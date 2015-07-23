@@ -1,0 +1,255 @@
+/* form styles */
+form {
+	padding: 0;
+	margin: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #000000;
+}
+
+/* form structure */
+div.db {
+	display: block;
+	float: left;
+	margin-right: 20px;
+}
+div.db h6 {
+	background-color: #C9DBD8;
+	color: #666666;
+	border: 1px solid #7DA6A6;
+	margin: 0;
+	padding: 0;
+	font-size: 9px;
+	font-weight: normal;
+	text-align: center;
+}
+
+/* elements */
+textarea {
+	font-size: 10px;
+	font-family: "Courier New", Courier, monospace;
+	background-color: #F7F7F7;
+	border: 1px solid #CCC;
+	border-bottom-color: #D5DDDD;
+	width: 485px;
+}
+
+textarea:focus {
+	background-color: #FFF;
+	border: 1px solid #AEDF9A;
+	border-top-color: #6AB94B;
+}
+
+input {
+	font-size: 10px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-color: #F7F7F7;
+	border: 1px solid #CCC;
+	border-bottom-color: #D5DDDD;
+}
+
+input:focus {
+	background-color: #FFF;
+	border: 1px solid #AEDF9A;
+	border-top-color: #6AB94B;
+}
+
+select {
+	font-size: 10px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-color: #F7F7F7;
+	border: 1px solid #CCC;
+	border-bottom-color: #D5DDDD;
+}
+
+select option {
+	border-width: 0px;
+}
+
+input.formerror, textarea.formerror {
+	background-color: #FFFFCB;
+}
+
+input.formerror:focus, form textarea.formerror:focus {
+	background-color: #FFF;
+	border: 1px solid #AEDF9A;
+	border-top-color: #6AB94B;
+}
+
+p.formerror {
+	color: #CC3333;
+	margin: 0px 0px 2px 0px;
+	padding: 0;
+	font-weight: bold;
+}
+
+input.sectionbutton, input.toolbutton, input.checkbutton, input.feedbutton, input.stopbutton {
+	font-size: 10px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	border-width: 3px;
+	border-style: double;
+	color: #2B333C;
+	background-color: #F7F7F7;
+	border-top-color: #C4CCCC;
+	border-left-color: #ACB5B5;
+	border-right-color: #ACB5B5;
+	border-bottom-color: #6F7777;
+	text-align: center;
+}
+input.toolbutton {
+	float: right;
+	margin: 10px 3px 10px 10px;
+	padding: 0px 2px;
+	font-weight: bold;
+}
+input.snailbutton {
+        font-size: 10px;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        border-width: 3px;
+        border-style: double;
+        color: #2B333C;
+        background-color: #F7F7F7;
+        border-top-color: #C4CCCC;
+        border-left-color: #ACB5B5;
+        border-right-color: #ACB5B5;
+        border-bottom-color: #6F7777;
+        text-align: left;
+        float: right;
+        margin: 10px 3px 10px 10px;
+        padding: 0px 20px 0px 2px;
+        font-weight: bold;
+        
+        background-image: url(../images/icon_snail.gif);
+        background-repeat: no-repeat;
+        background-position: right top;
+}
+input.sectionbutton {
+	float: left;
+	font-weight: normal;
+	margin: 0px 0px 0px 5px;
+	padding: 0;
+}
+input.feedbutton, input.stopbutton {
+	float: right;
+	font-weight: normal;
+	margin: 0px 3px 0px 0px;
+	padding: 0;
+}
+input.checkbutton {
+	float: none;
+	font-weight: normal;
+	margin: 5px 0px 0px 0px;
+	padding: 0;
+}
+input.helpbutton {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	border-width: 3px;
+	font-size: 12px;
+	position: absolute;
+	top: 0px;
+	right: 10px;
+	font-weight: bold;
+	border-style: solid;
+	background-color: #FFFFCB;	
+	color: #CC3333;
+	z-index: 10;
+	border-color: #CC3333;
+	text-align: center;
+	padding-left: 5px;
+	padding-right: 5px;
+	
+}
+input.sectionbutton:hover, input.toolbutton:hover, input.checkbutton:hover, input.feedbutton:hover, input.snailbutton:hover {
+	border-top-color: #AEDF9A;
+	border-left-color: #94DA78;
+	border-right-color: #94DA78;
+	border-bottom-color: #6AB94B;
+}
+input.stopbutton:hover {
+	border-color: #cc3333;
+}
+
+
+
+
+/* progress bar */
+span#progbarborder {
+	display: block;
+	float: left;
+	height: 14px;
+	margin: 0;
+	padding: 1px;
+	border-top: 2px solid #CCC;
+	border-right: 2px solid #CCC;
+	border-left: 2px solid #CCC;
+	border-bottom: 2px solid #D5DDDD;
+	background-color: #F7F7F7;
+}
+span#progbar {
+	display: block;
+	height: 100%;
+	width: 100%;
+	background-color: #AEDF9A;
+}
+
+/* waiting page */
+span#qstatus {
+	background-repeat: no-repeat;
+	margin: 0;;
+	padding: 0px 0px 0px 20px;
+	font-weight: bold;
+}
+span.r {
+	background-image: url(../images/status_yellow.gif);
+}
+span.q {
+	background-image: url(../images/status_red.gif);
+}
+span.s {
+	background-image: url(../images/status_grey.gif);
+}
+span.i {
+	background-image: url(../images/status_grey.gif);
+}
+span.d {
+	background-image: url(../images/status_green.gif);
+}
+span.e {
+	background-image: url(../images/status_darkred.gif);
+}
+div.statuslog {
+	margin: 10px 0px 0px 0px;
+	padding: 0;
+	border-top: 1px solid #CCC;
+	border-right: 1px solid #CCC;
+	border-left: 1px solid #CCC;
+	border-bottom: 1px solid #D5DDDD;
+	overflow: auto;
+	font-size: 10px;
+	font-family: "Courier New", Courier, monospace;
+	height: 200px;
+	white-space: pre;
+}
+
+
+/* set properties of genomes scroll box */
+div.gtreebox {
+	padding: 0;
+	border-top: 1px solid #CCC;
+	border-right: 1px solid #CCC;
+	border-left: 1px solid #CCC;
+	border-bottom: 1px solid #D5DDDD;
+	overflow: auto;
+	font-size: 10px;
+	height: 500px;
+}
+
+
+div.footnote {
+	font-size: 9px;
+	clear: both; 
+	padding-top: 3px;
+}
+
+
+

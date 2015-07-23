@@ -1,0 +1,184 @@
+/* Toolkit widescreen mode */
+body {
+	/*margin-top: 170px;*/
+	background-repeat: repeat-y;
+}
+
+/*#header {
+	position: fixed;
+}*/
+
+/*#navisection {
+	position: fixed;
+	top: 120px;
+	width: 480px;
+}*/
+
+#container {
+	background-image: none;	
+	background-color: transparent;
+}
+
+#header {
+	background: #FFFFFF url(../images/headerbg_help.gif) repeat-x top;
+}
+
+#content {
+	position: static;
+	width: 754px;
+}
+
+#footer {
+	width: 764px;
+}
+
+#metanav {
+	width: auto;
+}
+
+#navisection ul {
+	width: 100%;
+}
+
+/* helpindex */
+#helpindex {
+	position: absolute;
+	top: 95px;
+	left: 1px;
+	background-repeat: no-repeat;
+	background-position: left top;
+	width: 137px;
+	padding: 40px 0px 0px 2px;
+	margin: 0px;
+	z-index: 10;
+}
+ul#helpindex li {
+	clear: both;
+	list-style-type: none;
+	display: block;
+	padding: 0;
+	margin: 0;
+}
+ul#helpindex li a {
+	display: block;
+	background-color: #FFF;
+	font-size: 11px;
+	color: #666666;
+	text-decoration: none;
+	font-weight: normal;
+	margin: 0;
+	padding: 2px 0px 2px 8px;
+}
+
+/* help themes */
+/* theme std */
+ul.std {
+	background-image: url(../images/rect_sidebar_grey.gif);
+}
+ul.std li {
+	border-bottom: 1px solid #666666;
+}
+#content ul.std  a:hover {
+	background-color: #CFCFCF;
+}
+body.std {
+	background-image: url(../images/background_h_grey.gif);
+}	
+
+/* theme violett */
+ul.violett {
+	background-image: url(../images/rect_sidebar_violett.gif);
+}
+ul.violett li {
+	border-bottom: 1px solid #666699;
+}
+#content ul.violett a:hover {
+	background-color: #BEBED3;
+}
+body.violett {
+	background-image: url(../images/background_h_violett.gif);
+}
+
+/* theme ocker */
+ul.ocker {
+	background-image: url(../images/rect_sidebar_ocker.gif);
+}
+ul.ocker li {
+	border-bottom: 1px solid #D0BA89;
+}
+#content ul.ocker a:hover {
+	background-color: #E8DCC2;
+}
+body.ocker {
+	background-image: url(../images/background_h_ocker.gif);
+}
+
+/* theme blue */
+ul.blue {
+	background-image: url(../images/rect_sidebar_blue.gif);
+}
+ul.blue li {
+	border-bottom: 1px solid #79A4C4;
+}
+#content ul.blue a:hover {
+	background-color: #C8DCEC;
+}
+body.blue {
+	background-image: url(../images/background_h_blue.gif);
+}	
+
+/* theme orange */
+ul.orange {
+	background-image: url(../images/rect_sidebar_orange.gif);
+}
+ul.orange li {
+	border-bottom: 1px solid #FFCC66;
+}
+#content ul.orange a:hover {
+	background-color: #FFE09F;
+}
+body.orange {
+	background-image: url(../images/background_h_orange.gif);
+}		
+
+/* theme green */
+ul.green {
+	background-image: url(../images/rect_sidebar_green.gif);
+}
+ul.green li {
+	border-bottom: 1px solid #669933;
+}
+#content ul.green a:hover {
+	background-color: #99CC66;
+}
+body.green {
+	background-image: url(../images/background_h_green.gif);
+}	
+
+/* theme red */
+ul.red {
+	background-image: url(../images/rect_sidebar_red.gif);
+}
+ul.red li {
+	border-bottom: 1px solid #D6ABAB;
+}
+#content ul.red a:hover {
+	background-color: #E9D5D5;
+}
+body.red {
+	background-image: url(../images/background_h_red.gif);
+}
+
+/* theme darkred */
+ul.darkred {
+	background-image: url(../images/rect_sidebar_darkred.gif);
+}
+ul.darkred li {
+	border-bottom: 1px solid #CC3333;
+}
+#content ul.darkred a:hover {
+	background-color: #E89F9F;
+}
+body.darkred {
+	background-image: url(../images/background_h_darkred.gif);
+}		

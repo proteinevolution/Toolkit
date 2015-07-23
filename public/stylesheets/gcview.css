@@ -1,0 +1,133 @@
+/*
+
+Explorer Tree 1.4
+=================
+by Andrew Gregory <andrew@scss.com.au>
+http://www.scss.com.au/family/andrew/webdesign/explorertree/
+
+This work is licensed under the Creative Commons Attribution License. To view a
+copy of this license, visit http://creativecommons.org/licenses/by/1.0/ or send
+a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305,
+USA.
+
+*/
+/* Get the bullets inside their LI's, so they're clickable. */
+ul.explorertree li { list-style-position: inside; }
+ul.explorertree, ul.explorertree ul, ul.explorertree li { margin: 0; padding: 0; }
+ul.explorertree ul { padding-left: 10px; } /* sublist indentation */
+/* Set the bullet images */
+ul.explorertree li { list-style-type: square; }
+ul.explorertree li.explorertree-open {  list-style-type: circle; }
+ul.explorertree li.explorertree-closed { list-style-type: disc; }
+/* Actually show and hide sublists */
+ul.explorertree li.explorertree-open ul { display: block; }
+ul.explorertree li.explorertree-closed ul { display: none; }
+ul.explorertree li.explorertree-open div { display: block; }
+ul.explorertree li.explorertree-closed div { display: none; }
+
+ul.folderandfiletree li { 
+  list-style-image: url(/images/gcview/vertbranch.gif); 
+  background-image: url(/images/gcview/dotted.gif);
+  background-repeat: repeat-y; 
+/*   cursor: pointer;  */
+}
+ul.folderandfiletree a{
+  cursor: pointer;  
+}
+ul.folderandfiletree li:last-child {
+  background-repeat: no-repeat; 
+  list-style-image: url(/images/gcview/dottedend.gif);
+}
+/*ul.folderandfiletree li.explorertree-open::before {
+  content: url(folderopen.gif);
+}*/
+ul.folderandfiletree li.explorertree-open { 
+  list-style-image: url(/images/gcview/minusmid.gif); 
+}
+ul.folderandfiletree li.explorertree-open:last-child {
+  background-image: none; 
+  list-style-image: url(/images/gcview/minusend.gif);
+}
+/*ul.folderandfiletree li.explorertree-closed::before {
+  content: url(folderclosed.gif);
+}*/
+ul.folderandfiletree li.explorertree-closed {
+  list-style-image: url(/images/gcview/plusmid.gif); 
+}
+ul.folderandfiletree li.explorertree-closed:last-child {
+  background-image: none; 
+  list-style-image: url(/images/gcview/plusend.gif);
+}
+/*ul.folderandfiletree a::before {
+  text-decoration: none;
+  content: url(file.gif);
+}
+ul.folderandfiletree a[href$=".zip"]::before {
+  content: url(zip.gif);
+}*/
+
+a{text-decoration:none}
+area{cursor:pointer}
+
+
+#gcview_legend{border:1px black solid;width:300px;margin:5px 10% 5px 0%;border-spacing:0px;border-collapse:collapse}
+#gcview_legend td{border:0px black solid;padding:2px}
+#gcview_legend td h3{margin:0px 0px}
+
+#gi_list_container {
+  width:130px;
+  height:200px;
+  background-color:#eeeeee;
+  border:1px black dashed;
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  padding:15px;
+  z-index:10000;
+  overflow:auto;
+}
+
+#gi_list_switch {
+  position:absolute;
+  left:0px;
+  top:95px;
+  text-align:center;
+}
+
+#gi_list{
+  position:absolute;
+  top:25px;
+  left:15px;
+  width:130px;
+}
+
+.gcv_highlight_box
+{
+  background: url(/images/gcview/arrow_up.png) center top no-repeat;
+  height:16px;
+  width:16px;
+  border-top:6px #08c solid;
+  position:absolute;
+  bottom:-2px;
+  z-index:10001;
+}
+
+.gcv_button
+{
+	padding:1px 3px;
+	background-color: #F7F7F7;
+    border-color: #C4CCCC #ACB5B5 #6F7777;
+    border-style: double;
+    border-width: 3px;
+}
+
+.gcv_groupdiv
+{
+   margin-bottom:30px;
+   border-left:5px #F1EBEB solid
+}
+.gcv_groupdiv_sub
+{
+  margin-left:10px;
+}
+

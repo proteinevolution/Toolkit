@@ -1,0 +1,18 @@
+/* Default DOM Tooltip Style */
+div.domTT {
+	border: 1px solid #333333;
+	background-color: #DCDCDC;
+}
+div.domTT .caption {
+	font-family: serif;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 1px 2px;
+	color: #FFFFFF
+}
+div.domTT .contents {
+	font-size: 12px;
+	font-family: sans-serif;
+	padding: 3px 2px;
+	background-color: #ECF1F4;
+}

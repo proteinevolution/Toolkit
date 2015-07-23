@@ -1,0 +1,18 @@
+/* Toolkit widescreen mode */
+#container {
+	width: auto;
+	margin: 0;
+	background-image: url(../images/background_fullscreen_munich.gif);
+}
+
+#footer {
+	width: 100%;
+}
+
+#content {
+	width: auto;
+}
+
+#jobsection ul {
+		width: 100%;
+}

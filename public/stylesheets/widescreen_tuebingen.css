@@ -1,0 +1,37 @@
+/* Toolkit widescreen mode */
+#container {
+	background-image: url(../images/background_widescreen_tuebingen.gif);
+}
+
+#content {
+	width: 820px;
+	overflow: hidden;
+}
+
+#footer {
+	width: 829px;
+}
+
+#metanav {
+/*	width: auto;  */
+}
+
+#tabsection {
+	width: 790px;
+}
+
+#navisection ul {
+	width: 100%;
+}
+
+div div.bformw {
+	width: 620px;
+}
+
+div div.formw {
+	width: 570px;
+}
+
+#content ul#jobmenu {  
+  top: 5px;
+}
