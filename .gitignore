@@ -1,6 +1,8 @@
 logs
 project/project
 project/target
+bioprogs
+bin
 target
 tmp
 .history
