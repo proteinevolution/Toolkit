@@ -17,4 +17,14 @@ object Application extends Controller {
     Ok(views.html.contact())
   }
 
+  def footer = Action {
+    Ok(views.html.contact())
+  }
+
+  def search = Action {
+
+    Ok(views.html.search())
+  }
+
+
 }
