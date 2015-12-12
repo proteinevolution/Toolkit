@@ -20,3 +20,7 @@ GET        /contact             controllers.Application.contact
 GET        /footer              controllers.Application.footer
 
 GET        /search              controllers.Application.search
+
+# Routes for the individual tools must be defined here
+
+GET        /alnviz              controllers.Alnviz.submissionform
