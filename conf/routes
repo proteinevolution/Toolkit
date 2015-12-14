@@ -1,5 +1,8 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
+
+
+# IMPORTANT: Comments appended a valid line are not permitted
 # ~~~~
 
 # Home page
@@ -23,5 +26,8 @@ GET         /search              controllers.Application.search
 
 # Routes for the individual tools must be defined here
 
+
 GET         /alnviz              controllers.Alnviz.form
-POST        /alnviz              controllers.Alnviz.submit # TODO Don't know whether /alnviz is correct here
+
+# TODO Don't know whether /alnviz is correct here
+POST        /alnviz              controllers.Alnviz.submit

@@ -4,7 +4,6 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 
-
 /**
  * Controller of the Alnviz tool
  *
@@ -17,7 +16,7 @@ object Alnviz extends Controller{
 
   val inputForm = Form(
     mapping(
-      "sequence" -> text,
+      "alignment" -> text,
       "testInt" -> number
     )(InputData.apply)(InputData.unapply)
   )
