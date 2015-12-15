@@ -1,6 +1,6 @@
 @(inputForm: Form[controllers.Alnviz.InputData])
 @import models.Alnviz
-
+@import models.Values
 
 @roughtemplate(title = "AlnViz") {
 
@@ -9,7 +9,6 @@
     @helper.form(action = routes.Alnviz.submit()) {
 
         <!-- Input form elements derived from the Input Data Model -->
-
         <div class="row">
             <label>@Alnviz.parameterNames("alignment")
 
@@ -17,5 +16,20 @@
 
             </label>
         </div>
+        <div class="row">
+            <label>@Alnviz.parameterNames("format")
+
+                @helper.select(
+                    inputForm("format"),
+                    helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("format")))
+                )
+            </label>
+        </div>
+
+        <div class="row">
+            <input type="submit" value="Submit Job" />
+        </div>
+
     }
+
 }

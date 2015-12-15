@@ -18,6 +18,6 @@ object Alnviz {
 
   // Specifies a finite set of values the parameter is allowed to assume
   val parameterValues = Map(
-    "format" -> List("fas", "clue", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
+    "format" -> Set("fas", "clue", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
 }
