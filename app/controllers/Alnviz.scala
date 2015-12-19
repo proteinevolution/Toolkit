@@ -4,26 +4,26 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 
+import models.AlnvizFormData
+
 /**
  * Controller of the Alnviz tool
  *
- * TODO The form stuff should really be generated from the model
- *
  * Created by lzimmermann on 14.12.15.
  */
-object Alnviz extends Controller{
+class Alnviz extends Controller{
 
-  // Defines the fields of the Forms as Scala structure\
-  // Make sure that the case class parameter names and the keys in the map `inputForm` match
-  case class InputData(sequence: String, format: String)
-
+  // Define the input form
+  // MAKE SURE that the keys in the mapping match the arguments of the corresponding
+  // case class
   val inputForm = Form(
     mapping(
       "alignment" -> text,
       "format" -> text
-    )(InputData.apply)(InputData.unapply)
+    )(AlnvizFormData.apply)(AlnvizFormData.unapply)
   )
 
+  // #####################################################################################
 
   // Semantics: If we GET-Request the /alnviz page, we want to see the 
   // form of the tool
@@ -31,7 +31,7 @@ object Alnviz extends Controller{
     Ok(views.html.alnviz.form(inputForm))
   }
 
-  // binds the values from the form into the Request and submits.
+  // binds the values from the form into the Request and submits. TODO
   def submit = Action { implicit request =>
     Ok("Hi Submission")
   }

@@ -2,11 +2,12 @@ package controllers
 
 import play.api.mvc._
 
-object Application extends Controller {
+class Application extends Controller {
 
   def index = Action {
     Ok(views.html.index("Bioinformatics Toolkit"))
   }
+
 
   def disclaimer = Action {
     Ok(views.html.disclaimer())
@@ -24,6 +25,4 @@ object Application extends Controller {
 
     Ok(views.html.search())
   }
-
-
 }

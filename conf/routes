@@ -2,32 +2,23 @@
 # This file defines all application routes (Higher priority routes first)
 
 
-# IMPORTANT: Comments appended a valid line are not permitted
+# IMPORTANT: Comments appended to a valid line are not permitted
 # ~~~~
 
-# Home page
-GET         /                    controllers.Application.index
-
+# Index Page requested by user. Note that the controller is injected
+GET         /                    @controllers.Application.index
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file        controllers.Assets.at(path="/public", file)
-
-
-
 #GET        /toolkit             controllers.Assets.at(path="/public", file="index.html")
+GET         /disclaimer          @controllers.Application.disclaimer
+GET         /contact             @controllers.Application.contact
+#GET         /footer              controllers.Application.footer
 
-
-GET         /disclaimer          controllers.Application.disclaimer
-
-GET         /contact             controllers.Application.contact
-
-GET         /footer              controllers.Application.footer
-
-GET         /search              controllers.Application.search
+#GET         /search              controllers.Application.search
 
 # Routes for the individual tools must be defined here
 
-
-GET         /alnviz              controllers.Alnviz.form
+#GET         /alnviz              controllers.Alnviz.form
 
 # TODO Don't know whether /alnviz is correct here
-POST        /alnviz              controllers.Alnviz.submit
+#POST        /alnviz              @controllers.Alnviz.submit
