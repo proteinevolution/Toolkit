@@ -1,3 +1,30 @@
-@(inputForm: Form[models.AlnvizFormData])
+@(inputForm: Form[models.AlnvizFormData])(implicit messages: Messages)
+@roughtemplate(title = "AlnViz") {
 
-Test
+    <h2>@Alnviz.fullName</h2>
+
+    @helper.form(action = routes.Alnviz.submit()) {
+
+        <!-- Input form elements derived from the Input Data Model -->
+        <div class="row">
+            <label>@Alnviz.parameterNames("alignment")
+
+                @helper.textarea(field = inputForm("alignment"), args = 'rows -> 5, 'cols -> 50)
+
+            </label>
+        </div>
+        <div class="row">
+            <label>@Alnviz.parameterNames("format")
+
+                @helper.select(
+                    inputForm("format"),
+                    helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("format")))
+                )
+            </label>
+        </div>
+
+        <div class="row">
+            <input type="submit" value="Submit Job" />
+        </div>
+    }
+}

@@ -1,8 +1,10 @@
 package controllers
 
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import javax.inject.Inject
 
-class Application extends Controller {
+class Application @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   def index = Action {
     Ok(views.html.index("Bioinformatics Toolkit"))

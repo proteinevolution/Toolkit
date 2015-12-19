@@ -11,4 +11,3 @@ libraryDependencies ++= Seq( jdbc , cache , ws , "org.webjars" % "jquery" % "2.1
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
 
 routesGenerator := InjectedRoutesGenerator
-
