@@ -10,12 +10,12 @@
 # Toolkit related routes
 ###############################################################
 # Index Page requested by user. Note that the controller is injected
-GET        /                    @controllers.Application.index
+GET         /                    @controllers.Application.index
 # Map static resources from the /public folder to the /assets URL path
-GET        /assets/*file        controllers.Assets.at(path="/public", file)
+GET         /assets/*file        controllers.Assets.at(path="/public", file)
 #GET        /toolkit             controllers.Assets.at(path="/public", file="index.html")
-GET        /disclaimer          @controllers.Application.disclaimer
-GET        /contact             @controllers.Application.contact
+GET         /disclaimer          @controllers.Application.disclaimer
+GET         /contact             @controllers.Application.contact
 #GET         /footer              controllers.Application.footer
 
 #GET         /search              controllers.Application.search
@@ -26,7 +26,14 @@ GET        /contact             @controllers.Application.contact
 ###############################################################
 
 # Routes for the individual tools must be defined here
-GET        /alnviz        @controllers.Alnviz.form
+GET         /alnviz              @controllers.Alnviz.form
 
 # TODO Don't know whether /alnviz is correct here
 POST        /alnviz              @controllers.Alnviz.submit
+
+
+
+###############################################################
+# Handels the result View
+###############################################################
+GET         /results/$jobid<[0-9]+>            @controllers.Result.display(jobid: Long)

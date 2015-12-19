@@ -1,0 +1,20 @@
+@(jobID: Long)
+@import models.JobMap
+@import scala.concurrent.ExecutionContext.Implicits.global
+@roughtemplate(title = "AlnViz") {
+
+    <!-- Check whether job is already completed -->
+    @if(JobMap.get(jobID).get.isCompleted) {
+
+        <h2>Job Has Completed</h2>
+
+
+    }else {
+        <h2>Not completed yet</h2>
+
+        @JobMap.get(jobID).get.onComplete(try_on_complete =>
+
+        null
+        )
+    }
+}

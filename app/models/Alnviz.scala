@@ -1,7 +1,9 @@
 package models
 
 /**
+ * Singleton object that stores general information about a tool
  *
+ * TODO Dependency injection might come in handy here
  *
  * Created by lzimmermann on 14.12.15.
  */

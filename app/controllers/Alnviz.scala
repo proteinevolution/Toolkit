@@ -6,8 +6,9 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import models.AlnvizParam
+import jobs.JobManager
 
-import models.AlnvizFormData
 
 /**
  * Controller of the Alnviz tool
@@ -23,7 +24,7 @@ class Alnviz  @Inject()(val messagesApi: MessagesApi) extends Controller with I1
     mapping(
       "alignment" -> text,
       "format" -> text
-    )(AlnvizFormData.apply)(AlnvizFormData.unapply)
+    )(AlnvizParam.apply)(AlnvizParam.unapply)
   )
 
   // #####################################################################################
@@ -34,8 +35,27 @@ class Alnviz  @Inject()(val messagesApi: MessagesApi) extends Controller with I1
     Ok(views.html.alnviz.form(inputForm))
   }
 
-  // binds the values from the form into the Request and submits. TODO
+
+  // we want to bind the values submitted by the user and show redirect to another controller
   def submit = Action { implicit request =>
-    Ok("Hi Submission")
+    inputForm.bindFromRequest.fold(
+
+      formWithErrors => {
+        BadRequest("This was an error")
+      },
+
+      alnvizParam => {
+
+        // TODO give a dummy job to the Job Manager. Should be replaced with a reasonable invocation
+        // Obtain a new Job for this submission
+        val jobid = JobManager.job { () =>
+
+            Thread.sleep(5000)
+            null
+        }
+        // Please take me to the result View of this job
+        Redirect(s"/results/$jobid")
+      }
+    )
   }
 }
