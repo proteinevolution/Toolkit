@@ -19,6 +19,11 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
     Ok(views.html.contact())
   }
 
+
+  def sections = Action {
+    Ok(views.html.sections())
+  }
+
   def footer = Action {
     Ok(views.html.contact())
   }
