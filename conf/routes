@@ -27,6 +27,7 @@ GET         /contact                       @controllers.Application.contact
 
 # Routes for the individual tools must be defined here
 GET         /alnviz                        @controllers.Alnviz.form
+GET         /tcoffee                       @controllers.Tcoffee.form
 GET         /sections/alignment            @controllers.Application.sections
 
 

@@ -32,4 +32,12 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
 
     Ok(views.html.search())
   }
+
+
+  def search2 = Action {
+
+    Ok(views.html.search())
+  }
+
+
 }
