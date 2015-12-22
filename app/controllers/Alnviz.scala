@@ -6,7 +6,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import models.AlnvizParam
+import models.Parameters
 import jobs.JobManager
 
 
@@ -24,7 +24,7 @@ class Alnviz  @Inject()(val messagesApi: MessagesApi) extends Controller with I1
     mapping(
       "alignment" -> text,
       "format" -> text
-    )(AlnvizParam.apply)(AlnvizParam.unapply)
+    )(Parameters.Alnviz.apply)(Parameters.Alnviz.unapply)
   )
 
   // #####################################################################################
@@ -47,12 +47,13 @@ class Alnviz  @Inject()(val messagesApi: MessagesApi) extends Controller with I1
       alnvizParam => {
 
         // TODO give a dummy job to the Job Manager. Should be replaced with a reasonable invocation
+        // TODO Need a better job abstraction
         // Obtain a new Job for this submission
-        val jobid = JobManager.job { () =>
+        val jobid = JobManager.job("alnviz", {() =>
 
             Thread.sleep(5000)
             null
-        }
+        })
         // Please take me to the result View of this job
         Redirect(s"/results/$jobid")
       }

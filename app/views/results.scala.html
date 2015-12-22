@@ -1,18 +1,25 @@
 @(jobID: Long)
 @import models.JobMap
 @import scala.concurrent.ExecutionContext.Implicits.global
-@roughtemplate(title = "AlnViz") {
+@roughtemplate(title = "Results") {
 
     <!-- Check whether job is already completed -->
-    @if(JobMap.get(jobID).get.isCompleted) {
+    @if(JobMap.get(jobID).isCompleted) {
 
         <h2>Job Has Completed</h2>
+        <!-- TODO Currently we have to list each tool view explicitly here. -->
+
+        @JobMap.which(jobID) match {
+
+            case "alnviz" =>  {@alnviz.results(jobID) }
+        }
 
 
     }else {
         <h2>Not completed yet</h2>
 
-        @JobMap.get(jobID).get.onComplete(try_on_complete =>
+        <!-- TODO can we update the view dynamically on completion ? -->
+        @JobMap.get(jobID).onComplete(try_on_complete =>
 
         null
         )

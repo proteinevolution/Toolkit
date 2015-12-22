@@ -27,17 +27,22 @@ GET         /contact                       @controllers.Application.contact
 
 # Routes for the individual tools must be defined here
 GET         /alnviz                        @controllers.Alnviz.form
-GET         /tcoffee                       @controllers.Tcoffee.form
-GET         /sections/alignment            @controllers.Application.sections
-
-
-
-# TODO Don't know whether /alnviz is correct here
 POST        /alnviz                        @controllers.Alnviz.submit
 
+
+GET         /tcoffee                        @controllers.Tcoffee.form
+POST        /tcoffee                        @controllers.Tcoffee.submit
+
+
+
+###############################################################
+# Handels the result View (Determined by the status of the
+# jobid provided
+###############################################################
+GET         /results/$jobid<[0-9]+>        @controllers.Result.display(jobid: Long)
 
 
 ###############################################################
 # Handels the result View
 ###############################################################
-GET         /results/$jobid<[0-9]+>        @controllers.Result.display(jobid: Long)
+GET         /cluster                       @controllers.Application.cluster()

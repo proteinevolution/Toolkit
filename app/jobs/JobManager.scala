@@ -15,13 +15,23 @@ import models.JobMap
  */
 object JobManager {
 
+  // Keeps track of the Job ID
   private var jobID: Long = 0
 
 
-  def job(exec: () => JobResult) : Long = {
+  /**
+   * Starts a simple Job which is only able to evaluate a Scala Function `exec`
+   * For some tools like AlnViz, which only need to pass the arguments to the Frontend,
+   * this is totally enough
+   *
+   * @param toolID
+   * @param exec
+   * @return
+   */
+  def job(toolID: String, exec: () => JobResult) : Long = {
 
     this.jobID += 1
-    JobMap.put(this.jobID, Future {exec()})
+    JobMap.put(this.jobID, toolID, Future {exec()})
     this.jobID
   }
 }
