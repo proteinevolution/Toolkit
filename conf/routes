@@ -11,6 +11,9 @@
 ###############################################################
 # Index Page requested by user. Note that the controller is injected
 GET         /                              @controllers.Application.index
+
+# Controller for the websocket
+#GET         /ws                            @controllers.Application.ws
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                  controllers.Assets.at(path="/public", file)
 #GET        /toolkit             controllers.Assets.at(path="/public", file="index.html")
@@ -42,7 +45,7 @@ POST        /tcoffee                        @controllers.Tcoffee.submit
 GET         /results/$jobid<[0-9]+>        @controllers.Result.display(jobid: Long)
 
 
-###############################################################
-# Handels the result View
-###############################################################
-GET         /cluster                       @controllers.Application.cluster()
+################################################################################
+# Handels the result View (This is currently just a test for the cluster execution)
+################################################################################
+GET         /cluster                       @controllers.Application.cluster

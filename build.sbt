@@ -3,7 +3,7 @@ name := "toolkitscala"
 version := "1.0"
 
 lazy val `toolkitscala` = (project in file(".")).enablePlugins(PlayScala)
-lazy val akkaVersion = "2.4.0"
+lazy val akkaVersion = "2.4.1"
 
 scalaVersion := "2.11.7"
 fork in Test := true

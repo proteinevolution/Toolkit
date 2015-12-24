@@ -1,6 +1,5 @@
 package models
 
-import scala.collection.mutable
 import scala.concurrent.Future
 
 
