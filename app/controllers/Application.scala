@@ -34,4 +34,10 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
 
     Ok(views.html.search())
   }
+
+  def alignment= Action {
+
+    Ok(views.html.search())
+  }
+
 }
