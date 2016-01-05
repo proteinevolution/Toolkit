@@ -1,5 +1,8 @@
 package models
 
+import play.api.data.Form
+import play.api.data.Forms._
+
 /**
  * Singleton object that stores general information about a tool
  *
@@ -10,16 +13,25 @@ package models
 
 object Alnviz {
 
+  val toolname = "alnviz"
   val fullName = "Alignment Visualizer"
+
+  // Input Form Definition of this tool
+  val inputForm = Form(
+    mapping(
+      "alignment" -> text,
+      "format" -> text
+    )(Alnviz.apply)(Alnviz.unapply)
+  )
 
   //Map parameter identifier to the full names
   val parameterNames = Map(
     "alignment" -> "Sequence Alignment",
     "format"    -> "Alignment Format")
 
-
   // Specifies a finite set of values the parameter is allowed to assume
   val parameterValues = Map(
     "format" -> Set("fas", "clue", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
 }
+case class Alnviz(sequence: String, format: String)

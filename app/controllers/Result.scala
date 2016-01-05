@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class Result @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
-  def display(jobID: Long) = Action {
+  def display(jobID: Long) = Action { implicit request =>
 
     Ok(views.html.results(jobID))
   }

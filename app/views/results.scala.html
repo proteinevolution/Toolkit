@@ -1,27 +1,9 @@
-@(jobID: Long)
-@import models.JobMap
-@import scala.concurrent.ExecutionContext.Implicits.global
-@roughtemplate(title = "Results") {
+@import play.api.mvc.RequestHeader
+@(jobID: Long)(implicit request: RequestHeader)
 
-    <!-- Check whether job is already completed -->
-    @if(JobMap.get(jobID).isCompleted) {
-
-        <h2>Job Has Completed</h2>
-        <!-- TODO Currently we have to list each tool view explicitly here. -->
-
-        @JobMap.which(jobID) match {
-
-            case "alnviz" =>  {@alnviz.results(jobID) }
-        }
+@roughtemplate {
 
 
-    }else {
-        <h2>Not completed yet</h2>
+    This is the result view
 
-        <!-- TODO can we update the view dynamically on completion ? -->
-        @JobMap.get(jobID).onComplete(try_on_complete =>
-
-        null
-        )
-    }
 }

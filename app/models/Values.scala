@@ -10,7 +10,7 @@ package models
 object Values {
 
   // Maps parameter values onto their full names descriptions
-  var fullNames = Map(
+  val fullNames = Map(
     "fas"  -> "FASTA",
     "clus" -> "CLUSTALW",
     "sto" -> "Stockholm",
@@ -22,4 +22,15 @@ object Values {
     "pir" -> "PIR/NBRF",
     "tre" -> "TREECON"
   )
+
+  val modelMap = Map (
+
+    "alnviz" -> models.Alnviz
+  )
+
+  val viewMap = Map (
+
+    "alnviz" -> views.html.alnviz.form
+  )
+
 }

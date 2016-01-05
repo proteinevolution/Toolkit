@@ -1,9 +1,14 @@
-@(inputForm: Form[models.Parameters.Alnviz])(implicit messages: Messages)
-@roughtemplate(title = "AlnViz") {
+@import play.api.mvc.RequestHeader
+@(inputForm: Form[models.Alnviz])(implicit messages: Messages, request: RequestHeader)
+@roughtemplate {
 
     <h2>@Alnviz.fullName</h2>
 
-    @helper.form(action = routes.Alnviz.submit()) {
+
+    <!-- We cannot use helpers.forms here, because we do not want to specify an action for this form -->
+    <form id="jobform">
+
+        <script type='text/javascript' src='@routes.Assets.at("javascripts/index.js")'></script>
 
         <!-- Input form elements derived from the Input Data Model -->
         <div class="row">
@@ -26,5 +31,5 @@
         <div class="row">
             <input type="submit" value="Submit Job" />
         </div>
-    }
+    </form>
 }

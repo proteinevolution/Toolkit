@@ -12,10 +12,13 @@
 # Index Page requested by user. Note that the controller is injected
 GET         /                               @controllers.Application.index
 
-# Controller for the websocket
-#GET         /ws                            @controllers.Application.ws
+# I currently play with this socket to get the hang of it
+GET         /ws                            @controllers.Application.ws
+
+
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                   controllers.Assets.at(path="/public", file)
+GET     /assets/*file                       controllers.Assets.at(path="/public", file)
+
 #GET        /toolkit             controllers.Assets.at(path="/public", file="index.html")
 GET         /disclaimer                     @controllers.Application.disclaimer
 GET         /contact                        @controllers.Application.contact
@@ -32,14 +35,8 @@ GET         /sections/utils                 @controllers.Application.search
 ###############################################################
 # Tool specific routes
 ###############################################################
-
-# Routes for the individual tools must be defined here
-GET         /alnviz                         @controllers.Alnviz.form
-POST        /alnviz                         @controllers.Alnviz.submit
-
-
-GET         /tcoffee                        @controllers.Tcoffee.form
-POST        /tcoffee                        @controllers.Tcoffee.submit
+GET         /tools/:toolname                @controllers.Tool.show(toolname: String)
+POST        /tools/:toolname                @controllers.Tool.submit(toolname: String)
 
 
 
@@ -48,9 +45,3 @@ POST        /tcoffee                        @controllers.Tcoffee.submit
 # jobid provided
 ###############################################################
 GET         /results/$jobid<[0-9]+>         @controllers.Result.display(jobid: Long)
-
-
-################################################################################
-# Handels the result View (This is currently just a test for the cluster execution)
-################################################################################
-GET         /cluster                        @controllers.Application.cluster

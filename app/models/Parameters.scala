@@ -11,6 +11,5 @@ package models
 
 object Parameters {
 
-  case class Alnviz(sequence: String, format: String)
   case class TCoffee(sequences: String)
 }

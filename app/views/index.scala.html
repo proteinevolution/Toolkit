@@ -1,3 +1,6 @@
-@(message: String)
+@import play.api.mvc.RequestHeader
+@(uuid: String)(implicit request: RequestHeader)
+@roughtemplate {
 
-@main(message)
+    @mainframe()
+}
