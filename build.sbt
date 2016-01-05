@@ -31,6 +31,6 @@ libraryDependencies ++= Seq(jdbc , cache , filters, ws,
 
 routesGenerator := InjectedRoutesGenerator
 
-fork in run := true
+//fork in run := true
 
 
