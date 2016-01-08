@@ -25,13 +25,23 @@ class JobManager extends Actor with ActorLogging {
   // maps jobID to the Future Object which holds the Job Result
   private val jobMap = Map[Long, Future[JobResult]]()
 
-  // Maps the jobID to the String indentifier of the associated tool
+  // Maps the jobID to the String identifier of the associated tool
   private val toolMap = Map[Long, String]()
+
+
 
 
   def receive = LoggingReceive {
 
-    case JobInit(uuid, toolname, details) => sender ! Message(uuid, "JobManager has received from " + uuid + "for tool" + toolname + " with details " + details)
+    /**
+      * Handels what the JobManager should do if he receives a new JobInit Request
+     */
+    case JobInit(uuid, toolname, details) => {
+
+
+
+
+    }
 
     case Subscribe => {
       users += sender

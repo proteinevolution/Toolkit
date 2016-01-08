@@ -36,8 +36,6 @@ GET         /sections/utils                 @controllers.Application.search
 # Tool specific routes
 ###############################################################
 GET         /tools/:toolname                @controllers.Tool.show(toolname: String)
-POST        /tools/:toolname                @controllers.Tool.submit(toolname: String)
-
 
 
 ###############################################################

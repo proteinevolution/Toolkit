@@ -30,27 +30,4 @@ class Tool @Inject()(val messagesApi: MessagesApi) extends Controller with I18nS
     // Pass the input form to the form view of the  tool
     Ok(models.Values.viewMap.get(toolname).get(inputForm))
   }
-
-  def submit(toolname: String) = Action { implicit request =>
-
-    models.Values.modelMap.get(toolname).get.inputForm.bindFromRequest.fold(
-
-      formWithErrors => {
-
-        BadRequest("This was an error")
-      },
-
-     // TODO assemble new job from parameters
-      parameters => {
-
-        // tell JobManager that we have just submitted a Job with parameters
-
-        val jobid = 0
-
-
-
-        // Please take me to the result View of this job
-        Redirect(s"/results/$jobid")
-  })
-}
 }

@@ -4,7 +4,9 @@ $ ->
   # Handles the behavior that occurs if the WebSocket receives data from the Server
   # TODO For instance, we can update the Job Monitor Widget here
   ws.onmessage = (event) ->
-    alert "There has been an Event"
+    message = JSON.parse event.data
+    alert(message.msg)
+
 
   # Handles the behavior when the submit button is pressed in a job form
   $(".jobform").submit (event) ->
