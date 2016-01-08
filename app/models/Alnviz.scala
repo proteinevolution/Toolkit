@@ -33,5 +33,8 @@ object Alnviz {
   val parameterValues = Map(
     "format" -> Set("fas", "clue", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
+
+  // Specify which arguments need to go to a file for further processing
+  val files = List("alignment")
 }
 case class Alnviz(sequence: String, format: String)

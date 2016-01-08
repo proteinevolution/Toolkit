@@ -5,10 +5,8 @@ import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Terminated
-import models.JobResult
 import play.libs.Akka
 import akka.actor.Props
-import scala.concurrent.Future
 
 
 /**
@@ -19,34 +17,56 @@ import scala.concurrent.Future
   */
 class JobManager extends Actor with ActorLogging {
 
-  // keeps track of all the users registered in the Application
-  var users = Set[ActorRef]()
+  var jobID = 0
 
-  // maps jobID to the Future Object which holds the Job Result
-  private val jobMap = Map[Long, Future[JobResult]]()
+
+  // set of all users that are under way
+  var users = scala.collection.mutable.Set[ActorRef]()
+
+  // Maps the JobID to the corresponding JobWorker Actor
+  //var workers = scala.collection.mutable.Map[Long, ActorRef]()
 
   // Maps the jobID to the String identifier of the associated tool
-  private val toolMap = Map[Long, String]()
-
-
+  //private val toolMap = Map[Long, String]()
 
 
   def receive = LoggingReceive {
 
     /**
-      * Handels what the JobManager should do if he receives a new JobInit Request
+      *
+      * Handles what the JobManager should do if he receives a new JobInit Request
      */
-    case JobInit(uuid, toolname, details) => {
+    case JobInit(toolname, details) =>
+
+      log.info("LogManager tries to start a new Job")
+      // TODO There might be several cases when a Job cannot be started properly. We must handle this case here
+      val newWorker = context.actorOf(Props[JobWorker])
+      jobID += 1
+      context watch newWorker
+      newWorker ! Start(toolname, details, jobID, sender)
+
+      // inform the corresponding user actor about the status of the job initialization
+      // Currently, only success encoded
+      sender ! JobInitStatus(toolname, jobID, "success")
 
 
+    case JobDone(userActor, toolname, details, jobID) =>
+
+      userActor ! JobDone(userActor, toolname, details, jobID)
+
+      log.info("JobManager received that Job is done")
+      // we can terminate the sender
+      context.stop(sender)
 
 
-    }
-
-    case Subscribe => {
+    /**
+      * Subscribes new user to the System
+      *
+      */
+    case Subscribe =>
       users += sender
       context watch sender
-    }
+
     case Terminated(user) => users -= user
   }
 }
@@ -56,3 +76,26 @@ object JobManager {
   lazy val board = Akka.system().actorOf(Props[JobManager])
   def apply() = board
 }
+
+
+/*
+val myActor = system.actorOf(Props[MyActor].withDispatcher("my-dispatcher"), name = "myactor2")
+
+import akka.actor.{ Actor, Props, Terminated }
+
+class WatchActor extends Actor {
+val child = context.actorOf(Props.empty, "child")
+context.watch(child) // <-- this is the only call needed for registration
+var lastSender = system.deadLetters
+
+def receive = {
+  case "kill" =>
+    context.stop(child); lastSender = sender()
+  case Terminated(`child`) => lastSender ! "finished"
+}
+}
+
+
+ */
+
+

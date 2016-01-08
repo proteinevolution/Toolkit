@@ -23,7 +23,23 @@ class UserActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends Actor 
 
     // UserActor receives JSON data, most probably from a input form
     // TODO The toolname must be decoded from the JSON string
-    case js: JsValue => (js \ "jobinit").validate[String] map { jobmanager ! JobInit(uid, "foo", _) }
+    case js: JsValue => (js \ "jobinit").validate[String] map { jobmanager ! JobInit("foo", _) }
+
+
+
+    // Informs the user whether the Job was initialized Successfully
+    case JobInitStatus(toolname, jobID, status) => out ! Json.obj("type" -> "JobInitStatus",
+                                                                  "status" -> status,
+                                                                  "jobid" -> jobID,
+                                                                  "toolname" -> toolname)
+
+
+    /* In this block we will handle several events the user might encounter */
+    case JobDone(userActor, toolname, details, jobID) =>
+
+      out ! Json.obj("type" -> "JobDone",
+                    "jobid" -> jobID,
+                    "toolname" -> toolname)
 
     case other => log.error("unhandled: " + other)
   }
