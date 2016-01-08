@@ -12,9 +12,16 @@ package actors
   * */
 
 /**
-Just a test Message copied from an Activator example
+A Message is anything that is meant to go from the Server to the client over the Websocket
  */
-case class Message(uuid: String, s: String)
+case class Message(uuid: String, msg: String)
+
+
+/**
+  * Message the User sends to declare a new Job to the JobManager
+  */
+case class JobInit(uuid: String, toolname: String, details: String)
+
 
 /**
 The Message that is passed when a new User subscribes to the Job System

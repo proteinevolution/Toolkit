@@ -3,26 +3,28 @@ package actors
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
-import play.api.libs.json.Json
 import akka.actor.ActorRef
 import akka.actor.Props
+import play.api.libs.json.Json
+import play.api.libs.json.JsValue
 
-
-
-class UserActor(uid: String, board: ActorRef, out: ActorRef) extends Actor with ActorLogging {
+class UserActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends Actor with ActorLogging {
 
   /** The user actor subscribes at the JobActor on Startup */
   override def preStart() = {
+    log.info("User Actor tries to subscribe at the JobManager")
     JobManager() ! Subscribe
   }
 
   def receive = LoggingReceive {
 
-    case Message(muid, s) if sender == board => {
-      val js = Json.obj("type" -> "message", "uid" -> muid, "msg" -> s)
-      out ! js
-    }
-    //case js: JsValue => (js \ "msg").validate[String] map { Utility.escape(_) }  map { board ! Message(uid, _ ) }
+    // just a generic Interface of the Server to the WebSocket
+    case Message(muid, msg)  => out ! Json.obj("uid" -> muid, "msg" -> msg)
+
+    // UserActor receives JSON data, most probably from a input form
+    // TODO The toolname must be decoded from the JSON string
+    case js: JsValue => (js \ "jobinit").validate[String] map { jobmanager ! JobInit(uid, "foo", _) }
+
     case other => log.error("unhandled: " + other)
   }
 }

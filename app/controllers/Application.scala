@@ -44,7 +44,8 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
     Future.successful(request.session.get(UID) match {
 
       case None => Left(Forbidden)
-      case Some(uid) => Right(UserActor.props(uid))
+      case Some(uid) =>  Logger.info("WebSocket has accepted the request with uid " + uid)
+                         Right(UserActor.props(uid))
     })
   }
 

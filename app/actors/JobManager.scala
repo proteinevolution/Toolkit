@@ -31,7 +31,7 @@ class JobManager extends Actor with ActorLogging {
 
   def receive = LoggingReceive {
 
-    case m: Message => users map { _ ! m}
+    case JobInit(uuid, toolname, details) => sender ! Message(uuid, "JobManager has received from " + uuid + "for tool" + toolname + " with details " + details)
 
     case Subscribe => {
       users += sender
