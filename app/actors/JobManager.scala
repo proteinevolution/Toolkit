@@ -32,22 +32,28 @@ class JobManager extends Actor with ActorLogging {
 
   def receive = LoggingReceive {
 
+
     /**
-      *
-      * Handles what the JobManager should do if he receives a new JobInit Request
-     */
-    case JobInit(toolname, details) =>
+      * Prepares a new working directory for processing the job
+      */
+    case PrepWD(details, jobID_l, startJob)=>
 
-      log.info("LogManager tries to start a new Job")
-      // TODO There might be several cases when a Job cannot be started properly. We must handle this case here
-      val newWorker = context.actorOf(Props[JobWorker])
       jobID += 1
-      context watch newWorker
-      newWorker ! Start(toolname, details, jobID, sender)
 
-      // inform the corresponding user actor about the status of the job initialization
-      // Currently, only success encoded
-      sender ! JobInitStatus(toolname, jobID, "success")
+      // A new Working Directory for the Job is assembled
+      val newStorageWorker = context.actorOf(Props[StorageWorker])
+      context watch newStorageWorker
+      newStorageWorker ! PrepWD(details, jobID_l, startJob)
+
+    /**
+      * Starts the Job that was put into the Job Directory under the designated ID
+     */
+    case JobInit(jobID_l) =>
+
+      val newWorker = context.actorOf(Props[JobWorker])
+      context watch newWorker
+      newWorker ! Start(jobID_l)
+
 
 
     case JobDone(userActor, toolname, details, jobID) =>

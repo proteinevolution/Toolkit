@@ -1,6 +1,6 @@
 package helpers;
 
-import java.io.File;
+import java.io.*;
 
 /**
  * Handles the directory structures that need to be created due to Job Execution
@@ -20,5 +20,23 @@ public class FileAccess {
     public static boolean mkdir(String name) {
 
         return new File(name).mkdirs();
+    }
+
+    public static boolean mkfile(String name, String content) {
+
+
+        BufferedWriter bf;
+
+        try {
+            bf = new BufferedWriter(new FileWriter(new File(name)));
+            bf.write(content);
+            bf.close();
+            return true;
+        }
+        catch(IOException e) {
+
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package actors
 
 import akka.actor.ActorRef
+import play.api.libs.json.JsValue
 
 /**
   *
@@ -22,7 +23,7 @@ case class Message(uuid: String, msg: String)
 /**
   * Message the User sends to declare a new Job to the JobManager
   */
-case class JobInit(toolname: String, details: String)
+case class JobInit(jobID: Long)
 
 
 /**
@@ -42,7 +43,7 @@ case class JobDone(userActor: ActorRef, toolname: String, details: String, jobID
 /**
   * Starts the JobWorker for one distinguished Job
   */
-case class Start(toolname: String, details: String, jobID: Long, userActor: ActorRef)
+case class Start(jobID: Long)
 
 
 /**
@@ -56,3 +57,12 @@ case class Stop()
 The Message that is passed when a new User subscribes to the Job System
  */
 object Subscribe
+
+
+/**
+  * Tells the JobManager to create a new Working Directory for a Job
+  *
+  * @param details
+  * @param startJob whether or not the Job should be started afterwards
+  */
+case class PrepWD(details: String, jobID: Long, startJob: Boolean)

@@ -22,7 +22,8 @@ $ ->
   $(".jobform").submit (event) ->
     event.preventDefault()
     # send form data over the websocket
-    ws.send(JSON.stringify({jobinit: $(".jobform").serialize()}))
+
+    ws.send(JSON.stringify({jobinit: $(".jobform").serialize(), type: "jobinit"}))
     # reset the form of interest
     $(".jobform")[0].reset()
 
