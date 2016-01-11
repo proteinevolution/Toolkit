@@ -17,6 +17,27 @@ public class FileAccess {
     }
 
 
+    public static String readFile(String name) {
+
+        File file = new File(name);
+
+        BufferedReader br;
+        String res = null;
+
+        try {
+            br = new BufferedReader(new FileReader(file));
+
+            // It should suffice to read the first line of the toolname file
+            res = br.readLine();
+            br.close();
+        }
+        catch(IOException e) {
+
+            e.printStackTrace();
+        }
+        return res;
+    }
+
     public static boolean mkdir(String name) {
 
         return new File(name).mkdirs();

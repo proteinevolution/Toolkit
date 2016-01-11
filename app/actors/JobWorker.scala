@@ -1,6 +1,10 @@
 package actors
 
+import java.io.File
+
 import akka.actor.{ActorLogging, Actor}
+import helpers.FileAccess
+import play.api.Play._
 import language.postfixOps
 
 /**
@@ -17,7 +21,11 @@ class JobWorker extends Actor with ActorLogging {
       */
     case Start(jobID) =>
 
+      // path of working directory
+      val path = s"${current.configuration.getString("job_path").get}${File.separator}$jobID"
 
+      // read the toolname file to get the tool configuration
+      val toolname = FileAccess.readFile(path + "/" + "toolname")
 
 
 

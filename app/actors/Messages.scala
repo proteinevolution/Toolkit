@@ -66,3 +66,5 @@ object Subscribe
   * @param startJob whether or not the Job should be started afterwards
   */
 case class PrepWD(details: String, jobID: Long, startJob: Boolean)
+
+case class JobSubmission(details: String, startJob: Boolean)

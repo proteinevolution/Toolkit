@@ -41,4 +41,3 @@ class StorageWorker extends Actor with ActorLogging {
       self ! PoisonPill
   }
 }
-

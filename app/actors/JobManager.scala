@@ -36,14 +36,14 @@ class JobManager extends Actor with ActorLogging {
     /**
       * Prepares a new working directory for processing the job
       */
-    case PrepWD(details, jobID_l, startJob)=>
+    case JobSubmission(details, startJob)=>
 
       jobID += 1
 
       // A new Working Directory for the Job is assembled
       val newStorageWorker = context.actorOf(Props[StorageWorker])
       context watch newStorageWorker
-      newStorageWorker ! PrepWD(details, jobID_l, startJob)
+      newStorageWorker ! PrepWD(details, jobID, startJob)
 
     /**
       * Starts the Job that was put into the Job Directory under the designated ID

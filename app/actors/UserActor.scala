@@ -5,8 +5,8 @@ import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
-import play.api.libs.json.Json
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
+
 
 class UserActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends Actor with ActorLogging {
 
@@ -22,15 +22,16 @@ class UserActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends Actor 
     case Message(muid, msg)  => out ! Json.obj("uid" -> muid, "msg" -> msg)
 
     // UserActor receives JSON data, most probably from a input form
-    // TODO The toolname must be decoded from the JSON string, Call must be adapted
-      /*
+
     case js: JsValue =>
       (js \ "type").validate[String].get match {
 
         case "jobinit" =>
-          // Get the toolname from the form
-          jobmanager ! JobInit("foo", (js \ "jobinit").validate[String].get)
-      }*/
+
+          // Fetch the details GET String from the JSON data
+          // Prepare Working Directory in Job Manager and start immediately
+          jobmanager ! JobSubmission((js \ "jobinit").validate[String].get, startJob = true)
+      }
 
     // Informs the user whether the Job was initialized Successfully
     case JobInitStatus(toolname, jobID, status) => out ! Json.obj("type" -> "JobInitStatus",

@@ -3,10 +3,12 @@ package models
 import play.api.data.Form
 import play.api.data.Forms._
 
+
+// TODO Dependency injection might come in handy here
+
+
 /**
  * Singleton object that stores general information about a tool
- *
- * TODO Dependency injection might come in handy here
  *
  * Created by lzimmermann on 14.12.15.
  */
@@ -16,6 +18,11 @@ object Alnviz {
   val toolname = "alnviz"
   val fullName = "Alignment Visualizer"
 
+
+  // Parameter List
+  val parameters = Vector(FileParam("alignment", None), StringParam("format", None))
+
+
   // Input Form Definition of this tool
   val inputForm = Form(
     mapping(
@@ -23,6 +30,9 @@ object Alnviz {
       "format" -> text
     )(Alnviz.apply)(Alnviz.unapply)
   )
+
+
+  val exec  = Vector("perl",  "reformat.pl", "-i", parameters(1), "-o", "clu", "-f", parameters(0), "-a", "result")
 
 
   //Map parameter identifier to the full names
