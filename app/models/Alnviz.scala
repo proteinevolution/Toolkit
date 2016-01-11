@@ -20,7 +20,13 @@ object Alnviz {
 
 
   // Parameter List
-  val parameters = Vector(FileParam("alignment", None), StringParam("format", None))
+  val parameters = Vector(FileParam("alignment"), StringParam("format"))
+
+  // Declares the required Interpreters
+  val interpreters = Vector(Interpreter("perl"))
+
+  // Declare the required helper scripts (helpers directory)
+  var helpers = Vector(HelperScript("reformat.pl"))
 
 
   // Input Form Definition of this tool
@@ -31,20 +37,20 @@ object Alnviz {
     )(Alnviz.apply)(Alnviz.unapply)
   )
 
-
-  val exec  = Vector("perl",  "reformat.pl", "-i", parameters(1), "-o", "clu", "-f", parameters(0), "-a", "result")
-
-
   //Map parameter identifier to the full names
   val parameterNames = Map(
     "alignment" -> "Sequence Alignment",
     "format"    -> "Alignment Format")
 
-  // Specifies a finite set of values the parameter is allowed to assume
+  // Specifies a finite set of values the parameter is allowed to assumepe
   val parameterValues = Map(
     "format" -> Set("fas", "clue", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
-
+  val exec  = Vector(interpreters(0),  helpers(0),
+                    KeyValuePair("i", parameters(1), "-", "="),
+                    KeyValuePair("o", ConstParam("clu"), "-", "="),
+                    KeyValuePair("f", parameters(0), "-", "="),
+                    KeyValuePair("a", ResFileParam("result"), "-", "="))
 
 }
 case class Alnviz(sequence: String, format: String)
