@@ -22,10 +22,22 @@ $ ->
   $(".jobform").submit (event) ->
     event.preventDefault()
     # send form data over the websocket
-
     ws.send(JSON.stringify({jobinit: $(".jobform").serialize(), type: "jobinit"}))
     # reset the form of interest
     $(".jobform")[0].reset()
+
+  $("#file").submit (event) ->
+    event.preventDefault
+
+    # Load file from the input  field
+    files = document.getElementById('files').files
+    if !files.length
+      alert 'Please select a file!'
+
+    file = files[0]
+
+    # Load a worker to deal with the file
+    worker = new Worker('fileupload.js')
 
 
 
