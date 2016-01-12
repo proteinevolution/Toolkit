@@ -30,4 +30,21 @@ class Tool @Inject()(val messagesApi: MessagesApi) extends Controller with I18nS
     // Pass the input form to the form view of the  tool
     Ok(models.Values.viewMap.get(toolname).get(inputForm))
   }
+
+
+  def submit = Action { implicit request =>
+
+    models.Alnviz.inputForm.bindFromRequest.fold(
+      formWithErrors => {
+        BadRequest("this was an error")
+      },
+      contact => {
+
+        print(contact)
+        Ok
+      }
+    )
+  }
+
 }
+

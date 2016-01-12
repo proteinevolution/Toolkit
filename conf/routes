@@ -36,7 +36,7 @@ GET         /sections/utils                 @controllers.Application.search
 # Tool specific routes
 ###############################################################
 GET         /tools/:toolname                @controllers.Tool.show(toolname: String)
-
+POST        /tools                          @controllers.Tool.submit
 
 ###############################################################
 # Handels the result View (Determined by the status of the
