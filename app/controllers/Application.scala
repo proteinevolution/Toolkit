@@ -2,6 +2,7 @@ package controllers
 
 
 import actors.{WebSocketActor, WebSocketActor$}
+import play.api.routing.JavaScriptReverseRouter
 
 import scala.concurrent.Future
 import play.api.Play.current
@@ -29,7 +30,7 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
     val uid = request.session.get(UID).getOrElse {
       counter += 1
       counter.toString
-    },
+    }
     // Continue to index view
     Ok(views.html.index(uid)).withSession {
       Logger.debug("creation uid " + uid)
@@ -48,7 +49,6 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
                          Right(WebSocketActor.props(uid))
     })
   }
-
 
   // TODO These Actions must be redefined
   def disclaimer = Action {
