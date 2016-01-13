@@ -1,7 +1,7 @@
 package controllers
 
 
-import actors.UserActor
+import actors.{WebSocketActor, WebSocketActor$}
 
 import scala.concurrent.Future
 import play.api.Play.current
@@ -29,7 +29,7 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
     val uid = request.session.get(UID).getOrElse {
       counter += 1
       counter.toString
-    }
+    },
     // Continue to index view
     Ok(views.html.index(uid)).withSession {
       Logger.debug("creation uid " + uid)
@@ -45,7 +45,7 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
 
       case None => Left(Forbidden)
       case Some(uid) =>  Logger.info("WebSocket has accepted the request with uid " + uid)
-                         Right(UserActor.props(uid))
+                         Right(WebSocketActor.props(uid))
     })
   }
 

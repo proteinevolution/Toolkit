@@ -8,7 +8,7 @@ import akka.actor.Props
 import play.api.libs.json.{JsValue, Json}
 
 
-class UserActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends Actor with ActorLogging {
+class WebSocketActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends Actor with ActorLogging {
 
   /** The user actor subscribes at the JobActor on Startup */
   override def preStart() = {
@@ -51,7 +51,7 @@ class UserActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends Actor 
   }
 }
 
-object UserActor {
+object WebSocketActor {
 
-  def props(uid: String)(out: ActorRef) = Props(new UserActor(uid, JobManager(), out))
+  def props(uid: String)(out: ActorRef) = Props(new WebSocketActor(uid, JobManager(), out))
 }
