@@ -43,3 +43,9 @@ POST        /tools                          @controllers.Tool.submit
 # jobid provided
 ###############################################################
 GET         /results/$jobid<[0-9]+>         @controllers.Result.display(jobid: Long)
+
+
+####
+## Routes handled with JavaScript
+####
+GET   /test          controllers.User.test
