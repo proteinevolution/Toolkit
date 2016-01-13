@@ -8,12 +8,17 @@ import play.api.mvc.{Action, Controller}
 class User extends Controller {
 
 
+  def test = Action { implicit request =>
 
-  def test = Action {
+    models.Alnviz.inputForm.bindFromRequest.fold(
+      formWithErrors => {
+        BadRequest("this was an error")
+      },
+      contact => {
 
-    Ok
+        print(contact)
+        Ok
+      }
+    )
   }
-
-
-
 }

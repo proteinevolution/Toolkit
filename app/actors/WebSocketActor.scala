@@ -13,6 +13,7 @@ class WebSocketActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends A
   /** The user actor subscribes at the JobActor on Startup */
   override def preStart() = {
     log.info("User Actor tries to subscribe at the JobManager")
+    print("foobar")
     JobManager() ! Subscribe
   }
 

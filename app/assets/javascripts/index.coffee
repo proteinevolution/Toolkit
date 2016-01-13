@@ -21,11 +21,22 @@ $ ->
   # Handles the behavior when the submit button is pressed in a job form
   $(".jobform").submit (event) ->
     event.preventDefault()
-    # send form data over the websocket
-    ws.send(JSON.stringify({jobinit: $(".jobform").serialize(), type: "jobinit"}))
-    # reset the form of interest
-    $(".jobform")[0].reset()
+    r = jsRoutes.controllers.User.test()
 
+    $.ajax
+      url: r.url
+      type: r.type
+      data: $(".jobform").serialize()
+      #dataType: "json"
+      error: (jqXHR, textStatus, errorThrown) ->
+
+        alert errorThrown
+      success: (data, textStatus, jqXHR) ->
+        #$('body').append "Successful AJAX call: #{data}"
+
+
+
+  #  File Uplaod
   $("#file").submit (event) ->
     event.preventDefault
 

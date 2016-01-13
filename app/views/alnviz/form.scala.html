@@ -6,7 +6,7 @@
 
     <h2>@Alnviz.fullName</h2>
     <!-- We cannot use helpers.forms here, because we do not want to specify an action for this form -->
-    @helper.form(action = routes.Tool.submit ) {
+    <form class="jobform">
         <input type="hidden" name="toolname" value="alnviz">
 
         <!-- Input form elements derived from the Input Data Model -->
@@ -30,5 +30,5 @@
         <div class="row">
             <input class="jobformsubmit" type="submit" value="Submit Job" />
         </div>
-    }
+    </form>
 }
