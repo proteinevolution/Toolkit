@@ -49,3 +49,4 @@ GET         /results/$jobid<[0-9]+>         @controllers.Result.display(jobid: L
 ## Routes handled with JavaScript
 ####
 POST   /test          controllers.User.test
+

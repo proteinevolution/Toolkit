@@ -7,7 +7,6 @@ import play.api.mvc.{Action, Controller}
   */
 class User extends Controller {
 
-
   def test = Action { implicit request =>
 
     models.Alnviz.inputForm.bindFromRequest.fold(
@@ -21,4 +20,5 @@ class User extends Controller {
       }
     )
   }
+
 }
