@@ -1,0 +1,282 @@
+/* sidebar */
+#sidebar {
+    position: absolute;
+    top: 95px;
+    left: 0px;
+    /*	background-image: url(../images/mainpicNavi.gif);*/
+    background-repeat: no-repeat;
+    background-position: left top;
+    width: 139px;
+    padding: 0px 0px 0px 2px;
+    margin: 0px;
+    z-index: 10;
+}
+#sidebar h5 {
+    color: #000;
+    font-size: 10px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0px 0px 4px 0px;
+}
+#sidebar .section {
+    clear: both;
+    margin: 0px;
+    padding: 8px;
+    border-bottom: 1px solid #7CA6A6;
+}
+#sidebar ul {
+    margin: 0;
+    padding: 0;
+}
+
+#sidebar ul.joblist li {
+    clear: both;
+    list-style-type: none;
+    display: block;
+    padding: 0px 0px 0px 10px;
+    margin: 0;
+    border-bottom: 1px solid #7CA6A6;
+}
+
+/* table definitins*/
+
+/* additions by Hippolyt 2012 */
+#sorttable{
+    border-right-width: 0px;
+    border-left-width: 0px;
+    border-spacing: 0px;
+    table-layout: fixed;
+    width: 139px;
+    border-collapse: collapse;
+}
+
+#sidebar table#sorttable tr td{
+    float: left;
+    width: 8px;
+}
+
+#sidebar table#sorttable td.sub_stat_left{
+    float: left;
+    width:7px
+}
+
+#sidebar table#sorttable td.sub_stat_right{
+    float: left;
+    width: 20px;
+}
+
+#sidebar table#sorttable td.sub_id_right{
+    float: left;
+    width: 62px;
+}
+
+#sidebar table#sorttable td.sub_type_left{
+    float: left;
+    width: 8px;
+}
+/* additions end */
+
+#sidebar table#jobtable thead th  {
+
+    vertical-align:  middle;
+    text-align:left;
+    width: 13px;
+    height: 16px;
+}
+#sidebar table#jobtable thead th.search  {
+
+    vertical-align: left;
+    width: 30px;
+}
+#sidebar table#jobtable thead th.jobcell  {
+
+    vertical-align: left;
+    width: 72px;
+}
+
+
+
+/* cell types for job types */
+
+#sidebar table#jobtable td.search {
+    border-right-width: 0px;
+    width: 30px;
+    background-color: #E8DCC2;
+}
+#sidebar table#jobtable td.alignment {
+    border-right-width: 0px;
+    width: 30px;
+    background-color: #FFE09F;
+}
+#sidebar table#jobtable td.seqanal {
+    border-right-width: 0px;
+    width: 30px;
+    background-color: #99CC66;
+}
+#sidebar table#jobtable td.secstruct {
+    border-right-width: 0px;
+    width: 30px;
+    background-color: #C8DCEC;
+}
+#sidebar table#jobtable td.tertstruct {
+    border-right-width: 0px;
+    width: 30px;
+    background-color: #BEBED3;
+}
+#sidebar table#jobtable td.classification {
+    border-right-width: 0px;
+    width: 30px;
+    background-color: #E9D5D5;
+}
+#sidebar table#jobtable td.utils {
+    border-right-width: 0px;
+    width: 30px;
+    background-color: #E89F9F;
+}
+
+
+#sidebar td.jobcell{
+    padding: 0px;
+    margin: 0px;
+    border-width: 1px;
+    border-spacing: 0px;
+    width: 72px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+#jobtable td a {
+    padding: 0px 2px 0px 2px;
+    margin: 0px;
+    border-spacing: 0px;
+    display: block;
+    height: 100%;
+    line-height: 16px;
+    vertical-align: middle;
+}
+
+#jobtable input.jobcheckbox{
+    padding: 0px;
+    margin: 0px;
+    margin-right: -5px;
+}
+
+#sidebar a:hover, #sidebar a#current {
+    background-color: #C9DBD8;
+}
+#jobtable td {
+    font-size: 9px;
+    width: 15px;
+}
+#sidebar a {
+    font-size: 9px;
+    color: #666666;
+    text-decoration: none;
+    margin: 0px;
+    padding: 0px;
+}
+#sidebar p {
+    margin: 5px 0px 0px 0px;
+    padding: 0px;
+}
+#sidebar div.hr {
+    margin-bottom: 10px;
+}
+
+
+#sidebar div.sep {
+    background-color: #7CA6A6;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 1px 2px 2px 2px;"
+}
+
+
+
+/* Table listing the jobs of the user */
+
+#jobtable{
+    border: 1px solid #7CA6A6;
+    border-right-width: 0px;
+    border-left-width: 0px;
+    border-spacing: 0px;
+    table-layout: fixed;
+    width: 139px;
+    border-collapse: collapse;
+}
+
+
+#sidebar table#jobtable tr td {
+    border: 1px solid #7CA6A6;
+}
+
+#sidebar table#jobtable tr td.jobcodedesc {
+    width: auto;
+    border-right-width: 0px;
+    font-size: 1em;
+    padding-left: 4px;
+}
+
+
+/*Color code Table for the Job States */
+
+#jobcode{
+    border: 1px solid #7CA6A6;
+    border-right-width: 0px;
+    border-left-width: 0px;
+    border-spacing: 0px;
+    table-layout: fixed;
+    width: 139px;
+    border-collapse: collapse;
+}
+
+
+#sidebar table#jobcode tr td {
+    border: 1px solid #7CA6A6;
+}
+
+
+
+
+/* Names of the Code colors */
+#sidebar table#jobcode tr td.jobcodedesc {
+    width: auto;
+    border-right-width: 0px;
+    font-size: 1em;
+    padding-left: 4px;
+}
+
+
+#sidebar table#jobcode tr td.jobcodedesc:hover {
+    background-color: #CCC
+}
+
+
+
+/* joblist jobstatus bullets */
+#jobcode td.s {
+
+    background-color: #CCC;
+    width: 20px;
+}
+#jobcode td.d {
+
+    background-color: #6AB94B;
+    width: 20px;
+}
+#jobcode td.q {
+
+    background-color: #D6ABAB;
+    width: 20px;
+}
+#jobcode td.r {
+
+    background-color: #FFCC66;
+    width: 20px;
+}
+#jobcode td.e {
+
+    background-color: #CC0000;
+    width: 20px;
+}

@@ -14,7 +14,6 @@ class UserActor(uid: String) extends Actor with ActorLogging {
 
   var ws: ActorRef = null
 
-
   def receive = LoggingReceive {
 
 

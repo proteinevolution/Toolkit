@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
-import actors.{JobManager, PrepWD, SubscribeUser, UserManager}
+import actors._
 import models.{Session, Alnviz}
 import play.api.data.Form
 import play.api.data.Forms._
@@ -62,10 +62,13 @@ class Alnviz @Inject()(val messagesApi: MessagesApi) extends Controller with I18
         },
         formdata => {
 
+          val uid =  request.session.get(UID).get
+
           Logger.info("Alnviz received formdata" + formdata + "from uid " + request.session.get(UID).get + "\n")
 
           // TODO Do we really need to cast formdata into a map?
-          JobManager() ! PrepWD(ccToMap(formdata), toolname, request.session.get(UID).get)
+          JobManager() ! PrepWD(ccToMap(formdata), toolname, uid)
+          
           Ok
         })
     }

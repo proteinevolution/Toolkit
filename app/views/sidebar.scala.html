@@ -1,6 +1,35 @@
 <sidebar>
-    <div style="background-color: #7CA6A6; color: #FFFFFF; font-size: 12px; font-weight: bold; padding: 1px 2px 2px 2px;">
-  
+
+
+    <!-- Job Code -->
+    <table id="jobcode">
+        <tr>
+            <td class="q"></td>
+            <td class="jobcodedesc">queued</td>
+        </tr>
+        <tr>
+            <td class="r"></td>
+            <td class="jobcodedesc">running</td>
+        </tr>
+        <tr>
+            <td class="d"></td>
+            <td class="jobcodedesc">done</td>
+        </tr>
+        <tr>
+            <td class="e">
+            </td>
+            <td class="jobcodedesc tooltip">error</td>
+        </tr>
+    </table>
+
+
+    <div class="sep">
+        Recent jobs:
+    </div>
+
+
+
+    <!--
     Show results of job:
     </div>
     <div class="section">
@@ -12,29 +41,35 @@
     </div>
 
     <div style="background-color: #7CA6A6; color: #FFFFFF; font-size: 12px; font-weight: bold; padding: 1px 2px 2px 2px; margin-bottom: 2px; margin-top: 15px;">
-  
-    Recent jobs:
-    </div>
 
-        <!-- buttons to sort jobs organized in a table
-  
   -->
+
+
+
     <form action="/common/clear" id="clearrecentjobs" method="post" name="clearrecentjobs">
         <table id="jobtable" class="tablesorter">
-            <thead><th><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" /> </th><th></th><th class="jobcell"><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" /></th><th class="search"><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" /></th></thead>
+            <!--
+            <thead><th><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" />
+            </th><th></th><th class="jobcell"><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" />
+            </th><th class="search"><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" /></th></thead>
+            -->
             <tbody>
-
                 <tr>
+
+                    <!--
                     <td class="d" style="color:transparent"> d</td>
                     <td><input class="jobcheckbox" id="jobid[]" name="jobid[]" type="checkbox" value="6382954" /></td>
                     <td class="jobcell">
                         <a href="/ancescon/check/6382954" class="joblink" id="" onmouseout="return nd();" onmouseover="return overlib('ID: 6382954 ANCESCON');">6382954</a>
                     </td>
                     <td class="classification">ANCE</td>
+                    -->
                 </tr>
             </tbody>
         </table>
 
+
+        <!--
         <div class="section">
             <input type="hidden" id="clear_checkboxes" value="1">
             <a href="#" onclick="selectjobs();">Select all</a>&nbsp;&nbsp;&nbsp;<a href="#" onclick="deselectjobs();">Deselect all</a>
@@ -42,27 +77,9 @@
             <br/>
             <input class="stopbutton" name="removejobs" type="submit" style="float: none; width: 100%; margin-top: 5px;" value="Delete sel. Jobs" style="width: 100%;" onClick="setAction('clearrecentjobs', '/common/removeJobs');" />
         </div>
-
+        -->
     </form>
-
-    <table id="jobtable">
-        <tr>
-            <td class="q"></td>
-            <td style="width: auto; border-right-width: 0px; padding-left: 5px;">queued</td>
-        </tr>
-        <tr>
-            <td class="r"></td>
-            <td style="width: auto; border-right-width: 0px; padding-left: 5px;  ">running</td>
-        </tr>
-        <tr>
-            <td class="d"></td>
-            <td style="width: auto; border-right-width: 0px; padding-left: 5px;">done</td>
-        </tr>
-        <tr>
-            <td class="e"></td>
-            <td style="width: auto; border-right-width: 0px; padding-left: 5px;">error</td>
-        </tr>
-    </table>
+<!--
 
     <div class="section">@upload()</div>
 
@@ -71,6 +88,6 @@
 
     jQuery("#jobtable").tablesorter();
 
-    </script>
-    -->
+    </script>-->
+
 </sidebar>
