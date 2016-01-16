@@ -2,8 +2,7 @@ package models
 
 /**
  *
- * Stores certain attributes to particular Values, like the
- * full descriptive names of the parameter values.
+ * Stores certain attributes to particular Values, like the full descriptive names of the parameter values.
  *
  * Created by lzimmermann on 14.12.15.
  */
@@ -11,6 +10,7 @@ object Values {
 
   // Maps parameter values onto their full names descriptions
   val fullNames = Map(
+
     "fas"  -> "FASTA",
     "clus" -> "CLUSTALW",
     "sto" -> "Stockholm",
@@ -23,14 +23,7 @@ object Values {
     "tre" -> "TREECON"
   )
 
-  val modelMap = Map (
-
+  val modelMap : Map[String, ToolModel] = Map(
     "alnviz" -> models.Alnviz
   )
-
-  val viewMap = Map (
-
-    "alnviz" -> views.html.alnviz.form
-  )
-
 }

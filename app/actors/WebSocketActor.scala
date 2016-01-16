@@ -18,15 +18,12 @@ class WebSocketActor(uid: String, out: ActorRef) extends Actor with ActorLogging
   /** The user actor subscribes at the JobActor on Startup */
   override def preStart() = {
 
-    // We want the Jobmanager to register this new user, before the websocket is not available
-    //UserManager() ? SubscribeUser(uid)
+    // Attach this Websocket to the corresponding user Actor
+    UserManager() ! TellUser(uid, AttachWS(self))
   }
 
 
   def receive = LoggingReceive {
-
-    // just a generic Interface of the Server to the WebSocket
-    case Message(muid, msg) => out ! Json.obj("uid" -> muid, "msg" -> msg)
 
     // UserActor receives JSON data, most probably from a input form
 
@@ -40,23 +37,6 @@ class WebSocketActor(uid: String, out: ActorRef) extends Actor with ActorLogging
         ///jobmanager ! JobSubmission((js \ "jobinit").validate[String].get, startJob = true)
       }
 
-    /*
-    // Informs the user whether the Job was initialized Successfully
-    case JobInitStatus(toolname, jobID, status) => out ! Json.obj("type" -> "JobInitStatus",
-                                                                  "status" -> status,
-                                                                  "jobid" -> jobID,
-                                                                  "toolname" -> toolname)
-
-
-    /* In this block we will handle several events the user might encounter */
-    case JobDone(userActor, toolname, details, jobID) =>
-
-      out ! Json.obj("type" -> "JobDone",
-                    "jobid" -> jobID,
-                    "toolname" -> toolname)
-
-    case other => log.error("unhandled: " + other)
-  }*/
   }
 }
 
@@ -64,4 +44,3 @@ object WebSocketActor {
 
   def props(uid: String)(out: ActorRef) = Props(new WebSocketActor(uid, out))
 }
-

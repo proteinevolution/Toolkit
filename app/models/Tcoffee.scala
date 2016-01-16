@@ -13,3 +13,4 @@ object Tcoffee {
   val parameterNames = Map(
     "sequences" -> "Sequences to be aligned")
 }
+case class Tcoffee(sequences: String)

@@ -15,15 +15,9 @@ import play.api.libs.json.JsValue
   * */
 
 /**
-A Message is anything that is meant to go from the Server to the client over the Websocket
+  * A Message is anything that is meant to go from the Server to the client over the Websocket
  */
 case class Message(uuid: String, msg: String)
-
-
-/**
-  * Message the User sends to declare a new Job to the JobManager
-  */
-case class JobInit(jobID: Long)
 
 
 /**
@@ -37,7 +31,7 @@ case class JobInitStatus(toolname: String, jobID: Long, status: String)
   * Message sent to the JobManager to indicate that the Job is done
   *
   */
-case class JobDone(userActor: ActorRef, toolname: String, details: String, jobID: Long)
+case class JobDone(jobID: Long)
 
 
 /**
@@ -54,17 +48,30 @@ case class Stop()
 
 
 /**
-The Message that is passed when a new User subscribes to the Job System
+  * The Message that is passed when a new User subscribes to the Job System
  */
 case class SubscribeUser(uid: String)
 
 
-/**
-  * Tells the JobManager to create a new Working Directory for a Job
-  *
-  * @param details
-  * @param startJob whether or not the Job should be started afterwards
-  */
-case class PrepWD(details: String, jobID: Long, startJob: Boolean)
+case class PrepWD(spec: Map[String, Any], toolname: String, uid: String)
+case class PrepWDDone(jobID: Long)
+
+
+case class Prepare(spec: Map[String, Any], jobID: Long, toolname: String, uid: String)
+
 
 case class JobSubmission(details: String, startJob: Boolean)
+
+
+/*
+Messages which the UserManager will forward to the particular user
+ */
+sealed trait UserMessage
+
+
+case class TellUser(uid: String, message: UserMessage)
+
+// TODO Please give me some parameters here
+case class Jobinit() extends UserMessage
+
+case class AttachWS(ws: ActorRef) extends UserMessage

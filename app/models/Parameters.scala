@@ -19,10 +19,12 @@ case class ConstParam(name: String) extends Param(name: String)
 case class ResFileParam(name: String) extends Param(name: String)
 
 
-
-case class Interpreter(name: String)
-
-case class HelperScript(name: String)
+abstract class CallComponent
 
 
-case class KeyValuePair(key: String, value: Param, prefix: String, sep: String)
+case class Interpreter(name: String) extends CallComponent
+
+case class HelperScript(name: String) extends CallComponent
+
+
+case class KeyValuePair(key: String, value: Param, prefix: String, sep: String) extends CallComponent

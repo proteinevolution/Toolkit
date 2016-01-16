@@ -1,9 +1,7 @@
 package controllers
 
 
-import actors.{WebSocketActor, WebSocketActor$}
-import play.api.routing.JavaScriptReverseRouter
-
+import actors.{SubscribeUser, UserManager, WebSocketActor}
 import scala.concurrent.Future
 import play.api.Play.current
 import play.api.Logger
@@ -16,7 +14,6 @@ import javax.inject.Inject
 class Application @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val UID = "uid"
-  var counter = 0
 
   /**
     * Handles the request of the index page of the toolkit. This implies that a new session
@@ -26,33 +23,26 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
     *
     * @return
     */
-  def index = Action { implicit request => {
+  def index = Action { implicit request =>
 
-    // Fetch user id from open session
-    val uid = request.session.get(UID).getOrElse {
-      counter += 1
-      counter.toString
-    }
-    // Continue to index view
-    Ok(views.html.index(uid)).withSession {
-      Logger.debug("creation uid " + uid)
-      request.session + (UID -> uid)
-    }
-  }
+    Ok(views.html.index())
   }
 
+
+
+  // User has connected over the WebSocket
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
 
     // The user of this session is assigned a user actor
     Future.successful(request.session.get(UID) match {
 
+      case None =>
+        Logger.info("WebSocket Connection not allowed, since the user does not have a corresponding session\n")
+        Left(Forbidden)
 
-
-        // Websocket without index request
-      case None => Left(Forbidden)
-
-      case Some(uid) =>  Logger.info("WebSocket has accepted the request with uid " + uid)
-                         Right(WebSocketActor.props(uid))
+      case Some(uid) =>
+        Logger.info("WebSocket has accepted the request with uid " + uid + "\n")
+        Right(WebSocketActor.props(uid))
     })
   }
 
@@ -81,10 +71,4 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
 
     Ok(views.html.search())
   }
-
-  /*
-  def index = Action {
-    Ok(views.html.index("Bioinformatics Toolkit"))
-  }
-*/
 }

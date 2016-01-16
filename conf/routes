@@ -35,8 +35,8 @@ GET         /sections/utils                 @controllers.Application.search
 ###############################################################
 # Tool specific routes
 ###############################################################
-GET         /tools/:toolname                @controllers.Tool.show(toolname: String)
-POST        /tools                          @controllers.Tool.submit
+GET         /tools/alnviz                  @controllers.Alnviz.show
+
 
 ###############################################################
 # Handels the result View (Determined by the status of the
@@ -48,5 +48,4 @@ GET         /results/$jobid<[0-9]+>         @controllers.Result.display(jobid: L
 ####
 ## Routes handled with JavaScript
 ####
-POST   /test          controllers.User.test
-
+POST        /submit/alnviz                  @controllers.Alnviz.submit

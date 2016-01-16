@@ -22,19 +22,17 @@ $ ->
   $(".jobform").submit (event) ->
     event.preventDefault()
 
-    r = jsRoutes.controllers.User.test()
-
     $.ajax
-      url: r.url
-      type: r.type
+      url: submitRoute.url
+      type: submitRoute.type
       data: $(".jobform").serialize()
       #dataType: "json"
       error: (jqXHR, textStatus, errorThrown) ->
 
         alert errorThrown
       success: (data, textStatus, jqXHR) ->
-        alert(data.status)
         #$('body').append "Successful AJAX call: #{data}"
+
 
 
 ###

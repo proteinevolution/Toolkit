@@ -1,8 +1,5 @@
 package models
 
-import play.api.data.Form
-import play.api.data.Forms._
-
 
 // TODO Dependency injection might come in handy here
 
@@ -13,7 +10,7 @@ import play.api.data.Forms._
  * Created by lzimmermann on 14.12.15.
  */
 
-object Alnviz {
+object Alnviz extends ToolModel {
 
   val toolname = "alnviz"
   val fullName = "Alignment Visualizer"
@@ -28,15 +25,6 @@ object Alnviz {
   // Declare the required helper scripts (helpers directory)
   var helpers = Vector(HelperScript("reformat.pl"))
 
-
-  // Input Form Definition of this tool
-  val inputForm = Form(
-    mapping(
-      "alignment" -> text,
-      "format" -> text
-    )(Alnviz.apply)(Alnviz.unapply)
-  )
-
   //Map parameter identifier to the full names
   val parameterNames = Map(
     "alignment" -> "Sequence Alignment",
@@ -46,11 +34,11 @@ object Alnviz {
   val parameterValues = Map(
     "format" -> Set("fas", "clue", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
-  val exec  = Vector(interpreters(0),  helpers(0),
-                    KeyValuePair("i", parameters(1), "-", "="),
-                    KeyValuePair("o", ConstParam("clu"), "-", "="),
+
+  val exec : Vector[CallComponent] = Vector(interpreters(0),  helpers(0),
+                                      KeyValuePair("i", parameters(1), "-", "="),
+                                      KeyValuePair("o", ConstParam("clu"), "-", "="),
                     KeyValuePair("f", parameters(0), "-", "="),
                     KeyValuePair("a", ResFileParam("result"), "-", "="))
-
 }
-case class Alnviz(sequence: String, format: String)
+case class Alnviz(alignment: String, format: String)
