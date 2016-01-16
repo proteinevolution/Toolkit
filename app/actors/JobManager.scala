@@ -5,8 +5,8 @@ import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Terminated
-import play.libs.Akka
 import akka.actor.Props
+import play.libs.Akka
 
 
 /**
@@ -21,7 +21,8 @@ class JobManager extends Actor with ActorLogging {
 
 
   // set of all users that are under way
-  var users = scala.collection.mutable.Set[ActorRef]()
+  var users = scala.collection.mutable.HashMap[String, ActorRef]()
+
 
   // Maps the JobID to the corresponding JobWorker Actor
   //var workers = scala.collection.mutable.Map[Long, ActorRef]()
@@ -64,21 +65,23 @@ class JobManager extends Actor with ActorLogging {
       // we can terminate the sender
       context.stop(sender)
 
+    /////
+    //// User Management should go into another actor
+    ////
 
     /**
-      * Subscribes new user to the System
+      * Subscribes new user to the System, ignore if already present
       *
       */
-    case Subscribe =>
-      users += sender
-      context watch sender
 
-    case Terminated(user) => users -= user
+
+
+
+    case Terminated(user) =>
   }
 }
 
 object JobManager {
-
   lazy val board = Akka.system().actorOf(Props[JobManager])
   def apply() = board
 }

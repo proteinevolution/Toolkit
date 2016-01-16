@@ -22,6 +22,8 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
     * Handles the request of the index page of the toolkit. This implies that a new session
     * for the new user will be opened.
     *
+    * Currently the index controller will assign a session id to the user for identification purpose
+    *
     * @return
     */
   def index = Action { implicit request => {
@@ -44,7 +46,11 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
     // The user of this session is assigned a user actor
     Future.successful(request.session.get(UID) match {
 
+
+
+        // Websocket without index request
       case None => Left(Forbidden)
+
       case Some(uid) =>  Logger.info("WebSocket has accepted the request with uid " + uid)
                          Right(WebSocketActor.props(uid))
     })

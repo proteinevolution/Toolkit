@@ -56,7 +56,7 @@ case class Stop()
 /**
 The Message that is passed when a new User subscribes to the Job System
  */
-object Subscribe
+case class SubscribeUser(uid: String)
 
 
 /**

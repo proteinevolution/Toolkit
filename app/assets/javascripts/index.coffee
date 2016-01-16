@@ -21,6 +21,7 @@ $ ->
   # Handles the behavior when the submit button is pressed in a job form
   $(".jobform").submit (event) ->
     event.preventDefault()
+
     r = jsRoutes.controllers.User.test()
 
     $.ajax
@@ -32,10 +33,11 @@ $ ->
 
         alert errorThrown
       success: (data, textStatus, jqXHR) ->
+        alert(data.status)
         #$('body').append "Successful AJAX call: #{data}"
 
 
-
+###
   #  File Uplaod
   $("#file").submit (event) ->
     event.preventDefault
@@ -50,7 +52,7 @@ $ ->
     # Load a worker to deal with the file
     worker = new Worker('fileupload.js')
 
-
+###
 
 ###
 

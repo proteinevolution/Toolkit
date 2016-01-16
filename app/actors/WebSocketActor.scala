@@ -8,19 +8,25 @@ import akka.actor.Props
 import play.api.libs.json.{JsValue, Json}
 
 
-class WebSocketActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends Actor with ActorLogging {
+
+// TODO Currently the Websocket cannot do much
+
+class WebSocketActor(uid: String, out: ActorRef) extends Actor with ActorLogging {
+
+  //val user: ActorRef
 
   /** The user actor subscribes at the JobActor on Startup */
   override def preStart() = {
-    log.info("User Actor tries to subscribe at the JobManager")
-    print("foobar")
-    JobManager() ! Subscribe
+
+    // We want the Jobmanager to register this new user, before the websocket is not available
+    //UserManager() ? SubscribeUser(uid)
   }
+
 
   def receive = LoggingReceive {
 
     // just a generic Interface of the Server to the WebSocket
-    case Message(muid, msg)  => out ! Json.obj("uid" -> muid, "msg" -> msg)
+    case Message(muid, msg) => out ! Json.obj("uid" -> muid, "msg" -> msg)
 
     // UserActor receives JSON data, most probably from a input form
 
@@ -29,11 +35,12 @@ class WebSocketActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends A
 
         case "jobinit" =>
 
-          // Fetch the details GET String from the JSON data
-          // Prepare Working Directory in Job Manager and start immediately
-          jobmanager ! JobSubmission((js \ "jobinit").validate[String].get, startJob = true)
+        // Fetch the details GET String from the JSON data
+        // Prepare Working Directory in Job Manager and start immediately
+        ///jobmanager ! JobSubmission((js \ "jobinit").validate[String].get, startJob = true)
       }
 
+    /*
     // Informs the user whether the Job was initialized Successfully
     case JobInitStatus(toolname, jobID, status) => out ! Json.obj("type" -> "JobInitStatus",
                                                                   "status" -> status,
@@ -49,10 +56,12 @@ class WebSocketActor(uid: String, jobmanager: ActorRef, out: ActorRef) extends A
                     "toolname" -> toolname)
 
     case other => log.error("unhandled: " + other)
+  }*/
   }
 }
 
 object WebSocketActor {
 
-  def props(uid: String)(out: ActorRef) = Props(new WebSocketActor(uid, JobManager(), out))
+  def props(uid: String)(out: ActorRef) = Props(new WebSocketActor(uid, out))
 }
+
