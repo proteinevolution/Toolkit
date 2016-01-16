@@ -22,6 +22,8 @@ dist
 /RUNNING_PID
 /.settings
 project/build.properties
-project/plugins.sbt
-
-    
+project/plugins
+.sbtserver/
+project/.sbtserver
+project/.sbtserver.lock
+   
