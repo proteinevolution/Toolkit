@@ -43,11 +43,10 @@ class UserManager extends Actor with ActorLogging {
 
       registeredUsers.get(uid) match {
 
-       case None => // Forget Message
+       case None =>  Logger.warn("You wanted to send a message to a user who is not subscribed")
 
        case Some(user) => user forward message
       }
-
 
 
 

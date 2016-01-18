@@ -1,0 +1,65 @@
+<a href="#" onClick="openHelpWindow('/t_coffee/help_ov');" onmouseover="return overlib('Help');" onmouseout="return nd();"><img src="/images/helpbutton.gif" border="0" style="float: right; padding-top: 2px;"></a>
+<h2><%= @page_title %></h2>
+
+<%= form_tag({:action => :run, :job => 't_coffee'}, {:multipart => true})%> 
+<h3 class="<%= @section["name"] %>">Input</h3>
+<div class="row">
+	<%= form_label("Enter sequences in FASTA format", "sequence_input") %>
+	<%= form_text_area("sequence_input") %>
+</div>
+<div class="row">
+	<%= form_label("or upload a local file") %>
+	<%= form_file("sequence_file") %>
+</div>
+<div class="row">
+  <div class="formw">
+    <span style="color: green;">
+      Create alignment of viral DNA ligases. <a href="#" onClick="javascript:pasteExample();">Paste example sequences.</a>
+    </span>
+  </div>
+</div>
+
+<div class="spacer">&nbsp;</div>
+
+<h3 class="<%= @section["name"] %>">Alignment Options</h3>
+<div class="row">
+	<%= form_label("Pairwise methods", "pairwise_methods") %>
+	<div class="formw">	
+		<table>
+			<tr><td align="left" valign="top"><%= form_checkbox("mlalign_id_pair", '1', true, true) %></td><td>Mlalign_id_pair</td></tr>
+			<tr><td align="left" valign="top"><%= form_checkbox("mfast_pair", '1', false, true) %></td><td>Mfast_pair</td></tr>
+			<tr><td align="left" valign="top"><%= form_checkbox("mslow_pair", '1', true, true) %></td><td>Mslow_pair</td></tr>
+		<!--	<tr><td align="left" valign="top"><%= form_checkbox("mclustalw_pair", '1', false, true) %></td><td>Mclustalw_pair</td></tr>-->
+		</table>
+	</div>
+	
+</div>
+<div class="spacer">&nbsp;</div>
+<div class="row">
+	<%= form_label("Other advanced options", "otheradvanced") %>
+	<%= form_text_field("otheradvanced", "", "", 50) %>
+</div>
+<div class="spacer">&nbsp;</div>
+<h3 class="<%= @section["name"] %>">Output Options</h3>
+<div class="row">
+<%= form_label("Character transformation", "case") %>
+<%= form_select_single("case", ["upper"], ["upper case"]) %>
+<!--<%= form_select_single("case", ["upper", "lower"], ["upper case", "lower case"]) %>-->
+</div>
+<div class="row">
+<%= form_label("Residue number", "residue_number") %>
+<%= form_checkbox("residue_number", "on", false, false) %>
+</div>
+<div class="row">
+<%= form_label("Output in alignment order", "aln_order") %>
+<%= form_checkbox("order", "align", false, false) %>
+</div>
+<div class="spacer">&nbsp;</div>
+
+<%= render(:partial => "shared/joboptions") %>
+
+<div class="row">
+	<%= form_submit_buttons %>
+</div>
+
+</form>

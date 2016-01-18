@@ -1,6 +1,5 @@
 <sidebar>
 
-
     <!-- Job Code -->
     <table id="jobcode">
         <tr>
@@ -27,8 +26,6 @@
         Recent jobs:
     </div>
 
-
-
     <!--
     Show results of job:
     </div>
@@ -44,16 +41,13 @@
 
   -->
 
-
-
-    <form action="/common/clear" id="clearrecentjobs" method="post" name="clearrecentjobs">
         <table id="jobtable" class="tablesorter">
             <!--
             <thead><th><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" />
             </th><th></th><th class="jobcell"><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" />
             </th><th class="search"><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" /></th></thead>
             -->
-            <tbody>
+            <tbody id="rows">
                 <tr>
 
                     <!--
@@ -78,7 +72,6 @@
             <input class="stopbutton" name="removejobs" type="submit" style="float: none; width: 100%; margin-top: 5px;" value="Delete sel. Jobs" style="width: 100%;" onClick="setAction('clearrecentjobs', '/common/removeJobs');" />
         </div>
         -->
-    </form>
 <!--
 
     <div class="section">@upload()</div>
@@ -91,3 +84,56 @@
     </script>-->
 
 </sidebar>
+
+
+
+<!-- The View-Model Definition for the JobWidget in the Sidebar -->
+<script type="text/javascript">
+todo = {};
+//this application only has one module: todo
+//for simplicity, we use this module to namespace the model classes
+
+//the Todo class has two properties
+todo.Todo = function(data) {
+    this.description = m.prop(data.description);
+    this.state = m.prop(data.state);
+};
+
+//the TodoList class is a list of Todo's
+todo.TodoList = Array;
+
+//the view-model tracks a running list of todos,
+//stores a description for new todos before they are created
+//and takes care of the logic surrounding when adding is permitted
+//and clearing the input after adding a todo to the list
+todo.vm = (function() {
+    var vm = {}
+    vm.init = function() {
+        //a running list of todos
+        vm.list = new todo.TodoList();
+
+        //adds a todo to the list, and clears the description field for user convenience
+        vm.add = function(desc, state) {
+            vm.list.push(new todo.Todo({description: desc,
+                                        state: state}));
+        };
+    };
+    return vm
+}());
+
+//the controller defines what part of the model is relevant for the current page
+//in our case, there's only one view-model that handles everything
+todo.controller = function() {
+    todo.vm.init()
+}
+
+//here's the view
+todo.view = function() {
+    return [m("button", {onclick: todo.vm.add}, "Add"),
+        [todo.vm.list.map(function(task, index) {
+            return m("tr", [m("td", task.description()),
+                            m("td", task.state())]);
+        })]]
+};
+m.mount(document.getElementById("rows"), {controller: todo.controller, view: todo.view});
+</script>

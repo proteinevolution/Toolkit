@@ -14,6 +14,10 @@ class UserActor(uid: String) extends Actor with ActorLogging {
 
   var ws: ActorRef = null
 
+  val userJobs = new collection.mutable.HashMap[Long, models.JobState]()
+
+
+
   def receive = LoggingReceive {
 
 
@@ -22,6 +26,22 @@ class UserActor(uid: String) extends Actor with ActorLogging {
       this.ws = ws_new
       context watch ws
       Logger.info("WebSocket atached successfully\n")
+
+
+    case  UserJobStart(spec, toolname) =>
+
+      Logger.info("User with ID " + uid + " wants to start job\n ")
+      JobManager() ! PrepWD(spec, toolname, uid)
+
+
+      // Notifies the user about a Job Status change
+    case UserJobStateChanged(newState, jobID: Long) =>
+
+      Logger.info("User Actor "  + uid + " received Job state change")
+
+      userJobs.put(jobID, newState)
+
+      ws ! UserJobStateChanged(newState, jobID)
 
 
 

@@ -13,8 +13,6 @@ import play.api.libs.json.{JsValue, Json}
 
 class WebSocketActor(uid: String, out: ActorRef) extends Actor with ActorLogging {
 
-  //val user: ActorRef
-
   /** The user actor subscribes at the JobActor on Startup */
   override def preStart() = {
 
@@ -25,18 +23,13 @@ class WebSocketActor(uid: String, out: ActorRef) extends Actor with ActorLogging
 
   def receive = LoggingReceive {
 
-    // UserActor receives JSON data, most probably from a input form
 
-    case js: JsValue =>
-      (js \ "type").validate[String].get match {
+    /* Messages received from the UserActor and passed to the WebSocket
+      */
 
-        case "jobinit" =>
+    case UserJobStateChanged(newState, jobID)  =>
 
-        // Fetch the details GET String from the JSON data
-        // Prepare Working Directory in Job Manager and start immediately
-        ///jobmanager ! JobSubmission((js \ "jobinit").validate[String].get, startJob = true)
-      }
-
+      out ! Json.obj("type" ->  "jobstate", "newState" -> newState.no, "jobid" -> jobID)
   }
 }
 

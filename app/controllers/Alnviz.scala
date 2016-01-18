@@ -45,12 +45,14 @@ class Alnviz @Inject()(val messagesApi: MessagesApi) extends Controller with I18
 
       val uid = request.session.get(UID).getOrElse {
 
-        val res = Session.next.toString
-        UserManager() ! SubscribeUser(res)
-        res
+        Session.next.toString
       }
+      UserManager() ! SubscribeUser(uid)
+
+      Logger.info("Request from  UID" + uid)
       request.session + (UID -> uid)
     }
+
   }
 
   def submit = Action { implicit request =>
@@ -64,11 +66,11 @@ class Alnviz @Inject()(val messagesApi: MessagesApi) extends Controller with I18
 
           val uid =  request.session.get(UID).get
 
-          Logger.info("Alnviz received formdata" + formdata + "from uid " + request.session.get(UID).get + "\n")
+          Logger.info("Alnviz received formdata" + formdata + "from uid " + uid + "\n")
 
           // TODO Do we really need to cast formdata into a map?
-          JobManager() ! PrepWD(ccToMap(formdata), toolname, uid)
-          
+
+          UserManager() ! TellUser(uid, UserJobStart(ccToMap(formdata), toolname))
           Ok
         })
     }

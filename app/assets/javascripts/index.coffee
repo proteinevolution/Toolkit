@@ -4,8 +4,19 @@ $ ->
   # Handles the behavior that occurs if the WebSocket receives data from the Server
   # TODO For instance, we can update the Job Monitor Widget here
   ws.onmessage = (event) ->
+    m.startComputation()
+
     message = JSON.parse event.data
 
+    switch message.type
+      when "jobstate"
+        state = message.newState.toString()
+        todo.vm.add(message.jobid, state)
+        alert(state)
+
+    m.endComputation()
+
+  ###
     switch message.type
       when "JobInitStatus"
         text = "The Job for tool " + message.toolname + " with JobID " + message.jobid + " has been started successfully."
@@ -16,7 +27,7 @@ $ ->
           "Hello World", "success",
           { globalPosition:"bottom right" }
         )
-
+###
 
   # Handles the behavior when the submit button is pressed in a job form
   $(".jobform").submit (event) ->
@@ -32,8 +43,6 @@ $ ->
         alert errorThrown
       success: (data, textStatus, jqXHR) ->
         #$('body').append "Successful AJAX call: #{data}"
-
-
 
 ###
   #  File Uplaod

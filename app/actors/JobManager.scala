@@ -5,6 +5,7 @@ import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.Props
 import akka.routing.RoundRobinPool
+import models.JobRunning
 import play.libs.Akka
 import play.api.Logger
 
@@ -35,7 +36,10 @@ class JobManager extends Actor with ActorLogging {
       jobID += 1
 
       Logger.info("Job Manager wants to prepare working directory for Job\n")
+
       workerActors ! Prepare(paramMap, jobID, toolname, uid)
+
+      sender ! UserJobStateChanged(JobRunning, jobID)
 
 
     case PrepWDDone(jobID_l) =>
@@ -44,9 +48,12 @@ class JobManager extends Actor with ActorLogging {
       workerActors ! Start(jobID_l)
 
 
-    case JobDone(jobID_l) =>
+    case JobDone(jobID_l, exitCode, uid) =>
 
-        null //TODO Implement me
+      Logger.info("JobMabager was informed that Job is done")
+
+      UserManager() ! TellUser(uid, UserJobStateChanged(models.JobDone, jobID))
+
   }
 }
 

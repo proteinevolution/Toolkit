@@ -1,5 +1,7 @@
 package actors
 
+import javax.swing.JFileChooser
+
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
 import helpers.FileAccess
@@ -69,6 +71,8 @@ class Worker extends Actor with ActorLogging {
 
                 case ConstParam(name) => prefix + key + sep + name
 
+
+
                 case ResFileParam(name) => prefix + key + sep + path + "/" + name
               }
             case Interpreter(name) => name
@@ -83,6 +87,11 @@ class Worker extends Actor with ActorLogging {
       val exit_code = call.!
       Logger.info("Exit code was " + exit_code)
 
-      sender ! actors.JobDone(jobID)
+
+      val uid = FileAccess.readFile(path + "/" + UID)
+
+      Logger.info("Job Done for user " + uid)
+
+      JobManager() ! actors.JobDone(jobID, exit_code, uid)
   }
 }

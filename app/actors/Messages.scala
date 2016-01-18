@@ -31,7 +31,7 @@ case class JobInitStatus(toolname: String, jobID: Long, status: String)
   * Message sent to the JobManager to indicate that the Job is done
   *
   */
-case class JobDone(jobID: Long)
+case class JobDone(jobID: Long, exitCode: Int, uid: String)
 
 
 /**
@@ -71,7 +71,10 @@ sealed trait UserMessage
 
 case class TellUser(uid: String, message: UserMessage)
 
-// TODO Please give me some parameters here
-case class Jobinit() extends UserMessage
-
 case class AttachWS(ws: ActorRef) extends UserMessage
+
+case class UserJobStart(spec: Map[String, Any], toolname: String) extends UserMessage
+
+case class UserJobStateChanged(newState: models.JobState, jobID: Long) extends UserMessage
+
+case class UserJobDone(jobID: Long, exitCode: Int) extends UserMessage

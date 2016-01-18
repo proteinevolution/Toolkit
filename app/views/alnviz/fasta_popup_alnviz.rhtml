@@ -1,0 +1,74 @@
+
+<body onkeydown="return (event.keyCode == 154)">
+
+
+
+<style>
+
+.biojs_msa_labels
+{
+    font-family: Droid Sans Mono;
+    font-size: 10px;
+}
+
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+
+</style>
+
+<script>
+
+        // this is a way how you use a bundled file parser
+        msa = require("msa");
+
+        var opts = {colorscheme: {"scheme": "clustal"}};
+
+        // set your custom properties
+        // @see: https://github.com/greenify/biojs-vis-msa/tree/master/src/g 
+        opts.el = document.getElementById("yourDiv");
+        opts.vis = {
+            conserv: false,
+            overviewbox: false,
+            seqlogo: false
+        };
+        opts.conf = {
+            dropImport: true
+        };
+        opts.zoomer = {
+           alignmentHeight: 680, alignmentWidth: "auto", labelNameLength: 50, labelWidth: 130,labelFontsize: "10px",labelIdLength: 80,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 15px 0px 15px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
+        };
+
+        // init msa
+        var m = new msa.msa(opts);
+
+        // search in URL for fasta or clustal
+        function getURLParameter(name) {
+            return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20')) || null;
+        }
+
+        
+
+             
+        var defaultURL = myVar+".align";
+        var url = getURLParameter('seq') || defaultURL;
+
+        m.u.file.importURL(url, renderMSA);
+
+        function renderMSA() {
+
+            // the menu is independent to the MSA container
+            var menuOpts = {};
+            menuOpts.el = document.getElementById('div');
+            menuOpts.msa = m;
+            var defMenu = new msa.menu.defaultmenu(menuOpts);
+            m.addView("menu", defMenu);
+
+            // call render at the end to display the whole MSA
+            m.render();
+        }
+    </script>
+    </body>
+ 
