@@ -27,9 +27,9 @@ class WebSocketActor(uid: String, out: ActorRef) extends Actor with ActorLogging
     /* Messages received from the UserActor and passed to the WebSocket
       */
 
-    case UserJobStateChanged(newState, jobID)  =>
+    case UserJobStateChanged(job, jobID)  =>
 
-      out ! Json.obj("type" ->  "jobstate", "newState" -> newState.no, "jobid" -> jobID)
+      out ! Json.obj("type" ->  "jobstate", "newState" -> job.state.no, "jobid" -> jobID)
   }
 }
 

@@ -53,6 +53,9 @@ class Worker extends Actor with ActorLogging {
       // Assemble Bash script
 
       // parse the exec String and replace the occurrences =of parameters accordingly
+      // TODO We need to use reflection here, the map is no reasonable solution
+
+
       val call =
         models.Values.modelMap.get(toolname).get.exec map { elem =>
 
@@ -70,8 +73,6 @@ class Worker extends Actor with ActorLogging {
                   prefix + key + sep +  FileAccess.readFile(path + "/" + name)
 
                 case ConstParam(name) => prefix + key + sep + name
-
-
 
                 case ResFileParam(name) => prefix + key + sep + path + "/" + name
               }
@@ -92,6 +93,16 @@ class Worker extends Actor with ActorLogging {
 
       Logger.info("Job Done for user " + uid)
 
-      JobManager() ! actors.JobDone(jobID, exit_code, uid)
+
+      // Collect result file paths
+
+
+
+
+
+
+
+
+      JobManager() ! actors.JobDone(jobID, exit_code, uid, toolname)
   }
 }

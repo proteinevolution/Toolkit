@@ -27,10 +27,4 @@ object Values {
     "alnviz" -> models.Alnviz
   )
 
-  val viewMap = Map(
-
-    "alnviz" -> views.html.alnviz.results,
-    "tcoffee" -> views.html.tcoffee.results
-  )
-
 }

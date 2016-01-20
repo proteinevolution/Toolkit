@@ -42,7 +42,7 @@ GET         /tools/alnviz                  @controllers.Alnviz.show
 # Handels the result View (Determined by the status of the
 # jobid provided
 ###############################################################
-GET         /results/$jobid<[0-9]+>         @controllers.Result.display(jobid: Long)
+GET         /results/$jobid<[0-9]+>         @controllers.User.result(jobid: Long)
 
 
 ####

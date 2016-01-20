@@ -10,15 +10,20 @@ import play.api.Logger
   * Created by lukas on 1/13/16.
   *
   */
-class UserActor(uid: String) extends Actor with ActorLogging {
+class UserActor(uid: String)   extends Actor with ActorLogging {
 
   var ws: ActorRef = null
 
-  val userJobs = new collection.mutable.HashMap[Long, models.JobState]()
+  val userJobs = new collection.mutable.HashMap[Long, models.Job]()
 
 
 
   def receive = LoggingReceive {
+
+
+    case AskJob(jobID: Long) =>
+
+      sender ! userJobs.get(jobID).get
 
 
     case AttachWS(ws_new) =>
@@ -35,14 +40,12 @@ class UserActor(uid: String) extends Actor with ActorLogging {
 
 
       // Notifies the user about a Job Status change
-    case UserJobStateChanged(newState, jobID: Long) =>
+    case UserJobStateChanged(job, jobID: Long) =>
 
       Logger.info("User Actor "  + uid + " received Job state change")
 
-      userJobs.put(jobID, newState)
-
-      ws ! UserJobStateChanged(newState, jobID)
-
+      userJobs.put(jobID, job)
+      ws ! UserJobStateChanged(job, jobID)
 
 
     case Terminated(ws_new) =>

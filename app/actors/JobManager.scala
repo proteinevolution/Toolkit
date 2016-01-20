@@ -5,7 +5,6 @@ import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.Props
 import akka.routing.RoundRobinPool
-import models.JobRunning
 import play.libs.Akka
 import play.api.Logger
 
@@ -39,7 +38,7 @@ class JobManager extends Actor with ActorLogging {
 
       workerActors ! Prepare(paramMap, jobID, toolname, uid)
 
-      sender ! UserJobStateChanged(JobRunning, jobID)
+      sender ! UserJobStateChanged(models.Job.instance(toolname, models.Running), jobID)
 
 
     case PrepWDDone(jobID_l) =>
@@ -48,12 +47,12 @@ class JobManager extends Actor with ActorLogging {
       workerActors ! Start(jobID_l)
 
 
-    case JobDone(jobID_l, exitCode, uid) =>
+    case JobDone(jobID_l, exitCode, uid, toolname) =>
 
-      Logger.info("JobMabager was informed that Job is done")
+      Logger.info("JobManager was informed that Job is done")
 
-      UserManager() ! TellUser(uid, UserJobStateChanged(models.JobDone, jobID))
-
+      // TODO Implement cache for UserActor
+      UserManager() ! TellUser(uid, UserJobStateChanged(models.Job.instance(toolname, models.Done), jobID))
   }
 }
 

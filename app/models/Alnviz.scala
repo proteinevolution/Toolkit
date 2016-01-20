@@ -11,7 +11,6 @@ package models
  */
 
 object Alnviz extends ToolModel {
-
   val toolname = "alnviz"
   val fullName = "Alignment Visualizer"
 
@@ -29,6 +28,9 @@ object Alnviz extends ToolModel {
   val parameterNames = Map(
     "alignment" -> "Sequence Alignment",
     "format"    -> "Alignment Format")
+
+
+  val resultFileNames = Vector("result")
 
   // Specifies a finite set of values the parameter is allowed to assumepe
   val parameterValues = Map(

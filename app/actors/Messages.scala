@@ -31,7 +31,7 @@ case class JobInitStatus(toolname: String, jobID: Long, status: String)
   * Message sent to the JobManager to indicate that the Job is done
   *
   */
-case class JobDone(jobID: Long, exitCode: Int, uid: String)
+case class JobDone(jobID: Long, exitCode: Int, uid: String, toolname: String)
 
 
 /**
@@ -63,6 +63,8 @@ case class Prepare(spec: Map[String, Any], jobID: Long, toolname: String, uid: S
 case class JobSubmission(details: String, startJob: Boolean)
 
 
+
+
 /*
 Messages which the UserManager will forward to the particular user
  */
@@ -75,6 +77,14 @@ case class AttachWS(ws: ActorRef) extends UserMessage
 
 case class UserJobStart(spec: Map[String, Any], toolname: String) extends UserMessage
 
-case class UserJobStateChanged(newState: models.JobState, jobID: Long) extends UserMessage
+case class UserJobStateChanged(job: models.Job, jobID: Long)  extends UserMessage
 
-case class UserJobDone(jobID: Long, exitCode: Int) extends UserMessage
+case class UserJobDone(jobID: Long, exitCode: Int, toolname: String) extends UserMessage
+
+case class AskJob(jobID: Long) extends UserMessage
+
+
+
+
+
+

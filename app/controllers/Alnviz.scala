@@ -38,6 +38,14 @@ class Alnviz @Inject()(val messagesApi: MessagesApi) extends Controller with I18
     }
 
 
+  def result = Action {
+
+
+    Ok
+
+  }
+
+
   def show = Action { implicit request =>
 
 
@@ -52,7 +60,6 @@ class Alnviz @Inject()(val messagesApi: MessagesApi) extends Controller with I18
       Logger.info("Request from  UID" + uid)
       request.session + (UID -> uid)
     }
-
   }
 
   def submit = Action { implicit request =>
