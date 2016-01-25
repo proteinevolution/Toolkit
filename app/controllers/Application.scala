@@ -1,7 +1,10 @@
 package controllers
 
 
+import java.io.File
+
 import actors.{SubscribeUser, UserManager, WebSocketActor}
+import play.api.Play
 import scala.concurrent.Future
 import play.api.Play.current
 import play.api.Logger
@@ -14,6 +17,7 @@ import javax.inject.Inject
 class Application @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val UID = "uid"
+  var path = s"${Play.application.path}${current.configuration.getString("job_path").get}${File.separator}"
 
   /**
     * Handles the request of the index page of the toolkit. This implies that a new session
@@ -28,6 +32,13 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
     Ok(views.html.index())
   }
 
+
+  def file(filename : String, jobid : Long) = Action {
+
+    // TODO check whether the user is allowed to access the file in the jobID
+
+    Ok.sendFile(new java.io.File(path + jobid + "/" + filename)).withHeaders(CONTENT_TYPE->"text/plain")
+  }
 
 
   // User has connected over the WebSocket

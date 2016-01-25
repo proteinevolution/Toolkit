@@ -8,13 +8,6 @@
     <div id="yourDiv">Loading ... </div>
 
 
-
-    <ul>
-        <li>@path</li>
-    </ul>
-
-
-
     <style>
 
     .biojs_msa_labels
@@ -69,8 +62,7 @@
             // init msa
             var m = new msa.msa(opts);
 
-
-            var url = '@models.Alnviz.resultFilePaths(jobID)(0)'
+            var url = '/files' + '/'+ '@jobID' + '/' + '@Alnviz.resultFileNames(0)';
 
             m.u.file.importURL(url, renderMSA);
 

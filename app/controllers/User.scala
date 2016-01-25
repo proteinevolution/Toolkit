@@ -24,8 +24,6 @@ class User extends Controller {
 
     val uid = request.session.get(UID).get
 
-
-
       (UserManager() ? TellUser(uid, AskJob(jobID))).mapTo[Job].map { job =>
 
 
@@ -42,8 +40,6 @@ class User extends Controller {
               case "alnviz" => Ok(views.html.alnviz.result(jobID, job, play.Play.application().path().getPath()))
 
             }
-
-
 
           case models.Running => Ok(views.html.running(jobID))
         }

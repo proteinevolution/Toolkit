@@ -42,7 +42,7 @@ class UserActor(uid: String)   extends Actor with ActorLogging {
       // Notifies the user about a Job Status change
     case UserJobStateChanged(job, jobID: Long) =>
 
-      Logger.info("User Actor "  + uid + " received Job state change")
+      Logger.info("User Actor "  + uid + " received Job state change: " + job.state + '\n')
 
       userJobs.put(jobID, job)
       ws ! UserJobStateChanged(job, jobID)

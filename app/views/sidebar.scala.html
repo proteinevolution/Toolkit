@@ -89,6 +89,10 @@
 
 <!-- The View-Model Definition for the JobWidget in the Sidebar -->
 <script type="text/javascript">
+var a = {};
+a[1] = 'r';
+a[3] = 'd';
+
 todo = {};
 //this application only has one module: todo
 //for simplicity, we use this module to namespace the model classes
@@ -107,13 +111,25 @@ todo.TodoList = Array;
 //and takes care of the logic surrounding when adding is permitted
 //and clearing the input after adding a todo to the list
 todo.vm = (function() {
-    var vm = {}
+    var vm = {};
     vm.init = function() {
         //a running list of todos
         vm.list = new todo.TodoList();
 
         //adds a todo to the list, and clears the description field for user convenience
-        vm.add = function(desc, state) {
+        vm.update = function(desc, state) {
+
+            for (var i = 0; i < vm.list.length; i++) {
+
+                var job = vm.list[i];
+
+                if(job.description() == desc) {
+
+                    vm.list[i] = new todo.Todo({description: desc,
+                                               state: state});
+                    return;
+                }
+            }
             vm.list.push(new todo.Todo({description: desc,
                                         state: state}));
         };
@@ -132,7 +148,7 @@ todo.view = function() {
     return [m("button", {onclick: todo.vm.add}, "Add"),
         [todo.vm.list.map(function(task, index) {
             return m("tr", [m("td", task.description()),
-                            m("td", task.state())]);
+                            m("td[class=" + a[task.state()] + ']')]);
         })]]
 };
 m.mount(document.getElementById("rows"), {controller: todo.controller, view: todo.view});

@@ -36,9 +36,8 @@ class JobManager extends Actor with ActorLogging {
 
       Logger.info("Job Manager wants to prepare working directory for Job\n")
 
-      workerActors ! Prepare(paramMap, jobID, toolname, uid)
-
       sender ! UserJobStateChanged(models.Job.instance(toolname, models.Running), jobID)
+      workerActors ! Prepare(paramMap, jobID, toolname, uid)
 
 
     case PrepWDDone(jobID_l) =>

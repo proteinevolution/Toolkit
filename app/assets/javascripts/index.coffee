@@ -2,7 +2,6 @@ $ ->
   ws = new WebSocket $("body").data("ws-url")
 
   # Handles the behavior that occurs if the WebSocket receives data from the Server
-  # TODO For instance, we can update the Job Monitor Widget here
   ws.onmessage = (event) ->
     m.startComputation()
 
@@ -11,8 +10,8 @@ $ ->
     switch message.type
       when "jobstate"
         state = message.newState.toString()
-        todo.vm.add(message.jobid, state)
-        alert(state)
+        console.log(state)
+        todo.vm.update(message.jobid, state)
 
     m.endComputation()
 

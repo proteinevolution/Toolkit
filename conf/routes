@@ -10,14 +10,18 @@
 # Toolkit related routes
 ###############################################################
 # Index Page requested by user. Note that the controller is injected
-GET         /                               @controllers.Application.index
+GET         /                              @controllers.Application.index
 
 # I currently play with this socket to get the hang of it
 GET         /ws                            @controllers.Application.ws
 
 
+# Serve files
+GET         /files/$jobid<[0-9]+>/:filename    @controllers.Application.file(filename  : String, jobid : Long)
+
+
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                       controllers.Assets.at(path="/public", file)
+GET         /assets/*file                   controllers.Assets.at(path="/public", file)
 
 #GET        /toolkit             controllers.Assets.at(path="/public", file="index.html")
 GET         /disclaimer                     @controllers.Application.disclaimer
@@ -49,3 +53,6 @@ GET         /results/$jobid<[0-9]+>         @controllers.User.result(jobid: Long
 ## Routes handled with JavaScript
 ####
 POST        /submit/alnviz                  @controllers.Alnviz.submit
+
+
+

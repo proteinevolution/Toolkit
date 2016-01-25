@@ -37,15 +37,6 @@ class Alnviz @Inject()(val messagesApi: MessagesApi) extends Controller with I18
         a + (f.getName -> f.get(cc))
     }
 
-
-  def result = Action {
-
-
-    Ok
-
-  }
-
-
   def show = Action { implicit request =>
 
 
