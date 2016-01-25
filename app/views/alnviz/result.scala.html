@@ -1,8 +1,6 @@
 @import play.api.mvc.RequestHeader
-@(jobID: Long, job: models.Job, path: String)(implicit request: RequestHeader)
-@roughtemplate {
-
-    <h3><a href="http://msa.biojs.net" target="_blank">BioJS MSA Viewer</a> (Full Alignment)</h3>
+@(jobID: Long, job: models.Job)(implicit request: RequestHeader)
+<h3><a href="http://msa.biojs.net" target="_blank">BioJS MSA Viewer</a> (Full Alignment)</h3>
 
     <div id="menuDiv"></div>
     <div id="yourDiv">Loading ... </div>
@@ -90,5 +88,3 @@
                 m.render();
             }
     </script>
-
-}

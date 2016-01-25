@@ -43,6 +43,9 @@ $ ->
       success: (data, textStatus, jqXHR) ->
         #$('body').append "Successful AJAX call: #{data}"
 
+
+
+
 ###
   #  File Uplaod
   $("#file").submit (event) ->

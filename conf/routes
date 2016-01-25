@@ -12,7 +12,7 @@
 # Index Page requested by user. Note that the controller is injected
 GET         /                              @controllers.Application.index
 
-# I currently play with this socket to get the hang of it
+# Websocket
 GET         /ws                            @controllers.Application.ws
 
 
@@ -47,12 +47,10 @@ GET         /tools/alnviz                  @controllers.Alnviz.show
 # jobid provided
 ###############################################################
 GET         /results/$jobid<[0-9]+>         @controllers.User.result(jobid: Long)
+POST        /results/$jobid<[0-9]+>         @controllers.User.result(jobid: Long)
 
 
 ####
 ## Routes handled with JavaScript
 ####
 POST        /submit/alnviz                  @controllers.Alnviz.submit
-
-
-

@@ -42,22 +42,8 @@
   -->
 
         <table id="jobtable" class="tablesorter">
-            <!--
-            <thead><th><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" />
-            </th><th></th><th class="jobcell"><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" />
-            </th><th class="search"><img alt="Up-down-arrow" src="@routes.Assets.at("images/up-down-arrow.png")" /></th></thead>
-            -->
             <tbody id="rows">
                 <tr>
-
-                    <!--
-                    <td class="d" style="color:transparent"> d</td>
-                    <td><input class="jobcheckbox" id="jobid[]" name="jobid[]" type="checkbox" value="6382954" /></td>
-                    <td class="jobcell">
-                        <a href="/ancescon/check/6382954" class="joblink" id="" onmouseout="return nd();" onmouseover="return overlib('ID: 6382954 ANCESCON');">6382954</a>
-                    </td>
-                    <td class="classification">ANCE</td>
-                    -->
                 </tr>
             </tbody>
         </table>
@@ -116,6 +102,22 @@ todo.vm = (function() {
         //a running list of todos
         vm.list = new todo.TodoList();
 
+
+        vm.onclick = function(event){
+
+            var jobID = event();
+            var route = jsRoutes.controllers.User.result(jobID);
+
+            $.ajax({
+                url: route.url,
+                type: route.type
+            }).done(function(data) {
+
+                $("#content").empty();
+                $("#content").append(data);
+            });
+        };
+
         //adds a todo to the list, and clears the description field for user convenience
         vm.update = function(desc, state) {
 
@@ -141,15 +143,30 @@ todo.vm = (function() {
 //in our case, there's only one view-model that handles everything
 todo.controller = function() {
     todo.vm.init()
-}
+};
 
 //here's the view
 todo.view = function() {
-    return [m("button", {onclick: todo.vm.add}, "Add"),
+    return [
         [todo.vm.list.map(function(task, index) {
-            return m("tr", [m("td", task.description()),
+            return m("tr[class=job]", {onclick: todo.vm.onclick.bind(task, task.description)},
+                           [m("td", task.description()),
                             m("td[class=" + a[task.state()] + ']')]);
         })]]
 };
 m.mount(document.getElementById("rows"), {controller: todo.controller, view: todo.view});
 </script>
+
+
+    <!--
+    var vm = todo.vm
+
+m("button", {onclick: vm.add.bind(vm, vm.description)}, "Add")
+
+
+onclick: function(e) {
+    todo.vm.add(todo.vm.description)
+}
+   -->
+
+

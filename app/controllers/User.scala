@@ -22,28 +22,28 @@ class User extends Controller {
 
   def result(jobID: Long) = Action.async { implicit request =>
 
+
+
     val uid = request.session.get(UID).get
 
       (UserManager() ? TellUser(uid, AskJob(jobID))).mapTo[Job].map { job =>
-
 
         Logger.info("View for Job with tool" + job.toolname + " requested")
 
 
         job.state match {
 
-
           case models.Done =>
 
+            // TODO Replace by reflection
             job.toolname match {
 
-              case "alnviz" => Ok(views.html.alnviz.result(jobID, job, play.Play.application().path().getPath()))
-
+              case "alnviz" => Ok(views.html.alnviz.result(jobID, job))
             }
 
           case models.Running => Ok(views.html.running(jobID))
         }
-    }
+      }
   }
 }
 
