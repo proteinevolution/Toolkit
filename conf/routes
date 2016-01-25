@@ -28,13 +28,7 @@ GET         /disclaimer                     @controllers.Application.disclaimer
 GET         /contact                        @controllers.Application.contact
 #GET         /footer              controllers.Application.footer
 
-GET         /sections/search                @controllers.Application.search
-GET         /sections/alignment             @controllers.Application.alignment
-GET         /sections/seqanal               @controllers.Application.search
-GET         /sections/secstruct             @controllers.Application.search
-GET         /sections/tertstruct            @controllers.Application.search
-GET         /sections/classification        @controllers.Application.search
-GET         /sections/utils                 @controllers.Application.search
+GET         /sections/:sectionname          @controllers.Application.section(sectionname : String)
 
 ###############################################################
 # Tool specific routes

@@ -5,6 +5,7 @@ import java.io.File
 
 import actors.{SubscribeUser, UserManager, WebSocketActor}
 import play.api.Play
+import play.twirl.api.Html
 import scala.concurrent.Future
 import play.api.Play.current
 import play.api.Logger
@@ -31,6 +32,29 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
 
     Ok(views.html.index())
   }
+
+
+  def section(sectionname : String) = Action { implicit request =>
+
+
+    val view = views.html.sections.alignment()
+
+    Ok(views.html.roughtemplate(view))
+  }
+
+
+  /*
+  GET         /sections/search                @controllers.Application.section
+GET         /sections/alignment             @controllers.Application.alignment
+GET         /sections/seqanal               @controllers.Application.search
+GET         /sections/secstruct             @controllers.Application.search
+GET         /sections/tertstruct            @controllers.Application.search
+GET         /sections/classification        @controllers.Application.search
+GET         /sections/utils                 @controllers.Application.search
+   */
+
+
+
 
 
   def file(filename : String, jobid : Long) = Action {

@@ -1,6 +1,7 @@
 package helpers;
 
 import java.io.*;
+import java.util.List;
 
 /**
  * Handles the directory structures that need to be created due to Job Execution
@@ -42,6 +43,12 @@ public class FileAccess {
 
         return new File(name).mkdirs();
     }
+
+    public static String[] listDirectory(String name) {
+
+        return new File(name).list();
+    }
+
 
     public static boolean mkfile(String name, String content) {
 

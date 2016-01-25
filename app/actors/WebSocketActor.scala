@@ -6,10 +6,9 @@ import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
 import play.api.libs.json.{JsValue, Json}
+import play.api.Logger
 
 
-
-// TODO Currently the Websocket cannot do much
 
 class WebSocketActor(uid: String, out: ActorRef) extends Actor with ActorLogging {
 
@@ -23,10 +22,17 @@ class WebSocketActor(uid: String, out: ActorRef) extends Actor with ActorLogging
 
   def receive = LoggingReceive {
 
+    /*
+    Messages received from the websocket and passed to the User
+     */
+    case js : JsValue =>
+
+      Logger.info("???????????????????????????????????")
+
+
 
     /* Messages received from the UserActor and passed to the WebSocket
       */
-
     case UserJobStateChanged(job, jobID)  =>
 
       out ! Json.obj("type" ->  "jobstate", "newState" -> job.state.no, "jobid" -> jobID)

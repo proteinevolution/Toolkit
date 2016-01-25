@@ -77,6 +77,7 @@
 <script type="text/javascript">
 var a = {};
 a[1] = 'r';
+a[2] = 'e';
 a[3] = 'd';
 
 todo = {};
@@ -110,12 +111,15 @@ todo.vm = (function() {
 
             $.ajax({
                 url: route.url,
-                type: route.type
+                type: "POST"
             }).done(function(data) {
 
                 $("#content").empty();
                 $("#content").append(data);
             });
+
+            // Use HTML5 Push state to change the state to result view without reloading
+            window.history.pushState("string", "", "/results/" + jobID);
         };
 
         //adds a todo to the list, and clears the description field for user convenience
@@ -155,7 +159,10 @@ todo.view = function() {
         })]]
 };
 m.mount(document.getElementById("rows"), {controller: todo.controller, view: todo.view});
+
+
 </script>
+
 
 
     <!--

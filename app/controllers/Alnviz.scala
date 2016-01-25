@@ -37,10 +37,13 @@ class Alnviz @Inject()(val messagesApi: MessagesApi) extends Controller with I18
         a + (f.getName -> f.get(cc))
     }
 
+
+
   def show = Action { implicit request =>
 
+    val view = views.html.alnviz.form(inputForm)
 
-    Ok(views.html.alnviz.form(inputForm)).withSession {
+    Ok(views.html.roughtemplate(view)).withSession {
 
       val uid = request.session.get(UID).getOrElse {
 

@@ -3,6 +3,7 @@ package controllers
 import actors.{AskJob, TellUser, UserManager}
 import akka.util.Timeout
 import models.Job
+import play.twirl.api.Html
 import scala.concurrent.duration._
 import akka.pattern.ask
 import play.api.mvc._
@@ -22,7 +23,7 @@ class User extends Controller {
 
   def result(jobID: Long) = Action.async { implicit request =>
 
-
+    Logger.info("Method was: " + request.method + "\n")
 
     val uid = request.session.get(UID).get
 
@@ -30,18 +31,26 @@ class User extends Controller {
 
         Logger.info("View for Job with tool" + job.toolname + " requested")
 
-
-        job.state match {
+        // Decide which view to render based on the job state
+        val view : Html = job.state match {
 
           case models.Done =>
 
             // TODO Replace by reflection
             job.toolname match {
 
-              case "alnviz" => Ok(views.html.alnviz.result(jobID, job))
+              case "alnviz" => views.html.alnviz.result.render(jobID, job, request)
             }
+        }
 
-          case models.Running => Ok(views.html.running(jobID))
+        request.method match {
+
+          // Post requests will just get the rendered tool view
+          case "POST" => Ok(view)
+
+          // get request will also embed into the whole page
+          case "GET" => Ok(views.html.roughtemplate(view))
+
         }
       }
   }

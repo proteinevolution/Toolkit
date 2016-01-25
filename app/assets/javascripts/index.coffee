@@ -1,6 +1,6 @@
 $ ->
   ws = new WebSocket $("body").data("ws-url")
-
+  # reload state of user from server
   # Handles the behavior that occurs if the WebSocket receives data from the Server
   ws.onmessage = (event) ->
     m.startComputation()
@@ -27,7 +27,6 @@ $ ->
           { globalPosition:"bottom right" }
         )
 ###
-
   # Handles the behavior when the submit button is pressed in a job form
   $(".jobform").submit (event) ->
     event.preventDefault()
@@ -42,6 +41,9 @@ $ ->
         alert errorThrown
       success: (data, textStatus, jqXHR) ->
         #$('body').append "Successful AJAX call: #{data}"
+
+  $(".jobformclear").click (event) -> $('.jobform').trigger("reset");
+
 
 
 

@@ -12,10 +12,11 @@ import play.api.Logger
   */
 class UserActor(uid: String)   extends Actor with ActorLogging {
 
+  // The websocket that is attached to the User
   var ws: ActorRef = null
 
+  // The UserActor knows all Jobs that belong t him
   val userJobs = new collection.mutable.HashMap[Long, models.Job]()
-
 
 
   def receive = LoggingReceive {
@@ -44,7 +45,11 @@ class UserActor(uid: String)   extends Actor with ActorLogging {
 
       Logger.info("User Actor "  + uid + " received Job state change: " + job.state + '\n')
 
+
+      // Update the Job state in the Job Table
       userJobs.put(jobID, job)
+
+      // Only then we will tell the WebSocket and hence the User that the Job is actually finished
       ws ! UserJobStateChanged(job, jobID)
 
 

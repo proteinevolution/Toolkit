@@ -1,41 +1,39 @@
 @import play.api.mvc.RequestHeader
 @(inputForm: Form[models.Alnviz])(implicit messages: Messages, request: RequestHeader)
-@roughtemplate {
 
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
-            submitRoute = jsRoutes.controllers.Alnviz.submit()
-    </script>
+        submitRoute = jsRoutes.controllers.Alnviz.submit()
+</script>
+
+<h2>@Alnviz.fullName</h2>
 
 
-    <h2>@Alnviz.fullName</h2>
+<form class="jobform">
+    <input type="hidden" id="toolname" name="toolname" value="alnviz">
 
-    <!-- We cannot use helpers.forms here, because we do not want to specify an action for this form -->
-    <form class="jobform">
-        <input type="hidden" id="toolname" name="toolname" value="alnviz">
+    <h3 class="alignment" style="clear:both;display: block;">Input</h3>
 
         <!-- Input form elements derived from the Input Data Model -->
         <div class="row">
-            <label>@Alnviz.parameterNames("alignment")
-
-                @helper.textarea(field = inputForm("alignment"), args = 'rows -> 5, 'cols -> 50)
-
-            </label>
+                @helper.textarea(field = inputForm("alignment"), args = 'rows -> 5, 'cols -> 50,
+                    '_label -> "Enter sequence alignment")
         </div>
-        <div class="row">
-            <label>@Alnviz.parameterNames("format")
 
+
+        <div class="row">
                 @helper.select(
                     inputForm("format"),
-                    helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("format")))
+                    helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("format"))),
+                    '_label -> "Select alignment format"
                 )
-            </label>
         </div>
 
         <div class="row">
             <input class="jobformsubmit" type="submit" value="Submit Job" />
+            <input class="jobformclear" type="button", value="Clear form" />
         </div>
     </form>
-}
+
 

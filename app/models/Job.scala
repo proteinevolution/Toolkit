@@ -1,9 +1,15 @@
 package models
 
+
+import play.twirl.api.HtmlFormat
+
 /**
   * Created by lukas on 1/20/16.
   */
-class Job(val toolname: String, var state: JobState)
+class Job(val toolname: String, var state: JobState) {
+
+  var resultView : HtmlFormat.Appendable   = null
+}
 
 
 

@@ -22,21 +22,21 @@ class Worker extends Actor with ActorLogging {
   val UID = "UID"
 
   val sep = File.separator
-  val pathbase = s"${Play.application.path}${current.configuration.getString("job_path").get}${File.separator}"
+  var path = s"${Play.application.path}${current.configuration.getString("job_path").get}${File.separator}"
 
 
   def receive = LoggingReceive {
 
     case Prepare(spec, jobID, toolname, uid) =>
 
-      val path = pathbase + jobID
+      path += jobID
 
       Logger.info("Worker starts to prepare working directory for jobID " + jobID + "\n")
 
       // create the Working Directory
       FileAccess.mkdir(path)
 
-      Logger.info("Path was " + path + '\n')
+      Logger.info("Path was " + path)
 
       for ((key , value) <- spec) {
 
@@ -52,7 +52,7 @@ class Worker extends Actor with ActorLogging {
 
       Logger.info("Worker was told to start job" + jobID)
 
-      val path = pathbase + jobID
+      path += jobID
 
       // read the toolname file to get the tool configuration
       val toolname = FileAccess.readFile(path + "/" + TOOLNAME)
