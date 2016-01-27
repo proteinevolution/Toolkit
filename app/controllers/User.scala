@@ -1,14 +1,9 @@
 package controllers
 
-import actors.{AskJob, TellUser, UserManager}
+
 import akka.util.Timeout
-import models.Job
-import play.twirl.api.Html
 import scala.concurrent.duration._
-import akka.pattern.ask
 import play.api.mvc._
-import play.api.{Play, Logger}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by lukas on 1/20/16.
@@ -21,6 +16,7 @@ class User extends Controller {
   implicit val timeout : Timeout = 5.seconds
 
 
+  /*
   def result(jobID: Long) = Action.async { implicit request =>
 
     Logger.info("Method was: " + request.method + "\n")
@@ -53,7 +49,8 @@ class User extends Controller {
 
         }
       }
-  }
+
+  } */
 }
 
 

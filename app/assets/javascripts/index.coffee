@@ -31,6 +31,8 @@ $ ->
   $(".jobform").submit (event) ->
     event.preventDefault()
 
+    submitRoute = jsRoutes.controllers.Tool.submit(toolname)
+
     $.ajax
       url: submitRoute.url
       type: submitRoute.type

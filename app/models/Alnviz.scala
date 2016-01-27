@@ -1,5 +1,8 @@
 package models
 
+import play.api.data.Form
+import play.api.data.Forms._
+
 
 // TODO Dependency injection might come in handy here
 
@@ -13,6 +16,14 @@ package models
 object Alnviz extends ToolModel {
   val toolname = "alnviz"
   val fullName = "Alignment Visualizer"
+
+  // Input Form Definition of this tool
+  val inputForm = Form(
+    mapping(
+      "alignment" -> text,
+      "format" -> text
+    )(Alnviz.apply)(Alnviz.unapply)
+  )
 
 
   // Parameter List
@@ -36,11 +47,5 @@ object Alnviz extends ToolModel {
   val parameterValues = Map(
     "format" -> Set("fas", "clue", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
-
-  val exec : Vector[CallComponent] = Vector(interpreters(0),  helpers(0),
-                                      KeyValuePair("i", parameters(1), "-", "="),
-                                      KeyValuePair("o", ConstParam("clu"), "-", "="),
-                    KeyValuePair("f", parameters(0), "-", "="),
-                    KeyValuePair("a", ResFileParam("result"), "-", "="))
 }
 case class Alnviz(alignment: String, format: String)

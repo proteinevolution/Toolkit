@@ -1,52 +1,58 @@
 package actors
 
+import actors.UserActor.AttachWS
 import akka.actor._
 import akka.event.LoggingReceive
+import javax.inject._
+import play.api.libs.concurrent.InjectedActorSupport
+import play.api.cache._
 import play.api.Logger
-import play.libs.Akka
 
-class UserManager extends Actor with ActorLogging {
+object UserManager {
+
+  case class GetUserActor(key: String)
+}
 
 
-  val registeredUsers = new collection.mutable.HashMap[String, ActorRef]()
+@Singleton
+class UserManager @Inject() (childFactory: UserActor.Factory,
+                             cache: CacheApi)
+  extends Actor with ActorLogging with InjectedActorSupport {
+
+  import actors.UserManager._
+
+  val registeredUsers = scala.collection.mutable.Map[String, ActorRef]()
 
 
   def receive = LoggingReceive  {
 
-    case SubscribeUser(uid) =>
 
-      Logger.info("User session " + uid + " subscribed\n")
+    case GetUserActor(uid: String) =>
 
-      registeredUsers.getOrElseUpdate(uid, {
+      val user = registeredUsers.getOrElseUpdate(uid, {
 
-          val newUser = Akka.system().actorOf(UserActor.props(uid))
-          context watch newUser
-          newUser
+        injectedChild(childFactory(uid), uid)
       })
+      sender() ! user
 
-    case TellUser(uid, message) =>
+      // Assume cache miss
+      cache.set(uid, user)
+      context watch user
 
-      registeredUsers.get(uid) match {
 
-       case None =>  Logger.warn("You wanted to send a message to a user who is not subscribed")
+    case m @ AttachWS(uid, ws) =>
 
-       case Some(user) => user forward message
-      }
+      Logger.info("[User Manager] Attach Web Socket")
 
+      val user = registeredUsers.getOrElseUpdate(uid, {
+
+        injectedChild(childFactory(uid), uid)
+      })
+      user ! m
 
 
     case Terminated(user) =>
 
-        // TODO Remove terminated user from the HashMap of registered users
+      context stop user
   }
-}
-/**
-  * Created by lukas on 1/16/16.
-  */
-object UserManager  {
-
-
-  lazy val theUserManager = Akka.system().actorOf(Props[UserManager])
-
-  def apply() = theUserManager
 }

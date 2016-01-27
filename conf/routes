@@ -33,18 +33,12 @@ GET         /sections/:sectionname          @controllers.Application.section(sec
 ###############################################################
 # Tool specific routes
 ###############################################################
-GET         /tools/alnviz                  @controllers.Alnviz.show
-
+GET         /tools/:toolname                @controllers.Tool.show(toolname : String)
+POST        /tools/:toolname/submit         @controllers.Tool.submit(toolname : String)
 
 ###############################################################
 # Handels the result View (Determined by the status of the
 # jobid provided
 ###############################################################
-GET         /results/$jobid<[0-9]+>         @controllers.User.result(jobid: Long)
-POST        /results/$jobid<[0-9]+>         @controllers.User.result(jobid: Long)
-
-
-####
-## Routes handled with JavaScript
-####
-POST        /submit/alnviz                  @controllers.Alnviz.submit
+#GET         /results/$jobid<[0-9]+>         @controllers.User.result(jobid: Long)
+# POST        /results/$jobid<[0-9]+>         @controllers.User.result(jobid: Long)

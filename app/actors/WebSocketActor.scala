@@ -1,22 +1,22 @@
 package actors
 
+
+import actors.UserActor.{JobStateChanged, AttachWS}
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
 import play.api.libs.json.{JsValue, Json}
-import play.api.Logger
 
 
-
-class WebSocketActor(uid: String, out: ActorRef) extends Actor with ActorLogging {
+class WebSocketActor(uid: String, userManager : ActorRef, out: ActorRef)  extends Actor with ActorLogging {
 
   /** The user actor subscribes at the JobActor on Startup */
   override def preStart() = {
 
     // Attach this Websocket to the corresponding user Actor
-    UserManager() ! TellUser(uid, AttachWS(self))
+    userManager ! AttachWS(uid, self)
   }
 
 
@@ -25,21 +25,18 @@ class WebSocketActor(uid: String, out: ActorRef) extends Actor with ActorLogging
     /*
     Messages received from the websocket and passed to the User
      */
-    case js : JsValue =>
-
-      Logger.info("???????????????????????????????????")
-
+    case js : JsValue => // TODO
 
 
     /* Messages received from the UserActor and passed to the WebSocket
       */
-    case UserJobStateChanged(job, jobID)  =>
+    case JobStateChanged(jobid, state)  =>
 
-      out ! Json.obj("type" ->  "jobstate", "newState" -> job.state.no, "jobid" -> jobID)
+      out ! Json.obj("type" ->  "jobstate", "newState" -> state.no, "jobid" -> jobid)
   }
 }
 
 object WebSocketActor {
 
-  def props(uid: String)(out: ActorRef) = Props(new WebSocketActor(uid, out))
+  def props(uid : String, userManager : ActorRef)(out: ActorRef) = Props(new WebSocketActor(uid, userManager, out))
 }

@@ -3,22 +3,41 @@ package controllers
 
 import java.io.File
 
-import actors.{SubscribeUser, UserManager, WebSocketActor}
-import play.api.Play
-import play.twirl.api.Html
-import scala.concurrent.Future
+import actors.WebSocketActor
+import akka.actor.ActorRef
+import play.api.{Logger, Play}
 import play.api.Play.current
-import play.api.Logger
-import play.api.libs.json.JsValue
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsValue
 import play.api.mvc._
-import javax.inject.Inject
+import javax.inject.{Singleton, Named, Inject}
 
+import scala.concurrent.Future
 
-class Application @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
+@Singleton
+class Application @Inject()(val messagesApi: MessagesApi,
+                            @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
 
   val UID = "uid"
   var path = s"${Play.application.path}${current.configuration.getString("job_path").get}${File.separator}"
+
+
+  def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
+
+    // The user of this session is assigned a user actor
+    Future.successful(request.session.get(UID) match {
+
+      case None =>
+        Logger.info("$Application$ WebSocket connection not allowed, since no UID has been assigned to the session")
+        Left(Forbidden)
+
+      case Some(uid) =>
+        Logger.info("$Application$ WebSocket connection requested")
+        Right(WebSocketActor.props(uid, userManager))
+    })
+  }
+
+
 
   /**
     * Handles the request of the index page of the toolkit. This implies that a new session
@@ -54,9 +73,6 @@ GET         /sections/utils                 @controllers.Application.search
    */
 
 
-
-
-
   def file(filename : String, jobid : Long) = Action {
 
     // TODO check whether the user is allowed to access the file in the jobID
@@ -65,29 +81,16 @@ GET         /sections/utils                 @controllers.Application.search
   }
 
 
-  // User has connected over the WebSocket
-  def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
 
-    // The user of this session is assigned a user actor
-    Future.successful(request.session.get(UID) match {
 
-      case None =>
-        Logger.info("WebSocket Connection not allowed, since the user does not have a corresponding session\n")
-        Left(Forbidden)
 
-      case Some(uid) =>
-        Logger.info("WebSocket has accepted the request with uid " + uid + "\n")
-        Right(WebSocketActor.props(uid))
-    })
-  }
+
+
 
   // TODO These Actions must be redefined
   def disclaimer = Action {
     Ok(views.html.disclaimer())
   }
-
-
-
 
   def contact = Action {
     Ok(views.html.contact())

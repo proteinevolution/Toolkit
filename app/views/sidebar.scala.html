@@ -154,8 +154,8 @@ todo.view = function() {
     return [
         [todo.vm.list.map(function(task, index) {
             return m("tr[class=job]", {onclick: todo.vm.onclick.bind(task, task.description)},
-                           [m("td", task.description()),
-                            m("td[class=" + a[task.state()] + ']')]);
+                           [m("td[class=" + a[task.state()] + ']'),
+                            m("td", task.description())]);
         })]]
 };
 m.mount(document.getElementById("rows"), {controller: todo.controller, view: todo.view});

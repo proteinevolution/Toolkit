@@ -1,19 +1,30 @@
 package models
 
 
-import play.twirl.api.HtmlFormat
-
 /**
   * Created by lukas on 1/20/16.
   */
-class Job(val toolname: String, var state: JobState) {
+class Job(toolname_c: String, state_c: JobState, id_c : String, uid_c : String) {
 
-  var resultView : HtmlFormat.Appendable   = null
+  val toolname : String = toolname_c
+  var state : JobState = state_c
+  var id : String = id_c
+  val uid : String = uid_c
+
+  def attachParams(params : Map[String, Any]) = new SuppliedJob(toolname, state, id, uid, params)
+
 }
 
+
+// Job which is supplied with parameters and ready for execution
+class SuppliedJob(toolname : String, state : JobState, id : String, uid : String, params_c : Map[String, Any])
+  extends Job(toolname, state, id, uid) {
+
+  val params : Map[String, Any] = params_c
+}
 
 
 object Job {
 
-  def instance(toolname: String, state: JobState) = new Job(toolname, state)
+  def apply(toolname: String, state: JobState, id : String, uid : String) = new Job(toolname, state, id, uid)
 }

@@ -4,22 +4,29 @@
 
 <script type="text/javascript">
 
-        submitRoute = jsRoutes.controllers.Alnviz.submit()
+        toolname = "alnviz"
 </script>
+
+
+
+<script src='@routes.Assets.at("javascripts/alnviz.js")' type="text/javascript" ></script>
+
 
 <h2>@Alnviz.fullName</h2>
 
 
 <form class="jobform">
-    <input type="hidden" id="toolname" name="toolname" value="alnviz">
 
     <h3 class="alignment" style="clear:both;display: block;">Input</h3>
 
         <!-- Input form elements derived from the Input Data Model -->
         <div class="row">
-                @helper.textarea(field = inputForm("alignment"), args = 'rows -> 5, 'cols -> 50,
-                    '_label -> "Enter sequence alignment")
+                @helper.textarea(field = inputForm("alignment"), args = 'rows -> 30, 'cols -> 50,
+                    '_label -> "Enter sequence alignment",
+                    'id -> "alignment")
         </div>
+        <a href="#" onClick="$('#alignment').val(alnviz_example())">Paste example alignment</a>
+
 
 
         <div class="row">
@@ -32,7 +39,7 @@
 
         <div class="row">
             <input class="jobformsubmit" type="submit" value="Submit Job" />
-            <input class="jobformclear" type="button", value="Clear form" />
+            <input class="jobformclear" type="button" value="Clear form" />
         </div>
     </form>
 
