@@ -256,60 +256,38 @@
 
 
 /* joblist jobstatus bullets */
-#jobcode td.s {
+#jobcode td.s, #jobtable td.s {     /* Job submitted */
 
     background-color: #CCC;
     width: 20px;
 }
-#jobcode td.d {
+#jobcode td.p, #jobtable td.p {     /* Job Prepared */
+
+    background-color: #0000DD;
+    width: 20px;
+}
+
+#jobcode td.d, #jobtable td.d {     /* Job Done */
 
     background-color: #6AB94B;
     width: 20px;
 }
-#jobcode td.q {
+#jobcode td.q, #jobtable td.q {     /* Job Queued */
 
     background-color: #D6ABAB;
     width: 20px;
 }
-#jobcode td.r {
+#jobcode td.r, #jobtable td.r {     /* Job Running */
 
     background-color: #FFCC66;
     width: 20px;
 }
-#jobcode td.e {
+#jobcode td.e, #jobtable td.e {     /* Job Error */
 
     background-color: #CC0000;
     width: 20px;
 }
 
-
-
-/* joblist jobstatus bullets for jobtable */
-#jobtable td.s {
-
-    background-color: #CCC;
-    width: 20px;
-}
-#jobtable td.d {
-
-    background-color: #6AB94B;
-    width: 20px;
-}
-#jobtable td.q {
-
-    background-color: #D6ABAB;
-    width: 20px;
-}
-#jobtable td.r {
-
-    background-color: #FFCC66;
-    width: 20px;
-}
-#jobtable td.e {
-
-    background-color: #CC0000;
-    width: 20px;
-}
 
 
 /* Additions for the new toolkit */

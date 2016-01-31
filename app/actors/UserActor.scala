@@ -55,7 +55,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
   var jobIDCounter : Long = 0
   val sep = File.separator
-  val path = s"${Play.application.path}${current.configuration.getString("job_path").get}$sep$uid$sep"
+  val path = s"${current.configuration.getString("job_path").get}$sep$uid$sep"
 
 
   /**
@@ -115,17 +115,16 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
         val sjob = Job(toolname, models.Running, jobid, uid).attachParams(params)
         userJobs.put(sjob.id, sjob)
 
-        self ! JobStateChanged(jobid, models.Running)
-
+        self ! JobStateChanged(jobid, models.Submitted)
         worker ! WPrepare(sjob)
       }
 
     /*  Job Dir has been prepared successfully    */
     case PrepWDDone(job) =>
 
-      Logger.info("Job Manager got to know that the working directory for Job " + job.id + " is now ready")
-      worker ! WStart(job.id)
-
+      Logger.info("[UserActor] Job with ID " + job.id + " was prepared successfully")
+      self ! JobStateChanged(job.id, models.Prepared)
+      worker ! WStart(job)
 
 
       // Notifies the user about a Job Status change
@@ -147,9 +146,15 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
      */
     case JobDone(job) =>
 
-      Logger.info("User actor was informed that Job is done")
+      Logger.info("[UserActor] Job Execution was done for job " + job.id)
+      self ! JobStateChanged(job.id, job.state)
 
-      // TODO Implement me
+
+
+
+
+
+
     case Terminated(ws_new) =>
 
       ws = null

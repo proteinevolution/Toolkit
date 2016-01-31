@@ -13,13 +13,18 @@ $ ->
         console.log(state)
         todo.vm.update(message.jobid, state)
 
+        # Show user a popup with the submission
+        if state == '0'
+          text = "Job submitted successfully."
+          $(".jobformsubmit").notify(text, "success")
+          $('.jobform').trigger("reset")
+
     m.endComputation()
 
   ###
     switch message.type
       when "JobInitStatus"
-        text = "The Job for tool " + message.toolname + " with JobID " + message.jobid + " has been started successfully."
-        $(".jobformsubmit").notify(text, message.status)
+
 
       when "JobDone"
         $(".jobformsubmit").notify(
