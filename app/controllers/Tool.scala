@@ -35,13 +35,17 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
     Logger.info(s"{Tool} Input view for tool $toolname requested")
 
-    // Determine view of tool // TODO Replace with reflection
-    val view = toolname match {
+
+    // Determine view of tool
+    // TODO Replace with reflection
+    val toolframe = toolname match {
 
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
     }
+    val view = views.html.general.submit(toolname, toolframe)
 
-    Ok(views.html.roughtemplate(view)).withSession {
+
+    Ok(views.html.general.main(view)).withSession {
 
       val uid = request.session.get(UID).getOrElse {
 
@@ -56,6 +60,13 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
     val uid = request.session.get(UID).get
 
+    val jobID =  request.body.asFormUrlEncoded.get("jobid").head match {
+
+      case m if m.isEmpty => None
+      case m => Some(m)
+    }
+
+
     (userManager ? GetUserActor(uid)).mapTo[ActorRef].map { userActor =>
 
       // TODO replace with reflection
@@ -68,17 +79,54 @@ class Tool @Inject()(val messagesApi: MessagesApi,
               BadRequest("This was an error")
             },
             formdata => {
-
               Logger.info("{Tool} Form data sucessfully received")
-
               // TODO Determine whether user has submitted a jobid
-              userActor ! PrepWD(toolname, getCCParams(formdata)  , true, None)
+              userActor ! PrepWD(toolname, getCCParams(formdata)  , true, jobID)
             }
           )
       }
       Ok
     }
   }
+
+
+  /*
+def result(jobID: Long) = Action.async { implicit request =>
+
+  Logger.info("Method was: " + request.method + "\n")
+
+  val uid = request.session.get(UID).get
+
+    (UserManager() ? TellUser(uid, AskJob(jobID))).mapTo[Job].map { job =>
+
+      Logger.info("View for Job with tool" + job.toolname + " requested")
+
+      // Decide which view to render based on the job state
+      val view : Html = job.state match {
+
+        case models.Done =>
+
+          // TODO Replace by reflection
+          job.toolname match {
+
+            case "alnviz" => views.html.alnviz.result.render(jobID, job, request)
+          }
+      }
+
+      request.method match {
+
+        // Post requests will just get the rendered tool view
+        case "POST" => Ok(view)
+
+        // get request will also embed into the whole page
+        case "GET" => Ok(views.html.main(view))
+
+      }
+    }
+
+} */
+
+
 
 
   def getCCParams(cc: AnyRef) =

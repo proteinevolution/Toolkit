@@ -70,6 +70,9 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     Logger.info("Try to delete user folder: State " + deleteSuccess)
 
     d.createDirectory(force = false, failIfExists = false)
+
+    // Flush User Jobs
+    userJobs.clear()
   }
 
 
@@ -140,6 +143,10 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       // Forward to WebSocket
       ws ! m
 
+    case m @ JobIDInvalid =>
+
+      ws ! m
+
 
     /*
      * Job Manager was told that the Job has been finished executing
@@ -149,12 +156,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       Logger.info("[UserActor] Job Execution was done for job " + job.id)
       self ! JobStateChanged(job.id, job.state)
 
-
-
-
-
-
-
+      
     case Terminated(ws_new) =>
 
       ws = null

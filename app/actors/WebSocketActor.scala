@@ -1,7 +1,7 @@
 package actors
 
 
-import actors.UserActor.{JobStateChanged, AttachWS}
+import actors.UserActor.{JobIDInvalid, JobStateChanged, AttachWS}
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
@@ -26,6 +26,11 @@ class WebSocketActor(uid: String, userManager : ActorRef, out: ActorRef)  extend
     Messages received from the websocket and passed to the User
      */
     case js : JsValue => // TODO
+
+
+    case JobIDInvalid =>
+
+      out ! Json.obj("type" ->  "jobidinvalid")
 
 
     /* Messages received from the UserActor and passed to the WebSocket

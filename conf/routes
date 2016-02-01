@@ -24,7 +24,6 @@ GET         /files/$jobid<[0-9]+>/:filename    @controllers.Application.file(fil
 GET         /assets/*file                   controllers.Assets.at(path="/public", file)
 
 #GET        /toolkit             controllers.Assets.at(path="/public", file="index.html")
-GET         /disclaimer                     @controllers.Application.disclaimer
 GET         /contact                        @controllers.Application.contact
 #GET         /footer              controllers.Application.footer
 

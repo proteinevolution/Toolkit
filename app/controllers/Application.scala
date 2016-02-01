@@ -49,16 +49,15 @@ class Application @Inject()(val messagesApi: MessagesApi,
     */
   def index = Action { implicit request =>
 
-    Ok(views.html.index())
+    Ok(views.html.general.index())
   }
 
 
   def section(sectionname : String) = Action { implicit request =>
 
-
     val view = views.html.sections.alignment()
 
-    Ok(views.html.roughtemplate(view))
+    Ok(views.html.general.main(view))
   }
 
 
@@ -81,23 +80,12 @@ GET         /sections/utils                 @controllers.Application.search
   }
 
 
-
-
-
-
-
-
-  // TODO These Actions must be redefined
-  def disclaimer = Action {
-    Ok(views.html.disclaimer())
-  }
-
   def contact = Action {
-    Ok(views.html.contact())
+    Ok(views.html.old.contact())
   }
 
   def footer = Action {
-    Ok(views.html.contact())
+    Ok(views.html.old.contact())
   }
 
   def search = Action {

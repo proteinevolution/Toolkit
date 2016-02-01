@@ -25,15 +25,9 @@ object Alnviz extends ToolModel {
     )(Alnviz.apply)(Alnviz.unapply)
   )
 
-
   // Parameter List
   val parameters = Vector(FileParam("alignment"), StringParam("format"))
 
-  // Declares the required Interpreters
-  val interpreters = Vector(Interpreter("perl"))
-
-  // Declare the required helper scripts (helpers directory)
-  var helpers = Vector(HelperScript("reformat.pl"))
 
   //Map parameter identifier to the full names
   val parameterNames = Map(
