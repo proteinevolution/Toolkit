@@ -3,11 +3,11 @@ package controllers
 import javax.inject.{Named, Singleton, Inject}
 
 
-import actors.UserActor.PrepWD
+import actors.UserActor.{GetJob, PrepWD}
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.{Alnviz, Session}
+import models.{Job, Alnviz, Session}
 import play.api.Logger
 import play.api.cache.CacheApi
 import scala.concurrent.duration._
@@ -66,7 +66,6 @@ class Tool @Inject()(val messagesApi: MessagesApi,
       case m => Some(m)
     }
 
-
     (userManager ? GetUserActor(uid)).mapTo[ActorRef].map { userActor =>
 
       // TODO replace with reflection
@@ -90,42 +89,23 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   }
 
 
-  /*
-def result(jobID: Long) = Action.async { implicit request =>
+  def result(jobID : String) = Action.async { implicit request =>
 
-  Logger.info("Method was: " + request.method + "\n")
+    val uid = request.session.get(UID).get
 
-  val uid = request.session.get(UID).get
+    (userManager ? GetUserActor(uid)).mapTo[ActorRef].flatMap { userActor =>
+      (userActor ? GetJob(jobID)).mapTo[Job].map { job =>
 
-    (UserManager() ? TellUser(uid, AskJob(jobID))).mapTo[Job].map { job =>
+       val toolframe = job.toolname match {
 
-      Logger.info("View for Job with tool" + job.toolname + " requested")
+          case "alnviz" => views.html.alnviz.result(job.id, job)
+        }
 
-      // Decide which view to render based on the job state
-      val view : Html = job.state match {
-
-        case models.Done =>
-
-          // TODO Replace by reflection
-          job.toolname match {
-
-            case "alnviz" => views.html.alnviz.result.render(jobID, job, request)
-          }
+        Ok(views.html.general.result(toolframe))
       }
 
-      request.method match {
-
-        // Post requests will just get the rendered tool view
-        case "POST" => Ok(view)
-
-        // get request will also embed into the whole page
-        case "GET" => Ok(views.html.main(view))
-
-      }
     }
-
-} */
-
+  }
 
 
 
