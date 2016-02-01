@@ -17,14 +17,13 @@ GET         /ws                            @controllers.Application.ws
 
 
 # Serve files
-GET         /files/$jobid<[0-9]+>/:filename    @controllers.Application.file(filename  : String, jobid : Long)
+GET         /files/:jobid/:filename     @controllers.Application.file(filename: String, jobid: String)
 
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                   controllers.Assets.at(path="/public", file)
 
 #GET        /toolkit             controllers.Assets.at(path="/public", file="index.html")
-GET         /disclaimer                     @controllers.Application.disclaimer
 GET         /contact                        @controllers.Application.contact
 #GET         /footer              controllers.Application.footer
 
@@ -40,5 +39,5 @@ POST        /tools/:toolname/submit         @controllers.Tool.submit(toolname : 
 # Handels the result View (Determined by the status of the
 # jobid provided
 ###############################################################
-#GET         /results/$jobid<[0-9]+>         @controllers.User.result(jobid: Long)
-# POST        /results/$jobid<[0-9]+>         @controllers.User.result(jobid: Long)
+GET         /results/:jobid                @controllers.Tool.result(jobid: String)
+POST        /results/:jobid                @controllers.Tool.result(jobid: String)

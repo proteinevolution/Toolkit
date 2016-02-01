@@ -110,15 +110,14 @@ todo.vm = (function() {
         vm.onclick = function(event){
 
             var jobID = event();
-            var route = jsRoutes.controllers.User.result(jobID);
+            var route = jsRoutes.controllers.Tool.result(jobID);
 
             $.ajax({
                 url: route.url,
                 type: "POST"
             }).done(function(data) {
 
-                $("#content").empty();
-                $("#content").append(data);
+                $("#content").empty().append(data);
             });
 
             // Use HTML5 Push state to change the state to result view without reloading

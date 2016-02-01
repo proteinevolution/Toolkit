@@ -7,7 +7,7 @@ import actors.Worker.{WStart, WPrepare}
 import akka.actor._
 import akka.event.LoggingReceive
 import models.Job
-import play.api.{Play, Logger}
+import play.api.Logger
 import com.google.inject.assistedinject.Assisted
 import play.api.Play.current
 import reflect.io._
@@ -31,6 +31,8 @@ object UserActor {
   case class PrepWDDone(job : models.Job)
 
   case object JobIDInvalid
+
+  case class GetJob(jobID : String)
 
   case class AttachWS(uid : String, ws : ActorRef)
 
@@ -61,15 +63,19 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
   /**
     * Executed when the UserActor fires up
     */
+  // TODO Only for prototype
   override def preStart() = {
 
     val d = Directory(path)
 
-    // Delete the Job Directory // TODO Only for prototype
+    // Delete the Job Directory
     val deleteSuccess = d.deleteRecursively()
     Logger.info("Try to delete user folder: State " + deleteSuccess)
 
     d.createDirectory(force = false, failIfExists = false)
+
+    // Flush User Jobs
+    userJobs.clear()
   }
 
 
@@ -138,6 +144,14 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       userJobs.put(jobid, job)
 
       // Forward to WebSocket
+      ws ! m
+
+    case GetJob(jobid) =>
+
+      sender() ! userJobs.get(jobid).get
+
+    case m @ JobIDInvalid =>
+
       ws ! m
 
 

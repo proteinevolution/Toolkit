@@ -3,11 +3,11 @@ package controllers
 import javax.inject.{Named, Singleton, Inject}
 
 
-import actors.UserActor.PrepWD
+import actors.UserActor.{GetJob, PrepWD}
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.{Alnviz, Session}
+import models.{Job, Alnviz, Session}
 import play.api.Logger
 import play.api.cache.CacheApi
 import scala.concurrent.duration._
@@ -35,13 +35,17 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
     Logger.info(s"{Tool} Input view for tool $toolname requested")
 
-    // Determine view of tool // TODO Replace with reflection
-    val view = toolname match {
+
+    // Determine view of tool
+    // TODO Replace with reflection
+    val toolframe = toolname match {
 
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
     }
+    val view = views.html.general.submit(toolname, toolframe)
 
-    Ok(views.html.roughtemplate(view)).withSession {
+
+    Ok(views.html.general.main(view)).withSession {
 
       val uid = request.session.get(UID).getOrElse {
 
@@ -56,6 +60,12 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
     val uid = request.session.get(UID).get
 
+    val jobID =  request.body.asFormUrlEncoded.get("jobid").head match {
+
+      case m if m.isEmpty => None
+      case m => Some(m)
+    }
+
     (userManager ? GetUserActor(uid)).mapTo[ActorRef].map { userActor =>
 
       // TODO replace with reflection
@@ -68,17 +78,35 @@ class Tool @Inject()(val messagesApi: MessagesApi,
               BadRequest("This was an error")
             },
             formdata => {
-
               Logger.info("{Tool} Form data sucessfully received")
-
               // TODO Determine whether user has submitted a jobid
-              userActor ! PrepWD(toolname, getCCParams(formdata)  , true, None)
+              userActor ! PrepWD(toolname, getCCParams(formdata)  , true, jobID)
             }
           )
       }
       Ok
     }
   }
+
+
+  def result(jobID : String) = Action.async { implicit request =>
+
+    val uid = request.session.get(UID).get
+
+    (userManager ? GetUserActor(uid)).mapTo[ActorRef].flatMap { userActor =>
+      (userActor ? GetJob(jobID)).mapTo[Job].map { job =>
+
+       val toolframe = job.toolname match {
+
+          case "alnviz" => views.html.alnviz.result(job.id, job)
+        }
+
+        Ok(views.html.general.result(toolframe))
+      }
+
+    }
+  }
+
 
 
   def getCCParams(cc: AnyRef) =

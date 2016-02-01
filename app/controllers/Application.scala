@@ -19,7 +19,7 @@ class Application @Inject()(val messagesApi: MessagesApi,
                             @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
 
   val UID = "uid"
-  var path = s"${Play.application.path}${current.configuration.getString("job_path").get}${File.separator}"
+  var path = s"${Play.application.path}${File.separator}${current.configuration.getString("job_path").get}${File.separator}"
 
 
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
@@ -49,21 +49,20 @@ class Application @Inject()(val messagesApi: MessagesApi,
     */
   def index = Action { implicit request =>
 
-    Ok(views.html.index())
+    Ok(views.html.general.index())
   }
 
 
   def section(sectionname : String) = Action { implicit request =>
 
-
     val view = views.html.sections.alignment()
 
-    Ok(views.html.roughtemplate(view))
+    Ok(views.html.general.main(view))
   }
 
 
   /*
-  GET         /sections/search                @controllers.Application.section
+GET        /sections/search                @controllers.Application.section
 GET         /sections/alignment             @controllers.Application.alignment
 GET         /sections/seqanal               @controllers.Application.search
 GET         /sections/secstruct             @controllers.Application.search
@@ -73,31 +72,23 @@ GET         /sections/utils                 @controllers.Application.search
    */
 
 
-  def file(filename : String, jobid : Long) = Action {
+  def file(filename : String, jobid : String) = Action { implicit request =>
 
-    // TODO check whether the user is allowed to access the file in the jobID
+    val uid = request.session.get(UID).get
+    val filePath = path + "/" + uid + "/" + jobid + "/" + "results" + "/" + filename
 
-    Ok.sendFile(new java.io.File(path + jobid + "/" + filename)).withHeaders(CONTENT_TYPE->"text/plain")
+    Logger.info(filePath)
+
+    Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain")
   }
 
-
-
-
-
-
-
-
-  // TODO These Actions must be redefined
-  def disclaimer = Action {
-    Ok(views.html.disclaimer())
-  }
 
   def contact = Action {
-    Ok(views.html.contact())
+    Ok(views.html.old.contact())
   }
 
   def footer = Action {
-    Ok(views.html.contact())
+    Ok(views.html.old.contact())
   }
 
   def search = Action {

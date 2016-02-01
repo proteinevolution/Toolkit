@@ -17,25 +17,17 @@ $ ->
         if state == '0'
           text = "Job submitted successfully."
           $(".jobformsubmit").notify(text, "success")
-          $('.jobform').trigger("reset")
+          $('.jobformclear').click()
+      when "jobidinvalid"
+        text = "Sorry, but this jobID is already used by you."
+        $(".jobformsubmit").notify(text)
+
 
     m.endComputation()
 
-  ###
-    switch message.type
-      when "JobInitStatus"
-
-
-      when "JobDone"
-        $(".jobformsubmit").notify(
-          "Hello World", "success",
-          { globalPosition:"bottom right" }
-        )
-###
   # Handles the behavior when the submit button is pressed in a job form
   $(".jobform").submit (event) ->
     event.preventDefault()
-
     submitRoute = jsRoutes.controllers.Tool.submit(toolname)
 
     $.ajax
@@ -49,9 +41,10 @@ $ ->
       success: (data, textStatus, jqXHR) ->
         #$('body').append "Successful AJAX call: #{data}"
 
-  $(".jobformclear").click (event) -> $('.jobform').trigger("reset");
 
-
+  $(".jobformclear").click (event) ->
+    $('.jobform').trigger("reset")
+    $('#jobid').prop('readonly', true).hide().val("")
 
 
 

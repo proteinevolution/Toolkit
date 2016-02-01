@@ -1,0 +1,35 @@
+@import play.api.mvc.RequestHeader
+@(toolname : String, toolframe: Html)(implicit messages: Messages, request: RequestHeader)
+
+
+<!--
+    Javascript that holds for all tool input forms
+-->
+<script src="@routes.Assets.at("javascripts/submit.js")" type="text/javascript"></script>
+
+<script type="text/javascript">
+    toolname ='@toolname'
+</script>
+
+<form class="jobform">
+
+
+    <fieldset>
+        <legend>Tool-specific parameters</legend>
+        @toolframe
+    </fieldset>
+
+    <fieldset>
+        <legend>General</legend>
+
+        <input type="checkbox" id="customjobidwanted" name="customjobidwanted" />
+        <label for="customjobidwanted" id="customjobidwantedlabel">Provide Custom ID</label>
+        <input type="text" id="jobid" name="jobid" placeholder="Custom Job ID" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Actions</legend>
+        <input class="jobformsubmit" type="submit" value="Submit Job" >
+        <input class="jobformclear" type="button" value="Clear form" />
+    </fieldset>
+</form>
