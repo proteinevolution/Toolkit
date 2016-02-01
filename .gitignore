@@ -27,3 +27,4 @@ project/plugins
 project/.sbtserver
 project/.sbtserver.lock
 development   
+conf/application.conf
