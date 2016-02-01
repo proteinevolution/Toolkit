@@ -15,7 +15,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-slf4j" % "2.3.13",
   "org.webjars" % "bootstrap" % "3.2.0",
   "org.webjars" % "flot" % "0.8.0",
-  "com.typesafe.akka" %% "akka-testkit" % "2.3.13" % "test"
+  "com.typesafe.akka" %% "akka-testkit" % "2.3.13" % "test",
+  "mysql" % "mysql-connector-java" % "5.1.36"
 )
 
 /*
