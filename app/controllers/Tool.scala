@@ -7,7 +7,8 @@ import actors.UserActor.{GetJob, PrepWD}
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.{Job, Alnviz, Session}
+import models.tools.{Tcoffee, Alnviz}
+import models.{Job, Session}
 import play.api.Logger
 import play.api.cache.CacheApi
 import scala.concurrent.duration._
@@ -37,13 +38,14 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
 
     // Determine view of tool
-    // TODO Replace with reflection
+    // TODO Replace with reflection, otherwise we have to mention all tools explicitly here.
     val toolframe = toolname match {
 
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
+      case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
     }
-    val view = views.html.general.submit(toolname, toolframe)
 
+    val view = views.html.general.submit(toolname, toolframe)
 
     Ok(views.html.general.main(view)).withSession {
 
@@ -69,21 +71,21 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     (userManager ? GetUserActor(uid)).mapTo[ActorRef].map { userActor =>
 
       // TODO replace with reflection
-      toolname match {
+      val form = toolname match {
 
-        case "alnviz" =>
-
-          Alnviz.inputForm.bindFromRequest.fold(
-            formWithErrors => {
-              BadRequest("This was an error")
-            },
-            formdata => {
-              Logger.info("{Tool} Form data sucessfully received")
-              // TODO Determine whether user has submitted a jobid
-              userActor ! PrepWD(toolname, getCCParams(formdata)  , true, jobID)
-            }
-          )
+        case "alnviz" => Alnviz.inputForm
+        case "tcoffee" => Tcoffee.inputForm
       }
+     form.bindFromRequest.fold(
+        formWithErrors => {
+          BadRequest("This was an error")
+        },
+        formdata => {
+          Logger.info("{Tool} Form data sucessfully received")
+          // TODO Determine whether user has submitted a jobid
+          userActor ! PrepWD(toolname, getCCParams(formdata)  , true, jobID)
+        }
+      )
       Ok
     }
   }
@@ -101,9 +103,8 @@ class Tool @Inject()(val messagesApi: MessagesApi,
           case "alnviz" => views.html.alnviz.result(job.id, job)
         }
 
-        Ok(views.html.general.result(toolframe))
+        Ok(views.html.general.result(toolframe, job))
       }
-
     }
   }
 
@@ -114,6 +115,5 @@ class Tool @Inject()(val messagesApi: MessagesApi,
       f.setAccessible(true)
       a + (f.getName -> f.get(cc))
     }
-
 }
 

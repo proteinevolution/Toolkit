@@ -1,5 +1,7 @@
 package models
 
+import models.tools.Alnviz
+
 /**
  *
  * Stores certain attributes to particular Values, like the full descriptive names of the parameter values.
@@ -24,7 +26,7 @@ object Values {
   )
 
   val modelMap : Map[String, ToolModel] = Map(
-    "alnviz" -> models.Alnviz
+    "alnviz" -> Alnviz
   )
 
 }

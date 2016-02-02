@@ -1,6 +1,7 @@
 package actors
 
 
+import java.io
 import java.io.PrintWriter
 
 import actors.UserActor.{JobDone, PrepWDDone}
@@ -65,9 +66,9 @@ class Worker extends Actor with ActorLogging {
 
           s(0) match {
 
-            case '#' =>  rootPath + "/params/" + value
+            case '#' =>  "params/" + value
             case '$' => sjob.params.get(value).get.toString
-            case '@' => rootPath + "/results/" + value
+            case '@' => "results/" + value
           }
         }))
       }
@@ -84,9 +85,7 @@ class Worker extends Actor with ActorLogging {
 
       Logger.info("[Worker](WStart) for job " + job.id)
       val rootPath = jobPath + job.uid + sep + job.id + sep
-
-      // Execute shell script
-      val result = (rootPath + job.toolname + ".sh").!
+      val result = Process("./" + job.toolname + ".sh", new io.File(rootPath)).!
 
       // If script has run successfully, send back to sender
       job.state = if(result == 0) models.Done else models.Error

@@ -1,5 +1,6 @@
-package models
+package models.tools
 
+import models.ToolModel
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -24,10 +25,6 @@ object Alnviz extends ToolModel {
       "format" -> text
     )(Alnviz.apply)(Alnviz.unapply)
   )
-
-  // Parameter List
-  val parameters = Vector(FileParam("alignment"), StringParam("format"))
-
 
   //Map parameter identifier to the full names
   val parameterNames = Map(

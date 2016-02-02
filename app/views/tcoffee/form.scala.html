@@ -1,0 +1,14 @@
+@import play.api.mvc.RequestHeader
+@import models.tools.Tcoffee
+@(inputForm: Form[Tcoffee])(implicit messages: Messages, request: RequestHeader)
+
+<h2>@Tcoffee.fullName</h2>
+
+
+@helper.textarea(field = inputForm("sequences"), args = 'rows -> 30, 'cols -> 50,
+                    '_label -> "Enter sequences to be aligned in Multi-FASTA format.",
+                    'id -> "sequences")
+
+@helper.checkbox(field = inputForm("mlalign_id_pair"), '_showConstraints -> false)
+@helper.checkbox(field = inputForm("mfast_pair"), '_showConstraints -> false)
+@helper.checkbox(field = inputForm("mslow_pair"), '_showConstraints -> false)

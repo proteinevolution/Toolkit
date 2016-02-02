@@ -1,6 +1,6 @@
 project/project
 project/target
-bioprogs
+bioprogs/tools
 bin/
 /db
 /lib/
