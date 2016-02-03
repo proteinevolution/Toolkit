@@ -25,10 +25,9 @@ class Worker extends Actor with ActorLogging {
   // Variables the worker need to execute //TODO Inject Configuration
   val runscriptPath = "bioprogs/runscripts/"
   val jobPath = "development/"
+  val subdirs = Array("/results", "/logs", "/params", "/specific")
 
-  val subdirs = Array("/results", "/logs", "/params")
-
-  val argumentPattern = "(\\$\\{[a-z]+\\}|#\\{[a-z]+\\}|@\\{[a-z]+\\})".r
+  val argumentPattern = "(\\$\\{[a-z]+\\}|#\\{[a-z]+\\}|@\\{[a-z]+\\}|\\?\\{.+\\})".r
 
 
   def receive = LoggingReceive {
@@ -69,6 +68,13 @@ class Worker extends Actor with ActorLogging {
             case '#' =>  "params/" + value
             case '$' => sjob.params.get(value).get.toString
             case '@' => "results/" + value
+            case '?' =>
+
+              val splt = value.split("(\\||:)")
+              if(sjob.params.get(splt(0)).get.asInstanceOf[Boolean]) splt(1) else {
+
+                if(splt.length == 2) "" else splt(2)
+              }
           }
         }))
       }

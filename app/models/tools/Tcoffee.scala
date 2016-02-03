@@ -30,6 +30,5 @@ object Tcoffee extends ToolModel {
 
 
   val resultFileNames = Vector("result")
-
 }
 case class Tcoffee(sequences: String, mlalign_id_pair: Boolean, mfast_pair : Boolean, mslow_pair : Boolean)
