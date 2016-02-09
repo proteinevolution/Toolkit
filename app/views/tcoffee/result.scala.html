@@ -1,0 +1,30 @@
+@import play.api.mvc.RequestHeader
+@import models.tools.Tcoffee
+@(jobID: String, job: models.Job)(implicit request: RequestHeader)
+
+
+<script src="@routes.Assets.at("javascripts/t_coffee.js")" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+        window.onload = calculate_forwarding();
+</script>
+
+
+<!-- Load the alnfile of the job -->
+<script type="text/javascript">
+
+
+        $.get('/files/' + '@jobID' + '/sequences.clustalw_aln', function(myContentFile) {
+            var lines = myContentFile.split("\r\n");
+
+            for(var i  in lines){
+
+
+
+
+
+            }
+        }, 'text');
+
+</script>

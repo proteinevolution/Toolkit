@@ -101,6 +101,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
        val toolframe = job.toolname match {
 
           case "alnviz" => views.html.alnviz.result(job.id, job)
+          case "tcoffee" => views.html.tcoffee.result(job.id, job)
         }
 
         Ok(views.html.general.result(toolframe, job))

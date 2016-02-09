@@ -28,7 +28,7 @@ object Tcoffee extends ToolModel {
   val parameterNames = Map(
     "sequences" -> "Sequences to be aligned")
 
-
+  // TODO We need a better abstraction for the tool result names
   val resultFileNames = Vector("result")
 }
 case class Tcoffee(sequences: String, mlalign_id_pair: Boolean, mfast_pair : Boolean, mslow_pair : Boolean)
