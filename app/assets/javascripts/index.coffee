@@ -25,27 +25,6 @@ $ ->
 
     m.endComputation()
 
-  # Handles the behavior when the submit button is pressed in a job form
-  $(".jobform").submit (event) ->
-    event.preventDefault()
-    submitRoute = jsRoutes.controllers.Tool.submit(toolname)
-
-    $.ajax
-      url: submitRoute.url
-      type: submitRoute.type
-      data: $(".jobform").serialize()
-      #dataType: "json"
-      error: (jqXHR, textStatus, errorThrown) ->
-
-        alert errorThrown
-      success: (data, textStatus, jqXHR) ->
-        #$('body').append "Successful AJAX call: #{data}"
-
-
-  $(".jobformclear").click (event) ->
-    $('.jobform').trigger("reset")
-    $('#jobid').prop('readonly', true).hide().val("")
-
 
 
 ###

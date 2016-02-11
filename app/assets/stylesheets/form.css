@@ -93,6 +93,13 @@ div.gtreebox {
 }
 
 
+span.formwarning {
+
+	color: red;
+	font-weight: bold;
+}
+
+
 div.footnote {
 	clear: both; 
 	padding-top: 3px;
