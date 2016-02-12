@@ -23,6 +23,9 @@ GET         /files/:jobid/:filename     @controllers.Application.file(filename: 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                   controllers.Assets.at(path="/public", file)
 
+# Helper for WebJars
+GET         /webjars/*file                  controllers.WebJarAssets.at(file)
+
 #GET        /toolkit             controllers.Assets.at(path="/public", file="index.html")
 GET         /contact                        @controllers.Application.contact
 #GET         /footer              controllers.Application.footer

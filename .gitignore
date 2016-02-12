@@ -29,3 +29,4 @@ project/.sbtserver.lock
 development   
 conf/application.conf
 target
+clean.sh
