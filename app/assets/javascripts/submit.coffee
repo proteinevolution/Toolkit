@@ -1,9 +1,15 @@
 $ ->
-  # Variables in Scope of Input text
+  # Variables in Scope of the Input form
+
+  # JobIDs have to obey this regular expression
   jobidPattern = /// ^
    ([\w-]+)
    $ ///i
 
+  # Whether Job submission is currently possible
+  submissionAllowed = true
+
+  # List all the reasons why job Submission is currently not allowed
 
 
 
@@ -12,16 +18,46 @@ $ ->
 
     if $(this).is(':checked')
       $('#jobid').prop('readonly', false).show()
+      $('#jobidnotif').show()
     else
       $('#jobid').prop('readonly', true).hide()
       $('#jobid').val("")
+      $('#jobidnotif').hide()
 
 
   $('#jobid').bind 'input propertychange', ->
-    if $(this).val().match jobidPattern
-      $('#jobidnotif').text "success"
-    else
+
+    value = $(this).val()
+    if value.match jobidPattern
       $('#jobidnotif').text ""
+      submissionAllowed = true
+    else
+      $('#jobidnotif').text "This Job ID is invalid."
+      submissionAllowed = false
+
+
+  # Handles the behavior when the submit button is pressed in a job form
+  $(".jobform").submit (event) ->
+    event.preventDefault()
+    submitRoute = jsRoutes.controllers.Tool.submit(toolname)
+
+    $.ajax
+      url: submitRoute.url
+      type: submitRoute.type
+      data: $(".jobform").serialize()
+      #dataType: "json"
+      error: (jqXHR, textStatus, errorThrown) ->
+
+        alert errorThrown
+      success: (data, textStatus, jqXHR) ->
+      #$('body').append "Successful AJAX call: #{data}"
+
+
+  $(".jobformclear").click (event) ->
+    $('.jobform').trigger("reset")
+    $('#jobid').prop('readonly', true).hide().val("")
+
+
 
 
 

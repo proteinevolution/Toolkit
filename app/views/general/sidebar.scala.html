@@ -91,6 +91,7 @@ todo = {};
 todo.Todo = function(data) {
     this.description = m.prop(data.description);
     this.state = m.prop(data.state);
+    this.code = m.prop(data.code);
 };
 
 //the TodoList class is a list of Todo's
@@ -124,8 +125,7 @@ todo.vm = (function() {
             window.history.pushState("string", "", "/results/" + jobID);
         };
 
-        //adds a todo to the list, and clears the description field for user convenience
-        vm.update = function(desc, state) {
+        vm.update = function(desc, state, code) {
 
             for (var i = 0; i < vm.list.length; i++) {
 
@@ -134,12 +134,14 @@ todo.vm = (function() {
                 if(job.description() == desc) {
 
                     vm.list[i] = new todo.Todo({description: desc,
-                                               state: state});
+                                               state: state,
+                                                code: code});
                     return;
                 }
             }
             vm.list.push(new todo.Todo({description: desc,
-                                        state: state}));
+                                        state: state,
+                                        code: code}));
         };
     };
     return vm
@@ -154,10 +156,11 @@ todo.controller = function() {
 //here's the view
 todo.view = function() {
     return [
-        [todo.vm.list.map(function(task, index) {
+        [todo.vm.list.map(function(task) {
             return m("tr[class=job]", {onclick: todo.vm.onclick.bind(task, task.description)},
                            [m("td[class=" + a[task.state()] + ']'),
-                            m("td", task.description())]);
+                            m("td", task.description()),
+                            m("td", task.code())]);
         })]]
 };
 m.mount(document.getElementById("rows"), {controller: todo.controller, view: todo.view});
