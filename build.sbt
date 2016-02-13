@@ -22,7 +22,9 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.4.0-1",
   "org.webjars.bower" % "lodash" % "4.3.0",
   "org.webjars" % "bootstrap" % "3.2.0",
+  "org.webjars" % "foundation" % "6.1.2",
   "org.webjars" % "flot" % "0.8.0",
+  "org.webjars" % "mithril" % "0.2.0",
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.typesafe.play" %% "play-slick" % "1.1.1",
   "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1"
