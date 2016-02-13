@@ -1,0 +1,68 @@
+/* sidebar */
+#sidebar {
+    position: absolute;
+    top: 95px;
+    left: 0px;
+  /*background-image: url(../images/mainpicNavi.gif);*/
+    background-repeat: repeat;
+    background-position: left top;
+    width: 139px;
+    padding: 0px 0px 0px 2px;
+    margin: 0px;
+    z-index: 10;
+}
+#sidebar h5 {
+    color: #000;
+    font-size: 10px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0px 0px 4px 0px;
+}
+#sidebar .section {
+    clear: both;
+    margin: 0px;
+    padding: 8px;
+    border-bottom: 1px solid #7CA6A6;
+}
+#sidebar ul {
+    margin: 0;
+    padding: 0;
+}
+
+#sidebar ul.joblist li {
+    clear: both;
+    list-style-type: none;
+    display: block;
+    padding: 0px 0px 0px 10px;
+    margin: 0;
+    border-bottom: 1px solid #7CA6A6;
+}
+
+#content {
+  margin: 0px 0px 0px 170px;
+  padding: 0px 10px 70px 0px;
+  width: 720px;
+  position: relative;
+}
+
+
+#header {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    background: #FFFFFF;
+    height: 95px;
+    top: 0px;
+    width: 100%;
+}
+
+#tabsection {
+    list-style: none;
+    position: absolute;
+    bottom: 0px;
+    left: 170px;
+    margin: 0;
+    padding: 0;
+    width: 690px;
+}
