@@ -16,7 +16,7 @@ import play.api.data.Forms._
 
 object Alnviz extends ToolModel {
   val toolname = "alnviz"
-  val fullName = "Alignment Visualizer"
+  val fullName = "AlignmentViewer"
 
   // Input Form Definition of this tool
   val inputForm = Form(
