@@ -17,14 +17,16 @@ GET         /ws                            @controllers.Application.ws
 
 
 # Serve files
-GET         /files/:jobid/:filename     @controllers.Application.file(filename: String, jobid: String)
+GET         /files/:jobid/:filename        @controllers.Application.file(filename: String, jobid: String)
 
 
+# Assets
+# Map static resources from the web jars to the /assets/lib/wjars URL path
+GET    /assets/lib/wjars/*file             controllers.WebJarAssets.at(file)
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                   controllers.Assets.at(path="/public", file)
+GET    /assets/*file                       controllers.Assets.versioned(path="/public", file: Asset)
 
-# Helper for WebJars
-GET         /webjars/*file                  controllers.WebJarAssets.at(file)
+
 
 #GET        /toolkit             controllers.Assets.at(path="/public", file="index.html")
 GET         /contact                        @controllers.Application.contact

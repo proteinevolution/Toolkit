@@ -47,7 +47,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
     val view = views.html.general.submit(toolname, toolframe)
 
-    Ok(views.html.general.main(view)).withSession {
+    Ok(views.html.main(view)).withSession {
 
       val uid = request.session.get(UID).getOrElse {
 

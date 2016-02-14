@@ -1,0 +1,12 @@
+.fullwidth {
+    width: 100%;
+    margin-left: 0pt;
+    margin-right: 0pt;
+    max-width: initial;
+}
+
+.logotext {
+    text-align: center;
+    font-weight: bold;
+    font-size: 150%;
+}

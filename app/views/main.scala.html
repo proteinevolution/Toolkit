@@ -1,0 +1,55 @@
+@import play.api.mvc.RequestHeader
+@(content: Html)(implicit request: RequestHeader)
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Bioinformatics Toolkit</title>
+
+        <link href="@routes.Assets.versioned("styles/global.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/custom.css")" rel="stylesheet">
+        <script src="@routes.WebJarAssets.at(WebJarAssets.locate("modernizr.min.js"))"></script>
+        <script src="@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))"></script>
+
+         <!-- Mithril -->
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("mithril.min.js"))'></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.2-rc.1/mithril.min.js"></script>
+
+
+        <!-- Javascript Router -->
+        @helper.javascriptRouter("jsRoutes")(
+            routes.javascript.Tool.submit,
+            routes.javascript.Tool.result
+        )
+    </head>
+
+
+    <body data-ws-url="@routes.Application.ws().webSocketURL()">
+
+
+        <div class="row fullwidth">
+            <div class="small-2 columns"> <div class="logotext">Bioinformatics Toolkit</div></div>
+            <div class="large-10 columns">@elements.topbar()</div>
+        </div>
+        <div class="row fullwidth">
+            <div class="small-2 columns">@elements.sidebar()</div>
+            <div id="content" class="large-10 columns">@content</div>
+        </div>
+
+        <!-- Script Inclusions -->
+        <script src="@routes.WebJarAssets.at(WebJarAssets.locate("fastclick.js"))"></script>
+        <script src="@routes.WebJarAssets.at(WebJarAssets.locate("foundation.min.js"))"></script>
+
+         <!-- CoffeeScript Assets -->
+        <script src="@routes.Assets.versioned("scripts/index.js")"></script>
+        <script src="@routes.Assets.versioned("scripts/submit.js")"></script>
+        <script src="@routes.Assets.versioned("scripts/main.js")"></script>
+
+
+         <!-- Public Javascript Assets -->
+        <script src="@routes.Assets.versioned("javascripts/msa_mpi_content.min.js")" type="text/javascript"></script>
+        <script src='@routes.Assets.versioned("javascripts/notify.min.js")' type="text/javascript" ></script>
+        <script src='@routes.Assets.versioned("javascripts/alnviz.js")' type="text/javascript" ></script>
+    </body>
+</html>

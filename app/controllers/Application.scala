@@ -57,7 +57,7 @@ class Application @Inject()(val messagesApi: MessagesApi,
 
     val view = views.html.sections.alignment()
 
-    Ok(views.html.general.main(view))
+    Ok(views.html.main(view))
   }
 
 
@@ -89,15 +89,5 @@ GET         /sections/utils                 @controllers.Application.search
 
   def footer = Action {
     Ok(views.html.old.contact())
-  }
-
-  def search = Action {
-
-    Ok(views.html.search())
-  }
-
-  def alignment= Action {
-
-    Ok(views.html.search())
   }
 }

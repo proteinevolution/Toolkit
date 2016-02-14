@@ -1,45 +1,24 @@
-<sidebar>
 
-    <!-- Job Code -->
-    <table id="jobcode">
+<!-- Job Code -->
+<table id="jobcode">
         <tr>
-            <td class="q"></td>
-            <td class="jobcodedesc">queued</td>
+            <td class="q">Queued</td>
         </tr>
         <tr>
-            <td class="r"></td>
-            <td class="jobcodedesc">running</td>
+            <td class="r">Running</td>
         </tr>
         <tr>
-            <td class="d"></td>
-            <td class="jobcodedesc">done</td>
+            <td class="d">Done</td>
         </tr>
         <tr>
-            <td class="e">
-            </td>
-          <!--  <td class="jobcodedesc tooltip">error</td> -->
+            <td class="e">Error</td>
         </tr>
-    </table>
-
+</table>
 
     <div class="sep">
         Recent jobs:
     </div>
 
-    <!--
-    Show results of job:
-    </div>
-    <div class="section">
-        <form action="/common/check" method="post">
-
-            <input id="jobid" name="jobid" style="width: 100%;" type="text" value="" />
-            <input class="checkbutton" name="showres" type="submit" value="Show results" style="width: 100%;" />
-        </form>
-    </div>
-
-    <div style="background-color: #7CA6A6; color: #FFFFFF; font-size: 12px; font-weight: bold; padding: 1px 2px 2px 2px; margin-bottom: 2px; margin-top: 15px;">
-
-  -->
 
         <table id="jobtable" class="tablesorter">
             <tbody id="rows">
@@ -49,34 +28,11 @@
         </table>
 
 
-        <!--
-        <div class="section">
-            <input type="hidden" id="clear_checkboxes" value="1">
-            <a href="#" onclick="selectjobs();">Select all</a>&nbsp;&nbsp;&nbsp;<a href="#" onclick="deselectjobs();">Deselect all</a>
-            <input class="stopbutton" name="clearjobs" type="submit" style="float: none; width: 100%; margin-top: 5px;" value="Clear sel. Jobs" style="width: 100%;" />
-            <br/>
-            <input class="stopbutton" name="removejobs" type="submit" style="float: none; width: 100%; margin-top: 5px;" value="Delete sel. Jobs" style="width: 100%;" onClick="setAction('clearrecentjobs', '/common/removeJobs');" />
-        </div>
-        -->
-<!--
-
-    <div class="section">@upload()</div>
-
-        <!--
-    <script type="text/javascript">
-
-    jQuery("#jobtable").tablesorter();
-
-    </script>-->
-
-</sidebar>
-
-
 
 <!-- The View-Model Definition for the JobWidget in the Sidebar -->
 <script type="text/javascript">
 var a = {};
-a[0] = 's'
+a[0] = 's';
 a[1] = 'p';
 a[2] = 'q';
 a[3] = 'r';
