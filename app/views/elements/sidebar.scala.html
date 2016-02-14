@@ -2,16 +2,16 @@
 <!-- Job Code -->
 <table id="jobcode">
         <tr>
-            <td class="q">Queued</td>
+            <td class="q job-status-fade">Queued</td>
         </tr>
         <tr>
-            <td class="r">Running</td>
+            <td class="r job-status-fade">Running</td>
         </tr>
         <tr>
-            <td class="d">Done</td>
+            <td class="d job-status-fade">Done</td>
         </tr>
         <tr>
-            <td class="e">Error</td>
+            <td class="e job-status-fade">Error</td>
         </tr>
 </table>
 
@@ -32,12 +32,12 @@
 <!-- The View-Model Definition for the JobWidget in the Sidebar -->
 <script type="text/javascript">
 var a = {};
-a[0] = 's';
-a[1] = 'p';
-a[2] = 'q';
-a[3] = 'r';
-a[4] = 'e';
-a[5] = 'd';
+a[0] = 'ss';
+a[1] = 'pp';
+a[2] = 'qq';
+a[3] = 'rr';
+a[4] = 'ee';
+a[5] = 'dd';
 
 todo = {};
 //this application only has one module: todo
@@ -136,5 +136,4 @@ onclick: function(e) {
     todo.vm.add(todo.vm.description)
 }
    -->
-
 

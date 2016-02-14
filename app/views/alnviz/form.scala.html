@@ -3,14 +3,8 @@
 @(inputForm: Form[Alnviz])(implicit messages: Messages, request: RequestHeader)
 
 
-
-
-
-<h2>@Alnviz.fullName</h2>
-
-
         <!-- Input form elements derived from the Input Data Model -->
-        @helper.textarea(field = inputForm("alignment"), args = 'rows -> 30, 'cols -> 50,
+        @helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 30,
                     '_label -> "Enter sequence alignment",
                     'id -> "alignment")
 

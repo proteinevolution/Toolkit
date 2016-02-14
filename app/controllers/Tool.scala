@@ -44,10 +44,15 @@ class Tool @Inject()(val messagesApi: MessagesApi,
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
       case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
     }
+    val toolcompletename = toolname match {
+
+      case "alnviz" => models.tools.Alnviz.fullName
+      case "tcoffee" => models.tools.Tcoffee.fullName
+    }
 
     val view = views.html.general.submit(toolname, toolframe)
 
-    Ok(views.html.main(view)).withSession {
+    Ok(views.html.main(view, toolcompletename)).withSession {
 
       val uid = request.session.get(UID).getOrElse {
 

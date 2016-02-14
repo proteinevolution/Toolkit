@@ -27,13 +27,6 @@ GET    /assets/lib/wjars/*file             controllers.WebJarAssets.at(file)
 GET    /assets/*file                       controllers.Assets.versioned(path="/public", file: Asset)
 
 
-
-#GET        /toolkit             controllers.Assets.at(path="/public", file="index.html")
-GET         /contact                        @controllers.Application.contact
-#GET         /footer              controllers.Application.footer
-
-GET         /sections/:sectionname          @controllers.Application.section(sectionname : String)
-
 ###############################################################
 # Tool specific routes
 ###############################################################

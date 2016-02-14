@@ -12,27 +12,14 @@
 
 <form class="jobform">
 
-
-    <fieldset>
-        <legend>Tool-specific parameters</legend>
-        @toolframe
-    </fieldset>
-
-    <fieldset>
-        <legend>General</legend>
-
+        <input class="button" type="submit" value="Submit Job" >
+        <input class="jobformclear button" type="button" value="Clear form" />
         <input type="checkbox" id="customjobidwanted" name="customjobidwanted" />
         <label for="customjobidwanted" id="customjobidwantedlabel">Provide Custom ID</label>
         <input type="text" id="jobid" name="jobid" placeholder="Custom Job ID" />
 
-        <!-- Label for input failure -->
-        <span class="formwarning" id="jobidnotif"></span>
+        @toolframe
 
-    </fieldset>
 
-    <fieldset>
-        <legend>Actions</legend>
-        <input class="success hollow button" type="submit" value="Submit Job" >
-        <input class="jobformclear success hollow button" type="button" value="Clear form" />
-    </fieldset>
+
 </form>

@@ -1,17 +1,17 @@
-@()
+@(sectionname : String)
 <div class="top-bar">
-    <div class="top-bar-left">
+    <div class="top-bar-title logotext">
+        @sectionname
+    </div>
+    <div class="top-bar-right">
         <ul class="dropdown menu" data-dropdown-menu>
             <li>
-                <a href="#">One</a>
+                <a href="">Alignment</a>
                 <ul class="menu vertical">
-                    <li><a href="#">One</a></li>
-                    <li><a href="#">Two</a></li>
-                    <li><a href="#">Three</a></li>
+                    <li><a href="/tools/alnviz">Alignment Visualizer</a></li>
+                    <li><a href="/tools/tcoffee">T-Coffee</a></li>
                 </ul>
             </li>
-            <li><a href="#">Two</a></li>
-            <li><a href="#">Three</a></li>
         </ul>
     </div>
 </div>

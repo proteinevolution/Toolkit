@@ -1,5 +1,5 @@
 @import play.api.mvc.RequestHeader
-@(content: Html)(implicit request: RequestHeader)
+@(content: Html, sectionname : String)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 
@@ -30,7 +30,7 @@
 
         <div class="row fullwidth">
             <div class="small-2 columns"> <div class="logotext">Bioinformatics Toolkit</div></div>
-            <div class="large-10 columns">@elements.topbar()</div>
+            <div class="large-10 columns">@elements.topbar(sectionname)</div>
         </div>
         <div class="row fullwidth">
             <div class="small-2 columns">@elements.sidebar()</div>

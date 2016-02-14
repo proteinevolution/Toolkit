@@ -1,7 +1,5 @@
 .fullwidth {
-    width: 100%;
-    margin-left: 0pt;
-    margin-right: 0pt;
+    width: 90%;
     max-width: initial;
 }
 
@@ -10,3 +8,38 @@
     font-weight: bold;
     font-size: 150%;
 }
+
+.job-status-fade {
+    border-radius: 5px;
+    -webkit-transition: background-color 0.5s;
+    -moz-transition: background-color 0.5s;
+    -o-transition: background-color 0.5s;
+    -ms-transition: background-color 0.5s;
+    transition: background-color 0.5s;
+}
+.d:hover {
+    background-color: green;
+}
+.e:hover {
+    background-color: red;
+}
+.r:hover {
+    background-color: yellow;
+}
+.q:hover {
+    background-color: orange;
+}
+
+.dd {
+    background-color: green;
+}
+.ee {
+    background-color: red;
+}
+.rr {
+    background-color: yellow;
+}
+.qq {
+    background-color: orange;
+}
+

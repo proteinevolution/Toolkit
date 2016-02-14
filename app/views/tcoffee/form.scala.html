@@ -2,10 +2,7 @@
 @import models.tools.Tcoffee
 @(inputForm: Form[Tcoffee])(implicit messages: Messages, request: RequestHeader)
 
-<h2>@Tcoffee.fullName</h2>
-
-
-@helper.textarea(field = inputForm("sequences"), args = 'rows -> 30, 'cols -> 50,
+@helper.textarea(field = inputForm("sequences"), args = 'rows -> 20, 'cols -> 50,
                     '_label -> "Enter sequences to be aligned in Multi-FASTA format.",
                     'id -> "sequences")
 

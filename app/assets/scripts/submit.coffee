@@ -9,32 +9,26 @@ $ ->
   # Whether Job submission is currently possible
   submissionAllowed = true
 
-  # List all the reasons why job Submission is currently not allowed
-
-
 
   $('#jobid').prop('readonly', true).hide()
   $('#customjobidwanted').change ->
 
     if $(this).is(':checked')
       $('#jobid').prop('readonly', false).show()
-      $('#jobidnotif').show()
     else
       $('#jobid').prop('readonly', true).hide()
       $('#jobid').val("")
-      $('#jobidnotif').hide()
 
 
   $('#jobid').bind 'input propertychange', ->
 
     value = $(this).val()
     if value.match jobidPattern
-      $('#jobidnotif').text ""
+      $(this).css('background-color', 'white')
       submissionAllowed = true
     else
-      $('#jobidnotif').text "This Job ID is invalid."
+      $(this).css('background-color', 'rgba(255, 0, 0, 0.3)').
       submissionAllowed = false
-
 
   # Handles the behavior when the submit button is pressed in a job form
   $(".jobform").submit (event) ->

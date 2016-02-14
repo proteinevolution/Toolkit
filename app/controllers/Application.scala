@@ -49,28 +49,9 @@ class Application @Inject()(val messagesApi: MessagesApi,
     */
   def index = Action { implicit request =>
 
-    Ok(views.html.general.index())
+    // TODO Serve reasonble content frame
+    Ok(views.html.main(views.html.general.homecontent(),"Home"))
   }
-
-
-  def section(sectionname : String) = Action { implicit request =>
-
-    val view = views.html.sections.alignment()
-
-    Ok(views.html.main(view))
-  }
-
-
-  /*
-GET        /sections/search                @controllers.Application.section
-GET         /sections/alignment             @controllers.Application.alignment
-GET         /sections/seqanal               @controllers.Application.search
-GET         /sections/secstruct             @controllers.Application.search
-GET         /sections/tertstruct            @controllers.Application.search
-GET         /sections/classification        @controllers.Application.search
-GET         /sections/utils                 @controllers.Application.search
-   */
-
 
   def file(filename : String, jobid : String) = Action { implicit request =>
 
