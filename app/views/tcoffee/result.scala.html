@@ -3,32 +3,4 @@
 @(jobID: String, job: models.Job)(implicit request: RequestHeader)
 
 
-
-<script type="text/javascript">
-        window.onload = calculate_forwarding();
-</script>
-
-
-<table id="clustal">
-
-</table>
-
-
-
-<!-- Load the alnfile of the job -->
-<script type="text/javascript">
-
-
-        $.get('/files/' + '@jobID' + '/sequences.clustalw_aln', function(myContentFile) {
-            var lines = myContentFile.split("\r\n");
-
-            for(var i  in lines){
-
-
-
-
-
-            }
-        }, 'text');
-
-</script>
+@visualization.alignment.simple(s"/files/$jobID/sequences.clustalw_aln")

@@ -43,3 +43,12 @@
     background-color: orange;
 }
 
+.alignment {
+    font-family: monospace;
+    font-size: 14px;
+}
+
+tr.spaceUnder > td
+{
+    padding-bottom: 1em;
+}
