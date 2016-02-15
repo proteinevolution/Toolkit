@@ -1,2 +1,11 @@
-@(visualizations : Array[Html])
+@(visualizations : Map[String, Html])
 
+@for((key, value) <- visualizations) {
+
+
+    <input type="button" value="Toggle @key" onclick="$('#@key-panel').toggle()">
+
+    <div id="@key-panel" class="panel" hidden>
+        @value
+    </div>
+}

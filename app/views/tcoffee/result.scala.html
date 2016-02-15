@@ -1,6 +1,0 @@
-@import play.api.mvc.RequestHeader
-@import models.tools.Tcoffee
-@(jobID: String, job: models.Job)(implicit request: RequestHeader)
-
-
-@visualization.alignment.simple(s"/files/$jobID/sequences.clustalw_aln")

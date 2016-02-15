@@ -11,6 +11,7 @@ import models.tools.{Tcoffee, Alnviz}
 import models.{Job, Session}
 import play.api.Logger
 import play.api.cache.CacheApi
+import play.twirl.api.Html
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask
@@ -103,10 +104,13 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     (userManager ? GetUserActor(uid)).mapTo[ActorRef].flatMap { userActor =>
       (userActor ? GetJob(jobID)).mapTo[Job].map { job =>
 
-       val toolframe = job.toolname match {
+        //TODO Calculate the appropriate visualizations of the tools
+        val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$jobID/sequences.clustalw_aln"))
+
+        val toolframe = job.toolname match {
 
           case "alnviz" => views.html.alnviz.result(job.id, job)
-          case "tcoffee" => views.html.tcoffee.result(job.id, job)
+          case "tcoffee" => views.html.tool.visualizations(vis)
         }
 
         Ok(views.html.general.result(toolframe, job))

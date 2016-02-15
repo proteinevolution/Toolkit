@@ -1,6 +1,0 @@
-<h1><%= @tool['title'] %> Help</h1>
-<ul>
-	<li <% if params['action'] == "help_ov" %> class = "current" <% end %> ><a href="<%= url_for(:action => 'help_ov') %>">Overview</a></li>
-	<li <% if params['action'] == "help_params" %> class = "current" <% end %>><a href="<%= url_for(:action => 'help_params') %>">Parameters</a></li>
-        <li <% if params['action'] == "help_results" %> class = "current" <% end %>><a href="<%= url_for(:action => 'help_results') %>">Results</a></li>
-</ul>
