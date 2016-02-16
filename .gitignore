@@ -28,5 +28,6 @@ project/.sbtserver
 project/.sbtserver.lock
 development   
 conf/application.conf
+/conf/application.conf
 target
 clean.sh
