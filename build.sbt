@@ -4,6 +4,7 @@ version := "1.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
+
 scalaVersion := "2.11.7"
 
 logLevel := Level.Warn
@@ -12,6 +13,7 @@ libraryDependencies ++= Seq(
   ws,
   filters,
   cache,
+  evolutions,
   "org.webjars" %% "webjars-play" % "2.4.0-2",
   "org.webjars" % "jquery" % "2.2.0",
   "org.webjars" % "foundation" % "6.1.2",

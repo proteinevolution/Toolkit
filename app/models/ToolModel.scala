@@ -1,6 +1,7 @@
 package models
 
 import java.io.File
+import models.data.Inport
 import play.api.Play._
 
 /**
@@ -8,8 +9,18 @@ import play.api.Play._
   */
 abstract class ToolModel {
 
-
   val resultFileNames :  Vector[String]
+
+
+  /*
+  def makeInputForm = {
+
+    val mainMapping =  inports flatMap  {case (inport, no) =>
+
+      for(i <- 0 until no) yield inport.str + no.toString -> inport.pattern
+    }
+  }
+*/
 
 
   def resultFilePaths(jobID : Long) : Vector[String] = {

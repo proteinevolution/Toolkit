@@ -29,3 +29,6 @@ object Job {
 
   def apply(toolname: String, state: JobState, id : String, uid : String) = new Job(toolname, state, id, uid)
 }
+
+//Job Class used for database storage
+case class DBJob(val id : Long, val jobid : Long)

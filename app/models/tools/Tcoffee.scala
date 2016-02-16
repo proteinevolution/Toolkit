@@ -1,6 +1,8 @@
 package models.tools
 
 import models.ToolModel
+import models.data.DataTypes.{Sequences, Alignment}
+import models.data.{Inport, FASTA}
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -11,8 +13,19 @@ import play.api.data.Forms._
   * Singleton object that stores general information about a tool
   */
 object Tcoffee extends ToolModel {
+
+
   val toolname = "tcoffee"
   val fullName = "T-Coffee"
+
+
+  val inports  = Map(
+
+    Sequences -> 1 // TCoffee needs one Set of Sequences
+  )
+
+
+  //-----------------------------------------------------------------------------------------------
 
   // Input Form Definition of this tool
   val inputForm = Form(
