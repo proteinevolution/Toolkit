@@ -52,3 +52,27 @@ tr.spaceUnder > td
 {
     padding-bottom: 1em;
 }
+
+.small-2 {
+
+    background-color: #006F62;
+
+
+}
+
+
+.footer  {
+
+    background-color: #272727;
+    color: #fff;
+    text-align: justify;
+    font-style: oblique;
+}
+
+.socket {
+
+    background-color: #222222;
+    color: #fff;
+
+
+}
