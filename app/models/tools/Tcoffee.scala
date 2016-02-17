@@ -1,6 +1,5 @@
 package models.tools
 
-import models.ToolModel
 import models.data.DataTypes.{Sequences, Alignment}
 import models.data.{Inport, FASTA}
 import play.api.data.Form

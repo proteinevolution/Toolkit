@@ -1,6 +1,5 @@
 package models.tools
 
-import models.ToolModel
 import play.api.data.Form
 import play.api.data.Forms._
 

@@ -1,6 +1,9 @@
+###*
+# Provides the necessary scripts for handling form elements of the view, like they are used to submit a
+# job from the UI.
+###
 $ ->
   # Variables in Scope of the Input form
-
   # JobIDs have to obey this regular expression
   jobidPattern = /// ^
    ([\w-]+)
@@ -8,8 +11,7 @@ $ ->
 
   # Whether Job submission is currently possible
   submissionAllowed = true
-
-
+  # Elements taking care of the input of a custom Job ID
   $('#jobid').prop('readonly', true).hide()
   $('#customjobidwanted').change ->
 
@@ -18,7 +20,6 @@ $ ->
     else
       $('#jobid').prop('readonly', true).hide()
       $('#jobid').val("")
-
 
   $('#jobid').bind 'input propertychange', ->
 
@@ -46,15 +47,10 @@ $ ->
       success: (data, textStatus, jqXHR) ->
       #$('body').append "Successful AJAX call: #{data}"
 
-
+  # If one hits the Reset button of the form
   $(".jobformclear").click (event) ->
     $('.jobform').trigger("reset")
     $('#jobid').prop('readonly', true).hide().val("")
-
-
-
-
-
 
 
 

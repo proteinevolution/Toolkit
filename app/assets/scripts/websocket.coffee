@@ -1,13 +1,21 @@
+###
+#  Handles the Connection to the WebSocket and its connection to ModelView elements like provided by
+#  Mithril.
+###
+
 $ ->
   ws = new WebSocket $("body").data("ws-url")
-  # reload state of user from server
+
   # Handles the behavior that occurs if the WebSocket receives data from the Server
   ws.onmessage = (event) ->
+
+    # Need to make recalc of Mithril explicit here, since this code is not part of the Mithril view
     m.startComputation()
 
     message = JSON.parse event.data
 
     switch message.type
+      # Jobstate has changed
       when "jobstate"
         state = message.newState.toString()
         console.log(state)
@@ -18,11 +26,12 @@ $ ->
           text = "Job submitted successfully."
           $(".jobformsubmit").notify(text, "success")
           $('.jobformclear').click()
+
+      # User has entered a JobID that is already in use
+      # // TODO This case can be handled on client-side
       when "jobidinvalid"
         text = "Sorry, but this jobID is already used by you."
         $(".jobformsubmit").notify(text)
-
-
     m.endComputation()
 
 

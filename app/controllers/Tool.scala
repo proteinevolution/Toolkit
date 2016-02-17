@@ -7,8 +7,9 @@ import actors.UserActor.{GetJob, PrepWD}
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
+import models.jobs.Job
 import models.tools.{Tcoffee, Alnviz}
-import models.{Job, Session}
+import models.Session
 import play.api.Logger
 import play.api.cache.CacheApi
 import play.twirl.api.Html

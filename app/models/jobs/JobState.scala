@@ -1,4 +1,4 @@
-package models
+package models.jobs
 
 /**
   * Created by lukas on 1/20/16.

@@ -1,6 +1,6 @@
 package models.database
 
-import models.DBJob
+import models.jobs.DBJob
 import play.api.Play
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile

@@ -8,6 +8,7 @@ import actors.UserActor.{JobDone, PrepWDDone}
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
 import models._
+import models.jobs.{Done, Error, SuppliedJob, Job}
 import play.api.Logger
 import scala.io.Source
 import sys.process._
@@ -94,7 +95,7 @@ class Worker extends Actor with ActorLogging {
       val result = Process("./" + job.toolname + ".sh", new io.File(rootPath)).!
 
       // If script has run successfully, send back to sender
-      job.state = if(result == 0) models.Done else models.Error
+      job.state = if(result == 0) Done else Error
 
       sender() ! JobDone(job)
   }

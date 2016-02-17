@@ -1,6 +1,6 @@
 package models
 
-import models.tools.Alnviz
+import models.tools.{ToolModel, Alnviz}
 
 /**
  *

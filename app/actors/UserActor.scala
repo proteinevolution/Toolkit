@@ -6,7 +6,7 @@ import javax.inject._
 import actors.Worker.{WStart, WPrepare}
 import akka.actor._
 import akka.event.LoggingReceive
-import models.Job
+import models.jobs._
 import play.api.Logger
 import com.google.inject.assistedinject.Assisted
 import play.api.Play.current
@@ -24,11 +24,11 @@ import reflect.io._
 
 object UserActor {
 
-  case class JobStateChanged(jobid : String, state : models.JobState)
-  case class JobDone(job: models.Job)
+  case class JobStateChanged(jobid : String, state : JobState)
+  case class JobDone(job: Job)
 
   case class PrepWD(toolname : String, params : Map[String, Any], startImmediately : Boolean, jobid : Option[String])
-  case class PrepWDDone(job : models.Job)
+  case class PrepWDDone(job : Job)
 
   case object JobIDInvalid
 
@@ -53,7 +53,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
   var ws: ActorRef = null
 
   // The UserActor knows all Jobs that belong to him
-  val userJobs = new collection.mutable.HashMap[String, models.Job]()
+  val userJobs = new collection.mutable.HashMap[String, Job]()
 
   var jobIDCounter : Long = 0
   val sep = File.separator
@@ -118,10 +118,10 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       else {
 
         // Everything seems to be fine, send Job to workers
-        val sjob = Job(toolname, models.Running, jobid, uid).attachParams(params)
+        val sjob = Job(toolname, Running, jobid, uid).attachParams(params)
         userJobs.put(sjob.id, sjob)
 
-        self ! JobStateChanged(jobid, models.Submitted)
+        self ! JobStateChanged(jobid, Submitted)
         worker ! WPrepare(sjob)
       }
 
@@ -129,7 +129,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case PrepWDDone(job) =>
 
       Logger.info("[UserActor] Job with ID " + job.id + " was prepared successfully")
-      self ! JobStateChanged(job.id, models.Prepared)
+      self ! JobStateChanged(job.id, Prepared)
       worker ! WStart(job)
 
 
