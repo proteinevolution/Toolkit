@@ -28,6 +28,7 @@
     <body data-ws-url="@routes.Application.ws().webSocketURL()">
 
 
+
         <div class="row fullwidth">
             <div class="small-2 columns"> <div class="logotext">Bioinformatics Toolkit</div></div>
             <div class="large-10 columns">@elements.topbar(sectionname)</div>
@@ -41,11 +42,13 @@
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("fastclick.js"))"></script>
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("foundation.min.js"))"></script>
 
-         <!-- CoffeeScript Assets -->
+
+        <!-- CoffeeScript Assets -->
+        <script src="@routes.Assets.versioned("scripts/main.js")"></script>
         <script src="@routes.Assets.versioned("scripts/websocket.js")"></script>
         <script src="@routes.Assets.versioned("scripts/form.js")"></script>
-        <script src="@routes.Assets.versioned("scripts/main.js")"></script>
         <script src="@routes.Assets.versioned("scripts/alignment.js")"></script>
+
 
 
          <!-- Public Javascript Assets -->

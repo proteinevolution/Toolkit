@@ -63,7 +63,6 @@ todo.vm = (function() {
         //a running list of todos
         vm.list = new todo.TodoList();
 
-
         vm.onclick = function(event){
 
             var jobID = event();
@@ -80,6 +79,8 @@ todo.vm = (function() {
             // Use HTML5 Push state to change the state to result view without reloading
             window.history.pushState("string", "", "/results/" + jobID);
         };
+
+
 
         vm.update = function(desc, state, code) {
 
@@ -99,6 +100,7 @@ todo.vm = (function() {
                                         state: state,
                                         code: code}));
         };
+        //ws.send(JSON.stringify({type: "getAllJobs"}))
     };
     return vm
 }());
@@ -119,8 +121,8 @@ todo.view = function() {
                             m("td", task.code())]);
         })]]
 };
-m.mount(document.getElementById("rows"), {controller: todo.controller, view: todo.view});
 
+m.mount(document.getElementById("rows"), {controller: todo.controller, view: todo.view});
 
 </script>
 

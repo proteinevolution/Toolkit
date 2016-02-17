@@ -21,7 +21,6 @@ import reflect.io._
   *
   */
 
-
 object UserActor {
 
   case class JobStateChanged(jobid : String, state : JobState)
@@ -33,6 +32,8 @@ object UserActor {
   case object JobIDInvalid
 
   case class GetJob(jobID : String)
+
+  case class GetAllJobs()
 
   case class AttachWS(uid : String, ws : ActorRef)
 
@@ -149,6 +150,10 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case GetJob(jobid) =>
 
       sender() ! userJobs.get(jobid).get
+
+    case GetAllJobs() =>
+
+      sender() ! userJobs.values
 
     case m @ JobIDInvalid =>
 

@@ -3,36 +3,47 @@
 #  Mithril.
 ###
 
-$ ->
-  ws = new WebSocket $("body").data("ws-url")
+ws = new WebSocket $("body").data("ws-url")
 
   # Handles the behavior that occurs if the WebSocket receives data from the Server
-  ws.onmessage = (event) ->
+ws.onmessage = (event) ->
 
-    # Need to make recalc of Mithril explicit here, since this code is not part of the Mithril view
-    m.startComputation()
+  # Need to make recalc of Mithril explicit here, since this code is not part of the Mithril view
+  m.startComputation()
 
-    message = JSON.parse event.data
+  message = JSON.parse event.data
 
-    switch message.type
+  switch message.type
       # Jobstate has changed
-      when "jobstate"
-        state = message.newState.toString()
-        console.log(state)
-        todo.vm.update(message.jobid, state)
+    when "jobstate"
+      state = message.newState.toString()
+      console.log(state)
+      todo.vm.update(message.jobid, state)
 
-        # Show user a popup with the submission
-        if state == '0'
-          text = "Job submitted successfully."
-          $(".jobformsubmit").notify(text, "success")
-          $('.jobformclear').click()
+      # Show user a popup with the submission
+      if state == '0'
+        text = "Job submitted successfully."
+        $(".jobformsubmit").notify(text, "success")
+        $('.jobformclear').click()
 
-      # User has entered a JobID that is already in use
-      # // TODO This case can be handled on client-side
-      when "jobidinvalid"
-        text = "Sorry, but this jobID is already used by you."
-        $(".jobformsubmit").notify(text)
-    m.endComputation()
+    # User has entered a JobID that is already in use
+    # // TODO This case can be handled on client-side
+    when "jobidinvalid"
+      text = "Sorry, but this jobID is already used by you."
+      $(".jobformsubmit").notify(text)
+
+    when "joblist"
+
+      for job in message.jobs
+        console.log(job.newState.toString())
+        todo.vm.update(job.jobid, job.newState)
+
+
+  m.endComputation()
+
+
+
+  #
 
 
 
