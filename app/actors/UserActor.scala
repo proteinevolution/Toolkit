@@ -3,6 +3,7 @@ package actors
 import java.io.File
 import javax.inject._
 
+import actors.WebSocketActor.JobList
 import actors.Worker.{WStart, WPrepare}
 import akka.actor._
 import akka.event.LoggingReceive
@@ -33,7 +34,7 @@ object UserActor {
 
   case class GetJob(jobID : String)
 
-  case class GetAllJobs()
+  case object GetAllJobs
 
   case class AttachWS(uid : String, ws : ActorRef)
 
@@ -151,9 +152,10 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       sender() ! userJobs.get(jobid).get
 
-    case GetAllJobs() =>
+    case GetAllJobs =>
 
-      sender() ! userJobs.values
+      Logger.info("User Actor was asked to restore all jobs")
+      sender() ! JobList(userJobs.values)
 
     case m @ JobIDInvalid =>
 

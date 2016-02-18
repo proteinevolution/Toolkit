@@ -13,6 +13,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.duration._
 import models.jobs.Job
+import play.api.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import play.api.libs.json.{JsValue, Json}
@@ -42,11 +43,14 @@ class WebSocketActor(uid: String, userManager : ActorRef, out: ActorRef)  extend
      */
     case js: JsValue =>
 
-      (js \ "type").validate[String] map { _ =>
+      (js \ "type").validate[String] map {
 
-        (userManager ? GetUserActor(uid)).mapTo[ActorRef].map { userActor =>
-          userActor ! GetAllJobs
-        }
+        case  "getJobs" =>
+          Logger.info("WebSocket Actor Received message")
+          (userManager ? GetUserActor(uid)).mapTo[ActorRef].map { userActor =>
+            Logger.info("Send GetAllJobs to UserActor")
+            userActor ! GetAllJobs
+          }
       }
 
     case JobIDInvalid =>
@@ -63,13 +67,12 @@ class WebSocketActor(uid: String, userManager : ActorRef, out: ActorRef)  extend
     /* Passes the full list of jobs to the WebSocket
       */
     case JobList(joblist) =>
-      val jobListObjs = for (job <- joblist) yield {
-        Json.obj("toolname" -> Json.toJson(job.toolname),
-          "state" -> Json.toJson(job.state.no),
-          "id" -> Json.toJson(job.id))
-      }
-      val jobListObjJsn = Json.toJson(jobListObjs)
-      out ! Json.obj("type" -> "joblist", "jobs" -> Json.stringify(jobListObjJsn))
 
+      val jobListObjs = for (job <- joblist) yield {
+        Json.obj("t" -> job.toolname,
+                  "s" -> job.state.no,
+                  "i" -> job.id)
+      }
+      out ! Json.obj("type" -> "joblist", "jobs" -> jobListObjs)
   }
 }

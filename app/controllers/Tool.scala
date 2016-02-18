@@ -11,8 +11,6 @@ import models.jobs.Job
 import models.tools.{Tcoffee, Alnviz}
 import models.Session
 import play.api.Logger
-import play.api.cache.CacheApi
-import play.twirl.api.Html
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask
@@ -24,8 +22,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 @Singleton
 class Tool @Inject()(val messagesApi: MessagesApi,
-                     @Named("user-manager") userManager : ActorRef,
-                     cache: CacheApi) extends Controller with I18nSupport {
+                     @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
+
 
   val UID = "uid"
   val toolname = "alnviz"

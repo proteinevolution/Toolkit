@@ -15,127 +15,14 @@
         </tr>
 </table>
 
-    <div class="sep">
-        Recent jobs:
-    </div>
 
 
-        <table id="jobtable" class="tablesorter">
-            <tbody id="rows">
-                <tr>
-                </tr>
-            </tbody>
-        </table>
+<table id="jobtable" class="hover">
+    <tbody id="jobtable-rows">
+        <tr>
+        </tr>
+    </tbody>
+</table>
 
 
-
-<!-- The View-Model Definition for the JobWidget in the Sidebar -->
-<script type="text/javascript">
-var a = {};
-a[0] = 'ss';
-a[1] = 'pp';
-a[2] = 'qq';
-a[3] = 'rr';
-a[4] = 'ee';
-a[5] = 'dd';
-
-todo = {};
-//this application only has one module: todo
-//for simplicity, we use this module to namespace the model classes
-
-//the Todo class has two properties
-todo.Todo = function(data) {
-    this.description = m.prop(data.description);
-    this.state = m.prop(data.state);
-    this.code = m.prop(data.code);
-};
-
-//the TodoList class is a list of Todo's
-todo.TodoList = Array;
-
-//the view-model tracks a running list of todos,
-//stores a description for new todos before they are created
-//and takes care of the logic surrounding when adding is permitted
-//and clearing the input after adding a todo to the list
-todo.vm = (function() {
-    var vm = {};
-    vm.init = function() {
-        //a running list of todos
-        vm.list = new todo.TodoList();
-
-        vm.onclick = function(event){
-
-            var jobID = event();
-            var route = jsRoutes.controllers.Tool.result(jobID);
-
-            $.ajax({
-                url: route.url,
-                type: "POST"
-            }).done(function(data) {
-
-                $("#content").empty().append(data);
-            });
-
-            // Use HTML5 Push state to change the state to result view without reloading
-            window.history.pushState("string", "", "/results/" + jobID);
-        };
-
-
-
-        vm.update = function(desc, state, code) {
-
-            for (var i = 0; i < vm.list.length; i++) {
-
-                var job = vm.list[i];
-
-                if(job.description() == desc) {
-
-                    vm.list[i] = new todo.Todo({description: desc,
-                                               state: state,
-                                                code: code});
-                    return;
-                }
-            }
-            vm.list.push(new todo.Todo({description: desc,
-                                        state: state,
-                                        code: code}));
-        };
-        //ws.send(JSON.stringify({type: "getAllJobs"}))
-    };
-    return vm
-}());
-
-//the controller defines what part of the model is relevant for the current page
-//in our case, there's only one view-model that handles everything
-todo.controller = function() {
-    todo.vm.init()
-};
-
-//here's the view
-todo.view = function() {
-    return [
-        [todo.vm.list.map(function(task) {
-            return m("tr[class=job]", {onclick: todo.vm.onclick.bind(task, task.description)},
-                           [m("td[class=" + a[task.state()] + ']'),
-                            m("td", task.description()),
-                            m("td", task.code())]);
-        })]]
-};
-
-m.mount(document.getElementById("rows"), {controller: todo.controller, view: todo.view});
-
-</script>
-
-
-
-    <!--
-    var vm = todo.vm
-
-m("button", {onclick: vm.add.bind(vm, vm.description)}, "Add")
-
-
-onclick: function(e) {
-    todo.vm.add(todo.vm.description)
-}
-   -->
 
