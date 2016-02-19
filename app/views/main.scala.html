@@ -29,23 +29,24 @@
 
 
 
-        <div class="row fullwidth">
-            <div class="small-2 columns"> <div class="logotext">Bioinformatics Toolkit</div></div>
-            <div class="large-10 columns">@elements.topbar(sectionname)</div>
+        <div class="row" data-equalizer>
+            <div class="large-2 columns top-bar" data-equalizer-watch>
+                <span class="logo"> Bioinformatics Toolkit </span>
+            </div>
+            <div class="large-10 columns top-bar" data-equalizer-watch>@elements.topbar(sectionname)</div>
         </div>
-        <div class="row fullwidth">
+
+        <<div class="row">
             <div class="small-2 columns">@elements.sidebar()</div>
             <div id="content" class="large-10 columns">@content</div>
         </div>
 
-        <div class="row fullwidth">
-            <div class="small-2 columns"></div>
-            <div class="large-10 columns" class="footer">@elements.footer()</div>
+        <div class="row">
+            <div class="large-12 columns" class="footer">@elements.footer()</div>
         </div>
 
-        <div class="row fullwidth">
-            <div class="small-2 columns"></div>
-            <div class="large-10 columns" class="socket">@elements.socket()</div>
+        <div class="row">
+            <div class="large-12 columns" class="socket">@elements.socket()</div>
         </div>
 
         <!-- Script Inclusions -->

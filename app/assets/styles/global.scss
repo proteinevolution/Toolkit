@@ -1,4 +1,7 @@
 @import 'lib/foundation/scss/foundation';
+@import 'footer';
+@import 'sidebar';
+@import 'topbar';
 @import '_settings';
 
 @include foundation-global-styles;

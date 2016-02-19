@@ -1,12 +1,12 @@
 .fullwidth {
-    width: 90%;
+    width: 100%;
     max-width: initial;
 }
 
 .logotext {
     text-align: center;
     font-weight: bold;
-    font-size: 150%;
+    font-size: large;
 }
 
 .job-status-fade {
@@ -53,26 +53,5 @@ tr.spaceUnder > td
     padding-bottom: 1em;
 }
 
-.small-2 {
-
-    background-color: #006F62;
 
 
-}
-
-
-.footer  {
-
-    background-color: #272727;
-    color: #fff;
-    text-align: justify;
-    font-style: oblique;
-}
-
-.socket {
-
-    background-color: #222222;
-    color: #fff;
-
-
-}
