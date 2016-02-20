@@ -1,6 +1,4 @@
 package actors
-
-import java.io.File
 import javax.inject._
 
 import actors.WebSocketActor.JobList
@@ -10,9 +8,6 @@ import akka.event.LoggingReceive
 import models.jobs._
 import play.api.Logger
 import com.google.inject.assistedinject.Assisted
-import play.api.Play.current
-import reflect.io._
-
 
 /**
   *  The User actor will represent each user who is present on the toolkit and
@@ -24,29 +19,25 @@ import reflect.io._
 
 object UserActor {
 
+  // All messages that the UserActor can actually receive
   case class JobStateChanged(jobid : String, state : JobState)
-  case class JobDone(job: Job)
-
-  case class PrepWD(toolname : String, params : Map[String, Any], startImmediately : Boolean, jobid : Option[String])
-  case class PrepWDDone(job : Job)
-
+  case class PrepWD(toolname : String, params : Map[String, Any], startImmediately : Boolean, job_id_o : Option[String])
+  case class PrepWDDone(job : UserJob)
   case object JobIDInvalid
-
   case class GetJob(jobID : String)
-
   case object GetAllJobs
-
-  case class AttachWS(uid : String, ws : ActorRef)
+  case class AttachWS(user_id : Long, ws : ActorRef)
 
   trait Factory {
 
-    def apply(uid: String): Actor
+    def apply(user_id: Long): Actor
   }
 }
 
 
 class UserActor @Inject() (@Named("worker") worker : ActorRef,
-                           @Assisted uid: String)
+                           @Assisted user_id: Long,
+                           jobDB : models.database.Jobs)
                   extends Actor with ActorLogging {
 
   import UserActor._
@@ -54,40 +45,14 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
   // The websocket that is attached to the User
   var ws: ActorRef = null
 
-  // The UserActor knows all Jobs that belong to him
-  val userJobs = new collection.mutable.HashMap[String, Job]()
+  // The User Actor maps the job_id to the actual job instance
+  val userJobs = new collection.mutable.HashMap[String, UserJob]
 
-  var jobIDCounter : Long = 0
-  val sep = File.separator
-  val path = s"${current.configuration.getString("job_path").get}$sep$uid$sep"
-
-
-  /**
-    * Executed when the UserActor fires up
-    */
-  // TODO Only for prototype
-  override def preStart() = {
-
-    val d = Directory(path)
-
-    // Delete the Job Directory
-    val deleteSuccess = d.deleteRecursively()
-    Logger.info("Try to delete user folder: State " + deleteSuccess)
-
-    d.createDirectory(force = false, failIfExists = false)
-
-    // Flush User Jobs
-    userJobs.clear()
-  }
+  val job_id_generator = scala.util.Random
 
 
   def receive = LoggingReceive {
 
-    /*
-      *   General Messages
-      */
-
-    //
     case AttachWS(_, ws_new) =>
 
       ws = ws_new
@@ -96,92 +61,72 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
 
      /* Prepare Routine */
-    case PrepWD(toolname, params, startImmediately, jobID) =>
+    case PrepWD(toolname, params, startImmediately, job_id_o) =>
 
       // Determine the Job ID for the Job that was submitted
-      val jobid = jobID match {
+      val job_id : String = job_id_o match {
 
         case Some(id) => id
 
         case None =>
 
-          while(userJobs.keySet contains jobIDCounter.toString) {
+          var new_job_id : String = null
+          do {
 
-            jobIDCounter += 1
-          }
-          jobIDCounter.toString
+            new_job_id = job_id_generator.nextInt(10000).toString
+
+          } while(userJobs contains new_job_id)
+
+          new_job_id
       }
-      Logger.info("UserActor wants to prepare job directory for tool " + toolname + " with id " + jobid)
+      Logger.info("UserActor wants to prepare job directory for tool " + toolname + " with job_id " + job_id)
 
-      if(userJobs.keySet contains jobid) {
+      // User has tried to submit same job_id twice
+      if(userJobs contains job_id) {
 
         self ! JobIDInvalid
       }
+
       else {
 
-        // Everything seems to be fine, send Job to workers
-        val sjob = Job(toolname, Running, jobid, uid).attachParams(params)
-        userJobs.put(sjob.id, sjob)
+        // User Actor has to wait until Job has entered the Database
+        val job = UserJob(self, toolname, Submitted, job_id, user_id)
 
-        self ! JobStateChanged(jobid, Submitted)
-        worker ! WPrepare(sjob)
+        userJobs.put(job.job_id, job)
+        jobDB.add(DBJob(job.job_id, user_id))
+
+        worker ! WPrepare(job, params)
       }
 
     /*  Job Dir has been prepared successfully    */
     case PrepWDDone(job) =>
 
-      Logger.info("[UserActor] Job with ID " + job.id + " was prepared successfully")
-      self ! JobStateChanged(job.id, Prepared)
+      Logger.info("[UserActor] Job with job_id " + job.job_id + " was prepared successfully")
       worker ! WStart(job)
 
-
-      // Notifies the user about a Job Status change
-    case m @ JobStateChanged(jobid, state) =>
-
-      Logger.info("[UserActor]"  + uid + " received Job state change: " + state)
-
-      // Update the Job state in the Job Table
-      val job = userJobs.get(jobid).get
-      job.state = state
-      userJobs.put(jobid, job)
-
-      // Forward to WebSocket
-      ws ! m
-
-    case GetJob(jobid) =>
-
-      sender() ! userJobs.get(jobid).get
+    case GetJob(job_id) =>  sender() ! userJobs.get(job_id).get
 
     case GetAllJobs =>
 
-      Logger.info("User Actor was asked to restore all jobs")
+      Logger.info("UserActor was asked to return all of its jobs")
       sender() ! JobList(userJobs.values)
 
-    case m @ JobIDInvalid =>
+    case Terminated(ws_new) =>  ws = null
 
+    case m @ JobStateChanged(job_id, state) =>
       ws ! m
 
-
-    /*
-     * Job Manager was told that the Job has been finished executing
-     */
-    case JobDone(job) =>
-
-      Logger.info("[UserActor] Job Execution was done for job " + job.id)
-      self ! JobStateChanged(job.id, job.state)
+      // TODO update Job state in Persistence
 
 
 
 
-
-
-
-    case Terminated(ws_new) =>
-
-      ws = null
+    /* All of the remaining messages are just passed further to the WebSocket
+    *  Currently: JobIDInvalid
+    * */
+    case m =>  ws ! m
   }
 }
-
 
 
 

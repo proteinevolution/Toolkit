@@ -11,14 +11,17 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import javax.inject.{Singleton, Named, Inject}
-
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class Application @Inject()(val messagesApi: MessagesApi,
+                            val jobDB : models.database.Jobs,
                             @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
 
   val UID = "uid"
+
+  // TODO this line has to vanish
   var path = s"${Play.application.path}${File.separator}${current.configuration.getString("job_path").get}${File.separator}"
 
 
@@ -32,8 +35,9 @@ class Application @Inject()(val messagesApi: MessagesApi,
         Left(Forbidden)
 
       case Some(uid) =>
+
         Logger.info("$Application$ WebSocket connection requested")
-        Right(WebSocketActor.props(uid, userManager))
+        Right(WebSocketActor.props(uid.toLong, userManager))
     })
   }
 
@@ -53,22 +57,18 @@ class Application @Inject()(val messagesApi: MessagesApi,
     Ok(views.html.main(views.html.general.homecontent(),"Home"))
   }
 
-  def file(filename : String, jobid : String) = Action { implicit request =>
+  def file(filename : String, job_id : String) = Action.async { implicit request =>
 
-    val uid = request.session.get(UID).get
-    val filePath = path + "/" + uid + "/" + jobid + "/" + "results" + "/" + filename
+    // TODO handle the case that there is no userID in session scope or no job with that name
+    val user_id = request.session.get(UID).get
+    val main_id_o = jobDB.userJobMapping.get(user_id.toLong, job_id).get
 
-    Logger.info(filePath)
+    main_id_o map { main_id =>
 
-    Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain")
-  }
-
-
-  def contact = Action {
-    Ok(views.html.old.contact())
-  }
-
-  def footer = Action {
-    Ok(views.html.old.contact())
+      Logger.info("Try to assemble file path")
+      val filePath = path + "/" + main_id.toString +  "/results/" + filename
+      Logger.info("File has been sent")
+      Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain")
+    }
   }
 }

@@ -3,29 +3,38 @@ package actors
 
 import java.io
 import java.io.PrintWriter
+import javax.inject.Inject
 
-import actors.UserActor.{JobDone, PrepWDDone}
+import actors.UserActor.PrepWDDone
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
-import models._
-import models.jobs.{Done, Error, SuppliedJob, Job}
+import models.jobs._
 import play.api.Logger
+import scala.concurrent.Await
 import scala.io.Source
 import sys.process._
+import scala.concurrent.duration._
 
 
 import scala.reflect.io.{Directory, File}
 
 
-class Worker extends Actor with ActorLogging {
+
+object Worker {
+
+  case class WPrepare(job : UserJob, params : Map[String, Any])
+  case class WStart(job: UserJob)
+}
+
+class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLogging {
 
   import actors.Worker._
 
   val sep = File.separator
 
   // Variables the worker need to execute //TODO Inject Configuration
-  val runscriptPath = "bioprogs/runscripts/"
-  val jobPath = "development/"
+  val runscriptPath = s"bioprogs${sep}runscripts$sep"
+  val jobPath = s"development$sep"
   val subdirs = Array("/results", "/logs", "/params", "/specific")
 
   val argumentPattern = "(\\$\\{[a-z]+\\}|#\\{[a-z]+\\}|@\\{[a-z]+\\}|\\?\\{.+\\})".r
@@ -33,12 +42,16 @@ class Worker extends Actor with ActorLogging {
 
   def receive = LoggingReceive {
 
-    case WPrepare(sjob) =>
+    case WPrepare(userJob, params) =>
 
-      Logger.info("[Worker](WPrepare) for job " + sjob.id)
+      Logger.info("[Worker](WPrepare) for job " + userJob.job_id)
       Logger.info("[Worker] Runscript path was " + runscriptPath)
       Logger.info("[Worker] Job path was " + jobPath)
-      val rootPath = jobPath + sjob.uid + sep + sjob.id + sep
+
+
+      // Worker will wait until it knows the Main ID
+      val main_id = Await.result(jobDB.userJobMapping.get(userJob.user_id -> userJob.job_id).get, Duration.Inf)
+      val rootPath = jobPath + sep + main_id.toString + sep
 
       // Make root Path and all subpaths
       Directory(rootPath).createDirectory(false, false)
@@ -46,17 +59,20 @@ class Worker extends Actor with ActorLogging {
 
         Directory(rootPath + subdir).createDirectory(false, false)
       }
+      Logger.info("All subdirectories were created successfully")
 
       // Write the parameters into the subdirectory:
-      for( (paramName, value) <- sjob.params ) {
+      for( (paramName, value) <- params ) {
 
-        File(rootPath + "/params/" + paramName).writeAll(value.toString)
+        File(s"$rootPath${sep}params$sep$paramName").writeAll(value.toString)
       }
+      Logger.info("All params were written to the job_directory successfully")
+
+      val sourceRunscript = Source.fromFile(runscriptPath + userJob.toolname + ".sh")
+      val targetRunscript = new PrintWriter(rootPath + userJob.toolname + ".sh")
 
 
-      val sourceRunscript = Source.fromFile(runscriptPath + sjob.toolname + ".sh")
-      val targetRunscript = new PrintWriter(rootPath + sjob.toolname + ".sh")
-
+      // Translate the Runscript template to an actual executable script
       for(line <- sourceRunscript.getLines) {
 
         targetRunscript.println(argumentPattern.replaceAllIn(line, { rm =>
@@ -67,12 +83,12 @@ class Worker extends Actor with ActorLogging {
           s(0) match {
 
             case '#' =>  "params/" + value
-            case '$' => sjob.params.get(value).get.toString
+            case '$' => params.get(value).get.toString
             case '@' => "results/" + value
             case '?' =>
 
               val splt = value.split("(\\||:)")
-              if(sjob.params.get(splt(0)).get.asInstanceOf[Boolean]) splt(1) else {
+              if(params.get(splt(0)).get.asInstanceOf[Boolean]) splt(1) else {
 
                 if(splt.length == 2) "" else splt(2)
               }
@@ -82,34 +98,22 @@ class Worker extends Actor with ActorLogging {
       sourceRunscript.close()
       targetRunscript.close()
 
-      // Set the execution right
-      ("chmod u+x " + rootPath + sjob.toolname + ".sh").!
+      // Set the execution right for the user
+      ("chmod u+x " + rootPath + userJob.toolname + ".sh").!
 
-      sender() ! PrepWDDone(sjob.stripParams())
+      sender() ! PrepWDDone(userJob)
 
 
-    case WStart(job) =>
+    case WStart(userJob) =>
 
-      Logger.info("[Worker](WStart) for job " + job.id)
-      val rootPath = jobPath + job.uid + sep + job.id + sep
-      val result = Process("./" + job.toolname + ".sh", new io.File(rootPath)).!
+      Logger.info("[Worker](WStart) for job " + userJob.job_id)
+      val main_id = Await.result(jobDB.userJobMapping.get(userJob.user_id -> userJob.job_id).get, Duration.Inf)
+      val rootPath = jobPath + main_id + sep
 
-      // If script has run successfully, send back to sender
-      job.state = if(result == 0) Done else Error
+      // Assumption : The Root path contains a prepared shellscript that bears the toolname + sh suffix
+      val result = Process("./" + userJob.toolname + ".sh", new io.File(rootPath)).!
 
-      sender() ! JobDone(job)
+      // Change state of job depending on the RUnscript execution
+      userJob.changeState(if(result == 0) Done else Error)
   }
-}
-
-
-/**
-  *
-  * Created by lukas on 1/16/16.
-  */
-
-
-object Worker {
-
-  case class WPrepare(job : SuppliedJob)
-  case class WStart(job: Job)
 }

@@ -1,7 +1,8 @@
 @import play.api.mvc.RequestHeader
 @import models.tools.Alnviz
-@import models.jobs.Job
-@(jobID: String, job: Job)(implicit request: RequestHeader)
+@import models.jobs.UserJob
+
+@(userJob: UserJob)(implicit request: RequestHeader)
 <h3><a href="http://msa.biojs.net" target="_blank">BioJS MSA Viewer</a> (Full Alignment)</h3>
 
     <div id="menuDiv"></div>
@@ -47,7 +48,7 @@
 
             // init msa
             var m = new msa.msa(opts);
-            var url = '/files/' + '@jobID' + '/' + '@Alnviz.resultFileNames(0)';
+            var url = '/files/' + '@userJob.job_id' + '/' + '@Alnviz.resultFileNames(0)';
 
             m.u.file.importURL(url, renderMSA);
 

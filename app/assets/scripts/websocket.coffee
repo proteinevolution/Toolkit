@@ -2,6 +2,7 @@
 #  Handles the Connection to the WebSocket and its connection to ModelView elements like provided by
 #  Mithril.
 ###
+# The Websocket will be globally available
 @ws = new WebSocket $("body").data("ws-url")
 
   # Handles the behavior that occurs if the WebSocket receives data from the Server
@@ -17,12 +18,10 @@ ws.onmessage = (event) ->
     when "jobstate"
       state = message.newState.toString()
       console.log(state)
-      jobs.vm.update(message.jobid, state)
+      jobs.vm.update(message.job_id, state)
 
       # Show user a popup with the submission
       if state == '0'
-        text = "Job submitted successfully."
-        $(".jobformsubmit").notify(text, "success")
         $('.jobformclear').click()
 
     # User has entered a JobID that is already in use

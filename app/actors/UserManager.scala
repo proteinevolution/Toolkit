@@ -5,51 +5,46 @@ import akka.actor._
 import akka.event.LoggingReceive
 import javax.inject._
 import play.api.libs.concurrent.InjectedActorSupport
-import play.api.cache._
 import play.api.Logger
 
 object UserManager {
 
-  case class GetUserActor(key: String)
+  case class GetUserActor(user_id: Long)
 }
 
 
 @Singleton
-class UserManager @Inject() (childFactory: UserActor.Factory,
-                             cache: CacheApi)
+class UserManager @Inject() (childFactory: UserActor.Factory)
   extends Actor with ActorLogging with InjectedActorSupport {
 
   import actors.UserManager._
 
-  val registeredUsers = scala.collection.mutable.Map[String, ActorRef]()
+  //
+  val registeredUsers = scala.collection.mutable.Map[Long, ActorRef]()
 
 
   def receive = LoggingReceive  {
 
 
-    case GetUserActor(uid: String) =>
+    case GetUserActor(user_id: Long) =>
 
-      val user = registeredUsers.getOrElseUpdate(uid, {
+      val user = registeredUsers.getOrElseUpdate(user_id, {
 
-        injectedChild(childFactory(uid), uid)
+        injectedChild(childFactory(user_id), user_id.toString)
       })
       sender() ! user
 
-      // Assume cache miss
-      cache.set(uid, user)
       context watch user
 
-
-    case m @ AttachWS(uid, ws) =>
+    case m @ AttachWS(user_id, ws) =>
 
       Logger.info("[User Manager] Attach Web Socket")
 
-      val user = registeredUsers.getOrElseUpdate(uid, {
+      val user = registeredUsers.getOrElseUpdate(user_id, {
 
-        injectedChild(childFactory(uid), uid)
+        injectedChild(childFactory(user_id), user_id.toString)
       })
       user ! m
-
 
     case Terminated(user) =>
 

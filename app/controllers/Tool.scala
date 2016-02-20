@@ -7,7 +7,7 @@ import actors.UserActor.{GetJob, PrepWD}
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.jobs.Job
+import models.jobs.{UserJob, UserJob$}
 import models.tools.{Tcoffee, Alnviz}
 import models.Session
 import play.api.Logger
@@ -26,11 +26,8 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
 
   val UID = "uid"
-  val toolname = "alnviz"
 
   implicit val timeout = Timeout(5.seconds)
-
-
 
   def show(toolname: String) = Action { implicit request =>
 
@@ -65,15 +62,15 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
   def submit(toolname: String) = Action.async { implicit request =>
 
-    val uid = request.session.get(UID).get
+    val user_id = request.session.get(UID).get.toLong
 
-    val jobID =  request.body.asFormUrlEncoded.get("jobid").head match {
+    val job_id =  request.body.asFormUrlEncoded.get("jobid").head match {
 
       case m if m.isEmpty => None
       case m => Some(m)
     }
 
-    (userManager ? GetUserActor(uid)).mapTo[ActorRef].map { userActor =>
+    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].map { userActor =>
 
       // TODO replace with reflection
       val form = toolname match {
@@ -87,8 +84,8 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         },
         formdata => {
           Logger.info("{Tool} Form data sucessfully received")
-          // TODO Determine whether user has submitted a jobid
-          userActor ! PrepWD(toolname, getCCParams(formdata)  , true, jobID)
+
+          userActor ! PrepWD(toolname, getCCParams(formdata)  , true, job_id)
         }
       )
       Ok
@@ -96,19 +93,19 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   }
 
 
-  def result(jobID : String) = Action.async { implicit request =>
+  def result(main_id : String) = Action.async { implicit request =>
 
-    val uid = request.session.get(UID).get
+    val user_id = request.session.get(UID).get.toLong
 
-    (userManager ? GetUserActor(uid)).mapTo[ActorRef].flatMap { userActor =>
-      (userActor ? GetJob(jobID)).mapTo[Job].map { job =>
+    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].flatMap { userActor =>
+      (userActor ? GetJob(main_id)).mapTo[UserJob].map { job =>
 
         //TODO Calculate the appropriate visualizations of the tools
-        val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$jobID/sequences.clustalw_aln"))
+        val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$main_id/sequences.clustalw_aln"))
 
         val toolframe = job.toolname match {
 
-          case "alnviz" => views.html.alnviz.result(job.id, job)
+          case "alnviz" => views.html.alnviz.result(job)
           case "tcoffee" => views.html.tool.visualizations(vis)
         }
 
