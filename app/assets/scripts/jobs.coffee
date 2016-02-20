@@ -60,7 +60,4 @@ jobs.view = ->
       m('td', task.code())
     ]
   ) ] ]
-
-m.mount document.getElementById('jobtable-rows'),
-  controller: jobs.controller
-  view: jobs.view
+m.mount(document.getElementById('jobtable-rows'),  { controller: jobs.controller, view: jobs.view})

@@ -32,13 +32,14 @@ $ ->
       submissionAllowed = false
 
   # Handles the behavior when the submit button is pressed in a job form
+  #
   $(".jobform").submit (event) ->
     event.preventDefault()
     submitRoute = jsRoutes.controllers.Tool.submit(toolname)
 
     $.ajax
       url: submitRoute.url
-      type: submitRoute.type
+      type: "POST"
       data: $(".jobform").serialize()
       #dataType: "json"
       error: (jqXHR, textStatus, errorThrown) ->
@@ -46,6 +47,7 @@ $ ->
         alert errorThrown
       success: (data, textStatus, jqXHR) ->
       #$('body').append "Successful AJAX call: #{data}"
+
 
   # If one hits the Reset button of the form
   $(".jobformclear").click (event) ->

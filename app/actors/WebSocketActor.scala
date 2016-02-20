@@ -63,6 +63,7 @@ class WebSocketActor(user_id: Long, userManager : ActorRef, out: ActorRef)  exte
 
 
     case JobList(joblist) =>
+      Logger.info("Websocket was asked to restore all jobs")
 
       val jobListObjs = for (job <- joblist) yield {
         Json.obj("t" -> job.toolname,

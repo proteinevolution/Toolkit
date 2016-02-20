@@ -24,7 +24,7 @@ GET         /files/:jobid/:filename        @controllers.Application.file(filenam
 # Map static resources from the web jars to the /assets/lib/wjars URL path
 GET    /assets/lib/wjars/*file             controllers.WebJarAssets.at(file)
 # Map static resources from the /public folder to the /assets URL path
-GET    /assets/*file                       controllers.Assets.versioned(path="/public", file: Asset)
+GET    /assets/*file                       controllers.Assets.at(path="/public", file)
 
 
 ###############################################################
