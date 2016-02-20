@@ -1,14 +1,14 @@
 # --- !Ups
 CREATE TABLE `jobs` (
 
-	`id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	`type` varchar(100),
-	`parent_id` BIGINT,
-	`jobid` BIGINT,
-	`user_id` BIGINT,
+	`main_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`type` varchar(50),
+	`parent_id` int(11),
+	`job_id` varchar(100),
+	`user_id` int(11),
 	`status` char(1),
 	`tool` varchar(100),
-	`stat_id` BIGINT,
+	`stat_id` int(11),
 	`created_on` DATETIME,
 	`updated_on` DATETIME,
 	`viewed_on` DATETIME
@@ -16,3 +16,4 @@ CREATE TABLE `jobs` (
 
 # --- !Downs
 DROP TABLE `jobs`;
+
