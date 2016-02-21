@@ -1,0 +1,30 @@
+#navbar-tabs {
+  $corporate-background-navbar: #2E8C81;
+  background: $corporate-background-navbar;
+  padding-left: 50px;
+  padding-right: 50px;
+
+  tab-margin: 0;
+  tab-background: $corporate-background-navbar;
+  tab-background-active: $corporate-background-navbar;
+  tab-border-width: 0px;
+  tab-item-color: foreground($corporate-background-navbar, $corporate-background-navbar);
+  tab-item-background-hover: $corporate-background-navbar;
+  tab-item-padding: 1.25rem 1.5rem;
+  tab-expand-max: 6;
+  tab-content-background: $corporate-background-navbar;
+  tab-content-border-width: 0px;
+  tab-content-color: foreground($corporate-background-navbar, $corporate-background-navbar);
+  tab-content-padding: 1rem;
+}
+.navbar {
+  background: #2E8C81;
+}
+#panel1 {
+  background: blue;
+  border-width: 0px;
+}
+#panel2 {
+  background: red;
+  border-width: 0px;
+}

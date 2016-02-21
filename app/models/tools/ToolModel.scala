@@ -9,6 +9,9 @@ import play.api.Play._
   */
 abstract class ToolModel {
 
+
+  //def toolNameShort:String
+
   val resultFileNames :  Vector[String]
 
 
@@ -20,7 +23,7 @@ abstract class ToolModel {
       for(i <- 0 until no) yield inport.str + no.toString -> inport.pattern
     }
   }
-*/
+  */
 
 
   def resultFilePaths(jobID : Long) : Vector[String] = {
