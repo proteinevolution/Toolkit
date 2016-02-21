@@ -8,18 +8,23 @@
 
 <script type="text/javascript">
     toolname ='@toolname'
+
 </script>
 
 <form class="jobform">
 
-        <input class="button" type="submit" value="Submit Job" >
-        <input class="jobformclear button" type="button" value="Clear form" />
-        <input type="checkbox" id="customjobidwanted" name="customjobidwanted" />
-        <label for="customjobidwanted" id="customjobidwantedlabel">Provide Custom ID</label>
-        <input type="text" id="jobid" name="jobid" placeholder="Custom Job ID" />
+
+
 
         @toolframe
 
 
+
+
+<input type="checkbox" id="customjobidwanted" name="customjobidwanted" />
+<label for="customjobidwanted" id="customjobidwantedlabel">Provide Custom ID</label>
+<input type="text" id="jobid" name="jobid" placeholder="Custom Job ID" />
+<input class="secondary button" type="submit" value="Submit Job" >
+<input class="jobformclear secondary button" type="button" value="Clear form" />
 
 </form>

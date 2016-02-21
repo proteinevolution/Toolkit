@@ -6,7 +6,7 @@
 <html>
     <head>
         <title>Bioinformatics Toolkit</title>
-
+        <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.png")">
         <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/custom.css")" rel="stylesheet">
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("modernizr.min.js"))"></script>
@@ -29,24 +29,28 @@
 
 
 
-        <div class="row" data-equalizer>
-            <div class="large-2 columns top-bar" data-equalizer-watch>
-                <span class="logo"> Bioinformatics Toolkit </span>
+        <div class="header" data-equalizer>
+            <div class="large-4 columns top-bar" data-equalizer-watch>
+                <span class="logo" style="margin-left: 100px;"> <a href="@general.homecontent()"><img class="logo" src="@routes.Assets.at("images/logo2.png")"> </a></span>
             </div>
-            <div class="large-10 columns top-bar" data-equalizer-watch>@elements.topbar(sectionname)</div>
+            <div class="large-8 columns top-bar" data-equalizer-watch>@elements.topbar(sectionname)</div>
+        </div>
+        <div class="navbar">
+            Navbar // TODO: Templating
         </div>
 
-        <div class="row">
+        <div class="sidebar">
             <div class="small-2 columns">@elements.sidebar()</div>
-            <div id="content" class="large-10 columns">@content</div>
         </div>
 
-        <div class="row">
-            <div class="large-12 columns" class="footer">@elements.footer()</div>
+        <div class="content"><div id="content" class="large-10 columns">@content</div></div>
+
+        <div class="footer">
+            <div class="large-12 columns">@elements.footer()</div>
         </div>
 
-        <div class="row">
-            <div class="large-12 columns" class="socket">@elements.socket()</div>
+        <div class="socket">
+            <div class="large-12 columns">@elements.socket()</div>
         </div>
 
         <!-- Script Inclusions -->

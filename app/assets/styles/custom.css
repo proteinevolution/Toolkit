@@ -3,13 +3,24 @@
     max-width: initial;
 }
 
+.row {
+    width: 80%;
+}
+
 .logotext {
     text-align: center;
     font-weight: bold;
     font-size: large;
 }
 
+#jobcode {
+
+    font-family: Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;
+    font-size: 12px;
+}
+
 .job-status-fade {
+
     border-radius: 5px;
     -webkit-transition: background-color 0.5s;
     -moz-transition: background-color 0.5s;
@@ -53,5 +64,36 @@ tr.spaceUnder > td
     padding-bottom: 1em;
 }
 
+.top-bar {
+    box-sizing: inherit;
+    background: #006F62;
+}
 
+.sidebar {
+    width: 50%;
+}
 
+.content {
+    width: 60%;
+
+}
+
+#alignment{
+    font-family: Droid Sans Mono;
+    font-size: 10px;
+}
+
+.top-bar-right {
+
+    margin-right: 70px;
+}
+
+.advancedsearch {
+
+    width: 500px;
+}
+
+.navbar {
+
+    background: #2E8C81;
+}
