@@ -36,7 +36,7 @@
             <div class="large-8 columns top-bar" data-equalizer-watch>@elements.topbar(sectionname)</div>
         </div>
         <div class="navbar">
-            Navbar // TODO: Templating
+            <div>@elements.navbar()</div>
         </div>
 
         <div class="sidebar">
@@ -46,12 +46,9 @@
         <div class="content"><div id="content" class="large-10 columns">@content</div></div>
 
         <div class="footer">
-            <div class="large-12 columns">@elements.footer()</div>
+            <div class="footer">@elements.footer()</div>
         </div>
 
-        <div class="socket">
-            <div class="large-12 columns">@elements.socket()</div>
-        </div>
 
         <!-- Script Inclusions -->
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("fastclick.js"))"></script>
