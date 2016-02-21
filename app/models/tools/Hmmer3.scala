@@ -11,7 +11,7 @@ import play.api.data.Forms._
 /**
   * Singleton object that stores general information about a tool
   */
-object Hmmer extends ToolModel {
+object Hmmer3 extends ToolModel {
 
 
   val toolname = "hmmer3"
@@ -33,7 +33,7 @@ object Hmmer extends ToolModel {
       "mlalign_id_pair" -> boolean,
       "mfast_pair" -> boolean,
       "mslow_pair" -> boolean
-    )(Hmmer.apply)(Hmmer.unapply)
+    )(Hmmer3.apply)(Hmmer3.unapply)
   )
 
   //Map parameter identifier to the full names
@@ -43,4 +43,4 @@ object Hmmer extends ToolModel {
   // TODO We need a better abstraction for the tool result names
   val resultFileNames = Vector("result")
 }
-case class Hmmer(sequences: String, mlalign_id_pair: Boolean, mfast_pair : Boolean, mslow_pair : Boolean)
+case class Hmmer3(sequences: String, mlalign_id_pair: Boolean, mfast_pair : Boolean, mslow_pair : Boolean)

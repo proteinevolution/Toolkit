@@ -2,6 +2,7 @@
 @import 'footer';
 @import 'sidebar';
 @import 'topbar';
+@import 'navbar';
 @import '_settings';
 
 @include foundation-global-styles;
@@ -39,6 +40,7 @@
 @include foundation-title-bar;
 @include foundation-tooltip;
 @include foundation-top-bar;
+@include foundation-tabs;
 
 body {
 

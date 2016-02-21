@@ -8,7 +8,7 @@ import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.jobs.{UserJob, UserJob$}
-import models.tools.{Hmmer, Tcoffee, Alnviz}
+import models.tools.{Hmmer3, Tcoffee, Alnviz}
 import models.Session
 import play.api.Logger
 import scala.concurrent.duration._
@@ -26,6 +26,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
 
   val UID = "uid"
+  val tools = ""
 
   implicit val timeout = Timeout(5.seconds)
 
@@ -40,13 +41,13 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
       case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
-      case "hmmer3" => views.html.hmmer3.form(Hmmer.inputForm)
+      case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
     }
     val toolcompletename = toolname match {
 
       case "alnviz" => models.tools.Alnviz.fullName
       case "tcoffee" => models.tools.Tcoffee.fullName
-      case "hmmer3" => models.tools.Hmmer.fullName
+      case "hmmer3" => models.tools.Hmmer3.fullName
     }
 
     val view = views.html.general.submit(toolname, toolframe)
@@ -79,7 +80,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
         case "alnviz" => Alnviz.inputForm
         case "tcoffee" => Tcoffee.inputForm
-        case "hmmer3" => Hmmer.inputForm
+        case "hmmer3" => Hmmer3.inputForm
       }
      form.bindFromRequest.fold(
         formWithErrors => {
