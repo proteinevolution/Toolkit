@@ -8,7 +8,7 @@
                     '_label -> "Enter sequence alignment",
                     'id -> "alignment")
 
-        <a href="#" onClick="$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
+        <a onClick="$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
 
         @helper.select(
                     inputForm("format"),

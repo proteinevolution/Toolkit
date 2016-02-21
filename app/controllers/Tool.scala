@@ -127,11 +127,15 @@ class Tool @Inject()(val messagesApi: MessagesApi,
       (userActor ? GetJob(main_id)).mapTo[UserJob].map { job =>
 
         //TODO Calculate the appropriate visualizations of the tools
-        val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$main_id/sequences.clustalw_aln"))
+        val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$main_id/sequences.clustalw_aln"),
+                      "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$main_id/sequences.clustalw_aln"))
 
         val toolframe = job.toolname match {
 
-          case "alnviz" => views.html.alnviz.result(job)
+          case "alnviz" =>
+            val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$main_id/result"))
+            views.html.tool.visualizations(vis)
+
           case "tcoffee" => views.html.tool.visualizations(vis)
           case "hmmer3" => views.html.tool.visualizations(vis)
         }
