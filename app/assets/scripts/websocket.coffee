@@ -30,8 +30,4 @@ ws.onmessage = (event) ->
       text = "Sorry, but this jobID is already used by you."
       $(".jobformsubmit").notify(text)
 
-    when "joblist"
-      for job in message.jobs
-        jobs.vm.update(job.i, job.s)
-
   m.endComputation()

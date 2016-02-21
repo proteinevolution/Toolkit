@@ -13,7 +13,7 @@ jobs.vm = do ->
   vm = {}
 
   vm.init = ->
-#a running list of todos
+
     vm.list = new (jobs.JobList)
 
     vm.onclick = (event) ->
@@ -36,13 +36,18 @@ jobs.vm = do ->
             code: code)
           return
         i++
-      vm.list.push new (jobs.Job)(
-        job_id: desc
-        state: state
-        code: code)
+      vm.list.push new (jobs.Job)( job_id: desc, state: state, code: code)
 
-    # Fetch all Jobs present on server
-    ws.send(JSON.stringify({type: "getJobs"}))
+    # Send Ajax call to retrieve all Jobs from the Server
+
+    $.post("/jobs", (data) ->
+        m.startComputation()
+        for job in data.jobs
+          vm.update(job.i, job.s, "dummy")
+        m.endComputation()
+    )
+
+
   vm
 #the controller defines what part of the model is relevant for the current page
 #in our case, there's only one view-model that handles everything

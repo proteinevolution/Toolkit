@@ -32,6 +32,7 @@ GET    /assets/*file                       controllers.Assets.at(path="/public",
 ###############################################################
 GET         /tools/:toolname                @controllers.Tool.show(toolname : String)
 POST        /tools/:toolname/submit         @controllers.Tool.submit(toolname : String)
+POST        /jobs                           @controllers.Tool.jobs
 
 ###############################################################
 # Handels the result View (Determined by the status of the

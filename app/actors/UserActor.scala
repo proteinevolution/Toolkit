@@ -1,7 +1,6 @@
 package actors
 import javax.inject._
 
-import actors.WebSocketActor.JobList
 import actors.Worker.{WStart, WPrepare}
 import akka.actor._
 import akka.event.LoggingReceive
@@ -106,10 +105,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     case GetJob(job_id) =>  sender() ! userJobs.get(job_id).get
 
-    case GetAllJobs =>
+    case GetAllJobs => sender() ! userJobs.values
 
-      Logger.info("UserActor was asked to return all of its jobs")
-      sender() ! JobList(userJobs.values)
 
     case Terminated(ws_new) =>  ws = null
 

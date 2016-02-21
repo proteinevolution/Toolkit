@@ -3,14 +3,15 @@ package controllers
 import javax.inject.{Named, Singleton, Inject}
 
 
-import actors.UserActor.{GetJob, PrepWD}
+import actors.UserActor.{GetAllJobs, GetJob, PrepWD}
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.jobs.{UserJob, UserJob$}
+import models.jobs.UserJob
 import models.tools.{Hmmer, Tcoffee, Alnviz}
 import models.Session
 import play.api.Logger
+import play.api.libs.json.Json
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask
@@ -28,6 +29,29 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   val UID = "uid"
 
   implicit val timeout = Timeout(5.seconds)
+
+
+
+  def jobs = Action.async { implicit request =>
+
+    Logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$All user jobs should be retrieved")
+
+    val user_id = request.session.get(UID).get.toLong
+
+    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].flatMap { userActor =>
+
+      (userActor ? GetAllJobs).mapTo[Iterable[UserJob]].map { joblist =>
+
+        val jobListObjs = for (job <- joblist) yield {
+          Json.obj("t" -> job.toolname,
+            "s" -> job.getState.no,
+            "i" -> job.job_id)
+        }
+        Ok(Json.obj( "jobs" -> jobListObjs))
+      }
+    }
+  }
+
 
   def show(toolname: String) = Action { implicit request =>
 
