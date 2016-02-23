@@ -1,7 +1,6 @@
 package models.tools
 
-import models.data.DataTypes.{Sequences, Alignment}
-import models.data.{Inport, FASTA}
+import models.data._
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -17,12 +16,12 @@ object Hmmer3 extends ToolModel {
   val toolname = "hmmer3"
   val fullName = "Hmmer3"
 
-
+/*
   val inports  = Map(
 
     Sequences -> 1 // TCoffee needs one Set of Sequences
   )
-
+*/
 
   //-----------------------------------------------------------------------------------------------
 

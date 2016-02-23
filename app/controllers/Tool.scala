@@ -110,8 +110,9 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         },
         formdata => {
           Logger.info("{Tool} Form data sucessfully received")
+          Logger.info(formdata.toString)
 
-          userActor ! PrepWD(toolname, getCCParams(formdata)  , true, job_id)
+          userActor ! PrepWD(toolname, formdata  , true, job_id) // The third argument is currently not used
         }
       )
       Ok

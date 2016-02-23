@@ -20,7 +20,7 @@ object UserActor {
 
   // All messages that the UserActor can actually receive
   case class JobStateChanged(jobid : String, state : JobState)
-  case class PrepWD(toolname : String, params : Map[String, Any], startImmediately : Boolean, job_id_o : Option[String])
+  case class PrepWD(toolname : String, params : Product with Serializable, startImmediately : Boolean, job_id_o : Option[String])
   case class PrepWDDone(job : UserJob)
   case object JobIDInvalid
   case class GetJob(jobID : String)

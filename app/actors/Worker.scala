@@ -8,6 +8,7 @@ import javax.inject.Inject
 import actors.UserActor.PrepWDDone
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
+import models.Values
 import models.jobs._
 import play.api.Logger
 import scala.concurrent.Await
@@ -22,7 +23,7 @@ import scala.reflect.io.{Directory, File}
 
 object Worker {
 
-  case class WPrepare(job : UserJob, params : Map[String, Any])
+  case class WPrepare(job : UserJob, params : Product with Serializable)
   case class WStart(job: UserJob)
 }
 
@@ -42,7 +43,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
   def receive = LoggingReceive {
 
-    case WPrepare(userJob, params) =>
+    case WPrepare(userJob, param) =>
 
       Logger.info("[Worker](WPrepare) for job " + userJob.job_id)
       Logger.info("[Worker] Runscript path was " + runscriptPath)
@@ -60,6 +61,10 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
         Directory(rootPath + subdir).createDirectory(false, false)
       }
       Logger.info("All subdirectories were created successfully")
+
+      // Construct parameter Map
+      val names = Values.paramNames(userJob.toolname)
+      val params =  (for(i <- names.indices ) yield names(i) -> param.productElement(i)).toMap
 
       // Write the parameters into the subdirectory:
       for( (paramName, value) <- params ) {

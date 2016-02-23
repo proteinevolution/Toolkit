@@ -29,4 +29,9 @@ object Values {
     "alnviz" -> Alnviz
   )
 
+  val paramNames = Map(
+    "alnviz" -> Array("alignment", "format"),
+    "tcoffee" -> Array("sequences", "mlalign_id_pair", "mfast_pair", "mslow_pair")
+
+  )
 }
