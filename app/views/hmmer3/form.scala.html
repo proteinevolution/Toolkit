@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
 @import models.tools.Hmmer3
-@(inputForm: Form[Hmmer3])(implicit messages: Messages, request: RequestHeader)
+@(inputForm: Form[(String, Boolean, Boolean, Boolean)])(implicit messages: Messages, request: RequestHeader)
 
 @helper.textarea(field = inputForm("sequences"), args = 'rows -> 20, 'cols -> 50,
   '_label -> "Enter sequences to be aligned in Multi-FASTA format.",

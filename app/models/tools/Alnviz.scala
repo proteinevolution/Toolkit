@@ -16,22 +16,22 @@ import play.api.data.Forms._
  */
 
 object Alnviz extends ToolModel {
-  val toolname = "alnviz"
-  val fullName = "AlignmentViewer"
+  // --- Names for the Tool ---
+  val toolNameShort:String        = "alnviz"
+  val toolNameLong:String         = "Alnviz"
+  val toolNameAbbreviation:String = "avz"
 
-
-  // AlignmentViewer wants to have an Alignment in Clustal Format
-  val inports = Array(Alignment(CLU))
-
-
-
+  // --- Alnviz specific values ---
   // Input Form Definition of this tool
   val inputForm = Form(
     tuple(
       "alignment" -> text,
-      "format" -> text
+      "format"    -> text
     )
   )
+
+  // AlignmentViewer wants to have an Alignment in Clustal Format
+  val inports = Array(Alignment(CLU))
 
   //Map parameter identifier to the full names
   val parameterNames = Map(
@@ -46,4 +46,3 @@ object Alnviz extends ToolModel {
     "format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
 }
-case class Alnviz(alignment: String, format: String)

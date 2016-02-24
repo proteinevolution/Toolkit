@@ -11,19 +11,13 @@ import play.api.data.Forms._
   */
 object Tcoffee extends ToolModel {
 
-  val toolname = "tcoffee"
-  val fullName = "T-Coffee"
+  // --- Names for the Tool ---
+  val toolNameShort:String        = "tcoffee"
+  val toolNameLong:String         = "T-Coffee"
+  val toolNameAbbreviation:String = "tcf"
 
-/*
-  val inports  = Map(
-
-    Sequences -> 1 // TCoffee needs one Set of Sequences
-  )
-*/
-
-  //-----------------------------------------------------------------------------------------------
-
-  // Input Form Definition of this tool
+  // --- Tcoffee specific values ---
+  // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
       "sequences" -> text,
@@ -32,7 +26,12 @@ object Tcoffee extends ToolModel {
       "mslow_pair" -> boolean
     )
   )
+  /*
+  val inports  = Map(
 
+    Sequences -> 1 // TCoffee needs one Set of Sequences
+  )
+  */
   //Map parameter identifier to the full names
   val parameterNames = Map(
     "sequences" -> "Sequences to be aligned")

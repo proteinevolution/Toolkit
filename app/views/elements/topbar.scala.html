@@ -15,9 +15,9 @@
             <li>
                 <a href="">Alignment</a>
                 <ul class="menu vertical">
-                    <li><a href="/tools/alnviz">Alignment Visualizer</a></li>
-                    <li><a href="/tools/tcoffee">T-Coffee</a></li>
-                    <li><a href="/tools/hmmer3">Hmmer3</a></li>
+                   @for(tool <- Tool.tools){
+                       <li><a id="@tool.toolNameAbbreviation" href="/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                    }
                 </ul>
             </li>
         </ul>

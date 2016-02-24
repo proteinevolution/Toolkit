@@ -8,7 +8,7 @@ import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.jobs.UserJob
-import models.tools.{Hmmer3, Tcoffee, Alnviz}
+import models.tools.{ToolModel, Hmmer3, Tcoffee, Alnviz}
 import models.Session
 import play.api.Logger
 import play.api.libs.json.Json
@@ -21,6 +21,50 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by lukas on 1/27/16.
   */
+object Tool {
+  var tools:List[ToolModel] = List[ToolModel]()  // list of all added tools
+  var toolsDropdownList:String = ""
+
+  // TODO Get these imported from an external file
+  tools::= Tcoffee
+  tools::= Alnviz
+  tools::= Hmmer3
+  toolsDropdownListRenew()
+
+
+  /** getToolModel
+    * Returns the tool object for a tool's name, null when there is no such tool.
+    *
+    * @param toolName tool Name
+    * @return
+    */
+  def getToolModel(toolName: String): ToolModel = {
+    for (tool <- tools) {
+      if ( tool.toolNameShort        == toolName
+        || tool.toolNameLong         == toolName
+        || tool.toolNameAbbreviation == toolName) return tool
+    }
+    return null // TODO catch error and show it as a 404
+  }
+
+  /** addToolModel
+    * adds a tool model to the controller
+    *
+    * @param toolModel
+    */
+  def addToolModel(toolModel:ToolModel) = {
+    tools ::= toolModel
+    toolsDropdownListRenew()
+  }
+
+  def toolsDropdownListRenew() = {
+    toolsDropdownList = ""
+
+  }
+
+
+}
+
 @Singleton
 class Tool @Inject()(val messagesApi: MessagesApi,
                      @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
@@ -56,25 +100,20 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
     Logger.info(s"{Tool} Input view for tool $toolname requested")
 
-
+    val tool = Tool.getToolModel(toolname)
     // Determine view of tool
+
+    //val inputForm = tool.inputForm
     // TODO Replace with reflection, otherwise we have to mention all tools explicitly here.
     val toolframe = toolname match {
-
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
       case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
       case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
     }
-    val toolcompletename = toolname match {
 
-      case "alnviz" => models.tools.Alnviz.fullName
-      case "tcoffee" => models.tools.Tcoffee.fullName
-      case "hmmer3" => models.tools.Hmmer3.fullName
-    }
+    val view = views.html.general.submit(tool.toolNameShort, toolframe)
 
-    val view = views.html.general.submit(toolname, toolframe)
-
-    Ok(views.html.main(view, toolcompletename)).withSession {
+    Ok(views.html.main(view, tool.toolNameLong)).withSession {
 
       val uid = request.session.get(UID).getOrElse {
 
@@ -97,14 +136,16 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
     (userManager ? GetUserActor(user_id)).mapTo[ActorRef].map { userActor =>
 
+      val tool = Tool.getToolModel(toolname)
+      //val form = tool.inputForm
       // TODO replace with reflection
-      val form = toolname match {
-
+      val form = tool.toolNameShort match {
         case "alnviz" => Alnviz.inputForm
         case "tcoffee" => Tcoffee.inputForm
         case "hmmer3" => Hmmer3.inputForm
       }
-     form.bindFromRequest.fold(
+
+      form.bindFromRequest.fold(
         formWithErrors => {
           BadRequest("This was an error")
         },
@@ -112,13 +153,12 @@ class Tool @Inject()(val messagesApi: MessagesApi,
           Logger.info("{Tool} Form data sucessfully received")
           Logger.info(formdata.toString)
 
-          userActor ! PrepWD(toolname, formdata  , true, job_id) // The third argument is currently not used
+          userActor ! PrepWD(toolname, formdata, true, job_id) // The third argument is currently not used
         }
       )
       Ok
     }
   }
-
 
   def result(main_id : String) = Action.async { implicit request =>
 
@@ -145,13 +185,5 @@ class Tool @Inject()(val messagesApi: MessagesApi,
       }
     }
   }
-
-
-
-  def getCCParams(cc: AnyRef) =
-    (Map[String, Any]() /: cc.getClass.getDeclaredFields) {(a, f) =>
-      f.setAccessible(true)
-      a + (f.getName -> f.get(cc))
-    }
 }
 
