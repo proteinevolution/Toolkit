@@ -46,4 +46,3 @@ object Alnviz extends ToolModel {
     "format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
 }
-case class Alnviz(alignment: String, format: String)
