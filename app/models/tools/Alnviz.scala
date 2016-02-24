@@ -14,10 +14,17 @@ import play.api.data.Forms._
  */
 
 object Alnviz extends ToolModel {
+
+
   val toolname = "alnviz"
   val fullName = "AlignmentViewer"
 
+  // --- Names for the Tool ---
+  val toolNameShort: String = "alnviz"
+  val toolNameLong: String = "Alnviz"
+  val toolNameAbbreviation: String = "avz"
 
+  // --- Alnviz specific values ---
   // Input Form Definition of this tool
   val inputForm = Form(
     tuple(
@@ -26,10 +33,12 @@ object Alnviz extends ToolModel {
     )
   )
 
+  // AlignmentViewer wants to have an Alignment in Clustal Format
+
   //Map parameter identifier to the full names
   val parameterNames = Map(
     "alignment" -> "Sequence Alignment",
-    "format"    -> "Alignment Format")
+    "format" -> "Alignment Format")
 
 
   val resultFileNames = Vector("result")

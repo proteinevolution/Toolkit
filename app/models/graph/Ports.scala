@@ -18,7 +18,7 @@ object Ports {
     throw ToolnameNotDistinctException("Error: Toolnames are not distinct. ")
   }
 
-  
+
   // Collects all Nodes which have the respective port type as input
 
 
