@@ -38,7 +38,3 @@ abstract class Port
 // Each Inport Type must declare a String representation and a mapping to a form field
 abstract class Inport[A](val str: String, val pattern : Mapping[A]) extends Port
 
-
-
-
-

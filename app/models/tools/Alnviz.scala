@@ -17,16 +17,16 @@ import play.api.data.Forms._
 
 object Alnviz extends ToolModel {
   // --- Names for the Tool ---
-  val toolNameShort:String        = "alnviz"
-  val toolNameLong:String         = "Alnviz"
-  val toolNameAbbreviation:String = "avz"
+  val toolNameShort: String = "alnviz"
+  val toolNameLong: String = "Alnviz"
+  val toolNameAbbreviation: String = "avz"
 
   // --- Alnviz specific values ---
   // Input Form Definition of this tool
   val inputForm = Form(
     tuple(
       "alignment" -> text,
-      "format"    -> text
+      "format" -> text
     )
   )
 
@@ -36,7 +36,7 @@ object Alnviz extends ToolModel {
   //Map parameter identifier to the full names
   val parameterNames = Map(
     "alignment" -> "Sequence Alignment",
-    "format"    -> "Alignment Format")
+    "format" -> "Alignment Format")
 
 
   val resultFileNames = Vector("result")
