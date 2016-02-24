@@ -1,7 +1,5 @@
 package models.tools
 
-import models.data.CLU
-import models.data.Ports.Alignment
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -18,11 +16,6 @@ import play.api.data.Forms._
 object Alnviz extends ToolModel {
   val toolname = "alnviz"
   val fullName = "AlignmentViewer"
-
-
-  // AlignmentViewer wants to have an Alignment in Clustal Format
-  val inports = Array(Alignment(CLU))
-
 
 
   // Input Form Definition of this tool

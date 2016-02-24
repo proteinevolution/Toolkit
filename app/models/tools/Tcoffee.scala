@@ -14,6 +14,8 @@ object Tcoffee extends ToolModel {
   val toolname = "tcoffee"
   val fullName = "T-Coffee"
 
+  val inport = null
+
 /*
   val inports  = Map(
 

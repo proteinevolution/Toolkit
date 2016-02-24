@@ -1,6 +1,5 @@
 package models.tools
 
-import models.data._
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -12,6 +11,7 @@ import play.api.data.Forms._
   */
 object Hmmer3 extends ToolModel {
 
+  val inport = null
 
   val toolname = "hmmer3"
   val fullName = "Hmmer3"

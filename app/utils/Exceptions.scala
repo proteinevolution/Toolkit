@@ -8,4 +8,5 @@ import akka.actor.ActorRef
 object Exceptions {
 
   case class ActorInitException(message: String, actor: ActorRef) extends Exception(message)
+  case class ToolnameNotDistinctException(message : String) extends Exception(message)
 }
