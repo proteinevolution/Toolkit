@@ -1,8 +1,7 @@
-package models.tools
+package models.graph.nodes
 
-import models.graph.{PortTag, CLU}
 import models.graph.Ports.Alignment
-import models.graph.nodes.Node1_0
+import models.graph.{CLU, PortTag}
 
 
 /**
@@ -12,9 +11,11 @@ import models.graph.nodes.Node1_0
   *
   * Created by lukas on 2/24/16.
   */
-object AlnvizNode extends Node1_0[String] {
+object AlnvizNode extends Node {
 
   val toolname = "alnviz"
 
-  val inport1 = Alignment(PortTag("alignment", "Alignment", None), CLU)
+  val inports = Vector(Alignment(PortTag("alignment", "Alignment", None), CLU))
+
+  val outports = Vector.empty
 }
