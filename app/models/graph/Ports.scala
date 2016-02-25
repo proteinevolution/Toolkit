@@ -1,7 +1,6 @@
 package models.graph
 
-import play.api.data._
-import play.api.data.Forms._
+import models.graph.nodes.{TcoffeeNode, AlnvizNode}
 
 /**
   * Created by lukas on 2/15/16.
@@ -9,16 +8,52 @@ import play.api.data.Forms._
 object Ports {
 
 
+  val nodes = Vector(AlnvizNode, TcoffeeNode)
+
+
+  for(node1 <- nodes; node2 <- nodes) {
+    for(i <- node1.inports.indices; j <- node2.outports.indices ) {
+
+      val x = node1.inports(i)
+      val y = node2.outports(j)
+
+      // the ports are compatible if they come from the same class
+      if(x.getClass.getName == y.getClass.getName) {
+
+        node1.inlinks += ((i, j, node2))
+        node2.outlinks += ((j, i, node1))
+      }
+    }
+  }
+
+
+
   // An MSA as ToolPort.
   // TODO We might want to distinguish between different Alphabets
-  case class Alignment(override val pid : PortTag, alignmentFormat : AlignmentFormat)
-    extends InportWithFormat(pid, "alignment", text, alignmentFormat) with Outport
+  case class Alignment(alignmentFormat : AlignmentFormat)
+    extends InportWithFormat(alignmentFormat) with Outport
 
   // TODO We assume this to be implicitly multi FASTA
-  case class Sequences(override val pid : PortTag) extends Inport(pid, "sequences")
-
+  case object Sequences extends Inport
 }
 
+
+/*
+ * Port Hierarchy
+ */
+abstract class Port
+
+
+// Each Inport Type must declare a String representation and a mapping to a form field
+abstract class Inport extends Port
+sealed trait Outport extends Port
+
+// Port that comes along with a format specification
+abstract class InportWithFormat(val format : Format) extends Inport
+
+
+
+// Formats // TODO Deal with format conversion
 
 abstract class Format(val fullName : String)
 
@@ -37,23 +72,13 @@ case object TRE extends AlignmentFormat("TREECON")
 
 
 
-/*
- * Port Hierarchy
- */
-abstract class Port(val pid : PortTag)
 
 
-// Each Inport Type must declare a String representation and a mapping to a form field
-abstract class Inport(pid : PortTag, val str: String) extends Port(pid)
-
-sealed trait Outport extends Port
 
 
-// Port that comes along with a format specification
-abstract class InportWithFormat[A](pid : PortTag, str : String, pattern :  Mapping[A], val format : Format)
-  extends Inport(pid, str)
 
-/*
-Port properties
- */
-case class PortTag(val portName : String, val fullName : String, val description : Option[String])
+
+
+
+
+
