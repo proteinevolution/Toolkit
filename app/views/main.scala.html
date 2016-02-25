@@ -28,10 +28,10 @@
     <body data-ws-url="@routes.Application.ws().webSocketURL()">
 
         <div class="header" data-equalizer>
-            <div class="large-4 columns top-bar" data-equalizer-watch>
+            <div class="small-4 columns top-bar" data-equalizer-watch>
                 <span class="logo" style="margin-left: 100px;"> <a href="@general.homecontent()"><img class="logo" src="@routes.Assets.at("images/logo2.png")"> </a></span>
             </div>
-            <div class="large-8 columns top-bar" data-equalizer-watch>@elements.topbar(sectionname)</div>
+            <div class="small-8 columns top-bar" data-equalizer-watch>@elements.topbar(sectionname)</div>
         </div>
         <div class="navbar">
             @elements.navbar()

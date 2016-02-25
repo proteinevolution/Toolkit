@@ -19,12 +19,73 @@
 }
 .navbar {
   background: #2E8C81;
+  border: 0px solid;
 }
 #panel1 {
-  background: blue;
+  background: #D0BA89;
   border-width: 0px;
+  border: 0px solid;
 }
 #panel2 {
-  background: red;
+  background: #FFCC66;
   border-width: 0px;
+  border: 0px solid;
+}
+#panel3 {
+  background: #669933;
+  border-width: 0px;
+  border: 0px solid;
+}
+#panel4 {
+  background: #7CA6A6;
+  border-width: 0px;
+  border: 0px solid;
+}
+#panel5 {
+  background: #666699;
+  border-width: 0px;
+  border: 0px solid;
+}
+#panel6 {
+  background: #D6ABAB;
+  border-width: 0px;
+  border: 0px solid;
+}
+#panel7 {
+  background: #CC3333;
+  border-width: 0px;
+  border: 0px solid;
+}
+
+
+#toolsec {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+#toolsec li {
+  display: inline;
+  margin-top: -12px;
+  float: left;
+  text-align: center;
+  padding-right: 10px;
+  padding-left: 10px;
+  font-size: 14px;
+  color: #000;
+}
+
+#toolsec li a {
+  border-right: none;
+  padding: 0;
+  color: #000;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  font-size: 14px;
+}
+#toolsec li a:hover {
+  color: #930;
+  background: #f5d7b4;
 }
