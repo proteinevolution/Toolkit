@@ -10,21 +10,16 @@
     toolname ='@toolname'
 
 </script>
-
+<script src="@routes.Assets.at("scripts/form.js")"></script>
 <form class="jobform">
-
-
-
 
         @toolframe
 
-
-
-
 <input type="checkbox" id="customjobidwanted" name="customjobidwanted" />
 <label for="customjobidwanted" id="customjobidwantedlabel">Provide Custom ID</label>
-<input type="text" id="jobid" name="jobid" placeholder="Custom Job ID" />
+<input type="hidden" id="jobid" name="jobid" placeholder="Custom Job ID" />
 <input class="secondary button" type="submit" value="Submit Job" >
+<input class="jobprepare secondary button" type="button" value="Prepare Job" />
 <input class="jobformclear secondary button" type="button" value="Clear form" />
 
 </form>

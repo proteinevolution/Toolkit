@@ -1,12 +1,14 @@
 package actors
 import javax.inject._
 
-import actors.Worker.{WStart, WPrepare}
+import actors.Worker.{WRead, WStart, WPrepare}
 import akka.actor._
 import akka.event.LoggingReceive
+import akka.util.Timeout
 import models.jobs._
 import play.api.Logger
 import com.google.inject.assistedinject.Assisted
+import scala.concurrent.duration._
 
 /**
   *  The User actor will represent each user who is present on the toolkit and
@@ -33,6 +35,10 @@ object UserActor {
   // Requested a list of all Job IDs
   case object GetAllJobs
 
+  case class GetJobParams(job_id : String)
+
+  case class GetJobView(job_id : String)
+
   // Socket attached / Starting socket session
   case class AttachWS(user_id : Long, ws : ActorRef)
 
@@ -41,11 +47,11 @@ object UserActor {
   }
 }
 
-
 class UserActor @Inject() (@Named("worker") worker : ActorRef,
                            @Assisted user_id: Long,
-                           jobDB : models.database.Jobs)
-                  extends Actor with ActorLogging {
+                           jobDB : models.database.Jobs) extends Actor with ActorLogging {
+
+  implicit val timeout = Timeout(5.seconds)
 
   import UserActor._
 
@@ -93,20 +99,22 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       } else {
 
+          val job = UserJob(self, toolname, PartiallyPrepared, job_id, user_id, startImmediate)
+          userJobs.put(job.job_id, job)
+          jobDB.add(DBJob(job.job_id, user_id, toolname))
 
-        val job = UserJob(self, toolname, PartiallyPrepared, job_id, user_id, startImmediate)
-        userJobs.put(job.job_id, job)
-        jobDB.add(DBJob(job.job_id, user_id, toolname))
-
-        worker ! WPrepare(job, params)
+          worker ! WPrepare(job, params)
       }
 
 
     // Returns a Job for a given job_id
     case GetJob(job_id) =>  sender() ! userJobs.get(job_id).get
 
+    case GetJobParams(job_id) => worker forward WRead(userJobs(job_id))
+
     // Returns all Jobs
     case GetAllJobs => sender() ! userJobs.values
+
 
     // Connection was ended
     case Terminated(ws_new) =>  ws = null

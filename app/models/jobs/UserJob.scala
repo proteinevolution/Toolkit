@@ -41,12 +41,13 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
   }
 
 
-
   def changeState(newState : JobState): Unit = {
 
     userActor ! JobStateChanged(job_id, newState)
     state = newState
   }
+
+
 
   def getState = state
 }

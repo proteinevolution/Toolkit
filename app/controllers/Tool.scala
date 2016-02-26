@@ -3,20 +3,24 @@ package controllers
 import javax.inject.{Named, Singleton, Inject}
 
 
-import actors.UserActor.{GetAllJobs, GetJob, PrepWD}
+import actors.UserActor._
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.jobs.UserJob
+import jdk.internal.dynalink.linker.LinkerServices.Implementation
+import models.jobs.{Prepared, Done, UserJob}
 import models.tools.{ToolModel, Hmmer3, Tcoffee, Alnviz}
 import models.Session
 import play.api.Logger
 import play.api.libs.json.Json
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask
 import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
+
+
 
 /**
   * Created by lukas on 1/27/16.
@@ -164,30 +168,62 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     }
   }
 
-  def result(main_id : String) = Action.async { implicit request =>
+  def result(job_id : String) = Action.async { implicit request =>
 
     val user_id = request.session.get(UID).get.toLong
 
     (userManager ? GetUserActor(user_id)).mapTo[ActorRef].flatMap { userActor =>
-      (userActor ? GetJob(main_id)).mapTo[UserJob].map { job =>
+      (userActor ? GetJob(job_id)).mapTo[UserJob].flatMap { job =>
 
-        //TODO Calculate the appropriate visualizations of the tools
-        val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$main_id/sequences.clustalw_aln"),
-                      "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$main_id/sequences.clustalw_aln"))
 
-        val toolframe = job.toolname match {
+        // Switch on Job state to decide what to show
+        job.getState match {
 
-          case "alnviz" =>
-            val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$main_id/result"))
-            views.html.tool.visualizations(vis)
+            
+          case Done => Future {
 
-          case "tcoffee" => views.html.tool.visualizations(vis)
-          case "hmmer3" => views.html.tool.visualizations(vis)
+            // TODO Dynamically calculate appropriate visualizations
+            val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$job_id/sequences.clustalw_aln"),
+              "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/sequences.clustalw_aln"))
+
+            val toolframe = job.toolname match {
+
+              case "alnviz" =>
+                val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/result"))
+                views.html.tool.visualizations(vis)
+
+              case "tcoffee" => views.html.tool.visualizations(vis)
+              case "hmmer3" => views.html.tool.visualizations(vis)
+            }
+
+            Ok(views.html.general.result(toolframe, job))
         }
+          case Prepared =>
+            Logger.info("Prepared job requested")
 
-        Ok(views.html.general.result(toolframe, job))
+            (userActor ? GetJobParams(job.job_id)).mapTo[Map[String, String]].map { res =>
+
+
+              val toolframe = job.toolname match {
+                case "alnviz" => views.html.alnviz.form(Alnviz.inputForm.bind(res))
+                case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm.bind(res))
+                case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm.bind(res))
+              }
+
+
+              Ok(views.html.general.submit(job.toolname, toolframe)).withSession {
+
+                val uid = request.session.get(UID).getOrElse {
+
+                  Session.next.toString
+                }
+                Logger.info("Request from  UID" + uid)
+                request.session + (UID -> uid)
+              }
+        }
+        }
       }
-    }
-  }
+      }
+ }
 }
 

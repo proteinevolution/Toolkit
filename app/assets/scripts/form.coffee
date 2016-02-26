@@ -16,9 +16,9 @@ $ ->
   $('#customjobidwanted').change ->
 
     if $(this).is(':checked')
-      $('#jobid').prop('readonly', false).show()
+      $('#jobid').prop('type', 'text').prop('readonly', false).show()
     else
-      $('#jobid').prop('readonly', true).hide()
+      $('#jobid').prop('type', 'hidden').prop('readonly', true).hide()
       $('#jobid').val("")
 
   $('#jobid').bind 'input propertychange', ->
@@ -32,7 +32,6 @@ $ ->
       submissionAllowed = false
 
   # Handles the behavior when the submit button is pressed in a job form
-  #
   $(".jobform").submit (event) ->
     event.preventDefault()
     submitRoute = jsRoutes.controllers.Tool.submit(toolname, true)
@@ -48,8 +47,30 @@ $ ->
       success: (data, textStatus, jqXHR) ->
       #$('body').append "Successful AJAX call: #{data}"
 
+  # Handles the behavior when the submit button is pressed in a job form
+  $(".jobprepare").click  ->
 
-  # If one hits the Reset button of the form
+    submitRoute = jsRoutes.controllers.Tool.submit(toolname, false)
+
+    $.ajax
+      url: submitRoute.url
+      type: "POST"
+      data: $(".jobform").serialize()
+      error: (jqXHR, textStatus, errorThrown) ->
+        alert errorThrown
+
+      success: (data, textStatus, jqXHR) ->
+
+
+
+
+
+
+
+
+
+
+# If one hits the Reset button of the form
   $(".jobformclear").click (event) ->
     $('.jobform').trigger("reset")
     $('#jobid').prop('readonly', true).hide().val("")

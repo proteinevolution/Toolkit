@@ -25,6 +25,9 @@ object Worker {
   case class WPrepare(job : UserJob, params : Map[String, String])
   // Starting the job
   case class WStart(job: UserJob)
+
+  // Worker was asked to read parameters of the job and to put them into a Map
+  case class WRead(job : UserJob)
 }
 
 class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLogging {
@@ -102,6 +105,22 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       sourceRunscript.close()
       targetRunscript.close()
       userJob.changeState(Prepared)
+
+
+    case WRead(userJob) =>
+
+      val main_id = Await.result(jobDB.userJobMapping.get(userJob.user_id -> userJob.job_id).get, Duration.Inf)
+      val paramPath = jobPath + main_id + sep + "params/"
+
+      val files = new java.io.File(paramPath).listFiles
+
+      val res : Map[String, String] = files.map { file =>
+
+        file.getName -> scala.io.Source.fromFile(file.getAbsolutePath).mkString
+      }.toMap
+      Logger.info("Worker reached")
+      sender() ! res
+
 
 
 

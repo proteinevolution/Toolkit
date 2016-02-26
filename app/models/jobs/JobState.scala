@@ -3,7 +3,6 @@ package models.jobs
 /**
   * Created by lukas on 1/20/16.
   */
-
 abstract class JobState(val no: Int)
 
 case object PartiallyPrepared extends JobState(0)

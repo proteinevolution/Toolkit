@@ -43,10 +43,9 @@ jobs.vm = do ->
     $.post("/jobs", (data) ->
         m.startComputation()
         for job in data.jobs
-          vm.update(job.i, job.s, "dummy")
+          vm.update(job.i, job.s, "")
         m.endComputation()
     )
-
 
   vm
 #the controller defines what part of the model is relevant for the current page
@@ -59,7 +58,7 @@ jobs.controller = ->
 
 jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
-    m 'tr[class=job]', { onclick: jobs.vm.onclick.bind(task, task.job_id) }, [
+    m 'tr[class=job]', {onclick: jobs.vm.onclick.bind(task, task.job_id)} , [
       m('td[class=' + a[task.state()] + ']')
       m('td', task.job_id())
       m('td', task.code())
