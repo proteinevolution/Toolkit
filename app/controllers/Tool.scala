@@ -179,7 +179,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         // Switch on Job state to decide what to show
         job.getState match {
 
-            
+
           case Done => Future {
 
             // TODO Dynamically calculate appropriate visualizations
