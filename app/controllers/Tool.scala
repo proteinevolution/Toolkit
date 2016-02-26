@@ -143,16 +143,17 @@ class Tool @Inject()(val messagesApi: MessagesApi,
           case "tcoffee" => Tcoffee.inputForm
           case "hmmer3" => Hmmer3.inputForm
         }
+        val boundForm = form.bindFromRequest
 
-        form.bindFromRequest.fold(
+        boundForm.fold(
           formWithErrors => {
             BadRequest("This was an error")
           },
-          formdata => {
+          _ => {
             Logger.info("{Tool} Form data sucessfully received")
-            Logger.info(formdata.toString)
+            Logger.info(boundForm.data.toString)
 
-            userActor ! PrepWD(toolname, formdata, true, job_id) // The third argument is currently not used
+            userActor ! PrepWD(toolname, boundForm.data, true, job_id) // The third argument is currently not used
           }
         )
         Ok

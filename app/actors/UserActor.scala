@@ -22,7 +22,7 @@ object UserActor {
   case class JobStateChanged(job_id : String, state : JobState)
 
   // Start a job
-  case class PrepWD(toolname : String, params : Product with Serializable, startImmediately : Boolean, job_id_o : Option[String])
+  case class PrepWD(toolname : String, params : Map[String, String], startImmediately : Boolean, job_id_o : Option[String])
 
   // Job has been prepared
   case class PrepWDDone(job : UserJob)

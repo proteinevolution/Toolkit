@@ -1,6 +1,5 @@
 package models
 
-import models.tools.{ToolModel, Alnviz}
 
 /**
  *
@@ -23,15 +22,5 @@ object Values {
     "msf" -> "GCG/MSF",
     "pir" -> "PIR/NBRF",
     "tre" -> "TREECON"
-  )
-
-  val modelMap : Map[String, ToolModel] = Map(
-    "alnviz" -> Alnviz
-  )
-
-  val paramNames = Map(
-    "alnviz" -> Array("alignment", "format"),
-    "tcoffee" -> Array("sequences", "mlalign_id_pair", "mfast_pair", "mslow_pair")
-
   )
 }

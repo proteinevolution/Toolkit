@@ -23,7 +23,7 @@ import scala.reflect.io.{Directory, File}
 
 object Worker {
   // Preparation of the Job
-  case class WPrepare(job : UserJob, params : Product with Serializable)
+  case class WPrepare(job : UserJob, params : Map[String, String])
   // Starting the job
   case class WStart(job: UserJob)
 }
@@ -44,7 +44,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
   def receive = LoggingReceive {
 
-    case WPrepare(userJob, param) =>
+    case WPrepare(userJob, params) =>
 
       Logger.info("[Worker](WPrepare) for job " + userJob.job_id)
       Logger.info("[Worker] Runscript path was " + runscriptPath)
@@ -63,9 +63,6 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       }
       Logger.info("All subdirectories were created successfully")
 
-      // Construct parameter Map
-      val names = Values.paramNames(userJob.toolname)
-      val params =  (for(i <- names.indices ) yield names(i) -> param.productElement(i)).toMap
 
       // Write the parameters into the subdirectory:
       for( (paramName, value) <- params ) {
