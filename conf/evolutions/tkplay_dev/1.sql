@@ -14,6 +14,20 @@ CREATE TABLE `jobs` (
 	`viewed_on` DATETIME
 );
 
+CREATE TABLE `users` (
+
+  `user_id` int(11) NOT NULL PRIMARY KEY,
+  `user_name_first` varchar(50),
+  `user_name_last` varchar(50),
+  `password` varchar(50),
+  `email` varchar(50),
+	`created_on` DATETIME,
+	`updated_on` DATETIME
+);
+
+
 # --- !Downs
 DROP TABLE `jobs`;
+
+DROP TABLE `users`;
 

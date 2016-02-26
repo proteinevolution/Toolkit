@@ -22,7 +22,7 @@ object UserActor {
   case class JobStateChanged(job_id : String, state : JobState)
 
   // Start a job
-  case class PrepWD(tool_name : String, params : Product with Serializable, startImmediately : Boolean, job_id_o : Option[String])
+  case class PrepWD(toolname : String, params : Product with Serializable, startImmediately : Boolean, job_id_o : Option[String])
 
   // Job has been prepared
   case class PrepWDDone(job : UserJob)
@@ -71,7 +71,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
 
      // Job Preparation Routine
-    case PrepWD(tool_name, params, startImmediately, job_id_o) =>
+    case PrepWD(toolname, params, startImmediately, job_id_o) =>
 
       // Determine the Job ID for the Job that was submitted
       val job_id : String = job_id_o match {
@@ -87,7 +87,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
           new_job_id
       }
-      Logger.info("UserActor wants to prepare job directory for tool " + tool_name + " with job_id " + job_id)
+      Logger.info("UserActor wants to prepare job directory for tool " + toolname + " with job_id " + job_id)
 
       if(userJobs contains job_id) {
 
@@ -97,10 +97,10 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       } else {
 
         // User Actor has to wait until Job has entered the Database
-        val job = UserJob(self, tool_name, Submitted, job_id, user_id)
+        val job = UserJob(self, toolname, Submitted, job_id, user_id)
 
         userJobs.put(job.job_id, job)
-        jobDB.add(DBJob(job.job_id, user_id, tool_name))
+        jobDB.add(DBJob(job.job_id, user_id, toolname))
 
         worker ! WPrepare(job, params)
       }

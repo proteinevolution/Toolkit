@@ -42,7 +42,7 @@ object Tool {
         || tool.toolNameLong         == toolName
         || tool.toolNameAbbreviation == toolName) return tool
     }
-    return null // TODO catch error and show it as a 404
+    return null
   }
 
   /** addToolModel
@@ -75,7 +75,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
       (userActor ? GetAllJobs).mapTo[Iterable[UserJob]].map { joblist =>
 
         val jobListObjs = for (job <- joblist) yield {
-          Json.obj("t" -> job.tool_name,
+          Json.obj("t" -> job.toolname,
             "s" -> job.getState.no,
             "i" -> job.job_id)
         }
@@ -84,17 +84,9 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     }
   }
 
-
   def show2(toolname : String) = Action { implicit request =>
-
     Ok(views.html.tool.form(toolname))
-
-
   }
-
-
-
-
 
   def show(toolname: String) = Action { implicit request =>
 
@@ -179,7 +171,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$main_id/sequences.clustalw_aln"),
                       "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$main_id/sequences.clustalw_aln"))
 
-        val toolframe = job.tool_name match {
+        val toolframe = job.toolname match {
 
           case "alnviz" =>
             val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$main_id/result"))
