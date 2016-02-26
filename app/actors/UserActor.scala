@@ -17,18 +17,29 @@ import com.google.inject.assistedinject.Assisted
   */
 
 object UserActor {
-
   // All messages that the UserActor can actually receive
-  case class JobStateChanged(jobid : String, state : JobState)
-  case class PrepWD(toolname : String, params : Product with Serializable, startImmediately : Boolean, job_id_o : Option[String])
+  // Job changed state
+  case class JobStateChanged(job_id : String, state : JobState)
+
+  // Start a job
+  case class PrepWD(tool_name : String, params : Product with Serializable, startImmediately : Boolean, job_id_o : Option[String])
+
+  // Job has been prepared
   case class PrepWDDone(job : UserJob)
+
+  // Job ID was Invalid
   case object JobIDInvalid
+
+  // Requested a Job with Job ID
   case class GetJob(jobID : String)
+
+  // Requested a list of all Job IDs
   case object GetAllJobs
+
+  // Socket attached / Starting socket session
   case class AttachWS(user_id : Long, ws : ActorRef)
 
   trait Factory {
-
     def apply(user_id: Long): Actor
   }
 }
@@ -59,57 +70,57 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       Logger.info("WebSocket attached successfully\n")
 
 
-     /* Prepare Routine */
-    case PrepWD(toolname, params, startImmediately, job_id_o) =>
+     // Job Preparation Routine
+    case PrepWD(tool_name, params, startImmediately, job_id_o) =>
 
       // Determine the Job ID for the Job that was submitted
       val job_id : String = job_id_o match {
-
+        // Job ID was selected by the User
         case Some(id) => id
-
+        // Job ID was none, generate a random ID
         case None =>
 
           var new_job_id : String = null
           do {
-
             new_job_id = job_id_generator.nextInt(10000).toString
-
           } while(userJobs contains new_job_id)
 
           new_job_id
       }
-      Logger.info("UserActor wants to prepare job directory for tool " + toolname + " with job_id " + job_id)
+      Logger.info("UserActor wants to prepare job directory for tool " + tool_name + " with job_id " + job_id)
 
-      // User has tried to submit same job_id twice
       if(userJobs contains job_id) {
 
+        // User has tried to submit same job_id twice
         self ! JobIDInvalid
-      }
 
-      else {
+      } else {
 
         // User Actor has to wait until Job has entered the Database
-        val job = UserJob(self, toolname, Submitted, job_id, user_id)
+        val job = UserJob(self, tool_name, Submitted, job_id, user_id)
 
         userJobs.put(job.job_id, job)
-        jobDB.add(DBJob(job.job_id, user_id))
+        jobDB.add(DBJob(job.job_id, user_id, tool_name))
 
         worker ! WPrepare(job, params)
       }
 
-    /*  Job Dir has been prepared successfully    */
+    // Job Dir has been prepared successfully
     case PrepWDDone(job) =>
 
       Logger.info("[UserActor] Job with job_id " + job.job_id + " was prepared successfully")
       worker ! WStart(job)
 
+    // Returns a Job for a given ID
     case GetJob(job_id) =>  sender() ! userJobs.get(job_id).get
 
+    // Returns all Jobs
     case GetAllJobs => sender() ! userJobs.values
 
-
+    // Connection was ended
     case Terminated(ws_new) =>  ws = null
 
+    // Job status was changed
     case m @ JobStateChanged(job_id, state) =>
       ws ! m
 

@@ -22,8 +22,9 @@ import scala.reflect.io.{Directory, File}
 
 
 object Worker {
-
+  // Preparation of the Job
   case class WPrepare(job : UserJob, params : Product with Serializable)
+  // Starting the job
   case class WStart(job: UserJob)
 }
 
@@ -63,7 +64,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       Logger.info("All subdirectories were created successfully")
 
       // Construct parameter Map
-      val names = Values.paramNames(userJob.toolname)
+      val names = Values.paramNames(userJob.tool_name)
       val params =  (for(i <- names.indices ) yield names(i) -> param.productElement(i)).toMap
 
       // Write the parameters into the subdirectory:
@@ -73,8 +74,8 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       }
       Logger.info("All params were written to the job_directory successfully")
 
-      val sourceRunscript = Source.fromFile(runscriptPath + userJob.toolname + ".sh")
-      val targetRunscript = new PrintWriter(rootPath + userJob.toolname + ".sh")
+      val sourceRunscript = Source.fromFile(runscriptPath + userJob.tool_name + ".sh")
+      val targetRunscript = new PrintWriter(rootPath + userJob.tool_name + ".sh")
 
 
       // Translate the Runscript template to an actual executable script
@@ -104,7 +105,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       targetRunscript.close()
 
       // Set the execution right for the user
-      ("chmod u+x " + rootPath + userJob.toolname + ".sh").!
+      ("chmod u+x " + rootPath + userJob.tool_name + ".sh").!
 
       sender() ! PrepWDDone(userJob)
 
@@ -116,7 +117,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       val rootPath = jobPath + main_id + sep
 
       // Assumption : The Root path contains a prepared shellscript that bears the toolname + sh suffix
-      val result = Process("./" + userJob.toolname + ".sh", new io.File(rootPath)).!
+      val result = Process("./" + userJob.tool_name + ".sh", new io.File(rootPath)).!
 
       // Change state of job depending on the RUnscript execution
       userJob.changeState(if(result == 0) Done else Error)

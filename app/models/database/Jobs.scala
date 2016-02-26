@@ -12,11 +12,13 @@ import scala.concurrent.Future
 
 class JobsTableDef(tag: Tag) extends Table[DBJob](tag, "jobs") {
 
-  def main_id = column[Long]("main_id", O.PrimaryKey,O.AutoInc)
-  def job_id = column[String]("job_id")
-  def user_id = column[Long]("user_id")
+  def main_id   = column[Long]("main_id", O.PrimaryKey,O.AutoInc)
+  def job_id    = column[String]("job_id")
+  def user_id   = column[Long]("user_id")
+  def status    = column[Char]("status")
+  def tool_name = column[String]("tool")
 
-  override def * = (job_id, user_id) <>(DBJob.tupled, DBJob.unapply)
+  override def * = (job_id, user_id, tool_name) <> (DBJob.tupled, DBJob.unapply)
 }
 
 @Singleton

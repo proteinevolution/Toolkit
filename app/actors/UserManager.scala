@@ -6,7 +6,7 @@ import akka.event.LoggingReceive
 import javax.inject._
 import play.api.libs.concurrent.InjectedActorSupport
 import play.api.Logger
-
+import play.api.cache._
 object UserManager {
 
   case class GetUserActor(user_id: Long)

@@ -23,13 +23,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 object Tool {
   var tools:List[ToolModel] = List[ToolModel]()  // list of all added tools
-  var toolsDropdownList:String = ""
 
   // TODO Get these imported from an external file
+  tools::= Hmmer3
   tools::= Tcoffee
   tools::= Alnviz
-  tools::= Hmmer3
-  toolsDropdownListRenew()
 
 
   /** getToolModel
@@ -54,15 +52,7 @@ object Tool {
     */
   def addToolModel(toolModel:ToolModel) = {
     tools ::= toolModel
-    toolsDropdownListRenew()
   }
-
-  def toolsDropdownListRenew() = {
-    toolsDropdownList = ""
-
-  }
-
-
 }
 
 @Singleton
@@ -86,7 +76,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
       (userActor ? GetAllJobs).mapTo[Iterable[UserJob]].map { joblist =>
 
         val jobListObjs = for (job <- joblist) yield {
-          Json.obj("t" -> job.toolname,
+          Json.obj("t" -> job.tool_name,
             "s" -> job.getState.no,
             "i" -> job.job_id)
         }
@@ -101,26 +91,29 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     Logger.info(s"{Tool} Input view for tool $toolname requested")
 
     val tool = Tool.getToolModel(toolname)
-    // Determine view of tool
-
-    //val inputForm = tool.inputForm
-    // TODO Replace with reflection, otherwise we have to mention all tools explicitly here.
-    val toolframe = toolname match {
-      case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
-      case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
-      case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
-    }
-
-    val view = views.html.general.submit(tool.toolNameShort, toolframe)
-
-    Ok(views.html.main(view, tool.toolNameLong)).withSession {
-
-      val uid = request.session.get(UID).getOrElse {
-
-        Session.next.toString
+    // Check if the tool name was ok.
+    if (tool == null) NotFound
+    else {
+      // Determine view of tool
+      //val inputForm = tool.inputForm
+      // TODO Replace with reflection, otherwise we have to mention all tools explicitly here.
+      val toolframe = tool.toolNameShort match {
+        case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
+        case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
+        case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
       }
-      Logger.info("Request from  UID" + uid)
-      request.session + (UID -> uid)
+
+      val view = views.html.general.submit(tool.toolNameShort, toolframe)
+
+      Ok(views.html.main(view, tool.toolNameLong)).withSession {
+
+        val uid = request.session.get(UID).getOrElse {
+
+          Session.next.toString
+        }
+        Logger.info("Request from  UID" + uid)
+        request.session + (UID -> uid)
+      }
     }
   }
 
@@ -137,26 +130,31 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     (userManager ? GetUserActor(user_id)).mapTo[ActorRef].map { userActor =>
 
       val tool = Tool.getToolModel(toolname)
-      //val form = tool.inputForm
-      // TODO replace with reflection
-      val form = tool.toolNameShort match {
-        case "alnviz" => Alnviz.inputForm
-        case "tcoffee" => Tcoffee.inputForm
-        case "hmmer3" => Hmmer3.inputForm
-      }
-
-      form.bindFromRequest.fold(
-        formWithErrors => {
-          BadRequest("This was an error")
-        },
-        formdata => {
-          Logger.info("{Tool} Form data sucessfully received")
-          Logger.info(formdata.toString)
-
-          userActor ! PrepWD(toolname, formdata, true, job_id) // The third argument is currently not used
+      // Check if the tool name was ok.
+      if (tool == null)
+        NotFound
+      else {
+        //val form = tool.inputForm
+        // TODO replace with reflection
+        val form = tool.toolNameShort match {
+          case "alnviz" => Alnviz.inputForm
+          case "tcoffee" => Tcoffee.inputForm
+          case "hmmer3" => Hmmer3.inputForm
         }
-      )
-      Ok
+
+        form.bindFromRequest.fold(
+          formWithErrors => {
+            BadRequest("This was an error")
+          },
+          formdata => {
+            Logger.info("{Tool} Form data sucessfully received")
+            Logger.info(formdata.toString)
+
+            userActor ! PrepWD(toolname, formdata, true, job_id) // The third argument is currently not used
+          }
+        )
+        Ok
+      }
     }
   }
 
@@ -171,7 +169,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$main_id/sequences.clustalw_aln"),
                       "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$main_id/sequences.clustalw_aln"))
 
-        val toolframe = job.toolname match {
+        val toolframe = job.tool_name match {
 
           case "alnviz" =>
             val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$main_id/result"))

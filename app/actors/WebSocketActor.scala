@@ -34,11 +34,10 @@ class WebSocketActor(user_id: Long, userManager : ActorRef, out: ActorRef)  exte
     userManager ! AttachWS(user_id, self)
   }
 
-
   def receive = LoggingReceive {
 
     /*
-    Messages received from the websocket and passed to the User
+     * Messages received from the websocket and passed to the User
      */
     case js: JsValue =>
 
@@ -52,11 +51,16 @@ class WebSocketActor(user_id: Long, userManager : ActorRef, out: ActorRef)  exte
           }
       }
 
+    /*
+     * Messages the user that there was a problem in handling the Job ID
+     */
     case JobIDInvalid => out ! Json.obj("type" -> "jobidinvalid")
 
+    /*
+     * Messages the user about a change in the Job status
+     */
     case JobStateChanged(job_id, state) =>
       Logger.info("WebSocketActor received: JobState Changed")
       out ! Json.obj("type" -> "jobstate", "newState" -> state.no, "job_id" -> job_id)
-
-}
+  }
 }
