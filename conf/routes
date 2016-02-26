@@ -40,3 +40,5 @@ POST        /jobs                           @controllers.Tool.jobs
 ###############################################################
 GET         /results/:jobid                @controllers.Tool.result(jobid: String)
 POST        /results/:jobid                @controllers.Tool.result(jobid: String)
+
+GET         /show2/:toolname               @controllers.Tool.show2(toolname : String)

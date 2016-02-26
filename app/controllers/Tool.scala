@@ -66,7 +66,6 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   implicit val timeout = Timeout(5.seconds)
 
 
-
   def jobs = Action.async { implicit request =>
 
     val user_id = request.session.get(UID).get.toLong
@@ -80,10 +79,21 @@ class Tool @Inject()(val messagesApi: MessagesApi,
             "s" -> job.getState.no,
             "i" -> job.job_id)
         }
-        Ok(Json.obj( "jobs" -> jobListObjs))
+        Ok(Json.obj("jobs" -> jobListObjs))
       }
     }
   }
+
+
+  def show2(toolname : String) = Action { implicit request =>
+
+    Ok(views.html.tool.form(toolname))
+
+
+  }
+
+
+
 
 
   def show(toolname: String) = Action { implicit request =>

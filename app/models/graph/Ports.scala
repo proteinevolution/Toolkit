@@ -1,42 +1,59 @@
 package models.graph
 
-import models.tools.{TcoffeeNode, AlnvizNode}
-import play.api.data._
-import play.api.data.Forms._
-import utils.Exceptions.ToolnameNotDistinctException
+import models.graph.nodes.{TcoffeeNode, AlnvizNode}
 
 /**
   * Created by lukas on 2/15/16.
   */
 object Ports {
 
-  private val nodes = Array(AlnvizNode, TcoffeeNode)
 
-  // Code to compute the dependency graph between the tools
-  // 1. Check that the toolnames are unique
-  if(nodes.map(_.toolname).distinct.length != nodes.length) {
-    throw ToolnameNotDistinctException("Error: Toolnames are not distinct. ")
+  val nodes = Vector(AlnvizNode, TcoffeeNode)
+
+
+  for(node1 <- nodes; node2 <- nodes) {
+    for(i <- node1.inports.indices; j <- node2.outports.indices ) {
+
+      val x = node1.inports(i)
+      val y = node2.outports(j)
+
+      // the ports are compatible if they come from the same class
+      if(x.getClass.getName == y.getClass.getName) {
+
+        node1.inlinks += ((i, j, node2))
+        node2.outlinks += ((j, i, node1))
+      }
+    }
   }
-
-
-  // Collects all Nodes which have the respective port type as input
-
-
-
-  // Collects all Nodes which have the respective port as output
 
 
 
   // An MSA as ToolPort.
   // TODO We might want to distinguish between different Alphabets
-  case class Alignment(override val pid : PortTag, alignmentFormat : AlignmentFormat)
-    extends InportWithFormat(pid, "alignment", text, alignmentFormat) with Outport
+  case class Alignment(alignmentFormat : AlignmentFormat)
+    extends InportWithFormat(alignmentFormat) with Outport
 
   // TODO We assume this to be implicitly multi FASTA
-  case class Sequences(override val pid : PortTag) extends Inport(pid, "sequences", text)
-
+  case object Sequences extends Inport
 }
 
+
+/*
+ * Port Hierarchy
+ */
+abstract class Port
+
+
+// Each Inport Type must declare a String representation and a mapping to a form field
+abstract class Inport extends Port
+sealed trait Outport extends Port
+
+// Port that comes along with a format specification
+abstract class InportWithFormat(val format : Format) extends Inport
+
+
+
+// Formats // TODO Deal with format conversion
 
 abstract class Format(val fullName : String)
 
@@ -55,31 +72,13 @@ case object TRE extends AlignmentFormat("TREECON")
 
 
 
-/*
- * Port Hierarchy
- */
-abstract class Port(val pid : PortTag)
 
 
-// Each Inport Type must declare a String representation and a mapping to a form field
-abstract class Inport[A](pid : PortTag, val str: String, val pattern : Mapping[A] ) extends Port(pid) {
-
-  val map = str -> pattern
-
-}
-
-sealed trait Outport extends Port
 
 
-// Port that comes along with a format specification
-abstract class InportWithFormat[A](pid : PortTag, str : String, pattern :  Mapping[A], val format : Format)
-  extends Inport(pid, str, pattern) {
-
-  val formatMap = str + "_format" -> text
-}
 
 
-/*
-Port properties
- */
-case class PortTag(val portName : String, val fullName : String, val description : Option[String])
+
+
+
+

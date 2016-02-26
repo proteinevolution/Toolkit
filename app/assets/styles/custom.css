@@ -67,10 +67,11 @@ tr.spaceUnder > td
 .top-bar {
     box-sizing: inherit;
     background: #006F62;
+    height: 130px;
 }
 
 .sidebar {
-    width: 50%;
+    width: 60%;
 }
 
 .content {
@@ -91,4 +92,39 @@ tr.spaceUnder > td
 .advancedsearch {
 
     width: 500px;
+}
+
+.tabs-content {
+    border: 0px;
+
+}
+
+.tabs {
+    border: 0;
+    color: #fff;
+}
+
+.navbar-tabs{
+    border: 0px;
+}
+
+.tabs-title{
+    border: 0px;
+    color: #fff;
+    background-color: #2E8C81;
+}
+
+.tabs-title.is-active a:link{
+    border: 0px;
+    background-color: #272727;
+    color: #fff;
+}
+
+.tabs-title a:link{
+    color:#000;
+}
+
+.header {
+
+    height: 130px;
 }
