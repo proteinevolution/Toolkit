@@ -97,7 +97,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       } else {
 
         // User Actor has to wait until Job has entered the Database
-        val job = UserJob(self, toolname, Submitted, job_id, user_id)
+        val job = UserJob(self, toolname, PartiallyPrepared, job_id, user_id)
 
         userJobs.put(job.job_id, job)
         jobDB.add(DBJob(job.job_id, user_id, toolname))

@@ -2,10 +2,7 @@ package models.tools
 
 import java.io.File
 
-import models.graph.{InportWithFormat, Port, Inport}
-
 import play.api.Play._
-import play.api.data.Form
 
 /**
   * Created by lukas on 1/16/16.

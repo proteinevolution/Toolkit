@@ -2,6 +2,7 @@ package models.jobs
 
 import actors.UserActor.JobStateChanged
 import akka.actor.ActorRef
+import models.graph.{Missing, FileState}
 
 /**
   * Created by lukas on 1/20/16.
@@ -12,6 +13,13 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
               val job_id : String, // Which job_id is attached to this Job
               val user_id : Long) // Which user_id is attached to this job
 {
+
+  val tool = models.graph.Ports.nodeMap(toolname)
+
+
+
+
+
 
   def changeState(newState : JobState): Unit = {
 

@@ -1,7 +1,7 @@
 package models.graph.nodes
 
 import models.graph.Ports.Alignment
-import models.graph.CLU
+import models.graph.{File, CLU}
 
 
 /**
@@ -15,7 +15,8 @@ object AlnvizNode extends Node {
 
   val toolname = "alnviz"
 
-  val inports = Vector(Alignment(CLU))
+
+  val inports = Vector(Alignment(Array("alignment"), CLU))
 
   val outports = Vector.empty
 }

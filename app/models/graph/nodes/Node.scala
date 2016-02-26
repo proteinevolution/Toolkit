@@ -1,7 +1,6 @@
 package models.graph.nodes
 
-import models.graph.{Outport, Inport}
-
+import models.graph.Port
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -11,8 +10,8 @@ abstract class Node {
 
   val toolname : String
 
-  val inports : Vector[Inport]
-  val outports : Vector[Outport]
+  val inports : Vector[Port]
+  val outports : Vector[Port]
 
   val inlinks : ArrayBuffer[(Int, Int, Node)] = ArrayBuffer.empty
   val outlinks : ArrayBuffer[(Int, Int, Node)] = ArrayBuffer.empty

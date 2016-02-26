@@ -10,6 +10,12 @@ object Ports {
 
   val nodes = Vector(AlnvizNode, TcoffeeNode)
 
+  val nodeMap = Map(
+
+    AlnvizNode.toolname -> AlnvizNode,
+    TcoffeeNode.toolname -> TcoffeeNode
+  )
+
 
   for(node1 <- nodes; node2 <- nodes) {
     for(i <- node1.inports.indices; j <- node2.outports.indices ) {
@@ -30,26 +36,24 @@ object Ports {
 
   // An MSA as ToolPort.
   // TODO We might want to distinguish between different Alphabets
-  case class Alignment(alignmentFormat : AlignmentFormat)
-    extends InportWithFormat(alignmentFormat) with Outport
+  case class Alignment(override val files : Array[String], alignmentFormat : AlignmentFormat)
+    extends PortWithFormat(files, alignmentFormat)
 
   // TODO We assume this to be implicitly multi FASTA
-  case object Sequences extends Inport
+  case class Sequences(override val files : Array[String]) extends Port(files)
 }
 
 
 /*
- * Port Hierarchy
+ * A Port must declare a set of files (as filename) which are either produces or consumed during tool execution
  */
-abstract class Port
+abstract class Port(val files : Array[String])
 
 
-// Each Inport Type must declare a String representation and a mapping to a form field
-abstract class Inport extends Port
-sealed trait Outport extends Port
-
-// Port that comes along with a format specification
-abstract class InportWithFormat(val format : Format) extends Inport
+/*
+ *  Port that also declares a format specification. Will require an adapter to link the ports
+ */
+abstract class PortWithFormat(files : Array[String], val format : Format) extends Port(files)
 
 
 
