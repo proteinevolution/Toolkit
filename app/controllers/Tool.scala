@@ -84,9 +84,9 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     }
   }
 
-  def show2(toolname : String) = Action { implicit request =>
-    Ok(views.html.tool.form(toolname))
-  }
+
+
+
 
   def show(toolname: String) = Action { implicit request =>
 
@@ -119,7 +119,10 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     }
   }
 
-  def submit(toolname: String) = Action.async { implicit request =>
+  def submit(toolname: String, startImmediate : Boolean) = Action.async { implicit request =>
+
+    Logger.info("Start immediate was set to: " + startImmediate )
+
 
     val user_id = request.session.get(UID).get.toLong
 
@@ -153,7 +156,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
             Logger.info("{Tool} Form data sucessfully received")
             Logger.info(boundForm.data.toString)
 
-            userActor ! PrepWD(toolname, boundForm.data, true, job_id) // The third argument is currently not used
+            userActor ! PrepWD(toolname, boundForm.data, startImmediate, job_id)
           }
         )
         Ok

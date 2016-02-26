@@ -5,10 +5,9 @@ import java.io
 import java.io.PrintWriter
 import javax.inject.Inject
 
-import actors.UserActor.PrepWDDone
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
-import models.Values
+import models.graph.Ready
 import models.jobs._
 import play.api.Logger
 import scala.concurrent.Await
@@ -68,6 +67,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       for( (paramName, value) <- params ) {
 
         File(s"$rootPath${sep}params$sep$paramName").writeAll(value.toString)
+        userJob.changeInFileState(paramName, Ready)
       }
       Logger.info("All params were written to the job_directory successfully")
 
@@ -75,7 +75,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       val targetRunscript = new PrintWriter(rootPath + userJob.toolname + ".sh")
 
 
-      // Translate the Runscript template to an actual executable script
+      // Translate the Runscript template to an actual executable script // TODO We should apply some abstraction here
       for(line <- sourceRunscript.getLines) {
 
         targetRunscript.println(argumentPattern.replaceAllIn(line, { rm =>
@@ -98,13 +98,12 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
           }
         }))
       }
+      ("chmod u+x " + rootPath + userJob.toolname + ".sh").!    // TODO Is there a neater way to change the permission?
       sourceRunscript.close()
       targetRunscript.close()
+      userJob.changeState(Prepared)
 
-      // Set the execution right for the user
-      ("chmod u+x " + rootPath + userJob.toolname + ".sh").!
 
-      sender() ! PrepWDDone(userJob)
 
 
     case WStart(userJob) =>

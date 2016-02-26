@@ -31,7 +31,7 @@ GET    /assets/*file                       controllers.Assets.at(path="/public",
 # Tool specific routes
 ###############################################################
 GET         /tools/:toolname                @controllers.Tool.show(toolname : String)
-POST        /tools/:toolname/submit         @controllers.Tool.submit(toolname : String)
+POST        /tools/:toolname/:start         @controllers.Tool.submit(toolname : String, start : Boolean)
 POST        /jobs                           @controllers.Tool.jobs
 
 ###############################################################
@@ -40,5 +40,3 @@ POST        /jobs                           @controllers.Tool.jobs
 ###############################################################
 GET         /results/:jobid                @controllers.Tool.result(jobid: String)
 POST        /results/:jobid                @controllers.Tool.result(jobid: String)
-
-GET         /show2/:toolname               @controllers.Tool.show2(toolname : String)

@@ -11,13 +11,34 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
               val toolname : String, // The name of the associated tool
               private var state: JobState, // The state in which this job is currently in
               val job_id : String, // Which job_id is attached to this Job
-              val user_id : Long) // Which user_id is attached to this job
+              val user_id : Long,
+              val startImmediate : Boolean) // Which user_id is attached to this job
 {
 
   val tool = models.graph.Ports.nodeMap(toolname)
 
 
+  private var inFileStates : Map[String, FileState] = tool.inports.flatMap { port =>
 
+    port.files.map { f =>
+
+      f -> Missing
+    }
+  }.toMap
+
+  private var outFileStates : Map[String, FileState] = tool.outports.flatMap { port =>
+
+    port.files.map { f =>
+
+      f -> Missing
+    }
+  }.toMap
+
+
+  def changeInFileState(filename : String, state : FileState) = {
+
+    inFileStates = inFileStates.updated(filename, state)
+  }
 
 
 
@@ -32,9 +53,9 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
 
 object UserJob {
 
-  def apply(userActor : ActorRef, tool: String, state: JobState, job_id : String, user_id : Long) = {
+  def apply(userActor : ActorRef, tool: String, state: JobState, job_id : String, user_id : Long, startImmediate : Boolean) = {
 
-    val newUserJob = new UserJob(userActor, tool, state, job_id, user_id)
+    val newUserJob = new UserJob(userActor, tool, state, job_id, user_id, startImmediate)
     newUserJob.changeState(state)
     newUserJob
   }

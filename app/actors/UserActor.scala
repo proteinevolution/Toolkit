@@ -22,10 +22,7 @@ object UserActor {
   case class JobStateChanged(job_id : String, state : JobState)
 
   // Start a job
-  case class PrepWD(toolname : String, params : Map[String, String], startImmediately : Boolean, job_id_o : Option[String])
-
-  // Job has been prepared
-  case class PrepWDDone(job : UserJob)
+  case class PrepWD(toolname : String, params : Map[String, String], startImmediate : Boolean, job_id_o : Option[String])
 
   // Job ID was Invalid
   case object JobIDInvalid
@@ -70,8 +67,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       Logger.info("WebSocket attached successfully\n")
 
 
-     // Job Preparation Routine
-    case PrepWD(toolname, params, startImmediately, job_id_o) =>
+     // Job Preparation Routine for a new Job
+    case PrepWD(toolname, params, startImmediate, job_id_o) =>
 
       // Determine the Job ID for the Job that was submitted
       val job_id : String = job_id_o match {
@@ -96,22 +93,16 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       } else {
 
-        // User Actor has to wait until Job has entered the Database
-        val job = UserJob(self, toolname, PartiallyPrepared, job_id, user_id)
 
+        val job = UserJob(self, toolname, PartiallyPrepared, job_id, user_id, startImmediate)
         userJobs.put(job.job_id, job)
         jobDB.add(DBJob(job.job_id, user_id, toolname))
 
         worker ! WPrepare(job, params)
       }
 
-    // Job Dir has been prepared successfully
-    case PrepWDDone(job) =>
 
-      Logger.info("[UserActor] Job with job_id " + job.job_id + " was prepared successfully")
-      worker ! WStart(job)
-
-    // Returns a Job for a given ID
+    // Returns a Job for a given job_id
     case GetJob(job_id) =>  sender() ! userJobs.get(job_id).get
 
     // Returns all Jobs
@@ -122,11 +113,18 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     // Job status was changed
     case m @ JobStateChanged(job_id, state) =>
+
+      val userJob = userJobs.get(job_id).get
+
+      // If the job changed to prepared and if it is set to start immediately, start the Job
+      if(state == Prepared && userJob.startImmediate) {
+
+        worker ! WStart(userJob)
+      }
+
+      // Forward Job state to Websocket
       ws ! m
-
       // TODO update Job state in Persistence
-
-
 
 
     /* All of the remaining messages are just passed further to the WebSocket
