@@ -1,11 +1,25 @@
 @(visualizations : Map[String, Html])(implicit messages: Messages, request: RequestHeader)
 
+
+<ul class="tabs" data-tabs id="example-tabs">
+@for((key, _) <- visualizations) {
+
+        <li class="tabs-title"><a href="#@key" aria-selected="true">@key</a></li>
+}
+</ul>
+
+
+<div class="tabs-content" data-tabs-content="example-tabs">
 @for((key, value) <- visualizations) {
 
 
-    <input type="button" value="Toggle @key" onclick="$('#@key-panel').toggle()">
+    <div class="tabs-panel" id="@key">
 
-    <div id="@key-panel" class="panel" hidden>
         @value
     </div>
 }
+</div>
+
+<script type="text/javascript">
+                $(document).foundation();
+</script>
