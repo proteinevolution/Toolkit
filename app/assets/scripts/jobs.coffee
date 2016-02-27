@@ -23,6 +23,9 @@ jobs.vm = do ->
         url: '/jobs/' + jobID
         type: 'POST')
 
+    vm.delete = (desc) ->
+      alert desc
+
 
     vm.update = (desc, state, code) ->
       i = 0
@@ -59,12 +62,22 @@ jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
     m 'tr[class=job]',   [
       m('td[class=' + a[task.state()] + ']')
-      m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())
-      m('td', task.code()))
+      m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id()))
     ]
   ) ] ]
+
 m.mount(document.getElementById('jobtable-rows'),  { controller: jobs.controller, view: jobs.view})
 
 ###
   {onclick: jobs.vm.onclick.bind(task, task.job_id)}
+  <ul class="vertical dropdown menu" data-dropdown-menu>
+    <li>
+        <a href="#">Item 1</a>
+        <ul class="menu">
+            <li><a href="#">Item 1A</a></li>
+                <!-- ... -->
+        </ul>
+    </li>
+</ul>
+
 ###

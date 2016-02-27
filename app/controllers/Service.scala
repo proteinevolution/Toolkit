@@ -10,6 +10,7 @@ import models.jobs.{Prepared, Done, UserJob}
 import models.tools.{ToolModel, Hmmer3, Tcoffee, Alnviz}
 import models.Session
 import play.api.Logger
+import play.api.libs.json.Json
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -55,6 +56,20 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
       request.session + (UID -> uid)
     }
   }
+
+
+  def delJob(job_id : String) = Action.async { implicit request =>
+
+    val user_id = request.session.get(UID).get.toLong
+
+    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].map { userActor =>
+
+      userActor ! DeleteJob(job_id)
+      Ok(Json.obj("job_id" -> job_id))
+  }
+  }
+
+
 
 
   def getJob(job_id : String) = Action.async { implicit request =>

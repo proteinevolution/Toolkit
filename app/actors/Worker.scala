@@ -26,6 +26,8 @@ object Worker {
   // Starting the job
   case class WStart(job: UserJob)
 
+  case class WDelete(job : UserJob)
+
   // Worker was asked to read parameters of the job and to put them into a Map
   case class WRead(job : UserJob)
 }
@@ -122,6 +124,11 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       sender() ! res
 
 
+    case WDelete(userJob) =>
+
+      val main_id = Await.result(jobDB.delete(userJob.user_id, userJob.job_id), Duration.Inf)
+      val rootPath = jobPath + main_id + sep
+      Directory(rootPath).deleteRecursively()
 
 
 

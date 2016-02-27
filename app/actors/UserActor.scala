@@ -1,7 +1,7 @@
 package actors
 import javax.inject._
 
-import actors.Worker.{WRead, WStart, WPrepare}
+import actors.Worker.{WDelete, WRead, WStart, WPrepare}
 import akka.actor._
 import akka.event.LoggingReceive
 import akka.util.Timeout
@@ -38,6 +38,9 @@ object UserActor {
   case class GetJobParams(job_id : String)
 
   case class GetJobView(job_id : String)
+
+  case class DeleteJob(job_id : String)
+
 
   // Socket attached / Starting socket session
   case class AttachWS(user_id : Long, ws : ActorRef)
@@ -105,6 +108,12 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
           worker ! WPrepare(job, params)
       }
+
+
+    case DeleteJob(job_id) =>
+
+      val job = userJobs.remove(job_id).get    // Remove from User Model
+      worker ! WDelete(job)                    // Worker removes Directory
 
 
     // Returns a Job for a given job_id

@@ -8,6 +8,7 @@ import play.db.NamedDatabase
 import slick.driver.JdbcProfile
 import slick.driver.MySQLDriver.api._
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class JobsTableDef(tag: Tag) extends Table[DBJob](tag, "jobs") {
@@ -32,12 +33,19 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
 
   // Defines that adding the Job with a query will return the new auto-incremented main_id
   val addQuery = jobs returning jobs.map(_.main_id)
+  val deleteQuery = jobs returning jobs.map(_.main_id)
 
-  /* Not implemented
-  def delete(main_id: Long): Future[Int] = {
-    dbConfig.db.run(jobs.filter(_.main_id === main_id).delete)
+
+  def delete(user_id : Long, job_id : String) : Future[Long] = {
+
+    userJobMapping.remove(user_id -> job_id).get.map { main_id =>
+
+      dbConfig.db.run(jobs.filter(_.main_id === main_id).delete)
+      main_id
+    }
   }
 
+  /*
   def get(main_id: Long): Future[Option[DBJob]] = {
     dbConfig.db.run(jobs.filter(_.main_id === main_id).result.headOption)
   }
