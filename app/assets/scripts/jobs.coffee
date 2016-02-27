@@ -18,11 +18,10 @@ jobs.vm = do ->
 
     vm.onclick = (event) ->
       jobID = event()
-      route = jsRoutes.controllers.Tool.result(jobID)
       $.ajax(
-        url: route.url
-        type: 'POST').done (data) ->
-          $('#content').empty().append data
+        async : false
+        url: '/jobs/' + jobID
+        type: 'POST')
 
 
     vm.update = (desc, state, code) ->
@@ -58,10 +57,14 @@ jobs.controller = ->
 
 jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
-    m 'tr[class=job]', {onclick: jobs.vm.onclick.bind(task, task.job_id)} , [
+    m 'tr[class=job]',   [
       m('td[class=' + a[task.state()] + ']')
-      m('td', task.job_id())
-      m('td', task.code())
+      m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())
+      m('td', task.code()))
     ]
   ) ] ]
 m.mount(document.getElementById('jobtable-rows'),  { controller: jobs.controller, view: jobs.view})
+
+###
+  {onclick: jobs.vm.onclick.bind(task, task.job_id)}
+###

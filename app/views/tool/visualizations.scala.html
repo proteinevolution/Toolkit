@@ -1,4 +1,4 @@
-@(visualizations : Map[String, Html])
+@(visualizations : Map[String, Html])(implicit messages: Messages, request: RequestHeader)
 
 @for((key, value) <- visualizations) {
 

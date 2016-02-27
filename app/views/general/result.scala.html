@@ -1,5 +1,6 @@
+@import play.api.mvc.RequestHeader
 @import models.jobs.UserJob
-@(toolframe : Html, job: UserJob)
+@(toolframe : Html, job: UserJob)(implicit messages: Messages, request: RequestHeader)
 
 
 @toolframe

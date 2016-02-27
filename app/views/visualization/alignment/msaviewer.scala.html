@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
 
-@(pathToAlignmentFile : String)(implicit request: RequestHeader)
+@(pathToAlignmentFile : String)(implicit messages: Messages, request: RequestHeader)
 <h3><a href="http://msa.biojs.net" target="_blank">BioJS MSA Viewer</a> (Full Alignment)</h3>
 
 <div id="menuDiv"></div>
@@ -45,19 +45,19 @@
         };
 
         // init msa
-        var m = new msa.msa(opts);
+        var ms = new msa.msa(opts);
         var url = '@pathToAlignmentFile';
 
-        m.u.file.importURL(url, renderMSA);
+        ms.u.file.importURL(url, renderMSA);
 
         function renderMSA() {
 
             // the menu is independent to the MSA container
             var menuOpts = {};
             menuOpts.el = document.getElementById('div');
-            menuOpts.msa = m;
+            menuOpts.msa = ms;
             var defMenu = new msa.menu.defaultmenu(menuOpts);
-            m.addView("menu", defMenu);
+            ms.addView("menu", defMenu);
 
             // Author: Seung-Zin Nam
             // bugfix: here we shift the sequence ids back to their correct value via the backbone.js api !!!
@@ -71,6 +71,6 @@
 
 
             // call render at the end to display the whole MSA
-            m.render();
+            ms.render();
         }
 </script>

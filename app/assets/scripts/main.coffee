@@ -4,7 +4,6 @@
 # Enables the foundation framework for the Toolkit
 $(document).foundation()
 
-#a sample component
 Tools =
   controller: ->
     { toolname: m.route.param('toolname') }
@@ -15,13 +14,18 @@ Tools =
         $('#content').empty().append data
 
 
-
-    m 'div', controller.toolname
-
+Jobs =
+  controller: ->
+    { job_id: m.route.param('jobid') }
+  view: (controller) ->
+    $.ajax(
+      type: "POST"
+      url: "/jobs/get/" + controller.job_id).done (data) ->
+        $('#content').empty().append data
 
 #setup routes to start w/ the `#` symbol
 m.route.mode = 'hash'
 
 
 #define a route
-m.route document.getElementById('content'), '/', '/tools/:toolname': Tools
+m.route document.getElementById('content'), '/', { '/tools/:toolname': Tools, '/jobs/:jobid' : Jobs }
