@@ -40,3 +40,6 @@ POST        /jobs                           @controllers.Tool.jobs
 ###############################################################
 GET         /results/:jobid                @controllers.Tool.result(jobid: String)
 POST        /results/:jobid                @controllers.Tool.result(jobid: String)
+
+
+POST        /jobs/new/:toolname             @controllers.Service.newJob(toolname : String)
