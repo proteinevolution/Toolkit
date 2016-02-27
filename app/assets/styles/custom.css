@@ -121,42 +121,42 @@ tr.spaceUnder > td
 
 .tabs-title.is-active a:link{
     border: 0px;
-    color: #fff;
+    color: #000;
 }
 .tabs-title.is-active #panel1-label{
     border: 0px;
     background-color: #D0BA89;
-    color: #fff;
+    color: #000;
 }
 .tabs-title.is-active #panel2-label{
     border: 0px;
     background-color: #FFCC66;
-    color: #fff;
+    color: #000;
 }
 .tabs-title.is-active #panel3-label{
     border: 0px;
     background-color: #669933;
-    color: #fff;
+    color: #000;
 }
 .tabs-title.is-active #panel4-label{
     border: 0px;
     background-color: #7CA6A6;
-    color: #fff;
+    color: #000;
 }
 .tabs-title.is-active #panel5-label{
     border: 0px;
     background-color: #666699;
-    color: #fff;
+    color: #000;
 }
 .tabs-title.is-active #panel6-label{
     border: 0px;
     background-color: #D6ABAB;
-    color: #fff;
+    color: #000;
 }
 .tabs-title.is-active #panel7-label{
     border: 0px;
     background-color: #CC3333;
-    color: #fff;
+    color: #000;
 }
 
 .tabs-title a:link{
