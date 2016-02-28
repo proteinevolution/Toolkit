@@ -1,6 +1,7 @@
 a = ['ss', 'pp', 'qq', 'rr', 'ee', 'dd']
 @jobs = {}
 
+
 jobs.Job = (data) ->
   @job_id = m.prop(data.job_id)
   @state = m.prop(data.state)
@@ -24,7 +25,22 @@ jobs.vm = do ->
         type: 'POST')
 
     vm.delete = (desc) ->
-      alert desc
+
+      $.ajax(
+        async : true
+        url : '/jobs/del/' + desc()
+        type : 'POST'
+      )
+      toDelete = undefined
+      i = 0
+      while i < vm.list.length
+
+        job = vm.list[i]
+        if job.job_id() == desc
+          toDelete = i
+          break
+        i++
+      vm.list.splice(toDelete, 1)
 
 
     vm.update = (desc, state, code) ->
@@ -63,21 +79,20 @@ jobs.view = ->
     m 'tr[class=job]',   [
       m('td[class=' + a[task.state()] + ']')
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id()))
+      m('td',  m('input',{type: "button", value: "del",onclick: jobs.vm.delete.bind(task, task.job_id)})   )
     ]
   ) ] ]
 
+
 m.mount(document.getElementById('jobtable-rows'),  { controller: jobs.controller, view: jobs.view})
 
-###
-  {onclick: jobs.vm.onclick.bind(task, task.job_id)}
-  <ul class="vertical dropdown menu" data-dropdown-menu>
-    <li>
-        <a href="#">Item 1</a>
-        <ul class="menu">
-            <li><a href="#">Item 1A</a></li>
-                <!-- ... -->
-        </ul>
-    </li>
-</ul>
+
+
 
 ###
+
+
+  {onclick: jobs.vm.onclick.bind(task, task.job_id)}
+###
+
+

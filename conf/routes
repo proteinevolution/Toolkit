@@ -44,3 +44,4 @@ POST        /results/:jobid                @controllers.Tool.result(jobid: Strin
 
 POST        /jobs/new/:toolname             @controllers.Service.newJob(toolname : String)
 POST        /jobs/get/:jobid                @controllers.Service.getJob(jobid : String)
+POST        /jobs/del/:jobid                @controllers.Service.delJob(jobid : String)
