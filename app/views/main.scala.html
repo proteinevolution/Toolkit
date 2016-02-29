@@ -33,8 +33,15 @@
             </div>
             <div class="small-8 columns top-bar" data-equalizer-watch>@elements.topbar(sectionname)</div>
         </div>
-        <div class="navbar">
-            @elements.navbar()
+
+        <div data-sticky-container>
+        <div class="row fullwidth sticky" data-sticky  data-options="marginTop:0;anchor:stickhere;">
+            <div class="large-12 columns navbar">
+                <div class="navbar">
+                @elements.navbar()
+                </div>
+            </div>
+        </div>
         </div>
 
         <div class="sidebar">

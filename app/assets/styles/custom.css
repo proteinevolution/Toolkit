@@ -3,9 +3,6 @@
     max-width: initial;
 }
 
-.row {
-    width: 80%;
-}
 
 .logotext {
     text-align: center;
@@ -92,6 +89,7 @@ tr.spaceUnder > td
 .top-bar-right {
 
     margin-right: 70px;
+    margin-top: 40px;
 }
 
 .advancedsearch {
@@ -164,7 +162,6 @@ tr.spaceUnder > td
     background-color: #2E8C81;
 
 }
-
 
 .header {
 
