@@ -167,3 +167,8 @@ tr.spaceUnder > td
 
     height: 130px;
 }
+
+.columns {
+    padding-left: 0;
+    padding-right: 0;
+}
