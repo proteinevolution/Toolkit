@@ -9,6 +9,7 @@ import models.jobs._
 import play.api.Logger
 import com.google.inject.assistedinject.Assisted
 import scala.concurrent.duration._
+import scala.annotation.tailrec
 
 /**
   *  The User actor will represent each user who is present on the toolkit and
@@ -67,6 +68,22 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
   val job_id_generator = scala.util.Random
 
 
+  def randomAlphaNumericString(length: Int): String = {
+    val chars = ('0' to '9')
+    randomStringFromCharList(length, chars)
+  }
+
+  def randomStringFromCharList(length: Int, chars: Seq[Char]): String = {
+    val sb = new StringBuilder
+    for (i <- 1 to length) {
+      val randomNum = util.Random.nextInt(chars.length)
+      sb.append(chars(randomNum))
+    }
+    sb.toString
+  }
+
+
+
   def receive = LoggingReceive {
 
     case AttachWS(_, ws_new) =>
@@ -88,7 +105,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
           var new_job_id : String = null
           do {
-            new_job_id = job_id_generator.nextInt(10000).toString
+            new_job_id = randomAlphaNumericString(7: Int)
           } while(userJobs contains new_job_id)
 
           new_job_id

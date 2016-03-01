@@ -79,7 +79,7 @@ jobs.view = ->
     m 'tr[class=job]',   [
       m('td[class=' + a[task.state()] + ']')
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id()))
-      m('td',  m('input',{type: "button", value: "del",onclick: jobs.vm.delete.bind(task, task.job_id)})   )
+      m('td',  m('input',{type: "button", value: "x",onclick: jobs.vm.delete.bind(task, task.job_id)})   )
     ]
   ) ] ]
 
