@@ -105,7 +105,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
           var new_job_id : String = null
           do {
-            new_job_id = randomAlphaNumericString(7: Int)
+            new_job_id = randomAlphaNumericString(7: Int) //TODO: check whether this random id already exists in the db
           } while(userJobs contains new_job_id)
 
           new_job_id
