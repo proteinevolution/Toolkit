@@ -1,0 +1,66 @@
+@import models.jobs.UserJob
+@(job: UserJob)
+
+
+
+<script src="@routes.Assets.at("scripts/forward.js")"></script>
+
+<script type="text/javascript">
+
+ target_tools = {};
+
+
+
+ @for(outlink <- job.tool.outlinks) {
+
+  var toolname = '@outlink._3.toolname';
+
+  // Fetch in and outport
+  var own_port = @outlink._1;
+  var foreign_port = @outlink._2;
+
+  if(typeof target_tools[toolname] == "undefined") {
+
+   target_tools[toolname] = [[own_port, foreign_port]];
+
+   }
+   else {
+
+      target_tools[toolname] = target_tools[toolname].push([own_port, foreign_port]);
+   }
+}
+
+
+
+
+
+</script>
+
+
+
+
+
+<div class="callout secondary">
+  <!-- Select field to show all tools that support forwarding here -->
+ <select id="childjobselect">
+
+
+  <option value="childtoolselect">Select Tool</option>
+
+  @for(outlink <- job.tool.outlinks) {
+
+   <option value="@outlink._3.toolname">@outlink._3.toolname</option>
+  }
+ </select>
+
+
+ <input type="button" value="Prepare" class="secondary button" id="prepare_child">
+
+</div>
+
+
+
+
+
+
+

@@ -42,6 +42,10 @@ object UserActor {
 
   case class DeleteJob(job_id : String)
 
+  case class AppendChildJob(parent_job_id : String, toolname : String, links : Seq[(Int, Int)])
+
+
+
 
   // Socket attached / Starting socket session
   case class AttachWS(user_id : Long, ws : ActorRef)
@@ -93,7 +97,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       Logger.info("WebSocket attached successfully\n")
 
 
-     // Job Preparation Routine for a new Job
+    // Job Preparation Routine for a new Job
+    //  TODO The semantic of this message is not well defined, should work on that
     case PrepWD(toolname, params, startImmediate, job_id_o) =>
 
       // Determine the Job ID for the Job that was submitted
@@ -105,7 +110,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
           var new_job_id : String = null
           do {
-            new_job_id = randomAlphaNumericString(7: Int) //TODO: check whether this random id already exists in the db
+            new_job_id = randomAlphaNumericString(7: Int) //TODO: check whether this random id already exists in the db or make the userJobs Map entirely consistent with the Database
           } while(userJobs contains new_job_id)
 
           new_job_id
@@ -119,7 +124,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       } else {
 
-          val job = UserJob(self, toolname, PartiallyPrepared, job_id, user_id, startImmediate)
+          val job = UserJob(self, toolname, job_id, user_id, startImmediate)
           userJobs.put(job.job_id, job)
           jobDB.add(DBJob(job.job_id, user_id, toolname))
 
@@ -140,6 +145,16 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     // Returns all Jobs
     case GetAllJobs => sender() ! userJobs.values
+
+
+
+
+    case AppendChildJob(parent_job_id, toolname, links) =>
+
+      //val job = UserJob(self, toolname, Submitted, job_id, user_id, startImmediate)
+      // TODO implement me
+
+
 
 
     // Connection was ended

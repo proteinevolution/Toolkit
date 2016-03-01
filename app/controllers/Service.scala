@@ -6,6 +6,7 @@ import actors.UserActor._
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
+import models.graph.nodes.Node
 import models.jobs.{Prepared, Done, UserJob}
 import models.tools.{ToolModel, Hmmer3, Tcoffee, Alnviz}
 import models.Session
@@ -37,6 +38,30 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
   implicit val timeout = Timeout(5.seconds)
 
 
+
+
+  /**
+    *  Appends child job to an already defined job
+    *
+   */
+  def addChild(parent_job_id : String, toolname : String, links : Seq[(Int, Int)]) = Action.async { implicit request =>
+
+    val user_id = request.session.get(UID).get.toLong
+
+    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].map { userActor =>
+
+      userActor ! AppendChildJob(parent_job_id,toolname, links)
+      Ok
+    }
+  }
+
+
+  /**
+    *
+    * User ask for the creation of a new Job with the provided tool name.
+    * Will return the empty submit form associated with the tool.
+    *
+    */
   def newJob(toolname : String) = Action { implicit  request =>
 
 
@@ -58,6 +83,12 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
   }
 
 
+  /**
+    * User asks to delete the Job with the provided jobid
+    *
+    * @param job_id
+    * @return
+    */
   def delJob(job_id : String) = Action.async { implicit request =>
 
     val user_id = request.session.get(UID).get.toLong
@@ -68,7 +99,6 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
       Ok(Json.obj("job_id" -> job_id))
   }
   }
-
 
 
 
@@ -95,10 +125,10 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
               case "alnviz" =>
                 val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/result"))
-                views.html.tool.visualizations(vis)
+                views.html.tool.visualizations(vis, job)
 
-              case "tcoffee" => views.html.tool.visualizations(vis)
-              case "hmmer3" => views.html.tool.visualizations(vis)
+              case "tcoffee" => views.html.tool.visualizations(vis, job)
+              case "hmmer3" => views.html.tool.visualizations(vis, job)
             }
 
             Ok(views.html.general.result(toolframe, job)).withSession {

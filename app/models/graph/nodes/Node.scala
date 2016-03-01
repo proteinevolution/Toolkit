@@ -15,4 +15,5 @@ abstract class Node {
 
   val inlinks : ArrayBuffer[(Int, Int, Node)] = ArrayBuffer.empty
   val outlinks : ArrayBuffer[(Int, Int, Node)] = ArrayBuffer.empty
+
 }

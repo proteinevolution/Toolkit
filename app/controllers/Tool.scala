@@ -190,10 +190,10 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
               case "alnviz" =>
                 val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/result"))
-                views.html.tool.visualizations(vis)
+                views.html.tool.visualizations(vis, job)
 
-              case "tcoffee" => views.html.tool.visualizations(vis)
-              case "hmmer3" => views.html.tool.visualizations(vis)
+              case "tcoffee" => views.html.tool.visualizations(vis, job)
+              case "hmmer3" => views.html.tool.visualizations(vis, job)
             }
 
             Ok(views.html.general.result(toolframe, job))
