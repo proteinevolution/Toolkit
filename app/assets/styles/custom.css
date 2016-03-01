@@ -178,3 +178,9 @@ tr.spaceUnder > td
     padding-left: 0;
     padding-right: 0;
 }
+
+tr.job{
+    font-size: 10px;
+    width: 20px;
+}
+
