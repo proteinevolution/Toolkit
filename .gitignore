@@ -31,3 +31,4 @@ conf/application.conf
 /conf/application.conf
 target
 clean.sh
+.DS_Store
