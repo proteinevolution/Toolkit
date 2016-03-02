@@ -4,6 +4,7 @@ import javax.inject._
 import actors.Worker.{WDelete, WRead, WStart, WPrepare}
 import akka.actor._
 import akka.event.LoggingReceive
+import akka.japi
 import akka.util.Timeout
 import models.jobs._
 import models.misc.RandomString
@@ -90,13 +91,13 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
         // Job ID was none, generate a random ID
         case None =>
 
-          var new_job_id : String = null
+          var new_job_id = None: Option[String]
           do {
             //TODO: check whether this random id already exists in the db or make the userJobs Map entirely consistent with the Database
-            new_job_id = RandomString.randomNumString(7)
-          } while(userJobs contains new_job_id)
+            new_job_id = Some(RandomString.randomNumString(7))
+          } while(userJobs contains new_job_id.getOrElse("No ID given"))
 
-          new_job_id
+          new_job_id.getOrElse("No ID given")
       }
       Logger.info("UserActor wants to prepare job directory for tool " + toolname + " with job_id " + job_id)
 
