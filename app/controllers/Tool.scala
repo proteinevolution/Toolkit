@@ -10,7 +10,7 @@ import akka.util.Timeout
 import jdk.internal.dynalink.linker.LinkerServices.Implementation
 import models.jobs.{Prepared, Done, UserJob}
 import models.tools.{ToolModel, Hmmer3, Tcoffee, Alnviz}
-import models.Session
+import models.sessions.Session
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.Future
@@ -63,8 +63,6 @@ object Tool {
 class Tool @Inject()(val messagesApi: MessagesApi,
                      @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
 
-
-  val UID = "uid"
   val tools = ""
 
   implicit val timeout = Timeout(5.seconds)
@@ -72,9 +70,9 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
   def jobs = Action.async { implicit request =>
 
-    val user_id = request.session.get(UID).get.toLong
+    val session_id = Session.requestSessionID(request) // Grab the Session ID
 
-    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].flatMap { userActor =>
+    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
 
       (userActor ? GetAllJobs).mapTo[Iterable[UserJob]].map { joblist =>
 
@@ -113,12 +111,8 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
       Ok(views.html.main(view, tool.toolNameLong)).withSession {
 
-        val uid = request.session.get(UID).getOrElse {
-
-          Session.next.toString
-        }
-        Logger.info("Request from  UID" + uid)
-        request.session + (UID -> uid)
+        val session_id = Session.requestSessionID(request) // Grab the Session ID
+        Session.closeSessionRequest(request, session_id)   // Send Session Cookie
       }
     }
   }
@@ -128,7 +122,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     Logger.info("Start immediate was set to: " + startImmediate )
 
 
-    val user_id = request.session.get(UID).get.toLong
+    val session_id = Session.requestSessionID(request) // Grab the Session ID
 
     val job_id =  request.body.asFormUrlEncoded.get("jobid").head match {
 
@@ -136,7 +130,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
       case m => Some(m)
     }
 
-    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].map { userActor =>
+    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
 
       val tool = Tool.getToolModel(toolname)
       // Check if the tool name was ok.
@@ -170,9 +164,9 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
   def result(job_id : String) = Action.async { implicit request =>
 
-    val user_id = request.session.get(UID).get.toLong
+    val session_id = Session.requestSessionID(request) // Grab the Session ID
 
-    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].flatMap { userActor =>
+    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
       (userActor ? GetJob(job_id)).mapTo[UserJob].flatMap { job =>
 
 
@@ -212,13 +206,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
 
               Ok(views.html.general.submit(job.toolname, toolframe)).withSession {
-
-                val uid = request.session.get(UID).getOrElse {
-
-                  Session.next.toString
-                }
-                Logger.info("Request from  UID" + uid)
-                request.session + (UID -> uid)
+                Session.closeSessionRequest(request, session_id)   // Send Session Cookie
               }
         }
         }

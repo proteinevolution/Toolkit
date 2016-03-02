@@ -19,11 +19,11 @@ import play.api.libs.json.{JsValue, Json}
 
 object WebSocketActor {
 
-  def props(user_id : Long, userManager : ActorRef)(out: ActorRef) = Props(new WebSocketActor(user_id, userManager, out))
+  def props(session_id : String, userManager : ActorRef)(out: ActorRef) = Props(new WebSocketActor(session_id, userManager, out))
 }
 
 
-class WebSocketActor(user_id: Long, userManager : ActorRef, out: ActorRef)  extends Actor with ActorLogging {
+class WebSocketActor(session_id: String, userManager : ActorRef, out: ActorRef)  extends Actor with ActorLogging {
 
   implicit val timeout = Timeout(5.seconds)
 
@@ -31,7 +31,7 @@ class WebSocketActor(user_id: Long, userManager : ActorRef, out: ActorRef)  exte
   override def preStart() = {
 
     // Attach this Websocket to the corresponding user Actor
-    userManager ! AttachWS(user_id, self)
+    userManager ! AttachWS(session_id, self)
   }
 
   def receive = LoggingReceive {
@@ -45,7 +45,7 @@ class WebSocketActor(user_id: Long, userManager : ActorRef, out: ActorRef)  exte
 
         case  "getJobs" =>
           Logger.info("WebSocket Actor Received message")
-          (userManager ? GetUserActor(user_id)).mapTo[ActorRef].map { userActor =>
+          (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
             Logger.info("Send GetAllJobs to UserActor")
             userActor ! GetAllJobs
           }

@@ -10,8 +10,8 @@ import models.graph.{Missing, FileState}
 class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
               val toolname : String, // The name of the associated tool
               val job_id : String, // Which job_id is attached to this Job
-              val user_id : Long,
-              val startImmediate : Boolean) // Which user_id is attached to this job
+              val user_id : String, // Which user_id is attached to this job
+              val startImmediate : Boolean)
 {
 
   private var state : JobState = Submitted
@@ -56,11 +56,11 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
 
 object UserJob {
 
-  def apply(userActor : ActorRef, tool: String, job_id : String, user_id : Long, startImmediate : Boolean) = {
+  def apply(userActor : ActorRef, tool: String, job_id : String, user_id : String, startImmediate : Boolean) = {
 
       new UserJob(userActor, tool, job_id, user_id, startImmediate)
   }
 }
 
 //Job Class used for database storage
-case class DBJob(val job_id : String, val user_id : Long, toolname : String)
+case class DBJob(val job_id : String, val user_id : String, toolname : String)

@@ -13,13 +13,12 @@ import play.api.mvc._
 import javax.inject.{Singleton, Named, Inject}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import models.sessions.Session
 
 @Singleton
 class Application @Inject()(val messagesApi: MessagesApi,
                             val jobDB : models.database.Jobs,
                             @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
-
-  val UID = "uid"
 
   // TODO this line has to vanish
   var path = s"${Play.application.path}${File.separator}${current.configuration.getString("job_path").get}${File.separator}"
@@ -28,16 +27,16 @@ class Application @Inject()(val messagesApi: MessagesApi,
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
 
     // The user of this session is assigned a user actor
-    Future.successful(request.session.get(UID) match {
+    Future.successful(request.session.get(Session.SID) match {
 
       case None =>
-        Logger.info("$Application$ WebSocket connection not allowed, since no UID has been assigned to the session")
+        Logger.info("$Application$ WebSocket connection not allowed, since no SID has been assigned to the session")
         Left(Forbidden)
 
       case Some(uid) =>
 
         Logger.info("$Application$ WebSocket connection requested")
-        Right(WebSocketActor.props(uid.toLong, userManager))
+        Right(WebSocketActor.props(uid.toString, userManager))
     })
   }
 
@@ -55,20 +54,29 @@ class Application @Inject()(val messagesApi: MessagesApi,
 
     // TODO Serve reasonble content frame
     Ok(views.html.main(views.html.general.homecontent(),"Home"))
+
+    /** With session cookie
+    val session_id = Session.requestSessionID(request)
+    Ok(views.html.main(views.html.general.homecontent(),"Home")).withSession {
+      Session.closeSessionRequest(request, session_id)
+    }
+    */
   }
 
   def file(filename : String, job_id : String) = Action.async { implicit request =>
 
     // TODO handle the case that there is no userID in session scope or no job with that name
-    val user_id = request.session.get(UID).get
-    val main_id_o = jobDB.userJobMapping.get(user_id.toLong, job_id).get
+    val session_id = Session.requestSessionID(request)
+    val main_id_o = jobDB.userJobMapping.get(session_id.toString, job_id).get
 
     main_id_o map { main_id =>
 
       Logger.info("Try to assemble file path")
       val filePath = path + "/" + main_id.toString +  "/results/" + filename
       Logger.info("File has been sent")
-      Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain")
+      Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {
+        Session.closeSessionRequest(request, session_id)
+      }
     }
   }
 }

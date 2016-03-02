@@ -15,7 +15,7 @@ class JobsTableDef(tag: Tag) extends Table[DBJob](tag, "jobs") {
 
   def main_id   = column[Long]("main_id", O.PrimaryKey,O.AutoInc)
   def job_id    = column[String]("job_id")
-  def user_id   = column[Long]("user_id")
+  def user_id   = column[String]("user_id")
   def status    = column[Char]("status")
   def toolname  = column[String]("tool")
 
@@ -26,17 +26,17 @@ class JobsTableDef(tag: Tag) extends Table[DBJob](tag, "jobs") {
 class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConfigProvider) {
 
   val dbConfig = dbConfigProvider.get[JdbcProfile]
-  val jobs = TableQuery[JobsTableDef]
+  val jobs = TableQuery[JobsTableDef]                //Loads the table definition for the Job Table
 
   // Maps user_id and job_id to the corresponding main_id
-  val userJobMapping = new collection.mutable.HashMap[(Long, String), Future[Long]]()
+  val userJobMapping = new collection.mutable.HashMap[(String, String), Future[Long]]()
 
   // Defines that adding the Job with a query will return the new auto-incremented main_id
   val addQuery = jobs returning jobs.map(_.main_id)
   val deleteQuery = jobs returning jobs.map(_.main_id)
 
 
-  def delete(user_id : Long, job_id : String) : Future[Long] = {
+  def delete(user_id : String, job_id : String) : Future[Long] = {
 
     userJobMapping.remove(user_id -> job_id).get.map { main_id =>
 

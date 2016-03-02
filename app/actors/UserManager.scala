@@ -9,7 +9,7 @@ import play.api.Logger
 import play.api.cache._
 object UserManager {
 
-  case class GetUserActor(user_id: Long)
+  case class GetUserActor(session_id: String)
 }
 
 
@@ -20,29 +20,29 @@ class UserManager @Inject() (childFactory: UserActor.Factory)
   import actors.UserManager._
 
   //
-  val registeredUsers = scala.collection.mutable.Map[Long, ActorRef]()
+  val currentSessions = scala.collection.mutable.Map[String, ActorRef]()
 
 
   def receive = LoggingReceive  {
 
 
-    case GetUserActor(user_id: Long) =>
+    case GetUserActor(session_id: String) =>
 
-      val user = registeredUsers.getOrElseUpdate(user_id, {
-
-        injectedChild(childFactory(user_id), user_id.toString)
-      })
+      val user = currentSessions.getOrElseUpdate(
+        session_id,
+        injectedChild(childFactory(session_id), session_id.toString)
+      )
       sender() ! user
 
       context watch user
 
-    case m @ AttachWS(user_id, ws) =>
+    case m @ AttachWS(session_id, ws) =>
 
       Logger.info("[User Manager] Attach Web Socket")
 
-      val user = registeredUsers.getOrElseUpdate(user_id, {
+      val user = currentSessions.getOrElseUpdate(session_id, {
 
-        injectedChild(childFactory(user_id), user_id.toString)
+        injectedChild(childFactory(session_id), session_id.toString)
       })
       user ! m
 

@@ -9,14 +9,14 @@ import akka.util.Timeout
 import models.graph.nodes.Node
 import models.jobs.{Prepared, Done, UserJob}
 import models.tools.{ToolModel, Hmmer3, Tcoffee, Alnviz}
-import models.Session
+import models.sessions.Session
 import play.api.Logger
 import play.api.libs.json.Json
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{AnyContent, Request, Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -30,8 +30,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") userManager : ActorRef)
   extends Controller with I18nSupport  {
 
-
-  val UID = "uid"
   val tools = ""
 
 
@@ -46,9 +44,9 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
    */
   def addChild(parent_job_id : String, toolname : String, links : Seq[(Int, Int)]) = Action.async { implicit request =>
 
-    val user_id = request.session.get(UID).get.toLong
+    val session_id = Session.requestSessionID(request) // Grab the Session ID
 
-    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].map { userActor =>
+    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
 
       userActor ! AppendChildJob(parent_job_id,toolname, links)
       Ok
@@ -64,7 +62,6 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
     */
   def newJob(toolname : String) = Action { implicit  request =>
 
-
     val toolframe = toolname match {
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
       case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
@@ -73,12 +70,8 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
     Ok(views.html.general.submit(toolname, toolframe)).withSession {
 
-      val uid = request.session.get(UID).getOrElse {
-
-        Session.next.toString
-      }
-      Logger.info("Request from  UID" + uid)
-      request.session + (UID -> uid)
+      val session_id = Session.requestSessionID(request)
+      Session.closeSessionRequest(request, session_id)   // Send Session Cookie
     }
   }
 
@@ -91,9 +84,9 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
     */
   def delJob(job_id : String) = Action.async { implicit request =>
 
-    val user_id = request.session.get(UID).get.toLong
+    val session_id = Session.requestSessionID(request) // Grab the Session ID
 
-    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].map { userActor =>
+    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
 
       userActor ! DeleteJob(job_id)
       Ok(Json.obj("job_id" -> job_id))
@@ -104,9 +97,9 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
   def getJob(job_id : String) = Action.async { implicit request =>
 
-    val user_id = request.session.get(UID).get.toLong
+    val session_id = Session.requestSessionID(request) // Grab the Session ID
 
-    (userManager ? GetUserActor(user_id)).mapTo[ActorRef].flatMap { userActor =>
+    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
       (userActor ? GetJob(job_id)).mapTo[UserJob].flatMap { job =>
 
 
@@ -132,13 +125,7 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
             }
 
             Ok(views.html.general.result(toolframe, job)).withSession {
-
-              val uid = request.session.get(UID).getOrElse {
-
-                Session.next.toString
-              }
-              Logger.info("Request from  UID" + uid)
-              request.session + (UID -> uid)
+              Session.closeSessionRequest(request, session_id)   // Send Session Cookie
             }
           }
           case Prepared =>
@@ -155,13 +142,7 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
 
               Ok(views.html.general.submit(job.toolname, toolframe)).withSession {
-
-                val uid = request.session.get(UID).getOrElse {
-
-                  Session.next.toString
-                }
-                Logger.info("Request from  UID" + uid)
-                request.session + (UID -> uid)
+                Session.closeSessionRequest(request, session_id)   // Send Session Cookie
               }
             }
         }

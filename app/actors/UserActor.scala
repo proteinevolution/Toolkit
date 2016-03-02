@@ -6,6 +6,7 @@ import akka.actor._
 import akka.event.LoggingReceive
 import akka.util.Timeout
 import models.jobs._
+import models.misc.RandomString
 import play.api.Logger
 import com.google.inject.assistedinject.Assisted
 import scala.concurrent.duration._
@@ -48,15 +49,15 @@ object UserActor {
 
 
   // Socket attached / Starting socket session
-  case class AttachWS(user_id : Long, ws : ActorRef)
+  case class AttachWS(session_id : String, ws : ActorRef)
 
   trait Factory {
-    def apply(user_id: Long): Actor
+    def apply(session_id: String): Actor
   }
 }
 
 class UserActor @Inject() (@Named("worker") worker : ActorRef,
-                           @Assisted user_id: Long,
+                           @Assisted session_id: String,
                            jobDB : models.database.Jobs) extends Actor with ActorLogging {
 
   implicit val timeout = Timeout(5.seconds)
@@ -68,25 +69,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
   // The User Actor maps the job_id to the actual job instance
   val userJobs = new collection.mutable.HashMap[String, UserJob]
-
-  val job_id_generator = scala.util.Random
-
-
-  def randomAlphaNumericString(length: Int): String = {
-    val chars = ('0' to '9')
-    randomStringFromCharList(length, chars)
-  }
-
-  def randomStringFromCharList(length: Int, chars: Seq[Char]): String = {
-    val sb = new StringBuilder
-    for (i <- 1 to length) {
-      val randomNum = util.Random.nextInt(chars.length)
-      sb.append(chars(randomNum))
-    }
-    sb.toString
-  }
-
-
 
   def receive = LoggingReceive {
 
@@ -110,7 +92,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
           var new_job_id : String = null
           do {
-            new_job_id = randomAlphaNumericString(7: Int) //TODO: check whether this random id already exists in the db or make the userJobs Map entirely consistent with the Database
+            //TODO: check whether this random id already exists in the db or make the userJobs Map entirely consistent with the Database
+            new_job_id = RandomString.randomNumString(7)
           } while(userJobs contains new_job_id)
 
           new_job_id
@@ -124,9 +107,9 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       } else {
 
-          val job = UserJob(self, toolname, job_id, user_id, startImmediate)
+          val job = UserJob(self, toolname, job_id, session_id, startImmediate)
           userJobs.put(job.job_id, job)
-          jobDB.add(DBJob(job.job_id, user_id, toolname))
+          jobDB.add(DBJob(job.job_id, session_id, toolname))
 
           worker ! WPrepare(job, params)
       }
