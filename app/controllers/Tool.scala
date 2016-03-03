@@ -44,9 +44,9 @@ object Tool {
     for (tool <- tools) {
       if ( tool.toolNameShort        == toolName
         || tool.toolNameLong         == toolName
-        || tool.toolNameAbbreviation == toolName) return tool
+        || tool.toolNameAbbreviation == toolName) tool
     }
-    return null
+    null
   }
 
   /** addToolModel
