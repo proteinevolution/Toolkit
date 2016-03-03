@@ -14,9 +14,11 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
               val startImmediate : Boolean)
 {
 
+  // TODO Toolname is a redundant field in the UserJob
   private var state : JobState = Submitted
   userActor ! JobStateChanged(job_id, Submitted)
 
+  // The associated tool node
   val tool = models.graph.Ports.nodeMap(toolname)
 
 
@@ -28,13 +30,25 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
     }
   }.toMap
 
-  private var outFileStates : Map[String, FileState] = tool.outports.flatMap { port =>
 
-    port.files.map { f =>
 
-      f -> Missing
+  // Counts the number of files that have notified to be ready. If all files are ready, then
+  // we can set the JobState to be prepared
+  private var readyCounter = 0
+
+  def countReady() = {
+
+    readyCounter += 1
+
+    state = readyCounter match {
+
+      // If all files are Ready, we can set the job to be *Prepared*
+      case tool.noInfiles => Prepared
+
+      // Otherwise, we have seen at least one file to be ready, so the job is *Partially Prepared*
+      case  _  : Int => PartiallyPrepared
     }
-  }.toMap
+  }
 
 
   def changeInFileState(filename : String, state : FileState) = {
