@@ -1,7 +1,6 @@
 package models.graph
 
 import models.jobs.UserJob
-import org.w3c.dom.UserDataHandler
 
 import scala.collection.mutable.ArrayBuffer
 

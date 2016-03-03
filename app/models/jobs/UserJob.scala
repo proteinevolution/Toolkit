@@ -43,7 +43,7 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
     state = readyCounter match {
 
       // If all files are Ready, we can set the job to be *Prepared*
-      case tool.noInfiles => Prepared
+     // case tool.noInfiles => Prepared
 
       // Otherwise, we have seen at least one file to be ready, so the job is *Partially Prepared*
       case  _  : Int => PartiallyPrepared

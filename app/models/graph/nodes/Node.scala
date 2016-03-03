@@ -14,7 +14,7 @@ abstract class Node {
   val outports : Vector[Port]
 
   // How many Infiles the Node expects
-  val noInfiles = inports.foldLeft(0) {_ + _.noFiles}
+  //val noInfiles = inports.foldLeft(0) {_ + _.noFiles}
 
 
   val inlinks : ArrayBuffer[(Int, Int, Node)] = ArrayBuffer.empty
