@@ -4,14 +4,12 @@ import javax.inject._
 import actors.Worker.{WDelete, WRead, WStart, WPrepare}
 import akka.actor._
 import akka.event.LoggingReceive
-import akka.japi
 import akka.util.Timeout
 import models.jobs._
 import models.misc.RandomString
 import play.api.Logger
 import com.google.inject.assistedinject.Assisted
 import scala.concurrent.duration._
-import scala.annotation.tailrec
 
 /**
   *  The User actor will represent each user who is present on the toolkit and
@@ -66,7 +64,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
   import UserActor._
 
   // The websocket that is attached to the User
-  var ws: ActorRef = null
+  var ws = None: Option[ActorRef]
 
   // The User Actor maps the job_id to the actual job instance
   val userJobs = new collection.mutable.HashMap[String, UserJob]
@@ -75,8 +73,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     case AttachWS(_, ws_new) =>
 
-      ws = ws_new
-      context watch ws
+      ws = Some(ws_new)
+      context watch ws.getOrElse(null)
       Logger.info("WebSocket attached successfully\n")
 
 
@@ -142,7 +140,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
 
     // Connection was ended
-    case Terminated(ws_new) =>  ws = null
+    case Terminated(ws_new) =>  ne(ws)
 
     // Job status was changed
     case m @ JobStateChanged(job_id, state) =>
@@ -156,14 +154,14 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       }
 
       // Forward Job state to Websocket
-      ws ! m
+      ws.getOrElse(null) ! m
       // TODO update Job state in Persistence
 
 
     /* All of the remaining messages are just passed further to the WebSocket
     *  Currently: JobIDInvalid
     * */
-    case m =>  ws ! m
+    case m =>  ws.getOrElse(null) ! m
   }
 }
 
