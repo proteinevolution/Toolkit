@@ -40,14 +40,19 @@ object Tool {
     * @param toolName tool Name
     * @return
     */
+
+
+
+
   def getToolModel(toolName: String): ToolModel = {
     for (tool <- tools) {
       if ( tool.toolNameShort        == toolName
         || tool.toolNameLong         == toolName
-        || tool.toolNameAbbreviation == toolName) tool
+        || tool.toolNameAbbreviation == toolName)  return tool
     }
     null
   }
+
 
   /** addToolModel
     * adds a tool model to the controller
