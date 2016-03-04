@@ -74,7 +74,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case AttachWS(_, ws_new) =>
 
       ws = Some(ws_new)
-      context watch ws.getOrElse(null)
+      context watch ws.get
       Logger.info("WebSocket attached successfully\n")
 
 
@@ -154,14 +154,14 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       }
 
       // Forward Job state to Websocket
-      ws.getOrElse(null) ! m
+      ws.get ! m
       // TODO update Job state in Persistence
 
 
     /* All of the remaining messages are just passed further to the WebSocket
     *  Currently: JobIDInvalid
     * */
-    case m =>  ws.getOrElse(null) ! m
+    case m =>  ws.get ! m
   }
 }
 

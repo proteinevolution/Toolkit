@@ -13,7 +13,10 @@ abstract class Node {
   val inports : Vector[Port]
   val outports : Vector[Port]
 
+  // How many Infiles the Node expects
+  //val noInfiles = inports.foldLeft(0) {_ + _.noFiles}
+
+
   val inlinks : ArrayBuffer[(Int, Int, Node)] = ArrayBuffer.empty
   val outlinks : ArrayBuffer[(Int, Int, Node)] = ArrayBuffer.empty
-
 }
