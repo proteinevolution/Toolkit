@@ -140,7 +140,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
 
     // Connection was ended
-    case Terminated(ws_new) =>  ne(ws)
+    case Terminated(ws_new) =>  ws.get ! PoisonPill
 
     // Job status was changed
     case m @ JobStateChanged(job_id, state) =>
