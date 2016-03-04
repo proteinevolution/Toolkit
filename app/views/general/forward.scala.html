@@ -1,15 +1,15 @@
 @import models.jobs.UserJob
 @(job: UserJob)
 
-
-
+<!--
+This view allows the forwarding of the results of one tool to another tool by specifying the links
+between the tools
+--->
 <script src="@routes.Assets.at("scripts/forward.js")"></script>
 
 <script type="text/javascript">
 
  target_tools = {};
-
-
 
  @for(outlink <- job.tool.outlinks) {
 
@@ -18,32 +18,26 @@
   // Fetch in and outport
   var own_port = @outlink._1;
   var foreign_port = @outlink._2;
+  var portname = '@outlink._4';
+
 
   if(typeof target_tools[toolname] == "undefined") {
 
-   target_tools[toolname] = [[own_port, foreign_port]];
+   target_tools[toolname] = [[own_port, foreign_port, portname]];
 
    }
    else {
 
-      target_tools[toolname] = target_tools[toolname].push([own_port, foreign_port]);
+      target_tools[toolname] = target_tools[toolname].push([own_port, foreign_port, portname]);
    }
 }
-
-
-
-
-
 </script>
-
-
-
 
 
 <div class="callout secondary">
   <!-- Select field to show all tools that support forwarding here -->
- <select id="childjobselect">
 
+ <select id="childjobselect">
 
   <option value="childtoolselect">Select Tool</option>
 
@@ -54,7 +48,15 @@
  </select>
 
 
- <input type="button" value="Prepare" class="secondary button" id="prepare_child">
+    <form id="wiring">
+
+
+
+
+
+    </form>
+
+ <!-- <input type="button" value="Prepare" class="secondary button" id="prepare_child"> -->
 
 </div>
 

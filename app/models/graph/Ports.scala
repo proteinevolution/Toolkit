@@ -1,6 +1,7 @@
 package models.graph
 
 import models.graph.nodes.{TcoffeeNode, AlnvizNode}
+import play.api.Logger
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -22,14 +23,15 @@ object Ports {
   for(node1 <- nodes; node2 <- nodes) {
     for(i <- node1.inports.indices; j <- node2.outports.indices ) {
 
-      val x = node1.inports(i)
-      val y = node2.outports(j)
+      val classname1 = node1.inports(i).getClass.getSimpleName
+      val classname2 = node2.outports(j).getClass.getSimpleName
 
       // the ports are compatible if they come from the same class
-      if(x.getClass.getName == y.getClass.getName) {
+      if(classname1 == classname2) {
+        Logger.info("Wire " + classname1)
 
-        node1.inlinks += ((i, j, node2))
-        node2.outlinks += ((j, i, node1))
+        node1.inlinks += ((i, j, node2, classname1))
+        node2.outlinks += ((j, i, node1, classname2))
       }
     }
   }

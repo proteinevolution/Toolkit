@@ -17,6 +17,6 @@ abstract class Node {
   lazy val noInfiles = inports.foldLeft(0) {_ + _.files.length}
 
 
-  val inlinks : ArrayBuffer[(Int, Int, Node)] = ArrayBuffer.empty
-  val outlinks : ArrayBuffer[(Int, Int, Node)] = ArrayBuffer.empty
+  val inlinks : ArrayBuffer[(Int, Int, Node, String)] = ArrayBuffer.empty
+  val outlinks : ArrayBuffer[(Int, Int, Node, String)] = ArrayBuffer.empty
 }
