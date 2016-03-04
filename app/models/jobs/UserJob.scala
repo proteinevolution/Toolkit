@@ -2,7 +2,8 @@ package models.jobs
 
 import actors.UserActor.JobStateChanged
 import akka.actor.ActorRef
-import models.graph.{Missing, FileState}
+import models.graph.{File, FileState}
+import play.api.Logger
 
 /**
   * Created by lukas on 1/20/16.
@@ -22,11 +23,12 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
   val tool = models.graph.Ports.nodeMap(toolname)
 
 
-  private var inFileStates : Map[String, FileState] = tool.inports.flatMap { port =>
+  // Maps all input files to an associated file object
+  private val inFileStates = tool.inports.flatMap { port =>
 
     port.files.map { f =>
 
-      f -> Missing
+      f -> File(f, this)
     }
   }.toMap
 
@@ -39,23 +41,18 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
   def countReady() = {
 
     readyCounter += 1
+    Logger.info("Ready counter is now: " + readyCounter)
+    Logger.info("We want to have: " + tool.noInfiles )
 
-    state = readyCounter match {
+    readyCounter match {
 
       // If all files are Ready, we can set the job to be *Prepared*
-     // case tool.noInfiles => Prepared
+      case tool.noInfiles => changeState(Prepared)
 
       // Otherwise, we have seen at least one file to be ready, so the job is *Partially Prepared*
-      case  _  : Int => PartiallyPrepared
+      case  _  : Int => changeState(PartiallyPrepared)
     }
   }
-
-
-  def changeInFileState(filename : String, state : FileState) = {
-
-    inFileStates = inFileStates.updated(filename, state)
-  }
-
 
   def changeState(newState : JobState): Unit = {
 
@@ -63,6 +60,11 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
     state = newState
   }
 
+
+  def changeInFileState(filename : String, state : FileState) = {
+
+    inFileStates(filename).changeState(state)
+  }
 
 
   def getState = state

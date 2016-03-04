@@ -39,6 +39,7 @@ class File(val filename : String, userJob : UserJob) {
       case Missing => Missing  // TODO Change state to missing is not really supported
       case Ready =>
 
+        userJob.countReady()
         children.foreach(_.changeState(NeedsAdaption))
         Ready
 

@@ -3,6 +3,8 @@ package models.graph.nodes
 import models.graph.Ports.Alignment
 import models.graph.{File, CLU}
 
+import scala.collection.mutable.ArrayBuffer
+
 
 /**
   *
@@ -16,7 +18,7 @@ object AlnvizNode extends Node {
   val toolname = "alnviz"
 
 
-  val inports = Vector(Alignment(Array("alignment"), CLU))
+  val inports = Vector(Alignment(ArrayBuffer("alignment"), CLU))
 
   val outports = Vector.empty
 }

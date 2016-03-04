@@ -2,6 +2,8 @@ package models.graph
 
 import models.graph.nodes.{TcoffeeNode, AlnvizNode}
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by lukas on 2/15/16.
   */
@@ -36,30 +38,24 @@ object Ports {
 
   // An MSA as ToolPort.
   // TODO We might want to distinguish between different Alphabets
-  case class Alignment(override val files : Array[String], alignmentFormat : AlignmentFormat)
+  case class Alignment(override val files : ArrayBuffer[String], alignmentFormat : AlignmentFormat)
     extends PortWithFormat(files, alignmentFormat)
 
   // TODO We assume this to be implicitly multi FASTA
-  case class Sequences(override val files : Array[String]) extends Port(files)
+  case class Sequences(override val files : ArrayBuffer[String]) extends Port(files)
 }
 
 
 /*
  * A Port must declare a set of files (as filename) which are either produces or consumed during tool execution
  */
-abstract class Port(val files : Array[String]) {
-
-  // How many files are associated with this Port
-  val noFiles = files.length
-}
-
+abstract class Port(val files : ArrayBuffer[String])
 /*
  *  Port that also declares a format specification. Will require an adapter to link the ports
  */
-abstract class PortWithFormat(files : Array[String], val format : Format) extends Port(files) {
+abstract class PortWithFormat(files : ArrayBuffer[String], val format : Format) extends Port(files) {
 
-  // The Port has a format, its specification will make up another file
-  override val noFiles = files.length + 1
+  files.append("format")
 }
 
 

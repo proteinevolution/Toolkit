@@ -59,7 +59,9 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       val main_id = Await.result(jobDB.userJobMapping.get(userJob.user_id -> userJob.job_id).get, Duration.Inf)
       val rootPath = jobPath + sep + main_id.toString + sep
 
-      // Make root Path and all subpaths
+      ///
+      ///  Step 1: Make the working directory of the job with all subdirectories
+      ///
       Directory(rootPath).createDirectory(false, false)
       for(subdir <- subdirs) {
 
@@ -68,19 +70,13 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       Logger.info("All subdirectories were created successfully")
 
 
-      // Write the parameters into the subdirectory:
-      for( (paramName, value) <- params ) {
 
-        File(s"$rootPath${sep}params$sep$paramName").writeAll(value.toString)
-        userJob.changeInFileState(paramName, Ready)
-      }
-      Logger.info("All params were written to the job_directory successfully")
-
+      ///
+      ///  Step 2: Get the runscript of the appropriate tool and replace template placeholders with
+      ///  input parameters
       val sourceRunscript = Source.fromFile(runscriptPath + userJob.toolname + ".sh")
       val targetRunscript = new PrintWriter(rootPath + userJob.toolname + ".sh")
 
-
-      // Translate the Runscript template to an actual executable script // TODO We should apply some abstraction here
       for(line <- sourceRunscript.getLines) {
 
         targetRunscript.println(argumentPattern.replaceAllIn(line, { rm =>
@@ -103,11 +99,25 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
           }
         }))
       }
+      Logger.info("Set file permission of: " + rootPath + userJob.toolname + ".sh")
       ("chmod u+x " + rootPath + userJob.toolname + ".sh").!    // TODO Is there a neater way to change the permission?
       sourceRunscript.close()
       targetRunscript.close()
-      userJob.changeState(Prepared)
 
+
+      ///
+      ///  Step 3: Write the parameters into the directory, this will also change the state
+      ///          of the job as a side effect.
+      for( (paramName, value) <- params ) {
+
+        if(paramName != "jobid") {
+          File(s"$rootPath${sep}params$sep$paramName").writeAll(value.toString)
+          userJob.changeInFileState(paramName, Ready)
+        }
+      }
+      Logger.info("All params were written to the job_directory successfully")
+
+      
 
     case WRead(userJob) =>
 
