@@ -73,7 +73,6 @@ jobs.controller = ->
   jobs.vm.init()
 
 #here's the view
-
 jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
     m 'tr[class=job]',   [

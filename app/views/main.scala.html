@@ -29,32 +29,54 @@
 
     <body data-ws-url="@routes.Application.ws().webSocketURL()">
 
-        <div class="header" data-equalizer>
-            <div class="small-4 columns top-bar" data-equalizer-watch>
-                <span class="logo" style="margin-left: 100px;"> <a href="@general.homecontent()"><img class="logo" src="@routes.Assets.at("images/logo2.png")"> </a></span>
+        <!---Top-Bar with Logo/Search and Dropdown --->
+        <div class="top-bar" data-equalizer>
+            <div class="large-4 columns" style="height 130px;" data-equalizer-watch>
+                <div class="logo"><a href=""><img style="margin-left: 50px; margin-top: 15px"  src="@routes.Assets.at("images/TestLogo.png")"> </a></div>
             </div>
-            <div class="small-8 columns top-bar" data-equalizer-watch>@elements.topbar(sectionname)</div>
-        </div>
 
-        <div data-sticky-container>
-        <div class="fullwidth sticky" data-sticky  data-options="marginTop:0;anchor:stickhere;">
-            <div class="large-12 columns navbar">
-
-                @elements.navbar()
-
+            <div class="large-6 columns" data-equalizer-watch>
+                <div class="advancedsearch" style="margin-top: 40px;">
+                    <input type="text" placeholder="Advanced Search" style="width: 500px; height: 35px">
+                </div>
             </div>
-        </div>
-        </div>
 
-        <div class="sidebar">
-            <div class="small-2 columns">@elements.sidebar()</div>
-        </div>
+            <div class="large-2 columns" data-equalizer-watch>
+                <ul class="dropdown menu" id="toolsdropdown" data-dropdown-menu>
+                    <li>
+                        <a href="">Alignment</a>
+                        <ul class="menu vertical">
+                        @for(tool <- Tool.tools){
+                            <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                        }
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+          </div>
 
-        <div class="content"><div id="content" class="large-10 columns">@content</div></div>
 
-        <div class="footer">
-            <div class="footer">@elements.footer()</div>
-        </div>
+        <!---Navigation Bar --->
+        <section>
+          <nav>
+            @elements.navbar()
+          </nav>
+        </section>
+
+        <!---Main Content Section includes Sidebar and Content --->
+        <section class="row fullwidth">
+            <div class="large-2 columns sidebar padded-column">
+                @elements.sidebar()
+            </div>
+
+            <div id="content" class="large-10 columns padded-column">
+                @content
+            </div>
+        </section>
+
+        <footer>
+            @elements.footer()
+        </footer>
 
 
         <!-- Script Inclusions -->

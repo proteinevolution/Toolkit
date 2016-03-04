@@ -3,7 +3,6 @@
     max-width: initial;
 }
 
-
 .logotext {
     text-align: center;
     font-weight: bold;
@@ -73,8 +72,8 @@ tr.spaceUnder > td
 }
 
 .sidebar {
-    margin-left: 10px;
-    width: 60%;
+
+    padding-left: 20px;
     padding-top: 0px;
     padding-right: 20px;
 }
@@ -82,7 +81,7 @@ tr.spaceUnder > td
 .content {
     width: 60%;
     margin-left: 100px;
-    padding-top: 20px;
+    padding-top: 100px;
     padding-left: 50px;
     padding-right: 50px;
 }
@@ -92,11 +91,6 @@ tr.spaceUnder > td
     font-size: 10px;
 }
 
-.top-bar-right {
-
-    margin-right: 70px;
-    margin-top: 40px;
-}
 
 .advancedsearch {
 
@@ -184,3 +178,18 @@ tr.job{
     width: 20px;
 }
 
+#toolsdropdown {
+
+    width: 120px;
+    margin-top: 40px;
+}
+
+hr {
+
+    width:50%;
+}
+
+.padded-column {
+    padding: 10px;
+
+}
