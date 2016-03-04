@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
 @(inputForm: Form[(String, Boolean, Boolean, Boolean)])(implicit messages: Messages, request: RequestHeader)
 
-@helper.textarea(field = inputForm(""), args = 'rows -> 20, 'cols -> 50,
+@helper.textarea(field = inputForm("sequences"), args = 'rows -> 20, 'cols -> 50,
                     'placeholder -> "Enter sequences to be aligned in Multi-FASTA format",
                     'id -> "sequences")
 <!--
