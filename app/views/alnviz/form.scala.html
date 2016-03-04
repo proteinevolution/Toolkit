@@ -4,9 +4,11 @@
 
 
         <!-- Input form elements derived from the Input Data Model -->
-        @helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 30,
-                    '_label -> "Enter sequence alignment",
+        @helper.textarea(field = inputForm(""), args = 'rows -> 20, 'cols -> 30,
+                    'placeholder -> "Enter sequence alignment",
                     'id -> "alignment")
+
+
 
         <a onClick="$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
 

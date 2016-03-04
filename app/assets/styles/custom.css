@@ -73,6 +73,7 @@ tr.spaceUnder > td
 
 .sidebar {
 
+    margin-top: 5px;
     padding-left: 20px;
     padding-top: 0px;
     padding-right: 20px;
@@ -85,12 +86,6 @@ tr.spaceUnder > td
     padding-left: 50px;
     padding-right: 50px;
 }
-
-#alignment{
-    font-family: Droid Sans Mono;
-    font-size: 10px;
-}
-
 
 .advancedsearch {
 
@@ -191,5 +186,11 @@ hr {
 
 .padded-column {
     padding: 10px;
+
+}
+
+.main-content {
+
+    min-height: 500px;
 
 }

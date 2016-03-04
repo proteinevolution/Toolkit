@@ -61,19 +61,24 @@ $ ->
 
       success: (data, textStatus, jqXHR) ->
 
-
-
-
-
-
-
-
-
-
 # If one hits the Reset button of the form
   $(".jobformclear").click (event) ->
     $('.jobform').trigger("reset")
     $('#jobid').prop('readonly', true).hide().val("")
+
+
+# If one hits the ID button
+  $(".provideid").click (event) ->
+    if $('#jobid').is(':visible')
+      $('#jobid').prop('type', 'text').prop('readonly', false).hide()
+      $('#jobid').val("")
+    else
+      $('#jobid').prop('type', 'text').prop('readonly', false).show()
+
+
+
+
+
 
 
 
