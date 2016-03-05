@@ -5,6 +5,7 @@ import actors.Worker.{WDelete, WRead, WStart, WPrepare}
 import akka.actor._
 import akka.event.LoggingReceive
 import akka.util.Timeout
+import models.database.DBJob
 import models.jobs._
 import models.misc.RandomString
 import play.api.Logger
@@ -108,7 +109,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
           val job = UserJob(self, toolname, job_id, session_id, startImmediate)
           userJobs.put(job.job_id, job)
-          jobDB.add(DBJob(job.job_id, session_id, toolname))
+          jobDB.add(DBJob(job.job_id, session_id, job.getState, toolname))
 
           worker ! WPrepare(job, params)
       }
@@ -156,6 +157,10 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       // Forward Job state to Websocket
       ws.get ! m
       // TODO update Job state in Persistence
+
+      val jobState = userJob.getState
+      jobDB.update(DBJob(job_id, session_id, jobState, userJob.toolname))
+
 
 
     /* All of the remaining messages are just passed further to the WebSocket

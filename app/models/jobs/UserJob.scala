@@ -78,5 +78,4 @@ object UserJob {
   }
 }
 
-//Job Class used for database storage
-case class DBJob(val job_id : String, val user_id : String, toolname : String)
+
