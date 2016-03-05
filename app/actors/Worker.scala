@@ -10,10 +10,8 @@ import akka.event.LoggingReceive
 import models.graph.Ready
 import models.jobs._
 import play.api.Logger
-import scala.concurrent.Await
 import scala.io.Source
 import sys.process._
-import scala.concurrent.duration._
 
 
 import scala.reflect.io.{Directory, File}
@@ -56,7 +54,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
 
       // Worker will wait until it knows the Main ID
-      val main_id = Await.result(jobDB.userJobMapping.get(userJob.user_id -> userJob.job_id).get, Duration.Inf)
+      val main_id = jobDB.userJobMapping(userJob.user_id -> userJob.job_id)
       val rootPath = jobPath + sep + main_id.toString + sep
 
       ///
@@ -121,7 +119,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
     case WRead(userJob) =>
 
-      val main_id = Await.result(jobDB.userJobMapping.get(userJob.user_id -> userJob.job_id).get, Duration.Inf)
+      val main_id = jobDB.userJobMapping(userJob.user_id -> userJob.job_id)
       val paramPath = jobPath + main_id + sep + "params/"
 
       val files = new java.io.File(paramPath).listFiles
@@ -136,7 +134,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
     case WDelete(userJob) =>
 
-      val main_id = Await.result(jobDB.delete(userJob.user_id, userJob.job_id), Duration.Inf)
+      val main_id = jobDB.delete(userJob.user_id, userJob.job_id)
       val rootPath = jobPath + main_id + sep
       Directory(rootPath).deleteRecursively()
 
@@ -145,7 +143,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
     case WStart(userJob) =>
 
       Logger.info("[Worker](WStart) for job " + userJob.job_id)
-      val main_id = Await.result(jobDB.userJobMapping.get(userJob.user_id -> userJob.job_id).get, Duration.Inf)
+      val main_id = jobDB.userJobMapping(userJob.user_id -> userJob.job_id)
       val rootPath = jobPath + main_id + sep
 
       // Assumption : The Root path contains a prepared shellscript that bears the toolname + sh suffix

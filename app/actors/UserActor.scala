@@ -20,6 +20,9 @@ import scala.concurrent.duration._
   *
   */
 
+// A links just connects one output port to one input port
+case class Link(out : Int, in : Int)
+
 object UserActor {
   // All messages that the UserActor can actually receive
   // Job changed state
@@ -43,7 +46,7 @@ object UserActor {
 
   case class DeleteJob(job_id : String)
 
-  case class AppendChildJob(parent_job_id : String, toolname : String, links : Seq[(Int, Int)])
+  case class AppendChildJob(parent_job_id : String, toolname : String, links : Seq[Link])
 
 
 
@@ -108,9 +111,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       } else {
 
           val job = UserJob(self, toolname, job_id, session_id, startImmediate)
+          jobDB.update(DBJob(job_id, session_id, job.getState, job.toolname))
           userJobs.put(job.job_id, job)
-          jobDB.add(DBJob(job.job_id, session_id, job.getState, toolname))
-
           worker ! WPrepare(job, params)
       }
 
@@ -131,12 +133,19 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
 
 
-
     case AppendChildJob(parent_job_id, toolname, links) =>
 
-      //val job = UserJob(self, toolname, Submitted, job_id, user_id, startImmediate)
-      // TODO implement me
+      Logger.info("Append child job received")
 
+
+      var new_job_id = None: Option[String]
+      do {
+        //TODO: check whether this random id already exists in the db or make the userJobs Map entirely consistent with the Database
+        new_job_id = Some(RandomString.randomNumString(7))
+      } while(userJobs contains new_job_id.get)
+
+      val job = UserJob(self, toolname, new_job_id.get, session_id, false) // TODO Start immediate not yet supported for child jobs
+      userJobs.put(job.job_id, job)
 
 
 
@@ -157,13 +166,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       // Forward Job state to Websocket
       ws.get ! m
 
-
       // update Job state in Persistence
-
-      val jobState = userJob.getState
-      jobDB.update(DBJob(job_id, session_id, jobState, userJob.toolname))
-
-
+      jobDB.update(DBJob(job_id, session_id, userJob.getState, userJob.toolname))
 
     /* All of the remaining messages are just passed further to the WebSocket
     *  Currently: JobIDInvalid

@@ -1,5 +1,6 @@
 package models.jobs
 
+import actors.Link
 import actors.UserActor.JobStateChanged
 import akka.actor.ActorRef
 import models.graph.{File, FileState}
@@ -31,6 +32,13 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
       f -> File(f, this)
     }
   }.toMap
+
+
+  def appendChild(userJob : UserJob, links : Seq[Link]): Unit = {
+
+
+    // TODO Implement me
+  }
 
 
 

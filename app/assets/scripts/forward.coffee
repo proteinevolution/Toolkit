@@ -1,13 +1,34 @@
-#$("#prepare_child").click () ->
+$("#forward").submit (event) ->
+  event.preventDefault()
+
+  data = $("#forward").serializeArray()
+  data.map (link) ->
+    link["out"] = parseInt(link["name"])
+    link["in"] = parseInt(link["value"])
+    delete link["name"]
+    delete link["value"]
+    return link
+
+  obj = { 'parent_job_id' : parent_job_id, 'toolname' : $("#childjobselect").val() , 'links' : data }
+
+
+  alert JSON.stringify obj
+
+  $.ajax
+    url: "/jobs/addChild"
+    type: "POST"
+    data: JSON.stringify obj
+    contentType: 'application/json; charset=utf-8',
+    dataType: "json"
+
 
 
 
 $("#childjobselect").change (event) ->
   event.preventDefault()
-  $("#wiring").empty()
+  $("#forward-fieldset").empty()
 
   # compute tuple
-  toolname = $("#childjobselect").val()
   tuples = target_tools[toolname]
 
   ports = []
@@ -25,18 +46,18 @@ $("#childjobselect").change (event) ->
 
       # Get name of this port as classname
       portname = ports[i][0][1]
-      alert portname
 
 
-      $("#wiring").append('<select id="outport_' + i + '"' +  ' name="outport_' + i + '" >')
+
+      $("#forward-fieldset").append('<label for="outport_' + i +  '">Forward ' + portname + ' to</label>')
+      $("#forward-fieldset").append('<select id="outport_' + i + '"' +  ' name="' + i + '" >')
 
       for inport in ports[i]
-        $('#outport_' + i).append('<option value="foo">foo</option>')
 
+        port = inport[0]
 
-      $("#wiring").append('</select>')
+        $('#outport_' + i).append('<option value="' +  port + '">'  + port +  '</option>')
+
+      $("#forward-fieldset").append('</select>')
 
     i++
-
-
-

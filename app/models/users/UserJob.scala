@@ -1,6 +1,5 @@
 package models.users
 
-import akka.actor.ActorRef
 
 /**
   * Created by astephens on 25.02.16.

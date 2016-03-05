@@ -5,11 +5,18 @@
 This view allows the forwarding of the results of one tool to another tool by specifying the links
 between the tools
 --->
+
+<!-- TODO Use Mithril to establish a viewmodel of the tools that can be forwarded to -->
+
 <script src="@routes.Assets.at("scripts/forward.js")"></script>
 
 <script type="text/javascript">
 
+
+ // TODO These variables are global such that the 'forward.coffee' script can see them. Need to find another way
  target_tools = {};
+ parent_job_id = '@job.job_id';
+
 
  @for(outlink <- job.tool.outlinks) {
 
@@ -37,6 +44,7 @@ between the tools
 <div class="callout secondary">
   <!-- Select field to show all tools that support forwarding here -->
 
+ <label for="childjobselect">Select compatible tool for child job</label>
  <select id="childjobselect">
 
   <option value="childtoolselect">Select Tool</option>
@@ -48,16 +56,15 @@ between the tools
  </select>
 
 
-    <form id="wiring">
+    <form id="forward">
+
+    <fieldset id="forward-fieldset">
 
 
+    </fieldset>
 
-
-
+     <input type="submit" value="Add Child Job" class="secondary button">
     </form>
-
- <!-- <input type="button" value="Prepare" class="secondary button" id="prepare_child"> -->
-
 </div>
 
 

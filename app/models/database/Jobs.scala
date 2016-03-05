@@ -7,8 +7,8 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
 import slick.driver.MySQLDriver.api._
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import scala.concurrent.Await
 
 
 
@@ -62,14 +62,11 @@ class JobsTableDef(tag: Tag) extends Table[DBJob](tag, "jobs") {
 class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConfigProvider) {
 
 
-
-
-
   val dbConfig = dbConfigProvider.get[JdbcProfile]
   val jobs = TableQuery[JobsTableDef]                //Loads the table definition for the Job Table
 
   // Maps user_id and job_id to the corresponding main_id
-  val userJobMapping = new collection.mutable.HashMap[(String, String), Future[Long]]()
+  val userJobMapping = new collection.mutable.HashMap[(String, String), Long]()
 
   // Defines that adding the Job with a query will return the new auto-incremented main_id
   val addQuery = jobs returning jobs.map(_.main_id)
@@ -77,34 +74,31 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
   val updateQuery = jobs returning jobs.map(_.main_id)
 
 
-  def delete(user_id : String, job_id : String) : Future[Long] = {
+  def delete(user_id : String, job_id : String) : Option[Long] = {
 
-    userJobMapping.remove(user_id -> job_id).get.map { main_id =>
+    val main_id = userJobMapping.remove(user_id -> job_id)
+    dbConfig.db.run(jobs.filter(_.main_id === main_id).delete)
+    main_id
+  }
 
-      dbConfig.db.run(jobs.filter(_.main_id === main_id).delete)
-      main_id
+
+
+  def update(job: DBJob) = {
+
+    userJobMapping.get(job.user_id -> job.job_id) match {
+
+      case None =>
+
+        val main_id : Long = Await.result(dbConfig.db.run(addQuery += job), Duration.Inf)
+        userJobMapping.put(job.user_id -> job.job_id, main_id)
+
+      case Some(main_id) =>
+
+        dbConfig.db.run(jobs.filter(_.main_id === main_id).update(job))
     }
   }
-
-  def add(job: DBJob) : Future[Long] = {
-
-    val res: Future[Long] = dbConfig.db.run(addQuery += job)
-    userJobMapping.put(job.user_id -> job.job_id, res)
-    res
-  }
-
-  def update(job: DBJob) : Future[Long] = {
-
-    userJobMapping(job.user_id -> job.job_id).map{
-
-      main_id => dbConfig.db.run(jobs.filter(_.main_id === main_id).update(job))
-        main_id
-
-    }
-
-  }
-
 }
+
 
 
 //Job Class used for database storage

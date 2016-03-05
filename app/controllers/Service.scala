@@ -2,13 +2,13 @@ package controllers
 
 import javax.inject.{Named, Inject, Singleton}
 
+import actors.Link
 import actors.UserActor._
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.graph.nodes.Node
 import models.jobs.{Prepared, Done, UserJob}
-import models.tools.{ToolModel, Hmmer3, Tcoffee, Alnviz}
+import models.tools.{Hmmer3, Tcoffee, Alnviz}
 import models.sessions.Session
 import play.api.Logger
 import play.api.libs.json.Json
@@ -16,8 +16,11 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask
-import play.api.mvc.{AnyContent, Request, Action, Controller}
+import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.json._
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
 
 /**
   * This controller is intended to provide a WebService Interface for Mithril
@@ -38,20 +41,55 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
 
 
+
+  // Defines which messages the user can pass to the server
+  case class AddChildJob(parent_job_id : String, toolname : String, links : Seq[Link])
+
+
+
+  /*
+    Defines appropriate JSON conversions
+   */
+  implicit val readsLink : Reads[Link] = (
+      (JsPath \ "out").read[Int](min(0)) and
+      (JsPath \ "in").read[Int](min(0))
+    )(Link.apply _)
+
+  implicit val readsAddChildJob : Reads[AddChildJob] = (
+      (JsPath \ "parent_job_id").read[String] and
+      (JsPath \ "toolname").read[String] and
+      (JsPath \ "links").read[Seq[Link]]
+    )(AddChildJob.apply _)
+
+
+
   /**
     *  Appends child job to an already defined job
     *
    */
-  def addChild(parent_job_id : String, toolname : String, links : Seq[(Int, Int)]) = Action.async { implicit request =>
+  val addChild = Action.async(parse.json) { implicit request =>
 
-    val session_id = Session.requestSessionID(request) // Grab the Session ID
+    Logger.info("Add child Job received")
+
+    val session_id = request.session.get("sid").get
 
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
 
-      userActor ! AppendChildJob(parent_job_id,toolname, links)
-      Ok
+      request.body.validate[AddChildJob] match {
+
+        case JsSuccess(addChildJob, _) =>
+
+          userActor ! AppendChildJob(addChildJob.parent_job_id, addChildJob.toolname, addChildJob.links)
+          Logger.info("JSON Data seems to be fine")
+          Ok
+
+        case JsError(errors) =>
+          Logger.info("JSON Data  has errors")
+          BadRequest
+      }
     }
   }
+
 
 
   /**
@@ -105,7 +143,6 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
         // Switch on Job state to decide what to show
         job.getState match {
-
 
           case Done => Future {
 

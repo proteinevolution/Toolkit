@@ -67,20 +67,19 @@ class Application @Inject()(val messagesApi: MessagesApi,
     */
   }
 
-  def file(filename : String, job_id : String) = Action.async { implicit request =>
+  def file(filename : String, job_id : String) = Action{ implicit request =>
 
     // TODO handle the case that there is no userID in session scope or no job with that name
     val session_id = Session.requestSessionID(request)
-    val main_id_o = jobDB.userJobMapping.get(session_id.toString, job_id).get
+    val main_id= jobDB.userJobMapping(session_id.toString, job_id)
 
-    main_id_o map { main_id =>
 
-      Logger.info("Try to assemble file path")
-      val filePath = path + "/" + main_id.toString +  "/results/" + filename
-      Logger.info("File has been sent")
-      Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {
+    Logger.info("Try to assemble file path")
+    val filePath = path + "/" + main_id.toString +  "/results/" + filename
+    Logger.info("File has been sent")
+    Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {
         Session.closeSessionRequest(request, session_id)
-      }
     }
+
   }
 }
