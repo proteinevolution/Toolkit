@@ -13,6 +13,8 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 import play.api.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.Play.materializer
+
 
 import play.api.libs.json.{JsValue, Json}
 

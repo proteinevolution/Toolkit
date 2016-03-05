@@ -14,6 +14,8 @@ import javax.inject.{Singleton, Named, Inject}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.sessions.Session
+import play.api.Play.materializer
+
 
 @Singleton
 class Application @Inject()(val messagesApi: MessagesApi,
@@ -22,6 +24,7 @@ class Application @Inject()(val messagesApi: MessagesApi,
 
   // TODO this line has to vanish
   var path = s"${Play.application.path}${File.separator}${current.configuration.getString("job_path").get}${File.separator}"
+
 
 
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
@@ -42,6 +45,7 @@ class Application @Inject()(val messagesApi: MessagesApi,
 
 
 
+
   /**
     * Handles the request of the index page of the toolkit. This implies that a new session
     * for the new user will be opened.
@@ -56,10 +60,10 @@ class Application @Inject()(val messagesApi: MessagesApi,
     Ok(views.html.main(views.html.general.homecontent(),"Home"))
 
     /** With session cookie
-    val session_id = Session.requestSessionID(request)
-    Ok(views.html.main(views.html.general.homecontent(),"Home")).withSession {
-      Session.closeSessionRequest(request, session_id)
-    }
+    *val session_id = Session.requestSessionID(request)
+    *Ok(views.html.main(views.html.general.homecontent(),"Home")).withSession {
+      *Session.closeSessionRequest(request, session_id)
+    *}
     */
   }
 
