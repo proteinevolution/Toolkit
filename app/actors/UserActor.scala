@@ -156,7 +156,9 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       // Forward Job state to Websocket
       ws.get ! m
-      // TODO update Job state in Persistence
+
+
+      // update Job state in Persistence
 
       val jobState = userJob.getState
       jobDB.update(DBJob(job_id, session_id, jobState, userJob.toolname))
