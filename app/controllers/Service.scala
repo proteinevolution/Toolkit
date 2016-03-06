@@ -127,6 +127,7 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
 
   def clearJob(job_id: String) = Action.async { implicit request =>
+    Logger.info("clear")
 
     val session_id = Session.requestSessionID(request)
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>

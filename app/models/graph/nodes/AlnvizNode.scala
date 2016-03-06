@@ -18,7 +18,7 @@ object AlnvizNode extends Node {
   val toolname = "alnviz"
 
 
-  val inports = Vector(Alignment(ArrayBuffer("alignment"), CLU))
+  val inports = Vector(Alignment("alignment", CLU))
 
   val outports = Vector.empty
 }

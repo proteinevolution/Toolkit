@@ -1,10 +1,12 @@
 package models.jobs
 
 import actors.Link
-import actors.UserActor.JobStateChanged
+import actors.UserActor.{Convert, JobStateChanged}
 import akka.actor.ActorRef
-import models.graph.{File, FileState}
+import models.graph.{Locked, File, FileState}
 import play.api.Logger
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by lukas on 1/20/16.
@@ -20,24 +22,56 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
   private var state : JobState = Submitted
   userActor ! JobStateChanged(job_id, Submitted)
 
-  // The associated tool node
-  val tool = models.graph.Ports.nodeMap(toolname)
+  val tool = models.graph.Ports.nodeMap(toolname)  // The associated tool node
+
+  // Keeps track of all child Jobs and which inport links of the child jobs are controlled
+  val childJobs : ArrayBuffer[(UserJob, Seq[Link])] = ArrayBuffer.empty
 
 
   // Maps all input files to an associated file object
-  private val inFileStates = tool.inports.flatMap { port =>
+   val inFileStates = tool.inports.map { port =>
 
-    port.files.map { f =>
-
-      f -> File(f, this)
-    }
+    port.filename -> File.in(port.filename, this)
   }.toMap
+
 
 
   def appendChild(userJob : UserJob, links : Seq[Link]): Unit = {
 
+    Logger.info("???????????????????????????????????????????????????????????????????")
+    childJobs.append((userJob, links))
+    // Lock all files in the inport port of the child job
+    links.foreach { link =>
 
-    // TODO Implement me
+      // lock each inlink file from child Job
+      val filename =  userJob.tool.inports(link.in).filename
+      userJob.changeInFileState(filename, Locked)
+
+    }
+    // if the Job is done, we can trigger conversion process for this Job
+    if(state == Done) {
+
+      Logger.info("Send convert to User Actor")
+      userActor ! Convert(job_id, userJob.job_id, links)
+    }
+  }
+
+
+  def changeState(newState : JobState): Unit = {
+
+    userActor ! JobStateChanged(job_id, newState)
+
+    // If the new state is Done, we can make all output files ready
+    if(newState == Done) {
+
+      Logger.info("Job Done, we need to convert for " + childJobs.length + "sjobs")
+
+      childJobs.foreach {userJob =>
+
+          userActor ! Convert(job_id, userJob._1.job_id, userJob._2)
+      }
+    }
+    state = newState
   }
 
 
@@ -50,7 +84,6 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
 
     readyCounter += 1
     Logger.info("Ready counter is now: " + readyCounter)
-    Logger.info("We want to have: " + tool.noInfiles )
 
     readyCounter match {
 
@@ -62,11 +95,6 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
     }
   }
 
-  def changeState(newState : JobState): Unit = {
-
-    userActor ! JobStateChanged(job_id, newState)
-    state = newState
-  }
 
 
   def changeInFileState(filename : String, state : FileState) = {
