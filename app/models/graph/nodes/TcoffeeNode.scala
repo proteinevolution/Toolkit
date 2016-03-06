@@ -12,6 +12,6 @@ object TcoffeeNode extends Node {
 
   val toolname = "tcoffee"
 
-  val inports = Vector(Sequences(ArrayBuffer("sequences")))
-  val outports = Vector(Alignment(ArrayBuffer("alignment"), CLU))
+  val inports = Vector(Sequences("sequences"))
+  val outports = Vector(Alignment("sequences.aln", CLU))
 }

@@ -1,5 +1,6 @@
 package models.graph
 
+import models.graph.Converters.ReformatConverter
 import models.graph.nodes.{TcoffeeNode, AlnvizNode}
 import play.api.Logger
 
@@ -37,32 +38,48 @@ object Ports {
   }
 
 
-
   // An MSA as ToolPort.
   // TODO We might want to distinguish between different Alphabets
-  case class Alignment(override val files : ArrayBuffer[String], alignmentFormat : AlignmentFormat)
-    extends PortWithFormat(files, alignmentFormat)
+  case class Alignment(override val filename : String, alignmentFormat : AlignmentFormat)
+    extends PortWithFormat(filename, alignmentFormat)
 
   // TODO We assume this to be implicitly multi FASTA
-  case class Sequences(override val files : ArrayBuffer[String]) extends Port(files)
+  case class Sequences(override val filename : String) extends Port(filename)
+
+
+  // Returns script name and parametes for conversion
+  object PortConverter {
+
+    def convert(portA : Port, portB : Port) :  ArrayBuffer[String] = {
+
+      (portA, portB) match {
+
+        case t :  (Alignment, Alignment) =>
+
+          ReformatConverter.convert(t._1.format.asInstanceOf[AlignmentFormat], t._2.format.asInstanceOf[AlignmentFormat])
+
+
+        case _  => throw new RuntimeException("Sorry, you have not specified a converter for this case")
+      }
+    }
+  }
 }
 
 
 /*
  * A Port must declare a set of files (as filename) which are either produces or consumed during tool execution
  */
-abstract class Port(val files : ArrayBuffer[String])
+abstract class Port(val filename : String)
 /*
  *  Port that also declares a format specification. Will require an adapter to link the ports
  */
-abstract class PortWithFormat(files : ArrayBuffer[String], val format : Format) extends Port(files) {
+abstract class PortWithFormat(filename : String, val format : Format) extends Port(filename) {
 
-  files.append("format")
+  val formatFilename : String = filename + "_format"
+
 }
 
 
-
-// Formats // TODO Deal with format conversion
 
 abstract class Format(val fullName : String)
 
@@ -78,16 +95,4 @@ case object NEX extends AlignmentFormat("NEX")
 case object PHY extends AlignmentFormat("PHY")
 case object PIR extends AlignmentFormat("PIR/NBRF")
 case object TRE extends AlignmentFormat("TREECON")
-
-
-
-
-
-
-
-
-
-
-
-
 

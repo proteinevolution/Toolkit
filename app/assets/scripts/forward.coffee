@@ -11,17 +11,12 @@ $("#forward").submit (event) ->
 
   obj = { 'parent_job_id' : parent_job_id, 'toolname' : $("#childjobselect").val() , 'links' : data }
 
-
-  alert JSON.stringify obj
-
   $.ajax
     url: "/jobs/addChild"
     type: "POST"
     data: JSON.stringify obj
     contentType: 'application/json; charset=utf-8',
     dataType: "json"
-
-
 
 
 $("#childjobselect").change (event) ->

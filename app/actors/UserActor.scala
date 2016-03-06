@@ -1,7 +1,7 @@
 package actors
 import javax.inject._
 
-import actors.Worker.{WDelete, WRead, WStart, WPrepare}
+import actors.Worker._
 import akka.actor._
 import akka.event.LoggingReceive
 import akka.util.Timeout
@@ -49,6 +49,9 @@ object UserActor {
   case class AppendChildJob(parent_job_id : String, toolname : String, links : Seq[Link])
 
   case class ClearJob(job_id : String)
+
+
+  case class Convert(parent_job_id : String, child_job_id : String, links : Seq[Link])
 
 
 
@@ -127,6 +130,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
 
     case ClearJob(job_id) =>
+      Logger.info("Clear Actor")
       val job = userJobs.remove(job_id).get
 
 
@@ -154,6 +158,14 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       val job = UserJob(self, toolname, new_job_id.get, session_id, false) // TODO Start immediate not yet supported for child jobs
       userJobs.put(job.job_id, job)
 
+      userJobs(parent_job_id).appendChild(job, links)
+
+
+    case Convert(parent_job_id, child_job_id, links) =>
+
+      Logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+      worker ! WConvert(userJobs(parent_job_id), userJobs(child_job_id), links)
 
 
     // Connection was ended
@@ -180,6 +192,9 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     *  Currently: JobIDInvalid
     * */
     case m =>  ws.get ! m
+
+
+
   }
 }
 
