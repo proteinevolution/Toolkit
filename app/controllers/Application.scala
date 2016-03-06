@@ -76,6 +76,7 @@ class Application @Inject()(val messagesApi: MessagesApi,
 
     Logger.info("Try to assemble file path")
     val filePath = path + "/" + main_id.toString +  "/results/" + filename
+    Logger.info("File path was: " + filePath)
     Logger.info("File has been sent")
     Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {
         Session.closeSessionRequest(request, session_id)

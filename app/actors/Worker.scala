@@ -160,7 +160,10 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
         }
       }
 
-      
+
+
+
+
 
       Logger.info("Worker was asked to convert Jobs")
       for(link <- links) {

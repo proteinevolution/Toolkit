@@ -182,8 +182,8 @@ class Tool @Inject()(val messagesApi: MessagesApi,
           case Done => Future {
 
             // TODO Dynamically calculate appropriate visualizations
-            val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$job_id/sequences.clustalw_aln"),
-              "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/sequences.clustalw_aln"))
+            val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$job_id/sequences.aln"),
+              "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/sequences.aln"))
 
             val toolframe = job.toolname match {
 
