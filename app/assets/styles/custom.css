@@ -12,7 +12,7 @@
 #jobcode {
 
     font-family: Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;
-    font-size: 12px;
+    font-size: 0.750em;
 }
 
 .job-status-fade {
@@ -57,7 +57,7 @@
 
 .alignment {
     font-family: monospace;
-    font-size: 14px;
+    font-size: 0.875em;
 }
 
 tr.spaceUnder > td
@@ -68,28 +68,28 @@ tr.spaceUnder > td
 .top-bar {
     box-sizing: inherit;
     background: #006F62;
-    height: 130px;
+    height: 8.125em;
 }
 
 .sidebar {
 
-    margin-top: 5px;
-    padding-left: 20px;
+    margin-top: 0.313em;
+    padding-left: 1.250em;
     padding-top: 0px;
-    padding-right: 20px;
+    padding-right: 1.250em;
 }
 
 .content {
     width: 60%;
-    margin-left: 100px;
-    padding-top: 100px;
-    padding-left: 50px;
-    padding-right: 50px;
+    margin-left: 6.250em;
+    padding-top: 6.250em;
+    padding-left: 3.125em;
+    padding-right: 3.125em;
 }
 
 .advancedsearch {
 
-    width: 500px;
+    width: 31.250em;
 }
 
 .tabs-content {
@@ -160,7 +160,7 @@ tr.spaceUnder > td
 
 .header {
 
-    height: 130px;
+    height: 8.125em;
 }
 
 .columns {
@@ -169,14 +169,14 @@ tr.spaceUnder > td
 }
 
 tr.job{
-    font-size: 10px;
-    width: 20px;
+    font-size: 0.625em;
+    width: 1.250em;
 }
 
 #toolsdropdown {
 
-    width: 120px;
-    margin-top: 40px;
+    width: 7.500em;
+    margin-top: 2.500em;
 }
 
 hr {
@@ -185,12 +185,26 @@ hr {
 }
 
 .padded-column {
-    padding: 10px;
+    padding: 0.625em;
 
 }
 
 .main-content {
 
-    min-height: 500px;
+    min-height: 31.250em;
+
+}
+
+#alignment{
+
+    font-family: Droid Sans Mono;
+    font-size: 0.625em;
+
+}
+
+#sequences{
+
+    font-family: Droid Sans Mono;
+    font-size: 0.625em;
 
 }
