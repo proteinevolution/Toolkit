@@ -76,9 +76,11 @@ jobs.controller = ->
 jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
     m 'tr[class=job]',   [
-      m('td[class=' + a[task.state()] + ']')
-      m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id()))
+      m('td[class=' + a[task.state()] + ']'),
+      m("div", {style: {cssFloat: "left", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},m('br'), m('input',{type: "checkbox"})),
+      m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
       m('td',  m('input',{type: "button", value: "x",onclick: jobs.vm.delete.bind(task, task.job_id)})   )
+
     ]
   ) ] ]
 

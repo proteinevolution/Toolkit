@@ -12,6 +12,11 @@
   bottom: 0;
   position: static;
   font-family: Helvetica;
+  font-size: 0.625em;
+}
+
+.spacer {
+  background-color: #272727;
 }
 
 .footer a {
@@ -21,11 +26,12 @@
 
 
 .socket {
-
+  padding-top: 0.625em;
+  padding-bottom: 1.7em;
   background-color: #222222;
   color: #fff;
   text-align: center;
-  font-size: small;
+  font-size: 0.825em;
   height: 20px;
   bottom: 0;
   margin-bottom: 0px;

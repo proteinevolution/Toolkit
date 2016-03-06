@@ -31,7 +31,7 @@ import play.api.libs.functional.syntax._
 
 @Singleton
 class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") userManager : ActorRef)
-  extends Controller with I18nSupport  {
+  extends Controller with I18nSupport {
 
   val tools = ""
 
@@ -39,34 +39,29 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
   implicit val timeout = Timeout(5.seconds)
 
 
-
-
-
   // Defines which messages the user can pass to the server
-  case class AddChildJob(parent_job_id : String, toolname : String, links : Seq[Link])
-
+  case class AddChildJob(parent_job_id: String, toolname: String, links: Seq[Link])
 
 
   /*
     Defines appropriate JSON conversions
    */
-  implicit val readsLink : Reads[Link] = (
-      (JsPath \ "out").read[Int](min(0)) and
+  implicit val readsLink: Reads[Link] = (
+    (JsPath \ "out").read[Int](min(0)) and
       (JsPath \ "in").read[Int](min(0))
-    )(Link.apply _)
+    ) (Link.apply _)
 
-  implicit val readsAddChildJob : Reads[AddChildJob] = (
-      (JsPath \ "parent_job_id").read[String] and
+  implicit val readsAddChildJob: Reads[AddChildJob] = (
+    (JsPath \ "parent_job_id").read[String] and
       (JsPath \ "toolname").read[String] and
       (JsPath \ "links").read[Seq[Link]]
-    )(AddChildJob.apply _)
-
+    ) (AddChildJob.apply _)
 
 
   /**
-    *  Appends child job to an already defined job
+    * Appends child job to an already defined job
     *
-   */
+    */
   val addChild = Action.async(parse.json) { implicit request =>
 
     Logger.info("Add child Job received")
@@ -91,14 +86,13 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
   }
 
 
-
   /**
     *
     * User ask for the creation of a new Job with the provided tool name.
     * Will return the empty submit form associated with the tool.
     *
     */
-  def newJob(toolname : String) = Action { implicit  request =>
+  def newJob(toolname: String) = Action { implicit request =>
 
     val toolframe = toolname match {
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
@@ -109,7 +103,7 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
     Ok(views.html.general.submit(toolname, toolframe)).withSession {
 
       val session_id = Session.requestSessionID(request)
-      Session.closeSessionRequest(request, session_id)   // Send Session Cookie
+      Session.closeSessionRequest(request, session_id) // Send Session Cookie
     }
   }
 
@@ -120,7 +114,7 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
     * @param job_id
     * @return
     */
-  def delJob(job_id : String) = Action.async { implicit request =>
+  def delJob(job_id: String) = Action.async { implicit request =>
 
     val session_id = Session.requestSessionID(request) // Grab the Session ID
 
@@ -128,10 +122,21 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
       userActor ! DeleteJob(job_id)
       Ok(Json.obj("job_id" -> job_id))
-  }
+    }
   }
 
 
+  def clearJob(job_id: String) = Action.async { implicit request =>
+
+    val session_id = Session.requestSessionID(request)
+    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
+
+
+      userActor ! ClearJob(job_id)
+      Ok(Json.obj("job_id" -> job_id))
+
+  }
+}
 
   def getJob(job_id : String) = Action.async { implicit request =>
 

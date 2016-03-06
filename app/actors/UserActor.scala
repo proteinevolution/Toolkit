@@ -48,6 +48,8 @@ object UserActor {
 
   case class AppendChildJob(parent_job_id : String, toolname : String, links : Seq[Link])
 
+  case class ClearJob(job_id : String)
+
 
 
 
@@ -121,6 +123,11 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       val job = userJobs.remove(job_id).get    // Remove from User Model
       worker ! WDelete(job)                    // Worker removes Directory
+
+
+
+    case ClearJob(job_id) =>
+      val job = userJobs.remove(job_id).get
 
 
     // Returns a Job for a given job_id
