@@ -28,7 +28,7 @@ jobs.vm = do ->
 
       $.ajax(
         async : true
-        url : '/jobs/clear  /' + desc()
+        url : '/jobs/clear/' + desc()
         type : 'POST'
       )
       toClear = undefined
@@ -47,7 +47,7 @@ jobs.vm = do ->
 
       $.ajax(
         async : true
-        url : '/jobs/del  /' + desc()
+        url : '/jobs/del/' + desc()
         type : 'POST'
       )
       toDelete = undefined
