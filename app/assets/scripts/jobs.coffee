@@ -24,11 +24,30 @@ jobs.vm = do ->
         url: '/jobs/' + jobID
         type: 'POST')
 
+    vm.clear = (desc) ->
+
+      $.ajax(
+        async : true
+        url : '/jobs/clear  /' + desc()
+        type : 'POST'
+      )
+      toClear = undefined
+      i = 0
+      while i < vm.list.length
+
+        job = vm.list[i]
+        if job.job_id() == desc()
+          toClear = i
+          break
+        i++
+      vm.list.splice(toClear, 1)
+
+
     vm.delete = (desc) ->
 
       $.ajax(
         async : true
-        url : '/jobs/clear/' + desc()
+        url : '/jobs/del  /' + desc()
         type : 'POST'
       )
       toDelete = undefined
@@ -77,9 +96,10 @@ jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
     m 'tr[class=job]',   [
       m('td[class=' + a[task.state()] + ']'),
-      m("div", {style: {cssFloat: "left", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},m('br'), m('input',{type: "checkbox"})),
+      m("div", {style: {cssFloat: "left", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
+        m('br'), m('input',{type: "checkbox", id: task.job_id(), value: task.job_id(), name: task.job_id()})),
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
-      m('td',  m('input',{type: "button", value: "x",onclick: jobs.vm.delete.bind(task, task.job_id)})   )
+      m('td',  m('input',{type: "button", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
 
     ]
   ) ] ]

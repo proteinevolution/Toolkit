@@ -6,8 +6,11 @@
         </div>
         <div  align="center">
             <input type="submit" class="small expanded secondary hollow button" value="Search" />
-            <input type="submit" class="small expanded secondary hollow button" value="Delete sel. Jobs" />
+
         </div>
+        </form>
+        <form action="/jobs/clear/" id="deletejobs" method="post" name="deletejobs">
+            <input type="submit" class="small expanded secondary hollow button" value="Delete sel. Jobs" onclick="setAction('deletejobs', '/jobs/clear')"/>
         </form>
 
     </div>
@@ -27,10 +30,6 @@
             <td class="e job-status-fade">Error</td>
         </tr>
 </table>
-
-
-
-
 
 <table id="jobtable" class="hover">
     <tbody id="jobtable-rows">
