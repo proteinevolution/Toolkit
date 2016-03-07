@@ -79,7 +79,7 @@ jobs.vm = do ->
 
     # Send Ajax call to retrieve all Jobs from the Server
 
-    $.post("/jobs", (data) ->
+    $.post("/jobs/list", (data) ->
         m.startComputation()
         for job in data.jobs
           vm.update(job.i, job.s, "")

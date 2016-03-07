@@ -82,9 +82,6 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
         }
       }
 
-      // TODO Should be moved to WStart to allow for partial preparation
-
-
 
       ///
       ///  Step 3: Write the parameters into the directory, this will also change the state
@@ -172,7 +169,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       }
 
 
-      
+
     case WStart(userJob) =>
 
       Logger.info("[Worker](WStart) for job " + userJob.job_id)
@@ -187,6 +184,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
         file.getName -> scala.io.Source.fromFile(file.getAbsolutePath).mkString
       }.toMap
+
       ///
       ///  Step 2: Get the runscript of the appropriate tool and replace template placeholders with
       ///  input parameters
