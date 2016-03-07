@@ -77,6 +77,7 @@ tr.spaceUnder > td
     padding-left: 1.250em;
     padding-top: 0px;
     padding-right: 1.250em;
+
 }
 
 .content {
@@ -171,7 +172,9 @@ tr.spaceUnder > td
 tr.job{
     font-size: 0.625em;
     width: 1.250em;
+
 }
+
 
 #toolsdropdown {
 
@@ -207,4 +210,13 @@ hr {
     font-family: Droid Sans Mono;
     font-size: 0.625em;
 
+}
+
+.tabs a{
+    -webkit-border-top-left-radius: 1.2500rem;
+    -webkit-border-top-right-radius: 1.2500rem;
+    -moz-border-radius-topleft: 1.2500rem;
+    -moz-border-radius-topright: 1.2500rem;
+    border-top-left-radius: 1.2500rem;
+    border-top-right-radius: 1.2500rem;
 }
