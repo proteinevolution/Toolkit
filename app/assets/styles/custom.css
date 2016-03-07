@@ -145,9 +145,16 @@ tr.spaceUnder > td
 }
 
 tr.job{
-    font-size: 0.625em;
-    width: 1.250em;
+    position: relative;
+    font-size: 0.5em;
+    background-color: #fff;
 
+
+}
+
+tr.job a:link {
+
+    color: #000;
 }
 
 #toolsdropdown {
