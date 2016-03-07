@@ -3,23 +3,31 @@ package actors
 
 import java.io
 import java.io.PrintWriter
-import java.nio.file.{Files, Paths}
+import java.nio.file.{Paths, Files}
 import javax.inject.Inject
 
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
-import models.graph.{Ports, PortWithFormat, Ready}
+import models.graph.{PortWithFormat, Ports, Ready}
 import models.jobs._
 import play.api.Logger
+import utils.Exceptions.NotImplementedException
+import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 import sys.process._
 
 
+// TODO Get rid of this library
 import scala.reflect.io.{Directory, File}
 
 
+/* TODO Worker specific TODOs
+ * Get rid of Reflect Library since its state is considered to be experimental
+ *
+*/
 
 object Worker {
+
   // Preparation of the Job
   case class WPrepare(job : UserJob, params : Map[String, String])
   // Starting the job
@@ -30,23 +38,23 @@ object Worker {
   // Worker was asked to read parameters of the job and to put them into a Map
   case class WRead(job : UserJob)
 
-
+  // Worker was asked to convert all provided links between the provided Jobs
   case class WConvert(parentUserJob : UserJob, childUserJob : UserJob, links : Seq[Link])
-
 }
 
 class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLogging {
 
   import actors.Worker._
 
-  val sep = File.separator
+  val SEP = java.io.File.separator
 
-  // Variables the worker need to execute //TODO Inject Configuration
-  val runscriptPath = s"bioprogs${sep}runscripts$sep"
-  val jobPath = s"development$sep"
   val subdirs = Array("/results", "/logs", "/params", "/specific")
 
-  val argumentPattern = "(\\$\\{[a-z]+\\}|#\\{[a-z]+\\}|@\\{[a-z]+\\}|\\?\\{.+\\})".r
+
+  // Variables the worker need to execute //TODO Inject Configuration
+  val runscriptPath = s"bioprogs${SEP}runscripts$SEP"
+  val jobPath = s"development$SEP"
+  val argumentPattern = "(\\$\\{[a-z_]+\\}|#\\{[a-z_]+\\}|@\\{[a-z_]+\\}|\\?\\{.+\\})".r
 
 
   def receive = LoggingReceive {
@@ -59,7 +67,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
 
       val main_id = jobDB.userJobMapping(userJob.user_id -> userJob.job_id)
-      val rootPath = jobPath + sep + main_id.toString + sep
+      val rootPath = jobPath + SEP + main_id.toString + SEP
 
 
 
@@ -116,7 +124,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       for( (paramName, value) <- params ) {
 
         if(paramName != "jobid") {
-          File(s"$rootPath${sep}params$sep$paramName").writeAll(value.toString)
+          File(s"$rootPath${SEP}params$SEP$paramName").writeAll(value.toString)
           userJob.changeInFileState(paramName, Ready)
         }
       }
@@ -126,7 +134,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
     case WRead(userJob) =>
 
       val main_id = jobDB.userJobMapping(userJob.user_id -> userJob.job_id)
-      val paramPath = jobPath + main_id + sep + "params/"
+      val paramPath = jobPath + main_id + SEP + "params/"
 
       val files = new java.io.File(paramPath).listFiles
 
@@ -141,43 +149,59 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
     case WDelete(userJob) =>
 
       val main_id = jobDB.delete(userJob.user_id, userJob.job_id)
-      val rootPath = jobPath + main_id + sep
+      val rootPath = jobPath + main_id + SEP
       Directory(rootPath).deleteRecursively()
 
 
     case WConvert(parentUserJob, childUserJob, links) =>
 
-      val main_id = jobDB.userJobMapping(childUserJob.user_id -> childUserJob.job_id)
-      val rootPath = jobPath + sep + main_id.toString + sep
+      // Assemble all necessary file paths
+      val parent_main_id = jobDB.userJobMapping(parentUserJob.user_id -> parentUserJob.job_id)
+      val child_main_id = jobDB.userJobMapping(childUserJob.user_id -> childUserJob.job_id)
 
+      val parentRootPath = jobPath + parent_main_id + SEP
+      val childRootPath = jobPath + child_main_id + SEP
 
-      if(!Files.exists(Paths.get(rootPath))) {
+      // Create Child Root Path if does not alpready exist
+      if(!java.nio.file.Files.exists(Paths.get(childRootPath))) {
 
-        Directory(rootPath).createDirectory(false, false)
+        Directory(childRootPath).createDirectory(false, false)
         for (subdir <- subdirs) {
 
-          Directory(rootPath + subdir).createDirectory(false, false)
+          Directory(childRootPath + subdir).createDirectory(false, false)
         }
       }
 
-
-
-
-
-
-      Logger.info("Worker was asked to convert Jobs")
       for(link <- links) {
 
-        val x = parentUserJob.tool.outports(link.out)
-        val y = childUserJob.tool.inports(link.in)
+        val outport = parentUserJob.tool.outports(link.out)
+        val inport = childUserJob.tool.inports(link.in)
 
+        val params : Option[ArrayBuffer[String]] = Ports.convert(outport, inport)
 
+        // Assemble paths to respective files
+        val outfile = parentRootPath + "results/" + outport.filename
+        val infile =  childRootPath + "params/" + inport.filename
+
+        // Decide whether conversion is needed
+        params match  {
+
+           // This is the same format, just copy over the file
+          case None =>
+            java.nio.file.Files.copy(Paths.get(outfile), Paths.get(infile))
+            childUserJob.changeInFileState(inport.filename, Ready)
+
+            // If this port has a format, we also need to write the format file
+            if(inport.isInstanceOf[PortWithFormat]) {
+
+              val portWithFormat = inport.asInstanceOf[PortWithFormat]
+              File(s"$childRootPath${SEP}params$SEP${portWithFormat.formatFilename}").writeAll(portWithFormat.format.paramName)
+            }
+
+          case Some(buffer) => throw NotImplementedException("Format conversion is currently not supported")
+
+        }
       }
-
-
-
-
-
 
 
 
@@ -187,7 +211,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
       Logger.info("[Worker](WStart) for job " + userJob.job_id)
       val main_id = jobDB.userJobMapping(userJob.user_id -> userJob.job_id)
-      val rootPath = jobPath + main_id + sep
+      val rootPath = jobPath + main_id + SEP
 
       // Assumption : The Root path contains a prepared shellscript that bears the toolname + sh suffix
 

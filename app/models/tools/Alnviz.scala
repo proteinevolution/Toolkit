@@ -29,7 +29,7 @@ object Alnviz extends ToolModel {
   val inputForm = Form(
     tuple(
       "alignment" -> text,
-      "format" -> text
+      "alignment_format" -> text
     )
   )
 
@@ -38,13 +38,13 @@ object Alnviz extends ToolModel {
   //Map parameter identifier to the full names
   val parameterNames = Map(
     "alignment" -> "Sequence Alignment",
-    "format" -> "Alignment Format")
+    "alignment_format" -> "Alignment Format")
 
 
   val resultFileNames = Vector("result")
 
   // Specifies a finite set of values the parameter is allowed to assumepe
   val parameterValues = Map(
-    "format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
+    "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
 }

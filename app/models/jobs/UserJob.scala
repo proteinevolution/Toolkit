@@ -96,10 +96,10 @@ class UserJob(val userActor : ActorRef, // Which UserActor the Job belongs to
   }
 
 
-
   def changeInFileState(filename : String, state : FileState) = {
 
-    inFileStates(filename).changeState(state)
+
+    if(inFileStates.contains(filename)) inFileStates(filename).changeState(state)
   }
 
 
