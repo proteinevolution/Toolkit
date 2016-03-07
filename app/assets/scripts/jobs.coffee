@@ -6,6 +6,7 @@ jobs.Job = (data) ->
   @job_id = m.prop(data.job_id)
   @state = m.prop(data.state)
   @code = m.prop(data.code)
+  @name = m.prop(data.toolname)
   return # This return statement is important!
 
 jobs.JobList = Array
@@ -95,11 +96,18 @@ jobs.controller = ->
 jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
     m 'tr[class=job]',   [
+
       m('td[class=' + a[task.state()] + ']'),
       m("div", {style: {cssFloat: "left", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
         m('br'), m('input',{type: "checkbox", id: task.job_id(), value: task.job_id(), name: task.job_id()})),
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
-      m('td',  m('input',{type: "button", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
+      m('td', {style: {textAlign: "center", border: "1px solid black"}}
+        m("div", {style: {cssFloat: "center", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
+          "TOOL",
+        ))
+      m('td', {style: {cssFloat: "center", marginLeft: "0.7em"}},
+        m('input',{type: "button", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
+
 
     ]
   ) ] ]
