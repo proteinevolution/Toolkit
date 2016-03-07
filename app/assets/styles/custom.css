@@ -24,34 +24,18 @@
     -ms-transition: background-color 0.5s;
     transition: background-color 0.5s;
 }
-.d:hover {
+
+.d {
     background-color: green;
 }
-.e:hover {
+.e {
     background-color: red;
 }
-.r:hover {
+.r{
     background-color: yellow;
 }
-.q:hover {
+.q {
     background-color: orange;
-}
-
-.dd {
-    background-color: green;
-}
-.ee {
-    background-color: red;
-}
-.rr {
-    background-color: yellow;
-}
-.qq {
-    background-color: orange;
-}
-
-.pp {
-    background-color: dimgray;
 }
 
 
@@ -69,15 +53,6 @@ tr.spaceUnder > td
     box-sizing: inherit;
     background: #006F62;
     height: 8.125em;
-}
-
-.sidebar {
-
-    margin-top: 0.313em;
-    padding-left: 1.250em;
-    padding-top: 0px;
-    padding-right: 1.250em;
-
 }
 
 .content {
@@ -175,7 +150,6 @@ tr.job{
 
 }
 
-
 #toolsdropdown {
 
     width: 7.500em;
@@ -189,12 +163,12 @@ hr {
 
 .padded-column {
     padding: 0.625em;
-
 }
 
 .main-content {
 
     min-height: 31.250em;
+    display: flex;
 
 }
 
@@ -219,4 +193,10 @@ hr {
     -moz-border-radius-topright: 1.2500rem;
     border-top-left-radius: 1.2500rem;
     border-top-right-radius: 1.2500rem;
+}
+
+.example-alignment {
+
+    padding-bottom: 1.25em;
+
 }

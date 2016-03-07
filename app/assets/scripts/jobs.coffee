@@ -1,4 +1,4 @@
-a = ['ss', 'pp', 'qq', 'rr', 'ee', 'dd']
+a = ['0', 'p', 'q', 'r', 'e', 'd','i']
 @jobs = {}
 
 
@@ -17,6 +17,7 @@ jobs.vm = do ->
   vm.init = ->
 
     vm.list = new (jobs.JobList)
+    vm.stateList = {"0": "Partially Prepared", "p": "Prepared", "q": "Queued", "r": "Running", "e": "Error", "d": "Done", "i": "Submitted"}
 
     vm.onclick = (event) ->
       jobID = event()
@@ -92,12 +93,14 @@ jobs.vm = do ->
 jobs.controller = ->
   jobs.vm.init()
 
+
 #here's the view
 jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
     m 'tr[class=job]',   [
-
-      m('td[class=' + a[task.state()] + ']'),
+      m('td[class=' + a[task.state()] + ']',
+        #ADD tooltip not done yet
+        m('span'), )
       m("div", {style: {cssFloat: "left", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
         m('br'), m('input',{type: "checkbox", id: task.job_id(), value: task.job_id(), name: task.job_id()})),
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
