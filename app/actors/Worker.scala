@@ -84,38 +84,6 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
       // TODO Should be moved to WStart to allow for partial preparation
 
-      ///
-      ///  Step 2: Get the runscript of the appropriate tool and replace template placeholders with
-      ///  input parameters
-      val sourceRunscript = Source.fromFile(runscriptPath + userJob.toolname + ".sh")
-      val targetRunscript = new PrintWriter(rootPath + userJob.toolname + ".sh")
-
-      for(line <- sourceRunscript.getLines) {
-
-        targetRunscript.println(argumentPattern.replaceAllIn(line, { rm =>
-
-          val s = rm.toString()
-          val value = s.substring(2, s.length - 1)
-
-          s(0) match {
-
-            case '#' =>  "params/" + value
-            case '$' => params.get(value).get.toString
-            case '@' => "results/" + value
-            case '?' =>
-
-              val splt = value.split("(\\||:)")
-              if(params.get(splt(0)).get.asInstanceOf[Boolean]) splt(1) else {
-
-                if(splt.length == 2) "" else splt(2)
-              }
-          }
-        }))
-      }
-      Logger.info("Set file permission of: " + rootPath + userJob.toolname + ".sh")
-      ("chmod u+x " + rootPath + userJob.toolname + ".sh").!    // TODO Is there a neater way to change the permission?
-      sourceRunscript.close()
-      targetRunscript.close()
 
 
       ///
@@ -204,14 +172,55 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       }
 
 
-
-
-
+      
     case WStart(userJob) =>
 
       Logger.info("[Worker](WStart) for job " + userJob.job_id)
       val main_id = jobDB.userJobMapping(userJob.user_id -> userJob.job_id)
       val rootPath = jobPath + main_id + SEP
+      val paramPath = jobPath + main_id + SEP + "params/"
+
+
+      val files = new java.io.File(paramPath).listFiles
+
+      val params : Map[String, String] = files.map { file =>
+
+        file.getName -> scala.io.Source.fromFile(file.getAbsolutePath).mkString
+      }.toMap
+      ///
+      ///  Step 2: Get the runscript of the appropriate tool and replace template placeholders with
+      ///  input parameters
+      val sourceRunscript = Source.fromFile(runscriptPath + userJob.toolname + ".sh")
+      val targetRunscript = new PrintWriter(rootPath + userJob.toolname + ".sh")
+
+      for(line <- sourceRunscript.getLines) {
+
+        targetRunscript.println(argumentPattern.replaceAllIn(line, { rm =>
+
+          val s = rm.toString()
+          val value = s.substring(2, s.length - 1)
+
+          s(0) match {
+
+            case '#' =>  "params/" + value
+            case '$' => params.get(value).get.toString
+            case '@' => "results/" + value
+            case '?' =>
+
+              val splt = value.split("(\\||:)")
+              if(params.get(splt(0)).get.asInstanceOf[Boolean]) splt(1) else {
+
+                if(splt.length == 2) "" else splt(2)
+              }
+          }
+        }))
+      }
+      Logger.info("Set file permission of: " + rootPath + userJob.toolname + ".sh")
+      ("chmod u+x " + rootPath + userJob.toolname + ".sh").!    // TODO Is there a neater way to change the permission?
+      sourceRunscript.close()
+      targetRunscript.close()
+
+
 
       // Assumption : The Root path contains a prepared shellscript that bears the toolname + sh suffix
 
