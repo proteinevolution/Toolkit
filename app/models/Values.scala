@@ -13,7 +13,7 @@ object Values {
   val fullNames = Map(
 
     "fas"  -> "FASTA",
-    "clus" -> "CLUSTALW",
+    "clu" -> "CLUSTALW",
     "sto" -> "Stockholm",
     "a2m" -> "A2M",
     "a3m" -> "A3M",
@@ -24,3 +24,19 @@ object Values {
     "tre" -> "TREECON"
   )
 }
+
+
+
+/*
+case object CLU extends AlignmentFormat("clu")
+case object STO extends AlignmentFormat("sto")
+case object EMB extends AlignmentFormat("emb")
+case object GBK extends AlignmentFormat("gbk")
+case object MEG extends AlignmentFormat("meg")
+case object MSF extends AlignmentFormat("msf")
+case object NEX extends AlignmentFormat("nex")
+case object PHY extends AlignmentFormat("phy")
+case object PIR extends AlignmentFormat("pir")
+case object TRE extends AlignmentFormat("tre")
+
+ */

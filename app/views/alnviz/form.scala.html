@@ -15,8 +15,8 @@
         <a onClick="$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
 
         @helper.select(
-                    inputForm("format"),
-                    helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("format"))),
+                    inputForm("alignment_format"),
+                    helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("alignment_format"))),
                     '_label -> "Select alignment format",
                     'id -> "format"
                 )

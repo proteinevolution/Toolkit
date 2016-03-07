@@ -47,27 +47,27 @@ object Ports {
   case class Sequences(override val filename : String) extends Port(filename)
 
 
-  // Returns script name and parametes for conversion
-  object PortConverter {
 
-    def convert(portA : Port, portB : Port) :  ArrayBuffer[String] = {
+
+  def convert(portA : Port, portB : Port) :  Option[ArrayBuffer[String]] = {
 
       (portA, portB) match {
 
         case t :  (Alignment, Alignment) =>
 
-          ReformatConverter.convert(t._1.format.asInstanceOf[AlignmentFormat], t._2.format.asInstanceOf[AlignmentFormat])
+          // Decide whether the Alignment needs to be converted
+          if(t._1.format == t._2.format) None else
+          Some(ReformatConverter.convert(t._1.format.asInstanceOf[AlignmentFormat], t._2.format.asInstanceOf[AlignmentFormat]))
 
 
         case _  => throw new RuntimeException("Sorry, you have not specified a converter for this case")
       }
     }
-  }
 }
 
 
 /*
- * A Port must declare a set of files (as filename) which are either produces or consumed during tool execution
+ * A Port must declare a file via name which is either produces or consumed from the tool
  */
 abstract class Port(val filename : String)
 /*
@@ -76,23 +76,22 @@ abstract class Port(val filename : String)
 abstract class PortWithFormat(filename : String, val format : Format) extends Port(filename) {
 
   val formatFilename : String = filename + "_format"
-
 }
 
 
 
-abstract class Format(val fullName : String)
+abstract class Format(val paramName : String)
 
-abstract class AlignmentFormat(fullName : String) extends Format(fullName)
+abstract class AlignmentFormat(paramName : String) extends Format(paramName)
 
-case object CLU extends AlignmentFormat("CLUSTALW")
-case object STO extends AlignmentFormat("Stockholm")
-case object EMB extends AlignmentFormat("EMBL")
-case object GBK extends AlignmentFormat("GBK")
-case object MEG extends AlignmentFormat("MEGA")
-case object MSF extends AlignmentFormat("GCG/MSF")
-case object NEX extends AlignmentFormat("NEX")
-case object PHY extends AlignmentFormat("PHY")
-case object PIR extends AlignmentFormat("PIR/NBRF")
-case object TRE extends AlignmentFormat("TREECON")
-
+case object FAS extends AlignmentFormat("fas")
+case object CLU extends AlignmentFormat("clu")
+case object STO extends AlignmentFormat("sto")
+case object EMB extends AlignmentFormat("emb")
+case object GBK extends AlignmentFormat("gbk")
+case object MEG extends AlignmentFormat("meg")
+case object MSF extends AlignmentFormat("msf")
+case object NEX extends AlignmentFormat("nex")
+case object PHY extends AlignmentFormat("phy")
+case object PIR extends AlignmentFormat("pir")
+case object TRE extends AlignmentFormat("tre")
