@@ -134,6 +134,31 @@ tr.spaceUnder > td
 
 }
 
+
+.alnviz{
+
+    background-color: #FFCC66;
+    border: solid 1px black;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.tcoffee{
+
+    background-color: #FFCC66;
+    border: solid 1px black;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.hmmer{
+
+    background-color: #D0BA89;
+    border: solid 1px black;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
 .header {
 
     height: 8.125em;
@@ -153,6 +178,11 @@ tr.job{
 }
 
 tr.job a:link {
+
+    color: #000;
+}
+
+tr.job a:visited {
 
     color: #000;
 }

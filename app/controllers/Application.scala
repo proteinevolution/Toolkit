@@ -17,6 +17,7 @@ import models.sessions.Session
 import play.api.Play.materializer
 
 
+
 @Singleton
 class Application @Inject()(val messagesApi: MessagesApi,
                             val jobDB : models.database.Jobs,
@@ -30,7 +31,7 @@ class Application @Inject()(val messagesApi: MessagesApi,
   var path = s"${environment.rootPath}${File.separator}${ConfigFactory.load().getString("job_path")}${File.separator}"
 
 
-
+    //TODO: migrate to akka streams by using flows
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
 
     // The user of this session is assigned a user actor

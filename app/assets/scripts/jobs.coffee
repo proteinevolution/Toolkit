@@ -64,7 +64,7 @@ jobs.vm = do ->
       vm.list.splice(toDelete, 1)
 
 
-    vm.update = (desc, state, code) ->
+    vm.update = (desc, state, toolname) ->
       i = 0
       while i < vm.list.length
         job = vm.list[i]
@@ -72,17 +72,17 @@ jobs.vm = do ->
           vm.list[i] = new (jobs.Job)(
             job_id: desc
             state: state
-            code: code)
+            toolname: toolname)
           return
         i++
-      vm.list.push new (jobs.Job)( job_id: desc, state: state, code: code)
+      vm.list.push new (jobs.Job)( job_id: desc, state: state, toolname: toolname)
 
     # Send Ajax call to retrieve all Jobs from the Server
 
     $.post("/jobs", (data) ->
         m.startComputation()
         for job in data.jobs
-          vm.update(job.i, job.s, "")
+          vm.update(job.i, job.s, job.t)
         m.endComputation()
     )
 
@@ -104,9 +104,9 @@ jobs.view = ->
       m("div", {style: {cssFloat: "left", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
         m('br'), m('input',{type: "checkbox", id: task.job_id(), value: task.job_id(), name: task.job_id()})),
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
-      m('td', {style: {textAlign: "center", border: "1px solid black"}}
+      m('td', {class: task.toolname()}, {style: {textAlign: "center", border: "1px solid black"}}
         m("div", {style: {cssFloat: "center", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
-          task.toolname(),
+          task.toolname().substring(0,4),
         ))
       m('td', {style: {cssFloat: "center", marginLeft: "0.7em"}},
         m('input',{type: "button", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
