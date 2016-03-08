@@ -82,15 +82,16 @@ class Tool @Inject()(val messagesApi: MessagesApi,
       (userActor ? GetAllJobs).mapTo[Iterable[UserJob]].map { joblist =>
 
         val jobListObjs = for (job <- joblist) yield {
-          Json.obj("t" -> job.toolname,
+          Json.obj(
+            "t" -> job.toolname,
             "s" -> job.getState.no,
             "i" -> job.job_id)
         }
         Ok(Json.obj("jobs" -> jobListObjs))
+
       }
     }
   }
-
 
 
 
