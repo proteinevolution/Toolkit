@@ -171,10 +171,19 @@ tr.spaceUnder > td
 
 tr.job{
     position: relative;
-    font-size: 0.5em;
+    font-size: 0.7em;
     background-color: #fff;
 
 
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi) {
+    /* High-res styles go here */
+
+    tr.job{
+        position: relative;
+        font-size: 0.5em;
+        background-color: #fff;
 }
 
 tr.job a:link {
