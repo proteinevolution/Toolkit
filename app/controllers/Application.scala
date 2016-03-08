@@ -5,14 +5,14 @@ import java.io.File
 
 import actors.WebSocketActor
 import akka.actor.ActorRef
-import play.api.{Logger, Play}
+import com.typesafe.config.ConfigFactory
+import play.api.{Configuration, Environment, Logger, Play}
 import play.api.Play.current
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import javax.inject.{Singleton, Named, Inject}
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 import models.sessions.Session
 import play.api.Play.materializer
 
@@ -20,10 +20,14 @@ import play.api.Play.materializer
 @Singleton
 class Application @Inject()(val messagesApi: MessagesApi,
                             val jobDB : models.database.Jobs,
+                            val environment: Environment,
+                            val configuration: Configuration,
                             @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
 
   // TODO this line has to vanish
-  var path = s"${Play.application.path}${File.separator}${current.configuration.getString("job_path").get}${File.separator}"
+
+
+  var path = s"${environment.rootPath}${File.separator}${ConfigFactory.load().getString("job_path")}${File.separator}"
 
 
 
