@@ -134,6 +134,31 @@ tr.spaceUnder > td
 
 }
 
+
+.alnviz{
+
+    background-color: #FFCC66;
+    border: solid 1px black;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.tcoffee{
+
+    background-color: #FFCC66;
+    border: solid 1px black;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.hmmer{
+
+    background-color: #D0BA89;
+    border: solid 1px black;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
 .header {
 
     height: 8.125em;
@@ -145,9 +170,21 @@ tr.spaceUnder > td
 }
 
 tr.job{
-    font-size: 0.625em;
-    width: 1.250em;
+    position: relative;
+    font-size: 0.5em;
+    background-color: #fff;
 
+
+}
+
+tr.job a:link {
+
+    color: #000;
+}
+
+tr.job a:visited {
+
+    color: #000;
 }
 
 #toolsdropdown {

@@ -6,6 +6,7 @@ Tools =
   controller: ->
     { toolname: m.route.param('toolname') }
   view: (controller) ->
+
     $.ajax(
       type: "POST"
       url: "/jobs/new/" + controller.toolname).done (data) ->
