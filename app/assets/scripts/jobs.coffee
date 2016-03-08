@@ -106,14 +106,14 @@ jobs.view = ->
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
       m('td', {class: task.toolname()}, {style: {textAlign: "center", border: "1px solid black"}}
         m("div", {style: {cssFloat: "center", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
-          task.toolname().substring(0,4),
+          task.toolname()
         ))
       m('td', {style: {cssFloat: "center", marginLeft: "0.7em"}},
         m('input',{type: "button", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
 
 
     ]
-  ) ] ]
+  ) ]]
 
 
 m.mount(document.getElementById('jobtable-rows'),  { controller: jobs.controller, view: jobs.view})
