@@ -73,7 +73,6 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   implicit val timeout = Timeout(5.seconds)
 
 
-
   def show(toolname: String) = Action { implicit request =>
 
     Logger.info(s"{Tool} Input view for tool $toolname requested")
