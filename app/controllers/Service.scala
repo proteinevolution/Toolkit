@@ -145,8 +145,6 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
       (userActor ? GetJob(job_id)).mapTo[UserJob].flatMap { job =>
-
-
         // Switch on Job state to decide what to show
         job.getState match {
 

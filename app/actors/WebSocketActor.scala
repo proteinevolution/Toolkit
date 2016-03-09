@@ -62,7 +62,7 @@ class WebSocketActor(session_id: String, userManager : ActorRef, out: ActorRef) 
      * Messages the user about a change in the Job status
      */
     case JobStateChanged(job_id, state) =>
-      Logger.info("WebSocketActor received: JobState Changed")
+      Logger.info("WebSocketActor received: JobState Changed to " + state.no)
       out ! Json.obj("type" -> "jobstate", "newState" -> state.no, "job_id" -> job_id)
   }
 }

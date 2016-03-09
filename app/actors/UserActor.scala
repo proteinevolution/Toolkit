@@ -5,7 +5,7 @@ import actors.Worker._
 import akka.actor._
 import akka.event.LoggingReceive
 import akka.util.Timeout
-import models.database.DBJob
+import models.database.{DBJobRef, DBJob}
 import models.jobs._
 import models.misc.RandomString
 import play.api.Logger
@@ -50,10 +50,9 @@ object UserActor {
 
   case class ClearJob(job_id : String)
 
-
   case class Convert(parent_job_id : String, child_job_id : String, links : Seq[Link])
 
-
+  case object UpdateJobs
 
 
   // Socket attached / Starting socket session
@@ -66,8 +65,10 @@ object UserActor {
 
 class UserActor @Inject() (@Named("worker") worker : ActorRef,
                            @Assisted session_id: String,
-                           jobDB : models.database.Jobs) extends Actor with ActorLogging {
+                           jobDB    : models.database.Jobs,
+                           jobRefDB : models.database.JobReference) extends Actor with ActorLogging {
 
+  val user_id : Long = 12345L   // TODO Implement User ID
   implicit val timeout = Timeout(5.seconds)
 
   import UserActor._
@@ -76,7 +77,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
   var ws = None: Option[ActorRef]
 
   // The User Actor maps the job_id to the actual job instance
-  val userJobs = new collection.mutable.HashMap[String, UserJob]
+  val userJobs        = new collection.mutable.HashMap[String, UserJob]
+  val databankMapping = new collection.mutable.HashMap[String, DBJobRef]
 
   def receive = LoggingReceive {
 
@@ -96,48 +98,44 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
         // Job ID was selected by the User
         case Some(id) => id
         // Job ID was none, generate a random ID
-        case None =>
-
-          var new_job_id = None: Option[String]
-          do {
-            //TODO: check whether this random id already exists in the db or make the userJobs Map entirely consistent with the Database
-            new_job_id = Some(RandomString.randomNumString(7))
-          } while(userJobs contains new_job_id.getOrElse("No ID given"))
-
-          new_job_id.getOrElse("No ID given")
+        case None     => RandomString.randomNumString(7)
+        //TODO: check whether this random id already exists in the db or make the userJobs Map entirely consistent with the Database
       }
       Logger.info("UserActor wants to prepare job directory for tool " + toolname + " with job_id " + job_id)
 
-      if(userJobs contains job_id) {
+      val job   = UserJob(self, toolname, job_id, user_id, startImmediate)
+      val dbJob = jobRefDB.update(DBJob(None, job_id, user_id, job.getState, job.toolname), session_id)
 
-        // User has tried to submit same job_id twice
-        self ! JobIDInvalid
-
-      } else {
-
-          val job = UserJob(self, toolname, job_id, session_id, startImmediate)
-          jobDB.update(DBJob(job_id, session_id, job.getState, job.toolname))
-          userJobs.put(job.job_id, job)
-          worker ! WPrepare(job, params)
-      }
+      userJobs.put(job_id, job)
+      databankMapping.put(job_id, dbJob)
+      worker ! WPrepare(job, params)
 
 
+    // Removes a Job (from the view and user actor as well as from the folder structure)
     case DeleteJob(job_id) =>
-
       val job = userJobs.remove(job_id).get    // Remove from User Model
+      databankMapping.remove(job_id)
       worker ! WDelete(job)                    // Worker removes Directory
 
-
-
+    // Removes a Job (from the view and from user actor)
     case ClearJob(job_id) =>
       Logger.info("Clear Actor")
+      jobRefDB.delete(databankMapping.remove(job_id).get)
       val job = userJobs.remove(job_id).get
-
 
     // Returns a Job for a given job_id
     case GetJob(job_id) =>  sender() ! userJobs.get(job_id).get
 
     case GetJobParams(job_id) => worker forward WRead(userJobs(job_id))
+
+    // Updates all jobs from the database
+    case UpdateJobs =>
+      for (jobRef <- jobRefDB.get(session_id)) {
+        val dbJob = jobDB.get(jobRef.main_id).get
+        val job   = new UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
+        userJobs.put(dbJob.job_id,job)
+        databankMapping.put(dbJob.job_id,jobRef)
+      }
 
     // Returns all Jobs
     case GetAllJobs => sender() ! userJobs.values
@@ -155,7 +153,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
         new_job_id = Some(RandomString.randomNumString(7))
       } while(userJobs contains new_job_id.get)
 
-      val job = UserJob(self, toolname, new_job_id.get, session_id, false) // TODO Start immediate not yet supported for child jobs
+      val job = UserJob(self, toolname, new_job_id.get, user_id, false)  // TODO Start immediate not yet supported for child jobs
       userJobs.put(job.job_id, job)
 
       userJobs(parent_job_id).appendChild(job, links)
@@ -172,21 +170,23 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case Terminated(ws_new) =>  ws.get ! PoisonPill
 
     // Job status was changed
-    case m @ JobStateChanged(job_id, state) =>
+    case JobStateChanged(job_id, state) =>
 
       val userJob = userJobs.get(job_id).get
 
       // If the job changed to prepared and if it is set to start immediately, start the Job
       if(state == Prepared && userJob.startImmediate) {
-
         worker ! WStart(userJob)
       }
 
       // Forward Job state to Websocket
-      ws.get ! m
+      ws.get ! JobStateChanged(job_id, state)
+
+      // get the main ID
+      val main_id = Some(databankMapping.get(job_id).get.main_id)
 
       // update Job state in Persistence
-      jobDB.update(DBJob(job_id, session_id, userJob.getState, userJob.toolname))
+      jobRefDB.update(DBJob(main_id, job_id, user_id, userJob.getState, userJob.toolname), session_id)
 
     /* All of the remaining messages are just passed further to the WebSocket
     *  Currently: JobIDInvalid

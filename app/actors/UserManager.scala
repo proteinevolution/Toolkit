@@ -1,6 +1,6 @@
 package actors
 
-import actors.UserActor.AttachWS
+import actors.UserActor.{UpdateJobs, AttachWS}
 import akka.actor._
 import akka.event.LoggingReceive
 import javax.inject._
@@ -29,8 +29,11 @@ class UserManager @Inject() (childFactory: UserActor.Factory)
     case GetUserActor(session_id: String) =>
 
       val user = currentSessions.getOrElseUpdate(
-        session_id,
-        injectedChild(childFactory(session_id), session_id.toString)
+        session_id, {
+          val newUser = injectedChild(childFactory(session_id), session_id.toString)
+          newUser ! UpdateJobs
+          newUser
+        }
       )
       sender() ! user
 
@@ -40,10 +43,13 @@ class UserManager @Inject() (childFactory: UserActor.Factory)
 
       Logger.info("[User Manager] Attach Web Socket")
 
-      val user = currentSessions.getOrElseUpdate(session_id, {
-
-        injectedChild(childFactory(session_id), session_id.toString)
-      })
+      val user = currentSessions.getOrElseUpdate(
+        session_id, {
+          val newUser = injectedChild(childFactory(session_id), session_id.toString)
+          newUser ! UpdateJobs
+          newUser
+        }
+      )
       user ! m
 
     case Terminated(user) =>
