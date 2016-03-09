@@ -111,7 +111,10 @@ jobs.view = ->
           task.toolname().substr(0,4)
         ))
       m('td', {style: {cssFloat: "center", marginLeft: "0.7em", fontSize: "0.5em"}},
-        m('input',{type: "button", class: "button tiny alert hollow xbutton", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
+
+
+
+        m('input',{type: "button", class: "masterTooltip button tiny alert hollow xbutton", title: "Clear from job table", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
 
 
     ]
@@ -124,8 +127,8 @@ m.mount(document.getElementById('jobtable-rows'),  { controller: jobs.controller
 
 
 ###
-
-
+<span data-tooltip aria-haspopup="true" class="has-tip" title="Tooltips are awesome, you should totally use them!">extended information</span>
+class="tooltip" data-tooltip="Ist das nicht ein toller Tooltip! So informativ!"
   {onclick: jobs.vm.onclick.bind(task, task.job_id)}
 ###
 
