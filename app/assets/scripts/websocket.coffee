@@ -18,7 +18,7 @@ ws.onmessage = (event) ->
     when "jobstate"
       state = message.newState.toString()
       console.log(state)
-      jobs.vm.update(message.job_id, state)
+      jobs.vm.update(message.job_id, state, toolname)
 
       # Show user a popup with the submission
       if state == '0'

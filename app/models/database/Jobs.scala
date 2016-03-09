@@ -123,6 +123,25 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
         Await.result(dbConfig.db.run(jobs.filter(_.main_id === main_id).update(job)), Duration.Inf).toLong
     }
   }
+
+  /**
+    * Returns the main_id of a job by passing the user_id and job_id
+    * @param user_id
+    * @param job_id
+    * @return
+    */
+  def getMainID(user_id : Long, job_id : String) : Long = {
+    get(user_id, job_id).head.main_id.get
+  }
+
+  /**
+    * Returns the main_id of a user job by passing the job itself
+    * @param job
+    * @return
+    */
+  def getMainID(job : UserJob) : Long = {
+    get(job.user_id, job.job_id).head.main_id.get
+  }
 }
 
 //Job Class used for database storage

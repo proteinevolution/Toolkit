@@ -2,7 +2,9 @@ package models.tools
 
 import java.io.File
 
-import play.api.Play._
+
+import com.typesafe.config.ConfigFactory
+
 
 /**
   * Created by lukas on 1/16/16.
@@ -38,9 +40,10 @@ abstract class ToolModel {
   */
 
 
+
   def resultFilePaths(jobID : Long) : Vector[String] = {
 
-    val path = s"${current.configuration.getString("job_path").get}${File.separator}$jobID"
+    val path = s"${ConfigFactory.load().getString("job_path")}${File.separator}$jobID"
 
     this.resultFileNames map {
 

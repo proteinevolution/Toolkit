@@ -73,28 +73,6 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   implicit val timeout = Timeout(5.seconds)
 
 
-  def jobs = Action.async { implicit request =>
-
-    val session_id = Session.requestSessionID(request) // Grab the Session ID
-
-    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
-
-      (userActor ? GetAllJobs).mapTo[Iterable[UserJob]].map { joblist =>
-
-        val jobListObjs = for (job <- joblist) yield {
-          Json.obj("t" -> job.toolname,
-            "s" -> job.getState.no,
-            "i" -> job.job_id)
-        }
-        Ok(Json.obj("jobs" -> jobListObjs))
-      }
-    }
-  }
-
-
-
-
-
   def show(toolname: String) = Action { implicit request =>
 
     Logger.info(s"{Tool} Input view for tool $toolname requested")

@@ -19,7 +19,9 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
               val startImmediate : Boolean)
 {
   // TODO Toolname is a redundant field in the UserJob
-  userActor ! JobStateChanged(job_id, state)
+  // TODO Pass Main ID instead of user and job ID to make sure a unique job ID is used.
+
+  if (state == Submitted) userActor ! JobStateChanged(job_id, state)
 
   val tool = models.graph.Ports.nodeMap(toolname)  // The associated tool node
 
@@ -95,24 +97,8 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
   }
 
 
-
   def changeInFileState(filename : String, state : FileState) = {
-
-    inFileStates(filename).changeState(state)
-    /*
-    [error] a.a.OneForOneStrategy - key not found: format
-java.util.NoSuchElementException: key not found: format
-	at scala.collection.MapLike$class.default(MapLike.scala:228)
-	at scala.collection.AbstractMap.default(Map.scala:59)
-	at scala.collection.MapLike$class.apply(MapLike.scala:141)
-	at scala.collection.AbstractMap.apply(Map.scala:59)
-  at models.jobs.UserJob.changeInFileState(UserJob.scala:100)	TODO Error
-	at actors.Worker$$anonfun$receive$1$$anonfun$applyOrElse$8.apply(Worker.scala:121)
-	at actors.Worker$$anonfun$receive$1$$anonfun$applyOrElse$8.apply(Worker.scala:117)
-	at scala.collection.TraversableLike$WithFilter$$anonfun$foreach$1.apply(TraversableLike.scala:778)
-	at scala.collection.immutable.Map$Map3.foreach(Map.scala:161)
-	at scala.collection.TraversableLike$WithFilter.foreach(TraversableLike.scala:777)
-     */
+    if(inFileStates.contains(filename)) inFileStates(filename).changeState(state)
   }
 
 

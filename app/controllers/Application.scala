@@ -5,28 +5,33 @@ import java.io.File
 
 import actors.WebSocketActor
 import akka.actor.ActorRef
-import play.api.{Logger, Play}
+import com.typesafe.config.ConfigFactory
+import play.api.{Configuration, Environment, Logger, Play}
 import play.api.Play.current
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import javax.inject.{Singleton, Named, Inject}
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 import models.sessions.Session
 import play.api.Play.materializer
+
 
 
 @Singleton
 class Application @Inject()(val messagesApi: MessagesApi,
                             val jobDB : models.database.Jobs,
+                            val environment: Environment,
+                            val configuration: Configuration,
                             @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
 
   // TODO this line has to vanish
-  var path = s"${Play.application.path}${File.separator}${current.configuration.getString("job_path").get}${File.separator}"
 
   val user_id = 12345  // TODO integrate user_id
 
+  var path = s"${environment.rootPath}${File.separator}${ConfigFactory.load().getString("job_path")}${File.separator}"
+
+    //TODO: migrate to akka streams by using flows
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
     // The user of this session is assigned a user actor
     Future.successful(request.session.get(Session.SID) match {
@@ -70,7 +75,7 @@ class Application @Inject()(val messagesApi: MessagesApi,
 
     // TODO handle the case that there is no userID in session scope or no job with that name
     val session_id = Session.requestSessionID(request)
-    val main_id = jobDB.get(user_id, job_id)
+    val main_id = jobDB.getMainID(user_id, job_id)
 
     Logger.info("Try to assemble file path")
     val filePath = path + "/" + main_id.toString +  "/results/" + filename

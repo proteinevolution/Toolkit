@@ -86,6 +86,26 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
   }
 
 
+  val listJobs = Action.async { implicit request =>
+
+    val session_id = Session.requestSessionID(request) // Grab the Session ID
+
+    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
+
+      (userActor ? GetAllJobs).mapTo[Iterable[UserJob]].map { joblist =>
+
+        val jobListObjs = for (job <- joblist) yield {
+          Json.obj("t" -> job.toolname,
+            "s" -> job.getState.no,
+            "i" -> job.job_id)
+        }
+        Ok(Json.obj("jobs" -> jobListObjs))
+      }
+    }
+  }
+
+
+
   /**
     *
     * User ask for the creation of a new Job with the provided tool name.
@@ -174,13 +194,11 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
             (userActor ? GetJobParams(job.job_id)).mapTo[Map[String, String]].map { res =>
 
-
               val toolframe = job.toolname match {
                 case "alnviz" => views.html.alnviz.form(Alnviz.inputForm.bind(res))
                 case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm.bind(res))
                 case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm.bind(res))
               }
-
 
               Ok(views.html.general.submit(job.toolname, toolframe)).withSession {
                 Session.closeSessionRequest(request, session_id)   // Send Session Cookie
