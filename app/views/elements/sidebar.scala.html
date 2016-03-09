@@ -10,7 +10,7 @@
         </div>
         </form>
         <form action="/jobs/del/" id="deletejobs" method="post" name="deletejobs">
-            <input type="submit" class="small expanded secondary hollow button" value="Delete sel. Jobs" onclick="setAction('deletejobs', '/jobs/del')"/>
+            <input type="submit" class="small expanded alert hollow button masterTooltip" title="This will delete your checked jobs permanently from our database" value="Delete sel. Jobs" onclick="setAction('deletejobs', '/jobs/del')"/>
         </form>
 
     </div>
@@ -22,3 +22,29 @@
     </tbody>
 </table>
 
+    <script type="text/javascript">
+
+
+                $(document).ready(function() {
+// Tooltip only Text
+                    $('.masterTooltip').hover(function(){
+
+                        // Hover over code
+                        var title = $(this).attr('title');
+                        $(this).data('tipText', title).removeAttr('title');
+                        $('<p class="tooltip"></p>')
+                                .text(title)
+                                .appendTo('body')
+                                .fadeIn('fast');
+                    }, function() {
+                        // Hover out code
+                        $(this).attr('title', $(this).data('tipText'));
+                        $('.tooltip').remove();
+                    }).mousemove(function(e) {
+                        var mousex = e.pageX + 20; //Get X coordinates
+                        var mousey = e.pageY + 10; //Get Y coordinates
+                        $('.tooltip')
+                                .css({ top: mousey, left: mousex })
+                    });
+                });
+        </script>
