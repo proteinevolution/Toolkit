@@ -265,3 +265,5 @@ hr {
     color:#fff;
     font-size:12px Arial;
 }
+
+div.top-bar::after: 0 0;
