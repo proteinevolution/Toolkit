@@ -35,7 +35,8 @@ object Worker {
 
 }
 
-class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLogging {
+class Worker @Inject() (jobDB    : models.database.Jobs)
+                        extends Actor with ActorLogging {
 
   import actors.Worker._
 
@@ -58,7 +59,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
       Logger.info("[Worker] Job path was " + jobPath)
 
 
-      val main_id = jobDB.userJobMapping(userJob.user_id -> userJob.job_id)
+      val main_id = jobDB.get(userJob.user_id, userJob.job_id).head.main_id
       val rootPath = jobPath + sep + main_id.toString + sep
 
 
@@ -125,7 +126,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
     case WRead(userJob) =>
 
-      val main_id = jobDB.userJobMapping(userJob.user_id -> userJob.job_id)
+      val main_id = jobDB.get(userJob.user_id, userJob.job_id).head.main_id
       val paramPath = jobPath + main_id + sep + "params/"
 
       val files = new java.io.File(paramPath).listFiles
@@ -147,7 +148,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
 
     case WConvert(parentUserJob, childUserJob, links) =>
 
-      val main_id = jobDB.userJobMapping(childUserJob.user_id -> childUserJob.job_id)
+      val main_id = jobDB.get(childUserJob.user_id, childUserJob.job_id).head.main_id
       val rootPath = jobPath + sep + main_id.toString + sep
 
 
@@ -186,7 +187,7 @@ class Worker @Inject() (jobDB : models.database.Jobs) extends Actor with ActorLo
     case WStart(userJob) =>
 
       Logger.info("[Worker](WStart) for job " + userJob.job_id)
-      val main_id = jobDB.userJobMapping(userJob.user_id -> userJob.job_id)
+      val main_id = jobDB.get(userJob.user_id, userJob.job_id).head.main_id
       val rootPath = jobPath + main_id + sep
 
       // Assumption : The Root path contains a prepared shellscript that bears the toolname + sh suffix

@@ -25,10 +25,9 @@ class Application @Inject()(val messagesApi: MessagesApi,
   // TODO this line has to vanish
   var path = s"${Play.application.path}${File.separator}${current.configuration.getString("job_path").get}${File.separator}"
 
-
+  val user_id = 12345  // TODO integrate user_id
 
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
-
     // The user of this session is assigned a user actor
     Future.successful(request.session.get(Session.SID) match {
 
@@ -71,8 +70,7 @@ class Application @Inject()(val messagesApi: MessagesApi,
 
     // TODO handle the case that there is no userID in session scope or no job with that name
     val session_id = Session.requestSessionID(request)
-    val main_id= jobDB.userJobMapping(session_id.toString, job_id)
-
+    val main_id = jobDB.get(user_id, job_id)
 
     Logger.info("Try to assemble file path")
     val filePath = path + "/" + main_id.toString +  "/results/" + filename
