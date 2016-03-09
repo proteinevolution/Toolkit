@@ -132,7 +132,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case UpdateJobs =>
       for (jobRef <- jobRefDB.get(session_id)) {
         val dbJob = jobDB.get(jobRef.main_id).get
-        val job   = new UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
+        val job   = UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
         userJobs.put(dbJob.job_id,job)
         databankMapping.put(dbJob.job_id,jobRef)
       }

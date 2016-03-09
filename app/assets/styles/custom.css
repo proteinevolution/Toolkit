@@ -24,34 +24,18 @@
     -ms-transition: background-color 0.5s;
     transition: background-color 0.5s;
 }
-.d:hover {
+
+.d {
     background-color: green;
 }
-.e:hover {
+.e {
     background-color: red;
 }
-.r:hover {
+.r{
     background-color: yellow;
 }
-.q:hover {
+.q {
     background-color: orange;
-}
-
-.dd {
-    background-color: green;
-}
-.ee {
-    background-color: red;
-}
-.rr {
-    background-color: yellow;
-}
-.qq {
-    background-color: orange;
-}
-
-.pp {
-    background-color: dimgray;
 }
 
 
@@ -62,22 +46,13 @@
 
 tr.spaceUnder > td
 {
-    padding-bottom: 1em;
+    padding-bottom: 0em;
 }
 
 .top-bar {
     box-sizing: inherit;
     background: #006F62;
     height: 8.125em;
-}
-
-.sidebar {
-
-    margin-top: 0.313em;
-    padding-left: 1.250em;
-    padding-top: 0px;
-    padding-right: 1.250em;
-
 }
 
 .content {
@@ -104,10 +79,12 @@ tr.spaceUnder > td
 }
 
 .navbar-tabs{
+
     border: 0px;
 }
 
 .tabs-title{
+    height: 100%;
     border: 0px;
     color: #fff;
     background-color: #2E8C81;
@@ -159,6 +136,31 @@ tr.spaceUnder > td
 
 }
 
+
+.alnviz{
+
+    background-color: #FFCC66;
+    border: solid 1px black;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.tcoffee{
+
+    background-color: #FFCC66;
+    border: solid 1px black;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.hmmer{
+
+    background-color: #D0BA89;
+    border: solid 1px black;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
 .header {
 
     height: 8.125em;
@@ -170,11 +172,31 @@ tr.spaceUnder > td
 }
 
 tr.job{
-    font-size: 0.625em;
-    width: 1.250em;
+
+    font-size: 0.6em;
+    background-color: #fff;
+
 
 }
 
+@media only screen and (-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi) {
+    /* High-res styles go here */
+    tr.job {
+
+        font-size: 0.5em;
+        background-color: #fff;
+    }
+}
+
+tr.job a:link {
+
+    color: #000;
+}
+
+tr.job a:visited {
+
+    color: #000;
+}
 
 #toolsdropdown {
 
@@ -189,12 +211,12 @@ hr {
 
 .padded-column {
     padding: 0.625em;
-
 }
 
 .main-content {
 
     min-height: 31.250em;
+    display: flex;
 
 }
 
@@ -219,4 +241,10 @@ hr {
     -moz-border-radius-topright: 1.2500rem;
     border-top-left-radius: 1.2500rem;
     border-top-right-radius: 1.2500rem;
+}
+
+.example-alignment {
+
+    padding-bottom: 1.25em;
+
 }

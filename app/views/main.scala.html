@@ -20,7 +20,7 @@
         @helper.javascriptRouter("jsRoutes")(
             routes.javascript.Tool.submit,
             routes.javascript.Tool.result,
-            routes.javascript.Tool.jobs,
+            routes.javascript.Service.listJobs,
             routes.javascript.Service.addChild)
 
         <!-- Google Fonts -->
@@ -58,11 +58,11 @@
 
 
         <!---Navigation Bar --->
-        <section>
+        <div class="large-12 columns navbar">
           <nav>
             @elements.navbar()
           </nav>
-        </section>
+        </div>
 
         <!---Main Content Section includes Sidebar and Content --->
         <section class="row fullwidth main-content">
