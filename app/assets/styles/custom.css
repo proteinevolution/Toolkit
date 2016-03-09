@@ -46,7 +46,7 @@
 
 tr.spaceUnder > td
 {
-    padding-bottom: 1em;
+    padding-bottom: 0em;
 }
 
 .top-bar {
@@ -79,10 +79,12 @@ tr.spaceUnder > td
 }
 
 .navbar-tabs{
+
     border: 0px;
 }
 
 .tabs-title{
+    height: 100%;
     border: 0px;
     color: #fff;
     background-color: #2E8C81;
@@ -170,8 +172,8 @@ tr.spaceUnder > td
 }
 
 tr.job{
-    position: relative;
-    font-size: 0.7em;
+
+    font-size: 0.6em;
     background-color: #fff;
 
 
@@ -179,11 +181,11 @@ tr.job{
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi) {
     /* High-res styles go here */
+    tr.job {
 
-    tr.job{
-        position: relative;
         font-size: 0.5em;
         background-color: #fff;
+    }
 }
 
 tr.job a:link {
