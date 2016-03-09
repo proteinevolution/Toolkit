@@ -110,8 +110,8 @@ jobs.view = ->
         m("div", {style: {cssFloat: "center", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
           task.toolname().substr(0,4)
         ))
-      m('td', {style: {cssFloat: "center", marginLeft: "0.7em"}},
-        m('input',{type: "button", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
+      m('td', {style: {cssFloat: "center", marginLeft: "0.7em", fontSize: "0.5em"}},
+        m('input',{type: "button", class: "button tiny alert hollow xbutton", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
 
 
     ]
