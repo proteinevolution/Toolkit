@@ -33,14 +33,6 @@ object Alnviz extends ToolModel {
     )
   )
 
-  // AlignmentViewer wants to have an Alignment in Clustal Format
-
-  //Map parameter identifier to the full names
-  val parameterNames = Map(
-    "alignment" -> "Sequence Alignment",
-    "alignment_format" -> "Alignment Format")
-
-
   val resultFileNames = Vector("result")
 
   // Specifies a finite set of values the parameter is allowed to assumepe
