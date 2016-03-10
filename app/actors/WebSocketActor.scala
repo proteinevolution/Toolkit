@@ -36,10 +36,6 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
 
       (js \ "type").validate[String] map {
 
-        case "getJobs" => userActor ! GetAllJobs
-
-
-
         case "getSuggestion" =>
             (js \ "query").validate[String].map { query => userActor ! AutoComplete(query)
             }
