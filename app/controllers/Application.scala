@@ -61,29 +61,32 @@ class Application @Inject()(val messagesApi: MessagesApi,
   def index = Action { implicit request =>
 
     // TODO Serve reasonble content frame
-    Ok(views.html.main(views.html.general.homecontent(),"Home"))
+    val session_id = Session.requestSessionID(request)
+    Ok(views.html.main(views.html.general.homecontent(),"Home")).withSession {
+      Session.closeSessionRequest(request, session_id)
+    }
 
-    /** With session cookie
-    *val session_id = Session.requestSessionID(request)
-    *Ok(views.html.main(views.html.general.homecontent(),"Home")).withSession {
-      *Session.closeSessionRequest(request, session_id)
-    *}
-    */
+    // Without session cookie
+    //Ok(views.html.main(views.html.general.homecontent(),"Home"))
   }
 
   def file(filename : String, job_id : String) = Action{ implicit request =>
-
-    // TODO handle the case that there is no userID in session scope or no job with that name
     val session_id = Session.requestSessionID(request)
-    val main_id = jobDB.getMainID(user_id, job_id)
+    val main_id_o  = jobDB.getMainID(user_id, job_id)
 
-    Logger.info("Try to assemble file path")
-    val filePath = path + "/" + main_id.toString +  "/results/" + filename
-    Logger.info("File path was: " + filePath)
-    Logger.info("File has been sent")
-    Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {
-        Session.closeSessionRequest(request, session_id)
+    main_id_o match {
+        // main_id exists, allow send File
+      case Some(main_id) =>
+        Logger.info("Try to assemble file path")
+        val filePath = path + "/" + main_id.toString +  "/results/" + filename
+        Logger.info("File path was: " + filePath)
+        Logger.info("File has been sent")
+        Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {
+          Session.closeSessionRequest(request, session_id)
+        }
+        // main_id does not exist. Redirect to Forbidden
+      case None =>
+        Forbidden
     }
-
   }
 }

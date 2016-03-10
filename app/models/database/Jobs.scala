@@ -56,6 +56,15 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
   val updateQuery = jobs returning jobs.map(_.main_id)
   val getQuery = jobs returning jobs.map(_.main_id)
 
+  /**
+    * Finds Jobs based on a partial job_id
+    * @param user_id
+    * @param job_id_part
+    * @return
+    */
+  def findJobID(user_id: Long, job_id_part : String) : Seq[DBJob] = {
+    Await.result(dbConfig.db.run(jobs.filter(_.user_id === user_id).filter(_.job_id.startsWith(job_id_part)).result), Duration.Inf)
+  }
 
   /**
     * Removes the first Job from the Database permanently using the job_id and the user_id
@@ -67,7 +76,7 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
     val jobOption = get(user_id, job_id).headOption
     jobOption match {
       case Some(job) =>
-        dbConfig.db.run(jobs.filter (_.main_id === job.main_id).delete)
+        dbConfig.db.run(jobs.filter(_.main_id === job.main_id).delete)
         job.main_id
       case None =>
         None : Option[Long]
@@ -130,8 +139,8 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
     * @param job_id
     * @return
     */
-  def getMainID(user_id : Long, job_id : String) : Long = {
-    get(user_id, job_id).head.main_id.get
+  def getMainID(user_id : Long, job_id : String) : Option[Long] = {
+    get(user_id, job_id).head.main_id
   }
 
   /**
@@ -139,8 +148,8 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
     * @param job
     * @return
     */
-  def getMainID(job : UserJob) : Long = {
-    get(job.user_id, job.job_id).head.main_id.get
+  def getMainID(job : UserJob) : Option[Long] = {
+    get(job.user_id, job.job_id).head.main_id
   }
 }
 
