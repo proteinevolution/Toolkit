@@ -1,6 +1,5 @@
 package models.jobs
 
-import slick.lifted.MappedTo
 
 /**
   * Created by lukas on 1/20/16.

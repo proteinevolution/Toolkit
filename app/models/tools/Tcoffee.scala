@@ -17,19 +17,6 @@ object Tcoffee extends ToolModel {
   val toolNameAbbreviation:String = "tcf"
 
 
-  val inport = null
-
-/*
-  val inports  = Map(
-
-    Sequences -> 1 // TCoffee needs one Set of Sequences
-  )
-*/
-
-  //-----------------------------------------------------------------------------------------------
-
-  // Input Form Definition of this tool
-
   // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
@@ -40,16 +27,4 @@ object Tcoffee extends ToolModel {
       "mslow_pair" -> boolean
     )
   )
-  /*
-  val inports  = Map(
-
-    Sequences -> 1 // TCoffee needs one Set of Sequences
-  )
-  */
-  //Map parameter identifier to the full names
-  val parameterNames = Map(
-    "sequences" -> "Sequences to be aligned")
-
-  // TODO We need a better abstraction for the tool result names
-  val resultFileNames = Vector("result")
 }
