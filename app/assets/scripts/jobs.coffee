@@ -114,7 +114,7 @@ jobs.view = ->
 
 
 
-        m('input',{type: "button", class: "masterTooltip button tiny alert hollow xbutton", title: "Clear from job table", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
+        m('input',{type: "button", class: "button tiny alert hollow masterTooltip", style: {cssFloat: "center", padding: "0.35em 0.55em", margin: "0 0"}, title: "Clear from job table", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
 
 
     ]
