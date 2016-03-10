@@ -31,18 +31,20 @@
     <body data-ws-url="@routes.Application.ws().webSocketURL()">
 
         <!---Top-Bar with Logo/Search and Dropdown --->
-        <div class="top-bar" data-equalizer>
-            <div class="large-4 columns" style="height 130px;" data-equalizer-watch>
-                <div class="logo"><a href=""><img style="margin-left: 50px; width: 200%;"  src="@routes.Assets.at("images/TestLogo.png")"> </a></div>
+        <div class="row fullwidth" id="topbar" data-equalizer>
+            <div class="large-4 medium-7 hide-for-small-only columns"  data-equalizer-watch>
+                <div class="logo"><a href=""><img src="@routes.Assets.at("images/TestLogo.png")"> </a></div>
             </div>
 
-            <div class="large-6 columns" data-equalizer-watch>
+            <div class="large-4 large-offset-4 small-12 medium-5 columns" data-equalizer-watch>
                 <div class="advancedsearch" style="margin-top: 40px;">
-                    <input type="text" placeholder="Advanced Search" style="width: 500px; height: 35px">
+                    <input type="text" placeholder="Advanced Search" style="height: 35px">
                 </div>
             </div>
+        </div>
 
-            <div class="large-2 columns" data-equalizer-watch>
+            <!--No Use so far,looks ugly (Lukas opinion)
+            <div class="large-4 small-4 topsmall columns" data-equalizer-watch>
                 <ul class="dropdown menu" id="toolsdropdown" data-dropdown-menu>
                     <li>
                         <a href="">Alignment</a>
@@ -54,7 +56,9 @@
                     </li>
                 </ul>
             </div>
-          </div>
+        -->
+
+
 
 
         <!---Navigation Bar --->
@@ -66,11 +70,11 @@
 
         <!---Main Content Section includes Sidebar and Content --->
         <section class="row fullwidth main-content">
-            <div class="large-2 columns sidebar padded-column">
+            <div class="large-2 small-2 columns sidebar padded-column">
                 @elements.sidebar()
             </div>
 
-            <div id="content" class="large-6 columns padded-column" style="float: left;">
+            <div id="content" class="large-6 small-10 columns padded-column" style="float: left;">
                 @content
             </div>
         </section>

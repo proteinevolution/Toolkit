@@ -1,9 +1,38 @@
 .logo {
 
   background-color: #006F62;
-  margin-top: 0.938em;
-  margin-bottom: 1.250em;
-  margin-right: 18.750em;
+  padding-left: 2.500em;
+  padding-top: 1.000em;
+  padding-bottom: 1.000em;
 
+}
+
+.top-bar {
+  box-sizing: inherit;
+  background: #006F62;
+  height: auto;
+}
+
+#topbar {
+
+  background: #006F62;
+  height: 8.75em;
+
+}
+
+#toolsdropdown {
+
+  width: 7.500em;
+  background-color: #e6e6e6;
+  margin-top: 2.500em;
+
+}
+
+.advancedsearch {
+
+  width: auto;
+  padding-top: 1.000em;
+  padding-left: 3.125em;
+  padding-right: 3.125em;
 
 }
