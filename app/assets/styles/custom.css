@@ -49,12 +49,6 @@ tr.spaceUnder > td
     padding-bottom: 0em;
 }
 
-.top-bar {
-    box-sizing: inherit;
-    background: #006F62;
-    height: 8.125em;
-}
-
 .content {
     width: 60%;
     margin-left: 6.250em;
@@ -63,10 +57,7 @@ tr.spaceUnder > td
     padding-right: 3.125em;
 }
 
-.advancedsearch {
 
-    width: 31.250em;
-}
 
 .tabs-content {
     border: 0px;
@@ -198,11 +189,6 @@ tr.job a:visited {
     color: #000;
 }
 
-#toolsdropdown {
-
-    width: 7.500em;
-    margin-top: 2.500em;
-}
 
 hr {
 
@@ -263,7 +249,5 @@ hr {
     border-radius:5px;
     padding:10px;
     color:#fff;
-    font-size:12px Arial;
+    font-size:12px;
 }
-
-div.top-bar::after: 0 0;
