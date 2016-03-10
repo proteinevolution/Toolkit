@@ -1,34 +1,30 @@
 package actors
-import javax.inject._
 
+import javax.inject._
 import actors.Worker._
 import akka.actor._
 import akka.event.LoggingReceive
-import akka.util.Timeout
 import models.database.{DBJobRef, DBJob}
 import models.jobs._
 import models.misc.RandomString
 import play.api.Logger
 import com.google.inject.assistedinject.Assisted
-import scala.concurrent.duration._
 
 /**
-  *  The User actor will represent each user who is present on the toolkit and
-  *  encompass its possible interactions with the server.
+  *  The User actor will represent each user who is currently present on the toolkit and
+  *  describe possible interaction with the web application. If a new session is created, a new UserActor
+  *  is created as well.
   *
   * Created by lukas on 1/13/16.
-  *
   */
-
-// A links just connects one output port to one input port
-case class Link(out : Int, in : Int)
-
 object UserActor {
-  // All messages that the UserActor can actually receive
+  /*
+   *  All messages that the UserActor can actually receive are listed here.
+   */
+
   // Job changed state
   case class JobStateChanged(job_id : String, state : JobState)
 
-  // Start a job
   case class PrepWD(toolname : String, params : Map[String, String], startImmediate : Boolean, job_id_o : Option[String])
 
   // Job ID was Invalid
@@ -54,9 +50,8 @@ object UserActor {
 
   case object UpdateJobs
 
-
-  // Socket attached / Starting socket session
-  case class AttachWS(session_id : String, ws : ActorRef)
+  // Attach WebSocket Actor to UserActor
+  case class AttachWS(ws : ActorRef)
 
   trait Factory {
     def apply(session_id: String): Actor
@@ -69,24 +64,23 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
                            jobRefDB : models.database.JobReference) extends Actor with ActorLogging {
 
   val user_id : Long = 12345L   // TODO Implement User ID
-  implicit val timeout = Timeout(5.seconds)
 
   import UserActor._
 
   // The websocket that is attached to the User
   var ws = None: Option[ActorRef]
 
-  // The User Actor maps the job_id to the actual job instance
+  // The User Actor maps the job_id to the actual job instance, represented as UserJob
   val userJobs        = new collection.mutable.HashMap[String, UserJob]
   val databankMapping = new collection.mutable.HashMap[String, DBJobRef]
 
   def receive = LoggingReceive {
 
-    case AttachWS(_, ws_new) =>
+    case AttachWS(ws_new) =>
 
       ws = Some(ws_new)
       context watch ws.get
-      Logger.info("WebSocket attached successfully\n")
+      Logger.info("WebSocket attached successfully")
 
 
     // Job Preparation Routine for a new Job
@@ -103,11 +97,12 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       }
       Logger.info("UserActor wants to prepare job directory for tool " + toolname + " with job_id " + job_id)
 
+
+      // Create a new Job instance
       val job = UserJob(self, toolname, job_id, user_id, Submitted, startImmediate)
 
       // This is a new Job, so we have to make the status *Submitted explicit*
       job.changeState(Submitted)
-
 
       // Make changes to the UserActor Model
       userJobs.put(job_id, job)
@@ -118,14 +113,14 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       worker ! WPrepare(job, params)
 
 
-    // Removes a Job (from the view and user actor as well as from the directory structure)
+    // Removes a Job completely
     case DeleteJob(job_id) =>
 
       val job = userJobs.remove(job_id).get    // Remove from User Model
       databankMapping.remove(job_id)           // Remove from the database
       worker ! WDelete(job)                    // Worker removes Directory
 
-    // Removes a Job (from the view and from user actor)
+    // Removes the job from the UserActor, but keep it in the database
     case ClearJob(job_id) =>
 
       jobRefDB.delete(databankMapping.remove(job_id).get)
@@ -134,10 +129,10 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     // Returns a Job for a given job_id
     case GetJob(job_id) =>  sender() ! userJobs.get(job_id).get
 
-    // Read the parameters, which have already been provided, from a job
+    // Read the parameter map from the job directory
     case GetJobParams(job_id) => worker forward WRead(userJobs(job_id))
 
-    // Updates all jobs from the database
+    // Asks the user actor to load jobs from the database in the JobModel
     case UpdateJobs =>
       for (jobRef <- jobRefDB.get(session_id)) {
         val dbJob = jobDB.get(jobRef.main_id).get
@@ -149,10 +144,10 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     // Returns all Jobs
     case GetAllJobs => sender() ! userJobs.values
 
-
     /* Appends a new Job to one parent job */
     case AppendChildJob(parent_job_id, toolname, links) =>
 
+      // Generate new Job ID
       var new_job_id = None: Option[String]
       do {
         //TODO: check whether this random id already exists in the db or make the userJobs Map entirely consistent with the Database
@@ -171,16 +166,16 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       Logger.info("Try to get Parent job for job id from database, parent is: " + userJobs(parent_job_id).job_id)
       userJobs(parent_job_id).appendChild(job, links)
 
-      
+
     case Convert(parent_job_id, child_job_id, links) =>
 
       worker ! WConvert(userJobs(parent_job_id), userJobs(child_job_id), links)
 
 
-    // Connection was ended
+    // Connection To the WebSocket was ended
     case Terminated(ws_new) =>  ws.get ! PoisonPill
 
-    // Job status was changed
+    // UserActor got to know that the job state has changed
     case JobStateChanged(job_id, state) =>
 
       val userJob = userJobs.get(job_id).get
@@ -204,35 +199,10 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     * */
     case m =>  ws.get ! m
 
-
-
   }
 }
-
-
-
-/*
-
-val myActor = system.actorOf(Props[MyActor].withDispatcher("my-dispatcher"), name = "myactor2")
-
-import akka.actor.{ Actor, Props, Terminated }
-
-class WatchActor extends Actor {
-val child = context.actorOf(Props.empty, "child")
-context.watch(child) // <-- this is the only call needed for registration
-var lastSender = system.deadLetters
-
-def receive = {
-  case "kill" =>
-    context.stop(child); lastSender = sender()
-  case Terminated(`child`) => lastSender ! "finished"
-}
-}
- */
-
-
-
-
+// A links just connects one output port to one input port
+case class Link(out : Int, in : Int)
 
 
 
