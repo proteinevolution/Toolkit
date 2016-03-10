@@ -1,7 +1,7 @@
 package actors
 
 
-import actors.UserActor.{GetAllJobs, JobIDInvalid, JobStateChanged, AttachWS}
+import actors.UserActor._
 import actors.UserManager.GetUserActor
 import akka.actor.Actor
 import akka.actor.ActorLogging
@@ -44,11 +44,17 @@ class WebSocketActor(session_id: String, userManager : ActorRef, out: ActorRef) 
 
       (js \ "type").validate[String] map {
 
-        case  "getJobs" =>
+        case "getJobs" =>
           Logger.info("WebSocket Actor Received message")
           (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
             Logger.info("Send GetAllJobs to UserActor")
             userActor ! GetAllJobs
+          }
+        case "getSuggestion" =>
+          (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
+            (js \ "query").validate[String].map { query =>
+              userActor ! AutoComplete(query)
+            }
           }
       }
 
@@ -63,5 +69,8 @@ class WebSocketActor(session_id: String, userManager : ActorRef, out: ActorRef) 
     case JobStateChanged(job_id, state) =>
       Logger.info("WebSocketActor received: JobState Changed to " + state.no)
       out ! Json.obj("type" -> "jobstate", "newState" -> state.no, "job_id" -> job_id)
+
+    case AutoComplete (suggestion : String) =>
+      out ! Json.obj("type" -> "autocomplete", "suggestion" -> suggestion)
   }
 }

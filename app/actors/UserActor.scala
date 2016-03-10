@@ -52,8 +52,11 @@ object UserActor {
 
   case class Convert(parent_job_id : String, child_job_id : String, links : Seq[Link])
 
+  // Load jobs from the database
   case object UpdateJobs
 
+  // User requested a suggestion
+  case class AutoComplete(suggestion : String)
 
   // Socket attached / Starting socket session
   case class AttachWS(session_id : String, ws : ActorRef)
@@ -78,7 +81,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
   // The User Actor maps the job_id to the actual job instance
   val userJobs        = new collection.mutable.HashMap[String, UserJob]
-  val databankMapping = new collection.mutable.HashMap[String, DBJobRef]
+  val databaseMapping = new collection.mutable.HashMap[String, DBJobRef]
 
   def receive = LoggingReceive {
 
@@ -107,20 +110,20 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       val dbJob = jobRefDB.update(DBJob(None, job_id, user_id, job.getState, job.toolname), session_id)
 
       userJobs.put(job_id, job)
-      databankMapping.put(job_id, dbJob)
+      databaseMapping.put(job_id, dbJob)
       worker ! WPrepare(job, params)
 
 
     // Removes a Job (from the view and user actor as well as from the folder structure)
     case DeleteJob(job_id) =>
       val job = userJobs.remove(job_id).get    // Remove from User Model
-      databankMapping.remove(job_id)
+      databaseMapping.remove(job_id)           // Remove from the
       worker ! WDelete(job)                    // Worker removes Directory
 
     // Removes a Job (from the view and from user actor)
     case ClearJob(job_id) =>
       Logger.info("Clear Actor")
-      jobRefDB.delete(databankMapping.remove(job_id).get)
+      jobRefDB.delete(databaseMapping.remove(job_id).get)
       val job = userJobs.remove(job_id).get
 
     // Returns a Job for a given job_id
@@ -134,7 +137,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
         val dbJob = jobDB.get(jobRef.main_id).get
         val job   = UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
         userJobs.put(dbJob.job_id,job)
-        databankMapping.put(dbJob.job_id,jobRef)
+        databaseMapping.put(dbJob.job_id,jobRef)
       }
 
     // Returns all Jobs
@@ -183,10 +186,19 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       ws.get ! JobStateChanged(job_id, state)
 
       // get the main ID
-      val main_id = Some(databankMapping.get(job_id).get.main_id)
+      val main_id = Some(databaseMapping.get(job_id).get.main_id)
 
       // update Job state in Persistence
       jobRefDB.update(DBJob(main_id, job_id, user_id, userJob.getState, userJob.toolname), session_id)
+
+    case AutoComplete (suggestion : String) =>
+      jobDB.findJobID(user_id, suggestion).headOption match {
+        // Found something, return it to the user
+        case Some(dbJob) => ws.get ! AutoComplete(dbJob.job_id)
+        // Found nothing, do nothing.
+        case None        =>
+      }
+
 
     /* All of the remaining messages are just passed further to the WebSocket
     *  Currently: JobIDInvalid
