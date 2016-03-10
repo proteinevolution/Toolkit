@@ -1,12 +1,11 @@
 package controllers
 
-
-import java.io.File
-
+import actors.UserManager.GetUserActor
 import actors.WebSocketActor
 import akka.actor.ActorRef
+import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
-import play.api.{Configuration, Environment, Logger, Play}
+import play.api.{Configuration, Environment, Logger}
 import play.api.Play.current
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
@@ -15,6 +14,10 @@ import javax.inject.{Singleton, Named, Inject}
 import scala.concurrent.Future
 import models.sessions.Session
 import play.api.Play.materializer
+import akka.pattern.ask
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+import java.io.File
 
 
 
@@ -25,29 +28,31 @@ class Application @Inject()(val messagesApi: MessagesApi,
                             val configuration: Configuration,
                             @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
 
-  // TODO this line has to vanish
 
+  val SEP = java.io.File.separator
   val user_id = 12345  // TODO integrate user_id
+  implicit val timeout = Timeout(5.seconds)
 
   var path = s"${environment.rootPath}${File.separator}${ConfigFactory.load().getString("job_path")}${File.separator}"
 
     //TODO: migrate to akka streams by using flows
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
     // The user of this session is assigned a user actor
-    Future.successful(request.session.get(Session.SID) match {
+    request.session.get(Session.SID) match {
 
       case None =>
+        // TODO I guess this should not happen
         Logger.info("$Application$ WebSocket connection not allowed, since no SID has been assigned to the session")
-        Left(Forbidden)
+        Future.successful(Left(Forbidden))
 
-      case Some(uid) =>
+      case Some(sid) =>
 
-        Logger.info("$Application$ WebSocket connection requested")
-        Right(WebSocketActor.props(uid.toString, userManager))
-    })
+        (userManager ? GetUserActor(sid)).mapTo[ActorRef].map(u =>
+
+          Right(WebSocketActor.props(u))
+        )
+    }
   }
-
-
 
 
   /**
@@ -71,19 +76,19 @@ class Application @Inject()(val messagesApi: MessagesApi,
     */
   }
 
+  /**
+   * Action that offers result files of jobs to the user.
+   */
   def file(filename : String, job_id : String) = Action{ implicit request =>
 
     // TODO handle the case that there is no userID in session scope or no job with that name
     val session_id = Session.requestSessionID(request)
     val main_id = jobDB.getMainID(user_id, job_id)
 
-    Logger.info("Try to assemble file path")
-    val filePath = path + "/" + main_id.toString +  "/results/" + filename
-    Logger.info("File path was: " + filePath)
-    Logger.info("File has been sent")
-    Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {
+    val filePath = s"$path$SEP${main_id.toString}${SEP}results$SEP$filename"
+
+    Ok.sendFile(new File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {
         Session.closeSessionRequest(request, session_id)
     }
-
   }
 }
