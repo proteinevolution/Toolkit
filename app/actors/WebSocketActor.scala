@@ -2,12 +2,13 @@ package actors
 
 
 import actors.UserActor.{JobIDInvalid, JobStateChanged, AttachWS}
+import actors.UserActor._
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 
 
 /**
@@ -30,9 +31,22 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
 
   def receive = LoggingReceive {
 
+
+    case js: JsValue =>
+
+      (js \ "type").validate[String] map {
+
+        case "getJobs" => userActor ! GetAllJobs
+
+
+
+        case "getSuggestion" =>
+            (js \ "query").validate[String].map { query => userActor ! AutoComplete(query)
+            }
+      }
+
     /*
-     * Messages the user that there was a problem in handling the Job ID that was most recently provided
-     */
+     * Messages the user that there was a problem in handling the Job ID     */
     case JobIDInvalid => out ! Json.obj("type" -> "jobidinvalid")
 
     /*
@@ -43,5 +57,8 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
       // Sends the message that a job state has changed over the WebSocket. This is probably the most important
       // Real-time notification in this application
       out ! Json.obj("type" -> "jobstate", "newState" -> state.no, "job_id" -> job_id)
+
+    case AutoComplete (suggestion : String) =>
+      out ! Json.obj("type" -> "autocomplete", "suggestion" -> suggestion)
   }
 }

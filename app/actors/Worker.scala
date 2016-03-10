@@ -5,10 +5,8 @@ import java.io
 import java.io.PrintWriter
 import java.nio.file.{Paths, Files}
 import javax.inject.Inject
-
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
-import models.database.DBJob
 import models.graph.{PortWithFormat, Ports, Ready}
 import models.jobs._
 import play.api.Logger
@@ -44,7 +42,7 @@ object Worker {
 }
 
 class Worker @Inject() (jobDB    : models.database.Jobs)
-                        extends Actor with ActorLogging {
+  extends Actor with ActorLogging {
 
   import actors.Worker._
 
@@ -67,164 +65,195 @@ class Worker @Inject() (jobDB    : models.database.Jobs)
       Logger.info("[Worker] Runscript path was " + runscriptPath)
       Logger.info("[Worker] Job path was " + jobPath)
 
-      val main_id = jobDB.getMainID(userJob.user_id, userJob.job_id)
-      val rootPath = jobPath + SEP + main_id.toString + SEP
+      val main_id_o = jobDB.getMainID(userJob.user_id, userJob.job_id)
+      main_id_o match {
+        case Some(main_id) =>
+          val rootPath  = jobPath + SEP + main_id.toString + SEP
 
-      ///
-      ///  Step 1: Make the working directory of the job with all subdirectories
-      ///
-      if(!Files.exists(Paths.get(rootPath))) {
-        Directory(rootPath).createDirectory(false, false)
-        for (subdir <- subdirs) {
+          ///
+          ///  Step 1: Make the working directory of the job with all subdirectories
+          ///
+          if(!Files.exists(Paths.get(rootPath))) {
+            Directory(rootPath).createDirectory(false, false)
+            for (subdir <- subdirs) {
 
-          Directory(rootPath + subdir).createDirectory(false, false)
-        }
+              Directory(rootPath + subdir).createDirectory(false, false)
+            }
+          }
+
+
+          ///
+          ///  Step 3: Write the parameters into the directory, this will also change the state
+          ///          of the job as a side effect.
+          for( (paramName, value) <- params ) {
+
+            if(paramName != "jobid") {
+              File(s"$rootPath${SEP}params$SEP$paramName").writeAll(value.toString)
+              userJob.changeInFileState(paramName, Ready)
+            }
+          }
+          Logger.info("All params were written to the job_directory successfully")
+        case None =>
+          userJob.changeState(Error)
       }
-
-
-      ///
-      ///  Step 3: Write the parameters into the directory, this will also change the state
-      ///          of the job as a side effect.
-      for( (paramName, value) <- params ) {
-
-        if(paramName != "jobid") {
-          File(s"$rootPath${SEP}params$SEP$paramName").writeAll(value.toString)
-          userJob.changeInFileState(paramName, Ready)
-        }
-      }
-      Logger.info("All params were written to the job_directory successfully")
 
 
     case WRead(userJob) =>
 
-      val main_id = jobDB.getMainID(userJob.user_id, userJob.job_id)
-      val paramPath = jobPath + main_id + SEP + "params/"
+      val main_id_o = jobDB.getMainID(userJob.user_id, userJob.job_id)
+      main_id_o match {
+        case Some(main_id) =>
+          val paramPath = jobPath + main_id + SEP + "params/"
 
-      val files = new java.io.File(paramPath).listFiles
+          val files = new java.io.File(paramPath).listFiles
 
-      val res : Map[String, String] = files.map { file =>
+          val res : Map[String, String] = files.map { file =>
 
-        file.getName -> scala.io.Source.fromFile(file.getAbsolutePath).mkString
-      }.toMap
+            file.getName -> scala.io.Source.fromFile(file.getAbsolutePath).mkString
+          }.toMap
 
-      sender() ! res
+          sender() ! res
+        case None =>
+          userJob.changeState(Error)
+      }
 
 
     case WDelete(userJob) =>
 
-      val main_id = jobDB.delete(userJob.user_id, userJob.job_id)
-      val rootPath = jobPath + main_id + SEP
-      Directory(rootPath).deleteRecursively()
+      val main_id_o = jobDB.delete(userJob.user_id, userJob.job_id)
+
+      main_id_o match {
+        case Some(main_id) =>
+          val rootPath  = jobPath + main_id + SEP
+          Directory(rootPath).deleteRecursively()
+        case None =>
+          userJob.changeState(Error)
+      }
 
 
     case WConvert(parentUserJob, childUserJob, links) =>
 
       // Assemble all necessary file paths
-      val parent_main_id = jobDB.getMainID(parentUserJob.user_id, parentUserJob.job_id)
-      val child_main_id = jobDB.getMainID(childUserJob.user_id, childUserJob.job_id)
+      val parent_main_id_o = jobDB.getMainID(parentUserJob.user_id, parentUserJob.job_id)
+      val child_main_id_o = jobDB.getMainID(childUserJob.user_id, childUserJob.job_id)
 
-      val parentRootPath = jobPath + parent_main_id + SEP
-      val childRootPath = jobPath + child_main_id + SEP
+      parent_main_id_o match {
+        case Some(parent_main_id) =>
+          child_main_id_o match {
+            case Some(child_main_id) =>
+              val parentRootPath = jobPath + parent_main_id + SEP
+              val childRootPath = jobPath + child_main_id + SEP
 
       // Create Child Root Path if does not already exist
       if(!java.nio.file.Files.exists(Paths.get(childRootPath))) {
 
-        Directory(childRootPath).createDirectory(false, false)
-        for (subdir <- subdirs) {
 
-          Directory(childRootPath + subdir).createDirectory(false, false)
-        }
+                Directory(childRootPath).createDirectory(false, false)
+                for (subdir <- subdirs) {
+
+                  Directory(childRootPath + subdir).createDirectory(false, false)
+                }
+              }
+
+              for(link <- links) {
+
+                val outport = parentUserJob.tool.outports(link.out)
+                val inport = childUserJob.tool.inports(link.in)
+
+                val params : Option[ArrayBuffer[String]] = Ports.convert(outport, inport)
+
+                // Assemble paths to respective files
+                val outfile = parentRootPath + "results/" + outport.filename
+                val infile =  childRootPath + "params/" + inport.filename
+
+                // Decide whether conversion is needed
+                params match  {
+
+                  // This is the same format, just copy over the file
+                  case None =>
+                    java.nio.file.Files.copy(Paths.get(outfile), Paths.get(infile))
+                    childUserJob.changeInFileState(inport.filename, Ready)
+
+                    // If this port has a format, we also need to write the format file
+                    if(inport.isInstanceOf[PortWithFormat]) {
+
+                      val portWithFormat = inport.asInstanceOf[PortWithFormat]
+                      File(s"$childRootPath${SEP}params$SEP${portWithFormat.formatFilename}").writeAll(portWithFormat.format.paramName)
+                    }
+
+                  case Some(buffer) => throw NotImplementedException("Format conversion is currently not supported")
+
+                }
+              }
+            case None =>
+              childUserJob.changeState(Error)
+          }
+        case None =>
+          parentUserJob.changeState(Error)
       }
-
-      for(link <- links) {
-
-        val outport = parentUserJob.tool.outports(link.out)
-        val inport = childUserJob.tool.inports(link.in)
-
-        val params : Option[ArrayBuffer[String]] = Ports.convert(outport, inport)
-
-        // Assemble paths to respective files
-        val outfile = parentRootPath + "results/" + outport.filename
-        val infile =  childRootPath + "params/" + inport.filename
-
-        // Decide whether conversion is needed
-        params match  {
-
-           // This is the same format, just copy over the file
-          case None =>
-            java.nio.file.Files.copy(Paths.get(outfile), Paths.get(infile))
-            childUserJob.changeInFileState(inport.filename, Ready)
-
-            // If this port has a format, we also need to write the format file
-            if(inport.isInstanceOf[PortWithFormat]) {
-
-              val portWithFormat = inport.asInstanceOf[PortWithFormat]
-              File(s"$childRootPath${SEP}params$SEP${portWithFormat.formatFilename}").writeAll(portWithFormat.format.paramName)
-            }
-
-          case Some(buffer) => throw NotImplementedException("Format conversion is currently not supported")
-
-        }
-      }
-
 
 
     case WStart(userJob) =>
 
       Logger.info("[Worker](WStart) for job " + userJob.job_id)
-      val main_id = jobDB.getMainID(userJob.user_id, userJob.job_id)
-      val rootPath = jobPath + main_id.toString + SEP
-      val paramPath = jobPath + main_id.toString + SEP + "params/"
+      val main_id_o = jobDB.getMainID(userJob.user_id, userJob.job_id)
+      main_id_o match {
+        case Some(main_id) =>
+          val rootPath  = jobPath + main_id.toString + SEP
+          val paramPath = jobPath + main_id.toString + SEP + "params/"
 
 
-      val files = new java.io.File(paramPath).listFiles
+          val files = new java.io.File(paramPath).listFiles
 
-      val params : Map[String, String] = files.map { file =>
+          val params : Map[String, String] = files.map { file =>
 
-        file.getName -> scala.io.Source.fromFile(file.getAbsolutePath).mkString
-      }.toMap
+            file.getName -> scala.io.Source.fromFile(file.getAbsolutePath).mkString
+          }.toMap
 
-      ///
-      ///  Step 2: Get the runscript of the appropriate tool and replace template placeholders with
-      ///  input parameters
-      val sourceRunscript = Source.fromFile(runscriptPath + userJob.toolname + ".sh")
-      val targetRunscript = new PrintWriter(rootPath + userJob.toolname + ".sh")
+          ///
+          ///  Step 2: Get the runscript of the appropriate tool and replace template placeholders with
+          ///  input parameters
+          val sourceRunscript = Source.fromFile(runscriptPath + userJob.toolname + ".sh")
+          val targetRunscript = new PrintWriter(rootPath + userJob.toolname + ".sh")
 
-      for(line <- sourceRunscript.getLines) {
+          for(line <- sourceRunscript.getLines) {
 
-        targetRunscript.println(argumentPattern.replaceAllIn(line, { rm =>
+            targetRunscript.println(argumentPattern.replaceAllIn(line, { rm =>
 
-          val s = rm.toString()
-          val value = s.substring(2, s.length - 1)
+              val s = rm.toString()
+              val value = s.substring(2, s.length - 1)
 
-          s(0) match {
+              s(0) match {
 
-            case '#' =>  "params/" + value
-            case '$' => params.get(value).get.toString
-            case '@' => "results/" + value
-            case '?' =>
+                case '#' =>  "params/" + value
+                case '$' => params.get(value).get.toString
+                case '@' => "results/" + value
+                case '?' =>
 
-              val splt = value.split("(\\||:)")
-              if(params.get(splt(0)).get.asInstanceOf[Boolean]) splt(1) else {
+                  val splt = value.split("(\\||:)")
+                  if(params.get(splt(0)).get.asInstanceOf[Boolean]) splt(1) else {
 
-                if(splt.length == 2) "" else splt(2)
+                    if(splt.length == 2) "" else splt(2)
+                  }
               }
+            }))
           }
-        }))
+          Logger.info("Set file permission of: " + rootPath + userJob.toolname + ".sh")
+          ("chmod u+x " + rootPath + userJob.toolname + ".sh").!    // TODO Is there a neater way to change the permission?
+          sourceRunscript.close()
+          targetRunscript.close()
+
+          // Assumption : The Root path contains a prepared shellscript that bears the toolname + sh suffix
+
+          // TODO Maybe we can use the Process builder in a more clever way
+
+          val result = Process("./" + userJob.toolname + ".sh", new io.File(rootPath)).!
+
+          // Change state of job depending on the RUnscript execution
+          // TODO Add more error handling here
+          userJob.changeState(if(result == 0) Done else Error)
+        case None =>
+          userJob.changeState(Error)
       }
-      Logger.info("Set file permission of: " + rootPath + userJob.toolname + ".sh")
-      ("chmod u+x " + rootPath + userJob.toolname + ".sh").!    // TODO Is there a neater way to change the permission?
-      sourceRunscript.close()
-      targetRunscript.close()
-
-      // Assumption : The Root path contains a prepared shellscript that bears the toolname + sh suffix
-
-      // TODO Maybe we can use the Process builder in a more clever way
-
-      val result = Process("./" + userJob.toolname + ".sh", new io.File(rootPath)).!
-
-      // Change state of job depending on the RUnscript execution
-      // TODO Add more error handling here
-      userJob.changeState(if(result == 0) Done else Error)
   }
 }

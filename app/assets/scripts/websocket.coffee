@@ -30,4 +30,10 @@ ws.onmessage = (event) ->
       text = "Sorry, but this jobID is already used by you."
       $(".jobformsubmit").notify(text)
 
+    # User receives a autocomplete
+    when "autocomplete"
+      text = message.suggestion.toString()
+
+
+
   m.endComputation()
