@@ -48,10 +48,14 @@ object UserActor {
 
   case class Convert(parent_job_id : String, child_job_id : String, links : Seq[Link])
 
+  // Load jobs from the database
   case object UpdateJobs
 
   // Attach WebSocket Actor to UserActor
   case class AttachWS(ws : ActorRef)
+
+  // User requested a suggestion
+  case class AutoComplete(suggestion : String)
 
   trait Factory {
     def apply(session_id: String): Actor
@@ -72,7 +76,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
   // The User Actor maps the job_id to the actual job instance, represented as UserJob
   val userJobs        = new collection.mutable.HashMap[String, UserJob]
-  val databankMapping = new collection.mutable.HashMap[String, DBJobRef]
+  val databaseMapping = new collection.mutable.HashMap[String, DBJobRef]
 
   def receive = LoggingReceive {
 
@@ -108,7 +112,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       userJobs.put(job_id, job)
 
       // Put the new job into the Database Mapping
-      databankMapping.put(job_id, jobRefDB.update(DBJob(None, job_id, user_id, job.getState, job.toolname), session_id))
+      databaseMapping.put(job_id, jobRefDB.update(DBJob(None, job_id, user_id, job.getState, job.toolname), session_id))
+
 
       worker ! WPrepare(job, params)
 
@@ -117,13 +122,15 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case DeleteJob(job_id) =>
 
       val job = userJobs.remove(job_id).get    // Remove from User Model
-      databankMapping.remove(job_id)           // Remove from the database
+      databaseMapping.remove(job_id)           // Remove from the
+
       worker ! WDelete(job)                    // Worker removes Directory
 
     // Removes the job from the UserActor, but keep it in the database
     case ClearJob(job_id) =>
 
-      jobRefDB.delete(databankMapping.remove(job_id).get)
+      jobRefDB.delete(databaseMapping.remove(job_id).get)
+      userJobs.remove(job_id).get
       userJobs.remove(job_id).get
 
     // Returns a Job for a given job_id
@@ -138,7 +145,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
         val dbJob = jobDB.get(jobRef.main_id).get
         val job   = UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
         userJobs.put(dbJob.job_id,job)
-        databankMapping.put(dbJob.job_id,jobRef)
+        databaseMapping.put(dbJob.job_id,jobRef)
       }
 
     // Returns all Jobs
@@ -160,7 +167,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       job.changeState(Submitted)
 
       // Put the new job into the Database Mapping
-      databankMapping.put(job.job_id, jobRefDB.update(DBJob(None, job.job_id, user_id, job.getState, job.toolname), session_id))
+      databaseMapping.put(job.job_id, jobRefDB.update(DBJob(None, job.job_id, user_id, job.getState, job.toolname), session_id))
       userJobs.put(job.job_id, job)
 
       Logger.info("Try to get Parent job for job id from database, parent is: " + userJobs(parent_job_id).job_id)
@@ -189,10 +196,19 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       ws.get ! JobStateChanged(job_id, state)
 
       // get the main ID
-      val main_id = Some(databankMapping.get(job_id).get.main_id)
+      val main_id = Some(databaseMapping.get(job_id).get.main_id)
 
       // update Job state in Persistence
       jobRefDB.update(DBJob(main_id, job_id, user_id, userJob.getState, userJob.toolname), session_id)
+
+    case AutoComplete (suggestion : String) =>
+      jobDB.findJobID(user_id, suggestion).headOption match {
+        // Found something, return it to the user
+        case Some(dbJob) => ws.get ! AutoComplete(dbJob.job_id)
+        // Found nothing, do nothing.
+        case None        =>
+      }
+
 
     /* All of the remaining messages are just passed further to the WebSocket
     *  Currently: JobIDInvalid

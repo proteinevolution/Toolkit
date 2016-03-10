@@ -1,7 +1,7 @@
 # --- !Ups
 CREATE TABLE `users` (
 
-  `id`                  INTEGER UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `user_id`             INTEGER UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name_login`          VARCHAR(80),
   `name_first`          VARCHAR(50),
   `name_last`           VARCHAR(50),
