@@ -21,13 +21,10 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
   // TODO Toolname is a redundant field in the UserJob
   // TODO Pass Main ID instead of user and job ID to make sure a unique job ID is used.
 
-  if (state == Submitted) userActor ! JobStateChanged(job_id, state)
-
   val tool = models.graph.Ports.nodeMap(toolname)  // The associated tool node
 
   // Keeps track of all child Jobs and which inport links of the child jobs are controlled
   val childJobs : ArrayBuffer[(UserJob, Seq[Link])] = ArrayBuffer.empty
-
 
   // Maps all input files to an associated file object
    val inFileStates = tool.inports.map { port =>
@@ -42,12 +39,13 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
     Logger.info("???????????????????????????????????????????????????????????????????")
     childJobs.append((userJob, links))
     // Lock all files in the inport port of the child job
+
+    // Lock input files of fileports specified by link
     links.foreach { link =>
 
       // lock each inlink file from child Job
       val filename =  userJob.tool.inports(link.in).filename
       userJob.changeInFileState(filename, Locked)
-
     }
     // if the Job is done, we can trigger conversion process for this Job
     if(state == Done) {
@@ -107,13 +105,6 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
 
 object UserJob {
 
-  def apply(userActor      : ActorRef,
-            tool           : String,
-            job_id         : String,
-            user_id        : Long,
-            startImmediate : Boolean) = {
-    new UserJob(userActor, tool, job_id, user_id, Submitted, startImmediate)
-  }
 
   def apply(userActor      : ActorRef,
             tool           : String,

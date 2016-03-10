@@ -103,29 +103,38 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       }
       Logger.info("UserActor wants to prepare job directory for tool " + toolname + " with job_id " + job_id)
 
-      val job   = UserJob(self, toolname, job_id, user_id, startImmediate)
-      val dbJob = jobRefDB.update(DBJob(None, job_id, user_id, job.getState, job.toolname), session_id)
+      val job = UserJob(self, toolname, job_id, user_id, Submitted, startImmediate)
 
+      // This is a new Job, so we have to make the status *Submitted explicit*
+      job.changeState(Submitted)
+
+
+      // Make changes to the UserActor Model
       userJobs.put(job_id, job)
-      databankMapping.put(job_id, dbJob)
+
+      // Put the new job into the Database Mapping
+      databankMapping.put(job_id, jobRefDB.update(DBJob(None, job_id, user_id, job.getState, job.toolname), session_id))
+
       worker ! WPrepare(job, params)
 
 
-    // Removes a Job (from the view and user actor as well as from the folder structure)
+    // Removes a Job (from the view and user actor as well as from the directory structure)
     case DeleteJob(job_id) =>
+
       val job = userJobs.remove(job_id).get    // Remove from User Model
-      databankMapping.remove(job_id)
+      databankMapping.remove(job_id)           // Remove from the database
       worker ! WDelete(job)                    // Worker removes Directory
 
     // Removes a Job (from the view and from user actor)
     case ClearJob(job_id) =>
-      Logger.info("Clear Actor")
+
       jobRefDB.delete(databankMapping.remove(job_id).get)
-      val job = userJobs.remove(job_id).get
+      userJobs.remove(job_id).get
 
     // Returns a Job for a given job_id
     case GetJob(job_id) =>  sender() ! userJobs.get(job_id).get
 
+    // Read the parameters, which have already been provided, from a job
     case GetJobParams(job_id) => worker forward WRead(userJobs(job_id))
 
     // Updates all jobs from the database
@@ -141,11 +150,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case GetAllJobs => sender() ! userJobs.values
 
 
-
+    /* Appends a new Job to one parent job */
     case AppendChildJob(parent_job_id, toolname, links) =>
-
-      Logger.info("Append child job received")
-
 
       var new_job_id = None: Option[String]
       do {
@@ -153,15 +159,20 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
         new_job_id = Some(RandomString.randomNumString(7))
       } while(userJobs contains new_job_id.get)
 
-      val job = UserJob(self, toolname, new_job_id.get, user_id, false)  // TODO Start immediate not yet supported for child jobs
+      val job = UserJob(self, toolname, new_job_id.get, user_id, Submitted,  false)
+
+      // This is a new Job, so we have to make the Job state *Submitted* explicit
+      job.changeState(Submitted)
+
+      // Put the new job into the Database Mapping
+      databankMapping.put(job.job_id, jobRefDB.update(DBJob(None, job.job_id, user_id, job.getState, job.toolname), session_id))
       userJobs.put(job.job_id, job)
 
+      Logger.info("Try to get Parent job for job id from database, parent is: " + userJobs(parent_job_id).job_id)
       userJobs(parent_job_id).appendChild(job, links)
 
-
+      
     case Convert(parent_job_id, child_job_id, links) =>
-
-      Logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
       worker ! WConvert(userJobs(parent_job_id), userJobs(child_job_id), links)
 
