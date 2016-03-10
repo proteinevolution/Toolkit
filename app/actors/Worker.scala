@@ -126,7 +126,7 @@ class Worker @Inject() (jobDB    : models.database.Jobs)
       val parentRootPath = jobPath + parent_main_id + SEP
       val childRootPath = jobPath + child_main_id + SEP
 
-      // Create Child Root Path if does not alpready exist
+      // Create Child Root Path if does not already exist
       if(!java.nio.file.Files.exists(Paths.get(childRootPath))) {
 
         Directory(childRootPath).createDirectory(false, false)
