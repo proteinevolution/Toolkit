@@ -8,7 +8,7 @@ import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.jobs.{Prepared, Done, UserJob}
-import models.tools.{ToolModel, Hmmer3, Tcoffee, Alnviz}
+import models.tools._
 import models.sessions.Session
 import play.api.Logger
 import scala.concurrent.Future
@@ -24,12 +24,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by lukas on 1/27/16.
   */
 object Tool {
+
   var tools:List[ToolModel] = List[ToolModel]()  // list of all added tools
 
   // TODO Get these imported from an external file
   tools::= Hmmer3
   tools::= Tcoffee
   tools::= Alnviz
+  tools::= Psiblast
 
 
   /** getToolModel
@@ -70,8 +72,6 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
 
   def show(toolname: String) = Action { implicit request =>
-
-    Logger.info(s"{Tool} Input view for tool $toolname requested")
 
     val tool = Tool.getToolModel(toolname)
     // Check if the tool name was ok.
