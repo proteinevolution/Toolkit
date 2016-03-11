@@ -21,24 +21,8 @@ object Hmmer3 extends ToolModel {
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
-      "sequences"       -> text,
-      "mlalign_id_pair" -> boolean,
-      "mfast_pair"      -> boolean,
-      "mslow_pair"      -> boolean
+      "alignment" -> text,
+      "alignment_format" -> text
     )
   )
-
-  /*
-    val inports  = Map(
-
-      Sequences -> 1 // TCoffee needs one Set of Sequences
-    )
-  */
-
-  //Map parameter identifier to the full names
-  val parameterNames = Map(
-    "sequences" -> "Sequences to be aligned")
-
-  // TODO We need a better abstraction for the tool result names
-  val resultFileNames = Vector("result")
 }
