@@ -188,18 +188,26 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
           // User requested job whose execution is done
           case Done => Future.successful {
 
-            val vis = Map(
-              "Simple" -> views.html.visualization.alignment.simple(s"/files/$job_id/sequences.clustalw_aln"),
-              "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/sequences.clustalw_aln"))
-
             val toolframe = job.toolname match {
 
+              //  The tool anlviz just returns the BioJS MSA Viewer page
               case "alnviz" =>
                 val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/result"))
                 views.html.job.result(vis, job)
 
-              case "tcoffee" => views.html.job.result(vis, job)
-              case "hmmer3" => views.html.job.result(vis, job)
+
+              // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
+              case "tcoffee" =>
+
+                val vis = Map(
+                  "Simple" -> views.html.visualization.alignment.simple(s"/files/$job_id/sequences.clustalw_aln"),
+                  "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/sequences.clustalw_aln"))
+
+                views.html.job.result(vis, job)
+
+              // Hmmer just provides a simple file viewer.
+              case "hmmer3" => views.html.visualization.general.fileview(
+                Array(s"/files/$job_id/domtbl", s"/files/$job_id/outfile", s"/files/$job_id/outfile_multi_sto", s"/files/$job_id/tbl"))
             }
 
             Ok(toolframe).withSession {
