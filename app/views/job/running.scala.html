@@ -1,0 +1,8 @@
+@import models.jobs.UserJob
+@(job : UserJob)(implicit messages: Messages, request: RequestHeader)
+
+
+<div class="callout secondary">
+
+    The job with ID @job.job_id is currently being processed. Have patience.
+</div>
