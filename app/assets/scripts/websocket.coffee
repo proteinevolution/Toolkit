@@ -24,16 +24,9 @@ ws.onmessage = (event) ->
       if state == '0'
         $('.jobformclear').click()
 
-    # User has entered a JobID that is already in use
-    # // TODO This case can be handled on client-side
+    # User was looking for a job_id which was not valid
     when "jobidinvalid"
-      text = "Sorry, but this jobID is already used by you."
-      $(".jobformsubmit").notify(text)
-
-    # User receives a autocomplete
-    when "autocomplete"
-      text = message.suggestion.toString()
-
-
+      text = "Sorry, but there is no such Job ID."
+      $(".jobsearchform").notify(text)
 
   m.endComputation()

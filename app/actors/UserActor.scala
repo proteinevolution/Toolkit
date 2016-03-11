@@ -51,11 +51,15 @@ object UserActor {
   // Load jobs from the database
   case object UpdateJobs
 
+  // Loads a single job from the database and loads it into the user actor
+  case class AddJob(job_id : String)
+
   // Attach WebSocket Actor to UserActor
   case class AttachWS(ws : ActorRef)
 
   // User requested a suggestion
   case class AutoComplete(suggestion : String)
+  case class AutoCompleteSend (suggestions : Seq[DBJob])
 
   trait Factory {
     def apply(session_id: String): Actor
@@ -122,15 +126,13 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case DeleteJob(job_id) =>
 
       val job = userJobs.remove(job_id).get    // Remove from User Model
-      databaseMapping.remove(job_id)           // Remove from the
+      databaseMapping.remove(job_id)           // Remove job from the relation database mapping
 
       worker ! WDelete(job)                    // Worker removes Directory
 
-    // Removes the job from the UserActor, but keep it in the database
+    // Removes the job from the UserActor, but keep it in the job database
     case ClearJob(job_id) =>
-
       jobRefDB.delete(databaseMapping.remove(job_id).get)
-      userJobs.remove(job_id).get
       userJobs.remove(job_id).get
 
     // Returns a Job for a given job_id
@@ -146,6 +148,23 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
         val job   = UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
         userJobs.put(dbJob.job_id,job)
         databaseMapping.put(dbJob.job_id,jobRef)
+      }
+
+    // Asks the user actor to load a single job from the database in the JobModel
+    case AddJob (job_id : String) =>
+      val dbJob_o = jobDB.get(user_id, job_id).headOption
+      dbJob_o match {
+        case Some(dbJob) =>
+          val job = UserJob (self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
+          val jobRef = jobRefDB.update(dbJob, session_id)
+          userJobs.put (dbJob.job_id, job)
+          databaseMapping.put (dbJob.job_id, jobRef)
+
+          Logger.info("Adding Job. (AddJob)")
+
+        case None =>
+          ws.get ! JobIDInvalid
+          Logger.info("Invalid ID")
       }
 
     // Returns all Jobs
@@ -202,13 +221,9 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       jobRefDB.update(DBJob(main_id, job_id, user_id, userJob.getState, userJob.toolname), session_id)
 
     case AutoComplete (suggestion : String) =>
-      jobDB.findJobID(user_id, suggestion).headOption match {
-        // Found something, return it to the user
-        case Some(dbJob) => ws.get ! AutoComplete(dbJob.job_id)
-        // Found nothing, do nothing.
-        case None        =>
-      }
-
+      val dbJobSeq = jobDB.suggestJobID(user_id, suggestion)
+      // Found something, return it to the user
+      ws.get ! AutoCompleteSend(dbJobSeq)
 
     /* All of the remaining messages are just passed further to the WebSocket
     *  Currently: JobIDInvalid

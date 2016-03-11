@@ -12,7 +12,7 @@ object Session {
 
   var sessions = List[String]()
 
-  def requestSessionID(request : Request[AnyContent]) : String = {
+  def requestSessionID(request : Request[Any]) : String = {
     request.session.get(SID).getOrElse {
       var nextString:String = ""
       do {
@@ -24,7 +24,7 @@ object Session {
     }
   }
 
-  def closeSessionRequest(request : Request[AnyContent], session_id : String): mvc.Session = {
+  def closeSessionRequest(request : Request[Any], session_id : String): mvc.Session = {
     Logger.info("Request from SID \"" + session_id + "\"")
     request.session + (SID -> session_id)
   }

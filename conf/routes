@@ -38,8 +38,12 @@ POST        /tools/:toolname/:start         @controllers.Tool.submit(toolname : 
 GET         /results/:jobid                 @controllers.Tool.result(jobid: String)
 POST        /results/:jobid                 @controllers.Tool.result(jobid: String)
 
-
+GET         /jobs/search/:jobid             @controllers.Service.findJobID(jobid: String)
+POST        /jobs/search/:jobid             @controllers.Service.findJobID(jobid: String)
+GET         /jobs/add/:jobid                @controllers.Service.addJobID(jobid: String)
+POST        /jobs/add/:jobid                @controllers.Service.addJobID(jobid: String)
 POST        /jobs/new/:toolname             @controllers.Service.newJob(toolname : String)
+GET         /jobs/get/:jobid                @controllers.Service.getJob(jobid : String)
 POST        /jobs/get/:jobid                @controllers.Service.getJob(jobid : String)
 POST        /jobs/del/:jobid                @controllers.Service.delJob(jobid : String)
 POST        /jobs/addChild                  @controllers.Service.addChild

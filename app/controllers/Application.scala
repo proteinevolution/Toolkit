@@ -93,9 +93,9 @@ class Application @Inject()(val messagesApi: MessagesApi,
         Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {
           Session.closeSessionRequest(request, session_id)
         }
-        // main_id does not exist. Redirect to Forbidden
+        // main_id does not exist. Redirect to NotFound
       case None =>
-        Forbidden
+        NotFound
     }
   }
 }

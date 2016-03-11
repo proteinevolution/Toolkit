@@ -8,6 +8,7 @@ import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
+import models.database.DBJob
 import play.api.libs.json.{JsValue, Json}
 
 
@@ -37,7 +38,8 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
       (js \ "type").validate[String] map {
 
         case "getSuggestion" =>
-            (js \ "query").validate[String].map { query => userActor ! AutoComplete(query)
+            (js \ "query").validate[String].map {
+              query => userActor ! AutoComplete(query)
             }
       }
 
@@ -54,7 +56,12 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
       // Real-time notification in this application
       out ! Json.obj("type" -> "jobstate", "newState" -> state.no, "job_id" -> job_id)
 
-    case AutoComplete (suggestion : String) =>
-      out ! Json.obj("type" -> "autocomplete", "suggestion" -> suggestion)
+    case AutoCompleteSend (suggestions : Seq[DBJob]) =>
+      val jobListObjs = for (suggestion <- suggestions) yield {
+        Json.obj("t" -> suggestion.toolname,
+                 "s" -> suggestion.job_state.no,
+                 "i" -> suggestion.job_id)
+      }
+      out ! Json.obj("type" -> "autocomplete", "suggestions" -> jobListObjs)
   }
 }

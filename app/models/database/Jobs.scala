@@ -55,6 +55,7 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
   val deleteQuery = jobs returning jobs.map(_.main_id)
   val updateQuery = jobs returning jobs.map(_.main_id)
   val getQuery = jobs returning jobs.map(_.main_id)
+  //val likeQuery = jobs  jobs.map(_.job_id)
 
   /**
     * Finds Jobs based on a partial job_id
@@ -62,7 +63,7 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
     * @param job_id_part
     * @return
     */
-  def findJobID(user_id: Long, job_id_part : String) : Seq[DBJob] = {
+  def suggestJobID(user_id: Long, job_id_part : String) : Seq[DBJob] = {
     Await.result(dbConfig.db.run(jobs.filter(_.user_id === user_id).filter(_.job_id.startsWith(job_id_part)).result), Duration.Inf)
   }
 

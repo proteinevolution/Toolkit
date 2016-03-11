@@ -12,7 +12,7 @@ import models.tools.{Hmmer3, Tcoffee, Alnviz}
 import models.sessions.Session
 import play.api.Logger
 import play.api.libs.json.Json
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask
@@ -30,11 +30,10 @@ import play.api.libs.functional.syntax._
   */
 
 @Singleton
-class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") userManager : ActorRef)
+class Service @Inject() (val messagesApi: MessagesApi,
+                         jobDB    : models.database.Jobs,
+                         @Named("user-manager") userManager : ActorRef)
   extends Controller with I18nSupport {
-
-  val tools = ""
-
 
   implicit val timeout = Timeout(5.seconds)
 
@@ -66,7 +65,7 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
     Logger.info("Add child Job received")
 
-    val session_id = request.session.get("sid").get
+    val session_id = Session.requestSessionID(request) // Grab the Session ID
 
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
 
@@ -105,7 +104,6 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
   }
 
 
-
   /**
     *
     * User ask for the creation of a new Job with the provided tool name.
@@ -129,7 +127,7 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
 
 
   /**
-    * User asks to delete the Job with the provided jobid
+    * User asks to delete the Job with the provided job_id
     *
     * @param job_id
     * @return
@@ -145,21 +143,24 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
     }
   }
 
-
+  /**
+    * Asks the userActor to clear a job from the view
+    *
+    * @param job_id job_id of the job
+    * @return
+    */
   def clearJob(job_id: String) = Action.async { implicit request =>
     Logger.info("clear")
 
     val session_id = Session.requestSessionID(request)
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
 
-
       userActor ! ClearJob(job_id)
       Ok(Json.obj("job_id" -> job_id))
-
+    }
   }
-}
 
-  def getJob(job_id : String) = Action.async { implicit request =>
+  def getJob(job_id: String) = Action.async { implicit request =>
 
     val session_id = Session.requestSessionID(request) // Grab the Session ID
 
@@ -186,7 +187,7 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
             }
 
             Ok(views.html.general.result(toolframe, job)).withSession {
-              Session.closeSessionRequest(request, session_id)   // Send Session Cookie
+              Session.closeSessionRequest(request, session_id) // Send Session Cookie
             }
           }
           case Prepared =>
@@ -201,10 +202,49 @@ class Service @Inject() (val messagesApi: MessagesApi, @Named("user-manager") us
               }
 
               Ok(views.html.general.submit(job.toolname, toolframe)).withSession {
-                Session.closeSessionRequest(request, session_id)   // Send Session Cookie
+                Session.closeSessionRequest(request, session_id) // Send Session Cookie
               }
             }
         }
+      }
+    }
+  }
+
+  /**
+    * Searches for a matching job_id
+    *
+    * @param jobIDLookup prefix of a job_id
+    * @return
+    */
+  def findJobID(jobIDLookup: String) = Action.async { implicit request =>
+    Future {
+      Ok(views.html.general.search(jobDB.suggestJobID(12345L, jobIDLookup)))
+    }
+  }
+
+  /**
+    * Searches for a matching job_id
+    *
+    * @param jobIDLookup prefix of a job_id
+    * @return
+    */
+  def addJobID(jobIDLookup: String) = Action.async { implicit request =>
+    Logger.info(":)")
+    Future {
+      val session_id = Session.requestSessionID(request) // Grab the Session ID
+      val jobSeq = jobDB.suggestJobID(12345L, jobIDLookup)
+      jobSeq.headOption match {
+        case Some(dbJob) =>
+          Logger.info("Adding Job. (addJobID): " + dbJob.job_id)
+          (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
+            userActor ! AddJob(dbJob.job_id)
+            Logger.info("Adding Job. (addJobID)")
+          }
+
+          Ok(views.html.general.search(jobSeq))
+        // no such job_id, send to NotFound
+        case None =>
+          NotFound
       }
     }
   }
