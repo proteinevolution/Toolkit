@@ -208,6 +208,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       // If the job changed to prepared and if it is set to start immediately, start the Job
       if(state == Prepared && userJob.startImmediate) {
+
+        userJob.changeState(Queued)
         worker ! WStart(userJob)
       }
 

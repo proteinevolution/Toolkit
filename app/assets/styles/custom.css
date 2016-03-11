@@ -38,6 +38,11 @@
     background-color: orange;
 }
 
+.p {
+    background-color: brown;
+}
+
+
 
 .alignment {
     font-family: monospace;
@@ -144,7 +149,7 @@ tr.spaceUnder > td
     text-transform: uppercase;
 }
 
-.hmmer{
+.hmmer3{
 
     background-color: #D0BA89;
     border: solid 1px black;
@@ -201,7 +206,7 @@ hr {
 
 .main-content {
 
-    min-height: 31.250em;
+    height: 100vh;
     display: flex;
 
 }
@@ -244,4 +249,14 @@ hr {
     padding:10px;
     color:#fff;
     font-size:12px;
+}
+
+.orbit {
+
+    height: 100%;
+}
+
+.orbit-container {
+
+    height: 100%;
 }

@@ -9,10 +9,14 @@
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.png")">
         <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/custom.css")" rel="stylesheet">
+        <link href="@routes.Assets.at("styles/")" rel="stylesheet">
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("modernizr.min.js"))"></script>
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))"></script>
 
-         <!-- Mithril -->
+
+
+
+        <!-- Mithril -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.2-rc.1/mithril.min.js"></script>
 
 
@@ -29,6 +33,24 @@
 
 
     <body data-ws-url="@routes.Application.ws().webSocketURL()">
+
+        <div class="row fullwidth">
+            <div class="large-12 columns" id="subnav">
+                <dl class="sub-nav">
+                    <dd><a href="#">Help</a></dd>
+                    <dd><a href="#">Disclaimer</a></dd>
+                    <dd><a href="http://www.eb.tuebingen.mpg.de/impressum" target="_blank">Imprint</a></dd>
+                    <dd><a href="#">Tool Versions</a></dd>
+                    <dd><a href="#">Tool Statistics</a></dd>
+                    <dd><a href="#">DB Statistics</a></dd>
+                    <dd><a href="#">User Statistics</a></dd>
+                    <dd><a href="#">Contact</a></dd>
+                    <dd><a href="#">Personal Databases</a></dd>
+                    <dd><a href="#">PDBalert</a></dd>
+                    <dd><a href="#">Login</a></dd>
+                </dl>
+            </div>
+        </div>
 
         <!---Top-Bar with Logo/Search and Dropdown --->
         <div class="row fullwidth" id="topbar" data-equalizer>
@@ -70,7 +92,7 @@
 
         <!---Main Content Section includes Sidebar and Content --->
         <section class="row fullwidth main-content">
-            <div class="large-2 small-2 columns sidebar padded-column">
+            <div class="large-2 small-2 columns sidebar padded-column show-for-large">
                 @elements.sidebar()
             </div>
 
@@ -90,6 +112,7 @@
         <!-- Foundation 6 -->
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("foundation.min.js"))"></script>
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("foundation.tabs.js"))"></script>
+        <script src="@routes.WebJarAssets.at(WebJarAssets.locate("foundation.util.motion.js"))"></script>
 
         <!-- CoffeeScript Assets -->
         <script src="@routes.Assets.at("scripts/main.js")"></script>
@@ -102,6 +125,8 @@
         <!-- Public Javascript Assets -->
         <script src="@routes.Assets.at("javascripts/msa_mpi_content.min.js")" type="text/javascript"></script>
         <script src='@routes.Assets.at("javascripts/notify.min.js")' type="text/javascript" ></script>
+        <link href="@routes.Assets.at("styles/motion-ui.css")" rel="stylesheet">
+
 
 
         <script type="text/javascript">
