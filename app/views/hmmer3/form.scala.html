@@ -1,11 +1,18 @@
 @import play.api.mvc.RequestHeader
-@import models.tools.Hmmer3
-@(inputForm: Form[(String, Boolean, Boolean, Boolean)])(implicit messages: Messages, request: RequestHeader)
+@import models.tools.Alnviz
+@(inputForm: Form[(String, String)])(implicit messages: Messages, request: RequestHeader)
 
-@helper.textarea(field = inputForm("sequences"), args = 'rows -> 20, 'cols -> 50,
-  '_label -> "Enter sequences to be aligned in Multi-FASTA format.",
-  'id -> "sequences")
+@helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 50,
+  '_label -> "",
+  'placeholder -> "Enter multiple sequence alignment",
+  'id -> "alignment")
 
-@helper.checkbox(field = inputForm("mlalign_id_pair"), '_showConstraints -> false)
-@helper.checkbox(field = inputForm("mfast_pair"), '_showConstraints -> false)
-@helper.checkbox(field = inputForm("mslow_pair"), '_showConstraints -> false)
+
+    <a onClick="$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
+
+    @helper.select(
+        inputForm("alignment_format"),
+        helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("alignment_format"))),
+        '_label -> "Select alignment format",
+        'id -> "format"
+    )
