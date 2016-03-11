@@ -15,14 +15,14 @@ libraryDependencies ++= Seq(
   cache,
   evolutions,
   "org.webjars" %% "webjars-play" % "2.4.0-2",
-  "org.webjars" % "jquery" % "2.2.0",
+  "org.webjars" % "jquery" % "2.2.1",
   "org.webjars" % "foundation" % "6.2.0",
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.typesafe.play" %% "play-slick" % "1.1.1",
   "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1"
 )
 
-dependencyOverrides += "org.webjars" % "jquery" % "2.2.0"
+dependencyOverrides += "org.webjars" % "jquery" % "2.2.1"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
