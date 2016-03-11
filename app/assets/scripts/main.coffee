@@ -18,7 +18,7 @@ Jobs =
     { job_id: m.route.param('jobid') }
   view: (controller) ->
     $.ajax(
-      type: "POST"
+      type: "GET"
       url: "/jobs/get/" + controller.job_id).done (data) ->
         $('#content').empty().append data
 

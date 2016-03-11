@@ -1,0 +1,6 @@
+@import play.api.mvc.RequestHeader
+@import models.database.DBJob
+@(jobs: Seq[DBJob])(implicit messages: Messages, request: RequestHeader)
+<ul class="jobsearchlist">
+@for(job <- jobs){ <li><a href="/#/jobs/add/@job.job_id">@job.job_id</a> by user <b>@job.user_id</b></li> }
+</ul>
