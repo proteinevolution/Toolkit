@@ -1,7 +1,8 @@
 package models.graph
 
+import models.graph
 import models.graph.Converters.ReformatConverter
-import models.graph.nodes.{TcoffeeNode, AlnvizNode}
+import models.graph.nodes.{HmmerNode, TcoffeeNode, AlnvizNode}
 import play.api.Logger
 
 import scala.collection.mutable.ArrayBuffer
@@ -12,12 +13,13 @@ import scala.collection.mutable.ArrayBuffer
 object Ports {
 
 
-  val nodes = Vector(AlnvizNode, TcoffeeNode)
+  val nodes = Vector(AlnvizNode, TcoffeeNode, HmmerNode)
 
   val nodeMap = Map(
 
     AlnvizNode.toolname -> AlnvizNode,
-    TcoffeeNode.toolname -> TcoffeeNode
+    TcoffeeNode.toolname -> TcoffeeNode,
+    HmmerNode.toolname -> HmmerNode
   )
 
 

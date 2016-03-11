@@ -155,7 +155,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
           case Done => Future {
 
-            // TODO Dynamically calculate appropriate visualizations
+            // TODO Dynamically calculate appropriate result
             val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$job_id/sequences.aln"),
               "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/sequences.aln"))
 
@@ -163,13 +163,13 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
               case "alnviz" =>
                 val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/result"))
-                views.html.tool.visualizations(vis, job)
+                views.html.job.result(vis, job)
 
-              case "tcoffee" => views.html.tool.visualizations(vis, job)
-              case "hmmer3" => views.html.tool.visualizations(vis, job)
+              case "tcoffee" => views.html.job.result(vis, job)
+              case "hmmer3" => views.html.job.result(vis, job)
             }
 
-            Ok(views.html.general.result(toolframe, job))
+            Ok(toolframe)
         }
           case Prepared =>
             Logger.info("Prepared job requested")
