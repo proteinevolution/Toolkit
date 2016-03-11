@@ -10,8 +10,6 @@ import play.api.data.Forms._
   */
 object Hmmer3 extends ToolModel {
 
-  val inport = null
-
   // --- Names for the Tool ---
   val toolNameShort:String        = "hmmer3"
   val toolNameLong:String         = "Hmmer3"

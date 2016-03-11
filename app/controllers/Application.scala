@@ -72,7 +72,7 @@ class Application @Inject()(val messagesApi: MessagesApi,
     }
 
     // Without session cookie
-    //Ok(views.html.main(views.html.general.homecontent(),"Home"))
+    Ok(views.html.main(views.html.general.newcontent(),"Home"))
   }
 
   /**

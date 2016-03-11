@@ -7,7 +7,7 @@ import actors.UserActor._
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.jobs.{Prepared, Done, UserJob}
+import models.jobs._
 import models.tools.{Hmmer3, Tcoffee, Alnviz}
 import models.sessions.Session
 import play.api.Logger
@@ -166,30 +166,56 @@ class Service @Inject() (val messagesApi: MessagesApi,
 
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
       (userActor ? GetJob(job_id)).mapTo[UserJob].flatMap { job =>
+
         // Switch on Job state to decide what to show
         job.getState match {
 
-          case Done => Future {
+          case Queued => Future.successful {
 
-            // TODO Dynamically calculate appropriate visualizations
-            val vis = Map(
-              "Simple" -> views.html.visualization.alignment.simple(s"/files/$job_id/sequences.clustalw_aln"),
-              "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/sequences.clustalw_aln"))
+            Ok(views.html.job.queued(job)).withSession {
+              Session.closeSessionRequest(request, session_id)   // Send Session Cookie
+            }
+          }
+
+
+          // User has requested a job whose state is Running
+          case Running => Future.successful {
+
+            Ok(views.html.job.running(job)).withSession {
+              Session.closeSessionRequest(request, session_id)   // Send Session Cookie
+            }
+          }
+
+          // User requested job whose execution is done
+          case Done => Future.successful {
 
             val toolframe = job.toolname match {
 
+              //  The tool anlviz just returns the BioJS MSA Viewer page
               case "alnviz" =>
                 val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/result"))
-                views.html.tool.visualizations(vis, job)
+                views.html.job.result(vis, job)
 
-              case "tcoffee" => views.html.tool.visualizations(vis, job)
-              case "hmmer3" => views.html.tool.visualizations(vis, job)
+
+              // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
+              case "tcoffee" =>
+
+                val vis = Map(
+                  "Simple" -> views.html.visualization.alignment.simple(s"/files/$job_id/sequences.clustalw_aln"),
+                  "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/sequences.clustalw_aln"))
+
+                views.html.job.result(vis, job)
+
+              // Hmmer just provides a simple file viewer.
+              case "hmmer3" => views.html.visualization.general.fileview(
+                Array(s"/files/$job_id/domtbl", s"/files/$job_id/outfile", s"/files/$job_id/outfile_multi_sto", s"/files/$job_id/tbl"))
             }
-
-            Ok(views.html.general.result(toolframe, job)).withSession {
-              Session.closeSessionRequest(request, session_id) // Send Session Cookie
+            Ok(toolframe).withSession {
+              Session.closeSessionRequest(request, session_id)   // Send Session Cookie
             }
           }
+
+          // User has requested a job that is currently prepared
           case Prepared =>
             Logger.info("Prepared job requested")
 

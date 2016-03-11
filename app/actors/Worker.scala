@@ -41,20 +41,20 @@ object Worker {
   case class WConvert(parentUserJob : UserJob, childUserJob : UserJob, links : Seq[Link])
 }
 
-class Worker @Inject() (jobDB    : models.database.Jobs)
+class Worker @Inject() (jobDB : models.database.Jobs)
   extends Actor with ActorLogging {
 
   import actors.Worker._
 
   val SEP = java.io.File.separator
 
-  val subdirs = Array("/results", "/logs", "/params", "/specific")
+  val subdirs = Array("/results", "/logs", "/params", "/specific", "/inter")
 
 
   // Variables the worker need to execute //TODO Inject Configuration
   val runscriptPath = s"bioprogs${SEP}runscripts$SEP"
   val jobPath = s"development$SEP"
-  val argumentPattern = "(\\$\\{[a-z_]+\\}|#\\{[a-z_]+\\}|@\\{[a-z_]+\\}|\\?\\{.+\\})".r
+  val argumentPattern = "(\\$\\{[a-z_]+\\}|#\\{[a-z_]+\\}|@\\{[a-z_]+\\}|\\?\\{.+\\}|\\+\\{[a-z_]+\\})".r
 
 
   def receive = LoggingReceive {
@@ -225,6 +225,7 @@ class Worker @Inject() (jobDB    : models.database.Jobs)
 
               s(0) match {
 
+                case '+' => "inter/" + value
                 case '#' =>  "params/" + value
                 case '$' => params.get(value).get.toString
                 case '@' => "results/" + value
@@ -243,10 +244,11 @@ class Worker @Inject() (jobDB    : models.database.Jobs)
           sourceRunscript.close()
           targetRunscript.close()
 
-          // Assumption : The Root path contains a prepared shellscript that bears the toolname + sh suffix
 
           // TODO Maybe we can use the Process builder in a more clever way
 
+          // Actually start the Job, the code will stall here
+          userJob.changeState(Running)
           val result = Process("./" + userJob.toolname + ".sh", new io.File(rootPath)).!
 
           // Change state of job depending on the RUnscript execution
