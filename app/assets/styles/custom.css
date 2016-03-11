@@ -206,7 +206,7 @@ hr {
 
 .main-content {
 
-    min-height: 31.250em;
+    height: 100vh;
     display: flex;
 
 }
