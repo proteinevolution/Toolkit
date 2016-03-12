@@ -96,13 +96,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case PrepWD(toolname, params, startImmediate, job_id_o) =>
 
       // Determine the Job ID for the Job that was submitted
-      val job_id : String = job_id_o match {
-        // Job ID was selected by the User
-        case Some(id) => id
-        // Job ID was none, generate a random ID
-        case None     => RandomString.randomNumString(7)
-        //TODO: check whether this random id already exists in the db or make the userJobs Map entirely consistent with the Database
-      }
+      val job_id : String = checkJobID(job_id_o)
       Logger.info("UserActor wants to prepare job directory for tool " + toolname + " with job_id " + job_id)
 
 
@@ -172,15 +166,13 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     /* Appends a new Job to one parent job */
     case AppendChildJob(parent_job_id, toolname, links) =>
-
+      // Load the Parent job from the Database if it is not in the UserActor
+      if(userJobs.filterKeys(_ == parent_job_id).isEmpty) {
+        self ! AddJob(parent_job_id)
+      }
       // Generate new Job ID
-      var new_job_id = None: Option[String]
-      do {
-        //TODO: check whether this random id already exists in the db or make the userJobs Map entirely consistent with the Database
-        new_job_id = Some(RandomString.randomNumString(7))
-      } while(userJobs contains new_job_id.get)
-
-      val job = UserJob(self, toolname, new_job_id.get, user_id, Submitted,  false)
+      var job_id : String = checkJobID(None)
+      val job = UserJob(self, toolname, job_id, user_id, Submitted,  false)
 
       // This is a new Job, so we have to make the Job state *Submitted* explicit
       job.changeState(Submitted)
@@ -194,7 +186,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
 
     case Convert(parent_job_id, child_job_id, links) =>
-
       worker ! WConvert(userJobs(parent_job_id), userJobs(child_job_id), links)
 
 
@@ -217,10 +208,10 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       ws.get ! JobStateChanged(job_id, state)
 
       // get the main ID
-      val main_id = Some(databaseMapping.get(job_id).get.main_id)
+      val main_id_o = Some(databaseMapping.get(job_id).get.main_id)
 
       // update Job state in Persistence
-      jobRefDB.update(DBJob(main_id, job_id, user_id, userJob.getState, userJob.toolname), session_id)
+      jobRefDB.update(DBJob(main_id_o, job_id, user_id, userJob.getState, userJob.toolname), session_id)
 
     case AutoComplete (suggestion : String) =>
       val dbJobSeq = jobDB.suggestJobID(user_id, suggestion)
@@ -232,6 +223,20 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     * */
     case m =>  ws.get ! m
 
+  }
+
+  /**
+    * Checks if a given job_id is already used for a different job
+    * @param job_id_o selected job_id
+    * @return
+    */
+  def checkJobID (job_id_o : Option[String]) : String = {
+    // Determine the Job ID for the Job that was submitted
+    var job_id : String = job_id_o.getOrElse(RandomString.randomNumString(7))
+    while (jobDB.get(user_id, job_id).nonEmpty) {
+      job_id = RandomString.randomNumString(7)
+    }
+    job_id
   }
 }
 // A links just connects one output port to one input port

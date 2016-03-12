@@ -243,7 +243,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
     * @return
     */
   def findJobID(jobIDLookup: String) = Action.async { implicit request =>
-    Future {
+    Future.successful {
       Ok(views.html.general.search(jobDB.suggestJobID(12345L, jobIDLookup)))
     }
   }
@@ -255,16 +255,14 @@ class Service @Inject() (val messagesApi: MessagesApi,
     * @return
     */
   def addJobID(jobIDLookup: String) = Action.async { implicit request =>
-    Logger.info(":)")
-    Future {
-      val session_id = Session.requestSessionID(request) // Grab the Session ID
+    val session_id = Session.requestSessionID(request) // Grab the Session ID
+    Logger.info("Hi " + session_id + " :)") // TODO should get this message in the logger, at least
+    Future.successful {
       val jobSeq = jobDB.suggestJobID(12345L, jobIDLookup)
       jobSeq.headOption match {
         case Some(dbJob) =>
-          Logger.info("Adding Job. (addJobID): " + dbJob.job_id)
           (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
             userActor ! AddJob(dbJob.job_id)
-            Logger.info("Adding Job. (addJobID)")
           }
 
           Ok(views.html.general.search(jobSeq))
