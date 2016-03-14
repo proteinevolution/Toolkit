@@ -7,11 +7,9 @@ import actors.UserActor._
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.jobs.{Prepared, Done, UserJob}
 import models.tools._
 import models.sessions.Session
 import play.api.Logger
-import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask

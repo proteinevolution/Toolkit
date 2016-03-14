@@ -1,9 +1,8 @@
 package models.graph.nodes
 
 import models.graph.Ports.Alignment
-import models.graph.{File, CLU}
+import models.graph.CLU
 
-import scala.collection.mutable.ArrayBuffer
 
 
 /**
