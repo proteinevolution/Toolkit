@@ -51,6 +51,9 @@ object UserActor {
   // Load jobs from the database
   case object UpdateJobs
 
+  // Tells the User to reload their joblist
+  case object UpdateJobList
+
   // Loads a single job from the database and loads it into the user actor
   case class AddJob(job_id : String)
 
@@ -82,12 +85,33 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
   val userJobs        = new collection.mutable.HashMap[String, UserJob]
   val databaseMapping = new collection.mutable.HashMap[String, DBJobRef]
 
+  /**
+    * Is starting when the user actor is initialized
+    */
+  override def preStart() = {
+    Logger.info("updating jobs from the database")
+    self ! UpdateJobs
+  }
+
+  /**
+    * Adds a Job to the user using a Database entry
+    * @param dbJob database entry of the job
+    */
+  def addJob(dbJob : DBJob) = {
+    val job    = UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
+    val jobRef = jobRefDB.update(dbJob, session_id)
+    userJobs.put(dbJob.job_id,job)
+    databaseMapping.put(dbJob.job_id,jobRef)
+  }
+
   def receive = LoggingReceive {
 
     case AttachWS(ws_new) =>
 
       ws = Some(ws_new)
       context watch ws.get
+      // Websocket attached, tell user to update their jobslist
+      ws.get ! UpdateJobList
       Logger.info("WebSocket attached successfully")
 
 
@@ -139,9 +163,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case UpdateJobs =>
       for (jobRef <- jobRefDB.get(session_id)) {
         val dbJob = jobDB.get(jobRef.main_id).get
-        val job   = UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
-        userJobs.put(dbJob.job_id,job)
-        databaseMapping.put(dbJob.job_id,jobRef)
+        addJob(dbJob)
       }
 
     // Asks the user actor to load a single job from the database in the JobModel
@@ -149,16 +171,12 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       val dbJob_o = jobDB.get(user_id, job_id).headOption
       dbJob_o match {
         case Some(dbJob) =>
-          val job = UserJob (self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
-          val jobRef = jobRefDB.update(dbJob, session_id)
-          userJobs.put (dbJob.job_id, job)
-          databaseMapping.put (dbJob.job_id, jobRef)
-
-          Logger.info("Adding Job. (AddJob)")
+          // job_id was ok, add the job.
+          addJob(dbJob)
 
         case None =>
+          // job_id was faulty, show error.
           ws.get ! JobIDInvalid
-          Logger.info("Invalid ID")
       }
 
     // Returns all Jobs
