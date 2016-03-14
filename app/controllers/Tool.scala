@@ -66,40 +66,18 @@ object Tool {
 class Tool @Inject()(val messagesApi: MessagesApi,
                      @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
 
-  val tools = ""
-
   implicit val timeout = Timeout(5.seconds)
 
 
   def show(toolname: String) = Action { implicit request =>
 
-    val tool = Tool.getToolModel(toolname)
-    // Check if the tool name was ok.
-    if (tool == null) NotFound
-    else {
-      // Determine view of tool
-      //val inputForm = tool.inputForm
-      // TODO Replace with reflection, otherwise we have to mention all tools explicitly here.
-      val toolframe = tool.toolNameShort match {
-        case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
-        case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
-        case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
-      }
-
-      val view = views.html.general.submit(tool.toolNameShort, toolframe)
-
-      Ok(views.html.main(view, tool.toolNameLong)).withSession {
-
-        val session_id = Session.requestSessionID(request) // Grab the Session ID
-        Session.closeSessionRequest(request, session_id)   // Send Session Cookie
-      }
-    }
+    Redirect(s"/#/tools/$toolname")
   }
+
 
   def submit(toolname: String, startImmediate : Boolean) = Action.async { implicit request =>
 
     Logger.info("Start immediate was set to: " + startImmediate )
-
 
     val session_id = Session.requestSessionID(request) // Grab the Session ID
 
@@ -141,56 +119,8 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     }
   }
 
-  def result(job_id : String) = Action.async { implicit request =>
+  def result(job_id : String) = Action { implicit request =>
 
-    val session_id = Session.requestSessionID(request) // Grab the Session ID
-
-    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
-      (userActor ? GetJob(job_id)).mapTo[UserJob].flatMap { job =>
-
-
-        // Switch on Job state to decide what to show
-        job.getState match {
-
-
-          case Done => Future {
-
-            // TODO Dynamically calculate appropriate result
-            val vis = Map("Simple" -> views.html.visualization.alignment.simple(s"/files/$job_id/sequences.aln"),
-              "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/sequences.aln"))
-
-            val toolframe = job.toolname match {
-
-              case "alnviz" =>
-                val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$job_id/result"))
-                views.html.job.result(vis, job)
-
-              case "tcoffee" => views.html.job.result(vis, job)
-              case "hmmer3" => views.html.job.result(vis, job)
-            }
-
-            Ok(toolframe)
-        }
-          case Prepared =>
-            Logger.info("Prepared job requested")
-
-            (userActor ? GetJobParams(job.job_id)).mapTo[Map[String, String]].map { res =>
-
-
-              val toolframe = job.toolname match {
-                case "alnviz" => views.html.alnviz.form(Alnviz.inputForm.bind(res))
-                case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm.bind(res))
-                case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm.bind(res))
-              }
-
-
-              Ok(views.html.general.submit(job.toolname, toolframe)).withSession {
-                Session.closeSessionRequest(request, session_id)   // Send Session Cookie
-              }
-        }
-        }
-      }
-      }
+    Redirect(s"/#/jobs/$job_id")
  }
 }
-

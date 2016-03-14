@@ -67,12 +67,11 @@ class Application @Inject()(val messagesApi: MessagesApi,
 
     // TODO Serve reasonble content frame
     val session_id = Session.requestSessionID(request)
-    Ok(views.html.main(views.html.general.homecontent(),"Home")).withSession {
-      Session.closeSessionRequest(request, session_id)
-    }
 
     // Without session cookie
-    Ok(views.html.main(views.html.general.newcontent(),"Home"))
+    Ok(views.html.main(views.html.general.newcontent(),"Home")).withSession {
+      Session.closeSessionRequest(request, session_id)
+    }
   }
 
   /**
