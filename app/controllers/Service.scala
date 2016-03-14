@@ -134,10 +134,12 @@ class Service @Inject() (val messagesApi: MessagesApi,
     */
   def delJob(job_id: String) = Action.async { implicit request =>
 
+    //TODO: implement kill method so that processes can get killed
+
     val session_id = Session.requestSessionID(request) // Grab the Session ID
 
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
-
+      Logger.info("Deleted " + job_id + " from database.")
       userActor ! DeleteJob(job_id)
       Ok(Json.obj("job_id" -> job_id))
     }
