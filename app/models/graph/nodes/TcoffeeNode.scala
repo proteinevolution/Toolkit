@@ -3,8 +3,6 @@ package models.graph.nodes
 import models.graph.Ports.{Alignment, Sequences}
 import models.graph.CLU
 
-import scala.collection.mutable.ArrayBuffer
-
 /**
   * Created by lukas on 2/24/16.
   */

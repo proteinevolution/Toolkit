@@ -5,15 +5,12 @@
             <input type="text" placeholder="Show results by Job ID" class="jobsearch" id="jobsearch">
         </div>
         <div  align="center">
-            <input type="submit" class="small expanded secondary hollow button" value="Search" />
+            <input type="submit" class="small expanded secondary button" value="Search" />
 
         </div>
         </form>
-        <form action="/jobs/del/" id="deletejobs" method="post" name="deletejobs">
-            <input type="submit" class="small expanded alert hollow button masterTooltip" title="This will delete your checked jobs permanently from our database" value="Delete sel. Jobs" onclick="setAction('deletejobs', '/jobs/del')"/>
-        </form>
-
-    </div>
+        <form class="delete_id">
+            <input type="submit" class="small expanded alert button masterTooltip" title="This will delete your checked jobs permanently from our database." value="Delete sel. Jobs" onclick="deleteIDs();"/>
 
 <!-- Job Code -->
 <table id="jobtable">
@@ -21,11 +18,30 @@
 
     </tbody>
 </table>
-
+    </form> <!-- form must close here -->
+    </div>
     <script type="text/javascript">
 
+        function deleteIDs(){
 
-                $(document).ready(function() {
+            var IDs = $('input:checked').map(function(){
+
+                return $(this).val();
+
+            });
+
+            for (var i = 0; i<=IDs.length-1; i++){
+            $.ajax( {
+                async: true,
+                url:'/jobs/del/' + IDs[i],
+                type:'POST'
+            });}
+
+
+        }
+
+
+        $(document).ready(function() {
 // Tooltip only Text
                     $('.masterTooltip').hover(function(){
 
@@ -41,7 +57,7 @@
                         $(this).attr('title', $(this).data('tipText'));
                         $('.tooltip').remove();
                     }).mousemove(function(e) {
-                        var mousex = e.pageX + 20; //Get X coordinates
+                        var mousex = e.pageX - 60; //Get X coordinates
                         var mousey = e.pageY + 10; //Get Y coordinates
                         $('.tooltip')
                                 .css({ top: mousey, left: mousex })

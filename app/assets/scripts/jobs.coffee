@@ -101,10 +101,10 @@ jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
     m 'tr[class=job]',   [
       m('td[class=' + a[task.state()] + ']',
-        #ADD tooltip not done yet
+
         m('span'), )
       m("div", {style: {cssFloat: "left", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
-        m('br'), m('input',{type: "checkbox", id: task.job_id(), value: task.job_id(), name: task.job_id()})),
+        m('br'), m('input',{type: "checkbox", id: "jobid[]", value: task.job_id(), name: "jobid[]"})),
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
       m('td', {class: task.toolname()}, {style: {textAlign: "center", border: "1px solid black"}},
 
@@ -112,12 +112,10 @@ jobs.view = ->
           task.toolname().substr(0,4)
         ))
       m('td', {style: {cssFloat: "center", marginLeft: "0.7em", fontSize: "0.5em"}},
+      m('span', {class: "masterTooltip", title: "Hide in your job list"}
+        m('input',{type: "button", class: "button tiny alert hollow", style: {padding: "0.35em 0.55em", margin: "0 0"}, value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
 
-
-
-        m('input',{type: "button", class: "button tiny alert hollow masterTooltip", style: {cssFloat: "center", padding: "0.35em 0.55em", margin: "0 0"}, title: "Clear from job table", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
-
-
+      )
     ]
   ) ]]
 
@@ -127,10 +125,6 @@ m.mount(document.getElementById('jobtable-rows'),  { controller: jobs.controller
 
 
 
-###
-<span data-tooltip aria-haspopup="true" class="has-tip" title="Tooltips are awesome, you should totally use them!">extended information</span>
-class="tooltip" data-tooltip="Ist das nicht ein toller Tooltip! So informativ!"
-  {onclick: jobs.vm.onclick.bind(task, task.job_id)}
-###
+
 
 

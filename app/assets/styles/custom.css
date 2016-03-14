@@ -1,3 +1,4 @@
+
 .fullwidth {
     width: 100%;
     max-width: initial;
@@ -66,7 +67,6 @@ tr.spaceUnder > td
 
 .tabs-content {
     border: 0px;
-
 }
 
 .tabs {
@@ -160,6 +160,7 @@ tr.spaceUnder > td
 .header {
 
     height: 8.125em;
+    height: 8.125em;
 }
 
 .columns {
@@ -206,7 +207,7 @@ hr {
 
 .main-content {
 
-    height: 100vh;
+    min-height: 100%;
     display: flex;
 
 }

@@ -21,20 +21,15 @@ class UserManager @Inject() (childFactory: UserActor.Factory)
 
   import actors.UserManager._
 
-  val currentSessions = scala.collection.mutable.Map[String, ActorRef]()
 
   def receive = LoggingReceive  {
 
     case GetUserActor(session_id: String) =>
 
-      val user = currentSessions.getOrElseUpdate(
-        session_id, {
-          injectedChild(childFactory(session_id), session_id.toString)
-        }
-      )
-      sender() ! user
+      sender() ! context.child(session_id).getOrElse {
 
-      context watch user
+        context watch injectedChild(childFactory(session_id), session_id)
+      }
 
     case Terminated(user) =>
 
