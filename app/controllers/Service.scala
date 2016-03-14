@@ -12,7 +12,7 @@ import models.tools.{Hmmer3, Tcoffee, Alnviz}
 import models.sessions.Session
 import play.api.Logger
 import play.api.libs.json.Json
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask

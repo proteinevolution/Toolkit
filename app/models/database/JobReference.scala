@@ -3,7 +3,6 @@ package models.database
 import javax.inject.{Singleton, Inject}
 
 import models.misc.RandomString
-import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
