@@ -7,17 +7,14 @@ import actors.UserActor._
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.jobs.{Prepared, Done, UserJob}
 import models.tools._
 import models.sessions.Session
 import play.api.Logger
-import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask
 import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
-
 
 
 /**
@@ -75,17 +72,20 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   }
 
 
-  def submit(toolname: String, startImmediate : Boolean) = Action.async { implicit request =>
+  def submit(toolname: String, startImmediate : Boolean, newSubmission : Boolean) = Action.async { implicit request =>
 
-    Logger.info("Start immediate was set to: " + startImmediate )
+    Logger.info(if(newSubmission) "This was a new Submission" else "This was a job edit")
 
     val session_id = Session.requestSessionID(request) // Grab the Session ID
 
+    // Determine the submitted job_id
     val job_id =  request.body.asFormUrlEncoded.get("jobid").head match {
 
       case m if m.isEmpty => None
       case m => Some(m)
     }
+    Logger.info("The supplied JobID was: " + job_id.toString)
+
 
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
 
@@ -109,8 +109,6 @@ class Tool @Inject()(val messagesApi: MessagesApi,
           },
           _ => {
             Logger.info("{Tool} Form data sucessfully received")
-            Logger.info(boundForm.data.toString)
-
             userActor ! PrepWD(toolname, boundForm.data, startImmediate, job_id)
           }
         )

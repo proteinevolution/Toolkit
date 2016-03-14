@@ -118,7 +118,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
       case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
     }
 
-    Ok(views.html.general.submit(toolname, toolframe)).withSession {
+    Ok(views.html.general.submit(toolname, toolframe, None)).withSession {
 
       val session_id = Session.requestSessionID(request)
       Session.closeSessionRequest(request, session_id) // Send Session Cookie
@@ -227,7 +227,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
                 case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm.bind(res))
               }
 
-              Ok(views.html.general.submit(job.toolname, toolframe)).withSession {
+              Ok(views.html.general.submit(job.toolname, toolframe, Some(job_id))).withSession {
                 Session.closeSessionRequest(request, session_id) // Send Session Cookie
               }
             }
