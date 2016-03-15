@@ -12,7 +12,7 @@ import actors.{UserActor, UserManager, Worker}
 class ActorBinding extends AbstractModule with AkkaGuiceSupport {
 
 
-  def configure = {
+  def configure() = {
 
     bindActor[UserManager]("user-manager")
     bindActorFactory[UserActor, UserActor.Factory]

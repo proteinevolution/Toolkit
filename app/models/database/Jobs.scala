@@ -73,15 +73,14 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
     * @param job_id
     * @return
     */
-  def delete(user_id : Long, job_id : String) : Option[Long] = {
-    val jobOption = get(user_id, job_id).headOption
-    jobOption match {
-      case Some(job) =>
-        dbConfig.db.run(jobs.filter(_.main_id === job.main_id).delete)
-        job.main_id
+  def delete(user_id : Long, job_id : String) : Option[DBJob] = {
+    val dbJobOption = get(user_id, job_id).headOption
+    dbJobOption match {
+      case Some(dbJob) =>
+        dbConfig.db.run(jobs.filter(_.main_id === dbJob.main_id).delete)
       case None =>
-        None : Option[Long]
     }
+    dbJobOption
   }
 
   /**
@@ -89,15 +88,14 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
     * @param main_id
     * @return
     */
-  def delete(main_id : Long) : Option[Long] = {
-    val jobOption = get(main_id).headOption
-    jobOption match {
-      case Some(job) =>
-        dbConfig.db.run(jobs.filter (_.main_id === job.main_id).delete)
-        job.main_id
+  def delete(main_id : Long) : Option[DBJob] = {
+    val dbJobOption = get(main_id).headOption
+    dbJobOption match {
+      case Some(dbJob) =>
+        dbConfig.db.run(jobs.filter (_.main_id === main_id).delete)
       case None =>
-        None : Option[Long]
     }
+    dbJobOption
   }
 
   /**

@@ -29,4 +29,7 @@ ws.onmessage = (event) ->
       text = "Sorry, but there is no such Job ID."
       $(".jobsearchform").notify(text)
 
+    when "updatejoblist"
+      jobs.vm.retrieveJobs()
+
   m.endComputation()

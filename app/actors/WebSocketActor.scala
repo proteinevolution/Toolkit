@@ -43,9 +43,11 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
             }
       }
 
-    /*
-     * Messages the user that there was a problem in handling the Job ID     */
+    // Messages the user that there was a problem in handling the Job ID
     case JobIDInvalid => out ! Json.obj("type" -> "jobidinvalid")
+
+    // Updates the User about updating their joblist
+    case UpdateJobList => out ! Json.obj("type" -> "updatejoblist")
 
     /*
      * Messages the user about a change in the Job status

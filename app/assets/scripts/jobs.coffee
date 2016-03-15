@@ -26,6 +26,7 @@ jobs.vm = do ->
         url: '/jobs/' + jobID
         type: 'POST')
 
+    # Remove a Job from the View
     vm.clear = (desc) ->
 
       $.ajax(
@@ -44,7 +45,7 @@ jobs.vm = do ->
         i++
       vm.list.splice(toClear, 1)
 
-
+    # Delete a Job
     vm.delete = (desc) ->
 
       $.ajax(
@@ -63,7 +64,7 @@ jobs.vm = do ->
         i++
       vm.list.splice(toDelete, 1)
 
-
+    # Update a Job Object
     vm.update = (desc, state, toolname) ->
       i = 0
       while i < vm.list.length
@@ -78,13 +79,13 @@ jobs.vm = do ->
       vm.list.push new (jobs.Job)( job_id: desc, state: state, toolname: toolname)
 
     # Send Ajax call to retrieve all Jobs from the Server
-
-    $.post("/jobs/list", (data) ->
+    vm.retrieveJobs = () ->
+      $.post("/jobs/list", (data) ->
         m.startComputation()
         for job in data.jobs
           vm.update(job.i, job.s, job.t)
         m.endComputation()
-    )
+      )
 
   vm
 #the controller defines what part of the model is relevant for the current page
@@ -111,7 +112,7 @@ jobs.view = ->
           task.toolname().substr(0,4)
         ))
       m('td', {style: {cssFloat: "center", marginLeft: "0.7em", fontSize: "0.5em"}},
-      m('span', {class: "masterTooltip", title: "Hide in your job list"}
+      m('span', {class: "masterTooltip", title: "Hide in your job list", ariaHidden: true}
         m('input',{type: "button", class: "button tiny alert hollow", style: {padding: "0.35em 0.55em", margin: "0 0"}, value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
 
       )
