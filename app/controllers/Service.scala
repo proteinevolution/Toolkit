@@ -12,7 +12,7 @@ import models.tools.{Hmmer3, Tcoffee, Alnviz}
 import models.sessions.Session
 import play.api.Logger
 import play.api.libs.json.Json
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import akka.pattern.ask
@@ -118,7 +118,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
       case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
     }
 
-    Ok(views.html.general.submit(toolname, toolframe)).withSession {
+    Ok(views.html.general.submit(toolname, toolframe, None)).withSession {
 
       val session_id = Session.requestSessionID(request)
       Session.closeSessionRequest(request, session_id) // Send Session Cookie
@@ -134,10 +134,12 @@ class Service @Inject() (val messagesApi: MessagesApi,
     */
   def delJob(job_id: String) = Action.async { implicit request =>
 
+    //TODO: implement kill method so that processes can get killed
+
     val session_id = Session.requestSessionID(request) // Grab the Session ID
 
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
-
+      Logger.info("Deleted " + job_id + " from database.")
       userActor ! DeleteJob(job_id)
       Ok(Json.obj("job_id" -> job_id))
     }
@@ -227,7 +229,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
                 case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm.bind(res))
               }
 
-              Ok(views.html.general.submit(job.toolname, toolframe)).withSession {
+              Ok(views.html.general.submit(job.toolname, toolframe, Some(job_id))).withSession {
                 Session.closeSessionRequest(request, session_id) // Send Session Cookie
               }
             }

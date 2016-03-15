@@ -1,6 +1,5 @@
 package models.graph
 
-import models.graph
 import models.graph.Converters.ReformatConverter
 import models.graph.nodes.{HmmerNode, TcoffeeNode, AlnvizNode}
 import play.api.Logger
@@ -55,11 +54,11 @@ object Ports {
 
       (portA, portB) match {
 
-        case t :  (Alignment, Alignment) =>
+        case (a : Alignment, b : Alignment)  =>
 
           // Decide whether the Alignment needs to be converted
-          if(t._1.format == t._2.format) None else
-          Some(ReformatConverter.convert(t._1.format.asInstanceOf[AlignmentFormat], t._2.format.asInstanceOf[AlignmentFormat]))
+          if(a.format == b.format) None else
+          Some(ReformatConverter.convert(a.format.asInstanceOf[AlignmentFormat], b.format.asInstanceOf[AlignmentFormat]))
 
 
         case _  => throw new RuntimeException("Sorry, you have not specified a converter for this case")

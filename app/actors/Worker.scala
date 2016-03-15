@@ -5,6 +5,7 @@ import java.io
 import java.io.PrintWriter
 import java.nio.file.{Paths, Files}
 import javax.inject.Inject
+import actors.UserActor.UpdateWDDone
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
 import models.graph.{PortWithFormat, Ports, Ready}
@@ -27,21 +28,27 @@ import scala.reflect.io.{Directory, File}
 
 object Worker {
 
-  // Preparation of the Job
+  // Prepares the working directory for a _NEW_ job
   case class WPrepare(job : UserJob, params : Map[String, String])
-  // Starting the job
+
+  // Updates the parameters of a userJob with an already exisiting working directory
+  case class WUpdate(job : UserJob, params : Map[String, String])
+
+  // Executes the specified job.
   case class WStart(job: UserJob)
 
+  // Deletes the Job, such that the working directory will be brutally removed
   case class WDelete(job : UserJob)
 
-  // Worker was asked to read parameters of the job and to put them into a Map
+  // Worker will read the parameters of the job from the working directory and tell them back in a Map
   case class WRead(job : UserJob)
 
   // Worker was asked to convert all provided links between the provided Jobs
   case class WConvert(parentUserJob : UserJob, childUserJob : UserJob, links : Seq[Link])
 }
 
-class Worker @Inject() (jobDB : models.database.Jobs)
+class Worker @Inject() (jobDB    : models.database.Jobs,
+                        jobRefDB : models.database.JobReference)
   extends Actor with ActorLogging {
 
   import actors.Worker._
@@ -61,41 +68,72 @@ class Worker @Inject() (jobDB : models.database.Jobs)
 
     case WPrepare(userJob, params) =>
 
-      Logger.info("[Worker](WPrepare) for job " + userJob.job_id)
-      Logger.info("[Worker] Runscript path was " + runscriptPath)
-      Logger.info("[Worker] Job path was " + jobPath)
+      jobDB.getMainID(userJob.user_id, userJob.job_id) match {
 
-      val main_id_o = jobDB.getMainID(userJob.user_id, userJob.job_id)
-      main_id_o match {
         case Some(main_id) =>
-          val rootPath  = jobPath + SEP + main_id.toString + SEP
+
+          // Assemble the path were the Job directory is located
+          val rootPath  = s"$jobPath$SEP${main_id.toString}$SEP"
 
           ///
-          ///  Step 1: Make the working directory of the job with all subdirectories
+          ///  Step 1: Make the working directory of the job with all subdirectories. We force the creation
+          ///          of the paths since WPrepare assumes that the directory does not yet exist
           ///
-          if(!Files.exists(Paths.get(rootPath))) {
-            Directory(rootPath).createDirectory(false, false)
-            for (subdir <- subdirs) {
+          Directory(rootPath).createDirectory(force = true, failIfExists = false)
+          for (subdir <- subdirs) {
 
-              Directory(rootPath + subdir).createDirectory(false, false)
-            }
+            Directory(rootPath + subdir).createDirectory(force = true, failIfExists = false)
           }
 
-
           ///
-          ///  Step 3: Write the parameters into the directory, this will also change the state
-          ///          of the job as a side effect.
-          for( (paramName, value) <- params ) {
+          ///  Step 2: Write the parameters into the directory, this will also change the state
+          ///          of the job as a side effect. We will write all parameters except for the jobid
+          ///          which currently also occurs in the Map
+          for((paramName, value) <- params ) {
 
             if(paramName != "jobid") {
               File(s"$rootPath${SEP}params$SEP$paramName").writeAll(value.toString)
+
+              // The argument has been written to the file, so we can change the state of the infile to Ready
               userJob.changeInFileState(paramName, Ready)
             }
           }
-          Logger.info("All params were written to the job_directory successfully")
+
+        // TODO Can this case happen? If we can exclude this for sure, we do not need the match here
         case None =>
+
           userJob.changeState(Error)
       }
+      sender() ! UpdateWDDone(userJob)
+
+
+    case WUpdate(userJob, params) =>
+
+      Logger.info("Worker was asked to update the parameters of a working directory")
+
+        jobDB.getMainID(userJob.user_id, userJob.job_id) match {
+
+        case Some(main_id) =>
+
+          val rootPath  = s"$jobPath$SEP${main_id.toString}$SEP"
+          ///
+          ///  Step 1: Write the parameters into the directory, this will also change the state
+          ///          of the job as a side effect.
+          for((paramName, value) <- params ) {
+
+            if(paramName != "jobid") {
+
+              File(s"$rootPath${SEP}params$SEP$paramName").writeAll(value.toString)
+            }
+          }
+
+        // TODO Can this case happen? If we can exclude this for sure, we do not need the match here
+        case None =>
+
+          userJob.changeState(Error)
+      }
+      sender() ! UpdateWDDone(userJob)
+
 
 
     case WRead(userJob) =>
@@ -120,12 +158,13 @@ class Worker @Inject() (jobDB : models.database.Jobs)
 
     case WDelete(userJob) =>
 
-      val main_id_o = jobDB.delete(userJob.user_id, userJob.job_id)
+      val dbJobOption = jobDB.delete(userJob.user_id, userJob.job_id)
 
-      main_id_o match {
-        case Some(main_id) =>
-          val rootPath  = jobPath + main_id + SEP
+      dbJobOption match {
+        case Some(dbJob) =>
+          val rootPath  = jobPath + dbJob.main_id.get + SEP // .get is ok
           Directory(rootPath).deleteRecursively()
+          jobRefDB.delete(dbJob.main_id.get) // .get is ok
         case None =>
           userJob.changeState(Error)
       }
