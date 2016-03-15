@@ -16,7 +16,7 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
               val job_id         : String,   // Which job_id is attached to this Job
               val user_id        : Long,     // Which user_id is attached to this job
               private var state  : JobState, // State of the job
-              val startImmediate : Boolean)
+              var startImmediate : Boolean)
 {
   // TODO Toolname is a redundant field in the UserJob
   // TODO Pass Main ID instead of user and job ID to make sure a unique job ID is used.
