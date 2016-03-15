@@ -52,7 +52,7 @@ object UserActor {
   case class Convert(parent_job_id : String, child_job_id : String, links : Seq[Link])
 
   // Load jobs from the database
-  case object UpdateJobs
+  case object LoadJobsFromDB
 
   // Tells the User to reload their joblist
   case object UpdateJobList
@@ -95,12 +95,13 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     * Is starting when the user actor is initialized
     */
   override def preStart() = {
-    Logger.info("updating jobs from the database")
-    self ! UpdateJobs
+    //Logger.info("updating jobs from the database")
+    //self ! LoadJobsFromDB
   }
 
   /**
     * Adds a Job to the user using a Database entry
+ *
     * @param dbJob database entry of the job
     */
   def addJob(dbJob : DBJob) = {
@@ -112,6 +113,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
   /**
     * Checks if a given job_id is already used for a different job
+ *
     * @param job_id_o selected job_id
     * @return
     */
@@ -139,7 +141,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
 
     // Job Preparation Routine for a new Job
-    //  TODO The semantic of this message is not well defined, should work on that
     case PrepWD(toolname, params, startImmediate, job_id_o) =>
 
       // Determine the Job ID for the Job that was submitted
@@ -203,7 +204,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case GetJobParams(job_id) => worker forward WRead(userJobs(job_id))
 
     // Asks the user actor to load jobs from the database in the JobModel
-    case UpdateJobs =>
+    case LoadJobsFromDB =>
       for (jobRef <- jobRefDB.get(session_id)) {
         val dbJob_o = jobDB.get(jobRef.main_id)
         dbJob_o match {
@@ -232,6 +233,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     /* Appends a new Job to one parent job */
     case AppendChildJob(parent_job_id, toolname, links) =>
+
+
       // Load the Parent job from the Database if it is not in the UserActor
       if(userJobs.filterKeys(_ == parent_job_id).isEmpty) {
         self ! AddJob(parent_job_id)
@@ -262,7 +265,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case JobStateChanged(job_id, state) =>
 
       val userJob = userJobs.get(job_id).get
-
 
       // Forward Job state to Websocket
       ws.get ! JobStateChanged(job_id, state)

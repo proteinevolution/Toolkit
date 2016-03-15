@@ -36,11 +36,10 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
 
   def appendChild(userJob : UserJob, links : Seq[Link]): Unit = {
 
-    Logger.info("???????????????????????????????????????????????????????????????????")
     childJobs.append((userJob, links))
-    // Lock all files in the inport port of the child job
 
-    // Lock input files of fileports specified by link
+
+    // Lock all files in the inport port of the child job
     links.foreach { link =>
 
       // lock each inlink file from child Job
@@ -49,8 +48,6 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
     }
     // if the Job is done, we can trigger conversion process for this Job
     if(state == Done) {
-
-      Logger.info("Send convert to User Actor")
       userActor ! Convert(job_id, userJob.job_id, links)
     }
   }
