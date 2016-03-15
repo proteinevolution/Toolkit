@@ -6,4 +6,4 @@ $ ->
     $.ajax(
       url: route
       type: 'POST').done (data) ->
-        $('#content').empty().append data
+        $("#searchmodal").html(data).foundation('open')
