@@ -17,19 +17,12 @@ import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-
 /**
   * Created by lukas on 1/27/16.
   */
 object Tool {
 
-  var tools:List[ToolModel] = List[ToolModel]()  // list of all added tools
-
-  // TODO Get these imported from an external file
-  tools::= Hmmer3
-  tools::= Tcoffee
-  tools::= Alnviz
-  tools::= Psiblast
+  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast) // list of all added tools
 
 
   /** getToolModel
@@ -38,8 +31,6 @@ object Tool {
     * @param toolName tool Name
     * @return
     */
-
-
   def getToolModel(toolName: String): ToolModel = {
     for (tool <- tools) {
       if ( tool.toolNameShort        == toolName
@@ -47,16 +38,6 @@ object Tool {
         || tool.toolNameAbbreviation == toolName)  return tool
     }
     null
-  }
-
-
-  /** addToolModel
-    * adds a tool model to the controller
-    *
-    * @param toolModel
-    */
-  def addToolModel(toolModel:ToolModel) = {
-    tools ::= toolModel
   }
 }
 
@@ -73,17 +54,20 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   }
 
 
-  def submit(toolname: String, startImmediate : Boolean) = Action.async { implicit request =>
-
-    Logger.info("Start immediate was set to: " + startImmediate )
+  def submit(toolname: String, startImmediate : Boolean, newSubmission : Boolean) = Action.async { implicit request =>
 
     val session_id = Session.requestSessionID(request) // Grab the Session ID
 
+    // Determine the submitted JobID
     val job_id =  request.body.asFormUrlEncoded.get("jobid").head match {
 
+      // If the user has not provided any, this will be None
       case m if m.isEmpty => None
+
+      // If the user has provided one or the Job is an already exisiting one, then there is a Job ID
       case m => Some(m)
     }
+    Logger.info("Submission for JobID " + job_id.toString + " received")
 
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
 
@@ -106,10 +90,14 @@ class Tool @Inject()(val messagesApi: MessagesApi,
             BadRequest("This was an error")
           },
           _ => {
-            Logger.info("{Tool} Form data sucessfully received")
-            Logger.info(boundForm.data.toString)
 
-            userActor ! PrepWD(toolname, boundForm.data, startImmediate, job_id)
+            // Decide whether to Prepare a new Job or alter the parameters of an already prepared one
+            if(newSubmission) {
+              userActor ! PrepWD(toolname, boundForm.data, startImmediate, job_id)
+
+            } else {
+              userActor ! UpdateWD(job_id.get, boundForm.data, startImmediate)
+            }
           }
         )
         Ok
