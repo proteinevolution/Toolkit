@@ -27,6 +27,9 @@ object UserActor {
 
   case class PrepWD(toolname : String, params : Map[String, String], startImmediate : Boolean, job_id_o : Option[String])
 
+  case class UpdateWD(job_id : String, params : Map[String, String], startImmediate : Boolean)
+
+
   // Job ID was Invalid
   case object JobIDInvalid
 
@@ -59,6 +62,9 @@ object UserActor {
 
   // Attach WebSocket Actor to UserActor
   case class AttachWS(ws : ActorRef)
+
+  case class UpdateWDDone(userJob : UserJob)
+
 
   // User requested a suggestion
   case class AutoComplete(suggestion : String)
@@ -157,6 +163,25 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       worker ! WPrepare(job, params)
 
 
+
+    //  Updates the Job directory of a provided job with a new set of parameters
+    case UpdateWD(job_id,  params, startImmediate) =>
+      Logger.info("User Actor was asked to update the working directory")
+      val userJob =  userJobs(job_id)
+      userJob.startImmediate = startImmediate
+      worker ! WUpdate(userJobs(job_id), params)
+
+
+    case UpdateWDDone(userJob) =>
+
+      // If the Job state is prepared and we want to start the job, then start
+      if(userJob.getState == Prepared && userJob.startImmediate) {
+
+        userJob.changeState(Queued)
+        worker ! WStart(userJob)
+      }
+
+
     // Removes a Job completely
     case DeleteJob(job_id) =>
       if(userJobs.filterKeys(_ == job_id).nonEmpty) {
@@ -238,12 +263,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       val userJob = userJobs.get(job_id).get
 
-      // If the job changed to prepared and if it is set to start immediately, start the Job
-      if(state == Prepared && userJob.startImmediate) {
-
-        userJob.changeState(Queued)
-        worker ! WStart(userJob)
-      }
 
       // Forward Job state to Websocket
       ws.get ! JobStateChanged(job_id, state)
