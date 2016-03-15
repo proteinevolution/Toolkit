@@ -14,8 +14,6 @@
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))"></script>
 
 
-
-
         <!-- Mithril -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.2-rc.1/mithril.min.js"></script>
 
@@ -35,7 +33,7 @@
     <body data-ws-url="@routes.Application.ws().webSocketURL()">
 
         <div class="row fullwidth">
-            <div class="large-12 columns" id="subnav">
+            <div class="large-12 columns hide-for-small-only" id="subnav">
                 <dl class="sub-nav">
                     <dd><a href="#">Help</a></dd>
                     <dd><a href="#">Disclaimer</a></dd>
@@ -53,7 +51,7 @@
         </div>
 
         <!---Top-Bar with Logo/Search and Dropdown --->
-        <div class="row fullwidth" id="topbar" data-equalizer>
+        <div class="row fullwidth" id="header" data-equalizer>
             <div class="large-5 medium-8 hide-for-small-only columns"  data-equalizer-watch>
                 <div class="logo"><a href=""><img src="@routes.Assets.at("images/TestLogo.png")"> </a></div>
             </div>
@@ -78,17 +76,15 @@
                     </li>
                 </ul>
             </div>
-        -->
+             -->
 
 
 
 
         <!---Navigation Bar --->
-        <div class="large-12 columns navbar">
-          <nav>
-            @elements.navbar()
-          </nav>
-        </div>
+        @elements.navbar()
+
+
 
         <!---Main Content Section includes Sidebar and Content --->
         <section class="row fullwidth main-content">

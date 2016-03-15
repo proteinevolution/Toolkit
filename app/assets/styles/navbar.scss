@@ -1,3 +1,47 @@
+#stickyheader {
+  background-color: #2E8C81;
+}
+
+#toolsdropdown {
+
+  background-color: #2E8C81;
+  font-size: 0.875em;
+  padding-left: 18.500em;
+
+}
+
+#section {
+
+  color: white;
+  padding-top: 1em;
+
+}
+
+#dropdowns li {
+  a {
+    &:hover {
+      color: lightslategrey;
+    }
+  }
+}
+
+#dropdowns {
+  border-color: transparent;
+  background-color: rgba(#333,0.995);
+  margin-left: 0.8em;
+
+
+
+}
+
+#dropdowns a {
+  color: white;
+  font-size: 0.9em;
+  font: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+
+}
+
+
 #navbar-tabs {
   $corporate-background-navbar: #2E8C81;
   background: $corporate-background-navbar;
@@ -23,8 +67,7 @@
   border-width: 0px;
   padding: 0;
   margin: 0;
-
-
+  
 }
 #panel1 {
   background: #D0BA89;
@@ -95,3 +138,4 @@
   color: #930;
   background: #f5d7b4;
 }
+

@@ -1,4 +1,4 @@
-<ul class="tabs" data-tabs id="navbar-tabs">
+<!--<ul class="tabs" data-tabs id="navbar-tabs">
     <li class="tabs-title"><a href="#panel1">Search</a></li>
     <li class="tabs-title"><a href="#panel2">Alignment</a></li>
     <li class="tabs-title"><a href="#panel3">Sequence Analysis</a></li>
@@ -31,3 +31,77 @@
     <div class="tabs-panel" id="panel7">
     </div>
 </div>
+-->
+
+<div class="title-bar" data-responsive-toggle="example-menu" data-hide-for="medium">
+    <button class="menu-icon" type="button" data-toggle></button>
+    <div class="title-bar-title">Menu</div>
+</div>
+
+<div data-sticky-container>
+    <div class="top-bar sticky fullwidth" id="stickyheader" data-sticky data-stick-to>
+        <div class="top-bar-left">
+            <ul class="dropdown menu" id="toolsdropdown" data-dropdown-menu data-closing-time="20">
+                <li>
+                    <a href="#" id="section">Search</a>
+                    <ul class="menu vertical" id="dropdowns">
+                        <li><a href="/#/tools/hmmer3">Hmmer3</a></li>
+                        <li><a  href="/#/tools/psiblast">PSI-BLAST</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" id="section">Alignment</a>
+                    <ul class="menu vertical" id="dropdowns">
+                        <li><a href="/#/tools/alnviz">AlignmentViewer</a></li>
+                        <li><a href="/#/tools/tcoffee">T-Coffee</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" id="section">Sequence Analysis</a>
+                    <ul class="menu vertical" id="dropdowns">
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" id="section">2ary Structure</a>
+                    <ul class="menu vertical" id="dropdowns">
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" id="section">3ary Structure</a>
+                    <ul class="menu vertical" id="dropdowns">
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" id="section">Classification</a>
+                    <ul class="menu vertical" id="dropdowns">
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" id="section">Utils</a>
+                    <ul class="menu vertical" id="dropdowns">
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+                $(function(){
+                    // Check the initial Poistion of the Sticky Header
+                    var stickyHeaderTop = $('#stickyheader').offset().top;
+
+                    $(window).scroll(function(){
+                        if( $(window).scrollTop() > stickyHeaderTop ) {
+                            $('#stickyheader').css({position: 'fixed', top: '0px'});
+                            $('#stickyalias').css('display', 'block');
+                        } else {
+                            $('#stickyheader').css({position: 'static', top: '0px'});
+                            $('#stickyalias').css('display', 'none');
+                        }
+                    });
+                });
+
+</script>
