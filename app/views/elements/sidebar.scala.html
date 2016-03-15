@@ -8,11 +8,18 @@
             <input type="submit" class="small expanded secondary button" value="Search" />
 
         </div>
-        </form>
-        <form class="delete_id">
-            <input type="submit" class="small expanded alert button masterTooltip" title="This will delete your checked jobs permanently from our database." value="Delete sel. Jobs" onclick="deleteIDs();"/>
 
-<!-- Job Code -->
+
+        </form>
+
+        <form class="delete_id">
+            <div class="tiny expanded button-group">
+            <input type="submit" class="small alert button masterTooltip" title="This will delete your checked jobs permanently from our database." value="Delete sel. Jobs" onclick="deleteIDs();">
+            <input type="button" class="check small secondary button masterTooltip" title="Select all jobs in your job list." value="Select all Jobs"/>
+
+            </div>
+            <div>&nbsp;</div>
+            <!-- Job Code -->
 <table id="jobtable">
     <tbody id="jobtable-rows">
 
@@ -21,6 +28,9 @@
     </form> <!-- form must close here -->
     </div>
     <script type="text/javascript">
+
+
+
 
         function deleteIDs(){
 
@@ -37,9 +47,15 @@
                 type:'POST'
             });}
 
-
         }
 
+
+        $('.check:button').click(function(){
+            var checked = !$(this).data('checked');
+            $('input:checkbox').prop('checked', checked);
+            $(this).val(checked ? 'uncheck all' : 'check all' )
+            $(this).data('checked', checked);
+        });
 
         $(document).ready(function() {
 // Tooltip only Text
