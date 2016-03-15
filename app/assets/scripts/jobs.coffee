@@ -113,7 +113,7 @@ jobs.view = ->
         ))
       m('td', {style: {cssFloat: "center", marginLeft: "0.7em", fontSize: "0.5em"}},
       m('span', {class: "masterTooltip", title: "Hide in your job list", ariaHidden: true}
-        m('a',{class: "button tiny hollow", onclick: jobs.vm.clear.bind(task, task.job_id)},
+        m('a',{ onclick: jobs.vm.clear.bind(task, task.job_id)},
           m('img[src="/assets/images/icons/fi-x.svg"][width=10em]', {class: 'clear'})))
 
       )
