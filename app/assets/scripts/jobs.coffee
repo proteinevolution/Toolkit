@@ -112,7 +112,7 @@ jobs.view = ->
           task.toolname().substr(0,4)
         ))
       m('td', {style: {cssFloat: "center", marginLeft: "0.7em", fontSize: "0.5em"}},
-      m('span', {class: "masterTooltip", title: "Hide in your job list"}
+      m('span', {class: "masterTooltip", title: "Hide in your job list", ariaHidden: true}
         m('input',{type: "button", class: "button tiny alert hollow", style: {padding: "0.35em 0.55em", margin: "0 0"}, value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
 
       )
