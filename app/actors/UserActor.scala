@@ -95,8 +95,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     * Is starting when the user actor is initialized
     */
   override def preStart() = {
-    //Logger.info("updating jobs from the database")
-    //self ! LoadJobsFromDB
+    Logger.info("updating jobs from the database")
+    self ! LoadJobsFromDB
   }
 
   /**

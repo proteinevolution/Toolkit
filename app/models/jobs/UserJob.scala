@@ -55,19 +55,17 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
 
   def changeState(newState : JobState): Unit = {
 
+    state = newState
     userActor ! JobStateChanged(job_id, newState)
 
-    // If the new state is Done, we can make all output files ready
+    // If the Job state is Done, we ask the UserActor to convert Output for all child jobs
     if(newState == Done) {
-
-      Logger.info("Job Done, we need to convert for " + childJobs.length + "sjobs")
 
       childJobs.foreach {userJob =>
 
           userActor ! Convert(job_id, userJob._1.job_id, userJob._2)
       }
     }
-    state = newState
   }
 
 
