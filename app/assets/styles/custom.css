@@ -44,6 +44,10 @@
 }
 
 
+.clear{
+    border: 0;
+}
+
 
 .alignment {
     font-family: monospace;
