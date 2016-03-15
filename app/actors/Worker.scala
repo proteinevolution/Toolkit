@@ -41,7 +41,8 @@ object Worker {
   case class WConvert(parentUserJob : UserJob, childUserJob : UserJob, links : Seq[Link])
 }
 
-class Worker @Inject() (jobDB : models.database.Jobs)
+class Worker @Inject() (jobDB    : models.database.Jobs,
+                        jobRefDB : models.database.JobReference)
   extends Actor with ActorLogging {
 
   import actors.Worker._
@@ -120,12 +121,13 @@ class Worker @Inject() (jobDB : models.database.Jobs)
 
     case WDelete(userJob) =>
 
-      val main_id_o = jobDB.delete(userJob.user_id, userJob.job_id)
+      val dbJobOption = jobDB.delete(userJob.user_id, userJob.job_id)
 
-      main_id_o match {
-        case Some(main_id) =>
-          val rootPath  = jobPath + main_id + SEP
+      dbJobOption match {
+        case Some(dbJob) =>
+          val rootPath  = jobPath + dbJob.main_id.get + SEP // .get is ok
           Directory(rootPath).deleteRecursively()
+          jobRefDB.delete(dbJob.main_id.get) // .get is ok
         case None =>
           userJob.changeState(Error)
       }

@@ -98,17 +98,30 @@ class JobReference @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider : Dat
     )
   }
 
+  /**
+    * Deletes a single JobRef in the Reference database
+    * @param jobRef job reference to delete
+    * @return
+    */
   def delete(jobRef : DBJobRef) : Option[DBJobRef] = {
     val jobOption = get(jobRef.main_id, jobRef.session_id).headOption
     jobOption match {
       case Some(jobRef) =>
-        dbConfig.db.run(jobReferences.filter (_.main_id === jobRef.main_id).delete)
+        dbConfig.db.run(jobReferences.filter(_.main_id === jobRef.main_id).delete)
         Some(jobRef)
       case None =>
         None : Option[DBJobRef]
     }
   }
 
+  /**
+    * Deletes all instances of JobReferences linking to the main_id
+    * @param main_id main_id of the Job to which the references lead
+    * @return
+    */
+  def delete(main_id : Long) = {
+    dbConfig.db.run(jobReferences.filter(_.main_id === main_id).delete)
+  }
 }
 
 case class DBJobRef(val session_id    : String, // The Session ID from which the Reference was made

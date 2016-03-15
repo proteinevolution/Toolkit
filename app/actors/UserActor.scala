@@ -104,14 +104,31 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     databaseMapping.put(dbJob.job_id,jobRef)
   }
 
+  /**
+    * Checks if a given job_id is already used for a different job
+    * @param job_id_o selected job_id
+    * @return
+    */
+  def checkJobID (job_id_o : Option[String]) : String = {
+    // Determine the Job ID for the Job that was submitted
+    var job_id : String = job_id_o.getOrElse(RandomString.randomNumString(7))
+    while (jobDB.get(user_id, job_id).nonEmpty) {
+      job_id = RandomString.randomNumString(7)
+    }
+    job_id
+  }
+
+  /**
+    * Incoming actor message handler
+    */
   def receive = LoggingReceive {
 
     case AttachWS(ws_new) =>
 
       ws = Some(ws_new)
-      context watch ws.get
+      context watch ws.get   // .get is ok here, since it just got initalized with Some(ws_new)
       // Websocket attached, tell user to update their jobslist
-      ws.get ! UpdateJobList
+      ws.get ! UpdateJobList // .get is ok
       Logger.info("WebSocket attached successfully")
 
 
@@ -142,11 +159,12 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     // Removes a Job completely
     case DeleteJob(job_id) =>
+      if(userJobs.filterKeys(_ == job_id).nonEmpty) {
+        val job = userJobs.remove(job_id).get    // Remove from User Model
+        databaseMapping.remove(job_id)           // Remove job from the relation database mapping
 
-      val job = userJobs.remove(job_id).get    // Remove from User Model
-      databaseMapping.remove(job_id)           // Remove job from the relation database mapping
-
-      worker ! WDelete(job)                    // Worker removes Directory
+        worker ! WDelete(job)                    // Worker removes Directory
+      }
 
     // Removes the job from the UserActor, but keep it in the job database
     case ClearJob(job_id) =>
@@ -154,7 +172,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       userJobs.remove(job_id).get
 
     // Returns a Job for a given job_id
-    case GetJob(job_id) =>  sender() ! userJobs.get(job_id).get
+    case GetJob(job_id) => sender() ! userJobs.get(job_id).get
 
     // Read the parameter map from the job directory
     case GetJobParams(job_id) => worker forward WRead(userJobs(job_id))
@@ -162,8 +180,13 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     // Asks the user actor to load jobs from the database in the JobModel
     case UpdateJobs =>
       for (jobRef <- jobRefDB.get(session_id)) {
-        val dbJob = jobDB.get(jobRef.main_id).get
-        addJob(dbJob)
+        val dbJob_o = jobDB.get(jobRef.main_id)
+        dbJob_o match {
+          // job with the main_id exists, add the job
+          case Some(dbJob) => addJob(dbJob)
+          // delete the jobRef from the DB, as the main_id is no longer there
+          case None => jobRefDB.delete(jobRef)
+        }
       }
 
     // Asks the user actor to load a single job from the database in the JobModel
@@ -241,20 +264,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     * */
     case m =>  ws.get ! m
 
-  }
-
-  /**
-    * Checks if a given job_id is already used for a different job
-    * @param job_id_o selected job_id
-    * @return
-    */
-  def checkJobID (job_id_o : Option[String]) : String = {
-    // Determine the Job ID for the Job that was submitted
-    var job_id : String = job_id_o.getOrElse(RandomString.randomNumString(7))
-    while (jobDB.get(user_id, job_id).nonEmpty) {
-      job_id = RandomString.randomNumString(7)
-    }
-    job_id
   }
 }
 // A links just connects one output port to one input port
