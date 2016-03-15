@@ -27,6 +27,9 @@ object UserActor {
 
   case class PrepWD(toolname : String, params : Map[String, String], startImmediate : Boolean, job_id_o : Option[String])
 
+  case class UpdateWD(job_id : String, params : Map[String, String], startImmediate : Boolean)
+
+
   // Job ID was Invalid
   case object JobIDInvalid
 
@@ -49,13 +52,19 @@ object UserActor {
   case class Convert(parent_job_id : String, child_job_id : String, links : Seq[Link])
 
   // Load jobs from the database
-  case object UpdateJobs
+  case object LoadJobsFromDB
+
+  // Tells the User to reload their joblist
+  case object UpdateJobList
 
   // Loads a single job from the database and loads it into the user actor
   case class AddJob(job_id : String)
 
   // Attach WebSocket Actor to UserActor
   case class AttachWS(ws : ActorRef)
+
+  case class UpdateWDDone(userJob : UserJob)
+
 
   // User requested a suggestion
   case class AutoComplete(suggestion : String)
@@ -82,17 +91,56 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
   val userJobs        = new collection.mutable.HashMap[String, UserJob]
   val databaseMapping = new collection.mutable.HashMap[String, DBJobRef]
 
+  /**
+    * Is starting when the user actor is initialized
+    */
+  override def preStart() = {
+    Logger.info("updating jobs from the database")
+    self ! LoadJobsFromDB
+  }
+
+  /**
+    * Adds a Job to the user using a Database entry
+ *
+    * @param dbJob database entry of the job
+    */
+  def addJob(dbJob : DBJob) = {
+    val job    = UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
+    val jobRef = jobRefDB.update(dbJob, session_id)
+    userJobs.put(dbJob.job_id,job)
+    databaseMapping.put(dbJob.job_id,jobRef)
+  }
+
+  /**
+    * Checks if a given job_id is already used for a different job
+ *
+    * @param job_id_o selected job_id
+    * @return
+    */
+  def checkJobID (job_id_o : Option[String]) : String = {
+    // Determine the Job ID for the Job that was submitted
+    var job_id : String = job_id_o.getOrElse(RandomString.randomNumString(7))
+    while (jobDB.get(user_id, job_id).nonEmpty) {
+      job_id = RandomString.randomNumString(7)
+    }
+    job_id
+  }
+
+  /**
+    * Incoming actor message handler
+    */
   def receive = LoggingReceive {
 
     case AttachWS(ws_new) =>
 
       ws = Some(ws_new)
-      context watch ws.get
+      context watch ws.get   // .get is ok here, since it just got initalized with Some(ws_new)
+      // Websocket attached, tell user to update their jobslist
+      ws.get ! UpdateJobList // .get is ok
       Logger.info("WebSocket attached successfully")
 
 
     // Job Preparation Routine for a new Job
-    //  TODO The semantic of this message is not well defined, should work on that
     case PrepWD(toolname, params, startImmediate, job_id_o) =>
 
       // Determine the Job ID for the Job that was submitted
@@ -116,13 +164,33 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       worker ! WPrepare(job, params)
 
 
+
+    //  Updates the Job directory of a provided job with a new set of parameters
+    case UpdateWD(job_id,  params, startImmediate) =>
+      Logger.info("User Actor was asked to update the working directory")
+      val userJob =  userJobs(job_id)
+      userJob.startImmediate = startImmediate
+      worker ! WUpdate(userJobs(job_id), params)
+
+
+    case UpdateWDDone(userJob) =>
+
+      // If the Job state is prepared and we want to start the job, then start
+      if(userJob.getState == Prepared && userJob.startImmediate) {
+
+        userJob.changeState(Queued)
+        worker ! WStart(userJob)
+      }
+
+
     // Removes a Job completely
     case DeleteJob(job_id) =>
+      if(userJobs.filterKeys(_ == job_id).nonEmpty) {
+        val job = userJobs.remove(job_id).get    // Remove from User Model
+        databaseMapping.remove(job_id)           // Remove job from the relation database mapping
 
-      val job = userJobs.remove(job_id).get    // Remove from User Model
-      databaseMapping.remove(job_id)           // Remove job from the relation database mapping
-
-      worker ! WDelete(job)                    // Worker removes Directory
+        worker ! WDelete(job)                    // Worker removes Directory
+      }
 
     // Removes the job from the UserActor, but keep it in the job database
     case ClearJob(job_id) =>
@@ -130,18 +198,21 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       userJobs.remove(job_id).get
 
     // Returns a Job for a given job_id
-    case GetJob(job_id) =>  sender() ! userJobs.get(job_id).get
+    case GetJob(job_id) => sender() ! userJobs.get(job_id).get
 
     // Read the parameter map from the job directory
     case GetJobParams(job_id) => worker forward WRead(userJobs(job_id))
 
     // Asks the user actor to load jobs from the database in the JobModel
-    case UpdateJobs =>
+    case LoadJobsFromDB =>
       for (jobRef <- jobRefDB.get(session_id)) {
-        val dbJob = jobDB.get(jobRef.main_id).get
-        val job   = UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
-        userJobs.put(dbJob.job_id,job)
-        databaseMapping.put(dbJob.job_id,jobRef)
+        val dbJob_o = jobDB.get(jobRef.main_id)
+        dbJob_o match {
+          // job with the main_id exists, add the job
+          case Some(dbJob) => addJob(dbJob)
+          // delete the jobRef from the DB, as the main_id is no longer there
+          case None => jobRefDB.delete(jobRef)
+        }
       }
 
     // Asks the user actor to load a single job from the database in the JobModel
@@ -149,16 +220,12 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       val dbJob_o = jobDB.get(user_id, job_id).headOption
       dbJob_o match {
         case Some(dbJob) =>
-          val job = UserJob (self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, true)
-          val jobRef = jobRefDB.update(dbJob, session_id)
-          userJobs.put (dbJob.job_id, job)
-          databaseMapping.put (dbJob.job_id, jobRef)
-
-          Logger.info("Adding Job. (AddJob)")
+          // job_id was ok, add the job.
+          addJob(dbJob)
 
         case None =>
+          // job_id was faulty, show error.
           ws.get ! JobIDInvalid
-          Logger.info("Invalid ID")
       }
 
     // Returns all Jobs
@@ -166,6 +233,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     /* Appends a new Job to one parent job */
     case AppendChildJob(parent_job_id, toolname, links) =>
+
+
       // Load the Parent job from the Database if it is not in the UserActor
       if(userJobs.filterKeys(_ == parent_job_id).isEmpty) {
         self ! AddJob(parent_job_id)
@@ -197,13 +266,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       val userJob = userJobs.get(job_id).get
 
-      // If the job changed to prepared and if it is set to start immediately, start the Job
-      if(state == Prepared && userJob.startImmediate) {
-
-        userJob.changeState(Queued)
-        worker ! WStart(userJob)
-      }
-
       // Forward Job state to Websocket
       ws.get ! JobStateChanged(job_id, state)
 
@@ -223,20 +285,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     * */
     case m =>  ws.get ! m
 
-  }
-
-  /**
-    * Checks if a given job_id is already used for a different job
-    * @param job_id_o selected job_id
-    * @return
-    */
-  def checkJobID (job_id_o : Option[String]) : String = {
-    // Determine the Job ID for the Job that was submitted
-    var job_id : String = job_id_o.getOrElse(RandomString.randomNumString(7))
-    while (jobDB.get(user_id, job_id).nonEmpty) {
-      job_id = RandomString.randomNumString(7)
-    }
-    job_id
   }
 }
 // A links just connects one output port to one input port

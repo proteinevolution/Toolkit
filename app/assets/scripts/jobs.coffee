@@ -26,6 +26,7 @@ jobs.vm = do ->
         url: '/jobs/' + jobID
         type: 'POST')
 
+    # Remove a Job from the View
     vm.clear = (desc) ->
 
       $.ajax(
@@ -44,7 +45,7 @@ jobs.vm = do ->
         i++
       vm.list.splice(toClear, 1)
 
-
+    # Delete a Job
     vm.delete = (desc) ->
 
       $.ajax(
@@ -63,7 +64,7 @@ jobs.vm = do ->
         i++
       vm.list.splice(toDelete, 1)
 
-
+    # Update a Job Object
     vm.update = (desc, state, toolname) ->
       i = 0
       while i < vm.list.length
@@ -78,13 +79,13 @@ jobs.vm = do ->
       vm.list.push new (jobs.Job)( job_id: desc, state: state, toolname: toolname)
 
     # Send Ajax call to retrieve all Jobs from the Server
-
-    $.post("/jobs/list", (data) ->
+    vm.retrieveJobs = () ->
+      $.post("/jobs/list", (data) ->
         m.startComputation()
         for job in data.jobs
           vm.update(job.i, job.s, job.t)
         m.endComputation()
-    )
+      )
 
   vm
 #the controller defines what part of the model is relevant for the current page
@@ -100,10 +101,10 @@ jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
     m 'tr[class=job]',   [
       m('td[class=' + a[task.state()] + ']',
-        #ADD tooltip not done yet
+
         m('span'), )
       m("div", {style: {cssFloat: "left", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
-        m('br'), m('input',{type: "checkbox", id: task.job_id(), value: task.job_id(), name: task.job_id()})),
+        m('br'), m('input',{type: "checkbox", id: "jobid[]", value: task.job_id(), name: "jobid[]"})),
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
       m('td', {class: task.toolname()}, {style: {textAlign: "center", border: "1px solid black"}},
 
@@ -111,12 +112,11 @@ jobs.view = ->
           task.toolname().substr(0,4)
         ))
       m('td', {style: {cssFloat: "center", marginLeft: "0.7em", fontSize: "0.5em"}},
+      m('span', {class: "masterTooltip", title: "Hide in your job list", ariaHidden: true}
+        m('a',{class: "button tiny hollow", onclick: jobs.vm.clear.bind(task, task.job_id)},
+          m('img[src="/assets/images/icons/fi-x.svg"][width=10em]', {class: 'clear'})))
 
-
-
-        m('input',{type: "button", class: "button tiny alert hollow masterTooltip", style: {cssFloat: "center", padding: "0.35em 0.55em", margin: "0 0"}, title: "Clear from job table", value: "x",onclick: jobs.vm.clear.bind(task, task.job_id)})   )
-
-
+      )
     ]
   ) ]]
 
@@ -126,10 +126,6 @@ m.mount(document.getElementById('jobtable-rows'),  { controller: jobs.controller
 
 
 
-###
-<span data-tooltip aria-haspopup="true" class="has-tip" title="Tooltips are awesome, you should totally use them!">extended information</span>
-class="tooltip" data-tooltip="Ist das nicht ein toller Tooltip! So informativ!"
-  {onclick: jobs.vm.onclick.bind(task, task.job_id)}
-###
+
 
 

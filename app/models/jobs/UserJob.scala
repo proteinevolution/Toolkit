@@ -16,7 +16,7 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
               val job_id         : String,   // Which job_id is attached to this Job
               val user_id        : Long,     // Which user_id is attached to this job
               private var state  : JobState, // State of the job
-              val startImmediate : Boolean)
+              var startImmediate : Boolean)
 {
   // TODO Toolname is a redundant field in the UserJob
   // TODO Pass Main ID instead of user and job ID to make sure a unique job ID is used.
@@ -36,11 +36,10 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
 
   def appendChild(userJob : UserJob, links : Seq[Link]): Unit = {
 
-    Logger.info("???????????????????????????????????????????????????????????????????")
     childJobs.append((userJob, links))
-    // Lock all files in the inport port of the child job
 
-    // Lock input files of fileports specified by link
+
+    // Lock all files in the inport port of the child job
     links.foreach { link =>
 
       // lock each inlink file from child Job
@@ -49,8 +48,6 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
     }
     // if the Job is done, we can trigger conversion process for this Job
     if(state == Done) {
-
-      Logger.info("Send convert to User Actor")
       userActor ! Convert(job_id, userJob.job_id, links)
     }
   }
@@ -58,19 +55,17 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
 
   def changeState(newState : JobState): Unit = {
 
+    state = newState
     userActor ! JobStateChanged(job_id, newState)
 
-    // If the new state is Done, we can make all output files ready
+    // If the Job state is Done, we ask the UserActor to convert Output for all child jobs
     if(newState == Done) {
-
-      Logger.info("Job Done, we need to convert for " + childJobs.length + "sjobs")
 
       childJobs.foreach {userJob =>
 
           userActor ! Convert(job_id, userJob._1.job_id, userJob._2)
       }
     }
-    state = newState
   }
 
 
