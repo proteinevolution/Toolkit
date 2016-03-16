@@ -26,6 +26,9 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
   // Keeps track of all child Jobs and which inport links of the child jobs are controlled
   val childJobs : ArrayBuffer[(UserJob, Seq[Link])] = ArrayBuffer.empty
 
+  // The process that is associated with the Execution of this job.
+  var process : Option[scala.sys.process.Process] = None
+
   // Maps all input files to an associated file object
    val inFileStates = tool.inports.map { port =>
 
