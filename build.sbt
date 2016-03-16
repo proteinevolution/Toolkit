@@ -20,7 +20,8 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
-  "org.json4s" %% "json4s-jackson" % "3.3.0"
+  "org.json4s" %% "json4s-jackson" % "3.3.0",
+  "org.scalaz" %% "scalaz-core" % "7.2.1"
 )
 
 dependencyOverrides += "org.webjars" % "jquery" % "2.2.1"
