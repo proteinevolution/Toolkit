@@ -30,22 +30,21 @@
     <script type="text/javascript">
 
 
-
-
         function deleteIDs(){
-            m.startComputation();
 
             var IDs = $('input:checked').map(function(){
 
                 return $(this).val();
-
             });
 
-            for (var i = 0; i < IDs.length; i++){
+            if(IDs.length > 0 && confirm("Do you really want to delete the selected jobs permanently?")) {
+                m.startComputation();
+                for (var i = 0; i < IDs.length; i++){
 
-                jobs.vm.delete(IDs[i]);
+                    jobs.vm.delete(IDs[i]);
+                }
+                m.endComputation();
             }
-            m.endComputation();
         }
 
         $('.check:button').click(function(){
