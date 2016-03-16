@@ -7,3 +7,11 @@ $ ->
       url: route
       type: 'POST').done (data) ->
         $("#searchmodal").html(data).foundation('open')
+
+  $("#showjobs").click ->
+    route = "jobs/show/12345"
+    $.ajax(
+      url: route
+      type: 'GET').done (data) ->
+        $("#searchmodal").html(data).foundation('open')
+        alert "--"

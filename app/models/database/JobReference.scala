@@ -40,17 +40,21 @@ class JobReference @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider : Dat
     * @param job        Job for which the reference should be made
     * @param session_id Session ID from which the job is sent
     */
-  def update(job : DBJob, session_id : String) : DBJobRef = {
-    val main_id   : Long = jobDB.update(job)
-    val jobRefSeq : Seq[DBJobRef] = get(main_id, job.user_id)
+  def update(dbJob : DBJob, session_id : String) : DBJobRef = {
+    // First update the DBJob, to see if it exists or if it needs to be created.
+    val dbJobUpdated : DBJob = jobDB.update(dbJob).get
+    // Second, see if there has been a creation of a Reference for this main_id already
+    val jobRefSeq : Seq[DBJobRef] = get(dbJobUpdated.main_id.get, dbJobUpdated.user_id)
     jobRefSeq.headOption match {
-      case Some(jobRef) =>
-        Await.result(dbConfig.db.run(jobReferences.filter(_.main_id === main_id).update(jobRef)), Duration.Inf)
-        jobRef
+      // This is an update
+      case Some(dbJobRef) =>
+        Await.result(dbConfig.db.run(jobReferences.filter(_.main_id === dbJobUpdated.main_id.get).update(dbJobRef)), Duration.Inf)
+        dbJobRef
+      // This is a creation
       case None         =>
-        val jobRef = new DBJobRef(session_id, job.user_id, main_id, RandomString.randomAlphaString(15))
-        Await.result(dbConfig.db.run(jobReferences += jobRef), Duration.Inf)
-        jobRef
+        val dbJobRef = new DBJobRef(session_id, dbJobUpdated.user_id, dbJobUpdated.main_id.get, RandomString.randomAlphaString(15))
+        Await.result(dbConfig.db.run(jobReferences += dbJobRef), Duration.Inf)
+        dbJobRef
     }
   }
 

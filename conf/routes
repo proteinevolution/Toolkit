@@ -34,10 +34,6 @@ GET         /jobs/:jobid                    @controllers.Tool.result(jobid: Stri
 # Submit Route
 POST        /tools/:toolname       @controllers.Tool.submit(toolname : String, start : Boolean, newSubmission : Boolean)
 
-# Look up jobs with the matching job_id
-GET         /jobs/search/:jobid             @controllers.Service.findJobID(jobid: String)
-POST        /jobs/search/:jobid             @controllers.Service.findJobID(jobid: String)
-
 ############################################################################
 # Handles the result View (Determined by the status of the job_id provided)
 ############################################################################
@@ -45,8 +41,11 @@ POST        /jobs/search/:jobid             @controllers.Service.findJobID(jobid
 
 
 # Interaction with Jobs
+# Show all jobs a user has
+GET         /jobs/show/:userid              @controllers.Service.showJobs(userid: Long)
+# Look up jobs with the matching job_id
+POST        /jobs/search/:jobid             @controllers.Service.findJobID(jobid: String)
 # Loading a Job from the DB
-GET         /jobs/add/:jobid                @controllers.Service.addJobID(jobid: String)
 POST        /jobs/add/:jobid                @controllers.Service.addJobID(jobid: String)
 # Creating a new Job
 POST        /jobs/new/:toolname             @controllers.Service.newJob(toolname : String)
