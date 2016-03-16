@@ -134,12 +134,10 @@ class Service @Inject() (val messagesApi: MessagesApi,
     */
   def delJob(job_id: String) = Action.async { implicit request =>
 
-    //TODO: implement kill method so that processes can get killed
-
     val session_id = Session.requestSessionID(request) // Grab the Session ID
 
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
-      Logger.info("Deleted " + job_id + " from database.")
+
       userActor ! DeleteJob(job_id)
       Ok(Json.obj("job_id" -> job_id))
     }
@@ -284,7 +282,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
         // Found jobs, list them now
         case Some(dbJob) =>
           (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
-            userActor ! AddJob(dbJob.job_id)
+            userActor ! LoadJob(dbJob.job_id)
           }
           // This sends a NoContent header to the user, informing them that the request was ok
           // but that there is nothing to do on their side as we want to send this over websockets

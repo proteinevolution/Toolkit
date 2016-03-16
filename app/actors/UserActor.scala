@@ -58,7 +58,7 @@ object UserActor {
   case object UpdateJobList
 
   // Loads a single job from the database and loads it into the user actor
-  case class AddJob(job_id : String)
+  case class LoadJob(job_id : String)
 
   // Attach WebSocket Actor to UserActor
   case class AttachWS(ws : ActorRef)
@@ -185,18 +185,18 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     // Removes a Job completely
     case DeleteJob(job_id) =>
-      Logger.info("Try to delete job")
 
-      if(userJobs.filterKeys(_ == job_id).nonEmpty) {
-        val job = userJobs.remove(job_id).get    // Remove from User Model
-        job.destroy()                            // Tell the Job that it has been destroyed
-        databaseMapping.remove(job_id)           // Remove job from the relation database mapping
+      if(userJobs.contains(job_id)) {
 
-        worker ! WDelete(job)                    // Worker removes Directory
+        val job = userJobs.remove(job_id).get // Remove from User Model, there should not exist a reference to that job anymore
+        job.destroy() // Tells the job that is was destroyed
+        databaseMapping.remove(job_id) // Remove job from the relation database mapping
+        worker ! WDelete(job) // Worker removes Directory
       }
 
     // Removes the job from the UserActor, but keep it in the job database
     case ClearJob(job_id) =>
+
       val dbJobOption = databaseMapping.remove(job_id)
       dbJobOption match {
         case Some(dbJob) => jobRefDB.delete(dbJob)
@@ -205,10 +205,12 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       }
 
     // Returns a Job for a given job_id
+    // TODO Handle the case that the user requests a job which does not belong to him
     case GetJob(job_id) => sender() ! userJobs.get(job_id).get
 
     // Read the parameter map from the job directory
     case GetJobParams(job_id) => worker forward WRead(userJobs(job_id))
+
 
     // Asks the user actor to load jobs from the database in the JobModel
     case LoadJobsFromDB =>
@@ -223,16 +225,12 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       }
 
     // Asks the user actor to load a single job from the database in the JobModel
-    case AddJob (job_id : String) =>
+    case LoadJob (job_id : String) =>
       val dbJob_o = jobDB.get(user_id, job_id).headOption
       dbJob_o match {
-        case Some(dbJob) =>
-          // job_id was ok, add the job.
-          addJob(dbJob)
+        case Some(dbJob) => addJob(dbJob)
 
-        case None =>
-          // job_id was faulty, show error.
-          ws.get ! JobIDInvalid
+        case None => ws.get ! JobIDInvalid
       }
 
     // Returns all Jobs
@@ -241,13 +239,13 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     /* Appends a new Job to one parent job */
     case AppendChildJob(parent_job_id, toolname, links) =>
 
-
       // Load the Parent job from the Database if it is not in the UserActor
-      if(userJobs.filterKeys(_ == parent_job_id).isEmpty) {
-        self ! AddJob(parent_job_id)
+      if(!userJobs.contains(parent_job_id)) {
+
+        self ! LoadJob(parent_job_id)
       }
       // Generate new Job ID
-      var job_id : String = checkJobID(None)
+      val job_id : String = checkJobID(None)
       val job = UserJob(self, toolname, job_id, user_id, Submitted,  false)
 
       // This is a new Job, so we have to make the Job state *Submitted* explicit
@@ -257,7 +255,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       databaseMapping.put(job.job_id, jobRefDB.update(DBJob(None, job.job_id, user_id, job.getState, job.toolname), session_id))
       userJobs.put(job.job_id, job)
 
-      Logger.info("Try to get Parent job for job id from database, parent is: " + userJobs(parent_job_id).job_id)
       userJobs(parent_job_id).appendChild(job, links)
 
 
@@ -271,16 +268,19 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     // UserActor got to know that the job state has changed
     case JobStateChanged(job_id, state) =>
 
-      val userJob = userJobs.get(job_id).get
+      if(userJobs.contains(job_id)) {
 
-      // Forward Job state to Websocket
-      ws.get ! JobStateChanged(job_id, state)
+        val userJob = userJobs(job_id)
 
-      // get the main ID
-      val main_id_o = Some(databaseMapping.get(job_id).get.main_id)
+        // Forward Job state to Websocket
+        ws.get ! JobStateChanged(job_id, state)
 
-      // update Job state in Persistence
-      jobRefDB.update(DBJob(main_id_o, job_id, user_id, userJob.getState, userJob.toolname), session_id)
+        // get the main ID
+        val main_id_o = Some(databaseMapping.get(job_id).get.main_id)
+
+        // update Job state in Persistence
+        jobRefDB.update(DBJob(main_id_o, job_id, user_id, userJob.getState, userJob.toolname), session_id)
+      }
 
     case AutoComplete (suggestion : String) =>
       val dbJobSeq = jobDB.suggestJobID(user_id, suggestion)
