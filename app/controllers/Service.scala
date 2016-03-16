@@ -250,6 +250,11 @@ class Service @Inject() (val messagesApi: MessagesApi,
     }
   }
 
+  /**
+    * Returns a list of jobs a user owns
+    * @param user_id user_id of the user
+    * @return
+    */
   def showJobs(user_id : Long) = Action.async { implicit reqest =>
     Future.successful {
       Ok(views.html.general.search(jobDB.getJobsForUser(user_id)))
@@ -258,24 +263,26 @@ class Service @Inject() (val messagesApi: MessagesApi,
 
 
   /**
-    * Searches for a matching job_id
-    *
-    * @param jobIDLookup prefix of a job_id
+    * Adds a job_id to the current list of jobs
+    * @param job_id job_id of the job
     * @return
     */
-  def addJobID(jobIDLookup: String) = Action.async { implicit request =>
+  def addJobID(job_id: String) = Action.async { implicit request =>
     val session_id = Session.requestSessionID(request) // Grab the Session ID
-    Logger.info("Hi " + session_id + " :)") // TODO should get this message in the logger, at least
+    Logger.info("Adding Job for " + session_id + ", job_id to add: " + job_id)
     Future.successful {
-      val jobSeq = jobDB.suggestJobID(12345L, jobIDLookup)
+      val jobSeq = jobDB.suggestJobID(12345L, job_id)
       jobSeq.headOption match {
+        // Found jobs, list them now
         case Some(dbJob) =>
           (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
             userActor ! AddJob(dbJob.job_id)
           }
+          // This sends a NoContent header to the user, informing them that the request was ok
+          // but that there is nothing to do on their side as we want to send this over websockets
+          NoContent
 
-          Ok(views.html.general.search(jobSeq))
-        // no such job_id, send to NotFound
+        // no such job_id, send to NotFound (This is needed in case someone follows the route to try out stuff)
         case None =>
           NotFound
       }
