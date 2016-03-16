@@ -14,7 +14,7 @@
 
         <form class="delete_id">
             <div class="tiny expanded button-group">
-            <input type="submit" class="small alert button masterTooltip" title="This will delete your checked jobs permanently from our database." value="Delete sel. Jobs" onclick="deleteIDs();">
+            <input type="button" class="small alert button masterTooltip" title="This will delete your checked jobs permanently from our database." value="Delete sel. Jobs" onclick="deleteIDs();">
             <input type="button" class="check small secondary button masterTooltip" title="Select all jobs in your job list." value="Select all Jobs"/>
 
             </div>
@@ -30,25 +30,24 @@
     <script type="text/javascript">
 
 
-
-
         function deleteIDs(){
 
             var IDs = $('input:checked').map(function(){
 
                 return $(this).val();
-
             });
 
-            for (var i = 0; i<=IDs.length-1; i++){
-            $.ajax( {
-                async: true,
-                url:'/jobs/del/' + IDs[i],
-                type:'POST'
-            });}
+            if(IDs.length > 0 && confirm("Do you really want to delete the selected jobs permanently?")) {
+                m.startComputation();
+                for (var i = 0; i < IDs.length; i++){
 
+                    jobs.vm.delete(IDs[i]);
+                    m.redraw.strategy("all");
+                }
+                m.endComputation();
+
+            }
         }
-
 
         $('.check:button').click(function(){
             var checked = !$(this).data('checked');

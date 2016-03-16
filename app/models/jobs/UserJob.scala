@@ -26,6 +26,11 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
   // Keeps track of all child Jobs and which inport links of the child jobs are controlled
   val childJobs : ArrayBuffer[(UserJob, Seq[Link])] = ArrayBuffer.empty
 
+  // The process that is associated with the Execution of this job.
+  var process : Option[scala.sys.process.Process] = None
+
+  var destroyed : Boolean = false
+
   // Maps all input files to an associated file object
    val inFileStates = tool.inports.map { port =>
 
@@ -36,37 +41,53 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
 
   def appendChild(userJob : UserJob, links : Seq[Link]): Unit = {
 
-    childJobs.append((userJob, links))
+    if(!destroyed) {
+      childJobs.append((userJob, links))
 
+      // Lock all files in the inport port of the child job
+      links.foreach { link =>
 
-    // Lock all files in the inport port of the child job
-    links.foreach { link =>
-
-      // lock each inlink file from child Job
-      val filename =  userJob.tool.inports(link.in).filename
-      userJob.changeInFileState(filename, Locked)
-    }
-    // if the Job is done, we can trigger conversion process for this Job
-    if(state == Done) {
-      userActor ! Convert(job_id, userJob.job_id, links)
+        // lock each inlink file from child Job
+        val filename = userJob.tool.inports(link.in).filename
+        userJob.changeInFileState(filename, Locked)
+      }
+      // if the Job is done, we can trigger conversion process for this Job
+      if (state == Done) {
+        userActor ! Convert(job_id, userJob.job_id, links)
+      }
     }
   }
 
 
   def changeState(newState : JobState): Unit = {
 
-    state = newState
-    userActor ! JobStateChanged(job_id, newState)
+    if(!destroyed) {
+      state = newState
+      userActor ! JobStateChanged(job_id, newState)
 
-    // If the Job state is Done, we ask the UserActor to convert Output for all child jobs
-    if(newState == Done) {
+      // If the Job state is Done, we ask the UserActor to convert Output for all child jobs
+      if(newState == Done) {
 
-      childJobs.foreach {userJob =>
+        childJobs.foreach {userJob =>
 
-          userActor ! Convert(job_id, userJob._1.job_id, userJob._2)
+            userActor ! Convert(job_id, userJob._1.job_id, userJob._2)
+        }
       }
     }
   }
+
+  def destroy() = {
+
+      // TODO We have to handle the case that this Job has child jobs
+      if(process.isDefined) {
+
+        process.get.destroy()
+      }
+      process = None
+
+    destroyed = true
+  }
+
 
 
 
