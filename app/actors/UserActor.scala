@@ -101,7 +101,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
   /**
     * Adds a Job to the user using a Database entry
- *
     * @param dbJob database entry of the job
     */
   def addJob(dbJob : DBJob) = {
@@ -109,11 +108,17 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     val jobRef = jobRefDB.update(dbJob, session_id)
     userJobs.put(dbJob.job_id,job)
     databaseMapping.put(dbJob.job_id,jobRef)
+    ws match {
+      // Websocket ready, send Job
+      case Some(webSocket) =>
+        webSocket ! UpdateJobList
+      // Websocket not initialized yet
+      case None =>
+    }
   }
 
   /**
     * Checks if a given job_id is already used for a different job
- *
     * @param job_id_o selected job_id
     * @return
     */

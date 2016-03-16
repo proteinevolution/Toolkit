@@ -29,6 +29,7 @@ ws.onmessage = (event) ->
       text = "Sorry, but there is no such Job ID."
       $(".jobsearchform").notify(text)
 
+    # Updates the Joblist by removing the old ones and requesting the list again
     when "updatejoblist"
       jobs.vm.retrieveJobs()
 
