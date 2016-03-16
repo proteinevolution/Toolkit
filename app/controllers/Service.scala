@@ -172,6 +172,14 @@ class Service @Inject() (val messagesApi: MessagesApi,
         // Switch on Job state to decide what to show
         job.getState match {
 
+
+          case Error => Future.successful {
+
+            Ok(views.html.job.error(job)).withSession {
+              Session.closeSessionRequest(request, session_id)   // Send Session Cookie
+            }
+          }
+
           case Queued => Future.successful {
 
             Ok(views.html.job.queued(job)).withSession {
