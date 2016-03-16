@@ -206,7 +206,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     // Returns a Job for a given job_id
     // TODO Handle the case that the user requests a job which does not belong to him
-    case GetJob(job_id) => sender() ! userJobs.get(job_id).get
+    case GetJob(job_id) => sender() ! userJobs.get(job_id)
 
     // Read the parameter map from the job directory
     case GetJobParams(job_id) => worker forward WRead(userJobs(job_id))
