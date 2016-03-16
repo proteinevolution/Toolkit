@@ -50,7 +50,7 @@ jobs.vm = do ->
 
       $.ajax(
         async : true
-        url : '/jobs/del/' + desc()
+        url : '/jobs/del/' + desc
         type : 'POST'
       )
       toDelete = undefined
@@ -58,7 +58,7 @@ jobs.vm = do ->
       while i < vm.list.length
 
         job = vm.list[i]
-        if job.job_id() == desc()
+        if job.job_id() == desc
           toDelete = i
           break
         i++

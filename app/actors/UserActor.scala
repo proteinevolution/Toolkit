@@ -185,8 +185,11 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     // Removes a Job completely
     case DeleteJob(job_id) =>
+      Logger.info("Try to delete job")
+
       if(userJobs.filterKeys(_ == job_id).nonEmpty) {
         val job = userJobs.remove(job_id).get    // Remove from User Model
+        job.destroy()                            // Tell the Job that it has been destroyed
         databaseMapping.remove(job_id)           // Remove job from the relation database mapping
 
         worker ! WDelete(job)                    // Worker removes Directory

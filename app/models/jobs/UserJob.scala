@@ -71,6 +71,18 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
     }
   }
 
+  def destroy() = {
+
+      Logger.info("Try to destroy job")
+      // TODO We have to handle the case that this Job has child jobs
+      if(process.isDefined) {
+
+        process.get.destroy()
+      }
+      process = None
+  }
+
+
 
 
   // Counts the number of files that have notified to be ready. If all files are ready, then
