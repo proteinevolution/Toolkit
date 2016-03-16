@@ -3,7 +3,7 @@ package actors
 
 import java.io
 import java.io.PrintWriter
-import java.nio.file.{Paths, Files}
+import java.nio.file.Paths
 import javax.inject.Inject
 import actors.UserActor.UpdateWDDone
 import akka.actor.{Actor, ActorLogging}
@@ -11,11 +11,13 @@ import akka.event.LoggingReceive
 import models.graph.{PortWithFormat, Ports, Ready}
 import models.jobs._
 import play.api.Logger
-import utils.Exceptions.NotImplementedException
+import utils.Exceptions.{RunscriptExecutionFailedException, NotImplementedException}
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.Future
 import scala.io.Source
-import sys.process._
-
+import scala.sys.process._
+import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 // TODO Get rid of this library
 import scala.reflect.io.{Directory, File}
@@ -284,15 +286,32 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
           targetRunscript.close()
 
 
-          // TODO Maybe we can use the Process builder in a more clever way
 
-          // Actually start the Job, the code will stall here
-          userJob.changeState(Running)
-          val result = Process("./" + userJob.toolname + ".sh", new io.File(rootPath)).!
+          // Run the tool async in the execution context of the worker
+          Future {
 
-          // Change state of job depending on the RUnscript execution
-          // TODO Add more error handling here
-          userJob.changeState(if(result == 0) Done else Error)
+            userJob.changeState(Running)
+            val process = Process("./" + userJob.toolname + ".sh", new io.File(rootPath)).run
+            userJob.process = Some(process)
+            val exitValue = process.exitValue()
+
+            if(exitValue != 0) {
+
+              throw RunscriptExecutionFailedException(exitValue, "Execution of Runscript failed. Exit code was " + exitValue)
+            } else {
+
+              exitValue
+            }
+          } onComplete {
+
+            case Success(_) => userJob.changeState(Done)
+
+              // TODO Add more Error handling here
+            case Failure(t) => userJob.changeState(Error)
+          }
+
+
+
         case None =>
           userJob.changeState(Error)
       }
