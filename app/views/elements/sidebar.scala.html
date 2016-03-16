@@ -42,8 +42,10 @@
                 for (var i = 0; i < IDs.length; i++){
 
                     jobs.vm.delete(IDs[i]);
+                    m.redraw.strategy("all");
                 }
                 m.endComputation();
+
             }
         }
 
