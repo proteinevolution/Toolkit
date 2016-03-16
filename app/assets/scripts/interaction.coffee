@@ -14,4 +14,3 @@ $ ->
       url: route
       type: 'GET').done (data) ->
         $("#searchmodal").html(data).foundation('open')
-        alert "--"
