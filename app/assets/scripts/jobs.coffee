@@ -82,6 +82,9 @@ jobs.vm = do ->
     vm.retrieveJobs = () ->
       $.post("/jobs/list", (data) ->
         m.startComputation()
+        # Clear old jobs from the list
+        vm.list = new (jobs.JobList)
+        # Update the jobs
         for job in data.jobs
           vm.update(job.i, job.s, job.t)
         m.endComputation()

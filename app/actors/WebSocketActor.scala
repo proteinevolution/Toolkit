@@ -9,7 +9,7 @@ import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
 import models.database.DBJob
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsValue, JsArray, Json}
 
 
 /**
@@ -30,6 +30,14 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
     userActor ! AttachWS(self)
   }
 
+  def createJobObjList (dbJobSeq : Seq[DBJob]) : JsArray = {
+    JsArray(for (dbJob <- dbJobSeq) yield {
+      Json.obj("t" -> dbJob.toolname,
+               "s" -> dbJob.job_state.no,
+               "i" -> dbJob.job_id)
+    })
+  }
+
   def receive = LoggingReceive {
 
 
@@ -44,7 +52,7 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
       }
 
     // Messages the user that there was a problem in handling the Job ID
-    case JobIDInvalid => out ! Json.obj("type" -> "jobidinvalid")
+    case JobIDInvalid  => out ! Json.obj("type" -> "jobidinvalid")
 
     // Updates the User about updating their joblist
     case UpdateJobList => out ! Json.obj("type" -> "updatejoblist")
@@ -59,11 +67,6 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
       out ! Json.obj("type" -> "jobstate", "newState" -> state.no, "job_id" -> job_id)
 
     case AutoCompleteSend (suggestions : Seq[DBJob]) =>
-      val jobListObjs = for (suggestion <- suggestions) yield {
-        Json.obj("t" -> suggestion.toolname,
-                 "s" -> suggestion.job_state.no,
-                 "i" -> suggestion.job_id)
-      }
-      out ! Json.obj("type" -> "autocomplete", "suggestions" -> jobListObjs)
+      out ! Json.obj("type" -> "autocomplete", "suggestions" -> createJobObjList(suggestions))
   }
 }
