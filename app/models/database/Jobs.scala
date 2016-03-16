@@ -118,17 +118,29 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
   }
 
   /**
+    * Find all of the Jobs a User owns
+    * @param user_id user_id of the user who first created (and owns) the job
+    * @return
+    */
+  def getJobsForUser(user_id : Long) : Seq[DBJob] = {
+    Await.result(dbConfig.db.run(jobs.filter(_.user_id === user_id).result), Duration.Inf)
+  }
+
+  /**
     * Updates a Job in the database
     * @param job
     * @return
     */
-  def update(job: DBJob) : Long = {
-    job.main_id match {
-      case None =>
-        Await.result(dbConfig.db.run(addQuery += job), Duration.Inf)
-
+  def update(dbJob: DBJob) : Option[DBJob] = {
+    dbJob.main_id match {
+      // This is an update
       case Some(main_id) =>
-        Await.result(dbConfig.db.run(jobs.filter(_.main_id === main_id).update(job)), Duration.Inf).toLong
+        Await.result(dbConfig.db.run(jobs.filter(_.main_id === main_id).update(dbJob)), Duration.Inf)
+        get(main_id)
+      // This is a creation
+      case None =>
+        val main_id : Long = Await.result(dbConfig.db.run(addQuery += dbJob), Duration.Inf)
+        get(main_id)
     }
   }
 

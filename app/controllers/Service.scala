@@ -250,6 +250,13 @@ class Service @Inject() (val messagesApi: MessagesApi,
     }
   }
 
+  def showJobs(user_id : Long) = Action.async { implicit reqest =>
+    Future.successful {
+      Ok(views.html.general.search(jobDB.getJobsForUser(user_id)))
+    }
+  }
+
+
   /**
     * Searches for a matching job_id
     *

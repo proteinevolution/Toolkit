@@ -194,8 +194,12 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
     // Removes the job from the UserActor, but keep it in the job database
     case ClearJob(job_id) =>
-      jobRefDB.delete(databaseMapping.remove(job_id).get)
-      userJobs.remove(job_id).get
+      val dbJobOption = databaseMapping.remove(job_id)
+      dbJobOption match {
+        case Some(dbJob) => jobRefDB.delete(dbJob)
+                            userJobs.remove(job_id).get
+        case None        =>
+      }
 
     // Returns a Job for a given job_id
     case GetJob(job_id) => sender() ! userJobs.get(job_id).get
