@@ -165,7 +165,11 @@ class Service @Inject() (val messagesApi: MessagesApi,
     val session_id = Session.requestSessionID(request) // Grab the Session ID
 
     (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
-      (userActor ? GetJob(job_id)).mapTo[UserJob].flatMap { job =>
+      (userActor ? GetJob(job_id)).mapTo[Option[UserJob]].flatMap {
+
+        case None => Future.successful(NotFound)
+
+        case Some(job) =>
 
         // Switch on Job state to decide what to show
         job.getState match {
