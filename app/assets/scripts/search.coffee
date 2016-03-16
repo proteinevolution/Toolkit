@@ -1,7 +1,9 @@
 $ ->
   # TODO Add a confirm signal after clicking of some sort
   $(".jobsearchfield .jobsearchentry").click ->
-    route = "jobs/add/" + this.id
+    divobject = this
+    route = "jobs/add/" + divobject.id
     $.ajax(
       url: route
-      type: 'POST')
+      type: 'POST').done (data) ->
+        divobject.style.backgroundColor = "#22FF22"
