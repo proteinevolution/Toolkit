@@ -74,10 +74,11 @@ jobs.vm = do ->
             state: state
             toolname: toolname)
           return
+        m.redraw()
       # limit job list to 5 jobs at the moment
         if i >= 4
           vm.clear(vm.list[0])
-        m.redraw.strategy("diff")
+        m.redraw()
         i++
       vm.list.push new (jobs.Job)( job_id: desc, state: state, toolname: toolname)
 
@@ -90,6 +91,7 @@ jobs.vm = do ->
         # Update the jobs
         for job in data.jobs
           vm.update(job.i, job.s, job.t)
+          m.redraw.strategy("all")
         m.endComputation()
       )
 
