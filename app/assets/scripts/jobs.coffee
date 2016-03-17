@@ -30,7 +30,7 @@ jobs.vm = do ->
 
       $.ajax(
         async : true
-        url : '/jobs/clear/' + desc()
+        url : '/jobs/clear/' + desc
         type : 'POST'
       )
       toClear = undefined
@@ -38,7 +38,7 @@ jobs.vm = do ->
       while i < vm.list.length
 
         job = vm.list[i]
-        if job.job_id() == desc()
+        if job.job_id() == desc
           toClear = i
           break
         i++
@@ -74,7 +74,10 @@ jobs.vm = do ->
             state: state
             toolname: toolname)
           return
-          m.redraw.strategy("all")
+      # limit job list to 25 jobs at the moment
+        if i >= 24
+          vm.clear(vm.list[0])
+        m.redraw.strategy("all")
         i++
       vm.list.push new (jobs.Job)( job_id: desc, state: state, toolname: toolname)
 
@@ -89,6 +92,7 @@ jobs.vm = do ->
           vm.update(job.i, job.s, job.t)
         m.endComputation()
       )
+
 
   vm
 #the controller defines what part of the model is relevant for the current page
@@ -111,7 +115,7 @@ jobs.view = ->
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
       m('td', {class: task.toolname()}, {style: {textAlign: "center", border: "1px solid black"}},
 
-        m("div", {style: {cssFloat: "center", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
+        m("div", {style: {cssFloat: "center", border: "0px solid black", marginLeft: "0.75em"}},
           task.toolname().substr(0,4)
         ))
       m('td', {style: {cssFloat: "center", marginLeft: "0.7em", fontSize: "0.5em"}},
