@@ -54,6 +54,8 @@ $ ->
       data: $(".jobform").serialize()
       error: (jqXHR, textStatus, errorThrown) -> alert errorThrown
 
+    m.redraw.strategy("all")
+
 # If one hits the Reset button of the form
   $(".jobformclear").click (event) ->
     $('.jobform').trigger("reset")
