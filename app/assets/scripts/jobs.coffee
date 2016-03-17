@@ -6,7 +6,6 @@ jobs.Job = (data) ->
   @toolname = m.prop(data.toolname)
   @job_id = m.prop(data.job_id)
   @state = m.prop(data.state)
-  #@code = m.prop(data.code)
   return # This return statement is important!
 
 jobs.JobList = Array
@@ -75,6 +74,7 @@ jobs.vm = do ->
             state: state
             toolname: toolname)
           return
+          m.redraw.strategy("all")
         i++
       vm.list.push new (jobs.Job)( job_id: desc, state: state, toolname: toolname)
 
