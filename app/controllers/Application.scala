@@ -21,7 +21,8 @@ import java.io.File
 
 
 @Singleton
-class Application @Inject()(val messagesApi: MessagesApi,
+class Application @Inject()(webJarAssets: WebJarAssets,
+                            val messagesApi: MessagesApi,
                             val jobDB : models.database.Jobs,
                             val environment: Environment,
                             val configuration: Configuration,
@@ -63,7 +64,7 @@ class Application @Inject()(val messagesApi: MessagesApi,
     val session_id = Session.requestSessionID(request)
 
     // Without session cookie
-    Ok(views.html.main(views.html.general.newcontent(),"Home")).withSession {
+    Ok(views.html.main(webJarAssets, views.html.general.newcontent(),"Home")).withSession {
       Session.closeSessionRequest(request, session_id)
     }
   }
