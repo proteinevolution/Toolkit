@@ -1,0 +1,14 @@
+@import play.api.mvc.RequestHeader
+@import models.tools.Reformat
+@(inputForm: Form[(String, String)])(implicit messages: Messages, request: RequestHeader)
+
+
+<script src='@routes.Assets.at("javascripts/alnviz.js")' type="text/javascript" ></script>
+@helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 50,
+    '_label -> "",
+    'placeholder -> "Enter multiple sequence alignment",
+    'id -> "alignment")
+
+
+<a onClick="$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
+

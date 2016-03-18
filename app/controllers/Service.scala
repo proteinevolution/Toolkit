@@ -8,7 +8,7 @@ import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.jobs._
-import models.tools.{Hmmer3, Tcoffee, Alnviz}
+import models.tools._
 import models.sessions.Session
 import play.api.Logger
 import play.api.libs.json.Json
@@ -116,6 +116,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
       case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
       case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
+      case "reformat" => views.html.reformat.form(Hmmer3.inputForm)
     }
 
     Ok(views.html.general.submit(toolname, toolframe, None)).withSession {
@@ -237,6 +238,8 @@ class Service @Inject() (val messagesApi: MessagesApi,
                 case "alnviz" => views.html.alnviz.form(Alnviz.inputForm.bind(res))
                 case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm.bind(res))
                 case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm.bind(res))
+                case "psiblast" => views.html.psiblast.form(Psiblast.inputForm.bind(res))
+                case "reformat" => views.html.reformat.form(Reformat.inputForm.bind(res))
               }
 
               Ok(views.html.general.submit(job.toolname, toolframe, Some(job_id))).withSession {
