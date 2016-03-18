@@ -202,7 +202,9 @@ tr.job a:visited {
 
 hr {
 
-    width:50%;
+    width:100%;
+    border-top: 1px solid #006F62;
+
 }
 
 .padded-column {
