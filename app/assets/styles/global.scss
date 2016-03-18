@@ -1,4 +1,5 @@
 @import 'lib/foundation/scss/foundation';
+
 @import 'footer';
 @import 'sidebar';
 @import 'topbar';
@@ -12,8 +13,6 @@
 @include foundation-forms;
 @include foundation-visibility-classes;
 @include foundation-float-classes;
-@include foundation-accordion;
-@include foundation-accordion-menu;
 @include foundation-badge;
 @include foundation-breadcrumbs;
 @include foundation-button-group;
@@ -41,6 +40,13 @@
 @include foundation-tooltip;
 @include foundation-top-bar;
 @include foundation-tabs;
+
+
+/* Currently cause trouble, please do not comment in
+@include foundation-accordion;
+@include foundation-accordion-menu;
+*/
+
 
 
 
