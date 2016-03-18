@@ -19,6 +19,25 @@
 
 .footer a {
   display: block;
+  color: #fff;
+
+}
+
+.footer a:active {
+  display: block;
+  color: #006F62;
+
+}
+
+.footer a:hover {
+  display: block;
+  background-color: #006F62;
+
+}
+
+.footer a:visited {
+  display: block;
+  color: #fff;
 
 }
 
