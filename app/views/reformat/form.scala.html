@@ -7,7 +7,7 @@
 @helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 50,
     '_label -> "",
     'placeholder -> "Enter multiple sequence alignment",
-    'id -> "alignment")
+    'id -> "alignment", '_showConstraints -> false)
 
 
 <a onClick="$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
