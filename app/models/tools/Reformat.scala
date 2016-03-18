@@ -17,7 +17,7 @@ object Reformat extends ToolModel {
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
-      "alignment" -> text,
+      "alignment" -> nonEmptyText,
       "alignment_format" -> text
     )
   )

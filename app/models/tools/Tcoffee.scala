@@ -21,7 +21,7 @@ object Tcoffee extends ToolModel {
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
-      "sequences" -> text,
+      "sequences" -> nonEmptyText,
       "mlalign_id_pair" -> boolean,
       "mfast_pair" -> boolean,
       "mslow_pair" -> boolean
