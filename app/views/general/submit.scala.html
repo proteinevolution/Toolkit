@@ -14,16 +14,17 @@
 }
 </script>
 <script src="@routes.Assets.at("scripts/form.js")"></script>
+
 <form class="jobform">
 
         @toolframe
 
 
-<!-- Only show JobID stuff iff the submission is a new one -->
+
+<script src="@routes.Assets.at("scripts/validation.js")"></script>
 
 
-
-<input class="secondary button" type="submit" value="Submit Job" >
+<input class="secondary button" id="foo" type="submit" value="Submit Job" >
 <input class="jobprepare secondary button" type="button" value="Prepare Job" />
 <input class="jobformclear secondary button" type="button" value="Clear form" />
 
