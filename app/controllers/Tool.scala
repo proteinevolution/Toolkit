@@ -82,6 +82,8 @@ class Tool @Inject()(val messagesApi: MessagesApi,
           case "alnviz" => Alnviz.inputForm
           case "tcoffee" => Tcoffee.inputForm
           case "hmmer3" => Hmmer3.inputForm
+          case "psiblast" => Psiblast.inputForm
+          case "reformat" => Reformat.inputForm
         }
         val boundForm = form.bindFromRequest
 
