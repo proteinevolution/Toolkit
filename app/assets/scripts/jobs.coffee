@@ -26,30 +26,29 @@ jobs.vm = do ->
         type: 'POST')
 
     # Remove a Job from the View
-    vm.clear = (desc) ->
-
+    vm.clear = (job_id) ->
       $.ajax(
         async : true
-        url : '/jobs/clear/' + desc
+        url : '/jobs/clear/' + job_id
         type : 'POST'
       )
       toClear = undefined
       i = 0
       while i < vm.list.length
-
         job = vm.list[i]
-        if job.job_id() == desc
+        if job.job_id() == job_id
           toClear = i
           break
         i++
       vm.list.splice(toClear, 1)
 
+
     # Delete a Job
-    vm.delete = (desc) ->
+    vm.delete = (job_id) ->
 
       $.ajax(
         async : true
-        url : '/jobs/del/' + desc
+        url : '/jobs/del/' + job_id
         type : 'POST'
       )
       toDelete = undefined
@@ -57,43 +56,38 @@ jobs.vm = do ->
       while i < vm.list.length
 
         job = vm.list[i]
-        if job.job_id() == desc
+        if job.job_id() == job_id
           toDelete = i
           break
         i++
       vm.list.splice(toDelete, 1)
 
     # Update a Job Object
-    vm.update = (desc, state, toolname) ->
+    vm.update = (job_id, state, toolname) ->
       i = 0
       while i < vm.list.length
         job = vm.list[i]
-        if job.job_id() == desc
+        if job.job_id() == job_id
           vm.list[i] = new (jobs.Job)(
-            job_id: desc
+            job_id: job_id
             state: state
             toolname: toolname)
           return
-        m.redraw()
       # limit job list to 5 jobs at the moment
         if i >= 4
           vm.clear(vm.list[0])
         m.redraw()
         i++
-      vm.list.push new (jobs.Job)( job_id: desc, state: state, toolname: toolname)
+      vm.list.push new (jobs.Job)( job_id: job_id, state: state, toolname: toolname)
 
-    # Send Ajax call to retrieve all Jobs from the Server
-    vm.retrieveJobs = () ->
-      $.post("/jobs/list", (data) ->
-        m.startComputation()
-        # Clear old jobs from the list
-        vm.list = new (jobs.JobList)
-        # Update the jobs
-        for job in data.jobs
-          vm.update(job.i, job.s, job.t)
-          m.redraw.strategy("all")
-        m.endComputation()
-      )
+    # Update the joblist
+    vm.updateList = (joblist) ->
+      m.startComputation()
+      vm.list = new (jobs.JobList)
+      for job in joblist
+        vm.update(job.i, job.s, job.t)
+        m.redraw.strategy("all")
+      m.endComputation()
 
 
   vm
@@ -122,7 +116,7 @@ jobs.view = ->
         ))
       m('td', {style: {cssFloat: "center", marginLeft: "0.7em", fontSize: "0.5em"}},
       m('span', {class: "masterTooltip", title: "Hide in your job list", ariaHidden: true}
-        m('a',{ onclick: jobs.vm.clear.bind(task, task.job_id)},
+        m('a',{ onclick: jobs.vm.clear.bind(task, task.job_id())},
           m('img[src="/assets/images/icons/fi-x.svg"][width=10em]', {class: 'clear'})))
 
       )
