@@ -7,9 +7,9 @@ CREATE TABLE `job_reference` (
   `jobs_main_id`        INTEGER UNSIGNED    NOT NULL,
   `referral_link`       VARCHAR(15)         NOT NULL,
   `description_id`      INTEGER UNSIGNED,
-  `created_on`          TIMESTAMP           DEFAULT CURRENT_TIMESTAMP,
-  `updated_on`          TIMESTAMP           DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`viewed_on`           TIMESTAMP           DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `created_on`          DATETIME,
+  `updated_on`          DATETIME,
+  `viewed_on`           DATETIME
 );
 
 # --- !Downs

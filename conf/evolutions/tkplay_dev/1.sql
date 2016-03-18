@@ -9,9 +9,9 @@ CREATE TABLE `jobs` (
 	`status`              CHAR(1),
 	`tool`                VARCHAR(100),
 	`stat_id`             INTEGER,
-	`created_on`          TIMESTAMP           DEFAULT CURRENT_TIMESTAMP,
-	`updated_on`          TIMESTAMP           DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`viewed_on`           TIMESTAMP           DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+	`created_on`          DATETIME,
+	`updated_on`          DATETIME,
+	`viewed_on`           DATETIME
 );
 
 # --- !Downs
