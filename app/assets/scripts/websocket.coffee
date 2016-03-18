@@ -15,10 +15,10 @@ ws.onmessage = (event) ->
 
   switch message.type
       # Jobstate has changed
-    when "jobstate"
-      state = message.newState.toString()
+    when "updatejob"
+      state = message.state.toString()
       console.log(state)
-      jobs.vm.update(message.job_id, state, toolname)
+      jobs.vm.update(message.job_id, state, message.toolname)
 
       # Show user a popup with the submission
       if state == '0'
@@ -29,8 +29,16 @@ ws.onmessage = (event) ->
       text = "Sorry, but there is no such Job ID."
       $(".jobsearchform").notify(text)
 
-    # Updates the Joblist by removing the old ones and requesting the list again
-    when "updatejoblist"
-      jobs.vm.retrieveJobs()
+    # Updates the Joblist by handing over a Json Array of Jobs
+    when "joblist"
+      jobs.vm.updateList(message.list)
+
+    when "autocomplete"
+      autocomplete.data.response(message.list)
+
+    when "ping"
+      requestJson = ("type":"ping")
+      alert "type: " + requestJson.type
+      ws.send(requestJson)
 
   m.endComputation()

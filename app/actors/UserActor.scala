@@ -23,7 +23,7 @@ object UserActor {
    */
 
   // Job changed state
-  case class JobStateChanged(job_id : String, state : JobState)
+  case class UpdateJob(job : UserJob)
 
   case class PrepWD(toolname : String, params : Map[String, String], startImmediate : Boolean, job_id_o : Option[String])
 
@@ -35,9 +35,6 @@ object UserActor {
 
   // Requested a Job with Job ID
   case class GetJob(jobID : String)
-
-  // Requested a list of all Job IDs
-  case object GetAllJobs
 
   case class GetJobParams(job_id : String)
 
@@ -66,9 +63,13 @@ object UserActor {
   case class UpdateWDDone(userJob : UserJob)
 
 
+  // User requested the job widget list
+  case object GetJobList
+  case class SendJobList(jobSeq : Seq[UserJob])
+
   // User requested a suggestion
-  case class AutoComplete(suggestion : String)
-  case class AutoCompleteSend (suggestions : Seq[DBJob])
+  case class AutoComplete (suggestion : String)
+  case class AutoCompleteSend (jobSeq : Seq[DBJob])
 
   trait Factory {
     def apply(session_id: String): Actor
@@ -111,7 +112,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     ws match {
       // Websocket ready, send Job
       case Some(webSocket) =>
-        webSocket ! UpdateJobList
+        webSocket ! UpdateJob(job)
       // Websocket not initialized yet
       case None =>
     }
@@ -140,8 +141,8 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
       ws = Some(ws_new)
       context watch ws.get   // .get is ok here, since it just got initalized with Some(ws_new)
-      // Websocket attached, tell user to update their jobslist
-      ws.get ! UpdateJobList // .get is ok
+      // Websocket attached, send user their joblist
+      self ! GetJobList
       Logger.info("WebSocket attached successfully")
 
 
@@ -199,15 +200,20 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
         worker ! WDelete(job) // Worker removes Directory
       }
 
+    self ! GetJobList // Update view to ensure that the list is filled with jobs if there are any left
+
+
     // Removes the job from the UserActor, but keep it in the job database
     case ClearJob(job_id) =>
-
       val dbJobOption = databaseMapping.remove(job_id)
       dbJobOption match {
         case Some(dbJob) => jobRefDB.delete(dbJob)
                             userJobs.remove(job_id).get
         case None        =>
       }
+
+    self ! GetJobList // Update view to ensure that the list is filled with jobs if there are any left
+
 
     // Returns a Job for a given job_id
     // TODO Handle the case that the user requests a job which does not belong to him
@@ -217,7 +223,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case GetJobParams(job_id) => worker forward WRead(userJobs(job_id))
 
 
-    // Asks the user actor to load jobs from the database in the JobModel
+    // Asks the user actor to load jobs from the job reference database into the JobModel
     case LoadJobsFromDB =>
       for (jobRef <- jobRefDB.get(session_id)) {
         val dbJob_o = jobDB.get(jobRef.main_id)
@@ -234,21 +240,28 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       val dbJob_o = jobDB.get(user_id, job_id).headOption
       dbJob_o match {
         case Some(dbJob) => addJob(dbJob)
-
-        case None => ws.get ! JobIDInvalid
+        case None =>
+          ws match {
+            case Some(webSocket) => webSocket ! JobIDInvalid
+            case None =>
+          }
       }
 
-    // Returns all Jobs
-    case GetAllJobs => sender() ! userJobs.values
+    // Sends the list of all jobs registered in the User Job
+    case GetJobList => 
+      ws match {
+        case Some(webSocket) => webSocket ! SendJobList(userJobs.values.toSeq)
+        case None =>
+      }
 
-    /* Appends a new Job to one parent job */
+    // Appends a new Job to a single parent job
     case AppendChildJob(parent_job_id, toolname, links) =>
 
       // Load the Parent job from the Database if it is not in the UserActor
       if(!userJobs.contains(parent_job_id)) {
-
         self ! LoadJob(parent_job_id)
       }
+
       // Generate new Job ID
       val job_id : String = checkJobID(None)
       val job = UserJob(self, toolname, job_id, user_id, Submitted,  false)
@@ -271,32 +284,40 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     case Terminated(ws_new) =>  ws.get ! PoisonPill
 
     // UserActor got to know that the job state has changed
-    case JobStateChanged(job_id, state) =>
+    case UpdateJob(job : UserJob) =>
 
-      if(userJobs.contains(job_id)) {
-
-        val userJob = userJobs(job_id)
+      if(userJobs.contains(job.job_id)) {
 
         // Forward Job state to Websocket
-        ws.get ! JobStateChanged(job_id, state)
+        ws match {
+          case Some(webSocket) => webSocket ! UpdateJob(job)
+          case None =>
+        }
 
         // get the main ID
-        val main_id_o = Some(databaseMapping.get(job_id).get.main_id)
+        val main_id_o = Some(databaseMapping.get(job.job_id).get.main_id)
 
         // update Job state in Persistence
-        jobRefDB.update(DBJob(main_id_o, job_id, user_id, userJob.getState, userJob.toolname), session_id)
+        jobRefDB.update(DBJob(main_id_o, job.job_id, user_id, job.getState, job.toolname), session_id)
       }
 
+    // Sends a List of suggestions for the Auto Complete function
     case AutoComplete (suggestion : String) =>
       val dbJobSeq = jobDB.suggestJobID(user_id, suggestion)
       // Found something, return it to the user
-      ws.get ! AutoCompleteSend(dbJobSeq)
+      ws match {
+        case Some(webSocket) => webSocket ! AutoCompleteSend(dbJobSeq)
+        case None =>
+      }
 
     /* All of the remaining messages are just passed further to the WebSocket
-    *  Currently: JobIDInvalid
-    * */
-    case m =>  ws.get ! m
-
+     * Currently: JobIDInvalid
+     */
+    case m =>
+      ws match {
+        case Some(webSocket) => webSocket ! m
+        case None =>
+      }
   }
 }
 // A links just connects one output port to one input port

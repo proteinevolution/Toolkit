@@ -1,7 +1,6 @@
 package actors
 
 
-import actors.UserActor.{JobIDInvalid, JobStateChanged, AttachWS}
 import actors.UserActor._
 import akka.actor.Actor
 import akka.actor.ActorLogging
@@ -9,8 +8,9 @@ import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
 import models.database.DBJob
-import play.api.libs.json.{JsValue, JsArray, Json}
-
+import models.jobs.{JobState, UserJob}
+import play.api.libs.json.{JsValue, JsArray, Json, JsObject}
+import play.api.Logger
 
 /**
   * Actor that listens to the WebSocket and accepts messages from and passes messages to it.
@@ -30,11 +30,29 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
     userActor ! AttachWS(self)
   }
 
-  def createJobObjList (dbJobSeq : Seq[DBJob]) : JsArray = {
+  /**
+    * Returns a Sequence of DBJob as a JSON Array
+    * @param dbJobSeq Sequence of DBJob
+    * @return
+    */
+  def createJobObjListDB (dbJobSeq : Seq[DBJob]) : JsArray = {
     JsArray(for (dbJob <- dbJobSeq) yield {
       Json.obj("t" -> dbJob.toolname,
                "s" -> dbJob.job_state.no,
                "i" -> dbJob.job_id)
+    })
+  }
+
+  /**
+    * Returns a Sequence of user Jobs as a JSON Array
+    * @param jobSeq Sequence of UserJobs
+    * @return
+    */
+  def createJobObjList (jobSeq : Seq[UserJob]) : JsArray = {
+    JsArray(for (job <- jobSeq) yield {
+      Json.obj("t" -> job.toolname,
+               "s" -> job.getState.no,
+               "i" -> job.job_id)
     })
   }
 
@@ -43,30 +61,33 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
 
     case js: JsValue =>
 
-      (js \ "type").validate[String] map {
+      (js \ "type").validate[String].map {
 
-        case "getSuggestion" =>
+        case "autocomplete" =>
             (js \ "query").validate[String].map {
               query => userActor ! AutoComplete(query)
             }
+
+        case "getjoblist" =>
+            userActor ! GetJobList
+        case "ping" => Logger.info("PING!")
       }
 
     // Messages the user that there was a problem in handling the Job ID
     case JobIDInvalid  => out ! Json.obj("type" -> "jobidinvalid")
 
-    // Updates the User about updating their joblist
-    case UpdateJobList => out ! Json.obj("type" -> "updatejoblist")
-
     /*
      * Messages the user about a change in the Job status
      */
-    case JobStateChanged(job_id, state) =>
-
+    case UpdateJob(job : UserJob) =>
       // Sends the message that a job state has changed over the WebSocket. This is probably the most important
       // Real-time notification in this application
-      out ! Json.obj("type" -> "jobstate", "newState" -> state.no, "job_id" -> job_id)
+      out ! Json.obj("type" -> "updatejob", "job_id" -> job.job_id, "state" -> job.getState.no, "toolname" -> job.toolname)
 
-    case AutoCompleteSend (suggestions : Seq[DBJob]) =>
-      out ! Json.obj("type" -> "autocomplete", "suggestions" -> createJobObjList(suggestions))
+    case SendJobList(jobSeq : Seq[UserJob]) =>
+      out ! Json.obj("type" -> "joblist", "list" -> createJobObjList(jobSeq))
+
+    case AutoCompleteSend (jobSeq : Seq[DBJob]) =>
+      out ! Json.obj("type" -> "autocomplete", "list" -> createJobObjListDB(jobSeq))
   }
 }

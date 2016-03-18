@@ -85,25 +85,6 @@ class Service @Inject() (val messagesApi: MessagesApi,
   }
 
 
-  val listJobs = Action.async { implicit request =>
-
-    val session_id = Session.requestSessionID(request) // Grab the Session ID
-
-    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
-
-      (userActor ? GetAllJobs).mapTo[Iterable[UserJob]].map { joblist =>
-
-        val jobListObjs = for (job <- joblist) yield {
-          Json.obj("t" -> job.toolname,
-            "s" -> job.getState.no,
-            "i" -> job.job_id)
-        }
-        Ok(Json.obj("jobs" -> jobListObjs))
-      }
-    }
-  }
-
-
   /**
     *
     * User ask for the creation of a new Job with the provided tool name.
