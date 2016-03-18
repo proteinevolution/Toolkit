@@ -1,7 +1,7 @@
 package models.jobs
 
 import actors.Link
-import actors.UserActor.{Convert, JobStateChanged}
+import actors.UserActor.{Convert, UpdateJob}
 import akka.actor.ActorRef
 import models.graph.{Locked, File, FileState}
 import play.api.Logger
@@ -63,7 +63,7 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
 
     if(!destroyed) {
       state = newState
-      userActor ! JobStateChanged(job_id, newState)
+      userActor ! UpdateJob(this)
 
       // If the Job state is Done, we ask the UserActor to convert Output for all child jobs
       if(newState == Done) {

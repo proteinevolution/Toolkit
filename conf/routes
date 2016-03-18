@@ -57,5 +57,3 @@ POST        /jobs/del/:jobid                @controllers.Service.delJob(jobid : 
 POST        /jobs/addChild                  @controllers.Service.addChild
 # Clear a Job
 POST        /jobs/clear/:jobid              @controllers.Service.clearJob(jobid: String)
-# Lists the Jobs the UserActor has active control over
-POST        /jobs/list                      @controllers.Service.listJobs
