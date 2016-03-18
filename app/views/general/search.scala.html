@@ -1,8 +1,17 @@
 @import play.api.mvc.RequestHeader
 @import models.database.DBJob
 @(jobs: Seq[DBJob])(implicit messages: Messages, request: RequestHeader)
-  <div class="jobsearchfield">
-  @for(job <- jobs){ <div class="jobsearchentry" id="@job.job_id">@job.job_id by user <b>@job.user_id</b></div> }
-  <div class="jobsearchquery"> @if(jobs.isEmpty){ No Jobs with a matching Job ID found } else { @jobs.length Jobs found. } </div>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>
+<div class="row align-middle">
+  <div class="medium-6 columns jobsearchfield" id="jobsearchfield">
+    @for(job <- jobs){ <div class="jobsearchentry" id="@job.job_id">@job.job_id by user <b>@job.user_id</b></div> }
+  </div>
+  <div class="medium-6 columns jobdetailinfo">
+    <p></p>    
+  </div>
 </div>
+
+<div class="jobsearchquery"> @if(jobs.isEmpty){ No Jobs with a matching Job ID found } else { @jobs.length Jobs found. } </div>
 <script src="@routes.Assets.at("scripts/search.js")"></script>
