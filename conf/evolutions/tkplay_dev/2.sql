@@ -14,10 +14,10 @@ CREATE TABLE `users` (
   `groups`              VARCHAR(100)        DEFAULT 'member',
   `role`                VARCHAR(100)        NULL,
   `security_token`      CHAR(40)            DEFAULT NULL,
-  `security_token_exp`  TIMESTAMP           DEFAULT CURRENT_TIMESTAMP,
-	`created_on`          TIMESTAMP           DEFAULT CURRENT_TIMESTAMP,
-	`updated_on`          TIMESTAMP           DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`logged_in_on`        TIMESTAMP           DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `security_token_exp`  DATETIME,
+  `created_on`          DATETIME,
+  `updated_on`          DATETIME,
+  `logged_in_on`        DATETIME
 );
 
 # --- !Downs
