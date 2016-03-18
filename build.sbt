@@ -9,12 +9,13 @@ scalaVersion := "2.11.7"
 
 logLevel := Level.Warn
 
+
 libraryDependencies ++= Seq(
   ws,
   filters,
   cache,
   evolutions,
-  "org.webjars" %% "webjars-play" % "2.4.0-2",
+  "org.webjars" %% "webjars-play" % "2.5.0",
   "org.webjars" % "jquery" % "2.2.1",
   "org.webjars" % "foundation" % "6.2.0",
   "mysql" % "mysql-connector-java" % "5.1.36",
