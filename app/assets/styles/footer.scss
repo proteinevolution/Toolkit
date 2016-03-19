@@ -72,3 +72,40 @@
   margin-right: 200px;
 
 }
+
+.top {
+  background: url("/assets/images/arrow-up.png") 50% 30% no-repeat #fff;
+  background-size: 1.3em;
+  border: #cccccc 1px solid;
+  font-size: 14px;
+  border-radius: 40px;
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+  color: #555555;
+  height: 80px;
+  padding: 40px 0;
+  position: relative;
+  top: -40px;
+  width: 80px; }
+
+
+.top-link a:hover{
+  background-color: #fff;
+  color: #555555;
+}
+
+.top-link a{
+  background-color: #fff;
+  color: #555555;
+}
+
+.top-link a:active{
+  background-color: #fff;
+  color: #555555;
+}
+
+.top-link a:visited{
+  background-color: #fff;
+  color: #555555;
+}
