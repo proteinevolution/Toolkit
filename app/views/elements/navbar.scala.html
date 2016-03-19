@@ -14,15 +14,15 @@
                 <li>
                     <a href="#" id="section">Search</a>
                     <ul class="menu vertical" id="dropdowns">
-                        <li><a href="/#/tools/hmmer3">Hmmer3</a></li>
-                        <li><a  href="/#/tools/psiblast">PSI-BLAST</a></li>
+                        <li><a href="/#/tools/hmmer3" id="section">Hmmer3</a></li>
+                        <li><a  href="/#/tools/psiblast" id="section">PSI-BLAST</a></li>
                     </ul>
                 </li>
                 <li>
                     <a href="#" id="section">Alignment</a>
                     <ul class="menu vertical" id="dropdowns">
-                        <li><a href="/#/tools/alnviz">AlignmentViewer</a></li>
-                        <li><a href="/#/tools/tcoffee">T-Coffee</a></li>
+                        <li><a href="/#/tools/alnviz" id="section">AlignmentViewer</a></li>
+                        <li><a href="/#/tools/tcoffee" id="section">T-Coffee</a></li>
                     </ul>
                 </li>
                 <li>
@@ -48,7 +48,7 @@
                 <li>
                     <a href="#" id="section">Utils</a>
                     <ul class="menu vertical" id="dropdowns">
-                        <li><a  href="/#/tools/reformat">Reformat</a></li>
+                        <li><a  href="/#/tools/reformat" id="section">Reformat</a></li>
                     </ul>
                 </li>
             </ul>
@@ -73,5 +73,15 @@
                         }
                     });
                 });
+
+                $("a[href='#']").click(function() {
+                    $("html, body").animate({ scrollTop: 0 }, "fast");
+                    return false;
+                });
+
+                $('#section').click(function() {
+                    $('html,body').animate({scrollTop: $(this).offset().top}, 500);
+                });
+
 
 </script>
