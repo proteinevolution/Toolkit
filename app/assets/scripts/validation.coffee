@@ -8,7 +8,7 @@ validator = new m.validator {
   alignment: (alignment) ->
 
     if not process(alignment)
-        return "nope alignment"
+        return "No Alignment"
 
 }
 
