@@ -268,10 +268,18 @@ hr {
 .orbit {
 
     height: 100%;
+    z-index: 20;
 }
 
 .orbit-container {
 
     height: 100%;
+    z-index: 20;
+
+}
+
+.vertical {
+
+    z-index: 99;
 
 }

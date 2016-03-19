@@ -1,5 +1,7 @@
 #stickyheader {
   background-color: #2E8C81;
+  position: absolute;
+  z-index: 99;
 }
 
 #toolsdropdown {
@@ -7,6 +9,7 @@
   background-color: #2E8C81;
   font-size: 0.875em;
   padding-left: 18.500em;
+  z-index: 99;
 
 }
 
@@ -21,6 +24,7 @@
   a {
     &:hover {
       color: lightslategrey;
+      z-index: 99;
     }
   }
 }
@@ -29,15 +33,14 @@
   border-color: transparent;
   background-color: rgba(#333,0.995);
   margin-left: 0.8em;
-
-
+  z-index: 99;
 
 }
 
 #dropdowns a {
   color: white;
   font-size: 0.9em;
-  font: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+  z-index: 99;
 
 }
 
