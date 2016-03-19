@@ -7,7 +7,6 @@
   background-color: #2E8C81;
   font-size: 0.875em;
   padding-left: 18.500em;
-
 }
 
 #section {
@@ -29,16 +28,18 @@
   border-color: transparent;
   background-color: rgba(#333,0.995);
   margin-left: 0.8em;
-
-
-
 }
 
 #dropdowns a {
   color: white;
   font-size: 0.9em;
   font: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+}
 
+#button-up a {
+  background-color: #2E8C81;
+  width: 4em;
+  color: white;
 }
 
 
@@ -69,42 +70,6 @@
   margin: 0;
   
 }
-#panel1 {
-  background: #D0BA89;
-  border-width: 0px;
-  border: 0px solid;
-}
-#panel2 {
-  background: #FFCC66;
-  border-width: 0px;
-  border: 0px solid;
-}
-#panel3 {
-  background: #669933;
-  border-width: 0px;
-  border: 0px solid;
-}
-#panel4 {
-  background: #7CA6A6;
-  border-width: 0px;
-  border: 0px solid;
-}
-#panel5 {
-  background: #666699;
-  border-width: 0px;
-  border: 0px solid;
-}
-#panel6 {
-  background: #D6ABAB;
-  border-width: 0px;
-  border: 0px solid;
-}
-#panel7 {
-  background: #CC3333;
-  border-width: 0px;
-  border: 0px solid;
-}
-
 
 #toolsec {
   margin-top: 0.5em;
