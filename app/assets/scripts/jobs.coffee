@@ -109,7 +109,7 @@ jobs.view = ->
       m("div", {style: {cssFloat: "left", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
         m('br'), m('input',{type: "checkbox", id: "jobid[]", value: task.job_id(), name: "jobid[]"})),
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
-      m('td', {class: task.toolname()}, {style: {textAlign: "center", border: "1px solid black"}},
+      m('td', {class: task.toolname()}, {style: {textAlign: "center", border: "0px solid black"}},
 
         m("div", {style: {cssFloat: "center", border: "0px solid black", marginLeft: "0.75em"}},
           task.toolname().substr(0,4)
