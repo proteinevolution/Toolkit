@@ -1,0 +1,21 @@
+2016-03-20 20:14:05,999 [INFO] from play.core.server.NettyServer in pool-4-thread-7 - Listening for HTTP on /0.0.0.0:6111
+2016-03-20 20:15:05,268 [INFO] from play.api.Play in ForkJoinPool-1-worker-57 - Application started (Dev)
+2016-03-20 20:15:05,628 [INFO] from application in application-akka.actor.default-dispatcher-6 - Request from SID "aPk5P1vCb7VLzzS"
+2016-03-20 20:15:06,608 [INFO] from application in application-akka.actor.default-dispatcher-2 - updating jobs from the database
+2016-03-20 20:15:07,038 [INFO] from application in application-akka.actor.default-dispatcher-2 - WebSocket attached successfully
+2016-03-20 20:16:33,353 [INFO] from application in application-akka.actor.default-dispatcher-8 - Request from SID "aPk5P1vCb7VLzzS"
+2016-03-20 20:16:34,553 [INFO] from application in application-akka.actor.default-dispatcher-8 - Submission for JobID None received
+2016-03-20 20:16:34,597 [INFO] from application in application-akka.actor.default-dispatcher-8 - UserActor wants to prepare job directory for tool hmmer3 with job_id 3949529
+2016-03-20 20:16:34,614 [INFO] from application in application-akka.actor.default-dispatcher-8 - Wire Alignment
+2016-03-20 20:16:34,615 [INFO] from application in application-akka.actor.default-dispatcher-8 - Wire Alignment
+2016-03-20 20:16:34,749 [INFO] from application in application-akka.actor.default-dispatcher-4 - Request from SID "aPk5P1vCb7VLzzS"
+2016-03-20 20:16:34,764 [INFO] from application in application-akka.actor.default-dispatcher-22 - Ready counter is now: 1
+2016-03-20 20:16:34,809 [INFO] from application in application-akka.actor.default-dispatcher-21 - Request from SID "aPk5P1vCb7VLzzS"
+2016-03-20 20:16:34,844 [INFO] from application in application-akka.actor.default-dispatcher-4 - [Worker](WStart) for job 3949529
+2016-03-20 20:16:34,854 [INFO] from application in application-akka.actor.default-dispatcher-22 - Request from SID "aPk5P1vCb7VLzzS"
+2016-03-20 20:16:34,880 [INFO] from application in application-akka.actor.default-dispatcher-4 - Set file permission of: /ebio/abt1/lzimmermann/share/jobs/67/hmmer3.sh
+2016-03-20 20:16:34,920 [INFO] from application in application-akka.actor.default-dispatcher-4 - Request from SID "aPk5P1vCb7VLzzS"
+2016-03-20 20:16:36,404 [INFO] from application in ForkJoinPool-3-worker-29 - Request from SID "aPk5P1vCb7VLzzS"
+2016-03-20 20:16:49,652 [INFO] from application in ForkJoinPool-3-worker-29 - Request from SID "aPk5P1vCb7VLzzS"
+2016-03-20 20:35:18,370 [INFO] from application in application-akka.actor.default-dispatcher-7 - Request from SID "JUF19FFGIODFjCu"
+2016-03-20 20:35:18,885 [INFO] from application in application-akka.actor.default-dispatcher-34 - WebSocket attached successfully

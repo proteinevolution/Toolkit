@@ -8,6 +8,7 @@ import javax.inject.Inject
 import actors.UserActor.UpdateWDDone
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
+import com.typesafe.config.ConfigFactory
 import models.graph.{PortWithFormat, Ports, Ready}
 import models.jobs._
 import play.api.Logger
@@ -59,11 +60,13 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
 
   val subdirs = Array("/results", "/logs", "/params", "/specific", "/inter")
 
+  // Get paths
+  val runscriptPath = s"cluster${SEP}runscripts$SEP"
+  val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
+  val bioprogsPath = s"${ConfigFactory.load().getString("bioprogs_path")}$SEP"
+  val databasesPath = s"${ConfigFactory.load().getString("databases_path")}$SEP"
 
-  // Variables the worker need to execute //TODO Inject Configuration
-  val runscriptPath = s"bioprogs${SEP}runscripts$SEP"
-  val jobPath = s"development$SEP"
-  val argumentPattern = "(\\$\\{[a-z_]+\\}|#\\{[a-z_]+\\}|@\\{[a-z_]+\\}|\\?\\{.+\\}|\\+\\{[a-z_]+\\})".r
+  val argumentPattern = "(\\$\\{[a-z_]+\\}|#\\{[a-z_]+\\}|@\\{[a-z_]+\\}|\\?\\{.+\\}|\\+\\{[a-z_]+\\}|\\!\\{(BIO|DATA)\\})".r
 
 
   def receive = LoggingReceive {
@@ -266,6 +269,7 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
 
               s(0) match {
 
+                case '!' => if(value == "BIO") bioprogsPath else databasesPath
                 case '+' => "inter/" + value
                 case '#' =>  "params/" + value
                 case '$' => params.get(value).get.toString

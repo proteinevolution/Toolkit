@@ -148,6 +148,7 @@ tr.spaceUnder > td
 
     background-color: #FFCC66;
     border: solid 0px black;
+    c
     font-size: 1em;
     text-transform: uppercase;
 }
@@ -170,6 +171,11 @@ tr.spaceUnder > td
     text-transform: uppercase;
 }
 
+.header {
+
+    height: 8.125em;
+    
+}
 
 .columns {
     padding-left: 0;
