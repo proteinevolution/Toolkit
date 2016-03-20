@@ -74,9 +74,9 @@
 }
 
 .top {
-  background: url("/assets/images/arrow-up.png") 50% 30% no-repeat #fff;
+  background: url("/assets/images/arrow-up.png") 50% 30% no-repeat #ACCDC9;
   background-size: 1.3em;
-  border: #cccccc 1px solid;
+  border: #006F62 0px solid;
   font-size: 14px;
   border-radius: 40px;
   text-align: center;
@@ -87,25 +87,30 @@
   padding: 40px 0;
   position: relative;
   top: -40px;
-  width: 80px; }
+  width: 80px;
+  z-index: 99; }
 
 
 .top-link a:hover{
-  background-color: #fff;
+  background-color: #ACCDC9;
+  opacity: 0.9;
   color: #555555;
 }
 
 .top-link a{
-  background-color: #fff;
+  background-color: #ACCDC9;
+  opacity: 0.9;
   color: #555555;
 }
 
 .top-link a:active{
-  background-color: #fff;
+  background-color: #ACCDC9;
+  opacity: 0.9;
   color: #555555;
 }
 
 .top-link a:visited{
-  background-color: #fff;
+  background-color: #ACCDC9;
+  opacity: 0.9;
   color: #555555;
 }

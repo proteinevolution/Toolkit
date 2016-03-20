@@ -48,11 +48,6 @@
                         <li><a  href="/#/tools/reformat" id="section">Reformat</a></li>
                     </ul>
                 </li>
-                <li>
-                    <div class="advancedsearch">
-                        <input type="text" placeholder="Advanced Search" style="width: 500px; height: 30px">
-                    </div>
-                </li>
             </ul>
         </div>
 
@@ -79,7 +74,7 @@
                 });
 
                 $("a[href='#']").click(function() {
-                    $("html, body").animate({ scrollTop: 0 }, "fast");
+                    $("html, body").animate({ scrollTop: 0 }, "slow");
                     return false;
                 });
 
