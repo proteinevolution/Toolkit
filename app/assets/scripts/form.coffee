@@ -32,7 +32,7 @@ $ ->
       submissionAllowed = false
 
   # Handles the behavior when the submit button is pressed in a job form
-  $(".jobform").submit (event) ->
+  $(".jobform").unbind('submit').submit (event) ->
     event.preventDefault()
     submitRoute = jsRoutes.controllers.Tool.submit(toolname, true, newSubmission)
 
