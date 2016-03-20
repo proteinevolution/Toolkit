@@ -1,7 +1,7 @@
 body{
 
 font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-    background-color: #f0f0f0;
+    background-color: #fff;
 
 }
 
@@ -147,7 +147,8 @@ tr.spaceUnder > td
 .alnviz{
 
     background-color: #FFCC66;
-    border: solid 1px black;
+    border: solid 0px black;
+    c
     font-size: 1em;
     text-transform: uppercase;
 }
@@ -155,7 +156,8 @@ tr.spaceUnder > td
 .tcoffee{
 
     background-color: #FFCC66;
-    border: solid 1px black;
+    border: solid 0px black;
+    opacity: 0.9;
     font-size: 1em;
     text-transform: uppercase;
 }
@@ -163,7 +165,8 @@ tr.spaceUnder > td
 .hmmer3{
 
     background-color: #D0BA89;
-    border: solid 1px black;
+    border: solid 0px black;
+    opacity: 0.9;
     font-size: 1em;
     text-transform: uppercase;
 }
