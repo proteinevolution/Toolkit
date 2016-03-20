@@ -16,7 +16,6 @@ import play.api.Play.materializer
 import akka.pattern.ask
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-import java.io.File
 
 
 
@@ -33,7 +32,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   val user_id = 12345  // TODO integrate user_id
   implicit val timeout = Timeout(5.seconds)
 
-  var path = s"${environment.rootPath}${File.separator}${ConfigFactory.load().getString("job_path")}${File.separator}"
+  val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
 
     //TODO: migrate to akka streams by using flows
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
@@ -77,11 +76,12 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     val session_id = Session.requestSessionID(request)
     val main_id_o = jobDB.getMainID(user_id, job_id)
 
+
     main_id_o match {
         // main_id exists, allow send File
       case Some(main_id) =>
         Logger.info("Try to assemble file path")
-        val filePath = path + "/" + main_id.toString +  "/results/" + filename
+        val filePath = jobPath + "/" + main_id.toString +  "/results/" + filename
         Logger.info("File path was: " + filePath)
         Logger.info("File has been sent")
         Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {

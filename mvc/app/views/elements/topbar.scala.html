@@ -1,0 +1,21 @@
+@(sectionname : String)
+
+    <div class="top-bar-title logotext">
+        <!--@sectionname-->
+    </div>
+    <div class="large-4 columns" data-equalizer-watch>
+        <div class="logo"><a href=""><img style="margin-left: 50px; margin-top: 15px"  src="@routes.Assets.at("images/logo2.png")"> </a></div>
+    </div>
+
+    <div class="large-2 columns" data-equalizer-watch>
+        <ul class="dropdown menu" id="toolsdropdown" data-dropdown-menu>
+            <li>
+                <a href="">Alignment</a>
+                <ul class="menu vertical">
+                @for(tool <- Tool.tools){
+                    <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                }
+                </ul>
+            </li>
+        </ul>
+    </div>

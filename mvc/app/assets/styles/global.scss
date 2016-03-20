@@ -4,7 +4,7 @@
 @import 'sidebar';
 @import 'topbar';
 @import 'navbar';
-@import '_settings';
+@import 'settings';
 
 @include foundation-global-styles;
 @include foundation-grid;

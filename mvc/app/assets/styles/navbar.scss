@@ -1,0 +1,146 @@
+#stickyheader {
+  background-color: #2E8C81;
+  position: absolute;
+  z-index: 99;
+}
+
+#toolsdropdown {
+
+  background-color: #2E8C81;
+  font-size: 0.875em;
+  padding-left: 18.500em;
+  z-index: 99;
+
+}
+
+#section {
+
+  color: white;
+  padding-top: 1em;
+
+}
+
+#dropdowns li {
+  a {
+    &:hover {
+      color: lightslategrey;
+      z-index: 99;
+    }
+  }
+}
+
+#dropdowns {
+  border-color: transparent;
+  background-color: rgba(#333,0.995);
+  margin-left: 0.8em;
+  z-index: 99;
+}
+
+#dropdowns a {
+  color: white;
+  font-size: 0.9em;
+  z-index: 99;
+
+}
+
+
+#button-up a {
+  background-color: #2E8C81;
+  width: 4em;
+  color: white;
+}
+
+
+#navbar-tabs {
+  $corporate-background-navbar: #2E8C81;
+  background: $corporate-background-navbar;
+  padding-left: 3.125em;
+  padding-right: 3.125em;
+
+  tab-margin: 0;
+  tab-background: $corporate-background-navbar;
+  tab-background-active: $corporate-background-navbar;
+  tab-border-width: 0px;
+  tab-item-color: foreground($corporate-background-navbar, $corporate-background-navbar);
+  tab-item-background-hover: $corporate-background-navbar;
+  tab-item-padding: 1.25rem 1.5rem;
+  tab-expand-max: 6;
+  tab-content-background: $corporate-background-navbar;
+  tab-content-border-width: 0px;
+  tab-content-color: foreground($corporate-background-navbar, $corporate-background-navbar);
+  tab-content-padding: 1rem;
+}
+.navbar {
+  background: #2E8C81;
+  border: 0px solid;
+  border-width: 0px;
+  padding: 0;
+  margin: 0;
+  
+}
+
+#toolsec {
+  margin-top: 0.5em;
+  margin-left: 2.25em;
+  border: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+#toolsec li {
+  display: inline;
+  margin-top: -0.750em;
+  float: left;
+  text-align: center;
+  padding-right: 0.625em;
+  padding-left: 0.625em;
+  font-size: 0.875em;
+  color: #000;
+}
+
+#toolsec li a {
+  border-right: none;
+  padding: 0;
+  color: #000;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  font-size: 0.875em;
+}
+#toolsec li a:hover {
+  color: #930;
+  background: #f5d7b4;
+}
+
+div.sticky-container {
+  z-index: 99;
+}
+
+i {
+  font-size: 20px;
+}
+
+.globalsearch input {
+
+  background-color: #006F62;
+  border: 0;
+  border-bottom: solid 2px #000;
+  color: #fff;
+  font-size: 0.8em;
+  font-family: inherit;
+  font-weight: normal;
+  letter-spacing: 2px;
+  line-height: 1.42857;
+  outline: 0;
+  width: 120px;
+  height: 50%;}
+
+.globalsearch input:focus{
+
+  background-color: #ACCDC9;
+
+}
+
+
+
+
