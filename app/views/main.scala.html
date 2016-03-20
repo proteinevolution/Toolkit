@@ -40,31 +40,8 @@
             </div>
         </div>
 
-        <!---Top-Bar with Logo/Search and Dropdown --->
-        <div class="row fullwidth" id="header" style="opacity: 1;" data-equalizer>
-            <div class="large-5 medium-8 hide-for-small-only columns"  data-equalizer-watch>
-               <!-- <div class="logo"><a href=""><img src="@routes.Assets.at("images/TestLogo.png")"> </a></div> -->
-               <div class="logo"><a href=""><img style="width: 42%" src="@routes.Assets.at("images/logo.svg")"></a></div> <!-- SVG Minerva -->
-            </div>
-        </div>
-
-            <!--No Use so far,looks ugly (Lukas opinion)
-            <div class="large-4 small-4 topsmall columns" data-equalizer-watch>
-                <ul class="dropdown menu" id="toolsdropdown" data-dropdown-menu>
-                    <li>
-                        <a href="">Alignment</a>
-                        <ul class="menu vertical">
-                        @for(tool <- Tool.tools){
-                            <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-                        }
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-             -->
-
-
-
+        <!---Top-Bar with Logo --->
+        @elements.topbar()
 
         <!---Navigation Bar --->
         @elements.navbar()
