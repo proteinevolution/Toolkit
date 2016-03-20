@@ -116,3 +116,31 @@ div.sticky-container {
   z-index: 99;
 }
 
+i {
+  font-size: 20px;
+}
+
+.globalsearch input {
+
+  background-color: #006F62;
+  border: 0;
+  border-bottom: solid 2px #000;
+  color: #fff;
+  font-size: 0.8em;
+  font-family: inherit;
+  font-weight: normal;
+  letter-spacing: 2px;
+  line-height: 1.42857;
+  outline: 0;
+  width: 120px;
+  height: 50%;}
+
+.globalsearch input:focus{
+
+  background-color: #ACCDC9;
+
+}
+
+
+
+
