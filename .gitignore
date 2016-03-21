@@ -27,10 +27,8 @@ project/plugins
 project/.sbtserver
 project/.sbtserver.lock
 development   
-conf/application.conf
-mvc/conf/
-/conf/application.conf
 target
+mvc/conf/application.conf
 mvc/mvc.iml
 clean.sh
 .DS_Store

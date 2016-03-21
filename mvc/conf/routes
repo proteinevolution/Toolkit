@@ -1,0 +1,57 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+
+
+# IMPORTANT: Comments appended to a valid line are not permitted\
+# IMPORTANT: Controllers are now injected, do not forget the '@' prefix
+# ~~~~
+
+############################################################################
+# Toolkit related routes
+############################################################################
+
+# Index Page requested by user. Note that the controller is injected
+GET         /                              @controllers.Application.index
+
+# Websocket
+GET         /ws                            @controllers.Application.ws
+
+
+# Serve files
+GET         /files/:jobid/:filename        @controllers.Application.file(filename: String, jobid: String)
+
+# Assets
+GET         /webjars/*file                 controllers.WebJarAssets.at(file)
+GET         /assets/*file                  controllers.Assets.at(path="/public", file)
+
+
+# Route for direct get requests
+GET         /tools/:toolname                @controllers.Tool.show(toolname : String)
+GET         /jobs/:jobid                    @controllers.Tool.result(jobid: String)
+
+# Submit Route
+POST        /tools/:toolname       @controllers.Tool.submit(toolname : String, start : Boolean, newSubmission : Boolean)
+
+############################################################################
+# Handles the result View (Determined by the status of the job_id provided)
+############################################################################
+
+
+
+# Interaction with Jobs
+# Show all jobs a user has
+GET         /jobs/show/:userid              @controllers.Service.showJobs(userid: Long)
+# Look up jobs with the matching job_id
+POST        /jobs/search/:jobid             @controllers.Service.findJobID(jobid: String)
+# Loading a Job from the DB
+POST        /jobs/add/:jobid                @controllers.Service.addJobID(jobid: String)
+# Creating a new Job
+POST        /jobs/new/:toolname             @controllers.Service.newJob(toolname : String)
+# Get a Job the User Actor already has loaded
+GET         /jobs/get/:jobid                @controllers.Service.getJob(jobid : String)
+# Delete a Job
+POST        /jobs/del/:jobid                @controllers.Service.delJob(jobid : String)
+# Add a Child Job
+POST        /jobs/addChild                  @controllers.Service.addChild
+# Clear a Job
+POST        /jobs/clear/:jobid              @controllers.Service.clearJob(jobid: String)
