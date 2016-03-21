@@ -14,7 +14,8 @@
 
 
         <!-- Mithril -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.3/mithril.min.js"></script>
+        <!--<script src="//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.3/mithril.min.js"></script>-->
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("mithril.min.js"))"></script>
         <script src='@routes.Assets.at("javascripts/validator.js")' type="text/javascript" ></script>
 
 
@@ -110,7 +111,7 @@
         <script src="@routes.Assets.at("scripts/validation.js")"></script>
 
         <!-- Public Javascript Assets -->
-        <script src="@routes.Assets.at("javascripts/msa_mpi_content.min.js")" type="text/javascript"></script>
+        <!--<script src="@routes.Assets.at("javascripts/msa_mpi_content.min.js")" type="text/javascript"></script> -->
         <script src='@routes.Assets.at("javascripts/notify.min.js")' type="text/javascript" ></script>
         <link href="@routes.Assets.at("styles/motion-ui.css")" rel="stylesheet">
 

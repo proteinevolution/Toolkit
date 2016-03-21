@@ -41,7 +41,8 @@ lazy val mvc = (project in file("mvc"))
       "com.typesafe.play" %% "play-slick" % "2.0.0",
       "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
       "org.json4s" %% "json4s-jackson" % "3.3.0",
-      "org.scalaz" %% "scalaz-core" % "7.2.1")),
+      "org.scalaz" %% "scalaz-core" % "7.2.1",
+      "org.webjars" % "mithril" % "0.2.3")),
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
