@@ -11,7 +11,7 @@
 
 
 
-        <a onClick="$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
+        <a onClick="$('#alignment').val(alnviz_example().replace(/\s*$/,''));$('#format').val('fas');$('#submitbutton').prop('disabled', false);">Paste example alignment</a>
 
         @helper.select(
                     inputForm("alignment_format"),

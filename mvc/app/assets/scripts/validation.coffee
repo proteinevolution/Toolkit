@@ -51,7 +51,7 @@ $("#alignment").bind 'input propertychange', (event) ->
   #console.log(new Validation().alignment)
   if(validator.validate(new Validation()).hasError('alignment'))
     console.log("Not alignment")
-    $('#foo').prop('disabled', true);
+    $('#submitbutton').prop('disabled', true);
   else
     console.log("Is alignment")
-    $('#foo').prop('disabled', false);
+    $('#submitbutton').prop('disabled', false);
