@@ -41,7 +41,8 @@ lazy val mvc = (project in file("mvc"))
       "com.typesafe.play" %% "play-slick" % "2.0.0",
       "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
       "org.json4s" %% "json4s-jackson" % "3.3.0",
-      "org.scalaz" %% "scalaz-core" % "7.2.1")),
+      "org.scalaz" %% "scalaz-core" % "7.2.1",
+      "com.clever-age" % "play2-elasticsearch" % "2.1-SNAPSHOT")),
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
@@ -59,6 +60,7 @@ lazy val cluster = (project in file("cluster"))
 dependencyOverrides += "org.webjars" % "jquery" % "2.2.1"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+resolvers +=   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 /*
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 resolvers += "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"
