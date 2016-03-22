@@ -46,12 +46,21 @@ lazy val mvc = (project in file("mvc"))
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
-    )
+    ).dependsOn(api)
+
 
 lazy val cluster = (project in file("cluster"))
   .settings(
     commonSettings,
     name := "mpi-toolkit-cluster",
+    libraryDependencies ++= commonDeps
+  ).dependsOn(api)
+
+
+lazy val api = (project in file("api"))
+  .settings(
+    commonSettings,
+    name := "mpi-toolkit-api",
     libraryDependencies ++= commonDeps
   )
 
