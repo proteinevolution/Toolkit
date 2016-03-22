@@ -148,7 +148,6 @@ tr.spaceUnder > td
 
     background-color: #FFCC66;
     border: solid 0px black;
-    c
     font-size: 1em;
     text-transform: uppercase;
 }
@@ -287,3 +286,12 @@ hr {
     z-index: 99;
 
 }
+
+#alert {
+    color: white;
+    background-color: #CC3333;
+    border-radius: 1.563em;
+
+}
+
+
