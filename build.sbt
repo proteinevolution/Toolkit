@@ -1,12 +1,15 @@
 val akkaVersion = "2.4.2"
 
 
-val commonDeps = Seq(
+val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "com.google.guava" % "guava" % "18.0"
+  "com.google.guava" % "guava" % "18.0",
+  "mysql" % "mysql-connector-java" % "5.1.36",
+  "com.typesafe.play" %% "play-slick" % "2.0.0",
+  "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0"
 )
 
 /*
@@ -24,8 +27,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "mpi-toolkit"
   )
-  .aggregate(mvc, cluster)
-
+  .aggregate(mvc, cluster, api)
 
 
 lazy val mvc = (project in file("mvc"))
@@ -33,13 +35,10 @@ lazy val mvc = (project in file("mvc"))
   .settings(
     commonSettings,
     name := "mpi-toolkit-mvc",
-    libraryDependencies ++= (commonDeps ++ Seq(ws,  filters, cache, evolutions,
+    libraryDependencies ++= (commonDeps ++ Seq(
       "org.webjars" %% "webjars-play" % "2.5.0",
       "org.webjars" % "jquery" % "2.2.1",
       "org.webjars" % "foundation" % "6.2.0",
-      "mysql" % "mysql-connector-java" % "5.1.36",
-      "com.typesafe.play" %% "play-slick" % "2.0.0",
-      "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
       "org.json4s" %% "json4s-jackson" % "3.3.0",
       "org.scalaz" %% "scalaz-core" % "7.2.1",
       "org.webjars" % "mithril" % "0.2.3")),

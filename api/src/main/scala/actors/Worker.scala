@@ -5,12 +5,17 @@ import java.io
 import java.io.PrintWriter
 import java.nio.file.Paths
 import javax.inject.Inject
-import actors.UserActor.UpdateWDDone
+
+import models.Messages.UpdateWDDone
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
+
 import com.typesafe.config.ConfigFactory
-import models.graph.{PortWithFormat, Ports, Ready}
+
+import models.graph.{Link, PortWithFormat, Ports, Ready}
 import models.jobs._
+
+
 import play.api.Logger
 import utils.Exceptions.{RunscriptExecutionFailedException, NotImplementedException}
 import scala.collection.mutable.ArrayBuffer
