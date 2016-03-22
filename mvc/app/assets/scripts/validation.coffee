@@ -1,6 +1,7 @@
 Validation = (data) ->
 
-  this.alignment = $("#alignment").val()
+  a = $("#alignment").val()
+  this.alignment = a ? a : ""
 
 
 validator = new m.validator {
@@ -15,6 +16,9 @@ validator = new m.validator {
 process = (alignment) ->
 
   seq = alignment.split('\n')
+
+  if seq.length < 2
+    return false
 
   seqlength = -1
   tmp = -1
@@ -38,16 +42,12 @@ process = (alignment) ->
 
 
 
-  return seqlength != 0 and tmp == seqlength and headercount > 1
-
-
-
+  return seqlength != 0 and tmp == seqlength and headercount > 1 
 
 
 $("#alignment").bind 'input propertychange', (event) ->
 
   alignment = $("#alignment").val()
-  process(alignment)
   #console.log(new Validation().alignment)
   if(validator.validate(new Validation()).hasError('alignment'))
     console.log("Not alignment")
