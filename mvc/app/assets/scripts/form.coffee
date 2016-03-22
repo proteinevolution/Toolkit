@@ -60,6 +60,7 @@ $ ->
   $(".jobformclear").click (event) ->
     $('.jobform').trigger("reset")
     $('#jobid').prop('readonly', true).hide().val("")
+    $('#foo').prop('disabled', true);
 
 
 # If one hits the ID button
