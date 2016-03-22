@@ -1,9 +1,8 @@
 package models.jobs
 
-import actors.Link
 import actors.UserActor.{Convert, UpdateJob}
 import akka.actor.ActorRef
-import models.graph.{Locked, File, FileState}
+import models.graph.{Link, Locked, File, FileState}
 import play.api.Logger
 
 import scala.collection.mutable.ArrayBuffer

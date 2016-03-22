@@ -96,3 +96,12 @@ case object NEX extends AlignmentFormat("nex")
 case object PHY extends AlignmentFormat("phy")
 case object PIR extends AlignmentFormat("pir")
 case object TRE extends AlignmentFormat("tre")
+
+
+
+
+
+// A links just connects one output port to one input port
+case class Link(out : Int, in : Int)
+
+

@@ -1,14 +1,17 @@
 package actors
 
 import javax.inject._
+
 import actors.Worker._
 import akka.actor._
 import akka.event.LoggingReceive
-import models.database.{DBJobRef, DBJob}
+import com.google.inject.assistedinject.Assisted
+import models.database.{DBJob, DBJobRef}
+import models.graph.Link
 import models.jobs._
 import models.misc.RandomString
 import play.api.Logger
-import com.google.inject.assistedinject.Assisted
+import models.Messages.UpdateWDDone
 
 /**
   *  The User actor will represent each user who is currently present on the toolkit and
@@ -60,9 +63,6 @@ object UserActor {
   // Attach WebSocket Actor to UserActor
   case class AttachWS(ws : ActorRef)
 
-  case class UpdateWDDone(userJob : UserJob)
-
-
   // User requested the job widget list
   case object GetJobList
   case class SendJobList(jobSeq : Seq[UserJob])
@@ -102,6 +102,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
   /**
     * Adds a Job to the user using a Database entry
+ *
     * @param dbJob database entry of the job
     */
   def addJob(dbJob : DBJob) = {
@@ -120,6 +121,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
   /**
     * Checks if a given job_id is already used for a different job
+ *
     * @param job_id_o selected job_id
     * @return
     */
@@ -320,12 +322,6 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       }
   }
 }
-// A links just connects one output port to one input port
-case class Link(out : Int, in : Int)
-
-
-
-
 
 
 

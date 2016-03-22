@@ -2,11 +2,11 @@ package controllers
 
 import javax.inject.{Named, Inject, Singleton}
 
-import actors.Link
 import actors.UserActor._
 import actors.UserManager.GetUserActor
 import akka.actor.ActorRef
 import akka.util.Timeout
+import models.graph.Link
 import models.jobs._
 import models.tools._
 import models.sessions.Session
@@ -246,6 +246,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
 
   /**
     * Returns a list of jobs a user owns
+ *
     * @param user_id user_id of the user
     * @return
     */
@@ -258,6 +259,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
 
   /**
     * Adds a job_id to the current list of jobs
+ *
     * @param job_id job_id of the job
     * @return
     */
