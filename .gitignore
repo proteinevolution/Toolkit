@@ -29,6 +29,7 @@ project/.sbtserver.lock
 development   
 target
 mvc/conf/application.conf
+mvc/logs
 mvc/mvc.iml
 clean.sh
 .DS_Store
