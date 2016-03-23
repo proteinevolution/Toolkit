@@ -1,4 +1,4 @@
-package backend
+package cluster
 
 import akka.actor._
 import akka.routing.RoundRobinPool
@@ -8,9 +8,10 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 /**
+  *
  * Booting a cluster backend node with all actors
  */
-object Backend extends App {
+object Cluster extends App {
 
   // Simple cli parsing
   val port = args match {
@@ -23,12 +24,10 @@ object Backend extends App {
   val properties = Map(
       "akka.remote.netty.tcp.port" -> port
   )
-  
   val system = ActorSystem("application", (ConfigFactory parseMap properties)
     .withFallback(ConfigFactory.load())
   )
 
-  //system.actorOf(Props[WorkerActor].withRouter(RoundRobinPool(100)), name = "toolkitCluster")
-
-  //Await.result(system.whenTerminated, Duration.Inf)
+  system.actorOf(Props[Worker].withRouter(RoundRobinPool(10)), name = "toolkitCluster")
+  Await.result(system.whenTerminated, Duration.Inf)
 }

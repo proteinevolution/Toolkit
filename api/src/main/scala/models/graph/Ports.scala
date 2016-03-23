@@ -70,13 +70,17 @@ object Ports {
 /*
  * A Port must declare a file via name which is either produces or consumed from the tool
  */
-abstract class Port(val filename : String)
+abstract class Port(val filename : String) {
+
+  val nInfile = 1
+}
 /*
  *  Port that also declares a format specification. Will require an adapter to link the ports
  */
 abstract class PortWithFormat(filename : String, val format : Format) extends Port(filename) {
 
   val formatFilename : String = filename + "_format"
+  override val nInfile = 2
 }
 
 

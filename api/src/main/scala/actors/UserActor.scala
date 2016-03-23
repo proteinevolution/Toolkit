@@ -11,7 +11,6 @@ import models.graph.Link
 import models.jobs._
 import models.misc.RandomString
 import play.api.Logger
-import models.Messages.UpdateWDDone
 
 /**
   *  The User actor will represent each user who is currently present on the toolkit and
@@ -28,10 +27,8 @@ object UserActor {
   // Job changed state
   case class UpdateJob(job : UserJob)
 
-  case class PrepWD(toolname : String, params : Map[String, String], startImmediate : Boolean, job_id_o : Option[String])
-
-  case class UpdateWD(job_id : String, params : Map[String, String], startImmediate : Boolean)
-
+  case class PrepWD(toolname : String, params : Map[String, String], startImmediate : Boolean, job_id_o : Option[String],
+                    newSubmission : Boolean)
 
   // Job ID was Invalid
   case object JobIDInvalid
@@ -149,45 +146,38 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
 
 
     // Job Preparation Routine for a new Job
-    case PrepWD(toolname, params, startImmediate, job_id_o) =>
+    case PrepWD(toolname, params, startImmediate, job_id_o, newSubmission) =>
 
       // Determine the Job ID for the Job that was submitted
-      val job_id : String = checkJobID(job_id_o)
+      val job_id : String = if(newSubmission) {
+        checkJobID(job_id_o)
+      } else {
+        job_id_o.get
+      }
+
       Logger.info("UserActor wants to prepare job directory for tool " + toolname + " with job_id " + job_id)
 
 
-      // Create a new Job instance
-      val job = UserJob(self, toolname, job_id, user_id, Submitted, startImmediate)
+      if(userJobs.contains(job_id)) {
 
-      // This is a new Job, so we have to make the status *Submitted explicit*
-      job.changeState(Submitted)
+        val job = userJobs(job_id)
+        job.startImmediate = startImmediate
+        worker ! WPrepare(job, params)
 
-      // Make changes to the UserActor Model
-      userJobs.put(job_id, job)
+      } else {
 
-      // Put the new job into the Database Mapping
-      databaseMapping.put(job_id, jobRefDB.update(DBJob(None, job_id, user_id, job.getState, job.toolname), session_id))
+        // Create a new Job instance
+        val job = UserJob(self, toolname, job_id, user_id, Submitted, startImmediate)
 
+        // This is a new Job, so we have to make the status *Submitted explicit*
+        job.changeState(Submitted)
 
-      worker ! WPrepare(job, params)
+        // Make changes to the UserActor Model
+        userJobs.put(job_id, job)
 
-
-
-    //  Updates the Job directory of a provided job with a new set of parameters
-    case UpdateWD(job_id,  params, startImmediate) =>
-      Logger.info("User Actor was asked to update the working directory")
-      val userJob =  userJobs(job_id)
-      userJob.startImmediate = startImmediate
-      worker ! WUpdate(userJobs(job_id), params)
-
-
-    case UpdateWDDone(userJob) =>
-
-      // If the Job state is prepared and we want to start the job, then start
-      if(userJob.getState == Prepared && userJob.startImmediate) {
-
-        userJob.changeState(Queued)
-        worker ! WStart(userJob)
+        // Put the new job into the Database Mapping
+        databaseMapping.put(job_id, jobRefDB.update(DBJob(None, job_id, user_id, job.getState, job.tool.toolname), session_id))
+        worker ! WPrepare(job, params)
       }
 
 
@@ -272,7 +262,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
       job.changeState(Submitted)
 
       // Put the new job into the Database Mapping
-      databaseMapping.put(job.job_id, jobRefDB.update(DBJob(None, job.job_id, user_id, job.getState, job.toolname), session_id))
+      databaseMapping.put(job.job_id, jobRefDB.update(DBJob(None, job.job_id, user_id, job.getState, job.tool.toolname), session_id))
       userJobs.put(job.job_id, job)
 
       userJobs(parent_job_id).appendChild(job, links)
@@ -288,6 +278,13 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
     // UserActor got to know that the job state has changed
     case UpdateJob(job : UserJob) =>
 
+      // If the Job state is prepared and we want to start the job, then start
+      if(job.getState == Prepared && job.startImmediate) {
+
+        job.changeState(Queued)
+        worker ! WStart(job)
+      }
+
       if(userJobs.contains(job.job_id)) {
 
         // Forward Job state to Websocket
@@ -300,7 +297,7 @@ class UserActor @Inject() (@Named("worker") worker : ActorRef,
         val main_id_o = Some(databaseMapping.get(job.job_id).get.main_id)
 
         // update Job state in Persistence
-        jobRefDB.update(DBJob(main_id_o, job.job_id, user_id, job.getState, job.toolname), session_id)
+        jobRefDB.update(DBJob(main_id_o, job.job_id, user_id, job.getState, job.tool.toolname), session_id)
       }
 
     // Sends a List of suggestions for the Auto Complete function

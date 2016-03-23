@@ -2,7 +2,7 @@ package models.jobs
 
 import actors.UserActor.{Convert, UpdateJob}
 import akka.actor.ActorRef
-import models.graph.{Link, Locked, File, FileState}
+import models.graph._
 import play.api.Logger
 
 import scala.collection.mutable.ArrayBuffer
@@ -17,7 +17,6 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
               private var state  : JobState, // State of the job
               var startImmediate : Boolean)
 {
-  // TODO Toolname is a redundant field in the UserJob
   // TODO Pass Main ID instead of user and job ID to make sure a unique job ID is used.
 
   val tool = models.graph.Ports.nodeMap(toolname)  // The associated tool node
@@ -31,9 +30,9 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
   var destroyed : Boolean = false
 
   // Maps all input files to an associated file object
-   val inFileStates = tool.inports.map { port =>
+  var inFileStates : Map[String, FileState] = tool.inports.map { port =>
 
-    port.filename -> File.in(port.filename, this)
+    port.filename -> Missing
   }.toMap
 
 
@@ -61,6 +60,7 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
   def changeState(newState : JobState): Unit = {
 
     if(!destroyed) {
+
       state = newState
       userActor ! UpdateJob(this)
 
@@ -88,33 +88,24 @@ class UserJob(val userActor      : ActorRef, // Which UserActor the Job belongs 
   }
 
 
+  def changeInFileState(filename : String, state : FileState) = {
 
+    inFileStates = inFileStates.updated(filename, state)
 
-  // Counts the number of files that have notified to be ready. If all files are ready, then
-  // we can set the JobState to be prepared
-  private var readyCounter = 0
+    val nInfile = tool.inports.foldLeft(0) { _ + _.nInfile}
+    val countReady =  inFileStates.count( t => t._2 == Ready )
 
-  def countReady() = {
+    Logger.info("Change inFileSTate invoked")
+    Logger.info("We expect to have " + nInfile.toString + " Files")
+    Logger.info("We have in total " + countReady.toString + " ready files" )
 
-    readyCounter += 1
-    Logger.info("Ready counter is now: " + readyCounter)
+   countReady match {
 
-    readyCounter match {
-
-      // If all files are Ready, we can set the job to be *Prepared*
-      case tool.noInfiles => changeState(Prepared)
-
-      // Otherwise, we have seen at least one file to be ready, so the job is *Partially Prepared*
-      case  _  : Int => changeState(PartiallyPrepared)
+      case i : Int if i == nInfile => changeState(Prepared)
+      case i : Int if i > 0 => changeState(PartiallyPrepared)
+      case i : Int if i == 0 => changeState(Submitted)
     }
   }
-
-
-  def changeInFileState(filename : String, state : FileState) = {
-    if(inFileStates.contains(filename)) inFileStates(filename).changeState(state)
-  }
-
-
   def getState = state
 }
 

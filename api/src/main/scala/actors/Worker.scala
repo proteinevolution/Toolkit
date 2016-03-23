@@ -3,10 +3,9 @@ package actors
 
 import java.io
 import java.io.PrintWriter
-import java.nio.file.Paths
+import java.nio.file.{StandardOpenOption, Paths, Files}
 import javax.inject.Inject
 
-import models.Messages.UpdateWDDone
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
 
@@ -36,11 +35,8 @@ import scala.reflect.io.{Directory, File}
 
 object Worker {
 
-  // Prepares the working directory for a _NEW_ job
+  // Prepare the Working Directory with new Values for the parameters.
   case class WPrepare(job : UserJob, params : Map[String, String])
-
-  // Updates the parameters of a userJob with an already exisiting working directory
-  case class WUpdate(job : UserJob, params : Map[String, String])
 
   // Executes the specified job.
   case class WStart(job: UserJob)
@@ -74,77 +70,42 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
   val argumentPattern = "(\\$\\{[a-z_]+\\}|#\\{[a-z_]+\\}|@\\{[a-z_]+\\}|\\?\\{.+\\}|\\+\\{[a-z_]+\\}|\\!\\{(BIO|DATA)\\})".r
 
 
+  val ignore : Seq[String] = Array("jobid", "newSubmission", "start", "edit")
+
+
   def receive = LoggingReceive {
 
     case WPrepare(userJob, params) =>
 
-      jobDB.getMainID(userJob.user_id, userJob.job_id) match {
+      val main_id = jobDB.getMainID(userJob.user_id, userJob.job_id).get
 
-        case Some(main_id) =>
+      // Assemble the path were the Job directory is located
+      val rootPath  = s"$jobPath$SEP${main_id.toString}$SEP"
 
-          // Assemble the path were the Job directory is located
-          val rootPath  = s"$jobPath$SEP${main_id.toString}$SEP"
+      // If the Job directory does not exist yet, make a new one
+      subdirs.foreach { s => Files.createDirectories(Paths.get(rootPath + s))  }
 
-          ///
-          ///  Step 1: Make the working directory of the job with all subdirectories. We force the creation
-          ///          of the paths since WPrepare assumes that the directory does not yet exist
-          ///
-          Directory(rootPath).createDirectory(force = true, failIfExists = false)
-          for (subdir <- subdirs) {
+      ///
+      ///          Write the parameters into the directory, this will also change the state
+      ///          of the job as a side effect. We will write all parameters except for the jobid
+      ///          which currently also occurs in the Map
+      for((paramName, value) <- params ) {
 
-            Directory(rootPath + subdir).createDirectory(force = true, failIfExists = false)
-          }
 
-          ///
-          ///  Step 2: Write the parameters into the directory, this will also change the state
-          ///          of the job as a side effect. We will write all parameters except for the jobid
-          ///          which currently also occurs in the Map
-          for((paramName, value) <- params ) {
+        if(! ignore.contains(paramName)) {
 
-            if(paramName != "jobid") {
-              File(s"$rootPath${SEP}params$SEP$paramName").writeAll(value.toString)
+          Logger.info("Worker will write " + paramName)
 
-              // The argument has been written to the file, so we can change the state of the infile to Ready
-              userJob.changeInFileState(paramName, Ready)
-            }
-          }
+          Files.write(Paths.get(s"${rootPath}params$SEP$paramName"), value.getBytes("utf-8"),
+                                        StandardOpenOption.CREATE,
+                                        StandardOpenOption.TRUNCATE_EXISTING)
+          // The argument has been written to the file, so we can change the state of the infile to Ready
+          // The job should not care whether the File was already set to ready
+          Logger.info("Worker will change file State")
+          userJob.changeInFileState(paramName, Ready)
 
-        // TODO Can this case happen? If we can exclude this for sure, we do not need the match here
-        case None =>
-
-          userJob.changeState(Error)
+        }
       }
-      sender() ! UpdateWDDone(userJob)
-
-
-    case WUpdate(userJob, params) =>
-
-      Logger.info("Worker was asked to update the parameters of a working directory")
-
-        jobDB.getMainID(userJob.user_id, userJob.job_id) match {
-
-        case Some(main_id) =>
-
-          val rootPath  = s"$jobPath$SEP${main_id.toString}$SEP"
-          ///
-          ///  Step 1: Write the parameters into the directory, this will also change the state
-          ///          of the job as a side effect.
-          for((paramName, value) <- params ) {
-
-            if(paramName != "jobid") {
-
-              File(s"$rootPath${SEP}params$SEP$paramName").writeAll(value.toString)
-            }
-          }
-
-        // TODO Can this case happen? If we can exclude this for sure, we do not need the match here
-        case None =>
-
-          userJob.changeState(Error)
-      }
-      sender() ! UpdateWDDone(userJob)
-
-
 
     case WRead(userJob) =>
 
@@ -228,6 +189,7 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
 
                       val portWithFormat = inport.asInstanceOf[PortWithFormat]
                       File(s"$childRootPath${SEP}params$SEP${portWithFormat.formatFilename}").writeAll(portWithFormat.format.paramName)
+                      childUserJob.changeInFileState(portWithFormat.formatFilename, Ready)
                     }
 
                   case Some(buffer) => throw NotImplementedException("Format conversion is currently not supported")
@@ -262,8 +224,8 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
           ///
           ///  Step 2: Get the runscript of the appropriate tool and replace template placeholders with
           ///  input parameters
-          val sourceRunscript = Source.fromFile(runscriptPath + userJob.toolname + ".sh")
-          val targetRunscript = new PrintWriter(rootPath + userJob.toolname + ".sh")
+          val sourceRunscript = Source.fromFile(runscriptPath + userJob.tool.toolname + ".sh")
+          val targetRunscript = new PrintWriter(rootPath + userJob.tool.toolname + ".sh")
 
           for(line <- sourceRunscript.getLines) {
 
@@ -289,8 +251,8 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
               }
             }))
           }
-          Logger.info("Set file permission of: " + rootPath + userJob.toolname + ".sh")
-          ("chmod u+x " + rootPath + userJob.toolname + ".sh").!    // TODO Is there a neater way to change the permission?
+          Logger.info("Set file permission of: " + rootPath + userJob.tool.toolname + ".sh")
+          ("chmod u+x " + rootPath + userJob.tool.toolname + ".sh").!    // TODO Is there a neater way to change the permission?
           sourceRunscript.close()
           targetRunscript.close()
 
@@ -300,7 +262,7 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
           Future {
 
             userJob.changeState(Running)
-            val process = Process("./" + userJob.toolname + ".sh", new io.File(rootPath)).run
+            val process = Process("./" + userJob.tool.toolname + ".sh", new io.File(rootPath)).run
             userJob.process = Some(process)
             val exitValue = process.exitValue()
 

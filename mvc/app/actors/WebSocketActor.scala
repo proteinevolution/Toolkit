@@ -50,7 +50,7 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
     */
   def createJobObjList (jobSeq : Seq[UserJob]) : JsArray = {
     JsArray(for (job <- jobSeq) yield {
-      Json.obj("t" -> job.toolname,
+      Json.obj("t" -> job.tool.toolname,
                "s" -> job.getState.no,
                "i" -> job.job_id)
     })
@@ -82,7 +82,7 @@ class WebSocketActor(userActor : ActorRef, out: ActorRef)  extends Actor with Ac
     case UpdateJob(job : UserJob) =>
       // Sends the message that a job state has changed over the WebSocket. This is probably the most important
       // Real-time notification in this application
-      out ! Json.obj("type" -> "updatejob", "job_id" -> job.job_id, "state" -> job.getState.no, "toolname" -> job.toolname)
+      out ! Json.obj("type" -> "updatejob", "job_id" -> job.job_id, "state" -> job.getState.no, "toolname" -> job.tool.toolname)
 
     case SendJobList(jobSeq : Seq[UserJob]) =>
       out ! Json.obj("type" -> "joblist", "list" -> createJobObjList(jobSeq))
