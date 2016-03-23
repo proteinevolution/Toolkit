@@ -90,59 +90,6 @@ tr.spaceUnder > td
     border: 0px;
 }
 
-.tabs-title{
-    height: 100%;
-    border: 0px;
-    color: #fff;
-    background-color: #2E8C81;
-}
-
-.tabs-title.is-active a:link{
-    border: 0px;
-    color: #000;
-}
-.tabs-title.is-active #panel1-label{
-    border: 0px;
-    background-color: #D0BA89;
-    color: #000;
-}
-.tabs-title.is-active #panel2-label{
-    border: 0px;
-    background-color: #FFCC66;
-    color: #000;
-}
-.tabs-title.is-active #panel3-label{
-    border: 0px;
-    background-color: #669933;
-    color: #000;
-}
-.tabs-title.is-active #panel4-label{
-    border: 0px;
-    background-color: #7CA6A6;
-    color: #000;
-}
-.tabs-title.is-active #panel5-label{
-    border: 0px;
-    background-color: #666699;
-    color: #000;
-}
-.tabs-title.is-active #panel6-label{
-    border: 0px;
-    background-color: #D6ABAB;
-    color: #000;
-}
-.tabs-title.is-active #panel7-label{
-    border: 0px;
-    background-color: #CC3333;
-    color: #000;
-}
-
-.tabs-title a:link{
-    color: #fff;
-    background-color: #2E8C81;
-
-}
-
 
 .alnviz{
 
@@ -240,15 +187,6 @@ hr {
     font-family: Droid Sans Mono;
     font-size: 0.625em;
 
-}
-
-.tabs a{
-    -webkit-border-top-left-radius: 1.2500rem;
-    -webkit-border-top-right-radius: 1.2500rem;
-    -moz-border-radius-topleft: 1.2500rem;
-    -moz-border-radius-topright: 1.2500rem;
-    border-top-left-radius: 1.2500rem;
-    border-top-right-radius: 1.2500rem;
 }
 
 .example-alignment {
