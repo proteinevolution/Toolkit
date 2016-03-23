@@ -289,8 +289,12 @@ hr {
 
 #alert {
     color: white;
+    text-align: center;
     background-color: #CC3333;
-    border-radius: 1.563em;
+    border-radius: 0em;
+    width: 50%;
+    opacity: 0.9;
+    font-size: 0.75em;
 
 }
 
