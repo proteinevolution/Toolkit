@@ -183,7 +183,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
           // User requested job whose execution is done
           case Done => Future.successful {
 
-            val toolframe = job.toolname match {
+            val toolframe = job.tool.toolname match {
 
               //  The tool anlviz just returns the BioJS MSA Viewer page
               case "alnviz" =>
@@ -223,7 +223,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
                 case "reformat" => views.html.reformat.form(Reformat.inputForm.bind(res))
               }
 
-              Ok(views.html.general.submit(job.toolname, toolframe, Some(job_id))).withSession {
+              Ok(views.html.general.submit(job.tool.toolname, toolframe, Some(job_id))).withSession {
                 Session.closeSessionRequest(request, session_id) // Send Session Cookie
               }
             }

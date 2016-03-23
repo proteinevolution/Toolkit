@@ -1,6 +1,5 @@
 package models
 
-
 /**
  *
  * Stores certain attributes to particular Values, like the full descriptive names of the parameter values.

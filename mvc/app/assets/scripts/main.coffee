@@ -11,8 +11,7 @@ Tools =
       type: "POST"
       url: "/jobs/new/" + controller.toolname).done (data) ->
         $('#content').empty().append data
-        $("html, body").animate({ scrollTop: 0 }, "fast");
-
+        $("html, body").animate({ scrollTop: 0 }, "fast")
 
 Jobs =
   controller: ->

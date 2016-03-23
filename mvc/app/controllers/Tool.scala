@@ -93,13 +93,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
           },
           _ => {
 
-            // Decide whether to Prepare a new Job or alter the parameters of an already prepared one
-            if(newSubmission) {
-              userActor ! PrepWD(toolname, boundForm.data, startImmediate, job_id)
-
-            } else {
-              userActor ! UpdateWD(job_id.get, boundForm.data, startImmediate)
-            }
+            userActor ! PrepWD(toolname, boundForm.data, startImmediate, job_id, newSubmission)
           }
         )
         Ok
