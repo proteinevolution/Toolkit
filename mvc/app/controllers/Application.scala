@@ -2,17 +2,17 @@ package controllers
 
 import actors.UserManager.GetUserActor
 import actors.WebSocketActor
-import akka.actor.ActorRef
+import akka.actor.{ActorSystem, ActorRef}
+import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
-import play.api.{Configuration, Environment, Logger}
-import play.api.Play.current
+import play.api.libs.streams.ActorFlow
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import javax.inject.{Singleton, Named, Inject}
 import models.sessions.Session
-import play.api.Play.materializer
 import akka.pattern.ask
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,20 +23,23 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class Application @Inject()(webJarAssets: WebJarAssets,
                             val messagesApi: MessagesApi,
                             val jobDB : models.database.Jobs,
-                            val environment: Environment,
-                            val configuration: Configuration,
+                            system: ActorSystem,
+                            mat: Materializer,
                             @Named("user-manager") userManager : ActorRef) extends Controller with I18nSupport {
-
 
   val SEP = java.io.File.separator
   val user_id = 12345  // TODO integrate user_id
+
+
+  implicit val implicitMaterializer: Materializer = mat
+  implicit val implicitActorSystem: ActorSystem = system
   implicit val timeout = Timeout(5.seconds)
+
 
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
 
-    //TODO: migrate to akka streams by using flows
-  def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
-    // The user of this session is assigned a user actor
+
+  def ws = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
 
     Session.requestSessionID(request) match {
 
@@ -44,10 +47,11 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
         (userManager ? GetUserActor(sid)).mapTo[ActorRef].map(u =>
 
-          Right(WebSocketActor.props(u))
+          Right(ActorFlow.actorRef(WebSocketActor.props(u)))
         )
     }
   }
+
 
 
   /**
@@ -62,7 +66,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     val session_id = Session.requestSessionID(request)
 
-    // Without session cookie
     Ok(views.html.main(webJarAssets, views.html.general.newcontent(),"Home")).withSession {
       Session.closeSessionRequest(request, session_id)
     }
