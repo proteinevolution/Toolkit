@@ -1,4 +1,8 @@
 val akkaVersion = "2.4.2"
+val jqueryVersion = "2.2.2"
+val foundationVersion = "6.2.0"
+val mithrilVersion = "0.2.3"
+
 
 
 val commonDeps = Seq(ws,  filters, cache, evolutions,
@@ -6,7 +10,6 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "com.google.guava" % "guava" % "18.0",
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0"
@@ -18,9 +21,11 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
 val commonSettings = Seq(
   organization := "your.organization",
   version := "2.5.0",
-  scalaVersion := "2.11.7",
-  logLevel := Level.Warn
+  scalaVersion := "2.11.8",
+  logLevel := Level.Warn,
+  dependencyOverrides += "org.webjars" % "jquery" % jqueryVersion
 )
+
 
 
 lazy val root = (project in file("."))
@@ -37,11 +42,11 @@ lazy val mvc = (project in file("mvc"))
     name := "mpi-toolkit-mvc",
     libraryDependencies ++= (commonDeps ++ Seq(
       "org.webjars" %% "webjars-play" % "2.5.0",
-      "org.webjars" % "jquery" % "2.2.1",
-      "org.webjars" % "foundation" % "6.2.0",
+      "org.webjars" % "jquery" % jqueryVersion,
+      "org.webjars" % "foundation" % foundationVersion,
       "org.json4s" %% "json4s-jackson" % "3.3.0",
       "org.scalaz" %% "scalaz-core" % "7.2.1",
-      "org.webjars" % "mithril" % "0.2.3")),
+      "org.webjars" % "mithril" % mithrilVersion)),
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
@@ -65,7 +70,8 @@ lazy val api = (project in file("api"))
 
 
 
-dependencyOverrides += "org.webjars" % "jquery" % "2.2.1"
+
+
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 /*
@@ -73,6 +79,7 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 resolvers += "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"
 resolvers += Resolver.url("Typesafe Ivy releases", url("https://repo.typesafe.com/typesafe/ivy-releases"))(Resolver.ivyStylePatterns)
 */
+
 
 
 
