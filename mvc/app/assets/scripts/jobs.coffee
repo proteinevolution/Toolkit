@@ -14,16 +14,10 @@ jobs.vm = do ->
   vm = {}
 
   vm.init = ->
+    m.redraw.strategy("all")
 
     vm.list = new (jobs.JobList)
     vm.stateList = {"0": "Partially Prepared", "p": "Prepared", "q": "Queued", "r": "Running", "e": "Error", "d": "Done", "i": "Submitted"}
-
-    vm.onclick = (event) ->
-      jobID = event()
-      $.ajax(
-        async : false
-        url: '/jobs/' + jobID
-        type: 'POST')
 
     # Remove a Job from the View
     vm.clear = (job_id) ->
