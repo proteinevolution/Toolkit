@@ -2,7 +2,7 @@ val akkaVersion = "2.4.2"
 val jqueryVersion = "2.2.2"
 val foundationVersion = "6.2.0"
 val mithrilVersion = "0.2.3"
-val sbtioVersion = "0.13.11"
+val betterfilesVersion = "2.15.0"
 
 
 val commonDeps = Seq(ws,  filters, cache, evolutions,
@@ -13,7 +13,7 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
-  "org.scala-sbt" % "io" % sbtioVersion
+  "com.github.pathikrit" %% "better-files" % betterfilesVersion
 )
 
 /*
@@ -72,7 +72,9 @@ lazy val api = (project in file("api"))
 
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
-resolvers += Resolver.url("typesafe", url("http://repo.typesafe.com/typesafe/ivy-releases/"))(Resolver.ivyStylePatterns)
+
+
+
 /*
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 resolvers += "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"

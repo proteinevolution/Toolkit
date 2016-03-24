@@ -10,7 +10,11 @@ import scala.reflect.io.{Directory, File}
 
 
 
-import sbt.IO
+import better.files._
+
+
+
+
 
 import javax.inject.Inject
 
@@ -90,8 +94,8 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
       val rootPath  = s"$jobPath$SEP${main_id.toString}$SEP"
 
       // If the Job directory does not exist yet, make a new one
-      subdirs.foreach { s => Files.createDirectories(Paths.get(rootPath + s))  }
 
+      subdirs.foreach { s => (rootPath + s).toFile.createDirectories() }
       ///
       ///          Write the parameters into the directory, this will also change the state
       ///          of the job as a side effect. We will write all parameters except for the jobid
@@ -101,14 +105,9 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
 
         if(! ignore.contains(paramName)) {
 
-          Logger.info("Worker will write " + paramName)
-
-          Files.write(Paths.get(s"${rootPath}params$SEP$paramName"), value.getBytes("utf-8"),
-                                        StandardOpenOption.CREATE,
-                                        StandardOpenOption.TRUNCATE_EXISTING)
+          s"${rootPath}params$SEP$paramName".toFile.write(value)
           // The argument has been written to the file, so we can change the state of the infile to Ready
           // The job should not care whether the File was already set to ready
-          Logger.info("Worker will change file State")
           userJob.changeInFileState(paramName, Ready)
 
         }
