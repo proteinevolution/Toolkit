@@ -4,6 +4,14 @@ package actors
 import java.io
 import java.io.PrintWriter
 import java.nio.file.{StandardOpenOption, Paths, Files}
+import scala.io.Source
+// TODO Get rid of this library
+import scala.reflect.io.{Directory, File}
+
+
+
+import sbt.IO
+
 import javax.inject.Inject
 
 import akka.actor.{Actor, ActorLogging}
@@ -14,18 +22,17 @@ import com.typesafe.config.ConfigFactory
 import models.graph.{Link, PortWithFormat, Ports, Ready}
 import models.jobs._
 
-
 import play.api.Logger
 import utils.Exceptions.{RunscriptExecutionFailedException, NotImplementedException}
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
-import scala.io.Source
+
 import scala.sys.process._
 import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
 
-// TODO Get rid of this library
-import scala.reflect.io.{Directory, File}
+
+
 
 
 /* TODO Worker specific TODOs
@@ -134,7 +141,11 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
       dbJobOption match {
         case Some(dbJob) =>
           val rootPath  = jobPath + dbJob.main_id.get + SEP // .get is ok
+
+
           Directory(rootPath).deleteRecursively()
+
+
           jobRefDB.delete(dbJob.main_id.get) // .get is ok
         case None =>
           userJob.changeState(Error)
