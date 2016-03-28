@@ -2,47 +2,20 @@ package actors
 
 
 import java.io
-import java.io.PrintWriter
-import java.nio.file.{StandardOpenOption, Paths, Files}
-import scala.io.Source
-// TODO Get rid of this library
-import scala.reflect.io.{Directory, File}
-
-
-
 import better.files._
-
-
-
-
-
 import javax.inject.Inject
-
 import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
-
 import com.typesafe.config.ConfigFactory
-
 import models.graph.{Link, PortWithFormat, Ports, Ready}
 import models.jobs._
-
-import play.api.Logger
 import utils.Exceptions.{RunscriptExecutionFailedException, NotImplementedException}
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
-
 import scala.sys.process._
 import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
-
-
-
-/* TODO Worker specific TODOs
- * Get rid of Reflect Library since its state is considered to be experimental
- *
-*/
 
 object Worker {
 
@@ -70,6 +43,10 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
 
   val SEP = java.io.File.separator
 
+  // Directory Names in Job Directory
+  val PARAM_DIR = "params"
+
+
   val subdirs = Array("/results", "/logs", "/params", "/specific", "/inter")
 
   // Get paths
@@ -94,7 +71,6 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
       val rootPath  = s"$jobPath$SEP${main_id.toString}$SEP"
 
       // If the Job directory does not exist yet, make a new one
-
       subdirs.foreach { s => (rootPath + s).toFile.createDirectories() }
       ///
       ///          Write the parameters into the directory, this will also change the state
@@ -102,14 +78,12 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
       ///          which currently also occurs in the Map
       for((paramName, value) <- params ) {
 
-
         if(! ignore.contains(paramName)) {
 
-          s"${rootPath}params$SEP$paramName".toFile.write(value)
+          s"$rootPath$SEP$PARAM_DIR$SEP$paramName".toFile.write(value)
           // The argument has been written to the file, so we can change the state of the infile to Ready
           // The job should not care whether the File was already set to ready
           userJob.changeInFileState(paramName, Ready)
-
         }
       }
 
@@ -117,17 +91,14 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
 
       val main_id_o = jobDB.getMainID(userJob.user_id, userJob.job_id)
       main_id_o match {
+
         case Some(main_id) =>
-          val paramPath = jobPath + main_id + SEP + "params/"
 
-          val files = new java.io.File(paramPath).listFiles
+          sender() ! s"$jobPath$main_id$SEP$PARAM_DIR".toFile.list.map { file =>
 
-          val res : Map[String, String] = files.map { file =>
-
-            file.getName -> scala.io.Source.fromFile(file.getAbsolutePath).mkString
+            file.name -> file.contentAsString
           }.toMap
 
-          sender() ! res
         case None =>
           userJob.changeState(Error)
       }
@@ -135,111 +106,77 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
 
     case WDelete(userJob) =>
 
-      val dbJobOption = jobDB.delete(userJob.user_id, userJob.job_id)
-
-      dbJobOption match {
-        case Some(dbJob) =>
-          val rootPath  = jobPath + dbJob.main_id.get + SEP // .get is ok
+      val dbJob = jobDB.delete(userJob.user_id, userJob.job_id).get
+      s"$jobPath${dbJob.main_id.get}$SEP".toFile.delete(swallowIOExceptions = false) // get is safe, Delete JobDir
+      jobRefDB.delete(dbJob.main_id.get) // .get is ok
 
 
-          Directory(rootPath).deleteRecursively()
-
-
-          jobRefDB.delete(dbJob.main_id.get) // .get is ok
-        case None =>
-          userJob.changeState(Error)
-      }
 
 
     case WConvert(parentUserJob, childUserJob, links) =>
 
       // Assemble all necessary file paths
-      val parent_main_id_o = jobDB.getMainID(parentUserJob.user_id, parentUserJob.job_id)
-      val child_main_id_o = jobDB.getMainID(childUserJob.user_id, childUserJob.job_id)
+      val parent_main_id = jobDB.getMainID(parentUserJob.user_id, parentUserJob.job_id).get
+      val child_main_id = jobDB.getMainID(childUserJob.user_id, childUserJob.job_id).get
 
-      parent_main_id_o match {
-        case Some(parent_main_id) =>
-          child_main_id_o match {
-            case Some(child_main_id) =>
-              val parentRootPath = jobPath + parent_main_id + SEP
-              val childRootPath = jobPath + child_main_id + SEP
+      val parentRootPath = s"$jobPath$parent_main_id$SEP"
+      val childRootPath = s"$jobPath$child_main_id$SEP"
 
-      // Create Child Root Path if does not already exist
-      if(!java.nio.file.Files.exists(Paths.get(childRootPath))) {
+      // If the Job directory does not exist yet, make a new one
+      subdirs.foreach { s => (childRootPath + s).toFile.createDirectories() }
 
+      for(link <- links) {
 
-                Directory(childRootPath).createDirectory(false, false)
-                for (subdir <- subdirs) {
+        val outport = parentUserJob.tool.outports(link.out)
+        val inport = childUserJob.tool.inports(link.in)
 
-                  Directory(childRootPath + subdir).createDirectory(false, false)
-                }
-              }
+        val params : Option[ArrayBuffer[String]] = Ports.convert(outport, inport)
 
-              for(link <- links) {
+        // Assemble paths to respective files
+        val outfile = s"${parentRootPath}results/${outport.filename}"
+        val infile =  s"$childRootPath$SEP$PARAM_DIR$SEP${inport.filename}"
 
-                val outport = parentUserJob.tool.outports(link.out)
-                val inport = childUserJob.tool.inports(link.in)
+        // Decide whether conversion is needed
+        params match  {
 
-                val params : Option[ArrayBuffer[String]] = Ports.convert(outport, inport)
+          // This is the same format, just copy over the file
+          case None =>
 
-                // Assemble paths to respective files
-                val outfile = parentRootPath + "results/" + outport.filename
-                val infile =  childRootPath + "params/" + inport.filename
+            outfile.toFile.copyTo(infile.toFile)
+            childUserJob.changeInFileState(inport.filename, Ready)
 
-                // Decide whether conversion is needed
-                params match  {
+            // If this port has a format, we also need to write the format file
+            inport match {
 
-                  // This is the same format, just copy over the file
-                  case None =>
-                    java.nio.file.Files.copy(Paths.get(outfile), Paths.get(infile))
-                    childUserJob.changeInFileState(inport.filename, Ready)
+              case portWithFormat : PortWithFormat =>
 
-                    // If this port has a format, we also need to write the format file
-                    if(inport.isInstanceOf[PortWithFormat]) {
+                s"$childRootPath$SEP$PARAM_DIR$SEP${portWithFormat.formatFilename}".toFile.write(portWithFormat.format.paramName)
+                childUserJob.changeInFileState(portWithFormat.formatFilename, Ready)
+            }
 
-                      val portWithFormat = inport.asInstanceOf[PortWithFormat]
-                      File(s"$childRootPath${SEP}params$SEP${portWithFormat.formatFilename}").writeAll(portWithFormat.format.paramName)
-                      childUserJob.changeInFileState(portWithFormat.formatFilename, Ready)
-                    }
-
-                  case Some(buffer) => throw NotImplementedException("Format conversion is currently not supported")
-
-                }
-              }
-            case None =>
-              childUserJob.changeState(Error)
-          }
-        case None =>
-          parentUserJob.changeState(Error)
+          case Some(buffer) => throw NotImplementedException("Format conversion is currently not supported")
+        }
       }
 
 
     case WStart(userJob) =>
 
-      Logger.info("[Worker](WStart) for job " + userJob.job_id)
-      val main_id_o = jobDB.getMainID(userJob.user_id, userJob.job_id)
-      main_id_o match {
-        case Some(main_id) =>
-          val rootPath  = jobPath + main_id.toString + SEP
-          val paramPath = jobPath + main_id.toString + SEP + "params/"
+      val main_id = jobDB.getMainID(userJob.user_id, userJob.job_id).get
 
+      val rootPath  = s"$jobPath${main_id.toString}$SEP"
+      val paramPath = s"$jobPath${main_id.toString}$SEP$PARAM_DIR"
 
-          val files = new java.io.File(paramPath).listFiles
+      val params : Map[String, String] = paramPath.toFile.list.map { file =>
 
-          val params : Map[String, String] = files.map { file =>
+            file.name -> file.contentAsString
+      }.toMap
 
-            file.getName -> scala.io.Source.fromFile(file.getAbsolutePath).mkString
-          }.toMap
+      ///
+      ///  Step 2: Get the runscript of the appropriate tool and replace template placeholders with
+      ///  input parameters
+      for(line <- s"$runscriptPath${userJob.tool.toolname}.sh".toFile.lines) {
 
-          ///
-          ///  Step 2: Get the runscript of the appropriate tool and replace template placeholders with
-          ///  input parameters
-          val sourceRunscript = Source.fromFile(runscriptPath + userJob.tool.toolname + ".sh")
-          val targetRunscript = new PrintWriter(rootPath + userJob.tool.toolname + ".sh")
-
-          for(line <- sourceRunscript.getLines) {
-
-            targetRunscript.println(argumentPattern.replaceAllIn(line, { rm =>
+        s"$rootPath${userJob.tool.toolname}.sh".toFile.appendLine(argumentPattern.replaceAllIn(line, { rm =>
 
               val s = rm.toString()
               val value = s.substring(2, s.length - 1)
@@ -248,7 +185,7 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
 
                 case '!' => if(value == "BIO") bioprogsPath else databasesPath
                 case '+' => "inter/" + value
-                case '#' =>  "params/" + value
+                case '#' =>  PARAM_DIR + SEP + value
                 case '$' => params.get(value).get.toString
                 case '@' => "results/" + value
                 case '?' =>
@@ -260,41 +197,31 @@ class Worker @Inject() (jobDB    : models.database.Jobs,
                   }
               }
             }))
-          }
-          Logger.info("Set file permission of: " + rootPath + userJob.tool.toolname + ".sh")
-          ("chmod u+x " + rootPath + userJob.tool.toolname + ".sh").!    // TODO Is there a neater way to change the permission?
-          sourceRunscript.close()
-          targetRunscript.close()
+      }
+      ("chmod u+x " + rootPath + userJob.tool.toolname + ".sh").!    // TODO Is there a neater way to change the permission?
 
 
+      // Run the tool async in the execution context of the worker
+      Future {
 
-          // Run the tool async in the execution context of the worker
-          Future {
+        userJob.changeState(Running)
+        val process = Process("./" + userJob.tool.toolname + ".sh", new io.File(rootPath)).run
+        userJob.process = Some(process)
+        val exitValue = process.exitValue()
 
-            userJob.changeState(Running)
-            val process = Process("./" + userJob.tool.toolname + ".sh", new io.File(rootPath)).run
-            userJob.process = Some(process)
-            val exitValue = process.exitValue()
+        if(exitValue != 0) {
 
-            if(exitValue != 0) {
+          throw RunscriptExecutionFailedException(exitValue, "Execution of Runscript failed. Exit code was " + exitValue)
+        } else {
 
-              throw RunscriptExecutionFailedException(exitValue, "Execution of Runscript failed. Exit code was " + exitValue)
-            } else {
+          exitValue
+        }
+      } onComplete {
 
-              exitValue
-            }
-          } onComplete {
-
-            case Success(_) => userJob.changeState(Done)
+        case Success(_) => userJob.changeState(Done)
 
               // TODO Add more Error handling here
-            case Failure(t) => userJob.changeState(Error)
-          }
-
-
-
-        case None =>
-          userJob.changeState(Error)
+        case Failure(t) => userJob.changeState(Error)
       }
   }
 }
