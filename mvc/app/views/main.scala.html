@@ -35,7 +35,6 @@
     <body data-ws-url="@routes.Application.ws().webSocketURL()">
 
         <div class="row fullwidth" style="opacity: 1;">
-
             <div class="large-12 columns" id="subnav">
                 @elements.topnav()
             </div>
@@ -48,21 +47,6 @@
                <div class="logo"><a href=""><img style="width: 42%" src="@routes.Assets.at("images/logo.svg")"></a></div> <!-- SVG Minerva -->
             </div>
         </div>
-
-            <!--No Use so far,looks ugly (Lukas opinion)
-            <div class="large-4 small-4 topsmall columns" data-equalizer-watch>
-                <ul class="dropdown menu" id="toolsdropdown" data-dropdown-menu>
-                    <li>
-                        <a href="">Alignment</a>
-                        <ul class="menu vertical">
-                        @for(tool <- Tool.tools){
-                            <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-                        }
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-             -->
 
 
 
