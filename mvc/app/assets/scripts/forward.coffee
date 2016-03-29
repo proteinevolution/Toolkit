@@ -1,6 +1,7 @@
 $("#forward").submit (event) ->
   event.preventDefault()
 
+  
   data = $("#forward").serializeArray()
   data.map (link) ->
     link["out"] = parseInt(link["name"])
