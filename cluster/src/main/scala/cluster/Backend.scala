@@ -11,7 +11,7 @@ import scala.concurrent.duration.Duration
   *
  * Booting a cluster backend node with all actors
  */
-object Cluster extends App {
+object Backend extends App {
 
   // Simple cli parsing
   val port = args match {
