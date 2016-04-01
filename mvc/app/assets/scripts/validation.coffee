@@ -45,14 +45,22 @@ validator = new m.validator {
 
       clustal = clustal.split('\n')
 
-      clustal[0] = clustal[0].replace(" ", "")
-      if not clustal[0].startsWith('CLUSTALW')
-        return "No CLUSTALW Header"
+      header = clustal[0].trim().replace(' ' , '')
+      if not header.startsWith('CLUSTALW')
+        return 'No CLUSTALW Header'
+
+      for sequence in clustal
+          sequence = sequence.trim()
+          lines = sequence.split(/\s+/g);
+          if lines.length > 1 and lines.length < 4
+            console.log(lines)
+            if lines[1].length > 60
+              return 'More then 60 sequence symbols in one line'
 
 }
 
 
-$("#alignment").bind 'input propertychange ', (event) ->
+$("#alignment").bind 'input propertychange', (event) ->
 
   alignment = $("#alignment").val()
   format = $("#format").val()
@@ -77,4 +85,6 @@ $("#alignment").bind 'input propertychange ', (event) ->
       else
         $('#submitbutton').prop('disabled', false);
         $('#alert').prop('hidden',true)
+
+
 
