@@ -72,6 +72,8 @@ lazy val api = (project in file("api"))
   )
 
 
+
+
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 

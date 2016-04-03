@@ -7,11 +7,10 @@ Tools =
     { toolname: m.route.param('toolname') }
   view: (controller) ->
 
-    
 
     $.ajax(
       type: "POST"
-      url: "/jobs/new/" + controller.toolname).done (data) ->
+      url: "/tools/form/" + controller.toolname).done (data) ->
         $('#content').empty().append data
         $("html, body").animate({ scrollTop: 0 }, "fast")
 

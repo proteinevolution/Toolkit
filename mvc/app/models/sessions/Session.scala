@@ -11,6 +11,7 @@ import scala.collection.mutable.ArrayBuffer
 object Session {
 
   val SID = "sid" // name for the entry in the session cookie
+  val MID = "mid" // mainID of the last job that was get
   val sessions : ArrayBuffer[String] = ArrayBuffer.empty
 
   def requestSessionID(request : RequestHeader) : String = {
@@ -28,5 +29,11 @@ object Session {
   def closeSessionRequest(request : RequestHeader, session_id : String): mvc.Session = {
     Logger.info("Request from SID \"" + session_id + "\"")
     request.session + (SID -> session_id)
+  }
+
+  def closeSessionRequest(request : RequestHeader, session_id : String, mainID : Long): mvc.Session = {
+    Logger.info("Request from SID \"" + session_id + "\"")
+    request.session + (SID -> session_id)
+    request.session + (MID -> mainID.toString)
   }
 }
