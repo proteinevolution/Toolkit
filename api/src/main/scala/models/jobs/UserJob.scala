@@ -1,8 +1,9 @@
 package models.jobs
 
 import akka.actor.ActorRef
+import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import models.graph._
-import models.jobs.UserJob.JobStateChanged
+import models.jobs.UserJob.{JobPub, JobPubDel, JobStateChanged}
 import play.api.Logger
 
 import scala.collection.mutable.ArrayBuffer
@@ -20,9 +21,10 @@ class UserJob(val mediator : ActorRef, // The WebSocket the changes will be Publ
               private var state  : JobState, // State of the job
               var start : Boolean)
 {
-  mediator ! JobStateChanged(jobID, state, toolname)
 
-  // TODO Pass Main ID instead of user and job ID to make sure a unique job ID is used.
+  mediator ! Publish("SESSION_" + sessionID, JobStateChanged(jobID, state, toolname))
+  mediator ! Publish("JOBS", JobPub(this))
+
 
   val tool = models.graph.Ports.nodeMap(toolname)  // The associated tool node
 
@@ -67,7 +69,8 @@ class UserJob(val mediator : ActorRef, // The WebSocket the changes will be Publ
     if(!destroyed) {
 
       state = newState
-      mediator ! JobStateChanged(jobID, newState, toolname)
+      mediator ! Publish("SESSION_" + sessionID, JobStateChanged(jobID, state, toolname))
+      mediator ! Publish("JOBS", JobPub(this))
 
       // If the Job state is Done, we ask the UserActor to convert Output for all child jobs
       if(newState == Done) {
@@ -82,6 +85,7 @@ class UserJob(val mediator : ActorRef, // The WebSocket the changes will be Publ
 
   def destroy() = {
 
+      mediator ! Publish("JOBS", JobPubDel(this))
       // TODO We have to handle the case that this Job has child jobs
       if(process.isDefined) {
 
@@ -118,6 +122,12 @@ object UserJob {
 
   // The Messages which the Job can publish
   case class JobStateChanged(jobID : String, newState : JobState, toolname : String)
+
+
+  case class JobPub(userJob : UserJob) // The job publishes itself to the 'JOBS' topic, for update purpose
+  case class JobPubDel(userJob : UserJob) // The Job publishes its deletion
+
+
 
   def apply(webSocketActor : ActorRef,
             sessionID : String,
