@@ -48,7 +48,7 @@
 
             // init msa
             var m = new msa.msa(opts);
-            var url = '/files/' + '@userJob.job_id' + '/' + '@Alnviz.resultFileNames(0)';
+            var url = '/files/' + '@userJob.jobID' + '/' + '@Alnviz.resultFileNames(0)';
 
             m.u.file.importURL(url, renderMSA);
 

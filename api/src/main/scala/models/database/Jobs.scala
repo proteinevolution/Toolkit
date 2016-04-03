@@ -128,7 +128,6 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
 
   /**
     * Updates a Job in the database
-    * @param job
     * @return
     */
   def update(dbJob: DBJob) : Option[DBJob] = {
@@ -156,12 +155,12 @@ class Jobs @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseConf
 
   /**
     * Returns the main_id of a user job by passing the job itself
-    * @param job
     * @return
     */
+  /*
   def getMainID(job : UserJob) : Option[Long] = {
-    get(job.user_id, job.job_id).head.main_id
-  }
+    get(job.sessionID, job.jobID).head.main_id
+  } */
 }
 
 //Job Class used for database storage
