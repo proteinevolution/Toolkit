@@ -2,6 +2,7 @@ package actors
 
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Terminated}
+import akka.cluster.pubsub.DistributedPubSub
 import play.api.Logger
 import models.database.DBJobRef
 import models.distributed.FrontendMasterProtocol._
@@ -31,6 +32,9 @@ class Master extends Actor with ActorLogging {
   import models.distributed.WorkState._
 
   val jobIDRegex = "[0-9a-zA-Z_-]+"
+
+
+  val mediator = DistributedPubSub(context.system).mediator
 
 
 
@@ -118,7 +122,7 @@ class Master extends Actor with ActorLogging {
         // This is an new Job
         val newJobID = if(jobID.matches(jobIDRegex)) jobID else RandomString.randomNumString(7)
 
-        val userJob = UserJob(userWebSockets(sessionID), toolname, mainIDCounter, newJobID, start = false)
+        val userJob = UserJob(userWebSockets(sessionID),sessionID, toolname, mainIDCounter, newJobID, start = false)
         mainIDCounter += 1
 
         userJobs(sessionID).put(newJobID, userJob)
@@ -170,7 +174,6 @@ class Master extends Actor with ActorLogging {
   } */
 
 
-  //val mediator = DistributedPubSub(context.system).mediator
   //ClusterClientReceptionist(context.system).registerService(self)
 
 
@@ -198,11 +201,16 @@ class Master extends Actor with ActorLogging {
   override def receive: Receive = {
 
     // A new Sesssion has registered at the Master // TODO This will be rather slow, we shouldn't do that
-    case FrontendMasterProtocol.Subscribe(sessionID) =>
+    case FrontendMasterProtocol.SubscribeToMaster(sessionID) =>
 
       userWebSockets.put(sessionID, sender())
       context watch sender()
       Logger.info("Master: User with SessionID " + sessionID + "has subscribed successfully")
+      // Register the sender at th PubSubMediator
+
+
+
+
 
       /* TODO Database currently disabled
       // Load All Jobs from the Database

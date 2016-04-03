@@ -12,14 +12,15 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by lukas on 1/20/16.
   */
-class UserJob(val webSocketActor : ActorRef, // The WebSocket the changes will be Published to TODO We Should replace this stuff with A Cluster DistributedPubSub
+class UserJob(val mediator : ActorRef, // The WebSocket the changes will be Published to
+              val sessionID : String,
               val toolname       : String, // The name of the associated tool
               val mainID         : Long,
-              val jobID         : String,     // Which job_id is attached to this Job
-              private var state  : JobState,  // State of the job
+              val jobID         : String, // Which job_id is attached to this Job
+              private var state  : JobState, // State of the job
               var start : Boolean)
 {
-  webSocketActor ! JobStateChanged(jobID, state, toolname)
+  mediator ! JobStateChanged(jobID, state, toolname)
 
   // TODO Pass Main ID instead of user and job ID to make sure a unique job ID is used.
 
@@ -66,7 +67,7 @@ class UserJob(val webSocketActor : ActorRef, // The WebSocket the changes will b
     if(!destroyed) {
 
       state = newState
-      webSocketActor ! JobStateChanged(jobID, newState, toolname)
+      mediator ! JobStateChanged(jobID, newState, toolname)
 
       // If the Job state is Done, we ask the UserActor to convert Output for all child jobs
       if(newState == Done) {
@@ -119,10 +120,11 @@ object UserJob {
   case class JobStateChanged(jobID : String, newState : JobState, toolname : String)
 
   def apply(webSocketActor : ActorRef,
+            sessionID : String,
             toolname : String,
             mainID : Long,
             jobID : String,
             start : Boolean) = {
-    new UserJob(webSocketActor, toolname, mainID, jobID, Submitted, start)
+    new UserJob(webSocketActor, sessionID, toolname, mainID, jobID, Submitted, start)
   }
 }
