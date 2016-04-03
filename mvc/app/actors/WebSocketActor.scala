@@ -29,7 +29,7 @@ class WebSocketActor(sessionID : String, master : ActorRef, out: ActorRef)  exte
   override def preStart = {
 
     Logger.info("WebSocket for " + sessionID + " has started")
-    master ! FrontendMasterProtocol.Subscribe(sessionID)
+    master ! FrontendMasterProtocol.SubscribeToMaster(sessionID)
   }
 
   /**

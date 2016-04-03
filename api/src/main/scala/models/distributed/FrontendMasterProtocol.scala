@@ -44,7 +44,7 @@ object FrontendMasterProtocol {
 
 
   // Attach WebSocket to Master
-  case class Subscribe(sessionID : String) extends UserRequest
+  case class SubscribeToMaster(sessionID : String) extends UserRequest
 
   // Get the userJob
   case class Get(sessionID : String, jobID : String) extends UserRequest
