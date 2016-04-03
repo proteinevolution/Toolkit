@@ -3,6 +3,7 @@ val jqueryVersion = "2.2.2"
 val foundationVersion = "6.2.0"
 val mithrilVersion = "0.2.3"
 val betterfilesVersion = "2.15.0"
+val bcryptVersion = "0.3m"
 
 
 val commonDeps = Seq(ws,  filters, cache, evolutions,
@@ -15,7 +16,8 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
-  "com.github.pathikrit" %% "better-files" % betterfilesVersion
+  "com.github.pathikrit" %% "better-files" % betterfilesVersion,
+  "org.mindrot" % "jbcrypt" % bcryptVersion
 )
 
 /*
