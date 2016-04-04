@@ -17,7 +17,8 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
-  "org.mindrot" % "jbcrypt" % bcryptVersion
+  "org.mindrot" % "jbcrypt" % bcryptVersion,
+  "io.prismic" %% "scala-kit" % "1.3.7"
 )
 
 /*
