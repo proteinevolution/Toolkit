@@ -1,0 +1,4 @@
+@import play.api.mvc.RequestHeader
+@(authMessage:String, redirect:String)(implicit messages: Messages, request: RequestHeader)
+<div>@authMessage</div>
+<div><a class="redirect" id="@redirect">Redirecting...</a></div>

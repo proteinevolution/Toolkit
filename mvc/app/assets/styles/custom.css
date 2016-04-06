@@ -236,4 +236,6 @@ hr {
 
 }
 
-
+#auth-dropdown {
+    z-index: 100;
+}

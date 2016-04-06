@@ -1,0 +1,19 @@
+@import play.api.mvc.RequestHeader
+@(inputForm: Form[(String, String)], userName : String)(implicit messages: Messages, request: RequestHeader)
+
+<form id="signin-form" action="@routes.Auth.signInSubmit()" data-abide novalidate>
+    <div class="row">
+        <div class="small-12 columns">
+            <label>
+                E-Mail:
+                <input type="text" id="email" placeholder="JohnDoe&#64;SomePlace.net" required pattern="email" value="@userName">
+            </label>
+        </div>
+        <div class="small-12 columns">
+            <label>
+                Password:
+                <input type="password" id="password" placeholder="Password" required>
+            </label>
+        </div>
+    </div>
+</form>

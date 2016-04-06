@@ -1,0 +1,48 @@
+@import play.api.mvc.RequestHeader
+@(inputForm: Form[(String, String, String, String, Boolean, Boolean)])(implicit messages: Messages, request: RequestHeader)
+
+<form id="signup-form" data-abide="ajax" novalidate>
+    <div class="row">
+        <div class="small-12 columns">
+            <label>
+                First Name:
+                <input type="text" id="namefirst" name="namefirst" placeholder="John" required pattern="text">
+            </label>
+        </div>
+        <div class="small-12 columns">
+            <label>
+                Last Name:
+                <input type="text" id="namelast" name="namelast" placeholder="Doe" required pattern="text">
+            </label>
+        </div>
+        <div class="small-12 columns">
+            <label>
+                E-Mail:
+                <input type="text" id="email" name="email" placeholder="JohnDoe&#64;SomePlace.net" required pattern="email">
+            </label>
+        </div>
+        <div class="small-12 columns">
+            <label>
+                Password:
+                <input type="password" id="password" name="password" placeholder="Password" required >
+            </label>
+        </div>
+        <!---
+        <div class="small-12 columns">
+            <label>
+                Repeat Password:
+                <input type="password" placeholder="Password" required pattern="text" data-equalTo="password">
+                <span class="form-error">(Passwords must match!)</span>
+            </label>
+        </div>
+        --->
+        <div class="small-12 columns">
+            <label>
+                I Accept the AGB &nbsp;
+                <input type="checkbox" id="acceptagb" name="acceptagb" value="true" required>
+                <span class="form-error">(You must accept the AGB!)</span>
+            </label>
+        </div>
+    </div>
+    <input id="signup-submit" type="submit" class="small expanded secondary button disabled" value="Register">
+</form>
