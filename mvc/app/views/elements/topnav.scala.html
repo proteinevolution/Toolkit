@@ -1,3 +1,6 @@
+@import play.api.mvc.RequestHeader
+@()(implicit messages: Messages, request: RequestHeader)
+
 <dl class="sub-nav">
     <dd><a href="#">Help</a></dd>
     <dd><a href="#">Disclaimer</a></dd>
@@ -9,5 +12,20 @@
     <dd><a href="#">Contact</a></dd>
     <dd><a href="#">Personal Databases</a></dd>
     <dd><a href="#">PDBalert</a></dd>
-    <dd><a href="#">Login</a></dd>
+    <dd><a href="#" id="auth-link" data-toggle="auth-dropdown">Sign in</a></dd>
 </dl>
+
+<div class="dropdown-pane" id="auth-dropdown" data-dropdown data-auto-focus="true" data-close-on-click="true">
+    <ul class="tabs" id="auth-tab" data-tabs>
+        <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">Sign In</a></li>
+        <li class="tabs-title"><a href="#panel2">Sign Up</a></li>
+    </ul>
+    <div class="tabs-content" data-tabs-content="auth-tab">
+        <div class="tabs-panel is-active" id="panel1">
+            @authform.signin(models.auth.SignIn.inputForm, "")
+        </div>
+        <div class="tabs-panel" id="panel2">
+            @authform.signup(models.auth.SignUp.inputForm)
+        </div>
+    </div>
+</div>

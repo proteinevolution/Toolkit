@@ -29,7 +29,13 @@ GET         /assets/*file                  controllers.Assets.at(path="/public",
 GET         /tools/:toolname                @controllers.Application.showTool(toolname : String)
 GET         /jobs/:jobid                    @controllers.Application.showJob(jobid: String)
 
-
+# Routes for Auth Service
+GET         /signin                         @controllers.Auth.signIn(username : String = "")
+GET         /signin/:username               @controllers.Auth.signIn(username : String)
+POST        /signin/submit/                 @controllers.Auth.signInSubmit()
+GET         /signup                         @controllers.Auth.signUp()
+POST        /signup/submit/                 @controllers.Auth.signUpSubmit()
+GET         /signout                        @controllers.Auth.signOut()
 
 # Get the input form of the tools
 POST        /tools/form/:toolname           @controllers.Application.form(toolname : String)
