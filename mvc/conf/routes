@@ -11,7 +11,7 @@
 ############################################################################
 
 # Index Page requested by user. Note that the controller is injected
-GET         /                              @controllers.Application.index
+GET     /                                  @controllers.Application.index(page: Int ?= 1)
 
 # Websocket
 GET         /ws                            @controllers.Application.ws
@@ -28,6 +28,17 @@ GET         /assets/*file                  controllers.Assets.at(path="/public",
 # Route for direct get requests
 GET         /tools/:toolname                @controllers.Application.showTool(toolname : String)
 GET         /jobs/:jobid                    @controllers.Application.showJob(jobid: String)
+
+#Prismic
+GET     /not-found                                  controllers.Application.brokenLink()
+GET     /documents/$id<[-_a-zA-Z0-9]{16}>/:slug     controllers.Application.detail(id, slug)
+
+# Basic search
+GET     /search                                     controllers.Application.search(q: Option[String] ?= None, page: Int ?= 1)
+
+# Preview
+GET     /preview                                    controllers.Application.preview(token: String)
+
 
 # Routes for Auth Service
 GET         /signin                         @controllers.Auth.signIn(username : String = "")

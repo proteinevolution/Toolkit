@@ -6,7 +6,7 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import play.api.libs.streams.ActorFlow
-import play.api.Logger
+import play.api.{Configuration, Logger}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc._
@@ -15,17 +15,38 @@ import javax.inject.{Inject, Singleton}
 import models.sessions.Session
 import models.tools.{Alnviz, Hmmer3, Tcoffee}
 import actors.MasterConnection
-
+import io.prismic._
 
 import scala.concurrent.duration._
 import scala.concurrent.Future
+import javax.inject._
+import play.api._
+import play.api.mvc._
+import play.api.Configuration
+
+import scala.concurrent._
+import play.api.libs.concurrent.Execution.Implicits._
+
+import io.prismic._
+
+
+
+object Application {
+
+  // -- Resolve links to documents
+  def linkResolver(api: Api)(implicit request: RequestHeader) = DocumentLinkResolver(api) {
+    case (docLink, maybeBookmarked) if !docLink.isBroken => routes.Application.detail(docLink.id, docLink.slug).absoluteURL()
+    case _ => routes.Application.brokenLink().absoluteURL()
+  }
+}
 
 
 @Singleton
 class Application @Inject()(webJarAssets: WebJarAssets,
                             val messagesApi: MessagesApi,
                             system: ActorSystem,
-                            mat: Materializer) extends Controller with I18nSupport {
+                            mat: Materializer,
+                            configuration: Configuration) extends Controller with I18nSupport {
 
   val SEP = java.io.File.separator
   val user_id = 12345  // TODO integrate user_id
@@ -36,6 +57,25 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   implicit val timeout = Timeout(5.seconds)
 
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
+
+  private val Cache = BuiltInCache(200)
+
+  // -- Write debug and error messages to the Play `prismic` logger (check the configuration in application.conf)
+  private val Logger2 = (level: Symbol, message: String) => level match {
+    case 'DEBUG => play.api.Logger("prismic").debug(message)
+    case 'ERROR => play.api.Logger("prismic").error(message)
+    case _      => play.api.Logger("prismic").info(message)
+  }
+
+  private def endpoint = configuration.getString("prismic.api").getOrElse(sys.error(s"Missing configuration prismic.api"))
+  private def token = configuration.getString("prismic.token")
+  private def fetchApi: Future[Api] = Api.get(endpoint, accessToken = token, cache = Cache, logger = Logger2)
+
+  private def ref(api: Api)(implicit request: RequestHeader): String = {
+    val experimentRef: Option[String] = request.cookies.get(Prismic.experimentsCookie).map(_.value).flatMap(api.experiments.refFromCookie)
+    val previewRef: Option[String] = request.cookies.get(Prismic.previewCookie).map(_.value)
+    previewRef.orElse(experimentRef).getOrElse(api.master.ref)
+  }
 
 
   def ws = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
@@ -54,14 +94,79 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     * Currently the index controller will assign a session id to the user for identification purpose.
     *
     */
-  def index = Action { implicit request =>
+ /* def index = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
 
     Ok(views.html.main(webJarAssets, views.html.general.newcontent(),"Home")).withSession {
       Session.closeSessionRequest(request, session_id)
     }
+  }*/
+
+  // -- Page not found
+  def PageNotFound = NotFound(views.html.pageNotFound())
+
+  def brokenLink = Action { implicit request =>
+    PageNotFound
   }
+
+ // -- Home page
+  def index(page: Int) = Action.async { implicit request =>
+
+
+    for {
+      api <- fetchApi
+      response <- api.forms("everything").ref(ref(api)).pageSize(10).page(page).submit()
+    } yield {
+
+      val session_id = Session.requestSessionID(request)
+      Ok(views.html.main(webJarAssets, views.html.index(response), "Home")).withSession {
+        Session.closeSessionRequest(request, session_id)
+      }
+    }
+  }
+
+  // -- Document detail
+  def detail(id: String, slug: String) = Action.async { implicit request =>
+    for {
+      api <- fetchApi
+      maybeDocument <- api.forms("everything").ref(ref(api)).pageSize(1).submit().map(_.results.headOption)
+    } yield {
+      checkSlug(maybeDocument, slug) {
+        case Left(newSlug)   => MovedPermanently(routes.Application.detail(id, newSlug).url)
+        case Right(document) => Ok(views.html.detail(document, api))
+      }
+    }
+  }
+
+  // -- Basic Search
+  def search(q: Option[String], page: Int) = Action.async { implicit request =>
+    for {
+      api <- fetchApi
+      response <- api.forms("everything").query(Predicate.fulltext("document", q.getOrElse(""))).ref(ref(api)).pageSize(10).page(page).submit()
+    } yield {
+      Ok(views.html.search(q, response, api))
+    }
+  }
+
+  // -- Preview Action
+  def preview(token: String) = Action.async { implicit req =>
+    for {
+      api <- fetchApi
+      redirectUrl <- api.previewSession(token, Application.linkResolver(api), routes.Application.index().url)
+    } yield {
+      Redirect(redirectUrl).withCookies(Cookie(Prismic.previewCookie, token, path = "/", maxAge = Some(30 * 60 * 1000), httpOnly = false))
+    }
+  }
+
+  // -- Helper: Check if the slug is valid and redirect to the most recent version id needed
+  def checkSlug(document: Option[Document], slug: String)(callback: Either[String, Document] => Result) =
+    document.collect {
+      case document if document.slug == slug         => callback(Right(document))
+      case document if document.slugs.contains(slug) => callback(Left(document.slug))
+    }.getOrElse {
+      Results.NotFound(views.html.pageNotFound())
+    }
 
   // Route is handled by Mithril
   def showTool(toolname: String) = Action { implicit request =>
@@ -92,9 +197,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
       Session.closeSessionRequest(request, Session.requestSessionID(request)) // Send Session Cookie
     }
   }
-
-
-
 
 
 
