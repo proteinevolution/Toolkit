@@ -94,14 +94,14 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     * Currently the index controller will assign a session id to the user for identification purpose.
     *
     */
- /* def index = Action { implicit request =>
+  def index = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
 
     Ok(views.html.main(webJarAssets, views.html.general.newcontent(),"Home")).withSession {
       Session.closeSessionRequest(request, session_id)
     }
-  }*/
+  }
 
   // -- Page not found
   def PageNotFound = NotFound(views.html.pageNotFound())
@@ -111,9 +111,8 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   }
 
  // -- Home page
-  def index(page: Int) = Action.async { implicit request =>
-
-
+  def home(page: Int) = Action.async { implicit request =>
+   
     for {
       api <- fetchApi
       response <- api.forms("everything").ref(ref(api)).pageSize(10).page(page).submit()
@@ -124,6 +123,15 @@ class Application @Inject()(webJarAssets: WebJarAssets,
         Session.closeSessionRequest(request, session_id)
       }
     }
+  }
+
+  def contact(title: String = "Contact") = Action { implicit request =>
+
+    Ok(views.html.general.contact()).withSession {
+
+      Session.closeSessionRequest(request, Session.requestSessionID(request)) // Send Session Cookie
+    }
+
   }
 
   // -- Document detail
@@ -153,7 +161,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   def preview(token: String) = Action.async { implicit req =>
     for {
       api <- fetchApi
-      redirectUrl <- api.previewSession(token, Application.linkResolver(api), routes.Application.index().url)
+      redirectUrl <- api.previewSession(token, Application.linkResolver(api), routes.Application.home().url)
     } yield {
       Redirect(redirectUrl).withCookies(Cookie(Prismic.previewCookie, token, path = "/", maxAge = Some(30 * 60 * 1000), httpOnly = false))
     }
