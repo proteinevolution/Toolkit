@@ -1,0 +1,12 @@
+@import play.api.mvc.RequestHeader
+@(document: io.prismic.Document, api: io.prismic.Api)(implicit messages: Messages, request: RequestHeader)
+
+
+
+    <article id="@document.id" data-wio-id="@document.id">
+    @Html(document.asHtml(Application.linkResolver(api)))
+    </article>
+
+
+
+

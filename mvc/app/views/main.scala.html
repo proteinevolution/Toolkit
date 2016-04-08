@@ -29,6 +29,17 @@
         <!-- Google Fonts -->
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300' rel='stylesheet' type='text/css'>
+
+
+        <script type="application/javascript">
+            @** Required for the edit button *@
+          window.prismic = {
+            endpoint: "https://mpi-toolkit.cdn.prismic.io/api"
+          };
+        </script>
+        @** Required for previews, edit button and experiments *@
+        <script src="//static.cdn.prismic.io/prismic.min.js"></script>
+
     </head>
 
 
@@ -63,6 +74,13 @@
                 @elements.sidebar()
 
             </div>
+
+            <header>
+                <a href="@routes.Application.index()">
+                    <h1>Your prismic.io project</h1>
+                </a>
+
+            </header>
 
             <div id="content" class="large-6 small-10 columns padded-column" style="float: left;">
                 @content
