@@ -11,7 +11,7 @@
 ############################################################################
 
 # Index Page requested by user. Note that the controller is injected
-GET     /                                  @controllers.Application.index(page: Int ?= 1)
+GET     /                                  @controllers.Application.home(page: Int ?= 1)
 
 # Websocket
 GET         /ws                            @controllers.Application.ws
@@ -39,6 +39,9 @@ GET     /search                                     controllers.Application.sear
 # Preview
 GET     /preview                                    controllers.Application.preview(token: String)
 
+# Contact
+
+GET         /contact                                @controllers.Application.contact()
 
 # Routes for Auth Service
 GET         /signin                         @controllers.Auth.signIn(username : String = "")
