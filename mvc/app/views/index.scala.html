@@ -1,26 +1,16 @@
 @import play.api.mvc.RequestHeader
 @(response: io.prismic.Response)
 
+@response.results.map { document =>
 
 
 
-    <h2>
-    @response.resultsSize match {
-        case 0 => { No documents found }
-        case 1 => { One document found }
-        case n => { Showing @n out of @response.totalResultsSize documents }
+            @routes.Application.detail(document.id, document.slug)
+
+
+
     }
-    </h2>
 
-    <ul>
-    @response.results.map { document =>
-        <li>
-            <a href="@routes.Application.detail(document.id, document.slug)">
-            @document.slug
-            </a>
-        </li>
-    }
-    </ul>
 
     @if(response.totalPages > 1) {
         <div>

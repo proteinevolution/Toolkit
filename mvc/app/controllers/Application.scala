@@ -112,7 +112,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
  // -- Home page
   def home(page: Int) = Action.async { implicit request =>
-   
+
     for {
       api <- fetchApi
       response <- api.forms("everything").ref(ref(api)).pageSize(10).page(page).submit()

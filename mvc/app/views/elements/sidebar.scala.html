@@ -14,8 +14,8 @@
 
         <form class="delete_id">
             <div class="tiny expanded button-group">
-            <input type="button" class="small alert button masterTooltip" title="This will delete your checked jobs permanently from our database." value="Delete sel. Jobs" onclick="deleteIDs();">
-            <input type="button" class="check small secondary button masterTooltip" title="Select all jobs in your job list. The size of the job widget is limited to 5 jobs (for development, will be increased to 25 for production)." value="Select all Jobs"/>
+            <input id="delete" type="button" class="small alert button masterTooltip" title="This will delete your checked jobs permanently from our database." value="Delete sel. Jobs" onclick="deleteIDs();">
+            <input id="select" type="button" class="check small secondary button masterTooltip" title="Select all jobs in your job list. The size of the job widget is limited to 5 jobs (for development, will be increased to 25 for production)." value="Select all Jobs"/>
 
             </div>
             <div>&nbsp;</div>
@@ -29,6 +29,17 @@
     </div>
     <script type="text/javascript">
 
+
+        $("#togglesidebar").click( function(){
+            $(this).toggleClass("isLeft");
+            if ( $(this).hasClass("isLeft") ) {
+                $("#sidebar-switch").stop().animate({marginLeft:"-17.313em"}, 200);
+            } else {
+                $("#sidebar-switch").stop().animate({marginLeft:"0em"}, 200);
+            }
+
+            return false;
+        });
 
         function deleteIDs(){
 
