@@ -6,10 +6,9 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import play.api.libs.streams.ActorFlow
-import play.api.{Configuration, Logger}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
-import play.api.mvc._
 import javax.inject.{Inject, Singleton}
 
 import models.sessions.Session
@@ -19,16 +18,10 @@ import io.prismic._
 
 import scala.concurrent.duration._
 import scala.concurrent.Future
-import javax.inject._
-import play.api._
 import play.api.mvc._
 import play.api.Configuration
 
-import scala.concurrent._
 import play.api.libs.concurrent.Execution.Implicits._
-
-import io.prismic._
-
 
 
 object Application {
@@ -45,8 +38,10 @@ object Application {
 class Application @Inject()(webJarAssets: WebJarAssets,
                             val messagesApi: MessagesApi,
                             system: ActorSystem,
+                            masterConnection : MasterConnection,
                             mat: Materializer,
                             configuration: Configuration) extends Controller with I18nSupport {
+
 
   val SEP = java.io.File.separator
   val user_id = 12345  // TODO integrate user_id
@@ -83,7 +78,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     Logger.info("Application attaches WebSocket")
     Session.requestSessionID(request) match {
 
-      case sid => Future.successful {  Right(ActorFlow.actorRef(WebSocketActor.props(sid, MasterConnection.master))) }
+      case sid => Future.successful {  Right(ActorFlow.actorRef(WebSocketActor.props(sid, masterConnection.masterProxy))) }
     }
   }
 

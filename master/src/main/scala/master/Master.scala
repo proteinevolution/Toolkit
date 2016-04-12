@@ -1,21 +1,23 @@
-package actors
+package master
 
-
-import akka.actor.{Actor, ActorLogging, ActorRef, Terminated}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
-import play.api.Logger
 import models.database.DBJobRef
 import models.distributed.FrontendMasterProtocol._
 import models.distributed.{FrontendMasterProtocol, MasterWorkerProtocol, Work}
 import models.jobs.UserJob
 import models.misc.RandomString
+import play.api.Logger
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 
 object Master {
+
+  def props : Props = Props(classOf[Master])
+
 
   private sealed trait WorkerStatus
   private case object Idle extends WorkerStatus
@@ -43,7 +45,7 @@ class Master extends Actor with ActorLogging {
 
 
 
-  // workState is event sourced // TODO Should be DI
+  // workState is event sourced
   private var workState = WorkState.empty
 
   // workers are not event sourced //TODO Master currently spawns workers by himself. Shouldn't be the case
@@ -179,9 +181,6 @@ class Master extends Actor with ActorLogging {
   // workers state is not event sourced TODO Currently the workers are injected into the Master
   //private var workers = Map[String, WorkerState]()
 
-
-  import context.dispatcher
-
   //val cleanupTask = context.system.scheduler.schedule(workTimeout / 2, workTimeout / 2,
   //  self, CleanupTick)
 
@@ -303,7 +302,8 @@ class Master extends Actor with ActorLogging {
           sender() ! FrontendMasterProtocol.JobUnknown
         } else {
 
-          sender() ! userJobs(sessionID)(jobID)
+          val userJob = userJobs(sessionID)(jobID)
+          sender() ! (userJob.getState, userJob.toolname, userJob.mainID)
         }
       }
 

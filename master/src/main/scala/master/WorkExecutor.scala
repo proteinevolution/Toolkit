@@ -1,14 +1,17 @@
-package actors
+package master
 
-import akka.actor.{Actor, Props}
+import java.io
+import java.io.{BufferedWriter, FileWriter}
+
+import akka.actor.{Actor, ActorLogging, Props}
+import better.files._
 import com.typesafe.config.ConfigFactory
 import models.distributed.FrontendMasterProtocol.{Delete, Prepare, PrepareAndStart}
 import models.distributed.Work
-import better.files._
 import models.graph.Ready
 import models.jobs.{Done, Error, Running}
+
 import scala.sys.process._
-import java.io
 
 
 
@@ -22,18 +25,19 @@ object WorkExecutor {
 /**
   * Created by lzimmermann on 02.04.16.
   */
-class WorkExecutor extends Actor {
+class WorkExecutor extends Actor with ActorLogging {
 
 
   val SEP = java.io.File.separator
 
   // Directory Names in Job Directory
   val PARAM_DIR = "params"
+  val LOG_DIR = "logs"
 
   val subdirs = Array("/results", "/logs", "/params", "/specific", "/inter")
 
   // Get paths
-  val runscriptPath = s"cluster${SEP}runscripts$SEP"
+  val runscriptPath = s"master${SEP}runscripts$SEP"
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
   val bioprogsPath = s"${ConfigFactory.load().getString("bioprogs_path")}$SEP"
   val databasesPath = s"${ConfigFactory.load().getString("databases_path")}$SEP"
@@ -132,7 +136,16 @@ class WorkExecutor extends Actor {
           // Run the tool async in the execution context of the worker
 
           userJob.changeState(Running)
-          val process = Process("./" + userJob.tool.toolname + ".sh", new io.File(rootPath)).run
+
+          // Log files output buffer
+          val out = new BufferedWriter(new FileWriter(new io.File(rootPath + "logs/stdout.out")))
+          val err = new BufferedWriter(new FileWriter(new io.File(rootPath + "logs/stderr.err")) )
+
+          log.info("Start tool " + userJob.tool.toolname)
+          val process = Process("./" + userJob.tool.toolname + ".sh", new io.File(rootPath)).run(ProcessLogger(
+            (o: String) => out.write(o),
+            (e: String) => err.write(e)))
+
           userJob.process = Some(process)
           val exitValue = process.exitValue()
 
@@ -143,6 +156,8 @@ class WorkExecutor extends Actor {
 
               userJob.changeState(Done)
             }
+          out.close()
+          err.close()
 
 
         case Delete(sessionID, jobID) =>

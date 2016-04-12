@@ -9,14 +9,13 @@ import models.graph.Link
 import models.jobs._
 import models.sessions.Session
 import akka.pattern.ask
-import scala.concurrent.ExecutionContext.Implicits.global
-
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * This controller is intended to provide a WebService Interface for Mithril
@@ -26,7 +25,8 @@ import play.api.libs.functional.syntax._
   */
 
 @Singleton
-class Service @Inject() (val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Service @Inject() (val messagesApi: MessagesApi,
+                         masterConnection : MasterConnection) extends Controller with I18nSupport {
 
   implicit val timeout = Timeout(5.seconds)
 
@@ -58,7 +58,7 @@ class Service @Inject() (val messagesApi: MessagesApi) extends Controller with I
   def delJob(jobID: String) = Action { implicit request =>
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
-    MasterConnection.master ! Delete(sessionID, jobID)
+    masterConnection.masterProxy ! Delete(sessionID, jobID)
 
     Ok
   }
@@ -96,30 +96,30 @@ class Service @Inject() (val messagesApi: MessagesApi) extends Controller with I
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
 
-    (MasterConnection.master ? Get(sessionID, jobID)).map {
+    (masterConnection.masterProxy ? Get(sessionID, jobID)).map {
 
       case SessionIDUnknown => NotFound
       case JobUnknown => NotFound
 
-      case userJob : UserJob =>
+      case (state: JobState, toolname : String, mainID : Long)  =>
 
         // Decide what to show depending on the JobState
 
-      userJob.getState match {
+      state match {
 
         // User has requested a job whose state is Running
-        case Running => Ok(views.html.job.running(userJob)).withSession {
+        case Running => Ok(views.html.job.running(jobID)).withSession {
           Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
         }
         // User requested job whose execution is done
         case Done =>
 
-          val toolframe = userJob.tool.toolname match {
+          val toolframe = toolname match {
 
             //  The tool anlviz just returns the BioJS MSA Viewer page
             case "alnviz" =>
               val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$jobID/result"))
-              views.html.job.result(vis, userJob)
+              views.html.job.result(vis, jobID)
 
 
             // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
@@ -129,25 +129,25 @@ class Service @Inject() (val messagesApi: MessagesApi) extends Controller with I
                 "Simple" -> views.html.visualization.alignment.simple(s"/files/$jobID/sequences.clustalw_aln"),
                 "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$jobID/sequences.clustalw_aln"))
 
-              views.html.job.result(vis, userJob)
+              views.html.job.result(vis, jobID)
 
             // Hmmer just provides a simple file viewer.
             case "hmmer3" => views.html.visualization.general.fileview(
               Array(s"/files/$jobID/domtbl", s"/files/$jobID/outfile", s"/files/$jobID/outfile_multi_sto", s"/files/$jobID/tbl"))
           }
           Ok(toolframe).withSession {
-            Session.closeSessionRequest(request, sessionID, userJob.mainID)   // Send Session Cookie
+            Session.closeSessionRequest(request, sessionID, mainID)   // Send Session Cookie
           }
 
         case Error =>
 
-          Ok(views.html.job.error(userJob)).withSession {
+          Ok(views.html.job.error(jobID)).withSession {
             Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
           }
 
         case Queued =>
 
-          Ok(views.html.job.queued(userJob)).withSession {
+          Ok(views.html.job.queued(jobID)).withSession {
             Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
           }
 

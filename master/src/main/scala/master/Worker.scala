@@ -1,11 +1,12 @@
-package actors
+package master
 
-import scala.concurrent.duration._
-import actors.Worker.WorkComplete
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, ReceiveTimeout}
+import master.Worker.WorkComplete
 import models.distributed.MasterWorkerProtocol.{Ack, WorkIsDone, WorkIsReady, WorkerRequestsWork}
 import models.distributed.Work
 import play.api.Logger
+
+import scala.concurrent.duration._
 
 object Worker {
 

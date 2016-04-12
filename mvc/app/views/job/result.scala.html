@@ -1,5 +1,4 @@
-@import models.jobs.UserJob
-@(visualizations : Map[String, Html], job : UserJob)(implicit messages: Messages, request: RequestHeader)
+@(visualizations : Map[String, Html], jobID : String)(implicit messages: Messages, request: RequestHeader)
 
 
 <ul class="tabs" data-tabs id="example-tabs">
@@ -7,7 +6,9 @@
 
         <li class="tabs-title"><a href="#@key" aria-selected="true">@key</a></li>
 }
+    <!--
 <li class="tabs-title"><a href="#toolkit-forward-panel" aria-selected="true">Child Job</a></li>
+-->
 </ul>
 
 
@@ -22,9 +23,12 @@
     </div>
 }
 
+
+<!--
 <div class="tabs-panel" id="toolkit-forward-panel">
-    @views.html.general.forward(job)
+    TODO Forward view was included here
 </div>
+-->
 
 </div>
 

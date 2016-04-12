@@ -35,7 +35,8 @@ object Tool {
 }
 
 @Singleton
-class Tool @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Tool @Inject()(val messagesApi: MessagesApi,
+                     masterConnection: MasterConnection) extends Controller with I18nSupport {
 
   implicit val timeout = Timeout(5.seconds)
 
@@ -75,10 +76,10 @@ class Tool @Inject()(val messagesApi: MessagesApi) extends Controller with I18nS
 
           if(start) {
 
-            MasterConnection.master ! PrepareAndStart(sessionID, jobID, toolname, boundForm.data, newJob)
+            masterConnection.masterProxy ! PrepareAndStart(sessionID, jobID, toolname, boundForm.data, newJob)
           } else {
 
-            MasterConnection.master ! Prepare(sessionID, jobID, toolname, boundForm.data, newJob)
+            masterConnection.masterProxy ! Prepare(sessionID, jobID, toolname, boundForm.data, newJob)
           }
         }
       )

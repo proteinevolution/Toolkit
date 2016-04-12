@@ -1,8 +1,7 @@
-@import models.jobs.UserJob
-@(job : UserJob)(implicit messages: Messages, request: RequestHeader)
+@(jobID : String)(implicit messages: Messages, request: RequestHeader)
 
 
 <div class="callout secondary">
 
-    The job with ID @job.jobID is currently being processed. Have patience.
+    The job with ID @jobID is currently being processed. Have patience.
 </div>
