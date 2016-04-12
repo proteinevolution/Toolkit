@@ -6,6 +6,7 @@ val betterfilesVersion = "2.15.0"
 val bcryptVersion = "0.3m"
 
 
+
 val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
@@ -38,7 +39,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "mpi-toolkit"
   )
-  .aggregate(mvc, cluster, api)
+  .aggregate(mvc, master, api)
 
 
 lazy val mvc = (project in file("mvc"))
@@ -59,10 +60,10 @@ lazy val mvc = (project in file("mvc"))
     ).dependsOn(api)
 
 
-lazy val cluster = (project in file("cluster"))
+lazy val master = (project in file("master"))
   .settings(
     commonSettings,
-    name := "mpi-toolkit-cluster",
+    name := "mpi-toolkit-master",
     libraryDependencies ++= commonDeps
   ).dependsOn(api)
 

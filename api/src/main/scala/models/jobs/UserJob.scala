@@ -34,6 +34,11 @@ class UserJob(val mediator : ActorRef, // The WebSocket the changes will be Publ
   // The process that is associated with the Execution of this job.
   var process : Option[scala.sys.process.Process] = None
 
+  // Logging Giles
+  var outFile = None
+  var errFile = None
+
+
   var destroyed : Boolean = false
 
   // Maps all input files to an associated file object
