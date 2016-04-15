@@ -12,7 +12,7 @@ import play.api.libs.json.JsValue
 import javax.inject.{Inject, Singleton}
 
 import models.sessions.Session
-import models.tools.{Alnviz, Hmmer3, Tcoffee}
+import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
 import actors.MasterConnection
 import io.prismic._
 
@@ -20,7 +20,6 @@ import scala.concurrent.duration._
 import scala.concurrent.Future
 import play.api.mvc._
 import play.api.Configuration
-
 import play.api.libs.concurrent.Execution.Implicits._
 
 
@@ -193,6 +192,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
       case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
       case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
       case "reformat" => views.html.reformat.form(Hmmer3.inputForm)
+      case "psiblast" => views.html.psiblast.form(Psiblast.inputForm)
     }
 
     Ok(views.html.general.submit(toolname, toolframe, None)).withSession {
