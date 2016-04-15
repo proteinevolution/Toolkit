@@ -114,6 +114,7 @@ class WorkExecutor extends Actor with ActorLogging {
               val s = rm.toString()
               val value = s.substring(2, s.length - 1)
 
+              log.info("Work Executor processes value " + value)
               s(0) match {
 
                 case '!' => if(value == "BIO") bioprogsPath else databasesPath

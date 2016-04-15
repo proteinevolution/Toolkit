@@ -1,7 +1,7 @@
 package models.graph
 
 import models.graph.Converters.ReformatConverter
-import models.graph.nodes.{HmmerNode, TcoffeeNode, AlnvizNode}
+import models.graph.nodes._
 import play.api.Logger
 
 import scala.collection.mutable.ArrayBuffer
@@ -18,7 +18,8 @@ object Ports {
 
     AlnvizNode.toolname -> AlnvizNode,
     TcoffeeNode.toolname -> TcoffeeNode,
-    HmmerNode.toolname -> HmmerNode
+    HmmerNode.toolname -> HmmerNode,
+    PsiblastNode.toolname -> PsiblastNode
   )
 
 

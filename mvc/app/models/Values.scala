@@ -20,7 +20,12 @@ object Values {
     "meg" -> "MEGA",
     "msf" -> "GCG/MSF",
     "pir" -> "PIR/NBRF",
-    "tre" -> "TREECON"
+    "tre" -> "TREECON",
+    "BLOSUM62" -> "BLOSUM62",
+    "BLOSUM45" -> "BLOSUM45",
+    "BLOSUM80" -> "BLOSUM80",
+    "PAM30" -> "PAM30",
+    "PAM70" -> "PAM70"
   )
 }
 
