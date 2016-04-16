@@ -42,7 +42,7 @@ class WorkExecutor extends Actor with ActorLogging {
   val bioprogsPath = s"${ConfigFactory.load().getString("bioprogs_path")}$SEP"
   val databasesPath = s"${ConfigFactory.load().getString("databases_path")}$SEP"
 
-  val argumentPattern = "(\\$\\{[a-z_]+\\}|#\\{[a-z_]+\\}|@\\{[a-z_]+\\}|\\?\\{.+\\}|\\+\\{[a-z_]+\\}|\\!\\{(BIO|DATA)\\})".r
+  val argumentPattern = "(\\$\\{[a-z_]+\\}|%\\{[a-z_]+\\}|@\\{[a-z_]+\\}|\\?\\{.+\\}|\\+\\{[a-z_]+\\}|\\!\\{(BIO|DATA)\\})".r
 
 
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
@@ -105,7 +105,6 @@ class WorkExecutor extends Actor with ActorLogging {
 
           //START STEP
           val mainID = userJob.mainID
-          val paramPath = s"$jobPath${mainID.toString}$SEP$PARAM_DIR"
 
           for(line <- s"$runscriptPath${userJob.tool.toolname}.sh".toFile.lines) {
 
@@ -119,7 +118,7 @@ class WorkExecutor extends Actor with ActorLogging {
 
                 case '!' => if(value == "BIO") bioprogsPath else databasesPath
                 case '+' => "inter/" + value
-                case '#' =>  PARAM_DIR + SEP + value
+                case '%' =>  PARAM_DIR + SEP + value
                 case '$' => params.get(value).get.toString
                 case '@' => "results/" + value
                 case '?' =>
