@@ -6,14 +6,17 @@
 <div data-sticky-container>
     <div class="top-bar sticky fullwidth" id="stickyheader" style="opacity: 0.9;" data-sticky data-stick-to>
         <div class="top-bar-left">
-
+            <div class="switch tiny">
+                <input class="switch-input" id="exampleSwitch" type="checkbox" name="exampleSwitch">
+                <label class="switch-paddle" for="exampleSwitch" >
+                    <span class="show-for-sr"></span>
+                </label>
+            </div>
+        </div>
+        <div class="top-bar-right">
             <ul class="dropdown menu" id="toolsdropdown" style="opacity: 0.9;" data-dropdown-menu data-closing-time="20">
                 <li>
-                    <a id="togglesidebar" class="button">Toggle</a>
-                </li>
-
-                <li>
-                    <a href="#" id="section1">Search</a>
+                    <a href="#" id="section">Search</a>
                     <ul class="menu vertical" id="dropdowns">
                         <li><a href="/#/tools/hmmer3" id="section">Hmmer3</a></li>
                         <li><a  href="/#/tools/psiblast" id="section">PSI-BLAST</a></li>
