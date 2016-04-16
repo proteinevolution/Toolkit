@@ -34,13 +34,14 @@
 
               $(".switch-paddle").click( function(){
 
-                      if ( $(this).hasClass("isLeft") ) {
+                      if ($(this).hasClass("isLeft") ) {
                           $('#sidebar-switch').stop().animate({marginLeft:"-17.313em"}, 200);
-                      $(this).removeClass('isLeft');
+                          $(this).removeClass('isLeft');
                       } else {
                           $("#sidebar-switch").stop().animate({marginLeft:"0em"}, 200);
-                      $(this).addClass('isLeft');
-                       }
+                          $(this).addClass('isLeft');
+                      }
+
 
               });
 
