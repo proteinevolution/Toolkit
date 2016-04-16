@@ -11,7 +11,7 @@ trap 'kill $(jobs -p)' EXIT
                                             -num_threads 4 \
                                             -num_descriptions ${desc}\
                                             -num_alignments ${desc}\
-                                            -in_msa #{alignment} \
+                                            -in_msa %{alignment} \
                                             -out out.psiblastp_tmp \
                                             -outfmt 0 \
                                             -html\
