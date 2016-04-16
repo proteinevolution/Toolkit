@@ -12,6 +12,7 @@ import models.graph.Ready
 import models.jobs.{Done, Error, Running}
 
 import scala.sys.process._
+import scala.util.matching.Regex
 
 
 
@@ -42,8 +43,7 @@ class WorkExecutor extends Actor with ActorLogging {
   val bioprogsPath = s"${ConfigFactory.load().getString("bioprogs_path")}$SEP"
   val databasesPath = s"${ConfigFactory.load().getString("databases_path")}$SEP"
 
-  val argumentPattern = "(\\$\\{[a-z_]+\\}|%\\{[a-z_]+\\}|@\\{[a-z_]+\\}|\\?\\{.+\\}|\\+\\{[a-z_]+\\}|\\!\\{(BIO|DATA)\\})".r
-
+  val argumentPattern = new Regex("""(\$|%|@|\?|\+|\!)\{([^\{\}]+)\}""", "selector", "selValue")
 
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
 
@@ -103,27 +103,21 @@ class WorkExecutor extends Actor with ActorLogging {
             }
           }
 
-          //START STEP
-          val mainID = userJob.mainID
-
           for(line <- s"$runscriptPath${userJob.tool.toolname}.sh".toFile.lines) {
 
-            s"$rootPath${userJob.tool.toolname}.sh".toFile.appendLine(argumentPattern.replaceAllIn(line, { rm =>
+            s"$rootPath${userJob.tool.toolname}.sh".toFile.appendLine(
+              argumentPattern.replaceAllIn(line.split('#')(0), { m =>
 
-              val s = rm.toString()
-              val value = s.substring(2, s.length - 1)
+              m.group("selector") match {
 
-              log.info("Work Executor processes value " + value)
-              s(0) match {
+                case "!" => if(m.group("selValue") == "BIO") bioprogsPath else databasesPath
+                case "+" => "inter/" + m.group("selValue")
+                case "%" =>  PARAM_DIR + SEP + m.group("selValue")
+                case "$" => params.get(m.group("selValue")).get.toString
+                case "@" => "results/" + m.group("selValue")
+                case "?" =>
 
-                case '!' => if(value == "BIO") bioprogsPath else databasesPath
-                case '+' => "inter/" + value
-                case '%' =>  PARAM_DIR + SEP + value
-                case '$' => params.get(value).get.toString
-                case '@' => "results/" + value
-                case '?' =>
-
-                  val splt = value.split("(\\||:)")
+                  val splt = m.group("selValue").split("(\\||:)")
                   if(params.get(splt(0)).get.asInstanceOf[Boolean]) splt(1) else {
 
                     if(splt.length == 2) "" else splt(2)
