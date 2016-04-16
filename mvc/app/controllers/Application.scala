@@ -114,7 +114,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     } yield {
 
       val session_id = Session.requestSessionID(request)
-      Ok(views.html.main(webJarAssets, views.html.index(response), "Home")).withSession {
+      Ok(views.html.main(webJarAssets, views.html.general.newcontent(), "Home")).withSession {
         Session.closeSessionRequest(request, session_id)
       }
     }
