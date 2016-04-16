@@ -29,17 +29,20 @@
     </div>
     <script type="text/javascript">
 
+              $(".switch-paddle").click( function(){
+                  $(this).toggleClass("isLeft");
+                      if ( $(this).hasClass("isLeft") ) {
+                          $('#sidebar-switch').stop().animate({marginLeft:"-17.313em"}, 200);
 
-        $("#togglesidebar").click( function(){
-            $(this).toggleClass("isLeft");
-            if ( $(this).hasClass("isLeft") ) {
-                $("#sidebar-switch").stop().animate({marginLeft:"-17.313em"}, 200);
-            } else {
-                $("#sidebar-switch").stop().animate({marginLeft:"0em"}, 200);
-            }
+                      } else {
+                          $("#sidebar-switch").stop().animate({marginLeft:"0em"}, 200);
+                       }
 
-            return false;
-        });
+                  return false;
+              });
+
+
+
 
         function deleteIDs(){
 
