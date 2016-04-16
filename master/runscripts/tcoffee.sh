@@ -3,7 +3,7 @@
 
 trap 'kill $(jobs -p)' EXIT
 
-export DIR_4_TCOFFEE=./specific
+export DIR_4_TCOFFEE=./specific   # ${foobarblub}
 export TMP_4_TCOFFEE=./specific
 export CACHE_4_TCOFFEE=./specific
 
