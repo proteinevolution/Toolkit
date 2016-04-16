@@ -14,27 +14,92 @@ display: none;
 max-height: 380px;
 }
 
+ body {
+   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+   margin: 0;
+ }
+
+#show-length {
+  position: absolute;
+  margin-left: 23em;
+}
+
+.links {
+  fill: none;
+  stroke: #000;
+}
+
+.link-extensions {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: .25;
+}
+
+.labels {
+  font: 10px sans-serif;
+}
+
+.link--active {
+  stroke: #000 !important;
+  stroke-width: 1.5px;
+}
+
+.link-extension--active {
+  stroke-opacity: .6;
+}
+
+.label--active {
+  font-weight: bold;
+}
+
+svg {
+    margin-left: 20em;
+}
+
 </style>
 
-<div class="orbit" role="region" aria-label="Favorite Space Pictures" data-orbit>
-  <ul class="orbit-container">
-    <button class="orbit-previous"><span class="show-for-sr">Previous Slide</span>&#9664;&#xFE0E;</button>
-    <button class="orbit-next"><span class="show-for-sr">Next Slide</span>&#9654;&#xFE0E;</button>
-    <li class="orbit-slide is-active">
-      <img class="orbit-image" src="@routes.Assets.at("images/RNA.jpg")" alt="Space">
-      <figcaption class="orbit-caption">Test</figcaption>
-    </li>
-    <li class="orbit-slide">
-      <img class="orbit-image" src="@routes.Assets.at("images/RNA.jpg")" alt="Space">
-      <figcaption class="orbit-caption">Test</figcaption>
-    </li>
-  </ul>
-</div>
+<label id="show-length">
+    <input type="checkbox"> Show branch length
+</label>
+
+  <!-- Copyright 2015 Mike Bostock http://d3js.org -->
+<script src="//d3js.org/d3.v3.min.js"></script>
+
+<script>
+
+ var outerRadius = 960 / 2;
+ var innerRadius = outerRadius - 170;
+
+ var color = d3.scale.category10()
+         .domain(["Bacteria", "Eukaryota", "Archaea"]);
+
+ var svg = d3.select('#content').append("svg")
+         .attr("width", 960)
+         .attr("height", 960);
+
+ var legend = svg.append("g")
+         .attr("class", "legend")
+         .selectAll("g")
+         .data(color.domain())
+         .enter().append("g")
+         .attr("transform", function(d, i) { return "translate(" + (outerRadius * 2 - 10) + "," + (i * 20 + 10) + ")"; });
+
+ legend.append("rect")
+         .attr("x", -18)
+         .attr("width", 18)
+         .attr("height", 18)
+         .style("fill", color);
+ legend.append("text")
+         .attr("x", -24)
+         .attr("y", 9)
+         .attr("dy", ".35em")
+         .style("text-anchor", "end")
+         .text(function(d) { return d; });
+
+ var chart = svg.append("g")
+         .attr("transform", "translate(" + 300 + "," + 300 + ")");
 
 
-<header>
-  <a href="@routes.Application.home()">
-    <h1>Your prismic.io project</h1>
-  </a>
 
-</header>
+</script>
+
