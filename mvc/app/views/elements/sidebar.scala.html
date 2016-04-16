@@ -29,16 +29,19 @@
     </div>
     <script type="text/javascript">
 
+
+        //TODO: one has to click one time too much when first loaded, need to get rid of this
+
               $(".switch-paddle").click( function(){
-                  $(this).toggleClass("isLeft");
+
                       if ( $(this).hasClass("isLeft") ) {
                           $('#sidebar-switch').stop().animate({marginLeft:"-17.313em"}, 200);
-
+                      $(this).removeClass('isLeft');
                       } else {
                           $("#sidebar-switch").stop().animate({marginLeft:"0em"}, 200);
+                      $(this).addClass('isLeft');
                        }
 
-                  return false;
               });
 
 
