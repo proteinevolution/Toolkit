@@ -84,15 +84,8 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         }
       )
       Ok
-
-
-
     }
-
-
   }
-
-
 }
 
 /*

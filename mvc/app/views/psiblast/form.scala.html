@@ -1,6 +1,8 @@
 @import play.api.mvc.RequestHeader
-@import models.tools.Alnviz
-@(inputForm: Form[(String, String)])(implicit messages: Messages, request: RequestHeader)
+@import models.tools.Psiblast
+@(inputForm: Form[(String, String, String, Int, Int, Int, Int, Int)])(implicit messages: Messages, request: RequestHeader)
+
+<!-- Order of parameters : Alignment, Alignment_Format, Matrix, Number of Iterations, Evalue, Gap_open, Gap_Ext -->
 
 
 <script src='@routes.Assets.at("javascripts/alnviz.js")' type="text/javascript" ></script>
@@ -11,13 +13,49 @@
   'id -> "alignment", '_showConstraints -> false)
 
 
-    <a onClick="$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
-
+<a onClick="$('#alert').prop('hidden',true);$('#submitbutton').prop('disabled', false);$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
 
 
     @helper.select(
         inputForm("alignment_format"),
-        helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("alignment_format"))),
+        helper.options(Values.fullNames.filterKeys(Psiblast.parameterValues("alignment_format"))),
         '_label -> "Select alignment format",
         'id -> "format"
+    )
+
+    @helper.select(
+        inputForm("matrix"),
+        helper.options(Values.fullNames.filterKeys(Psiblast.parameterValues("matrix"))),
+        '_label -> "Select Scoring Matrix",
+        'id -> "matrix"
+    )
+    @helper.inputText(
+    inputForm("num_iter"),
+    '_label  -> "Set the number of iterations",
+    'id -> "num_iter",
+    '_showConstraints -> false
+    )
+    @helper.inputText(
+    inputForm("evalue"),
+    '_label  -> "E-Value",
+    'id -> "evalue",
+    '_showConstraints -> false
+    )
+    @helper.inputText(
+    inputForm("gap_open"),
+    '_label  -> "Gap Open penalty",
+    'id -> "gap_open",
+    '_showConstraints -> false
+    )
+    @helper.inputText(
+    inputForm("gap_ext"),
+    '_label  -> "Gap Extension penalty",
+    'id -> "gap_ext",
+    '_showConstraints -> false
+)
+    @helper.inputText(
+        inputForm("desc"),
+        '_label  -> "Number of alignments and descriptions",
+        'id -> "desc",
+        '_showConstraints -> false
     )
