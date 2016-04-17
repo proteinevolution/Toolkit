@@ -35,7 +35,16 @@
               $(".switch-paddle").click( function(){
 
                       if ($(this).hasClass("isLeft") ) {
-                          $('#sidebar-switch').stop().animate({marginLeft:"-17.313em"}, 200);
+                          if ( $(window).width() > 1900) {
+                              $('#sidebar-switch').stop().animate({marginLeft:"-17.313em"}, 200);
+                          }
+
+                          else {
+
+                              $('#sidebar-switch').stop().animate({marginLeft:"-13em"}, 200);
+
+                          }
+
                           $(this).removeClass('isLeft');
                       } else {
                           $("#sidebar-switch").stop().animate({marginLeft:"0em"}, 200);
