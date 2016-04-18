@@ -103,7 +103,73 @@ svg {
          .text(function(d) { return d; });
 
  var chart = svg.append("g")
-         .attr("transform", "translate(" + 300 + "," + 300 + ")");
+         .attr("transform", "translate(" + 480 + "," + 480 + ")");
+
+
+ //for some reason the svg disappears when deleting the '/' and nothing is shown, couldn't fix it so far guess the route is somehow not correct
+ d3.text(@routes.Assets.at("/life.txt"), function(error, life) {
+
+    var root = parseNewick(life),
+        nodes = cluster.nodes(root),
+        links = cluster.links(nodes),
+        input = d3.select("#show-length input").on("change", changed),
+        timeout = setTimeout(function() { input.property("checked", true).each(changed); }, 2000)
+
+
+ //code form here should work problem is at the d3.text part
+    setRadius(root, root.length = 0, innerRadius / maxLength(root));
+    setColor(root);
+
+
+    var linkExtension = chart.append("g")
+         .attr("class", "link-extensions")
+         .selectAll("path")
+         .data(links.filter(function(d) { return !d.target.children; }))
+         .enter().append("path")
+         .each(function(d) { d.target.linkExtensionNode = this; })
+         .attr("d", function(d) { return step(d.target.x, d.target.y, d.target.x, innerRadius); });
+
+    var link = chart.append("g")
+         .attr("class", "links")
+         .selectAll("path")
+         .data(links)
+         .enter().append("path")
+         .each(function(d) { d.target.linkNode = this; })
+         .attr("d", function(d) { return step(d.source.x, d.source.y, d.target.x, d.target.y) })
+         .style("stroke", function(d) { return d.target.color; });
+
+    chart.append("g")
+         .attr("class", "labels")
+         .selectAll("text")
+         .data(nodes.filter(function(d) { return !d.children; }))
+         .enter().append("text")
+         .attr("dy", ".31em")
+         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (innerRadius + 4) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
+         .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+         .text(function(d) { return d.name.replace(/_/g, " "); })
+         .on("mouseover", mouseovered(true))
+         .on("mouseout", mouseovered(false));
+
+    function changed() {
+        clearTimeout(timeout);
+        var checked = this.checked;
+        d3.transition().duration(750).each(function() {
+            linkExtension.transition().attr("d", function(d) { return step(d.target.x, checked ? d.target.radius : d.target.y, d.target.x, innerRadius); });
+            link.transition().attr("d", function(d) { return step(d.source.x, checked ? d.source.radius : d.source.y, d.target.x, checked ? d.target.radius : d.target.y) });
+        });
+    }
+    function mouseovered(active) {
+        return function(d) {
+            d3.select(this).classed("label--active", active);
+            d3.select(d.linkExtensionNode).classed("link-extension--active", active).each(moveToFront);
+            do d3.select(d.linkNode).classed("link--active", active).each(moveToFront); while (d = d.parent);
+        };
+    }
+    function moveToFront() {
+         this.parentNode.appendChild(this);
+    }
+
+ });
 
 
 
