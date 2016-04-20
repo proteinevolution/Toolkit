@@ -2,7 +2,7 @@
 
 trap 'kill $(jobs -p)' EXIT
 
-!{BIO}/tools/ncbi-blast-2.3.0+/bin/psiblast -db !{DATA}/nr70 \
+!{BIO}/tools/ncbi-blast-2.3.0+/bin/psiblast -db !{DATA}/standard/nr70 \
                                             -matrix ${matrix} \
                                             -num_iterations ${num_iter} \
                                             -evalue ${evalue}\
@@ -12,11 +12,8 @@ trap 'kill $(jobs -p)' EXIT
                                             -num_descriptions ${desc}\
                                             -num_alignments ${desc}\
                                             -in_msa %{alignment} \
-                                            -out out.psiblastp_tmp \
+                                            -out results/out.psiblastp_tmp \
                                             -outfmt 0 \
                                             -html\
-                                            -out_pssm out.ksf 
-
-
-
+                                            -out_pssm results/out.ksf 
 
