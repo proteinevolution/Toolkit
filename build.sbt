@@ -1,4 +1,4 @@
-val akkaVersion = "2.4.3"
+val akkaVersion = "2.4.4"
 val jqueryVersion = "2.2.2"
 val foundationVersion = "6.2.0"
 val mithrilVersion = "0.2.3"
