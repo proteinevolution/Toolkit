@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
 @(inputForm: Form[(String, String)], userName : String)(implicit messages: Messages, request: RequestHeader)
 
-<form id="signin-form" action="@routes.Auth.signInSubmit()" data-abide novalidate>
+<form id="signin-form" data-abide="ajax" novalidate>
     <div class="row">
         <div class="small-12 columns">
             <label>

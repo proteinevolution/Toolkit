@@ -8,7 +8,7 @@ import play.api.data.Forms._
   */
 
 /**
-  * Form mapping for the Sign in formular
+  * Form mapping for the Sign in form
   */
 object SignIn {
   val inputForm = Form(
@@ -20,7 +20,7 @@ object SignIn {
 }
 
 /**
-  * Form mapping for the Sign up formular
+  * Form mapping for the Sign up form
   */
 object SignUp {
   val inputForm = Form(
