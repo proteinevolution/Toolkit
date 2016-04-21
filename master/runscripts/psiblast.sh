@@ -12,8 +12,12 @@ trap 'kill $(jobs -p)' EXIT
                                             -num_descriptions ${desc}\
                                             -num_alignments ${desc}\
                                             -in_msa %{alignment} \
-                                            -out results/out.psiblastp_tmp \
+                                            -out results/out.psiblastp \
                                             -outfmt 0 \
                                             -html\
                                             -out_pssm results/out.ksf 
+# Produce some extra files:
+< results/out.psiblastp grep Expect | awk '{ print $8; }' | sed 's/,$//' > results/evalues.dat
+
+
 
