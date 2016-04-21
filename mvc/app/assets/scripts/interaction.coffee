@@ -24,7 +24,7 @@ $ ->
   $("#signup-form").on 'submit', (event) ->
     event.preventDefault()
     form_data = $("#signup-form").serialize()
-    route = "signup/submit"
+    route = "signup/submit/"
     $.ajax(
       data: form_data
       url: route
@@ -32,14 +32,24 @@ $ ->
         $("#auth-dropdown").html(data)
         $("#auth-link").html("Account")
 
+  $("#acceptagb").change (event) ->
+    if $("#acceptagb").val() == "true"
+      $("#acceptagb").val("false")
+    else
+      $("#acceptagb").val("true")
+
   $("#signup-form").change (event) ->
-    buttonDisabled = false
+    # agb button checked?
+    buttonDisabled = $("#acceptagb").val() == "false"
+    # any other items unedited?
     $("#signup-form").find(':input').each ->
       if (!this.value && this.type != "submit") then buttonDisabled = true
 
+    # any invalid items?
     $(".is-invalid-input").each ->
       buttonDisabled = true
 
+    # disable the button
     if buttonDisabled
       $("#signup-submit").addClass('disabled')
     else

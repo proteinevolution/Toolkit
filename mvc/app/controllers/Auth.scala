@@ -32,9 +32,9 @@ class Auth @Inject() (val messagesApi: MessagesApi) extends Controller with I18n
     val form = SignIn.inputForm.bindFromRequest
     form.fold(
       formWithErrors => {
-        BadRequest("Login Error")
+        BadRequest("Login Error" + form.errors.toString())
       },
-      _ => Logger.info("")
+      _ => Logger.info("Sign in succeeded for " + sessionID)
     )
 
     Ok(views.html.authform.authmessage("Welcome. You are now logged in.", routes.Auth.signOut().url)).withSession {
@@ -59,6 +59,7 @@ class Auth @Inject() (val messagesApi: MessagesApi) extends Controller with I18n
         BadRequest("Login Error:" + form.errors.toString())
       },
       _ => {
+        form.data
         Ok(views.html.authform.authmessage("Welcome." + form.data.toString() + "You are now registered and logged in.", routes.Auth.signOut().url)).withSession {
           Session.closeSessionRequest(request, sessionID) // Send Session Cookie
         }
