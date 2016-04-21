@@ -19,7 +19,8 @@ object Ports {
     AlnvizNode.toolname -> AlnvizNode,
     TcoffeeNode.toolname -> TcoffeeNode,
     HmmerNode.toolname -> HmmerNode,
-    PsiblastNode.toolname -> PsiblastNode
+    PsiblastNode.toolname -> PsiblastNode,
+    CsblastNode.toolname -> CsblastNode
   )
 
 

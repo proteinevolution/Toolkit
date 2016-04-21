@@ -4,7 +4,7 @@ val foundationVersion = "6.2.0"
 val mithrilVersion = "0.2.3"
 val betterfilesVersion = "2.15.0"
 val bcryptVersion = "0.3m"
-
+val highchartsVersion = "4.2.4"
 
 
 val commonDeps = Seq(ws,  filters, cache, evolutions,
@@ -53,7 +53,8 @@ lazy val mvc = (project in file("mvc"))
       "org.webjars" % "foundation" % foundationVersion,
       "org.json4s" %% "json4s-jackson" % "3.3.0",
       "org.scalaz" %% "scalaz-core" % "7.2.1",
-      "org.webjars" % "mithril" % mithrilVersion)),
+      "org.webjars" % "mithril" % mithrilVersion,
+      "org.webjars" % "highcharts" % highchartsVersion)),
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")

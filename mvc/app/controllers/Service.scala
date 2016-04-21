@@ -131,6 +131,8 @@ class Service @Inject() (val messagesApi: MessagesApi,
 
               views.html.job.result(vis, jobID)
 
+            case "psiblast" => views.html.psiblast.result(s"/files/$jobID/evalues.dat")
+
             // Hmmer just provides a simple file viewer.
             case "hmmer3" => views.html.visualization.general.fileview(
               Array(s"/files/$jobID/domtbl", s"/files/$jobID/outfile", s"/files/$jobID/outfile_multi_sto", s"/files/$jobID/tbl"))
