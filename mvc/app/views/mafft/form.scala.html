@@ -6,8 +6,12 @@
                     'placeholder -> "Enter sequences to be aligned in Multi-FASTA format",
                     '_label -> "",
                     'id -> "sequences", '_showConstraints -> false)
-@helper.inputText(field = inputForm("gapopen"))
-@helper.inputText(field = inputForm("offset"))
+@helper.inputText(field = inputForm("gapopen"),
+'placeholder -> "Open Gaps", '_label -> "",
+'id -> "gapopen", '_showConstraints -> false)
+@helper.inputText(field = inputForm("offset"),
+'placeholder -> "Offset", '_label -> "",
+'id -> "offset", '_showConstraints -> false)
 
 <div class="example-alignment">
 <a onClick="$('#submitbutton').prop('disabled', false);$('#sequences').val(pasteExample());$('#format').val('fas')">Paste example alignment</a>
