@@ -15,7 +15,7 @@ import actors.MasterConnection
   */
 object Tool {
 
-  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast) // list of all added tools
+  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft) // list of all added tools
 
 
   /** getToolModel
@@ -64,13 +64,14 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         case "hmmer3" => Hmmer3.inputForm
         case "psiblast" => Psiblast.inputForm
         case "reformat" => Reformat.inputForm
+        case "mafft" => Mafft.inputForm
       }
       val boundForm = form.bindFromRequest
 
       boundForm.fold(
         formWithErrors => {
 
-          BadRequest("This was an error")
+          BadRequest("There was an error with the Form")
         },
         _ => {
 
