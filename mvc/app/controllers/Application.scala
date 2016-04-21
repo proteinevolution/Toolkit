@@ -194,6 +194,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
       case "reformat" => views.html.reformat.form(Hmmer3.inputForm)
       case "psiblast" => views.html.psiblast.form(Psiblast.inputForm)
       case "mafft" => views.html.mafft.form(Mafft.inputForm)
+      case "csblast" => views.html.csblast.form(Csblast.inputForm)
     }
 
     Ok(views.html.general.submit(toolname, toolframe, None)).withSession {
