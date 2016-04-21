@@ -12,7 +12,7 @@ import play.api.libs.json.JsValue
 import javax.inject.{Inject, Singleton}
 
 import models.sessions.Session
-import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
+import models.tools._
 import actors.MasterConnection
 import io.prismic._
 
@@ -193,6 +193,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
       case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
       case "reformat" => views.html.reformat.form(Hmmer3.inputForm)
       case "psiblast" => views.html.psiblast.form(Psiblast.inputForm)
+      case "mafft" => views.html.mafft.form(Mafft.inputForm)
     }
 
     Ok(views.html.general.submit(toolname, toolframe, None)).withSession {
