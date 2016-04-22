@@ -20,7 +20,8 @@ object Ports {
     TcoffeeNode.toolname -> TcoffeeNode,
     HmmerNode.toolname -> HmmerNode,
     PsiblastNode.toolname -> PsiblastNode,
-    CsblastNode.toolname -> CsblastNode
+    CsblastNode.toolname -> CsblastNode,
+    MafftNode.toolname -> MafftNode
   )
 
 
