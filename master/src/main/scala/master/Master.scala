@@ -7,7 +7,6 @@ import models.database.DBJobRef
 import models.distributed.FrontendMasterProtocol._
 import models.distributed.{FrontendMasterProtocol, MasterWorkerProtocol, Work}
 import models.jobs.UserJob
-import models.misc.RandomString
 import play.api.Logger
 
 import scala.collection.mutable
@@ -34,16 +33,16 @@ class Master extends Actor with ActorLogging {
   import models.distributed.WorkState
   import models.distributed.WorkState._
 
-  val jobIDRegex = "[0-9a-zA-Z_-]+"
+
+  // Random number Generator used to generate jobIDs // TODO We should 'persist' the state of these fields
+  val random = scala.util.Random
+  val jobIDSource: Iterator[Int] = Stream.continually(  random.nextInt(8999999) + 1000000 ).distinct.iterator
 
   val mediator = DistributedPubSub(context.system).mediator
-
 
   // Counter for WorkID and JobID
   var workIDCounter : Long = 0  // TODO Maybe replace by Config
   var mainIDCounter : Long = 0
-
-
 
   // workState is event sourced
   private var workState = WorkState.empty
@@ -59,8 +58,8 @@ class Master extends Actor with ActorLogging {
 
   val userWebSockets = scala.collection.mutable.Map[String, ActorRef]()
 
-  // Maps Session ID of user to all known jobs of the corresponsing user
-  val userJobs = new mutable.HashMap[String, mutable.HashMap[String, UserJob]]
+  // Maps Session ID of user to all known jobs of the corresp. user
+  val userJobs = new mutable.HashMap[String, mutable.HashMap[Int, UserJob]]
 
   // Maps Session ID to something that has something to do with the DB // TODO Reactivate
   val databaseMapping = new collection.mutable.HashMap[String, ArrayBuffer[DBJobRef]]
@@ -104,43 +103,36 @@ class Master extends Actor with ActorLogging {
     }
   }
 
-  // Fetch the Job that belongs to a Request
+  // Fetch the Job that belongs to a Request, or Create a new One
   def evalJob(sender : ActorRef,
-              newJob : Boolean,
+              jobID : Option[Int],
               sessionID : String,
               toolname : String,
-              jobID : String) : Option[UserJob] = {
+              start : Boolean) : Option[UserJob] = {
 
     val userJobIDs  = userJobs(sessionID).keySet
 
-    if(newJob) {
-      if(userJobIDs.contains(jobID)) {
+    // Case, we have a new Job
+    if(jobID.isEmpty) {
 
-        Logger.info("Master says that jobID is already in use.")
-        sender ! FrontendMasterProtocol.JobIDAlreadyInUse
-        None
-      } else {
-        // This is an new Job
-        val newJobID = if(jobID.matches(jobIDRegex)) jobID else RandomString.randomNumString(7)
+      val newJobID = this.jobIDSource.next()
+      val newUserJob = UserJob(mediator, sessionID, toolname, newJobID, start = start)
+      userJobs(sessionID).put(newJobID, newUserJob)
+      sender ! Accepted
+      Some(newUserJob)
+      // The User has provided jobID, so he seems to want to edit this job
+    } else if(!userJobIDs.contains(jobID.get)) {
 
-        val userJob = UserJob(mediator,sessionID, toolname, mainIDCounter, newJobID, start = false)
-        mainIDCounter += 1
-
-        userJobs(sessionID).put(newJobID, userJob)
-        sender ! Accepted
-        Some(userJob)
-      }
+      sender ! JobUnknown
+      None
     } else {
-      if(!userJobIDs.contains(jobID)) {
-        sender ! JobUnknown
-        None
-      }
-      else {
-        // Just get the UserJob From the Map
-        Some(userJobs(sessionID)(jobID))
-      }
+
+      val userJob = userJobs(sessionID)(jobID.get)
+      userJob.start = start
+      Some(userJob)
     }
-  }
+    }
+
 
 
   /*
@@ -210,7 +202,6 @@ class Master extends Actor with ActorLogging {
       mediator ! Subscribe("SESSION_" + sessionID, sender())
 
 
-
       /* TODO Database currently disabled// TODO This will be rather slow, we shouldn't do that
       // Load All Jobs from the Database
       for (jobRef <- jobRefDB.get(sessionID)) {
@@ -229,24 +220,17 @@ class Master extends Actor with ActorLogging {
       /* Master handles the different requests */
 
     // Prepare Requests
-    case userRequest : UserRequestPrepare =>
+    case userRequest@Prepare(sessionID, jobID, toolname, params, start) =>
 
-      val sessionID = userRequest.sessionID
-      val newJob = userRequest.newJob
-      val toolname = userRequest.toolname
-      val jobID = userRequest.jobID
-
-      Logger.info("Master was asked to prepare a Job from SessionID " + sessionID)
-      userJobs.getOrElseUpdate(sessionID, mutable.HashMap.empty[String, UserJob])
+      userJobs.getOrElseUpdate(sessionID, mutable.HashMap.empty[Int, UserJob])
 
       if(!userWebSockets.contains(sessionID)) {
         Logger.info("Master does not know the SessionID " + sessionID)
         sender() ! SessionIDUnknown
-      }
-      else {
+      } else {
 
         // determine the UserJobObject
-        val userJob : Option[UserJob] = evalJob(sender(), newJob, sessionID, toolname, jobID)
+        val userJob : Option[UserJob] = evalJob(sender(), jobID, sessionID, toolname, start)
 
         // There is Work do be done
         if(userJob.nonEmpty) {
@@ -262,7 +246,8 @@ class Master extends Actor with ActorLogging {
     // User Request to entirely delete the job
     case userRequest@Delete(sessionID, jobID) =>
 
-      userJobs.getOrElseUpdate(sessionID, mutable.HashMap.empty[String, UserJob])
+      userJobs.getOrElseUpdate(sessionID, mutable.HashMap.empty[Int, UserJob])
+
       if(!userWebSockets.contains(sessionID)) {
         Logger.info("Master does not know the SessionID " + sessionID)
         sender() ! SessionIDUnknown
@@ -274,7 +259,6 @@ class Master extends Actor with ActorLogging {
           sender() ! FrontendMasterProtocol.JobUnknown
         } else {
 
-          Logger.info("JobID " + jobID + " will be deleted")
           val userJob = userJobs(sessionID).remove(jobID).get
           userJob.destroy()
           val work = Work(workIDCounter.toString, userRequest, userJob)
@@ -289,7 +273,7 @@ class Master extends Actor with ActorLogging {
     // User has requested his Job from the Master
     case userRequest@Get(sessionID, jobID) =>
 
-      userJobs.getOrElseUpdate(sessionID, mutable.HashMap.empty[String, UserJob])
+      userJobs.getOrElseUpdate(sessionID, mutable.HashMap.empty[Int, UserJob])
       if(!userWebSockets.contains(sessionID)) {
 
         Logger.info("Master does not know the SessionID " + sessionID)
@@ -303,10 +287,9 @@ class Master extends Actor with ActorLogging {
         } else {
 
           val userJob = userJobs(sessionID)(jobID)
-          sender() ! (userJob.getState, userJob.toolname, userJob.mainID)
+          sender() ! (userJob.getState, userJob.toolname)
         }
       }
-
 
 
 

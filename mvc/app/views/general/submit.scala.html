@@ -1,5 +1,5 @@
 @import play.api.mvc.RequestHeader
-@(toolname : String, toolframe: Html, job_id : Option[String])(implicit messages: Messages, request: RequestHeader)
+@(toolname : String, toolframe: Html, job_id : Option[Int])(implicit messages: Messages, request: RequestHeader)
 
 
 <!--
@@ -8,10 +8,10 @@
 <script type="text/javascript">
     toolname ='@toolname';
     @if(job_id.isEmpty) {
-        newSubmission = true;
+        jobID = null;
     } else {
-        newSubmission = false;
-}
+        jobID = @job_id.get ;
+    }
 </script>
 <script src="@routes.Assets.at("scripts/form.js")"></script>
 
@@ -28,6 +28,7 @@
 <input class="jobformclear secondary button" type="button" value="Clear form" />
 
 <!-- This is a new Job submission -->
+<!-- No custom jobID allowed
 @if(job_id.isEmpty) {
     <input class="provideid secondary button" type="button" value="Custom ID" />
     <input type="hidden" id="jobid" name="jobid" placeholder="Custom Job ID" style="width: 420px"/>
@@ -35,4 +36,5 @@
 
     <input type="hidden" id="jobid" name="jobid" placeholder="Custom Job ID" style="width: 420px" value="@job_id.get"/>
 }
+-->
 </form>

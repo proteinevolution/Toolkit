@@ -10,10 +10,7 @@ object FrontendMasterProtocol {
 
 
   sealed trait UserRequest {val sessionID : String}
-  sealed trait UserRequestPrepare extends UserRequest {
-    val jobID : String
-    val toolname : String
-    val newJob : Boolean}
+
 
   // This requests will be forwarded to the Worker such that it can reply immediately to the sender
   sealed trait UserRequestForward extends UserRequest
@@ -26,34 +23,27 @@ object FrontendMasterProtocol {
   // Updates the job with the given and the particular tool. If newJob is true, then a new Job Instance
   // for the User will be generated. Otherwise. an existing job will be updated.
   case class Prepare(sessionID : String,
-                     jobID : String,
+                     jobID: Option[Int],
                      toolname : String,
                      params : Map[String, String],
-                     newJob : Boolean) extends UserRequestPrepare
-
-  // Like Prepare, but will Execute the Job Immediately after Preparation
-  case class PrepareAndStart(sessionID : String,
-                             jobID : String,
-                             toolname : String,
-                             params : Map[String, String],
-                             newJob : Boolean) extends UserRequestPrepare
+                     start : Boolean) extends UserRequest
 
 
   // Deletes Job entirely
-  case class Delete(sessionID : String, jobID : String) extends UserRequest
+  case class Delete(sessionID : String, jobID : Int) extends UserRequest
 
 
   // Attach WebSocket to Master
   case class SubscribeToMaster(sessionID : String) extends UserRequest
 
   // Get the userJob
-  case class Get(sessionID : String, jobID : String) extends UserRequest
+  case class Get(sessionID : String, jobID : Int) extends UserRequest
 
   // Reads the supplied Parameters of a given job and returns them as a map //TODO This is currently not implemented
-  case class Read(sessionID : String, jobID : String) extends UserRequestForward
+  case class Read(sessionID : String, jobID : Int) extends UserRequestForward
 
   // Transforms the output of an old job to the input of a new job
-  case class Convert(sessionID : String, parentJobID : String, childJobID : String, links : Seq[Link]) extends UserRequest
+  case class Convert(sessionID : String, parentJobID : Int, childJobID : Int, links : Seq[Link]) extends UserRequest
 
 
 

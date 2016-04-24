@@ -34,7 +34,7 @@ $ ->
   # Handles the behavior when the submit button is pressed in a job form
   $(".jobform").unbind('submit').submit (event) ->
     event.preventDefault()
-    submitRoute = jsRoutes.controllers.Tool.submit(toolname, true, newSubmission)
+    submitRoute = jsRoutes.controllers.Tool.submit(toolname, true, jobID)
 
     $.ajax
       url: submitRoute.url
@@ -46,7 +46,7 @@ $ ->
   # Handles the behavior when the submit button is pressed in a job form
   $(".jobprepare").click  ->
 
-    submitRoute = jsRoutes.controllers.Tool.submit(toolname, false, newSubmission)
+    submitRoute = jsRoutes.controllers.Tool.submit(toolname, false, jobID)
 
     $.ajax
       url: submitRoute.url
