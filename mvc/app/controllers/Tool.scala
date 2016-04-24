@@ -1,14 +1,16 @@
 package controllers
 
-import javax.inject.{Named, Singleton, Inject}
+import javax.inject.{Inject, Singleton}
 
 import akka.util.Timeout
 import models.tools._
 import models.sessions.Session
+
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 import actors.MasterConnection
+import play.api.Logger
 
 /**
   * Created by lukas on 1/27/16.
@@ -42,13 +44,12 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
   import models.distributed.FrontendMasterProtocol._
 
-  def submit(toolname: String, start : Boolean, newJob : Boolean) = Action { implicit request =>
+  def submit(toolname: String, start : Boolean, jobID : Option[Int]) = Action { implicit request =>
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
 
     // Fetch the job ID from the submission, might be the empty string
-    val jobID = request.body.asFormUrlEncoded.get("jobid").head
-
+    //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
 
     // Determine whether the toolname was fine
     val tool = Tool.getToolModel(toolname)
@@ -73,16 +74,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
           BadRequest("There was an error with the Form")
         },
-        _ => {
-
-          if(start) {
-
-            masterConnection.masterProxy ! PrepareAndStart(sessionID, jobID, toolname, boundForm.data, newJob)
-          } else {
-
-            masterConnection.masterProxy ! Prepare(sessionID, jobID, toolname, boundForm.data, newJob)
-          }
-        }
+        _ => masterConnection.masterProxy ! Prepare(sessionID, jobID, toolname, boundForm.data, start = start)
       )
       Ok
     }

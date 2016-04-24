@@ -206,20 +206,16 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
 
   /**
-   * Action that offers result files of jobs to the user.
+   * Allows to access result files by the filename and a given jobID
    */
-  def file(filename : String, job_id : String) = Action{ implicit request =>
+  def file(filename : String, jobID : String) = Action{ implicit request =>
 
     val session_id = Session.requestSessionID(request)
-    val mainID = request.session.get("mid").get
 
     // main_id exists, allow send File
-    Logger.info("Try to assemble file path")
-    val filePath = jobPath + "/" + mainID +  "/results/" + filename
-    Logger.info("File path was: " + filePath)
-    Logger.info("File has been sent")
-    Ok.sendFile(new java.io.File(filePath)).withHeaders(CONTENT_TYPE->"text/plain").withSession {
-      Session.closeSessionRequest(request, session_id)
+
+    Ok.sendFile(new java.io.File(s"$jobPath$SEP$jobID${SEP}results$SEP$filename"))
+      .withHeaders(CONTENT_TYPE->"text/plain").withSession { Session.closeSessionRequest(request, session_id)
     }
   }
 }

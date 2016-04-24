@@ -15,9 +15,8 @@ import scala.collection.mutable.ArrayBuffer
   */
 class UserJob(val mediator : ActorRef, // The WebSocket the changes will be Published to
               val sessionID : String,
-              val toolname       : String, // The name of the associated tool
-              val mainID         : Long,
-              val jobID         : String, // Which job_id is attached to this Job
+              val toolname  : String, // The name of the associated tool
+              val jobID : Int, // Which job_id is attached to this Job
               private var state  : JobState, // State of the job
               var start : Boolean)
 {
@@ -126,20 +125,18 @@ class UserJob(val mediator : ActorRef, // The WebSocket the changes will be Publ
 object UserJob {
 
   // The Messages which the Job can publish
-  case class JobStateChanged(jobID : String, newState : JobState, toolname : String)
+  case class JobStateChanged(jobID : Int, newState : JobState, toolname : String)
 
 
   case class JobPub(userJob : UserJob) // The job publishes itself to the 'JOBS' topic, for update purpose
   case class JobPubDel(userJob : UserJob) // The Job publishes its deletion
 
 
-
   def apply(webSocketActor : ActorRef,
             sessionID : String,
             toolname : String,
-            mainID : Long,
-            jobID : String,
+            jobID : Int,
             start : Boolean) = {
-    new UserJob(webSocketActor, sessionID, toolname, mainID, jobID, Submitted, start)
+    new UserJob(webSocketActor, sessionID, toolname, jobID, Submitted, start)
   }
 }

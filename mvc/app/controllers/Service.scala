@@ -55,7 +55,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
     * @param jobID
     * @return
     */
-  def delJob(jobID: String) = Action { implicit request =>
+  def delJob(jobID: Int) = Action { implicit request =>
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
     masterConnection.masterProxy ! Delete(sessionID, jobID)
@@ -89,10 +89,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
 
 
 
-
-
-
-  def getJob(jobID: String) = Action.async { implicit request =>
+  def getJob(jobID: Int) = Action.async { implicit request =>
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
 
@@ -101,7 +98,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
       case SessionIDUnknown => NotFound
       case JobUnknown => NotFound
 
-      case (state: JobState, toolname : String, mainID : Long)  =>
+      case (state: JobState, toolname : String)  =>
 
         // Decide what to show depending on the JobState
 
@@ -138,7 +135,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
               Array(s"/files/$jobID/domtbl", s"/files/$jobID/outfile", s"/files/$jobID/outfile_multi_sto", s"/files/$jobID/tbl"))
           }
           Ok(toolframe).withSession {
-            Session.closeSessionRequest(request, sessionID, mainID)   // Send Session Cookie
+            Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
           }
 
         case Error =>
