@@ -52,6 +52,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
 
+
   private val Cache = BuiltInCache(200)
 
   // -- Write debug and error messages to the Play `prismic` logger (check the configuration in application.conf)
@@ -218,4 +219,5 @@ class Application @Inject()(webJarAssets: WebJarAssets,
       .withHeaders(CONTENT_TYPE->"text/plain").withSession { Session.closeSessionRequest(request, session_id)
     }
   }
+
 }

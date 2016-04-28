@@ -5,6 +5,7 @@ val mithrilVersion = "0.2.3"
 val betterfilesVersion = "2.15.0"
 val bcryptVersion = "0.3m"
 val highchartsVersion = "4.2.4"
+val d3Version = "3.5.16"
 
 
 val commonDeps = Seq(ws,  filters, cache, evolutions,
@@ -42,6 +43,7 @@ lazy val root = (project in file("."))
   .aggregate(mvc, master, api)
 
 
+
 lazy val mvc = (project in file("mvc"))
   .enablePlugins(PlayScala, JavaAppPackaging)
   .settings(
@@ -54,6 +56,7 @@ lazy val mvc = (project in file("mvc"))
       "org.json4s" %% "json4s-jackson" % "3.3.0",
       "org.scalaz" %% "scalaz-core" % "7.2.1",
       "org.webjars" % "mithril" % mithrilVersion,
+      "org.webjars.bower" % "d3" % d3Version,
       "org.webjars" % "highcharts" % highchartsVersion)),
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),

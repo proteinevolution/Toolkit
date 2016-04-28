@@ -94,8 +94,7 @@
     };
 })(
     // exports will be set in any commonjs platform; use it if it's available
-    typeof exports !== "undefined" ?
-        exports :
+   
         // otherwise construct a name space.  outside the anonymous function,
         // "this" will always be "window" in a browser, even in strict mode.
         this.newick = {}
