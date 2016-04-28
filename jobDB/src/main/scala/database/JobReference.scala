@@ -1,12 +1,4 @@
-package models.database
-
-import javax.inject.{Singleton, Inject}
-
-import models.misc.RandomString
-import play.api.db.slick.DatabaseConfigProvider
-import play.db.NamedDatabase
-import slick.driver.JdbcProfile
-import slick.driver.MySQLDriver.api._
+package database
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -29,7 +21,7 @@ class JobReferenceTableDef(tag: Tag) extends Table[DBJobRef](tag, "job_reference
 
 @Singleton
 class JobReference @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider : DatabaseConfigProvider,
-                                                          jobDB            : models.database.Jobs) {
+                                                          jobDB            : Jobs) {
 
   val dbConfig = dbConfigProvider.get[JdbcProfile]
   val jobReferences = TableQuery[JobReferenceTableDef] //Loads the table definition for the JobReference Table

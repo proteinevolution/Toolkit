@@ -68,6 +68,14 @@ lazy val master = (project in file("master"))
     libraryDependencies ++= commonDeps
   ).dependsOn(api)
 
+lazy val jobDB = (project in file("jobDB"))
+  .settings(
+    commonSettings,
+    name := "mpi-toolkit-jobDB",
+    libraryDependencies ++= commonDeps
+  ).dependsOn(api)
+
+
 
 lazy val api = (project in file("api"))
   .settings(

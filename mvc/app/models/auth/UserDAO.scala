@@ -2,15 +2,13 @@ package models.auth
 
 import javax.inject.{Singleton, Inject}
 
-import models.database.{User, Users}
-import org.mindrot.jbcrypt.BCrypt
+import models.database.User
 
-import scala.concurrent.Future
 
 /**
   * Created by astephens on 21.04.16.
   */
 @Singleton
-class UserDAO @Inject () (userDB : Users) {
+class UserDAO @Inject () (userDB : User) {
 
 }

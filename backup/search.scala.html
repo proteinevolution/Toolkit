@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
-@import models.database.DBJob
-@(jobs: Seq[DBJob])(implicit messages: Messages, request: RequestHeader)
+
+
 <button class="close-button" data-close aria-label="Close modal" type="button">
   <span aria-hidden="true">&times;</span>
 </button>
@@ -15,3 +15,4 @@
 
 <div class="jobsearchquery"> @if(jobs.isEmpty){ No Jobs with a matching Job ID found } else { @jobs.length Jobs found. } </div>
 <script src="@routes.Assets.at("scripts/search.js")"></script>
+
