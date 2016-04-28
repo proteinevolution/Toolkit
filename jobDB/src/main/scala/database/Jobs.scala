@@ -1,14 +1,10 @@
-package models.database
+package database
 
-import javax.inject.{Singleton, Inject}
 
-import models.jobs._
-import play.api.db.slick.DatabaseConfigProvider
-import play.db.NamedDatabase
-import slick.driver.JdbcProfile
-import slick.driver.MySQLDriver.api._
-import scala.concurrent.duration.Duration
+
 import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
 
 
 

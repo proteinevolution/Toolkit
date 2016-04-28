@@ -6,7 +6,6 @@ import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
-import models.database.DBJob
 import models.distributed.FrontendMasterProtocol
 import models.jobs.UserJob
 import play.api.libs.json.{JsArray, JsValue, Json}
@@ -32,19 +31,16 @@ class WebSocketActor(sessionID : String, master : ActorRef, out: ActorRef)  exte
     master ! FrontendMasterProtocol.SubscribeToMaster(sessionID)
   }
 
-  /**
-    * Returns a Sequence of DBJob as a JSON Array
-    *
-    * @param dbJobSeq Sequence of DBJob
-    * @return
-    */
+
+
+  /*
   def createJobObjListDB (dbJobSeq : Seq[DBJob]) : JsArray = {
     JsArray(for (dbJob <- dbJobSeq) yield {
       Json.obj("t" -> dbJob.toolname,
                "s" -> dbJob.job_state.no,
                "i" -> dbJob.job_id)
     })
-  }
+  }*/
 
   /**
     * Returns a Sequence of user Jobs as a JSON Array
