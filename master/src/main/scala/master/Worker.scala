@@ -17,11 +17,6 @@ object Worker {
 }
 
 
-/*
-jobDB    : models.database.Jobs,
-jobRefDB : models.database.JobReference
-*/
-
 class Worker(val master : ActorRef, val workerID : String) extends Actor with ActorLogging {
 
   val workExecutor = context.actorOf(WorkExecutor.props())

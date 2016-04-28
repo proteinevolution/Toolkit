@@ -2,12 +2,13 @@ package models.database
 
 import javax.inject.{Inject, Singleton}
 
+import models.users.DBUser
 import play.api.db.slick.DatabaseConfigProvider
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
 import slick.driver.MySQLDriver.api._
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
 /**
@@ -62,6 +63,12 @@ class Users @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseCon
   def get (user_id : Long) : Option[User] = {
     Await.result(dbConfig.db.run(users.filter(_.user_id === user_id).result), Duration.Inf).headOption
   }
+
+  def add(user : User) : Future[Long] = {
+    val res: Future[Long] = dbConfig.db.run(addQuery += user)
+    res
+  }
+
 
   /**
     * Find users in the Database with the matching filter
