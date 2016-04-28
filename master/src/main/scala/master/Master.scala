@@ -3,14 +3,12 @@ package master
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
-import models.database.DBJobRef
 import models.distributed.FrontendMasterProtocol._
 import models.distributed.{FrontendMasterProtocol, MasterWorkerProtocol, Work}
 import models.jobs.UserJob
 import play.api.Logger
 
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 
 
 object Master {
@@ -60,9 +58,6 @@ class Master extends Actor with ActorLogging {
 
   // Maps Session ID of user to all known jobs of the corresp. user
   val userJobs = new mutable.HashMap[String, mutable.HashMap[Int, UserJob]]
-
-  // Maps Session ID to something that has something to do with the DB // TODO Reactivate
-  val databaseMapping = new collection.mutable.HashMap[String, ArrayBuffer[DBJobRef]]
 
 
   /*
@@ -189,6 +184,10 @@ class Master extends Actor with ActorLogging {
 
 
   override def receive: Receive = {
+
+
+
+
 
     // A new Sesssion has registered at the Master
     case FrontendMasterProtocol.SubscribeToMaster(sessionID) =>
