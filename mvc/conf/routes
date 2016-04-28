@@ -20,6 +20,8 @@ GET         /ws                            @controllers.Application.ws
 # Serve files
 GET         /files/:jobid/:filename        @controllers.Application.file(filename: String, jobid: String)
 
+
+
 # Assets
 GET         /webjars/*file                 controllers.WebJarAssets.at(file)
 GET         /assets/*file                  controllers.Assets.at(path="/public", file)
