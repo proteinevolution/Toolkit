@@ -1,1 +1,1 @@
-(Alignment,Search,Sequence Analysis,2ary Structure,3ary Structure,Classification,Utils);
+(Alignment:0.5,(HMMER3:0.2,(CS-BLAST:0.1,Prot-BLAST:0.1, PSI-BLAST:0.1),(HHpred:0.1,HHsenser:0.1,HHblits:0.1),PatternSearch:0.2),SeqAnalysis:0.5,2aryStructure:0.5,3aryStructure:0.5,Classification:0.5,Utils:0.5);
