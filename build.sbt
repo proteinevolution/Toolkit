@@ -6,6 +6,7 @@ val betterfilesVersion = "2.15.0"
 val bcryptVersion = "0.3m"
 val highchartsVersion = "4.2.4"
 val d3Version = "3.5.16"
+val scalaGuiceVersion = "4.0.1"
 
 
 val commonDeps = Seq(ws,  filters, cache, evolutions,
@@ -18,6 +19,7 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
+  "net.codingwell" %% "scala-guice" % scalaGuiceVersion,
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
   "org.mindrot" % "jbcrypt" % bcryptVersion,
   "io.prismic" %% "scala-kit" % "1.3.7"
