@@ -1,8 +1,7 @@
 package master
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.cluster.pubsub.DistributedPubSub
-import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 import models.distributed.FrontendMasterProtocol._
 import models.distributed.{FrontendMasterProtocol, MasterWorkerProtocol, Work}
 import models.jobs.UserJob
@@ -53,8 +52,6 @@ class Master extends Actor with ActorLogging {
     "worker4" -> WorkerState(context.actorOf(Worker.props(self, "worker4")), Idle)
   )
 
-
-  val userWebSockets = scala.collection.mutable.Map[String, ActorRef]()
 
   // Maps Session ID of user to all known jobs of the corresp. user
   val userJobs = new mutable.HashMap[String, mutable.HashMap[Int, UserJob]]
@@ -186,21 +183,6 @@ class Master extends Actor with ActorLogging {
   override def receive: Receive = {
 
 
-
-
-
-    // A new Sesssion has registered at the Master
-    case FrontendMasterProtocol.SubscribeToMaster(sessionID) =>
-
-      // TODO This map might be superfluous
-      userWebSockets.put(sessionID, sender())
-      context watch sender()
-      Logger.info("Master: User with SessionID " + sessionID + "has subscribed successfully")
-
-      // Register the sender at the PubSubMediator
-      mediator ! Subscribe("SESSION_" + sessionID, sender())
-
-
       /* TODO Database currently disabled// TODO This will be rather slow, we shouldn't do that
       // Load All Jobs from the Database
       for (jobRef <- jobRefDB.get(sessionID)) {
@@ -213,9 +195,6 @@ class Master extends Actor with ActorLogging {
       } */
 
 
-    case Terminated(user) => // TODO Remove user from map
-
-
       /* Master handles the different requests */
 
     // Prepare Requests
@@ -223,16 +202,11 @@ class Master extends Actor with ActorLogging {
 
       userJobs.getOrElseUpdate(sessionID, mutable.HashMap.empty[Int, UserJob])
 
-      if(!userWebSockets.contains(sessionID)) {
-        Logger.info("Master does not know the SessionID " + sessionID)
-        sender() ! SessionIDUnknown
-      } else {
+      // determine the UserJobObject
+      val userJob : Option[UserJob] = evalJob(sender(), jobID, sessionID, toolname, start)
 
-        // determine the UserJobObject
-        val userJob : Option[UserJob] = evalJob(sender(), jobID, sessionID, toolname, start)
-
-        // There is Work do be done
-        if(userJob.nonEmpty) {
+      // There is Work do be done
+      if(userJob.nonEmpty) {
 
           val work = Work(workIDCounter.toString, userRequest, userJob.get)
           workIDCounter += 1
@@ -240,17 +214,12 @@ class Master extends Actor with ActorLogging {
           workState = workState.updated(event)
           notifyWorkers()
         }
-      }
+
 
     // User Request to entirely delete the job
     case userRequest@Delete(sessionID, jobID) =>
 
       userJobs.getOrElseUpdate(sessionID, mutable.HashMap.empty[Int, UserJob])
-
-      if(!userWebSockets.contains(sessionID)) {
-        Logger.info("Master does not know the SessionID " + sessionID)
-        sender() ! SessionIDUnknown
-      } else {
 
         if(!userJobs(sessionID).contains(jobID)) {
 
@@ -266,29 +235,24 @@ class Master extends Actor with ActorLogging {
           workState = workState.updated(event)
           notifyWorkers()
         }
-      }
+
 
 
     // User has requested his Job from the Master
     case userRequest@Get(sessionID, jobID) =>
 
       userJobs.getOrElseUpdate(sessionID, mutable.HashMap.empty[Int, UserJob])
-      if(!userWebSockets.contains(sessionID)) {
 
-        Logger.info("Master does not know the SessionID " + sessionID)
-        sender() ! SessionIDUnknown
+      if(!userJobs(sessionID).contains(jobID)) {
+
+        Logger.info("JobID " + jobID + " is unknown for userID" + sessionID)
+        sender() ! FrontendMasterProtocol.JobUnknown
       } else {
 
-        if(!userJobs(sessionID).contains(jobID)) {
-
-          Logger.info("JobID " + jobID + " is unknown for userID" + sessionID)
-          sender() ! FrontendMasterProtocol.JobUnknown
-        } else {
-
-          val userJob = userJobs(sessionID)(jobID)
-          sender() ! (userJob.getState, userJob.toolname)
-        }
+        val userJob = userJobs(sessionID)(jobID)
+        sender() ! (userJob.getState, userJob.toolname)
       }
+
 
 
 

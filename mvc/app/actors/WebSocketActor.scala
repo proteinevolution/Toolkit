@@ -6,6 +6,10 @@ import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
+import akka.cluster.Cluster
+import akka.cluster.ClusterEvent.CurrentClusterState
+import akka.cluster.pubsub.DistributedPubSub
+import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 import models.distributed.FrontendMasterProtocol
 import models.distributed.ToolkitClusterEvent.JobStateChanged
 import models.jobs.UserJob
@@ -25,22 +29,21 @@ object WebSocketActor {
 class WebSocketActor(sessionID : String, master : ActorRef, out: ActorRef)  extends Actor with ActorLogging {
 
 
+  val cluster = Cluster.get(context.system)
+  val mediator = DistributedPubSub(context.system).mediator
+
   override def preStart = {
 
-    Logger.info("WebSocket for " + sessionID + " has started")
-    master ! FrontendMasterProtocol.SubscribeToMaster(sessionID)
+    //cluster.subscribe(self)
+    mediator ! Subscribe("SESSION_" + sessionID, self)
+  }
+
+  override def postStop = {
+
+    //cluster.unsubscribe(self)
   }
 
 
-
-  /*
-  def createJobObjListDB (dbJobSeq : Seq[DBJob]) : JsArray = {
-    JsArray(for (dbJob <- dbJobSeq) yield {
-      Json.obj("t" -> dbJob.toolname,
-               "s" -> dbJob.job_state.no,
-               "i" -> dbJob.job_id)
-    })
-  }*/
 
   /**
     * Returns a Sequence of user Jobs as a JSON Array
@@ -58,6 +61,8 @@ class WebSocketActor(sessionID : String, master : ActorRef, out: ActorRef)  exte
 
   def receive = LoggingReceive {
 
+
+    case state: CurrentClusterState => //
 
     case js: JsValue =>
 
