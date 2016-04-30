@@ -33,6 +33,7 @@ max-height: 380px;
 .links {
   fill: none;
   stroke: #000;
+  stroke-width: 3;
 }
 
 .link-extensions {
@@ -42,13 +43,14 @@ max-height: 380px;
 }
 
 .labels {
-  font-size: 15px;
+  font-size: 1em;
   font-family: inherit;
+    cursor: pointer;  
 }
 
 .link--active {
   stroke: #000 !important;
-  stroke-width: 1.5px;
+  stroke-width: 3;
 }
 
 .link-extension--active {
@@ -59,9 +61,11 @@ max-height: 380px;
   font-weight: bold;
 }
 
+
 svg {
     margin-left: 20em;
 }
+
 
 </style>
 
@@ -70,7 +74,6 @@ svg {
 <script src="//d3js.org/d3.v3.min.js"></script>
 
 <script>
- function parseNewick(a){for(var e=[],r={},s=a.split(/\s*(;|\(|\)|,|:)\s*/),t=0;t<s.length;t++){var n=s[t];switch(n){case"(":var c={};r.branchset=[c],e.push(r),r=c;break;case",":var c={};e[e.length-1].branchset.push(c),r=c;break;case")":r=e.pop();break;case":":break;default:var h=s[t-1];")"==h||"("==h||","==h?r.name=n:":"==h&&(r.length=parseFloat(n))}}return r}
  var outerRadius = 960 / 2;
  var innerRadius = outerRadius - 170;
 
@@ -117,9 +120,7 @@ svg {
 
     if(error) throw error;
 
-
-
-    var root = parseNewick(life),
+    var root = newick.parse(life),
         nodes = cluster.nodes(root),
         links = cluster.links(nodes);
         input = d3.select("#show-length input").on("change", changed),
@@ -128,13 +129,13 @@ svg {
     setRadius(root, root.length = 0, innerRadius / maxLength(root));
     setColor(root);
 
-    var linkExtension = chart.append("g")
+    /*var linkExtension = chart.append("g")
          .attr("class", "link-extensions")
          .selectAll("path")
          .data(links.filter(function(d) { return !d.target.children; }))
          .enter().append("path")
          .each(function(d) { d.target.linkExtensionNode = this; })
-         .attr("d", function(d) { return step(d.target.x, d.target.y, d.target.x, innerRadius); });
+         .attr("d", function(d) { return step(d.target.x, d.target.y, d.target.x, innerRadius); });*/
 
     var link = chart.append("g")
          .attr("class", "links")
@@ -155,9 +156,16 @@ svg {
          .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
          .text(function(d) { return d.name.replace(/_/g, " "); })
          .on("mouseover", mouseovered(true))
-         .on("mouseout", mouseovered(false));
+         .on("mouseout", mouseovered(false))
+         .on("click", function () {
+             var names = {"AlignmentViewer": "alnviz" , "T-Coffee": "tcoffee", "MAFFT": "mafft", "Hmmer3": "hmmer3",
+                          "PSI-Blast": "psiblast", "CS-Blast": "csblast", "Reformat": "reformat"};
+             window.location.href = "/#/tools/" + names[d3.select(this).text()];
+         });
 
-    function changed() {
+
+
+     function changed() {
         clearTimeout(timeout);
         var checked = this.checked;
         d3.transition().duration(750).each(function() {
@@ -177,6 +185,7 @@ svg {
     }
 
  });
+
 
  // Compute the maximum cumulative length of any node in the tree.
  function maxLength(d) {
@@ -205,6 +214,7 @@ svg {
 
 
  d3.select(self.frameElement).style("height", outerRadius * 2 + "px");
+
 
 
 </script>
