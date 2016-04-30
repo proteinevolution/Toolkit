@@ -1,11 +1,10 @@
 # --- !Ups
 CREATE TABLE `jobs` (
 
-	`main_id`             INTEGER UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`job_id`              INTEGER UNSIGNED    NOT NULL PRIMARY KEY,
 	`type`                VARCHAR(50),
 	`parent_id`           INTEGER,
-	`job_id`              VARCHAR(100),
-	`user_id`             INTEGER,
+	`session_id`          VARCHAR(100),
 	`status`              CHAR(1),
 	`tool`                VARCHAR(100),
 	`stat_id`             INTEGER,

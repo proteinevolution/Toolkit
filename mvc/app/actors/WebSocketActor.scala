@@ -7,10 +7,10 @@ import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
 import models.distributed.FrontendMasterProtocol
+import models.distributed.ToolkitClusterEvent.JobStateChanged
 import models.jobs.UserJob
 import play.api.libs.json.{JsArray, JsValue, Json}
 import play.api.Logger
-import models.jobs.UserJob.JobStateChanged
 
 /**
   * Actor that listens to the WebSocket and accepts messages from and passes messages to it.
@@ -75,7 +75,7 @@ class WebSocketActor(sessionID : String, master : ActorRef, out: ActorRef)  exte
     // Messages the user that there was a problem in handling the Job ID
     //case JobIDInvalid  => out ! Json.obj("type" -> "jobidinvalid")
 
-    case JobStateChanged(jobID, state, toolname) =>
+    case JobStateChanged(jobID, _, state, toolname) =>
 
       out ! Json.obj("type" -> "updatejob", "job_id" -> jobID, "state" -> state.no, "toolname" -> toolname)
 
