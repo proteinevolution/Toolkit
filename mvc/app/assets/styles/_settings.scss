@@ -40,7 +40,7 @@
 //  35. Tooltip
 //  36. Top Bar
 
-@import 'lib/foundation/scss/util/util';
+@import 'lib/foundation-sites/scss/util/util';
 
 // 1. Global
 // ---------
@@ -306,7 +306,7 @@ $dropdown-sizes: (
 // 17. Dropdown Menu
 // -----------------
 
-$dropdownmenu-arrows: false;
+$dropdownmenu-arrows: true;
 $dropdownmenu-arrow-color: $anchor-color;
 $dropdownmenu-min-width: 200px;
 $dropdownmenu-background: $white;
@@ -352,7 +352,7 @@ $input-border: 1px solid $medium-gray;
 $input-border-focus: 1px solid $dark-gray;
 $input-shadow: inset 0 1px 2px rgba($black, 0.1);
 $input-shadow-focus: 0 0 5px $medium-gray;
-$input-cursor-disabled: default;
+$input-cursor-disabled: not-allowed;
 $input-transition: box-shadow 0.5s, border-color 0.25s ease-in-out;
 $input-number-spinners: true;
 $input-radius: $global-radius;
@@ -419,7 +419,7 @@ $orbit-caption-background: rgba($black, 0.5);
 $orbit-caption-padding: 1rem;
 $orbit-control-background-hover: rgba($black, 0.5);
 $orbit-control-padding: 1rem;
-
+$orbit-control-zindex: 10;
 
 // 26. Pagination
 // --------------
