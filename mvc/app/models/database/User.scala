@@ -19,15 +19,16 @@ import scala.concurrent.duration.Duration
 
 class UsersTableDef(tag: Tag) extends Table[User](tag, "jobs") {
 
-  def user_id         = column[Long]("user_id", O.PrimaryKey,O.AutoInc)
-  def user_name_first = column[String]("user_name_first")
-  def user_name_last  = column[String]("user_name_last")
-  def password        = column[String]("password")
-  def email           = column[String]("email")
-  def created_on      = column[Long]("created_on")
-  def updated_on      = column[Long]("updated_on")
+  def user_id    = column[Long]("user_id", O.PrimaryKey, O.AutoInc)
+  def name_login = column[String]("name_login")
+  def name_first = column[String]("name_first")
+  def name_last  = column[String]("name_last")
+  def password   = column[String]("password")
+  def email      = column[String]("email")
+  def created_on = column[Long]("created_on")
+  def updated_on = column[Long]("updated_on")
 
-  override def * = (user_id.?, user_name_last, user_name_first, password, email) <>(User.tupled, User.unapply)
+  override def * = (user_id.?, name_login, name_last, name_first, password, email) <>(User.tupled, User.unapply)
 }
 
 @Singleton
@@ -81,9 +82,10 @@ class Users @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseCon
 }
 
 
-//User Class used for database storage
-case class User(val user_id         : Option[Long],
-                val user_name_last  : String,
-                val user_name_first : String,
-                val password        : String,
-                val email           : String)
+//User Data Object used for database storage and interaction
+case class User(val user_id    : Option[Long],
+                val name_login : String,
+                val name_last  : String,
+                val name_first : String,
+                val password   : String,
+                val email      : String)
