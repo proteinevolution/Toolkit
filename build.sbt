@@ -1,6 +1,6 @@
 val akkaVersion = "2.4.4"
 val jqueryVersion = "2.2.2"
-val foundationVersion = "6.2.0"
+val foundationVersion = "6.2.1"
 val mithrilVersion = "0.2.3"
 val betterfilesVersion = "2.15.0"
 val bcryptVersion = "0.3m"
@@ -54,7 +54,9 @@ lazy val mvc = (project in file("mvc"))
     libraryDependencies ++= (commonDeps ++ Seq(
       "org.webjars" %% "webjars-play" % "2.5.0",
       "org.webjars" % "jquery" % jqueryVersion,
-      "org.webjars" % "foundation" % foundationVersion,
+      "org.webjars.bower" % "foundation-sites" % "6.2.1",
+      "org.webjars" % "modernizr" % "2.8.3",
+      "org.webjars.bower" % "fastclick" % "1.0.6",
       "org.json4s" %% "json4s-jackson" % "3.3.0",
       "org.scalaz" %% "scalaz-core" % "7.2.1",
       "org.webjars" % "mithril" % mithrilVersion,
