@@ -2,7 +2,7 @@
 CREATE TABLE `users` (
 
   `user_id`             INTEGER UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `name_login`          VARCHAR(80),
+  `name_login`          VARCHAR(80)         UNIQUE,
   `name_first`          VARCHAR(50),
   `name_last`           VARCHAR(50),
   `password`            VARCHAR(50),
