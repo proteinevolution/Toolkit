@@ -108,7 +108,26 @@ tr.spaceUnder > td
     text-transform: uppercase;
 }
 
+
+.mafft{
+
+    background-color: #FFCC66;
+    border: solid 0px black;
+    opacity: 0.9;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
 .hmmer3{
+
+    background-color: #D0BA89;
+    border: solid 0px black;
+    opacity: 0.9;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.psiblast{
 
     background-color: #D0BA89;
     border: solid 0px black;
