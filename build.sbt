@@ -54,7 +54,7 @@ lazy val mvc = (project in file("mvc"))
     libraryDependencies ++= (commonDeps ++ Seq(
       "org.webjars" %% "webjars-play" % "2.5.0",
       "org.webjars" % "jquery" % jqueryVersion,
-      "org.webjars.bower" % "foundation-sites" % "6.2.1",
+      "org.webjars.bower" % "foundation-sites" % foundationVersion,
       "org.webjars" % "modernizr" % "2.8.3",
       "org.webjars.bower" % "fastclick" % "1.0.6",
       "org.json4s" %% "json4s-jackson" % "3.3.0",
