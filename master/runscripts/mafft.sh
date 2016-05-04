@@ -3,12 +3,8 @@
 
 trap 'kill $(jobs -p)' EXIT
 
-export MAFFT_BINARIES='!{BIO}/tools/mafft/binaries'
+export MAFFT_BINARIES='!{BIO}/tools/mafft2/binaries'
 
-!{BIO}/tools/mafft/scripts/mafft \
+!{BIO}/tools/mafft2/scripts/mafft \
 --op ${gapopen} \
---ep ${offset} \
-#{alnorder} \
-#{clustalw} \
-%{sequences} > \
-results/out
+--ep ${offset} %{sequences} > results/out
