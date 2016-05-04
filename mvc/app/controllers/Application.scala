@@ -220,4 +220,17 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
+  def upload = Action(parse.multipartFormData) { request =>
+    request.body.file("picture").map { picture =>
+      import java.io.File
+      val filename = picture.filename
+      val contentType = picture.contentType
+      picture.ref.moveTo(new File(s"/tmp/picture/$filename"))
+      Ok("File uploaded")
+    }.getOrElse {
+      Redirect(s"/#/upload").flashing(
+        "error" -> "Missing file")
+    }
+  }
+
 }
