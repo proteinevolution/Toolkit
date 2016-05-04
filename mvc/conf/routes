@@ -11,55 +11,59 @@
 ############################################################################
 
 # Index Page requested by user. Note that the controller is injected
-GET     /                                  @controllers.Application.home(page: Int ?= 1)
+GET         /                                              @controllers.Application.home(page: Int ?= 1)
 
 # Websocket
-GET         /ws                            @controllers.Application.ws
+GET         /ws                                            @controllers.Application.ws
 
 
 # Serve files
-GET         /files/:jobid/:filename        @controllers.Application.file(filename: String, jobid: String)
+GET         /files/:jobid/:filename                        @controllers.Application.file(filename: String, jobid: String)
 
 
 
 # Assets
-GET         /webjars/*file                 controllers.WebJarAssets.at(file)
-GET         /assets/*file                  controllers.Assets.at(path="/public", file)
+GET         /webjars/*file                                 controllers.WebJarAssets.at(file)
+GET         /assets/*file                                  controllers.Assets.at(path="/public", file)
 
 
 # Route for direct get requests
-GET         /tools/:toolname                @controllers.Application.showTool(toolname : String)
-GET         /jobs/:jobid                    @controllers.Application.showJob(jobid: String)
+GET         /tools/:toolname                               @controllers.Application.showTool(toolname : String)
+GET         /jobs/:jobid                                   @controllers.Application.showJob(jobid: String)
+
+# File Uploader
+
+POST       /upload                                         @controllers.Application.upload()
 
 #Prismic
-GET     /not-found                                  controllers.Application.brokenLink()
-GET     /documents/$id<[-_a-zA-Z0-9]{16}>/:slug     controllers.Application.detail(id, slug)
+GET         /not-found                                     controllers.Application.brokenLink()
+GET         /documents/$id<[-_a-zA-Z0-9]{16}>/:slug        controllers.Application.detail(id, slug)
 
 # Basic search
-GET     /search                                     controllers.Application.search(q: Option[String] ?= None, page: Int ?= 1)
+GET         /search                                        controllers.Application.search(q: Option[String] ?= None, page: Int ?= 1)
 
 # Preview
-GET     /preview                                    controllers.Application.preview(token: String)
+GET         /preview                                       controllers.Application.preview(token: String)
 
 # Contact
 
-GET         /contact                                @controllers.Application.contact()
+GET         /contact                                       @controllers.Application.contact()
 
 # Routes for Auth Service
-GET         /signin                         @controllers.Auth.signIn(username : String = "")
-GET         /signin/:username               @controllers.Auth.signIn(username : String)
-POST        /signin/submit/                 @controllers.Auth.signInSubmit()
-GET         /signup                         @controllers.Auth.signUp()
-POST        /signup/submit/                 @controllers.Auth.signUpSubmit()
-GET         /signout                        @controllers.Auth.signOut()
+GET         /signin                                        @controllers.Auth.signIn(username : String = "")
+GET         /signin/:username                              @controllers.Auth.signIn(username : String)
+POST        /signin/submit/                                @controllers.Auth.signInSubmit()
+GET         /signup                                        @controllers.Auth.signUp()
+POST        /signup/submit/                                @controllers.Auth.signUpSubmit()
+GET         /signout                                       @controllers.Auth.signOut()
 
 # Get the input form of the tools
-POST        /tools/form/:toolname           @controllers.Application.form(toolname : String)
+POST        /tools/form/:toolname                          @controllers.Application.form(toolname : String)
 
 
 
 # Submit Route
-POST        /tools/:toolname                @controllers.Tool.submit(toolname : String, start : Boolean, jobID: Option[Int])
+POST        /tools/:toolname                               @controllers.Tool.submit(toolname : String, start : Boolean, jobID: Option[Int])
 
 
 
@@ -72,9 +76,9 @@ POST        /tools/:toolname                @controllers.Tool.submit(toolname : 
 # Loading a Job from the DB
 #POST        /jobs/add/:jobid                @controllers.Service.addJobID(jobid: String)
 # Get a Job the User Actor already has loaded
-GET         /jobs/get/:jobid                 @controllers.Service.getJob(jobid : Int)
+GET         /jobs/get/:jobid                               @controllers.Service.getJob(jobid : Int)
 # Delete a Job
-POST        /jobs/del/:jobid                 @controllers.Service.delJob(jobid : Int)
+POST        /jobs/del/:jobid                               @controllers.Service.delJob(jobid : Int)
 # Add a Child Job
 #POST        /jobs/addChild                  @controllers.Service.addChild
 # Clear a Job
