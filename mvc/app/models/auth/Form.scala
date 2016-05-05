@@ -13,8 +13,8 @@ import play.api.data.Forms._
 object SignIn {
   val inputForm = Form(
     tuple(
-      "username" -> email,
-      "password" -> nonEmptyText
+      "user_login" -> nonEmptyText,
+      "password"   -> nonEmptyText
     )
   )
 }
@@ -25,11 +25,12 @@ object SignIn {
 object SignUp {
   val inputForm = Form(
     tuple(
-      "namefirst"     -> nonEmptyText,
-      "namelast"      -> nonEmptyText,
+      "name_login"    -> nonEmptyText,
+      "name_first"    -> nonEmptyText,
+      "name_last"     -> nonEmptyText,
       "email"         -> email,
       "password"      -> nonEmptyText,
-      "acceptagb"     -> boolean,
+      "accepttos"     -> boolean,
       "passwordmatch" -> boolean
     )
   )

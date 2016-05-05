@@ -1,18 +1,18 @@
 @import play.api.mvc.RequestHeader
-@(inputForm: Form[(String, String, String, String, Boolean, Boolean)])(implicit messages: Messages, request: RequestHeader)
+@(inputForm: Form[(String, String, String, String, String, Boolean, Boolean)])(implicit messages: Messages, request: RequestHeader)
 
 <form id="signup-form" data-abide="ajax" novalidate>
     <div class="row">
         <div class="small-12 columns">
             <label>
                 First Name:
-                <input type="text" id="namefirst" name="namefirst" placeholder="John" required pattern="text">
+                <input type="text" id="name_first" name="name_first" placeholder="John" required pattern="text">
             </label>
         </div>
         <div class="small-12 columns">
             <label>
                 Last Name:
-                <input type="text" id="namelast" name="namelast" placeholder="Doe" required pattern="text">
+                <input type="text" id="name_last" name="name_last" placeholder="Doe" required pattern="text">
             </label>
         </div>
         <div class="small-12 columns">
@@ -23,24 +23,30 @@
         </div>
         <div class="small-12 columns">
             <label>
+                Username:
+                <input type="text" id="name_login" name="name_login" placeholder="JDoe11186" required pattern="text">
+            </label>
+        </div>
+        <div class="small-12 columns">
+            <label>
                 Password:
                 <input type="password" id="password" name="password" placeholder="Password" required >
             </label>
         </div>
-        <!---
+        <!--
         <div class="small-12 columns">
             <label>
                 Repeat Password:
-                <input type="password" placeholder="Password" required pattern="text" data-equalTo="password">
+                <input type="password" id="password_repeat" placeholder="Password" required pattern="text" data-equalTo="password">
                 <span class="form-error">(Passwords must match!)</span>
             </label>
         </div>
-        --->
+        -->
         <div class="small-12 columns">
             <label>
                 I Accept the AGB &nbsp;
-                <input type="checkbox" id="acceptagb" name="acceptagb" value="false" required>
-                <span class="form-error">(You must accept the AGB!)</span>
+                <input type="checkbox" id="accepttos" name="accepttos" value="false" required>
+                <span class="form-error">You must accept the ToS!</span>
             </label>
         </div>
     </div>
