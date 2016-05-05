@@ -44,6 +44,7 @@ lazy val root = (project in file("."))
     name := "mpi-toolkit"
   )
   .aggregate(mvc, master, api)
+  .enablePlugins(SbtWeb)
 
 
 
@@ -63,7 +64,7 @@ lazy val mvc = (project in file("mvc"))
       "org.webjars" % "mithril" % mithrilVersion,
       "org.webjars.bower" % "d3" % d3Version,
       "org.webjars" % "highcharts" % highchartsVersion)),
-    pipelineStages := Seq.empty,
+    pipelineStages := Seq(rjs),
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
     ).dependsOn(api)
