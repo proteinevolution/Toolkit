@@ -30,31 +30,32 @@
         'id -> "matrix"
     )
     @helper.inputText(
-    inputForm("num_iter"),
+    inputForm("num_iter").copy(value=Some("1")),
     '_label  -> "Set the number of iterations",
     'id -> "num_iter",
     '_showConstraints -> false
     )
+
     @helper.inputText(
-    inputForm("evalue"),
+    inputForm("evalue").copy(value=Some("10")),
     '_label  -> "E-Value",
     'id -> "evalue",
     '_showConstraints -> false
     )
     @helper.inputText(
-    inputForm("gap_open"),
+    inputForm("gap_open").copy(value=Some("11")),
     '_label  -> "Gap Open penalty",
     'id -> "gap_open",
     '_showConstraints -> false
     )
     @helper.inputText(
-    inputForm("gap_ext"),
+    inputForm("gap_ext").copy(value=Some("1")),
     '_label  -> "Gap Extension penalty",
     'id -> "gap_ext",
     '_showConstraints -> false
 )
     @helper.inputText(
-        inputForm("desc"),
+        inputForm("desc").copy(value=Some("200")),
         '_label  -> "Number of alignments and descriptions",
         'id -> "desc",
         '_showConstraints -> false
