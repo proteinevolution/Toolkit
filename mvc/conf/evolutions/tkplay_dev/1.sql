@@ -5,7 +5,7 @@ CREATE TABLE `users` (
   `name_login`          VARCHAR(80)         UNIQUE,
   `name_first`          VARCHAR(50),
   `name_last`           VARCHAR(50),
-  `password`            VARCHAR(50),
+  `password`            VARCHAR(60),
   `email`               VARCHAR(50)         NOT NULL,
   `institute`           VARCHAR(100)        NULL,
   `street`              VARCHAR(100)        NULL,
