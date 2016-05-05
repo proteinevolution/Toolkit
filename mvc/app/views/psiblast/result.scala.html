@@ -1,7 +1,25 @@
 @(pathToEvalues : String)(implicit messages: Messages, request: RequestHeader)
 
+<ul class="tabs" data-tabs id="example-tabs">
+    <li class="tabs-title"><a href="#panel1" aria-selected="true">Results</a></li>
+    <li class="tabs-title"><a href="#panel2" aria-selected="true">Alignment</a></li>
+    <li class="tabs-title"><a href="#panel3" aria-selected="true">E-Value Distribution</a></li>
 
-<div id="hcontainer" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+</ul>
+
+<div class="tabs-content" data-tabs-content="example-tabs">
+    <div class="tabs-panel" id="panel1">
+        Hallo
+    </div>
+    <div class="tabs-panel" id="panel2">
+        Test
+    </div>
+    <div class="tabs-panel" id="panel3">
+        <div id="hcontainer" style="min-width: 610px; height: 600px; margin: 0 auto"></div>
+    </div>
+</div>
+
+
 
 
 <script type="text/javascript">
@@ -52,4 +70,7 @@
                 }]
             });
         });
+
+
+$(document).foundation();
 </script>
