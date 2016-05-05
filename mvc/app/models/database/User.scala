@@ -17,7 +17,7 @@ import scala.concurrent.duration.Duration
   * @param tag
   */
 
-class UsersTableDef(tag: Tag) extends Table[User](tag, "jobs") {
+class UsersTableDef(tag: Tag) extends Table[User](tag, "users") {
 
   def user_id    = column[Long]("user_id", O.PrimaryKey, O.AutoInc)
   def name_login = column[String]("name_login")
@@ -65,19 +65,13 @@ class Users @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseCon
     Await.result(dbConfig.db.run(users.filter(_.user_id === user_id).result), Duration.Inf).headOption
   }
 
-  def add(user : User) : Future[Long] = {
-    val res: Future[Long] = dbConfig.db.run(addQuery += user)
-    res
-  }
-
-
   /**
     * Find users in the Database with the matching filter
-    * @param email the email of the User
+    * @param name_login login name of the user
     * @return
     */
-  def get (email : String) : Option[User] = {
-    Await.result(dbConfig.db.run(users.filter(_.email === email).result), Duration.Inf).headOption
+  def get (name_login : String) : Option[User] = {
+    Await.result(dbConfig.db.run(users.filter(_.name_login === name_login).result), Duration.Inf).headOption
   }
 }
 

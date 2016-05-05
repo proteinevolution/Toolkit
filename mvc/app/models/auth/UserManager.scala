@@ -11,6 +11,7 @@ import org.mindrot.jbcrypt.BCrypt
 
 /**
   * User Manager manages authentication requests
+  *
   * @see [[http://www.mindrot.org/files/jBCrypt/jBCrypt-0.2-doc/BCrypt.html#gensalt(int) gensalt]]
   */
 @Singleton
@@ -18,36 +19,39 @@ class UserManager @Inject ()(userDB : models.database.Users) { // User Database
   val LOG_ROUNDS : Int = 10 // Number of rounds for BCrypt to hash the Password (2^x) // TODO Move to the config?
 
   /**
-    * Checks if a user with the given email exists and
-    *
-    * @param form
+    * Checks if a user with the given account name exists and returns the user object
+    * @param name_login account name of the User
+    * @param name_last  last name of the User
+    * @param name_first first name of the User
+    * @param email      email of the User
+    * @param password   password of the User
     * @return
     */
-  def SignUp(form : Map[String,String]) : AuthAction = {
-    userDB.get(form.get("email").get) match {
+  def SignUp(name_login : String, name_last : String, name_first : String, email : String, password : String) : AuthAction = {
+    userDB.get(name_login) match {
       case Some(user) =>
-        EmailUsed()
+        AccountNameUsed()
       case None =>
-        val newUser = userDB.update(new User(None, "basic",
-                                                   form.get("name_last").get,       // Last Name
-                                                   form.get("name_first").get,      // First Name
-                                                   hash(form.get("password").get),  // Immediately hash the password!
-                                                   form.get("email").get))          // E-Mail
+        val newUser = userDB.update(new User(None, name_login,     // Account Name
+                                                   name_last,      // Last Name
+                                                   name_first,     // First Name
+                                                   hash(password), // Immediately hash the password!
+                                                   email))         // E-Mail
 
         LoggedIn(newUser.get)
     }
   }
 
   /**
-    * Checks if the User Exists and if the Password matches
-    *
-    * @param form input form
+    * Checks if the user exists and if the password matches
+    * @param name_login account name of the User
+    * @param password   password of the User
     * @return
     */
-  def SignIn(form : Map[String, String]) : AuthAction = {
-    userDB.get(form.get("email").get) match {
+  def SignIn(name_login : String, password : String) : AuthAction = {
+    userDB.get(name_login) match {
       case Some(user) =>
-        if(checkPassword(user, form.get("password").get)) {
+        if(checkPassword(user, password)) {
           LoggedIn(user)
         } else {
           LoginIncorrect()
@@ -82,26 +86,43 @@ class UserManager @Inject ()(userDB : models.database.Users) { // User Database
 /**
   * Abstract object returning whether the Action was successful or not
   * @param success whether the action was successful or not
+  * @param message the message which should be displayed to the User
   */
-abstract class AuthAction (val success : Boolean)
+abstract class AuthAction (val success : Boolean, val message : String)
 
 /**
   * User Login successful
   * @param user User DAO
   */
-case class LoggedIn(user : User) extends AuthAction(true)
+case class LoggedIn(user : User) extends AuthAction(true,
+  "Welcome, " + user.name_last + ". \n You are now logged in.")
 
 /**
   * User Logout succesful
   */
-case class LoggedOut()           extends AuthAction(true)
+case class LoggedOut()           extends AuthAction(true,
+  "You have been logged out successfully. See you soon!")
 
 /**
-  * EMail has been used to identify the user already
+  * Username has been given away already.
   */
-case class EmailUsed()           extends AuthAction(false)
+case class AccountNameUsed()     extends AuthAction(false,
+  "There already is a Account using this username, please use a different one.")
 
 /**
   * Login was not successful due to an Error
   */
-case class LoginIncorrect()      extends AuthAction(false)
+case class LoginIncorrect()      extends AuthAction(false,
+  "There was an error logging you in. Please check your account name and password.")
+
+/**
+  * User has not accepted the Terms of Service
+  */
+case class MustAcceptToS()       extends AuthAction(false,
+  "Please accept the terms for our service before registering.")
+
+/**
+  * Passwords did not match when registering
+  */
+case class PasswordMismatch()      extends AuthAction(false,
+  "Your passwords did not match.")

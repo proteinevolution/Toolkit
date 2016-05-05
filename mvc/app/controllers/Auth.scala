@@ -2,7 +2,6 @@ package controllers
 
 import javax.inject.{Singleton, Inject}
 
-import models.database.User
 import models.sessions.Session
 import models.auth._
 import play.Logger
@@ -20,7 +19,6 @@ class Auth @Inject() (userManager : UserManager,
 
   /**
     * Returns the sign in form
- *
     * @param userName usually the eMail address
     * @return
     */
@@ -31,7 +29,6 @@ class Auth @Inject() (userManager : UserManager,
   /**
     * Submission of the sign in form, user wants to authenticate themself
     * Checks the Database for the user and logs them in if their password matches
- *
     * @return
     */
   def signInSubmit() = Action { implicit request =>
@@ -43,58 +40,59 @@ class Auth @Inject() (userManager : UserManager,
     form.fold(
       // Form has errors, return "Bad Request" - most likely timed out or user tampered with form
       formWithErrors => {
-        BadRequest("Login Error: " + form.errors.toString())
+        BadRequest("Login Error: " + form.errors.toString)
       },
       _ => {
         // Check the User Database for the user and return the User if there is a match.
-        val authAction: AuthAction = userManager.SignIn(form.data)
-        authAction match {
+        val authAction: AuthAction = userManager.SignIn(form.get._1,  // name_login
+                                                        form.get._2)  // password
 
-          case LoggedIn(user: User) =>
-            Ok(views.html.authform.authmessage("Welcome, " + user.name_last + ". \n" +
-                                               "You are now registered and logged in.",
-                                               routes.Auth.signOut().url)).withSession {
-              Session.closeSessionRequest(request, sessionID) // Send Session Cookie
-            }
-
-          case LoginIncorrect() =>
-            Ok(views.html.authform.authmessage("There is no User with this E-Mail or the Password is incorrect.",
-                                               routes.Auth.signIn("").url))
-
-          case _ => InternalServerError
+        Ok(views.html.authform.authmessage(authAction)).withSession {
+          Session.closeSessionRequest(request, sessionID) // Send Session Cookie
         }
       }
     )
   }
 
+  /**
+    * Returns the sign up form
+    * @return
+    */
   def signUp() = Action { implicit request =>
     Ok(views.html.authform.signup(SignUp.inputForm))
   }
 
+  /**
+    * Submission of the sign up form, user wants to register
+    * Checks Database if there is a preexisting user and adds them if there is none
+    * @return
+    */
   def signUpSubmit() = Action { implicit request =>
     val sessionID = Session.requestSessionID(request)
-    Logger.info(sessionID + " wants to Register!")
     val form = SignUp.inputForm.bindFromRequest
     form.fold(
       formWithErrors => {
         BadRequest("Login Error: " + form.errors.toString())
       },
       _ => {
-        val authAction : AuthAction = userManager.SignUp(form.data)
-        authAction match {
+        /* while it should not be easy to get to this point without accepting the ToS or mismatching Passwords
+         * (due to the javascript preventing them)
+         * there should still be a serverside backup to keep them from happening */
+        if (form.get._6) {
+          Ok(views.html.authform.authmessage(MustAcceptToS()))
+        }
+        if (form.get._7) {
+          Ok(views.html.authform.authmessage(PasswordMismatch()))
+        }
 
-          case LoggedIn(user : User) =>
-            Ok(views.html.authform.authmessage("Welcome, " + user.name_last + ". \n" +
-              "You are now registered and logged in.",
-              routes.Auth.signOut().url)).withSession {
-              Session.closeSessionRequest(request, sessionID) // Send Session Cookie
-            }
+        val authAction : AuthAction = userManager.SignUp(form.get._1, // name_login
+                                                         form.get._2, // name_last
+                                                         form.get._3, // name_first
+                                                         form.get._4, // email
+                                                         form.get._5) // password // TODO maybe hash the password here?
 
-          case EmailUsed() =>
-            Ok(views.html.authform.authmessage("The provided E-Mail has been used already.", routes.Auth.signUp().url))
-
-          case _ =>
-            InternalServerError
+        Ok(views.html.authform.authmessage(authAction)).withSession {
+          Session.closeSessionRequest(request, sessionID) // Send Session Cookie
         }
       }
     )
@@ -102,9 +100,8 @@ class Auth @Inject() (userManager : UserManager,
 
   def signOut() = Action { implicit request =>
     val sessionID = Session.requestSessionID(request)
-    Logger.info(sessionID + " wants to Logout!")
 
-    Ok(views.html.authform.authmessage("Bye! You are now logged out!", routes.Auth.signIn("").url)).withSession {
+    Ok(views.html.authform.authmessage(LoggedOut())).withSession {
       Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
     }
   }
