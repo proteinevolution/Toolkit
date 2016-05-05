@@ -22,7 +22,7 @@ Jobs =
     $.ajax(
       type: "GET"
       url: "/jobs/get/" + controller.job_id).done (data) ->
-        $('#content').empty().append data
+        $('#content').empty().prepend data
 
 #setup routes to start w/ the `#` symbol
 m.route.mode = 'hash'
