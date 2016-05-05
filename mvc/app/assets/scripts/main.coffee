@@ -11,7 +11,7 @@ Tools =
     $.ajax(
       type: "POST"
       url: "/tools/form/" + controller.toolname).done (data) ->
-        $('#content').empty().prepend data
+        $('#content').empty().append data
         $("html, body").animate({ scrollTop: 0 }, "fast")
 
 
