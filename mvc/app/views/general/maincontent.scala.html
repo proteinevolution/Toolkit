@@ -1,160 +1,29 @@
+<style>
 
-<!--
-<mainframe>
-    <h2>Bioinformatics Toolkit</h2>
+#content {
+width: 100%;
+padding: 0 0 0 0;
+}
 
-        <!--<p class="message" align="justify">
-  <b><font color="red"><u>Announcement:</u></br>There will be a downtime of the Bioinformatics Toolkit on
-  February 1st, 2010 starting at 1pm (local time in Germany).</br>The downtime will take approximately 4 hours.</br>
-  Sorry for the inconvenience.</br></font></b>
-</p>
-    <p class="message" align="justify">
-  The Bioinformatics Toolkit is a platform that integrates a great variety of
-        tools for protein sequence analysis. Many tools are developed in-house, and several
-        public tools are offered with extended functionality.
+#sidebar-switch {
 
-    </p>
-    <br>
-    <p class="message" align="justify">
-<h2>Most frequently used tools</h2>
-    </p>
-    <p class="message" align="justify">
-        <b><a href=hhpred>HHpred</a></b> Sensitive protein homology detection and structure prediction by HMM-HMM-comparison. Starting from a query sequence, HHpred builds a multiple sequence alignment
-        using HHblits and turns it into a profile HMM. This is then compared it with a database of HMMs representing proteins with known structure (e.g. PDB, SCOP) or annotated protein
-        families (e.g. PFAM, SMART, CDD, COGs, KOGs). The output is a list of closest homologs with alignments.
-        HHpred can also build 3d homology models using the identified templates in the PDB database. It can optimize template picking and query-template alignments for
-        homology modeling.
-        <br>The HHblits software is part of the open source package <a href="ftp://toolkit.genzentrum.lmu.de/pub/HH-suite/" target="_self">HHsuite</a>.<br>
-        <br>
-        <b><a href=hhblits>HHblits</a></b> Remote homology detection method based on iterative HMM-HMM comparison. HHblits can build high-quality MSAs starting from single sequences or from MSAs.
-        It transforms these into a query HMM and iteratively searches through uniprot20 or nr20 databases by adding significantly similar sequences from the previous
-        search to the updated query HMM for the next search iteration. Compared to PSI-BLAST, HHblits is faster, up to twice as sensitive and produces more accurate alignments.
-        <br>
-        The HHblits software is part of the open source package <a href="ftp://toolkit.genzentrum.lmu.de/pub/HH-suite/" target="_self">HHsuite</a>.
-        <br>
-        <br>
-        <b><a href=quick2_d>Quick2d</a></b> Quick2D gives you an overview of secondary structure features like alpha-helices, extended beta-sheets,
-        coiled coils, transmembrane helices and disorder regions.
-        Predictions by PSIPRED, JNET, Prof(Rost), Prof(Ouali), Coils, MEMSAT2, HMMTOP, DISOPRED2 and VSL2.<br>
-        <br>
+display: none;
 
-        <b><a href=modeller>Modeller</a></b> A Program for Comparative Protein Structure Modelling by Satisfaction of Spatial Restraints.<br>
-        <br>
+}
 
-        <b><a href=pcoils>Coils/PCoils</a></b> This server compares a single sequence (COILS) or a sequence alignment (PCOILS) to a database of known coiled-coils
-        and derives a similarity score. The program then calculates the probability that the sequence will adopt a coiled-coil conformation.<br>
-        <br>
-        <b><a href=psi_blast>PSI-Blast</a></b> Search with an amino acid sequence against protein databases for locally similar sequences. Similar to ProteinBLAST but more sensitive.
-        PSI-BLAST first performs a BLAST search and builds an alignment from the best local hits. This alignment is then used as a query for the next round of search.
-        After each successive round the search alignment is updated.<br>
-        <br>
+#hideSwitch {
 
-        To find a tool not listed here, choose the appropriate section tab above, or look for the tool in the <b>Quickfinder</b> on the top right corner.
-    </p>
-    <div class="hr" style="margin-bottom: 20px;">&nbsp;</div>
-    <p class="message" align="justify">
-<h2>Recent Updates</h2>
-    <h3>November, 2014</h3>
-    scop 1.75 databases were replaced by <a href=http://scop.berkeley.edu/ver=2.04>SCOPe 2.04</a> databases.
-    <h3>June, 2013</h3>
-    The signal peptide identification protocol Predisi has been added to <a href=quick2_d>Quick2D</a></b>.
-    <h3>April, 2013</h3>
-    The sequence alignment tool <a href=msaprobs>MSAProbs</a> has been added to our library of programs</b>.
-    <h3>April, 2013</h3>
-    <a href=clustalw>Clustal Omega</a> has been made default for the clustal alignment protocol </b>.
-    </p>
+display: none;
+}
+
+.orbit-slide {
+max-height: 380px;
+}
+
+body {
+font-family: inherit;
+margin: 0;
+}
 
 
-    <br>
-    <div class="hr" style="margin-bottom: 20px;">&nbsp;</div>
-    <p class="message" align="justify">
-<h2>Alternative Toolkit Location</h2>
-    </p>
-    <p class="message" align="justify">
-
-  You also can use our partner Bioinformatics Toolkit at the <a href="http://toolkit.lmb.uni-muenchen.de/">Gene Center</a> of the Ludwig Maximilians University, Munich
-
-</p>
-    <div id="sitereqfull">This website is optimized for <a target="_blank" href="http://www.mozilla.org">Mozilla</a>, <a target="_blank" href="http://channels.netscape.com/ns/browsers/default.jsp">Netscape 7</a> and <a target="_blank" href="http://www.opera.com">Opera 7</a>.</div>
-
-    <div class="hr" style="margin-bottom: 20px;">&nbsp;</div>
-
-    <p class="message" align="justify">
-<h2>Job submission</h2>
-    </p>
-    <p class="message" align="justify">
-    Each tool has a
-        separate input page with a web form in which the user can input sequence data,
-        upload sequence files, and specify options. All tools that take alignments
-        as input accept the most widely used formats (FASTA, CLUSTAL, Stockholm and
-        A3M). You may also choose your own job-names to organize your work.
-        Snail symbols inside the submit buttons inform you about tools that
-        typically run for more than 10 minutes.
-    </p>
-
-    <div class="clearall">&nbsp;</div>
-
-    <p class="message" align="justify">
-<h2>Job management</h2>
-    </p>
-    <p class="message" align="justify">
-    Located on the left of the screen is a sidebar pane that holds a status
-        and section-coded list of all recent jobs in the current session. You can click
-        on previously submitted jobs to check their status and view their results.<br>
-        In general a session will last until the web browser is closed. However,
-        because of different session implementations by the various browser types, jobs
-        may occasionally disappear from the joblist. Therefore, noting down the job ids is
-        recommended. Anonymous job results are stored <strong>two
-        weeks</strong>, whereas jobs of logged-in users are stored at least <strong>two months</strong>.
-  </p>
-    <p class="message" align="justify">
-Please keep in mind, that the toolkit is focussed on providing tools,
-        not on storing results or other data: We don't backup of your
-        results. If the storage medium crashes or your job is deleted, we
-        cannot restore it! After removal or updates of databases or tools, you
-        probably will not be able to get the same results any more, even if
-        you still know your input parameters. It's your task to save your
-        results and databases.
-    </p>
-    <div class="clearall">&nbsp;</div>
-
-    <p class="message" align="justify">
-<h2>Interconnectivity</h2>
-    </p>
-    <p class="message" align="justify">
-    Most of the tools in the Toolkit are
-        interconnected, allowing job results of one tool to be forwarded as input to
-        others. For example, you could run PSI-BLAST, parse out a multiple alignment of selected
-        hits and send the results to a cluster analysis tool.
-    </p>
-
-    <div class="clearall">&nbsp;</div>
-
-    <p class="message" align="justify">
-<h2>User databases</h2>
-    </p>
-    <p class="message" align="justify">
-    You may upload customized databases which are then accessible throughout the whole toolkit (upload once, use many times).
-    </p>
-
-    <div class="hr" style="margin-bottom: 20px;">&nbsp;</div>
-    <div class="row">
-  Reference:
-        Biegert A, Mayer C, Remmert M, S&ouml;ding J and Lupas A. The
-        MPI Toolkit for protein sequence analysis <em>Nucleic Acids Res.</em>
-        <strong>34</strong>, W335-339
-        <a
-        href="http://nar.oxfordjournals.org/cgi/reprint/34/suppl_2/W335" target="_blank">(download
-            pdf)</a>
-</div>
-
-    <div class="row">
--->
-            <!--<a href="http://www.webwatch4u.com"><img src="http://monitor.webwatch4u.com/status.php?id=6240&button=3" title="WebWatch4u.com :: Serverüberwachung kostenlos" border="0" width="80" height="15"></><br>-->
-
-<!--
-        <a href="http://www.webwatch4u.com"><img src="http://monitor.webwatch4u.com/status.php?id=5799&button=3" title="WebWatch4u.com :: Serverüberwachung kostenlos" border="0" width="80" height="15"></a>
-    </div>
-
-</mainframe>
--->
+</style>
