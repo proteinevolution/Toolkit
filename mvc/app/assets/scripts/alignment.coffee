@@ -45,4 +45,16 @@
     $('#' + statid).append("<tr><td>Number of sequences</td><td>#{noSeq}</td></tr>")
   , 'text')
 
+
+@blastOutput = (tabid, statid, pathToBlastOutput) ->
+
+    # Makes AJAX call to the file on server
+  $.get(pathToBlastOutput, (content) ->
+
+    $('#' + tabid ).append content
+
+   )
+
+
+
   

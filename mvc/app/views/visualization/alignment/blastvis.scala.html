@@ -1,0 +1,17 @@
+@import play.api.mvc.RequestHeader
+@(pathToBlastOutput : String)(implicit messages: Messages, request: RequestHeader)
+
+
+<table id="blastout" class="hover alignment">
+
+</table>
+
+
+<table id="blaststats">
+
+</table>
+
+
+<script>
+blastOutput("blastout", "blaststats", '@pathToBlastOutput')
+</script>
