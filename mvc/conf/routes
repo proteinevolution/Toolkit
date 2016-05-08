@@ -11,7 +11,7 @@
 ############################################################################
 
 # Index Page requested by user. Note that the controller is injected
-GET         /                                              @controllers.Application.home(page: Int ?= 1)
+GET         /                                              @controllers.Application.index
 
 # Websocket
 GET         /ws                                            @controllers.Application.ws
@@ -35,15 +35,6 @@ GET         /jobs/:jobid                                   @controllers.Applicat
 
 POST       /upload                                         @controllers.Application.upload()
 
-#Prismic
-GET         /not-found                                     controllers.Application.brokenLink()
-GET         /documents/$id<[-_a-zA-Z0-9]{16}>/:slug        controllers.Application.detail(id, slug)
-
-# Basic search
-GET         /search                                        controllers.Application.search(q: Option[String] ?= None, page: Int ?= 1)
-
-# Preview
-GET         /preview                                       controllers.Application.preview(token: String)
 
 # Contact
 
