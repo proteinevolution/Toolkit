@@ -45,12 +45,18 @@
         @** Required for previews, edit button and experiments *@
         <script src="//static.cdn.prismic.io/prismic.min.js"></script>
 
+        <script>
+        var shiftWindow = function() { scrollBy(0, 5) };
+        window.addEventListener("hashchange", shiftWindow);
+        function load() { if (window.location.hash) shiftWindow(); }
+        </script>
+
     </head>
 
 
-    <body data-ws-url="@routes.Application.ws().webSocketURL()">
+    <body onload="load()" data-ws-url="@routes.Application.ws().webSocketURL()">
 
-        <div class="row fullwidth" style="opacity: 1;">
+        <div class="row fullwidth" id="topnavi" style="opacity: 1;">
             <div class="large-12 columns" id="subnav">
                 @elements.topnav()
             </div>
