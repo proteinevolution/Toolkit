@@ -22,7 +22,6 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "net.codingwell" %% "scala-guice" % scalaGuiceVersion,
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
   "org.mindrot" % "jbcrypt" % bcryptVersion,
-  "io.prismic" %% "scala-kit" % "1.3.7",
   "com.evojam" %% "play-elastic4s" % "0.3.0"
 )
 
