@@ -69,7 +69,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     val session_id = Session.requestSessionID(request)
 
-    Ok(views.html.main(webJarAssets, views.html.general.newcontent(),"Home")).withSession {
+    Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home")).withSession {
       Session.closeSessionRequest(request, session_id)
     }
   }
@@ -81,6 +81,17 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     Ok(views.html.general.contact()).withSession {
 
       Session.closeSessionRequest(request, Session.requestSessionID(request)) // Send Session Cookie
+    }
+
+  }
+
+
+  def sitemap(title: String = "Sitemap") = Action { implicit request =>
+
+    //TODO build xml sitemap for google
+
+    Ok(views.html.main(webJarAssets, views.html.general.sitemap(),"Sitemap")).withSession {
+      Session.closeSessionRequest(request, Session.requestSessionID(request))
     }
 
   }

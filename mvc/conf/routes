@@ -40,6 +40,10 @@ POST       /upload                                         @controllers.Applicat
 
 GET         /contact                                       @controllers.Application.contact()
 
+# Sitemap
+
+GET         /sitemap                                       @controllers.Application.sitemap()
+
 # Routes for Auth Service
 GET         /signin                                        @controllers.Auth.signIn(username : String = "")
 GET         /signin/:username                              @controllers.Auth.signIn(username : String)

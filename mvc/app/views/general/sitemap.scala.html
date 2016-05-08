@@ -87,6 +87,8 @@ max-height: 380px;
          .attr("width", 960)
          .attr("height", 960);
 
+ $("svg").css({top: 200, left: '50%', position:'absolute', transform: 'translateX(-50%)'});
+
 
  var legend = svg.append("g")
          .attr("class", "legend")
@@ -211,6 +213,5 @@ max-height: 380px;
  d3.select(self.frameElement).style("height", outerRadius * 2 + "px");
 
 
-
+m.route.mode = "search"
 </script>
-
