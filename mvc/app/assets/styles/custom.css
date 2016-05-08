@@ -83,6 +83,7 @@ tr.spaceUnder > td
 .tabs {
     border: 0;
     color: #fff;
+    float: left;
 }
 
 .navbar-tabs{
@@ -258,3 +259,33 @@ hr {
 #auth-dropdown {
     z-index: 100;
 }
+
+
+#helpDiv {
+    float: right;
+    font-size: .75rem;
+    margin-top: 1em;
+}
+
+#helpModal {
+
+    height: 40em;
+}
+
+#helpModal p {
+
+    font-size: small;
+}
+
+#helpModal h4 {
+
+    background-color: #B6D7D3;
+    padding-left: 0.10em;
+}
+
+#helpModal h6 {
+
+   font-weight: bold;
+}
+
+

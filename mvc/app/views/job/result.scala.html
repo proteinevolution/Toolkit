@@ -1,15 +1,59 @@
 @(visualizations : Map[String, Html], jobID : Int)(implicit messages: Messages, request: RequestHeader)
 
+<div>
 
-<ul class="tabs" data-tabs id="example-tabs">
-@for((key, _) <- visualizations) {
+    <ul class="tabs" data-tabs id="example-tabs">
+        @for((key, _) <- visualizations) {
 
-        <li class="tabs-title"><a href="#@key" aria-selected="true">@key</a></li>
-}
-    <!--
+            <li class="tabs-title"><a href="#@key" aria-selected="true">@key</a></li>
+        }
+            <!--
 <li class="tabs-title"><a href="#toolkit-forward-panel" aria-selected="true">Child Job</a></li>
 -->
-</ul>
+
+    </ul>
+
+    <div id="helpDiv">
+        <p><a data-open="helpModal">Help</a></p>
+    </div>
+
+
+    <div class="small reveal" id="helpModal" data-reveal>
+        <div class="row collapse">
+            <div class="medium-2 columns">
+                 <ul class="tabs vertical helpTabs" id="example-vert-tabs" data-tabs>
+                    <li class="tabs-title is-active"><a href="#panel1v" aria-selected="true">Overview</a></li>
+                    <li class="tabs-title"><a href="#panel2v">Parameters</a></li>
+                    <li class="tabs-title"><a href="#panel3v">Results</a></li>
+                </ul>
+            </div>
+
+            <div class="medium-10 columns">
+                <div class="tabs-content vertical" data-tabs-content="example-vert-tabs">
+                    <div class="tabs-panel is-active" id="panel1v">
+                            <h4>PSI-BLAST Overview</h4>
+                            <p>Search with an amino acid sequence against protein databases for locally similar sequences. Similar to Protein BLAST but more sensitive. PSIBLAST first performs a BLAST search and builds an alignment from the best local hits. This alignment is then used as a query for the next round of search. After each successive round the search alignment is updated.
+                             </p>
+                    </div>
+                    <div class="tabs-panel" id="panel2v">
+                        <h4>PSI-BLAST Parameters</h4>
+                           <h6>Input</h6>
+                           <p>Enter single protein sequence or protein sequence alignment and choose its format from the dropdown menu. </p>
+                        <h6>Input Format</h6>
+                           <p> Accepted formats are listed in the dropdown menu. FASTA input format accepts a single raw sequence without headers as well. Format descriptions can be found <a href="/reformat/help_params#formats">here</a></p>
+                        <h6>Database</h6>
+                           <p>The selected databases are used by BLAST to perform the search. You may press CTRL to select multiple databases. </p>
+                    </div>
+                    <div class="tabs-panel" id="panel3v">
+                         <h4>PSI-Blast Results</h4>
+                            <p>At the top of the results page is a "View alignment"-"button, that shows the multiple alignment of all hits. Then there is a list with brief information about all hits that were found. They are listed together with their scores and e-values. There you can select the ones, you want to work with. Below this you can find more information. There are all pairwise alignments and there is also additional information about the method, the identities and the positives. There you also have the possibility to select the hits, you want to work with. At the bottom you can find more information about the database and the matrix. </p>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </div>
+
+</div>
 
 
 
@@ -21,7 +65,9 @@
     <div class="tabs-panel" id="@key">
         @value
     </div>
+
 }
+
 
 
 <!--
