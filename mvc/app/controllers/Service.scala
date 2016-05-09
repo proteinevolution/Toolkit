@@ -35,6 +35,17 @@ class Service @Inject() (val messagesApi: MessagesApi,
   case class AddChildJob(parent_job_id: String, toolname: String, links: Seq[Link])
 
 
+  def static(static : String)  = Action { implicit request =>
+
+    static match {
+
+      case "sitemap" =>
+        Ok(views.html.general.sitemap()).withSession {
+          Session.closeSessionRequest(request, Session.requestSessionID(request))
+        }
+    }
+  }
+
   /*
     Defines appropriate JSON conversions
    */
