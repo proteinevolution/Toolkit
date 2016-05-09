@@ -40,9 +40,6 @@ POST       /upload                                         @controllers.Applicat
 
 GET         /contact                                       @controllers.Application.contact()
 
-# Sitemap
-
-GET         /sitemap                                       @controllers.Application.sitemap()
 
 # Routes for Auth Service
 GET         /signin                                        @controllers.Auth.signIn(username : String = "")
@@ -56,11 +53,8 @@ GET         /signout                                       @controllers.Auth.sig
 POST        /tools/form/:toolname                          @controllers.Application.form(toolname : String)
 
 
-
 # Submit Route
 POST        /tools/:toolname                               @controllers.Tool.submit(toolname : String, start : Boolean, jobID: Option[Int])
-
-
 
 
 # Interaction with Jobs
@@ -74,7 +68,13 @@ POST        /tools/:toolname                               @controllers.Tool.sub
 GET         /jobs/get/:jobid                               @controllers.Service.getJob(jobid : Int)
 # Delete a Job
 POST        /jobs/del/:jobid                               @controllers.Service.delJob(jobid : Int)
+
+GET         /static/get/:static                                @controllers.Service.static(static : String)
 # Add a Child Job
 #POST        /jobs/addChild                  @controllers.Service.addChild
 # Clear a Job
 #POST        /jobs/clear/:jobid              @controllers.Service.clearJob(jobid: String)
+
+# Sitemap
+# Routes for static assets
+GET         /:static                                       @controllers.Application.static(static : String)

@@ -24,9 +24,19 @@ Jobs =
       url: "/jobs/get/" + controller.job_id).done (data) ->
         $('#content').empty().prepend data
 
+
+Static =
+  controller: ->
+    { static: m.route.param('static') }
+  view: (controller) ->
+    $.ajax(
+      type: "GET"
+      url: "/static/get/" + controller.static ).done (data) ->
+        $('#content').empty().prepend data
+
+
 #setup routes to start w/ the `#` symbol
 m.route.mode = 'hash'
 
-
 #define a route
-m.route document.getElementById('content'), '/', { '/tools/:toolname': Tools, '/jobs/:jobid' : Jobs }
+m.route document.getElementById('content'), '/', { '/tools/:toolname': Tools,'/jobs/:jobid' : Jobs, '/:static' : Static }

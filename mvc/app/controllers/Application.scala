@@ -45,10 +45,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
 
 
-
-
-
-
   def ws = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
 
     Logger.info("Application attaches WebSocket")
@@ -86,16 +82,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   }
 
 
-  def sitemap(title: String = "Sitemap") = Action { implicit request =>
-
-    //TODO build xml sitemap for google
-
-    Ok(views.html.main(webJarAssets, views.html.general.sitemap(),"Sitemap")).withSession {
-      Session.closeSessionRequest(request, Session.requestSessionID(request))
-    }
-
-  }
-
 
   // Route is handled by Mithril
   def showTool(toolname: String) = Action { implicit request =>
@@ -108,6 +94,13 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     Redirect(s"/#/jobs/$job_id")
   }
+
+
+  def static(static : String) = Action { implicit request =>
+
+    Redirect(s"/#/$static")
+  }
+
 
   /*
     *  Return the Input form of the corresponding tool
