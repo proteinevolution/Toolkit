@@ -43,6 +43,11 @@ class Service @Inject() (val messagesApi: MessagesApi,
         Ok(views.html.general.sitemap()).withSession {
           Session.closeSessionRequest(request, Session.requestSessionID(request))
         }
+
+      case "reformat" =>
+        Ok(views.html.reformat.form()).withSession {
+          Session.closeSessionRequest(request, Session.requestSessionID(request))
+        }
     }
   }
 

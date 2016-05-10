@@ -111,7 +111,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
       case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
       case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
-      case "reformat" => views.html.reformat.form(Hmmer3.inputForm)
       case "psiblast" => views.html.psiblast.form(Psiblast.inputForm)
       case "mafft" => views.html.mafft.form(Mafft.inputForm)
       case "csblast" => views.html.csblast.form(Csblast.inputForm)
@@ -122,8 +121,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
       Session.closeSessionRequest(request, Session.requestSessionID(request)) // Send Session Cookie
     }
   }
-
-
 
   /**
    * Allows to access result files by the filename and a given jobID

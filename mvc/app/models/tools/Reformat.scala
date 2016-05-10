@@ -13,12 +13,5 @@ object Reformat extends ToolModel {
   val toolNameLong:String         = "Reformat"
   val toolNameAbbreviation:String = "form"
 
-  // --- Hmmer3 specific values ---
-  // Returns the Input Form Definition of this tool
-  val inputForm = Form(
-    tuple(
-      "alignment" -> nonEmptyText,
-      "alignment_format" -> text
-    )
-  )
+
 }
