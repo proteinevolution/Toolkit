@@ -1,7 +1,4 @@
-<div class="title-bar" data-responsive-toggle="example-menu" data-hide-for="medium">
-    <button class="menu-icon" type="button" data-toggle></button>
-    <div class="title-bar-title">Menu</div>
-</div>
+
 
 <div data-sticky-container>
     <div class="top-bar sticky fullwidth" id="stickyheader" style="width:100%; opacity: 0.9;" data-sticky data-options="marginTop:0;" data-top-anchor="top" data-btm-anchor="blaststats:bottom">
@@ -13,14 +10,147 @@
                 </label>
             </div>
         </div>
-        <div class="top-bar-right">
+        <div class="top-bar-title">
+            <div class="drops">
+                <button  class="button" id="but1" type="button" data-toggle="dropdown-1" >Search</button>
+                    <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="75" id="dropdown-1" data-dropdown data-hover="true" data-hover-pane="true" animate="slide-in-down">
+                        <div class="large-3 columns">
+                            <ul class="objects"  style="list-style: none">
+                                <li style="padding-top: 1em"><a onclick="location.href='/#/tools/hmmer3'">Hmmer3</a></li>
+                                <li style="padding-top: 2em"><a onclick="location.href='/#/tools/psiblast'">PSI-BLAST</a></li>
+                                <li style="padding-top: 5em"><a onclick="location.href='/#/tools/csblast'">CS-BLAST</a></li>
+                            </ul>
+                        </div>
+                        <div class="large-9 columns">
+                            <ul class="textArea"  style="list-style: none">
+                                <li> Fast, PSI-BLAST accelerated HMMER search. About 30 times faster for the nr database.</li>
+                                <li> Search with an amino acid sequence against protein databases for locally similar sequences. Similar to ProteinBLAST but more sensitive. PSI-BLAST first performs a BLAST search and builds an alignment from the best local hits. This alignment is then used as a query for the next round of search. After each successive round the search alignment is updated.</li>
+                                <li> CS-BLAST is an extension to standard NCBI BLAST that allows to increase its sensitivity by a factor of more than two on remote homologs at the same speed. CS-BLAST first adds context-specific pseudocounts to the input sequence and then jumpstarts PSI-BLAST with the resulting profile. The output is identical to BLAST and contains a list of closest homologs with alignments.
+                                    The software can be downloaded here. </li>
+                            </ul>
+                        </div>
+                    </div>
+                <button  class="button" type="button" data-toggle="dropdown-2">Alignment</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-2" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-3 columns">
+                        <ul class="objects"  style="list-style: none">
+                            <li style="padding-top: 1em"><a onclick="location.href='/#/tools/alnviz'">AlignmentViewer</a></li>
+                            <li style="padding-top: 2em"><a onclick="location.href='/#/tools/tcoffee'">T-Coffee</a></li>
+                            <li style="padding-top: 2em"><a onclick="location.href='/#/tools/mafft'">MAFFT</a></li>
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                            <li> Alignment viewer with BioJS MSA viewer.</li>
+                            <li> Multiple sequence alignment tool for protein and nucleotide sequences. (T-Coffee:Tree-based Consistency Objective Function for alignment Evaluation).</li>
+                            <li> A very accurate multiple alignment program for amino acid or nucleotide sequences. (MAFFT: Multiple sequence Alignment based on Fast Fourier Transform)</li>
+                        </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-3">Sequence Analysis</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-3" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-3 columns">
+                        <ul class="objects"  style="list-style: none">
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                        </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-4">2aryStructure</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-4" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-3 columns">
+                        <ul class="objects"  style="list-style: none">
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                        </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-5">3aryStructure</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-5" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-3 columns">
+                        <ul class="objects"  style="list-style: none">
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                        </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-6">Classification</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-6" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-3 columns">
+                        <ul class="objects"  style="list-style: none">
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                        </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-7">Utilities</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-7" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-3 columns">
+                        <ul class="objects"  style="list-style: none">
+                            <li style="padding-top: 1em"><a onclick="location.href='/#/reformat'">Reformat</a></li>
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                            <li>Sequence reformatting utility.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+   </div>
+</div>
+
+
+<script type="text/javascript">
+
+                $(function(){
+                    // Check the initial Poistion of the Sticky Header
+                    var stickyHeaderTop = $('#stickyheader').offset().top;
+
+                    $(window).scroll(function(){
+                        if( $(window).scrollTop() > stickyHeaderTop ) {
+                            $('#stickyheader').css({position: 'fixed', top: '0px'});
+                            $('#stickyalias').css('display', 'block');
+                        } else {
+                            $('#stickyheader').css({position: 'static', top: '0px'});
+                            $('#stickyalias').css('display', 'none');
+                        }
+                    });
+                });
+
+                $("a[href='#']").click(function() {
+                    $("html, body").animate({ scrollTop: 0 }, "slow");
+                    return false;
+                });
+
+                $('#section').click(function() {
+                    $('html,body').animate({scrollTop: $(this).offset().top}, 500);
+                });
+
+
+
+</script>
+
+<!--     <div class="top-bar-right">
             <ul class="dropdown menu" id="toolsdropdown" style="opacity: 0.9;" data-dropdown-menu data-closing-time="20">
                 <li>
                     <a href="#" id="section">Search</a>
                     <ul class="menu vertical" id="dropdowns">
-                        <li><a href="/#/tools/hmmer3" id="section">Hmmer3</a></li>
-                        <li><a  href="/#/tools/psiblast" id="section">PSI-BLAST</a></li>
-                        <li><a  href="/#/tools/csblast" id="section">CS-BLAST</a></li>
+                        <div class="row fullwidth">
+                            <li><a href="/#/tools/hmmer3" id="section">Hmmer3</a></li>
+                            <li><a  href="/#/tools/psiblast" id="section">PSI-BLAST</a></li>
+                            <li><a  href="/#/tools/csblast" id="section">CS-BLAST</a></li>
+                        </div>
+
                     </ul>
                 </li>
                 <li>
@@ -80,35 +210,6 @@
         </div>
 
 
-    </div>
+    </div> -->
 </div>
 
-
-<script type="text/javascript">
-
-                $(function(){
-                    // Check the initial Poistion of the Sticky Header
-                    var stickyHeaderTop = $('#stickyheader').offset().top;
-
-                    $(window).scroll(function(){
-                        if( $(window).scrollTop() > stickyHeaderTop ) {
-                            $('#stickyheader').css({position: 'fixed', top: '0px'});
-                            $('#stickyalias').css('display', 'block');
-                        } else {
-                            $('#stickyheader').css({position: 'static', top: '0px'});
-                            $('#stickyalias').css('display', 'none');
-                        }
-                    });
-                });
-
-                $("a[href='#']").click(function() {
-                    $("html, body").animate({ scrollTop: 0 }, "slow");
-                    return false;
-                });
-
-                $('#section').click(function() {
-                    $('html,body').animate({scrollTop: $(this).offset().top}, 500);
-                });
-
-
-</script>
