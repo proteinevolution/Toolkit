@@ -2,9 +2,10 @@ package master
 
 import java.io
 import java.io.{BufferedWriter, FileWriter}
+import java.nio.file.attribute.PosixFilePermission
 
 import akka.actor.{Actor, ActorLogging, Props}
-import better.files._
+import better.files._, Cmds._
 import com.typesafe.config.ConfigFactory
 import models.distributed.FrontendMasterProtocol.{Delete, Prepare}
 import models.distributed.Work
@@ -13,6 +14,7 @@ import models.jobs.{Done, Error, Running}
 
 import scala.sys.process._
 import scala.util.matching.Regex
+
 
 
 
@@ -62,6 +64,7 @@ class WorkExecutor extends Actor with ActorLogging {
           // PREPARE STEP
           // Assemble the path were the Job directory is located
           val rootPath  = s"$jobPath$SEP${userJob.jobID.toString}$SEP"
+          val runscript = s"$rootPath${userJob.tool.toolname}.sh".toFile
 
           // If the Job directory does not exist yet, make a new one
           subdirs.foreach { s => (rootPath + s).toFile.createDirectories() }
@@ -83,7 +86,7 @@ class WorkExecutor extends Actor with ActorLogging {
           if(userJob.start) {
             for (line <- s"$runscriptPath${userJob.tool.toolname}.sh".toFile.lines) {
 
-              s"$rootPath${userJob.tool.toolname}.sh".toFile.appendLine(
+              runscript.appendLine(
                 argumentPattern.replaceAllIn(line.split('#')(0), { m =>
 
                   m.group("selector") match {
@@ -104,7 +107,9 @@ class WorkExecutor extends Actor with ActorLogging {
                   }
                 }))
             }
-            ("chmod u+x " + rootPath + userJob.tool.toolname + ".sh").! // TODO Is there a neater way to change the permission?
+            
+            chmod_+(PosixFilePermission.OWNER_EXECUTE, runscript)
+
 
             // Run the tool async in the execution context of the worker
 
