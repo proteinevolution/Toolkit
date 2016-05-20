@@ -23,6 +23,7 @@ Jobs =
       type: "GET"
       url: "/jobs/get/" + controller.job_id).done (data) ->
         $('#content').empty().prepend data
+        $("html, body").animate({ scrollTop: 0 }, "fast")
 
 
 Static =
@@ -33,6 +34,7 @@ Static =
       type: "GET"
       url: "/static/get/" + controller.static ).done (data) ->
         $('#content').empty().prepend data
+        $("html, body").animate({ scrollTop: 0 }, "fast")
 
 
 #setup routes to start w/ the `#` symbol
