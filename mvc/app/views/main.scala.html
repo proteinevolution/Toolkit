@@ -47,16 +47,15 @@
 
     <body onload="load()" data-ws-url="@routes.Application.ws().webSocketURL()">
 
-        <div class="row fullwidth" id="topnavi" style="opacity: 1;">
+        <div class="row fullwidth show-for-large" id="topnavi" style="opacity: 1;">
             <div class="large-12 columns" id="subnav">
                 @elements.topnav()
             </div>
         </div>
 
         <!---Top-Bar with Logo/Search and Dropdown --->
-        <div class="row fullwidth" id="header" style="opacity: 1;" data-equalizer>
-            <div class="large-5 medium-8 hide-for-small-only columns"  data-equalizer-watch>
-               <!-- <div class="logo"><a href=""><img src="@routes.Assets.at("images/TestLogo.png")"> </a></div> -->
+        <div class="row fullwidth hide-for-small-only" id="header" style="opacity: 1;" >
+            <div class="large-5 medium-8 hide-for-small-only columns"  >
                <div class="logo"><a href=""><img style="width: 42%" src="@routes.Assets.at("images/logo.svg")"></a></div> <!-- SVG Minerva -->
             </div>
         </div>
@@ -70,7 +69,7 @@
 
         <!---Main Content Section includes Sidebar and Content --->
         <section class="row fullwidth main-content">
-            <div class="large-2 small-2 columns sidebar padded-column show-for-large" id="sidebar-switch">
+            <div class="large-2 show-for-large columns sidebar padded-column show-for-large" id="sidebar-switch">
 
                 @elements.sidebar()
 

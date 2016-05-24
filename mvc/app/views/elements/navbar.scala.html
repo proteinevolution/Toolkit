@@ -1,8 +1,11 @@
+<div class="title-bar" data-responsive-toggle="stickyheader" data-hide-for="large">
+    <button class="menu-icon dark" type="button" data-toggle></button>
+    <div class="title-bar-title">Menu</div>
+</div>
 
-
-<div data-sticky-container>
-    <div class="top-bar sticky fullwidth" id="stickyheader" style="width:100%; opacity: 0.9;" data-sticky data-options="marginTop:0;" data-top-anchor="top" data-btm-anchor="blaststats:bottom">
-        <div class="top-bar-left">
+<div data-sticky-container class="show-for-large">
+    <div class="top-bar sticky fullwidth row" id="stickyheader" style="width:100%; opacity: 0.9;" data-sticky data-options="marginTop:0;" data-top-anchor="top" data-btm-anchor="blaststats:bottom">
+        <div class="top-bar-left large-1 columns show-for-large">
             <div class="switch tiny" id="hideSwitch">
                 <input class="switch-input" id="exampleSwitch" type="checkbox" name="exampleSwitch">
                 <label class="switch-paddle isLeft" for="exampleSwitch" id="paddle" >
@@ -10,7 +13,7 @@
                 </label>
             </div>
         </div>
-        <div class="top-bar-title">
+        <div class="top-bar-title large-11 columns">
             <div class="drops">
                 <button  class="button" id="but1" type="button" data-toggle="dropdown-1" >Search</button>
                     <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="75" id="dropdown-1" data-dropdown data-hover="true" data-hover-pane="true" animate="slide-in-down">
