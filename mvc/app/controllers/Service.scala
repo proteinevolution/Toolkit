@@ -132,7 +132,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
             //  The tool anlviz just returns the BioJS MSA Viewer page
             case "alnviz" =>
               val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$jobID/result"))
-              views.html.job.result(vis, jobID)
+              views.html.job.result(vis, jobID, toolname)
 
 
             // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
@@ -142,7 +142,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
                 "Simple" -> views.html.visualization.alignment.simple(s"/files/$jobID/sequences.clustalw_aln"),
                 "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$jobID/sequences.clustalw_aln"))
 
-              views.html.job.result(vis, jobID)
+              views.html.job.result(vis, jobID, toolname)
 
             case "psiblast" =>
 
@@ -151,7 +151,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
                 "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$jobID/sequences.clustalw_aln"),
                 "Evalue" -> views.html.visualization.alignment.evalues(s"/files/$jobID/evalues.dat"))
 
-              views.html.job.result(vis, jobID)
+              views.html.job.result(vis, jobID, toolname)
 
             // Hmmer just provides a simple file viewer.
             case "hmmer3" => views.html.visualization.general.fileview(
