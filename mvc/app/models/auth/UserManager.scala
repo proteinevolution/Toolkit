@@ -3,6 +3,7 @@ package models.auth
 import javax.inject.{Singleton, Inject}
 
 import models.database.User
+import models.mailing.NewUserWelcomeMail
 import org.mindrot.jbcrypt.BCrypt
 
 /**
@@ -15,11 +16,13 @@ import org.mindrot.jbcrypt.BCrypt
   * @see [[http://www.mindrot.org/files/jBCrypt/jBCrypt-0.2-doc/BCrypt.html#gensalt(int) gensalt]]
   */
 @Singleton
-class UserManager @Inject ()(userDB : models.database.Users) { // User Database
+class UserManager @Inject ()(userDB : models.database.Users, // User Database
+                             mailing: controllers.Mailing) { // Mailing Controller
   val LOG_ROUNDS : Int = 10 // Number of rounds for BCrypt to hash the Password (2^x) // TODO Move to the config?
 
   /**
     * Checks if a user with the given account name exists and returns the user object
+    *
     * @param name_login account name of the User
     * @param name_last  last name of the User
     * @param name_first first name of the User
@@ -37,13 +40,14 @@ class UserManager @Inject ()(userDB : models.database.Users) { // User Database
                                                    name_first,     // First Name
                                                    hash(password), // Immediately hash the password!
                                                    email))         // E-Mail
-
+        mailing.sendEmail(newUser.get, new NewUserWelcomeMail) // Send the
         LoggedIn(newUser.get)
     }
   }
 
   /**
     * Checks if the user exists and if the password matches
+    *
     * @param name_login account name of the User
     * @param password   password of the User
     * @return
@@ -85,6 +89,7 @@ class UserManager @Inject ()(userDB : models.database.Users) { // User Database
 
 /**
   * Abstract object returning whether the Action was successful or not
+  *
   * @param success whether the action was successful or not
   * @param message the message which should be displayed to the User
   */

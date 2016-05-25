@@ -18,17 +18,26 @@ import scala.concurrent.duration.Duration
   */
 
 class UsersTableDef(tag: Tag) extends Table[User](tag, "users") {
+  def user_id            = column[Long]("user_id", O.PrimaryKey, O.AutoInc)
+  def name_login         = column[String]("name_login")
+  def name_first         = column[String]("name_first")
+  def name_last          = column[String]("name_last")
+  def password           = column[String]("password")
+  def email              = column[String]("email")
+  def institute          = column[String]("institute")
+  def street             = column[String]("street")
+  def city               = column[String]("city")
+  def country            = column[String]("country")
+  def groups             = column[String]("groups")
+  def role               = column[String]("role")
+  def security_token     = column[String]("security_token")
 
-  def user_id    = column[Long]("user_id", O.PrimaryKey, O.AutoInc)
-  def name_login = column[String]("name_login")
-  def name_first = column[String]("name_first")
-  def name_last  = column[String]("name_last")
-  def password   = column[String]("password")
-  def email      = column[String]("email")
-  def created_on = column[Long]("created_on")
-  def updated_on = column[Long]("updated_on")
+  def security_token_exp = column[Long]("security_token_exp")
+  def created_on         = column[Long]("created_on")
+  def updated_on         = column[Long]("updated_on")
+  def logged_in_on       = column[Long]("logged_in_on")
 
-  override def * = (user_id.?, name_login, name_last, name_first, password, email) <>(User.tupled, User.unapply)
+  override def * = (user_id.?, name_login, name_last, name_first, password, email) <> (User.tupled, User.unapply)
 }
 
 @Singleton
@@ -83,3 +92,8 @@ case class User(val user_id    : Option[Long],
                 val name_first : String,
                 val password   : String,
                 val email      : String)
+
+//User Data Object used for database storage and interaction
+case class UserSecurityToken(val user_id            : Option[Long],
+                             val security_token     : String,
+                             val security_token_exp : Long)
