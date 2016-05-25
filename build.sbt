@@ -7,7 +7,7 @@ val bcryptVersion = "0.3m"
 val highchartsVersion = "4.2.4"
 val d3Version = "3.5.16"
 val scalaGuiceVersion = "4.0.1"
-
+val playMailerVersion = "5.0.0-M1"
 
 val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
@@ -22,7 +22,8 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "net.codingwell" %% "scala-guice" % scalaGuiceVersion,
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
   "org.mindrot" % "jbcrypt" % bcryptVersion,
-  "com.evojam" %% "play-elastic4s" % "0.3.0"
+  "com.evojam" %% "play-elastic4s" % "0.3.0",
+  "com.typesafe.play" %% "play-mailer" % playMailerVersion  // Mailer Plugin: https://github.com/playframework/play-mailer
 )
 
 /*
