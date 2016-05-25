@@ -1,7 +1,7 @@
 package controllers
 
 import actors.WebSocketActor
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
@@ -9,26 +9,23 @@ import play.api.libs.streams.ActorFlow
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 
 import models.sessions.Session
 import models.tools._
-import actors.MasterConnection
-
 
 import scala.concurrent.duration._
 import scala.concurrent.Future
 import play.api.mvc._
 import play.api.Configuration
-import play.api.libs.concurrent.Execution.Implicits._
 
 
 @Singleton
 class Application @Inject()(webJarAssets: WebJarAssets,
                             val messagesApi: MessagesApi,
                             system: ActorSystem,
-                            masterConnection : MasterConnection,
                             mat: Materializer,
+                            @Named("jobManager") jobManager : ActorRef,    // Connect to JobManager
                             configuration: Configuration) extends Controller with I18nSupport {
 
 
@@ -50,7 +47,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     Logger.info("Application attaches WebSocket")
     Session.requestSessionID(request) match {
 
-      case sid => Future.successful {  Right(ActorFlow.actorRef(WebSocketActor.props(sid, masterConnection.masterProxy))) }
+      case sid => Future.successful {  Right(ActorFlow.actorRef(WebSocketActor.props(sid, jobManager))) }
     }
   }
 

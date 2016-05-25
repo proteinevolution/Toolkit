@@ -1,7 +1,9 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 
+import actors.JobManager.Prepare
+import akka.actor.ActorRef
 import akka.util.Timeout
 import models.tools._
 import models.sessions.Session
@@ -9,7 +11,6 @@ import models.sessions.Session
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import actors.MasterConnection
 import play.api.Logger
 
 /**
@@ -38,13 +39,13 @@ object Tool {
 
 @Singleton
 class Tool @Inject()(val messagesApi: MessagesApi,
-                     masterConnection: MasterConnection) extends Controller with I18nSupport {
+                     @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport {
 
   implicit val timeout = Timeout(5.seconds)
 
-  import models.distributed.FrontendMasterProtocol._
 
   def submit(toolname: String, start : Boolean, jobID : Option[Int]) = Action { implicit request =>
+
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
 
@@ -73,7 +74,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
           BadRequest("There was an error with the Form")
         },
-        _ => masterConnection.masterProxy ! Prepare(sessionID, jobID, toolname, boundForm.data, start = start)
+        _ => jobManager ! Prepare(sessionID, jobID, toolname, boundForm.data, start = start)
       )
       Ok
     }
