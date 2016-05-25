@@ -1,32 +1,31 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 
-import actors.MasterConnection
+import actors.JobManager.{Delete, JobIDUnknown, JobInfo, PermissionDenied}
+import akka.actor.ActorRef
 import akka.util.Timeout
-import models.distributed.FrontendMasterProtocol.{Delete, Get, JobUnknown, SessionIDUnknown}
 import models.graph.Link
-import models.jobs._
 import models.sessions.Session
 import akka.pattern.ask
+import models.jobs.JobState
+
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 /**
-  * This controller is intended to provide a WebService Interface for Mithril
   *
   *
   * Created by lukas on 2/27/16.
   */
-
 @Singleton
 class Service @Inject() (val messagesApi: MessagesApi,
-                         masterConnection : MasterConnection) extends Controller with I18nSupport {
+                         @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport {
 
   implicit val timeout = Timeout(5.seconds)
 
@@ -73,9 +72,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
     */
   def delJob(jobID: Int) = Action { implicit request =>
 
-    val sessionID = Session.requestSessionID(request) // Grab the Session ID
-    masterConnection.masterProxy ! Delete(sessionID, jobID)
-
+    jobManager ! Delete(Session.requestSessionID(request), jobID)
     Ok
   }
 
@@ -103,29 +100,32 @@ class Service @Inject() (val messagesApi: MessagesApi,
     }
   } */
 
-
-
-  def getJob(jobID: Int) = Action.async { implicit request =>
+  /**
+    * Returns JobState and toolname
+    *
+    * @param jobID
+    * @return
+    */
+  def jobInfo(jobID: Int) = Action.async { implicit request =>
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
 
-    (masterConnection.masterProxy ? Get(sessionID, jobID)).map {
+    (jobManager ? JobInfo(sessionID, jobID)).map {
 
-      case SessionIDUnknown => NotFound
-      case JobUnknown => NotFound
+      case JobIDUnknown => NotFound
+      case PermissionDenied => NotFound
 
-      case (state: JobState, toolname : String)  =>
+      case (state: JobState.JobState, toolname : String)  =>
 
         // Decide what to show depending on the JobState
-
       state match {
 
         // User has requested a job whose state is Running
-        case Running => Ok(views.html.job.running(jobID)).withSession {
+        case JobState.Running => Ok(views.html.job.running(jobID)).withSession {
           Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
         }
         // User requested job whose execution is done
-        case Done =>
+        case JobState.Done =>
 
           val toolframe = toolname match {
 
@@ -161,20 +161,11 @@ class Service @Inject() (val messagesApi: MessagesApi,
             Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
           }
 
-        case Error =>
+        case JobState.Error =>
 
           Ok(views.html.job.error(jobID)).withSession {
             Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
           }
-
-        case Queued =>
-
-          Ok(views.html.job.queued(jobID)).withSession {
-            Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
-          }
-
-
-
       }
     }
   }

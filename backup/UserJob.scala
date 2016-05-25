@@ -2,7 +2,7 @@ package models.jobs
 
 import akka.actor.ActorRef
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
-import models.distributed.ToolkitClusterEvent.JobStateChanged
+import .JobStateChanged
 import models.graph._
 import play.api.Logger
 

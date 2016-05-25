@@ -1,9 +1,12 @@
-package master
+package actors
 
+import javax.inject.Singleton
+
+import actors.Worker.Work
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.cluster.pubsub.DistributedPubSub
-import models.distributed.FrontendMasterProtocol._
-import models.distributed.{FrontendMasterProtocol, MasterWorkerProtocol, Work}
+import models.protocols.ClientManagerProtocol._
+import models.protocols.{ClientManagerProtocol, Work}
 import models.jobs.UserJob
 import play.api.Logger
 
@@ -17,18 +20,22 @@ object Master {
 
   private sealed trait WorkerStatus
   private case object Idle extends WorkerStatus
-  private case class Busy(workID: String) extends WorkerStatus
+  private case class Busy(workID: Int) extends WorkerStatus
   private case class WorkerState(ref: ActorRef, status: WorkerStatus)
 
   private case object CleanupTick
 
 }
 
+
+
+
+@Singleton
 class Master extends Actor with ActorLogging {
 
   import Master._
-  import models.distributed.WorkState
-  import models.distributed.WorkState._
+  import models.protocols.WorkState
+  import models.protocols.WorkState._
 
 
   // Random number Generator used to generate jobIDs // TODO We should 'persist' the state of these fields
@@ -39,12 +46,12 @@ class Master extends Actor with ActorLogging {
 
   // Counter for WorkID and JobID
   var workIDCounter : Long = 0  // TODO Maybe replace by Config
-  var mainIDCounter : Long = 0
+
 
   // workState is event sourced
   private var workState = WorkState.empty
 
-  // workers are not event sourced //TODO Master currently spawns workers by himself. Shouldn't be the case
+  // workers are not event sourced
   private val workers = scala.collection.mutable.Map[String, WorkerState](
     "worker1" -> WorkerState(context.actorOf(Worker.props(self, "worker1")), Idle),
     "worker2" -> WorkerState(context.actorOf(Worker.props(self, "worker2")), Idle),
@@ -127,48 +134,7 @@ class Master extends Actor with ActorLogging {
 
 
 
-  /*
-    * Generates a new JobID for the particular job
-    *
-    * @param job_id_o selected job_id
-    * @return
-    */
-  /*
-  def checkOrGenerateJobID(job_id_o: Option[String]): String = {
 
-    val fakeUserID = 12345 // TODO UserID not currently implemented
-
-    // Determine the Job ID for the Job that was submitted
-    var job_id: String = job_id_o.getOrElse(RandomString.randomNumString(7))
-    while (jobDB.get(fakeUserID, job_id).nonEmpty) {
-      job_id = RandomString.randomNumString(7)
-    }
-    job_id
-  }
-
-
-  def addJob(sender: ActorRef, sessionID: String, dbJob: DBJob) = {
-
-    val job = UserJob(self, dbJob.toolname, dbJob.job_id, dbJob.user_id, dbJob.job_state, startImmediate = true)
-    val jobRef = jobRefDB.update(dbJob, sessionID)
-
-    userJobs(sessionID).append(job)
-    databaseMapping(sessionID).append(jobRef)
-
-    sender ! UpdateJob(job)
-  } */
-
-
-  //ClusterClientReceptionist(context.system).registerService(self)
-
-
-  // workers state is not event sourced TODO Currently the workers are injected into the Master
-  //private var workers = Map[String, WorkerState]()
-
-  //val cleanupTask = context.system.scheduler.schedule(workTimeout / 2, workTimeout / 2,
-  //  self, CleanupTick)
-
-  //override def postStop(): Unit = cleanupTask.cancel()
 
   // TODO Only for persistent actor
   /*
@@ -183,19 +149,8 @@ class Master extends Actor with ActorLogging {
   override def receive: Receive = {
 
 
-      /* TODO Database currently disabled// TODO This will be rather slow, we shouldn't do that
-      // Load All Jobs from the Database
-      for (jobRef <- jobRefDB.get(sessionID)) {
-        val dbJob_o = jobDB.get(jobRef.main_id)
-        dbJob_o match {
-          // job with the main_id exists, add the job
-          case Some(dbJob) => addJob(sender(), sessionID, dbJob)
-          case None => jobRefDB.delete(jobRef)
-        }
-      } */
-
-
       /* Master handles the different requests */
+
 
     // Prepare Requests
     case userRequest@Prepare(sessionID, jobID, toolname, params, start) =>
@@ -224,7 +179,7 @@ class Master extends Actor with ActorLogging {
         if(!userJobs(sessionID).contains(jobID)) {
 
           Logger.info("JobID " + jobID + " is unknown for userID" + sessionID)
-          sender() ! FrontendMasterProtocol.JobUnknown
+          sender() ! ClientManagerProtocol.JobUnknown
         } else {
 
           val userJob = userJobs(sessionID).remove(jobID).get
@@ -239,14 +194,14 @@ class Master extends Actor with ActorLogging {
 
 
     // User has requested his Job from the Master
-    case userRequest@Get(sessionID, jobID) =>
+    case userRequest@GetState(sessionID, jobID) =>
 
       userJobs.getOrElseUpdate(sessionID, mutable.HashMap.empty[Int, UserJob])
 
       if(!userJobs(sessionID).contains(jobID)) {
 
         Logger.info("JobID " + jobID + " is unknown for userID" + sessionID)
-        sender() ! FrontendMasterProtocol.JobUnknown
+        sender() ! ClientManagerProtocol.JobUnknown
       } else {
 
         val userJob = userJobs(sessionID)(jobID)
