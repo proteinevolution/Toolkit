@@ -1,0 +1,14 @@
+@import play.api.mvc.RequestHeader
+@()(implicit messages: Messages, request: RequestHeader)
+<div id="tabs">
+    <ul id="auth-tab">
+        <li><a href="#tabs-1">Sign In</a></li>
+        <li><a href="#tabs-2">Sign Up</a></li>
+    </ul>
+    <div id="tabs-1">
+        @views.html.auth.signin(models.auth.SignIn.inputForm, "")
+    </div>
+    <div id="tabs-2">
+        @views.html.auth.signup(models.auth.SignUp.inputForm)
+    </div>
+</div>

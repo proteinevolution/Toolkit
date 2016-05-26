@@ -1,0 +1,9 @@
+@import play.api.mvc.RequestHeader
+@import models.auth.AuthAction
+@(authAction : AuthAction)(implicit messages: Messages, request: RequestHeader)
+<html>
+    <head><meta http-equiv="refresh" content="0; url=@routes.Application.index()" /></head>
+    <body>
+        <div>@{authAction.message}</div>
+    </body>
+</html>
