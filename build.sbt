@@ -23,7 +23,8 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
   "org.mindrot" % "jbcrypt" % bcryptVersion,
   "com.evojam" %% "play-elastic4s" % "0.3.0",
-  "com.typesafe.play" %% "play-mailer" % playMailerVersion  // Mailer Plugin: https://github.com/playframework/play-mailer
+  "com.typesafe.play" %% "play-mailer" % playMailerVersion,  // Mailer Plugin: https://github.com/playframework/play-mailer
+  "org.reactivemongo" %% "play2-reactivemongo" % "0.11.11"
 )
 
 /*
@@ -34,7 +35,8 @@ val commonSettings = Seq(
   version := "2.5.3",
   scalaVersion := "2.11.8",
   logLevel := Level.Warn,
-  dependencyOverrides += "org.webjars" % "jquery" % jqueryVersion
+  dependencyOverrides ++= Set("org.webjars" % "jquery" % jqueryVersion,
+                              "com.typesafe.akka" %% "akka-actor" % akkaVersion)
 )
 
 
@@ -43,7 +45,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "mpi-toolkit"
   )
-  .aggregate(mvc, master, api)
+  .aggregate(mvc, api)
   .enablePlugins(SbtWeb)
 
 
@@ -64,18 +66,13 @@ lazy val mvc = (project in file("mvc"))
       "org.webjars" % "mithril" % mithrilVersion,
       "org.webjars.bower" % "d3" % d3Version,
       "org.webjars" % "highcharts" % highchartsVersion)),
-    pipelineStages := Seq(rjs),
+    pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
     ).dependsOn(api)
 
 
-lazy val master = (project in file("master"))
-  .settings(
-    commonSettings,
-    name := "mpi-toolkit-master",
-    libraryDependencies ++= commonDeps
-  ).dependsOn(api)
+
 
 lazy val jobDB = (project in file("jobDB"))
   .settings(

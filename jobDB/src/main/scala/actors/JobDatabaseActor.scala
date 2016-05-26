@@ -9,7 +9,6 @@ import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 import akkaguice.NamedActor
 import database.{DBJob, JobDatabaseService}
-import models.distributed.ToolkitClusterEvent
 import play.api.Logger
 
 
