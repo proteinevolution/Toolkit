@@ -1,4 +1,4 @@
-package models.distributed
+package models.protocols
 
 import scala.collection.immutable.Queue
 import play.api.Logger

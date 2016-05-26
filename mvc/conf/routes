@@ -65,11 +65,11 @@ POST        /tools/:toolname                               @controllers.Tool.sub
 # Loading a Job from the DB
 #POST        /jobs/add/:jobid                @controllers.Service.addJobID(jobid: String)
 # Get a Job the User Actor already has loaded
-GET         /jobs/get/:jobid                               @controllers.Service.getJob(jobid : Int)
+GET         /jobs/get/:jobid                               @controllers.Service.jobInfo(jobid : Int)
 # Delete a Job
 POST        /jobs/del/:jobid                               @controllers.Service.delJob(jobid : Int)
 
-GET         /static/get/:static                                @controllers.Service.static(static : String)
+GET         /static/get/:static                            @controllers.Service.static(static : String)
 # Add a Child Job
 #POST        /jobs/addChild                  @controllers.Service.addChild
 # Clear a Job

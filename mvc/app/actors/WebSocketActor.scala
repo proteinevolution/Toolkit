@@ -1,19 +1,13 @@
 package actors
 
 
+import actors.JobManager.{JobStateChanged, UserConnect, UserDisconnect}
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
-import akka.cluster.Cluster
-import akka.cluster.ClusterEvent.CurrentClusterState
-import akka.cluster.pubsub.DistributedPubSub
-import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
-import models.distributed.FrontendMasterProtocol
-import models.distributed.ToolkitClusterEvent.JobStateChanged
-import models.jobs.UserJob
-import play.api.libs.json.{JsArray, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 import play.api.Logger
 
 /**
@@ -22,47 +16,27 @@ import play.api.Logger
   */
 object WebSocketActor {
 
-
-  def props(sessionID : String, master : ActorRef)(out: ActorRef) = Props(new WebSocketActor(sessionID, master, out))
+  def props(userID : String, jobManager : ActorRef)(out: ActorRef) = Props(new WebSocketActor(userID, jobManager, out))
 }
 
-class WebSocketActor(sessionID : String, master : ActorRef, out: ActorRef)  extends Actor with ActorLogging {
+class WebSocketActor(sessionID : String, jobManager : ActorRef,  out: ActorRef)  extends Actor with ActorLogging {
 
 
-  val cluster = Cluster.get(context.system)
-  val mediator = DistributedPubSub(context.system).mediator
+  override def preStart =
 
-  override def preStart = {
+    // Connect to JobManager via Session ID
+    jobManager ! UserConnect(sessionID)
 
-    //cluster.subscribe(self)
-    mediator ! Subscribe("SESSION_" + sessionID, self)
-  }
+  override def postStop =
 
-  override def postStop = {
-
-    //cluster.unsubscribe(self)
-  }
+    jobManager ! UserDisconnect(sessionID)
 
 
 
-  /**
-    * Returns a Sequence of user Jobs as a JSON Array
-    *
-    * @param jobSeq Sequence of UserJobs
-    * @return
-    */
-  def createJobObjList (jobSeq : Seq[UserJob]) : JsArray = {
-    JsArray(for (job <- jobSeq) yield {
-      Json.obj("t" -> job.tool.toolname,
-               "s" -> job.getState.no,
-               "i" -> job.jobID)
-    })
-  }
 
   def receive = LoggingReceive {
 
 
-    case state: CurrentClusterState => //
 
     case js: JsValue =>
 
@@ -80,9 +54,9 @@ class WebSocketActor(sessionID : String, master : ActorRef, out: ActorRef)  exte
     // Messages the user that there was a problem in handling the Job ID
     //case JobIDInvalid  => out ! Json.obj("type" -> "jobidinvalid")
 
-    case JobStateChanged(jobID, _, state, toolname) =>
+    case JobStateChanged(jobID, state) =>
 
-      out ! Json.obj("type" -> "updatejob", "job_id" -> jobID, "state" -> state.no, "toolname" -> toolname)
+      out ! Json.obj("type" -> "updatejob", "job_id" -> jobID, "state" -> state.no, "toolname" -> "foobar")
 
 
     /*
