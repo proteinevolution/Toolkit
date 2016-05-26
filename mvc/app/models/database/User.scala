@@ -37,7 +37,15 @@ class UsersTableDef(tag: Tag) extends Table[User](tag, "users") {
   def updated_on         = column[Long]("updated_on")
   def logged_in_on       = column[Long]("logged_in_on")
 
-  override def * = (user_id.?, name_login, name_last, name_first, password, email) <> (User.tupled, User.unapply)
+  override def * = (user_id.?,
+                    name_login,
+                    name_last,
+                    name_first,
+                    password,
+                    email,
+                    //None,
+                    security_token.?,
+                    security_token_exp.?) <> (User.tupled, User.unapply)
 }
 
 @Singleton
@@ -86,14 +94,19 @@ class Users @Inject()(@NamedDatabase("tkplay_dev") dbConfigProvider: DatabaseCon
 
 
 //User Data Object used for database storage and interaction
-case class User(val user_id    : Option[Long],
-                val name_login : String,
-                val name_last  : String,
-                val name_first : String,
-                val password   : String,
-                val email      : String)
+case class User(val user_id            : Option[Long],
+                val name_login         : String,
+                val name_last          : String,
+                val name_first         : String,
+                val password           : String,
+                val email              : String,
+                //val address            : Option[Address] = None,
+                val security_token     : Option[String] = None,
+                val security_token_exp : Option[Long] = None)
 
-//User Data Object used for database storage and interaction
-case class UserSecurityToken(val user_id            : Option[Long],
-                             val security_token     : String,
-                             val security_token_exp : Long)
+case class Address (val institute      : Option[String] = None,
+                    val street         : Option[String] = None,
+                    val city           : Option[String] = None,
+                    val country        : Option[String] = None,
+                    val groups         : Option[String] = None,
+                    val role           : Option[String] = None)

@@ -47,6 +47,9 @@ class Auth @Inject() (userManager : UserManager,
         val authAction: AuthAction = userManager.SignIn(form.get._1,  // name_login
                                                         form.get._2)  // password
 
+        if (authAction.success) {
+          Session.addUser(sessionID, authAction.user_o.get)
+        }
         Ok(views.html.authform.authmessage(authAction)).withSession {
           Session.closeSessionRequest(request, sessionID) // Send Session Cookie
         }
@@ -91,6 +94,10 @@ class Auth @Inject() (userManager : UserManager,
                                                          form.get._4, // email
                                                          form.get._5) // password // TODO maybe hash the password here?
 
+        if (authAction.success) {
+          Session.addUser(sessionID, authAction.user_o.get)
+        }
+
         Ok(views.html.authform.authmessage(authAction)).withSession {
           Session.closeSessionRequest(request, sessionID) // Send Session Cookie
         }
@@ -98,8 +105,30 @@ class Auth @Inject() (userManager : UserManager,
     )
   }
 
+  /**
+    * User wants to sign out, Overwrite their cookie and give them a new Session ID
+    * @return
+    */
   def signOut() = Action { implicit request =>
+    val oldSessionID = Session.requestSessionID(request) // grabs the Old Session ID
+    Session.removeUser(oldSessionID)  // Remove the User from the association
+    val sessionID = Session.newSessionID(request) // Generates a new session ID
+
+    Ok(views.html.authform.authmessage(LoggedOut())).withSession {
+      Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
+    }
+  }
+
+  /**
+    * Verifies a Users Email
+    * @param userName
+    * @param token
+    * @return
+    */
+  def verification(userName : String, token : String) = Action { implicit request =>
     val sessionID = Session.requestSessionID(request)
+
+
 
     Ok(views.html.authform.authmessage(LoggedOut())).withSession {
       Session.closeSessionRequest(request, sessionID)   // Send Session Cookie

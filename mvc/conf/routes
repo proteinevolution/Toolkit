@@ -40,7 +40,6 @@ POST       /upload                                         @controllers.Applicat
 
 GET         /contact                                       @controllers.Application.contact()
 
-
 # Routes for Auth Service
 GET         /signin                                        @controllers.Auth.signIn(username : String = "")
 GET         /signin/:username                              @controllers.Auth.signIn(username : String)
@@ -48,6 +47,7 @@ POST        /signin/submit/                                @controllers.Auth.sig
 GET         /signup                                        @controllers.Auth.signUp()
 POST        /signup/submit/                                @controllers.Auth.signUpSubmit()
 GET         /signout                                       @controllers.Auth.signOut()
+GET         /verification/:name_login/:token               @controllers.Auth.verification(name_login,token)
 
 # Get the input form of the tools
 POST        /tools/form/:toolname                          @controllers.Application.form(toolname : String)

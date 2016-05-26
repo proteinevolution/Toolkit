@@ -4,6 +4,7 @@ import javax.inject.{Singleton, Inject}
 
 import models.database.User
 import models.mailing.NewUserWelcomeMail
+import models.misc.RandomString
 import org.mindrot.jbcrypt.BCrypt
 
 /**
@@ -39,8 +40,10 @@ class UserManager @Inject ()(userDB : models.database.Users, // User Database
                                                    name_last,      // Last Name
                                                    name_first,     // First Name
                                                    hash(password), // Immediately hash the password!
-                                                   email))         // E-Mail
-        mailing.sendEmail(newUser.get, new NewUserWelcomeMail) // Send the
+                                                   email,          // E-Mail
+                                                   //None,           // Address
+                                                   Some(RandomString.randomAlphaNumString(6)))) // Verification Token
+        mailing.sendEmail(newUser.get, new NewUserWelcomeMail) // Send a E-Mail to the User to verify the address
         LoggedIn(newUser.get)
     }
   }
@@ -64,6 +67,23 @@ class UserManager @Inject ()(userDB : models.database.Users, // User Database
         LoginIncorrect()
     }
   }
+
+  def VerifyEmail(name_login : String, token : String) : AuthAction = {
+    userDB.get(name_login) match {
+      case Some(user) =>
+        if (user.security_token.get.matches(token)) {
+          VerificationSuccessful(user)
+        } else {
+          TokenMismatch()
+        }
+      case None =>
+        TokenMismatch()
+    }
+  }
+
+  /**
+    * More general Functions
+    */
 
   /**
     * Hashes a password.
@@ -93,14 +113,16 @@ class UserManager @Inject ()(userDB : models.database.Users, // User Database
   * @param success whether the action was successful or not
   * @param message the message which should be displayed to the User
   */
-abstract class AuthAction (val success : Boolean, val message : String)
+abstract class AuthAction (val success : Boolean = false, val message : String, val user_o : Option[User] = None)
 
 /**
   * User Login successful
+  *
   * @param user User DAO
   */
 case class LoggedIn(user : User) extends AuthAction(true,
-  "Welcome, " + user.name_last + ". \n You are now logged in.")
+  "Welcome, " + user.name_last + ". \n You are now logged in.",
+  Some(user))
 
 /**
   * User Logout succesful
@@ -131,3 +153,16 @@ case class MustAcceptToS()       extends AuthAction(false,
   */
 case class PasswordMismatch()      extends AuthAction(false,
   "Your passwords did not match.")
+
+/**
+  * Verification was successful
+  */
+case class VerificationSuccessful(user : User) extends AuthAction(true,
+  "Your E-Mail Account has been Verified, "+user.name_login+".",
+  Some(user))
+
+/**
+  * Passwords did not match when registering
+  */
+case class TokenMismatch()      extends AuthAction(false,
+  "Your Token did not match.")
