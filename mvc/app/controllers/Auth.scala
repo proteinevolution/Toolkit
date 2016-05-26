@@ -7,6 +7,7 @@ import models.auth._
 import play.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
+import play.api.libs.json._
 
 /**
   * Controller for Authentication interactions
@@ -23,7 +24,7 @@ class Auth @Inject() (userManager : UserManager,
     * @return
     */
   def signIn(userName : String) = Action { implicit request =>
-    Ok(views.html.authform.signin(SignIn.inputForm,userName))
+    Ok(views.html.auth.signin(SignIn.inputForm,userName))
   }
 
   /**
@@ -50,7 +51,9 @@ class Auth @Inject() (userManager : UserManager,
         if (authAction.success) {
           Session.addUser(sessionID, authAction.user_o.get)
         }
-        Ok(views.html.authform.authmessage(authAction)).withSession {
+        // Send a JSON with the status to the user so that the Form can be modified dynamically
+        val json = Json.toJson(JSONTemplate.authActionToJSON(authAction))
+        Ok(json).withSession {
           Session.closeSessionRequest(request, sessionID) // Send Session Cookie
         }
       }
@@ -62,7 +65,7 @@ class Auth @Inject() (userManager : UserManager,
     * @return
     */
   def signUp() = Action { implicit request =>
-    Ok(views.html.authform.signup(SignUp.inputForm))
+    Ok(views.html.auth.signup(SignUp.inputForm))
   }
 
   /**
@@ -82,10 +85,10 @@ class Auth @Inject() (userManager : UserManager,
          * (due to the javascript preventing them)
          * there should still be a serverside backup to keep them from happening */
         if (form.get._6) {
-          Ok(views.html.authform.authmessage(MustAcceptToS()))
+          Ok(views.html.auth.message(MustAcceptToS()))
         }
         if (form.get._7) {
-          Ok(views.html.authform.authmessage(PasswordMismatch()))
+          Ok(views.html.auth.message(PasswordMismatch()))
         }
 
         val authAction : AuthAction = userManager.SignUp(form.get._1, // name_login
@@ -97,13 +100,26 @@ class Auth @Inject() (userManager : UserManager,
         if (authAction.success) {
           Session.addUser(sessionID, authAction.user_o.get)
         }
-
-        Ok(views.html.authform.authmessage(authAction)).withSession {
+        // Send a JSON with the status to the user so that the Form can be modified dynamically
+        val json = Json.toJson(JSONTemplate.authActionToJSON(authAction))
+        Ok(json).withSession {
           Session.closeSessionRequest(request, sessionID) // Send Session Cookie
         }
       }
     )
   }
+
+  def miniprofile() = Action { implicit request =>
+    val session = Session.requestSessionID(request)
+    val user_o = Session.getUser(session)
+    user_o match {
+      case Some(user) =>
+        Ok(views.html.auth.miniprofile(user))
+      case None =>
+        BadRequest
+    }
+  }
+
 
   /**
     * User wants to sign out, Overwrite their cookie and give them a new Session ID
@@ -114,7 +130,7 @@ class Auth @Inject() (userManager : UserManager,
     Session.removeUser(oldSessionID)  // Remove the User from the association
     val sessionID = Session.newSessionID(request) // Generates a new session ID
 
-    Ok(views.html.authform.authmessage(LoggedOut())).withSession {
+    Ok(views.html.auth.message(LoggedOut())).withSession {
       Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
     }
   }
@@ -126,12 +142,7 @@ class Auth @Inject() (userManager : UserManager,
     * @return
     */
   def verification(userName : String, token : String) = Action { implicit request =>
-    val sessionID = Session.requestSessionID(request)
-
-
-
-    Ok(views.html.authform.authmessage(LoggedOut())).withSession {
-      Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
-    }
+    val authAction = userManager.VerifyEmail(userName : String, token : String)
+    Ok(views.html.auth.message(authAction))
   }
 }

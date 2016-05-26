@@ -8,15 +8,18 @@
     <head>
         <title>Bioinformatics Toolkit</title>
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
         <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/custom.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/motion-ui.css")" rel="stylesheet">
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("modernizr.min.js"))"></script>
-        <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
-        <script src="@routes.Assets.at("javascripts/newick.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/jquery.lazy.js")" type="text/javascript" ></script>
-        <script src="@routes.Assets.at("javascripts/jquery-ui.js")" type="text/javascript" ></script>
 
+        <!-- JQuery -->
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("dist/jquery.min.js"))" type="text/javascript" ></script>
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("jquery.lazyload.js"))" type="text/javascript" ></script>
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("jquery-ui.js"))" type="text/javascript" ></script>
+
+        <script src="@routes.Assets.at("javascripts/newick.js")" type="text/javascript"></script>
 
         <!-- Mithril -->
         <script src="https://cdn.jsdelivr.net/mithril/0.2.4/mithril.min.js"></script>

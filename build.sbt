@@ -1,5 +1,7 @@
 val akkaVersion = "2.4.4"
-val jqueryVersion = "2.2.2"
+val jqueryVersion = "2.2.4"
+val jqueryLazyloadVersion = "1.9.7"
+val jqueryUIVersion = "1.11.4"
 val foundationVersion = "6.2.1"
 val mithrilVersion = "0.2.3"
 val betterfilesVersion = "2.15.0"
@@ -16,6 +18,7 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
   "com.typesafe.akka" %% "akka-persistence" % akkaVersion,
+  "com.typesafe.play" %% "play-mailer" % playMailerVersion,  // Mailer Plugin: https://github.com/playframework/play-mailer
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
@@ -23,7 +26,6 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
   "org.mindrot" % "jbcrypt" % bcryptVersion,
   "com.evojam" %% "play-elastic4s" % "0.3.0",
-  "com.typesafe.play" %% "play-mailer" % playMailerVersion,  // Mailer Plugin: https://github.com/playframework/play-mailer
   "org.reactivemongo" %% "play2-reactivemongo" % "0.11.11"
 )
 
@@ -58,6 +60,8 @@ lazy val mvc = (project in file("mvc"))
     libraryDependencies ++= (commonDeps ++ Seq(
       "org.webjars" %% "webjars-play" % "2.5.0",
       "org.webjars" % "jquery" % jqueryVersion,
+      "org.webjars.bower" % "jquery.lazyload" % jqueryLazyloadVersion,
+      "org.webjars" % "jquery-ui" % jqueryUIVersion,
       "org.webjars.bower" % "foundation-sites" % foundationVersion,
       "org.webjars" % "modernizr" % "2.8.3",
       "org.webjars.bower" % "fastclick" % "1.0.6",
