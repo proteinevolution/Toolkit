@@ -60,7 +60,9 @@ display: none;
   <!-- Copyright 2015 Mike Bostock http://d3js.org -->
 <script src="//d3js.org/d3.v3.min.js"></script>
 
+<div class="targetWindow"></div>
 <script>
+
 
 function data_display(){
 
@@ -155,6 +157,7 @@ function data_display(){
              var names = {"AlignmentViewer": "alnviz" , "T-Coffee": "tcoffee", "MAFFT": "mafft", "Hmmer3": "hmmer3",
                           "PSI-Blast": "psiblast", "CS-Blast": "csblast", "Reformat": "reformat"};
              window.location.href = "/#/tools/" + names[d3.select(this).text()];
+
          });
 
 
@@ -214,14 +217,13 @@ function data_display(){
 
 data_display();
 
-
-window.addEventListener('resize', function(event){
-
+var listener = function(event) {
     d3.select("svg").remove();
     data_display();
     d3.selectAll(".legend").remove();
-    
-})
+};
+
+window.addEventListener('resize', listener, false);
 
 
 

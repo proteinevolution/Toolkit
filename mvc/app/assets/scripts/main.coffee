@@ -13,6 +13,7 @@ Tools =
       url: "/tools/form/" + controller.toolname).done (data) ->
         $('#content').empty().append data
         $("html, body").animate({ scrollTop: 0 }, "fast")
+        window.removeEventListener 'resize', listener, false
 
 
 Jobs =
@@ -24,6 +25,7 @@ Jobs =
       url: "/jobs/get/" + controller.job_id).done (data) ->
         $('#content').empty().prepend data
         $("html, body").animate({ scrollTop: 0 }, "fast")
+        
 
 
 Static =
