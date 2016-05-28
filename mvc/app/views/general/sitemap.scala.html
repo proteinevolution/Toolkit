@@ -36,7 +36,7 @@ display: none;
 }
 
 .labels {
-  font-size: 1em;
+
   font-family: inherit;
     cursor: pointer;
 }
@@ -60,7 +60,6 @@ display: none;
   <!-- Copyright 2015 Mike Bostock http://d3js.org -->
 <script src="//d3js.org/d3.v3.min.js"></script>
 
-<div class="targetWindow"></div>
 <script>
 
 
@@ -150,6 +149,7 @@ function data_display(){
          .attr("dy", ".31em")
          .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (innerRadius + 4) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
          .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+         .style("font-size", x/100+"px")
          .text(function(d) { return d.name.replace(/_/g, " "); })
          .on("mouseover", mouseovered(true))
          .on("mouseout", mouseovered(false))
