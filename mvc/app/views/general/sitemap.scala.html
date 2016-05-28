@@ -65,7 +65,6 @@ display: none;
 function data_display(){
 
     var x = window.innerWidth;
-    var y = window.innerWidth;
     var outerRadius = x / 4;
     var innerRadius = outerRadius - x/7;
 
@@ -83,7 +82,7 @@ function data_display(){
 
     var svg = d3.select('#content').append("svg")
             .attr("width", x/2)
-            .attr("height", y/2);
+            .attr("height", x/2);
 
     $("svg").css({top: 200, bottom: 600, left: '50%', position:'absolute', transform: 'translateX(-50%)'});
 
@@ -108,7 +107,7 @@ function data_display(){
             .text(function(d) { return d; });
 
     var chart = svg.append("g")
-            .attr("transform", "translate(" + x/4 + "," + y/5 + ")");
+            .attr("transform", "translate(" + x/4 + "," + x/5 + ")");
 
  //for some reason the svg disappears when deleting the '/' and nothing is shown, couldn't fix it so far guess the route is somehow not correct
  d3.text('@routes.Assets.at("life.txt")', function(error, life) {
@@ -220,7 +219,8 @@ window.addEventListener('resize', function(event){
 
     d3.select("svg").remove();
     data_display();
-    //TODO: Make legend also responsive
+    d3.selectAll(".legend").remove();
+    
 })
 
 
