@@ -1,9 +1,6 @@
 <style>
 
-#content {
-width: 100%;
-padding: 0 0 0 0;
-}
+
 
 #sidebar-switch {
 
@@ -14,10 +11,6 @@ display: none;
 #hideSwitch {
 
     display: none;
-}
-
-.orbit-slide {
-max-height: 380px;
 }
 
  body {
@@ -45,7 +38,7 @@ max-height: 380px;
 .labels {
   font-size: 1em;
   font-family: inherit;
-    cursor: pointer;  
+    cursor: pointer;
 }
 
 .link--active {
@@ -68,48 +61,54 @@ max-height: 380px;
 <script src="//d3js.org/d3.v3.min.js"></script>
 
 <script>
- var outerRadius = 960 / 2;
- var innerRadius = outerRadius - 170;
 
- var color = d3.scale.category10()
-         .domain(["Search", "Alignment", "SeqAnalysis", '2aryStructure', '3aryStructure', 'Classification', 'Utils']);
+function data_display(){
 
-
- var cluster = d3.layout.cluster()
-         .size([360, innerRadius])
-         .children(function(d) { return d.branchset; })
-         .value(function(d) { return 1; })
-         .sort(function(a, b) { return (a.value - b.value) || d3.ascending(a.length, b.length); })
-         .separation(function(a, b) { return 1; });
-
- var svg = d3.select('#content').append("svg")
-         .attr("width", 960)
-         .attr("height", 960);
-
- $("svg").css({top: 200, left: '50%', position:'absolute', transform: 'translateX(-50%)'});
+    var x = window.innerWidth;
+    var y = window.innerWidth;
+    var outerRadius = x / 4;
+    var innerRadius = outerRadius - x/7;
 
 
- var legend = svg.append("g")
-         .attr("class", "legend")
-         .selectAll("g")
-         .data(color.domain())
-         .enter().append("g")
-         .attr("transform", function(d, i) { return "translate(" + (outerRadius * 2 - 10) + "," + (i * 20 + 10) + ")"; });
+    var color = d3.scale.category10()
+            .domain(["Search", "Alignment", "SeqAnalysis", '2aryStructure', '3aryStructure', 'Classification', 'Utils']);
 
- legend.append("rect")
-         .attr("x", -18)
-         .attr("width", 18)
-         .attr("height", 18)
-         .style("fill", color);
- legend.append("text")
-         .attr("x", -24)
-         .attr("y", 9)
-         .attr("dy", ".35em")
-         .style("text-anchor", "end")
-         .text(function(d) { return d; });
 
- var chart = svg.append("g")
-         .attr("transform", "translate(" + 480 + "," + 480 + ")");
+    var cluster = d3.layout.cluster()
+            .size([360, innerRadius])
+            .children(function(d) { return d.branchset; })
+            .value(function(d) { return 1; })
+            .sort(function(a, b) { return (a.value - b.value) || d3.ascending(a.length, b.length); })
+            .separation(function(a, b) { return 1; });
+
+    var svg = d3.select('#content').append("svg")
+            .attr("width", x/2)
+            .attr("height", y/2);
+
+    $("svg").css({top: 200, bottom: 600, left: '50%', position:'absolute', transform: 'translateX(-50%)'});
+
+
+    var legend = svg.append("g")
+            .attr("class", "legend")
+            .selectAll("g")
+            .data(color.domain())
+            .enter().append("g")
+            .attr("transform", function(d, i) { return "translate(" + (outerRadius * 2 - 10) + "," + (i * 20 + 10) + ")"; });
+
+    legend.append("rect")
+            .attr("x", -18)
+            .attr("width", 18)
+            .attr("height", 18)
+            .style("fill", color);
+    legend.append("text")
+            .attr("x", -24)
+            .attr("y", 9)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text(function(d) { return d; });
+
+    var chart = svg.append("g")
+            .attr("transform", "translate(" + x/4 + "," + y/5 + ")");
 
  //for some reason the svg disappears when deleting the '/' and nothing is shown, couldn't fix it so far guess the route is somehow not correct
  d3.text('@routes.Assets.at("life.txt")', function(error, life) {
@@ -208,7 +207,26 @@ max-height: 380px;
              + "L" + endRadius * c1 + "," + endRadius * s1;
  }
 
+    d3.select(self.frameElement).style("height", outerRadius * 2 + "px");
 
- d3.select(self.frameElement).style("height", outerRadius * 2 + "px");
+
+}
+
+
+data_display();
+
+
+window.addEventListener('resize', function(event){
+
+    d3.select("svg").remove();
+    data_display();
+    //TODO: Make legend also responsive
+})
+
+
+
+
+
 
 </script>
+
