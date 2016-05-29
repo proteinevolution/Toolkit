@@ -1,0 +1,21 @@
+# This file specifies how a particular tool is executed. This is ought to be a very simple
+# config language for specifying parameters for tool execution.
+
+# In each block of a particular tool T one has three things that can be done:
+# * Access the parameters of the tool with %paramname and attach some logic to it
+# * Some functions will be provided that can compute certain values out of parameters
+# * The block must return an expression that ultimately describes how the tool is executed
+
+ 
+tcoffee {
+
+		 
+	
+
+}
+
+
+
+
+
+
