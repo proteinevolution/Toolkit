@@ -12,6 +12,7 @@ import better.files._
 import Cmds._
 import java.nio.file.attribute.PosixFilePermission
 
+import models.Constants
 import play.api.Logger
 
 import scala.sys.process.{Process, ProcessLogger}
@@ -30,7 +31,7 @@ class JobManager extends Actor {
 
 import JobManager._
 
-  val SEP = java.io.File.separator
+  val SEP = Constants.SEP
   val random = scala.util.Random
 
   // TODO All paths to Config
@@ -94,9 +95,6 @@ import JobManager._
 
 
 
-
-
-
   // Methods
   def executeJob(jobID : Int, toolname : String, params : Map[String, String]): Unit = {
 
@@ -138,7 +136,7 @@ import JobManager._
     val err = new BufferedWriter(new FileWriter(new File(rootPath + "logs/stderr.err")))
 
 
-    val process = Process("./" + toolname + ".sh", new File(rootPath)).run(ProcessLogger(
+    val process = Process(s"$toolname.sh" , new File(rootPath)).run(ProcessLogger(
       (o: String) => out.write(o),
       (e: String) => err.write(e)))
 
