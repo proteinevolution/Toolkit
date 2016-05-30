@@ -6,16 +6,8 @@
 # * Some functions will be provided that can compute certain values out of parameters
 # * The block must return an expression that ultimately describes how the tool is executed
 
- 
-tcoffee {
-
-		 
-	
-
-}
-
-
-
-
+#% tcoffee
+#% sequences.nr    nCPUS    MODE
+20	          8        SGE 
 
 
