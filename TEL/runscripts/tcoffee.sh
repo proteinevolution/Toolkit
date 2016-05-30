@@ -1,7 +1,6 @@
 #!/bin/bash
 
-#% sequences : FASTA    
-
+#% sequences : FAS < Alignment    
 
 trap 'kill $(jobs -p)' EXIT
 

@@ -1,9 +1,9 @@
 package actors
 
-import java.io.{BufferedWriter, File, FileWriter}
+import java.io.{BufferedWriter, FileWriter}
 import javax.inject.Singleton
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
 import models.jobs.JobState
 
@@ -15,7 +15,7 @@ import java.nio.file.attribute.PosixFilePermission
 import models.Constants
 import play.api.Logger
 
-import scala.sys.process.{Process, ProcessLogger}
+import scala.sys.process._
 import scala.util.matching.Regex
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -27,7 +27,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by lzimmermann on 10.05.16.
   */
 @Singleton
-class JobManager extends Actor {
+class JobManager extends Actor with ActorLogging {
 
 import JobManager._
 
@@ -36,7 +36,7 @@ import JobManager._
 
   // TODO All paths to Config
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
-  val runscriptPath = s"runscripts$SEP"
+  val runscriptPath = s"TEL${SEP}runscripts$SEP"
   val bioprogsPath = s"${ConfigFactory.load().getString("bioprogs_path")}$SEP"
   val databasesPath = s"${ConfigFactory.load().getString("databases_path")}$SEP"
 
@@ -104,6 +104,7 @@ import JobManager._
     // Where the Runscript of the corresponding tool is located
     val runscript = s"$rootPath$toolname.sh".toFile
 
+    Logger.info("Runscript " + runscriptPath)
 
     // Parse all lines of runscript template and translate to runscript instance
     for (line <- s"$runscriptPath$toolname.sh".toFile.lines) {
@@ -132,25 +133,19 @@ import JobManager._
     chmod_+(PosixFilePermission.OWNER_EXECUTE, runscript)
 
     // Log files output buffer
-    val out = new BufferedWriter(new FileWriter(new File(rootPath + "logs/stdout.out")))
-    val err = new BufferedWriter(new FileWriter(new File(rootPath + "logs/stderr.err")))
+    val out = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stdout.out")))
+    val err = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stderr.err")))
 
-
-    val process = Process(s"$toolname.sh" , new File(rootPath)).run(ProcessLogger(
-      (o: String) => out.write(o),
-      (e: String) => err.write(e)))
-
-    val exitValue = process.exitValue()
-
-    if(exitValue == 0) {
+    if(Process(s"./$toolname.sh" , new java.io.File(rootPath)).run(ProcessLogger(
+      (fout) => out.write(fout),
+      (ferr) => err.write(ferr)
+    )).exitValue() == 0) {
 
         changeState(jobID, JobState.Done)
     } else {
 
         changeState(jobID, JobState.Error)
     }
-
-
     out.close()
     err.close()
   }
