@@ -9,8 +9,8 @@ export TMP_4_TCOFFEE=./specific
 export CACHE_4_TCOFFEE=./specific
 
 
-%BIOPROGS/tools/tcoffee/bin/t_coffee \
-                   -in %sequences.location \
+!{BIO}/tools/tcoffee/bin/t_coffee \
+                   -in %{sequences} \
                    -cache=no \
                    -output clustalw_aln score_pdf score_html
 
