@@ -2,7 +2,7 @@
 
 trap 'kill $(jobs -p)' EXIT
 
-!{BIO}/tools/ncbi-blast-2.3.0+/bin/psiblast -db !{DATA}/standard/nr70 \
+<BIOPROGS>/tools/ncbi-blast-2.3.0+/bin/psiblast -db <DATABASES>/standard/nr70 \
                                             -matrix ${matrix} \
                                             -num_iterations ${num_iter} \
                                             -evalue ${evalue}\
