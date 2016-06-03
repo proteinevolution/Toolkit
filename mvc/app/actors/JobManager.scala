@@ -13,6 +13,7 @@ import Cmds._
 import java.nio.file.attribute.PosixFilePermission
 
 import models.Constants
+import models.tel.TEL
 import play.api.Logger
 
 import scala.sys.process._
@@ -64,8 +65,6 @@ import JobManager._
   // Ignore the following keys when writing parameters
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
 
-  // For translating the runscript template into an actual executable runscript
-  val argumentPattern = new Regex("""(\$|%|@|\?|\+|\!)\{([^\{\}]+)\}""", "selector", "selValue")
 
 
   /**
@@ -104,32 +103,12 @@ import JobManager._
     // Where the Runscript of the corresponding tool is located
     val runscript = s"$rootPath$toolname.sh".toFile
 
-    Logger.info("Runscript " + runscriptPath)
 
     // Parse all lines of runscript template and translate to runscript instance
-    for (line <- s"$runscriptPath$toolname.sh".toFile.lines) {
+    // Generate the execution scripts in the working directory using TEL
+    TEL.init(toolname, params, rootPath)
 
-      runscript.appendLine(
-        argumentPattern.replaceAllIn(line.split('#')(0), { m =>
-
-          m.group("selector") match {
-
-            case "!" => if (m.group("selValue") == "BIO") bioprogsPath else databasesPath
-            case "+" => "inter/" + m.group("selValue")
-            case "%" => "params/" + SEP + m.group("selValue")
-            case "$" => params.get(m.group("selValue")).get.toString
-            case "@" => "results/" + m.group("selValue")
-            case "?" =>
-
-              val splt = m.group("selValue").split("(\\||:)")
-              if (params.get(splt(0)).get.asInstanceOf[Boolean]) splt(1)
-              else {
-
-                if (splt.length == 2) "" else splt(2)
-              }
-          }
-        }))
-    }
+    /*
     chmod_+(PosixFilePermission.OWNER_EXECUTE, runscript)
 
     // Log files output buffer
@@ -147,7 +126,7 @@ import JobManager._
         changeState(jobID, JobState.Error)
     }
     out.close()
-    err.close()
+    err.close() */
   }
 
 

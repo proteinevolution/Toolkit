@@ -3,6 +3,8 @@ package models.tel
 import better.files._
 import models.Constants
 
+import scala.util.matching.Regex
+
 
 /**
   * Created by lzimmermann on 26.05.16.
@@ -13,16 +15,27 @@ object TEL {
 
 
   // TODO Get this from the configuration
-  val toolmode_path = "TEL"
-  val types_path = s"$toolmode_path${Constants.SEP}types"
+  val TELPath = "TEL"
+  val typesPath = s"$TELPath${Constants.SEP}types"
+  val runscriptPath = s"$TELPath${Constants.SEP}runscripts${Constants.SEP}"
+
+
+  val commentChar = '#'
+
+  // For translating the runscript template into an actual executable runscript
+  val argumentPattern = new Regex("""%([A-Z]+)""", "expression")
+
+
+  // Ignore the following keys when writing parameters
+  val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
 
 
   private val constants = {
 
-    s"$toolmode_path${Constants.SEP}CONSTANTS".toFile.lines.map { line =>
+    s"$TELPath${Constants.SEP}CONSTANTS".toFile.lines.withFilter { _.trim() != ""  }.map { line =>
 
       val spt = line.split("=")
-      spt(0) -> spt(1)
+      spt(0).trim() -> spt(1).trim()
 
     }.toMap
   }
@@ -39,13 +52,10 @@ object TEL {
   def invoke(methodname : String, t : String, content : String): Unit = {
 
     val clazz = Class.forName("models.tel.TEL_" + t )
-    clazz
 
+    // TODO Implement me
 
   }
-
-
-
 
 
 
@@ -53,16 +63,26 @@ object TEL {
     *  Assembles all scripts to create a new executable Job and
     *  returns the name of the excutable script for job execution.
     */
-  def init(toolname : String, params : Map[String, String]): Unit = {
+  def init(toolname : String, params : Map[String, String], dest : String): Unit = {
 
-  // TODO Implement me
+    val source = s"$runscriptPath$toolname.sh"
+    val target = s"$dest$toolname.sh".toFile
+
+    val newLines = source.toFile.lines.map { line =>
+
+      argumentPattern.replaceAllIn(line.split(commentChar)(0), { m =>
+
+        val expr = m.group("expression")
+
+        constants(expr)
+
+      } )
+    }.toSeq
+    target.appendLines(newLines:_*)
 
 
   }
+
+
 }
 
-object FASTA {
-
-
-  def nSeq(input : String) = 42
-}
