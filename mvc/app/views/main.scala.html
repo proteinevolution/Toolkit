@@ -70,23 +70,51 @@
 
 
         <!---Navigation Bar --->
+        <div>
         @elements.navbar()
+        </div>
+
+        <!--Off Canvas Menu for mobile version of Toolkit-->
+        <div class="off-canvas-wrapper">
+            <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+                <div class="off-canvas position-left" id="offCanvas" data-off-canvas>
+
+                    @elements.offcanvas()
+
+                </div>
+
+                    <!---Off Canvas Content includes main content--->
+                    <div class="off-canvas-content" data-off-canvas-content>
+                            <div class="title-bar hide-for-large">
+                                <div class="title-bar-left">
+                                    <button class="menu-icon dark" type="button" data-open="offCanvasLeft"></button>
+                                    <span class="title-bar-title">Toolkit</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!---Main Content Section includes Sidebar and Content --->
+                        <section class="row fullwidth main-content">
+                            <div class="large-2 show-for-large columns sidebar padded-column show-for-large" id="sidebar-switch">
+
+                            @elements.sidebar()
+
+                            </div>
 
 
-        <!---Main Content Section includes Sidebar and Content --->
-        <section class="row fullwidth main-content">
-            <div class="large-2 show-for-large columns sidebar padded-column show-for-large" id="sidebar-switch">
 
-                @elements.sidebar()
+                            <div id="content" class="large-6 small-10 columns padded-column" style="float: left;">
+                            @content
+                            </div>
+                        </section>
+                    </div>
 
             </div>
+        </div>
 
 
 
-            <div id="content" class="large-6 small-10 columns padded-column" style="float: left;">
-                @content
-            </div>
-        </section>
+
 
         <footer>
             @elements.footer()
