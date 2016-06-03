@@ -289,4 +289,33 @@ hr {
    font-weight: bold;
 }
 
+.off-canvas-wrapper {
 
+    min-height: 31.250em;
+}
+
+.off-canvas-wrapper-inner {
+
+    min-height: 31.250em;
+
+
+}
+
+#offCanvas {
+    height: 100%;
+
+}
+
+.vertical a {
+    color: black;
+    font-family: monospace;
+    font-size: medium;
+}
+
+.vertical a:hover {
+    background-color: white;
+}
+
+.vertical ul {
+    background-color: #e6e6e6;
+}
