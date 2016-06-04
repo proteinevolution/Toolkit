@@ -109,7 +109,7 @@ class Auth @Inject() (userManager : UserManager,
     )
   }
 
-  def miniprofile() = Action { implicit request =>
+  def miniProfile() = Action { implicit request =>
     val session = Session.requestSessionID(request)
     val user_o = Session.getUser(session)
     user_o match {
@@ -137,12 +137,12 @@ class Auth @Inject() (userManager : UserManager,
 
   /**
     * Verifies a Users Email
-    * @param userName
+    * @param name_login
     * @param token
     * @return
     */
-  def verification(userName : String, token : String) = Action { implicit request =>
-    val authAction = userManager.VerifyEmail(userName : String, token : String)
+  def verification(name_login : String, token : String) = Action { implicit request =>
+    val authAction = userManager.VerifyEmail(name_login, token)
     Ok(views.html.auth.message(authAction))
   }
 }

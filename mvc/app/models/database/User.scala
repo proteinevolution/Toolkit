@@ -30,9 +30,7 @@ class UsersTableDef(tag: Tag) extends Table[User](tag, "users") {
   def country            = column[String]("country")
   def groups             = column[String]("groups")
   def role               = column[String]("role")
-  def security_token     = column[String]("security_token")
 
-  def security_token_exp = column[Long]("security_token_exp")
   def created_on         = column[Long]("created_on")
   def updated_on         = column[Long]("updated_on")
   def logged_in_on       = column[Long]("logged_in_on")
@@ -42,10 +40,7 @@ class UsersTableDef(tag: Tag) extends Table[User](tag, "users") {
                     name_last,
                     name_first,
                     password,
-                    email,
-                    //None,
-                    security_token.?,
-                    security_token_exp.?) <> (User.tupled, User.unapply)
+                    email) <> (User.tupled, User.unapply)
 }
 
 @Singleton
@@ -99,10 +94,8 @@ case class User(val user_id            : Option[Long],
                 val name_last          : String,
                 val name_first         : String,
                 val password           : String,
-                val email              : String,
-                //val address            : Option[Address] = None,
-                val security_token     : Option[String] = None,
-                val security_token_exp : Option[Long] = None)
+                val email              : String/*,
+                val address            : Option[Address] = None*/)
 
 case class Address (val institute      : Option[String] = None,
                     val street         : Option[String] = None,
