@@ -2,7 +2,7 @@ package models.auth
 
 import javax.inject.{Singleton, Inject}
 
-import models.database.User
+import models.database.{UserVerification, User}
 import models.mailing.NewUserWelcomeMail
 import models.misc.RandomString
 import org.mindrot.jbcrypt.BCrypt
@@ -17,8 +17,9 @@ import org.mindrot.jbcrypt.BCrypt
   * @see [[http://www.mindrot.org/files/jBCrypt/jBCrypt-0.2-doc/BCrypt.html#gensalt(int) gensalt]]
   */
 @Singleton
-class UserManager @Inject ()(userDB : models.database.Users, // User Database
-                             mailing: controllers.Mailing) { // Mailing Controller
+class UserManager @Inject ()(userDB             : models.database.Users,             // User Database
+                             userVerificationDB : models.database.UserVerifications, // Verification Database
+                             mailing            : controllers.Mailing) {             // Mailing Controller
   val LOG_ROUNDS : Int = 10 // Number of rounds for BCrypt to hash the Password (2^x) // TODO Move to the config?
 
   /**
@@ -36,15 +37,18 @@ class UserManager @Inject ()(userDB : models.database.Users, // User Database
       case Some(user) =>
         AccountNameUsed()
       case None =>
-        val newUser = userDB.update(new User(None, name_login,     // Account Name
-                                                   name_last,      // Last Name
-                                                   name_first,     // First Name
-                                                   hash(password), // Immediately hash the password!
-                                                   email,          // E-Mail
-                                                   //None,           // Address
-                                                   Some(RandomString.randomAlphaNumString(6)))) // Verification Token
-        mailing.sendEmail(newUser.get, new NewUserWelcomeMail) // Send a E-Mail to the User to verify the address
-        LoggedIn(newUser.get)
+        val user = userDB.update(new User(None, name_login,     // Account Name
+                                                name_last,      // Last Name
+                                                name_first,     // First Name
+                                                hash(password), // Immediately hash the password!
+                                                email/*,        // E-Mail
+                                                //None,         // Address*/))
+        val token = RandomString.randomAlphaNumString(7)
+        userVerificationDB.add(new UserVerification(user.get.user_id.get,       // User ID
+                                                    token,                      // Token
+                                                    'e'))                       // Token type "Email Verification"
+        mailing.sendEmail(user.get, new NewUserWelcomeMail(token)) // Send a E-Mail to the User to verify the address
+        LoggedIn(user.get)
     }
   }
 
@@ -68,16 +72,31 @@ class UserManager @Inject ()(userDB : models.database.Users, // User Database
     }
   }
 
+  /**
+    * Verifies a User's token
+    *
+    * @param name_login
+    * @param token
+    * @return
+    */
   def VerifyEmail(name_login : String, token : String) : AuthAction = {
-    userDB.get(name_login) match {
-      case Some(user) =>
-        if (user.security_token.get.matches(token)) {
-          VerificationSuccessful(user)
-        } else {
-          TokenMismatch()
+    val user_o = userDB.get(name_login)   // Get the user from the database
+    user_o match {
+      case Some(user) =>                  // User exists.
+        val verification_o = userVerificationDB.get(user.user_id.get)
+        verification_o match {
+          case Some(verification) =>      // Verification token exists.
+            if (verification.token.matches(token)) {
+              userVerificationDB.remove(user.user_id.get)
+              VerificationSuccessful(user)
+            } else {
+              TokenMismatch()
+            }
+          case None =>
+            TokenMismatch()
         }
       case None =>
-        TokenMismatch()
+        LoginIncorrect()
     }
   }
 
@@ -106,6 +125,12 @@ class UserManager @Inject ()(userDB : models.database.Users, // User Database
     BCrypt.checkpw(plainPassword, user.password)
   }
 }
+
+
+
+
+
+
 
 /**
   * Abstract object returning whether the Action was successful or not
