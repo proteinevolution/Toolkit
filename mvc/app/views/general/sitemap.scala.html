@@ -2,58 +2,73 @@
 
 
 
-#sidebar-switch {
-
-display: none;
-
-  }
-
-#hideSwitch {
+    #sidebar-switch {
 
     display: none;
-}
 
- body {
-   font-family: inherit;
-   margin: 0;
- }
+      }
 
-#show-length {
-  position: absolute;
-  margin-left: 23em;
-}
+    #hideSwitch {
 
-.links {
-  fill: none;
-  stroke: #000;
-  stroke-width: 3;
-}
+        display: none;
+    }
 
-.link-extensions {
-  fill: none;
-  stroke: #000;
-  stroke-opacity: .25;
-}
+     body {
+       font-family: inherit;
+       margin: 0;
 
-.labels {
+     }
 
-  font-family: inherit;
-    cursor: pointer;
-}
+    #show-length {
+      position: absolute;
+      margin-left: 23em;
+    }
 
-.link--active {
-  stroke: #000 !important;
-  stroke-width: 3;
-}
+    .links {
+      fill: none;
+      stroke: #000;
+      stroke-width: 3;
+    }
 
-.link-extension--active {
-  stroke-opacity: .6;
-}
+    .link-extensions {
+      fill: none;
+      stroke: #000;
+      stroke-opacity: .25;
+    }
 
-.label--active {
-  font-weight: bold;
-}
+    .labels {
 
+      font-family: inherit;
+        cursor: pointer;
+    }
+
+    .link--active {
+      stroke: #000 !important;
+      stroke-width: 3;
+    }
+
+    .link-extension--active {
+      stroke-opacity: .6;
+    }
+
+    .label--active {
+      font-weight: bold;
+    }
+
+    .off-canvas-content {
+
+        overflow: hidden;
+    }
+
+    .main-content {
+
+        overflow: hidden;
+    }
+
+    .off-canvas-wrapper {
+
+        overflow: hidden;
+    }
 
 </style>
 
@@ -85,7 +100,7 @@ function data_display(){
             .attr("width", x/2)
             .attr("height", x/2);
 
-    $("svg").css({top: 200, bottom: 600, left: '50%', position:'absolute', transform: 'translateX(-50%)'});
+    $("svg").css({top: 80, bottom: 600, left: '50%', position:'absolute', transform: 'translateX(-50%)'});
 
 
     var legend = svg.append("g")
@@ -149,7 +164,8 @@ function data_display(){
          .attr("dy", ".31em")
          .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (innerRadius + 4) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
          .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-         .style("font-size", x/100+"px")
+         .style("font-size", x/150+"px")
+         .style("font-weight", "light")
          .text(function(d) { return d.name.replace(/_/g, " "); })
          .on("mouseover", mouseovered(true))
          .on("mouseout", mouseovered(false))
@@ -218,17 +234,18 @@ function data_display(){
 data_display();
 
 var listener = function(event) {
+    //document.getElementById("content").style.height = window.innerWidth*0.5+"px";
     d3.select("svg").remove();
     data_display();
     d3.selectAll(".legend").remove();
+
 };
 
 window.addEventListener('resize', listener, false);
 
 
 
-
-
+document.getElementById("content").style.height = window.innerHeight*0.8+"px";
 
 </script>
 
