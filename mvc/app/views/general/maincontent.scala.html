@@ -25,5 +25,116 @@ font-family: inherit;
 margin: 0;
 }
 
+.lazy-container {
+
+    background-color: #F0F3F3;
+    float: left;
+    width: 100%;
+}
+
+.content-wrapper-half {
+ margin-top: 2em;
+ border: 2px solid;
+ border-color:  #006F62;
+ font-family: Droid Sans Mono;
+ background-color: white;
+
+
+}
+
+.content-wrapper-quarter {
+    margin-top: 2em;
+    font-family: Droid Sans Mono;
+    border: 2px solid;
+    border-color:  #006F62;
+    background-color: white;
+
+}
+
+.text-wrapper-half {
+    padding: 2em 5em;
+    background-color: white;
+}
+
+.text-wrapper-quarter {
+    padding: 2em 3em;
+
+
+}
+
+.lazy-container h5 {
+   font-family: Droid Sans Mono;
+   text-align: justify;
+   font-weight: bold;
+}
+
+.elements {
+    display: flex;
+    margin-bottom: 2em;
+}
+
+.lazy-container p {
+    font-size: 0.90em;
+}
+
 
 </style>
+
+
+<div class="lazy-container">
+    <div class="row elements">
+    <div class="content-wrapper-half large-5 large-offset-2 columns">
+        <div class="text-wrapper-half">
+            <h5>Max-Planck-Instituts für Entwicklungsbiologie, Tübingen</h5>
+            <p style="font-size:  0.9em;">Das Max-Planck-Institut (MPI) für Entwicklungsbiologie entstand, als MPI für Virusforschung, 1954 aus einer Arbeitsgruppe für Virologie des bereits in Tübingen bestehenden Max-Planck-Institut für Biologie. Zunächst waren die Einrichtungen des MPI für Virusforschung in der Melanchthonstraße. Sechs Jahre später, 1960, zog das Institut in neue Gebäude in der Spemannstraße 35 um. </p>
+        </div>
+        <div class="image-wrapper">
+           <a href="http://www.eb.tuebingen.mpg.de/de.html"><img class="lazy" data-original="@routes.Assets.at("images/MPICampus.jpg")" style="width: 100%"> </a>
+        </div>
+
+    </div>
+    <div style="margin-left: 2em" class="content-wrapper-quarter large-3 end columns">
+        <div class="image-wrapper" >
+            <a href="http://localhost:8600/#/sitemap"> <img  class="lazy" data-original="@routes.Assets.at("images/dna.jpg")" style="width: 100%"> </a>
+        </div>
+
+        <div class="text-wrapper-quarter">
+            <h5>Bioinformatics Toolkit</h5>
+            <p> The Bioinformatics Toolkit is a platform that integrates a great variety of tools for protein sequence analysis. Many tools are developed in-house, and several public tools are offered with extended functionality. </p>
+        </div>
+
+    </div>
+    </div>
+
+    <div class="row elements">
+        <div class="content-wrapper-quarter large-2 large-offset-2 columns">
+            <div class="image-wrapper">
+                <a href="http://localhost:8600/#/sitemap">  <img class="lazy" data-original="@routes.Assets.at("images/Tree.png")"> </a>
+            </div>
+            <div class="text-wrapper-quarter">
+                <h5>Tool Map</h5>
+                <p>An overview containing all available tools and showing their artificial relationships between each other.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row elements">
+
+    </div>
+
+
+</div>
+
+
+
+
+    <script>
+
+    $("img.lazy").lazyload({
+     threshold : -100,
+     effect : "fadeIn"
+    });
+
+    </script>
+
+
