@@ -1,14 +1,36 @@
 @import play.api.mvc.RequestHeader
 @()(implicit messages: Messages, request: RequestHeader)
-<div id="tabs">
+
+<div id="auth-tabs">
     <ul id="auth-tab">
-        <li><a href="#tabs-1">Sign In</a></li>
-        <li><a href="#tabs-2">Sign Up</a></li>
+        <li><a href="#auth-tab-signin">Sign In</a></li>
+        <li><a href="#auth-tab-signup">Sign Up</a></li>
+        <li><a href="#auth-tab-forgot">Reset Password</a></li>
     </ul>
-    <div id="tabs-1">
+    <div class="tabs-panel" id="auth-tab-signin">
         @views.html.auth.signin(models.auth.SignIn.inputForm, "")
     </div>
-    <div id="tabs-2">
+    <div class="tabs-panel" id="auth-tab-signup">
         @views.html.auth.signup(models.auth.SignUp.inputForm)
     </div>
+    <div class="tabs-panel" id="auth-tab-forgot">
+        @views.html.auth.forgot(models.auth.Forgot.inputForm)
+    </div>
 </div>
+
+<!--
+<div id="tabs">
+    <ul class="tabs"  id="auth-tab">
+        <li class="tabs-title is-active"><a href="#auth-tab-signin" aria-selected="true">Sign In</a></li>
+        <li class="tabs-title"><a href="#auth-tab-signup">Sign Up</a></li>
+    </ul>
+    <div class="tabs-content" data-tabs-content="auth-tab">
+        <div class="tabs-panel is-active" id="auth-tab-signin">
+            views.html.auth.signin(models.auth.SignIn.inputForm, "")
+        </div>
+        <div class="tabs-panel" id="auth-tab-signup">
+            views.html.auth.signup(models.auth.SignUp.inputForm)
+        </div>
+    </div>
+</div>
+-->
