@@ -35,3 +35,15 @@ object SignUp {
     )
   )
 }
+
+/**
+  * Form mapping for the forgot login/password form
+  */
+object Forgot {
+  val inputForm = Form(
+    tuple(
+      "name_login"    -> nonEmptyText,
+      "email"         -> email
+    )
+  )
+}

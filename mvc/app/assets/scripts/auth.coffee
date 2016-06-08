@@ -1,7 +1,7 @@
 $ ->
   # Top bar interaction
   # Tabs for the sign in / up /reset password interaction
-  $( "#tabs" ).tabs()
+  $( "#auth-tabs" ).tabs()
   # toggle the auth dropdown for the link
   $("#auth-link").click ->
     $("#auth-dropdown").foundation('toggle')

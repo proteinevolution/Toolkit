@@ -313,3 +313,32 @@ hr {
 .vertical ul {
     background-color: #e6e6e6;
 }
+
+
+#auth-tabs {
+    background: transparent;
+    border: none;
+}
+#auth-tabs .ui-widget-header {
+    font-size: 0.7em;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #c0c0c0;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+#auth-tabs .ui-tabs-nav .ui-state-default {
+    background: transparent;
+    border: none;
+}
+#auth-tabs .ui-tabs-nav .ui-state-active {
+    background: transparent url(images/arrow-up.png) no-repeat bottom center;
+    border: none;
+}
+#auth-tabs .ui-tabs-nav .ui-state-default a {
+    color: #c0c0c0;
+}
+#auth-tabs .ui-tabs-nav .ui-state-active a {
+    color: #000000;
+}
