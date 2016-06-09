@@ -65,8 +65,9 @@
 
         document.getElementById("outformat").onchange = function() {
             var currentVal = this.value;
+            var inputVal = document.getElementById("format").value;
 
-            if (currentVal == "fas") {
+            if (currentVal == "fas" && inputVal == "fas") {
                 document.getElementById("reformatOutput").value = inputFasta;
             }
 
