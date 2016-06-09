@@ -46,7 +46,10 @@
 <label>Select Output Format
     <select id="outformat">
         <option value="fas">FASTA</option>
+        <option value="a3m">A3M</option>
         <option value="clu">CLUSTAL</option>
+        <option value="phy">PHYLIP</option>
+        <option value="stock">STOCKHOLM</option>
         <option value="json">JSON</option>
     </select>
 </label>
@@ -67,6 +70,10 @@
 
             if (currentVal == "fas" && inputVal == "fas") {
                 document.getElementById("reformatOutput").value = document.getElementById("alignment").value;
+            }
+
+            if (currentVal == "a3m") {
+            document.getElementById("reformatOutput").value = readA3mText(document.getElementById("alignment").value);
             }
 
             if (currentVal == "clu") {
