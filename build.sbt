@@ -2,7 +2,7 @@ val akkaVersion = "2.4.4"
 val jqueryVersion = "2.2.4"
 val jqueryLazyloadVersion = "1.9.7"
 val jqueryUIVersion = "1.11.4"
-val foundationVersion = "6.2.1"
+val foundationVersion = "6.2.3"
 val mithrilVersion = "0.2.3"
 val betterfilesVersion = "2.15.0"
 val bcryptVersion = "0.3m"
@@ -62,7 +62,7 @@ lazy val mvc = (project in file("mvc"))
       "org.webjars" % "jquery" % jqueryVersion,
       "org.webjars.bower" % "jquery.lazyload" % jqueryLazyloadVersion,
       "org.webjars" % "jquery-ui" % jqueryUIVersion,
-      "org.webjars.bower" % "foundation-sites" % foundationVersion,
+      "org.webjars" % "foundation" % foundationVersion,
       "org.webjars" % "modernizr" % "2.8.3",
       "org.webjars.bower" % "fastclick" % "1.0.6",
       "org.json4s" %% "json4s-jackson" % "3.3.0",
