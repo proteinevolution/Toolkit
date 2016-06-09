@@ -67,10 +67,7 @@ REFORMAT
 
     function getClustalSeq (fastaLine) {
 
-        var fasta = readFastaLine(fastaLine),
-            result = {};
-
-
+        var fasta = readFastaLine(fastaLine);
         return fasta.sequence;
 
     }
@@ -96,20 +93,6 @@ REFORMAT
 
         return _ret;
     }
-
-
-
-    function chunkSubstr(str, size) {
-        var numChunks = Math.ceil(str.length / size),
-            chunks = new Array(numChunks);
-
-        for(var i = 0, o = 0; i < numChunks; ++i, o += size) {
-            chunks[i] = str.substr(o, size);
-        }
-
-        return chunks;
-    }
-
 
 
     function printAsJSON(source) {
