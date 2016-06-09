@@ -4,8 +4,6 @@ REFORMAT
 
  */
 
-
-
     function readFastaText(fastaText){
 
 
@@ -20,6 +18,48 @@ REFORMAT
         }
 
         return result;
+    }
+
+
+    function readA3mText(a3mtext){
+
+
+        var splittedStrings = a3mtext.split(">"),
+            result = [],
+            i = 1;
+
+        for (; i < splittedStrings.length; i++) {
+
+            result += ">";
+            result += readA3mLine(splittedStrings[i]).name;
+            result += "\n";
+            result += readA3mLine(splittedStrings[i]).sequence;
+            result += "\n";
+
+        }
+
+
+
+
+        console.log(result);
+        return result;
+
+    }
+
+
+    function readA3mLine(a3mline){
+
+        var splittedStrings  = a3mline.split('\n'),
+            result = {},
+            i = 1;
+        result.name = splittedStrings[0].substr(0, 11);
+        result.sequence = '';
+        for (; i < splittedStrings.length; i++) {
+            result.sequence += splittedStrings[i];
+            result.sequence = result.sequence.split('.').join('');
+        }
+        return result;
+
     }
 
 
