@@ -38,10 +38,6 @@ REFORMAT
 
         }
 
-
-
-
-        console.log(result);
         return result;
 
     }
@@ -72,7 +68,7 @@ REFORMAT
             j = 0;
 
 
-        for (; j<Math.trunc(getClustalSeq(splittedStrings[i]).length/60)+1 ; j++){
+        for (; j < Math.trunc(getClustalSeq(splittedStrings[i]).length/60) + 1 ; j++){
 
         for (; i < splittedStrings.length; i++) {
 
