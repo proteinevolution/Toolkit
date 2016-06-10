@@ -87,6 +87,8 @@ REFORMAT
 
         }
 
+        result = result.slice(0, -3); //removes trailing whitespaces at EOF
+
         return result;
     }
 
@@ -138,13 +140,8 @@ REFORMAT
     function printAsJSON(source) {
 
 
-        var output = JSON.stringify(readFastaText(source));
+        return JSON.stringify(readFastaText(source));
 
-        return output;
+
     }
-
-
-
-
-
 
