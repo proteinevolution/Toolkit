@@ -68,16 +68,20 @@ REFORMAT
             j = 0;
 
 
+            result += "CLUSTAL multiple sequence alignment";
+            result += "\n\n";
+
         for (; j < Math.trunc(getClustalSeq(splittedStrings[i]).length/60) + 1 ; j++){
 
-        for (; i < splittedStrings.length; i++) {
+            for (; i < splittedStrings.length; i++) {
 
-                result += getClustalHeader(splittedStrings[i]);
-                result += "\t";
-                result += chunkString(getClustalSeq(splittedStrings[i]), 60)[j];
-                result += "\n";
+                    result += getClustalHeader(splittedStrings[i]);
+                    result += "\t";
+                    result += chunkString(getClustalSeq(splittedStrings[i]), 60)[j];
+                    result += "\n";
 
-        }
+            }
+
             result += "\n\n";
             i = 1;
 
