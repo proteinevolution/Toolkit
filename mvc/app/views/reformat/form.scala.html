@@ -110,6 +110,11 @@
                 document.getElementById("reformatOutput").value = clustalAsJSON(document.getElementById("alignment").value);
             }
 
+            if (currentVal == "a3m" && inputVal == "clu") {
+                document.getElementById("reformatOutput").value = readA3mText(clustal2Fasta(document.getElementById("alignment").value));
+            }
+
+
 
         }
 
