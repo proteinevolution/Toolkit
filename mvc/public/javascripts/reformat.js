@@ -145,6 +145,32 @@ REFORMAT ES6 VERSION
 
     }
 
+    function clustalAsJSON(source){
+
+        return JSON.stringify(clustalParser(source));
+
+    }
+
+
+    function clustal2Fasta(text) {
+
+        var clustalObj = clustalParser(text),
+            result = [];
+
+
+        for(var i=0;i<clustalObj.length;i++){
+            result +=">";
+            result += clustalObj[i].name;
+            result += "\t";
+            result += clustalObj[i].seq;
+            result += "\n";
+        }
+
+
+        return result;
+
+    }
+
 
 
     function _contains(text, search) {
@@ -210,7 +236,8 @@ REFORMAT ES6 VERSION
                 }
             }
         }
-        return JSON.stringify(seqs);
+
+        return seqs;
     }
 
 
