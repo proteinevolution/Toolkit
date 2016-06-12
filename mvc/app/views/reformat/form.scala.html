@@ -101,8 +101,13 @@
             }
 
 
+            if (currentVal == "fas" && inputVal == "clu") {
+                document.getElementById("reformatOutput").value = clustal2Fasta(document.getElementById("alignment").value);
+            }
+
+
             if (currentVal == "json" && inputVal == "clu") {
-                document.getElementById("reformatOutput").value = clustalParser(document.getElementById("alignment").value);
+                document.getElementById("reformatOutput").value = clustalAsJSON(document.getElementById("alignment").value);
             }
 
 
