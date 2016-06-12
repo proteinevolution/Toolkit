@@ -161,7 +161,7 @@ REFORMAT ES6 VERSION
         for(var i=0;i<clustalObj.length;i++){
             result +=">";
             result += clustalObj[i].name;
-            result += "\t";
+            result += "\n";
             result += clustalObj[i].seq;
             result += "\n";
         }
