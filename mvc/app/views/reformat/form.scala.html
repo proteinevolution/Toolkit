@@ -88,16 +88,21 @@
                 document.getElementById("reformatOutput").value = document.getElementById("alignment").value;
             }
 
-            if (currentVal == "a3m") {
+            if (currentVal == "a3m" && inputVal == "fas") {
             document.getElementById("reformatOutput").value = readA3mText(document.getElementById("alignment").value);
             }
 
-            if (currentVal == "clu") {
+            if (currentVal == "clu" && inputVal == "fas") {
                 document.getElementById("reformatOutput").value = printClustalText(document.getElementById("alignment").value);
             }
 
-            if (currentVal == "json") {
+            if (currentVal == "json" && inputVal == "fas") {
                 document.getElementById("reformatOutput").value = printAsJSON(document.getElementById("alignment").value);
+            }
+
+
+            if (currentVal == "json" && inputVal == "clu") {
+                document.getElementById("reformatOutput").value = clustalParser(document.getElementById("alignment").value);
             }
 
 
