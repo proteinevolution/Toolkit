@@ -100,7 +100,7 @@ REFORMAT ES6 VERSION
             i = 1;
 
             for (; i < splittedStrings.length; i++) {
-                console.log(splittedStrings[i]);
+
                 if (splittedStrings[i].substring(0,3) == 'gi|') {
                 result += getClustalHeader(splittedStrings[i]).substring(3);
                 result += "\n";
