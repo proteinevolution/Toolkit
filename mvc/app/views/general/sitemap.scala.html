@@ -170,9 +170,9 @@ function data_display(){
          .on("mouseover", mouseovered(true))
          .on("mouseout", mouseovered(false))
          .on("click", function () {
-             var names = {"AlignmentViewer": "alnviz" , "T-Coffee": "tcoffee", "MAFFT": "mafft", "Hmmer3": "hmmer3",
-                          "PSI-Blast": "psiblast", "CS-Blast": "csblast", "Reformat": "reformat"};
-             window.location.href = "/#/tools/" + names[d3.select(this).text()];
+             var names = {"AlignmentViewer": "tools/alnviz" , "T-Coffee": "tools/tcoffee", "MAFFT": "tools/mafft", "Hmmer3": "tools/hmmer3",
+                          "PSI-Blast": "tools/psiblast", "CS-Blast": "tools/csblast", "Reformat": "reformat", "Extract GIs": "seq2gi"};
+             window.location.href = "/#/" + names[d3.select(this).text()];
 
          });
 
