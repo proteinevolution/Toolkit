@@ -100,7 +100,7 @@ function data_display(){
             .attr("width", x/2)
             .attr("height", x/2);
 
-    $("svg").css({top: 80, bottom: 600, left: '50%', position:'absolute', transform: 'translateX(-50%)'});
+    $("svg").css({top: -30, bottom: 600, left: '50%', position:'absolute', transform: 'translateX(-50%)'});
 
 
     var legend = svg.append("g")
@@ -108,7 +108,7 @@ function data_display(){
             .selectAll("g")
             .data(color.domain())
             .enter().append("g")
-            .attr("transform", function(d, i) { return "translate(" + (outerRadius * 2 - 10) + "," + (i * 20 + 10) + ")"; });
+            .attr("transform", function(d, i) { return "translate(" + (outerRadius * 2 - 10) + "," + (i * 20 + 50) + ")"; });
 
     legend.append("rect")
             .attr("x", -18)
