@@ -75,6 +75,7 @@
 
             if (currentVal == "clu") {
                 document.getElementById("alignment").value = inputClustal;
+                document.getElementById("reformatOutput").value = clustal2Fasta(document.getElementById("alignment").value);
 
             }
         };
