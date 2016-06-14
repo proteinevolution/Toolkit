@@ -52,28 +52,21 @@
 
         //TODO: one has to click one time too much when first loaded, need to get rid of this
 
-              $(".switch-paddle").click( function(){
 
-                      if ($(this).hasClass("isLeft") ) {
-                          if ( $(window).width() > 1900) {
-                              $('#sidebar-switch').stop().animate({marginLeft:"-17.313em"}, 200);
-                          }
+            $("#sidebartoggle").click(function(){
+                $(".sidebar").toggle();
+            });
 
-                          else {
+        $("#sidebartoggle").on("click", function(){
+            if($(this).text()=="Hide")
+            {
+                $(this).text("Sidebar");
+            } else {
+                $(this).text("Hide");
+            }
 
-                              $('#sidebar-switch').stop().animate({marginLeft:"-13em"}, 200);
-
-                          }
-
-                          $(this).removeClass('isLeft');
-                      } else {
-                          $("#sidebar-switch").stop().animate({marginLeft:"0em"}, 200);
-                          $(this).addClass('isLeft');
-                      }
-
-
-              });
-
+            return false;
+        });
 
 
 
