@@ -346,3 +346,8 @@ hr {
 .off-canvas {
     z-index: 99;
 }
+
+.off-canvas-wrapper{
+    position: relative;
+    overflow: hidden;
+}
