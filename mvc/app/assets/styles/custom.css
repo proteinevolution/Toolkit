@@ -342,3 +342,7 @@ hr {
 #auth-tabs .ui-tabs-nav .ui-state-active a {
     color: #000000;
 }
+
+.off-canvas {
+    z-index: 99;
+}
