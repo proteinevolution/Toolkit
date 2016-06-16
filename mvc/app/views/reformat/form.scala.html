@@ -30,11 +30,16 @@
     }
 
     h6, label {
-    padding-left: 20px;
+    padding-left: 50px;
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
     color: #2e2e2e;
     font-weight: bolder;
 
+    }
+
+    .sidebar {
+
+        display: none;
     }
 
 
@@ -43,6 +48,7 @@
 <link href="@routes.Assets.at("styles/bespin.css")" rel="stylesheet">
 <div style="padding-top: 10px;"></div>
 <h6>Reformat Sequence Converter</h6>
+
 <p>&nbsp;</p>
 <!--
 <textarea id="alignment" name="alignment" class="reformatInput"></textarea>
@@ -72,7 +78,7 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <!--<input class="small button" id="submitbutton" value="Convert" onclick="convert()">-->
-<div style="width: 95%; padding-left: 20px;">
+<div style="width: 95%; display: block; margin: auto;">
 <div class="large-6 columns">
 <div id="inputMirror" style="width: 98%;"></div>
 </div>
@@ -81,17 +87,19 @@
 </div>
 </div>
 <p>&nbsp;</p>
-<div style="width: 40%; display: block; margin: auto;">
-<label>Select Output Format
-    <select id="outformat">
-        <option value="fas">FASTA</option>
-        <option value="a3m">A3M</option>
-        <option value="clu">CLUSTAL</option>
-        <option value="phy">PHYLIP</option>
-        <option value="stock">STOCKHOLM</option>
-        <option value="json">JSON</option>
-    </select>
-</label>
+<div class="success callout" data-closable="slide-out-right" style="width: 50%; display: block; margin: auto;">
+    <p>It looks as we found a FASTA formatted input. To which format do you want to convert it?</p>
+    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+        <span aria-hidden="true">&times;</span>
+    </button>
+
+    <label>Select Output Format
+        <select id="outformat">
+            <option>Choose</option>
+            <option value="a3m">A3M</option>
+            <option value="clu">CLUSTAL</option>
+        </select>
+    </label>
 </div>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -159,9 +167,9 @@
 
 
     var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
-    value: "",
+    value: inputFasta,
     lineNumbers: false,
-    mode:  "javascript",
+    mode:  "none",
     theme: "bespin"
     });
 
@@ -170,13 +178,29 @@
 
     var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
     value: "",
-    lineNumbers: false,
+    lineNumbers: true,
     mode:  "javascript",
     theme: "bespin"
     });
 
     myCodeMirror2.setSize("100%", 450);
 
+
+
+
+    document.getElementById("outformat").onchange = function() {
+        var currentVal = this.value;
+
+        if (currentVal == "a3m") {
+            console.log("Hallo");
+            myCodeMirror2.setValue(readA3mText(myCodeMirror.getValue()));
+        }
+
+        if (currentVal == "clu") {
+            myCodeMirror2.setValue(printClustalText(myCodeMirror.getValue()));
+        }
+
+    }
 
 
 </script>
