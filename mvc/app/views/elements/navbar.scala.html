@@ -7,12 +7,7 @@
 <div data-sticky-container class="show-for-large">
     <div class="top-bar sticky fullwidth row" id="stickyheader" style="width:100%; opacity: 0.9;" data-sticky data-options="marginTop:0;" data-top-anchor="top" data-btm-anchor="blaststats:bottom">
         <div class="top-bar-left large-1 columns show-for-large">
-            <div class="switch tiny" id="hideSwitch">
-                <input class="switch-input" id="exampleSwitch" type="checkbox" name="exampleSwitch">
-                <label class="switch-paddle isLeft" for="exampleSwitch" id="paddle" >
-                    <span class="show-for-sr"></span>
-                </label>
-            </div>
+                <button id="sidebartoggle">Hide</button>
         </div>
         <div class="top-bar-title large-11 columns">
             <div class="drops">
@@ -113,6 +108,7 @@
                     <div class="large-2 columns">
                         <ul class="objects"  style="list-style: none">
                             <li style="padding-top: 0.625em"><a onclick="location.href='/#/reformat';$('.dropdown-pane').foundation('close');">Reformat</a></li>
+                            <li style="padding-top: 0.625em"><a onclick="location.href='/#/seq2gi';$('.dropdown-pane').foundation('close');">ExtractGIs</a></li>
                         </ul>
                     </div>
                     <div class="large-9 columns">
