@@ -177,6 +177,28 @@ margin: 0;
     }
 
 
+    .jobstate {
+
+        margin-right: 0px;
+        box-shadow: 0 0 5px rgba(0,0,0, .8);
+        display: block;
+        width: 30px;
+        height: 115px;
+        background: #ffff00;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        border-radius: 4px;
+        box-shadow: 0 0 10px orange;
+    }
+
+    .traffic {
+
+        display: inline;
+        float: right;
+        position: relative;
+        margin-top: -116px;
+        z-index: 20;
+    }
 
 
 </style>
@@ -190,10 +212,10 @@ margin: 0;
 
 
 
-<div class="grid" style="margin-top: 460px;">
+<div class="grid show-for-large" style="margin-top: 460px;">
 
 
-    <div class="tool-finder">
+    <div class="tool-finder show-for-large">
 
         <fieldset>
             <div class="labels">
@@ -211,7 +233,7 @@ margin: 0;
 
         </fieldset>
 
-        <div class="keysearch">
+        <div class="keysearch show-for-large">
             <div class="large-7 columns">
             <input class="search-query" type="text" name="q" value="" placeholder="Search Keywords">
                 <p><a data-open="advancedsearch-modal" style="margin-top: -25px; margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
@@ -233,6 +255,12 @@ margin: 0;
 
         </div>
 
+    </div>
+
+    <div class="traffic show-for-large">
+        <span data-tooltip aria-haspopup="true" class="has-tip right" data-disable-hover="false" tabindex="3" title="you have still 2 running jobs: 124354 (HHpred), 658234 (Hmmer3)">
+        <div class="jobstate"></div>
+        </span>
     </div>
 
 </div>
