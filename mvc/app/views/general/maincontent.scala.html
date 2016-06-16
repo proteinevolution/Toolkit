@@ -185,6 +185,7 @@ margin: 0;
     }
 
 
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
@@ -239,13 +240,15 @@ margin: 0;
 
         </div>
 
+        <div class="trafficbar" id="trafficbar"></div>
+
     </div>
 
-    <div class="traffic" media="screen and (min-width: 1310px)">
+    <!--<div class="traffic">
         <span data-tooltip aria-haspopup="true" class="has-tip right" data-disable-hover="false" tabindex="3" title="you have still 2 running jobs: 124354 (HHpred), 658234 (Hmmer3)">
         <div class="jobstate"></div>
         </span>
-    </div>
+    </div> -->
 
 </div>
 
@@ -312,7 +315,7 @@ margin: 0;
                             <input type="text" name="query" value="" id="query"/>
                             <div class="query-note">
 
-          You can use any of <a href="/info" target="_blank">these search
+                                You can use any of <a href="/info" target="_blank">these search
                                 operators</a> in this input field
 
       </div>
@@ -435,6 +438,7 @@ margin: 0;
 
     $(document).ready(function() {
                 $(".js-example-basic-single").select2();
+
     });
 
 
@@ -453,6 +457,8 @@ margin: 0;
 
 
     };
+
+
     </script>
 
 

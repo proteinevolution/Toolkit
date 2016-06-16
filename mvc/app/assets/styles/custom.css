@@ -358,30 +358,7 @@ hr {
     overflow: hidden;
 }
 
-@media only screen and (min-width : 1310px) {
 
-    .traffic {
-
-        display: inline;
-        float: right;
-        position: relative;
-        margin-top: -116px;
-        z-index: 20;
-    }
-
-}
-@media only screen and (max-width : 1309px) {
-
-    .traffic {
-
-        display: none;
-        float: right;
-        position: relative;
-        margin-top: -116px;
-        z-index: 20;
-    }
-
-}
 
 @media only screen and (min-width : 1310px) {
 
@@ -408,3 +385,34 @@ hr {
     }
 
 }
+
+
+.trafficbar {
+
+    position: relative;
+    z-index: 99;
+    margin-bottom: 0px;
+    height: 6px;
+    width: 100%;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-animation: background 10s cubic-bezier(1,0,0,1) infinite;
+    animation: background 10s cubic-bezier(1,0,0,1) infinite;
+}
+
+
+@-webkit-keyframes background {
+    0% { background: #ff0000; box-shadow: 0 0 10px #d2071d ; }
+    50% { background: #ffff00; box-shadow: 0 0 10px #ffce27 ; }
+    100% { background: green; box-shadow: 0 0 10px darkgreen ; }
+
+}
+
+@keyframes background {
+    0% { background: #ff0000; box-shadow: 0 0 10px #d2071d ; }
+    50% { background: #ffff00; box-shadow: 0 0 10px #ffce27 ; }
+    100% { background: green; box-shadow: 0 0 10px darkgreen ; }
+
+}
+
