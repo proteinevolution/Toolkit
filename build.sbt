@@ -69,6 +69,7 @@ lazy val mvc = (project in file("mvc"))
       "org.scalaz" %% "scalaz-core" % "7.2.1",
       "org.webjars" % "mithril" % mithrilVersion,
       "org.webjars.bower" % "d3" % d3Version,
+      "org.webjars.bower" % "slick-carousel" % "1.6.0",
       "org.webjars" % "highcharts" % highchartsVersion)),
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
