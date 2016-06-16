@@ -133,14 +133,7 @@ margin: 0;
         font-family: font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
     }
 
-    .keysearch{
-        float: right;
-        margin-top: 30px;
-        margin-right: 100px;
-        width: 60%;
-        display:inline;
 
-    }
 
     input.search-query {
 
@@ -191,15 +184,6 @@ margin: 0;
         box-shadow: 0 0 10px orange;
     }
 
-    .traffic {
-
-        display: inline;
-        float: right;
-        position: relative;
-        margin-top: -116px;
-        z-index: 20;
-    }
-
 
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
@@ -233,7 +217,7 @@ margin: 0;
 
         </fieldset>
 
-        <div class="keysearch show-for-large">
+        <div class="keysearch">
             <div class="large-7 columns">
             <input class="search-query" type="text" name="q" value="" placeholder="Search Keywords">
                 <p><a data-open="advancedsearch-modal" style="margin-top: -25px; margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
@@ -257,7 +241,7 @@ margin: 0;
 
     </div>
 
-    <div class="traffic show-for-large">
+    <div class="traffic" media="screen and (min-width: 1310px)">
         <span data-tooltip aria-haspopup="true" class="has-tip right" data-disable-hover="false" tabindex="3" title="you have still 2 running jobs: 124354 (HHpred), 658234 (Hmmer3)">
         <div class="jobstate"></div>
         </span>
