@@ -67,7 +67,6 @@ REFORMAT ES6 VERSION
             i = 1,
             j = 0;
 
-
             result += "CLUSTAL multiple sequence alignment";
             result += "\n\n";
 
@@ -106,7 +105,6 @@ REFORMAT ES6 VERSION
                 result += "\n";
 
                 }
-
             }
 
         return result;
@@ -139,7 +137,6 @@ REFORMAT ES6 VERSION
         var fasta = readFastaLine(fastaLine);
         return fasta.name;
 
-
     }
 
     function chunkString(str, len) {
@@ -159,9 +156,7 @@ REFORMAT ES6 VERSION
 
     function printAsJSON(source) {
 
-
         return JSON.stringify(readFastaText(source));
-
 
     }
 
@@ -186,17 +181,14 @@ REFORMAT ES6 VERSION
             result += "\n";
         }
 
-
         return result;
 
     }
 
 
-
     function _contains(text, search) {
         return ''.indexOf.call(text, search, 0) !== -1;
     }
-
 
 
     function clustalParser(text) {
