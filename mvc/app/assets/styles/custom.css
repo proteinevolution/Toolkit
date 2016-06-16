@@ -404,15 +404,16 @@ hr {
 
 @-webkit-keyframes background {
     0% { background: #ff0000; box-shadow: 0 0 10px #d2071d ; }
-    50% { background: #ffff00; box-shadow: 0 0 10px #ffce27 ; }
-    100% { background: green; box-shadow: 0 0 10px darkgreen ; }
+    33% { background: #ffff00; box-shadow: 0 0 10px #ffce27 ; }
+    66% { background: green; box-shadow: 0 0 10px darkgreen ; }
+    100% { display: none; }
 
 }
 
 @keyframes background {
     0% { background: #ff0000; box-shadow: 0 0 10px #d2071d ; }
-    50% { background: #ffff00; box-shadow: 0 0 10px #ffce27 ; }
-    100% { background: green; box-shadow: 0 0 10px darkgreen ; }
-
+    33% { background: #ffff00; box-shadow: 0 0 10px #ffce27 ; }
+    66% { background: green; box-shadow: 0 0 10px darkgreen ; }
+    100% { display: none; }
 }
 
