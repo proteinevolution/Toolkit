@@ -343,6 +343,12 @@ hr {
     color: #000000;
 }
 
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+    float: left;
+    padding: .5em .5em;
+    text-decoration: none;
+}
+
 .off-canvas {
     z-index: 99;
 }
