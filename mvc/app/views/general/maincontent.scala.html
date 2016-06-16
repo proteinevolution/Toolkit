@@ -197,7 +197,11 @@ margin: 0;
                 <label style="margin-top: -10px;">Section: </label>
             </div>
             <div class="inputs">
-                <select><option>Choose</option></select><br />
+                <select id="toolselect"><option>Choose</option>
+                    <option value="alnviz">AlignmentViewer</option>
+                    <option value="reformat">Reformat</option>
+                    <option value="seq2gi">Extract GIs</option>
+                </select><br />
                 <select><option>Choose</option></select>
             </div>
 
@@ -206,7 +210,7 @@ margin: 0;
         <div class="keysearch">
             <div class="large-7 columns">
             <input class="search-query" type="text" name="q" value="" placeholder="Search Keywords">
-                <p><a data-open="exampleModal1" style="margin-top: -25px; margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
+                <p><a data-open="advancedsearch-modal" style="margin-top: -25px; margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
             </div>
             <div class="large-2 columns">
             <button class="fi-magnifying-glass" type="submit" style="margin-left: -25px; margin-top: 10px;"></button>
@@ -276,7 +280,7 @@ margin: 0;
 </div>
 
 
-<div class="reveal" id="exampleModal1" data-reveal>
+<div class="reveal" id="advancedsearch-modal" data-reveal>
 
     <form class="search-form" id="search-form" action="/#results" method="get">
         <div class="search-content">
@@ -417,7 +421,21 @@ margin: 0;
     });
 
 
+    document.getElementById("toolselect").onchange = function() {
 
+    var currentVal = this.value;
+    if (currentVal == "reformat") {
+    window.location.href = "/#/reformat";
+    }
+    if (currentVal == "seq2gi") {
+    window.location.href = "/#/seq2gi";
+    }
+    if (currentVal == "alnviz") {
+    window.location.href = "/#/tools/alnviz";
+    }
+
+
+    };
     </script>
 
 
