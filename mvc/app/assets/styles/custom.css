@@ -357,3 +357,54 @@ hr {
     position: relative;
     overflow: hidden;
 }
+
+@media only screen and (min-width : 1310px) {
+
+    .traffic {
+
+        display: inline;
+        float: right;
+        position: relative;
+        margin-top: -116px;
+        z-index: 20;
+    }
+
+}
+@media only screen and (max-width : 1309px) {
+
+    .traffic {
+
+        display: none;
+        float: right;
+        position: relative;
+        margin-top: -116px;
+        z-index: 20;
+    }
+
+}
+
+@media only screen and (min-width : 1310px) {
+
+    .keysearch{
+        float: right;
+        margin-top: 30px;
+        margin-right: 100px;
+        width: 60%;
+        display:inline;
+
+    }
+
+    }
+
+@media only screen and (max-width : 1310px) {
+
+    .keysearch{
+        float: right;
+        margin-top: 30px;
+        margin-right: 100px;
+        width: 60%;
+        display:none;
+
+    }
+
+}
