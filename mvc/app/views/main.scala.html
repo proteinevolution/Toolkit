@@ -12,10 +12,12 @@
         <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/custom.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/motion-ui.css")" rel="stylesheet">
+        <link href="@routes.WebJarAssets.at(webJarAssets.locate("slick.css"))" rel="stylesheet">
+        <link href="@routes.WebJarAssets.at(webJarAssets.locate("slick-theme.css"))" rel="stylesheet">
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("modernizr.min.js"))"></script>
 
         <!-- JQuery -->
-        <script src="@routes.WebJarAssets.at(webJarAssets.locate("jquery.min.js"))" type="text/javascript" ></script>
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("2.2.4/jquery.min.js"))" type="text/javascript" ></script>
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("jquery.lazyload.js"))" type="text/javascript" ></script>
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("jquery-ui.js"))" type="text/javascript" ></script>
 
@@ -31,6 +33,16 @@
         <!-- Highcharts -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("highcharts.js"))"></script>
 
+        <!-- Slick Slider -->
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("slick.min.js"))"></script>
+
+
+        <!-- Codemirror -->
+
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("codemirror.js"))"></script>
+        <link rel="stylesheet" href="@routes.WebJarAssets.at(webJarAssets.locate("codemirror.css"))">
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("javascript.js"))"></script>
+
         <!-- Javascript Router -->
         @helper.javascriptRouter("jsRoutes")(
             routes.javascript.Tool.submit)
@@ -40,7 +52,7 @@
         <!-- Google Fonts -->
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300' rel='stylesheet' type='text/css'>
-
+        <link href='http://fonts.googleapis.com/css?family=Vollkorn:400,700' rel='stylesheet' type='text/css'>
 
         <script>
         var shiftWindow = function() { scrollBy(0, 5) };

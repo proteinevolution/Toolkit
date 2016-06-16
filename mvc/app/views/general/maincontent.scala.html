@@ -35,8 +35,8 @@ margin: 0;
 .content-wrapper-half {
  margin-top: 2em;
  border: 2px solid;
- border-color:  #006F62;
- font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+ border-color:  #8a8a8a;
+ font-family: 'Vollkorn', 'Palatino', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
  background-color: white;
 
 
@@ -44,9 +44,9 @@ margin: 0;
 
 .content-wrapper-quarter {
     margin-top: 2em;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+    font-family: 'Vollkorn', 'Palatino', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
     border: 2px solid;
-    border-color:  #006F62;
+    border-color:  #8a8a8a;
     background-color: white;
 
 }
@@ -63,7 +63,7 @@ margin: 0;
 }
 
 .lazy-container h5 {
-   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+   font-family: 'Liberation Serif', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
    text-align: justify;
    font-weight: bold;
 }
@@ -78,7 +78,165 @@ margin: 0;
 }
 
 
+    .grid {
+
+        display: block;
+        margin: auto;
+        width: 60%;
+    }
+
+    .tool-finder {
+
+        background: #ffffff; /* Old browsers */
+        background: -moz-linear-gradient(top, #ffffff 0%, #e5e5e5 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #ffffff 0%,#e5e5e5 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+        border: 1px solid #ccc;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -ms-border-radius: 4px;
+        -o-border-radius: 4px;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -ms-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -o-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        z-index: 9;
+        position: relative;
+    }
+
+    FIELDSET {
+    margin-top: 14px;
+    display: inline-block;
+    line-height: 200%;
+    }
+    .labels {
+        font-family: font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+        text-align: right;
+        float: left;
+        font-size: 12px;
+        margin-left: 14px;
+        margin-right: 15px;
+        margin-bottom: 15px;
+    }
+    .inputs {
+        float: left;
+        width: 130px;
+        white-space: nowrap;display:inline;
+    }
+
+    select {
+        height: 30px;
+        font-size: 12px;
+        font-family: font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+    }
+
+    .keysearch{
+        float: right;
+        margin-top: 30px;
+        margin-right: 100px;
+        width: 60%;
+        display:inline;
+
+    }
+
+    input.search-query {
+
+        margin: 0 0;
+    }
+
+
+    .slider {
+
+        width: 100%;
+
+    }
+
+    .slick-slide {
+    height:530px;
+    }
+
+    .slick-slide img {
+    height: 530px;
+    }
+
+
+    .search-form {
+
+        font-size: 12px;
+        opacity: 0.8;
+
+    }
+
+    .search-fields{
+        display: block;
+        margin: auto;
+        width: 80%;
+    }
+
+
+
+
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
+
+<section class="slider" style="margin-top:-10px;">
+    <div><img src="@routes.Assets.at("images/ScalaCoil.jpg")" style="width: 100%"></div>
+    <div><img src="@routes.Assets.at("images/proteinCoverart.jpg")" style="width: 100%"></div>
+</section>
+
+
+
+<div class="grid" style="margin-top: 460px;">
+
+
+    <div class="tool-finder">
+
+        <fieldset>
+            <div class="labels">
+                <label style="margin-top: 5px;">Tools: </label><br />
+                <label style="margin-top: -10px;">Section: </label>
+            </div>
+            <div class="inputs">
+                <select id="toolselect"><option>Choose</option>
+                    <option value="alnviz">AlignmentViewer</option>
+                    <option value="reformat">Reformat</option>
+                    <option value="seq2gi">Extract GIs</option>
+                </select><br />
+                <select><option>Choose</option></select>
+            </div>
+
+        </fieldset>
+
+        <div class="keysearch">
+            <div class="large-7 columns">
+            <input class="search-query" type="text" name="q" value="" placeholder="Search Keywords">
+                <p><a data-open="advancedsearch-modal" style="margin-top: -25px; margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
+            </div>
+            <div class="large-2 columns">
+            <button class="fi-magnifying-glass" type="submit" style="margin-left: -25px; margin-top: 10px;"></button>
+            </div>
+            <div class="large-3 columns">
+                <div style="margin-top: 5px;"> <! -- TODO: implement me: https://select2.github.io/examples.html -->
+                <select class="js-example-basic-single" style="position:relative;z-index:9999999;">
+                    <option value="AL">Find your job</option>
+                    <option value="WY">123345</option>
+                    <option value="WY">523125</option>
+                    <option value="WY">222345</option>
+                    <option value="WY">123345</option>
+                </select>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 
 <div class="lazy-container">
@@ -126,6 +284,113 @@ margin: 0;
 </div>
 
 
+<div class="reveal" id="advancedsearch-modal" data-reveal>
+
+    <form class="search-form" id="search-form" action="/#results" method="get">
+        <div class="search-content">
+            <center><h5>Advanced search</h5></center>
+
+            <div class="search-fields">
+
+                <div class="search-section">
+                    <h6>Words</h6>
+                    <div class="search-operator">
+                        <label for="query"> <strong>All</strong> these words </label>
+                        <div class="input-section">
+                            <input type="text" name="query" value="" id="query"/>
+                            <div class="query-note">
+
+          You can use any of <a href="/info" target="_blank">these search
+                                operators</a> in this input field
+
+      </div>
+
+                        </div>
+                    </div>
+                    <div class="search-operator">
+                        <label for="query"> This <strong>exact</strong> phrase </label>
+                        <div class="input-section">
+                            <input type="text" name="exact_phrase" value="" id="exact_phrase"/>
+                            <div class="query-note">
+
+      </div>
+
+                        </div>
+                    </div>
+                    <div class="search-operator">
+                        <label for="query"> <strong>Any</strong> of these words </label>
+                        <div class="input-section">
+                            <input type="text" name="any_of" value="" id="any_of"/>
+                            <div class="query-note">
+
+      </div>
+
+                        </div>
+                    </div>
+                    <div class="search-operator">
+                        <label for="query"> <strong>Exclude</strong> these words </label>
+                        <div class="input-section">
+                            <input type="text" name="exclude_words" value="" id="exclude_words"/>
+                            <div class="query-note">
+
+      </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-section dates">
+                    <h6>Dates</h6>
+                    <div class="search-operator">
+                        <label> Origin or created </label>
+                        <div class="input-section date-range">
+                            <input
+                            type="text"
+                            id="document_date_start"
+                            name="document_date_start"
+                            value=""
+                            placeholder="yyyy-mm-dd"/>
+                            <div class="to">to</div>
+                            <input
+                            type="text"
+                            id="document_date_end"
+                            name="document_date_end"
+                            value=""
+                            placeholder="yyyy-mm-dd"/>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="input-section checkbox-group">
+                    <label>
+                        <input
+                        type="checkbox"
+                        name="include_external_sources"
+                        value="True"
+
+                        />
+                        Include external sources
+                    </label>
+                    <div class="query-note">
+                    e.g. NCBI, etc.
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="advanced-submit">
+                    <button class="button small" type="submit" name="new_search" value="True">Search</button>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </form>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
 
     <script>
@@ -135,6 +400,47 @@ margin: 0;
      effect : "fadeIn"
     });
 
+
+    $(".slider").slick({
+        autoplay: true,
+        autoplayspeed: 5000,
+        speed: 2500,
+        dots: false,
+        fade: true,
+        cssEase: 'ease-out',
+        zIndex: 1,
+        responsive: [{
+            breakpoint: 500,
+            settings: {
+                dots: false,
+                arrows: false,
+                infinite: false,
+                slidesToShow: 2,
+                slidesToScroll: 2
+            }
+        }]
+    });
+
+    $(document).ready(function() {
+                $(".js-example-basic-single").select2();
+    });
+
+
+    document.getElementById("toolselect").onchange = function() {
+
+    var currentVal = this.value;
+    if (currentVal == "reformat") {
+    window.location.href = "/#/reformat";
+    }
+    if (currentVal == "seq2gi") {
+    window.location.href = "/#/seq2gi";
+    }
+    if (currentVal == "alnviz") {
+    window.location.href = "/#/tools/alnviz";
+    }
+
+
+    };
     </script>
 
 

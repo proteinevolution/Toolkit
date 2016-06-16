@@ -47,6 +47,11 @@ class Service @Inject() (val messagesApi: MessagesApi,
         Ok(views.html.reformat.form()).withSession {
           Session.closeSessionRequest(request, Session.requestSessionID(request))
         }
+        
+      case "seq2gi" =>
+        Ok(views.html.seq2gi.form()).withSession {
+          Session.closeSessionRequest(request, Session.requestSessionID(request))
+        }
     }
   }
 
