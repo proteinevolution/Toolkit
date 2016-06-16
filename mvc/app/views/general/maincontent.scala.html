@@ -168,6 +168,7 @@ margin: 0;
 
 <section class="slider" style="margin-top:-10px;">
     <div><img src="@routes.Assets.at("images/ScalaCoil.jpg")" style="width: 100%"></div>
+    <div><img src="@routes.Assets.at("images/proteinCoverart.jpg")" style="width: 100%"></div>
 </section>
 
 
@@ -274,7 +275,10 @@ margin: 0;
 
     $(".slider").slick({
         autoplay: true,
-        dots: true,
+        autoplayspeed: 3000,
+        speed: 1500,
+        dots: false,
+        fade: true,
         zIndex: 1,
         responsive: [{
             breakpoint: 500,
