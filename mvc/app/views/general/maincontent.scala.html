@@ -159,6 +159,19 @@ margin: 0;
     }
 
 
+    .search-form {
+
+        font-size: 12px;
+        opacity: 0.8;
+
+    }
+
+    .search-fields{
+        display: block;
+        margin: auto;
+        width: 80%;
+    }
+
 
 
 
@@ -193,7 +206,7 @@ margin: 0;
         <div class="keysearch">
             <div class="large-7 columns">
             <input class="search-query" type="text" name="q" value="" placeholder="Search Keywords">
-            <a href="#" style="margin-top: -25px; margin-left: 4px; font-size: 12px;">Advanced Search</a>
+                <p><a data-open="exampleModal1" style="margin-top: -25px; margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
             </div>
             <div class="large-2 columns">
             <button class="fi-magnifying-glass" type="submit" style="margin-left: -25px; margin-top: 10px;"></button>
@@ -263,6 +276,113 @@ margin: 0;
 </div>
 
 
+<div class="reveal" id="exampleModal1" data-reveal>
+
+    <form class="search-form" id="search-form" action="/#results" method="get">
+        <div class="search-content">
+            <center><h5>Advanced search</h5></center>
+
+            <div class="search-fields">
+
+                <div class="search-section">
+                    <h6>Words</h6>
+                    <div class="search-operator">
+                        <label for="query"> <strong>All</strong> these words </label>
+                        <div class="input-section">
+                            <input type="text" name="query" value="" id="query"/>
+                            <div class="query-note">
+
+          You can use any of <a href="/info" target="_blank">these search
+                                operators</a> in this input field
+
+      </div>
+
+                        </div>
+                    </div>
+                    <div class="search-operator">
+                        <label for="query"> This <strong>exact</strong> phrase </label>
+                        <div class="input-section">
+                            <input type="text" name="exact_phrase" value="" id="exact_phrase"/>
+                            <div class="query-note">
+
+      </div>
+
+                        </div>
+                    </div>
+                    <div class="search-operator">
+                        <label for="query"> <strong>Any</strong> of these words </label>
+                        <div class="input-section">
+                            <input type="text" name="any_of" value="" id="any_of"/>
+                            <div class="query-note">
+
+      </div>
+
+                        </div>
+                    </div>
+                    <div class="search-operator">
+                        <label for="query"> <strong>Exclude</strong> these words </label>
+                        <div class="input-section">
+                            <input type="text" name="exclude_words" value="" id="exclude_words"/>
+                            <div class="query-note">
+
+      </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-section dates">
+                    <h6>Dates</h6>
+                    <div class="search-operator">
+                        <label> Origin or created </label>
+                        <div class="input-section date-range">
+                            <input
+                            type="text"
+                            id="document_date_start"
+                            name="document_date_start"
+                            value=""
+                            placeholder="yyyy-mm-dd"/>
+                            <div class="to">to</div>
+                            <input
+                            type="text"
+                            id="document_date_end"
+                            name="document_date_end"
+                            value=""
+                            placeholder="yyyy-mm-dd"/>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="input-section checkbox-group">
+                    <label>
+                        <input
+                        type="checkbox"
+                        name="include_external_sources"
+                        value="True"
+
+                        />
+                        Include external sources
+                    </label>
+                    <div class="query-note">
+                    e.g. NCBI, etc.
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="advanced-submit">
+                    <button class="button small" type="submit" name="new_search" value="True">Search</button>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </form>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
 
     <script>
