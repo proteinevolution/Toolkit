@@ -63,8 +63,8 @@ validator = new m.validator {
 
       else
         header = sequence.trim().replace(' ', '')
-        if not header.startsWith('CLUSTALW')
-          return 'No CLUSTALW Header'
+        if not header.startsWith('CLUSTAL')
+          return 'No CLUSTAL Header'
         # Check header
         headerSeen = true
 
