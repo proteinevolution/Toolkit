@@ -36,6 +36,13 @@
         <!-- Slick Slider -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("slick.min.js"))"></script>
 
+
+        <!-- Codemirror -->
+
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("codemirror.js"))"></script>
+        <link rel="stylesheet" href="@routes.WebJarAssets.at(webJarAssets.locate("codemirror.css"))">
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("javascript.js"))"></script>
+
         <!-- Javascript Router -->
         @helper.javascriptRouter("jsRoutes")(
             routes.javascript.Tool.submit)
