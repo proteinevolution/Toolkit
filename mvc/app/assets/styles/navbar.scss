@@ -133,7 +133,9 @@ i {
 
 
 .objects {
-  background-color: #d1d1d1 !important;
+
+  background-color: rgba(0, 0, 0, 0.0) !important;
+
 }
 
 .objects li:after {
@@ -143,7 +145,7 @@ i {
 
 
 .objects a {
-  color: black;
+  color: white;
   font-weight: bold;
   font-size: 0.7em;
 
@@ -151,22 +153,24 @@ i {
 
 
 .textArea {
-  background-color: white !important;
+  background-color: rgba(0, 0, 0, 0.0) !important;
   font-size: 0.625em;
+  color: white;
 }
 
 .textArea li {
   padding-top: 1.7em;
   padding-bottom: 1em;
-  background-color: #d1d1d1 !important;
+
+
 
 }
 
 .dropdowns {
-  background-color: #d1d1d1 !important;
-  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.6) !important;
   display: block !important;
   visibility: hidden;
+  border: none !important;
 
 }
 
@@ -175,7 +179,7 @@ i {
   color: #d317ff;
   font-weight: bolder;
   padding-top: 2.3em;
-  background-color: #d1d1d1 !important;
+  background-color: rgba(0, 0, 0, 0.0) !important;
   padding-right: 40%;
   padding-left: 10%;
 }
