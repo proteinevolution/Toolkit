@@ -34,7 +34,7 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
  */
 val commonSettings = Seq(
   organization := "your.organization",
-  version := "2.5.3",
+  version := "2.5.4",
   scalaVersion := "2.11.8",
   logLevel := Level.Warn,
   dependencyOverrides ++= Set("org.webjars" % "jquery" % jqueryVersion,
@@ -71,6 +71,7 @@ lazy val mvc = (project in file("mvc"))
       "org.webjars.bower" % "d3" % d3Version,
       "org.webjars.bower" % "slick-carousel" % "1.6.0",
       "org.webjars.npm" % "codemirror-minified" % "5.15.2",
+      "org.webjars" % "dropzone" % "4.3.0",
       "org.webjars" % "highcharts" % highchartsVersion)),
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
