@@ -4,13 +4,13 @@
 
 trap 'kill $(jobs -p)' EXIT
 
-export DIR_4_TCOFFEE=./specific   
-export TMP_4_TCOFFEE=./specific
-export CACHE_4_TCOFFEE=./specific
+export DIR_4_TCOFFEE=./tmp  
+export TMP_4_TCOFFEE=./tmp
+export CACHE_4_TCOFFEE=./tmp
 
 
-!{BIO}/tools/tcoffee/bin/t_coffee \
-                   -in %{sequences} \
+%BIOPROGS/tools/tcoffee/bin/t_coffee \
+                   -in %sequences.path \
                    -cache=no \
                    -output clustalw_aln score_pdf score_html
 

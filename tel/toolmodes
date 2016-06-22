@@ -8,6 +8,5 @@
 
 #% tcoffee
 #% sequences.nr    nCPUS    MODE
-20	          8        SGE 
-
-
+20	          8        local
+200               30-100   SGE

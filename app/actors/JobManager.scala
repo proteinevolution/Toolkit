@@ -55,12 +55,8 @@ import JobManager._
   // Maps User ID to Actor Ref of corresponding WebSocket
   val connectedUsers = new collection.mutable.HashMap[String, ActorRef]
 
-
   //  Generates new jobID // TODO Save this state
   val jobIDSource: Iterator[Int] = Stream.continually(  random.nextInt(8999999) + 1000000 ).distinct.iterator
-
-  // Subdirectories of a Job Directory
-  val subdirs = Array("/results", "/logs", "/params", "/specific", "/inter")
 
   // Ignore the following keys when writing parameters
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
@@ -97,25 +93,18 @@ import JobManager._
   // Methods
   def executeJob(jobID : Int, toolname : String, params : Map[String, String]): Unit = {
 
-    // Where the job directory is located
     val rootPath  = s"$jobPath$SEP$jobID$SEP"
+    val runscript = s"$rootPath$toolname.sh"
 
-    // Where the Runscript of the corresponding tool is located
-    val runscript = s"$rootPath$toolname.sh".toFile
+    chmod_+(PosixFilePermission.OWNER_EXECUTE, runscript.toFile)
 
-
-    // Parse all lines of runscript template and translate to runscript instance
-    // Generate the execution scripts in the working directory using TEL
-    TEL.init(toolname, params, rootPath)
-
-    /*
-    chmod_+(PosixFilePermission.OWNER_EXECUTE, runscript)
+    Logger.info("Runscript " + runscript)
 
     // Log files output buffer
     val out = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stdout.out")))
     val err = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stderr.err")))
 
-    if(Process(s"./$toolname.sh" , new java.io.File(rootPath)).run(ProcessLogger(
+    if(Process(runscript , new java.io.File(rootPath)).run(ProcessLogger(
       (fout) => out.write(fout),
       (ferr) => err.write(ferr)
     )).exitValue() == 0) {
@@ -126,7 +115,7 @@ import JobManager._
         changeState(jobID, JobState.Error)
     }
     out.close()
-    err.close() */
+    err.close()
   }
 
 
@@ -171,12 +160,10 @@ import JobManager._
         case scala.util.Failure(_) => sender() ! FailDeleted(jobID)
       }
 
-     // User asks to prepare new Job
+     // User asks to prepare new Job, might be directly executed (if start is true)
     case Prepare(userID, jobID, toolname, params, start) =>
 
-
       Future {
-
         // Check whether jobID already exists, otherwise make new job
 
         // This is a new Job Submission // TODO Only support new Jobs currently
@@ -184,21 +171,17 @@ import JobManager._
 
           val newJobID = jobIDSource.next()
           val rootPath  = s"$jobPath$SEP$newJobID$SEP"
+
+          // TODO Replace by database
           jobTools.put(newJobID, toolname)
           jobOwner.put(newJobID, userID)
 
           changeState(newJobID, JobState.Submitted)
 
-          // Make the directory structure
-          subdirs.foreach { s => (rootPath + s).toFile.createDirectories() }
+          // Use an interface of TEL to initialize a Job Directory
+          TEL.init(toolname, params, rootPath)
 
-          for((paramName, value) <- params ) {
-
-            if(! ignore.contains(paramName)) {
-
-              s"$rootPath${SEP}params$SEP$paramName".toFile.write(value)
-            }
-          }
+          // Job Directory will then be prepared
           changeState(newJobID, JobState.Prepared)
 
           // Also Start Job if requested
