@@ -44,19 +44,10 @@ val commonSettings = Seq(
 
 
 lazy val root = (project in file("."))
-  .settings(
-    name := "mpi-toolkit"
-  )
-  .aggregate(mvc, api)
-  .enablePlugins(SbtWeb)
-
-
-
-lazy val mvc = (project in file("mvc"))
-  .enablePlugins(PlayScala, JavaAppPackaging)
+  .enablePlugins(PlayScala, JavaAppPackaging, SbtWeb)
   .settings(
     commonSettings,
-    name := "mpi-toolkit-mvc",
+    name := "mpi-toolkit",
     libraryDependencies ++= (commonDeps ++ Seq(
       "org.webjars" %% "webjars-play" % "2.5.0",
       "org.webjars" % "jquery" % jqueryVersion,
@@ -76,8 +67,8 @@ lazy val mvc = (project in file("mvc"))
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
-    ).dependsOn(api)
-
+  )
+  .dependsOn(api)
 
 
 
@@ -97,12 +88,8 @@ lazy val api = (project in file("api"))
     libraryDependencies ++= commonDeps
   )
 
-
-
-
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
-
 
 
 /*
@@ -110,9 +97,6 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 resolvers += "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"
 resolvers += Resolver.url("Typesafe Ivy releases", url("https://repo.typesafe.com/typesafe/ivy-releases"))(Resolver.ivyStylePatterns)
 */
-
-
-
 
 
 scalacOptions ++= Seq(
