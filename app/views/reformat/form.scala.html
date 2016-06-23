@@ -87,8 +87,8 @@
 </div>
 </div>
 <p>&nbsp;</p>
-<div class="success callout" data-closable="slide-out-right" style="width: 50%; display: block; margin: auto;">
-    <p>It looks as we found a FASTA formatted input. To which format do you want to convert it?</p>
+<div class="success callout" id="fastacallout" data-closable="slide-out-right" style="width: 50%; display: block; margin: auto;">
+    <p style="width: 80%; text-align: justify;">It looks as we found a FASTA formatted input. To which format do you want to convert it?</p>
     <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
         <span aria-hidden="true">&times;</span>
     </button>
@@ -186,6 +186,15 @@
     myCodeMirror2.setSize("100%", 450);
 
 
+
+
+    // on and off handler like in jQuery
+    myCodeMirror.on('change',function(cMirror){
+        // get value right from instance
+        if(validateFasta(myCodeMirror.getValue())) {
+            document.getElementById('fastacallout').style.display = 'block';
+        } else document.getElementById('fastacallout').style.display = 'none';;
+    });
 
 
     document.getElementById("outformat").onchange = function() {
