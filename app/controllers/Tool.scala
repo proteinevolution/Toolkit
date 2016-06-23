@@ -18,7 +18,7 @@ import play.api.Logger
   */
 object Tool {
 
-  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft) // list of all added tools
+  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft, Reformatb) // list of all added tools
 
 
   /** getToolModel
@@ -66,6 +66,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         case "hmmer3" => Hmmer3.inputForm
         case "psiblast" => Psiblast.inputForm
         case "mafft" => Mafft.inputForm
+        case "reformatb" => Reformatb.inputForm // cluster version of reformat
       }
       val boundForm = form.bindFromRequest
 

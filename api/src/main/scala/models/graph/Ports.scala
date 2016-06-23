@@ -21,7 +21,8 @@ object Ports {
     HmmerNode.toolname -> HmmerNode,
     PsiblastNode.toolname -> PsiblastNode,
     CsblastNode.toolname -> CsblastNode,
-    MafftNode.toolname -> MafftNode
+    MafftNode.toolname -> MafftNode,
+    ReformatbNode.toolname -> ReformatbNode
   )
 
 
