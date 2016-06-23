@@ -1,6 +1,7 @@
 /*
 
 REFORMAT ES6 VERSION
+TODO: Minify me
 
  */
 
@@ -360,41 +361,40 @@ REFORMAT ES6 VERSION
 
     function validateFasta(fasta) {
 
+        if (!fasta) {
+            return false;
+        }
+
         var splittedStrings = fasta.split(">"),
             i = 1;
-
+        //console.log(splittedStrings);
         for (; i < splittedStrings.length; i++) {
 
-            if (!splittedStrings[i]) { // check there is something first of all
-                return false;
-            }
+            //reinsert seperator
+            var seq = ">" + splittedStrings[i];
 
             // immediately remove trailing spaces
-            splittedStrings[i] = splittedStrings[i].trim();
+            seq = seq.trim();
 
             // split on newlines...
-            var lines = splittedStrings[i].split('\n');
+            var lines = seq.split('\n');
 
             // check for header
-            if (splittedStrings[i][0] == '>') {
+            if (seq[0] == '>') {
                 // remove one line, starting at the first position
                 lines.splice(0, 1);
+
             }
 
             // join the array back into a single string without newlines and
             // trailing or leading spaces
-            splittedStrings[i] = lines.join('').trim();
+            seq = lines.join('').trim();
 
-            if (!splittedStrings[i]) { // is it empty whatever we collected ? re-check not efficient
+            if (seq.search(/[^\-\\.ACDEFGHIKLMNPQRSTUVWY\s]/i) != -1) {
+                //The seq string contains non-DNA characters
                 return false;
             }
 
-            // note that the empty string is caught above
-            // allow for Selenocysteine (U)
-            if ( /^[ACDEFGHIKLMNPQRSTUVWY\s]+$/i.test(splittedStrings[i]) == false ) {
-
-                return false;
-            }
         }
 
         return true;
