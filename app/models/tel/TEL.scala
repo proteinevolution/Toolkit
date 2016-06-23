@@ -20,11 +20,11 @@ object TEL {
 
 
   // For translating the runscript template into an executable instance
-  val replaceeString = """%([A-Za-z\.]+)""".r("expression")
+  val replaceeString = """%([A-Za-z_\.]+)""".r("expression")
 
   // Elements of the markup of runscripts, currently constants and parameter string are supported
   val constantsString =  """([A-Z]+)""".r("constant")
-  val parameterString = """([a-z]+)\.([a-z]+)""".r("paramName", "selector")
+  val parameterString = """([a-z_]+)\.([a-z_]+)""".r("paramName", "selector")
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
@@ -87,15 +87,22 @@ object TEL {
           matcher.group("expression").trim() match {
 
           // Replace constants
-          case constantsString(constant) => constants(constant)
+          case constantsString(constant) =>
+            Logger.info("Constant: " + constant)
+            constants(constant)
 
           // Replace param String
           case parameterString(paramName, selector) =>
 
-            // Some selectors hard-coded
+            Logger.info("paramName: " + paramName)
+            Logger.info("selector: " + selector)
+            // Some selectors hard-coded TODO Introduce the extensions of selectors with arbitrary methods
             selector match {
               case "path" => s"params${Constants.SEP}$paramName"
+              case "content" =>
+                s"${dest}params${Constants.SEP}$paramName".toFile.contentAsString
             }
+
 
           // Should not happen
           case _ => "notImplemented"
