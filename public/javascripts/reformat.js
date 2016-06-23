@@ -391,7 +391,7 @@ TODO: Minify me
             seq = lines.join('').trim();
 
             if (seq.search(/[^\-\\.ACDEFGHIKLMNPQRSTUVWY\s]/i) != -1) {
-                //The seq string contains non-DNA characters
+
                 return false;
             }
 
