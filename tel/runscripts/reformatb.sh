@@ -38,9 +38,15 @@ object FASTA {
 
 
  val fn = args(0)
+ val inputformat = args(1)
+ val outputformat = args(2)
+
+ if( inputformat == "fasta" && outputformat == "fasta" ) {
 
   val entries = FASTA.fromFile( fn )
 
   for( e <- entries ) {
     println( e.description + " -> " + e.sequence )
   }
+
+ }
