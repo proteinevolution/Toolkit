@@ -358,5 +358,46 @@ REFORMAT ES6 VERSION
 
     }
 
+    function validateFasta(fasta) {
+
+        var splittedStrings = fasta.split(">"),
+            i = 1;
+
+        for (; i < splittedStrings.length; i++) {
+
+            if (!splittedStrings[i]) { // check there is something first of all
+                return false;
+            }
+
+            // immediately remove trailing spaces
+            splittedStrings[i] = splittedStrings[i].trim();
+
+            // split on newlines...
+            var lines = splittedStrings[i].split('\n');
+
+            // check for header
+            if (splittedStrings[i][0] == '>') {
+                // remove one line, starting at the first position
+                lines.splice(0, 1);
+            }
+
+            // join the array back into a single string without newlines and
+            // trailing or leading spaces
+            splittedStrings[i] = lines.join('').trim();
+
+            if (!splittedStrings[i]) { // is it empty whatever we collected ? re-check not efficient
+                return false;
+            }
+
+            // note that the empty string is caught above
+            // allow for Selenocysteine (U)
+            if ( /^[ACDEFGHIKLMNPQRSTUVWY\s]+$/i.test(splittedStrings[i]) == false ) {
+
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 
