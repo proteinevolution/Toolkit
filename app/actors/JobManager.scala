@@ -17,7 +17,6 @@ import models.tel.TEL
 import play.api.Logger
 
 import scala.sys.process._
-import scala.util.matching.Regex
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -60,6 +59,10 @@ import JobManager._
 
   // Ignore the following keys when writing parameters
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
+
+
+  // Keeps track of all running processes. // TODO Should be restored after toolkit reboots
+  val runningProcesses = new collection.mutable.HashMap[Int, Process]
 
 
 
@@ -107,16 +110,22 @@ import JobManager._
     // Job will now be executed, change the job state to running
     changeState(jobID, JobState.Running)
 
-    if(Process(runscript , new java.io.File(rootPath)).run(ProcessLogger(
+    // Create new Process instance of the runscript to run the tool
+    val process = Process(runscript , new java.io.File(rootPath)).run(ProcessLogger(
       (fout) => out.write(fout),
       (ferr) => err.write(ferr)
-    )).exitValue() == 0) {
+    ))
+    runningProcesses.put(jobID, process)
+
+    if(process.exitValue() == 0) {
 
         changeState(jobID, JobState.Done)
     } else {
 
         changeState(jobID, JobState.Error)
     }
+    runningProcesses.remove(jobID)
+
     out.close()
     err.close()
   }
@@ -154,8 +163,16 @@ import JobManager._
     //  User asks to delete Job
     case Delete(userID, jobID) =>
 
+      //  Terminate running Process instance of the Job
+      if(runningProcesses.contains(jobID)) {
+
+        runningProcesses(jobID).destroy()
+      }
+
       Future {
         // TODO Delete job from database
+
+        // Delete Job Path
         s"jobPath$SEP$jobID".toFile.delete(swallowIOExceptions = false)
       }.onComplete {
 
