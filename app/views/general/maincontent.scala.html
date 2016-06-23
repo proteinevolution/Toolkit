@@ -420,12 +420,16 @@ margin: 0;
     });
 
 
-    $(".slider").slick({
+    $(".slider").on('init', function(slick) {
+        console.log('fired!');
+        $('.slider').fadeIn(3000);
+    }).slick({
         autoplay: true,
         autoplayspeed: 5000,
         speed: 2500,
         dots: false,
         fade: true,
+        lazyLoad: 'ondemand',
         cssEase: 'ease-out',
         zIndex: 1,
         responsive: [{
