@@ -192,14 +192,14 @@ hr {
 
 #alignment{
 
-    font-family: Droid Sans Mono;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
     font-size: 0.625em;
 
 }
 
 #sequences{
 
-    font-family: Droid Sans Mono;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
     font-size: 0.625em;
 
 }
@@ -416,4 +416,5 @@ hr {
     66% { background: green; box-shadow: 0 0 10px darkgreen ; }
     100% { display: none; }
 }
+
 

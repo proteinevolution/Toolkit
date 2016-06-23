@@ -9,7 +9,7 @@
         border: 3px solid #cccccc;
         padding: 5px;
         font-size: 0.625em;
-        font-family: Droid Sans Mono, sans-serif;
+
 
     }
 
@@ -19,7 +19,7 @@
         border: 3px solid #cccccc;
         padding: 5px;
         font-size: 0.625em;
-        font-family: Droid Sans Mono, sans-serif;
+
 
     }
 
@@ -40,6 +40,16 @@
     .sidebar {
 
         display: none;
+    }
+
+
+
+
+    .CodeMirror pre {
+
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    font-size: 12px;
+
     }
 
 
@@ -80,10 +90,10 @@
 <!--<input class="small button" id="submitbutton" value="Convert" onclick="convert()">-->
 <div style="width: 95%; display: block; margin: auto;">
 <div class="large-6 columns">
-<div id="inputMirror" style="width: 98%;"></div>
+<div id="inputMirror" style="width: 100%;"></div>
 </div>
 <div class="large-6 columns">
-<div id="outputMirror" style="width: 98%;"></div>
+<div id="outputMirror" style="width: 100%;"></div>
 </div>
 </div>
 <p>&nbsp;</p>
@@ -173,7 +183,7 @@
     theme: "bespin"
     });
 
-    myCodeMirror.setSize("100%", 450);
+    myCodeMirror.setSize("100%", 500);
 
 
     var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
@@ -183,7 +193,7 @@
     theme: "bespin"
     });
 
-    myCodeMirror2.setSize("100%", 450);
+    myCodeMirror2.setSize("100%", 500);
 
 
 
