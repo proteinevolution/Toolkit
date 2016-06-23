@@ -42,7 +42,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
         Ok(views.html.general.sitemap()).withSession {
           Session.closeSessionRequest(request, Session.requestSessionID(request))
         }
-
+      // Frontend tools
       case "reformat" =>
         Ok(views.html.reformat.form()).withSession {
           Session.closeSessionRequest(request, Session.requestSessionID(request))
@@ -142,6 +142,15 @@ class Service @Inject() (val messagesApi: MessagesApi,
 
             // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
             case "tcoffee" =>
+
+              val vis = Map(
+                "Simple" -> views.html.visualization.alignment.simple(s"/files/$jobID/sequences.clustalw_aln"),
+                "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$jobID/sequences.clustalw_aln"))
+
+              views.html.job.result(vis, jobID, toolname)
+
+
+            case "reformatb" =>
 
               val vis = Map(
                 "Simple" -> views.html.visualization.alignment.simple(s"/files/$jobID/sequences.clustalw_aln"),
