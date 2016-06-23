@@ -35,6 +35,4 @@ object Psiblast extends ToolModel {
   )
 
 
-
-
 }
