@@ -2,4 +2,7 @@
 
 trap 'kill $(jobs -p)' EXIT
 
-perl !{BIO}/helpers/reformat.pl -i=${alignment_format} -o=clu -f=%{alignment} -a=@{result}
+perl %BIOPROGS/helpers/reformat.pl -i=%alignment_format.content \
+                                   -o=clu \
+                                   -f=%alignment.path \
+                                   -a=results/result

@@ -104,6 +104,9 @@ import JobManager._
     val out = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stdout.out")))
     val err = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stderr.err")))
 
+    // Job will now be executed, change the job state to running
+    changeState(jobID, JobState.Running)
+
     if(Process(runscript , new java.io.File(rootPath)).run(ProcessLogger(
       (fout) => out.write(fout),
       (ferr) => err.write(ferr)
