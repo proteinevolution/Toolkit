@@ -2,16 +2,16 @@
 
 trap 'kill $(jobs -p)' EXIT
 
-<BIOPROGS>/tools/ncbi-blast-2.3.0+/bin/psiblast -db <DATABASES>/standard/nr70 \
-                                            -matrix ${matrix} \
-                                            -num_iterations ${num_iter} \
-                                            -evalue ${evalue}\
-                                            -gapopen ${gap_open} \
-                                            -gapextend ${gap_ext} \
+%BIOPROGS/tools/ncbi-blast-2.3.0+/bin/psiblast -db %DATABASES/standard/nr70 \
+                                            -matrix %matrix.content \
+                                            -num_iterations %num_iter.content \
+                                            -evalue %evalue.content \
+                                            -gapopen %gap_open.content \
+                                            -gapextend %gap_ext.content \
                                             -num_threads 4 \
-                                            -num_descriptions ${desc}\
-                                            -num_alignments ${desc}\
-                                            -in_msa %{alignment} \
+                                            -num_descriptions %desc.content \
+                                            -num_alignments %desc.content \
+                                            -in_msa %alignment.path \
                                             -out results/out.psiblastp \
                                             -outfmt 0 \
                                             -html\
