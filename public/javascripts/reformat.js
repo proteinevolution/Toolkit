@@ -365,6 +365,8 @@ TODO: Minify me
             return false;
         }
 
+        if (fasta.search(">")== -1) { return false; }
+
         var splittedStrings = fasta.split(">"),
             i = 1;
         //console.log(splittedStrings);
@@ -398,6 +400,19 @@ TODO: Minify me
         }
 
         return true;
+    }
+
+
+    function validateClustal(clustal) {
+
+        if (!clustal) {return false;}
+
+        if (clustal.slice(0,7) === "CLUSTAL") {
+
+            return true; // TODO: more validation pls!
+
+        }
+
     }
 
 
