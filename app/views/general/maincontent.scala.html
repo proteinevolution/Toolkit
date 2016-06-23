@@ -215,6 +215,7 @@ margin: 0;
                     <option value="alnviz">AlignmentViewer</option>
                     <option value="reformat">Reformat</option>
                     <option value="seq2gi">Extract GIs</option>
+                    <option value="reformatb">Reformat Cluster</option>
                 </select><br />
                 <select><option>Choose</option></select>
             </div>
@@ -447,17 +448,20 @@ margin: 0;
 
     document.getElementById("toolselect").onchange = function() {
 
-    var currentVal = this.value;
-    if (currentVal == "reformat") {
-    window.location.href = "/#/reformat";
-    }
-    if (currentVal == "seq2gi") {
-    window.location.href = "/#/seq2gi";
-    }
-    if (currentVal == "alnviz") {
-    window.location.href = "/#/tools/alnviz";
-    }
+        var currentVal = this.value;
 
+        if (currentVal == "reformat") {
+            window.location.href = "/#/reformat";
+        }
+        if (currentVal == "seq2gi") {
+            window.location.href = "/#/seq2gi";
+        }
+        if (currentVal == "alnviz") {
+            window.location.href = "/#/tools/alnviz";
+        }
+        if (currentVal == "reformatb") {
+            window.location.href = "/#/tools/reformatb"
+        }
 
     };
 
