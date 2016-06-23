@@ -104,10 +104,25 @@
     </button>
 
     <label>Select Output Format
-        <select id="outformat">
+        <select id="outformat_fas">
             <option>Choose</option>
             <option value="a3m">A3M</option>
             <option value="clu">CLUSTAL</option>
+        </select>
+    </label>
+</div>
+
+<div class="primary callout" id="clustalcallout" data-closable="slide-out-right" style="width: 50%; display: none; margin: auto;">
+    <p style="width: 80%; text-align: justify;">It looks as we found a CLUSTAL formatted input. To which format do you want to convert it?</p>
+    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+        <span aria-hidden="true">&times;</span>
+    </button>
+
+    <label>Select Output Format
+        <select id="outformat_clu">
+            <option>Choose</option>
+            <option value="fas">FASTA</option>
+            <option value="a3m">A3M</option>
         </select>
     </label>
 </div>
@@ -203,20 +218,46 @@
         // get value right from instance
         if(validateFasta(myCodeMirror.getValue())) {
             document.getElementById('fastacallout').style.display = 'block';
-        } else document.getElementById('fastacallout').style.display = 'none';;
+        }
+
+        if(!validateFasta(myCodeMirror.getValue())) {
+            document.getElementById('fastacallout').style.display = 'none';
+        }
+
+        if(validateClustal(myCodeMirror.getValue())) {
+            document.getElementById('clustalcallout').style.display = 'block';
+        }
+        if(!validateClustal(myCodeMirror.getValue())) {
+            document.getElementById('clustalcallout').style.display = 'none';
+        }
+
     });
 
 
-    document.getElementById("outformat").onchange = function() {
+    document.getElementById("outformat_fas").onchange = function() {
         var currentVal = this.value;
 
         if (currentVal == "a3m") {
-            console.log("Hallo");
+
             myCodeMirror2.setValue(readA3mText(myCodeMirror.getValue()));
         }
 
         if (currentVal == "clu") {
             myCodeMirror2.setValue(printClustalText(myCodeMirror.getValue()));
+        }
+
+    }
+
+    document.getElementById("outformat_clu").onchange = function() {
+        var currentVal = this.value;
+
+        if (currentVal == "a3m") {
+
+            myCodeMirror2.setValue(readA3mText(clustal2Fasta(myCodeMirror.getValue())));
+        }
+
+        if (currentVal == "fas") {
+            myCodeMirror2.setValue(clustal2Fasta(myCodeMirror.getValue()));
         }
 
     }
