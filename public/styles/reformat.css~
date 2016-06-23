@@ -1,0 +1,30 @@
+/*
+
+    Forked from Bespin Theme
+
+*/
+
+.cm-s-reformat.CodeMirror {background: rgba(0, 0, 0, 0.25); color: #def;}
+.cm-s-reformat div.CodeMirror-selected {background: #b08d96 !important;}
+.cm-s-bespin .CodeMirror-gutters {rgba(0, 0, 0, 0.25); border-right: 0px;}
+.cm-s-bespin .CodeMirror-linenumber {color: #666666;}
+.cm-s-bespin .CodeMirror-cursor {border-left: 1px solid #797977 !important;}
+
+.cm-s-bespin span.cm-comment {color: #937121;}
+.cm-s-bespin span.cm-atom {color: #def;}
+.cm-s-bespin span.cm-number {color: #def;}
+
+.cm-s-bespin span.cm-property, .cm-s-bespin span.cm-attribute {color: #b5c3d1;}
+.cm-s-bespin span.cm-keyword {color: #cf6a4c;}
+.cm-s-bespin span.cm-string {color: #f9ee98;}
+
+.cm-s-bespin span.cm-variable {color: #c6d6e5;}
+.cm-s-bespin span.cm-variable-2 {color: #5ea6ea;}
+.cm-s-bespin span.cm-def {color: #cf7d34;}
+.cm-s-bespin span.cm-error {background: #cf6a4c; color: #797977;}
+.cm-s-bespin span.cm-bracket {color: #9d9b97;}
+.cm-s-bespin span.cm-tag {color: #cf6a4c;}
+.cm-s-bespin span.cm-link {color: #def;}
+
+.cm-s-bespin .CodeMirror-matchingbracket { text-decoration: underline; color: white !important;}
+.cm-s-bespin .CodeMirror-activeline-background { background: #404040; }

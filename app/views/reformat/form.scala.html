@@ -1,28 +1,6 @@
 
 <style>
 
-
-    textarea.reformatInput {
-
-        width: 100%;
-        height: 220px;
-        border: 3px solid #cccccc;
-        padding: 5px;
-        font-size: 0.625em;
-
-
-    }
-
-    textarea#reformatOutput {
-        width: 100%;
-        height: 220px;
-        border: 3px solid #cccccc;
-        padding: 5px;
-        font-size: 0.625em;
-
-
-    }
-
     div#content {
 
         width: 100%;
@@ -42,9 +20,6 @@
         display: none;
     }
 
-
-
-
     .CodeMirror pre {
 
     font-family: Monaco, Consolas, "Lucida Console", monospace;
@@ -60,34 +35,7 @@
 <h6>Reformat Sequence Converter</h6>
 
 <p>&nbsp;</p>
-<!--
-<textarea id="alignment" name="alignment" class="reformatInput"></textarea>
-<label>Input Format
-    <select id="format" name="alignment_format">
-        <option value="fas">FASTA</option>
-        <option value="clu">CLUSTAL</option>
-    </select>
-</label>
 
-
-<div class="callout" id="alert"  hidden>
-
-</div>
-
-<textarea id="reformatOutput" disabled></textarea>
-<label>Select Output Format
-    <select id="outformat">
-        <option value="fas">FASTA</option>
-        <option value="a3m">A3M</option>
-        <option value="clu">CLUSTAL</option>
-        <option value="phy">PHYLIP</option>
-        <option value="stock">STOCKHOLM</option>
-        <option value="json">JSON</option>
-    </select>
-</label>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<!--<input class="small button" id="submitbutton" value="Convert" onclick="convert()">-->
 <div style="width: 95%; display: block; margin: auto;">
 <div class="large-6 columns">
 <div id="inputMirror" style="width: 100%;"></div>
@@ -137,58 +85,6 @@
     // document.getElementById("alignment").value = inputFasta;
     var inputClustal = "CLUSTAL multiple sequence alignment\n\ngi|33300828\tPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\ngi|11479639\tPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\ngi|11479645\tPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\ngi|29366706\tPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\ngi|68299729\tPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\ngi|77118174\tPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\ngi|17570796\tPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\ngi|11963775\tPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\n\ngi|33300828\tD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\ngi|11479639\tA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\ngi|11479645\tEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\ngi|29366706\t-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\ngi|68299729\tD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\ngi|77118174\t------DYYKGWACQITYMEETPDGSLRHPSFDQWR\ngi|17570796\tD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\ngi|11963775\tD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
 
-       /* document.getElementById("format").onchange = function() {
-
-            var currentVal = this.value;
-
-
-            if (currentVal == "fas") {
-                document.getElementById("alignment").value = inputFasta;
-            }
-
-            if (currentVal == "clu") {
-                document.getElementById("alignment").value = inputClustal;
-                document.getElementById("reformatOutput").value = clustal2Fasta(document.getElementById("alignment").value);
-
-            }
-        };
-
-
-        document.getElementById("outformat").onchange = function() {
-            var currentVal = this.value;
-            var inputVal = document.getElementById("format").value;
-
-            if (currentVal == inputVal) {
-                document.getElementById("reformatOutput").value = document.getElementById("alignment").value;
-            }
-
-            if (currentVal == "a3m" && inputVal == "fas") {
-            document.getElementById("reformatOutput").value = readA3mText(document.getElementById("alignment").value);
-            }
-
-            if (currentVal == "clu" && inputVal == "fas") {
-                document.getElementById("reformatOutput").value = printClustalText(document.getElementById("alignment").value);
-            }
-
-            if (currentVal == "json" && inputVal == "fas") {
-                document.getElementById("reformatOutput").value = printAsJSON(document.getElementById("alignment").value);
-            }
-
-
-            if (currentVal == "fas" && inputVal == "clu") {
-                document.getElementById("reformatOutput").value = clustal2Fasta(document.getElementById("alignment").value);
-            }
-
-
-            if (currentVal == "json" && inputVal == "clu") {
-                document.getElementById("reformatOutput").value = clustalAsJSON(document.getElementById("alignment").value);
-            }
-
-            if (currentVal == "a3m" && inputVal == "clu") {
-                document.getElementById("reformatOutput").value = readA3mText(clustal2Fasta(document.getElementById("alignment").value));
-            }
-
-        } */
 
 
     var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
@@ -204,6 +100,7 @@
     var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
     value: "",
     lineNumbers: false,
+    readOnly: true,
     mode:  "javascript",
     theme: "reformat"
     });

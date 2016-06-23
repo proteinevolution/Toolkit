@@ -4,7 +4,7 @@
 
 */
 
-.cm-s-reformat.CodeMirror {background: rgba(0, 0, 0, 0.25); color: #def;}
+.cm-s-reformat.CodeMirror {background: rgba(0, 0, 0, 0.4); color: #def;}
 .cm-s-reformat div.CodeMirror-selected {background: #b08d96 !important;}
 .cm-s-reformat .CodeMirror-gutters {rgba(0, 0, 0, 0.25); border-right: 0px;}
 .cm-s-reformat .CodeMirror-linenumber {color: #666666;}
