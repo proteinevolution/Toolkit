@@ -55,7 +55,7 @@
 
 </style>
 
-<link href="@routes.Assets.at("styles/bespin.css")" rel="stylesheet">
+<link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
 <div style="padding-top: 10px;"></div>
 <h6>Reformat Sequence Converter</h6>
 
@@ -180,7 +180,7 @@
     value: inputFasta,
     lineNumbers: false,
     mode:  "none",
-    theme: "bespin"
+    theme: "reformat"
     });
 
     myCodeMirror.setSize("100%", 500);
@@ -188,9 +188,9 @@
 
     var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
     value: "",
-    lineNumbers: true,
+    lineNumbers: false,
     mode:  "javascript",
-    theme: "bespin"
+    theme: "reformat"
     });
 
     myCodeMirror2.setSize("100%", 500);
