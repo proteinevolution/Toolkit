@@ -462,3 +462,8 @@ TODO: Minify me
     }
 
 
+    function validateA2m(a2m) {
+
+        if ((a2m.indexOf('.') != -1) && (validateFasta(a2m)))
+            return true;
+    }
