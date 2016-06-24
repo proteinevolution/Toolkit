@@ -453,4 +453,9 @@ TODO: Minify me
       return true;
     }
 
+    function validateA3m(a3m) {
+        if (a3m.indexOf('.') != -1) { return false; }
+        validateFasta(a3m);
+    }
+
 
