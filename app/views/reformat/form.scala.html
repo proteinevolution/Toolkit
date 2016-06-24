@@ -32,6 +32,15 @@
 
 <link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
 <div style="padding-top: 10px;"></div>
+<ul class="vertical menu" data-accordion-menu>
+    <li>
+        <a href="#">Reformat Options</a>
+        <ul class="menu horizontal nested">
+            <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
+            <li><a onclick="alert(myCodeMirror2.getValue())">AlignmentViewer</a></li>
+        </ul>
+    </li>
+</ul>
 <h6>Reformat Sequence Converter</h6>
 
 <p>&nbsp;</p>
@@ -109,7 +118,6 @@
 
 
 
-
     // on and off handler like in jQuery
     myCodeMirror.on('change',function(cMirror){
         // get value right from instance
@@ -157,8 +165,15 @@
             myCodeMirror2.setValue(clustal2Fasta(myCodeMirror.getValue()));
         }
 
-    }
+    };
 
+
+    function downloadResult() {
+        if (myCodeMirror2.getValue())
+        $('a.download').attr('href', 'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,' + encodeURIComponent(myCodeMirror2.getValue()));
+        }
+
+    $(document).foundation();
 
 </script>
 
