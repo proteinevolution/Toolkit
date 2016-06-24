@@ -413,9 +413,9 @@ TODO: Minify me
         var clustalObj = (clustalParser(clustal));
 
         for (var j = 1; j < clustalObj.length; j++) {
-            if (clustalObj[j].seq.length !== clustalObj[j-1].seq.length)
+            if (clustalObj[j].seq.length !== clustalObj[j-1].seq.length) {
                 console.log('input is not an alignment');
-                return false;
+                return false; }
         }
 
 
