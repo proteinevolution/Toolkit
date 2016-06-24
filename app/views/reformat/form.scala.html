@@ -31,6 +31,7 @@
             <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
             <li><a onclick="alert(myCodeMirror2.getValue())">Upload</a></li>
             <li><a onclick="alert(myCodeMirror2.getValue())">AlignmentViewer</a></li>
+            <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
         </ul>
     </li>
 </ul>
@@ -55,7 +56,7 @@
 
     <label>Select Output Format
         <select id="outformat_fas">
-            <option>Choose</option>
+            <option selected>Choose</option>
             <option value="a3m">A3M</option>
             <option value="clu">CLUSTAL</option>
         </select>
@@ -70,7 +71,7 @@
 
     <label>Select Output Format
         <select id="outformat_clu">
-            <option>Choose</option>
+            <option selected>Choose</option>
             <option value="fas">FASTA</option>
             <option value="a3m">A3M</option>
         </select>
