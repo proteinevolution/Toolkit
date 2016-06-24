@@ -7,14 +7,6 @@
         background-color: #d1d1d1 !important;
     }
 
-    h6, label {
-    padding-left: 50px;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-    color: #2e2e2e;
-    font-weight: bolder;
-
-    }
-
     .sidebar {
 
         display: none;
@@ -34,14 +26,15 @@
 <div style="padding-top: 10px;"></div>
 <ul class="vertical menu" data-accordion-menu>
     <li>
-        <a href="#">Reformat Options</a>
+        <a href="#" class="menu-icon"><i class="fi-list"></i> Reformat Converter</a>
         <ul class="menu horizontal nested">
             <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
+            <li><a onclick="alert(myCodeMirror2.getValue())">Upload</a></li>
             <li><a onclick="alert(myCodeMirror2.getValue())">AlignmentViewer</a></li>
         </ul>
     </li>
 </ul>
-<h6>Reformat Sequence Converter</h6>
+
 
 <p>&nbsp;</p>
 

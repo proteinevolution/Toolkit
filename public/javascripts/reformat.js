@@ -406,6 +406,9 @@ TODO: Minify me
 
 
   function checkClustal (clustal) {
+
+      if(!clustal) { return false; }
+      
         var header, headerSeen, i, len, lines, sequence;
         clustal = clustal.split('\n');
         headerSeen = false;
