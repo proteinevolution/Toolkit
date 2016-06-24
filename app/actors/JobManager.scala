@@ -142,6 +142,31 @@ import JobManager._
     case UserDisconnect(userID) =>
       connectedUsers.remove(userID)
 
+     // Reads parameters provided to the job from the job directory
+    case Read(userID, jobID) =>
+
+        // If jobID is unknown
+        if (!jobStates.contains(jobID)) {
+
+          sender() ! JobIDUnknown
+
+          // If jobID does not belong to the user
+        } else if (!jobOwner(jobID).equals(userID)) {
+
+          sender() ! PermissionDenied
+
+        } else {
+
+          // TODO fill me
+          sender() ! s"$jobPath$SEP$jobID${SEP}params".toFile.list.map { f =>
+
+            f.name -> f.contentAsString
+
+          }.toMap
+        }
+
+
+
 
 
     // User Requests State of Job
@@ -232,6 +257,10 @@ object JobManager {
   case class AckDeleted(jobID : Int)
 
 
+
+
+  // Reads the parameters from a prepared job and provides them to the user
+  case class Read(userID : String, jobID : Int)
 
   // Publish changes JobState
   case class JobStateChanged(jobID : Int, state : JobState.JobState)

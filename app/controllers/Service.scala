@@ -2,13 +2,15 @@ package controllers
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager.{Delete, JobIDUnknown, JobInfo, PermissionDenied}
+import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.graph.Link
 import models.sessions.Session
 import akka.pattern.ask
 import models.jobs.JobState
+import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
+import play.api.Logger
 
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -17,6 +19,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
+import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 /**
   *
@@ -69,6 +72,8 @@ class Service @Inject() (val messagesApi: MessagesApi,
       (JsPath \ "links").read[Seq[Link]]
     ) (AddChildJob.apply _)
 
+
+  // TODO  Handle Acknowledgement
   /**
     * User asks to delete the Job with the provided job_id
     *
@@ -106,7 +111,7 @@ class Service @Inject() (val messagesApi: MessagesApi,
   } */
 
   /**
-    * Returns JobState and toolname
+    * Returns JobState and toolname for a given jobID
     *
     * @param jobID
     * @return
@@ -115,10 +120,10 @@ class Service @Inject() (val messagesApi: MessagesApi,
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
 
-    (jobManager ? JobInfo(sessionID, jobID)).map {
+    (jobManager ? JobInfo(sessionID, jobID)).flatMap {
 
-      case JobIDUnknown => NotFound
-      case PermissionDenied => NotFound
+      case JobIDUnknown => Future.successful(NotFound)
+      case PermissionDenied => Future.successful(NotFound)
 
       case (state: JobState.JobState, toolname : String)  =>
 
@@ -126,9 +131,26 @@ class Service @Inject() (val messagesApi: MessagesApi,
       state match {
 
         // User has requested a job whose state is Running
-        case JobState.Running => Ok(views.html.job.running(jobID)).withSession {
+        case JobState.Running => Future.successful(Ok(views.html.job.running(jobID)).withSession {
           Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
-        }
+        })
+
+        case JobState.Prepared =>
+
+          (jobManager ? Read(sessionID, jobID)).mapTo[Map[String, String]].map { res =>
+
+            val toolframe = toolname match {
+              case "alnviz" => views.html.alnviz.form(Alnviz.inputForm.bind(res))
+              case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm.bind(res))
+              case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm.bind(res))
+              case "psiblast" => views.html.psiblast.form(Psiblast.inputForm.bind(res))
+            }
+
+            Ok(views.html.general.submit(toolname, toolframe, Some(jobID))).withSession {
+              Session.closeSessionRequest(request, sessionID) // Send Session Cookie
+            }
+          }
+
         // User requested job whose execution is done
         case JobState.Done =>
 
@@ -171,15 +193,15 @@ class Service @Inject() (val messagesApi: MessagesApi,
             case "hmmer3" => views.html.visualization.general.fileview(
               Array(s"/files/$jobID/domtbl", s"/files/$jobID/outfile", s"/files/$jobID/outfile_multi_sto", s"/files/$jobID/tbl"))
           }
-          Ok(toolframe).withSession {
+          Future.successful(Ok(toolframe).withSession {
             Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
-          }
+          })
 
         case JobState.Error =>
 
-          Ok(views.html.job.error(jobID)).withSession {
+          Future.successful(Ok(views.html.job.error(jobID)).withSession {
             Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
-          }
+          })
       }
     }
   }
