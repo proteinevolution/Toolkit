@@ -245,7 +245,7 @@ TODO: Minify me
                     }
                     seqCounter++;
                 } else {
-                    console.log("parse error", line);
+                    console.log("clustal parse error, maybe fasta?", line);
                 }
             }
         }
@@ -365,6 +365,20 @@ TODO: Minify me
             return false;
         }
 
+
+        // checks double occurrences of ">" in the header
+
+        var newlines = fasta.split('\n');
+        for(var k = 0;k < newlines.length;k++){
+            if ((newlines[k].match(/>/g)||[]).length > 1) {
+                console.log("warning, header has more than one > identifier. file corrupt?");
+                //newlines[k] = newlines[k].replace(/(?!^)>/g, '');
+            }
+        }
+
+
+        //fasta = newlines.join('\n');
+
         if (!fasta.startsWith('>')) { return false; }
         if (fasta.indexOf('>') == -1) { return false; }
 
@@ -393,7 +407,7 @@ TODO: Minify me
             // trailing or leading spaces
             seq = lines.join('').trim();
 
-            if (seq.search(/[^\-\\.ACDEFGHIKLMNPQRSTUVWY\s]/i) != -1) {
+            if (seq.search(/[^\-\\.ACDEFGHIKLMNPQRSTUVWXY\s]/i) != -1) {
 
                 return false;
             }
