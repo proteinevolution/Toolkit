@@ -302,7 +302,7 @@ hr {
 
 .vertical a {
     color: black;
-    font-family: monospace;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
     font-size: medium;
 }
 
