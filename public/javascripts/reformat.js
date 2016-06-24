@@ -365,6 +365,7 @@ TODO: Minify me
             return false;
         }
 
+        if (!fasta.startsWith('>')) { return false; }
         if (fasta.indexOf('>') == -1) { return false; }
 
         var splittedStrings = fasta.split(">"),
@@ -438,8 +439,6 @@ TODO: Minify me
                     console.log('More than 60 sequence symbols in one line');
                     return false;
                 }
-
-
 
             } else {
                 header = sequence.trim().replace(' ', '');
