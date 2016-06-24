@@ -442,10 +442,11 @@ TODO: Minify me
             if (sequence.match(/^\s*$/)) {
                 continue;
             }
+
             if (headerSeen === true) {
                 sequence = sequence.trim();
                 lines = sequence.split(/\s+/g);
-                //console.log(lines);
+
                 if (lines.length !== 2 && lines.length !== 3) {
 
                     console.log("Each line has to include name/sequence and optional length");
@@ -454,6 +455,11 @@ TODO: Minify me
                 if (lines[1].length > 60) {
 
                     console.log('More than 60 sequence symbols in one line');
+                    return false;
+                }
+
+                if (lines[1].search(/[^\-\\.ACDEFGHIKLMNPQRSTUVWXY\s]/i) != -1) {
+
                     return false;
                 }
 
