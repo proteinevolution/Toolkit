@@ -365,7 +365,7 @@ TODO: Minify me
             return false;
         }
 
-        if (fasta.search(">")== -1) { return false; }
+        if (fasta.indexOf('>') == -1) { return false; }
 
         var splittedStrings = fasta.split(">"),
             i = 1;
@@ -403,16 +403,55 @@ TODO: Minify me
     }
 
 
-    function validateClustal(clustal) {
 
-        if (!clustal) {return false;}
+  function checkClustal (clustal) {
+        var header, headerSeen, i, len, lines, sequence;
+        clustal = clustal.split('\n');
+        headerSeen = false;
+        //check if it's an alignment:
+        var clustalObj = (clustalParser(clustal));
 
-        if (clustal.slice(0,7) === "CLUSTAL") {
-
-            return true; // TODO: more validation pls!
-
+        for (var j = 1; j < clustalObj.length; j++) {
+            if (clustalObj[j].seq.length !== clustalObj[j-1].seq.length)
+                console.log('input is not an alignment');
+                return false;
         }
 
+
+        for (i = 0, len = clustal.length; i < len; i++) {
+            sequence = clustal[i];
+
+            if (sequence.match(/^\s*$/)) {
+                continue;
+            }
+            if (headerSeen === true) {
+                sequence = sequence.trim();
+                lines = sequence.split(/\s+/g);
+                //console.log(lines);
+                if (lines.length !== 2 && lines.length !== 3) {
+
+                    console.log("Each line has to include name/sequence and optional length");
+                    return false;
+                }
+                if (lines[1].length > 60) {
+
+                    console.log('More than 60 sequence symbols in one line');
+                    return false;
+                }
+
+
+
+            } else {
+                header = sequence.trim().replace(' ', '');
+                if (!header.startsWith('CLUSTAL')) {
+
+                    console.log('No CLUSTAL Header');
+                    return false;
+                }
+                headerSeen = true;
+            }
+        }
+      return true;
     }
 
 
