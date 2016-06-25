@@ -10,3 +10,10 @@ object Constants {
 
   val SEP = File.separator
 }
+
+
+object ExitCodes {
+
+  val SUCCESS = 0
+  val TERMINATED = 143
+}
