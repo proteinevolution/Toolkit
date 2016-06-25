@@ -26,7 +26,8 @@ object Psiblast extends ToolModel {
       "evalue" -> number,
       "gap_open" -> number,
       "gap_ext" -> number,
-      "desc" -> number
+      "desc" -> number,
+      "standarddb" -> text
     )
   )
   val parameterValues = Map(

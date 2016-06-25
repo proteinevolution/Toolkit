@@ -15,12 +15,16 @@ object Hmmer3 extends ToolModel {
   val toolNameLong:String         = "Hmmer3"
   val toolNameAbbreviation:String = "hm3"
 
+
+
+
   // --- Hmmer3 specific values ---
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
       "alignment" -> nonEmptyText,
-      "alignment_format" -> text
+      "alignment_format" -> text,
+      "standarddb" -> text
     )
   )
 }
