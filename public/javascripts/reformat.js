@@ -24,7 +24,7 @@ TODO: Minify me
 
         for (; i < splittedStrings.length; i++) {
 
-            result += JSON.stringify(new readFastaLine(splittedStrings[i]));
+            result.push(new readFastaLine(splittedStrings[i]));
 
         }
 
@@ -526,8 +526,28 @@ TODO: Minify me
 
     function validateAlignment(aln) {
 
-        // TODO: check whether a fasta input is an alignment. This will be useful for validating whether we can directly
+        // check whether a fasta input is an alignment. This will be useful for validating whether we can directly
         // convert from fasta to clustal. if not -> suggest forwarding to Muscle.
+
+        var fastaObj = readFastaText(aln);
+        var firstlength = fastaObj[0].sequence.length;
+
+
+        for (var i = 0; i < fastaObj.length; i++) {
+
+            if (fastaObj[i].sequence.length !== firstlength) {
+                console.log("input is not an alignment");
+                if (_contains(fastaObj[i].sequence, "-")) {
+
+                    console.log("warning: input contains dashes without being an alignment")
+                }
+                return false;
+            }
+
+        }
+
+        console.log("this is an alignment");
+        return true;
 
     }
 
