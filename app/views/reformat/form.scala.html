@@ -19,6 +19,8 @@
 
     }
 
+    .code { color: #ffae00; }
+
 
 </style>
 
@@ -26,11 +28,11 @@
 <div style="padding-top: 10px;"></div>
 <ul class="vertical menu" data-accordion-menu>
     <li>
-        <a href="#" class="menu-icon"><i class="fi-list"></i> Reformat Converter</a>
+        <a href="#" class="menu-icon"><i class="fi-list"></i> <span id="reformat">Reformat Converter</span></a>
         <ul class="menu horizontal nested">
             <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
             <li><a onclick="alert(myCodeMirror2.getValue())">Upload</a></li>
-            <li><a onclick="alert(myCodeMirror2.getValue())">AlignmentViewer</a></li>
+            <li><a data-open="alnvizmodal">AlignmentViewer</a></li>
             <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
         </ul>
     </li>
@@ -79,6 +81,15 @@
 </div>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+
+<div class="large reveal" id="alnvizmodal" data-reveal>
+    <h1>Awesome. I Have It.</h1>
+    <p class="lead">Your couch. It is mine.</p>
+    <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
 <script src="@routes.Assets.at("javascripts/reformat.js")" type="text/javascript"></script>
 <script src="@routes.Assets.at("scripts/validation.js")"></script>
@@ -143,6 +154,10 @@
 
         if (currentVal == "clu") {
             myCodeMirror2.setValue(printClustalText(myCodeMirror.getValue()));
+            var tempCode = myCodeMirror.getValue();
+            myCodeMirror.setValue('');
+            $(".CodeMirror-line").decodeEffect();
+            myCodeMirror.setValue(tempCode);
         }
 
     };
@@ -166,6 +181,60 @@
         if (myCodeMirror2.getValue())
         $('a.download').attr('href', 'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,' + encodeURIComponent(myCodeMirror2.getValue()));
         }
+
+    //$("#outputMirror").val().decodeEffect();
+
+
+    jQuery.fn.decodeEffect = (function ($) {
+        var defaultOptions = {
+            duration:      1,
+            stepsPerGlyph: 1,
+            codeGlyphs:    "-ACDEFGHIKLMNPQRSTUVWY",
+            className:     "code"
+        };
+
+        // get a random string from the given set,
+        // or from the 33 - 125 ASCII range
+        function randomString(set, length) {
+            var string = "", i, glyph;
+            for(i = 0 ; i < length ; i++) {
+                glyph = Math.random() * set.length;
+                string += set[glyph | 0];
+            }
+            return string;
+        }
+
+        function animate(element, options) {
+            var text = element.text(),
+                    span = $("<span/>").addClass(options.className).insertAfter(element),
+                    interval = options.duration / (text.length * options.stepsPerGlyph),
+                    step = 0,
+                    length = 0,
+                    stepper = function () {
+                        if(++step % options.stepsPerGlyph === 0) {
+                            length++;
+                            element.text(text.slice(0, length));
+                        }
+                        if(length <= text.length) {
+                            span.text(randomString(options.codeGlyphs, text.length - length));
+                            setTimeout(stepper, interval);
+                        } else {
+                            span.remove();
+                        }
+                    };
+            element.text("");
+            stepper();
+        }
+
+        // Basic jQuery plugin pattern
+        return function (options) {
+            options = $.extend({}, defaultOptions, (options || {}));
+            return this.each(function () {
+                animate($(this), options);
+            });
+        };
+    }(jQuery));
+    
 
     $(document).foundation();
 
