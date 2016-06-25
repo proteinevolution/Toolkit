@@ -443,7 +443,7 @@ TODO: Minify me
             // trailing or leading spaces
             seq = lines.join('').trim();
 
-            if (seq.search(/[^\-\\.ACDEFGHIKLMNPQRSTUVWXY\s]/i) != -1) {
+            if (seq.search(/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i) != -1) {
 
                 return false;
             }
@@ -494,7 +494,7 @@ TODO: Minify me
                     return false;
                 }
 
-                if (lines[1].search(/[^\-\\.ACDEFGHIKLMNPQRSTUVWXY\s]/i) != -1) {
+                if (lines[1].search(/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i) != -1) {
 
                     return false;
                 }
