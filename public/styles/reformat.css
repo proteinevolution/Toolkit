@@ -21,7 +21,7 @@
 .cm-s-reformat span.cm-variable {color: #c6d6e5;}
 .cm-s-reformat span.cm-variable-2 {color: #5ea6ea;}
 .cm-s-reformat span.cm-def {color: #cf7d34;}
-.cm-s-reformat span.cm-error {background: #cf6a4c; color: #797977;}
+/*.cm-s-reformat span.cm-error {background: #cf6a4c; color: #797977;} */
 .cm-s-reformat span.cm-bracket {color: #9d9b97;}
 .cm-s-reformat span.cm-tag {color: #cf6a4c;}
 .cm-s-reformat span.cm-link {color: #def;}
