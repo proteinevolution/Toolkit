@@ -12,7 +12,7 @@ import better.files._
 import Cmds._
 import java.nio.file.attribute.PosixFilePermission
 
-import models.Constants
+import models.{Constants, ExitCodes}
 import models.tel.TEL
 import play.api.Logger
 
@@ -117,12 +117,12 @@ import JobManager._
     ))
     runningProcesses.put(jobID, process)
 
-    if(process.exitValue() == 0) {
+    // Treat Exit code of job process
+    process.exitValue() match {
 
-        changeState(jobID, JobState.Done)
-    } else {
-
-        changeState(jobID, JobState.Error)
+      case ExitCodes.SUCCESS => changeState(jobID, JobState.Done)
+      case ExitCodes.TERMINATED => // Ignore
+      case x: Int => changeState(jobID, JobState.Error)
     }
     runningProcesses.remove(jobID)
 
