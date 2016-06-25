@@ -63,6 +63,16 @@ TODO: Minify me
     function printClustalText(fastaText){
 
 
+        // clean header from multiple occurences of > identifiers, will be missing in output for now.
+        var newlines = fastaText.split('\n');
+        for(var k = 0;k < newlines.length;k++){
+            if ((newlines[k].match(/>/g)||[]).length > 1) {
+                newlines[k] = newlines[k].replace(/(?!^)>/g, '');
+            }
+        }
+
+        fastaText = newlines.join('\n');
+
         var splittedStrings = fastaText.split(">"),
             result = [],
             i = 1,
@@ -117,7 +127,7 @@ TODO: Minify me
         var splittedStrings  = fastaLine.split('\n'),
             result = {},
             i = 1;
-        result.name = splittedStrings[0].substr(0, 11);
+        result.name = splittedStrings[0].substr(0, 12);
         result.sequence = '';
         for (; i < splittedStrings.length; i++) {
             result.sequence += splittedStrings[i];
