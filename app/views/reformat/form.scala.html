@@ -60,7 +60,7 @@
         <select id="outformat_fas">
             <option selected>Choose</option>
             <option value="a3m">A3M</option>
-            <option value="clu">CLUSTAL</option>
+            <option value="clu" class="clustaloption">CLUSTAL</option>
         </select>
     </label>
 </div>
@@ -128,6 +128,15 @@
         // get value right from instance
         if(validateFasta(myCodeMirror.getValue())) {
             document.getElementById('fastacallout').style.display = 'block';
+
+            if (validateAlignment(myCodeMirror.getValue())) {
+                $(".clustaloption").show();
+            }
+            if (!validateAlignment(myCodeMirror.getValue())) {
+
+                $(".clustaloption").hide();
+
+            }
         }
 
         if(!validateFasta(myCodeMirror.getValue())) {
@@ -141,6 +150,7 @@
             document.getElementById('clustalcallout').style.display = 'none';
         }
 
+
     });
 
 
@@ -149,7 +159,8 @@
 
         if (currentVal == "a3m") {
 
-            myCodeMirror2.setValue(readA3mText(myCodeMirror.getValue()));
+            //myCodeMirror2.setValue(readA3mText(myCodeMirror.getValue()));
+            myCodeMirror2.setValue(validateAlignment(myCodeMirror.getValue()));
         }
 
         if (currentVal == "clu") {
@@ -187,8 +198,8 @@
 
     jQuery.fn.decodeEffect = (function ($) {
         var defaultOptions = {
-            duration:      1,
-            stepsPerGlyph: 1,
+            duration:      2,
+            stepsPerGlyph: 5,
             codeGlyphs:    "-ACDEFGHIKLMNPQRSTUVWY",
             className:     "code"
         };
@@ -234,7 +245,7 @@
             });
         };
     }(jQuery));
-    
+
 
     $(document).foundation();
 
