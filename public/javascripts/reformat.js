@@ -127,7 +127,11 @@ TODO: Minify me
         var splittedStrings  = fastaLine.split('\n'),
             result = {},
             i = 1;
-        result.name = splittedStrings[0].substr(0, 12);
+
+        //if (splittedStrings[0].charAt(12) === '|'){
+        result.name = splittedStrings[0].substr(0, 28);
+        //else { result.name = splittedStrings[0].substr(0, 11) + ' '; }
+
         result.sequence = '';
         for (; i < splittedStrings.length; i++) {
             result.sequence += splittedStrings[i];
