@@ -7,6 +7,16 @@ TODO: Minify me
 
     function readFastaText(fastaText){
 
+        // clean header from multiple occurences of > identifiers, will be missing in output for now.
+        var newlines = fastaText.split('\n');
+        for(var k = 0;k < newlines.length;k++){
+            if ((newlines[k].match(/>/g)||[]).length > 1) {
+                newlines[k] = newlines[k].replace(/(?!^)>/g, '');
+            }
+        }
+
+        fastaText = newlines.join('\n');
+
 
         var splittedStrings = fastaText.split(">"),
             result = [],
@@ -23,6 +33,18 @@ TODO: Minify me
 
 
     function readA3mText(a3mtext){
+
+
+        // clean header from multiple occurences of > identifiers, will be missing in output for now.
+        var newlines = a3mtext.split('\n');
+        for(var k = 0;k < newlines.length;k++){
+            if ((newlines[k].match(/>/g)||[]).length > 1) {
+                newlines[k] = newlines[k].replace(/(?!^)>/g, '');
+            }
+        }
+
+        a3mtext = newlines.join('\n');
+
 
 
         var splittedStrings = a3mtext.split(">"),
@@ -501,3 +523,24 @@ TODO: Minify me
         if ((a2m.indexOf('.') != -1) && (validateFasta(a2m)))
             return true;
     }
+
+    function validateAlignment(aln) {
+
+        // TODO: check whether a fasta input is an alignment. This will be useful for validating whether we can directly
+        // convert from fasta to clustal. if not -> suggest forwarding to Muscle.
+
+    }
+
+
+    function aminoCount() {
+        // TODO: statistics 1
+    }
+
+    function getNumberOfSeqs() {
+
+        // TODO: stats
+    }
+
+
+
+
