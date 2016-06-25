@@ -18,7 +18,7 @@ perl %BIOPROGS/helpers/reformat.pl -i=%alignment_format.content \
                                           -o results/outfile \
                                           -A results/outfile_multi_sto \
                                            temp/infile_hmm \
-                                           %DATABASES/standard/nr
+                                           %standarddb.content
 
 
 

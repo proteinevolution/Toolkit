@@ -3,7 +3,7 @@ package models.tel
 import better.files._
 import models.Constants
 import play.api.Logger
-
+import scala.sys.process._
 
 
 /**
@@ -42,6 +42,28 @@ object TEL {
     }.toMap
   }
 
+  // Keeps a map of all setParams with their respective allowed values, together with the plain text name
+  private var setParams : Map[String, Map[String, String]] = loadSetParams()
+
+
+  private def loadSetParams() = {
+
+    s"$TELPath${Constants.SEP}params.d".toFile.list.map { f =>
+
+      f.name.replaceAll(".sh", "") -> Process(f.pathAsString).!!.split('\n').map { param =>
+        val spt = param.split(' ')
+        spt(0) -> spt(1)
+      }.toMap
+    }.toMap
+  }
+
+
+  /**
+    * Returns the Array of all values and plain text names of the set params
+    *
+    * @param param
+    */
+  def getSetParam(param : String) = setParams(param)
 
 
   /**
@@ -58,6 +80,7 @@ object TEL {
     // TODO Implement me
 
   }
+
 
 
   /**

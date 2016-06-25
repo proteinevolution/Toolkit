@@ -157,15 +157,12 @@ import JobManager._
 
         } else {
 
-          // TODO fill me
           sender() ! s"$jobPath$SEP$jobID${SEP}params".toFile.list.map { f =>
 
             f.name -> f.contentAsString
 
           }.toMap
         }
-
-
 
 
 
