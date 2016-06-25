@@ -159,7 +159,7 @@
 
         if (currentVal == "a3m") {
 
-            //myCodeMirror2.setValue(readA3mText(myCodeMirror.getValue()));
+            myCodeMirror2.setValue(readA3mText(myCodeMirror.getValue()));
             myCodeMirror2.setValue(validateAlignment(myCodeMirror.getValue()));
         }
 
@@ -198,8 +198,8 @@
 
     jQuery.fn.decodeEffect = (function ($) {
         var defaultOptions = {
-            duration:      2,
-            stepsPerGlyph: 5,
+            duration:      1,
+            stepsPerGlyph: 1,
             codeGlyphs:    "-ACDEFGHIKLMNPQRSTUVWY",
             className:     "code"
         };
