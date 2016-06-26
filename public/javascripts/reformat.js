@@ -567,6 +567,56 @@ TODO: Minify me
 
     }
 
+    /* transform fasta sequences to lowercase and returns parsed json object */
+
+     function fastaToLowerCase(fas) {
+
+        var fastaObj = readFastaText(fas);
+        for (var i = 0; i<fastaObj.length; i++) {
+            fastaObj[i].sequence = fastaObj[i].sequence.toLowerCase();
+        }
+        return fastaObj;
+
+    }
+
+
+    /* transform fasta sequences to uppercase and returns parsed json object */
+
+    function fastaToUpperCase(fas) {
+
+        var fastaObj = readFastaText(fas);
+        for (var i = 0; i<fastaObj.length; i++) {
+            fastaObj[i].sequence = fastaObj[i].sequence.toUpperCase();
+        }
+        return fastaObj;
+
+    }
+
+    /* transform clustal sequences to lowercase and returns parsed json object */
+
+    function clustalToLowerCase(clu) {
+
+        var clustalObj = clustalParser(clu);
+        for (var i = 0; i<clustalObj.length; i++) {
+            clustalObj[i].seq = clustalObj[i].seq.toLowerCase();
+        }
+        console.log(clustalObj);
+        return clustalObj;
+    }
+
+
+    /* transform clustal sequences to uppercase and returns parsed json object */
+
+    function clustalToUpperCase(clu) {
+
+        var clustalObj = clustalParser(clu);
+        for (var i = 0; i<clustalObj.length; i++) {
+            clustalObj[i].seq = clustalObj[i].seq.toUpperCase();
+        }
+        console.log(clustalObj);
+        return clustalObj;
+    }
+
 
 
     function aminoCountClustal(clu) {
@@ -577,9 +627,7 @@ TODO: Minify me
 
     function conservation(aln) {
 
-
         //TODO: compute the conservation for an alignment
-
 
     }
 
