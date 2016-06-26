@@ -68,7 +68,7 @@
 
 <div class="show-for-medium large-12 columns" style="padding-top: 20px;">
 <div class="success callout" id="fastacallout" data-closable="slide-out-right" style="width: 50%; display: block; margin: auto;">
-    <p style="width: 80%; text-align: justify;">It looks as we found a FASTA formatted input. To which format do you want to convert it?</p>
+    <p style="width: 80%; text-align: justify;">It looks as we found a <span id="nonalignedwarning" style="color: red; display: none;">non-aligned</span> FASTA formatted input. To which format do you want to convert it?</p>
     <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
         <span aria-hidden="true">&times;</span>
     </button>
@@ -149,10 +149,12 @@
 
             if (validateAlignment(myCodeMirror.getValue())) {
                 $(".clustaloption").show();
+                document.getElementById('nonalignedwarning').style.display= 'none';
             }
             if (!validateAlignment(myCodeMirror.getValue())) {
 
                 $(".clustaloption").hide();
+                document.getElementById('nonalignedwarning').style.display= 'inline';
 
             }
         }
@@ -191,8 +193,6 @@
 
 
         document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
-        console.log( document.getElementById('outputarea').value);
 
     };
 
