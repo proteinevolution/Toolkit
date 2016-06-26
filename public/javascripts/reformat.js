@@ -32,6 +32,22 @@ TODO: Minify me
     }
 
 
+    function printFastaObj(obj) {
+
+            result = [];
+
+        for(var i=0;i<obj.length;i++){
+            result +=">";
+            result += obj[i].name;
+            result += "\n";
+            result += obj[i].sequence;
+            result += "\n";
+        }
+
+        return result;
+    }
+
+
     function readA3mText(a3mtext){
 
 
@@ -600,7 +616,6 @@ TODO: Minify me
         for (var i = 0; i<clustalObj.length; i++) {
             clustalObj[i].seq = clustalObj[i].seq.toLowerCase();
         }
-        console.log(clustalObj);
         return clustalObj;
     }
 
@@ -613,7 +628,6 @@ TODO: Minify me
         for (var i = 0; i<clustalObj.length; i++) {
             clustalObj[i].seq = clustalObj[i].seq.toUpperCase();
         }
-        console.log(clustalObj);
         return clustalObj;
     }
 
