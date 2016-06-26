@@ -134,7 +134,7 @@ TODO: Minify me
             for (; i < splittedStrings.length; i++) {
 
                 if (splittedStrings[i].substring(0,3) == 'gi|') {
-                result += getClustalHeader(splittedStrings[i]).substring(3);
+                result += getClustalHeader(splittedStrings[i]).substring(3).split('|')[0];
                 result += "\n";
 
                 }
@@ -552,9 +552,10 @@ TODO: Minify me
     }
 
 
-    function aminoCount() {
+    function aminoCountFasta() {
         // TODO: statistics 1
     }
+
 
     function getNumberOfSeqs() {
 
