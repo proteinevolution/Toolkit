@@ -21,10 +21,15 @@
 
     .code { color: #ffae00; }
 
+    .has-tip {
+        border-bottom: dotted 0px;
+
+    }
+
 
 </style>
-
 <link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/clipboard.js/1.5.12/clipboard.min.js"></script>
 <div style="padding-top: 10px;"></div>
 <ul class="vertical menu" data-accordion-menu>
     <li>
@@ -40,16 +45,28 @@
 
 
 <p>&nbsp;</p>
-
 <div style="width: 95%; display: block; margin: auto;">
+    <div class="large-12 columns">
+        <div style="float: right; z-index: 9;">
+            <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Copy to clipboard">
+                <button class="small button warning" id="copy-button" data-clipboard-target="#outputarea" onclick="(function(){
+                    new Clipboard('#copy-button');
+                })();" style="margin: 0 0 0 0;">Copy</button></span>
+        </div>
+    </div>
 <div class="large-6 columns">
 <div id="inputMirror" style="width: 100%;"></div>
 </div>
 <div class="large-6 columns">
-<div id="outputMirror" style="width: 100%;"></div>
+<div id="outputMirror" style="width: 100%;">
+</div>
+
+
 </div>
 </div>
 <p>&nbsp;</p>
+
+<div class="show-for-medium large-12 columns" style="padding-top: 20px;">
 <div class="success callout" id="fastacallout" data-closable="slide-out-right" style="width: 50%; display: block; margin: auto;">
     <p style="width: 80%; text-align: justify;">It looks as we found a FASTA formatted input. To which format do you want to convert it?</p>
     <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
@@ -79,6 +96,7 @@
         </select>
     </label>
 </div>
+</div>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
@@ -90,7 +108,7 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-
+<textarea id="outputarea" style="height: 1px; position: relative; top: -10000px; left: -10000px;"></textarea>
 <script src="@routes.Assets.at("javascripts/reformat.js")" type="text/javascript"></script>
 <script src="@routes.Assets.at("scripts/validation.js")"></script>
 <script>
@@ -171,6 +189,11 @@
             myCodeMirror.setValue(tempCode);
         }
 
+
+        document.getElementById('outputarea').value = myCodeMirror2.getValue();
+
+        console.log( document.getElementById('outputarea').value);
+
     };
 
     document.getElementById("outformat_clu").onchange = function() {
@@ -184,6 +207,8 @@
         if (currentVal == "fas") {
             myCodeMirror2.setValue(clustal2Fasta(myCodeMirror.getValue()));
         }
+
+        document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
     };
 
@@ -245,7 +270,6 @@
             });
         };
     }(jQuery));
-
 
     $(document).foundation();
 
