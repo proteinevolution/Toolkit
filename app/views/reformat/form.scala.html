@@ -181,6 +181,10 @@
         if (currentVal == "a3m") {
 
             myCodeMirror2.setValue(readA3mText(myCodeMirror.getValue()));
+            tempCode = myCodeMirror.getValue();
+            myCodeMirror.setValue('');
+            $(".CodeMirror-line").decodeEffect();
+            myCodeMirror.setValue(tempCode);
         }
 
         if (currentVal == "clu") {
@@ -194,6 +198,10 @@
         if (currentVal == "lowercase") {
 
             myCodeMirror2.setValue(printFastaObj(fastaToLowerCase(myCodeMirror.getValue())));
+            tempCode = myCodeMirror.getValue();
+            myCodeMirror.setValue('');
+            $(".CodeMirror-line").decodeEffect();
+            myCodeMirror.setValue(tempCode);
 
         }
 
@@ -208,10 +216,18 @@
         if (currentVal == "a3m") {
 
             myCodeMirror2.setValue(readA3mText(clustal2Fasta(myCodeMirror.getValue())));
+            tempCode = myCodeMirror.getValue();
+            myCodeMirror.setValue('');
+            $(".CodeMirror-line").decodeEffect();
+            myCodeMirror.setValue(tempCode);
         }
 
         if (currentVal == "fas") {
             myCodeMirror2.setValue(clustal2Fasta(myCodeMirror.getValue()));
+            tempCode = myCodeMirror.getValue();
+            myCodeMirror.setValue('');
+            $(".CodeMirror-line").decodeEffect();
+            myCodeMirror.setValue(tempCode);
         }
 
         document.getElementById('outputarea').value = myCodeMirror2.getValue();
