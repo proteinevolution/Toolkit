@@ -557,9 +557,17 @@ TODO: Minify me
     }
 
 
-    function getNumberOfSeqs() {
+    function getNumberOfFastaSeqs(fas) {
+        var fastaObj = readFastaText(fas);
+        return fastaObj.length;
+    }
 
-        // TODO: stats
+
+    function getNumberOfClustalSeqs(clustal) {
+
+        var clustalObj = clustalParser(clustal);
+        return clustalObj.length;
+
     }
 
 
