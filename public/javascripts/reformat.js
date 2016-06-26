@@ -552,8 +552,35 @@ TODO: Minify me
     }
 
 
-    function aminoCountFasta() {
-        // TODO: statistics 1
+    function aminoCountFasta(fas) {
+
+        var fastaObj = readFastaText(fas);
+
+        var dashcount, AA, BB, CC, DD, EE, FF, GG, HH, II, KK, LL, MM, NN, PP, QQ, RR, SS, TT, UU, VV, WW, XX, YY, ZZ;
+
+        for (var i = 0; i<fastaObj.length; i++) {
+
+
+            //TODO: loop through everything and count and return the result as an array
+        }
+
+
+    }
+
+
+
+    function aminoCountClustal(clu) {
+
+        aminoCountFasta(clustal2Fasta(clu));
+    }
+
+
+    function conservation(aln) {
+
+
+        //TODO: compute the conservation for an alignment
+
+
     }
 
 
