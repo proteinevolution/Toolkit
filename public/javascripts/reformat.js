@@ -212,7 +212,7 @@ TODO: Minify me
 
         for(var i=0;i<clustalObj.length;i++){
             result +=">";
-            result += clustalObj[i].name;
+            result += clustalObj[i].id;
             result += "\n";
             result += clustalObj[i].seq;
             result += "\n";
@@ -281,7 +281,7 @@ TODO: Minify me
                     }
                     seqCounter++;
                 } else {
-                    console.log("clustal parse error, maybe fasta?", line);
+                    //console.log("clustal parse error, maybe fasta?", line);
                 }
             }
         }
