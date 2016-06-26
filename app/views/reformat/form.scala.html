@@ -76,6 +76,7 @@
     <label>Select Output Format
         <select id="outformat_fas">
             <option selected>Choose</option>
+            <option value="lowercase">Transform to lower case</option>
             <option value="a3m">A3M</option>
             <option value="clu" class="clustaloption">CLUSTAL</option>
         </select>
@@ -180,7 +181,6 @@
         if (currentVal == "a3m") {
 
             myCodeMirror2.setValue(readA3mText(myCodeMirror.getValue()));
-            myCodeMirror2.setValue(validateAlignment(myCodeMirror.getValue()));
         }
 
         if (currentVal == "clu") {
@@ -189,6 +189,12 @@
             myCodeMirror.setValue('');
             $(".CodeMirror-line").decodeEffect();
             myCodeMirror.setValue(tempCode);
+        }
+
+        if (currentVal == "lowercase") {
+
+            myCodeMirror2.setValue(printFastaObj(fastaToLowerCase(myCodeMirror.getValue())));
+
         }
 
 
