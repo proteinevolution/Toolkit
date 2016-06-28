@@ -4,17 +4,27 @@ import better.files._
 import models.Constants
 import play.api.Logger
 import scala.sys.process._
-
+import models.Implicits._
 
 /**
+  *
   * Created by lzimmermann on 26.05.16.
   */
 object TEL {
 
-  case class ToolParameter(name : String, t : String)
-
   // TODO Get this from the configuration
   val TELPath = "tel"
+
+  // Character used to have comments in the Shell files interpreted by TEL
+  // Do NOT change this !
+  val commentChar = '#'
+
+  // FILES
+   val constantsFile = s"$TELPath${Constants.SEP}CONSTANTS".toFile
+   val paramsDFile =  s"$TELPath${Constants.SEP}params.d".toFile
+
+
+
   val typesPath = s"$TELPath${Constants.SEP}types"
   val runscriptPath = s"$TELPath${Constants.SEP}runscripts${Constants.SEP}"
 
@@ -42,10 +52,14 @@ object TEL {
   private def loadConstants() = {
 
     // Get lines from CONSTANTS file, ignore empty lines, Split by key,value separator and make key/value map
-    s"$TELPath${Constants.SEP}CONSTANTS".toFile.lineIterator.withFilter { _.trim() != ""  }.map { line =>
+    constantsFile
+      .lineIterator
+      .withoutComment(commentChar)
+      .noWSLines
+      .map { line =>
 
-      val spt = line.split("=")
-      spt(0).trim() -> spt(1).trim()
+        val spt = line.split("=")
+        spt(0).trim() -> spt(1).trim()
 
     }.toMap
   }
@@ -69,7 +83,7 @@ object TEL {
   // Reloads all the set Params from the scripts in params.d
   private def loadSetParams() = {
 
-    s"$TELPath${Constants.SEP}params.d".toFile.list.map { f =>
+   paramsDFile.list.map { f =>
 
       f.name.replaceAll(".sh", "") -> Process(f.pathAsString).!!.split('\n').map { param =>
         val spt = param.split(' ')
@@ -109,6 +123,8 @@ object TEL {
     // TODO Implement me
 
   }
+
+
 
 
 
