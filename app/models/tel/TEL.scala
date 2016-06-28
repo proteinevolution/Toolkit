@@ -32,9 +32,17 @@ object TEL {
   // Each tool exection consists of the following subdirectories
   val subdirs : Seq[String] = Array("params", "results", "temp", "logs")
 
-  private val constants = {
 
-    s"$TELPath${Constants.SEP}CONSTANTS".toFile.lines.withFilter { _.trim() != ""  }.map { line =>
+
+  //-----------------------------------------------------------------------------------------------------
+  // Constants (values statically set, available in each runscript)
+  //-----------------------------------------------------------------------------------------------------
+  private var constants = loadConstants()
+
+  private def loadConstants() = {
+
+    // Get lines from CONSTANTS file, ignore empty lines, Split by key,value separator and make key/value map
+    s"$TELPath${Constants.SEP}CONSTANTS".toFile.lineIterator.withFilter { _.trim() != ""  }.map { line =>
 
       val spt = line.split("=")
       spt(0).trim() -> spt(1).trim()
@@ -42,10 +50,23 @@ object TEL {
     }.toMap
   }
 
+  def getConstant(constant : String) = {
+
+    // TODO Check whether file which holds constants has changed, otherwise return old value
+    // TODO Currently just returns the loaded constants
+    // You probably want to use loadConstants here
+    constants(constant)
+  }
+
+  //-----------------------------------------------------------------------------------------------------
+  // Set params (Parameters whose values can be taken from a predefined set)
+  //-----------------------------------------------------------------------------------------------------
+
   // Keeps a map of all setParams with their respective allowed values, together with the plain text name
   private var setParams : Map[String, Map[String, String]] = loadSetParams()
 
 
+  // Reloads all the set Params from the scripts in params.d
   private def loadSetParams() = {
 
     s"$TELPath${Constants.SEP}params.d".toFile.list.map { f =>
@@ -57,14 +78,22 @@ object TEL {
     }.toMap
   }
 
-
   /**
     * Returns the Array of all values and plain text names of the set params
     *
     * @param param
     */
-  def getSetParam(param : String) = setParams(param)
+  def getSetParam(param : String) = {
 
+    // TODO Reload contents of params.d if changed
+    // You probably want to use load set params here
+
+    setParams(param)
+  }
+
+  //-----------------------------------------------------------------------------------------------------
+  // Other stuff
+  //-----------------------------------------------------------------------------------------------------
 
   /**
     * Uses reflection to invoke the Method
