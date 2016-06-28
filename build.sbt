@@ -3,7 +3,7 @@ val jqueryVersion = "2.2.4"
 val jqueryLazyloadVersion = "1.9.7"
 val jqueryUIVersion = "1.11.4"
 val foundationVersion = "6.2.3"
-val mithrilVersion = "0.2.3"
+val mithrilVersion = "0.2.5"
 val betterfilesVersion = "2.15.0"
 val bcryptVersion = "0.3m"
 val highchartsVersion = "4.2.4"
@@ -63,6 +63,7 @@ lazy val root = (project in file("."))
       "org.webjars.bower" % "slick-carousel" % "1.6.0",
       "org.webjars.npm" % "codemirror-minified" % "5.15.2",
       "org.webjars" % "dropzone" % "4.3.0",
+      "org.webjars.bower" % "clipboard" % "1.5.10",
       "org.webjars" % "highcharts" % highchartsVersion)),
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
