@@ -22,7 +22,7 @@ object TEL {
   // FILES
    val constantsFile = s"$TELPath${Constants.SEP}CONSTANTS".toFile
    val paramsDFile =  s"$TELPath${Constants.SEP}params.d".toFile
-
+   val initFile =  s"$TELPath${Constants.SEP}init.sh".toFile
 
 
   val typesPath = s"$TELPath${Constants.SEP}types"
@@ -41,6 +41,14 @@ object TEL {
 
   // Each tool exection consists of the following subdirectories
   val subdirs : Seq[String] = Array("params", "results", "temp", "logs")
+
+
+  // Loads the init file variables
+  private val inits =  Process(initFile.pathAsString).!!.split('\n').map { param =>
+      val spt = param.split('=')
+      spt(0) -> spt(1)
+    }.toMap
+
 
 
 
