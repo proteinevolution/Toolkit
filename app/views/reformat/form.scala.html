@@ -1,3 +1,6 @@
+@import play.api.mvc.RequestHeader
+@import models.database.User
+@(webJarAssets: WebJarAssets, content: Html, sectionname : String, user_o: Option[User])(implicit messages: Messages, request: RequestHeader)
 
 <style>
 
@@ -27,23 +30,27 @@
     }
 
 
+
 </style>
 <link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
+<link href="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.css"))" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.12/clipboard.min.js"></script>
+<script src="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.js"))"></script>
 <div style="padding-top: 10px;"></div>
 <ul class="vertical menu" data-accordion-menu>
     <li>
         <a href="#" class="menu-icon"><i class="fi-list"></i> <span id="reformat">Reformat Converter</span></a>
         <ul class="menu horizontal nested">
             <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
-            <li><a onclick="alert(myCodeMirror2.getValue())">Upload</a></li>
+            <li><a onclick="document.getElementById('dropzonewrapper').style.display= 'block';">Upload</a></li>
             <li><a data-open="alnvizmodal">AlignmentViewer</a></li>
             <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
         </ul>
     </li>
 </ul>
-
-
+<div class="large-12 columns" id="dropzonewrapper" style="display: none;">
+<form action="/upload-target" class="dropzone" style="margin-top: 10px;"></form>
+</div>
 <p>&nbsp;</p>
 <div style="width: 95%; display: block; margin: auto;">
     <div class="large-12 columns">
