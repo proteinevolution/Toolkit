@@ -5,6 +5,7 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
+import models.database.User
 import models.graph.Link
 import models.sessions.Session
 import akka.pattern.ask
@@ -27,7 +28,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by lukas on 2/27/16.
   */
 @Singleton
-class Service @Inject() (val messagesApi: MessagesApi,
+class Service @Inject() (webJarAssets: WebJarAssets,
+                         val messagesApi: MessagesApi,
                          @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport {
 
   implicit val timeout = Timeout(5.seconds)
@@ -47,8 +49,12 @@ class Service @Inject() (val messagesApi: MessagesApi,
         }
       // Frontend tools
       case "reformat" =>
-        Ok(views.html.reformat.form()).withSession {
-          Session.closeSessionRequest(request, Session.requestSessionID(request))
+
+        val session_id = Session.requestSessionID(request)
+        val user_o : Option[User] = Session.getUser(session_id)
+
+        Ok(views.html.reformat.form(webJarAssets, views.html.general.maincontent(),"Home", user_o)).withSession {
+          Session.closeSessionRequest(request, session_id)
         }
         
       case "seq2gi" =>

@@ -97,6 +97,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
   def static(static : String) = Action { implicit request =>
 
+
     Redirect(s"/#/$static")
   }
 
