@@ -1,7 +1,8 @@
 @import play.api.mvc.RequestHeader
 @import models.database.User
 @(webJarAssets: WebJarAssets, content: Html, sectionname : String, user_o: Option[User])(implicit messages: Messages, request: RequestHeader)
-
+<link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
+<link href="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.css"))" rel="stylesheet">
 <style>
 
     div#content {
@@ -29,11 +30,14 @@
 
     }
 
+    .dropzone{
 
+    border: dashed 1px darkblue;
+    background-color: #c6d6e5 ;
+
+    }
 
 </style>
-<link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
-<link href="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.css"))" rel="stylesheet">
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("clipboard.min.js"))"></script>
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.js"))"></script>
 <div style="padding-top: 10px;"></div>
@@ -42,17 +46,17 @@
         <a href="#" class="menu-icon"><i class="fi-list"></i> <span id="reformat">Reformat Converter</span></a>
         <ul class="menu horizontal nested">
             <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
-            <li><a onclick="document.getElementById('dropzonewrapper').style.display= 'block';">Upload</a></li>
+            <li><a id="dropzonetoggle">Upload</a></li>
             <li><a data-open="alnvizmodal">AlignmentViewer</a></li>
             <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
         </ul>
     </li>
 </ul>
-<div class="large-12 columns" id="dropzonewrapper" style="display: none;">
-<form action="/upload-target" class="dropzone" style="margin-top: 10px;"></form>
+<div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
+    <div id="drop_zone" class="dropzone" style="margin-top: 10px; text-align: center; line-height: 150px; vertical-align: middle;">Drop files here</div>
+    <output id="list"></output>
 </div>
-<p>&nbsp;</p>
-<div style="width: 95%; display: block; margin: auto;">
+<div style="width: 95%; display: block; margin: auto; padding-top: 15px;">
     <div class="large-12 columns">
         <div style="float: right; z-index: 9;">
             <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Copy to clipboard">
@@ -248,6 +252,52 @@
         }
 
     //$("#outputMirror").val().decodeEffect();
+
+    function handleFileSelect(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        var files = evt.dataTransfer.files; // FileList object.
+
+        // files is a FileList of File objects. List some properties.
+        var output = [];
+        for (var i = 0, f; f = files[i]; i++) {
+            output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                    f.size, ' bytes, last modified: ',
+                    f.lastModifiedDate.toLocaleDateString(), '</li>');
+        }
+        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+    }
+
+    /* DropZone */
+
+    function handleDragOver(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+    }
+
+    // Setup the dnd listeners.
+    var dropZone = document.getElementById('drop_zone');
+    dropZone.addEventListener('dragover', handleDragOver, false);
+    dropZone.addEventListener('drop', handleFileSelect, false);
+
+
+    // Dropzone Toggle
+
+    $("#dropzonetoggle").on("click", function(){
+        if($("#dropzonewrapper").css("display") == "none")
+        {
+            $("#dropzonewrapper").show();
+        } else {
+            $("#dropzonewrapper").hide();
+        }
+
+        return false;
+    });
+
+
+    /* Decode Effect */
 
 
     jQuery.fn.decodeEffect = (function ($) {
