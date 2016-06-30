@@ -136,6 +136,7 @@ TODO: Minify me
         }
 
         result = result.slice(0, -3); //removes trailing whitespaces at EOF
+        result += "\n"; // hack for codemirror cursor bug with atomic ranges
 
         return result;
     }
@@ -229,7 +230,6 @@ TODO: Minify me
         for(var i=0;i<clustalObj.length;i++){
             result +=">";
             result += clustalObj[i].untrimmed;
-            console.log(JSON.stringify(clustalObj[i]));
             result += "\n";
             result += clustalObj[i].seq;
             result += "\n";
