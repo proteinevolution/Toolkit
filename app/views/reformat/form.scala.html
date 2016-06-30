@@ -59,7 +59,9 @@
 <div style="width: 95%; display: block; margin: auto; padding-top: 15px;">
     <div class="large-12 columns">
         <div style="float: right; z-index: 9;">
-            <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Copy to clipboard">
+            <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Paste output as input">
+                <button class="small button" id="copy-button" data-clipboard-target="#outputarea" onclick="pasteLeft()" style="margin: 0 -3px 0 0;">Paste left</button></span>
+            <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Copy output to clipboard">
                 <button class="small button warning" id="copy-button" data-clipboard-target="#outputarea" onclick="(function(){
                     new Clipboard('#copy-button');
                 })();" style="margin: 0 0 0 0;">Copy</button></span>
@@ -295,6 +297,20 @@
 
         return false;
     });
+
+    /* Paste left */
+
+    function pasteLeft() {
+
+        if (myCodeMirror2.getValue()) {
+
+            myCodeMirror.setValue(myCodeMirror2.getValue());
+            myCodeMirror2.setValue("");
+        }
+
+        else alert("no output yet");
+
+    }
 
 
     /* Decode Effect */
