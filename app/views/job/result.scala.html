@@ -1,44 +1,31 @@
 @(visualizations : Map[String, Html], jobID : Int, toolname : String)(implicit messages: Messages, request: RequestHeader)
 
 <div>
-
     <ul class="tabs" data-tabs id="example-tabs">
         @for((key, _) <- visualizations) {
 
             <li class="tabs-title"><a href="#@key" aria-selected="true">@key</a></li>
         }
-            <!--
-<li class="tabs-title"><a href="#toolkit-forward-panel" aria-selected="true">Child Job</a></li>
--->
-
+    <li class="tabs-title"><a href="#toolkit-forward-panel" aria-selected="true">Child Job</a></li>
     </ul>
-
-
 </div>
 
 
 @helpmodals.modal(toolname)
 
-
+<br />
 <div class="tabs-content" data-tabs-content="example-tabs">
 @for((key, value) <- visualizations) {
-
-
 
     <div class="tabs-panel" id="@key">
         @value
     </div>
-
 }
 
 
-
-<!--
 <div class="tabs-panel" id="toolkit-forward-panel">
-    TODO Forward view was included here
+    @job.forward()
 </div>
--->
-
 </div>
 
 

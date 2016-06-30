@@ -1,4 +1,4 @@
-@(job: UserJob)
+@(jobID : Int)
 
 <!--
 This view allows the forwarding of the results of one tool to another tool by specifying the links
@@ -14,7 +14,7 @@ between the tools
 
  // TODO These variables are global such that the 'forward.coffee' script can see them. Need to find another way
  target_tools = {};
- parent_job_id = '@job.jobID';
+ parent_job_id = '@jobID';
 
 
  @for(outlink <- job.tool.outlinks) {

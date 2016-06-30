@@ -9,8 +9,6 @@ import models.jobs.JobState
 
 import scala.concurrent.Future
 import better.files._
-import Cmds._
-import java.nio.file.attribute.PosixFilePermission
 
 import models.{Constants, ExitCodes}
 import models.tel.TEL
@@ -18,7 +16,6 @@ import play.api.Logger
 
 import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
-
 
 
 /**
@@ -127,12 +124,9 @@ import JobManager._
   def receive : Receive = {
 
 
-    case UserConnect(userID) =>
-      Logger.info("User Connected: " +  userID)
-      connectedUsers.put(userID, sender())
+    case UserConnect(userID) => connectedUsers.put(userID, sender())
 
-    case UserDisconnect(userID) =>
-      connectedUsers.remove(userID)
+    case UserDisconnect(userID) => connectedUsers.remove(userID)
 
      // Reads parameters provided to the job from the job directory
     case Read(userID, jobID) =>
@@ -143,6 +137,7 @@ import JobManager._
           sender() ! JobIDUnknown
 
           // If jobID does not belong to the user
+
         } else if (!jobOwner(jobID).equals(userID)) {
 
           sender() ! PermissionDenied
