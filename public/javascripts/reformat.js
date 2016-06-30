@@ -662,6 +662,14 @@ TODO: Minify me
 
     }
 
+    function validateClustalUpperCase(clu){}
+
+    function validateClustalLowerCase(clu){}
+
+    function validateFastaUpperCase(fas){}
+
+    function validateFastaLowerCase(fas){}
+
 
 
 

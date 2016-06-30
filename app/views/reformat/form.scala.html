@@ -37,6 +37,26 @@
 
     }
 
+    #progress_bar {
+    margin: 10px 0;
+    padding: 3px;
+    border: 1px solid #000;
+    font-size: 14px;
+    clear: both;
+
+    -moz-transition: opacity 1s linear;
+    -o-transition: opacity 1s linear;
+    -webkit-transition: opacity 1s linear;
+    }
+    #progress_bar.loading {
+    opacity: 1.0;
+    }
+    #progress_bar .percent {
+    background-color: #99ccff;
+    height: auto;
+    width: 0;
+    }
+
 </style>
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("clipboard.min.js"))"></script>
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.js"))"></script>
@@ -53,8 +73,12 @@
     </li>
 </ul>
 <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
-    <div id="drop_zone" class="dropzone" style="margin-top: 10px; text-align: center; line-height: 150px; vertical-align: middle;">Drop files here</div>
+    <div id="progress_bar"><div class="percent">0%</div></div>
+    <input type="file" id="files" name="file" />
+    <!--<div id="drop_zone" type="file" class="dropzone" name="file" style="margin-top: 10px; text-align: center; line-height: 150px; vertical-align: middle;">Drop files here</div>-->
     <output id="list"></output>
+
+
 </div>
 <div style="width: 95%; display: block; margin: auto; padding-top: 15px;">
     <div class="large-12 columns">
@@ -247,31 +271,133 @@
 
     };
 
+    /* Export */
 
     function downloadResult() {
         if (myCodeMirror2.getValue())
         $('a.download').attr('href', 'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,' + encodeURIComponent(myCodeMirror2.getValue()));
         }
 
-    //$("#outputMirror").val().decodeEffect();
+
+
+    /* DropZone */
+    var reader;
+    var progress = document.querySelector('.percent');
 
     function handleFileSelect(evt) {
         evt.stopPropagation();
         evt.preventDefault();
 
+
         var files = evt.dataTransfer.files; // FileList object.
 
         // files is a FileList of File objects. List some properties.
         var output = [];
+        progress.style.width = '0%';
+        progress.textContent = '0%';
+        reader = new FileReader();
+
         for (var i = 0, f; f = files[i]; i++) {
+            if (!f.type.match('text/plain')) {
+                output.push('<li><strong>', 'Please drop only plain text files with *.txt as suffix.', '</strong> </li>');
+                continue;
+            }
+
+
+            reader.onerror = errorHandler;
+            reader.onprogress = updateProgress;
+            reader.onabort = function(e) {
+                alert('File read cancelled');
+            };
+            reader.onloadstart = function(e) {
+                document.getElementById('progress_bar').className = 'loading';
+            };
+            reader.onload = function(e) {
+                // Ensure that the progress bar displays 100% at the end.
+                progress.style.width = '100%';
+                progress.textContent = '100%';
+                setTimeout("document.getElementById('progress_bar').className='';", 2000);
+            };
+
+            // Read in the image file as a binary string.
+            reader.readAsBinaryString(evt.target.files[i]);
+
+
+
             output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
                     f.size, ' bytes, last modified: ',
                     f.lastModifiedDate.toLocaleDateString(), '</li>');
-        }
+
+            }
+
+
+
         document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
     }
 
-    /* DropZone */
+
+
+    function handleFileSelect2(evt) {
+        // Reset progress indicator on new file selection.
+        progress.style.width = '0%';
+        progress.textContent = '0%';
+
+        reader = new FileReader();
+
+        reader.onerror = errorHandler;
+        reader.onprogress = updateProgress;
+        reader.onabort = function(e) {
+            alert('File read cancelled');
+        };
+        reader.onloadstart = function(e) {
+            document.getElementById('progress_bar').className = 'loading';
+        };
+        reader.onload = function(e) {
+            // Ensure that the progress bar displays 100% at the end.
+            progress.style.width = '100%';
+            progress.textContent = '100%';
+            setTimeout("document.getElementById('progress_bar').className='';", 2000);
+            myCodeMirror.setValue(reader.result);
+        };
+
+
+        // Read in the image file as a binary string.
+        //reader.readAsBinaryString(evt.target.files[0]);
+
+        reader.readAsText(evt.target.files[0]);
+
+    }
+
+    function updateProgress(evt) {
+        // evt is an ProgressEvent.
+        if (evt.lengthComputable) {
+            var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
+            // Increase the progress bar length.
+            if (percentLoaded < 100) {
+                progress.style.width = percentLoaded + '%';
+                progress.textContent = percentLoaded + '%';
+            }
+        }
+    }
+
+    function errorHandler(evt) {
+        switch(evt.target.error.code) {
+            case evt.target.error.NOT_FOUND_ERR:
+                alert('File Not Found!');
+                break;
+            case evt.target.error.NOT_READABLE_ERR:
+                alert('File is not readable');
+                break;
+            case evt.target.error.ABORT_ERR:
+                break; // noop
+            default:
+                alert('An error occurred reading this file.');
+        };
+    }
+
+    function abortRead() {
+        reader.abort();
+    }
 
     function handleDragOver(evt) {
         evt.stopPropagation();
@@ -280,9 +406,10 @@
     }
 
     // Setup the dnd listeners.
-    var dropZone = document.getElementById('drop_zone');
-    dropZone.addEventListener('dragover', handleDragOver, false);
-    dropZone.addEventListener('drop', handleFileSelect, false);
+    //var dropZone = document.getElementById('drop_zone');
+    //dropZone.addEventListener('dragover', handleDragOver, false);
+    //dropZone.addEventListener('drop', handleFileSelect, false);
+    document.getElementById('files').addEventListener('change', handleFileSelect2, false);
 
 
     // Dropzone Toggle
