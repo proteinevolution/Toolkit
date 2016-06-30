@@ -1,10 +1,15 @@
 package models.tel
 
+import java.nio.file.attribute.PosixFilePermission
+
+import better.files.Cmds._
 import better.files._
 import models.Constants
-import play.api.Logger
+
 import scala.sys.process._
 import models.Implicits._
+import models.tel.TELConstants._
+import models.tel.TELRegex._
 
 /**
   *
@@ -12,29 +17,6 @@ import models.Implicits._
   */
 object TEL {
 
-  // TODO Get this from the configuration
-  val TELPath = "tel"
-
-  // Character used to have comments in the Shell files interpreted by TEL
-  // Do NOT change this !
-  val commentChar = '#'
-
-  // FILES
-   val constantsFile = s"$TELPath${Constants.SEP}CONSTANTS".toFile
-   val paramsDFile =  s"$TELPath${Constants.SEP}params.d".toFile
-   val initFile =  s"$TELPath${Constants.SEP}init.sh".toFile
-
-
-  val typesPath = s"$TELPath${Constants.SEP}types"
-  val runscriptPath = s"$TELPath${Constants.SEP}runscripts${Constants.SEP}"
-
-
-  // For translating the runscript template into an executable instance
-  val replaceeString = """%([A-Za-z_\.]+)""".r("expression")
-
-  // Elements of the markup of runscripts, currently constants and parameter string are supported
-  val constantsString =  """([A-Z]+)""".r("constant")
-  val parameterString = """([a-z_]+)\.([a-z_]+)""".r("paramName", "selector")
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
@@ -49,6 +31,11 @@ object TEL {
       spt(0) -> spt(1)
     }.toMap
 
+
+
+  // Returns the context name currently set
+  //  TODO the CONTEXT variable can currently only be set in the init script
+  private def getContext : String = inits.getOrElse("CONTEXT", "LOCAL")
 
 
 
@@ -134,13 +121,11 @@ object TEL {
 
 
 
-
-
   /**
     *  Assembles all scripts to create a new executable Job and
     *  returns the name of the executable script for job execution.
     */
-  def init(toolname : String, params : Map[String, String], dest : String): Unit = {
+  def init(runscript : String, params : Map[String, String], dest : String): String = {
 
     // Create directories necessary for tool execution
     subdirs.foreach { s => (dest + Constants.SEP + s).toFile.createDirectories() }
@@ -148,13 +133,16 @@ object TEL {
     // Write parameters to file
     for((paramName, value) <- params ) {
 
+      // TODO This is a hack and needs to go
       if(! ignore.contains(paramName)) {
 
         s"$dest${Constants.SEP}params${Constants.SEP}$paramName".toFile.write(value)
       }
     }
-    val source = s"$runscriptPath$toolname.sh"
-    val target = s"$dest$toolname.sh".toFile
+
+    //
+    val source = s"$runscriptPath$runscript.sh"
+    val target = s"$dest$runscript.sh".toFile
 
     lazy val newLines = source.toFile.lines.map { line =>
 
@@ -163,15 +151,11 @@ object TEL {
           matcher.group("expression").trim() match {
 
           // Replace constants
-          case constantsString(constant) =>
-            Logger.info("Constant: " + constant)
-            constants(constant)
+          case constantsString(constant) => constants(constant)
 
           // Replace param String
           case parameterString(paramName, selector) =>
 
-            Logger.info("paramName: " + paramName)
-            Logger.info("selector: " + selector)
             // Some selectors hard-coded TODO Introduce the extensions of selectors with arbitrary methods
             selector match {
               case "path" => s"params${Constants.SEP}$paramName"
@@ -179,17 +163,40 @@ object TEL {
                 s"${dest}params${Constants.SEP}$paramName".toFile.contentAsString
             }
 
-
           // Should not happen
           case _ => "notImplemented"
 
         }
       })
     }.toSeq
-
     target.appendLines(newLines:_*)
+
+    val context = getContext
+    if(context == "LOCAL") {
+
+      s"$dest${Constants.SEP}EXECUTION".toFile.appendLine(target.name)
+
+      // Make the runscript executable
+      chmod_+(PosixFilePermission.OWNER_EXECUTE, target)
+
+      target.pathAsString
+    } else {
+
+      // Write the context script to the job directory and insert runscript name
+      // TODO The context script should also use the extended syntax
+      val contextLines = s"$contextPath$context.sh".toFile.lines.map { line =>
+
+        runscriptString.replaceAllIn(line, s"$runscript.sh")
+      }.toSeq
+
+      val contextFile = s"$dest$context.sh".toFile
+
+      contextFile.appendLines(contextLines:_*)
+      chmod_+(PosixFilePermission.OWNER_EXECUTE, contextFile)
+
+      s"$dest${Constants.SEP}EXECUTION".toFile.appendLine(contextFile.name)
+      contextFile.pathAsString
+    }
   }
-
-
 }
 
