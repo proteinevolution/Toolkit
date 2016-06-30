@@ -77,31 +77,23 @@ import JobManager._
     */
   def changeState(jobID : Int, newState : JobState.JobState) =  {
 
-    Logger.info("Jobstate to be changed")
-
     jobStates.put(jobID, newState)
     val owner = jobOwner(jobID)
-    Logger.info("The owner of the Job is: " + owner)
 
     // Inform user if connected
     if(connectedUsers contains owner) {
 
-      Logger.info("Will send message to job owner")
       connectedUsers(owner) ! JobStateChanged(jobID, newState)
     }
   }
 
-
-
-  // Methods
-  def executeJob(jobID : Int, toolname : String, params : Map[String, String]): Unit = {
+  /**
+    * @param jobID
+    * @param scriptPath
+    */
+  def executeJob(jobID : Int, scriptPath : String): Unit = {
 
     val rootPath  = s"$jobPath$SEP$jobID$SEP"
-    val runscript = s"$rootPath$toolname.sh"
-
-    chmod_+(PosixFilePermission.OWNER_EXECUTE, runscript.toFile)
-
-    Logger.info("Runscript " + runscript)
 
     // Log files output buffer
     val out = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stdout.out")))
@@ -111,7 +103,7 @@ import JobManager._
     changeState(jobID, JobState.Running)
 
     // Create new Process instance of the runscript to run the tool
-    val process = Process(runscript , new java.io.File(rootPath)).run(ProcessLogger(
+    val process = Process(scriptPath , new java.io.File(rootPath)).run(ProcessLogger(
       (fout) => out.write(fout),
       (ferr) => err.write(ferr)
     ))
@@ -221,14 +213,14 @@ import JobManager._
           changeState(newJobID, JobState.Submitted)
 
           // Use an interface of TEL to initialize a Job Directory
-          TEL.init(toolname, params, rootPath)
+          val script = TEL.init(toolname, params, rootPath)
 
           // Job Directory will then be prepared
           changeState(newJobID, JobState.Prepared)
 
           // Also Start Job if requested
           if(start) {
-              executeJob(newJobID, toolname, params)
+              executeJob(newJobID, script)
           }
         }
       }
