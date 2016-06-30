@@ -228,7 +228,8 @@ TODO: Minify me
 
         for(var i=0;i<clustalObj.length;i++){
             result +=">";
-            result += clustalObj[i].id;
+            result += clustalObj[i].untrimmed;
+            console.log(JSON.stringify(clustalObj[i]));
             result += "\n";
             result += clustalObj[i].seq;
             result += "\n";
@@ -245,7 +246,7 @@ TODO: Minify me
 
 
     function clustalParser(text) {
-        var blockstate, cSeq, k, keys, label, line, lines, match, obj, regex, seqCounter, seqs, sequence;
+        var blockstate, cSeq, k, keys, untrimmed, label, line, lines, match, obj, regex, seqCounter, seqs, sequence;
         seqs = [];
         if (Object.prototype.toString.call(text) === '[object Array]') {
             lines = text;
@@ -280,11 +281,13 @@ TODO: Minify me
                 match = regex.exec(line);
                 if (match != null) {
                     label = match[1];
+                    untrimmed = label;
                     sequence = match[2];
                     if (seqCounter >= seqs.length) {
                         obj = getMeta(label);
                         label = obj.name;
                         cSeq = new model(sequence, label, seqCounter);
+                        cSeq.untrimmed = untrimmed;
                         cSeq.ids = obj.ids || {};
                         cSeq.details = obj.details || {};
                         keys = Object.keys(cSeq.ids);
