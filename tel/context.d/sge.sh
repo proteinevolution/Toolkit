@@ -1,3 +1,5 @@
 #!/bin/bash
 
-qsub -sync -cwd %r
+qsub -sync y \
+      -cwd  \
+       %r
