@@ -357,7 +357,11 @@
             progress.style.width = '100%';
             progress.textContent = '100%';
             setTimeout("document.getElementById('progress_bar').className='';", 2000);
-            myCodeMirror.setValue(reader.result);
+            if (evt.target.files[0].type.match('text/plain')) {
+
+                myCodeMirror.setValue(reader.result);
+
+            } else alert("type mismatch, please upload only plain text files.");
         };
 
 
