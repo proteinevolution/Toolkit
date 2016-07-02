@@ -662,13 +662,47 @@ TODO: Minify me
 
     }
 
-    function validateClustalUpperCase(clu){}
+    function validateClustalUpperCase(clu){
 
-    function validateClustalLowerCase(clu){}
+        var clustalObj = clustalParser(clu);
+        for (var i = 0; i<clustalObj.length; i++) {
+            if((/[a-z]/.test(clustalObj[i].sequence)))
+                return false;
+        }
+        return true;
 
-    function validateFastaUpperCase(fas){}
+    }
 
-    function validateFastaLowerCase(fas){}
+    function validateClustalLowerCase(clu){
+
+        var clustalObj = clustalParser(clu);
+        for (var i = 0; i<clustalObj.length; i++) {
+            if((/[A-Z]/.test(clustalObj[i].sequence)))
+                return false;
+        }
+        return true;
+    }
+
+    function validateFastaUpperCase(fas){
+
+        var fastaObj = readFastaText(fas);
+        for (var i = 0; i<fastaObj.length; i++) {
+            if((/[a-z]/.test(fastaObj[i].sequence)))
+            return false;
+        }
+        return true;
+    }
+
+    function validateFastaLowerCase(fas){
+
+        var fastaObj = readFastaText(fas);
+        for (var i = 0; i<fastaObj.length; i++) {
+            if((/[A-Z]/.test(fastaObj[i].sequence)))
+                return false;
+        }
+        return true;
+
+    }
 
 
 
