@@ -4,6 +4,7 @@
 # if a corresponding f.pal file exists.
 
 
+if [ -d /ebio/abt1_share/toolkit_sync/databases/standard ] ; then
 
 for f in /ebio/abt1_share/toolkit_sync/databases/standard/*.pal ; do 
  
@@ -15,3 +16,8 @@ for f in /ebio/abt1_share/toolkit_sync/databases/standard/*.pal ; do
 	echo $DBNAME `echo $DBNAME | sed "s/\/ebio\/abt1_share\/toolkit_sync\/databases\/standard\///"` 	
      fi
 done
+
+else 
+
+echo "foo bar"
+fi
