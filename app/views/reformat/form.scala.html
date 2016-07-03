@@ -514,8 +514,8 @@
     opts.el = document.getElementById("yourDiv");
     opts.vis = {
         conserv: false,
-        overviewbox: false,
-        seqlogo: false,
+        overviewbox: true,
+        seqlogo: true,
 
         labels: true,
         labelName: true,
@@ -529,16 +529,13 @@
     opts.zoomer = {
         // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
         // use script for handling
-        alignmentHeight: 825, alignmentWidth: 600, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
+        alignmentHeight: 625, alignmentWidth: 900, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
     };
     if (validateFasta(myCodeMirror.getValue())){
         opts.seqs = readFastaText(myCodeMirror.getValue());
     }
     if (checkClustal(myCodeMirror.getValue())) {
-
-        console.log(clustalParser(myCodeMirror.getValue()));
         opts.seqs = (clustalParser(myCodeMirror.getValue()));
-
     }
     if (!validateFasta(myCodeMirror.getValue()) && !checkClustal(myCodeMirror.getValue()))  { alert("currently, the alignmentviewer supports only fasta and clustal inputs."); }
     // init msa
@@ -550,7 +547,7 @@
         menuOpts.el = document.getElementById('div');
         menuOpts.msa = ms;
         var defMenu = new msa.menu.defaultmenu(menuOpts);
-        ms.addView("menu", defMenu);
+        //ms.addView("menu", defMenu);
 
         // call render at the end to display the whole MSA
         ms.render();
