@@ -67,6 +67,8 @@ object TEL {
     constants(constant)
   }
 
+
+
   //-----------------------------------------------------------------------------------------------------
   // Set params (Parameters whose values can be taken from a predefined set)
   //-----------------------------------------------------------------------------------------------------
@@ -74,9 +76,9 @@ object TEL {
   // Keeps a map of all setParams with their respective allowed values, together with the plain text name
   private var setParams : Map[String, Map[String, String]] = loadSetParams()
 
-
   // Reloads all the set Params from the scripts in params.d
   private def loadSetParams() = {
+
 
    paramsDFile.list.withFilter(_.isRegularFile).map { f =>
 
@@ -85,7 +87,8 @@ object TEL {
         spt(0) -> spt(1)
       }.toMap
     }.toMap
-  }
+    }
+
 
   /**
     * Returns the Array of all values and plain text names of the set params
@@ -120,6 +123,16 @@ object TEL {
   }
 
 
+
+  //-----------------------------------------------------------------------------------------------------
+  // Private methods
+  //-----------------------------------------------------------------------------------------------------
+
+
+
+  //-----------------------------------------------------------------------------------------------------
+  // Public methods
+  //-----------------------------------------------------------------------------------------------------
 
   /**
     *  Assembles all scripts to create a new executable Job and
