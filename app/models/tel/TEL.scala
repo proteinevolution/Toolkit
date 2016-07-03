@@ -78,7 +78,7 @@ object TEL {
   // Reloads all the set Params from the scripts in params.d
   private def loadSetParams() = {
 
-   paramsDFile.list.map { f =>
+   paramsDFile.list.withFilter(_.isRegularFile).map { f =>
 
       f.name.replaceAll(".sh", "") -> Process(f.pathAsString).!!.split('\n').map { param =>
         val spt = param.split(' ')
