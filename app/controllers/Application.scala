@@ -19,6 +19,7 @@ import scala.concurrent.duration._
 import scala.concurrent.Future
 import play.api.mvc._
 import play.api.Configuration
+import play.twirl.api.Html
 
 
 @Singleton
@@ -102,18 +103,22 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   }
 
 
+
+
   /*
     *  Return the Input form of the corresponding tool
     */
+  // TODO Replace via reflection
   def form(toolname: String) = Action { implicit request =>
 
-    val toolframe = toolname match {
+    val toolframe : Html = toolname match {
       case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
       case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
       case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
       case "psiblast" => views.html.psiblast.form(Psiblast.inputForm)
       case "mafft" => views.html.mafft.form(Mafft.inputForm)
       case "csblast" => views.html.csblast.form(Csblast.inputForm)
+      case "hhpred" => views.html.hhpred.form(HHpred.inputForm)
       case "reformatb" => views.html.reformatb.form(Reformatb.inputForm)
     }
 
