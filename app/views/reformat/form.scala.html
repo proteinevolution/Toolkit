@@ -503,7 +503,7 @@
 
 
     /* MSA */
-    
+
     function initMSA(){
 
     // this is a way how you use a bundled file parser
@@ -531,9 +531,16 @@
         // use script for handling
         alignmentHeight: 825, alignmentWidth: 600, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
     };
+    if (validateFasta(myCodeMirror.getValue())){
+        opts.seqs = readFastaText(myCodeMirror.getValue());
+    }
+    if (checkClustal(myCodeMirror.getValue())) {
 
-    opts.seqs = readFastaText(myCodeMirror.getValue());
+        console.log(clustalParser(myCodeMirror.getValue()));
+        opts.seqs = (clustalParser(myCodeMirror.getValue()));
 
+    }
+    if (!validateFasta(myCodeMirror.getValue()) && !checkClustal(myCodeMirror.getValue()))  { alert("currently, the alignmentviewer supports only fasta and clustal inputs."); }
     // init msa
 
         var ms = new msa.msa(opts);
