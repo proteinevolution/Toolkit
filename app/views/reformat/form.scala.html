@@ -67,7 +67,7 @@
         <ul class="menu horizontal nested">
             <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
             <li><a id="dropzonetoggle">Upload</a></li>
-            <li><a data-open="alnvizmodal">AlignmentViewer</a></li>
+            <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
             <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
         </ul>
     </li>
@@ -139,13 +139,17 @@
 <p>&nbsp;</p>
 
 <div class="large reveal" id="alnvizmodal" data-reveal>
-    <h1>Awesome. I Have It.</h1>
-    <p class="lead">Your couch. It is mine.</p>
-    <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
+    <h1>AlignmentViewer</h1>
+
+    <div id="menuDiv"></div>
+    <div id="yourDiv">Loading ... </div>
     <button class="close-button" data-close aria-label="Close modal" type="button">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
+
+
+
 <textarea id="outputarea" style="height: 1px; position: relative; top: -10000px; left: -10000px;"></textarea>
 <script src="@routes.Assets.at("javascripts/reformat.js")" type="text/javascript"></script>
 <script src="@routes.Assets.at("scripts/validation.js")"></script>
@@ -496,6 +500,56 @@
             });
         };
     }(jQuery));
+
+
+    /* MSA */
+    
+    function initMSA(){
+
+    // this is a way how you use a bundled file parser
+    msa = require("msa");
+
+    var opts = {colorscheme: {"scheme": "clustal"}};
+
+    opts.el = document.getElementById("yourDiv");
+    opts.vis = {
+        conserv: false,
+        overviewbox: false,
+        seqlogo: false,
+
+        labels: true,
+        labelName: true,
+        labelId: false,
+        labelPartition: false,
+        labelCheckbox: false
+    };
+    opts.conf = {
+        dropImport: true
+    };
+    opts.zoomer = {
+        // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
+        // use script for handling
+        alignmentHeight: 825, alignmentWidth: 600, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
+    };
+
+    opts.seqs = readFastaText(myCodeMirror.getValue());
+
+    // init msa
+
+        var ms = new msa.msa(opts);
+
+        // the menu is independent to the MSA container
+        var menuOpts = {};
+        menuOpts.el = document.getElementById('div');
+        menuOpts.msa = ms;
+        var defMenu = new msa.menu.defaultmenu(menuOpts);
+        ms.addView("menu", defMenu);
+
+        // call render at the end to display the whole MSA
+        ms.render();
+
+    }
+
 
     $(document).foundation();
 

@@ -40,7 +40,7 @@ TODO: Minify me
             result +=">";
             result += obj[i].name;
             result += "\n";
-            result += obj[i].sequence;
+            result += obj[i].seq;
             result += "\n";
         }
 
@@ -72,7 +72,7 @@ TODO: Minify me
             result += ">";
             result += readA3mLine(splittedStrings[i]).name;
             result += "\n";
-            result += readA3mLine(splittedStrings[i]).sequence;
+            result += readA3mLine(splittedStrings[i]).seq;
             result += "\n";
 
         }
@@ -88,10 +88,10 @@ TODO: Minify me
             result = {},
             i = 1;
         result.name = splittedStrings[0].substr(0, 11);
-        result.sequence = '';
+        result.seq = '';
         for (; i < splittedStrings.length; i++) {
-            result.sequence += splittedStrings[i];
-            result.sequence = result.sequence.split('.').join('');
+            result.seq += splittedStrings[i];
+            result.seq = result.seq.split('.').join('');
         }
         return result;
 
@@ -171,9 +171,9 @@ TODO: Minify me
         result.name = splittedStrings[0].substr(0, 28);
         //else { result.name = splittedStrings[0].substr(0, 11) + ' '; }
 
-        result.sequence = '';
+        result.seq = '';
         for (; i < splittedStrings.length; i++) {
-            result.sequence += splittedStrings[i];
+            result.seq += splittedStrings[i];
         }
         return result;
     }
@@ -182,7 +182,7 @@ TODO: Minify me
     function getClustalSeq (fastaLine) {
 
         var fasta = readFastaLine(fastaLine);
-        return fasta.sequence;
+        return fasta.seq;
 
     }
 
@@ -549,14 +549,14 @@ TODO: Minify me
         // convert from fasta to clustal. if not -> suggest forwarding to Muscle.
 
         var fastaObj = readFastaText(aln);
-        var firstlength = fastaObj[0].sequence.length;
+        var firstlength = fastaObj[0].seq.length;
 
 
         for (var i = 0; i < fastaObj.length; i++) {
 
-            if (fastaObj[i].sequence.length !== firstlength) {
+            if (fastaObj[i].seq.length !== firstlength) {
                 console.log("input is not an alignment");
-                if (_contains(fastaObj[i].sequence, "-")) {
+                if (_contains(fastaObj[i].seq, "-")) {
 
                     console.log("warning: input contains dashes without being an alignment")
                 }
@@ -592,7 +592,7 @@ TODO: Minify me
 
         var fastaObj = readFastaText(fas);
         for (var i = 0; i<fastaObj.length; i++) {
-            fastaObj[i].sequence = fastaObj[i].sequence.toLowerCase();
+            fastaObj[i].seq = fastaObj[i].seq.toLowerCase();
         }
         return fastaObj;
 
@@ -605,7 +605,7 @@ TODO: Minify me
 
         var fastaObj = readFastaText(fas);
         for (var i = 0; i<fastaObj.length; i++) {
-            fastaObj[i].sequence = fastaObj[i].sequence.toUpperCase();
+            fastaObj[i].seq = fastaObj[i].seq.toUpperCase();
         }
         return fastaObj;
 
@@ -666,7 +666,7 @@ TODO: Minify me
 
         var clustalObj = clustalParser(clu);
         for (var i = 0; i<clustalObj.length; i++) {
-            if((/[a-z]/.test(clustalObj[i].sequence)))
+            if((/[a-z]/.test(clustalObj[i].seq)))
                 return false;
         }
         return true;
@@ -677,7 +677,7 @@ TODO: Minify me
 
         var clustalObj = clustalParser(clu);
         for (var i = 0; i<clustalObj.length; i++) {
-            if((/[A-Z]/.test(clustalObj[i].sequence)))
+            if((/[A-Z]/.test(clustalObj[i].seq)))
                 return false;
         }
         return true;
@@ -687,7 +687,7 @@ TODO: Minify me
 
         var fastaObj = readFastaText(fas);
         for (var i = 0; i<fastaObj.length; i++) {
-            if((/[a-z]/.test(fastaObj[i].sequence)))
+            if((/[a-z]/.test(fastaObj[i].seq)))
             return false;
         }
         return true;
@@ -697,7 +697,7 @@ TODO: Minify me
 
         var fastaObj = readFastaText(fas);
         for (var i = 0; i<fastaObj.length; i++) {
-            if((/[A-Z]/.test(fastaObj[i].sequence)))
+            if((/[A-Z]/.test(fastaObj[i].seq)))
                 return false;
         }
         return true;
