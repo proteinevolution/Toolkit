@@ -69,6 +69,7 @@
             <li><a id="dropzonetoggle">Upload</a></li>
             <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
             <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
+            <li><a onclick="forward()" > Forward to PSIBLAST</a></li>
         </ul>
     </li>
 </ul>
@@ -334,8 +335,6 @@
 
             }
 
-
-
         document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
     }
 
@@ -552,6 +551,17 @@
         // call render at the end to display the whole MSA
         ms.render();
 
+    }
+
+
+    /* Forwarding */
+
+    function forward() {
+
+
+        window.location.href="/forward/psiblast?output=" + encodeURIComponent(myCodeMirror.getValue());
+
+        //console.log(encodeURI(myCodeMirror.getValue()));
     }
 
 

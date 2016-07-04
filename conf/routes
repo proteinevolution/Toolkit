@@ -79,3 +79,6 @@ GET         /static/get/:static                            @controllers.Service.
 # Sitemap
 # Routes for static assets
 GET         /:static                                       @controllers.Application.static(static : String)
+
+#Forwarding
+GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
