@@ -103,8 +103,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   }
 
 
-
-
   /*
     *  Return the Input form of the corresponding tool
     */
