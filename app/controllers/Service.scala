@@ -53,7 +53,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
         val session_id = Session.requestSessionID(request)
         val user_o : Option[User] = Session.getUser(session_id)
 
-        Ok(views.html.reformat.form(webJarAssets, views.html.general.maincontent(),"Home", user_o)).withSession {
+        Ok(views.html.reformat.form(webJarAssets,"Utils", user_o)).withSession {
           Session.closeSessionRequest(request, session_id)
         }
         
@@ -61,6 +61,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
         Ok(views.html.seq2gi.form()).withSession {
           Session.closeSessionRequest(request, Session.requestSessionID(request))
         }
+
     }
   }
 
