@@ -4,6 +4,7 @@ import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobManager.Prepare
 import akka.actor.ActorRef
+import akka.stream.Materializer
 import akka.util.Timeout
 import models.tools._
 import models.sessions.Session
@@ -39,12 +40,13 @@ object Tool {
 
 @Singleton
 class Tool @Inject()(val messagesApi: MessagesApi,
+                     implicit val mat: Materializer,
                      @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport {
 
   implicit val timeout = Timeout(5.seconds)
 
-
-  def submit(toolname: String, start : Boolean, jobID : Option[Int]) = Action { implicit request =>
+  // submit file size is now restricted to 10 MB
+  def submit(toolname: String, start : Boolean, jobID : Option[Int]) = Action(parse.maxLength(10 * 1024 * 1024, parse.multipartFormData)) { implicit request =>
 
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
