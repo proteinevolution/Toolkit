@@ -558,10 +558,9 @@
 
     function forward() {
 
-        window.location.href="/forward/psiblast?output=" + encodeURIComponent(myCodeMirror.getValue());
-
+        localStorage.setItem("resultcookie", myCodeMirror.getValue());
+        window.location.href="/#/tools/psiblast";
     }
-
 
     $(document).foundation();
 
