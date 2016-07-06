@@ -21,9 +21,11 @@ object Clans extends ToolModel {
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
-      "sequences" -> nonEmptyText,
-      "gapopen" -> bigDecimal(5,3),
-      "offset" -> bigDecimal(5,3)
+      "alignment" -> nonEmptyText,
+      "matrix" -> text,
+      "num_iter" -> number,
+      "evalue" -> number,
+      "standarddb" -> text
     )
   )
   val parameterValues = Map(
