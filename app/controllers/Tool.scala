@@ -12,14 +12,14 @@ import models.sessions.Session
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import play.api.Logger
+
 
 /**
   * Created by lukas on 1/27/16.
   */
 object Tool {
 
-  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft, Reformatb) // list of all added tools
+  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft, Reformatb, Clans) // list of all added tools
 
 
   /** getToolModel
@@ -69,6 +69,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         case "psiblast" => Psiblast.inputForm
         case "mafft" => Mafft.inputForm
         case "reformatb" => Reformatb.inputForm // cluster version of reformat
+        case "clans" => Clans.inputForm
       }
       val boundForm = form.bindFromRequest
 
