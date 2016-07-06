@@ -22,7 +22,8 @@ object Ports {
     PsiblastNode.toolname -> PsiblastNode,
     CsblastNode.toolname -> CsblastNode,
     MafftNode.toolname -> MafftNode,
-    ReformatbNode.toolname -> ReformatbNode
+    ReformatbNode.toolname -> ReformatbNode,
+    ClansNode.toolname -> ClansNode
   )
 
 
