@@ -118,6 +118,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
       case "csblast" => views.html.csblast.form(Csblast.inputForm)
       case "hhpred" => views.html.hhpred.form(HHpred.inputForm)
       case "reformatb" => views.html.reformatb.form(Reformatb.inputForm)
+      case "clans" => views.html.clans.form(Clans.inputForm)
     }
 
     Ok(views.html.general.submit(toolname, toolframe, None)).withSession {
