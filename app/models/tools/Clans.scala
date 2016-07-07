@@ -17,7 +17,7 @@ object Clans extends ToolModel {
   val toolNameAbbreviation:String = "clns"
 
 
-  // --- Clansspecific values ---
+  // --- Clans specific values ---
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
@@ -25,7 +25,13 @@ object Clans extends ToolModel {
       "matrix" -> text,
       "num_iter" -> number,
       "evalue" -> number,
-      "standarddb" -> text
+      "standarddb" -> text,
+      "psiblastmode" -> boolean,
+      "protblastmode" -> boolean,
+      "firstevalue" -> number,
+      "complexityfilter" -> boolean,
+      "ungapped" -> boolean,
+      "customid" -> text
     )
   )
   val parameterValues = Map(
