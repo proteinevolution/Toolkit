@@ -4,6 +4,7 @@
     }
 
     h3 {
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
     clear: both;
     display: block;
     font-weight: bold;
@@ -14,6 +15,7 @@
     padding: 5px 0px 4px 8px;
     }
     h4 {
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
     font-size: 1.0em;
     font-weight: bold;
     padding-left: 2%;
@@ -22,6 +24,7 @@
     text-align: left;
     }
     .tooldescr {
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
     padding-left: 20%;
     font-size: 0.9em;
     text-align: justify;
@@ -36,10 +39,90 @@
     border-bottom: 1px solid #E6F2F2;
     }
 
+    .close-button {
+    position: absolute;
+    color: #8a8a8a;
+    right: 0.5rem;
+    top: 0.2rem;
+    font-size: 2em;
+    line-height: 1;
+    cursor: pointer;
+    }
+
+
+    .top-bar, .top-bar ul {
+    background-color: #fff;
+    }
+
+    #navisection ul {
+
+    font-size: 10px;
+    display: block;
+    margin: auto;
+    border-width: 0px;
+    padding-right: 0%;
+
+
+    }
+
+    div.ocker a {
+    border-bottom-color: #D0BA89;
+    text-decoration: none;
+    line-height: inherit;
+    cursor: pointer;
+    color: #000;
+
+    }
+
+    .menu>li>a {
+    display: block;
+    padding: 0rem 0.5rem;
+    line-height: 1;
+    }
+
+    hr {
+    display: block;
+    margin-top: -20em;
+    margin-bottom: 2em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+    }
+
+    .dotted {border: 1px dotted #D0BA89; border-style: none none dotted; color: #fff; background-color: #fff; }
+
 </style>
 <h3 class="search">Search Tools</h3>
 
-<p>&nbsp;</p>
+<div class="top-bar">
+    <div id="navisection" class="top-bar-left ocker">
+        <ul class="dropdown menu" data-dropdown-menu>
+
+            <li  ><a href="/#/tools/csblast" data-close>CS-BLAST</a></li>
+
+            <li  ><a href="/hhblits">HHblits</a></li>
+
+            <li  ><a href="/#/tools/hhpred" data-close>HHpred</a></li>
+
+            <li  ><a href="/hhsenser">HHsenser</a></li>
+
+            <li  ><a href="/#/tools/hmmer3" data-close>HMMER3</a></li>
+
+            <li  ><a href="/patsearch">PatternSearch</a></li>
+
+            <li  ><a href="/prot_blastp">ProtBLAST+</a></li>
+
+            <li  ><a href="/#/tools/psiblast" data-close>PSI-BLAST+</a></li>
+
+            <li  ><a href="/simshift">SimShiftDB</a></li>
+
+        </ul>
+    </div>
+</div>
+
+<hr class="dotted">
+
 <h4><a href="/#/tools/csblast" data-close>CS-BLAST</a></h4>
 <p class="tooldescr">
 	CS-BLAST is an extension to standard NCBI BLAST that allows to increase its sensitivity by a factor of more than two on remote homologs at the same speed.
