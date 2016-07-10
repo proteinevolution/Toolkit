@@ -26,7 +26,7 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
   "org.mindrot" % "jbcrypt" % bcryptVersion,
   "com.evojam" %% "play-elastic4s" % "0.3.0",
-  "org.reactivemongo" %% "play2-reactivemongo" % "0.11.13"
+  "org.reactivemongo" %% "play2-reactivemongo" % "0.11.14"
 )
 
 /*
