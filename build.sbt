@@ -65,6 +65,7 @@ lazy val root = (project in file("."))
       "org.webjars" % "dropzone" % "4.3.0",
       "org.webjars.bower" % "clipboard" % "1.5.10",
       "org.webjars" % "linkurious.js" % "1.5.1",
+      "com.edulify" %% "geolocation" % "2.1.0",
       "org.webjars" % "highcharts" % highchartsVersion)),
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
@@ -92,7 +93,9 @@ lazy val api = (project in file("api"))
 
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
-
+resolvers ++= Seq(
+  Resolver.url("Edulify Repository", url("https://edulify.github.io/modules/releases/"))(Resolver.ivyStylePatterns)
+)
 
 /*
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
