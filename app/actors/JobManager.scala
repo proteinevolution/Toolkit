@@ -1,11 +1,13 @@
 package actors
 
 import java.io.{BufferedWriter, FileWriter}
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
 import models.jobs.JobState
+import play.api.i18n.MessagesApi
+import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 
 import scala.concurrent.Future
 import better.files._
@@ -24,7 +26,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by lzimmermann on 10.05.16.
   */
 @Singleton
-class JobManager extends Actor with ActorLogging {
+class JobManager @Inject() (
+                             val messagesApi: MessagesApi,
+                             val reactiveMongoApi: ReactiveMongoApi,
+                             implicit val materializer: akka.stream.Materializer) extends Actor with ActorLogging with MongoController with ReactiveMongoComponents {
 
 import JobManager._
 
