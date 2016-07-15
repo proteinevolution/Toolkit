@@ -3,11 +3,15 @@ package actors
 import java.io.{BufferedWriter, FileWriter}
 import javax.inject.{Inject, Singleton}
 
+
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
 import models.jobs.JobState
 import play.api.i18n.MessagesApi
-import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
+
+import reactivemongo.api.collections.bson.BSONCollection
+
+
 
 import scala.concurrent.Future
 import better.files._
@@ -16,8 +20,16 @@ import models.{Constants, ExitCodes}
 import models.tel.TEL
 import play.api.Logger
 
+
 import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
+
+import play.api.libs.json.Json
+
+
+import play.modules.reactivemongo.{
+MongoController, ReactiveMongoApi, ReactiveMongoComponents
+}
 
 
 /**
@@ -31,7 +43,8 @@ class JobManager @Inject() (
                              val reactiveMongoApi: ReactiveMongoApi,
                              implicit val materializer: akka.stream.Materializer) extends Actor with ActorLogging with MongoController with ReactiveMongoComponents {
 
-import JobManager._
+  import JobManager._
+
 
   val SEP = Constants.SEP
   val random = scala.util.Random
@@ -126,6 +139,21 @@ import JobManager._
 
 
 
+  import reactivemongo.play.json._
+
+
+
+  val jobCollection: BSONCollection = db.collection("jobs")
+
+
+  def delete(id: Int) = {
+
+    jobCollection.remove(Json.obj("main_id" -> id))
+
+  }
+
+
+
   def receive : Receive = {
 
 
@@ -184,7 +212,8 @@ import JobManager._
       }
 
       Future {
-        // TODO Delete job from database
+
+        //delete(jobID)
 
         // Delete Job Path
         s"jobPath$SEP$jobID".toFile.delete(swallowIOExceptions = false)
@@ -226,6 +255,7 @@ import JobManager._
       }
   }
 }
+
 
 
 
