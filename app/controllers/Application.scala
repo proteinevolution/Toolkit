@@ -72,7 +72,12 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
   def login = Action { implicit request =>
 
-  Ok(views.html.general.login())
+    val session_id = Session.requestSessionID(request)
+    val user_o : Option[User] = Session.getUser(session_id)
+
+    Ok(views.html.backend.login(webJarAssets, views.html.general.maincontent(),"Backend", user_o)).withSession {
+      Session.closeSessionRequest(request, session_id)
+    }
 
   }
 
