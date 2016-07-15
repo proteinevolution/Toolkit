@@ -13,6 +13,9 @@
 # Index Page requested by user. Note that the controller is injected
 GET         /                                              @controllers.Application.index
 
+# Dashboard for Admin
+GET         /login                                         @controllers.Application.login
+
 # Websocket
 GET         /ws                                            @controllers.Application.ws
 

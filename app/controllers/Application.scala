@@ -70,6 +70,12 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
+  def login = Action { implicit request =>
+
+  Ok(views.html.general.login())
+
+  }
+
 
 
   def contact(title: String = "Contact") = Action { implicit request =>
