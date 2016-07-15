@@ -21,25 +21,54 @@
     </head>
 
     <body>
-    <div class="top-bar">
-    <div class="top-bar-right">
-        <h3>Toolkit Admin Dashboard</h3>
-    </div>
-</div>
+        <div id="site">
 
-<button class="hollow button" href="#">Primary Color</button>
+            <div class="login">
 
-<form>
-    <div class="row">
-        <div class="large-centered large-4 columns">
-            <label>Input Label
-                <input type="text" placeholder=".medium-6.columns">
-            </label>
+                <div class="row">
+
+                    <div class="small-12 medium-3 large-4 columns">&nbsp;</div>
+
+                    <div class="small-12 medium-6 large-4 columns">
+
+                        <div class="login-box">
+
+                            <div class="login-header"><p>LOG IN</p></div>
+
+                            <div class="login-subheader">
+                                <p>Bitte geben Sie Ihre Zugangsdaten ein:</p>
+                            </div>
+
+                            <div class="error"><p></p></div>
+
+                            <div class="login-content">
+
+                                <form method="post" action="/login">
+                                    <input type="hidden" name="step" value="auth">
+                                    <p><input type="text" name="username" value="" placeholder="Benutzername" /></p>
+                                    <p><input type="password" name="password" placeholder="Passwort" /></p>
+                                        <!-- p><a href="/recover">Sie haben Ihr Passwort vergessen?</a></p -->
+                                        <!-- p><input type="checkbox" name="remember"> Zugangsdaten auf diesem Computer merken.</p -->
+                                    <div class="login-submit"><input type="submit" value="Anmelden" name="submitSave" class="button"></div>
+                                    <input type="hidden" name="url" value="/backend/"/>
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="small-12 medium-3 large-4 columns">&nbsp;</div>
+
+                </div>
+
+            </div>
+
         </div>
-    </div>
-</form>
 
- <!-- Foundation 6 -->
+
+        <!-- Foundation 6 -->
     <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
     <script type="text/javascript">
                     $(document).ready(function() {

@@ -1,0 +1,52 @@
+@import play.api.mvc.RequestHeader
+@import models.database.User
+@(webJarAssets: WebJarAssets, content: Html, sectionname : String, user_o: Option[User])(implicit messages: Messages, request: RequestHeader)
+
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Bioinformatics Toolkit</title>
+        <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.png")">
+        <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
+
+
+            <!-- Google Fonts -->
+        <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Vollkorn:400,700' rel='stylesheet' type='text/css'>
+
+
+    </head>
+
+    <body>
+        <div class="top-bar">
+            <div class="top-bar-right">
+                <h3>Toolkit Admin Dashboard</h3>
+            </div>
+        </div>
+
+        <button class="hollow button" href="#">Primary Color</button>
+
+        <form>
+            <div class="row">
+                <div class="large-centered large-4 columns">
+                    <label>Input Label
+                        <input type="text" placeholder=".medium-6.columns">
+                    </label>
+                </div>
+            </div>
+        </form>
+
+            <!-- Foundation 6 -->
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
+        <script type="text/javascript">
+                $(document).ready(function() {
+                    $(document).foundation();
+                })
+        </script>
+
+
+    </body>
+</html>

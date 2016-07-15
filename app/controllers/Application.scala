@@ -81,6 +81,17 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
   }
 
+  def backend = Action { implicit request =>
+
+    val session_id = Session.requestSessionID(request)
+    val user_o : Option[User] = Session.getUser(session_id)
+
+    Ok(views.html.backend.backend(webJarAssets, views.html.general.maincontent(),"Backend", user_o)).withSession {
+      Session.closeSessionRequest(request, session_id)
+    }
+
+  }
+
 
 
   def contact(title: String = "Contact") = Action { implicit request =>
