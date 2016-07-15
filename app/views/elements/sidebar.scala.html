@@ -41,24 +41,9 @@
     <script type="text/javascript">
 
 
-
-        //TODO: one has to click one time too much when first loaded, need to get rid of this
-
-
-            $("#sidebartoggle").click(function(){
-                $(".sidebar").toggle();
+            $("#tinySwitch").click(function(){
+                $("#sidebar-switch").toggle();
             });
-
-        $("#sidebartoggle").on("click", function(){
-            if($(this).text()=="Hide")
-            {
-                $(this).text("Sidebar");
-            } else {
-                $(this).text("Hide");
-            }
-
-            return false;
-        });
 
 
 

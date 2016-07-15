@@ -188,12 +188,13 @@ i {
   background-color: #2E8C81 !important;
 }
 
-#sidebartoggle {
-  border: 2px solid;
-  border-color:  white;
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-  padding: 0.5em;
-  color: white;
+.switch {
+  padding-top: 0.25em;
+
+}
+
+input[type=checkbox]:checked + label {
+  background: deepskyblue !important;
 }
 
 
