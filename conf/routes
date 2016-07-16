@@ -16,6 +16,7 @@ GET         /                                              @controllers.Applicat
 # Dashboard for Admin
 GET         /login                                         @controllers.Application.login
 GET         /backend                                       @controllers.Application.backend
+GET         /404                                           @controllers.Application.forbidden
 
 
 # Websocket

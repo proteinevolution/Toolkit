@@ -75,7 +75,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     val session_id = Session.requestSessionID(request)
     val user_o : Option[User] = Session.getUser(session_id)
 
-    Ok(views.html.backend.login(webJarAssets, views.html.general.maincontent(),"Backend", user_o)).withSession {
+    Ok(views.html.backend.login(webJarAssets, "Backend", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)
     }
 
@@ -86,7 +86,26 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     val session_id = Session.requestSessionID(request)
     val user_o : Option[User] = Session.getUser(session_id)
 
-    Ok(views.html.backend.backend(webJarAssets, views.html.general.maincontent(),"Backend", user_o)).withSession {
+    if(!request.headers.get("referrer").equals("/login")) {
+      Ok(views.html.general.forbidden(webJarAssets, "Backend", user_o)).withSession {
+        Session.closeSessionRequest(request, session_id)
+      }
+    }
+
+    Ok(views.html.backend.backend(webJarAssets, "Backend", user_o)).withSession {
+      Session.closeSessionRequest(request, session_id)
+    }
+
+  }
+
+
+
+  def forbidden = Action { implicit request =>
+
+    val session_id = Session.requestSessionID(request)
+    val user_o : Option[User] = Session.getUser(session_id)
+
+    Ok(views.html.general.forbidden(webJarAssets, "404", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)
     }
 
