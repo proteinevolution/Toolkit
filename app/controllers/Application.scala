@@ -81,19 +81,27 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
   }
 
+
+  //def get[T](o:Option[T]) = o.get
+
   def backend = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
     val user_o : Option[User] = Session.getUser(session_id)
 
-    if(!request.headers.get("referrer").equals("/login")) {
+    //TODO add auth validation here for allowing access to the dashboard
+
+    if(!request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login")) {
       Ok(views.html.general.forbidden(webJarAssets, "Backend", user_o)).withSession {
         Session.closeSessionRequest(request, session_id)
       }
     }
 
+
+    else {
     Ok(views.html.backend.backend(webJarAssets, "Backend", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)
+      }
     }
 
   }
