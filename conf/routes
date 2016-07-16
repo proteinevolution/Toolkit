@@ -16,6 +16,8 @@ GET         /                                              @controllers.Applicat
 # Dashboard for Admin
 GET         /login                                         @controllers.Application.login
 GET         /backend                                       @controllers.Application.backend
+
+# 404 page
 GET         /404                                           @controllers.Application.forbidden
 
 
