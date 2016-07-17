@@ -14,6 +14,7 @@ import javax.inject.{Inject, Named, Singleton}
 
 import models.sessions.Session
 import models.tools._
+import play.api.mvc.Results._
 
 import scala.concurrent.duration._
 import scala.concurrent.Future
@@ -82,7 +83,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   }
 
 
-  //def get[T](o:Option[T]) = o.get
+
 
   def backend = Action { implicit request =>
 
@@ -92,9 +93,9 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     //TODO add auth validation here for allowing access to the dashboard
 
     if(!request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login")) {
-      Ok(views.html.general.forbidden(webJarAssets, "Backend", user_o)).withSession {
-        Session.closeSessionRequest(request, session_id)
-      }
+
+        InternalServerError(views.html.errors.pagenotfound())
+
     }
 
 
@@ -108,14 +109,9 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
 
 
-  def forbidden = Action { implicit request =>
+  def forbidden = {
 
-    val session_id = Session.requestSessionID(request)
-    val user_o : Option[User] = Session.getUser(session_id)
-
-    Ok(views.html.general.forbidden(webJarAssets, "404", user_o)).withSession {
-      Session.closeSessionRequest(request, session_id)
-    }
+      InternalServerError(views.html.errors.pagenotfound())
 
   }
 
