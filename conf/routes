@@ -17,9 +17,6 @@ GET         /                                              @controllers.Applicat
 GET         /login                                         @controllers.Application.login
 GET         /backend                                       @controllers.Application.backend
 
-# 404 page
-GET         /404                                           @controllers.Application.forbidden
-
 
 # Websocket
 GET         /ws                                            @controllers.Application.ws
