@@ -1,14 +1,10 @@
-@import play.api.mvc.RequestHeader
-@import models.database.User
-@(webJarAssets: WebJarAssets, sectionname : String, user_o: Option[User])(implicit messages: Messages, request: RequestHeader)
-
 
 <!DOCTYPE html>
 
 <html>
     <head>
         <title>Bioinformatics Toolkit</title>
-        <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="shortcut icon" href="@routes.Assets.at("/images/favicon.png")">
         <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
 
 
@@ -32,20 +28,11 @@
 
             <p>Congratulations!</p>
             <p>You just entered a Domain of Unknown Function!</p>
-            <br><img src="@routes.Assets.at("images/404.png")" style="height: 100%; width: auto;">
+            <br><img src="@routes.Assets.at("/images/404.png")" style="height: 100%; width: auto;">
 
         </div>
         </div>
 
-
-
-            <!-- Foundation 6 -->
-        <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
-        <script type="text/javascript">
-                $(document).ready(function() {
-                    $(document).foundation();
-                })
-        </script>
 
 
     </body>
