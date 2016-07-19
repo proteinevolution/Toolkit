@@ -92,7 +92,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     if(!request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login")) {
 
-        InternalServerError(views.html.errors.pagenotfound())
+        Status(404)(views.html.errors.pagenotfound())
 
     }
 
@@ -109,7 +109,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
   def forbidden = {
 
-      InternalServerError(views.html.errors.pagenotfound())
+      Status(404)(views.html.errors.pagenotfound())
 
   }
 
