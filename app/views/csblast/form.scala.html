@@ -8,60 +8,81 @@
 
 <script src='@routes.Assets.at("javascripts/alnviz.js")' type="text/javascript" ></script>
 
-@helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 50,
+<h6 style="background-color: #2E8C81;padding: 0.25em;
+    font-size: 0.75em;
+    font-weight: bold;color: white""> Input</h6>
+
+@helper.textarea(field = inputForm("alignment"), args = 'rows -> 15, 'cols -> 50,
   '_label -> "",
   'placeholder -> "Enter multiple sequence alignment of single sequence",
   'id -> "alignment", '_showConstraints -> false)
 
+<h6 style="background-color: #2E8C81;padding: 0.25em;
+    font-size: 0.75em;
+    font-weight: bold;color: white""> Options</h6>
 
-<a onClick="$('#alert').prop('hidden',true);$('#submitbutton').prop('disabled', false);$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
+
+<a style="font-size: 0.8em" onClick="$('#alert').prop('hidden',true);$('#submitbutton').prop('disabled', false);$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
 
 
     @helper.select(
         inputForm("alignment_format"),
         helper.options(Values.fullNames.filterKeys(Csblast.parameterValues("alignment_format"))),
         '_label -> "Select alignment format",
-        'id -> "format"
+        'id -> "format",
+        'class -> "forminput"
     )
 
     @helper.select(
         inputForm("matrix"),
         helper.options(Values.fullNames.filterKeys(Csblast.parameterValues("matrix"))),
         '_label -> "Select Scoring Matrix",
-        'id -> "matrix"
+        'id -> "matrix",
+        'class -> "forminput"
     )
     @helper.inputText(
     inputForm("num_iter"),
     '_label  -> "Set the number of iterations",
     'id -> "num_iter",
-    '_showConstraints -> false
+    '_showConstraints -> false,
+    'class -> "forminput"
     )
     @helper.inputText(
     inputForm("evalue"),
     '_label  -> "E-Value",
     'id -> "evalue",
-    '_showConstraints -> false
+    '_showConstraints -> false,
+    'class -> "forminput"
     )
     @helper.inputText(
     inputForm("gap_open"),
     '_label  -> "Gap Open penalty",
     'id -> "gap_open",
-    '_showConstraints -> false
+    '_showConstraints -> false,
+    'class -> "forminput"
     )
     @helper.inputText(
     inputForm("gap_ext"),
     '_label  -> "Gap Extension penalty",
     'id -> "gap_ext",
-    '_showConstraints -> false
+    '_showConstraints -> false,
+    'class -> "forminput"
 )
     @helper.inputText(
         inputForm("desc"),
         '_label  -> "Number of alignments and descriptions",
         'id -> "desc",
-        '_showConstraints -> false
+        '_showConstraints -> false,
+    'class -> "forminput"
     )
+
+<h6 style="background-color: #2E8C81;padding: 0.25em;
+    font-size: 0.75em;
+    font-weight: bold; color: white"> Databases</h6>
+
 @helper.select(
     inputForm("standarddb"),
     helper.options(TEL.getSetParam("standarddb")),
     '_label -> "Select Database",
-    'id -> "standarddb")
+    'id -> "standarddb",
+    'class -> "forminput")

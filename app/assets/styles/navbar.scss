@@ -3,6 +3,7 @@
   position: absolute;
   z-index: 99;
   float: left;
+  height: 3em;
 }
 
 #toolsdropdown {
@@ -188,11 +189,12 @@ i {
   background-color: #2E8C81 !important;
 }
 
-.switch {
-  padding-top: 0.25em;
+#fucker {
+
+  height: 1rem !important;
+  width: 2rem !important;
 
 }
-
 input[type=checkbox]:checked + label {
   background: deepskyblue !important;
 }
