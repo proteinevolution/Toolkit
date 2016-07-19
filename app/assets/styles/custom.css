@@ -33,6 +33,7 @@ font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sa
     transition: background-color 0.5s;
 }
 
+
 .d {
     background-color: green;
 }
@@ -196,6 +197,20 @@ hr {
     font-size: 0.625em;
 
 }
+
+.forminput {
+    height: 2.0375rem;
+    font-size: 0.75em;
+    width: 53%;
+
+}
+
+
+.forminput label {
+   font-size: 0.2rem !important;
+
+}
+
 
 #sequences{
 
