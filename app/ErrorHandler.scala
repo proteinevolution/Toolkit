@@ -14,7 +14,7 @@ class ErrorHandler extends HttpErrorHandler {
 
   def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
     Future.successful(
-      Status(statusCode)("A client error occurred: " + message)
+      Status(statusCode)(views.html.errors.pagenotfound())
     )
   }
 
