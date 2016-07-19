@@ -14,7 +14,7 @@
 #header {
 
   background: #006F62;
-  height: 6.0em
+  height: 5.0em
 
 }
 
@@ -34,7 +34,7 @@
 
 .sub-nav a {
   color: white;
-  font-size: 0.675em;
+  font-size: 0.575em;
 }
 
 #subnav {
@@ -42,3 +42,6 @@
 
 }
 
+#subnav a:hover {
+  color: black;
+}

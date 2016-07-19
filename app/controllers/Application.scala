@@ -83,8 +83,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   }
 
 
-
-
   def backend = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)

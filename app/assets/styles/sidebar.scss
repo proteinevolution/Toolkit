@@ -32,9 +32,10 @@
   opacity: 0.6;
   width: 85%;
   margin: 0 auto;
-  padding: 30px;
+  padding: 15px;
   border: 1px solid #333;
   color: #fff;
+  font-size: 0.75em;
 }
 
 ul#clock li {
@@ -43,4 +44,17 @@ ul#clock li {
 
 ul#jobs li {
   display:inline;
+}
+
+#jobsearchform input {
+  font-size: 0.75em;
+  height: 2.35em;
+}
+
+.button-group .alert {
+  margin-right: 0.8em !important;
+}
+
+.button-group .check {
+  margin-left: 0.8em !important;
 }
