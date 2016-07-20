@@ -5,11 +5,46 @@
 
 <!DOCTYPE html>
 
+<style>
+
+    #backend-logo {
+         background-color: #2E8C81;
+         height: 4em;
+    }
+
+    #backend-top {
+         background-color: lightgray;
+         height: 4em;
+    }
+
+    #backend-header {
+        color: white;
+        font-size: 1.40em;
+        font-weight: bold;
+        font-family: Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;
+        padding-top: 0.5em;
+
+    }
+
+    #backend-search {
+        width: 50%;
+        border-radius: 8px;
+    }
+
+
+    #backend-top-icons img {
+        padding-top: 0.30em;
+        margin-right: 1.0em;
+
+    }
+</style>
+
 <html>
     <head>
         <title>Bioinformatics Toolkit</title>
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.png")">
         <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.at("styles/dashboard.scss")" rel="stylesheet">
 
 
             <!-- Google Fonts -->
@@ -17,27 +52,31 @@
         <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Vollkorn:400,700' rel='stylesheet' type='text/css'>
 
-
     </head>
 
     <body>
-        <div class="top-bar">
-            <div class="top-bar-right">
-                <h3>Toolkit Admin Dashboard</h3>
+        <div class="row fullwidth" style="max-width: inherit">
+          <div id="backend-logo" class="large-2 columns">
+              <img style="width: 100%;padding-top: 0.75em;
+                  padding-left: 1em" src="@routes.Assets.at("images/logo.svg")">
+          </div>
+
+            <div id="backend-top" class="large-10 columns">
+                <div class="row" id="backend-header">
+                    <div class="large-8 columns">
+                        <div class="row collapse prefix-round">
+                                <input id="backend-search" type="text" placeholder="Search">
+                        </div>
+                    </div>
+                    <div id="backend-top-icons" align="center" class="large-4 columns">
+                        <span  aria-hidden="true"><a href="@routes.Application.index()" ><img align="right"  src="/assets/images/icons/logout.svg" width="25em"></a></span>
+                        <span  aria-hidden="true"><img align="right" src="/assets/images/icons/envelope.svg" width="25em" style="margin-right: 1.5em" ></span>
+                    </div>
+
+                </div>
             </div>
         </div>
 
-        <button class="hollow button" href="#">Primary Color</button>
-
-        <form>
-            <div class="row">
-                <div class="large-centered large-4 columns">
-                    <label>Input Label
-                        <input type="text" placeholder=".medium-6.columns">
-                    </label>
-                </div>
-            </div>
-        </form>
 
             <!-- Foundation 6 -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
