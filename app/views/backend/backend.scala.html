@@ -8,12 +8,12 @@
 <style>
 
     #backend-logo {
-         background-color: #2E8C81;
+         background-color: #006F62;
          height: 4em;
     }
 
     #backend-top {
-         background-color: lightgray;
+         background-color: dimgrey;
          height: 4em;
     }
 
@@ -37,6 +37,32 @@
         margin-right: 1.0em;
 
     }
+
+    #backend-side-nav {
+        background-color: #2E8C81;
+        min-height: 100vh;
+        padding-top: 0.25em;
+
+    }
+
+    #backend-side-nav li {
+        font-weight: bold;
+        color: white;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+    }
+
+    #backend-content {
+        background-color: #f2f2f2;
+        min-height: 100vh
+    }
+
+    .page-name {
+        color: dimgrey;
+        padding-top: 0.5em;
+
+    }
+
 </style>
 
 <html>
@@ -73,6 +99,29 @@
                         <span  aria-hidden="true"><img align="right" src="/assets/images/icons/envelope.svg" width="25em" style="margin-right: 1.5em" ></span>
                     </div>
 
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row fullwidth" style="max-width: inherit">
+            <div id="backend-side-nav" class="large-2 medium-12 small-12 columns">
+                <ul style="list-style: none">
+                    <li class="active"><img src="/assets/images/icons/icon.svg" width="25em" style="margin-right: 0.65em" >Dashboard</li>
+                    <li><img src="/assets/images/icons/avatar.svg" width="25em" style="margin-right: 0.65em" >Profile</li>
+                    <li><img src="/assets/images/icons/inbox.svg" width="25em" style="margin-right: 0.65em" >Inbox</li>
+
+                </ul>
+
+            </div>
+
+            <div id="backend-content" class="large-10 medium-12 small-12 columns">
+                <div class="row">
+                    <div class="large-10 columns">
+                        <div class="page-name">
+                            <h4 class="left">Dashboard</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
