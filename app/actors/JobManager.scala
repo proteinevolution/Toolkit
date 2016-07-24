@@ -244,7 +244,7 @@ class JobManager @Inject() (
 
       Future {
 
-        delete(jobID)
+       // delete(jobID)
 
         // Delete Job Path
         s"jobPath$SEP$jobID".toFile.delete(swallowIOExceptions = false)
@@ -266,7 +266,8 @@ class JobManager @Inject() (
           val newJobID = jobIDSource.next()
           val rootPath  = s"$jobPath$SEP$newJobID$SEP"
 
-
+	  jobTools.put(newJobID, toolname)
+          jobOwner.put(newJobID, userID)
 
           val document = BSONDocument(
             "main_id" -> newJobID, //this is wrong, I know, it should be the job_id
