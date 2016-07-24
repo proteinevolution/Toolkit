@@ -266,7 +266,9 @@ class JobManager @Inject() (
           val newJobID = jobIDSource.next()
           val rootPath  = s"$jobPath$SEP$newJobID$SEP"
 
-	  jobTools.put(newJobID, toolname)
+          // TODO use the template database model here
+
+          jobTools.put(newJobID, toolname)
           jobOwner.put(newJobID, userID)
 
           val document = BSONDocument(

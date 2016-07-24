@@ -3,7 +3,7 @@ package models.tel
 /**
   * Created by lzimmermann on 6/30/16.
   */
-object TELRegex {
+trait TELRegex {
 
   // For translating the runscript template into an executable instance
   val replaceeString = """%([A-Za-z_\.]+)""".r("expression")

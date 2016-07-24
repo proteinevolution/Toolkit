@@ -8,14 +8,13 @@ import models.Constants
 
 import scala.sys.process._
 import models.Implicits._
-import models.tel.TELConstants._
-import models.tel.TELRegex._
+
 
 /**
   *
   * Created by lzimmermann on 26.05.16.
   */
-object TEL {
+object TEL extends TELRegex with TELConstants {
 
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
