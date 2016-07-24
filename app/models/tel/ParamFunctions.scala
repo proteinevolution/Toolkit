@@ -1,7 +1,7 @@
 package models.tel
 
 
-object ParamFunctions {
+trait ParamFunctions {
 
   def FAS_nr(content : String) : Int = {
 
