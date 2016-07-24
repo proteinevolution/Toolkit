@@ -1,6 +1,7 @@
 package actors
 
 import java.io.{BufferedWriter, FileWriter}
+import java.util.{Date}
 import javax.inject.{Inject, Singleton}
 
 
@@ -12,6 +13,7 @@ import play.api.i18n.MessagesApi
 import reactivemongo.api.collections.bson.BSONCollection
 
 
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.Future
 import better.files._
@@ -20,12 +22,11 @@ import models.{Constants, ExitCodes}
 import models.tel.TEL
 import play.api.Logger
 
-
 import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
-
+import scala.util.{Try, Success, Failure}
 import play.api.libs.json.Json
-
+import play.api.mvc.{ Action, Controller, Request }
 
 import play.modules.reactivemongo.{
 MongoController, ReactiveMongoApi, ReactiveMongoComponents
@@ -154,6 +155,7 @@ class JobManager @Inject() (
 
 
 
+
   def receive : Receive = {
 
 
@@ -213,7 +215,7 @@ class JobManager @Inject() (
 
       Future {
 
-        //delete(jobID)
+        delete(jobID)
 
         // Delete Job Path
         s"jobPath$SEP$jobID".toFile.delete(swallowIOExceptions = false)
@@ -235,9 +237,23 @@ class JobManager @Inject() (
           val newJobID = jobIDSource.next()
           val rootPath  = s"$jobPath$SEP$newJobID$SEP"
 
-          // TODO Replace by database
-          jobTools.put(newJobID, toolname)
-          jobOwner.put(newJobID, userID)
+          val document = BSONDocument(
+            "main_id" -> newJobID, //this is wrong, I know, it should be the job_id
+            "tool" -> toolname,
+            "user_id" -> userID,
+            "created_on" -> new Date(),
+            "update_on" -> new Date(),
+            "viewed_on" -> 0)
+
+          val future = jobCollection.insert(document)
+
+
+          future.onComplete {
+            case Failure(e) => throw e
+            case Success(lastError) => {
+              println("successfully inserted document with lastError = " + lastError)
+            }
+          }
 
           changeState(newJobID, JobState.Submitted)
 
