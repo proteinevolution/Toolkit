@@ -8,16 +8,18 @@ import javax.inject.{Inject, Singleton}
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
 import models.jobs.JobState
+import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
 
 import reactivemongo.api.collections.bson.BSONCollection
 
-
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import reactivemongo.bson.BSONDocument
 
-import scala.concurrent.Future
+import scala.concurrent.{ Await, Future, duration }, duration.Duration
 import better.files._
 
+import models.database.Job
 import models.{Constants, ExitCodes}
 import models.tel.TEL
 import play.api.Logger
@@ -32,7 +34,7 @@ import play.modules.reactivemongo.{
 MongoController, ReactiveMongoApi, ReactiveMongoComponents
 }
 
-
+import reactivemongo.play.json.collection._
 /**
   * TODO Inject Database
   *
@@ -143,16 +145,43 @@ class JobManager @Inject() (
   import reactivemongo.play.json._
 
 
+  /* val jobCollection = reactiveMongoApi.database.
+    map(_.collection[JSONCollection]("jobs")) */
 
   val jobCollection: BSONCollection = db.collection("jobs")
 
 
   def delete(id: Int) = {
 
-    jobCollection.remove(Json.obj("main_id" -> id))
+
+    val futureRemove = jobCollection.remove(Json.obj("main_id" -> id))
+
+    futureRemove.onComplete {
+      case Failure(e) => throw e
+      case Success(lasterror) => {
+        println("successfully removed document")
+      }
+    }
 
   }
 
+
+/* TODO insert documents from template model like:
+  def create() = Action.async { implicit request =>
+    implicit val messages = messagesApi.preferred(request)
+
+    Job.form.bindFromRequest.fold(
+      errors => Future.successful(_),
+
+      // if no error, then insert the article into the 'articles' collection
+      job => collection2.flatMap(_.insert(job.copy(
+        main_id = id,
+        creationDate = Some(new DateTime()),
+        updateDate = Some(new DateTime()),
+        viewDate = Some(new DateTime()))
+      )).map(_)
+    )
+  } */
 
 
 
@@ -236,6 +265,8 @@ class JobManager @Inject() (
 
           val newJobID = jobIDSource.next()
           val rootPath  = s"$jobPath$SEP$newJobID$SEP"
+
+
 
           val document = BSONDocument(
             "main_id" -> newJobID, //this is wrong, I know, it should be the job_id
