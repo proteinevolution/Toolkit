@@ -8,7 +8,7 @@ import models.Implicits._
 /**
   * Created by lzimmermann on 6/30/16.
   */
-object TELConstants {
+trait TELConstants {
   // TODO Get this from the configuration of the toolkit
   val TELPath = "tel"
   // Character used to have comments in the Shell files interpreted by TEL
