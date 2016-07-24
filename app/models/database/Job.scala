@@ -1,6 +1,9 @@
 package models.database
 
 import org.joda.time.DateTime
+import play.api.data._
+import play.api.data.Forms._
+
 import reactivemongo.bson.{
 
 BSONDateTime, BSONDocument, BSONObjectID
@@ -45,12 +48,12 @@ BSONDateTime, BSONDocument, BSONObjectID
 case class Job(
                     main_id: Option[Int],
                     job_type: String,
-                    parent_id: Int,
+                    parent_id: String,
                     job_id: String,
-                    user_id: Int,
+                    user_id: String,
                     status: String,
                     tool: String,
-                    stat_id: Int,
+                    stat_id: String,
                     creationDate: Option[DateTime],
                     updateDate: Option[DateTime],
                     viewDate: Option[DateTime])
@@ -80,12 +83,12 @@ object Job {
       case obj: JsObject => try {
         val main_id = (obj \ "main_id").asOpt[Int]
         val job_type = (obj \ "job_type").as[String]
-        val parent_id = (obj \ "user_id").as[Int]
+        val parent_id = (obj \ "user_id").as[String]
         val job_id = (obj \ "job_id").as[String]
-        val user_id = (obj \ "user_id").as[Int]
+        val user_id = (obj \ "user_id").as[String]
         val status = (obj \ "status").as[String]
         val tool = (obj \ "tool").as[String]
-        val stat_id = (obj \ "stat_id").as[Int]
+        val stat_id = (obj \ "stat_id").as[String]
         val creationDate = (obj \ "creationDate").asOpt[Long]
         val updateDate = (obj \ "updateDate").asOpt[Long]
         val viewDate = (obj \ "viewDate").asOpt[Long]
@@ -103,4 +106,45 @@ object Job {
       case _ => JsError("expected.jsobject")
     }
   }
+
+  val form = Form(
+    mapping(
+      "main_id" -> optional(number),
+      "job_type" -> text,
+      "parent_id" -> text,
+      "job_id" -> text,
+      "user_id" -> text,
+      "status" -> text,
+      "tool" -> text,
+      "stat_id" -> text,
+      "creationDate" -> optional(longNumber),
+      "updateDate" -> optional(longNumber),
+      "viewDate" -> optional(longNumber)) {
+      (main_id, job_type, parent_id, job_id, user_id, status, tool, stat_id, creationDate, updateDate, viewDate) =>
+        Job(
+          main_id,
+          job_type,
+          parent_id,
+          job_id,
+          user_id,
+          status,
+          tool,
+          stat_id,
+          creationDate.map(new DateTime(_)),
+          updateDate.map(new DateTime(_)),
+          viewDate.map(new DateTime(_)))
+    } { job =>
+      Some(
+        (job.main_id,
+          job.job_type,
+          job.parent_id,
+          job.job_id,
+          job.user_id,
+          job.status,
+          job.tool,
+          job.stat_id,
+          job.creationDate.map(_.getMillis),
+          job.updateDate.map(_.getMillis),
+          job.viewDate.map(_.getMillis)))
+    })
 }
