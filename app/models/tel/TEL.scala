@@ -14,7 +14,7 @@ import models.Implicits._
   *
   * Created by lzimmermann on 26.05.16.
   */
-object TEL extends TELRegex with TELConstants {
+object TEL extends TELRegex with TELConstants with Constants {
 
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
@@ -151,7 +151,7 @@ object TEL extends TELRegex with TELConstants {
   def init(runscript : String, params : Map[String, String], dest : String): String = {
 
     // Create directories necessary for tool execution
-    subdirs.foreach { s => (dest + Constants.SEP + s).toFile.createDirectories() }
+    subdirs.foreach { s => (dest + SEPARATOR + s).toFile.createDirectories() }
 
     // Write parameters to file
     for((paramName, value) <- params ) {
@@ -159,7 +159,7 @@ object TEL extends TELRegex with TELConstants {
       // TODO This is a hack and needs to go
       if(! ignore.contains(paramName)) {
 
-        s"$dest${Constants.SEP}params${Constants.SEP}$paramName".toFile.write(value)
+        s"$dest${SEPARATOR}params${SEPARATOR}$paramName".toFile.write(value)
       }
     }
 
@@ -181,9 +181,9 @@ object TEL extends TELRegex with TELConstants {
 
             // Some selectors hard-coded TODO Introduce the extensions of selectors with arbitrary methods
             selector match {
-              case "path" => s"params${Constants.SEP}$paramName"
+              case "path" => s"params${SEPARATOR}$paramName"
               case "content" =>
-                s"${dest}params${Constants.SEP}$paramName".toFile.contentAsString
+                s"${dest}params${SEPARATOR}$paramName".toFile.contentAsString
             }
 
           // Should not happen
@@ -197,7 +197,7 @@ object TEL extends TELRegex with TELConstants {
     val context = getContext
     if(context == "LOCAL") {
 
-      s"$dest${Constants.SEP}EXECUTION".toFile.appendLine(target.name)
+      s"$dest${SEPARATOR}EXECUTION".toFile.appendLine(target.name)
 
       // Make the runscript executable
       chmod_+(PosixFilePermission.OWNER_EXECUTE, target)
@@ -217,7 +217,7 @@ object TEL extends TELRegex with TELConstants {
       contextFile.appendLines(contextLines:_*)
       chmod_+(PosixFilePermission.OWNER_EXECUTE, contextFile)
 
-      s"$dest${Constants.SEP}EXECUTION".toFile.appendLine(contextFile.name)
+      s"$dest${SEPARATOR}EXECUTION".toFile.appendLine(contextFile.name)
       contextFile.pathAsString
     }
   }

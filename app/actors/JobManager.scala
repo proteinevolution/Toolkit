@@ -20,6 +20,7 @@ import scala.concurrent.{ Await, Future, duration }, duration.Duration
 import better.files._
 
 import models.database.Job
+
 import models.{Constants, ExitCodes}
 import models.tel.TEL
 import play.api.Logger
@@ -41,15 +42,15 @@ import reactivemongo.play.json.collection._
   * Created by lzimmermann on 10.05.16.
   */
 @Singleton
-class JobManager @Inject() (
+final class JobManager @Inject() (
                              val messagesApi: MessagesApi,
                              val reactiveMongoApi: ReactiveMongoApi,
-                             implicit val materializer: akka.stream.Materializer) extends Actor with ActorLogging with MongoController with ReactiveMongoComponents {
+                             implicit val materializer: akka.stream.Materializer) extends Actor with ActorLogging with MongoController with ReactiveMongoComponents with Constants with ExitCodes {
 
   import JobManager._
 
 
-  val SEP = Constants.SEP
+  val SEP = SEPARATOR
   val random = scala.util.Random
 
   // TODO All paths to Config
@@ -130,8 +131,8 @@ class JobManager @Inject() (
     // Treat Exit code of job process
     process.exitValue() match {
 
-      case ExitCodes.SUCCESS => changeState(jobID, JobState.Done)
-      case ExitCodes.TERMINATED => // Ignore
+      case SUCCESS => changeState(jobID, JobState.Done)
+      case TERMINATED => // Ignore
       case x: Int => changeState(jobID, JobState.Error)
     }
     runningProcesses.remove(jobID)
@@ -166,21 +167,13 @@ class JobManager @Inject() (
   }
 
 
-/* TODO insert documents from template model like:
-  def create() = Action.async { implicit request =>
-    implicit val messages = messagesApi.preferred(request)
 
-    Job.form.bindFromRequest.fold(
-      errors => Future.successful(_),
+ //TODO insert documents from template model like:
 
-      // if no error, then insert the article into the 'articles' collection
-      job => collection2.flatMap(_.insert(job.copy(
-        main_id = id,
-        creationDate = Some(new DateTime()),
-        updateDate = Some(new DateTime()),
-        viewDate = Some(new DateTime()))
-      )).map(_)
-    )
+  /* def create() = {
+
+    Job.JobWrites
+
   } */
 
 
