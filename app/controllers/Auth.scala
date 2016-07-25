@@ -65,18 +65,36 @@ class Auth @Inject() (userManager : UserManager,
     )
   }
 
+  var LoginCounter = 0
+
 
   def backendLogin () = Action { implicit request =>
 
     val sessionID = Session.requestSessionID(request)
     Logger.info(sessionID + " wants to Sign in!")
 
+
     // Evaluate the Form
     val form = loginForm.bindFromRequest
     form.fold(
       // Form has errors, return "Bad Request" - most likely timed out or user tampered with form
       formWithErrors => {
-        Forbidden("You're not allowed to access this resource.")
+        LoginCounter = LoginCounter + 1
+
+        println(LoginCounter)
+
+        if (LoginCounter > 4) {
+
+          Thread.sleep(20000) //TODO: replace with javascript
+          LoginCounter = 0
+
+        }
+
+        val sessionID = Session.requestSessionID(request)
+        val user_o : Option[User] = Session.getUser(sessionID)
+        Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
+          Session.closeSessionRequest(request, sessionID)
+        }
       },
       _ => {
         // Check the User Database for the user and return the User if there is a match.
@@ -85,18 +103,38 @@ class Auth @Inject() (userManager : UserManager,
           form.get._2) // password
 
         if (authAction.success) {
+          LoginCounter = 0
           Session.addUser(sessionID, authAction.user_o.get)
-          // Send a JSON with the status to the user so that the Form can be modified dynamically
+
           Ok(views.html.backend.backend(webJarAssets, "Backend", authAction.user_o)).withSession {
             Session.closeSessionRequest(request, sessionID)
           }
 
         }
-        else Forbidden("You're not allowed to access this resource.")
+        else {
+          LoginCounter = LoginCounter + 1
+
+          println(LoginCounter)
+
+          if (LoginCounter > 4) {
+
+            Thread.sleep(2000) //TODO: replace with javascript timeout
+            LoginCounter = 0
+
+          }
+
+          val sessionID = Session.requestSessionID(request)
+          val user_o : Option[User] = Session.getUser(sessionID)
+          Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
+            Session.closeSessionRequest(request, sessionID)
+          }
+
+        }
 
       }
     )
   }
+
 
 
   /**

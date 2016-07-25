@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
 @import models.database.User
-@(webJarAssets: WebJarAssets, sectionname : String, user_o: Option[User])(implicit messages: Messages, request: RequestHeader)
+@(webJarAssets: WebJarAssets, fail : String, user_o: Option[User])(implicit messages: Messages, request: RequestHeader)
 
 
 <!DOCTYPE html>
@@ -67,6 +67,49 @@
                 </div>
 
             </div>
+
+                @if(fail == "1") {
+                    <div style="padding-top: 20px; width: 20%; display: block; margin: auto;">
+                        <div class="callout" id="alert" style="text-align: center;">
+
+                            <p>Nice try. Guess again.</p>
+
+                        </div>
+                    </div>
+
+                } @if(fail == "2") {
+
+                    <div style="padding-top: 20px; width: 20%; display: block; margin: auto;">
+                        <div class="callout" id="alert" style="text-align: center;">
+
+                            <p>Okay, one more time :/</p>
+
+                        </div>
+                    </div>
+
+                } @if(fail == "3") {
+
+                    <div style="padding-top: 20px; width: 20%; display: block; margin: auto;">
+                        <div class="callout" id="alert" style="text-align: center;">
+
+                            <p>Last chance! :(</p>
+
+                        </div>
+                    </div>
+
+                } @if(fail >= "4") {
+
+                    <div style="padding-top: 20px; width: 20%; display: block; margin: auto;">
+                        <div class="callout" id="alert" style="text-align: center;">
+
+                            <p>Countdown</p>
+
+                        </div>
+                    </div>
+
+                } else {
+
+                }
 
         </div>
 
