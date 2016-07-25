@@ -6,13 +6,13 @@ import java.io.File
 /**
   * Created by lzimmermann on 29.05.16.
   */
-object Constants {
+trait Constants {
 
-  val SEP = File.separator
+  val SEPARATOR = File.separator
 }
 
 
-object ExitCodes {
+trait ExitCodes {
 
   val SUCCESS = 0
   val TERMINATED = 143
