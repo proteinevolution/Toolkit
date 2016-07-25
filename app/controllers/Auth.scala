@@ -81,11 +81,11 @@ class Auth @Inject() (userManager : UserManager,
       formWithErrors => {
         LoginCounter = LoginCounter + 1
 
-        println(LoginCounter)
+        //println(LoginCounter)
 
         if (LoginCounter > 4) {
 
-          Thread.sleep(20000) //TODO: replace with javascript
+          Thread.sleep(20000)
           LoginCounter = 0
 
         }
@@ -114,11 +114,11 @@ class Auth @Inject() (userManager : UserManager,
         else {
           LoginCounter = LoginCounter + 1
 
-          println(LoginCounter)
+          //println(LoginCounter)
 
           if (LoginCounter > 4) {
 
-            Thread.sleep(20000) //TODO: replace with javascript timeout
+            Thread.sleep(20000)
             LoginCounter = 0
 
           }
