@@ -22,6 +22,6 @@ trait TELConstants extends Constants {
 
   // PATHS
   val typesPath = s"$TELPath${SEPARATOR}types"
-  val runscriptPath = s"$TELPath${SEPARATOR}runscripts${SEPARATOR}"
-  val contextPath = s"$TELPath${SEPARATOR}context.d${SEPARATOR}"
+  val runscriptPath = s"$TELPath${SEPARATOR}runscripts$SEPARATOR"
+  val contextPath = s"$TELPath${SEPARATOR}context.d$SEPARATOR"
 }

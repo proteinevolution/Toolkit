@@ -159,7 +159,7 @@ object TEL extends TELRegex with TELConstants with Constants {
       // TODO This is a hack and needs to go
       if(! ignore.contains(paramName)) {
 
-        s"$dest${SEPARATOR}params${SEPARATOR}$paramName".toFile.write(value)
+        s"$dest${SEPARATOR}params$SEPARATOR$paramName".toFile.write(value)
       }
     }
 
@@ -181,9 +181,9 @@ object TEL extends TELRegex with TELConstants with Constants {
 
             // Some selectors hard-coded TODO Introduce the extensions of selectors with arbitrary methods
             selector match {
-              case "path" => s"params${SEPARATOR}$paramName"
+              case "path" => s"params$SEPARATOR$paramName"
               case "content" =>
-                s"${dest}params${SEPARATOR}$paramName".toFile.contentAsString
+                s"${dest}params$SEPARATOR$paramName".toFile.contentAsString
             }
 
           // Should not happen
