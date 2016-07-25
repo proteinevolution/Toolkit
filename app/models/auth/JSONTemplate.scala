@@ -6,7 +6,7 @@ import play.api.libs.json.Json
 /**
   * Created by astephens on 26.05.16.
   */
-object JSONTemplate {
+trait JSONTemplate {
   /**
     * Creates a simplified JSON Object from a User Object
     * @param user
