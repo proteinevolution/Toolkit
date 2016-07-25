@@ -118,7 +118,7 @@ class Auth @Inject() (userManager : UserManager,
 
           if (LoginCounter > 4) {
 
-            Thread.sleep(2000) //TODO: replace with javascript timeout
+            Thread.sleep(20000) //TODO: replace with javascript timeout
             LoginCounter = 0
 
           }
