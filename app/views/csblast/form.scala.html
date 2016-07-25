@@ -8,18 +8,18 @@
 
 <script src='@routes.Assets.at("javascripts/alnviz.js")' type="text/javascript" ></script>
 
-<h6 style="background-color: #F4EEDF; padding: 0.25em;
+<h6 style="background-color: #D0BA89; padding: 0.25em;
     font-size: 0.75em;
-    font-weight: bold;color: white""> Input</h6>
+    font-weight: bold;color: black""> Input</h6>
 
 @helper.textarea(field = inputForm("alignment"), args = 'rows -> 15, 'cols -> 50,
   '_label -> "",
   'placeholder -> "Enter multiple sequence alignment of single sequence",
   'id -> "alignment", '_showConstraints -> false)
 
-<h6 style="background-color: #F4EEDF; padding: 0.25em;
+<h6 style="background-color: #D0BA89; padding: 0.25em;
     font-size: 0.75em;
-    font-weight: bold;color: white""> Options</h6>
+    font-weight: bold;color: black""> Options</h6>
 
 
 <a style="font-size: 0.8em" onClick="$('#alert').prop('hidden',true);$('#submitbutton').prop('disabled', false);$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
@@ -76,9 +76,9 @@
     'class -> "forminput"
     )
 
-<h6 style="background-color: #2E8C81;padding: 0.25em;
+<h6 style="background-color: #D0BA89;padding: 0.25em;
     font-size: 0.75em;
-    font-weight: bold; color: white"> Databases</h6>
+    font-weight: bold; color: black"> Databases</h6>
 
 @helper.select(
     inputForm("standarddb"),
