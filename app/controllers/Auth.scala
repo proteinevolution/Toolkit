@@ -78,7 +78,7 @@ final class Auth @Inject() (userManager : UserManager,
   }
 
 
-  def backend = Action { implicit request =>
+  /*def backend = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
     val user_o : Option[User] = Session.getUser(session_id)
@@ -97,7 +97,7 @@ final class Auth @Inject() (userManager : UserManager,
       }
     }
 
-  }
+  }*/
 
   var LoginCounter = 0
 
