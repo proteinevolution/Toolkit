@@ -16,6 +16,7 @@ GET         /                                              @controllers.Applicat
 # Dashboard for Admin
 GET         /login                                         @controllers.Application.login
 GET         /backend                                       @controllers.Application.backend
+POST        /login/submit                                  @controllers.Auth.backendLogin()
 
 
 # Websocket

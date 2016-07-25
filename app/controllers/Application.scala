@@ -96,7 +96,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     }
 
-
     else {
     Ok(views.html.backend.backend(webJarAssets, "Backend", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)

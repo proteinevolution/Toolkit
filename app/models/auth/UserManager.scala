@@ -17,7 +17,7 @@ import org.mindrot.jbcrypt.BCrypt
   * @see [[http://www.mindrot.org/files/jBCrypt/jBCrypt-0.2-doc/BCrypt.html#gensalt(int) gensalt]]
   */
 @Singleton
-class UserManager @Inject ()(userDB             : models.database.Users,             // User Database
+final class UserManager @Inject ()(userDB             : models.database.Users,             // User Database
                              userVerificationDB : models.database.UserVerifications, // Verification Database
                              mailing            : controllers.Mailing) {             // Mailing Controller
   val LOG_ROUNDS : Int = 10 // Number of rounds for BCrypt to hash the Password (2^x) // TODO Move to the config?
@@ -68,6 +68,30 @@ class UserManager @Inject ()(userDB             : models.database.Users,        
           LoginIncorrect()
         }
       case None =>
+        LoginIncorrect()
+    }
+  }
+
+  /**
+    * Checks if the backend user is authorized
+    */
+  def backendLogin(name_login : String, password: String) : AuthAction = {
+
+    val testUser = new User(Some(12345), "test", "Alva", "Vikram", "test", "vikram.alva@tuebingen.mpg.de")
+
+
+    name_login match {
+
+      case testUser.name_login =>
+        if (password.equals("test")) {
+          LoggedIn(testUser)
+        }
+        else {
+
+          LoginIncorrect()
+        }
+
+      case _ =>
         LoginIncorrect()
     }
   }
