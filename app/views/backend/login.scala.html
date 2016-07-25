@@ -10,6 +10,7 @@
         <title>Bioinformatics Toolkit</title>
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.png")">
         <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.at("styles/login.min.css")" rel="stylesheet">
 
 
             <!-- Google Fonts -->
@@ -21,7 +22,7 @@
     </head>
 
     <body>
-        <div id="site">
+        <div id="site" style="padding-top: 200px;">
 
             <div class="login">
 
@@ -33,24 +34,20 @@
 
                         <div class="login-box">
 
-                            <div class="login-header"><p>LOG IN</p></div>
+                            <div class="login-header"><p>MPI Bioinformatics Toolkit</p></div>
 
                             <div class="login-subheader">
-                                <p>Bitte geben Sie Ihre Zugangsdaten ein:</p>
+                                <p>Please authenticate:</p>
                             </div>
 
                             <div class="error"><p></p></div>
 
                             <div class="login-content">
 
-                                <form method="post" action="/login">
-                                    <input type="hidden" name="step" value="auth">
-                                    <p><input type="text" name="username" value="" placeholder="Benutzername" /></p>
-                                    <p><input type="password" name="password" placeholder="Passwort" /></p>
-                                        <!-- p><a href="/recover">Sie haben Ihr Passwort vergessen?</a></p -->
-                                        <!-- p><input type="checkbox" name="remember"> Zugangsdaten auf diesem Computer merken.</p -->
-                                    <div class="login-submit"><input type="submit" value="Anmelden" name="submitSave" class="button"></div>
-                                    <input type="hidden" name="url" value="/backend/"/>
+                                <form method="post" action="/login/submit">
+                                    <p><input type="text" name="user_login" id="user_login" placeholder="user name" value="test"/></p>
+                                    <p><input type="password" name="password" id="password" placeholder="password" /></p>
+                                    <div class="login-submit" style="padding-top: 5px;"><input type="submit" value="login" name="submitSave" class="button hollow"></div>
                                 </form>
 
                             </div>
@@ -58,8 +55,6 @@
                         </div>
 
                     </div>
-
-                    <a href="@routes.Application.backend()">Test</a>
 
                     <div class="small-12 medium-3 large-4 columns">&nbsp;</div>
 
