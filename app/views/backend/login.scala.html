@@ -50,7 +50,7 @@
 
                             <div class="login-content">
 
-                                <form method="post" action="/login/submit">
+                                <form method="post" action="/login/submit" autocomplete="off">
                                     <p><input type="text" name="user_login" id="user_login" placeholder="user name" /></p>
                                     <p><input type="password" name="password" id="password" placeholder="password" /></p>
                                     <div class="login-submit" style="padding-top: 5px;"><input type="submit" value="login" name="submitSave" class="button secondary hollow small" style="margin-left: 0px;"></div>
@@ -74,6 +74,7 @@
         <!-- Foundation 6 -->
     <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
     <script type="text/javascript">
+
                     $(document).ready(function() {
                         $(document).foundation();
                     })
