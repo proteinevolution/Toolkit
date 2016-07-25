@@ -2,10 +2,12 @@ package controllers
 
 import javax.inject.{Singleton, Inject}
 
+import models.database.User
 import models.sessions.Session
 import models.auth._
 import play.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results._
 import play.api.mvc.{Action, Controller}
 import play.api.libs.json._
 
@@ -16,10 +18,12 @@ import play.api.libs.json._
 
 @Singleton
 class Auth @Inject() (userManager : UserManager,
-                  val messagesApi : MessagesApi) extends Controller with I18nSupport with JSONTemplate {
+                      webJarAssets: WebJarAssets,
+                  val messagesApi : MessagesApi) extends Controller with I18nSupport with JSONTemplate with backendLogin {
 
   /**
     * Returns the sign in form
+    *
     * @param userName usually the eMail address
     * @return
     */
@@ -30,6 +34,7 @@ class Auth @Inject() (userManager : UserManager,
   /**
     * Submission of the sign in form, user wants to authenticate themself
     * Checks the Database for the user and logs them in if their password matches
+    *
     * @return
     */
   def signInSubmit() = Action { implicit request =>
@@ -60,8 +65,43 @@ class Auth @Inject() (userManager : UserManager,
     )
   }
 
+
+  def backendLogin () = Action { implicit request =>
+
+    val sessionID = Session.requestSessionID(request)
+    Logger.info(sessionID + " wants to Sign in!")
+
+    // Evaluate the Form
+    val form = loginForm.bindFromRequest
+    form.fold(
+      // Form has errors, return "Bad Request" - most likely timed out or user tampered with form
+      formWithErrors => {
+        BadRequest("Login Error: " + form.errors.toString)
+      },
+      _ => {
+        // Check the User Database for the user and return the User if there is a match.
+
+        val authAction: AuthAction = userManager.backendLogin(form.get._1, // name_login
+          form.get._2) // password
+
+        if (authAction.success) {
+          Session.addUser(sessionID, authAction.user_o.get)
+          // Send a JSON with the status to the user so that the Form can be modified dynamically
+          Ok(views.html.backend.backend(webJarAssets, "Backend", authAction.user_o)).withSession {
+            Session.closeSessionRequest(request, sessionID)
+          }
+
+        }
+        else Forbidden("You're not allowed to access this resource.")
+
+      }
+    )
+  }
+
+
   /**
     * Returns the sign up form
+    *
     * @return
     */
   def signUp() = Action { implicit request =>
@@ -71,6 +111,7 @@ class Auth @Inject() (userManager : UserManager,
   /**
     * Submission of the sign up form, user wants to register
     * Checks Database if there is a preexisting user and adds them if there is none
+    *
     * @return
     */
   def signUpSubmit() = Action { implicit request =>
@@ -123,6 +164,7 @@ class Auth @Inject() (userManager : UserManager,
 
   /**
     * User wants to sign out, Overwrite their cookie and give them a new Session ID
+    *
     * @return
     */
   def signOut() = Action { implicit request =>
@@ -137,6 +179,7 @@ class Auth @Inject() (userManager : UserManager,
 
   /**
     * Verifies a Users Email
+    *
     * @param name_login
     * @param token
     * @return

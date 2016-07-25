@@ -37,6 +37,20 @@ object SignUp {
 }
 
 /**
+  * Login form for the dashboard
+ */
+
+trait backendLogin {
+
+  val loginForm = Form(
+    tuple(
+      "user_login"    -> nonEmptyText,
+      "password"      -> nonEmptyText
+    )
+  )
+}
+
+/**
   * Form mapping for the forgot login/password form
   */
 object Forgot {
