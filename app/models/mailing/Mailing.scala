@@ -6,9 +6,9 @@ import models.database.User
   * Created by astephens on 24.05.16.
   */
 /**
-  * Template class to the Mailing
+  * Template trait to the Mailing
   */
-abstract class MailTemplate {
+sealed trait MailTemplate {
   // Subject of the Email
   def subject = "Generic Information"
   // Text version of the Email
