@@ -19,7 +19,7 @@ object WebSocketActor {
   def props(userID : String, jobManager : ActorRef)(out: ActorRef) = Props(new WebSocketActor(userID, jobManager, out))
 }
 
-class WebSocketActor(sessionID : String, jobManager : ActorRef,  out: ActorRef)  extends Actor with ActorLogging {
+private final class WebSocketActor(sessionID : String, jobManager : ActorRef,  out: ActorRef)  extends Actor with ActorLogging {
 
 
   override def preStart =
