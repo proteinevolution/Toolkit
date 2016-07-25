@@ -26,7 +26,10 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
   "org.mindrot" % "jbcrypt" % bcryptVersion,
   "com.evojam" %% "play-elastic4s" % "0.3.0",
-  "org.reactivemongo" %% "play2-reactivemongo" % "0.11.14"
+  "org.reactivemongo" %% "play2-reactivemongo" % "0.11.14",
+  "co.fs2" %% "fs2-core" % "0.9.0-M6",
+  "org.scalaz" %% "scalaz-core" % "7.2.4",
+  "com.chuusai" %% "shapeless" % "2.3.1"
 )
 
 /*
@@ -57,7 +60,6 @@ lazy val root = (project in file("."))
       "org.webjars" % "modernizr" % "2.8.3",
       "org.webjars.bower" % "fastclick" % "1.0.6",
       "org.json4s" %% "json4s-jackson" % "3.3.0",
-      "org.scalaz" %% "scalaz-core" % "7.2.1",
       "org.webjars" % "mithril" % mithrilVersion,
       "org.webjars.bower" % "d3" % d3Version,
       "org.webjars.bower" % "slick-carousel" % "1.6.0",
@@ -96,6 +98,10 @@ ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 resolvers ++= Seq(
   Resolver.url("Edulify Repository", url("https://edulify.github.io/modules/releases/"))(Resolver.ivyStylePatterns)
+)
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots")
 )
 
 /*
