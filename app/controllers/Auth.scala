@@ -76,7 +76,7 @@ class Auth @Inject() (userManager : UserManager,
     form.fold(
       // Form has errors, return "Bad Request" - most likely timed out or user tampered with form
       formWithErrors => {
-        BadRequest("Login Error: " + form.errors.toString)
+        Forbidden("You're not allowed to access this resource.")
       },
       _ => {
         // Check the User Database for the user and return the User if there is a match.
