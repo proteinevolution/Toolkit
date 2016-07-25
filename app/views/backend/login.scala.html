@@ -22,7 +22,12 @@
     </head>
 
     <body>
-        <div id="site" style="padding-top: 200px;">
+        <div id="site" style="padding-top: 100px;">
+
+
+            <div id="login-logo" style="width: 50%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 25px;">
+                <img style="display: block; margin-left: auto; margin-right: auto" src="@routes.Assets.at("images/logo.svg")">
+            </div>
 
             <div class="login">
 
@@ -34,7 +39,8 @@
 
                         <div class="login-box">
 
-                            <div class="login-header"><p>MPI Bioinformatics Toolkit</p></div>
+                            <div class="login-header"><p>Login to dashboard</p></div>
+
 
                             <div class="login-subheader">
                                 <p>Please authenticate:</p>
@@ -47,7 +53,7 @@
                                 <form method="post" action="/login/submit">
                                     <p><input type="text" name="user_login" id="user_login" placeholder="user name" value="test"/></p>
                                     <p><input type="password" name="password" id="password" placeholder="password" /></p>
-                                    <div class="login-submit" style="padding-top: 5px;"><input type="submit" value="login" name="submitSave" class="button hollow"></div>
+                                    <div class="login-submit" style="padding-top: 5px;"><input type="submit" value="login" name="submitSave" class="button secondary hollow small" style="margin-left: 0px;"></div>
                                 </form>
 
                             </div>
