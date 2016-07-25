@@ -16,7 +16,7 @@ import play.api.libs.json._
 
 @Singleton
 class Auth @Inject() (userManager : UserManager,
-                  val messagesApi : MessagesApi) extends Controller with I18nSupport {
+                  val messagesApi : MessagesApi) extends Controller with I18nSupport with JSONTemplate {
 
   /**
     * Returns the sign in form
@@ -52,7 +52,7 @@ class Auth @Inject() (userManager : UserManager,
           Session.addUser(sessionID, authAction.user_o.get)
         }
         // Send a JSON with the status to the user so that the Form can be modified dynamically
-        val json = Json.toJson(JSONTemplate.authActionToJSON(authAction))
+        val json = Json.toJson(authActionToJSON(authAction))
         Ok(json).withSession {
           Session.closeSessionRequest(request, sessionID) // Send Session Cookie
         }
@@ -101,7 +101,7 @@ class Auth @Inject() (userManager : UserManager,
           Session.addUser(sessionID, authAction.user_o.get)
         }
         // Send a JSON with the status to the user so that the Form can be modified dynamically
-        val json = Json.toJson(JSONTemplate.authActionToJSON(authAction))
+        val json = Json.toJson(authActionToJSON(authAction))
         Ok(json).withSession {
           Session.closeSessionRequest(request, sessionID) // Send Session Cookie
         }
