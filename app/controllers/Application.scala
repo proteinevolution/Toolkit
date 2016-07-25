@@ -76,7 +76,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     val session_id = Session.requestSessionID(request)
     val user_o : Option[User] = Session.getUser(session_id)
 
-    Ok(views.html.backend.login(webJarAssets, "Backend", user_o)).withSession {
+    Ok(views.html.backend.login(webJarAssets, "0", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)
     }
 
@@ -103,7 +103,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     }
 
   }
-
 
 
   def forbidden = {
