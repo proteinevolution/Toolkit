@@ -242,9 +242,9 @@ class JobManager @Inject() (
         runningProcesses(jobID).destroy()
       }
 
+      delete(jobID)
+      
       Future {
-
-       // delete(jobID)
 
         // Delete Job Path
         s"jobPath$SEP$jobID".toFile.delete(swallowIOExceptions = false)
