@@ -99,10 +99,11 @@
 
                 } @if(fail >= "4") {
 
-                    <div style="padding-top: 20px; width: 20%; display: block; margin: auto;">
-                        <div class="callout" id="alert" style="text-align: center;">
 
-                            <p>Countdown</p>
+                    <div style="padding-top: 20px; width: 20%; display: block; margin: auto;">
+                        <div class="callout" id="alert" style="text-align: center; height: 58px;">
+
+                            <span id="timer"></span>
 
                         </div>
                     </div>
@@ -117,6 +118,36 @@
         <!-- Foundation 6 -->
     <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
     <script type="text/javascript">
+
+
+        function checklength(i) {
+            'use strict';
+            if (i < 10) {
+                i = "0" + i;
+            }
+            return i;
+        }
+
+        var minutes, seconds, count, counter, timer;
+        count = 21; //seconds
+        counter = setInterval(timer, 1000);
+
+        function timer() {
+            'use strict';
+            count = count - 1;
+            minutes = checklength(Math.floor(count / 60));
+            seconds = checklength(count - minutes * 60);
+            if (count < 0) {
+                clearInterval(counter);
+                return;
+            }
+            document.getElementById("timer").innerHTML = 'Try again in ' + minutes + ':' + seconds + ' ';
+            if (count === 0) {
+                location.reload();
+            }
+        }
+
+
 
                     $(document).ready(function() {
                         $(document).foundation();
