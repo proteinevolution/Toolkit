@@ -12,6 +12,8 @@
         <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/login.min.css")" rel="stylesheet">
 
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("2.2.4/jquery.min.js"))" type="text/javascript" ></script>
+
 
             <!-- Google Fonts -->
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
@@ -120,7 +122,6 @@
     <script type="text/javascript">
 
 
-
         function submitForm() {
             document.getElementById("submitSave").click();
         }
@@ -135,6 +136,7 @@
         }
 
         var minutes, seconds, count, counter, timer;
+
         count = 21; //seconds
         counter = setInterval(timer, 1000);
 
@@ -149,8 +151,15 @@
             }
             document.getElementById("timer").innerHTML = 'Try again in ' + minutes + ':' + seconds + ' ';
             if (count === 20) {
+                $( "#password" ).prop( "disabled", true );
                 submitForm();
             }
+
+            if (count === 0) {
+
+                $( "#password" ).prop( "disabled", false );
+            }
+
         }
 
 
