@@ -71,47 +71,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
-  def login = Action { implicit request =>
-
-    val session_id = Session.requestSessionID(request)
-    val user_o : Option[User] = Session.getUser(session_id)
-
-    Ok(views.html.backend.login(webJarAssets, "0", user_o)).withSession {
-      Session.closeSessionRequest(request, session_id)
-    }
-
-  }
-
-
-  def backend = Action { implicit request =>
-
-    val session_id = Session.requestSessionID(request)
-    val user_o : Option[User] = Session.getUser(session_id)
-
-    //TODO add auth validation here for allowing access to the dashboard
-
-    if(!request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login")) {
-
-        Status(404)(views.html.errors.pagenotfound())
-
-    }
-
-    else {
-    Ok(views.html.backend.backend(webJarAssets, "Backend", user_o)).withSession {
-      Session.closeSessionRequest(request, session_id)
-      }
-    }
-
-  }
-
-
-  def forbidden = {
-
-      Status(404)(views.html.errors.pagenotfound())
-
-  }
-
-
 
   def contact(title: String = "Contact") = Action { implicit request =>
 
