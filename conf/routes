@@ -15,7 +15,7 @@ GET         /                                              @controllers.Applicat
 
 # Dashboard for Admin
 GET         /login                                         @controllers.Auth.login
-GET         /backend                                       @controllers.Auth.backend
+#GET         /backend                                       @controllers.Auth.backend
 POST        /login/submit                                  @controllers.Auth.backendLogin()
 
 
