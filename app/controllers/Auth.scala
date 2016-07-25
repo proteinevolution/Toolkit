@@ -17,7 +17,7 @@ import play.api.libs.json._
   */
 
 @Singleton
-class Auth @Inject() (userManager : UserManager,
+final class Auth @Inject() (userManager : UserManager,
                       webJarAssets: WebJarAssets,
                   val messagesApi : MessagesApi) extends Controller with I18nSupport with JSONTemplate with backendLogin {
 
@@ -63,6 +63,40 @@ class Auth @Inject() (userManager : UserManager,
         }
       }
     )
+  }
+
+
+  def login = Action { implicit request =>
+
+    val session_id = Session.requestSessionID(request)
+    val user_o : Option[User] = Session.getUser(session_id)
+
+    Ok(views.html.backend.login(webJarAssets, "0", user_o)).withSession {
+      Session.closeSessionRequest(request, session_id)
+    }
+
+  }
+
+
+  def backend = Action { implicit request =>
+
+    val session_id = Session.requestSessionID(request)
+    val user_o : Option[User] = Session.getUser(session_id)
+
+    //TODO allow direct access to the backend route if user is already authenticated as admin
+
+    if(!request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login")) {
+
+      Status(404)(views.html.errors.pagenotfound())
+
+    }
+
+    else {
+      Ok(views.html.backend.backend(webJarAssets, "Backend", user_o)).withSession {
+        Session.closeSessionRequest(request, session_id)
+      }
+    }
+
   }
 
   var LoginCounter = 0
