@@ -55,13 +55,44 @@
     #backend-content {
         background-color: #f2f2f2;
         min-height: 100vh
+
     }
 
     .page-name {
         color: dimgrey;
         padding-top: 0.5em;
 
+
     }
+
+    #clockbox {
+        font-size: 1.10em;
+        font-weight: bold;
+        font-family: Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;
+
+    }
+
+    .stats {
+        background-color: white;
+        border: 1px solid #e1e1e1;
+        margin-top: 1em;
+        padding: 0.5em;
+        font-family: Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;
+        height: 5em;
+
+    }
+
+    #statbox {
+        padding-left: 0;
+        float: left !important;
+    }
+
+    .left {
+        float: left !important;
+        width: 50%;
+    }
+
+
 
 </style>
 
@@ -117,12 +148,36 @@
 
             <div id="backend-content" class="large-10 medium-12 small-12 columns">
                 <div class="row">
-                    <div class="large-10 columns">
+                    <div class="large-12 columns">
                         <div class="page-name">
-                            <h4 class="left">Dashboard</h4>
+                                <div id="clockbox"></div>
                         </div>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="large-12 columns">
+                        <div id="statbox" class="large-3 medium-6 small-12 columns">
+                            <div class="stats">
+                                <div class="left">
+                                    Users Today
+                                    <h3>429</h3>
+                                </div>
+                                <span  aria-hidden="true"><img align="right" src="/assets/images/icons/users-group.svg" width="30em" ></span>
+                            </div>
+                        </div>
+                        <div id="statbox" class="large-3 medium-6 small-12 columns">
+                            <div class="stats">
+                                <div class="left">
+                                    Jobs Today
+                                    <h3>984</h3>
+                                </div>
+                                <span  aria-hidden="true"><img align="right" src="/assets/images/icons/information.svg" width="30em" ></span>
+                            </div>
+                        </div>
+
+                </div>
+
             </div>
         </div>
 
@@ -138,3 +193,32 @@
 
     </body>
 </html>
+
+<script type="text/javascript">
+        tday=new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday");
+        tmonth=new Array("January","February","March","April","May","June","July","August","September","October","November","December");
+
+        function GetClock(){
+            var d=new Date();
+            var nday=d.getDay(),nmonth=d.getMonth(),ndate=d.getDate(),nyear=d.getYear();
+            if(nyear<1000) nyear+=1900;
+            var nhour=d.getHours(),nmin=d.getMinutes(),nsec=d.getSeconds(),ap;
+
+            if(nhour==0){ap=" AM";nhour=12;}
+            else if(nhour<12){ap=" AM";}
+            else if(nhour==12){ap=" PM";}
+            else if(nhour>12){ap=" PM";nhour-=12;}
+
+            if(nmin<=9) nmin="0"+nmin;
+            if(nsec<=9) nsec="0"+nsec;
+
+            document.getElementById('clockbox').innerHTML=""+tday[nday]+", "+tmonth[nmonth]+" "+ndate+", "+nyear+" "+nhour+":"+nmin+":"+nsec+ap+"";
+        }
+
+        window.onload=function(){
+            GetClock();
+            setInterval(GetClock,1000);
+        }
+</script>
+
+
