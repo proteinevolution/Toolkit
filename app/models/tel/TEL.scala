@@ -31,25 +31,16 @@ object TEL extends TELRegex with TELConstants with Constants {
     }.toMap
 
 
-  //sets the context as environment variable whereas it is important to do this with the source command
-  private val setEnv = s"source$initFile"
-  Process(setEnv)
-
-
-
   // Returns the context name currently set
   //  TODO the CONTEXT variable can currently only be set in the init script - how do you want to set it?
   private var getContext : String = inits.getOrElse("CONTEXT", "LOCAL")
 
-  //get the context from the environment variable
 
-  private val getEnv = sys.env.get("CONTEXT")
-  getContext = getEnv.getOrElse("LOCAL")
   //another solution could be to do directly sth as below without using the init script
-
   val hostname_cmd = "hostname"
   private val hostname = hostname_cmd.!!
 
+  println("the toolkit runs on "+hostname)
   if (hostname.equals("olt"))
   getContext = "sge"
 
