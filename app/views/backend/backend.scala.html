@@ -92,6 +92,24 @@
         width: 50%;
     }
 
+    .todo-panel {
+        margin-top: 1em;
+    }
+
+    .todo-panel-header {
+        background: rgba(90, 90, 90, 0.1);
+        padding: 0.5em;
+    }
+
+    .todo-panel-body {
+        background-color: white;
+        padding: 0.5em;
+    }
+
+    #todo-items {
+        list-style: circle;
+
+    }
 
 
 </style>
@@ -175,7 +193,23 @@
                                 <span  aria-hidden="true"><img align="right" src="/assets/images/icons/information.svg" width="30em" ></span>
                             </div>
                         </div>
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="large-6 columns">
+                        <div class="todo-panel">
+                            <div class="todo-panel-header">
+                                <h4>To Do List</h4>
+                            </div>
+                            <div class="todo-panel-body">
+                                <input id="todo-textfield" type="text" placeholder="What needs to be done?">
+                                <ul id="todo-items" >
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -219,6 +253,23 @@
             GetClock();
             setInterval(GetClock,1000);
         }
+
+
+        document.getElementById('todo-textfield').onkeypress=function(e){
+            if(e.keyCode==13){
+                addNewItem(document.getElementById("todo-items"));
+                document.getElementById("todo-textfield").value = "";
+
+            }
+        }
+
+        function addNewItem(list) {
+            var listItem = document.createElement("li");
+            list.appendChild(listItem);
+            listItem.innerText = document.getElementById("todo-textfield").value;
+
+        }
+
 </script>
 
 
