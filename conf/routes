@@ -15,8 +15,8 @@ GET         /                                              @controllers.Applicat
 
 # Dashboard for Admin
 GET         /login                                         @controllers.Auth.login
-#GET         /backend                                       @controllers.Auth.backend
-POST        /login/submit                                  @controllers.Auth.backendLogin()
+GET         /backend                                       @controllers.Auth.backend
+POST        /login                                         @controllers.Auth.backendLogin()
 POST        /settings/clustermode                          @controllers.Settings.setClusterMode(clusterMode : String)
 POST        /settungs/memset                               @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
 

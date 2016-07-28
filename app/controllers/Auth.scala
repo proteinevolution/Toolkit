@@ -78,7 +78,7 @@ final class Auth @Inject() (userManager : UserManager,
   }
 
 
-  /*def backend = Action { implicit request =>
+  def backend = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
     val user_o : Option[User] = Session.getUser(session_id)
@@ -97,7 +97,7 @@ final class Auth @Inject() (userManager : UserManager,
       }
     }
 
-  }*/
+  }
 
   var LoginCounter = 0
 
@@ -110,6 +110,8 @@ final class Auth @Inject() (userManager : UserManager,
 
     // Evaluate the Form
     val form = loginForm.bindFromRequest
+
+
     form.fold(
       // Form has errors, return "Bad Request" - most likely timed out or user tampered with form
       formWithErrors => {
@@ -140,9 +142,10 @@ final class Auth @Inject() (userManager : UserManager,
           LoginCounter = 0
           Session.addUser(sessionID, authAction.user_o.get)
 
-          Ok(views.html.backend.backend(webJarAssets, "Backend", authAction.user_o)).withSession {
-            Session.closeSessionRequest(request, sessionID)
-          }
+          //Ok(views.html.backend.backend(webJarAssets, "Backend", authAction.user_o)).withSession {
+          //  Session.closeSessionRequest(request, sessionID)
+          //
+          Redirect("/backend") // TODO if logged in, users should not need to re-authenticate
 
         }
         else {
