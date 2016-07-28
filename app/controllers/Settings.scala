@@ -31,7 +31,7 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
     * @param clusterMode
     */
 
-  def clusterMode(clusterMode : String) = {
+  def setClusterMode(clusterMode : String) = {
 
 
     val document = BSONDocument(
@@ -51,11 +51,14 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
 
   }
 
+  def getClusterMode = "LOCAL" // IMPLEMENT ME
+
+
   /**
     * sets h_vmem for a specific tool
     * @param memory
     */
-  def memoryAllocation(memory : Int, toolName: String) = {
+  def setMemoryAllocation(memory : Int, toolName: String) = {
 
 
     val document = BSONDocument(
@@ -76,4 +79,5 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
 
   }
 
+  def getMemoryAlloc(toolName : String) = "42" // IMPLEMENT ME
 }
