@@ -88,9 +88,6 @@ final class Auth @Inject() (userManager : UserManager,
     if(!request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login")) {
 
       Status(404)(views.html.errors.pagenotfound())
-      //Ok(views.html.backend.backend(webJarAssets, "Backend", user_o)).withSession {
-      //  Session.closeSessionRequest(request, session_id)
-      //}
 
     }
 
@@ -136,7 +133,7 @@ final class Auth @Inject() (userManager : UserManager,
         }
       },
       _ => {
-        // Check the User Database for the user and return the User if there is a match.
+        // TODO Check the User Database for the user and return the User if there is a match.
 
         val authAction: AuthAction = userManager.backendLogin(form.get._1, // name_login
           form.get._2) // password
@@ -145,9 +142,6 @@ final class Auth @Inject() (userManager : UserManager,
           LoginCounter = 0
           Session.addUser(sessionID, authAction.user_o.get)
 
-          //Ok(views.html.backend.backend(webJarAssets, "Backend", authAction.user_o)).withSession {
-          //  Session.closeSessionRequest(request, sessionID)
-          //
           Redirect("/backend") // TODO if logged in, users should not need to re-authenticate
 
         }
