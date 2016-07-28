@@ -69,6 +69,7 @@ lazy val root = (project in file("."))
       "org.webjars" % "linkurious.js" % "1.5.1",
       "com.edulify" %% "geolocation" % "2.1.0",
       "org.webjars.bower" % "offline" % "0.7.11",
+      "org.webjars.bower" % "tinymce" % "4.4.1",
       "org.webjars" % "highcharts" % highchartsVersion)),
     pipelineStages := Seq.empty,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
