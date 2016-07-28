@@ -3,12 +3,13 @@ package controllers
 import java.util.Date
 import javax.inject.Inject
 
+import models.sessions.Session
 import play.api.mvc.{Action, Controller}
 import play.api.i18n.MessagesApi
 import play.modules.reactivemongo.{ReactiveMongoComponents, MongoController, ReactiveMongoApi}
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.BSONDocument
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Success, Failure}
 
 
@@ -28,10 +29,11 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
   /**
     *
     * // sets if the toolkit is using the sge or executes jobs on localhost
+    *
     * @param clusterMode
     */
 
-  def setClusterMode(clusterMode : String) = {
+  def setClusterMode(clusterMode : String) = Action {
 
 
     val document = BSONDocument(
@@ -49,6 +51,8 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
       }
     }
 
+    Ok("Got request")
+
   }
 
   def getClusterMode = "LOCAL" // IMPLEMENT ME
@@ -56,9 +60,10 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
 
   /**
     * sets h_vmem for a specific tool
+    *
     * @param memory
     */
-  def setMemoryAllocation(memory : Int, toolName: String) = {
+  def setMemoryAllocation(memory : Int, toolName: String) = Action {
 
 
     val document = BSONDocument(
@@ -76,6 +81,8 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
         println("successfully inserted document with lastError = " + lastError)
       }
     }
+
+    Ok("Got request")
 
   }
 
