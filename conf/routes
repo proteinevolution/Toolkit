@@ -19,6 +19,8 @@ GET         /backend                                       @controllers.Auth.bac
 POST        /login                                         @controllers.Auth.backendLogin()
 POST        /settings/clustermode                          @controllers.Settings.setClusterMode(clusterMode : String)
 POST        /settungs/memset                               @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
+GET         /backend/get/:static                           @controllers.Backend.getStatic(static : String)
+GET         /backend/settings                              @controllers.Backend.settings
 
 
 # Websocket
@@ -79,6 +81,7 @@ GET         /jobs/get/:jobid                               @controllers.Service.
 POST        /jobs/del/:jobid                               @controllers.Service.delJob(jobid : Int)
 
 GET         /static/get/:static                            @controllers.Service.static(static : String)
+
 # Add a Child Job
 #POST        /jobs/addChild                  @controllers.Service.addChild
 # Clear a Job
@@ -87,6 +90,7 @@ GET         /static/get/:static                            @controllers.Service.
 # Sitemap
 # Routes for static assets
 GET         /:static                                       @controllers.Application.static(static : String)
+GET         /backend/:static                               @controllers.Application.backend_static(static : String)
 
 #Forwarding
 GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
