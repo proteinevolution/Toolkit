@@ -18,7 +18,7 @@ GET         /login                                         @controllers.Auth.log
 #GET         /backend                                       @controllers.Auth.backend
 POST        /login/submit                                  @controllers.Auth.backendLogin()
 POST        /settings/clustermode                          @controllers.Settings.setClusterMode(clusterMode : String)
-POST        /settungs/memset                               @controllers.Settings.setMemoryAllocation(memory: int, toolName: String)
+POST        /settungs/memset                               @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
 
 
 # Websocket
