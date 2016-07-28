@@ -88,11 +88,14 @@ final class Auth @Inject() (userManager : UserManager,
     if(!request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login")) {
 
       Status(404)(views.html.errors.pagenotfound())
+      //Ok(views.html.backend.backend(webJarAssets, "Backend", user_o)).withSession {
+      //  Session.closeSessionRequest(request, session_id)
+      //}
 
     }
 
     else {
-      Ok(views.html.backend.backend(webJarAssets, "Backend", user_o)).withSession {
+      Ok(views.html.backend.backend(webJarAssets,views.html.backend.backend_maincontent(), "Backend", user_o)).withSession {
         Session.closeSessionRequest(request, session_id)
       }
     }
