@@ -1,63 +1,53 @@
 package actors
 
 import java.io.{BufferedWriter, FileWriter}
-import java.util.{Date}
+import java.util.Date
 import javax.inject.{Inject, Singleton}
-
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
 import models.jobs.JobState
-import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
-
 import reactivemongo.api.collections.bson.BSONCollection
-
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import reactivemongo.bson.BSONDocument
 
-import scala.concurrent.{ Await, Future, duration }, duration.Duration
+import scala.concurrent.Future
 import better.files._
-
-import models.database.Job
-
 import models.{Constants, ExitCodes}
 import models.tel.TEL
-import play.api.Logger
 
 import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Try, Success, Failure}
+import scala.util.{Failure, Success}
 import play.api.libs.json.Json
-import play.api.mvc.{ Action, Controller, Request }
+import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
+import reactivemongo.api.FailoverStrategy
 
-import play.modules.reactivemongo.{
-MongoController, ReactiveMongoApi, ReactiveMongoComponents
-}
-
-import reactivemongo.play.json.collection._
 /**
-  * TODO Inject Database
-  *
   * Created by lzimmermann on 10.05.16.
   */
 @Singleton
-final class JobManager @Inject() (
-                             val messagesApi: MessagesApi,
-                             val reactiveMongoApi: ReactiveMongoApi,
-                             implicit val materializer: akka.stream.Materializer) extends Actor with ActorLogging with MongoController with ReactiveMongoComponents with Constants with ExitCodes {
+final class JobManager @Inject() (val messagesApi: MessagesApi,
+                                  val reactiveMongoApi: ReactiveMongoApi,
+                                  implicit val materializer: akka.stream.Materializer)
+  extends Actor with ActorLogging with MongoController with ReactiveMongoComponents with Constants with ExitCodes {
 
   import JobManager._
 
 
-  val SEP = SEPARATOR
+  // TODO Get the collection name from the config, Currently only the default Failover strategy is used
+  var jobBSONCollection = database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
+  jobBSONCollection.onFailure { case t => throw t }
+
+
   val random = scala.util.Random
 
+
   // TODO All paths to Config
-  val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
-  val runscriptPath = s"TEL${SEP}runscripts$SEP"
-  val bioprogsPath = s"${ConfigFactory.load().getString("bioprogs_path")}$SEP"
-  val databasesPath = s"${ConfigFactory.load().getString("databases_path")}$SEP"
+  val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
+  val runscriptPath = s"TEL${SEPARATOR}runscripts$SEPARATOR"
+  val bioprogsPath = s"${ConfigFactory.load().getString("bioprogs_path")}$SEPARATOR"
+  val databasesPath = s"${ConfigFactory.load().getString("databases_path")}$SEPARATOR"
 
 
   // Keeps track of states of Job // TODO Temporary, will be replaced by database
@@ -71,7 +61,7 @@ final class JobManager @Inject() (
   val jobOwner = new collection.mutable.HashMap[Int, String]
 
   // Maps User ID to Actor Ref of corresponding WebSocket
-  val connectedUsers = new collection.mutable.HashMap[String, ActorRef]
+  var connectedUsers = Map.empty[String, ActorRef]
 
   //  Generates new jobID // TODO Save this state
   val jobIDSource: Iterator[Int] = Stream.continually(  random.nextInt(8999999) + 1000000 ).distinct.iterator
@@ -112,7 +102,7 @@ final class JobManager @Inject() (
     */
   def executeJob(jobID : Int, scriptPath : String): Unit = {
 
-    val rootPath  = s"$jobPath$SEP$jobID$SEP"
+    val rootPath  = s"$jobPath$SEPARATOR$jobID$SEPARATOR"
 
     // Log files output buffer
     val out = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stdout.out")))
@@ -141,31 +131,26 @@ final class JobManager @Inject() (
     err.close()
   }
 
-
-
   import reactivemongo.play.json._
 
 
   /* val jobCollection = reactiveMongoApi.database.
     map(_.collection[JSONCollection]("jobs")) */
 
-  val jobCollection: BSONCollection = db.collection("jobs")
+  //val jobCollection: BSONCollection = db.collection("jobs")
 
+  /** Deletes the job from the database
+    *
+    * @param jobID
+    * @return
+    */
+  def delete(jobID: Int) = {
 
-  def delete(id: Int) = {
-
-
-    val futureRemove = jobCollection.remove(Json.obj("main_id" -> id))
-
-    futureRemove.onComplete {
-      case Failure(e) => throw e
-      case Success(lasterror) => {
-        println("successfully removed document")
-      }
+    this.jobBSONCollection = this.jobBSONCollection.andThen {
+      case Success(coll) => coll.remove(Json.obj("main_id" -> jobID))
+      case Failure(t) => throw t
     }
-
   }
-
 
 
  //TODO insert documents from template model like:
@@ -181,9 +166,9 @@ final class JobManager @Inject() (
   def receive : Receive = {
 
 
-    case UserConnect(userID) => connectedUsers.put(userID, sender())
+    case UserConnect(userID) => this.connectedUsers = connectedUsers.updated(userID, sender())
 
-    case UserDisconnect(userID) => connectedUsers.remove(userID)
+    case UserDisconnect(userID) => this.connectedUsers = connectedUsers - userID
 
      // Reads parameters provided to the job from the job directory
     case Read(userID, jobID) =>
@@ -201,7 +186,7 @@ final class JobManager @Inject() (
 
         } else {
 
-          sender() ! s"$jobPath$SEP$jobID${SEP}params".toFile.list.map { f =>
+          sender() ! s"$jobPath$SEPARATOR$jobID${SEPARATOR}params".toFile.list.map { f =>
 
             f.name -> f.contentAsString
 
@@ -240,7 +225,7 @@ final class JobManager @Inject() (
       Future {
 
         // Delete Job Path
-        s"jobPath$SEP$jobID".toFile.delete(swallowIOExceptions = false)
+        s"jobPath$SEPARATOR$jobID".toFile.delete(swallowIOExceptions = false)
       }.onComplete {
 
         case scala.util.Success(_) => sender() ! AckDeleted(jobID)
@@ -250,44 +235,37 @@ final class JobManager @Inject() (
      // User asks to prepare new Job, might be directly executed (if start is true)
     case Prepare(userID, jobID, toolname, params, start) =>
 
-      Future {
+       Future {
         // Check whether jobID already exists, otherwise make new job
 
         // This is a new Job Submission // TODO Only support new Jobs currently
         if(jobID.isEmpty) {
 
           val newJobID = jobIDSource.next()
-          val rootPath  = s"$jobPath$SEP$newJobID$SEP"
+          val rootPath  = s"$jobPath$SEPARATOR$newJobID$SEPARATOR" // Where the Job Directory is located
 
           // TODO use the template database model here
-
           jobTools.put(newJobID, toolname)
           jobOwner.put(newJobID, userID)
 
-          val document = BSONDocument(
-            "main_id" -> newJobID, //this is wrong, I know, it should be the job_id
-            "tool" -> toolname,
-            "user_id" -> userID,
-            "created_on" -> new Date(),
-            "update_on" -> new Date(),
-            "viewed_on" -> 0)
 
-          val future = jobCollection.insert(document)
+          this.jobBSONCollection =  this.jobBSONCollection.andThen {
 
-
-          future.onComplete {
-            case Failure(e) => throw e
-            case Success(lastError) => {
-              println("successfully inserted document with lastError = " + lastError)
-            }
+              case Success(coll) => coll.insert(BSONDocument(
+                "main_id" -> newJobID, //this is wrong, I know, it should be the job_id
+                "tool" -> toolname,
+                "user_id" -> userID,
+                "created_on" -> new Date(),
+                "update_on" -> new Date(),
+                "viewed_on" -> 0))
+              case Failure(t) => throw t
           }
 
+
           changeState(newJobID, JobState.Submitted)
-
-          // Use an interface of TEL to initialize a Job Directory
+          // Interfaces with TEL to make a new job directory, returns the  path to the script which then
+          // needs to be executed
           val script = TEL.init(toolname, params, rootPath)
-
-          // Job Directory will then be prepared
           changeState(newJobID, JobState.Prepared)
 
           // Also Start Job if requested
