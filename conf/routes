@@ -14,9 +14,9 @@
 GET         /                                              @controllers.Application.index
 
 # Dashboard for Admin
-#GET         /login                                         @controllers.Auth.login
-#GET         /backend                                       @controllers.Auth.backend
-#POST        /login/submit                                  @controllers.Auth.backendLogin()
+GET         /login                                         @controllers.Auth.login
+GET         /backend                                       @controllers.Auth.backend
+POST        /login/submit                                  @controllers.Auth.backendLogin()
 POST        /settings/clustermode                          @controllers.Settings.setClusterMode(clusterMode : String)
 POST        /settungs/memset                               @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
 GET         /backend/get/:static                           @controllers.Backend.getStatic(static : String)

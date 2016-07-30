@@ -1,6 +1,6 @@
 package controllers
 
-import models.database.MongoDBUser
+import models.database.User
 import models.mailing.MailTemplate
 import play.api.libs.mailer._
 import javax.inject.Inject
@@ -10,7 +10,7 @@ import javax.inject.Inject
   */
 class Mailing @Inject() (mailerClient: MailerClient) {
 
-  def sendEmail(user : MongoDBUser, template : MailTemplate) {
+  def sendEmail(user : User, template : MailTemplate) {
     //val cid = user.nameLogin TODO What is that supposed to mean ?
     val email = Email(
       template.subject,

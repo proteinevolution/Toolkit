@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
-@import models.database.MongoDBUser
-@(inputForm: Form[MongoDBUser], nameLogin : String)(implicit messages: Messages, request: RequestHeader)
+@import models.database.User
+@(inputForm: Form[User], nameLogin : String)(implicit messages: Messages, request: RequestHeader)
 
 <form id="signin-form" data-abide="ajax" novalidate>
     <div class="row">
