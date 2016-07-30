@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
-@import models.database.User
-@(user_o : Option[User])(implicit messages: Messages, request: RequestHeader)
+@import models.database.MongoDBUser
+@(user_o : Option[MongoDBUser])(implicit messages: Messages, request: RequestHeader)
 
 <dl class="sub-nav">
     <dd><a href="#">Help</a></dd>
@@ -11,7 +11,7 @@
     <dd><a href="#">Personal Databases</a></dd>
     <dd><a href="#" id="auth-link" data-toggle="auth-dropdown" onclick="$('.dropdown-pane').show();">
     @{user_o match {
-        case Some(user) => user.name_login
+        case Some(user) => user.nameLogin
         case None       => "Sign in"
     }}</a></dd>
 </dl>

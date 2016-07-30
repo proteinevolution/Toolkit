@@ -1,6 +1,6 @@
 package models.sessions
 
-import models.database.User
+import models.database.MongoDBUser
 import models.misc.RandomString
 import play.api.{mvc, Logger}
 import play.api.mvc.RequestHeader
@@ -15,7 +15,7 @@ object Session {
   val SID = "sid" // name for the entry in the session cookie
   val MID = "mid" // mainID of the last job that was get
   val sessions : ArrayBuffer[String] = ArrayBuffer.empty
-  val sessionUserMap  = new mutable.HashMap[String, User]
+  val sessionUserMap  = new mutable.HashMap[String, MongoDBUser]
 
   /**
     * identifies a User
@@ -23,7 +23,7 @@ object Session {
     * @param session_id
     * @param user
     */
-  def addUser (session_id : String, user : User) {
+  def addUser (session_id : String, user : MongoDBUser) {
     sessionUserMap.getOrElseUpdate(session_id, user)
   }
 
@@ -33,7 +33,7 @@ object Session {
     * @param session_id
     * @return
     */
-  def getUser (session_id : String) : Option[User] = {
+  def getUser (session_id : String) : Option[MongoDBUser] = {
     sessionUserMap.get(session_id)
   }
 
@@ -43,7 +43,7 @@ object Session {
     * @param session_id
     * @return
     */
-  def removeUser (session_id : String) : Option[User] = {
+  def removeUser (session_id : String) : Option[MongoDBUser] = {
     sessionUserMap.remove(session_id)
   }
 

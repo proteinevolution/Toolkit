@@ -1,30 +1,13 @@
 @import play.api.mvc.RequestHeader
-@(inputForm: Form[(String, String, String, String, String, Boolean, Boolean)])(implicit messages: Messages, request: RequestHeader)
+@import models.database.MongoDBUser
+@(inputForm: Form[MongoDBUser])(implicit messages: Messages, request: RequestHeader)
 
 <form id="signup-form" data-abide="ajax" novalidate>
     <div class="row">
         <div class="small-12 columns">
             <label>
-                First Name:
-                <input type="text" id="name_first" name="name_first" placeholder="John" required pattern="text">
-            </label>
-        </div>
-        <div class="small-12 columns">
-            <label>
-                Last Name:
-                <input type="text" id="name_last" name="name_last" placeholder="Doe" required pattern="text">
-            </label>
-        </div>
-        <div class="small-12 columns">
-            <label>
-                E-Mail:
-                <input type="text" id="email" name="email" placeholder="JohnDoe&#64;SomePlace.net" required pattern="email">
-            </label>
-        </div>
-        <div class="small-12 columns">
-            <label>
                 Username:
-                <input type="text" id="name_login" name="name_login" placeholder="JDoe11186" required pattern="text">
+                <input type="text" id="nameLogin" name="nameLogin" placeholder="JDoe11186" required pattern="text">
             </label>
         </div>
         <div class="small-12 columns">
@@ -45,7 +28,7 @@
         <div class="small-12 columns">
             <label>
                 I Accept the Terms of Sevice &nbsp;
-                <input type="checkbox" id="accepttos" name="accepttos" value="false" required>
+                <input type="checkbox" id="acceptToS" name="acceptToS" value="false" required>
                 <span class="form-error">You must accept the ToS!</span>
             </label>
         </div>

@@ -1,0 +1,42 @@
+@import play.api.mvc.RequestHeader
+@import models.database.MongoDBUser
+@(inputForm: Form[MongoDBUser])(implicit messages: Messages, request: RequestHeader)
+
+<form id="signup-form" data-abide="ajax" novalidate>
+  <div class="row">
+    <div class="small-12 columns">
+      <label>
+        First Name:
+        <input type="text" id="name_first" name="name_first" placeholder="John" pattern="text">
+      </label>
+    </div>
+    <div class="small-12 columns">
+      <label>
+        Last Name:
+        <input type="text" id="name_last" name="name_last" placeholder="Doe" pattern="text">
+      </label>
+    </div>
+    <div class="small-12 columns">
+      <label>
+        E-Mail:
+        <input type="text" id="email" name="email" placeholder="JohnDoe&#64;SomePlace.net" pattern="email">
+      </label>
+    </div>
+  </div>
+  <div class="small-12 columns">
+    <label>
+      Password:
+      <input type="password" id="password" name="password" placeholder="Password">
+    </label>
+  </div>
+    <!--
+        <div class="small-12 columns">
+            <label>
+                Repeat Password:
+                <input type="password" id="password_repeat" placeholder="Password" required pattern="text" data-equalTo="password">
+                <span class="form-error">(Passwords must match!)</span>
+            </label>
+        </div>
+        -->
+  <input id="signup-submit" type="submit" class="small expanded secondary button disabled" value="Register">
+</form>
