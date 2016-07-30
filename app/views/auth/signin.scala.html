@@ -1,12 +1,13 @@
 @import play.api.mvc.RequestHeader
-@(inputForm: Form[(String, String)], userName : String)(implicit messages: Messages, request: RequestHeader)
+@import models.database.MongoDBUser
+@(inputForm: Form[MongoDBUser], nameLogin : String)(implicit messages: Messages, request: RequestHeader)
 
 <form id="signin-form" data-abide="ajax" novalidate>
     <div class="row">
         <div class="small-12 columns">
             <label>
                 Username:
-                <input type="text" id="user_login" name="user_login" placeholder="JDoe11186" required pattern="text" value="@userName">
+                <input type="text" id="nameLogin" name="nameLogin" placeholder="JDoe11186" required pattern="text" value="@nameLogin">
             </label>
         </div>
         <div class="small-12 columns">

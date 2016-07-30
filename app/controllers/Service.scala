@@ -5,7 +5,7 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.database.User
+import models.database.MongoDBUser
 import models.graph.Link
 import models.sessions.Session
 import akka.pattern.ask
@@ -51,7 +51,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
       case "reformat" =>
 
         val session_id = Session.requestSessionID(request)
-        val user_o : Option[User] = Session.getUser(session_id)
+        val user_o : Option[MongoDBUser] = Session.getUser(session_id)
 
         Ok(views.html.reformat.form(webJarAssets,"Utils", user_o)).withSession {
           Session.closeSessionRequest(request, session_id)

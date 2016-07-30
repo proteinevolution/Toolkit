@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
-@import models.database.User
-@(user : User)(implicit messages: Messages, request: RequestHeader)
+@import models.database.MongoDBUser
+@(user : MongoDBUser)(implicit messages: Messages, request: RequestHeader)
 
-<p>@{user.name_last}, @{user.name_first}</p>
+<p>@{user.nameLogin}</p>
 <p><a href="@routes.Auth.signOut()">Sign Out</a></p>
