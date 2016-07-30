@@ -3,7 +3,6 @@ package controllers
 import java.util.Date
 import javax.inject.Inject
 
-import models.sessions.Session
 import play.api.mvc.{Action, Controller}
 import play.api.i18n.MessagesApi
 import play.modules.reactivemongo.{ReactiveMongoComponents, MongoController, ReactiveMongoApi}
@@ -11,7 +10,7 @@ import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.BSONDocument
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Success, Failure}
-
+import scala.sys.process._
 
 /**
   * Created by zin on 28.07.16.
@@ -20,8 +19,12 @@ import scala.util.{Success, Failure}
   *
   */
 
+
+
 final class Settings @Inject() (val messagesApi: MessagesApi,
                            val reactiveMongoApi: ReactiveMongoApi) extends Controller with MongoController with ReactiveMongoComponents {
+
+
 
   val settingsCollection: BSONCollection = db.collection("settings")
   val toolSettings: BSONCollection = db.collection("toolsettings")
@@ -55,7 +58,20 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
 
   }
 
-  def getClusterMode = "LOCAL" // IMPLEMENT ME
+
+  var clusterMode = "LOCAL"
+
+  val hostname_cmd = "hostname"
+  private val hostname = hostname_cmd.!!
+
+    if (hostname.equals("olt"))
+
+      clusterMode = "sge"
+
+    else
+
+      clusterMode= "LOCAL"
+
 
 
   /**
