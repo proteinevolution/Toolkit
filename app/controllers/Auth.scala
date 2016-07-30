@@ -169,7 +169,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
         if (form.get._1 == "test" && form.get._2 == "test") {
           LoginCounter = 0
 
-          Redirect("/backend") // TODO if logged in, users should not need to re-authenticate
+          Redirect("/@/backend") // TODO if logged in, users should not need to re-authenticate
 
         }
         else {

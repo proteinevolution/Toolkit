@@ -102,12 +102,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     Redirect(s"/#/$static")
   }
 
-  def backend_static(static : String) = Action { implicit request =>
-
-    Redirect(s"/backend/$static")
-
-  }
-
 
   /*
     *  Return the Input form of the corresponding tool
