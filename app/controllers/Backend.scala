@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 
-import models.database.MongoDBUser
+import models.database.User
 import models.sessions.Session
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Controller, Action}
@@ -32,7 +32,7 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
   def index = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
-    val user_o : Option[MongoDBUser] = Session.getUser(session_id)
+    val user_o : Option[User] = Session.getUser(session_id)
 
     Ok(views.html.backend.backend(webJarAssets, views.html.backend.backend_maincontent(),"Backend", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)
@@ -42,7 +42,7 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
   def settings = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
-    val user_o : Option[MongoDBUser] = Session.getUser(session_id)
+    val user_o : Option[User] = Session.getUser(session_id)
 
     Ok(views.html.backend.backend(webJarAssets, views.html.backend.settings(),"Backend", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)

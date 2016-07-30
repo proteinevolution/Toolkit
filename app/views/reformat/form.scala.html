@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
-@import models.database.MongoDBUser
-@(webJarAssets: WebJarAssets, sectionname : String, user_o: Option[MongoDBUser])(implicit messages: Messages, request: RequestHeader)
+@import models.database.User
+@(webJarAssets: WebJarAssets, sectionname : String, user_o: Option[User])(implicit messages: Messages, request: RequestHeader)
 <link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
 <link href="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.css"))" rel="stylesheet">
 <style>

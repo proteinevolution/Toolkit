@@ -11,10 +11,10 @@
 
     </div>
     <div class="tabs-panel" id="auth-tab-signin">
-        @views.html.auth.signin(models.database.MongoDBUser.formSignIn, "")
+        @views.html.auth.signin(models.database.User.formSignIn, "")
     </div>
     <div class="tabs-panel" id="auth-tab-signup">
-        @views.html.auth.signup(models.database.MongoDBUser.formSignUp)
+        @views.html.auth.signup(models.database.User.formSignUp)
     </div>
     <div class="tabs-panel" id="auth-tab-forgot">
         @views.html.auth.forgot(models.auth.Forgot.inputForm)

@@ -2,7 +2,7 @@ package controllers
 import scala.concurrent.ExecutionContext.Implicits.global
 import javax.inject.{Singleton, Inject}
 
-import models.database.MongoDBUser
+import models.database.User
 import models.sessions.Session
 import models.auth._
 import org.joda.time.DateTime
@@ -50,7 +50,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signIn(userName : String) = Action { implicit request =>
-    Ok(views.html.auth.signin(MongoDBUser.formSignIn,userName))
+    Ok(views.html.auth.signin(User.formSignIn,userName))
   }
 
   /**
@@ -64,7 +64,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     Logger.info(sessionID + " wants to Sign in!")
 
     // Evaluate the Form
-    MongoDBUser.formSignIn.bindFromRequest.fold(
+    User.formSignIn.bindFromRequest.fold(
       errors =>
         Future.successful{
           Logger.info(" but there was an error in the submit form: " + errors.toString)
@@ -73,7 +73,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
       // if no error, then insert the user to the collection
       userForm => {
-        def futureUser = userCollection.flatMap(_.find(Json.obj(MongoDBUser.NAMELOGIN -> userForm.nameLogin)).one[MongoDBUser])
+        def futureUser = userCollection.flatMap(_.find(Json.obj(User.NAMELOGIN -> userForm.nameLogin)).one[User])
         for {
           maybeUser <- futureUser
           resultPage <- maybeUser.map { user =>
@@ -84,8 +84,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                   Session.addUser(sessionID, user)
 
                   // create a modifier document to change the last login date
-                  val modifier = Json.obj("$set" -> Json.obj(MongoDBUser.DATELASTLOGIN -> new DateTime().getMillis))
-                  userCollection.flatMap(_.update(Json.obj(MongoDBUser.IDDB -> user.id), modifier))
+                  val modifier = Json.obj("$set" -> Json.obj(User.DATELASTLOGIN -> new DateTime().getMillis))
+                  userCollection.flatMap(_.update(Json.obj(User.IDDB -> user.id), modifier))
                   Ok(LoggedIn(user))
                 }
               } else {
@@ -106,7 +106,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   def login = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
-    val user_o : Option[MongoDBUser] = Session.getUser(session_id)
+    val user_o : Option[User] = Session.getUser(session_id)
 
     Ok(views.html.backend.login(webJarAssets, "0", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)
@@ -117,11 +117,11 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   def backend = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
-    val user_o : Option[MongoDBUser] = Session.getUser(session_id)
+    val user_o : Option[User] = Session.getUser(session_id)
 
   //TODO allow direct access to the backend route if user is already authenticated as admin
 
-  if(!request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login")) {
+  if(request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login")) {
 
   Status(404)(views.html.errors.pagenotfound())
 
@@ -158,7 +158,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
         }
 
         val sessionID = Session.requestSessionID(request)
-        val user_o : Option[MongoDBUser] = Session.getUser(sessionID)
+        val user_o : Option[User] = Session.getUser(sessionID)
         Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
           Session.closeSessionRequest(request, sessionID)
         }
@@ -185,7 +185,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
           }
 
           val sessionID = Session.requestSessionID(request)
-          val user_o : Option[MongoDBUser] = Session.getUser(sessionID)
+          val user_o : Option[User] = Session.getUser(sessionID)
           Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
             Session.closeSessionRequest(request, sessionID)
           }
@@ -202,7 +202,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signUp() = Action { implicit request =>
-    Ok(views.html.auth.signup(MongoDBUser.formSignUp))
+    Ok(views.html.auth.signup(User.formSignUp))
   }
 
   /**
@@ -214,7 +214,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   def signUpSubmit() = Action.async { implicit request =>
     val sessionID = Session.requestSessionID(request)
     Logger.info(sessionID + " wants to Sign up!")
-    MongoDBUser.formSignUp.bindFromRequest.fold(
+    User.formSignUp.bindFromRequest.fold(
       errors =>
         Future.successful {
           Logger.info(" but there was an error in the submit form: " + errors.toString)
