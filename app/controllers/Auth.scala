@@ -102,7 +102,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     })
   }
 
-  /*
+
   def login = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
@@ -114,10 +114,10 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   }
 
-  /*def backend = Action { implicit request =>
+  def backend = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
-    val user_o : Option[User] = Session.getUser(session_id)
+    val user_o : Option[MongoDBUser] = Session.getUser(session_id)
 
   //TODO allow direct access to the backend route if user is already authenticated as admin
 
@@ -125,15 +125,12 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   Status(404)(views.html.errors.pagenotfound())
 
+  } else {
+      Ok(views.html.backend.backend(webJarAssets,views.html.backend.backend_maincontent(), "Backend", user_o)).withSession {
+        Session.closeSessionRequest(request, session_id)
+      }
+    }
   }
-
-  else {
-  Ok(views.html.backend.backend(webJarAssets, "Backend", user_o)).withSession {
-  Session.closeSessionRequest(request, session_id)
-  }
-  }
-
-  }*/
 
   var LoginCounter = 0
 
@@ -144,6 +141,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
     // Evaluate the Form
     val form = loginForm.bindFromRequest
+
+
     form.fold(
       // Form has errors, return "Bad Request" - most likely timed out or user tampered with form
       formWithErrors => {
@@ -165,18 +164,12 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
         }
       },
       _ => {
-        // Check the User Database for the user and return the User if there is a match.
+        // TODO Check the User Database for the user and return the User if there is a match.
 
-        val authAction: AuthAction = userManager.backendLogin(form.get._1, // name_login
-                                                              form.get._2) // password
-
-        if (authAction.success) {
+        if (form.get._1 == "test" && form.get._2 == "test") {
           LoginCounter = 0
-          Session.addUser(sessionID, authAction.user_o.get)
 
-          Ok(views.html.backend.backend(webJarAssets, "Backend", authAction.user_o)).withSession {
-            Session.closeSessionRequest(request, sessionID)
-          }
+          Redirect("/backend") // TODO if logged in, users should not need to re-authenticate
 
         }
         else {
@@ -202,7 +195,6 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
       }
     )
   }
-  */
 
   /**
     * Returns the sign up form
@@ -252,7 +244,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                 creationDate  = currentDateTime,
                 updateDate    = currentDateTime)
               userCollection.flatMap(_.insert(newUser)).map(_ => {
-              Logger.info(" and they succeded!")
+              Logger.info(" and they succeeded!")
               Session.addUser(sessionID, user)
               Ok(LoggedIn(newUser)).withSession {
                 Session.closeSessionRequest(request, sessionID) // Send Session Cookie

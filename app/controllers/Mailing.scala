@@ -11,7 +11,7 @@ import javax.inject.Inject
 class Mailing @Inject() (mailerClient: MailerClient) {
 
   def sendEmail(user : MongoDBUser, template : MailTemplate) {
-    val cid = user.nameLogin
+    //val cid = user.nameLogin TODO What is that supposed to mean ?
     val email = Email(
       template.subject,
       "Toolkit Team <toolkitmpg@gmail.com>",
