@@ -7,44 +7,121 @@
 <div data-sticky-container class="show-for-large">
     <div class="top-bar sticky fullwidth row" id="stickyheader" style="width:100%;" data-sticky data-options="marginTop:0;" data-top-anchor="top" data-btm-anchor="blaststats:bottom">
         <div class="top-bar-left large-1 columns show-for-large">
-            <div class="switch tiny" >
-                <input class="switch-input" id="tinySwitch" type="checkbox" name="exampleSwitch">
-                <label class="switch-paddle" for="tinySwitch">
-                    <span class="show-for-sr">Tiny Sandwiches Enabled</span>
-                </label>
-            </div>
+            <button id="sidebartoggle">Sidebar</button>
         </div>
         <div class="top-bar-title large-11 columns">
             <div class="drops">
-
-
-                <button class="button small" data-open="searchsection"> Search</button>
-
-                <button  class="button small" type="button" >Alignment</button>
-
-                <button  class="button small" type="button" >Sequence Analysis</button>
-
-                <button  class="button small" type="button" >2aryStructure</button>
-
-                <button  class="button small" type="button" >3aryStructure</button>
-
-                <button  class="button small" type="button" >Classification</button>
-
-                <button  class="button small" type="button" >Utilities</button>
-
+                <button  class="button" id="but1" type="button" data-toggle="dropdown-1" >Search</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="0"  data-hover-delay="75" id="dropdown-1" data-dropdown data-hover="false" data-hover-pane="true" animate="slide-in-down">
+                    <div class="large-1 columns">
+                        <ul class="objects"  style="list-style: none">
+                            <li style="padding-top: 0.625em"><a onclick="location.href='/#/tools/hmmer3';$('.dropdown-pane').foundation('close');">Hmmer3</a></li>
+                            <li style="padding-top: 1em"><a onclick="location.href='/#/tools/hhpred';$('.dropdown-pane').foundation('close');">HHpred</a></li>
+                            <li style="padding-top: 1em"><a onclick="location.href='/#/tools/psiblast';$('.dropdown-pane').foundation('close');">PSI-BLAST</a></li>
+                            <li style="padding-top: 1em"><a onclick="location.href='/#/tools/csblast';$('.dropdown-pane').foundation('close');">CS-BLAST</a></li>
+                        </ul>
+                    </div>
+                    <div class="large-5 columns">
+                        <ul class="textArea"  style="list-style: none">
+                            <li> Fast, PSI-BLAST accelerated HMMER search. About 30 times faster for the nr database.</li>
+                            <li> Search with an amino acid sequence against protein databases for locally similar sequences. Similar to ProteinBLAST but more sensitive. PSI-BLAST first performs a BLAST search and builds an alignment from the best local hits. This alignment is then used as a query for the next round of search. After each successive round the search alignment is updated.</li>
+                            <li> CS-BLAST is an extension to standard NCBI BLAST that allows to increase its sensitivity by a factor of more than two on remote homologs at the same speed. CS-BLAST first adds context-specific pseudocounts to the input sequence and then jumpstarts PSI-BLAST with the resulting profile. The output is identical to BLAST and contains a list of closest homologs with alignments.
+                                The software can be downloaded here. </li>
+                        </ul>
+                    </div>
+                    <div class="large-6 columns">
+                        <ul class="textArea"  style="list-style: none">
+                                <!-- Placeholder -->
+                            <div class="sectionintro">Introduction:  Sequence Similarity Searching is a method of searching sequence databases by using alignment to a query sequence. By statistically assessing how well database and query sequences match one can infer homology and transfer information to the query sequence.
+                                The tools can be launched with different form pre-sets using the links - these can be changed on the tool page as well.  </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-2">Alignment</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-2" data-dropdown data-hover="true" data-hover-pane="true" data-close-on-click="true">
+                    <div class="large-1 columns">
+                        <ul class="objects"  style="list-style: none">
+                            <li style="padding-top: 0.625em"><a onclick="location.href='/#/tools/alnviz';$('.dropdown-pane').foundation('close');">AlignmentViewer</a></li>
+                            <li style="padding-top: 1em"><a onclick="location.href='/#/tools/tcoffee';$('.dropdown-pane').foundation('close');">T-Coffee</a></li>
+                            <li style="padding-top: 1em"><a onclick="location.href='/#/tools/mafft';$('.dropdown-pane').foundation('close');">MAFFT</a></li>
+                        </ul>
+                    </div>
+                    <div class="large-5 columns">
+                        <ul class="textArea"  style="list-style: none">
+                            <li> Alignment viewer with BioJS MSA viewer.</li>
+                            <li> Multiple sequence alignment tool for protein and nucleotide sequences. (T-Coffee:Tree-based Consistency Objective Function for alignment Evaluation).</li>
+                            <li> A very accurate multiple alignment program for amino acid or nucleotide sequences. (MAFFT: Multiple sequence Alignment based on Fast Fourier Transform)</li>
+                        </ul>
+                    </div>
+                    <div class="large-6 columns">
+                        <ul class="textArea"  style="list-style: none">
+                                <!-- Placeholder -->
+                            <div class="sectionintro">Introduction:  Multiple Sequence Alignment (MSA) is generally the alignment of three or more biological sequences (protein or nucleic acid) of similar length. From the output, homology can be inferred and the evolutionary relationships between the sequences studied.
+                                By contrast, Pairwise Sequence Alignment tools are used to identify regions of similarity that may indicate functional, structural and/or evolutionary relationships between two biological sequences.</div>
+                        </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-3">Sequence Analysis</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-3" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-2 columns">
+                        <ul class="objects"  style="list-style: none">
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                        </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-4">2aryStructure</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-4" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-2 columns">
+                        <ul class="objects"  style="list-style: none">
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                        </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-5">3aryStructure</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-5" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-2 columns">
+                        <ul class="objects"  style="list-style: none">
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                        </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-6">Classification</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-6" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-2 columns">
+                        <ul class="objects"  style="list-style: none">
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                        </ul>
+                    </div>
+                </div>
+                <button  class="button" type="button" data-toggle="dropdown-7">Utilities</button>
+                <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="8"  data-hover-delay="100" id="dropdown-7" data-dropdown data-hover="true" data-hover-pane="true">
+                    <div class="large-2 columns">
+                        <ul class="objects"  style="list-style: none">
+                            <li style="padding-top: 0.625em"><a onclick="location.href='/#/reformat';$('.dropdown-pane').foundation('close');">Reformat</a></li>
+                            <li style="padding-top: 0.625em"><a onclick="location.href='/#/seq2gi';$('.dropdown-pane').foundation('close');">ExtractGIs</a></li>
+                        </ul>
+                    </div>
+                    <div class="large-9 columns">
+                        <ul class="textArea"  style="list-style: none">
+                            <li>Sequence reformatting utility.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-   </div>
-</div>
-
-
-    <div class="small reveal" id="searchsection" data-reveal>
-
-        @sections.search()
-
-        <button class="close-button" data-close aria-label="Close modal" type="button">
-            <span aria-hidden="true">&times;</span>
-        </button>
     </div>
+</div>
 
 
 <script type="text/javascript">
@@ -77,7 +154,7 @@
 
 </script>
 
-<!--     <div class="top-bar-right">
+    <!--     <div class="top-bar-right">
             <ul class="dropdown menu" id="toolsdropdown" style="opacity: 0.9;" data-dropdown-menu data-closing-time="20">
                 <li>
                     <a href="#" id="section">Search</a>
@@ -149,4 +226,3 @@
 
     </div> -->
 </div>
-
