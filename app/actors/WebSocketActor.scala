@@ -37,7 +37,7 @@ private final class WebSocketActor(sessionID : String, jobManager : ActorRef,  o
   def receive = LoggingReceive {
 
 
-
+  /*
     case js: JsValue =>
 
       (js \ "type").validate[String].map {
@@ -50,6 +50,7 @@ private final class WebSocketActor(sessionID : String, jobManager : ActorRef,  o
         //case "getjoblist" => master ! GetJobList
         case "ping" => Logger.info("PING!")
       }
+    */
 
     // Messages the user that there was a problem in handling the Job ID
     //case JobIDInvalid  => out ! Json.obj("type" -> "jobidinvalid")
