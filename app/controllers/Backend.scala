@@ -22,7 +22,7 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
     static match {
 
       case "settings" =>
-        Ok(views.html.backend.settings()).withSession {
+        Ok(views.html.backend.settings("foo")).withSession {
           Session.closeSessionRequest(request, Session.requestSessionID(request))
         }
 
@@ -44,7 +44,7 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
     val session_id = Session.requestSessionID(request)
     val user_o : Option[User] = Session.getUser(session_id)
 
-    Ok(views.html.backend.backend(webJarAssets, views.html.backend.settings(),"Backend", user_o)).withSession {
+    Ok(views.html.backend.backend(webJarAssets, views.html.backend.settings("foo"),"Backend", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)
     }
   }
