@@ -7,20 +7,20 @@ import play.api.data._
 import play.api.data.Forms.{ text, longNumber, mapping, boolean, optional }
 import play.api.data.validation.Constraints.pattern
 
-case class MongoDBUser(id            : Option[String],
-                       nameLogin     : String,
-                       password      : String,
-                       accountType   : Short,
-                       lastLoginDate : Option[DateTime],
-                       creationDate  : Option[DateTime],
-                       updateDate    : Option[DateTime]) {
+case class User(id            : Option[String],
+                nameLogin     : String,
+                password      : String,
+                accountType   : Short,
+                lastLoginDate : Option[DateTime],
+                creationDate  : Option[DateTime],
+                updateDate    : Option[DateTime]) {
 
   def checkPassword(plainPassword: String) : Boolean = {
     BCrypt.checkpw(plainPassword, password)
   }
 }
 
-object MongoDBUser {
+object User {
   import play.api.libs.json._
 
   // Number of rounds for BCrypt to hash the Password (2^x) TODO Move to the config?
@@ -41,8 +41,8 @@ object MongoDBUser {
   /**
     * Define how the User object is formatted
     */
-  implicit object UserFormat extends OFormat[MongoDBUser] {
-    override def reads(json: JsValue): JsResult[MongoDBUser] = json match {
+  implicit object UserFormat extends OFormat[User] {
+    override def reads(json: JsValue): JsResult[User] = json match {
       case obj: JsObject => try {
         val id            = (obj \ IDDB).asOpt[String]
         val nameLogin     = (obj \ NAMELOGIN).as[String]
@@ -53,7 +53,7 @@ object MongoDBUser {
         val updateDate    = (obj \ DATEUPDATED).asOpt[Long]
 
         JsSuccess(
-          MongoDBUser(
+          User(
             id,
             nameLogin,
             password,
@@ -69,7 +69,7 @@ object MongoDBUser {
       case _ => JsError("expected.jsObject")
     }
 
-    override def writes(user: MongoDBUser): JsObject = Json.obj(
+    override def writes(user: User): JsObject = Json.obj(
       IDDB          -> user.id,
       NAMELOGIN     -> user.nameLogin,
       PASSWORD      -> user.password,
@@ -92,7 +92,7 @@ object MongoDBUser {
       DATECREATED   -> optional(longNumber),
       DATEUPDATED   -> optional(longNumber)) {
       (id, nameLogin, password, acceptToS, lastLoginDate, creationDate, updateDate) =>
-        MongoDBUser(
+        User(
           id,
           nameLogin,
           BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
@@ -126,7 +126,7 @@ object MongoDBUser {
       DATECREATED   -> optional(longNumber),
       DATEUPDATED   -> optional(longNumber)) {
       (id, nameLogin, password, lastLoginDate, creationDate, updateDate) =>
-        MongoDBUser(
+        User(
           id,
           nameLogin,
           password,
