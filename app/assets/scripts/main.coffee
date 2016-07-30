@@ -39,19 +39,9 @@ Static =
         $("html, body").animate({ scrollTop: 0 }, "fast")
 
 
-Backend =
-  controller: ->
-    { backend: m.route.param('static') }
-  view: (controller) ->
-    $.ajax(
-      type: "GET"
-      url: "/static/get/" + controller.static ).done (data) ->
-        $('#content').empty().prepend data
-        $("html, body").animate({ scrollTop: 0 }, "fast")
-
 
 #setup routes to start w/ the `#` symbol
 m.route.mode = 'hash'
 
 #define a route
-m.route document.getElementById('content'), '/', { '/tools/:toolname': Tools,'/jobs/:jobid' : Jobs, '/:static' : Static, '/backend/:static' : Backend }
+m.route document.getElementById('content'), '/', { '/tools/:toolname': Tools,'/jobs/:jobid' : Jobs, '/:static' : Static }
