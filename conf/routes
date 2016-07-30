@@ -93,4 +93,4 @@ GET         /:static                                       @controllers.Applicat
 
 
 #Forwarding
-GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
+#GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
