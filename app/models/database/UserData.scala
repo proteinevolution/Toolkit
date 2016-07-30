@@ -6,18 +6,18 @@ import play.api.data._
 import play.api.data.Forms.{ text, nonEmptyText, longNumber, mapping, optional }
 import play.api.data.validation.Constraints.pattern
 
-case class MongoDBUserData(id:            Option[String],
-                           nameFirst:     String,
-                           nameLast:      String,
-                           eMail:         String,
-                           institute:     String,
-                           street:        String,
-                           city:          String,
-                           country:       String,
-                           groups:        String,
-                           roles:         String)
+case class UserData(id:            Option[String],
+                    nameFirst:     String,
+                    nameLast:      String,
+                    eMail:         String,
+                    institute:     String,
+                    street:        String,
+                    city:          String,
+                    country:       String,
+                    groups:        String,
+                    roles:         String)
 
-object MongoDBUserData {
+object UserData {
   import play.api.libs.json._
 
   // Constants for the JSON object identifiers
@@ -33,8 +33,8 @@ object MongoDBUserData {
   val GROUPS     = "groups"
   val ROLES      = "roles"
 
-  implicit object UserDataWrites extends OWrites[MongoDBUserData] {
-    def writes(userData: MongoDBUserData): JsObject = Json.obj(
+  implicit object UserDataWrites extends OWrites[UserData] {
+    def writes(userData: UserData): JsObject = Json.obj(
       IDDB       -> userData.id,
       NAMEFIRST  -> userData.nameFirst,
       NAMELAST   -> userData.nameFirst,
@@ -47,8 +47,8 @@ object MongoDBUserData {
       ROLES      -> userData.roles)
   }
 
-  implicit object UserDataReads extends Reads[MongoDBUserData] {
-    def reads(json: JsValue): JsResult[MongoDBUserData] = json match {
+  implicit object UserDataReads extends Reads[UserData] {
+    def reads(json: JsValue): JsResult[UserData] = json match {
       case obj: JsObject => try {
         val id         = (obj \ IDDB).asOpt[String]
         val nameFirst  = (obj \ NAMEFIRST).as[String]
@@ -62,7 +62,7 @@ object MongoDBUserData {
         val roles      = (obj \ ROLES).as[String]
 
         JsSuccess(
-          MongoDBUserData(
+          UserData(
             id,
             nameFirst,
             nameLast,
@@ -95,7 +95,7 @@ object MongoDBUserData {
       GROUPS    -> text,
       ROLES     -> text) {
       (id, nameFirst, nameLast, eMail, institute, street, city, country, groups, roles) =>
-        MongoDBUserData(
+        UserData(
           id,
           nameFirst,
           nameLast,
