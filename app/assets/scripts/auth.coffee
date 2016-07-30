@@ -29,16 +29,16 @@ $ ->
           checkAuthResponse(json)
 
   # swap values on the accept ToS checkbox on click
-  $("#accepttos").change (event) ->
-    if $("#accepttos").val() == "true"
-      $("#accepttos").val("false")
+  $("#acceptToS").change (event) ->
+    if $("#acceptToS").val() == "true"
+      $("#acceptToS").val("false")
     else
-      $("#accepttos").val("true")
+      $("#acceptToS").val("true")
 
   # Sign Up form dynamic evaluation
   $("#signup-form").change (event) ->
     # tos button checked?
-    buttonDisabled = $("#accepttos").val() == "false"
+    buttonDisabled = $("#acceptToS").val() == "false"
     # any other items unedited?
     $("#signup-form").find(':input').each ->
       if (!this.value && this.type != "submit") then buttonDisabled = true
@@ -58,7 +58,7 @@ $ ->
   checkAuthResponse = (json) ->
     # TODO add a closeable notice for the message?
     if (json.successful)
-      $("#auth-link").html(json.user.name_login)
+      $("#auth-link").html(json.user.nameLogin)
       $("#auth-dropdown").html(json.message)
       $.ajax(
         url: "/miniprofile"
@@ -66,4 +66,6 @@ $ ->
           $("#auth-dropdown").html(data)
     else
       # TODO add the error message to the view
+      $("#auth-alert").html(json.message)
+      $("#auth-alert").foundation('reveal', 'open')
 

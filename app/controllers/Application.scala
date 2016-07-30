@@ -5,7 +5,7 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
-import models.database.User
+import models.database.MongoDBUser
 import play.api.libs.streams.ActorFlow
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -64,7 +64,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   def index = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
-    val user_o : Option[User] = Session.getUser(session_id)
+    val user_o : Option[MongoDBUser] = Session.getUser(session_id)
 
     Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)

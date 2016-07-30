@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject.{Singleton, Inject}
-import models.database.User
+import models.database.MongoDBUser
 import models.sessions.Session
 import models.tools._
 import play.api.Configuration
@@ -37,7 +37,7 @@ class Forwarding @Inject()(webJarAssets: WebJarAssets,
 
 
     val session_id = Session.requestSessionID(request)
-    val user_o : Option[User] = Session.getUser(session_id)
+    val user_o : Option[MongoDBUser] = Session.getUser(session_id)
 
     Ok(views.html.main(webJarAssets, views.html.general.submit(toolname, toolframe, None),"Home", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)
