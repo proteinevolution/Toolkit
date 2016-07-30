@@ -13,21 +13,10 @@ import play.api.mvc.{Controller, Action}
   */
 @Singleton
 final class Backend @Inject()(webJarAssets: WebJarAssets,
-                       val messagesApi: MessagesApi) extends Controller with I18nSupport {
+                              settingsController: Settings,
+                              val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
 
-
-  def getStatic(static : String)  = Action { implicit request =>
-
-    static match {
-
-      case "settings" =>
-        Ok(views.html.backend.settings("foo")).withSession {
-          Session.closeSessionRequest(request, Session.requestSessionID(request))
-        }
-
-    }
-  }
 
   def index = Action { implicit request =>
 
@@ -39,12 +28,13 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
+
   def settings = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
     val user_o : Option[User] = Session.getUser(session_id)
 
-    Ok(views.html.backend.backend(webJarAssets, views.html.backend.settings("foo"),"Backend", user_o)).withSession {
+    Ok(views.html.backend.backend(webJarAssets, views.html.backend.settings(settingsController.clusterMode),"Backend", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)
     }
   }
