@@ -1,6 +1,6 @@
 package models.auth
 
-import models.database.MongoDBUser
+import models.database.User
 import play.api.libs.json.{JsValue, Json}
 
 /**
@@ -13,7 +13,7 @@ trait JSONTemplate {
     * @param user
     * @return
     */
-  def userToJSON (user : MongoDBUser) = {
+  def userToJSON (user : User) = {
     Json.obj("nameLogin" -> user.nameLogin)
   }
 
@@ -23,7 +23,7 @@ trait JSONTemplate {
     * @param userOption
     * @return
     */
-  def authMessage(message : String, success : Boolean, userOption : Option[MongoDBUser]) = {
+  def authMessage(message : String, success : Boolean, userOption : Option[User]) = {
     Json.toJson(userOption match {
       case Some(user) =>
         Json.obj("message"    -> message,
@@ -35,7 +35,7 @@ trait JSONTemplate {
     })
   }
 
-  def LoggedIn(user : MongoDBUser) = {
+  def LoggedIn(user : User) = {
     authMessage("Welcome, " + user.nameLogin + ". \n You are now logged in.",
                 true,
                 Some(user))
@@ -84,7 +84,7 @@ trait JSONTemplate {
                 None)
   }
 
-  def VerificationSuccessful(user : MongoDBUser) = {
+  def VerificationSuccessful(user : User) = {
     authMessage("Your E-Mail Account has been Verified, "+user.nameLogin+".",
                 true,
                 Some(user))

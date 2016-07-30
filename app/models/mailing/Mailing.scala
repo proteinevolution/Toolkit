@@ -1,6 +1,6 @@
 package models.mailing
 
-import models.database.MongoDBUser
+import models.database.User
 
 /**
   * Created by astephens on 24.05.16.
@@ -12,9 +12,9 @@ sealed trait MailTemplate {
   // Subject of the Email
   def subject = "Generic Information"
   // Text version of the Email
-  def bodyText (user : MongoDBUser) : String
+  def bodyText (user : User) : String
   // HTML version of the Email
-  def bodyHtml (user : MongoDBUser) : String
+  def bodyHtml (user : User) : String
 
   def bodyHtmlTemplate(subject : String, content : String) =
       s"""
@@ -30,7 +30,7 @@ sealed trait MailTemplate {
 class NewUserWelcomeMail(token : String) extends MailTemplate {
   override def subject = "Bioinformatics Toolkit - Verification"
 
-  def bodyText (user : MongoDBUser) = {
+  def bodyText (user : User) = {
     s"""Welcome ${user.nameLogin},
        |Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
        |To do this, visit
@@ -39,7 +39,7 @@ class NewUserWelcomeMail(token : String) extends MailTemplate {
      """.stripMargin
   }
 
-  def bodyHtml(user : MongoDBUser) = {
+  def bodyHtml(user : User) = {
     super.bodyHtmlTemplate(
       s"""Welcome ${user.nameLogin},""".stripMargin,
       s"""Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
