@@ -19,7 +19,7 @@ import play.api.mvc.{Action, Controller}
   */
 object Tool {
 
-  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft, Reformatb, Clans) // list of all added tools
+  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft, Reformatb, Clans, HHpred) // list of all added tools
 
 
   /** getToolModel
@@ -66,6 +66,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         case "alnviz" => Alnviz.inputForm
         case "tcoffee" => Tcoffee.inputForm
         case "hmmer3" => Hmmer3.inputForm
+        case "hhpred" => HHpred.inputForm
         case "psiblast" => Psiblast.inputForm
         case "mafft" => Mafft.inputForm
         case "reformatb" => Reformatb.inputForm // cluster version of reformat
