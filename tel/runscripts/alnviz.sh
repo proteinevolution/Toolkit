@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 #% alignment : Alignment
 
 trap 'kill $(jobs -p)' EXIT
