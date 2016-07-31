@@ -46,9 +46,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   // TODO All paths to Config
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
   val runscriptPath = s"TEL${SEPARATOR}runscripts$SEPARATOR"
-  val bioprogsPath = s"${ConfigFactory.load().getString("bioprogs_path")}$SEPARATOR"
-  val databasesPath = s"${ConfigFactory.load().getString("databases_path")}$SEPARATOR"
-
 
   // Keeps track of states of Job // TODO Temporary, will be replaced by database
   val jobStates = new collection.mutable.HashMap[Int, JobState.JobState]
