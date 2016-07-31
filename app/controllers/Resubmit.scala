@@ -13,6 +13,6 @@ class Resubmit  @Inject() (webJarAssets: WebJarAssets,
                            val messagesApi: MessagesApi) extends Controller with Forwarding {
 
 
-  val wja = webJarAssets
+  override def wja = webJarAssets
 
 }
