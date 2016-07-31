@@ -30,10 +30,9 @@ object Psiblast extends ToolModel {
       "standarddb" -> text
     )
   )
+  // TODO Move to TEL
   val parameterValues = Map(
     "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
     "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
-
-
 }
