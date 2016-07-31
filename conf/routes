@@ -65,7 +65,7 @@ POST        /tools/form/:toolname                          @controllers.Applicat
 
 
 # Submit Route
-POST        /tools/:toolname                               @controllers.Tool.submit(toolname : String, start : Boolean, jobID: Option[Int])
+POST        /tools/:toolname                               @controllers.Tool.submit(toolname : String, start : Boolean, jobID: Option[String])
 
 
 # Interaction with Jobs
