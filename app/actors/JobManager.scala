@@ -20,7 +20,7 @@ import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 import play.api.libs.json.Json
-import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.FailoverStrategy
 
 /**
@@ -30,13 +30,13 @@ import reactivemongo.api.FailoverStrategy
 final class JobManager @Inject() (val messagesApi: MessagesApi,
                                   val reactiveMongoApi: ReactiveMongoApi,
                                   implicit val materializer: akka.stream.Materializer)
-  extends Actor with ActorLogging with MongoController with ReactiveMongoComponents with Constants with ExitCodes {
+  extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes {
 
   import JobManager._
 
 
   // TODO Get the collection name from the config, Currently only the default Failover strategy is used
-  var jobBSONCollection = database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
+  var jobBSONCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
   jobBSONCollection.onFailure { case t => throw t }
 
 
@@ -315,7 +315,7 @@ object JobManager {
 
   // Prepare Job with new parameters or create new job with specified parameters for the given tool
   case class Prepare(userID : String,
-                     jobID: Option[Int],
+                     jobID: Option[String],
                      toolname : String,
                      params : Map[String, String],
                      start : Boolean)

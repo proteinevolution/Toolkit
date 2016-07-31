@@ -4,25 +4,28 @@ import org.joda.time.DateTime
 import org.mindrot.jbcrypt.BCrypt
 
 import play.api.data._
-import play.api.data.Forms.{ text, longNumber, mapping, boolean, optional }
+import play.api.data.Forms.{ text, longNumber, mapping, boolean, email, optional }
 import play.api.data.validation.Constraints.pattern
+import reactivemongo.bson._
 
-case class User(id            : Option[String],
-                nameLogin     : String,
-                password      : String,
-                accountType   : Short,
-                lastLoginDate : Option[DateTime],
-                creationDate  : Option[DateTime],
-                updateDate    : Option[DateTime]) {
+case class User(userID        : Option[BSONObjectID],   // ID of the User
+                nameLogin     : String,                 // Login name of the User
+                password      : String,                 // Password of the User (Hashed)
+                accountType   : Int,                    // User Access level
+                userData      : UserData,               // Personal Data of the User //TODO possibly encrypt?
+                jobs          : List[BSONObjectID],     // List of Jobs the User has
+                dateLastLogin : Option[DateTime],       // Last seen on
+                dateCreated   : Option[DateTime],       // Account creation date
+                dateUpdated   : Option[DateTime]) {     // Account updated on
 
   def checkPassword(plainPassword: String) : Boolean = {
     BCrypt.checkpw(plainPassword, password)
   }
 }
 
-object User {
-  import play.api.libs.json._
+case class Login(nameLogin : String, password : String)
 
+object User {
   // Number of rounds for BCrypt to hash the Password (2^x) TODO Move to the config?
   val LOG_ROUNDS : Int = 10
 
@@ -32,51 +35,40 @@ object User {
   val NAMELOGIN     = "nameLogin"     //              login name field
   val PASSWORD      = "password"      //              password field
   val ACCOUNTTYPE   = "accountType"   //              account type field
+  val USERDATA      = "userData"      //              user data object field
+  val JOBS          = "jobs"          //              job reference pointers field
   val ACCEPTEDTOS   = "acceptToS"     // needed for checking if the TOS was accepted
   val DATELASTLOGIN = "dateLastLogin" // name for the last login field
   val DATECREATED   = "dateCreated"   //              account created on field
   val DATEUPDATED   = "dateUpdated"   //              account data changed on field
 
-
   /**
     * Define how the User object is formatted
     */
-  implicit object UserFormat extends OFormat[User] {
-    override def reads(json: JsValue): JsResult[User] = json match {
-      case obj: JsObject => try {
-        val id            = (obj \ IDDB).asOpt[String]
-        val nameLogin     = (obj \ NAMELOGIN).as[String]
-        val password      = (obj \ PASSWORD).as[String]
-        val accountType   = (obj \ ACCOUNTTYPE).as[Short]
-        val lastLoginDate = (obj \ DATELASTLOGIN).asOpt[Long]
-        val creationDate  = (obj \ DATECREATED).asOpt[Long]
-        val updateDate    = (obj \ DATEUPDATED).asOpt[Long]
+  implicit object Reader extends BSONDocumentReader[User] {
+    override def read(bson: BSONDocument): User = User(
+      userID        = bson.getAs[BSONObjectID](IDDB),
+      nameLogin     = bson.getAs[String](NAMELOGIN).get,
+      password      = bson.getAs[String](PASSWORD).get,
+      accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
+      userData      = bson.getAs[UserData](USERDATA).get,
+      jobs          = bson.getAs[List[BSONObjectID]](JOBS).get,
+      dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => new DateTime(dt.value)),
+      dateCreated   = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
+      dateUpdated   = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)))
+  }
 
-        JsSuccess(
-          User(
-            id,
-            nameLogin,
-            password,
-            accountType,
-            lastLoginDate.map(new DateTime(_)),
-            creationDate.map(new DateTime(_)),
-            updateDate.map(new DateTime(_))))
-
-      } catch {
-        case cause: Throwable => JsError(cause.getMessage)
-      }
-
-      case _ => JsError("expected.jsObject")
-    }
-
-    override def writes(user: User): JsObject = Json.obj(
-      IDDB          -> user.id,
+  implicit object Writer extends BSONDocumentWriter[User] {
+    override def write(user: User): BSONDocument = BSONDocument(
+      IDDB          -> user.userID.getOrElse(BSONObjectID.generate),
       NAMELOGIN     -> user.nameLogin,
       PASSWORD      -> user.password,
       ACCOUNTTYPE   -> user.accountType,
-      DATELASTLOGIN -> user.lastLoginDate.fold(-1L)(_.getMillis),
-      DATECREATED   -> user.creationDate.fold(-1L)(_.getMillis),
-      DATEUPDATED   -> user.updateDate.fold(-1L)(_.getMillis))
+      USERDATA      -> user.userData,
+      JOBS          -> BSONArray(user.jobs),
+      DATELASTLOGIN -> BSONDateTime(user.dateLastLogin.fold(-1L)(_.getMillis)),
+      DATECREATED   -> BSONDateTime(user.dateCreated.fold(-1L)(_.getMillis)),
+      DATEUPDATED   -> BSONDateTime(user.dateUpdated.fold(-1L)(_.getMillis)))
   }
 
   /**
@@ -84,32 +76,43 @@ object User {
     */
   val formSignUp = Form(
     mapping(
-      ID            -> optional(text verifying pattern("""[a-fA-F0-9]{24}""".r, error = "error.objectId")),
-      NAMELOGIN     -> text(6,40),
-      PASSWORD      -> text(8,128),
-      ACCEPTEDTOS   -> boolean,
-      DATELASTLOGIN -> optional(longNumber),
-      DATECREATED   -> optional(longNumber),
-      DATEUPDATED   -> optional(longNumber)) {
-      (id, nameLogin, password, acceptToS, lastLoginDate, creationDate, updateDate) =>
+      NAMELOGIN      -> (text(6,40) verifying pattern("""[^\\"\\(\\)\\[\\]]*""".r, error = "error.objectId")),
+      PASSWORD       -> (text(8,128) verifying pattern("""[^\\"\\(\\)\\[\\]]*""".r, error = "error.objectId")),
+      UserData.EMAIL -> email,
+      ACCEPTEDTOS    -> boolean,
+      DATELASTLOGIN  -> optional(longNumber),
+      DATECREATED    -> optional(longNumber),
+      DATEUPDATED    -> optional(longNumber)) {
+      (nameLogin, password, eMail, acceptToS, dateLastLogin, dateCreated, dateUpdated) =>
+        val newBSONID : Option[BSONObjectID] = Some(BSONObjectID.generate)
         User(
-          id,
-          nameLogin,
-          BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
-          if (acceptToS) 1 else 0,
-          lastLoginDate.map(new DateTime(_)),
-          creationDate.map(new DateTime(_)),
-          updateDate.map(new DateTime(_))
+          userID        = newBSONID,
+          nameLogin     = nameLogin,
+          password      = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
+          accountType   = if (acceptToS) 1 else 0,
+          userData      = UserData(None,
+                                   None,
+                                   eMail = eMail,
+                                   None,
+                                   None,
+                                   None,
+                                   None,
+                                   None,
+                                   None),
+          jobs          = Nil,
+          dateLastLogin = dateLastLogin.map(new DateTime(_)),
+          dateCreated   = dateCreated.map(new DateTime(_)),
+          dateUpdated   = dateUpdated.map(new DateTime(_))
         )
     } { user =>
       Some((
-        user.id,
         user.nameLogin,
         "",
+        user.userData.eMail,
         true,
-        user.lastLoginDate.map(_.getMillis),
-        user.creationDate.map(_.getMillis),
-        user.updateDate.map(_.getMillis)
+        user.dateLastLogin.map(_.getMillis),
+        user.dateCreated.map(_.getMillis),
+        user.dateUpdated.map(_.getMillis)
         ))
     }
   )
@@ -119,30 +122,17 @@ object User {
     */
   val formSignIn = Form(
     mapping(
-      ID            -> optional(text verifying pattern("""[a-fA-F0-9]{24}""".r, error = "error.objectId")),
       NAMELOGIN     -> text(6,40),
-      PASSWORD      -> text(8,128),
-      DATELASTLOGIN -> optional(longNumber),
-      DATECREATED   -> optional(longNumber),
-      DATEUPDATED   -> optional(longNumber)) {
-      (id, nameLogin, password, lastLoginDate, creationDate, updateDate) =>
-        User(
-          id,
+      PASSWORD      -> text(8,128)) {
+      (nameLogin, password) =>
+        Login(
           nameLogin,
-          password,
-          -1,
-          lastLoginDate.map(new DateTime(_)),
-          creationDate.map(new DateTime(_)),
-          updateDate.map(new DateTime(_))
+          password
         )
     } { user =>
       Some((
-        user.id,
         user.nameLogin,
-        "",
-        user.lastLoginDate.map(_.getMillis),
-        user.creationDate.map(_.getMillis),
-        user.updateDate.map(_.getMillis)
+        ""
         ))
     }
   )

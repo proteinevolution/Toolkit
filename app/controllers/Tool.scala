@@ -46,7 +46,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   implicit val timeout = Timeout(5.seconds)
 
   // submit file size is now restricted to 10 MB
-  def submit(toolname: String, start : Boolean, jobID : Option[Int]) = Action { implicit request =>
+  def submit(toolname: String, start : Boolean, jobID : Option[String]) = Action { implicit request =>
 
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
