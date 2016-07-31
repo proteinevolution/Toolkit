@@ -21,7 +21,7 @@ object HHpred extends ToolModel {
     tuple(
       "alignment" -> nonEmptyText,
       "alignment_format" -> text,
-      "hhmdb" -> text
+      "hmmdb" -> text
     )
   )
 }
