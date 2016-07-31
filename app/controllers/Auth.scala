@@ -80,7 +80,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
                   // create a modifier document to change the last login date
                   val selector = BSONDocument(User.IDDB -> user.userID)
-                  val modifier = BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> new DateTime().getMillis))
+                  val modifier = BSONDocument("$set" -> BSONDocument(
+                                     User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
                   userCollection.flatMap(_.update(selector, modifier))
                   Ok(LoggedIn(user))
                 }
