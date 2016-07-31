@@ -2,6 +2,9 @@
 
 trap 'kill $(jobs -p)' EXIT
 
+#% alignment : STO
+
+
 perl %BIOPROGS/helpers/reformat.pl -i=%alignment_format.content \
                                    -o=sto \
                                    -f=%alignment.path \
