@@ -18,7 +18,7 @@ import play.twirl.api.Html
 private[controllers] trait Forwarding extends Controller with I18nSupport {
 
 
-  protected val wja : WebJarAssets
+  protected def wja : WebJarAssets
 
   def forward(toolname: String, output: String) = Action { implicit request =>
 

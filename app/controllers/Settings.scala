@@ -26,7 +26,9 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
 
 
 
-  val settingsCollection: BSONCollection = db.collection("settings")
+
+
+  val clusterSettings: BSONCollection = db.collection("settings")
   val toolSettings: BSONCollection = db.collection("toolsettings")
 
   /**
@@ -44,7 +46,7 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
       "created_on" -> new Date(),
       "update_on" -> new Date())
 
-    val future = settingsCollection.insert(document)
+    val future = clusterSettings.insert(document)
 
 
     future.onComplete {

@@ -62,6 +62,10 @@ class Service @Inject() (webJarAssets: WebJarAssets,
           Session.closeSessionRequest(request, Session.requestSessionID(request))
         }
 
+      case _ =>
+
+        Ok(views.html.errors.pagenotfound()) //Bug: Mithril only accepts 200 to re-route
+
     }
   }
 
