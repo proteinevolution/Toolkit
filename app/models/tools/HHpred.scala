@@ -20,8 +20,8 @@ object HHpred extends ToolModel {
   val inputForm = Form(
     tuple(
       "alignment" -> nonEmptyText,
-      "alignment_format" -> text
+      "alignment_format" -> text,
+      "hmmdb" -> text
     )
   )
-
 }
