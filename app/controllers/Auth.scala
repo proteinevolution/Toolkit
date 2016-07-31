@@ -1,5 +1,5 @@
 package controllers
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import javax.inject.{Singleton, Inject}
 
 import models.database.User
@@ -9,11 +9,13 @@ import org.joda.time.DateTime
 import play.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import play.api.libs.json._
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents, MongoController}
-import reactivemongo.api.gridfs.ReadFile
-import reactivemongo.play.json._
-import reactivemongo.play.json.collection.JSONCollection
+
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import reactivemongo.api.FailoverStrategy
+import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.bson._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 
@@ -32,16 +34,9 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                                        with backendLogin
                                        with ReactiveMongoComponents {
 
-  import java.util.UUID
-
-  type JSONReadFile = ReadFile[JSONSerializationPack.type, JsString]
 
   // get the collection 'users'
-  def userCollection = reactiveMongoApi.database.map(_.collection[JSONCollection]("users"))
-
-  // get the collection 'userData'
-  def userDataCollection = reactiveMongoApi.database.map(_.collection[JSONCollection]("userData"))
-
+  def userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
 
   /**
     * Returns the sign in form
@@ -73,7 +68,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
       // if no error, then insert the user to the collection
       userForm => {
-        def futureUser = userCollection.flatMap(_.find(Json.obj(User.NAMELOGIN -> userForm.nameLogin)).one[User])
+        def futureUser = userCollection.flatMap(_.find(BSONDocument(User.NAMELOGIN -> userForm.nameLogin)).one[User])
         for {
           maybeUser <- futureUser
           resultPage <- maybeUser.map { user =>
@@ -84,8 +79,9 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                   Session.addUser(sessionID, user)
 
                   // create a modifier document to change the last login date
-                  val modifier = Json.obj("$set" -> Json.obj(User.DATELASTLOGIN -> new DateTime().getMillis))
-                  userCollection.flatMap(_.update(Json.obj(User.IDDB -> user.id), modifier))
+                  val selector = BSONDocument(User.IDDB -> user.userID)
+                  val modifier = BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> new DateTime().getMillis))
+                  userCollection.flatMap(_.update(selector, modifier))
                   Ok(LoggedIn(user))
                 }
               } else {
@@ -223,7 +219,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
       // if no error, then insert the user to the collection
       user =>
-        if (user.accountType == 0) {
+        if (user.accountType < 1) {
           Future.successful{
             Logger.info(" but they did not accept the ToS!")
             Ok(MustAcceptToS())
@@ -239,10 +235,9 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
               // Create the database entry
               val currentDateTime = Some(new DateTime())
               val newUser = user.copy(
-                id            = user.id.orElse(Some(UUID.randomUUID().toString)),
-                lastLoginDate = currentDateTime,
-                creationDate  = currentDateTime,
-                updateDate    = currentDateTime)
+                dateLastLogin = currentDateTime,
+                dateCreated   = currentDateTime,
+                dateUpdated   = currentDateTime)
               userCollection.flatMap(_.insert(newUser)).map(_ => {
               Logger.info(" and they succeeded!")
               Session.addUser(sessionID, user)

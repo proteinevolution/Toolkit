@@ -1,28 +1,21 @@
 package models.database
 
 import org.joda.time.DateTime
-import play.api.data._
-import play.api.data.Forms._
-
-import reactivemongo.bson.{
-
-BSONDateTime, BSONDocument, BSONObjectID
-
-}
+import reactivemongo.bson._
 
 /** ?
   *
-  * @param main_id
-  * @param job_type
-  * @param parent_id
-  * @param job_id
-  * @param user_id
+  * @param mainID
+  * @param jobType
+  * @param parentID
+  * @param jobID
+  * @param userID
   * @param status
   * @param tool
-  * @param stat_id
-  * @param creationDate
-  * @param updateDate
-  * @param viewDate
+  * @param statID
+  * @param dateCreated
+  * @param dateUpdated
+  * @param dateViewed
   *
   * Maps MySQL schema with some fields renamed (e.g. type is a reserved word in Scala)
   * +------------+------------------+------+-----+-------------------+-----------------------------+
@@ -45,106 +38,67 @@ BSONDateTime, BSONDocument, BSONObjectID
   */
 
 
-case class Job(
-                    main_id: Option[Int],
-                    job_type: String,
-                    parent_id: String,
-                    job_id: String,
-                    user_id: String,
-                    status: String,
-                    tool: String,
-                    stat_id: String,
-                    creationDate: Option[DateTime],
-                    updateDate: Option[DateTime],
-                    viewDate: Option[DateTime])
-
+case class Job(mainID      : Option[BSONObjectID],    // ID of the Job in the System
+               jobType     : String,                  // Type of job
+               parentID    : BSONObjectID,            // ID of the Parent Job
+               jobID       : String,                  // User visible ID of the Job
+               userID      : BSONObjectID,            // ID referencing the Owner of the Job
+               status      : String,                  // Status of the Job
+               tool        : String,                  // Tool used for this Job
+               statID      : String,                  //
+               dateCreated : Option[DateTime],        // Creation time of the Job
+               dateUpdated : Option[DateTime],        // Last Updated on
+               dateViewed  : Option[DateTime])        // Last Viewed on
 
 object Job {
-  import play.api.libs.json._
+  // Constants for the JSON object identifiers
+  val ID            = "id"            // name for the ID in scala
+  val IDDB          = "_id"           //              ID in MongoDB
+  val JOBTYPE       = "jobType"       //              Type of the Job
+  val PARENTID      = "parentID"      //              ID of the parent job
+  val JOBID         = "jobID"         //              ID for the job
+  val USERID        = "userID"        //              ID of the job owner
+  val STATUS        = "status"        //              Status of the job field
+  val TOOL          = "tool"          //              name of the tool field
+  val STATID        = "statID"        //              ID of the stats for this Job
+  val DATECREATED   = "dateCreated"   //              created on field
+  val DATEUPDATED   = "dateUpdated"   //              changed on field
+  val DATEVIEWED    = "dateViewed"    //              last view on field
 
-
-  implicit object JobWrites extends OWrites[Job] {
-    def writes(job: Job): JsObject = Json.obj(
-      "main_id" -> job.main_id,
-      "job_type" -> job.job_type,
-      "parent_id" -> job.parent_id,
-      "job_id" -> job.job_id,
-      "user_id" -> job.user_id,
-      "status" -> job.status,
-      "tool" -> job.tool,
-      "stat_id" -> job.stat_id,
-      "creationDate" -> job.creationDate.fold(-1L)(_.getMillis),
-      "updateDate" -> job.updateDate.fold(-1L)(_.getMillis),
-      "viewDate" -> job.viewDate.fold(-1L)(_.getMillis))
-  }
-
-  implicit object JobReads extends Reads[Job] {
-    def reads(json: JsValue): JsResult[Job] = json match {
-      case obj: JsObject => try {
-        val main_id = (obj \ "main_id").asOpt[Int]
-        val job_type = (obj \ "job_type").as[String]
-        val parent_id = (obj \ "user_id").as[String]
-        val job_id = (obj \ "job_id").as[String]
-        val user_id = (obj \ "user_id").as[String]
-        val status = (obj \ "status").as[String]
-        val tool = (obj \ "tool").as[String]
-        val stat_id = (obj \ "stat_id").as[String]
-        val creationDate = (obj \ "creationDate").asOpt[Long]
-        val updateDate = (obj \ "updateDate").asOpt[Long]
-        val viewDate = (obj \ "viewDate").asOpt[Long]
-
-        JsSuccess(Job(main_id, job_type, parent_id, job_id,
-          user_id, status, tool, stat_id,
-          creationDate.map(new DateTime(_)),
-          updateDate.map(new DateTime(_)),
-          viewDate.map(new DateTime(_))))
-
-      } catch {
-        case cause: Throwable => JsError(cause.getMessage)
-      }
-
-      case _ => JsError("expected.jsobject")
+  /**
+    * Object containing the writer for the Class
+    */
+  implicit object Reader extends BSONDocumentReader[Job] {
+    def read(bson : BSONDocument): Job = {
+      Job(mainID      = bson.getAs[BSONObjectID](IDDB),
+          jobType     = bson.getAs[String](JOBTYPE).get,
+          parentID    = bson.getAs[BSONObjectID](PARENTID).get,
+          jobID       = bson.getAs[String](JOBID).get,
+          userID      = bson.getAs[BSONObjectID](USERID).get,
+          status      = bson.getAs[String](STATUS).get,
+          tool        = bson.getAs[String](TOOL).get,
+          statID      = bson.getAs[String](STATID).get,
+          dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
+          dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)),
+          dateViewed  = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => new DateTime(dt.value)))
     }
   }
 
-  val form = Form(
-    mapping(
-      "main_id" -> optional(number),
-      "job_type" -> text,
-      "parent_id" -> text,
-      "job_id" -> text,
-      "user_id" -> text,
-      "status" -> text,
-      "tool" -> text,
-      "stat_id" -> text,
-      "creationDate" -> optional(longNumber),
-      "updateDate" -> optional(longNumber),
-      "viewDate" -> optional(longNumber)) {
-      (main_id, job_type, parent_id, job_id, user_id, status, tool, stat_id, creationDate, updateDate, viewDate) =>
-        Job(
-          main_id,
-          job_type,
-          parent_id,
-          job_id,
-          user_id,
-          status,
-          tool,
-          stat_id,
-          creationDate.map(new DateTime(_)),
-          updateDate.map(new DateTime(_)),
-          viewDate.map(new DateTime(_)))
-    } { job =>
-      Some(
-        (job.main_id,
-          job.job_type,
-          job.parent_id,
-          job.job_id,
-          job.user_id,
-          job.status,
-          job.tool,
-          job.stat_id,
-          job.creationDate.map(_.getMillis),
-          job.updateDate.map(_.getMillis),
-          job.viewDate.map(_.getMillis)))
-    })
+  /**
+    * Object containing the writer for the Class
+    */
+  implicit object Writer extends BSONDocumentWriter[Job] {
+    def write(job: Job) : BSONDocument = BSONDocument(
+      ID          -> job.mainID,
+      JOBTYPE     -> job.jobType,
+      PARENTID    -> job.parentID,
+      JOBID       -> job.jobID,
+      USERID      -> job.userID,
+      STATUS      -> job.status,
+      TOOL        -> job.tool,
+      STATID      -> job.statID,
+      DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
+      DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
+      DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis)))
+  }
 }
