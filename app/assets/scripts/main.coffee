@@ -28,14 +28,21 @@ Jobs =
 
 
 
-Static =
+StaticRoute =
   controller: ->
     { static: m.route.param('static') }
   view: (controller) ->
     $.ajax(
       type: "GET"
       url: "/static/get/" + controller.static ).done (data) ->
-        $('#content').empty().prepend data
+        if [
+          'sitemap'
+          'reformat'
+          'seq2gi'
+        ].indexOf(controller['static']) >= 0
+          $('#content').empty().prepend data
+        else
+          $('body').empty().prepend data
         $("html, body").animate({ scrollTop: 0 }, "fast")
 
 
@@ -44,4 +51,4 @@ Static =
 m.route.mode = 'hash'
 
 #define a route
-m.route document.getElementById('content'), '/', { '/tools/:toolname': Tools,'/jobs/:jobid' : Jobs, '/:static' : Static }
+m.route document.getElementById('content'), '/', { '/tools/:toolname': Tools,'/jobs/:jobid' : Jobs, '/:static' : StaticRoute }
