@@ -53,12 +53,12 @@ class Service @Inject() (webJarAssets: WebJarAssets,
         val session_id = Session.requestSessionID(request)
         val user_o : Option[User] = Session.getUser(session_id)
 
-        Ok(views.html.reformat.form(webJarAssets,"Utils", user_o)).withSession {
+        Ok(views.html.tools.forms.reformat(webJarAssets,"Utils", user_o)).withSession {
           Session.closeSessionRequest(request, session_id)
         }
         
       case "seq2gi" =>
-        Ok(views.html.seq2gi.form()).withSession {
+        Ok(views.html.tools.forms.seq2gi()).withSession {
           Session.closeSessionRequest(request, Session.requestSessionID(request))
         }
 
@@ -151,10 +151,10 @@ class Service @Inject() (webJarAssets: WebJarAssets,
           (jobManager ? Read(sessionID, jobID)).mapTo[Map[String, String]].map { res =>
 
             val toolframe = toolname match {
-              case "alnviz" => views.html.alnviz.form(Alnviz.inputForm.bind(res))
-              case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm.bind(res))
-              case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm.bind(res))
-              case "psiblast" => views.html.psiblast.form(Psiblast.inputForm.bind(res))
+              case "alnviz" => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(res))
+              case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(res))
+              case "hmmer3" => views.html.tools.forms.hmmer3(Hmmer3.inputForm.bind(res))
+              case "psiblast" => views.html.tools.forms.psiblast(Psiblast.inputForm.bind(res))
             }
 
             Ok(views.html.general.submit(toolname, toolframe, Some(jobID))).withSession {

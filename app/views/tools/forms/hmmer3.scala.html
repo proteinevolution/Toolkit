@@ -4,7 +4,7 @@
 @(inputForm: Form[(String, String, String)])(implicit messages: Messages, request: RequestHeader)
 
 
-<script src='@routes.Assets.at("javascripts/alnviz.js")' type="text/javascript" ></script>
+<script src='@routes.Assets.at("../../../../public/javascripts/alnviz.js")' type="text/javascript" ></script>
 @helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 50,
   '_label -> "",
   'placeholder -> "Enter multiple sequence alignment",
