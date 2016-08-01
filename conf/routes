@@ -21,6 +21,7 @@ POST        /settings/clustermode                          @controllers.Settings
 POST        /settings/memset                               @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
 
 GET         /@/backend/settings                            @controllers.Backend.settings
+GET         /@/backend/edit                                @controllers.Backend.edit
 
 
 # Websocket
