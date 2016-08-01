@@ -118,14 +118,18 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   //TODO allow direct access to the backend route if user is already authenticated as admin
 
-  if(!request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login")) {
+  if(request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login") || request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")) {
 
-  Status(404)(views.html.errors.pagenotfound())
+    Ok(views.html.backend.backend(webJarAssets,views.html.backend.backend_maincontent(), "Backend", user_o)).withSession {
+      Session.closeSessionRequest(request, session_id)
+    }
 
-  } else {
-      Ok(views.html.backend.backend(webJarAssets,views.html.backend.backend_maincontent(), "Backend", user_o)).withSession {
-        Session.closeSessionRequest(request, session_id)
-      }
+  }
+
+  else {
+
+    Status(404)(views.html.errors.pagenotfound())
+
     }
   }
 
