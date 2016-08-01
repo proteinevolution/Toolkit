@@ -58,6 +58,7 @@ POST        /signin/submit/                                @controllers.Auth.sig
 GET         /signup                                        @controllers.Auth.signUp()
 POST        /signup/submit/                                @controllers.Auth.signUpSubmit()
 GET         /signout                                       @controllers.Auth.signOut()
+GET         /logout                                        @controllers.Auth.logout()
 GET         /miniprofile                                   @controllers.Auth.miniProfile()
 GET         /verification/:name_login/:token               @controllers.Auth.verification(name_login : String, token : String)
 

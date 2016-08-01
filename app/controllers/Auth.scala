@@ -286,6 +286,13 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     }
   }
 
+
+  def logout() = Action {
+    Redirect(routes.Application.index()).withNewSession.flashing(
+      "success" -> "You've been logged out"
+    )
+  }
+
   /**
     * Verifies a Users Email
     *
