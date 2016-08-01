@@ -107,21 +107,20 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     *  Return the Input form of the corresponding tool
     */
   // TODO Replace via reflection
-  def form(toolname: String) = Action { implicit request =>
-
-    val toolframe : Html = toolname match {
-      case "alnviz" => views.html.alnviz.form(Alnviz.inputForm)
-      case "tcoffee" => views.html.tcoffee.form(Tcoffee.inputForm)
-      case "hmmer3" => views.html.hmmer3.form(Hmmer3.inputForm)
-      case "psiblast" => views.html.psiblast.form(Psiblast.inputForm)
-      case "mafft" => views.html.mafft.form(Mafft.inputForm)
-      case "csblast" => views.html.csblast.form(Csblast.inputForm)
-      case "hhpred" => views.html.hhpred.form(HHpred.inputForm)
-      case "reformatb" => views.html.reformatb.form(Reformatb.inputForm)
-      case "clans" => views.html.clans.form(Clans.inputForm)
+  def form(toolName: String) = Action { implicit request =>
+    val toolFrame = toolName match {
+      case "alnviz"     => views.html.tools.forms.alnviz(Alnviz.inputForm)
+      case "tcoffee"    => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
+      case "hmmer3"     => views.html.tools.forms.hmmer3(Hmmer3.inputForm)
+      case "psiblast"   => views.html.tools.forms.psiblast(Psiblast.inputForm.fill(("", "", "", 1, 10, 11, 1, 200, "")))
+      case "mafft"      => views.html.tools.forms.mafft(Mafft.inputForm)
+      case "csblast"    => views.html.tools.forms.csblast(Csblast.inputForm)
+      case "hhpred"     => views.html.tools.forms.hhpred(HHpred.inputForm)
+      case "reformatb"  => views.html.tools.forms.reformatb(Reformatb.inputForm)
+      case "clans"      => views.html.tools.forms.clans(Clans.inputForm)
     }
 
-    Ok(views.html.general.submit(toolname, toolframe, None)).withSession {
+    Ok(views.html.general.submit(toolName, toolFrame, None)).withSession {
 
       Session.closeSessionRequest(request, Session.requestSessionID(request)) // Send Session Cookie
     }
