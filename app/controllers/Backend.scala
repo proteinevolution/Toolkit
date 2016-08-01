@@ -29,15 +29,24 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
   }
 
 
+
   def settings = Action { implicit request =>
 
     val session_id = Session.requestSessionID(request)
     val user_o : Option[User] = Session.getUser(session_id)
 
-    Ok(views.html.backend.backend(webJarAssets, views.html.backend.settings(settingsController.clusterMode),"Backend", user_o)).withSession {
-      Session.closeSessionRequest(request, session_id)
-    }
-  }
+    if(request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")) {
 
+      Ok(views.html.backend.backend(webJarAssets, views.html.backend.settings(settingsController.clusterMode),"Backend", user_o)).withSession {
+        Session.closeSessionRequest(request, session_id)
+      }
+
+    } else {
+
+      Status(404)(views.html.errors.pagenotfound())
+
+    }
+
+  }
 
 }
