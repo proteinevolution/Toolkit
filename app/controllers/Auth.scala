@@ -135,9 +135,9 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   var LoginCounter = 0
 
-  def backendLogin () = Action { implicit request =>
+  def backendLogin () = Action { implicit ctx =>
 
-    val sessionID = Session.requestSessionID(request)
+    val sessionID = Session.requestSessionID(ctx)
     Logger.info(sessionID + " wants to Sign in!")
 
     // Evaluate the Form
@@ -158,10 +158,10 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
         }
 
-        val sessionID = Session.requestSessionID(request)
+        val sessionID = Session.requestSessionID(ctx)
         val user_o : Option[User] = Session.getUser(sessionID)
         Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
-          Session.closeSessionRequest(request, sessionID)
+          Session.closeSessionRequest(ctx, sessionID)
         }
       },
       _ => {
@@ -185,10 +185,10 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
           }
 
-          val sessionID = Session.requestSessionID(request)
+          val sessionID = Session.requestSessionID(ctx)
           val user_o : Option[User] = Session.getUser(sessionID)
           Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
-            Session.closeSessionRequest(request, sessionID)
+            Session.closeSessionRequest(ctx, sessionID)
           }
 
         }
