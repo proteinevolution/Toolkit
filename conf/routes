@@ -60,6 +60,9 @@ POST        /signup/submit/                                @controllers.Auth.sig
 GET         /signout                                       @controllers.Auth.signOut()
 GET         /logout                                        @controllers.Auth.logout()
 GET         /miniprofile                                   @controllers.Auth.miniProfile()
+GET         /profile                                       @controllers.Auth.profile()
+POST        /profile/submit/userData/                      @controllers.Auth.profileSubmit()
+POST        /profile/submit/password/                      @controllers.Auth.profileSubmit()
 GET         /verification/:name_login/:token               @controllers.Auth.verification(name_login : String, token : String)
 
 # Get the input form of the tools

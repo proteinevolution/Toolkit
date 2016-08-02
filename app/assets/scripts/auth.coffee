@@ -56,7 +56,6 @@ $ ->
   # checks if the process failed and displays the error message above the form
   # or puts the miniprofile into view
   checkAuthResponse = (json) ->
-    # TODO add a closeable notice for the message?
     if (json.successful)
       $("#auth-link").html(json.user.nameLogin)
       $("#auth-dropdown").html(json.message)
@@ -65,10 +64,17 @@ $ ->
         method: 'GET').done (data) ->
           $("#auth-dropdown").html(data)
     else
-      # TODO add the error message to the view
+      # add the error message to the view
       $("#auth-alert").html(json.message)
       $("#auth-alert").fadeIn()
 
+  # Remove message by clicking on it
   $("#auth-alert").on 'click', (event) ->
     $("#auth-alert").fadeOut()
 
+  # Open the modal with the profile when the profile link is clicked
+  $("#profile-open").on 'click', (event) ->
+    $.ajax(
+      url: "/profile"
+      method: 'GET').done (data) ->
+        $("#modal").html(data).foundation('open')

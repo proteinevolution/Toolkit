@@ -89,4 +89,22 @@ trait JSONTemplate {
                 true,
                 Some(user))
   }
+
+  def NotLoggedIn() = {
+    authMessage("You are not logged in.",
+                false,
+                None)
+  }
+
+  def FormError() = {
+    authMessage("There was a Form error.",
+                false,
+                None)
+  }
+
+  def EditSuccessful(user : User) = {
+    authMessage("Changes have been saved.",
+                true,
+                Some(user))
+  }
 }
