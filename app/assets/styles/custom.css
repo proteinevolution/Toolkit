@@ -375,39 +375,13 @@ hr {
 
 
 
-@media only screen and (min-width : 1310px) {
-
-    .keysearch{
-        float: right;
-        margin-top: 30px;
-        margin-right: 100px;
-        width: 60%;
-        display:inline;
-
-    }
-
-    }
-
-@media only screen and (max-width : 1310px) {
-
-    .keysearch{
-        float: right;
-        margin-top: 30px;
-        margin-right: 100px;
-        width: 60%;
-        display:none;
-
-    }
-
-}
-
 
 .trafficbar {
 
-    position: relative;
     z-index: 99;
+    margin-right: 10em;
     margin-bottom: 0px;
-    height: 6px;
+    height: 0.75em;
     width: 100%;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
