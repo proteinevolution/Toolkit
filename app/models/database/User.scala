@@ -8,7 +8,7 @@ import play.api.data.Forms.{ text, longNumber, mapping, boolean, email, optional
 import play.api.data.validation.Constraints.pattern
 import reactivemongo.bson._
 
-case class User(userID        : Option[BSONObjectID],   // ID of the User
+case class User(userID        : BSONObjectID,           // ID of the User
                 nameLogin     : String,                 // Login name of the User
                 password      : String,                 // Password of the User (Hashed)
                 accountType   : Int,                    // User Access level
@@ -47,7 +47,7 @@ object User {
     */
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User = User(
-      userID        = bson.getAs[BSONObjectID](IDDB),
+      userID        = bson.getAs[BSONObjectID](IDDB).get,
       nameLogin     = bson.getAs[String](NAMELOGIN).get,
       password      = bson.getAs[String](PASSWORD).get,
       accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
@@ -60,7 +60,7 @@ object User {
 
   implicit object Writer extends BSONDocumentWriter[User] {
     override def write(user: User): BSONDocument = BSONDocument(
-      IDDB          -> user.userID.getOrElse(BSONObjectID.generate),
+      IDDB          -> user.userID,
       NAMELOGIN     -> user.nameLogin,
       PASSWORD      -> user.password,
       ACCOUNTTYPE   -> user.accountType,
@@ -84,9 +84,8 @@ object User {
       DATECREATED    -> optional(longNumber),
       DATEUPDATED    -> optional(longNumber)) {
       (nameLogin, password, eMail, acceptToS, dateLastLogin, dateCreated, dateUpdated) =>
-        val newBSONID : Option[BSONObjectID] = Some(BSONObjectID.generate)
         User(
-          userID        = newBSONID,
+          userID        = BSONObjectID.generate,
           nameLogin     = nameLogin,
           password      = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
           accountType   = if (acceptToS) 1 else 0,
@@ -100,9 +99,9 @@ object User {
                                    None,
                                    None),
           jobs          = Nil,
-          dateLastLogin = dateLastLogin.map(new DateTime(_)),
-          dateCreated   = dateCreated.map(new DateTime(_)),
-          dateUpdated   = dateUpdated.map(new DateTime(_))
+          dateLastLogin = Some(new DateTime()),
+          dateCreated   = Some(new DateTime()),
+          dateUpdated   = Some(new DateTime())
         )
     } { user =>
       Some((
