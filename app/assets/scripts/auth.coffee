@@ -67,5 +67,8 @@ $ ->
     else
       # TODO add the error message to the view
       $("#auth-alert").html(json.message)
-      $("#auth-alert").foundation('reveal', 'open')
+      $("#auth-alert").fadeIn()
+
+  $("#auth-alert").on 'click', (event) ->
+    $("#auth-alert").fadeOut()
 

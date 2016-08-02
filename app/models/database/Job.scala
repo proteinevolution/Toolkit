@@ -38,7 +38,7 @@ import reactivemongo.bson._
   */
 
 
-case class Job(mainID      : Option[BSONObjectID],    // ID of the Job in the System
+case class Job(mainID      : BSONObjectID,            // ID of the Job in the System
                jobType     : String,                  // Type of job
                parentID    : BSONObjectID,            // ID of the Parent Job
                jobID       : String,                  // User visible ID of the Job
@@ -70,7 +70,7 @@ object Job {
     */
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson : BSONDocument): Job = {
-      Job(mainID      = bson.getAs[BSONObjectID](IDDB),
+      Job(mainID      = bson.getAs[BSONObjectID](IDDB).get,
           jobType     = bson.getAs[String](JOBTYPE).get,
           parentID    = bson.getAs[BSONObjectID](PARENTID).get,
           jobID       = bson.getAs[String](JOBID).get,

@@ -18,6 +18,7 @@ import reactivemongo.bson._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
   * Controller for Authentication interactions
@@ -70,33 +71,35 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
       userForm => {
         def futureUser = userCollection.flatMap(_.find(BSONDocument(User.NAMELOGIN -> userForm.nameLogin)).one[User])
         for {
+        // Get the user option into the present
           maybeUser <- futureUser
           resultPage <- maybeUser.map { user =>
-              if (user.checkPassword(userForm.password)) {
-                Future.successful{
-                  Logger.info(" and they succeded!")
-                  // add the user to the current sessions
-                  Session.addUser(sessionID, user)
+            // Check the password
+            if (user.checkPassword(userForm.password)) {
+              Future.successful{
+                // add the user to the current sessions
+                Session.addUser(sessionID, user)
 
-                  // create a modifier document to change the last login date
-                  val selector = BSONDocument(User.IDDB -> user.userID)
-                  val modifier = BSONDocument("$set" -> BSONDocument(
-                                     User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
-                  userCollection.flatMap(_.update(selector, modifier))
-                  Ok(LoggedIn(user))
-                }
-              } else {
-                Future.successful{
-                  Logger.info(" but they had the wrong password.")
-                  Ok(LoginIncorrect())
-                }
+                // create a modifier document to change the last login date in the Database
+                val selector = BSONDocument(User.IDDB -> user.userID)
+                val modifier = BSONDocument("$set" -> BSONDocument(
+                  User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
+                userCollection.flatMap(_.update(selector, modifier))
+                // Everything is ok, let the user know that they are logged in now
+                Ok(LoggedIn(user))
               }
+            } else {
+              Future.successful{
+                // Wrong Password, show the error message
+                Ok(LoginIncorrect())
+              }
+            }
           }.getOrElse{
-            Logger.info(" but they had the wrong account name.")
+            // There is no such User account, let the User know about that
             Future.successful(Ok(LoginIncorrect()))
           }
         } yield resultPage
-    })
+      })
   }
 
 
@@ -209,48 +212,42 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   /**
     * Submission of the sign up form, user wants to register
     * Checks Database if there is a preexisting user and adds them if there is none
-    *
     * @return
     */
   def signUpSubmit() = Action.async { implicit request =>
     val sessionID = Session.requestSessionID(request)
-    Logger.info(sessionID + " wants to Sign up!")
     User.formSignUp.bindFromRequest.fold(
       errors =>
+        // Something went wrong with the Form.
         Future.successful {
-          Logger.info(" but there was an error in the submit form: " + errors.toString)
           Ok(LoginError())
         },
 
       // if no error, then insert the user to the collection
-      user =>
-        if (user.accountType < 1) {
+      newUser =>
+        if (newUser.accountType < 1) {
+          // User did not accept the Terms of Service but managed to get around the JS form validation
           Future.successful{
-            Logger.info(" but they did not accept the ToS!")
             Ok(MustAcceptToS())
           }
-        } else {/*
+        } else {
           // Check database for existing users with the same login name
-          def futureUser =
-            userCollection.flatMap(_.find(Json.obj(MongoDBUser.NAMELOGIN -> user.nameLogin)).one[MongoDBUser])
-          futureUser.map {
-            case Some(databaseUser) =>
-              Ok(AccountNameUsed())
-            case None =>*/
-              // Create the database entry
-              val currentDateTime = Some(new DateTime())
-              val newUser = user.copy(
-                dateLastLogin = currentDateTime,
-                dateCreated   = currentDateTime,
-                dateUpdated   = currentDateTime)
-              userCollection.flatMap(_.insert(newUser)).map(_ => {
-              Logger.info(" and they succeeded!")
-              Session.addUser(sessionID, user)
-              Ok(LoggedIn(newUser)).withSession {
-                Session.closeSessionRequest(request, sessionID) // Send Session Cookie
-              }}
-            )
-          //}
+          val futureUser = userCollection.flatMap(_.find(BSONDocument(User.NAMELOGIN -> newUser.nameLogin)).one[User])
+          futureUser.flatMap { possibleOtherUser =>
+            if (possibleOtherUser.isDefined) {
+              // Other user with the same username exists. Show error message.
+              Future.successful(Ok(AccountNameUsed()))
+            } else {
+              // Create the database entry.
+              userCollection.flatMap(_.insert(newUser)).map { _ =>
+                Session.addUser(sessionID, newUser)
+                // All done. User is registered
+                Ok(LoggedIn(newUser)).withSession {
+                  Session.closeSessionRequest(request, sessionID) // Send Session Cookie
+                }
+              }
+            }
+          }
         }
     )
   }
