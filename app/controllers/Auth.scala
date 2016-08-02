@@ -1,5 +1,6 @@
 package controllers
 
+import java.util.Calendar
 import javax.inject.{Singleton, Inject}
 
 import models.database.User
@@ -138,9 +139,9 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   var LoginCounter = 0
 
-  def backendLogin () = Action { implicit request =>
+  def backendLogin () = Action { implicit ctx =>
 
-    val sessionID = Session.requestSessionID(request)
+    val sessionID = Session.requestSessionID(ctx)
     Logger.info(sessionID + " wants to Sign in!")
 
     // Evaluate the Form
@@ -152,7 +153,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
       formWithErrors => {
         LoginCounter = LoginCounter + 1
 
-        //println(LoginCounter)
+        println("Login failed: "+LoginCounter+" attempts on " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress)
 
         if (LoginCounter > 4) {
 
@@ -161,10 +162,10 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
         }
 
-        val sessionID = Session.requestSessionID(request)
+        val sessionID = Session.requestSessionID(ctx)
         val user_o : Option[User] = Session.getUser(sessionID)
         Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
-          Session.closeSessionRequest(request, sessionID)
+          Session.closeSessionRequest(ctx, sessionID)
         }
       },
       _ => {
@@ -173,13 +174,14 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
         if (form.get._1 == "test" && form.get._2 == "test") {
           LoginCounter = 0
 
+          println("Login to backend detected on: " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress + " with session " + sessionID)
           Redirect("/@/backend") // TODO if logged in, users should not need to re-authenticate
 
         }
         else {
           LoginCounter = LoginCounter + 1
 
-          //println(LoginCounter)
+          println("Login failed: "+LoginCounter+" attempts on " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress)
 
           if (LoginCounter > 4) {
 
@@ -188,10 +190,10 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
           }
 
-          val sessionID = Session.requestSessionID(request)
+          val sessionID = Session.requestSessionID(ctx)
           val user_o : Option[User] = Session.getUser(sessionID)
           Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
-            Session.closeSessionRequest(request, sessionID)
+            Session.closeSessionRequest(ctx, sessionID)
           }
 
         }
@@ -281,6 +283,13 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     Ok(views.html.auth.message("You have been logged out Successfully")).withSession {
       Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
     }
+  }
+
+
+  def logout() = Action {
+    Redirect(routes.Application.index()).withNewSession.flashing(
+      "success" -> "You've been logged out"
+    )
   }
 
   /**
