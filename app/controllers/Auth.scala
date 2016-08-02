@@ -1,5 +1,6 @@
 package controllers
 
+import java.util.Calendar
 import javax.inject.{Singleton, Inject}
 
 import models.database.User
@@ -149,7 +150,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
       formWithErrors => {
         LoginCounter = LoginCounter + 1
 
-        //println(LoginCounter)
+        println("Login failed: "+LoginCounter+" attempts on " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress)
 
         if (LoginCounter > 4) {
 
@@ -170,13 +171,14 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
         if (form.get._1 == "test" && form.get._2 == "test") {
           LoginCounter = 0
 
+          println("Login to backend detected on: " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress + " with session " + sessionID)
           Redirect("/@/backend") // TODO if logged in, users should not need to re-authenticate
 
         }
         else {
           LoginCounter = LoginCounter + 1
 
-          //println(LoginCounter)
+          println("Login failed: "+LoginCounter+" attempts on " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress)
 
           if (LoginCounter > 4) {
 
