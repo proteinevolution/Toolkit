@@ -21,6 +21,15 @@ case class User(userID        : BSONObjectID,           // ID of the User
   def checkPassword(plainPassword: String) : Boolean = {
     BCrypt.checkpw(plainPassword, password)
   }
+
+  // Mock up function to show how a possible function to check user levels could look like.
+  def isSuperuser : Boolean = {
+    accountType match {
+      case 10 => true
+      case 11 => true
+      case _  => false
+    }
+  }
 }
 
 case class Login(nameLogin : String, password : String)

@@ -202,6 +202,17 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     )
   }
 
+  // Mock up function to let a user access to a page only when they are logged in as a user with certain rights
+  def backendAccess() = Action { implicit request =>
+    val sessionID = Session.requestSessionID(request)
+    val user_o = Session.getUser(sessionID)
+    if (user_o.get.isSuperuser) {
+      Redirect("@/backend")
+    } else {
+      Status(404)(views.html.errors.pagenotfound())
+    }
+  }
+
   /**
     * Returns the sign up form
     *
