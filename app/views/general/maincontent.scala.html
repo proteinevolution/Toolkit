@@ -83,10 +83,15 @@ margin: 0;
 
 
     .grid {
+    display: block;
+    margin: auto;
+    width: 55%;
+}
 
-        display: block;
-        margin: auto;
-        width: 60%;
+
+    .grid div {
+        float: left;
+
     }
 
     .tool-finder {
@@ -109,6 +114,10 @@ margin: 0;
         box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
         z-index: 9;
         position: relative;
+        height: 8em !important;
+        width: 100% !important;
+
+
     }
 
     FIELDSET {
@@ -116,32 +125,12 @@ margin: 0;
     display: inline-block;
     line-height: 200%;
     }
-    .labels {
-        font-family: font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-        text-align: right;
-        float: left;
-        font-size: 12px;
-        margin-left: 14px;
-        margin-right: 15px;
-        margin-bottom: 15px;
-    }
-    .inputs {
-        float: left;
-        width: 130px;
-        white-space: nowrap;display:inline;
-    }
+
 
     select {
         height: 31px;
         font-size: 12px;
         font-family: font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-    }
-
-
-
-    input.search-query {
-
-        margin: 0 0;
     }
 
 
@@ -159,19 +148,6 @@ margin: 0;
     height: 430px;
     }
 
-
-    .search-form {
-
-        font-size: 12px;
-        opacity: 0.8;
-
-    }
-
-    .search-fields{
-        display: block;
-        margin: auto;
-        width: 80%;
-    }
 
 
     .jobstate {
@@ -192,6 +168,38 @@ margin: 0;
         display: none;
     }
 
+    .search-query {
+        margin-top: 1.8em;
+        padding: 1em;
+
+    }
+
+    .search-query input {
+        margin: 0;
+
+    }
+
+    .selectors {
+        padding-left: 1.5em;
+        padding-top: 1.5em;
+
+    }
+
+    .selectors select {
+        width: 100% !important;
+        float: left;
+        display: block;
+
+    }
+
+    .select-job  {
+        margin-top: 3em;
+        padding: 1em;
+        font-size: 0.75em;
+    }
+
+
+
 
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
@@ -204,15 +212,82 @@ margin: 0;
 
 
 
-<div class="grid show-for-large" style="margin-top: 360px;">
+<div class="grid" style="margin-top: 355px;">
+
+  <div class="tool-finder show-for-medium row centered">
+        <div class="selectors large-3 medium-3">
+            <select id="toolselect" style="margin-right: 15em;"><option>Tools</option>
+                <option value="alnviz">AlignmentViewer</option>
+                <option value="reformat">Reformat</option>
+                <option value="seq2gi">Extract GIs</option>
+                <option value="reformatb">Reformat Cluster</option>
+                <option value="clans">Clans</option>
+                <option value="tcoffee">T-Coffee</option>
+            </select>
+            <select><option>Section</option></select>
+        </div>
+        <div class="search-query large-6 medium-5">
+            <input type="text" name="q" value="" placeholder="Search Keywords">
+            <p><a data-open="advancedsearch-modal" style="margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
+        </div>
+        <div class="select-job large-3 medium-4">
+            <select>
+                <option value="AL">Find your job</option>
+                <option value="WY">123345</option>
+                <option value="WY">523125</option>
+                <option value="WY">222345</option>
+                <option value="WY">123345</option>
+            </select>
+        </div>
+  </div>
+
+</div>
 
 
-    <div class="tool-finder show-for-large">
 
-        <fieldset>
+    <!--
+    <div class="tool-finder show-for-medium row">
+        <div class="selections large-2 medium-3 columns" id="selections">
+            <select id="toolselect"><option>Tools</option>
+            <option value="alnviz">AlignmentViewer</option>
+            <option value="reformat">Reformat</option>
+            <option value="seq2gi">Extract GIs</option>
+            <option value="reformatb">Reformat Cluster</option>
+            <option value="clans">Clans</option>
+            <option value="tcoffee">T-Coffee</option>
+            </select>
+            <select><option>Section</option></select>
+        </div>
+        <div class="search-query large-5 medium-5 columns">
+            <input type="text" name="q" value="" placeholder="Search Keywords">
+            <p><a data-open="advancedsearch-modal" style="margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
+        </div>
+        <div class="select-job large-4 medium-3 columns" style="font-size: 0.80em;">
+            <select class="js-example-basic-single" style="margin-right:1.5em;">
+                <option value="AL">Find your job</option>
+                <option value="WY">123345</option>
+                <option value="WY">523125</option>
+                <option value="WY">222345</option>
+                <option value="WY">123345</option>
+            </select>
+        </div>
+
+        <span data-tooltip aria-haspopup="true" class="has-tip right" data-disable-hover="false" tabindex="3" title="you have still 2 running jobs: 124354 (HHpred), 658234 (Hmmer3)">
+            <div class="jobstate"></div>
+        </span>
+
+    </div>
+
+
+</div>
+
+<script>
+
+
+</script>
+        <!--<fieldset>
             <div class="labels">
-                <label style="margin-top: 5px;">Tools: </label><br />
-                <label style="margin-top: -10px;">Section: </label>
+                <
             </div>
             <div class="inputs">
                 <select id="toolselect"><option>Choose</option>
@@ -237,7 +312,7 @@ margin: 0;
             <button class="fi-magnifying-glass" type="submit" style="margin-left: -25px; margin-top: 10px;"></button>
             </div>
             <div class="large-3 columns">
-                <div style="margin-top: 5px;"> <! -- TODO: implement me: https://select2.github.io/examples.html -->
+                <div style="margin-top: 5px;"> <! -- TODO: implement me: https://select2.github.io/examples.html
                 <select class="js-example-basic-single" style="position:relative;z-index:9999999;">
                     <option value="AL">Find your job</option>
                     <option value="WY">123345</option>
@@ -250,9 +325,9 @@ margin: 0;
 
         </div>
 
-        <div class="trafficbar" id="trafficbar"></div>
+        <div class="trafficbar" id="trafficbar"></div> -->
 
-    </div>
+
 
     <!--<div class="traffic">
         <span data-tooltip aria-haspopup="true" class="has-tip right" data-disable-hover="false" tabindex="3" title="you have still 2 running jobs: 124354 (HHpred), 658234 (Hmmer3)">
@@ -260,7 +335,7 @@ margin: 0;
         </span>
     </div> -->
 
-</div>
+
 
 
 
@@ -427,7 +502,6 @@ margin: 0;
 
 
     $(".slider").on('init', function(slick) {
-        console.log('fired!');
         $('.slider').fadeIn(3000);
     }).slick({
         autoplay: true,
@@ -448,11 +522,6 @@ margin: 0;
                 slidesToScroll: 2
             }
         }]
-    });
-
-    $(document).ready(function() {
-                $(".js-example-basic-single").select2();
-
     });
 
 
