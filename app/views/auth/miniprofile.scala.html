@@ -3,4 +3,9 @@
 @(user : User)(implicit messages: Messages, request: RequestHeader)
 
 <p>@{user.nameLogin}</p>
+<p>@{user.userData.eMail}</p>
+<p></p>
+@{if(user.isSuperuser){
+    <p><a href="/backend">Link zum Backend</a></p>} // Only visible when logged in as a Superuser
+}
 <p><a href="@routes.Auth.signOut()">Sign Out</a></p>
