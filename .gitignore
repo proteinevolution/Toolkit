@@ -1,7 +1,6 @@
 project/project
 project/target
 bioprogs/tools
-bin/
 /db
 /lib/
 /dist/
