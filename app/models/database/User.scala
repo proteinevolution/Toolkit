@@ -4,7 +4,7 @@ import org.joda.time.DateTime
 import org.mindrot.jbcrypt.BCrypt
 
 import play.api.data._
-import play.api.data.Forms.{ text, longNumber, mapping, boolean, email, optional }
+import play.api.data.Forms.{ text, longNumber, mapping, boolean, email, optional, nonEmptyText }
 import play.api.data.validation.Constraints.pattern
 import reactivemongo.bson._
 
@@ -33,6 +33,7 @@ case class User(userID        : BSONObjectID,           // ID of the User
 }
 
 case class Login(nameLogin : String, password : String)
+case class UpdatePasswordForm(password : String, passwordNew : String)
 
 object User {
   // Number of rounds for BCrypt to hash the Password (2^x) TODO Move to the config?
@@ -142,6 +143,61 @@ object User {
         user.nameLogin,
         ""
         ))
+    }
+  )
+
+
+  /**
+    * Edit form for the profile
+    */
+  val formProfileEdit = Form(
+    mapping(
+      UserData.NAMEFIRST -> optional(text),
+      UserData.NAMELAST  -> optional(text),
+      UserData.EMAIL     -> email,
+      UserData.INSTITUTE -> optional(text),
+      UserData.STREET    -> optional(text),
+      UserData.CITY      -> optional(text),
+      UserData.COUNTRY   -> optional(text),
+      UserData.GROUPS    -> optional(text),
+      UserData.ROLES     -> optional(text)) {
+      (nameFirst, nameLast, eMail, institute, street, city, country, groups, roles) =>
+        UserData(
+          nameFirst,
+          nameLast,
+          eMail,
+          institute,
+          street,
+          city,
+          country,
+          groups,
+          roles)
+
+    } { userData =>
+      Some((
+        userData.nameFirst,
+        userData.nameLast,
+        userData.eMail,
+        userData.institute,
+        userData.street,
+        userData.city,
+        userData.country,
+        userData.groups,
+        userData.roles
+        ))
+    })
+
+  /**
+    * Edit form for the password change in the Profile
+    */
+  val formProfilePasswordEdit = Form(
+    mapping(
+      PASSWORD       -> (text(8,128) verifying pattern("""[^\\"\\(\\)\\[\\]]*""".r, error = "error.objectId")),
+      "passwordNew"  -> (text(8,128) verifying pattern("""[^\\"\\(\\)\\[\\]]*""".r, error = "error.objectId"))) {
+      (password, passwordNew) =>
+        UpdatePasswordForm(password, passwordNew)
+    } { password =>
+      Some(("",""))
     }
   )
 }

@@ -3,7 +3,7 @@ package controllers
 import java.util.Calendar
 import javax.inject.{Singleton, Inject}
 
-import models.database.User
+import models.database.{UserData, User}
 import models.sessions.Session
 import models.auth._
 import org.joda.time.DateTime
@@ -225,6 +225,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   /**
     * Submission of the sign up form, user wants to register
     * Checks Database if there is a preexisting user and adds them if there is none
+    *
     * @return
     */
   def signUpSubmit() = Action.async { implicit request =>
@@ -301,6 +302,70 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     Redirect(routes.Application.index()).withNewSession.flashing(
       "success" -> "You've been logged out"
     )
+  }
+
+  def profile() = Action { implicit request =>
+    val sessionID = Session.requestSessionID(request)
+    val user_o  = Session.getUser(sessionID)
+    user_o match {
+      case Some(user) =>
+        Ok(views.html.auth.profile(user, User.formProfileEdit, User.formProfilePasswordEdit))
+      case None =>
+        // User was not logged in
+        Redirect(routes.Application.index())
+    }
+  }
+
+  def profileSubmit() = Action.async { implicit request =>
+    val sessionID = Session.requestSessionID(request)
+
+    Logger.info("Starting!")
+    val user_o = Session.getUser(sessionID)
+    user_o match {
+      case Some(user) =>
+
+        Logger.info("Form check!")
+        User.formProfileEdit.bindFromRequest.fold(
+          errors =>
+            Future.successful{
+              Logger.info("Form error!")
+              Ok(FormError())
+            },
+
+          // if no error, then insert the user to the collection
+          userDataForm => {
+            Logger.info("Got this far...")
+            def futureUser = userCollection.flatMap(_.find(BSONDocument(User.IDDB -> user.userID)).one[User])
+            for {
+            // Get the user option into the present
+              maybeUser <- futureUser
+              resultPage <- maybeUser.map { userFromDB =>
+                Future.successful{
+                  // Create a modified user object
+                  val modifiedUser = userFromDB.copy(userData      = userDataForm,
+                                                     dateLastLogin = Some(new DateTime()),
+                                                     dateUpdated   = Some(new DateTime()))
+
+                  // overwrite the sessions based user
+                  Session.addUser(sessionID, modifiedUser)
+
+                  // create a modifier document to change the last login date in the Database
+                  val selector = BSONDocument(User.IDDB -> userFromDB.userID)
+                  val modifier = BSONDocument("$set"    -> modifiedUser)
+                  userCollection.flatMap(_.update(selector, modifier))
+                  // Everything is ok, let the user know that they are logged in now
+                  Ok(EditSuccessful(user))
+                }
+              }.getOrElse(Future.successful(Ok(FormError())))
+            } yield resultPage
+          }
+        )
+      case None =>
+        // User was not logged in
+
+        Logger.info("Login!")
+        Future.successful(Ok(NotLoggedIn()))
+    }
   }
 
   /**

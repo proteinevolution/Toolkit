@@ -7,30 +7,31 @@
         <div class="small-12 columns">
             <label>
                 Username:
-                <input type="text" id="nameLogin" name="nameLogin" placeholder="JDoe11186" required pattern="text">
+                <input type="text" id="nameLogin" name="nameLogin" placeholder="JDoe11186" required pattern="[a-zA-Z0-9_]{6,40}">
+                <span class="form-error">Username must be at least 6 characters long!</span>
             </label>
         </div>
         <div class="small-12 columns">
             <label>
                 Password:
-                <input type="password" id="password" name="password" placeholder="Password" required >
+                <input type="password" id="passwordCheck" placeholder="Password" required pattern=".{8,128}">
+                <span class="form-error">Passwords must be at least 8 characters long!</span>
             </label>
         </div>
-        <div class="small-12 columns">
-            <label>
-        E-Mail:
-                <input type="text" id="eMail" name="eMail" placeholder="JohnDoe&#64;SomePlace.net" pattern="email">
-            </label>
-        </div>
-        <!--
         <div class="small-12 columns">
             <label>
                 Repeat Password:
-                <input type="password" id="password_repeat" placeholder="Password" required pattern="text" data-equalTo="password">
-                <span class="form-error">(Passwords must match!)</span>
+                <input type="password" id="password" name="password" placeholder="Password" data-equalTo="passwordCheck" required pattern=".{8,128}">
+                <span class="form-error">Passwords must match!</span>
             </label>
         </div>
-        -->
+        <div class="small-12 columns">
+            <label>
+                E-Mail:
+                <input type="text" id="eMail" name="eMail" placeholder="JohnDoe&#64;SomePlace.net" pattern="email">
+                    <span class="form-error">Please enter a valid e-Mail address!</span>
+            </label>
+        </div>
         <div class="small-12 columns">
             <label>
                 I Accept the Terms of Sevice &nbsp;
