@@ -37,7 +37,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   // TODO Get the collection name from the config, Currently only the default Failover strategy is used
   var jobBSONCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
-  var userBSONCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection])
+  //var userBSONCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection])
   jobBSONCollection.onFailure { case t => throw t }
 
 
