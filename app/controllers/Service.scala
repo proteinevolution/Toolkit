@@ -45,21 +45,21 @@ class Service @Inject() (webJarAssets: WebJarAssets,
 
       case "sitemap" =>
         Ok(views.html.general.sitemap()).withSession {
-          Session.closeSessionRequest(request, Session.requestSessionID(request))
+          Session.closeSessionRequest(request, Session.requestSessionID)
         }
       // Frontend tools
       case "reformat" =>
 
-        val session_id = Session.requestSessionID(request)
-        val user_o : Option[User] = Session.getUser(session_id)
+        val sessionID = Session.requestSessionID
+        val user_o : Option[User] = Session.getUser
 
         Ok(views.html.tools.forms.reformat(webJarAssets,"Utils", user_o)).withSession {
-          Session.closeSessionRequest(request, session_id)
+          Session.closeSessionRequest(request, sessionID)
         }
         
       case "seq2gi" =>
         Ok(views.html.tools.forms.seq2gi()).withSession {
-          Session.closeSessionRequest(request, Session.requestSessionID(request))
+          Session.closeSessionRequest(request, Session.requestSessionID)
         }
 
       case _ =>
@@ -91,9 +91,9 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     * @param jobID
     * @return
     */
-  def delJob(jobID: Int) = Action { implicit request =>
+  def delJob(jobID: String) = Action { implicit request =>
 
-    jobManager ! Delete(Session.requestSessionID(request), jobID)
+    jobManager ! Delete(Session.requestSessionID, jobID)
     Ok
   }
 
@@ -102,9 +102,9 @@ class Service @Inject() (webJarAssets: WebJarAssets,
 
     Logger.info("Add child Job received")
 
-    val session_id = Session.requestSessionID(request) // Grab the Session ID
+    val sessionID = Session.requestSessionID // Grab the Session ID
 
-    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
+    (userManager ? GetUserActor(sessionID)).mapTo[ActorRef].map { userActor =>
 
       request.body.validate[AddChildJob] match {
 
@@ -127,9 +127,9 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     * @param jobID
     * @return
     */
-  def jobInfo(jobID: Int) = Action.async { implicit request =>
+  def jobInfo(jobID: String) = Action.async { implicit request =>
 
-    val sessionID = Session.requestSessionID(request) // Grab the Session ID
+    val sessionID = Session.requestSessionID // Grab the Session ID
 
     (jobManager ? JobInfo(sessionID, jobID)).flatMap {
 
@@ -222,9 +222,9 @@ class Service @Inject() (webJarAssets: WebJarAssets,
   /*
   def getJob(job_id: String) = Action.async { implicit request =>
 
-    val session_id = Session.requestSessionID(request) // Grab the Session ID
+    val sessionID = Session.requestSessionID // Grab the Session ID
 
-    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].flatMap { userActor =>
+    (userManager ? GetUserActor(sessionID)).mapTo[ActorRef].flatMap { userActor =>
       (userActor ? GetJob(job_id)).mapTo[Option[UserJob]].flatMap {
 
         case None => Future.successful(NotFound)
@@ -249,7 +249,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
                 }
 
                 Ok(views.html.general.submit(job.tool.toolname, toolframe, Some(job_id))).withSession {
-                  Session.closeSessionRequest(request, session_id) // Send Session Cookie
+                  Session.closeSessionRequest(request, sessionID) // Send Session Cookie
                 }
               }
           }
@@ -277,8 +277,8 @@ class Service @Inject() (webJarAssets: WebJarAssets,
   def clearJob(job_id: String) = Action.async { implicit request =>
     Logger.info("clear")
 
-    val session_id = Session.requestSessionID(request)
-    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
+    val sessionID = Session.requestSessionID
+    (userManager ? GetUserActor(sessionID)).mapTo[ActorRef].map { userActor =>
 
       userActor ! ClearJob(job_id)
       Ok(Json.obj("job_id" -> job_id))
@@ -320,14 +320,14 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     * @return
     */
   def addJobID(job_id: String) = Action.async { implicit request =>
-    val session_id = Session.requestSessionID(request) // Grab the Session ID
-    Logger.info("Adding Job for " + session_id + ", job_id to add: " + job_id)
+    val sessionID = Session.requestSessionID // Grab the Session ID
+    Logger.info("Adding Job for " + sessionID + ", job_id to add: " + job_id)
     Future.successful {
       val jobSeq = jobDB.suggestJobID(12345L, job_id)
       jobSeq.headOption match {
         // Found jobs, list them now
         case Some(dbJob) =>
-          (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
+          (userManager ? GetUserActor(sessionID)).mapTo[ActorRef].map { userActor =>
             userActor ! LoadJob(dbJob.job_id)
           }
           // This sends a NoContent header to the user, informing them that the request was ok

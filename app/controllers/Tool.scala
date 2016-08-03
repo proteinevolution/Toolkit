@@ -49,8 +49,8 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   def submit(toolname: String, start : Boolean, jobID : Option[String]) = Action { implicit request =>
 
 
-    val sessionID = Session.requestSessionID(request) // Grab the Session ID
-    val user_o    = Session.getUser(sessionID)
+    val sessionID = Session.requestSessionID // Grab the Session ID
+    val user_o    = Session.getUser
 
     // Fetch the job ID from the submission, might be the empty string
     //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
@@ -110,7 +110,7 @@ case class Prepare(sessionID : String,
 
     Logger.info("Submission for JobID " + job_id.toString + " received")
 
-    (userManager ? GetUserActor(session_id)).mapTo[ActorRef].map { userActor =>
+    (userManager ? GetUserActor(sessionID)).mapTo[ActorRef].map { userActor =>
 
       val tool = Tool.getToolModel(toolname)
       // Check if the tool name was ok.

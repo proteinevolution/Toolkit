@@ -9,6 +9,7 @@ import akka.actor.ActorRef
 import akka.actor.Props
 import play.api.libs.json.{JsValue, Json}
 import play.api.Logger
+import reactivemongo.bson.BSONObjectID
 
 /**
   * Actor that listens to the WebSocket and accepts messages from and passes messages to it.
@@ -16,10 +17,10 @@ import play.api.Logger
   */
 object WebSocketActor {
 
-  def props(userID : String, jobManager : ActorRef)(out: ActorRef) = Props(new WebSocketActor(userID, jobManager, out))
+  def props(sessionID : BSONObjectID, jobManager : ActorRef)(out: ActorRef) = Props(new WebSocketActor(sessionID, jobManager, out))
 }
 
-private final class WebSocketActor(sessionID : String, jobManager : ActorRef,  out: ActorRef)  extends Actor with ActorLogging {
+private final class WebSocketActor(sessionID : BSONObjectID, jobManager : ActorRef, out: ActorRef)  extends Actor with ActorLogging {
 
 
   override def preStart =
@@ -55,9 +56,9 @@ private final class WebSocketActor(sessionID : String, jobManager : ActorRef,  o
     // Messages the user that there was a problem in handling the Job ID
     //case JobIDInvalid  => out ! Json.obj("type" -> "jobidinvalid")
 
-    case JobStateChanged(jobID, state) =>
+    case JobStateChanged(job, state) =>
 
-      out ! Json.obj("type" -> "updatejob", "job_id" -> jobID, "state" -> state.no, "toolname" -> "foobar")
+      out ! Json.obj("type" -> "updatejob", "job_id" -> job.jobID, "state" -> state.no, "toolname" -> "foobar")
 
 
     /*
