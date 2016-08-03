@@ -1,15 +1,16 @@
 package actors
 
 import java.io.{BufferedWriter, FileWriter}
-import java.util.Date
 import javax.inject.{Inject, Singleton}
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
+import models.database.Job
 import models.jobs.JobState
+import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONObjectID, BSONDocument}
 
 import scala.concurrent.Future
 import better.files._
@@ -19,7 +20,6 @@ import models.tel.TEL
 import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
-import play.api.libs.json.Json
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.FailoverStrategy
 
@@ -37,8 +37,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   // TODO Get the collection name from the config, Currently only the default Failover strategy is used
   var jobBSONCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
-  //var userBSONCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection])
+  val userBSONCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
   jobBSONCollection.onFailure { case t => throw t }
+  userBSONCollection.onFailure { case t => throw t }
 
 
   val random = scala.util.Random
@@ -48,18 +49,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
   val runscriptPath = s"TEL${SEPARATOR}runscripts$SEPARATOR"
 
-  // Keeps track of states of Job // TODO Temporary, will be replaced by database
-  val jobStates = new collection.mutable.HashMap[Int, JobState.JobState]
-
-  // Keeps track of the job associated tool // TODO Temporary, will be replaced by database
-  val jobTools = new collection.mutable.HashMap[Int, String]
-
-
-  // Keeps track of owner
-  val jobOwner = new collection.mutable.HashMap[Int, String]
-
-  // Maps User ID to Actor Ref of corresponding WebSocket
-  var connectedUsers = Map.empty[String, ActorRef]
+  // Maps Session ID to Actor Ref of corresponding WebSocket
+  var connectedUsers = Map.empty[BSONObjectID, ActorRef]
 
   //  Generates new jobID // TODO Save this state
   val jobIDSource: Iterator[Int] = Stream.continually(  random.nextInt(8999999) + 1000000 ).distinct.iterator
@@ -69,7 +60,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
 
   // Keeps track of all running processes. // TODO Should be restored after toolkit reboots
-  val runningProcesses = new collection.mutable.HashMap[Int, Process]
+  val runningProcesses = new collection.mutable.HashMap[String, Process]
 
 
 
@@ -78,197 +69,163 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     *
     * //TODO Subject to change upon database integration
     *
-    * @param jobID
+    * @param job
     * @param newState
     * @return
     */
-  def changeState(jobID : Int, newState : JobState.JobState) =  {
-
-    jobStates.put(jobID, newState)
-    val owner = jobOwner(jobID)
-
+  def changeState(job : Job, newState : JobState.JobState) =  {
     // Inform user if connected
-    if(connectedUsers contains owner) {
-
-      connectedUsers(owner) ! JobStateChanged(jobID, newState)
+    if(connectedUsers contains job.sessionID) {
+      connectedUsers(job.sessionID) ! JobStateChanged(job, newState)
     }
   }
 
   /**
-    * @param jobID
+    * @param job
     * @param scriptPath
     */
-  def executeJob(jobID : Int, scriptPath : String): Unit = {
+  def executeJob(job : Job, scriptPath : String): Unit = {
 
-    val rootPath  = s"$jobPath$SEPARATOR$jobID$SEPARATOR"
+    val rootPath  = s"$jobPath$SEPARATOR${job.mainID.toString()}$SEPARATOR"
 
     // Log files output buffer
     val out = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stdout.out")))
     val err = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stderr.err")))
 
     // Job will now be executed, change the job state to running
-    changeState(jobID, JobState.Running)
+    changeState(job, JobState.Running)
 
     // Create new Process instance of the runscript to run the tool
     val process = Process(scriptPath , new java.io.File(rootPath)).run(ProcessLogger(
       (fout) => out.write(fout),
       (ferr) => err.write(ferr)
     ))
-    runningProcesses.put(jobID, process)
+    runningProcesses.put(job.jobID, process)
 
     // Treat Exit code of job process
     process.exitValue() match {
 
-      case SUCCESS => changeState(jobID, JobState.Done)
+      case SUCCESS => changeState(job, JobState.Done)
       case TERMINATED => // Ignore
-      case x: Int => changeState(jobID, JobState.Error)
+      case x: Int => changeState(job, JobState.Error)
     }
-    runningProcesses.remove(jobID)
+    runningProcesses.remove(job.jobID)
 
     out.close()
     err.close()
   }
 
-  import reactivemongo.play.json._
-
-
-  /* val jobCollection = reactiveMongoApi.database.
-    map(_.collection[JSONCollection]("jobs")) */
-
-  //val jobCollection: BSONCollection = db.collection("jobs")
-
-  /** Deletes the job from the database
-    *
-    * @param jobID
-    * @return
-    */
-  def delete(jobID: Int) = {
-
-    this.jobBSONCollection = this.jobBSONCollection.andThen {
-      case Success(coll) => coll.remove(Json.obj("main_id" -> jobID))
-      case Failure(t) => throw t
-    }
-  }
-
-
- //TODO insert documents from template model like:
-
-  /* def create() = {
-
-    Job.JobWrites
-
-  } */
-
-
-
   def receive : Receive = {
 
+    // User Connected, add them to the connected users list
+    case UserConnect(sessionID) =>
+      this.connectedUsers = connectedUsers.updated(sessionID, sender())
 
-    case UserConnect(userID) => this.connectedUsers = connectedUsers.updated(userID, sender())
-
-    case UserDisconnect(userID) => this.connectedUsers = connectedUsers - userID
+    // User Disconnected, Remove them from the connected users list.
+    case UserDisconnect(sessionID) =>
+      this.connectedUsers = connectedUsers - sessionID
 
      // Reads parameters provided to the job from the job directory
-    case Read(userID, jobID) =>
+    case Read(sessionID : BSONObjectID, jobID : String) =>
+      val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
+      futureJob.map {
+        case Some(job) => // Job Owner must be linked with the Session ID
+          if (job.sessionID.eq(sessionID)) // Retrieve the Job Files
+            sender () ! s"$jobPath$SEPARATOR${job.mainID.toString ()}${SEPARATOR}params".toFile.list.map {f =>
+              f.name -> f.contentAsString
+            }.toMap
 
-        // If jobID is unknown
-        if (!jobStates.contains(jobID)) {
+          else // If jobID does not belong to the user
+            sender () ! PermissionDenied
 
-          sender() ! JobIDUnknown
-
-          // If jobID does not belong to the user
-
-        } else if (!jobOwner(jobID).equals(userID)) {
-
-          sender() ! PermissionDenied
-
-        } else {
-
-          sender() ! s"$jobPath$SEPARATOR$jobID${SEPARATOR}params".toFile.list.map { f =>
-
-            f.name -> f.contentAsString
-
-          }.toMap
-        }
-
-
+        case None => // If jobID is unknown
+          sender () ! JobIDUnknown
+      }
 
     // User Requests State of Job
-    case JobInfo(userID, jobID) =>
-
-      if(!jobStates.contains(jobID)) {
-
-        sender() ! JobIDUnknown
-
-      } else if(!jobOwner(jobID).equals(userID)) {
-
-        sender() ! PermissionDenied
-
-      } else {
-
-        sender() ! (jobStates(jobID), jobTools(jobID))
+    case JobInfo(sessionID : BSONObjectID, jobID) =>
+      val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
+      futureJob.map {
+        case Some(job) =>
+          if (job.sessionID.eq(sessionID))
+            sender() ! (job.jobID, job.tool)
+          else
+            sender() ! PermissionDenied
+        case None      =>
+          // Job ID is unknown.
+          sender() ! JobIDUnknown
       }
 
     //  User asks to delete Job
-    case Delete(userID, jobID) =>
+    case Delete(sessionID, jobID) =>
+      val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
+      futureJob.map {
+        case Some(job) =>
+          if (job.sessionID.eq(sessionID)) {
 
-      //  Terminate running Process instance of the Job
-      if(runningProcesses.contains(jobID)) {
+            //  Terminate running Process instance of the Job
+            if (runningProcesses.contains(jobID)) {
+              runningProcesses(jobID).destroy()
+            }
 
-        runningProcesses(jobID).destroy()
-      }
+            this.jobBSONCollection.flatMap(_.remove(BSONDocument(Job.JOBID -> jobID)))
 
-      delete(jobID)
-      
-      Future {
+            Future {
+              // Delete Job Path
+              s"jobPath$SEPARATOR$jobID".toFile.delete(swallowIOExceptions = false)
+            }.onComplete {
+              case scala.util.Success(_) => sender() ! AckDeleted(jobID)
+              case scala.util.Failure(_) => sender() ! FailDeleted(jobID)
+            }
+          } else {
+            sender() ! PermissionDenied
+          }
 
-        // Delete Job Path
-        s"jobPath$SEPARATOR$jobID".toFile.delete(swallowIOExceptions = false)
-      }.onComplete {
-
-        case scala.util.Success(_) => sender() ! AckDeleted(jobID)
-        case scala.util.Failure(_) => sender() ! FailDeleted(jobID)
+        case None      =>
+          // Job ID is unknown.
+          sender() ! JobIDUnknown
       }
 
      // User asks to prepare new Job, might be directly executed (if start is true)
-    case Prepare(userID, jobID, toolname, params, start) =>
+    case Prepare(sessionID, jobID, toolname, params, start) =>
 
        Future {
         // Check whether jobID already exists, otherwise make new job
 
         // This is a new Job Submission // TODO Only support new Jobs currently
         if(jobID.isEmpty) {
+          val newJob = Job(mainID      = BSONObjectID.generate(),
+                           jobType     = "",
+                           parentID    = None,
+                           jobID       = jobID.getOrElse(jobIDSource.next().toString),
+                           sessionID   = sessionID,
+                           userID      = None,
+                           status      = JobState.PartiallyPrepared.no.toString,
+                           tool        = toolname,
+                           statID      = "",
+                           dateCreated = Some(new DateTime()),
+                           dateUpdated = Some(new DateTime()),
+                           dateViewed  = Some(new DateTime()))
 
-          val newJobID = jobIDSource.next()
-          val rootPath  = s"$jobPath$SEPARATOR$newJobID$SEPARATOR" // Where the Job Directory is located
-
-          // TODO use the template database model here
-          jobTools.put(newJobID, toolname)
-          jobOwner.put(newJobID, userID)
-
+          val rootPath  = s"$jobPath$SEPARATOR${newJob.mainID}$SEPARATOR" // Where the Job Directory is located
 
           this.jobBSONCollection =  this.jobBSONCollection.andThen {
 
-              case Success(coll) => coll.insert(BSONDocument(
-                "main_id" -> newJobID, //this is wrong, I know, it should be the job_id
-                "tool" -> toolname,
-                "user_id" -> userID,
-                "created_on" -> new Date(),
-                "update_on" -> new Date(),
-                "viewed_on" -> 0))
+              case Success(coll) =>
+                coll.insert(newJob)
               case Failure(t) => throw t
           }
 
 
-          changeState(newJobID, JobState.Submitted)
+          changeState(newJob, JobState.Submitted)
           // Interfaces with TEL to make a new job directory, returns the  path to the script which then
           // needs to be executed
           val script = TEL.init(toolname, params, rootPath)
-          changeState(newJobID, JobState.Prepared)
+          changeState(newJob, JobState.Prepared)
 
           // Also Start Job if requested
           if(start) {
-              executeJob(newJobID, script)
+              executeJob(newJob, script)
           }
         }
       }
@@ -282,40 +239,35 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 object JobManager {
 
   // User connect and disconnect, mediated by WebSocket
-  case class UserConnect(userID : String)
+  case class UserConnect(sessionID : BSONObjectID)
 
-  case class UserDisconnect(userID : String)
+  case class UserDisconnect(sessionID : BSONObjectID)
 
   // Failure replies
   case object JobIDUnknown
   case object PermissionDenied
-  case class FailDeleted(jobID : Int)
+  case class FailDeleted(jobID : String)
 
   // Success replies
-  case class AckDeleted(jobID : Int)
-
-
-
+  case class AckDeleted(jobID : String)
 
   // Reads the parameters from a prepared job and provides them to the user
-  case class Read(userID : String, jobID : Int)
+  case class Read(userID : BSONObjectID, jobID : String)
 
   // Publish changes JobState
-  case class JobStateChanged(jobID : Int, state : JobState.JobState)
-
+  case class JobStateChanged(job : Job, state : JobState.JobState)
 
   // Ask for jobInfo (toolname and state)
-  case class JobInfo(userID : String, jobID  : Int)
+  case class JobInfo(userID : BSONObjectID, jobID  : String)
 
   // Delete Job Entirely
-  case class Delete(userID : String, jobID : Int)
-
+  case class Delete(userID : BSONObjectID, jobID : String)
 
   // Prepare Job with new parameters or create new job with specified parameters for the given tool
-  case class Prepare(userID : String,
-                     jobID: Option[String],
+  case class Prepare(userID   : BSONObjectID,
+                     jobID    : Option[String],
                      toolname : String,
-                     params : Map[String, String],
-                     start : Boolean)
+                     params   : Map[String, String],
+                     start    : Boolean)
 
 }

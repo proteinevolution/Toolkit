@@ -34,11 +34,11 @@ private[controllers] trait Forwarding extends Controller with I18nSupport {
       case _ => ""
     }
 
-    lazy val session_id = Session.requestSessionID(request)
-    lazy val user_o : Option[User] = Session.getUser(session_id)
+    lazy val sessionID = Session.requestSessionID
+    lazy val user_o : Option[User] = Session.getUser
 
     Ok(views.html.main(wja, toolFrame, section, user_o)).withSession {
-      Session.closeSessionRequest(request, session_id)
+      Session.closeSessionRequest(request, sessionID)
     }
   }
 
