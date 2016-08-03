@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
 @import models.database.User
 @(webJarAssets: WebJarAssets, sectionname : String, user_o: Option[User])(implicit messages: Messages, request: RequestHeader)
-<link href="@routes.Assets.at("../../../../public/styles/reformat.css")" rel="stylesheet">
+<link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
 <link href="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.css"))" rel="stylesheet">
 <style>
 
@@ -157,7 +157,7 @@
 
 
 <textarea id="outputarea" style="height: 1px; position: relative; top: -10000px; left: -10000px;"></textarea>
-<script src="@routes.Assets.at("../../../../public/javascripts/reformat.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/reformat.js")" type="text/javascript"></script>
 <script src="@routes.Assets.at("scripts/validation.js")"></script>
 <script>
 
