@@ -3,7 +3,7 @@ package controllers
 import java.util.Calendar
 import javax.inject.{Singleton, Inject}
 
-import models.database.{UserData, User}
+import models.database.User
 import models.sessions.Session
 import models.auth._
 import org.joda.time.DateTime
@@ -19,7 +19,6 @@ import reactivemongo.bson._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 /**
   * Controller for Authentication interactions
@@ -288,13 +287,12 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signOut() = Action { implicit request =>
-    val oldSessionID = Session.requestSessionID(request) // grabs the Old Session ID
-    Session.removeUser(oldSessionID)  // Remove the User from the association
-    val sessionID = Session.newSessionID(request) // Generates a new session ID
-
-    Ok(views.html.auth.message("You have been logged out Successfully")).withSession {
-      Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
-    }
+    val sessionID = Session.requestSessionID(request) // grab the Old Session ID
+    Session.removeUser(sessionID)  // Remove the User from the association
+    
+    Redirect(routes.Application.index()).withNewSession.flashing(
+      "success" -> "You've been logged out"
+    )
   }
 
 
@@ -318,23 +316,16 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   def profileSubmit() = Action.async { implicit request =>
     val sessionID = Session.requestSessionID(request)
-
-    Logger.info("Starting!")
     val user_o = Session.getUser(sessionID)
     user_o match {
       case Some(user) =>
-
-        Logger.info("Form check!")
         User.formProfileEdit.bindFromRequest.fold(
           errors =>
             Future.successful{
-              Logger.info("Form error!")
               Ok(FormError())
             },
-
           // if no error, then insert the user to the collection
           userDataForm => {
-            Logger.info("Got this far...")
             def futureUser = userCollection.flatMap(_.find(BSONDocument(User.IDDB -> user.userID)).one[User])
             for {
             // Get the user option into the present
@@ -347,7 +338,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                                                      dateUpdated   = Some(new DateTime()))
 
                   // overwrite the sessions based user
-                  Session.addUser(sessionID, modifiedUser)
+                  Session.editUser(sessionID, modifiedUser)
 
                   // create a modifier document to change the last login date in the Database
                   val selector = BSONDocument(User.IDDB -> userFromDB.userID)
@@ -362,8 +353,6 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
         )
       case None =>
         // User was not logged in
-
-        Logger.info("Login!")
         Future.successful(Ok(NotLoggedIn()))
     }
   }

@@ -28,6 +28,13 @@ object Session {
   }
 
   /**
+    *  Edit user
+    */
+  def editUser (session_id : String, user : User) {
+    sessionUserMap.put(session_id, user)
+  }
+
+  /**
     * Returns a User by its sessionID, or None if the sessionID is yet not
     * associated to a User.
     *
