@@ -5,17 +5,18 @@ import reactivemongo.bson._
 
 /** ?
   *
-  * @param mainID
+  * @param mainID       ID of the Job in the database
   * @param jobType
-  * @param parentID
-  * @param jobID
-  * @param ownerID
-  * @param status
-  * @param tool
+  * @param parentID     ID of the parent Job
+  * @param jobID        User Visible Job ID
+  * @param sessionID    Session of the User
+  * @param userID       Logged in Users will have their ID here
+  * @param status       status of the Job
+  * @param tool         name of the tool used for the Job
   * @param statID
-  * @param dateCreated
-  * @param dateUpdated
-  * @param dateViewed
+  * @param dateCreated  date on which the Job was created
+  * @param dateUpdated  date on which the Job was updated last
+  * @param dateViewed   date on which the Job was viewed last
   *
   * Maps MySQL schema with some fields renamed (e.g. type is a reserved word in Scala)
   * +------------+------------------+------+-----+-------------------+-----------------------------+
@@ -92,7 +93,7 @@ object Job {
     */
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job) : BSONDocument = BSONDocument(
-      ID          -> job.mainID,
+      IDDB        -> job.mainID,
       JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
