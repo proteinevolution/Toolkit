@@ -9,7 +9,7 @@ import reactivemongo.bson._
   * @param jobType
   * @param parentID
   * @param jobID
-  * @param userID
+  * @param ownerID
   * @param status
   * @param tool
   * @param statID
@@ -40,9 +40,9 @@ import reactivemongo.bson._
 
 case class Job(mainID      : BSONObjectID,            // ID of the Job in the System
                jobType     : String,                  // Type of job
-               parentID    : BSONObjectID,            // ID of the Parent Job
+               parentID    : Option[BSONObjectID],    // ID of the Parent Job
                jobID       : String,                  // User visible ID of the Job
-               userID      : BSONObjectID,            // ID referencing the Owner of the Job
+               ownerID     : JobOwner,                // ID referencing the Owner of the Job
                status      : String,                  // Status of the Job
                tool        : String,                  // Tool used for this Job
                statID      : String,                  //
@@ -57,7 +57,7 @@ object Job {
   val JOBTYPE       = "jobType"       //              Type of the Job
   val PARENTID      = "parentID"      //              ID of the parent job
   val JOBID         = "jobID"         //              ID for the job
-  val USERID        = "userID"        //              ID of the job owner
+  val OWNERID       = "ownerID"       //              ID of the job owner
   val STATUS        = "status"        //              Status of the job field
   val TOOL          = "tool"          //              name of the tool field
   val STATID        = "statID"        //              ID of the stats for this Job
@@ -72,9 +72,9 @@ object Job {
     def read(bson : BSONDocument): Job = {
       Job(mainID      = bson.getAs[BSONObjectID](IDDB).get,
           jobType     = bson.getAs[String](JOBTYPE).get,
-          parentID    = bson.getAs[BSONObjectID](PARENTID).get,
+          parentID    = bson.getAs[BSONObjectID](PARENTID),
           jobID       = bson.getAs[String](JOBID).get,
-          userID      = bson.getAs[BSONObjectID](USERID).get,
+          ownerID     = bson.getAs[JobOwner](OWNERID).get,
           status      = bson.getAs[String](STATUS).get,
           tool        = bson.getAs[String](TOOL).get,
           statID      = bson.getAs[String](STATID).get,
@@ -93,12 +93,38 @@ object Job {
       JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
-      USERID      -> job.userID,
+      OWNERID     -> job.ownerID,
       STATUS      -> job.status,
       TOOL        -> job.tool,
       STATID      -> job.statID,
       DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
       DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
       DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis)))
+  }
+}
+
+
+case class JobOwner(sessionIDOpt : Option[String], userIDOpt : Option[BSONObjectID])
+object JobOwner {
+  val USERID        = "userID"        //              ID of the User
+  val SESSIONID     = "sessionID"     //              ID of the Session
+
+  /**
+    * Object containing the writer for the Class
+    */
+  implicit object Reader extends BSONDocumentReader[JobOwner] {
+    def read(bson : BSONDocument): JobOwner = {
+      JobOwner(sessionIDOpt = bson.getAs[String](SESSIONID),
+               userIDOpt    = bson.getAs[BSONObjectID](USERID))
+    }
+  }
+
+  /**
+    * Object containing the writer for the Class
+    */
+  implicit object Writer extends BSONDocumentWriter[JobOwner] {
+    def write(job: JobOwner) : BSONDocument = BSONDocument(
+      SESSIONID  -> job.sessionIDOpt,
+      USERID     -> job.userIDOpt)
   }
 }
