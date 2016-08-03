@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
 @(inputForm: Form[(String, BigDecimal, BigDecimal)])(implicit messages: Messages, request: RequestHeader)
-<script src='@routes.Assets.at("../../../../public/javascripts/t_coffee.js")' type="text/javascript" ></script>
+<script src='@routes.Assets.at("javascripts/t_coffee.js")' type="text/javascript" ></script>
 
 @helper.textarea(field = inputForm("sequences"), args = 'rows -> 20, 'cols -> 50,
     'placeholder -> "Enter sequences to be aligned in Multi-FASTA format",
