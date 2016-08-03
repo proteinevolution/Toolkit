@@ -57,7 +57,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signInSubmit() = Action.async { implicit request =>
-    val sessionID = Session.requestSessionID(request)
+    val sessionID = Session.requestSessionID
     Logger.info(sessionID + " wants to Sign in!")
 
     // Evaluate the Form
@@ -106,8 +106,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   def login = Action { implicit request =>
 
-    val session_id = Session.requestSessionID(request)
-    val user_o : Option[User] = Session.getUser(session_id)
+    val sessionID = Session.requestSessionID
+    val user_o : Option[User] = Session.getUser
 
     NoCache(Ok(views.html.backend.login(webJarAssets, "0", user_o)).withNewSession)
 
@@ -115,15 +115,15 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   def backend = Action { implicit request =>
 
-    val session_id = Session.requestSessionID(request)
-    val user_o : Option[User] = Session.getUser(session_id)
+    val sessionID = Session.requestSessionID
+    val user_o : Option[User] = Session.getUser
 
   //TODO allow direct access to the backend route if user is already authenticated as admin
 
   if((request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login") || request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")) && this.loggedOut.equals(false))  {
 
     Ok(views.html.backend.backend(webJarAssets,views.html.backend.backend_maincontent(), "Backend", user_o)).withSession {
-      Session.closeSessionRequest(request, session_id)
+      Session.closeSessionRequest(request, sessionID)
     }
 
   }
@@ -162,7 +162,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
         }
 
         val sessionID = Session.requestSessionID(ctx)
-        val user_o : Option[User] = Session.getUser(sessionID)
+        val user_o : Option[User] = Session.getUser
         Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
           Session.closeSessionRequest(ctx, sessionID)
         }
@@ -191,7 +191,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
           }
 
           val sessionID = Session.requestSessionID(ctx)
-          val user_o : Option[User] = Session.getUser(sessionID)
+          val user_o : Option[User] = Session.getUser
           Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
             Session.closeSessionRequest(ctx, sessionID)
           }
@@ -204,8 +204,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   // Mock up function to let a user access to a page only when they are logged in as a user with certain rights
   def backendAccess() = Action { implicit request =>
-    val sessionID = Session.requestSessionID(request)
-    val user_o = Session.getUser(sessionID)
+    val sessionID = Session.requestSessionID
+    val user_o = Session.getUser
     if (user_o.get.isSuperuser) {
       Redirect("@/backend")
     } else {
@@ -229,7 +229,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signUpSubmit() = Action.async { implicit request =>
-    val sessionID = Session.requestSessionID(request)
+    val sessionID = Session.requestSessionID
     User.formSignUp.bindFromRequest.fold(
       errors =>
         // Something went wrong with the Form.
@@ -272,7 +272,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def miniProfile() = Action { implicit request =>
-    val session = Session.requestSessionID(request)
+    val session = Session.requestSessionID
     val user_o  = Session.getUser(session)
     user_o match {
       case Some(user) =>
@@ -288,7 +288,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signOut() = Action { implicit request =>
-    val sessionID = Session.requestSessionID(request) // grab the Old Session ID
+    val sessionID = Session.requestSessionID // grab the Old Session ID
     Session.removeUser(sessionID)  // Remove the User from the association
 
     Redirect(routes.Application.index()).withNewSession.flashing(
@@ -307,8 +307,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   }
 
   def profile() = Action { implicit request =>
-    val sessionID = Session.requestSessionID(request)
-    val user_o  = Session.getUser(sessionID)
+    val sessionID = Session.requestSessionID
+    val user_o  = Session.getUser
     user_o match {
       case Some(user) =>
         Ok(views.html.auth.profile(user, User.formProfileEdit, User.formProfilePasswordEdit))
@@ -319,8 +319,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   }
 
   def profileSubmit() = Action.async { implicit request =>
-    val sessionID = Session.requestSessionID(request)
-    val user_o = Session.getUser(sessionID)
+    val sessionID = Session.requestSessionID
+    val user_o = Session.getUser
     user_o match {
       case Some(user) =>
         User.formProfileEdit.bindFromRequest.fold(

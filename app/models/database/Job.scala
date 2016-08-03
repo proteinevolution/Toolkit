@@ -42,7 +42,8 @@ case class Job(mainID      : BSONObjectID,            // ID of the Job in the Sy
                jobType     : String,                  // Type of job
                parentID    : Option[BSONObjectID],    // ID of the Parent Job
                jobID       : String,                  // User visible ID of the Job
-               ownerID     : JobOwner,                // ID referencing the Owner of the Job
+               sessionID   : BSONObjectID,            // ID referencing the session Object
+               userID      : Option[BSONObjectID],    // User to whom the Job belongs
                status      : String,                  // Status of the Job
                tool        : String,                  // Tool used for this Job
                statID      : String,                  //
@@ -57,7 +58,8 @@ object Job {
   val JOBTYPE       = "jobType"       //              Type of the Job
   val PARENTID      = "parentID"      //              ID of the parent job
   val JOBID         = "jobID"         //              ID for the job
-  val OWNERID       = "ownerID"       //              ID of the job owner
+  val SESSIONID     = "sessionID"     //              ID of the Session
+  val USERID        = "userID"        //              ID of the job owner
   val STATUS        = "status"        //              Status of the job field
   val TOOL          = "tool"          //              name of the tool field
   val STATID        = "statID"        //              ID of the stats for this Job
@@ -74,7 +76,8 @@ object Job {
           jobType     = bson.getAs[String](JOBTYPE).get,
           parentID    = bson.getAs[BSONObjectID](PARENTID),
           jobID       = bson.getAs[String](JOBID).get,
-          ownerID     = bson.getAs[JobOwner](OWNERID).get,
+          sessionID   = bson.getAs[BSONObjectID](SESSIONID).get,
+          userID      = bson.getAs[BSONObjectID](USERID),
           status      = bson.getAs[String](STATUS).get,
           tool        = bson.getAs[String](TOOL).get,
           statID      = bson.getAs[String](STATID).get,
@@ -93,7 +96,8 @@ object Job {
       JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
-      OWNERID     -> job.ownerID,
+      SESSIONID   -> job.sessionID,
+      USERID      -> job.userID,
       STATUS      -> job.status,
       TOOL        -> job.tool,
       STATID      -> job.statID,

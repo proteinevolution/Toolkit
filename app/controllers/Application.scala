@@ -48,8 +48,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   def ws = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
 
     Logger.info("Application attaches WebSocket")
-    Session.requestSessionID(request) match {
-
+    Session.requestSessionID match {
       case sid => Future.successful {  Right(ActorFlow.actorRef(WebSocketActor.props(sid, jobManager))) }
     }
   }
@@ -63,11 +62,11 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     */
   def index = Action { implicit request =>
 
-    val session_id = Session.requestSessionID(request)
-    val user_o : Option[User] = Session.getUser(session_id)
+    val sessionID = Session.requestSessionID
+    val user_o : Option[User] = Session.getUser
 
     Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user_o)).withSession {
-      Session.closeSessionRequest(request, session_id)
+      Session.closeSessionRequest(request, sessionID)
     }
   }
 
@@ -76,7 +75,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     Ok(views.html.general.contact()).withSession {
 
-      Session.closeSessionRequest(request, Session.requestSessionID(request)) // Send Session Cookie
+      Session.closeSessionRequest(request, Session.requestSessionID) // Send Session Cookie
     }
 
   }
@@ -122,7 +121,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     Ok(views.html.general.submit(toolName, toolFrame, None)).withSession {
 
-      Session.closeSessionRequest(request, Session.requestSessionID(request)) // Send Session Cookie
+      Session.closeSessionRequest(request, Session.requestSessionID) // Send Session Cookie
     }
   }
 
@@ -131,12 +130,12 @@ class Application @Inject()(webJarAssets: WebJarAssets,
    */
   def file(filename : String, jobID : String) = Action{ implicit request =>
 
-    val session_id = Session.requestSessionID(request)
+    val sessionID = Session.requestSessionID
 
     // main_id exists, allow send File
 
     Ok.sendFile(new java.io.File(s"$jobPath$SEP$jobID${SEP}results$SEP$filename"))
-      .withHeaders(CONTENT_TYPE->"text/plain").withSession { Session.closeSessionRequest(request, session_id)
+      .withHeaders(CONTENT_TYPE->"text/plain").withSession { Session.closeSessionRequest(request, sessionID)
     }
   }
 

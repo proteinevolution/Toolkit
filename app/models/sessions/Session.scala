@@ -1,15 +1,15 @@
 package models.sessions
 
 import models.database.User
-import models.misc.RandomString
 import play.api.{mvc, Logger}
 import play.api.mvc.RequestHeader
+import reactivemongo.bson.BSONObjectID
 
 import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by astephens on 01.03.16.
-  * Session object used for a simple creation of a session cookie with the session_id
+  * Session object used for a simple creation of a session cookie with the sessionID
   */
 object Session {
   val SID = "sid" // name for the entry in the session cookie
@@ -18,20 +18,23 @@ object Session {
   val sessionUserMap  = new scala.collection.mutable.HashMap[String, User]
 
   /**
-    *  Establishes a new associated of a session ID with a User
+    * Saves a User to the session Mapping for a later time
+    *
+    * @param sessionID The sessionID the user should be identified with.
+    * @param user The user the sessionID will be linked to.wasdwasd@wasd.wasd
+    */
+  def addUser (sessionID : BSONObjectID, user : User) {
+    sessionUserMap.getOrElseUpdate(sessionID.stringify, user)
+  }
+
+  /**
+    * Saves a User to the session Mapping for a later time
     *
     * @param sessionID The sessionID the user should be identified with.
     * @param user The user the sessionID will be linked to.
     */
-  def addUser (session_id : String, user : User) {
-    sessionUserMap.getOrElseUpdate(session_id, user)
-  }
-
-  /**
-    *  Edit user
-    */
-  def editUser (session_id : String, user : User) {
-    sessionUserMap.put(session_id, user)
+  def editUser (sessionID : BSONObjectID, user : User) {
+    sessionUserMap.put(sessionID.stringify, user)
   }
 
   /**
@@ -42,20 +45,32 @@ object Session {
     * @return The User of the SessionID, wrapped into an Option value, or None if the sessionID is not associated
     *         with a User.
     */
-  def getUser (session_id : String) : Option[User] = {
-    sessionUserMap.get(session_id)
+  def getUser (sessionID : BSONObjectID) : Option[User] = {
+    sessionUserMap.get(sessionID.stringify)
+  }
+
+  /**
+    * Returns a User by its sessionID, or None if the sessionID is yet not
+    * associated to a User.
+    *
+    * @param request The request which can identify the user
+    * @return The User of the SessionID, wrapped into an Option value, or None if the sessionID is not associated
+    *         with a User.
+    */
+  def getUser (implicit request: RequestHeader) : Option[User] = {
+    sessionUserMap.get(requestSessionID.stringify)
   }
 
   /**
     * Removes a user by its sessionID and returns the removed User as Option[User],
-    * or None if the User was not present.
+    * or None if the User was not in the mapping.
     *
     * @param sessionID The sessionID of the user which should be removed.
     * @return Option[User] of the User which was removed, None if no user was removed because of a
     *         non-present sessionID
     */
-  def removeUser (session_id : String) : Option[User] = {
-    sessionUserMap.remove(session_id)
+  def removeUser (sessionID : BSONObjectID) : Option[User] = {
+    sessionUserMap.remove(sessionID.stringify)
   }
 
 
@@ -67,9 +82,12 @@ object Session {
     * @param request
     * @return
     */
-  def requestSessionID(request : RequestHeader) : String = {
-    request.session.get(SID).getOrElse {
-      newSessionID(request)
+  def requestSessionID(implicit request: RequestHeader) : BSONObjectID = {
+    val sid = request.session.get(SID)
+    if (sid.isDefined) {
+      BSONObjectID.parse(sid.get).getOrElse(BSONObjectID.generate())
+    } else {
+      BSONObjectID.generate()
     }
   }
 
@@ -80,37 +98,33 @@ object Session {
     * @param request
     * @return
     */
-  def newSessionID(request : RequestHeader) : String = {
-    var nextString  = ""
-    do {
-      nextString = RandomString.randomAlphaNumString(15)
-    } while (sessionUserMap.contains(nextString))
-    nextString
+  def newSessionID(implicit request : RequestHeader) : BSONObjectID = {
+    BSONObjectID.generate()
   }
 
   /**
     * Generates the Cookie for the Session
     *
     * @param request
-    * @param session_id
+    * @param sessionID
     * @return
     */
-  def closeSessionRequest(request : RequestHeader, session_id : String): mvc.Session = {
-    Logger.info("Request from SID \"" + session_id + "\"")
-    request.session + (SID -> session_id)
+  def closeSessionRequest(implicit request : RequestHeader, sessionID : BSONObjectID): mvc.Session = {
+    Logger.info("Request from SID \"" + sessionID + "\"")
+    request.session + (SID -> sessionID.stringify)
   }
 
   /**
     * Generates the Cookie for the Session
     *
     * @param request
-    * @param session_id
+    * @param sessionID
     * @param mainID
     * @return
     */
-  def closeSessionRequest(request : RequestHeader, session_id : String, mainID : Long): mvc.Session = {
-    Logger.info("Request from SID \"" + session_id + "\"")
-    request.session + (SID -> session_id)
+  def closeSessionRequest(implicit request : RequestHeader, sessionID : BSONObjectID, mainID : Long): mvc.Session = {
+    Logger.info("Request from SID \"" + sessionID + "\"")
+    request.session + (SID -> sessionID.stringify)
     request.session + (MID -> mainID.toString)
   }
 }
