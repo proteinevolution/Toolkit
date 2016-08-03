@@ -33,7 +33,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                     extends Controller with I18nSupport
                                        with JSONTemplate
                                        with backendLogin
-                                       with ReactiveMongoComponents {
+                                       with ReactiveMongoComponents
+                                       with Common {
 
 
   // get the collection 'users'
@@ -108,9 +109,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     val session_id = Session.requestSessionID(request)
     val user_o : Option[User] = Session.getUser(session_id)
 
-    Ok(views.html.backend.login(webJarAssets, "0", user_o)).withSession {
-      Session.closeSessionRequest(request, session_id)
-    }
+    NoCache(Ok(views.html.backend.login(webJarAssets, "0", user_o)).withNewSession)
 
   }
 
@@ -121,7 +120,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   //TODO allow direct access to the backend route if user is already authenticated as admin
 
-  if(request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login") || request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")) {
+  if((request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login") || request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")) && this.loggedOut.equals(false))  {
 
     Ok(views.html.backend.backend(webJarAssets,views.html.backend.backend_maincontent(), "Backend", user_o)).withSession {
       Session.closeSessionRequest(request, session_id)
@@ -137,6 +136,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   }
 
   var LoginCounter = 0
+
 
   def backendLogin () = Action { implicit ctx =>
 
@@ -174,7 +174,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
           LoginCounter = 0
 
           println("Login to backend detected on: " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress + " with session " + sessionID)
-          Redirect("/@/backend") // TODO if logged in, users should not need to re-authenticate
+          this.loggedOut = false
+          NoCache(Redirect("/@/backend")) // TODO if logged in, users should not need to re-authenticate
 
         }
         else {
@@ -296,10 +297,13 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   }
 
 
-  def logout() = Action {
-    Redirect(routes.Application.index()).withNewSession.flashing(
-      "success" -> "You've been logged out"
-    )
+  def logout() = Action { implicit ctx =>
+
+    println("logout from dashboard with on " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress + " with " +  ctx.session)
+    this.loggedOut = true
+    NoCache(Redirect(routes.Application.index())).withNewSession
+
+
   }
 
   def profile() = Action { implicit request =>
