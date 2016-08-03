@@ -289,7 +289,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   def signOut() = Action { implicit request =>
     val sessionID = Session.requestSessionID(request) // grab the Old Session ID
     Session.removeUser(sessionID)  // Remove the User from the association
-    
+
     Redirect(routes.Application.index()).withNewSession.flashing(
       "success" -> "You've been logged out"
     )

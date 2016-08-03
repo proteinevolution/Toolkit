@@ -50,6 +50,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
 
     val sessionID = Session.requestSessionID(request) // Grab the Session ID
+    val user_o    = Session.getUser(sessionID)
 
     // Fetch the job ID from the submission, might be the empty string
     //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
