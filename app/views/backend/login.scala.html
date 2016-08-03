@@ -7,6 +7,9 @@
 
 <html>
     <head>
+        <meta http-equiv='cache-control' content='no-cache'>
+        <meta http-equiv='expires' content='0'>
+        <meta http-equiv='pragma' content='no-cache'>
         <title>Bioinformatics Toolkit</title>
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.png")">
         <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
@@ -162,9 +165,9 @@
 
         }
 
-
-
                     $(document).ready(function() {
+                        var Backlen=history.length;
+                        history.go(-Backlen);
                         $(document).foundation();
                     })
     </script>
