@@ -3,9 +3,8 @@
 @import models.tel.TEL
 @(inputForm: Form[(String, String, String)])(implicit messages: Messages, request: RequestHeader)
 
-<!--
-<script src='@routes.Assets.at("javascripts/alnviz.js")' type="text/javascript" ></script>
--->
+
+<script src='@routes.Assets.at("javascripts/sampleseqs.js")' type="text/javascript" ></script>
 
 @helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 50,
     '_label -> "",
