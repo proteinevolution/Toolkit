@@ -133,9 +133,13 @@ tr.spaceUnder > td
 }
 
 .header {
+    background-color: #006F62;
 
-    height: 8.125em;
-    
+}
+
+.header img {
+    padding: 1em;
+    width: 25%;
 }
 
 .columns {
