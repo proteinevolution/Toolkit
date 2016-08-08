@@ -24,7 +24,7 @@ object Session {
     * @param user The user the sessionID will be linked to.wasdwasd@wasd.wasd
     */
   def addUser (sessionID : BSONObjectID, user : User) {
-    sessionUserMap.getOrElseUpdate(sessionID.stringify, user)
+    val _ = sessionUserMap.getOrElseUpdate(sessionID.stringify, user)
   }
 
   /**
@@ -34,7 +34,7 @@ object Session {
     * @param user The user the sessionID will be linked to.
     */
   def editUser (sessionID : BSONObjectID, user : User) {
-    sessionUserMap.put(sessionID.stringify, user)
+    val _ = sessionUserMap.put(sessionID.stringify, user)
   }
 
   /**

@@ -131,7 +131,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case Read(sessionID : BSONObjectID, jobID : String) =>
       implicit val reader = JobReader
       val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
-      futureJob.map {
+      futureJob.foreach {
         case Some(job) => // Job Owner must be linked with the Session ID
           if (job.sessionID.eq(sessionID)) // Retrieve the Job Files
             sender () ! s"$jobPath$SEPARATOR${job.jobID}${SEPARATOR}params".toFile.list.map {f =>
@@ -149,10 +149,10 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case JobInfo(sessionID : BSONObjectID, jobID) =>
       implicit val reader = JobReader
       val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
-      futureJob.map {
+      futureJob.foreach {
         case Some(job) =>
           if (job.sessionID.eq(sessionID)) {
-            sender() !(job.status, job.tool)
+            sender() ! (job.status, job.tool)
           }
 
           else
@@ -166,7 +166,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case Delete(sessionID, jobID) =>
       implicit val reader = JobReader
       val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
-      futureJob.map {
+      futureJob.foreach {
         case Some(job) =>
           if (job.sessionID.eq(sessionID)) {
 

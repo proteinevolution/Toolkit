@@ -21,5 +21,6 @@ class Mailing @Inject() (mailerClient: MailerClient) {
       bodyHtml = Some(template.bodyHtml(user))  // HTML formatted E-Mail content
     )
     mailerClient.send(email)
+    ()
   }
 }
