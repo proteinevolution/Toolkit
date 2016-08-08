@@ -152,7 +152,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       futureJob.foreach {
         case Some(job) =>
           if (job.sessionID.eq(sessionID)) {
-            sender() ! (job.status, job.tool)
+            sender() ! (job.status, jobID)
           }
 
           else
@@ -196,7 +196,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
      // User asks to prepare new Job, might be directly executed (if start is true)
     case Prepare(sessionID, jobID, toolname, params, start) =>
 
-       Future {
+       val _ = Future {
         // Check whether jobID already exists, otherwise make new job
 
         // This is a new Job Submission // TODO Only support new Jobs currently
