@@ -1,6 +1,9 @@
 package models.database
 
+import models.jobs.JobState
+import models.jobs.JobState.JobState
 import org.joda.time.DateTime
+import reactivemongo.bson.BSONNumberLike.BSONIntegerNumberLike
 import reactivemongo.bson._
 
 /** ?
@@ -45,7 +48,7 @@ case class Job(mainID      : BSONObjectID,            // ID of the Job in the Sy
                jobID       : String,                  // User visible ID of the Job
                sessionID   : BSONObjectID,            // ID referencing the session Object
                userID      : Option[BSONObjectID],    // User to whom the Job belongs
-               status      : String,                  // Status of the Job
+               status      : JobState,                  // Status of the Job
                tool        : String,                  // Tool used for this Job
                statID      : String,                  //
                dateCreated : Option[DateTime],        // Creation time of the Job
@@ -71,7 +74,9 @@ object Job {
   /**
     * Object containing the writer for the Class
     */
-  implicit object Reader extends BSONDocumentReader[Job] {
+
+  implicit val reader = JobStateReader
+  object JobReader extends BSONDocumentReader[Job] {
     def read(bson : BSONDocument): Job = {
       Job(mainID      = bson.getAs[BSONObjectID](IDDB).get,
           jobType     = bson.getAs[String](JOBTYPE).get,
@@ -79,13 +84,58 @@ object Job {
           jobID       = bson.getAs[String](JOBID).get,
           sessionID   = bson.getAs[BSONObjectID](SESSIONID).get,
           userID      = bson.getAs[BSONObjectID](USERID),
-          status      = bson.getAs[String](STATUS).get,
+          status      = bson.getAs[JobState](STATUS).get,
           tool        = bson.getAs[String](TOOL).get,
           statID      = bson.getAs[String](STATID).get,
           dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
           dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)),
           dateViewed  = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => new DateTime(dt.value)))
     }
+  }
+
+
+  object JobStateReader extends BSONReader[BSONInteger, JobState] {
+
+
+    def read(doc: BSONInteger) = {
+
+      doc match {
+
+      case BSONInteger(0) => JobState.PartiallyPrepared
+      case BSONInteger(1)  => JobState.Prepared
+      case BSONInteger(2)  => JobState.Queued
+      case BSONInteger(3)  => JobState.Running
+      case BSONInteger(4)  => JobState.Error
+      case BSONInteger(5)  => JobState.Done
+      case BSONInteger(6)  => JobState.Submitted
+
+    }
+
+    }
+
+  }
+
+
+  implicit object JobStateWriter extends BSONWriter[JobState, BSONInteger] {
+
+
+    def write(state : JobState)  = {
+
+      state match {
+
+      case JobState.PartiallyPrepared => BSONInteger(0)
+      case JobState.Prepared => BSONInteger(1)
+      case JobState.Queued => BSONInteger(2)
+      case JobState.Running => BSONInteger(3)
+      case JobState.Error => BSONInteger(4)
+      case JobState.Done => BSONInteger(5)
+      case JobState.Submitted => BSONInteger(6)
+
+
+      }
+
+    }
+
   }
 
   /**
@@ -105,5 +155,10 @@ object Job {
       DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
       DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
       DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis)))
+
   }
+
+
+
+
 }

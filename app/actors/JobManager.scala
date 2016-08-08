@@ -6,6 +6,7 @@ import javax.inject.{Inject, Singleton}
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
 import models.database.Job
+import models.database.Job.JobReader
 import models.jobs.JobState
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
@@ -125,8 +126,10 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case UserDisconnect(sessionID) =>
       this.connectedUsers = connectedUsers - sessionID
 
+
      // Reads parameters provided to the job from the job directory
     case Read(sessionID : BSONObjectID, jobID : String) =>
+      implicit val reader = JobReader
       val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
       futureJob.map {
         case Some(job) => // Job Owner must be linked with the Session ID
@@ -144,11 +147,14 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     // User Requests State of Job
     case JobInfo(sessionID : BSONObjectID, jobID) =>
+      implicit val reader = JobReader
       val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
       futureJob.map {
         case Some(job) =>
-          if (job.sessionID.eq(sessionID))
-            sender() ! (job.jobID, job.tool)
+          if (job.sessionID.eq(sessionID)) {
+            sender() !(job.status, job.tool)
+          }
+
           else
             sender() ! PermissionDenied
         case None      =>
@@ -158,6 +164,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     //  User asks to delete Job
     case Delete(sessionID, jobID) =>
+      implicit val reader = JobReader
       val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
       futureJob.map {
         case Some(job) =>
@@ -200,7 +207,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                            jobID       = jobID.getOrElse(jobIDSource.next().toString),
                            sessionID   = sessionID,
                            userID      = None,
-                           status      = JobState.PartiallyPrepared.no.toString,
+                           status      = JobState.PartiallyPrepared,
                            tool        = toolname,
                            statID      = "",
                            dateCreated = Some(new DateTime()),
