@@ -86,7 +86,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     */
   def executeJob(job : Job, scriptPath : String): Unit = {
 
-    val rootPath  = s"$jobPath$SEPARATOR${job.mainID.toString()}$SEPARATOR"
+    val rootPath  = s"$jobPath$SEPARATOR${job.jobID}$SEPARATOR"
 
     // Log files output buffer
     val out = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stdout.out")))
@@ -131,7 +131,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       futureJob.map {
         case Some(job) => // Job Owner must be linked with the Session ID
           if (job.sessionID.eq(sessionID)) // Retrieve the Job Files
-            sender () ! s"$jobPath$SEPARATOR${job.mainID.toString ()}${SEPARATOR}params".toFile.list.map {f =>
+            sender () ! s"$jobPath$SEPARATOR${job.jobID}${SEPARATOR}params".toFile.list.map {f =>
               f.name -> f.contentAsString
             }.toMap
 
@@ -207,7 +207,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                            dateUpdated = Some(new DateTime()),
                            dateViewed  = Some(new DateTime()))
 
-          val rootPath  = s"$jobPath$SEPARATOR${newJob.mainID}$SEPARATOR" // Where the Job Directory is located
+          val rootPath  = s"$jobPath$SEPARATOR${newJob.jobID}$SEPARATOR" // Where the Job Directory is located
+
 
           this.jobBSONCollection =  this.jobBSONCollection.andThen {
 
