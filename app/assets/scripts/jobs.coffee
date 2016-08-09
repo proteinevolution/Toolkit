@@ -1,3 +1,5 @@
+
+
 @a = ['0', 'p', 'q', 'r', 'e', 'd','i']
 @jobs = {}
 
@@ -21,12 +23,6 @@ jobs.vm = do ->
 
     # Remove a Job from the View
     vm.clear = (job_id) ->
-      $.ajax(
-        async : true
-        url : '/jobs/clear/' + job_id
-        type : 'POST'
-      )
-      toClear = undefined
       i = 0
       while i < vm.list.length
         job = vm.list[i]
@@ -68,8 +64,7 @@ jobs.vm = do ->
             toolname: toolname)
           return
       # limit job list to 5 jobs at the moment
-        if i >= 4
-          vm.clear(vm.list[0])
+
         m.redraw()
         i++
       vm.list.push new (jobs.Job)( job_id: job_id, state: state, toolname: toolname)
