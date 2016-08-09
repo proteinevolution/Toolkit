@@ -128,7 +128,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     * @return
     */
   def jobInfo(jobID: String) = Action.async { implicit request =>
-    
+
     val sessionID = Session.requestSessionID // Grab the Session ID
 
     (jobManager ? JobInfo(sessionID, jobID)).flatMap {
