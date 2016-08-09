@@ -20,7 +20,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 /**
   *
@@ -128,12 +128,10 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     * @return
     */
   def jobInfo(jobID: String) = Action.async { implicit request =>
-
+    
     val sessionID = Session.requestSessionID // Grab the Session ID
 
     (jobManager ? JobInfo(sessionID, jobID)).flatMap {
-      
-      case _ => Logger.info("RECEIVED"); Future.successful(Ok)
 
       case JobIDUnknown => Future.successful(NotFound)
       case PermissionDenied => Future.successful(NotFound)
