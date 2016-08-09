@@ -148,23 +148,24 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     // User Requests State of Job
     case JobInfo(sessionID : BSONObjectID, jobID) =>
+
+      val replyTo = sender()
       implicit val reader = JobReader
-      Logger.info("JobManager received Jobinfo message for jobID: " + jobID)
-      this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job]).foreach {
 
-        case Some(job) =>
-          if (job.sessionID == sessionID) {
+      this.jobBSONCollection = this.jobBSONCollection.andThen {
 
-            Logger.info("Send to seder")
-            sender() ! job.status -> jobID
-            Logger.info("SENT")
-          }
-          else {
-            sender() ! PermissionDenied
-          }
-        case None      =>
-          // Job ID is unknown.
-          sender() ! JobIDUnknown
+        case Success(coll) => coll.find(BSONDocument(Job.JOBID -> jobID)).one[Job].foreach {
+
+          case Some(job) =>
+            if (job.sessionID == sessionID) {
+
+              replyTo !  job.status -> job.jobID
+            } else {
+              sender() ! PermissionDenied
+            }
+          case None  =>  sender() ! JobIDUnknown
+        }
+        case Failure(t) => throw t
       }
 
     //  User asks to delete Job
