@@ -11,12 +11,13 @@ import models.jobs.JobState
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.{BSONObjectID, BSONDocument}
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.Future
 import better.files._
 import models.{Constants, ExitCodes}
 import models.tel.TEL
+import play.api.Logger
 
 import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -148,15 +149,19 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     // User Requests State of Job
     case JobInfo(sessionID : BSONObjectID, jobID) =>
       implicit val reader = JobReader
-      val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
-      futureJob.foreach {
-        case Some(job) =>
-          if (job.sessionID.eq(sessionID)) {
-            sender() ! (job.status, jobID)
-          }
+      Logger.info("JobManager received Jobinfo message for jobID: " + jobID)
+      this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job]).foreach {
 
-          else
+        case Some(job) =>
+          if (job.sessionID == sessionID) {
+
+            Logger.info("Send to seder")
+            sender() ! job.status -> jobID
+            Logger.info("SENT")
+          }
+          else {
             sender() ! PermissionDenied
+          }
         case None      =>
           // Job ID is unknown.
           sender() ! JobIDUnknown

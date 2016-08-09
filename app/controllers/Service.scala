@@ -32,7 +32,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
                          val messagesApi: MessagesApi,
                          @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport {
 
-  implicit val timeout = Timeout(5.seconds)
+  implicit val timeout = Timeout(1.seconds)
 
 
   // Defines which messages the user can pass to the server
@@ -132,6 +132,8 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     val sessionID = Session.requestSessionID // Grab the Session ID
 
     (jobManager ? JobInfo(sessionID, jobID)).flatMap {
+      
+      case _ => Logger.info("RECEIVED"); Future.successful(Ok)
 
       case JobIDUnknown => Future.successful(NotFound)
       case PermissionDenied => Future.successful(NotFound)
