@@ -69,13 +69,23 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   /**
     * Updates JobState.
     *
-    * //TODO Subject to change upon database integration
-    *
     * @param job
     * @param newState
     * @return
     */
   def changeState(job : Job, newState : JobState.JobState) =  {
+
+
+    // change Job State in Database
+    this.jobBSONCollection = this.jobBSONCollection.andThen {
+
+      case Success(coll) => coll.update(
+        BSONDocument(Job.JOBID -> job.jobID),
+        BSONDocument("$set" -> job.copy(status = newState))
+      )
+      case Failure(t) => throw t
+    }
+
     // Inform user if connected
     if(connectedUsers contains job.sessionID) {
       connectedUsers(job.sessionID) ! JobStateChanged(job, newState)
@@ -159,9 +169,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           case Some(job) =>
             if (job.sessionID == sessionID) {
 
-              replyTo !  job.status -> job.jobID
+              replyTo ! job.status -> job.tool
             } else {
-              sender() ! PermissionDenied
+              replyTo ! PermissionDenied
             }
           case None  =>  sender() ! JobIDUnknown
         }
