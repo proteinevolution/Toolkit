@@ -98,13 +98,15 @@
 
 
         <div id="myNav" class="overlay">
-            <button class="hamburger hamburger--elastic" type="button" style="float: right; margin: 41px 39px 0 0;" onclick="closeNav()">
+            <button id="hamburgerInside" class="hamburger hamburger--elastic" type="button" style="float: right; margin: 41px 39px 0 0;" onclick="closeNav()">
                 <span class="hamburger-box">
                     <span class="hamburger-inner overlayed" style="background-color: #000;"></span>
                 </span>
             </button>
             <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
-            <div class="overlay-content">
+            <div class="overlay-content" id="overlay-content">
+
+                @general.tools()
 
             </div>
         </div>
