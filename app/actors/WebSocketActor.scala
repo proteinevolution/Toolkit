@@ -58,7 +58,7 @@ private final class WebSocketActor(sessionID : BSONObjectID, jobManager : ActorR
 
     case JobStateChanged(job, state) =>
 
-      out ! Json.obj("type" -> "updatejob", "job_id" -> job.jobID, "state" -> state.no, "toolname" -> "foobar")
+      out ! Json.obj("type" -> "updatejob", "job_id" -> job.jobID, "state" -> state.no, "toolname" -> job.tool)
 
 
     /*
