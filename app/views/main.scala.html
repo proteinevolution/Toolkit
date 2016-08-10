@@ -9,8 +9,10 @@
         <title>Bioinformatics Toolkit</title>
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.png")">
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link href="@routes.Assets.at("styles/hamburgers.min.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/global.min.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/custom.css")" rel="stylesheet">
+
         <link href="@routes.Assets.at("styles/motion-ui.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/offline-theme-dark.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/offline-language-english.css")" rel="stylesheet">
@@ -70,6 +72,9 @@
 
         </script>
 
+
+
+
     </head>
 
 
@@ -84,8 +89,25 @@
         <!---Top-Bar with Logo/Search and Dropdown --->
         <div class="row fullwidth header show-for-medium">
             <a href="@routes.Application.index()"><img src="@routes.Assets.at("images/logo.svg")"></a>
+            <button class="hamburger hamburger--elastic" type="button" style="float: right; margin: 20px 40px 0 0;" onclick="openNav()">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </button>
         </div>
-     <!-- SVG Minerva -->
+
+
+        <div id="myNav" class="overlay">
+            <button class="hamburger hamburger--elastic" type="button" style="float: right; margin: 41px 39px 0 0;" onclick="closeNav()">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner overlayed" style="background-color: #000;"></span>
+                </span>
+            </button>
+            <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
+            <div class="overlay-content">
+
+            </div>
+        </div>
 
 
 
@@ -165,6 +187,21 @@
 
 
         <script type="text/javascript">
+
+                function openNav() {
+                    document.getElementById("myNav").style.height = "100%";
+                }
+
+                function closeNav() {
+                    document.getElementById("myNav").style.height = "0%";
+                }
+
+                var $hamburger = $(".hamburger");
+                $hamburger.on("click", function(e) {
+                    $hamburger.toggleClass("is-active");
+                    // Do something else, like open/close menu
+                });
+
                 $(document).ready(function() {
                     $(document).foundation();
                 })
