@@ -110,7 +110,7 @@ object Session {
     * @return
     */
   def closeSessionRequest(implicit request : RequestHeader, sessionID : BSONObjectID): mvc.Session = {
-    Logger.info("Request from SID \"" + sessionID + "\"")
+    Logger.info("Request from SID \"" + sessionID.stringify + "\"")
     request.session + (SID -> sessionID.stringify)
   }
 
@@ -123,7 +123,7 @@ object Session {
     * @return
     */
   def closeSessionRequest(implicit request : RequestHeader, sessionID : BSONObjectID, mainID : Long): mvc.Session = {
-    Logger.info("Request from SID \"" + sessionID + "\"")
+    Logger.info("Request from SID \"" + sessionID.stringify + "\"")
     request.session + (SID -> sessionID.stringify)
     request.session + (MID -> mainID.toString)
   }
