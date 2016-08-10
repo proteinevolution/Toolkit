@@ -13,7 +13,6 @@ import scala.collection.mutable.ArrayBuffer
   */
 object Session {
   val SID = "sid" // name for the entry in the session cookie
-  val MID = "mid" // mainID of the last job that was get
   val sessions : ArrayBuffer[String] = ArrayBuffer.empty
   val sessionUserMap  = new scala.collection.mutable.HashMap[String, User]
 
@@ -23,8 +22,8 @@ object Session {
     * @param sessionID The sessionID the user should be identified with.
     * @param user The user the sessionID will be linked to.wasdwasd@wasd.wasd
     */
-  def addUser (sessionID : BSONObjectID, user : User) {
-    val _ = sessionUserMap.getOrElseUpdate(sessionID.stringify, user)
+  def addUser (sessionID : BSONObjectID, user : User) : User = {
+    sessionUserMap.getOrElseUpdate(sessionID.stringify, user)
   }
 
   /**
@@ -33,8 +32,8 @@ object Session {
     * @param sessionID The sessionID the user should be identified with.
     * @param user The user the sessionID will be linked to.
     */
-  def editUser (sessionID : BSONObjectID, user : User) {
-    val _ = sessionUserMap.put(sessionID.stringify, user)
+  def editUser (sessionID : BSONObjectID, user : User) : Option[User] = {
+    sessionUserMap.put(sessionID.stringify, user)
   }
 
   /**
@@ -73,8 +72,6 @@ object Session {
     sessionUserMap.remove(sessionID.stringify)
   }
 
-
-
   /**
     * Generates a new Session ID unless the user already has one.
     * The Session ID is saved in the sessions array
@@ -112,19 +109,5 @@ object Session {
   def closeSessionRequest(implicit request : RequestHeader, sessionID : BSONObjectID): mvc.Session = {
     Logger.info("Request from SID \"" + sessionID.stringify + "\"")
     request.session + (SID -> sessionID.stringify)
-  }
-
-  /**
-    * Generates the Cookie for the Session
-    *
-    * @param request
-    * @param sessionID
-    * @param mainID
-    * @return
-    */
-  def closeSessionRequest(implicit request : RequestHeader, sessionID : BSONObjectID, mainID : Long): mvc.Session = {
-    Logger.info("Request from SID \"" + sessionID.stringify + "\"")
-    request.session + (SID -> sessionID.stringify)
-    request.session + (MID -> mainID.toString)
   }
 }
