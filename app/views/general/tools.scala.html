@@ -1,0 +1,242 @@
+<style>
+
+    
+
+body {
+font-family: inherit;
+margin: 0;
+
+}
+
+#show-length {
+position: absolute;
+margin-left: 23em;
+}
+
+.links {
+fill: none;
+stroke: #000;
+stroke-width: 3;
+}
+
+.link-extensions {
+fill: none;
+stroke: #000;
+stroke-opacity: .25;
+}
+
+.labels {
+
+font-family: inherit;
+cursor: pointer;
+}
+
+.link--active {
+stroke: #000 !important;
+stroke-width: 3;
+}
+
+.link-extension--active {
+stroke-opacity: .6;
+}
+
+.label--active {
+font-weight: bold;
+}
+
+.off-canvas-content {
+
+overflow: hidden;
+}
+
+.main-content {
+
+overflow: hidden;
+}
+
+.off-canvas-wrapper {
+
+overflow: hidden;
+}
+
+</style>
+
+    <!-- Copyright 2015 Mike Bostock http://d3js.org -->
+<script src="//d3js.org/d3.v3.min.js"></script>
+
+<script>
+
+
+function data_display(){
+
+    var x = window.innerWidth;
+    var outerRadius = x / 4;
+    var innerRadius = outerRadius - x/7;
+
+
+    var color = d3.scale.category10()
+            .domain(["Search", "Alignment", "SeqAnalysis", '2aryStructure', '3aryStructure', 'Classification', 'Utils']);
+
+
+    var cluster = d3.layout.cluster()
+            .size([360, innerRadius])
+            .children(function(d) { return d.branchset; })
+            .value(function(d) { return 1; })
+            .sort(function(a, b) { return (a.value - b.value) || d3.ascending(a.length, b.length); })
+            .separation(function(a, b) { return 1; });
+
+    var svg = d3.select('.overlay-content').append("svg")
+            .attr("width", x/2)
+            .attr("height", x/2);
+
+    $("svg").css({top: -200, bottom: 600, left: '50%', position:'absolute', transform: 'translateX(-50%)'});
+
+
+    var legend = svg.append("g")
+            .attr("class", "legend")
+            .selectAll("g")
+            .data(color.domain())
+            .enter().append("g")
+            .attr("transform", function(d, i) { return "translate(" + (outerRadius * 2 - 10) + "," + (i * 20 + 50) + ")"; });
+
+    legend.append("rect")
+            .attr("x", -18)
+            .attr("width", 18)
+            .attr("height", 18)
+            .style("fill", color);
+    legend.append("text")
+            .attr("x", -24)
+            .attr("y", 9)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text(function(d) { return d; });
+
+    var chart = svg.append("g")
+            .attr("transform", "translate(" + x/4 + "," + x/5 + ")");
+
+    //for some reason the svg disappears when deleting the '/' and nothing is shown, couldn't fix it so far guess the route is somehow not correct
+    d3.text('@routes.Assets.at("life.txt")', function(error, life) {
+
+        if(error) throw error;
+
+        var root = newick.parse(life),
+                nodes = cluster.nodes(root),
+                links = cluster.links(nodes);
+        input = d3.select("#show-length input").on("change", changed),
+                timeout = setTimeout(function() { input.property("checked", true).each(changed); }, 2000);
+
+        setRadius(root, root.length = 0, innerRadius / maxLength(root));
+        setColor(root);
+
+        /*var linkExtension = chart.append("g")
+         .attr("class", "link-extensions")
+         .selectAll("path")
+         .data(links.filter(function(d) { return !d.target.children; }))
+         .enter().append("path")
+         .each(function(d) { d.target.linkExtensionNode = this; })
+         .attr("d", function(d) { return step(d.target.x, d.target.y, d.target.x, innerRadius); });*/
+
+        var link = chart.append("g")
+                .attr("class", "links")
+                .selectAll("path")
+                .data(links)
+                .enter().append("path")
+                .each(function(d) { d.target.linkNode = this; })
+                .attr("d", function(d) { return step(d.source.x, d.source.y, d.target.x, d.target.y) })
+                .style("stroke", function(d) { return d.target.color; });
+
+        chart.append("g")
+                .attr("class", "labels")
+                .selectAll("text")
+                .data(nodes.filter(function(d) { return !d.children; }))
+                .enter().append("text")
+                .attr("dy", ".31em")
+                .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (innerRadius + 4) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
+                .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+                .style("font-size", x/150+"px")
+                .style("font-weight", "light")
+                .text(function(d) { return d.name.replace(/_/g, " "); })
+                .on("mouseover", mouseovered(true))
+                .on("mouseout", mouseovered(false))
+                .on("click", function () {
+                    var names = {"AlignmentViewer": "tools/alnviz" , "T-Coffee": "tools/tcoffee", "MAFFT": "tools/mafft", "Hmmer3": "tools/hmmer3",
+                        "PSI-Blast": "tools/psiblast", "CS-Blast": "tools/csblast", "Reformat": "reformat", "Extract GIs": "seq2gi"};
+                    window.location.href = "/#/" + names[d3.select(this).text()];
+
+                    $( "#hamburgerInside" ).click();
+
+                });
+
+
+
+        function changed() {
+            clearTimeout(timeout);
+            var checked = this.checked;
+            d3.transition().duration(750).each(function() {
+                linkExtension.transition().attr("d", function(d) { return step(d.target.x, checked ? d.target.radius : d.target.y, d.target.x, innerRadius); });
+                link.transition().attr("d", function(d) { return step(d.source.x, checked ? d.source.radius : d.source.y, d.target.x, checked ? d.target.radius : d.target.y) });
+            });
+        }
+        function mouseovered(active) {
+            return function(d) {
+                d3.select(this).classed("label--active", active);
+                d3.select(d.linkExtensionNode).classed("link-extension--active", active).each(moveToFront);
+                do d3.select(d.linkNode).classed("link--active", active).each(moveToFront); while (d = d.parent);
+            };
+        }
+        function moveToFront() {
+            this.parentNode.appendChild(this);
+        }
+
+    });
+
+
+    // Compute the maximum cumulative length of any node in the tree.
+    function maxLength(d) {
+        return d.length + (d.children ? d3.max(d.children, maxLength) : 0);
+    }
+    // Set the radius of each node by recursively summing and scaling the distance from the root.
+    function setRadius(d, y0, k) {
+        d.radius = (y0 += d.length) * k;
+        if (d.children) d.children.forEach(function(d) { setRadius(d, y0, k); });
+    }
+    // Set the color of each node by recursively inheriting.
+    function setColor(d) {
+        d.color = color.domain().indexOf(d.name) >= 0 ? color(d.name) : d.parent ? d.parent.color : null;
+        if (d.children) d.children.forEach(setColor);
+    }
+    // Like d3.svg.diagonal.radial, but with square corners.
+    function step(startAngle, startRadius, endAngle, endRadius) {
+        var c0 = Math.cos(startAngle = (startAngle - 90) / 180 * Math.PI),
+                s0 = Math.sin(startAngle),
+                c1 = Math.cos(endAngle = (endAngle - 90) / 180 * Math.PI),
+                s1 = Math.sin(endAngle);
+        return "M" + startRadius * c0 + "," + startRadius * s0
+                + (endAngle === startAngle ? "" : "A" + startRadius + "," + startRadius + " 0 0 " + (endAngle > startAngle ? 1 : 0) + " " + startRadius * c1 + "," + startRadius * s1)
+                + "L" + endRadius * c1 + "," + endRadius * s1;
+    }
+
+    d3.select(self.frameElement).style("height", outerRadius * 2 + "px");
+
+
+}
+
+
+data_display();
+
+var listener = function(event) {
+    //document.getElementById("content").style.height = window.innerWidth*0.5+"px";
+    d3.select("svg").remove();
+    data_display();
+    d3.selectAll(".legend").remove();
+
+};
+
+window.addEventListener('resize', listener, false);
+
+
+
+document.getElementById("overlay-content").style.height = window.innerHeight*0.8+"px";
+
+</script>
+
