@@ -14,7 +14,9 @@ ws.onmessage = (event) ->
   message = JSON.parse event.data
 
   switch message.type
-      # Jobstate has changed
+    #when "updatealljobs"
+    #ws.send("type":"getjoblist")
+    # Jobstate has changed
     when "updatejob"
       state = message.state.toString()
       console.log(state)
