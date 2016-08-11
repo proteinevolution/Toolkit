@@ -97,8 +97,8 @@ object Job {
     * Object containing the reader for the job state
     */
   object JobStateReader extends BSONReader[BSONInteger, JobState] {
-    def read(doc: BSONInteger) = {
-      doc match {
+    def read(state: BSONInteger) = {
+      state match {
       case BSONInteger(0) => JobState.PartiallyPrepared
       case BSONInteger(1) => JobState.Prepared
       case BSONInteger(2) => JobState.Queued
