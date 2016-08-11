@@ -1,12 +1,13 @@
 package actors
 
 
-import actors.JobManager.{JobStateChanged, UserConnect, UserDisconnect}
+import actors.JobManager._
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
+import models.database.Job
 import play.api.libs.json.{JsValue, Json}
 import play.api.Logger
 import reactivemongo.bson.BSONObjectID
@@ -24,7 +25,6 @@ private final class WebSocketActor(sessionID : BSONObjectID, jobManager : ActorR
 
 
   override def preStart =
-
     // Connect to JobManager via Session ID
     jobManager ! UserConnect(sessionID)
 
@@ -32,47 +32,51 @@ private final class WebSocketActor(sessionID : BSONObjectID, jobManager : ActorR
 
     jobManager ! UserDisconnect(sessionID)
 
-
-
-
   def receive = LoggingReceive {
 
-
-  /*
     case js: JsValue =>
-
       (js \ "type").validate[String].map {
+        // User requests the job list for the widget
+        case "getjoblist" =>
+          Logger.info("get job list message received,...")
+          jobManager ! GetJobList(sessionID, None)
 
-        case "autocomplete" =>
-            //(js \ "query").validate[String].map {
-              //query => master ! AutoComplete(query)
-            //}
-
-        //case "getjoblist" => master ! GetJobList
-        case "ping" => Logger.info("PING!")
+        // connection test case
+        case "ping"       =>
+          Logger.info("PING!")
+        case _ =>
+          Logger.error("Undefined Message.")
       }
-    */
+
+    // Messages the user that the job widget needs to be updated
+    case UpdateAllJobs =>
+      Logger.info("Update All Jobs message sent,...")
+      out ! Json.obj("type" -> "updatealljobs")
 
     // Messages the user that there was a problem in handling the Job ID
-    //case JobIDInvalid  => out ! Json.obj("type" -> "jobidinvalid")
+    case JobIDUnknown =>
+      out ! Json.obj("type" -> "jobidinvalid")
 
+    // Messages the user about a change in the Job status
     case JobStateChanged(job, state) =>
+      Logger.info("Job State Changed message sent,...")
+      out ! Json.obj("type"     -> "updatejob",
+                     "job_id"   -> job.jobID,
+                     "state"    -> state.no,
+                     "toolname" -> job.tool)
 
-      out ! Json.obj("type" -> "updatejob", "job_id" -> job.jobID, "state" -> state.no, "toolname" -> job.tool)
+    // Sends the job list to the user
+    case SendJobList(jobList : List[Job]) =>
+      Logger.info("Job List message sent,...")
+      out ! Json.obj("type" -> "joblist",
+                     "list" -> jobList.map(job =>
+                        Json.obj("job_id"   -> job.jobID,
+                                 "state"    -> job.status.no,
+                                 "toolname" -> job.tool)))
 
-
-    /*
-     * Messages the user about a change in the Job status
-     */
     //case UpdateJob(job : UserJob) =>
-      // Sends the message that a job state has changed over the WebSocket. This is probably the most important
-      // Real-time notification in this application
-      //out ! Json.obj("type" -> "updatejob", "job_id" -> job.job_id, "state" -> job.getState.no, "toolname" -> job.tool.toolname)
-
-    //case SendJobList(jobSeq : Seq[UserJob]) =>
-    //  out ! Json.obj("type" -> "joblist", "list" -> createJobObjList(jobSeq))
-
-    //case AutoCompleteSend (jobSeq : Seq[DBJob]) =>
-    //  out ! Json.obj("type" -> "autocomplete", "list" -> createJobObjListDB(jobSeq))
+    // Sends the message that a job state has changed over the WebSocket. This is probably the most important
+    // Real-time notification in this application
+    //out ! Json.obj("type" -> "updatejob", "job_id" -> job.job_id, "state" -> job.getState.no, "toolname" -> job.tool.toolname)
   }
 }
