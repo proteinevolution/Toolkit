@@ -209,48 +209,38 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           sender() ! JobIDUnknown
       }
 
-     // User asks to prepare new Job, might be directly executed (if start is true)
-    case Prepare(sessionID, jobID, toolname, params, start) =>
+    // User asks to prepare new Job, might be directly executed (if start is true)
+    case Prepare(sessionID, jobID, toolName, params, start) =>
+      // Check whether jobID already exists, otherwise make new job
+      // This is a new Job Submission // TODO Only supports new Jobs currently
+      if(jobID.isEmpty) {
+        val newJob = Job(mainID      = BSONObjectID.generate(),
+                         jobType     = "",
+                         parentID    = None,
+                         jobID       = jobID.getOrElse(jobIDSource.next().toString),
+                         sessionID   = sessionID,
+                         userID      = None,
+                         status      = JobState.PartiallyPrepared,
+                         tool        = toolName,
+                         statID      = "",
+                         dateCreated = Some(new DateTime()),
+                         dateUpdated = Some(new DateTime()),
+                         dateViewed  = Some(new DateTime()))
 
-       val _ = Future {
-        // Check whether jobID already exists, otherwise make new job
+        val rootPath  = s"$jobPath$SEPARATOR${newJob.jobID}$SEPARATOR" // Where the Job Directory is located
 
-        // This is a new Job Submission // TODO Only support new Jobs currently
-        if(jobID.isEmpty) {
-          val newJob = Job(mainID      = BSONObjectID.generate(),
-                           jobType     = "",
-                           parentID    = None,
-                           jobID       = jobID.getOrElse(jobIDSource.next().toString),
-                           sessionID   = sessionID,
-                           userID      = None,
-                           status      = JobState.PartiallyPrepared,
-                           tool        = toolname,
-                           statID      = "",
-                           dateCreated = Some(new DateTime()),
-                           dateUpdated = Some(new DateTime()),
-                           dateViewed  = Some(new DateTime()))
+        // Add the job to the Database
+        this.jobBSONCollection.flatMap(_.insert(newJob))
 
-          val rootPath  = s"$jobPath$SEPARATOR${newJob.jobID}$SEPARATOR" // Where the Job Directory is located
+        changeState(newJob, JobState.Submitted)
+        // Interfaces with TEL to make a new job directory, returns the  path to the script which then
+        // needs to be executed
+        val script = TEL.init(toolName, params, rootPath)
+        changeState(newJob, JobState.Prepared)
 
-
-          this.jobBSONCollection =  this.jobBSONCollection.andThen {
-
-              case Success(coll) =>
-                coll.insert(newJob)
-              case Failure(t) => throw t
-          }
-
-
-          changeState(newJob, JobState.Submitted)
-          // Interfaces with TEL to make a new job directory, returns the  path to the script which then
-          // needs to be executed
-          val script = TEL.init(toolname, params, rootPath)
-          changeState(newJob, JobState.Prepared)
-
-          // Also Start Job if requested
-          if(start) {
-              executeJob(newJob, script)
-          }
+        // Also Start Job if requested
+        if(start) {
+          executeJob(newJob, script)
         }
       }
   }
