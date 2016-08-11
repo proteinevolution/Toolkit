@@ -21,7 +21,7 @@ class ErrorHandler extends HttpErrorHandler {
   def onServerError(request: RequestHeader, exception: Throwable) = {
 
     Future.successful(
-      InternalServerError(views.html.errors.pagenotfound())
+      InternalServerError(exception.toString)
     )
   }
 }

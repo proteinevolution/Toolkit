@@ -5,7 +5,7 @@ import javax.inject.{Inject, Singleton}
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
-import models.database.Job
+import models.database.{User, Job}
 import models.database.Job.JobReader
 import models.jobs.JobState
 import org.joda.time.DateTime
@@ -64,8 +64,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   // Keeps track of all running processes. // TODO Should be restored after toolkit reboots
   val runningProcesses = new collection.mutable.HashMap[String, Process]
 
-
-
   /**
     * Updates JobState.
     *
@@ -73,18 +71,10 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     * @param newState
     * @return
     */
-  def changeState(job : Job, newState : JobState.JobState) =  {
-
-
+  def changeState(job : Job, newState : JobState.JobState) = {
     // change Job State in Database
-    this.jobBSONCollection = this.jobBSONCollection.andThen {
-
-      case Success(coll) => coll.update(
-        BSONDocument(Job.JOBID -> job.jobID),
-        BSONDocument("$set" -> job.copy(status = newState))
-      )
-      case Failure(t) => throw t
-    }
+    this.jobBSONCollection.flatMap(_.update(BSONDocument(Job.IDDB -> job.mainID),
+                                            BSONDocument("$set" -> job.copy(status = newState))))
 
     // Inform user if connected
     if(connectedUsers contains job.sessionID) {
@@ -127,16 +117,33 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     err.close()
   }
 
+  /**
+    * Receive will take a message and respond to it
+    */
   def receive : Receive = {
 
     // User Connected, add them to the connected users list
     case UserConnect(sessionID) =>
+      Logger.info("User Connected: " + sessionID.stringify)
       this.connectedUsers = connectedUsers.updated(sessionID, sender())
+      sender() ! UpdateAllJobs
 
     // User Disconnected, Remove them from the connected users list.
     case UserDisconnect(sessionID) =>
+      Logger.info("User Disconnected: " + sessionID.stringify)
       this.connectedUsers = connectedUsers - sessionID
 
+    // Get a request to send the job list
+    case GetJobList(sessionID, user) =>
+      implicit val reader = JobReader
+      Logger.info("finding jobs...")
+      // Find all jobs related to the session ID
+      val futureJobs = this.jobBSONCollection.map(_.find(BSONDocument(Job.SESSIONID -> sessionID)).cursor[Job]())
+      // Collect the list and then create the reply
+      futureJobs.flatMap(_.collect[List]()).foreach { jobList =>
+        Logger.info("Found " + jobList.length.toString + " Job[s]. Sending.")
+        sender() ! SendJobList(jobList)
+      }
 
      // Reads parameters provided to the job from the job directory
     case Read(sessionID : BSONObjectID, jobID : String) =>
@@ -148,17 +155,14 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
             sender () ! s"$jobPath$SEPARATOR${job.jobID}${SEPARATOR}params".toFile.list.map {f =>
               f.name -> f.contentAsString
             }.toMap
-
           else // If jobID does not belong to the user
             sender () ! PermissionDenied
-
         case None => // If jobID is unknown
           sender () ! JobIDUnknown
       }
 
     // User Requests State of Job
     case JobInfo(sessionID : BSONObjectID, jobID) =>
-
       val replyTo = sender()
       implicit val reader = JobReader
 
@@ -246,16 +250,21 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   }
 }
 
-
-
-
-
 object JobManager {
-
-  // User connect and disconnect, mediated by WebSocket
+  // User connect preparation, mediated by WebSocket
   case class UserConnect(sessionID : BSONObjectID)
 
+  // User disconnect cleanup, mediated by WebSocket
   case class UserDisconnect(sessionID : BSONObjectID)
+
+  // Tell job widget to update
+  case object UpdateAllJobs
+
+  // Get a request to send the job list
+  case class GetJobList(sessionID : BSONObjectID, user : Option[User])
+
+  // Send the job list to the user
+  case class SendJobList(jobList : List[Job])
 
   // Failure replies
   case object JobIDUnknown
@@ -271,7 +280,7 @@ object JobManager {
   // Publish changes JobState
   case class JobStateChanged(job : Job, state : JobState.JobState)
 
-  // Ask for jobInfo (toolname and state)
+  // Ask for jobInfo (tool name and state)
   case class JobInfo(userID : BSONObjectID, jobID  : String)
 
   // Delete Job Entirely
@@ -283,5 +292,4 @@ object JobManager {
                      toolname : String,
                      params   : Map[String, String],
                      start    : Boolean)
-
 }
