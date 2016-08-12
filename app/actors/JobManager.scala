@@ -142,9 +142,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       val replyTo = sender()
       futureJobs.flatMap(_.collect[List]()).foreach { jobList =>
         Logger.info("Found " + jobList.length.toString + " Job[s]. Sending.")
-        for (job <- jobList) {
-          Logger.info("Job: " + job.toString)
-        }
         replyTo ! SendJobList(jobList)
       }
 
