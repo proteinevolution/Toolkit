@@ -5,7 +5,15 @@
 # The Websocket will be globally available
 @ws = new WebSocket $("body").data("ws-url")
 
-  # Handles the behavior that occurs if the WebSocket receives data from the Server
+# requests the joblist
+ws.onopen = (event) ->
+  ws.send(JSON.stringify("type":"GetJobList"))
+
+#TODO add a check for this event instead of giving an alert
+ws.onclose = (event) ->
+  #alert "WS Closed " + event.code + " - " + event.reason + " - " + event.wasClean
+
+# Handles the behavior that occurs if the WebSocket receives data from the Server
 ws.onmessage = (event) ->
 
   # Need to make recalc of Mithril explicit here, since this code is not part of the Mithril view
@@ -14,10 +22,8 @@ ws.onmessage = (event) ->
   message = JSON.parse event.data
 
   switch message.type
-    #when "updatealljobs"
-    #ws.send("type":"getjoblist")
     # Jobstate has changed
-    when "updatejob"
+    when "UpdateJob"
       state = message.state.toString()
       console.log(state)
       jobs.vm.update(message.job_id, state, message.toolname)
@@ -26,21 +32,24 @@ ws.onmessage = (event) ->
       if state == '0'
         $('.jobformclear').click()
 
-    # User was looking for a job_id which was not valid
-    when "jobidinvalid"
+    # get all jobs from the server
+    when "UpdateAllJobs"
+      ws.send(JSON.stringify("type":"GetJobList"))
+
+    # User was looking for a job id which was not valid
+    when "JobIDUnknown"
       text = "Sorry, but there is no such Job ID."
       $(".jobsearchform").notify(text)
 
     # Updates the Joblist by handing over a Json Array of Jobs
-    when "joblist"
+    when "JobList"
       jobs.vm.updateList(message.list)
 
-    when "autocomplete"
+    when "AutoComplete"
       autocomplete.data.response(message.list)
 
-    when "ping"
-      requestJson = ("type":"ping")
-      alert "type: " + requestJson.type
+    when "Ping"
+      requestJson = ("type":"Ping")
       ws.send(requestJson)
 
   m.endComputation()

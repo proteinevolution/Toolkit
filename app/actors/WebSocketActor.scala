@@ -37,30 +37,31 @@ private final class WebSocketActor(sessionID : BSONObjectID, jobManager : ActorR
     case js: JsValue =>
       (js \ "type").validate[String].map {
         // User requests the job list for the widget
-        case "getjoblist" =>
-          Logger.info("get job list message received,...")
+        case "GetJobList" =>
+          Logger.info("Got a Request for the job list")
           jobManager ! GetJobList(sessionID, None)
 
         // connection test case
-        case "ping"       =>
+        case "Ping"       =>
           Logger.info("PING!")
-        case _ =>
-          Logger.error("Undefined Message.")
+        case _            =>
+          Logger.error("Undefined Message: " + js.toString())
       }
 
     // Messages the user that the job widget needs to be updated
     case UpdateAllJobs =>
       Logger.info("Update All Jobs message sent,...")
-      out ! Json.obj("type" -> "updatealljobs")
+      out ! Json.obj("type" -> "UpdateAllJobs")
 
     // Messages the user that there was a problem in handling the Job ID
     case JobIDUnknown =>
-      out ! Json.obj("type" -> "jobidinvalid")
+      Logger.info("User requested a unknown JobID")
+      out ! Json.obj("type" -> "JobIDUnknown")
 
     // Messages the user about a change in the Job status
     case JobStateChanged(job, state) =>
       Logger.info("Job State Changed message sent,...")
-      out ! Json.obj("type"     -> "updatejob",
+      out ! Json.obj("type"     -> "UpdateJob",
                      "job_id"   -> job.jobID,
                      "state"    -> state.no,
                      "toolname" -> job.tool)
@@ -68,7 +69,7 @@ private final class WebSocketActor(sessionID : BSONObjectID, jobManager : ActorR
     // Sends the job list to the user
     case SendJobList(jobList : List[Job]) =>
       Logger.info("Job List message sent,...")
-      out ! Json.obj("type" -> "joblist",
+      out ! Json.obj("type" -> "JobList",
                      "list" -> jobList.map(job =>
                         Json.obj("job_id"   -> job.jobID,
                                  "state"    -> job.status.no,
