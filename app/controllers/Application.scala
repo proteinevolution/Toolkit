@@ -31,10 +31,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
                             @Named("jobManager") jobManager : ActorRef,    // Connect to JobManager
                             configuration: Configuration) extends Controller with I18nSupport {
 
-
   val SEP = java.io.File.separator
-  val user_id = 12345  // TODO integrate user_id
-
 
   implicit val implicitMaterializer: Materializer = mat
   implicit val implicitActorSystem: ActorSystem = system
@@ -43,14 +40,13 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
 
 
-
-
-  def ws = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
-
+  /**
+    * Opens the websocket
+    * @return
+    */
+  def ws = WebSocket.accept[JsValue, JsValue] { implicit request =>
     Logger.info("Application attaches WebSocket")
-    Session.requestSessionID match {
-      case sid => Future.successful {  Right(ActorFlow.actorRef(WebSocketActor.props(sid, jobManager))) }
-    }
+    ActorFlow.actorRef(WebSocketActor.props(Session.requestSessionID, jobManager))
   }
 
 
@@ -58,14 +54,13 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     * Handles the request of the index page of the toolkit. This will assign a session to the User if
     * not already present.
     * Currently the index controller will assign a session id to the user for identification purpose.
-    *
     */
   def index = Action { implicit request =>
 
     val sessionID = Session.requestSessionID
-    val user_o : Option[User] = Session.getUser
+    val user : Option[User] = Session.getUser
 
-    Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user_o)).withSession {
+    Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user)).withSession {
       Session.closeSessionRequest(request, sessionID)
     }
   }
