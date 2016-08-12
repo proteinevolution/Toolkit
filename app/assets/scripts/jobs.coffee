@@ -74,7 +74,7 @@ jobs.vm = do ->
       m.startComputation()
       vm.list = new (jobs.JobList)
       for job in joblist
-        vm.update(job.i, job.s, job.t)
+        vm.update(job.job_id, job.state, job.toolname)
         m.redraw.strategy("all")
       m.endComputation()
 

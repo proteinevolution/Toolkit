@@ -126,7 +126,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case UserConnect(sessionID) =>
       Logger.info("User Connected: " + sessionID.stringify)
       this.connectedUsers = connectedUsers.updated(sessionID, sender())
-      sender() ! UpdateAllJobs
 
     // User Disconnected, Remove them from the connected users list.
     case UserDisconnect(sessionID) =>
@@ -140,9 +139,13 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       // Find all jobs related to the session ID
       val futureJobs = this.jobBSONCollection.map(_.find(BSONDocument(Job.SESSIONID -> sessionID)).cursor[Job]())
       // Collect the list and then create the reply
+      val replyTo = sender()
       futureJobs.flatMap(_.collect[List]()).foreach { jobList =>
         Logger.info("Found " + jobList.length.toString + " Job[s]. Sending.")
-        sender() ! SendJobList(jobList)
+        for (job <- jobList) {
+          Logger.info("Job: " + job.toString)
+        }
+        replyTo ! SendJobList(jobList)
       }
 
      // Reads parameters provided to the job from the job directory
