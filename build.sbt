@@ -12,7 +12,7 @@ val scalaGuiceVersion = "4.0.1"
 val playMailerVersion = "5.0.0-M1"
 val reactiveMongoDBVersion = "0.11.14"
 
-val commonDeps = Seq(ws,  filters, cache, evolutions,
+val commonDeps = Seq(ws,  filters, cache,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
@@ -20,9 +20,6 @@ val commonDeps = Seq(ws,  filters, cache, evolutions,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
   "com.typesafe.akka" %% "akka-persistence" % akkaVersion,
   "com.typesafe.play" %% "play-mailer" % playMailerVersion,  // Mailer Plugin: https://github.com/playframework/play-mailer
-  "mysql" % "mysql-connector-java" % "5.1.36",
-  "com.typesafe.play" %% "play-slick" % "2.0.0",
-  "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
   "net.codingwell" %% "scala-guice" % scalaGuiceVersion,
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
   "org.mindrot" % "jbcrypt" % bcryptVersion,
