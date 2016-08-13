@@ -5,7 +5,7 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.database.User
+import models.database.{Job, User}
 import models.graph.Link
 import models.sessions.Session
 import akka.pattern.ask
@@ -136,10 +136,10 @@ class Service @Inject() (webJarAssets: WebJarAssets,
       case JobIDUnknown => Future.successful(NotFound)
       case PermissionDenied => Future.successful(NotFound)
 
-      case (state: JobState.JobState, toolname : String)  =>
+      case job : Job =>
 
         // Decide what to show depending on the JobState
-      state match {
+      job.status match {
 
         // User has requested a job whose state is Running
         case JobState.Running => Future.successful(Ok(views.html.job.running(jobID)).withSession {
@@ -150,14 +150,14 @@ class Service @Inject() (webJarAssets: WebJarAssets,
 
           (jobManager ? Read(sessionID, jobID)).mapTo[Map[String, String]].map { res =>
 
-            val toolframe = toolname match {
+            val toolframe = job.tool match {
               case "alnviz" => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(res))
               case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(res))
               case "hmmer3" => views.html.tools.forms.hmmer3(Hmmer3.inputForm.bind(res))
               case "psiblast" => views.html.tools.forms.psiblast(Psiblast.inputForm.bind(res))
             }
 
-            Ok(views.html.general.submit(toolname, toolframe, Some(jobID))).withSession {
+            Ok(views.html.general.submit(job.tool, toolframe, Some(jobID))).withSession {
               Session.closeSessionRequest(request, sessionID) // Send Session Cookie
             }
           }
@@ -165,44 +165,47 @@ class Service @Inject() (webJarAssets: WebJarAssets,
         // User requested job whose execution is done
         case JobState.Done =>
 
-          val toolframe = toolname match {
+          val toolframe = job.tool match {
 
             //  The tool anlviz just returns the BioJS MSA Viewer page
             case "alnviz" =>
-              val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$jobID/result"))
-              views.html.job.result(vis, jobID, toolname)
+              val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/result"))
+              views.html.job.result(vis, jobID, job.tool)
 
 
             // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
             case "tcoffee" =>
 
               val vis = Map(
-                "Simple" -> views.html.visualization.alignment.simple(s"/files/$jobID/sequences.clustalw_aln"),
-                "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$jobID/sequences.clustalw_aln"))
+                "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+                "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
 
-              views.html.job.result(vis, jobID, toolname)
+              views.html.job.result(vis, jobID, job.tool)
 
 
             case "reformatb" =>
 
               val vis = Map(
-                "Simple" -> views.html.visualization.alignment.simple(s"/files/$jobID/sequences.clustalw_aln"),
-                "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$jobID/sequences.clustalw_aln"))
+                "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+                "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
 
-              views.html.job.result(vis, jobID, toolname)
+              views.html.job.result(vis, jobID, job.tool)
 
             case "psiblast" =>
 
               val vis = Map(
-                "Results" -> views.html.visualization.alignment.blastvis(s"/files/$jobID/out.psiblastp"),
-                "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/$jobID/sequences.clustalw_aln"),
-                "Evalue" -> views.html.visualization.alignment.evalues(s"/files/$jobID/evalues.dat"))
+                "Results" -> views.html.visualization.alignment.blastvis(s"/files/${job.mainID.stringify}/out.psiblastp"),
+                "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+                "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
 
-              views.html.job.result(vis, jobID, toolname)
+              views.html.job.result(vis, jobID, job.tool)
 
             // Hmmer just provides a simple file viewer.
             case "hmmer3" => views.html.visualization.general.fileview(
-              Array(s"/files/$jobID/domtbl", s"/files/$jobID/outfile", s"/files/$jobID/outfile_multi_sto", s"/files/$jobID/tbl"))
+              Array(s"/files/${job.mainID.stringify}/domtbl",
+                    s"/files/${job.mainID.stringify}/outfile",
+                    s"/files/${job.mainID.stringify}/outfile_multi_sto",
+                    s"/files/${job.mainID.stringify}/tbl"))
           }
           Future.successful(Ok(toolframe).withSession {
             Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
