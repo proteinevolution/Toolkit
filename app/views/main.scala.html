@@ -81,20 +81,16 @@
     <body onload="load()" data-ws-url="@routes.Application.ws().webSocketURL()">
 
         <div class="row fullwidth show-for-large" id="topnavi" style="opacity: 1;">
-            <div class="large-12 columns" id="subnav">
+            <div class="large-12 columns" align="center" id="subnav">
                 @elements.topnav(user_o)
             </div>
         </div>
 
-        <!---Top-Bar with Logo/Search and Dropdown --->
+        <!---Top-Bar with Logo/Search and Dropdown
         <div class="row fullwidth header show-for-medium">
-            <a href="@routes.Application.index()"><img src="@routes.Assets.at("images/logo.svg")"></a>
-            <button class="hamburger hamburger--elastic" type="button" style="float: right; margin: 20px 40px 0 0;" onclick="openNav()">
-                <span class="hamburger-box">
-                    <span class="hamburger-inner"></span>
-                </span>
-            </button>
-        </div>
+           <!-- <a href="@routes.Application.index()"><img src="@routes.Assets.at("images/logo.svg")"></a>
+
+        </div> -->
 
 
         <div id="myNav" class="overlay">
@@ -114,8 +110,10 @@
 
 
         <!---Navigation Bar --->
-        <div>
-        @elements.navbar()
+        <div class="row">
+            <div class="large-12 columns" align="center">
+            @elements.navbar()
+            </div>
         </div>
 
         <!--Off Canvas Menu for mobile version of Toolkit-->

@@ -5,8 +5,8 @@
 
 
 <div data-sticky-container class="show-for-large">
-    <div class="top-bar sticky fullwidth row" id="stickyheader" style="width:100%;" data-sticky data-options="marginTop:0;" data-top-anchor="top" data-btm-anchor="blaststats:bottom">
-        <div class="top-bar-left large-12 columns">
+    <div class="top-bar sticky" id="stickyheader" data-sticky data-options="marginTop:0;" data-top-anchor="top" data-btm-anchor="blaststats:bottom">
+        <div class="top-bar-left row">
                 <button  class="button small" id="but1" type="button" data-toggle="dropdown-1" >Search</button>
                 <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="2"  data-hover-delay="75" id="dropdown-1" data-dropdown data-hover="false" data-hover-pane="true"  data-close-on-click="true">
                     <div class="large-1 columns">
@@ -115,7 +115,14 @@
                         </ul>
                     </div>
                 </div>
-            </div>
+        </div>
+        <div class="top-bar-right">
+
+            <button class="hamburger hamburger--elastic" type="button" style="float: right;" onclick="openNav()">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </button>
         </div>
     </div>
 
