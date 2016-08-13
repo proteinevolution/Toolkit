@@ -88,7 +88,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     */
   def executeJob(job : Job, scriptPath : String): Unit = {
 
-    val rootPath  = s"$jobPath$SEPARATOR${job.jobID}$SEPARATOR"
+    val rootPath  = s"$jobPath$SEPARATOR${job.mainID.stringify}$SEPARATOR"
 
     // Log files output buffer
     val out = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stdout.out")))
@@ -102,7 +102,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       (fout) => out.write(fout),
       (ferr) => err.write(ferr)
     ))
-    runningProcesses.put(job.jobID, process)
+    runningProcesses.put(job.mainID.stringify, process)
 
     // Treat Exit code of job process
     process.exitValue() match {
@@ -111,7 +111,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       case TERMINATED => // Ignore
       case x: Int => changeState(job, JobState.Error)
     }
-    runningProcesses.remove(job.jobID)
+    runningProcesses.remove(job.mainID.stringify)
 
     out.close()
     err.close()
@@ -152,7 +152,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       futureJob.foreach {
         case Some(job) => // Job Owner must be linked with the Session ID
           if (job.sessionID.eq(sessionID)) // Retrieve the Job Files
-            sender () ! s"$jobPath$SEPARATOR${job.jobID}${SEPARATOR}params".toFile.list.map {f =>
+            sender () ! s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map {f =>
               f.name -> f.contentAsString
             }.toMap
           else // If jobID does not belong to the user
@@ -172,8 +172,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
           case Some(job) =>
             if (job.sessionID == sessionID) {
-
-              replyTo ! job.status -> job.tool
+              // Return a job object
+              replyTo ! job
             } else {
               replyTo ! PermissionDenied
             }
@@ -191,15 +191,15 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           if (job.sessionID.eq(sessionID)) {
 
             //  Terminate running Process instance of the Job
-            if (runningProcesses.contains(jobID)) {
-              runningProcesses(jobID).destroy()
+            if (runningProcesses.contains(job.mainID.stringify)) {
+              runningProcesses(job.mainID.stringify).destroy()
             }
 
-            this.jobBSONCollection.flatMap(_.remove(BSONDocument(Job.JOBID -> jobID)))
+            this.jobBSONCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID)))
 
             Future {
               // Delete Job Path
-              s"jobPath$SEPARATOR$jobID".toFile.delete(swallowIOExceptions = false)
+              s"jobPath$SEPARATOR${job.mainID.stringify}".toFile.delete(swallowIOExceptions = false)
             }.onComplete {
               case scala.util.Success(_) => sender() ! AckDeleted(jobID)
               case scala.util.Failure(_) => sender() ! FailDeleted(jobID)
@@ -231,7 +231,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                          dateUpdated = Some(new DateTime()),
                          dateViewed  = Some(new DateTime()))
 
-        val rootPath  = s"$jobPath$SEPARATOR${newJob.jobID}$SEPARATOR" // Where the Job Directory is located
+        val rootPath  = s"$jobPath$SEPARATOR${newJob.mainID.stringify}$SEPARATOR" // Where the Job Directory is located
 
         // Add the job to the Database
         this.jobBSONCollection.flatMap(_.insert(newJob))
