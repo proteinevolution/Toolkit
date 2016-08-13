@@ -182,7 +182,7 @@ input[type=checkbox]:checked + label {
   top: 0;
   left: 0;
   background-color: rgb(172,205,255);
-  background-color: rgba(172,205,255, 0.9);
+  background-color: rgba(172,205,255, 1);
   overflow-y: hidden;
   transition: 0.5s;
 }

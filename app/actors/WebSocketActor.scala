@@ -35,7 +35,7 @@ private final class WebSocketActor(sessionID : BSONObjectID, jobManager : ActorR
   def receive = LoggingReceive {
 
     case js: JsValue =>
-      (js \ "type").validate[String].map {
+      (js \ "type").validate[String].foreach {
         // User requests the job list for the widget
         case "GetJobList" =>
           Logger.info("Got a Request for the job list")
