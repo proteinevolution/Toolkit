@@ -1,7 +1,8 @@
 #stickyheader {
-  background-color: #2E8C81;
+  background-color: transparent;
   position: absolute;
   height: 3em;
+
 }
 
 #toolsdropdown {
@@ -97,16 +98,17 @@ i {
 
 .top-bar-left .button {
 
-  color: white;
+  color: grey;
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
   z-index: 99;
   margin: 0;
+  background-color: transparent;
 
 }
 
 .top-bar-left .button:hover {
 
-  background-color: #2E8C81 !important;
+  background-color: transparent !important;
 }
 
 .drops .button:focus {
