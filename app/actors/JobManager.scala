@@ -5,9 +5,8 @@ import javax.inject.{Inject, Singleton}
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
-import models.database.{User, Job}
+import models.database.{Job, JobState, User}
 import models.database.Job.JobReader
-import models.jobs.JobState
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
 import reactivemongo.api.collections.bson.BSONCollection

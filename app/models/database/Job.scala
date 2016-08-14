@@ -1,10 +1,10 @@
 package models.database
 
-import models.jobs.JobState
-import models.jobs.JobState.JobState
+
+import JobState.JobState
 import org.joda.time.DateTime
-import reactivemongo.bson.BSONNumberLike.BSONIntegerNumberLike
 import reactivemongo.bson._
+
 
 /** ?
   *
@@ -145,8 +145,4 @@ object Job {
       DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
       DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis)))
   }
-
-
-
-
 }
