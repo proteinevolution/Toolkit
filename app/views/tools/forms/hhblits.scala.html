@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
 @import models.tools.Alnviz
 @import models.tel.TEL
-@(inputForm: Form[(String, String)])(implicit messages: Messages, request: RequestHeader)
+@(inputForm: Form[(String, String, String)])(implicit messages: Messages, request: RequestHeader)
 
 
 <script src='@routes.Assets.at("javascripts/sampleseqs.js")' type="text/javascript" ></script>
@@ -23,11 +23,11 @@
     'id -> "format"
 )
 
-<!-- TODO HHblits does not seem to use the standard databases
+
 @helper.select(
-    inputForm("hmmdb"),
-    helper.options(TEL.getSetParam("hmmdb")),
+    inputForm("hhblitsdb"),
+    helper.options(TEL.getSetParam("hhblitsdb")),
     '_label -> "Select HMM Database",
-    'id -> "hmmdb",
+    'id -> "hhblitsdb",
     'class -> "forminput")
--->
+
