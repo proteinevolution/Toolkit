@@ -47,7 +47,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signIn(userName : String) = Action { implicit request =>
-    Ok(views.html.auth.signin(User.formSignIn,userName))
+    Ok(views.html.auth.signin(userName))
   }
 
   /**
@@ -61,7 +61,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     Logger.info(sessionID + " wants to Sign in!")
 
     // Evaluate the Form
-    User.formSignIn.bindFromRequest.fold(
+    FormDefinitions.SignIn.bindFromRequest.fold(
       errors =>
         Future.successful{
           Logger.info(" but there was an error in the submit form: " + errors.toString)
@@ -219,7 +219,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signUp() = Action { implicit request =>
-    Ok(views.html.auth.signup(User.formSignUp))
+    Ok(views.html.auth.signup())
   }
 
   /**
@@ -230,7 +230,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     */
   def signUpSubmit() = Action.async { implicit request =>
     val sessionID = Session.requestSessionID
-    User.formSignUp.bindFromRequest.fold(
+    FormDefinitions.SignUp.bindFromRequest.fold(
       errors =>
         // Something went wrong with the Form.
         Future.successful {
@@ -311,7 +311,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     val user_o  = Session.getUser
     user_o match {
       case Some(user) =>
-        Ok(views.html.auth.profile(user, User.formProfileEdit, User.formProfilePasswordEdit))
+        Ok(views.html.auth.profile(user))
       case None =>
         // User was not logged in
         Redirect(routes.Application.index())
@@ -323,7 +323,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     val user_o = Session.getUser
     user_o match {
       case Some(user) =>
-        User.formProfileEdit.bindFromRequest.fold(
+        FormDefinitions.ProfileEdit.bindFromRequest.fold(
           errors =>
             Future.successful{
               Ok(FormError())
@@ -337,19 +337,25 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
               resultPage <- maybeUser.map { userFromDB =>
                 Future.successful{
                   // Create a modified user object
-                  val modifiedUser = userFromDB.copy(userData      = userDataForm,
-                                                     dateLastLogin = Some(new DateTime()),
-                                                     dateUpdated   = Some(new DateTime()))
+                  if (userFromDB.checkPassword(userDataForm.password)) {
+                    val modifiedUser = userFromDB.copy(userData      = Some(userDataForm.toUserData(userFromDB.getUserData)),
+                                                       dateLastLogin = Some(new DateTime()),
+                                                       dateUpdated   = Some(new DateTime()))
 
-                  // overwrite the sessions based user
-                  Session.editUser(sessionID, modifiedUser)
+                    // overwrite the sessions based user
+                    Session.editUser(sessionID, modifiedUser)
 
-                  // create a modifier document to change the last login date in the Database
-                  val selector = BSONDocument(User.IDDB -> userFromDB.userID)
-                  val modifier = BSONDocument("$set"    -> modifiedUser)
-                  userCollection.flatMap(_.update(selector, modifier))
-                  // Everything is ok, let the user know that they are logged in now
-                  Ok(EditSuccessful(user))
+                    // create a modifier document to change the last login date in the Database
+                    val selector = BSONDocument(User.IDDB -> userFromDB.userID)
+                    val modifier = BSONDocument("$set"    -> modifiedUser)
+                    userCollection.flatMap(_.update(selector, modifier))
+
+                    // Everything is ok, let the user know that they are logged in now
+                    Ok(EditSuccessful(user))
+                  } else {
+                    // Password did not match.
+                    Ok(PasswordMismatch())
+                  }
                 }
               }.getOrElse(Future.successful(Ok(FormError())))
             } yield resultPage

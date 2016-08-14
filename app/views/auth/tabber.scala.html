@@ -1,4 +1,5 @@
 @import play.api.mvc.RequestHeader
+@import models.auth.FormDefinitions
 @()(implicit messages: Messages, request: RequestHeader)
 
 <div id="auth-tabs">
@@ -11,10 +12,10 @@
 
     </div>
     <div class="tabs-panel" id="auth-tab-signin">
-        @views.html.auth.signin(models.database.User.formSignIn, "")
+        @views.html.auth.signin("")
     </div>
     <div class="tabs-panel" id="auth-tab-signup">
-        @views.html.auth.signup(models.database.User.formSignUp)
+        @views.html.auth.signup()
     </div>
     <div class="tabs-panel" id="auth-tab-forgot">
         @views.html.auth.forgot(models.auth.Forgot.inputForm)

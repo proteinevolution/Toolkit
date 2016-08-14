@@ -1,38 +1,38 @@
 @import play.api.mvc.RequestHeader
-@import models.database.{User, UserData, UpdatePasswordForm}
+@import models.database.User
 @import models.misc.RegionCodes
-@(user : User, userDataForm : Form[UserData], passwordForm : Form[UpdatePasswordForm])(implicit messages: Messages, request: RequestHeader)
+@(user : User)(implicit messages: Messages, request: RequestHeader)
 
 <form id="profile-edit-form" data-abide="ajax" novalidate>
   <div class="row">
     <div class="small-12 columns">
       <label>
         First Name:
-        <input type="text" id="nameFirst" name="nameFirst" placeholder="John" pattern="text" value="@{user.userData.nameFirst.getOrElse("")}">
+        <input type="text" id="nameFirst" name="nameFirst" placeholder="John" pattern="text" value="@{user.getUserData.nameFirst.getOrElse("")}">
       </label>
     </div>
     <div class="small-12 columns">
       <label>
         Last Name:
-        <input type="text" id="nameLast" name="nameLast" placeholder="Doe" pattern="text" value="@{user.userData.nameLast.getOrElse("")}">
+        <input type="text" id="nameLast" name="nameLast" placeholder="Doe" pattern="text" value="@{user.getUserData.nameLast.getOrElse("")}">
       </label>
     </div>
     <div class="small-12 columns">
       <label>
         Institute:
-        <input type="text" id="institute" name="institute" pattern="text" value="@{user.userData.institute.getOrElse("")}">
+        <input type="text" id="institute" name="institute" pattern="text" value="@{user.getUserData.institute.getOrElse("")}">
       </label>
     </div>
     <div class="small-12 columns">
       <label>
         Street:
-        <input type="text" id="street" name="street" pattern="text" value="@{user.userData.street.getOrElse("")}">
+        <input type="text" id="street" name="street" pattern="text" value="@{user.getUserData.street.getOrElse("")}">
       </label>
     </div>
     <div class="small-12 columns">
       <label>
         City:
-        <input type="text" id="city" name="city" pattern="text" value="@{user.userData.city.getOrElse("")}">
+        <input type="text" id="city" name="city" pattern="text" value="@{user.getUserData.city.getOrElse("")}">
       </label>
     </div>
     <div class="small-12 columns">
@@ -41,7 +41,7 @@
         <select id="country" name="country">
           <option value="">None</option>
             @for(region <- RegionCodes.regions){
-                <option value="@{region._1}"@if(region._1.matches(user.userData.country.getOrElse(""))){ selected="selected"}>@{region._2}</option>
+                <option value="@{region._1}"@if(region._1.matches(user.getUserData.country.getOrElse(""))){ selected="selected"}>@{region._2}</option>
             }
         </select>
       </label>
@@ -49,21 +49,27 @@
     <div class="small-12 columns">
       <label>
         Group:
-        <input type="text" id="groups" name="groups" pattern="text" value="@{user.userData.groups.getOrElse("")}">
+        <input type="text" id="groups" name="groups" pattern="text" value="@{user.getUserData.groups.getOrElse("")}">
       </label>
     </div>
     <div class="small-12 columns">
       <label>
         Role:
-        <input type="text" id="roles" name="roles" pattern="text" value="@{user.userData.roles.getOrElse("")}">
+        <input type="text" id="roles" name="roles" pattern="text" value="@{user.getUserData.roles.getOrElse("")}">
       </label>
     </div>
     <div class="small-12 columns">
       <label>
         E-Mail:
-        <input type="text" id="eMail" name="eMail" placeholder="JohnDoe&#64;SomePlace.net" value="@{user.userData.eMail}" required pattern="email">
+        <input type="text" id="eMail" name="eMail" placeholder="JohnDoe&#64;SomePlace.net" value="@{user.getUserData.eMail}" required pattern="email">
       </label>
     </div>
+  </div>
+  <div class="small-12 columns">
+    <label>
+        Password:
+        <input type="password" id="password" name="password" placeholder="Password" pattern=".{8,128}">
+      </label>
   </div>
   <input id="signup-submit" type="submit" class="small expanded secondary button" value="Save Changes">
 </form>

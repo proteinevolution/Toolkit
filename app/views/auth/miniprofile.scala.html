@@ -3,7 +3,7 @@
 @(user : User)(implicit messages: Messages, request: RequestHeader)
 <div></div>
 <p>@{user.nameLogin}</p>
-<p>@{user.userData.eMail}</p>
+<p>@{user.getUserData.eMail}</p>
 <p></p>
 @{if(user.isSuperuser){
     <p><a href="/backend">Link zum Backend</a></p>} // Only visible when logged in as a Superuser
