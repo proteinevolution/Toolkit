@@ -110,6 +110,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
       case "mafft"      => views.html.tools.forms.mafft(Mafft.inputForm)
       case "csblast"    => views.html.tools.forms.csblast(Csblast.inputForm)
       case "hhpred"     => views.html.tools.forms.hhpred(HHpred.inputForm)
+      case "hhblits"    => views.html.tools.forms.hhblits(HHblits.inputForm)
       case "reformatb"  => views.html.tools.forms.reformatb(Reformatb.inputForm)
       case "clans"      => views.html.tools.forms.clans(Clans.inputForm)
     }
