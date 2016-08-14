@@ -1,6 +1,5 @@
 @import play.api.mvc.RequestHeader
-@import models.database.Login
-@(inputForm: Form[Login], nameLogin : String)(implicit messages: Messages, request: RequestHeader)
+@(nameLogin : String)(implicit messages: Messages, request: RequestHeader)
 
 <form id="signin-form" data-abide="ajax" novalidate>
     <div class="row">

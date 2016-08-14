@@ -3,23 +3,23 @@ package models.database
 import org.joda.time.DateTime
 import org.mindrot.jbcrypt.BCrypt
 
-import play.api.data._
-import play.api.data.Forms.{ text, longNumber, mapping, boolean, email, optional, nonEmptyText }
-import play.api.data.validation.Constraints.pattern
 import reactivemongo.bson._
 
 case class User(userID        : BSONObjectID,           // ID of the User
                 nameLogin     : String,                 // Login name of the User
-                password      : String,                 // Password of the User (Hashed)
                 accountType   : Int,                    // User Access level
-                userData      : UserData,               // Personal Data of the User //TODO possibly encrypt?
+                userData      : Option[UserData],       // Personal Data of the User //TODO possibly encrypt?
                 jobs          : List[BSONObjectID],     // List of Jobs the User has
                 dateLastLogin : Option[DateTime],       // Last seen on
                 dateCreated   : Option[DateTime],       // Account creation date
                 dateUpdated   : Option[DateTime]) {     // Account updated on
 
   def checkPassword(plainPassword: String) : Boolean = {
-    BCrypt.checkpw(plainPassword, password)
+    BCrypt.checkpw(plainPassword, getUserData.password)
+  }
+
+  def getUserData = {
+    userData.getOrElse(UserData("invalid", "invalid", None, None, None, None, None, None, None, None))
   }
 
   // Mock up function to show how a possible function to check user levels could look like.
@@ -31,9 +31,6 @@ case class User(userID        : BSONObjectID,           // ID of the User
     }
   }
 }
-
-case class Login(nameLogin : String, password : String)
-case class UpdatePasswordForm(password : String, passwordNew : String)
 
 object User {
   // Number of rounds for BCrypt to hash the Password (2^x) TODO Move to the config?
@@ -59,9 +56,8 @@ object User {
     override def read(bson: BSONDocument): User = User(
       userID        = bson.getAs[BSONObjectID](IDDB).get,
       nameLogin     = bson.getAs[String](NAMELOGIN).get,
-      password      = bson.getAs[String](PASSWORD).get,
       accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
-      userData      = bson.getAs[UserData](USERDATA).get,
+      userData      = bson.getAs[UserData](USERDATA),
       jobs          = bson.getAs[List[BSONObjectID]](JOBS).get,
       dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => new DateTime(dt.value)),
       dateCreated   = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
@@ -72,7 +68,6 @@ object User {
     override def write(user: User): BSONDocument = BSONDocument(
       IDDB          -> user.userID,
       NAMELOGIN     -> user.nameLogin,
-      PASSWORD      -> user.password,
       ACCOUNTTYPE   -> user.accountType,
       USERDATA      -> user.userData,
       JOBS          -> BSONArray(user.jobs),
@@ -81,123 +76,12 @@ object User {
       DATEUPDATED   -> BSONDateTime(user.dateUpdated.fold(-1L)(_.getMillis)))
   }
 
-  /**
-    * Form mapping for the Sign up form
-    */
-  val formSignUp = Form(
-    mapping(
-      NAMELOGIN      -> (text(6,40) verifying pattern("""[^\\"\\(\\)\\[\\]]*""".r, error = "error.objectId")),
-      PASSWORD       -> (text(8,128) verifying pattern("""[^\\"\\(\\)\\[\\]]*""".r, error = "error.objectId")),
-      UserData.EMAIL -> email,
-      ACCEPTEDTOS    -> boolean,
-      DATELASTLOGIN  -> optional(longNumber),
-      DATECREATED    -> optional(longNumber),
-      DATEUPDATED    -> optional(longNumber)) {
-      (nameLogin, password, eMail, acceptToS, dateLastLogin, dateCreated, dateUpdated) =>
-        User(
-          userID        = BSONObjectID.generate,
-          nameLogin     = nameLogin,
-          password      = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
-          accountType   = if (acceptToS) 1 else 0,
-          userData      = UserData(None,
-                                   None,
-                                   eMail = eMail,
-                                   None,
-                                   None,
-                                   None,
-                                   None,
-                                   None,
-                                   None),
-          jobs          = Nil,
-          dateLastLogin = Some(new DateTime()),
-          dateCreated   = Some(new DateTime()),
-          dateUpdated   = Some(new DateTime())
-        )
-    } { user =>
-      Some((
-        user.nameLogin,
-        "",
-        user.userData.eMail,
-        true,
-        user.dateLastLogin.map(_.getMillis),
-        user.dateCreated.map(_.getMillis),
-        user.dateUpdated.map(_.getMillis)
-        ))
-    }
-  )
 
   /**
-    * Form mapping for the Sign in form
+    * Helper class for a login Form Object
+    *
+    * @param nameLogin
+    * @param password
     */
-  val formSignIn = Form(
-    mapping(
-      NAMELOGIN     -> text(6,40),
-      PASSWORD      -> text(8,128)) {
-      (nameLogin, password) =>
-        Login(
-          nameLogin,
-          password
-        )
-    } { user =>
-      Some((
-        user.nameLogin,
-        ""
-        ))
-    }
-  )
-
-
-  /**
-    * Edit form for the profile
-    */
-  val formProfileEdit = Form(
-    mapping(
-      UserData.NAMEFIRST -> optional(text),
-      UserData.NAMELAST  -> optional(text),
-      UserData.EMAIL     -> email,
-      UserData.INSTITUTE -> optional(text),
-      UserData.STREET    -> optional(text),
-      UserData.CITY      -> optional(text),
-      UserData.COUNTRY   -> optional(text),
-      UserData.GROUPS    -> optional(text),
-      UserData.ROLES     -> optional(text)) {
-      (nameFirst, nameLast, eMail, institute, street, city, country, groups, roles) =>
-        UserData(
-          nameFirst,
-          nameLast,
-          eMail,
-          institute,
-          street,
-          city,
-          country,
-          groups,
-          roles)
-
-    } { userData =>
-      Some((
-        userData.nameFirst,
-        userData.nameLast,
-        userData.eMail,
-        userData.institute,
-        userData.street,
-        userData.city,
-        userData.country,
-        userData.groups,
-        userData.roles
-        ))
-    })
-
-  /**
-    * Edit form for the password change in the Profile
-    */
-  val formProfilePasswordEdit = Form(
-    mapping(
-      PASSWORD       -> (text(8,128) verifying pattern("""[^\\"\\(\\)\\[\\]]*""".r, error = "error.objectId")),
-      "passwordNew"  -> (text(8,128) verifying pattern("""[^\\"\\(\\)\\[\\]]*""".r, error = "error.objectId"))) {
-      (password, passwordNew) =>
-        UpdatePasswordForm(password, passwordNew)
-    } { password =>
-      Some(("",""))
-    }
-  )
+  case class Login(nameLogin : String, password : String)
 }
