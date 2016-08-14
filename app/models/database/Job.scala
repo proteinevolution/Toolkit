@@ -1,9 +1,7 @@
 package models.database
 
-import models.jobs.JobState
-import models.jobs.JobState.JobState
+import models.database.Job.JobState.JobState
 import org.joda.time.DateTime
-import reactivemongo.bson.BSONNumberLike.BSONIntegerNumberLike
 import reactivemongo.bson._
 
 /** ?
@@ -144,6 +142,21 @@ object Job {
       DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
       DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
       DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis)))
+  }
+
+
+  object JobState {
+
+
+    abstract class JobState(val no: Int)
+
+    case object PartiallyPrepared extends JobState(0)
+    case object Prepared extends JobState(1)
+    case object Queued extends JobState(2)
+    case object Running extends JobState(3)
+    case object Error extends JobState(4)
+    case object Done extends JobState(5)
+    case object Submitted extends JobState(6)
   }
 
 

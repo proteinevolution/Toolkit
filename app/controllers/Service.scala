@@ -5,11 +5,11 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
+import models.database.Job.JobState
 import models.database.{Job, User}
 import models.graph.Link
 import models.sessions.Session
 import akka.pattern.ask
-import models.jobs.JobState
 import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
 import play.api.Logger
 

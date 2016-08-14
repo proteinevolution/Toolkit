@@ -12,7 +12,7 @@ val scalaGuiceVersion = "4.0.1"
 val playMailerVersion = "5.0.0-M1"
 val reactiveMongoDBVersion = "0.11.14"
 
-val commonDeps = Seq(ws,  filters, cache,
+val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
