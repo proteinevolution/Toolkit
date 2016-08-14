@@ -10,7 +10,7 @@ val highchartsVersion = "4.2.4"
 val d3Version = "3.5.16"
 val scalaGuiceVersion = "4.0.1"
 val playMailerVersion = "5.0.0-M1"
-val reactiveMongoDBVersion = "0.11.14"
+val reactiveMongoVersion = "0.11.14"
 
 val commonDeps = Seq(ws,  filters, cache,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
@@ -24,8 +24,8 @@ val commonDeps = Seq(ws,  filters, cache,
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
   "org.mindrot" % "jbcrypt" % bcryptVersion,
   "com.evojam" %% "play-elastic4s" % "0.3.0",
-  "org.reactivemongo" %% "play2-reactivemongo" % reactiveMongoDBVersion,
-  "org.reactivemongo" %% "reactivemongo-play-json" % reactiveMongoDBVersion,
+  "org.reactivemongo" %% "play2-reactivemongo" % reactiveMongoVersion,
+  "org.reactivemongo" %% "reactivemongo-play-json" % reactiveMongoVersion,
   "co.fs2" %% "fs2-core" % "0.9.0-M6",
   "org.scalaz" %% "scalaz-core" % "7.2.4",
   "com.chuusai" %% "shapeless" % "2.3.1"
@@ -73,14 +73,7 @@ lazy val root = (project in file("."))
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
   )
-  .dependsOn(api)
 
-lazy val api = (project in file("api"))
-  .settings(
-    commonSettings,
-    name := "mpi-toolkit-api",
-    libraryDependencies ++= commonDeps
-  )
 
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
