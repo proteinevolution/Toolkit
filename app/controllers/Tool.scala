@@ -19,8 +19,8 @@ import play.api.mvc.{Action, Controller}
   */
 object Tool {
 
-  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft, Reformatb, Clans, HHpred) // list of all added tools
-
+  // TODO Remove this
+  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft, Reformatb, Clans, HHpred, HHblits) // list of all added tools
 
   /** getToolModel
     * Returns the tool object for a tool's name, null when there is no such tool.
