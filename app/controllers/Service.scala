@@ -5,20 +5,14 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.database.{Job, User}
-import models.graph.Link
+import models.database.{Job, JobState, User}
 import models.sessions.Session
 import akka.pattern.ask
-import models.jobs.JobState
 import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
-import play.api.Logger
 
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import play.api.libs.json._
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,10 +27,6 @@ class Service @Inject() (webJarAssets: WebJarAssets,
                          @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport {
 
   implicit val timeout = Timeout(1.seconds)
-
-
-  // Defines which messages the user can pass to the server
-  case class AddChildJob(parent_job_id: String, toolname: String, links: Seq[Link])
 
 
   def static(static : String)  = Action { implicit request =>
@@ -69,19 +59,6 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     }
   }
 
-  /*
-    Defines appropriate JSON conversions
-   */
-  implicit val readsLink: Reads[Link] = (
-    (JsPath \ "out").read[Int](min(0)) and
-      (JsPath \ "in").read[Int](min(0))
-    ) (Link.apply _)
-
-  implicit val readsAddChildJob: Reads[AddChildJob] = (
-    (JsPath \ "parent_job_id").read[String] and
-      (JsPath \ "toolname").read[String] and
-      (JsPath \ "links").read[Seq[Link]]
-    ) (AddChildJob.apply _)
 
 
   // TODO  Handle Acknowledgement
