@@ -2,8 +2,6 @@ package models.tel
 
 import models.Constants
 import better.files._
-import models.Implicits._
-
 
 /**
   * Created by lzimmermann on 6/30/16.
@@ -19,6 +17,8 @@ trait TELConstants extends Constants {
   val constantsFile = s"$TELPath${SEPARATOR}CONSTANTS".toFile
   val paramsDFile =  s"$TELPath${SEPARATOR}params.d".toFile
   val initFile =  s"$TELPath${SEPARATOR}init.sh".toFile
+  val typesFile = s"$TELPath${SEPARATOR}types".toFile
+
 
   // PATHS
   val typesPath = s"$TELPath${SEPARATOR}types"
