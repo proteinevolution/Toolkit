@@ -106,8 +106,6 @@ object Job {
   /**
     * Object containing the writer for the Class
     */
-
-  implicit val reader = JobStateReader
   object JobReader extends BSONDocumentReader[Job] {
     def read(bson : BSONDocument): Job = {
       Job(mainID      = bson.getAs[BSONObjectID](IDDB).get,
@@ -122,40 +120,6 @@ object Job {
           dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
           dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)),
           dateViewed  = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => new DateTime(dt.value)))
-    }
-  }
-
-  /**
-    * Object containing the reader for the job state
-    */
-  object JobStateReader extends BSONReader[BSONInteger, JobState] {
-    def read(state: BSONInteger) = {
-      state match {
-      case BSONInteger(0) => JobState.PartiallyPrepared
-      case BSONInteger(1) => JobState.Prepared
-      case BSONInteger(2) => JobState.Queued
-      case BSONInteger(3) => JobState.Running
-      case BSONInteger(4) => JobState.Error
-      case BSONInteger(5) => JobState.Done
-      case BSONInteger(6) => JobState.Submitted
-      }
-    }
-  }
-
-  /**
-    * Object containing the writer for the job state
-    */
-  implicit object JobStateWriter extends BSONWriter[JobState, BSONInteger] {
-    def write(state : JobState)  = {
-      state match {
-      case JobState.PartiallyPrepared => BSONInteger(0)
-      case JobState.Prepared          => BSONInteger(1)
-      case JobState.Queued            => BSONInteger(2)
-      case JobState.Running           => BSONInteger(3)
-      case JobState.Error             => BSONInteger(4)
-      case JobState.Done              => BSONInteger(5)
-      case JobState.Submitted         => BSONInteger(6)
-      }
     }
   }
 
