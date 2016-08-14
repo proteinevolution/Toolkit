@@ -4,9 +4,9 @@
 </div>
 
 
-<div data-sticky-container class="show-for-large">
-    <div class="top-bar sticky" id="stickyheader" data-sticky data-options="marginTop:0;" data-top-anchor="top" data-btm-anchor="blaststats:bottom">
-        <div class="top-bar-left">
+<div class="show-for-large">
+    <div class="top-bar" data-equalizer id="main-header" data-options="marginTop:0;" data-top-anchor="top" data-btm-anchor="blaststats:bottom">
+        <div class="top-bar-left" data-equalizer-watch>
                 <button  class="button small" id="but1" type="button" data-toggle="dropdown-1" >Search</button>
                 <div class="dropdown-pane bottom row fullwidth dropdowns" data-v-offset="2"  data-hover-delay="75" id="dropdown-1" data-dropdown data-hover="false" data-hover-pane="true"  data-close-on-click="true">
                     <div class="large-1 columns">
@@ -116,7 +116,7 @@
                     </div>
                 </div>
         </div>
-        <div class="top-bar-right">
+        <div class="top-bar-right"  data-equalizer-watch>
             <button class="hamburger hamburger--elastic" type="button" style="float: right;" onclick="openNav()">
                 <span class="hamburger-box">
                     <span class="hamburger-inner"></span>
@@ -124,37 +124,6 @@
             </button>
         </div>
     </div>
-
-<script type="text/javascript">
-
-                $(function(){
-                    // Check the initial Poistion of the Sticky Header
-                    var stickyHeaderTop = $('#stickyheader').offset().top;
-
-                    $(window).scroll(function(){
-                        if( $(window).scrollTop() > stickyHeaderTop ) {
-                            $('#stickyheader').css({position: 'fixed', top: '0px'});
-                            $('#stickyalias').css('display', 'block');
-                        } else {
-                            $('#stickyheader').css({position: 'static', top: '0px'});
-                            $('#stickyalias').css('display', 'none');
-                        }
-                    });
-                });
-
-                $("a[href='#']").click(function() {
-                    $("html, body").animate({ scrollTop: 0 }, "slow");
-                    return false;
-                });
-
-                $('#section').click(function() {
-                    $('html,body').animate({scrollTop: $(this).offset().top}, 500);
-                });
-
-
-
-</script>
-
     <!--     <div class="top-bar-right">
             <ul class="dropdown menu" id="toolsdropdown" style="opacity: 0.9;" data-dropdown-menu data-closing-time="20">
                 <li>
