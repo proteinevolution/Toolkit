@@ -67,18 +67,19 @@ i {
 
 }
 
+.title-bar {
+  background-color: transparent !important;
+}
+
+.title-bar-left {
+  color: #000;;
+}
+
 .top-bar-left {
   padding-bottom: 0;
   margin-bottom: 0;
   height: 2.4500em;
 }
-
-
-#navbar {
-  position: fixed;
-  width: 100%;
-}
-
 
 .top-bar-left .button {
 
