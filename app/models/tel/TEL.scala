@@ -4,7 +4,6 @@ import java.nio.file.attribute.PosixFilePermission
 
 import better.files.Cmds._
 import better.files._
-import models.Constants
 
 import scala.sys.process._
 import models.Implicits._
@@ -14,7 +13,7 @@ import models.Implicits._
   *
   * Created by lzimmermann on 26.05.16.
   */
-object TEL extends TELRegex with TELConstants with Constants {
+object TEL extends TELRegex with TELConstants   {
 
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
@@ -34,21 +33,6 @@ object TEL extends TELRegex with TELConstants with Constants {
   // Returns the context name currently set
   //  TODO the CONTEXT variable can currently only be set in the init script - how do you want to set it?
   private var getContext : String = inits.getOrElse("CONTEXT", "LOCAL")
-
-
-  //another solution could be to do directly sth as below without using the init script
-  val hostname_cmd = "hostname"
-  private val hostname = hostname_cmd.!!
-
-  println("the toolkit runs on "+hostname)
-  if (hostname.equals("olt"))
-  getContext = "sge"
-
-  else
-    getContext = "LOCAL"
-
-
-  // but this ain't tested yet - of course for production mode this is completely irrelevant
 
 
 
@@ -92,15 +76,31 @@ object TEL extends TELRegex with TELConstants with Constants {
   // Reloads all the set Params from the scripts in params.d
   private def loadSetParams() = {
 
+    // Only consider .sh and .dat files in the params.d directory
+   paramsDFile.list
+     .withFilter( f => f.isRegularFile && f.hasExtension)  // Ensure that only regular files with extension are used
+     .withFilter { f =>
+     val ext = f.extension.get
+     ext == ".sh" || ext == ".dat"    // Only ".sh" files and ".dat" files are considered
+   }.map { f =>
 
-   paramsDFile.list.withFilter(_.isRegularFile).map { f =>
+      f.name.replaceAll("(.sh|.dat)", "") ->   { f.extension.get match {
 
-      f.name.replaceAll(".sh", "") -> Process(f.pathAsString).!!.split('\n').map { param =>
-        val spt = param.split(' ')
-        spt(0) -> spt(1)
-      }.toMap
+        case ".sh"   =>  Process(f.pathAsString).!!.split('\n').map { param =>
+          val spt = param.split(' ')
+          spt(0) -> spt(1)
+        }.toMap
+
+        case ".dat" => f.lineIterator.map { line =>
+          val spt = line.split(' ')
+          spt(0) -> spt(1)
+        }.toMap
+      }
+      }
+      }
     }.toMap
-    }
+
+
 
 
   /**
@@ -115,6 +115,29 @@ object TEL extends TELRegex with TELConstants with Constants {
 
     setParams(param)
   }
+
+
+
+  //-----------------------------------------------------------------------------------------------------
+  // Types
+  //-----------------------------------------------------------------------------------------------------
+
+  private var types : Map[String, Array[String]] = loadTypes()
+
+  // Reloads all the set Params from the scripts in params.d
+  private def loadTypes() = {
+    typesFile
+      .lineIterator
+      .withoutComment(commentChar)
+      .noWSLines
+      .map { line =>
+
+        val spt = line.split(":")
+        spt(0).trim() -> spt(1).split("\\s+")
+      }.toMap
+  }
+
+
 
   //-----------------------------------------------------------------------------------------------------
   // Other stuff

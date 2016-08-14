@@ -14,12 +14,13 @@ object HHblits extends ToolModel{
   val toolNameAbbreviation:String = "HHBL"
 
 
-  // --- HHPRED
+  // --- HHblits
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
       "alignment" -> nonEmptyText,
-      "alignment_format" -> text
+      "alignment_format" -> text,
+      "hhblitsdb" -> text
     )
   )
 }
