@@ -1,7 +1,5 @@
-#stickyheader {
+#main-header {
   background-color: transparent;
-  position: absolute;
-  height: 3em;
 
 }
 
@@ -43,20 +41,6 @@
   color: white;
 }
 
-
-.navbar {
-  background: #2E8C81;
-  border: 0px solid;
-  border-width: 0px;
-  padding: 0;
-  margin: 0;
-  
-}
-
-
-div.sticky-container {
-  z-index: 99;
-}
 
 i {
   font-size: 20px;
@@ -102,7 +86,8 @@ i {
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
   z-index: 99;
   margin: 0;
-  background-color: transparent;
+  background-color: transparent !important;
+  padding-top: 3%;
 
 }
 
@@ -147,8 +132,6 @@ i {
   padding-top: 1.7em;
   padding-bottom: 1em;
 
-
-
 }
 
 .dropdowns {
@@ -167,14 +150,7 @@ i {
   background-color: rgba(0, 0, 0, 0.0) !important;
 }
 
-.title-bar {
-  background-color: #2E8C81 !important;
-}
 
-
-input[type=checkbox]:checked + label {
-  background: deepskyblue !important;
-}
 
 .overlay {
   height: 0%;
