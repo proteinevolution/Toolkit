@@ -5,18 +5,17 @@ import javax.inject.{Inject, Singleton}
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
-import models.database.{Job, JobState, User}
+import models.database.{User, Job}
 import models.database.Job.JobReader
+import models.database.JobState
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
-
 import scala.concurrent.Future
 import better.files._
 import models.{Constants, ExitCodes}
 import models.tel.TEL
-import play.api.Logger
 
 import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global

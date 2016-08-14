@@ -1,6 +1,5 @@
 package models.database
 
-
 import JobState.JobState
 import org.joda.time.DateTime
 import reactivemongo.bson._

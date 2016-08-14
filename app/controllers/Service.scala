@@ -9,11 +9,9 @@ import models.database.{Job, JobState, User}
 import models.sessions.Session
 import akka.pattern.ask
 import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
-
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 /**
