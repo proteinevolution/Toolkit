@@ -89,13 +89,10 @@ GET         /static/get/:static                            @controllers.Service.
 
 # Add a Child Job
 #POST        /jobs/addChild                  @controllers.Service.addChild
-# Clear a Job
-#POST        /jobs/clear/:jobid              @controllers.Service.clearJob(jobid: String)
 
 # Sitemap
 # Routes for static assets
 GET         /:static                                       @controllers.Application.static(static : String)
-
 
 #Forwarding
 #GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
