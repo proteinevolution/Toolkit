@@ -68,6 +68,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
         case "tcoffee" => Tcoffee.inputForm
         case "hmmer3" => Hmmer3.inputForm
         case "hhpred" => HHpred.inputForm
+        case "hhblits" => HHblits.inputForm
         case "psiblast" => Psiblast.inputForm
         case "mafft" => Mafft.inputForm
         case "reformatb" => Reformatb.inputForm // cluster version of reformat
@@ -87,59 +88,4 @@ class Tool @Inject()(val messagesApi: MessagesApi,
   }
 }
 
-/*
-case class Prepare(sessionID : String,
-                     jobID : String,
-                     toolname : String,
-                     params : Map[String, String],
-                     newJob : Boolean) extends UserRequestWithJob(sessionID, jobID)
 
- */
-
-
-/*
-// Determine the submitted JobID
-    val job_id =  request.body.asFormUrlEncoded.get("jobid").head match {
-
-      // If the user has not provided any, this will be None
-      case m if m.isEmpty => None
-
-      // If the user has provided one or the Job is an already exisiting one, then there is a Job ID
-      case m => Some(m)
-    }
-
-    Logger.info("Submission for JobID " + job_id.toString + " received")
-
-    (userManager ? GetUserActor(sessionID)).mapTo[ActorRef].map { userActor =>
-
-      val tool = Tool.getToolModel(toolname)
-      // Check if the tool name was ok.
-      if (tool == null)
-        NotFound
-      else {
-        //val form = tool.inputForm
-        // TODO replace with reflection
-        val form = tool.toolNameShort match {
-          case "alnviz" => Alnviz.inputForm
-          case "tcoffee" => Tcoffee.inputForm
-          case "hmmer3" => Hmmer3.inputForm
-          case "psiblast" => Psiblast.inputForm
-          case "reformat" => Reformat.inputForm
-        }
-        val boundForm = form.bindFromRequest
-
-        boundForm.fold(
-          formWithErrors => {
-            BadRequest("This was an error")
-          },
-          _ => {
-
-            userActor ! PrepWD(toolname, boundForm.data, startImmediate, job_id, newSubmission)
-          }
-        )
-        Ok
-      }
-    }
-
-
- */
