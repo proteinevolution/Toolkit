@@ -6,8 +6,8 @@ import actors.JobManager.Prepare
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
+import models.database.Session
 import models.tools._
-import models.sessions.Session
 
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}

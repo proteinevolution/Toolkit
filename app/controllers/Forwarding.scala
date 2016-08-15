@@ -1,8 +1,7 @@
 package controllers
 
 
-import models.database.User
-import models.sessions.Session
+import models.database.{Session, User}
 import models.tools._
 
 import play.api.i18n.I18nSupport

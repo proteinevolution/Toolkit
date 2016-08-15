@@ -5,8 +5,7 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.database.{Job, JobState, User}
-import models.sessions.Session
+import models.database.{Session, Job, JobState, User}
 import akka.pattern.ask
 import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
 import scala.concurrent.duration._

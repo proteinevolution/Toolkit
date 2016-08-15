@@ -5,14 +5,12 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
-import models.database.User
+import models.database.{Session, User}
 import play.api.libs.streams.ActorFlow
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import javax.inject.{Inject, Named, Singleton}
-
-import models.sessions.Session
 import models.tools._
 import play.api.mvc.Results._
 
@@ -42,6 +40,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
   /**
     * Opens the websocket
+ *
     * @return
     */
   def ws = WebSocket.accept[JsValue, JsValue] { implicit request =>
