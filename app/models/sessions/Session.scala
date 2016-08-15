@@ -1,11 +1,10 @@
 package models.sessions
 
 import models.database.User
+import org.joda.time.DateTime
 import play.api.{mvc, Logger}
 import play.api.mvc.RequestHeader
 import reactivemongo.bson.BSONObjectID
-
-import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by astephens on 01.03.16.
@@ -13,8 +12,7 @@ import scala.collection.mutable.ArrayBuffer
   */
 object Session {
   val SID = "sid" // name for the entry in the session cookie
-  val sessions : ArrayBuffer[String] = ArrayBuffer.empty
-  val sessionUserMap  = new scala.collection.mutable.HashMap[String, User]
+  val sessionUserMap = new scala.collection.mutable.HashMap[BSONObjectID, User]
 
   /**
     * Saves a User to the session Mapping for a later time
@@ -23,7 +21,7 @@ object Session {
     * @param user The user the sessionID will be linked to.wasdwasd@wasd.wasd
     */
   def addUser (sessionID : BSONObjectID, user : User) : User = {
-    sessionUserMap.getOrElseUpdate(sessionID.stringify, user)
+    sessionUserMap.getOrElseUpdate(sessionID, user)
   }
 
   /**
@@ -33,7 +31,7 @@ object Session {
     * @param user The user the sessionID will be linked to.
     */
   def editUser (sessionID : BSONObjectID, user : User) : Option[User] = {
-    sessionUserMap.put(sessionID.stringify, user)
+    sessionUserMap.put(sessionID, user)
   }
 
   /**
@@ -44,8 +42,15 @@ object Session {
     * @return The User of the SessionID, wrapped into an Option value, or None if the sessionID is not associated
     *         with a User.
     */
-  def getUser (sessionID : BSONObjectID) : Option[User] = {
-    sessionUserMap.get(sessionID.stringify)
+  def getUser (sessionID : BSONObjectID) : User = {
+    sessionUserMap.getOrElse(sessionID, addUser(sessionID, User(userID = BSONObjectID.generate(),
+                                                                         None,
+                                                                         -1,
+                                                                         None,
+                                                                         Nil,
+                                                                         Some(new DateTime()),
+                                                                         Some(new DateTime()),
+                                                                         Some(new DateTime()))))
   }
 
   /**
@@ -56,8 +61,8 @@ object Session {
     * @return The User of the SessionID, wrapped into an Option value, or None if the sessionID is not associated
     *         with a User.
     */
-  def getUser (implicit request: RequestHeader) : Option[User] = {
-    sessionUserMap.get(requestSessionID.stringify)
+  def getUser (implicit request: RequestHeader) : User = {
+    getUser(requestSessionID)
   }
 
   /**
@@ -69,7 +74,19 @@ object Session {
     *         non-present sessionID
     */
   def removeUser (sessionID : BSONObjectID) : Option[User] = {
-    sessionUserMap.remove(sessionID.stringify)
+    sessionUserMap.remove(sessionID)
+  }
+
+  /**
+    * Removes a user by its sessionID and returns the removed User as Option[User],
+    * or None if the User was not in the mapping.
+    *
+    * @param request The HTTP request
+    * @return Option[User] of the User which was removed, None if no user was removed because of a
+    *         non-present sessionID
+    */
+  def removeUser (implicit request: RequestHeader) : Option[User] = {
+    removeUser(requestSessionID)
   }
 
   /**
@@ -81,11 +98,14 @@ object Session {
     */
   def requestSessionID(implicit request: RequestHeader) : BSONObjectID = {
     val sid = request.session.get(SID)
-    if (sid.isDefined) {
+    val sessionID = if (sid.isDefined) {
       BSONObjectID.parse(sid.get).getOrElse(BSONObjectID.generate())
     } else {
       BSONObjectID.generate()
     }
+
+    Logger.info("Request from SID \"" + sessionID.stringify + "\"")
+    sessionID
   }
 
   /**
@@ -107,7 +127,6 @@ object Session {
     * @return
     */
   def closeSessionRequest(implicit request : RequestHeader, sessionID : BSONObjectID): mvc.Session = {
-    Logger.info("Request from SID \"" + sessionID.stringify + "\"")
     request.session + (SID -> sessionID.stringify)
   }
 }

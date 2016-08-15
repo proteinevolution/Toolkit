@@ -39,9 +39,9 @@ class Service @Inject() (webJarAssets: WebJarAssets,
       case "reformat" =>
 
         val sessionID = Session.requestSessionID
-        val user_o : Option[User] = Session.getUser
+        val user : User = Session.getUser
 
-        Ok(views.html.tools.forms.reformat(webJarAssets,"Utils", user_o)).withSession {
+        Ok(views.html.tools.forms.reformat(webJarAssets,"Utils")).withSession {
           Session.closeSessionRequest(request, sessionID)
         }
         
