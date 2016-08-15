@@ -43,22 +43,43 @@
 
 
 .socket {
-  padding-top: 0.625em;
-  padding-bottom: 1.7em;
-  background-color: #222222;
-  color: #fff;
+  margin: auto;
+  max-width: 75rem;
+  color: #848484;
+  padding: 3px 5px;
+  border-top-color: rgb(204, 204, 204);
+  border-right-color: rgb(204, 204, 204);
+  border-bottom-color: rgb(204, 204, 204);
+  border-left-color: rgb(204, 204, 204);
+  -moz-border-top-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  border-image-source: none;
+  border-image-repeat: stretch stretch;
   text-align: center;
   font-size: 0.825em;
   height: 20px;
   bottom: 0;
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
   margin-bottom: 0px;
-  font-family: Helvetica;
 
 }
 
 .bottomline {
-
-  background-color: #006F62;
+  margin: auto;
+  max-width: 75rem;
+  background: #eee;
+  background-image: linear-gradient(to bottom,#d7d7d7 0%,#eeeeee 116px);
+  overflow-x: hidden;
+  background-color: rgb(238, 238, 238);
+  background-image: none;
+  background-repeat: repeat;
+  background-attachment: scroll;
+  background-position: 0% 0%;
+  background-clip: border-box;
+  background-origin: padding-box;
+  background-size: auto auto;
   height: 10px;
   bottom: 0;
   font-size: 1px;

@@ -1,14 +1,22 @@
 body{
 
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-    background-color: #fff;
+    color: #707070;
+    background: #eee;
+    background-image: linear-gradient(to bottom,#d7d7d7 0%,#eeeeee 116px);
+    overflow-x: hidden;
+    background-color: rgb(238, 238, 238);
+    background-image: none;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-position: 0% 0%;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-size: auto auto;
 
 }
 
-.fullwidth {
-    width: 100%;
-    max-width: initial;
-}
+
 
 .logotext {
     text-align: center;
@@ -139,7 +147,7 @@ tr.spaceUnder > td
 
 .header img {
     padding: 1em;
-    width: 25%;
+    width: 15%;
 }
 
 .columns {
