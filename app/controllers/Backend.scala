@@ -3,8 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 
-import models.database.User
-import models.sessions.Session
+import models.database.{Session, User}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Controller, Action}
 

@@ -3,8 +3,7 @@ package controllers
 import java.util.Calendar
 import javax.inject.{Singleton, Inject}
 
-import models.database.User
-import models.sessions.Session
+import models.database.{Session, User}
 import models.auth._
 import org.joda.time.DateTime
 import play.Logger
