@@ -58,7 +58,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     */
   def signInSubmit() = Action.async { implicit request =>
     val sessionID = Session.requestSessionID
-    Logger.info(sessionID + " wants to Sign in!")
+    Logger.info(sessionID.stringify + " wants to Sign in!")
 
     // Evaluate the Form
     FormDefinitions.SignIn.bindFromRequest.fold(
@@ -78,16 +78,19 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
             // Check the password
             if (user.checkPassword(userForm.password)) {
               Future.successful{
+                // add the remaining jobs from the previous session to the jobs of the now logged in user
+                val loggedInUser = user.copy(jobs = user.jobs ::: Session.getUser.jobs)
                 // add the user to the current sessions
-                Session.addUser(sessionID, user)
+                Session.editUser(sessionID, loggedInUser)
 
                 // create a modifier document to change the last login date in the Database
-                val selector = BSONDocument(User.IDDB -> user.userID)
+                val selector = BSONDocument(User.IDDB -> loggedInUser.userID)
                 val modifier = BSONDocument("$set" -> BSONDocument(
-                  User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
+                                            User.JOBS          -> loggedInUser.jobs,
+                                            User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
                 userCollection.flatMap(_.update(selector, modifier))
                 // Everything is ok, let the user know that they are logged in now
-                Ok(LoggedIn(user))
+                Ok(LoggedIn(loggedInUser))
               }
             } else {
               Future.successful{
@@ -107,22 +110,22 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   def login = Action { implicit request =>
 
     val sessionID = Session.requestSessionID
-    val user_o : Option[User] = Session.getUser
+    val user : User = Session.getUser
 
-    NoCache(Ok(views.html.backend.login(webJarAssets, "0", user_o)).withNewSession)
+    NoCache(Ok(views.html.backend.login(webJarAssets, "0")).withNewSession)
 
   }
 
   def backend = Action { implicit request =>
 
     val sessionID = Session.requestSessionID
-    val user_o : Option[User] = Session.getUser
+    val user : User = Session.getUser
 
   //TODO allow direct access to the backend route if user is already authenticated as admin
 
   if((request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login") || request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")) && !this.loggedOut)  {
 
-    Ok(views.html.backend.backend(webJarAssets,views.html.backend.backend_maincontent(), "Backend", user_o)).withSession {
+    Ok(views.html.backend.backend(webJarAssets,views.html.backend.backend_maincontent(), "Backend")).withSession {
       Session.closeSessionRequest(request, sessionID)
     }
 
@@ -162,8 +165,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
         }
 
         val sessionID = Session.requestSessionID(ctx)
-        val user_o : Option[User] = Session.getUser
-        Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
+        val user : User = Session.getUser
+        Ok(views.html.backend.login(webJarAssets, LoginCounter.toString)).withSession {
           Session.closeSessionRequest(ctx, sessionID)
         }
       },
@@ -191,8 +194,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
           }
 
           val sessionID = Session.requestSessionID(ctx)
-          val user_o : Option[User] = Session.getUser
-          Ok(views.html.backend.login(webJarAssets, LoginCounter.toString, user_o)).withSession {
+          val user : User = Session.getUser
+          Ok(views.html.backend.login(webJarAssets, LoginCounter.toString)).withSession {
             Session.closeSessionRequest(ctx, sessionID)
           }
 
@@ -205,8 +208,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   // Mock up function to let a user access to a page only when they are logged in as a user with certain rights
   def backendAccess() = Action { implicit request =>
     val sessionID = Session.requestSessionID
-    val user_o = Session.getUser
-    if (user_o.get.isSuperuser) {
+    val user = Session.getUser
+    if (user.isSuperuser) {
       Redirect("@/backend")
     } else {
       Status(404)(views.html.errors.pagenotfound())
@@ -273,9 +276,9 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     */
   def miniProfile() = Action { implicit request =>
     val session = Session.requestSessionID
-    val user_o  = Session.getUser(session)
-    user_o match {
-      case Some(user) =>
+    val user  = Session.getUser(session)
+    user.nameLogin match {
+      case Some(nameLogin) =>
         Ok(views.html.auth.miniprofile(user))
       case None =>
         BadRequest
@@ -308,9 +311,9 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   def profile() = Action { implicit request =>
     val sessionID = Session.requestSessionID
-    val user_o  = Session.getUser
-    user_o match {
-      case Some(user) =>
+    val user  = Session.getUser
+    user.nameLogin match {
+      case Some(nameLogin) =>
         Ok(views.html.auth.profile(user))
       case None =>
         // User was not logged in
@@ -320,9 +323,9 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   def profileSubmit() = Action.async { implicit request =>
     val sessionID = Session.requestSessionID
-    val user_o = Session.getUser
-    user_o match {
-      case Some(user) =>
+    val user = Session.getUser
+    user.nameLogin match {
+      case Some(nameLogin) =>
         FormDefinitions.ProfileEdit.bindFromRequest.fold(
           errors =>
             Future.successful{

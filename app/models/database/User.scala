@@ -6,7 +6,7 @@ import org.mindrot.jbcrypt.BCrypt
 import reactivemongo.bson._
 
 case class User(userID        : BSONObjectID,           // ID of the User
-                nameLogin     : String,                 // Login name of the User
+                nameLogin     : Option[String],         // Login name of the User
                 accountType   : Int,                    // User Access level
                 userData      : Option[UserData],       // Personal Data of the User //TODO possibly encrypt?
                 jobs          : List[BSONObjectID],     // List of Jobs the User has
@@ -55,7 +55,7 @@ object User {
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User = User(
       userID        = bson.getAs[BSONObjectID](IDDB).get,
-      nameLogin     = bson.getAs[String](NAMELOGIN).get,
+      nameLogin     = bson.getAs[String](NAMELOGIN),
       accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
       userData      = bson.getAs[UserData](USERDATA),
       jobs          = bson.getAs[List[BSONObjectID]](JOBS).get,
