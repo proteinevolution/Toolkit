@@ -5,14 +5,19 @@
             <input type="text" placeholder="Show results by Job ID" class="jobsearch" id="jobsearch">
         </div>
         </form>
-        <div  align="center">
-            <input type="submit" class="tiny expanded secondary button" value="Search" />
+        <div>
+            <div align="center" style="border: solid 1px; margin-bottom: 1em; width: 100%;"  data-tooltip aria-haspopup="true"  data-disable-hover="false" title="Search Job" >
+                <i class="icon-magnifying"></i>
+            </div>
+
+            <div align="center" style="border: solid 1px; margin-bottom: 1em; width: 100%;" data-tooltip aria-haspopup="true" data-disable-hover="false" title="Delete Job">
+               <i class="icon-trash_can"></i>
+            </div>
         </div>
 
         <div align="center">
             <input id="showjobs" type="button" class="tiny expanded secondary button" value="Show all Jobs" />
         </div>
-
         <form class="delete_id">
             <div class="tiny button-group" style="text-align: center;">
             <input id="delete" align="left" type="button" class="small alert button masterTooltip" title="This will delete your checked jobs permanently from our database." value="Delete sel. Jobs" onclick="deleteIDs();">
