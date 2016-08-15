@@ -58,7 +58,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   def index = Action { implicit request =>
 
     val sessionID = Session.requestSessionID
-    val user : Option[User] = Session.getUser
+    val user : User = Session.getUser
 
     Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user)).withSession {
       Session.closeSessionRequest(request, sessionID)

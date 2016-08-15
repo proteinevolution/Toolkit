@@ -33,7 +33,7 @@ object FormDefinitions {
       (nameLogin, password, eMail, acceptToS, dateLastLogin, dateCreated, dateUpdated) =>
         User(
           userID        = BSONObjectID.generate,
-          nameLogin     = nameLogin,
+          nameLogin     = Some(nameLogin),
           accountType   = if (acceptToS) 1 else 0,
           userData      = Some(UserData(password = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
                                         eMail    = eMail,
@@ -52,7 +52,7 @@ object FormDefinitions {
         )
     } { user =>
       Some((
-        user.nameLogin,
+        user.nameLogin.get,
         "",
         user.userData.get.eMail,
         true,

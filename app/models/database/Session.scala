@@ -12,10 +12,13 @@ object Session {
   // Constants for the JSON object identifiers
   val ID            = "id"            // name for the ID in scala
   val IDDB          = "_id"           //              ID in MongoDB
+  val SID           = "sid"           //              ID entry in the session cookie
   val USERID        = "userID"        //              ID of the session ID owner
   val STATISTICS    = "statisticsID"  //              ID of the statistics
   val DATECREATED   = "dateCreated"   //              created on field
   val DATEUPDATED   = "dateUpdated"   //              changed on field
+
+  val sessionUserMap = new scala.collection.mutable.HashMap[String, User]
 
   /**
     * Object containing the writer for the Class
@@ -35,7 +38,7 @@ object Session {
     */
   implicit object Writer extends BSONDocumentWriter[Session] {
     def write(session: Session) : BSONDocument = BSONDocument(
-      ID          -> session.sessionID,
+      IDDB        -> session.sessionID,
       USERID      -> session.userID,
       DATECREATED -> BSONDateTime(session.dateCreated.fold(-1L)(_.getMillis)),
       DATEUPDATED -> BSONDateTime(session.dateUpdated.fold(-1L)(_.getMillis)))
