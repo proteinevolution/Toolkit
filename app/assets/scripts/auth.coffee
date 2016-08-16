@@ -3,8 +3,8 @@ $ ->
   # Tabs for the sign in / up /reset password interaction
   $( "#auth-tabs" ).tabs()
   # toggle the auth dropdown for the link
-  $("#auth-link").click ->
-    $("#auth-dropdown").foundation('toggle')
+  #$("#auth-link").click ->
+   # $("#auth-dropdown").foundation('toggle')
 
   # AJAX submission of the Login form
   $("#signin-form").on 'submit', (event) ->

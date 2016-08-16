@@ -1,27 +1,32 @@
 package modules
 
-//TODO import plugin from https://github.com/Sanoma-CDA/maxmind-geoip2-scala
-import scala.concurrent.duration._
+import com.sanoma.cda.geoip.MaxMindIpGeo
+import play.api.mvc.RequestHeader
 
-/**
-  * Created by zin on 02.08.16.
-  */
+final class GeoIP(file: String) {
+  private val geoIp = MaxMindIpGeo(file, 1000)
 
+  def getLocation(ipAddress : String) : Location = {
+    geoIp.getLocation.apply(ipAddress) match {
+      case Some(ipLocation) =>
+        Location(ipLocation.countryName.getOrElse("Solar System"), ipLocation.countryCode, ipLocation.region, ipLocation.city)
+      case None =>
+        Location("Solar System", None, None, None)
+    }
+  }
 
-final class GeoIP(file: String, cacheTtl: Duration) {
-
-
+  def getLocation(implicit request: RequestHeader) : Location = {
+    getLocation(request.remoteAddress)
+  }
 }
 
-case class Location(
-                     country: String,
-                     region: Option[String],
-                     city: Option[String]) {
-
+case class Location(country     : String,
+                    countryCode : Option[String],
+                    region      : Option[String],
+                    city        : Option[String]) {
 
 }
 
 object Location {
-
 
 }
