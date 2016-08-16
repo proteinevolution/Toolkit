@@ -131,8 +131,8 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     // main_id exists, allow send File
 
     Ok.sendFile(new java.io.File(s"$jobPath$SEP$jobID${SEP}results$SEP$filename"))
-      .withHeaders(CONTENT_TYPE->"text/plain").withSession { Session.closeSessionRequest(request, sessionID)
-    }
+      .withSession { Session.closeSessionRequest(request, sessionID)}
+      .as("text/plain")   //TODO Only text/plain for files currently supported
   }
 
   def upload = Action(parse.multipartFormData) { request =>
