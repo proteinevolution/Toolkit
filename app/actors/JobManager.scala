@@ -18,6 +18,7 @@ import better.files._
 import models.{Constants, ExitCodes}
 import models.tel.TEL
 import play.api.Logger
+import play.api.libs.json.Json
 
 import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -83,7 +84,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
      }
   }
 
-  
+
 
   /**
     * @param job
@@ -206,9 +207,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case UpdateJob(job)  =>
 
 
-
-
-
       Logger.info("Job Manager was asked to update Job")
 
 
@@ -239,9 +237,14 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
         // Interfaces with TEL to make a new job directory, returns the  path to the script which then
         // needs to be executed
-        val script = TEL.init(toolName, params,
-          s"$jobPath$SEPARATOR${newJob.mainID.stringify}$SEPARATOR")
+        val rootPath = s"$jobPath$SEPARATOR${newJob.mainID.stringify}$SEPARATOR"
+
+        val script = TEL.init(toolName, params, rootPath)
         this.updateJob(newJob.copy(status = JobState.Prepared))
+
+        // Write a JSON File with the job information to the JobDirectory
+        s"$rootPath$jobJSONFileName".toFile.write(Json.toJson(newJob).toString())
+
 
         // Also Start Job if requested
         if(start) {
