@@ -4,11 +4,14 @@
 
         <!-- Input form elements derived from the Input Data Model -->
         <script src='@routes.Assets.at("javascripts/sampleseqs.js")' type="text/javascript" ></script>
+        <div id="alnviz_ta">
         @helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 30,
                     'placeholder -> "Enter sequence alignment",
                      '_label -> "",
                     'id -> "alignment", '_showConstraints -> false)
 
+        </div>
+        <div id="alnviz_ctl">
         <div class="callout" id="alert"  hidden>
 
         </div>
@@ -24,3 +27,4 @@
                     '_label -> "Select alignment format",
                     'id -> "format"
                 )
+
