@@ -83,19 +83,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
      }
   }
 
-
-
-
-  def changeState(job : Job, newState : JobState.JobState) = {
-    // change Job State in Database
-    jobBSONCollection.flatMap(_.update(BSONDocument(Job.IDDB -> job.mainID),
-                                            BSONDocument("$set" -> job.copy(status = newState))))
-
-    // Inform user if connected
-    if(connectedUsers contains job.sessionID) {
-      connectedUsers(job.sessionID) ! JobStateChanged(job, newState)
-    }
-  }
+  
 
   /**
     * @param job
