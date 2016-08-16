@@ -200,6 +200,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     // User asks to prepare new Job, might be directly executed (if start is true)
     case Prepare(sessionID, jobID, toolName, params, start) =>
+      Future {
       // Check whether jobID already exists, otherwise make new job
       // This is a new Job Submission // TODO Only supports new Jobs currently
       if(jobID.isEmpty) {
@@ -232,6 +233,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           executeJob(newJob, script)
         }
       }
+  }
   }
 }
 
