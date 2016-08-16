@@ -91,22 +91,22 @@ jobs.controller = ->
 #here's the view
 jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
-    m 'tr[class=job]',   [
+    m 'tr[class=job]', {style: {border: '1px solid grey', background: '#EEEEEE', fontSize: '0.7em', marginBottom: '5px'}},   [
       m('td[class=' + a[task.state()] + ']',
 
         m('span'), )
-      m("div", {style: {cssFloat: "left", border: "0px solid black", paddingRight: "0.7em", paddingLeft: "0.7em"}},
+      m("div", {style: {cssFloat: "left", border: "1px solid black" }},
         m('br'), m('input',{type: "checkbox", id: "jobid[]", value: task.job_id(), name: "jobid[]"})),
       m('td',  m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
       m('td', {class: task.toolname()}, {style: {textAlign: "center", border: "0px solid black"}},
 
-        m("div", {style: {cssFloat: "center", border: "0px solid black", marginLeft: "0.75em"}},
+        m("div", {style: {cssFloat: "center", border: "0px solid black",}},
           task.toolname().substr(0,4)
         ))
-      m('td', {style: {cssFloat: "center", marginLeft: "0.7em", fontSize: "0.5em"}},
+      m('td', {style: {cssFloat: "center", fontSize: "0.5em"}},
       m('span', {class: "masterTooltip", title: "Hide in your job list", ariaHidden: true}
         m('a',{ onclick: jobs.vm.clear.bind(task, task.job_id())},
-          m('img[src="/assets/images/icons/fi-x.svg"][width=10em]', {class: 'clear'})))
+          m('img[src="/assets/images/icons/fi-x.svg"]', {class: 'clear'})))
 
       )
     ]
