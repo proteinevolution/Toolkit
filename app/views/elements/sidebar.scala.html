@@ -5,48 +5,47 @@
             <input type="text" placeholder="Show results by Job ID" class="jobsearch" id="jobsearch">
         </div>
         </form>
-        <div  align="center">
-            <input type="submit" class="tiny expanded secondary button" value="Search" />
-        </div>
-
-        <div align="center">
-            <input id="showjobs" type="button" class="tiny expanded secondary button" value="Show all Jobs" />
-        </div>
-
-        <form class="delete_id">
-            <div class="tiny button-group" style="text-align: center;">
-            <input id="delete" align="left" type="button" class="small alert button masterTooltip" title="This will delete your checked jobs permanently from our database." value="Delete sel. Jobs" onclick="deleteIDs();">
-            <input id="select" align="right" type="button" class="check small secondary button masterTooltip" title="Select all jobs in your job list. The size of the job widget is limited to 5 jobs (for development, will be increased to 25 for production)." value="Select all Jobs"/>
-
+        <div>
+            <div class="button sidebar-button" align="center" data-tooltip aria-haspopup="true"  data-disable-hover="false" title="Search for job" >
+                <span><i class="icon-magnifying" style="color: grey;"></i></span>
             </div>
-            <div>&nbsp;</div>
-            <!-- Job Code -->
-<table id="jobtable">
-    <tbody id="jobtable-rows">
 
-    </tbody>
-</table>
-    </form> <!-- form must close here -->
+            <div class="button sidebar-button" align="center" data-tooltip aria-haspopup="true" data-disable-hover="false" title="Delete selected jobs" onclick="deleteIDs();">
+               <span><i class="icon-trash_can" style="color: grey;"></i></span>
+            </div>
 
-        <div class="clock">
-                <p>Cluster load:</p>
+            <div class="button sidebar-button" align="center" >
+                <span style="color: grey; font-size: 0.85em;">Show all jobs</span>
+            </div>
+
+            <div class="check button sidebar-button" align="center" data-tooltip aria-haspopup="true" data-disable-hover="false" title="Select all jobs in your job list. The size of the job widget is limited to 25 jobs.">
+                <span style="color: grey; font-size: 0.85em;">Select all jobs</span>
+            </div>
+
+            <!--Lets add this when we need it-->
+            <!--<div class="clock">
+                <p align="center">Cluster Load</p>
                 <div class="progress" role="progressbar" tabindex="0" aria-valuenow="20" aria-valuemin="0" aria-valuetext="25 percent" aria-valuemax="100">
-                    <span class="progress-meter" id="testmeterspan" style="width: 25%">
+                    <span class="progress-meter" id="testmeterspan" style="width: 25%; background-color: darkgray">
                         <p class="progress-meter-text" id="testmeter"></p>
                     </span>
                 </div>
+            </div> -->
         </div>
+
+        <div>&nbsp;</div>
+                    <!-- Job Code -->
+        <table id="jobtable">
+    <tbody id="jobtable-rows">
+
+    </tbody>
+        </table>
+
+
     </div>
 
 
     <script type="text/javascript">
-
-
-            $("#tinySwitch").click(function(){
-                $("#sidebar-switch").toggle();
-            });
-
-
 
         setInterval(function(){
         number = Math.floor((Math.random()*100)+1);
@@ -74,7 +73,7 @@
             }
         }
 
-        $('.check:button').click(function(){
+        $('.check').click(function(){
             var checked = !$(this).data('checked');
             $('input:checkbox').prop('checked', checked);
             $(this).val(checked ? 'uncheck all' : 'check all' )

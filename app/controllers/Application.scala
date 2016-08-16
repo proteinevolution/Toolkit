@@ -27,7 +27,8 @@ class Application @Inject()(webJarAssets: WebJarAssets,
                             system: ActorSystem,
                             mat: Materializer,
                             @Named("jobManager") jobManager : ActorRef,    // Connect to JobManager
-                            configuration: Configuration) extends Controller with I18nSupport {
+                            configuration: Configuration) extends Controller with I18nSupport
+                                                                             with Common {
 
   val SEP = java.io.File.separator
 
@@ -58,6 +59,8 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     val sessionID = Session.requestSessionID
     val user : User = Session.getUser
+
+    Logger.info(geoIP.getLocation.toString)
 
     Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user)).withSession {
       Session.closeSessionRequest(request, sessionID)
@@ -130,8 +133,8 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     // main_id exists, allow send File
 
     Ok.sendFile(new java.io.File(s"$jobPath$SEP$jobID${SEP}results$SEP$filename"))
-      .withHeaders(CONTENT_TYPE->"text/plain").withSession { Session.closeSessionRequest(request, sessionID)
-    }
+      .withSession { Session.closeSessionRequest(request, sessionID)}
+      .as("text/plain")   //TODO Only text/plain for files currently supported
   }
 
   def upload = Action(parse.multipartFormData) { request =>

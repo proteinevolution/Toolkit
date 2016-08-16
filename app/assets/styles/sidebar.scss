@@ -1,19 +1,14 @@
-.columns-sidebar {
-
-
-}
-
 .sidebar {
 
   padding-left: 1.250em;
   padding-top: 0px;
   padding-right: 1.250em;
-  background-color: rgba(46, 140, 129, 0.35);
+  background-color: transparent;
   min-height: 31.250em;
   max-width: 17.500em;
-
-
 }
+
+
 
 
 .clear{
@@ -28,14 +23,14 @@
 
 
 .clock {
-  background-color: #000;
+  background-color: transparent;
   opacity: 0.6;
-  width: 85%;
+  width: 100%;
   margin: 0 auto;
-  padding: 15px;
-  border: 1px solid #333;
-  color: #fff;
-  font-size: 0.75em;
+  padding: 0.5em;
+  border: 1px solid grey;
+  color: grey;
+  font-size: 0.85em;
 }
 
 ul#clock li {
@@ -48,7 +43,7 @@ ul#jobs li {
 
 #jobsearchform input {
   font-size: 0.75em;
-  height: 2.35em;
+  height: 3.35em;
 }
 
 .button-group .alert {
@@ -57,4 +52,15 @@ ul#jobs li {
 
 .button-group .check {
   margin-left: 0.8em !important;
+}
+
+.sidebar-button {
+  border: solid 1px grey !important;
+  margin-bottom: 1em;
+  width: 100%;
+  background-color: transparent !important;
+
+}
+.sidebar-button:hover {
+  background-color: lightgray !important;
 }
