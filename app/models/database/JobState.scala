@@ -1,6 +1,7 @@
 package models.database
 
-import reactivemongo.bson.{BSONWriter, BSONInteger, BSONReader}
+import play.api.libs.json.{Json, Writes}
+import reactivemongo.bson.{BSONInteger, BSONReader, BSONWriter}
 
 /**
   * Created by lukas on 1/20/16.
@@ -16,6 +17,19 @@ object JobState {
   case object Error extends JobState(4)
   case object Done extends JobState(5)
   case object Submitted extends JobState(6)
+
+  implicit object JobStateWrites extends Writes[JobState] {
+    def writes(jobState: JobState) = jobState match {
+      case PartiallyPrepared => Json.toJson("PartiallyPrepared")
+      case Prepared => Json.toJson("PartiallyPrepared")
+      case Queued => Json.toJson("PartiallyPrepared")
+      case Running => Json.toJson("PartiallyPrepared")
+      case Error => Json.toJson("PartiallyPrepared")
+      case Done => Json.toJson("PartiallyPrepared")
+      case Submitted => Json.toJson("PartiallyPrepared")
+    }
+  }
+
 
   /**
     * Object containing the reader for the job state

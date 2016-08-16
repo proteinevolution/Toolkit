@@ -9,6 +9,7 @@ import java.io.File
 trait Constants {
 
   val SEPARATOR = File.separator
+  val jobJSONFileName = "JOB.json"
 }
 
 
