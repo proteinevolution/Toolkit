@@ -6,6 +6,7 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import models.database.User
+import modules.common.HTTPRequest
 import play.api.libs.streams.ActorFlow
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,6 +41,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
   /**
     * Opens the websocket
+    *
     * @return
     */
   def ws = WebSocket.accept[JsValue, JsValue] { implicit request =>
@@ -59,6 +61,11 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     val user : Option[User] = Session.getUser
 
     Logger.info(geoIP.getLocation.toString)
+    println(HTTPRequest.userAgent(request))
+
+    if (HTTPRequest.isSocket(request))
+      println("is Socket")
+    else println("is not a Socket")
 
     Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user)).withSession {
       Session.closeSessionRequest(request, sessionID)

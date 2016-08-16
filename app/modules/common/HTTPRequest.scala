@@ -12,14 +12,14 @@ object HTTPRequest {
   def isXhr(req: RequestHeader): Boolean =
     (req.headers get "X-Requested-With") contains "XMLHttpRequest"
 
-  //def isSocket(req: RequestHeader): Boolean =
-    //(req.headers get HeaderNames.UPGRADE) ??   (_.toLowerCase == "websocket")
+  def isSocket(req: RequestHeader): Boolean =
+    (req.headers get HeaderNames.UPGRADE.toLowerCase) contains "websocket"
 
-  //def isSynchronousHttp(req: RequestHeader) = !isXhr(req) && !isSocket(req)
+  def isSynchronousHttp(req: RequestHeader) = !isXhr(req) && !isSocket(req)
 
   def isSafe(req: RequestHeader) = req.method == "GET"
 
-  //def isRedirectable(req: RequestHeader) = isSynchronousHttp(req) && isSafe(req)
+  def isRedirectable(req: RequestHeader) = isSynchronousHttp(req) && isSafe(req)
 
   def userAgent(req: RequestHeader): Option[String] = req.headers get HeaderNames.USER_AGENT
 
@@ -54,7 +54,7 @@ object HTTPRequest {
 
   //def isHuman(req: RequestHeader) = !isBot(req)
 
-  //def isFacebookBot(req: RequestHeader) = userAgent(req) ?? (_ contains "facebookexternalhit")
+  def isFacebookBot(req: RequestHeader) = userAgent(req) contains "facebookexternalhit"
 
   private val fileExtensionPattern = """.+\.[a-z0-9]{2,4}$""".r.pattern
 
