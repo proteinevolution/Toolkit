@@ -68,7 +68,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     */
   def updateJob(newJob : Job): Unit = {
 
-     jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> newJob.mainID)).one[Job]).map {
+     jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> newJob.mainID)).one[Job]).foreach {
 
        case Some(oldJob) =>
 
@@ -205,14 +205,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     case UpdateJob(job)  =>
 
-
-
-
-
       Logger.info("Job Manager was asked to update Job")
-
-
-
 
     // User asks to prepare new Job, might be directly executed (if start is true)
     case Prepare(sessionID, jobID, toolName, params, start) =>
@@ -235,7 +228,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                          dateUpdated = Some(jobCreationTime),
                          dateViewed  = Some(jobCreationTime))
 
-        this.updateJob(newJob)
+        val _ = this.updateJob(newJob)
 
         // Interfaces with TEL to make a new job directory, returns the  path to the script which then
         // needs to be executed
@@ -248,7 +241,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           executeJob(newJob, script)
         }
       }
-  }
+    }
   }
 }
 
