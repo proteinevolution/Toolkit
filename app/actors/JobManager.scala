@@ -21,7 +21,6 @@ import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
-import reactivemongo.api.FailoverStrategy
 
 /**
   * Created by lzimmermann on 10.05.16.
@@ -35,11 +34,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   import JobManager._
 
 
-  // TODO Get the collection name from the config, Currently only the default Failover strategy is used
-  var jobBSONCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
-  val userBSONCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
-  jobBSONCollection.onFailure { case t => throw t }
-  userBSONCollection.onFailure { case t => throw t }
+  def jobBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
+  def userBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
+
 
 
   val random = scala.util.Random
@@ -71,7 +68,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     */
   def changeState(job : Job, newState : JobState.JobState) = {
     // change Job State in Database
-    this.jobBSONCollection.flatMap(_.update(BSONDocument(Job.IDDB -> job.mainID),
+    jobBSONCollection.flatMap(_.update(BSONDocument(Job.IDDB -> job.mainID),
                                             BSONDocument("$set" -> job.copy(status = newState))))
 
     // Inform user if connected
@@ -134,7 +131,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case GetJobList(sessionID, user) =>
       implicit val reader = JobReader
       // Find all jobs related to the session ID
-      val futureJobs = this.jobBSONCollection.map(_.find(BSONDocument(Job.SESSIONID -> sessionID)).cursor[Job]())
+      val futureJobs = jobBSONCollection.map(_.find(BSONDocument(Job.SESSIONID -> sessionID)).cursor[Job]())
       // Collect the list and then create the reply
       val replyTo = sender()
       futureJobs.flatMap(_.collect[List]()).foreach { jobList =>
@@ -145,7 +142,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
      // Reads parameters provided to the job from the job directory
     case Read(sessionID : BSONObjectID, jobID : String) =>
       implicit val reader = JobReader
-      val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
+      val futureJob = jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
       futureJob.foreach {
         case Some(job) => // Job Owner must be linked with the Session ID
           if (job.sessionID.eq(sessionID)) // Retrieve the Job Files
@@ -163,7 +160,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       val replyTo = sender()
       implicit val reader = JobReader
 
-      this.jobBSONCollection = this.jobBSONCollection.andThen {
+      jobBSONCollection.andThen {
 
         case Success(coll) => coll.find(BSONDocument(Job.JOBID -> jobID)).one[Job].foreach {
 
@@ -182,7 +179,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     //  User asks to delete Job
     case Delete(sessionID, jobID) =>
       implicit val reader = JobReader
-      val futureJob = this.jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
+      val futureJob = jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
       futureJob.foreach {
         case Some(job) =>
           if (job.sessionID.eq(sessionID)) {
@@ -192,7 +189,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
               runningProcesses(job.mainID.stringify).destroy()
             }
 
-            this.jobBSONCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID)))
+            jobBSONCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID)))
 
             Future {
               // Delete Job Path
@@ -231,7 +228,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         val rootPath  = s"$jobPath$SEPARATOR${newJob.mainID.stringify}$SEPARATOR" // Where the Job Directory is located
 
         // Add the job to the Database
-        this.jobBSONCollection.flatMap(_.insert(newJob))
+        jobBSONCollection.flatMap(_.insert(newJob))
 
         changeState(newJob, JobState.Submitted)
         // Interfaces with TEL to make a new job directory, returns the  path to the script which then
