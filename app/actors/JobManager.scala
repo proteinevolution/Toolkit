@@ -5,21 +5,22 @@ import javax.inject.{Inject, Singleton}
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
-import models.database.{User, Job}
+import models.database.{Job, User}
 import models.database.Job.JobReader
 import models.database.JobState
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
+
 import scala.concurrent.Future
 import better.files._
 import models.{Constants, ExitCodes}
 import models.tel.TEL
+import play.api.Logger
 
 import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 
 /**
@@ -36,8 +37,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   def jobBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
   def userBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
-
-
 
   val random = scala.util.Random
 
@@ -61,13 +60,32 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   implicit val reader = JobReader
 
+
   /**
-    * Updates JobState.
+    * Updates Job in database or creates a new Job if job with mainID does not exist
     *
-    * @param job
-    * @param newState
-    * @return
+    * @param newJob
     */
+  def updateJob(newJob : Job): Unit = {
+
+     jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> newJob.mainID)).one[Job]).map {
+
+       case Some(oldJob) =>
+
+         if(oldJob.status != newJob.status && connectedUsers.contains(newJob.sessionID)) {
+
+           connectedUsers(newJob.sessionID) ! JobStateChanged(newJob, newJob.status)
+         }
+       jobBSONCollection.flatMap(_.update(BSONDocument(Job.IDDB -> newJob.mainID),
+           BSONDocument("$set" -> newJob)))
+
+       case None => jobBSONCollection.flatMap(_.insert(newJob))
+     }
+  }
+
+
+
+
   def changeState(job : Job, newState : JobState.JobState) = {
     // change Job State in Database
     jobBSONCollection.flatMap(_.update(BSONDocument(Job.IDDB -> job.mainID),
@@ -92,7 +110,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     val err = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stderr.err")))
 
     // Job will now be executed, change the job state to running
-    changeState(job, JobState.Running)
+
+    this.updateJob(job.copy(status = JobState.Running))
 
     // Create new Process instance of the runscript to run the tool
     val process = Process(scriptPath , new java.io.File(rootPath)).run(ProcessLogger(
@@ -104,9 +123,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     // Treat Exit code of job process
     process.exitValue() match {
 
-      case SUCCESS => changeState(job, JobState.Done)
+      case SUCCESS => updateJob(job.copy(status = JobState.Done))
       case TERMINATED => // Ignore
-      case x: Int => changeState(job, JobState.Error)
+      case x: Int => updateJob(job.copy(status = JobState.Error))
     }
     runningProcesses.remove(job.mainID.stringify)
 
@@ -114,21 +133,18 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     err.close()
   }
 
-  /**
-    * Receive will take a message and respond to it
-    */
   def receive : Receive = {
 
     // User Connected, add them to the connected users list
     case UserConnect(sessionID) =>
       //Logger.info("User Connected: " + sessionID.stringify)
-      val actor = connectedUsers.getOrElseUpdate(sessionID, sender())
+      val _ = connectedUsers.getOrElseUpdate(sessionID, sender())
       //this.connectedUsers = connectedUsers.updated(sessionID, sender())
 
     // User Disconnected, Remove them from the connected users list.
     case UserDisconnect(sessionID) =>
       //Logger.info("User Disconnected: " + sessionID.stringify)
-      val actor = connectedUsers.remove(sessionID)
+      val _ = connectedUsers.remove(sessionID)
 
     // Get a request to send the job list
     case GetJobList(sessionID, user) =>
@@ -141,6 +157,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         //Logger.info("Found " + jobList.length.toString + " Job[s]. Sending.")
         replyTo ! SendJobList(jobList)
       }
+
 
      // Reads parameters provided to the job from the job directory
     case Read(sessionID : BSONObjectID, jobID : String) =>
@@ -156,7 +173,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           sender () ! JobIDUnknown
       }
 
+
     // User Requests State of Job
+    // TODO Move this logic to the Controller
     case JobInfo(sessionID : BSONObjectID, jobID) =>
       val replyTo = sender()
         jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job]).foreach {
@@ -179,7 +198,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
             if (runningProcesses.contains(job.mainID.stringify)) {
               runningProcesses(job.mainID.stringify).destroy()
             }
-
             jobBSONCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID)))
 
             Future {
@@ -192,11 +210,21 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           } else {
             sender() ! PermissionDenied
           }
-
         case None      =>
           // Job ID is unknown.
           sender() ! JobIDUnknown
       }
+
+    case UpdateJob(job)  =>
+
+
+
+
+
+      Logger.info("Job Manager was asked to update Job")
+
+
+
 
     // User asks to prepare new Job, might be directly executed (if start is true)
     case Prepare(sessionID, jobID, toolName, params, start) =>
@@ -204,29 +232,28 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       // Check whether jobID already exists, otherwise make new job
       // This is a new Job Submission // TODO Only supports new Jobs currently
       if(jobID.isEmpty) {
+
+        val jobCreationTime = DateTime.now()
         val newJob = Job(mainID      = BSONObjectID.generate(),
                          jobType     = "",
                          parentID    = None,
-                         jobID       = jobID.getOrElse(jobIDSource.next().toString),
+                         jobID       = jobIDSource.next().toString, //TODO Refactor to name
                          sessionID   = sessionID,
                          userID      = None,
-                         status      = JobState.PartiallyPrepared,
+                         status      = JobState.Submitted,
                          tool        = toolName,
                          statID      = "",
-                         dateCreated = Some(new DateTime()),
-                         dateUpdated = Some(new DateTime()),
-                         dateViewed  = Some(new DateTime()))
+                         dateCreated = Some(jobCreationTime),
+                         dateUpdated = Some(jobCreationTime),
+                         dateViewed  = Some(jobCreationTime))
 
-        val rootPath  = s"$jobPath$SEPARATOR${newJob.mainID.stringify}$SEPARATOR" // Where the Job Directory is located
+        this.updateJob(newJob)
 
-        // Add the job to the Database
-        jobBSONCollection.flatMap(_.insert(newJob))
-
-        changeState(newJob, JobState.Submitted)
         // Interfaces with TEL to make a new job directory, returns the  path to the script which then
         // needs to be executed
-        val script = TEL.init(toolName, params, rootPath)
-        changeState(newJob, JobState.Prepared)
+        val script = TEL.init(toolName, params,
+          s"$jobPath$SEPARATOR${newJob.mainID.stringify}$SEPARATOR")
+        this.updateJob(newJob.copy(status = JobState.Prepared))
 
         // Also Start Job if requested
         if(start) {
@@ -246,6 +273,9 @@ object JobManager {
 
   // Tell job widget to update
   case object UpdateAllJobs
+
+  // When the JobManager was asked to update a Job
+  case class UpdateJob(job : Job)
 
   // Get a request to send the job list
   case class GetJobList(sessionID : BSONObjectID, user : Option[User])

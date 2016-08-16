@@ -14,13 +14,10 @@ import javax.inject.{Inject, Named, Singleton}
 
 import models.sessions.Session
 import models.tools._
-import play.api.mvc.Results._
 
 import scala.concurrent.duration._
-import scala.concurrent.Future
 import play.api.mvc._
 import play.api.Configuration
-import play.twirl.api.Html
 
 
 @Singleton
@@ -149,3 +146,34 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   }
 
 }
+
+/* Example RESTFUL  Actions
+
+public static void createUser(User newUser) {
+    newUser.save();
+    user(newUser.id);
+}
+
+public static void updateUser(Long id, User user) {
+    User dbUser = User.findById(id);
+    dbUser.updateDetails(user); // some model logic you would write to do a safe merge
+    dbUser.save();
+    user(id);
+}
+
+public static void deleteUser(Long id) {
+    User.findById(id).delete();
+    renderText("success");
+}
+
+public static void user(Long id)  {
+    User user = User.findById(id)
+    render(user);
+}
+
+ */
+
+
+
+
+
