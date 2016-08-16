@@ -155,14 +155,6 @@ tr.spaceUnder > td
     padding-right: 0;
 }
 
-tr.job{
-
-    font-size: 0.7em;
-    background-color: #fff;
-
-
-}
-
 @media only screen and (-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi) {
     /* High-res styles go here */
     tr.job {
@@ -182,6 +174,9 @@ tr.job a:visited {
     color: #000;
 }
 
+#jobtable-rows tr {
+    margin-bottom: 2em !important;
+}
 
 hr {
 
