@@ -14,6 +14,7 @@ val reactiveMongoVersion = "0.11.14"
 
 val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+  "com.sanoma.cda" %% "maxmind-geoip2-scala" % "1.5.1",
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
@@ -51,7 +52,6 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "mpi-toolkit",
     libraryDependencies ++= (commonDeps ++ Seq(
-      "com.sanoma.cda" %% "maxmind-geoip2-scala" % "1.5.1",
       "org.webjars" %% "webjars-play" % "2.5.0",
       "org.webjars" % "jquery" % jqueryVersion,
       "org.webjars.bower" % "jquery.lazyload" % jqueryLazyloadVersion,

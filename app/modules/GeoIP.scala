@@ -1,7 +1,6 @@
 package modules
 
-import com.sanoma.cda.geoip.{ MaxMindIpGeo, IpLocation }
-
+import com.sanoma.cda.geoip.MaxMindIpGeo
 import scala.concurrent.duration._
 
 final class GeoIP(file: String, cacheTtl: Duration) {
@@ -28,7 +27,7 @@ case class Location(
 
   //override def toString = List(shortCountry.some, region, city).flatten mkString " > "
 }
-c
+
 object Location {
 
  // val unknown = Location("Solar System", none, none)
