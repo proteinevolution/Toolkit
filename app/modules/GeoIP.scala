@@ -5,7 +5,7 @@ import scala.concurrent.duration._
 
 final class GeoIP(file: String, cacheTtl: Duration) {
 
-  private val geoIp = MaxMindIpGeo(file, 0)
+  private val geoIp = MaxMindIpGeo("/ebio/abt1_share/toolkit_support1/data/GeoLite2-City.mmdb", 1000)
   //private val cache = lila.memo.Builder.cache(cacheTtl, compute)
 
   //private def compute(ip: String): Option[Location] =
