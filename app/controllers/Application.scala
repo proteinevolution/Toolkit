@@ -29,7 +29,8 @@ class Application @Inject()(webJarAssets: WebJarAssets,
                             system: ActorSystem,
                             mat: Materializer,
                             @Named("jobManager") jobManager : ActorRef,    // Connect to JobManager
-                            configuration: Configuration) extends Controller with I18nSupport {
+                            configuration: Configuration) extends Controller with I18nSupport
+                                                                             with Common {
 
   val SEP = java.io.File.separator
 
@@ -59,6 +60,8 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     val sessionID = Session.requestSessionID
     val user : Option[User] = Session.getUser
+
+    Logger.info(geoIP.getLocation.toString)
 
     Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user)).withSession {
       Session.closeSessionRequest(request, sessionID)

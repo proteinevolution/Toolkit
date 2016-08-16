@@ -1,39 +1,32 @@
 package modules
 
 import com.sanoma.cda.geoip.MaxMindIpGeo
-import scala.concurrent.duration._
+import play.api.mvc.RequestHeader
 
-final class GeoIP(file: String, cacheTtl: Duration) {
+final class GeoIP(file: String) {
+  private val geoIp = MaxMindIpGeo(file, 1000)
 
-  private val geoIp = MaxMindIpGeo("/ebio/abt1_share/toolkit_support1/data/GeoLite2-City.mmdb", 1000)
-  //private val cache = lila.memo.Builder.cache(cacheTtl, compute)
+  def getLocation(ipAddress : String) : Location = {
+    geoIp.getLocation.apply(ipAddress) match {
+      case Some(ipLocation) =>
+        Location(ipLocation.countryName.getOrElse("Solar System"), ipLocation.countryCode, ipLocation.region, ipLocation.city)
+      case None =>
+        Location("Solar System", None, None, None)
+    }
+  }
 
-  //private def compute(ip: String): Option[Location] =
-  //  geoIp getLocation ip map Location.apply
-
-  //def apply(ip: String): Option[Location] = cache get ip
-
-  //def orUnknown(ip: String): Location = apply(ip) | Location.unknown
+  def getLocation(implicit request: RequestHeader) : Location = {
+    getLocation(request.remoteAddress)
+  }
 }
 
-case class Location(
-                     country: String,
-                     region: Option[String],
-                     city: Option[String]) {
+case class Location(country     : String,
+                    countryCode : Option[String],
+                    region      : Option[String],
+                    city        : Option[String]) {
 
- // def comparable = (country, ~region, ~city)
-
- // def shortCountry: String = ~country.split(',').headOption
-
-  //override def toString = List(shortCountry.some, region, city).flatten mkString " > "
 }
 
 object Location {
 
- // val unknown = Location("Solar System", none, none)
-
-  //val tor = Location("Tor exit node", none, none)
-
- // def apply(ipLoc: IpLocation): Location =
-  //  Location(ipLoc.countryName | unknown.country, ipLoc.region, ipLoc.city)
 }
