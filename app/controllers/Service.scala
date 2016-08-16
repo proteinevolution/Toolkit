@@ -5,7 +5,7 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.database.{Job, JobState, User}
+import models.database.{JobState, User}
 import models.sessions.Session
 import akka.pattern.ask
 import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
@@ -111,7 +111,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
       case JobIDUnknown => Future.successful(NotFound)
       case PermissionDenied => Future.successful(NotFound)
 
-      case job : Job =>
+      case job : models.database.Job =>
 
         // Decide what to show depending on the JobState
       job.status match {
