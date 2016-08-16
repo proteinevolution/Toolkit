@@ -59,6 +59,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   // Keeps track of all running processes. // TODO Should be restored after toolkit reboots
   val runningProcesses = new collection.mutable.HashMap[String, Process]
 
+  implicit val reader = JobReader
+
   /**
     * Updates JobState.
     *
@@ -129,7 +131,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     // Get a request to send the job list
     case GetJobList(sessionID, user) =>
-      implicit val reader = JobReader
+
       // Find all jobs related to the session ID
       val futureJobs = jobBSONCollection.map(_.find(BSONDocument(Job.SESSIONID -> sessionID)).cursor[Job]())
       // Collect the list and then create the reply
@@ -141,7 +143,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
      // Reads parameters provided to the job from the job directory
     case Read(sessionID : BSONObjectID, jobID : String) =>
-      implicit val reader = JobReader
+
       val futureJob = jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
       futureJob.foreach {
         case Some(job) => // Job Owner must be linked with the Session ID
@@ -158,7 +160,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     // User Requests State of Job
     case JobInfo(sessionID : BSONObjectID, jobID) =>
       val replyTo = sender()
-      implicit val reader = JobReader
+
 
       jobBSONCollection.andThen {
 
@@ -178,7 +180,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     //  User asks to delete Job
     case Delete(sessionID, jobID) =>
-      implicit val reader = JobReader
+
       val futureJob = jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job])
       futureJob.foreach {
         case Some(job) =>
