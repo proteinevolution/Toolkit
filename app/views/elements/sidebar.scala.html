@@ -18,7 +18,7 @@
                 <span style="color: grey; font-size: 0.85em;">Show all jobs</span>
             </div>
 
-            <div class="button sidebar-button" align="center" data-tooltip aria-haspopup="true" data-disable-hover="false" title="Select all jobs in your job list. The size of the job widget is limited to 25 jobs.">
+            <div class="check button sidebar-button" align="center" data-tooltip aria-haspopup="true" data-disable-hover="false" title="Select all jobs in your job list. The size of the job widget is limited to 25 jobs.">
                 <span style="color: grey; font-size: 0.85em;">Select all jobs</span>
             </div>
 
@@ -47,13 +47,6 @@
 
     <script type="text/javascript">
 
-
-            $("#tinySwitch").click(function(){
-                $("#sidebar-switch").toggle();
-            });
-
-
-
         setInterval(function(){
         number = Math.floor((Math.random()*100)+1);
         document.getElementById('testmeter').innerHTML = number;
@@ -80,7 +73,7 @@
             }
         }
 
-        $('.check:button').click(function(){
+        $('.check').click(function(){
             var checked = !$(this).data('checked');
             $('input:checkbox').prop('checked', checked);
             $(this).val(checked ? 'uncheck all' : 'check all' )
