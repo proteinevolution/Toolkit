@@ -10,46 +10,18 @@ import reactivemongo.bson._
   * Session object used for a simple creation of a session cookie with the sessionID
   */
 
-case class Session(sessionID   : BSONObjectID,          // Session ID of the User
-                   userID      : BSONObjectID,          // User ID will be stored
-                   dateCreated : Option[DateTime],      // Creation time of the Session
-                   dateUpdated : Option[DateTime])      // Last Visit
+case class SessionData(sessionID   : BSONObjectID,          // Session ID of the User
+                       userID      : BSONObjectID,          // User ID will be stored
+                       dateCreated : Option[DateTime],      // Creation time of the Session
+                       dateUpdated : Option[DateTime])      // Last Visit
 
-object Session {
-  // Constants for the JSON object identifiers
-  val ID            = "id"            // name for the ID in scala
-  val IDDB          = "_id"           //              ID in MongoDB
-  val SID           = "sid"           //              ID entry in the session cookie
-  val USERID        = "userID"        //              ID of the session ID owner
-  val STATISTICS    = "statisticsID"  //              ID of the statistics
-  val DATECREATED   = "dateCreated"   //              created on field
-  val DATEUPDATED   = "dateUpdated"   //              changed on field
-
+object Sessions {
   val sessionUserMap = new scala.collection.mutable.HashMap[BSONObjectID, User]
+}
 
-  /**
-    * Object containing the writer for the Class
-    */
-  implicit object Reader extends BSONDocumentReader[Session] {
-    def read(bson : BSONDocument): Session = {
-      Session(
-        sessionID   = bson.getAs[BSONObjectID](IDDB).get,
-        userID      = bson.getAs[BSONObjectID](USERID).get,
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)))
-    }
-  }
-
-  /**
-    * Object containing the writer for the Class
-    */
-  implicit object Writer extends BSONDocumentWriter[Session] {
-    def write(session: Session) : BSONDocument = BSONDocument(
-      IDDB        -> session.sessionID,
-      USERID      -> session.userID,
-      DATECREATED -> BSONDateTime(session.dateCreated.fold(-1L)(_.getMillis)),
-      DATEUPDATED -> BSONDateTime(session.dateUpdated.fold(-1L)(_.getMillis)))
-  }
+trait Session extends {
+  // ID entry in the session cookie
+  val SID            = "sid"
 
   /**
     * Saves a User to the session Mapping for a later time
@@ -58,7 +30,7 @@ object Session {
     * @param user The user the sessionID will be linked to.wasdwasd@wasd.wasd
     */
   def addUser (sessionID : BSONObjectID, user : User) : User = {
-    sessionUserMap.getOrElseUpdate(sessionID, user)
+    Sessions.sessionUserMap.getOrElseUpdate(sessionID, user)
   }
 
   /**
@@ -68,7 +40,7 @@ object Session {
     * @param user The user the sessionID will be linked to.
     */
   def editUser (sessionID : BSONObjectID, user : User) : Option[User] = {
-    sessionUserMap.put(sessionID, user)
+    Sessions.sessionUserMap.put(sessionID, user)
   }
 
   /**
@@ -80,14 +52,14 @@ object Session {
     *         with a User.
     */
   def getUser (sessionID : BSONObjectID) : User = {
-    sessionUserMap.getOrElse(sessionID, addUser(sessionID, User(userID = BSONObjectID.generate(),
-                                                                         None,
-                                                                         -1,
-                                                                         None,
-                                                                         Nil,
-                                                                         Some(new DateTime()),
-                                                                         Some(new DateTime()),
-                                                                         Some(new DateTime()))))
+    Sessions.sessionUserMap.getOrElse(sessionID,
+                                        addUser(sessionID, User(userID        = BSONObjectID.generate(),
+                                                                sessionID     = Some(sessionID),
+                                                                accountType   = -1,
+                                                                jobs          = Nil,
+                                                                dateCreated   = Some(new DateTime()),
+                                                                dateLastLogin = Some(new DateTime()),
+                                                                dateUpdated   = Some(new DateTime()))))
   }
 
   /**
@@ -111,7 +83,7 @@ object Session {
     *         non-present sessionID
     */
   def removeUser (sessionID : BSONObjectID) : Option[User] = {
-    sessionUserMap.remove(sessionID)
+    Sessions.sessionUserMap.remove(sessionID)
   }
 
   /**
@@ -134,10 +106,10 @@ object Session {
     * @return
     */
   def requestSessionID(implicit request: RequestHeader) : BSONObjectID = {
-    val sid = request.session.get(SID)
-    val sessionID = if (sid.isDefined) {
-      BSONObjectID.parse(sid.get).getOrElse(BSONObjectID.generate())
-    } else {
+    val sessionID = request.session.get(SID) match {
+      case Some(sid) =>
+      BSONObjectID.parse(sid).getOrElse(BSONObjectID.generate())
+      case None      =>
       BSONObjectID.generate()
     }
 

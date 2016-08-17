@@ -31,21 +31,21 @@ class NewUserWelcomeMail(token : String) extends MailTemplate {
   override def subject = "Bioinformatics Toolkit - Verification"
 
   def bodyText (user : User) = {
-    s"""Welcome ${user.nameLogin},
+    s"""Welcome ${user.getUserData.nameLogin},
        |Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
        |To do this, visit
-       |http://olt:7550/verification/${user.nameLogin}/$token
+       |http://olt:7550/verification/${user.getUserData.nameLogin}/$token
        |Your Toolkit Team
      """.stripMargin
   }
 
   def bodyHtml(user : User) = {
     super.bodyHtmlTemplate(
-      s"""Welcome ${user.nameLogin},""".stripMargin,
+      s"""Welcome ${user.getUserData.nameLogin},""".stripMargin,
       s"""Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
-       |To do this, click <a href=\"http://olt:7550/verification/${user.nameLogin}/$token\">here</a>
+       |To do this, click <a href=\"http://olt:7550/verification/${user.getUserData.nameLogin}/$token\">here</a>
        |or copy this URL and visit this page in your browser:
-       |http://olt:7550/verification/${user.nameLogin}/$token
+       |http://olt:7550/verification/${user.getUserData.nameLogin}/$token
        |Your Toolkit Team
      """.stripMargin
     )

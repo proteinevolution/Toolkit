@@ -6,6 +6,7 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import models.database.{Session, User}
+import org.joda.time.DateTime
 import play.api.libs.streams.ActorFlow
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -13,6 +14,11 @@ import play.api.libs.json.JsValue
 import javax.inject.{Inject, Named, Singleton}
 import models.tools._
 import play.api.mvc.Results._
+import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
+import reactivemongo.api.FailoverStrategy
+import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.duration._
 import scala.concurrent.Future
@@ -24,11 +30,14 @@ import play.twirl.api.Html
 @Singleton
 class Application @Inject()(webJarAssets: WebJarAssets,
                             val messagesApi: MessagesApi,
+                            val reactiveMongoApi : ReactiveMongoApi,
                             system: ActorSystem,
                             mat: Materializer,
                             @Named("jobManager") jobManager : ActorRef,    // Connect to JobManager
                             configuration: Configuration) extends Controller with I18nSupport
-                                                                             with Common {
+                                                                             with ReactiveMongoComponents
+                                                                             with Common
+                                                                             with Session {
 
   val SEP = java.io.File.separator
 
@@ -38,6 +47,8 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
 
+  // get the collection 'users'
+  def userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
 
   /**
     * Opens the websocket
@@ -46,7 +57,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     */
   def ws = WebSocket.accept[JsValue, JsValue] { implicit request =>
     Logger.info("Application attaches WebSocket")
-    ActorFlow.actorRef(WebSocketActor.props(Session.requestSessionID, jobManager))
+    ActorFlow.actorRef(WebSocketActor.props(getUser, jobManager))
   }
 
 
@@ -55,15 +66,25 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     * not already present.
     * Currently the index controller will assign a session id to the user for identification purpose.
     */
-  def index = Action { implicit request =>
-
-    val sessionID = Session.requestSessionID
-    val user : User = Session.getUser
+  def index = Action.async { implicit request =>
+    val sessionID = requestSessionID
 
     Logger.info(geoIP.getLocation.toString)
-
-    Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user)).withSession {
-      Session.closeSessionRequest(request, sessionID)
+    userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID)).one[User]).map {
+      case Some(user) =>
+        userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
+                                        BSONDocument("$set"    -> BSONDocument(
+                                            User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))))
+        addUser(sessionID, user)
+        Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user)).withSession {
+          closeSessionRequest(request, sessionID)
+        }
+      case None =>
+        val user = getUser
+        userCollection.flatMap(_.insert(user))
+        Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user)).withSession {
+          closeSessionRequest(request, sessionID)
+        }
     }
   }
 
@@ -72,7 +93,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     Ok(views.html.general.contact()).withSession {
 
-      Session.closeSessionRequest(request, Session.requestSessionID) // Send Session Cookie
+      closeSessionRequest(request, requestSessionID) // Send Session Cookie
     }
 
   }
@@ -119,7 +140,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     Ok(views.html.general.submit(toolName, toolFrame, None)).withSession {
 
-      Session.closeSessionRequest(request, Session.requestSessionID) // Send Session Cookie
+      closeSessionRequest(request, requestSessionID) // Send Session Cookie
     }
   }
 
@@ -128,12 +149,12 @@ class Application @Inject()(webJarAssets: WebJarAssets,
    */
   def file(filename : String, jobID : String) = Action{ implicit request =>
 
-    val sessionID = Session.requestSessionID
+    val sessionID = requestSessionID
 
     // main_id exists, allow send File
 
     Ok.sendFile(new java.io.File(s"$jobPath$SEP$jobID${SEP}results$SEP$filename"))
-      .withSession { Session.closeSessionRequest(request, sessionID)}
+      .withSession { closeSessionRequest(request, sessionID)}
       .as("text/plain")   //TODO Only text/plain for files currently supported
   }
 

@@ -21,7 +21,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class Service @Inject() (webJarAssets: WebJarAssets,
                          val messagesApi: MessagesApi,
-                         @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport {
+                         @Named("jobManager") jobManager : ActorRef)
+
+                 extends Controller with I18nSupport
+                                    with Session {
 
   implicit val timeout = Timeout(1.seconds)
 
@@ -32,21 +35,21 @@ class Service @Inject() (webJarAssets: WebJarAssets,
 
       case "sitemap" =>
         Ok(views.html.general.sitemap()).withSession {
-          Session.closeSessionRequest(request, Session.requestSessionID)
+          closeSessionRequest(request, requestSessionID)
         }
       // Frontend tools
       case "reformat" =>
 
-        val sessionID = Session.requestSessionID
-        val user : User = Session.getUser
+        val sessionID = requestSessionID
+        val user : User = getUser
 
         Ok(views.html.tools.forms.reformat(webJarAssets,"Utils")).withSession {
-          Session.closeSessionRequest(request, sessionID)
+          closeSessionRequest(request, sessionID)
         }
         
       case "seq2gi" =>
         Ok(views.html.tools.forms.seq2gi()).withSession {
-          Session.closeSessionRequest(request, Session.requestSessionID)
+          closeSessionRequest(request, requestSessionID)
         }
 
       case _ =>
@@ -67,7 +70,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     */
   def delJob(jobID: String) = Action { implicit request =>
 
-    jobManager ! Delete(Session.requestSessionID, jobID)
+    jobManager ! Delete(getUser.userID, jobID)
     Ok
   }
 
@@ -103,9 +106,9 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     */
   def jobInfo(jobID: String) = Action.async { implicit request =>
 
-    val sessionID = Session.requestSessionID // Grab the Session ID
+    val sessionID = requestSessionID // Grab the Session ID
 
-    (jobManager ? JobInfo(sessionID, jobID)).flatMap {
+    (jobManager ? JobInfo(getUser(sessionID).userID, jobID)).flatMap {
 
       case JobIDUnknown => Future.successful(NotFound)
       case PermissionDenied => Future.successful(NotFound)
@@ -117,12 +120,12 @@ class Service @Inject() (webJarAssets: WebJarAssets,
 
         // User has requested a job whose state is Running
         case JobState.Running => Future.successful(Ok(views.html.job.running(jobID)).withSession {
-          Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
+          closeSessionRequest(request, sessionID)   // Send Session Cookie
         })
 
         case JobState.Prepared =>
 
-          (jobManager ? Read(sessionID, jobID)).mapTo[Map[String, String]].map { res =>
+          (jobManager ? Read(getUser(sessionID).userID, jobID)).mapTo[Map[String, String]].map { res =>
 
             val toolframe = job.tool match {
               case "alnviz" => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(res))
@@ -132,7 +135,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
             }
 
             Ok(views.html.general.submit(job.tool, toolframe, Some(jobID))).withSession {
-              Session.closeSessionRequest(request, sessionID) // Send Session Cookie
+              closeSessionRequest(request, sessionID) // Send Session Cookie
             }
           }
 
@@ -182,13 +185,13 @@ class Service @Inject() (webJarAssets: WebJarAssets,
                     s"/files/${job.mainID.stringify}/tbl"))
           }
           Future.successful(Ok(toolframe).withSession {
-            Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
+            closeSessionRequest(request, sessionID)   // Send Session Cookie
           })
 
         case JobState.Error =>
 
           Future.successful(Ok(views.html.job.error(jobID)).withSession {
-            Session.closeSessionRequest(request, sessionID)   // Send Session Cookie
+            closeSessionRequest(request, sessionID)   // Send Session Cookie
           })
       }
     }

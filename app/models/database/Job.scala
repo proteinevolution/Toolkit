@@ -11,7 +11,6 @@ import reactivemongo.bson._
   * @param jobType
   * @param parentID     ID of the parent Job
   * @param jobID        User Visible Job ID
-  * @param sessionID    Session of the User
   * @param userID       Logged in Users will have their ID here
   * @param status       status of the Job
   * @param tool         name of the tool used for the Job
@@ -45,8 +44,7 @@ case class Job(mainID      : BSONObjectID,            // ID of the Job in the Sy
                jobType     : String,                  // Type of job
                parentID    : Option[BSONObjectID],    // ID of the Parent Job
                jobID       : String,                  // User visible ID of the Job
-               sessionID   : BSONObjectID,            // ID referencing the session Object
-               userID      : Option[BSONObjectID],    // User to whom the Job belongs
+               userID      : BSONObjectID,            // User to whom the Job belongs
                status      : JobState,                // Status of the Job
                tool        : String,                  // Tool used for this Job
                statID      : String,                  //
@@ -94,7 +92,6 @@ object Job {
   val JOBTYPE       = "jobType"       //              Type of the Job
   val PARENTID      = "parentID"      //              ID of the parent job
   val JOBID         = "jobID"         //              ID for the job
-  val SESSIONID     = "sessionID"     //              ID of the Session
   val USERID        = "userID"        //              ID of the job owner
   val STATUS        = "status"        //              Status of the job field
   val TOOL          = "tool"          //              name of the tool field
@@ -112,8 +109,7 @@ object Job {
           jobType     = bson.getAs[String](JOBTYPE).get,
           parentID    = bson.getAs[BSONObjectID](PARENTID),
           jobID       = bson.getAs[String](JOBID).get,
-          sessionID   = bson.getAs[BSONObjectID](SESSIONID).get,
-          userID      = bson.getAs[BSONObjectID](USERID),
+          userID      = bson.getAs[BSONObjectID](USERID).get,
           status      = bson.getAs[JobState](STATUS).get,
           tool        = bson.getAs[String](TOOL).get,
           statID      = bson.getAs[String](STATID).get,
@@ -132,7 +128,6 @@ object Job {
       JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
-      SESSIONID   -> job.sessionID,
       USERID      -> job.userID,
       STATUS      -> job.status,
       TOOL        -> job.tool,

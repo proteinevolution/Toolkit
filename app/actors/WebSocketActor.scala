@@ -7,30 +7,28 @@ import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
-import models.database.Job
+import models.database.{User, Job}
 import play.api.libs.json.{JsValue, Json}
 import play.api.Logger
-import reactivemongo.bson.BSONObjectID
 
 /**
   * Actor that listens to the WebSocket and accepts messages from and passes messages to it.
   *
   */
 object WebSocketActor {
-
-  def props(sessionID : BSONObjectID, jobManager : ActorRef)(out: ActorRef) = Props(new WebSocketActor(sessionID, jobManager, out))
+  // TODO possibly use this object for session storing as the websockets are the first to show if a user is on / off
+  def props(user : User, jobManager : ActorRef)(out: ActorRef) = Props(new WebSocketActor(user, jobManager, out))
 }
 
-private final class WebSocketActor(sessionID : BSONObjectID, jobManager : ActorRef, out: ActorRef)  extends Actor with ActorLogging {
-
-
+private final class WebSocketActor(user : User, jobManager : ActorRef, out: ActorRef)  extends Actor with ActorLogging {
+  //TODO Warning: user is not stable and only the ID is used here
   override def preStart =
     // Connect to JobManager via Session ID
-    jobManager ! UserConnect(sessionID)
+    jobManager ! UserConnect(user.userID)
 
   override def postStop =
     // User Disconnected
-    jobManager ! UserDisconnect(sessionID)
+    jobManager ! UserDisconnect(user.userID)
 
   def receive = LoggingReceive {
 
@@ -38,7 +36,7 @@ private final class WebSocketActor(sessionID : BSONObjectID, jobManager : ActorR
       (js \ "type").validate[String].foreach {
         // User requests the job list for the widget
         case "GetJobList" =>
-          jobManager ! GetJobList(sessionID, None)
+          jobManager ! GetJobList(user.userID)
 
         // connection test case
         case "Ping"       =>
