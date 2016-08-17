@@ -2,7 +2,7 @@
 @import models.database.User
 @(user : User)(implicit messages: Messages, request: RequestHeader)
 <div></div>
-<p>@{user.nameLogin.get}</p>
+<p>@{user.getUserData.nameLogin}</p>
 <p>@{user.getUserData.eMail}</p>
 <p></p>
 @{if(user.isSuperuser){

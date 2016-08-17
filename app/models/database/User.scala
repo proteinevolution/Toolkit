@@ -5,21 +5,22 @@ import org.mindrot.jbcrypt.BCrypt
 
 import reactivemongo.bson._
 
-case class User(userID        : BSONObjectID,           // ID of the User
-                nameLogin     : Option[String],         // Login name of the User
-                accountType   : Int,                    // User Access level
-                userData      : Option[UserData],       // Personal Data of the User //TODO possibly encrypt?
-                jobs          : List[BSONObjectID],     // List of Jobs the User has
-                dateLastLogin : Option[DateTime],       // Last seen on
-                dateCreated   : Option[DateTime],       // Account creation date
-                dateUpdated   : Option[DateTime]) {     // Account updated on
+case class User(userID        : BSONObjectID,                 // ID of the User
+                sessionID     : Option[BSONObjectID] = None,  // Session ID
+                accountType   : Int                  = -1,    // User Access level
+                userData      : Option[UserData]     = None,  // Personal Data of the User //TODO possibly encrypt?
+                jobs          : List[BSONObjectID]   = Nil,   // List of Jobs the User has
+                dateLastLogin : Option[DateTime],             // Last seen on
+                dateCreated   : Option[DateTime],             // Account creation date
+                dateUpdated   : Option[DateTime]) {           // Account updated on
 
   def checkPassword(plainPassword: String) : Boolean = {
     BCrypt.checkpw(plainPassword, getUserData.password)
   }
 
   def getUserData = {
-    userData.getOrElse(UserData("invalid", "invalid", None, None, None, None, None, None, None, None))
+    // This should only return user data when the user is logged in.
+    userData.getOrElse(UserData("invalid", "invalid", "invalid"))
   }
 
   // Mock up function to show how a possible function to check user levels could look like.
@@ -34,20 +35,20 @@ case class User(userID        : BSONObjectID,           // ID of the User
 
 object User {
   // Number of rounds for BCrypt to hash the Password (2^x) TODO Move to the config?
-  val LOG_ROUNDS : Int = 10
+  final val LOG_ROUNDS : Int = 10
 
   // Constants for the JSON object identifiers
-  val ID            = "id"            // name for the ID in scala
-  val IDDB          = "_id"           //              ID in MongoDB
-  val NAMELOGIN     = "nameLogin"     //              login name field
-  val PASSWORD      = "password"      //              password field
-  val ACCOUNTTYPE   = "accountType"   //              account type field
-  val USERDATA      = "userData"      //              user data object field
-  val JOBS          = "jobs"          //              job reference pointers field
-  val ACCEPTEDTOS   = "acceptToS"     // needed for checking if the TOS was accepted
-  val DATELASTLOGIN = "dateLastLogin" // name for the last login field
-  val DATECREATED   = "dateCreated"   //              account created on field
-  val DATEUPDATED   = "dateUpdated"   //              account data changed on field
+  final val ID            = "id"                                // name for the ID in scala
+  final val IDDB          = "_id"                               //              ID in MongoDB
+  final val SESSIONID     = "sessionID"                         //              Session ID of the User
+  final val ACCOUNTTYPE   = "accountType"                       //              account type field
+  final val USERDATA      = "userData"                          //              user data object field
+  final val NAMELOGIN     = USERDATA + "." + UserData.NAMELOGIN //              login name field
+  final val JOBS          = "jobs"                              //              job reference pointers field
+  final val ACCEPTEDTOS   = "acceptToS"                         // needed for checking if the TOS was accepted
+  final val DATELASTLOGIN = "dateLastLogin"                     // name for the last login field
+  final val DATECREATED   = "dateCreated"                       //              account created on field
+  final val DATEUPDATED   = "dateUpdated"                       //              account data changed on field
 
   /**
     * Define how the User object is formatted
@@ -55,7 +56,7 @@ object User {
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User = User(
       userID        = bson.getAs[BSONObjectID](IDDB).get,
-      nameLogin     = bson.getAs[String](NAMELOGIN),
+      sessionID     = bson.getAs[BSONObjectID](SESSIONID),
       accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
       userData      = bson.getAs[UserData](USERDATA),
       jobs          = bson.getAs[List[BSONObjectID]](JOBS).get,
@@ -67,7 +68,7 @@ object User {
   implicit object Writer extends BSONDocumentWriter[User] {
     override def write(user: User): BSONDocument = BSONDocument(
       IDDB          -> user.userID,
-      NAMELOGIN     -> user.nameLogin,
+      SESSIONID     -> user.sessionID,
       ACCOUNTTYPE   -> user.accountType,
       USERDATA      -> user.userData,
       JOBS          -> BSONArray(user.jobs),

@@ -14,7 +14,7 @@ trait JSONTemplate {
     * @return
     */
   def userToJSON (user : User) = {
-    Json.obj("nameLogin" -> user.nameLogin)
+    Json.obj("nameLogin" -> user.getUserData.nameLogin)
   }
 
   /**
@@ -36,7 +36,7 @@ trait JSONTemplate {
   }
 
   def LoggedIn(user : User) = {
-    authMessage("Welcome, " + user.nameLogin + ". \n You are now logged in.",
+    authMessage("Welcome, " + user.getUserData.nameLogin + ". \n You are now logged in.",
                 true,
                 Some(user))
   }
@@ -49,7 +49,7 @@ trait JSONTemplate {
 
 
   def LoginError() = {
-    authMessage("There was an error while trying to Sign you up. Try again!",
+    authMessage("There was an error while trying to sign you in. Try again!",
                 false,
                 None)
   }
@@ -67,13 +67,19 @@ trait JSONTemplate {
   }
 
   def MustAcceptToS() = {
-    authMessage("Please accept the terms for our service before registering.",
+    authMessage("Please accept the terms for our service to register.",
                 false,
                 None)
   }
 
   def PasswordMismatch() = {
     authMessage("Your passwords did not match.",
+                false,
+                None)
+  }
+
+  def PasswordWrong() = {
+    authMessage("The Password was incorrect. Please try again.",
                 false,
                 None)
   }
@@ -85,7 +91,7 @@ trait JSONTemplate {
   }
 
   def VerificationSuccessful(user : User) = {
-    authMessage("Your E-Mail Account has been Verified, "+user.nameLogin+".",
+    authMessage("Your E-Mail Account has been Verified, "+user.getUserData.nameLogin+".",
                 true,
                 Some(user))
   }

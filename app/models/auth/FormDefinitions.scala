@@ -6,7 +6,6 @@ import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
-import reactivemongo.bson.BSONObjectID
 
 /**
   * Created by astephens on 03.04.16.
@@ -21,9 +20,9 @@ object FormDefinitions {
   /**
     * Form mapping for the Sign up form
     */
-  val SignUp = Form(
+  def SignUp(user: User) = Form(
     mapping(
-      User.NAMELOGIN     -> (text(6,40) verifying pattern(textRegex, error = "error.NameLogin")),
+      UserData.NAMELOGIN -> (text(6,40) verifying pattern(textRegex, error = "error.NameLogin")),
       UserData.PASSWORD  -> (text(8,128) verifying pattern(textRegex, error = "error.Password")),
       UserData.EMAIL     -> email,
       User.ACCEPTEDTOS   -> boolean,
@@ -32,29 +31,22 @@ object FormDefinitions {
       User.DATEUPDATED   -> optional(longNumber)) {
       (nameLogin, password, eMail, acceptToS, dateLastLogin, dateCreated, dateUpdated) =>
         User(
-          userID        = BSONObjectID.generate,
-          nameLogin     = Some(nameLogin),
+          userID        = user.userID,
+          sessionID     = user.sessionID,
           accountType   = if (acceptToS) 1 else 0,
-          userData      = Some(UserData(password = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
-                                        eMail    = eMail,
-                                        None,
-                                        None,
-                                        None,
-                                        None,
-                                        None,
-                                        None,
-                                        None,
-                                        None)),
-          jobs          = Nil,
+          userData      = Some(UserData(nameLogin = nameLogin,
+                                        password  = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
+                                        eMail     = eMail)),
+          jobs          = user.jobs,
           dateLastLogin = Some(new DateTime()),
           dateCreated   = Some(new DateTime()),
           dateUpdated   = Some(new DateTime())
         )
     } { user =>
       Some((
-        user.nameLogin.get,
+        user.getUserData.nameLogin,
         "",
-        user.userData.get.eMail,
+        user.getUserData.eMail,
         true,
         user.dateLastLogin.map(_.getMillis),
         user.dateCreated.map(_.getMillis),
@@ -68,8 +60,8 @@ object FormDefinitions {
     */
   val SignIn = Form(
     mapping(
-      User.NAMELOGIN    -> text(6,40),
-      UserData.PASSWORD -> text(8,128)) {
+      UserData.NAMELOGIN -> text(6,40),
+      UserData.PASSWORD  -> text(8,128)) {
       (nameLogin, password) =>
         User.Login(
           nameLogin,
@@ -89,14 +81,14 @@ object FormDefinitions {
   val ProfileEdit = Form(
     mapping(
       UserData.EMAIL     -> email,
-      UserData.NAMEFIRST -> optional(text(1,100)),
-      UserData.NAMELAST  -> optional(text(1,100)),
-      UserData.INSTITUTE -> optional(text(1,100)),
-      UserData.STREET    -> optional(text(1,100)),
-      UserData.CITY      -> optional(text(1,100)),
-      UserData.COUNTRY   -> optional(text(1,100)),
-      UserData.GROUPS    -> optional(text(1,100)),
-      UserData.ROLES     -> optional(text(1,100)),
+      UserData.NAMEFIRST -> optional(text(1,100) verifying pattern(textRegex, error = "error.NameFirst")),
+      UserData.NAMELAST  -> optional(text(1,100) verifying pattern(textRegex, error = "error.NameLast")),
+      UserData.INSTITUTE -> optional(text(1,100) verifying pattern(textRegex, error = "error.Institute")),
+      UserData.STREET    -> optional(text(1,100) verifying pattern(textRegex, error = "error.Street")),
+      UserData.CITY      -> optional(text(1,100) verifying pattern(textRegex, error = "error.City")),
+      UserData.COUNTRY   -> optional(text(1,100) verifying pattern(textRegex, error = "error.Country")),
+      UserData.GROUPS    -> optional(text(1,100) verifying pattern(textRegex, error = "error.Groups")),
+      UserData.ROLES     -> optional(text(1,100) verifying pattern(textRegex, error = "error.Roles")),
       UserData.PASSWORD  -> (text(8,128) verifying pattern(textRegex, error = "error.Password"))) {
       (eMail, nameFirst, nameLast, institute, street, city, country, groups, roles, password) =>
         UserData.EditProfileForm(eMail,
@@ -128,10 +120,10 @@ object FormDefinitions {
     */
   val ProfilePasswordEdit = Form(
     mapping(
-      UserData.PASSWORDOLD -> (text(8,128) verifying pattern(textRegex, error = "error.Password")),
+      UserData.PASSWORDOLD -> (text(8,128) verifying pattern(textRegex, error = "error.OldPassword")),
       UserData.PASSWORDNEW -> (text(8,128) verifying pattern(textRegex, error = "error.NewPassword"))) {
-      (password, passwordNew) =>
-        UserData.UpdatePasswordForm(password, passwordNew)
+      (passwordOld, passwordNew) =>
+        UserData.UpdatePasswordForm(passwordOld, passwordNew)
     } { password =>
       Some(("******","******"))
     }

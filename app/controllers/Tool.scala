@@ -41,16 +41,12 @@ object Tool {
 @Singleton
 class Tool @Inject()(val messagesApi: MessagesApi,
                      implicit val mat: Materializer,
-                     @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport {
+                     @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport with Session {
 
   implicit val timeout = Timeout(5.seconds)
 
   // submit file size is now restricted to 10 MB
   def submit(toolname: String, start : Boolean, jobID : Option[String]) = Action { implicit request =>
-
-
-    val sessionID = Session.requestSessionID // Grab the Session ID
-    val user_o    = Session.getUser
 
     // Fetch the job ID from the submission, might be the empty string
     //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
@@ -81,7 +77,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
           BadRequest("There was an error with the Form")
         },
-        _ => jobManager ! Prepare(sessionID, jobID, toolname, boundForm.data, start = start)
+        _ => jobManager ! Prepare(getUser, jobID, toolname, boundForm.data, start = start)
       )
       Ok
     }

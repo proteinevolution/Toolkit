@@ -71,11 +71,11 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   def changeState(job : Job, newState : JobState.JobState) = {
     // change Job State in Database
     jobBSONCollection.flatMap(_.update(BSONDocument(Job.IDDB -> job.mainID),
-                                            BSONDocument("$set" -> job.copy(status = newState))))
+                                       BSONDocument("$set"   -> job.copy(status = newState))))
 
     // Inform user if connected
-    if(connectedUsers contains job.sessionID) {
-      connectedUsers(job.sessionID) ! JobStateChanged(job, newState)
+    if(connectedUsers contains job.userID) {
+      connectedUsers(job.userID) ! JobStateChanged(job, newState)
     }
   }
 
@@ -120,33 +120,33 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   def receive : Receive = {
 
     // User Connected, add them to the connected users list
-    case UserConnect(sessionID) =>
-      //Logger.info("User Connected: " + sessionID.stringify)
-      val actor = connectedUsers.getOrElseUpdate(sessionID, sender())
-      //this.connectedUsers = connectedUsers.updated(sessionID, sender())
+    case UserConnect(user : BSONObjectID) =>
+      //Logger.info("User Connected: " + userID.stringify)
+      val actor = connectedUsers.getOrElseUpdate(user, sender())
+      //this.connectedUsers = connectedUsers.updated(userID, sender())
 
     // User Disconnected, Remove them from the connected users list.
-    case UserDisconnect(sessionID) =>
-      //Logger.info("User Disconnected: " + sessionID.stringify)
-      val actor = connectedUsers.remove(sessionID)
+    case UserDisconnect(user : BSONObjectID) =>
+      //Logger.info("User Disconnected: " + userID.stringify)
+      val actor = connectedUsers.remove(user)
 
     // Get a request to send the job list
-    case GetJobList(sessionID, user) =>
+    case GetJobList(user : BSONObjectID) =>
 
       // Find all jobs related to the session ID
-      val futureJobs = jobBSONCollection.map(_.find(BSONDocument(Job.SESSIONID -> sessionID)).cursor[Job]())
+      val futureJobs = jobBSONCollection.map(_.find(BSONDocument(Job.USERID -> user)).cursor[Job]())
       // Collect the list and then create the reply
       val replyTo = sender()
       futureJobs.flatMap(_.collect[List]()).foreach { jobList =>
-        //Logger.info("Found " + jobList.length.toString + " Job[s]. Sending.")
+        println("Found " + jobList.length.toString + " Job[s]. Sending.")
         replyTo ! SendJobList(jobList)
       }
 
      // Reads parameters provided to the job from the job directory
-    case Read(sessionID : BSONObjectID, jobID : String) =>
+    case Read(user : BSONObjectID, jobID : String) =>
       jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job]).foreach {
         case Some(job) => // Job Owner must be linked with the Session ID
-          if (job.sessionID == sessionID) // Retrieve the Job Files
+          if (job.userID == user) // Retrieve the Job Files
             sender () ! s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map {f =>
               f.name -> f.contentAsString
             }.toMap
@@ -157,11 +157,11 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       }
 
     // User Requests State of Job
-    case JobInfo(sessionID : BSONObjectID, jobID) =>
+    case JobInfo(user : BSONObjectID, jobID : String) =>
       val replyTo = sender()
         jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job]).foreach {
           case Some(job) => // Job Owner must be linked with the Session ID
-            if (job.sessionID == sessionID) // Retrieve the Job Files
+            if (job.userID == user) // Retrieve the Job Files
               replyTo ! job
             else // If jobID does not belong to the user
               replyTo ! PermissionDenied
@@ -170,10 +170,10 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         }
 
     //  User asks to delete Job
-    case Delete(sessionID, jobID) =>
+    case Delete(user : BSONObjectID, jobID : String) =>
       jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job]).foreach {
         case Some(job) =>
-          if (job.sessionID == sessionID) {
+          if (job.userID == user) {
 
             //  Terminate running Process instance of the Job
             if (runningProcesses.contains(job.mainID.stringify)) {
@@ -199,7 +199,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       }
 
     // User asks to prepare new Job, might be directly executed (if start is true)
-    case Prepare(sessionID, jobID, toolName, params, start) =>
+    case Prepare(user : User, jobID : Option[String], toolName : String, params, start) =>
       Future {
       // Check whether jobID already exists, otherwise make new job
       // This is a new Job Submission // TODO Only supports new Jobs currently
@@ -208,8 +208,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                          jobType     = "",
                          parentID    = None,
                          jobID       = jobID.getOrElse(jobIDSource.next().toString),
-                         sessionID   = sessionID,
-                         userID      = None,
+                         userID      = user.userID,
                          status      = JobState.PartiallyPrepared,
                          tool        = toolName,
                          statID      = "",
@@ -222,6 +221,17 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         // Add the job to the Database
         jobBSONCollection.flatMap(_.insert(newJob))
 
+        // Check if the User is in the Database
+        userBSONCollection.flatMap(_.find(BSONDocument(User.IDDB -> user.userID)).one[User]).foreach{
+          case Some(userFromDB) =>
+            // Add the jobID to the user
+            userBSONCollection.flatMap(_.update(BSONDocument(User.IDDB   -> user.userID),
+                                                BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> newJob.mainID))))
+          case None =>
+            // Add the user and their jobID to the collection
+            userBSONCollection.flatMap(_.insert(user.copy(jobs = List(newJob.mainID))))
+        }
+
         changeState(newJob, JobState.Submitted)
         // Interfaces with TEL to make a new job directory, returns the  path to the script which then
         // needs to be executed
@@ -233,22 +243,22 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           executeJob(newJob, script)
         }
       }
-  }
+    }
   }
 }
 
 object JobManager {
   // User connect preparation, mediated by WebSocket
-  case class UserConnect(sessionID : BSONObjectID)
+  case class UserConnect(userID : BSONObjectID)
 
   // User disconnect cleanup, mediated by WebSocket
-  case class UserDisconnect(sessionID : BSONObjectID)
+  case class UserDisconnect(userID : BSONObjectID)
 
   // Tell job widget to update
   case object UpdateAllJobs
 
   // Get a request to send the job list
-  case class GetJobList(sessionID : BSONObjectID, user : Option[User])
+  case class GetJobList(userID : BSONObjectID)
 
   // Send the job list to the user
   case class SendJobList(jobList : List[Job])
@@ -268,15 +278,15 @@ object JobManager {
   case class JobStateChanged(job : Job, state : JobState.JobState)
 
   // Ask for jobInfo (tool name and state)
-  case class JobInfo(userID : BSONObjectID, jobID  : String)
+  case class JobInfo(userID : BSONObjectID, jobID : String)
 
   // Delete Job Entirely
   case class Delete(userID : BSONObjectID, jobID : String)
 
   // Prepare Job with new parameters or create new job with specified parameters for the given tool
-  case class Prepare(userID   : BSONObjectID,
+  case class Prepare(user     : User,
                      jobID    : Option[String],
-                     toolname : String,
+                     toolName : String,
                      params   : Map[String, String],
                      start    : Boolean)
 }
