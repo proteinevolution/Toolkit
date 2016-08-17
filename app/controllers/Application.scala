@@ -1,30 +1,28 @@
 package controllers
 
+import javax.inject.{Inject, Named, Singleton}
+
 import actors.WebSocketActor
 import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import models.database.{Session, User}
+import models.tools._
+import modules.common.HTTPRequest
 import org.joda.time.DateTime
-import play.api.libs.streams.ActorFlow
-import play.api.Logger
+import play.api.{Configuration, Logger}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
-import javax.inject.{Inject, Named, Singleton}
-import models.tools._
-import play.api.mvc.Results._
-import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
+import play.api.libs.streams.ActorFlow
+import play.api.mvc._
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDateTime, BSONDocument}
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.concurrent.Future
-import play.api.mvc._
-import play.api.Configuration
-import play.twirl.api.Html
 
 
 @Singleton
@@ -52,7 +50,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
   /**
     * Opens the websocket
- *
+    *
     * @return
     */
   def ws = WebSocket.accept[JsValue, JsValue] { implicit request =>
@@ -69,20 +67,27 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   def index = Action.async { implicit request =>
     val sessionID = requestSessionID
 
+    println(HTTPRequest.userAgent(request))
+
+    if (HTTPRequest.isSocket(request))
+      println("is Socket")
+    else println("is not a Socket")
+
     Logger.info(geoIP.getLocation.toString)
+
     userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID)).one[User]).map {
       case Some(user) =>
         userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
                                         BSONDocument("$set"    -> BSONDocument(
                                             User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))))
         addUser(sessionID, user)
-        Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user)).withSession {
+        Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user)).withSession {
           closeSessionRequest(request, sessionID)
         }
       case None =>
         val user = getUser
         userCollection.flatMap(_.insert(user))
-        Ok(views.html.main(webJarAssets, views.html.general.maincontent(),"Home", user)).withSession {
+        Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user)).withSession {
           closeSessionRequest(request, sessionID)
         }
     }
@@ -172,3 +177,34 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   }
 
 }
+
+/* Example RESTFUL  Actions
+
+public static void createUser(User newUser) {
+    newUser.save();
+    user(newUser.id);
+}
+
+public static void updateUser(Long id, User user) {
+    User dbUser = User.findById(id);
+    dbUser.updateDetails(user); // some model logic you would write to do a safe merge
+    dbUser.save();
+    user(id);
+}
+
+public static void deleteUser(Long id) {
+    User.findById(id).delete();
+    renderText("success");
+}
+
+public static void user(Long id)  {
+    User user = User.findById(id)
+    render(user);
+}
+
+ */
+
+
+
+
+

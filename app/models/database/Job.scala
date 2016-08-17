@@ -2,8 +2,10 @@ package models.database
 
 import JobState.JobState
 import org.joda.time.DateTime
+import play.api.libs.json.Writes
 import reactivemongo.bson._
-
+import play.api.libs.json._
+import reactivemongo.play.json._
 
 /** ?
   *
@@ -51,6 +53,7 @@ case class Job(mainID      : BSONObjectID,            // ID of the Job in the Sy
                dateCreated : Option[DateTime],        // Creation time of the Job
                dateUpdated : Option[DateTime],        // Last Updated on
                dateViewed  : Option[DateTime]) {      // Last Viewed on
+
   /**
     * Returns the output file paths for the results
     * @return
@@ -85,6 +88,9 @@ case class Job(mainID      : BSONObjectID,            // ID of the Job in the Sy
   }
 }
 
+
+
+
 object Job {
   // Constants for the JSON object identifiers
   val ID            = "id"            // name for the ID in scala
@@ -99,6 +105,8 @@ object Job {
   val DATECREATED   = "dateCreated"   //              created on field
   val DATEUPDATED   = "dateUpdated"   //              changed on field
   val DATEVIEWED    = "dateViewed"    //              last view on field
+
+  implicit val jobWrites = Json.writes[Job]
 
   /**
     * Object containing the writer for the Class
