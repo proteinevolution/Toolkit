@@ -13,7 +13,7 @@ import play.api.mvc.{Controller, Action}
   */
 
 
-private[controllers] trait Forwarding extends Controller with I18nSupport {
+private[controllers] trait Forwarding extends Controller with I18nSupport with Session {
   protected def wja : WebJarAssets
 
   def forward(toolName: String, output: String) = Action { implicit request =>
@@ -33,11 +33,11 @@ private[controllers] trait Forwarding extends Controller with I18nSupport {
       case _ => ""
     }
 
-    lazy val sessionID = Session.requestSessionID
-    lazy val user : User = Session.getUser
+    lazy val sessionID = requestSessionID
+    lazy val user : User = getUser
 
     Ok(views.html.main(wja, toolFrame, section, user)).withSession {
-      Session.closeSessionRequest(request, sessionID)
+      closeSessionRequest(request, sessionID)
     }
   }
 

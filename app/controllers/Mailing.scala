@@ -15,7 +15,7 @@ class Mailing @Inject() (mailerClient: MailerClient) {
     val email = Email(
       template.subject,
       "Toolkit Team <toolkitmpg@gmail.com>",
-      Seq(user.nameLogin + " <" + user.nameLogin + ">"),
+      Seq(user.getUserData.nameLogin + " <" + user.getUserData.eMail + ">"),
       attachments = Seq(),
       bodyText = Some(template.bodyText(user)), // Text version of the E-Mail in case the User has no HTML E-Mail client
       bodyHtml = Some(template.bodyHtml(user))  // HTML formatted E-Mail content
