@@ -4,15 +4,16 @@ import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobManager._
 import akka.actor.ActorRef
-import akka.util.Timeout
-import models.database.{Session, Job, JobState, User}
 import akka.pattern.ask
+import akka.util.Timeout
+import models.database.{JobState, Session, User}
 import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
-import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import scala.concurrent.Future
+
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.concurrent.duration._
 /**
   *
   *
@@ -113,7 +114,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
       case JobIDUnknown => Future.successful(NotFound)
       case PermissionDenied => Future.successful(NotFound)
 
-      case job : Job =>
+      case job : models.database.Job =>
 
         // Decide what to show depending on the JobState
       job.status match {

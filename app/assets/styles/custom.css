@@ -416,3 +416,14 @@ hr {
 :focus {
     outline: 0;
 }
+
+textarea { resize:both; }
+
+#alnviz_ta { position: absolute; z-index: 99; }
+
+textarea#alignment {width: 500px; height: 280px;}
+
+#alnviz_ctl {
+    position: relative;
+    top: 300px;}
+

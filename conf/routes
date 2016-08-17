@@ -84,8 +84,16 @@ POST        /tools/:toolname                               @controllers.Tool.sub
 GET         /jobs/get/:jobid                               @controllers.Service.jobInfo(jobid : String)
 # Delete a Job
 POST        /jobs/del/:jobid                               @controllers.Service.delJob(jobid : String)
-
 GET         /static/get/:static                            @controllers.Service.static(static : String)
+
+
+# RESTFUL API for jobs
+# Update
+PUT         /job                                           @controllers.Jobs.updateJob
+
+
+
+
 
 # Add a Child Job
 #POST        /jobs/addChild                  @controllers.Service.addChild
@@ -96,3 +104,16 @@ GET         /:static                                       @controllers.Applicat
 
 #Forwarding
 #GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
+
+
+
+# EXAMPLE RESTFUL ROUTES
+#GET     /user/{id}            Application.user
+#POST    /user/                Application.createUser
+#PUT     /user/{id}            Application.updateUser
+#DELETE  /user/{id}            Application.deleteUser
+
+
+# Home page
+#GET      /books                           controllers.Application.listBooks
+#POST     /books controllers.Application.saveBook
