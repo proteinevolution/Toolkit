@@ -1,5 +1,6 @@
 package controllers
 
+import models.database.User
 import play.api.http.ContentTypes
 import play.api.mvc._
 import modules.GeoIP
@@ -16,6 +17,10 @@ private[controllers] trait Common
 
   protected implicit final class PimpedResult(result: Result) {
     def fuccess = scala.concurrent.Future successful result
+  }
+
+  protected def CheckBackendPath(implicit request: RequestHeader) : Boolean = {
+    request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")
   }
 
   protected def NoCache(res: Result): Result = res.withHeaders(
