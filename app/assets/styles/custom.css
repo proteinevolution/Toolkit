@@ -419,7 +419,7 @@ hr {
 
 textarea { resize:both; }
 
-#alnviz_ta { position: absolute; z-index: 99; }
+#alnviz_ta { position: absolute; z-index: 1; }
 
 textarea#alignment {width: 500px; height: 280px;}
 
