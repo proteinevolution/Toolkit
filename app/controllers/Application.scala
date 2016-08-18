@@ -31,7 +31,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
                             val reactiveMongoApi : ReactiveMongoApi,
                             system: ActorSystem,
                             mat: Materializer,
-                            @Named("jobManager") jobManager : ActorRef,    // Connect to JobManager
+                            @Named("userManager") userManager : ActorRef,    // Connect to JobManager
                             configuration: Configuration) extends Controller with I18nSupport
                                                                              with ReactiveMongoComponents
                                                                              with Common
@@ -55,7 +55,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     */
   def ws = WebSocket.accept[JsValue, JsValue] { implicit request =>
     Logger.info("Application attaches WebSocket")
-    ActorFlow.actorRef(WebSocketActor.props(getUser, jobManager))
+    ActorFlow.actorRef(WebSocketActor.props(getUser, userManager))
   }
 
 
