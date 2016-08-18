@@ -6,6 +6,7 @@ import javax.inject.Inject
 import play.api.mvc.{Action, Controller}
 import play.api.i18n.MessagesApi
 import play.modules.reactivemongo.{ReactiveMongoComponents, MongoController, ReactiveMongoApi}
+import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.BSONDocument
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,8 +29,8 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
 
 
 
-  val clusterSettings: BSONCollection = db.collection("settings")
-  val toolSettings: BSONCollection = db.collection("toolsettings")
+  val clusterSettings = reactiveMongoApi.database.map(_.collection("settings").as[BSONCollection](FailoverStrategy()))
+  val toolSettings = reactiveMongoApi.database.map(_.collection("toolSettings").as[BSONCollection](FailoverStrategy()))
 
   /**
     *
@@ -46,7 +47,7 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
       "created_on" -> new Date(),
       "update_on" -> new Date())
 
-    val future = clusterSettings.insert(document)
+    val future = clusterSettings.flatMap(_.insert(document))
 
 
     future.onComplete {
@@ -90,7 +91,7 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
       "created_on" -> new Date(),
       "update_on" -> new Date())
 
-    val future = toolSettings.insert(document)
+    val future = toolSettings.flatMap(_.insert(document))
 
 
     future.onComplete {
