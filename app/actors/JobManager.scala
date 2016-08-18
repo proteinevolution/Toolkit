@@ -1,8 +1,9 @@
 package actors
 
 import java.io.{BufferedWriter, FileWriter}
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Named, Inject, Singleton}
 
+import actors.UserManager.MessageWithUserID
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
 import models.database.{Job, User}
@@ -30,6 +31,7 @@ import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 @Singleton
 final class JobManager @Inject() (val messagesApi: MessagesApi,
                                   val reactiveMongoApi: ReactiveMongoApi,
+                                  @Named("userManager") userManager : ActorRef,
                                   implicit val materializer: akka.stream.Materializer)
   extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes {
 
@@ -45,9 +47,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   // TODO All paths to Config
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
   val runscriptPath = s"TEL${SEPARATOR}runscripts$SEPARATOR"
-
-  // Maps Session ID to Actor Ref of corresponding WebSocket
-  val connectedUsers =  new scala.collection.mutable.HashMap[BSONObjectID, ActorRef]
 
   //  Generates new jobID // TODO Save this state
   val jobIDSource: Iterator[Int] = Stream.continually(  random.nextInt(8999999) + 1000000 ).distinct.iterator
@@ -71,8 +70,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
      jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> job.mainID)).one[Job]).foreach {
 
        case Some(oldJob) =>
-         if(oldJob.status != job.status && connectedUsers.contains(job.userID)) {
-           connectedUsers(job.userID) ! JobStateChanged(job, job.status)
+         if(oldJob.status != job.status) {
+           userManager ! JobStateChanged(job, job.status)
          }
          jobBSONCollection.flatMap(_.update(BSONDocument(Job.IDDB -> job.mainID),
                                             BSONDocument("$set"   -> BSONDocument(Job.STATUS -> job.status))))
@@ -121,29 +120,15 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   def receive : Receive = {
 
-    // User Connected, add them to the connected users list
-    case UserConnect(user : BSONObjectID) =>
-      //Logger.info("User Connected: " + userID.stringify)
-      val actor = connectedUsers.getOrElseUpdate(user, sender())
-      //this.connectedUsers = connectedUsers.updated(userID, sender())
-
-    // User Disconnected, Remove them from the connected users list.
-    case UserDisconnect(user : BSONObjectID) =>
-      //Logger.info("User Disconnected: " + userID.stringify)
-      val actor = connectedUsers.remove(user)
-
     // Get a request to send the job list
-    case GetJobList(user : BSONObjectID) =>
-
+    case GetJobList(userID : BSONObjectID) =>
       // Find all jobs related to the session ID
-      val futureJobs = jobBSONCollection.map(_.find(BSONDocument(Job.USERID -> user)).cursor[Job]())
+      val futureJobs = jobBSONCollection.map(_.find(BSONDocument(Job.USERID -> userID)).cursor[Job]())
       // Collect the list and then create the reply
-      val replyTo = sender()
       futureJobs.flatMap(_.collect[List]()).foreach { jobList =>
-        println("Found " + jobList.length.toString + " Job[s]. Sending.")
-        replyTo ! SendJobList(jobList)
+        //println("Found " + jobList.length.toString + " Job[s]. Sending.")
+        userManager ! SendJobList(userID, jobList)
       }
-
 
      // Reads parameters provided to the job from the job directory
     case Read(user : BSONObjectID, jobID : String) =>
@@ -175,10 +160,10 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         }
 
     //  User asks to delete Job
-    case Delete(user : BSONObjectID, jobID : String) =>
+    case Delete(userID : BSONObjectID, jobID : String) =>
       jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job]).foreach {
         case Some(job) =>
-          if (job.userID == user) {
+          if (job.userID == userID) {
 
             //  Terminate running Process instance of the Job
             if (runningProcesses.contains(job.mainID.stringify)) {
@@ -190,8 +175,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
               // Delete Job Path
               s"jobPath$SEPARATOR${job.mainID.stringify}".toFile.delete(swallowIOExceptions = false)
             }.onComplete {
-              case scala.util.Success(_) => sender() ! AckDeleted(jobID)
-              case scala.util.Failure(_) => sender() ! FailDeleted(jobID)
+              case scala.util.Success(_) => sender() ! AckDeleted(userID, job)
+              case scala.util.Failure(_) => sender() ! FailDeleted(userID, job)
             }
           } else {
             sender() ! PermissionDenied
@@ -260,14 +245,16 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 }
 
 object JobManager {
-  // User connect preparation, mediated by WebSocket
-  case class UserConnect(userID : BSONObjectID)
 
-  // User disconnect cleanup, mediated by WebSocket
-  case class UserDisconnect(userID : BSONObjectID)
-
-  // Tell job widget to update
-  case object UpdateAllJobs
+  /**
+    * Incoming messages
+    */
+  // Prepare Job with new parameters or create new job with specified parameters for the given tool
+  case class Prepare(user     : User,
+                     jobID    : Option[String],
+                     toolName : String,
+                     params   : Map[String, String],
+                     start    : Boolean)
 
   // When the JobManager was asked to update a Job
   case class UpdateJob(job : Job)
@@ -275,33 +262,32 @@ object JobManager {
   // Get a request to send the job list
   case class GetJobList(userID : BSONObjectID)
 
+  // Delete Job Entirely
+  case class Delete(userID : BSONObjectID, jobID : String)
+
+
+  /**
+    * Outgoing messages
+    */
   // Send the job list to the user
-  case class SendJobList(jobList : List[Job])
+  case class SendJobList(userID : BSONObjectID, jobList : List[Job]) extends MessageWithUserID
 
   // Failure replies
   case object JobIDUnknown
   case object PermissionDenied
-  case class FailDeleted(jobID : String)
+  case class  FailDeleted(userID : BSONObjectID, job : Job) extends MessageWithUserID
 
   // Success replies
-  case class AckDeleted(jobID : String)
+  case class AckDeleted(userID : BSONObjectID, job : Job) extends MessageWithUserID
 
   // Reads the parameters from a prepared job and provides them to the user
   case class Read(userID : BSONObjectID, jobID : String)
 
   // Publish changes JobState
-  case class JobStateChanged(job : Job, state : JobState.JobState)
+  case class JobStateChanged(job : Job, state : JobState.JobState) extends MessageWithUserID {
+    override val userID : BSONObjectID = job.userID
+  }
 
   // Ask for jobInfo (tool name and state)
   case class JobInfo(userID : BSONObjectID, jobID : String)
-
-  // Delete Job Entirely
-  case class Delete(userID : BSONObjectID, jobID : String)
-
-  // Prepare Job with new parameters or create new job with specified parameters for the given tool
-  case class Prepare(user     : User,
-                     jobID    : Option[String],
-                     toolName : String,
-                     params   : Map[String, String],
-                     start    : Boolean)
 }
