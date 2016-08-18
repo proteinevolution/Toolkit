@@ -21,12 +21,12 @@ object JobState {
   implicit object JobStateWrites extends Writes[JobState] {
     def writes(jobState: JobState) = jobState match {
       case PartiallyPrepared => Json.toJson("PartiallyPrepared")
-      case Prepared => Json.toJson("PartiallyPrepared")
-      case Queued => Json.toJson("PartiallyPrepared")
-      case Running => Json.toJson("PartiallyPrepared")
-      case Error => Json.toJson("PartiallyPrepared")
-      case Done => Json.toJson("PartiallyPrepared")
-      case Submitted => Json.toJson("PartiallyPrepared")
+      case Prepared          => Json.toJson("Prepared")
+      case Queued            => Json.toJson("Queued")
+      case Running           => Json.toJson("Running")
+      case Error             => Json.toJson("Error")
+      case Done              => Json.toJson("Done")
+      case Submitted         => Json.toJson("Submitted")
     }
   }
 
