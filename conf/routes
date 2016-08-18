@@ -14,14 +14,17 @@
 GET         /                                              @controllers.Application.index
 
 # Dashboard for Admin
-GET         /login                                         @controllers.Auth.login
-GET         /@/backend                                     @controllers.Auth.backend
-POST        /login                                         @controllers.Auth.backendLogin()
+#GET         /login                                         @controllers.Auth.login
+#GET         /@/backend                                     @controllers.Auth.backend
+#POST        /login                                         @controllers.Auth.backendLogin()
 POST        /settings/clustermode                          @controllers.Settings.setClusterMode(clusterMode : String)
 POST        /settings/memset                               @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
 
+GET         /@/backend                                     @controllers.Backend.index
 GET         /@/backend/settings                            @controllers.Backend.settings
 GET         /@/backend/edit                                @controllers.Backend.edit
+GET         /@/backend/access                              @controllers.Backend.access
+GET         /@/backend/logout                              @controllers.Backend.logOut
 
 
 # Websocket
@@ -58,7 +61,7 @@ POST        /signin/submit/                                @controllers.Auth.sig
 GET         /signup                                        @controllers.Auth.signUp()
 POST        /signup/submit/                                @controllers.Auth.signUpSubmit()
 GET         /signout                                       @controllers.Auth.signOut()
-GET         /logout                                        @controllers.Auth.logout()
+#GET         /logout                                        @controllers.Auth.logout()
 GET         /miniprofile                                   @controllers.Auth.miniProfile()
 GET         /profile                                       @controllers.Auth.profile()
 POST        /profile/submit/userData/                      @controllers.Auth.profileSubmit()

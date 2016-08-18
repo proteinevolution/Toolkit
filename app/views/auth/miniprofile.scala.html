@@ -6,7 +6,7 @@
 <p>@{user.getUserData.eMail}</p>
 <p></p>
 @{if(user.isSuperuser){
-    <p><a href="/backend">Link zum Backend</a></p>} // Only visible when logged in as a Superuser
+    <p><a href="/@/backend/access">Link zum Backend</a></p>} // Only visible when logged in as a Superuser
 }
 <p><a id="profile-open">Edit Profile</a></p>
 <p><a href="@routes.Auth.signOut()">Sign Out</a></p>
