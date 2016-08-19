@@ -4,6 +4,7 @@ import org.joda.time.DateTime
 import play.api.mvc.RequestHeader
 import play.api.{Logger, mvc}
 import reactivemongo.bson._
+import modules.common.HTTPRequest
 
 /**
   * Created by astephens on 01.03.16.
@@ -11,7 +12,7 @@ import reactivemongo.bson._
   */
 
 case class SessionData(sessionID   : BSONObjectID,                    // Session ID of the User
-                       userID      : BSONObjectID,                    // User ID will be store
+                       userID      : BSONObjectID,                    // User ID will be stored
                        dateCreated : Option[DateTime],                // Creation time of the Session
                        dateUpdated : Option[DateTime])                // Last Visit
 
@@ -55,12 +56,16 @@ trait Session extends {
     Sessions.sessionUserMap.getOrElse(sessionID,
                                         addUser(sessionID, User(userID        = BSONObjectID.generate(),
                                                                 sessionID     = Some(sessionID),
+                                                                sessionData   = BSONDocument(),
                                                                 accountType   = -1,
                                                                 jobs          = Nil,
                                                                 dateCreated   = Some(new DateTime()),
                                                                 dateLastLogin = Some(new DateTime()),
                                                                 dateUpdated   = Some(new DateTime()))))
   }
+
+
+
 
   /**
     * Returns a User by its sessionID, or None if the sessionID is yet not
