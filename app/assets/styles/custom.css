@@ -42,8 +42,9 @@ body{
 }
 
 
+
 .d {
-    background-color: green;
+    background-color: #DCF8C6;
 }
 .e {
     background-color: red;
@@ -172,10 +173,6 @@ tr.job a:link {
 tr.job a:visited {
 
     color: #000;
-}
-
-#jobtable-rows tr {
-    margin-bottom: 2em !important;
 }
 
 hr {
@@ -427,3 +424,10 @@ textarea#alignment {width: 500px; height: 280px;}
     position: relative;
     top: 300px;}
 
+#jobtable {
+    width: 100%;
+}
+
+.job div {
+    width: 33.5% !important;
+}
