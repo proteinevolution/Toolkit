@@ -68,18 +68,18 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     val sessionID = requestSessionID
 
     println(HTTPRequest.userAgent(request))
-
-    if (HTTPRequest.isSocket(request))
-      println("is Socket")
-    else println("is not a Socket")
-
     Logger.info(geoIP.getLocation.toString)
 
     userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID)).one[User]).map {
       case Some(user) =>
         userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
                                         BSONDocument("$set"    -> BSONDocument(
-                                            User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))))
+                                            User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis),
+                                            User.SESSIONDATA -> BSONDocument(
+                                              "ip" -> HTTPRequest.lastRemoteAddress(request),
+                                              "ua" -> HTTPRequest.userAgent(request).getOrElse("?"),
+                                              "location" -> geoIP.getLocation.toString,
+                                              "up" -> true)))))
         addUser(sessionID, user)
         Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user)).withSession {
           closeSessionRequest(request, sessionID)
