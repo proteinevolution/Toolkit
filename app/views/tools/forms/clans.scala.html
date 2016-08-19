@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
-@import models.tel.TEL
 @import models.tools.Clans
-@(inputForm: Form[(String, String, Int, Int, String, Boolean, Boolean, Int, Boolean, Boolean, String)])(implicit messages: Messages, request: RequestHeader)
+@import models.tel.TEL
+@(tel : TEL, inputForm: Form[(String, String, Int, Int, String, Boolean, Boolean, Int, Boolean, Boolean, String)])(implicit messages: Messages, request: RequestHeader)
 <script src='@routes.Assets.at("javascripts/sampleseqs.js")' type="text/javascript" ></script>
 
 
@@ -38,7 +38,7 @@
 )
 @helper.select(
     inputForm("standarddb"),
-    helper.options(TEL.getSetParam("standarddb")),
+    helper.options(tel.getSetParam("standarddb")),
     '_label -> "Select Database",
     'id -> "standarddb"
 )

@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
 @import models.tools.Csblast
 @import models.tel.TEL
-@(inputForm: Form[(String, String, String, Int, Int, Int, Int, Int, String)])(implicit messages: Messages, request: RequestHeader)
+@(tel : TEL, inputForm: Form[(String, String, String, Int, Int, Int, Int, Int, String)])(implicit messages: Messages, request: RequestHeader)
 
 <!-- Order of parameters : Alignment, Alignment_Format, Matrix, Number of Iterations, Evalue, Gap_open, Gap_Ext -->
 
@@ -82,7 +82,7 @@
 
 @helper.select(
     inputForm("standarddb"),
-    helper.options(TEL.getSetParam("standarddb")),
+    helper.options(tel.getSetParam("standarddb")),
     '_label -> "Select Database",
     'id -> "standarddb",
     'class -> "forminput")
