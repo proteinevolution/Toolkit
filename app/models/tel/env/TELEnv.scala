@@ -1,8 +1,8 @@
-package models.tel
+package models.tel.env
 
 import javax.inject.Singleton
 
-import models.tel.env.EnvFile
+import models.tel.Observer
 
 /**
   * Manages values of Keys from the TEL environment
@@ -26,14 +26,3 @@ class TELEnv extends Env with Observer[EnvFile]    {
     }
   }
 }
-
-
-/**
-  *
-  * An Env is anything that provides key/value pairs
-  */
-trait Env {
-
-  def get(key : String) : String
-}
-
