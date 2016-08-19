@@ -7,6 +7,7 @@ import reactivemongo.bson._
 
 case class User(userID        : BSONObjectID,                 // ID of the User
                 sessionID     : Option[BSONObjectID] = None,  // Session ID
+                sessionData   : List[BSONObjectID]   = Nil,   // Session data separately from sid
                 accountType   : Int                  = -1,    // User Access level
                 userData      : Option[UserData]     = None,  // Personal Data of the User //TODO possibly encrypt?
                 jobs          : List[BSONObjectID]   = Nil,   // List of Jobs the User has
@@ -41,6 +42,7 @@ object User {
   final val ID            = "id"                                // name for the ID in scala
   final val IDDB          = "_id"                               //              ID in MongoDB
   final val SESSIONID     = "sessionID"                         //              Session ID of the User
+  final val SESSIONDATA   = "sessionData"                       // session information
   final val ACCOUNTTYPE   = "accountType"                       //              account type field
   final val USERDATA      = "userData"                          //              user data object field
   final val NAMELOGIN     = USERDATA + "." + UserData.NAMELOGIN //              login name field
@@ -57,6 +59,7 @@ object User {
     override def read(bson: BSONDocument): User = User(
       userID        = bson.getAs[BSONObjectID](IDDB).get,
       sessionID     = bson.getAs[BSONObjectID](SESSIONID),
+      sessionData   = bson.getAs[List[BSONObjectID]](SESSIONDATA).get,
       accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
       userData      = bson.getAs[UserData](USERDATA),
       jobs          = bson.getAs[List[BSONObjectID]](JOBS).get,
@@ -69,6 +72,7 @@ object User {
     override def write(user: User): BSONDocument = BSONDocument(
       IDDB          -> user.userID,
       SESSIONID     -> user.sessionID,
+      SESSIONDATA   -> BSONArray(user.sessionData),
       ACCOUNTTYPE   -> user.accountType,
       USERDATA      -> user.userData,
       JOBS          -> BSONArray(user.jobs),

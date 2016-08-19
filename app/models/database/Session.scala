@@ -10,10 +10,10 @@ import reactivemongo.bson._
   * Session object used for a simple creation of a session cookie with the sessionID
   */
 
-case class SessionData(sessionID   : BSONObjectID,          // Session ID of the User
-                       userID      : BSONObjectID,          // User ID will be stored
-                       dateCreated : Option[DateTime],      // Creation time of the Session
-                       dateUpdated : Option[DateTime])      // Last Visit
+case class SessionData(sessionID   : BSONObjectID,                    // Session ID of the User
+                       userID      : BSONObjectID,                    // User ID will be store
+                       dateCreated : Option[DateTime],                // Creation time of the Session
+                       dateUpdated : Option[DateTime])                // Last Visit
 
 object Sessions {
   val sessionUserMap = new scala.collection.mutable.HashMap[BSONObjectID, User]
