@@ -1,19 +1,26 @@
 package models.tel
 
 import java.nio.file.attribute.PosixFilePermission
+import javax.inject.Singleton
 
 import better.files.Cmds._
 import better.files._
 
 import scala.sys.process._
 import models.Implicits._
+import models.tel.env.ExecFile
+import play.api.Logger
 
 
 /**
   *
   * Created by lzimmermann on 26.05.16.
   */
-object TEL extends TELRegex with TELConstants   {
+@Singleton
+class TEL extends TELRegex with TELConstants   {
+
+
+  Logger.info(new ExecFile(testFile).load.toString())
 
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed

@@ -32,6 +32,7 @@ import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 final class JobManager @Inject() (val messagesApi: MessagesApi,
                                   val reactiveMongoApi: ReactiveMongoApi,
                                   @Named("userManager") userManager : ActorRef,
+                                  val tel : TEL,
                                   implicit val materializer: akka.stream.Materializer)
   extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes {
 
@@ -228,7 +229,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         // needs to be executed
         val rootPath = s"$jobPath$SEPARATOR${newJob.mainID.stringify}$SEPARATOR"
 
-        val script = TEL.init(toolName, params, rootPath)
+        val script = tel.init(toolName, params, rootPath)
         this.updateJob(newJob.copy(status = JobState.Prepared))
 
         // Write a JSON File with the job information to the JobDirectory

@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
 @import models.tools.Alnviz
 @import models.tel.TEL
-@(inputForm: Form[(String, String, String)])(implicit messages: Messages, request: RequestHeader)
+@(tel : TEL, inputForm: Form[(String, String, String)])(implicit messages: Messages, request: RequestHeader)
 
 
 <script src='@routes.Assets.at("javascripts/sampleseqs.js")' type="text/javascript" ></script>
@@ -24,7 +24,7 @@
 
 @helper.select(
     inputForm("hmmdb"),
-    helper.options(TEL.getSetParam("hmmdb")),
+    helper.options(tel.getSetParam("hmmdb")),
     '_label -> "Select HMM Database",
     'id -> "hmmdb",
     'class -> "forminput")
