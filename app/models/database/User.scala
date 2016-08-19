@@ -7,7 +7,7 @@ import reactivemongo.bson._
 
 case class User(userID        : BSONObjectID,                 // ID of the User
                 sessionID     : Option[BSONObjectID] = None,  // Session ID
-                sessionData   : List[BSONObjectID]   = Nil,   // Session data separately from sid
+                sessionData   : BSONDocument,                 // Session data separately from sid
                 accountType   : Int                  = -1,    // User Access level
                 userData      : Option[UserData]     = None,  // Personal Data of the User //TODO possibly encrypt?
                 jobs          : List[BSONObjectID]   = Nil,   // List of Jobs the User has
@@ -59,7 +59,7 @@ object User {
     override def read(bson: BSONDocument): User = User(
       userID        = bson.getAs[BSONObjectID](IDDB).get,
       sessionID     = bson.getAs[BSONObjectID](SESSIONID),
-      sessionData   = bson.getAs[List[BSONObjectID]](SESSIONDATA).get,
+      sessionData   = bson.getAs[BSONDocument](SESSIONDATA).get,
       accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
       userData      = bson.getAs[UserData](USERDATA),
       jobs          = bson.getAs[List[BSONObjectID]](JOBS).get,

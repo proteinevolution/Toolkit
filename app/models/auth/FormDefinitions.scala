@@ -33,6 +33,7 @@ object FormDefinitions {
         User(
           userID        = user.userID,
           sessionID     = user.sessionID,
+          sessionData   = user.sessionData,
           accountType   = if (acceptToS) 1 else 0,
           userData      = Some(UserData(nameLogin = nameLogin,
                                         password  = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
