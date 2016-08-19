@@ -19,7 +19,7 @@ import play.api.mvc._
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.bson.{BSONObjectID, BSONDateTime, BSONDocument}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -71,7 +71,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     Logger.info(geoIP.getLocation.toString)
 
     userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID)).one[User]).map {
-      case Some(user) =>
+      case Some(user)   =>
         userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
                                         BSONDocument("$set"    -> BSONDocument(
                                             User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis),
@@ -84,10 +84,26 @@ class Application @Inject()(webJarAssets: WebJarAssets,
         Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user)).withSession {
           closeSessionRequest(request, sessionID)
         }
+
+
       case None =>
-        val user = getUser
-        userCollection.flatMap(_.insert(user))
-        Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user)).withSession {
+
+        val newUser = User (userID        = BSONObjectID.generate(),
+                            sessionID     = Some(sessionID),
+                            sessionData   = BSONDocument("ip" -> HTTPRequest.lastRemoteAddress(request),
+                                                         "ua" -> HTTPRequest.userAgent(request).getOrElse("?"),
+                                                         "location" -> geoIP.getLocation.toString,
+                                                         "up" -> true),
+                            accountType   = -1,
+                            jobs          = Nil,
+                            dateCreated   = Some(new DateTime()),
+                            dateLastLogin = Some(new DateTime()),
+                            dateUpdated   = Some(new DateTime()))
+
+
+        //userCollection.flatMap(_.insert(newUser)) TODO: bugfix needed, when the user is stored once with this signature, it can't be retrieved from the database but updated. Need to refactor the getUser method
+        // in the Session trait
+        Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", newUser)).withSession {
           closeSessionRequest(request, sessionID)
         }
     }
