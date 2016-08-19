@@ -56,13 +56,15 @@ object User {
     * Define how the User object is formatted
     */
   implicit object Reader extends BSONDocumentReader[User] {
+
+    // TODO Please check this, sometimes, some Option Values can be None here
     override def read(bson: BSONDocument): User = User(
-      userID        = bson.getAs[BSONObjectID](IDDB).get,
+      userID        = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID("None")),
       sessionID     = bson.getAs[BSONObjectID](SESSIONID),
-      sessionData   = bson.getAs[BSONDocument](SESSIONDATA).get,
+      sessionData   = bson.getAs[BSONDocument](SESSIONDATA).getOrElse(BSONDocument()),
       accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
       userData      = bson.getAs[UserData](USERDATA),
-      jobs          = bson.getAs[List[BSONObjectID]](JOBS).get,
+      jobs          = bson.getAs[List[BSONObjectID]](JOBS).getOrElse(List.empty),
       dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => new DateTime(dt.value)),
       dateCreated   = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
       dateUpdated   = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)))
