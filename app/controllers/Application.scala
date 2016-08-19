@@ -103,8 +103,8 @@ class Application @Inject()(webJarAssets: WebJarAssets,
                             dateUpdated   = Some(new DateTime()))
 
 
-        //userCollection.flatMap(_.insert(newUser)) TODO: bugfix needed, when the user is stored once with this signature, it can't be retrieved from the database but updated. Need to refactor the getUser method
-        // in the Session trait
+        userCollection.flatMap(_.insert(newUser))
+        
         Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", newUser)).withSession {
           closeSessionRequest(request, sessionID)
         }

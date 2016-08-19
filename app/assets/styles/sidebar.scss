@@ -64,3 +64,16 @@ ul#jobs li {
 .sidebar-button:hover {
   background-color: lightgray !important;
 }
+
+.job-button {
+  background-color: #E8EAF6 !important;
+  width: 100%;
+  border: solid 1px lightgray !important;
+  color: gray !important;
+  font-size: 0.8em !important;
+  margin-bottom: 0 !important;
+}
+
+.job-button div {
+  width: 33.5%;
+}
