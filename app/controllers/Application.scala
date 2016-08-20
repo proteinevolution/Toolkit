@@ -6,7 +6,7 @@ import actors.WebSocketActor
 import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import akka.util.Timeout
-import com.typesafe.config.ConfigFactory
+import models.Constants
 import models.database.{Session, SessionData, User}
 import models.tel.TEL
 import models.tools._
@@ -37,18 +37,19 @@ class Application @Inject()(webJarAssets: WebJarAssets,
                             configuration: Configuration) extends Controller with I18nSupport
                                                                              with ReactiveMongoComponents
                                                                              with Common
+                                                                             with Constants
                                                                              with Session {
 
-  val SEP = java.io.File.separator
+  // TODO Moved to Constants
+  //val SEPARATOR = java.io.File.separator
+  //val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
 
   implicit val implicitMaterializer: Materializer = mat
   implicit val implicitActorSystem: ActorSystem = system
   implicit val timeout = Timeout(5.seconds)
 
-  val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
-
   // get the collection 'users'
-  val userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
+  def userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
 
   /**
     * Opens the websocket
@@ -164,7 +165,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
 
     // main_id exists, allow send File
 
-    Ok.sendFile(new java.io.File(s"$jobPath$SEP$jobID${SEP}results$SEP$filename"))
+    Ok.sendFile(new java.io.File(s"$jobPath$SEPARATOR$jobID${SEPARATOR}results$SEPARATOR$filename"))
       .withSession { closeSessionRequest(request, sessionID)}
       .as("text/plain")   //TODO Only text/plain for files currently supported
   }
