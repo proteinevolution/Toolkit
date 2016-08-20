@@ -1,6 +1,7 @@
 package modules
 
 import com.sanoma.cda.geoip.MaxMindIpGeo
+import models.database.Location
 import play.api.mvc.RequestHeader
 
 final class GeoIP(file: String) {
@@ -18,15 +19,4 @@ final class GeoIP(file: String) {
   def getLocation(implicit request: RequestHeader) : Location = {
     getLocation(request.remoteAddress)
   }
-}
-
-case class Location(country     : String,
-                    countryCode : Option[String],
-                    region      : Option[String],
-                    city        : Option[String]) {
-
-}
-
-object Location {
-
 }

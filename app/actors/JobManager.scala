@@ -7,7 +7,6 @@ import actors.UserManager.MessageWithUserID
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.typesafe.config.ConfigFactory
 import models.database.{Job, User}
-import models.database.Job.JobReader
 import models.database.JobState
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
@@ -57,9 +56,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   // Keeps track of all running processes. // TODO Should be restored after toolkit reboots
   val runningProcesses = new collection.mutable.HashMap[String, Process]
-
-  implicit val reader = JobReader
-
 
   /**
     * Updates Job in database or creates a new Job if job with mainID does not exist
