@@ -41,23 +41,22 @@ body{
     transition: background-color 0.5s;
 }
 
-
-
 .d {
     background-color: #DCF8C6;
+
 }
 .e {
-    background-color: red;
+    background-color: #FFD5D5;
 }
 .r{
-    background-color: yellow;
+    background-color: #FFFF94;
 }
 .q {
-    background-color: orange;
+    background-color: #FFDDAB;
 }
 
 .p {
-    background-color: brown;
+    background-color: #f2f2f2;
 }
 
 
@@ -98,15 +97,12 @@ tr.spaceUnder > td
 
 .alnviz{
 
-    background-color: #FFCC66;
     border: solid 0px black;
     font-size: 1em;
     text-transform: uppercase;
 }
 
 .tcoffee{
-
-    background-color: #FFCC66;
     border: solid 0px black;
     opacity: 0.9;
     font-size: 1em;
@@ -116,7 +112,6 @@ tr.spaceUnder > td
 
 .mafft{
 
-    background-color: #FFCC66;
     border: solid 0px black;
     opacity: 0.9;
     font-size: 1em;
@@ -125,7 +120,6 @@ tr.spaceUnder > td
 
 .hmmer3{
 
-    background-color: #D0BA89;
     border: solid 0px black;
     opacity: 0.9;
     font-size: 1em;
@@ -134,7 +128,6 @@ tr.spaceUnder > td
 
 .psiblast{
 
-    background-color: #D0BA89;
     border: solid 0px black;
     opacity: 0.9;
     font-size: 1em;
@@ -426,8 +419,16 @@ textarea#alignment {width: 500px; height: 280px;}
 
 #jobtable {
     width: 100%;
+
 }
 
 .job div {
     width: 33.5% !important;
 }
+
+#job_id a {
+
+    color: grey !important;
+}
+
+

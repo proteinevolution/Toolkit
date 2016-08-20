@@ -15,11 +15,7 @@
   border: 0 solid #ccc;
 }
 
-#togglesidebar {
 
-  background-color: #2E8C81;
-
-}
 
 
 .clock {
@@ -69,6 +65,7 @@ ul#jobs li {
   background-color: #E8EAF6 !important;
   width: 100%;
   border: solid 1px lightgray !important;
+  border-bottom: solid 1px grey !important;
   color: gray !important;
   font-size: 0.8em !important;
   margin-bottom: 0 !important;
@@ -76,4 +73,140 @@ ul#jobs li {
 
 .job-button div {
   width: 33.5%;
+}
+
+
+@-webkit-keyframes check {
+  0% {
+    height: 0;
+    width: 0;
+  }
+  25% {
+    height: 0;
+    width: 10px;
+  }
+  50% {
+    height: 17px;
+    width: 10px;
+  }
+}
+@-moz-keyframes check {
+  0% {
+    height: 0;
+    width: 0;
+  }
+  25% {
+    height: 0;
+    width: 10px;
+  }
+  50% {
+    height: 17px;
+    width: 10px;
+  }
+}
+@-ms-keyframes check {
+  0% {
+    height: 0;
+    width: 0;
+  }
+  25% {
+    height: 0;
+    width: 10px;
+  }
+  50% {
+    height: 17px;
+    width: 10px;
+  }
+}
+@keyframes check {
+  0% {
+    height: 0;
+    width: 0;
+  }
+  25% {
+    height: 0;
+    width: 10px;
+  }
+  50% {
+    height: 17px;
+    width: 10px;
+  }
+}
+
+.wrapper {
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  color: #fff;
+  left: 50%;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+}
+
+.checkbox, .checkbox-alt {
+  display: inline-block;
+  height: 20px;
+  margin: 0 0.25em;
+  width: 20px;
+}
+.checkbox label, .checkbox-alt label {
+  display: block;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+.checkbox label:after, .checkbox-alt label:after {
+  /*
+  This element has a border on the right, and top. By rotating it looks like a check symbol, but the wrong way. That's why I'm flipping it with scaleX(-1)
+  */
+  -moz-transform: scaleX(-1) rotate(135deg);
+  -ms-transform: scaleX(-1) rotate(135deg);
+  -webkit-transform: scaleX(-1) rotate(135deg);
+  transform: scaleX(-1) rotate(135deg);
+  /*
+  I want to position the symbol using the left top, because when increasing the width and height of an object, it expands from the top left corner as well. That is what makes it looks like it's being drawn.
+  */
+  -moz-transform-origin: left top;
+  -ms-transform-origin: left top;
+  -webkit-transform-origin: left top;
+  transform-origin: left top;
+  border-right: 4px solid lightgray;
+  border-top: 4px solid lightgray;
+  content: '';
+  display: block;
+  position: absolute;
+  height: 17px;
+  top: 12px;
+  width: 10px;
+}
+.checkbox label:hover:after, .checkbox-alt label:hover:after {
+  border-color: white;
+}
+.checkbox input, .checkbox-alt input {
+  display: none;
+}
+.checkbox input:checked + label:after, .checkbox-alt input:checked + label:after {
+  -webkit-animation: check 0.8s;
+  -moz-animation: check 0.8s;
+  -o-animation: check 0.8s;
+  animation: check 0.8s;
+  border-color: #6aa;
+}
+.checkbox.checkbox-alt label:hover:after, .checkbox-alt.checkbox-alt label:hover:after {
+  -webkit-animation: check 0.8s ease infinite;
+  -moz-animation: check 0.8s ease infinite;
+  -o-animation: check 0.8s ease infinite;
+  animation: check 0.8s ease infinite;
+}
+.checkbox.checkbox-alt input:checked + label:after, .checkbox-alt.checkbox-alt input:checked + label:after {
+  -webkit-animation: none;
+  -moz-animation: none;
+  -o-animation: none;
+  animation: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 100;
 }
