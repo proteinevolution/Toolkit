@@ -1,19 +1,27 @@
 package models.tel
 
 import java.nio.file.attribute.PosixFilePermission
+import javax.inject.{Inject, Singleton}
 
 import better.files.Cmds._
 import better.files._
+import com.google.inject.Guice
 
 import scala.sys.process._
 import models.Implicits._
+import models.tel.env.{Env, ExecFile}
+import play.api.Logger
 
 
 /**
   *
   * Created by lzimmermann on 26.05.16.
   */
-object TEL extends TELRegex with TELConstants   {
+@Singleton
+class TEL @Inject() (env : Env) extends TELRegex with TELConstants   {
+
+
+  Logger.info(new ExecFile(testFile).load.toString())
 
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed

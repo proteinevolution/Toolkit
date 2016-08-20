@@ -19,6 +19,9 @@ trait TELConstants extends Constants {
   val initFile =  s"$TELPath${SEPARATOR}init.sh".toFile
   val typesFile = s"$TELPath${SEPARATOR}types".toFile
 
+  // Test File
+  val testFile = s"$TELPath${SEPARATOR}test.sh"
+
 
   // PATHS
   val typesPath = s"$TELPath${SEPARATOR}types"
