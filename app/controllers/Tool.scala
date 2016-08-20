@@ -22,20 +22,6 @@ object Tool {
   // TODO Remove this
   val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft, Reformatb, Clans, HHpred, HHblits) // list of all added tools
 
-  /** getToolModel
-    * Returns the tool object for a tool's name, null when there is no such tool.
-    *
-    * @param toolName tool Name
-    * @return
-    */
-  def getToolModel(toolName: String): ToolModel = {
-    for (tool <- tools) {
-      if ( tool.toolNameShort        == toolName
-        || tool.toolNameLong         == toolName
-        || tool.toolNameAbbreviation == toolName)  return tool
-    }
-    null
-  }
 }
 
 @Singleton
@@ -51,26 +37,25 @@ class Tool @Inject()(val messagesApi: MessagesApi,
     // Fetch the job ID from the submission, might be the empty string
     //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
 
-    // Determine whether the toolname was fine
-    val tool = Tool.getToolModel(toolname)
+    // TODO replace with reflection to avoid the need to mention each tool explicitly here
+    val form = toolname match {
+      case "alnviz" => Some(Alnviz.inputForm)
+      case "tcoffee" => Some(Tcoffee.inputForm)
+      case "hmmer3" => Some(Hmmer3.inputForm)
+      case "hhpred" => Some(HHpred.inputForm)
+      case "hhblits" => Some(HHblits.inputForm)
+      case "psiblast" => Some(Psiblast.inputForm)
+      case "mafft" => Some(Mafft.inputForm)
+      case "reformatb" => Some(Reformatb.inputForm) // cluster version of reformat
+      case "clans" => Some(Clans.inputForm)
+      case _ => None
+    }
 
-    // Check if the tool name was ok.
-    if (tool == null)  NotFound
+    if (form.isEmpty)
+      NotFound
+
     else {
-
-      // TODO replace with reflection to avoid the need to mention each tool explicitly here
-      val form = tool.toolNameShort match {
-        case "alnviz" => Alnviz.inputForm
-        case "tcoffee" => Tcoffee.inputForm
-        case "hmmer3" => Hmmer3.inputForm
-        case "hhpred" => HHpred.inputForm
-        case "hhblits" => HHblits.inputForm
-        case "psiblast" => Psiblast.inputForm
-        case "mafft" => Mafft.inputForm
-        case "reformatb" => Reformatb.inputForm // cluster version of reformat
-        case "clans" => Clans.inputForm
-      }
-      val boundForm = form.bindFromRequest
+      val boundForm = form.get.bindFromRequest
 
       boundForm.fold(
         formWithErrors => {
@@ -82,6 +67,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
       Ok
     }
   }
+
 }
 
 
