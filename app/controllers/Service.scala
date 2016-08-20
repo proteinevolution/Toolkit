@@ -109,7 +109,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
 
     val sessionID = requestSessionID // Grab the Session ID
 
-    (jobManager ? JobInfo(getUser(sessionID).userID, jobID)).flatMap {
+    (jobManager ? JobInfo(getUser.userID, jobID)).flatMap {
 
       case JobIDUnknown => Future.successful(NotFound)
       case PermissionDenied => Future.successful(NotFound)
@@ -126,7 +126,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
 
         case JobState.Prepared =>
 
-          (jobManager ? Read(getUser(sessionID).userID, jobID)).mapTo[Map[String, String]].map { res =>
+          (jobManager ? Read(getUser.userID, jobID)).mapTo[Map[String, String]].map { res =>
 
             val toolframe = job.tool match {
               case "alnviz" => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(res))

@@ -7,7 +7,7 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
-import models.database.{Session, User}
+import models.database.{SessionData, User, Session}
 import models.tools._
 import modules.common.HTTPRequest
 import org.joda.time.DateTime
@@ -65,44 +65,32 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     * Currently the index controller will assign a session id to the user for identification purpose.
     */
   def index = Action.async { implicit request =>
-    val sessionID = requestSessionID
+    val sessionID      = requestSessionID
+    val httpRequest    = HTTPRequest(request)
+    val newSessionData = SessionData(ip        = request.remoteAddress,
+                                     userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
+                                     location  = geoIP.getLocation,
+                                     online    = true)
 
-    println(HTTPRequest.userAgent(request))
-    Logger.info(geoIP.getLocation.toString)
+    Logger.info(newSessionData.toString)
 
     userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID)).one[User]).map {
       case Some(user)   =>
-        userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
-                                        BSONDocument("$set"    -> BSONDocument(
-                                            User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis),
-                                            User.SESSIONDATA -> BSONDocument(
-                                              "ip" -> HTTPRequest.lastRemoteAddress(request),
-                                              "ua" -> HTTPRequest.userAgent(request).getOrElse("?"),
-                                              "location" -> geoIP.getLocation.toString,
-                                              "up" -> true)))))
+        val selector = BSONDocument(User.IDDB          -> user.userID)
+        val modifier = BSONDocument("$set"             ->
+                       BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
+                                    "$addToSet"        ->
+                       BSONDocument(User.SESSIONDATA   -> newSessionData))
+
+        userCollection.flatMap(_.update(selector,modifier))
         addUser(sessionID, user)
         Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user)).withSession {
           closeSessionRequest(request, sessionID)
         }
 
-
       case None =>
-
-        val newUser = User (userID        = BSONObjectID.generate(),
-                            sessionID     = Some(sessionID),
-                            sessionData   = BSONDocument("ip" -> HTTPRequest.lastRemoteAddress(request),
-                                                         "ua" -> HTTPRequest.userAgent(request).getOrElse("?"),
-                                                         "location" -> geoIP.getLocation.toString,
-                                                         "up" -> true),
-                            accountType   = -1,
-                            jobs          = Nil,
-                            dateCreated   = Some(new DateTime()),
-                            dateLastLogin = Some(new DateTime()),
-                            dateUpdated   = Some(new DateTime()))
-
-
+        val newUser = getUser
         userCollection.flatMap(_.insert(newUser))
-        
         Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", newUser)).withSession {
           closeSessionRequest(request, sessionID)
         }

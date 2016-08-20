@@ -33,11 +33,10 @@ object UserData {
     * Object containing the reader for the Class
     */
   implicit object Reader extends BSONDocumentReader[UserData] {
-    def read(bson: BSONDocument): UserData =
-      UserData(
-        nameLogin  = bson.getAs[String](NAMELOGIN).get,
-        password   = bson.getAs[String](PASSWORD).get,
-        eMail      = bson.getAs[String](EMAIL).get,
+    def read(bson: BSONDocument): UserData = UserData(
+        nameLogin  = bson.getAs[String](NAMELOGIN).getOrElse(""),
+        password   = bson.getAs[String](PASSWORD).getOrElse(""),
+        eMail      = bson.getAs[String](EMAIL).getOrElse(""),
         nameFirst  = bson.getAs[String](NAMEFIRST),
         nameLast   = bson.getAs[String](NAMELAST),
         institute  = bson.getAs[String](INSTITUTE),
@@ -45,7 +44,8 @@ object UserData {
         city       = bson.getAs[String](CITY),
         country    = bson.getAs[String](COUNTRY),
         groups     = bson.getAs[String](GROUPS),
-        roles      = bson.getAs[String](ROLES))
+        roles      = bson.getAs[String](ROLES)
+    )
   }
 
   /**
@@ -63,7 +63,8 @@ object UserData {
       CITY       -> userData.city,
       COUNTRY    -> userData.country,
       GROUPS     -> userData.groups,
-      ROLES      -> userData.roles)
+      ROLES      -> userData.roles
+    )
   }
 
   /**

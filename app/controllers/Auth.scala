@@ -81,7 +81,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     */
   def signOut() = Action { implicit request =>
     val sessionID = requestSessionID // grab the Old Session ID
-  val user      = getUser(sessionID)
+    val user      = getUser
     userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
       BSONDocument("$unset"  -> BSONDocument(User.SESSIONID -> ""))))
     removeUser(sessionID)  // Remove the User from the association
@@ -115,7 +115,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     */
   def signInSubmit() = Action.async { implicit request =>
     val sessionID        = requestSessionID
-    val unregisteredUser = getUser(sessionID)
+    val unregisteredUser = getUser
     Logger.info(sessionID.stringify + " wants to Sign in!")
 
     // Evaluate the Form
@@ -136,26 +136,18 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
               Future {
                 // add the remaining jobs from the previous session to the jobs of the now logged in user
                 val loggedInUser = databaseUser.copy(sessionID = Some(sessionID),
-                  jobs      = databaseUser.jobs ::: unregisteredUser.jobs)
+                                                     jobs      = databaseUser.jobs ::: unregisteredUser.jobs)
                 // add the user to the current sessions
                 editUser(sessionID, loggedInUser)
 
                 // create a modifier document to change the last login date in the Database
-                val selector = BSONDocument(User.IDDB -> loggedInUser.userID)
-                val modifier = BSONDocument("$set"    -> BSONDocument(
-                  User.SESSIONID        ->
-                    sessionID,
-                  User.DATELASTLOGIN    ->
-                    BSONDateTime(new DateTime().getMillis)))
-                /* //TODO Does not work for some reason, documentation:
-                https://docs.mongodb.com/manual/reference/operator/update/each
-
-                val modifier2 = BSONDocument("$addToSet" -> BSONDocument(
-                                                            User.JOBS ->
-                                                              BSONDocument(
-                                                                "$each" ->
-                                                                  unregisteredUser.jobs)))
-                                                                  */
+                val selector = BSONDocument(User.IDDB          -> loggedInUser.userID)
+                val modifier = BSONDocument("$set"             ->
+                               BSONDocument(User.SESSIONID     -> sessionID,
+                                            User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
+                                            "$addToSet"        ->
+                               BSONDocument(User.JOBS          ->
+                               BSONDocument("$each"            -> unregisteredUser.jobs)))
                 // Finally add the edits to the collection
                 userCollection.flatMap(_.update(selector, modifier))
                 // Remove the old, not logged in user
@@ -185,7 +177,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     */
   def signUpSubmit() = Action.async { implicit request =>
     val sessionID = requestSessionID
-    val user      = getUser(sessionID)
+    val user      = getUser
     FormDefinitions.SignUp(user).bindFromRequest.fold(
       errors =>
         // Something went wrong with the Form.
