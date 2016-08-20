@@ -7,6 +7,7 @@ import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 import models.database.{JobState, Session, User}
+import models.tel.TEL
 import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
@@ -22,6 +23,7 @@ import scala.concurrent.duration._
 @Singleton
 class Service @Inject() (webJarAssets: WebJarAssets,
                          val messagesApi: MessagesApi,
+                         val tel : TEL,
                          @Named("jobManager") jobManager : ActorRef)
 
                  extends Controller with I18nSupport
@@ -131,11 +133,11 @@ class Service @Inject() (webJarAssets: WebJarAssets,
             val toolframe = job.tool match {
               case "alnviz" => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(res))
               case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(res))
-              case "hmmer3" => views.html.tools.forms.hmmer3(Hmmer3.inputForm.bind(res))
-              case "psiblast" => views.html.tools.forms.psiblast(Psiblast.inputForm.bind(res))
+              case "hmmer3" => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(res))
+              case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(res))
             }
 
-            Ok(views.html.general.submit(job.tool, toolframe, Some(jobID))).withSession {
+            Ok(views.html.general.submit(tel, job.tool, toolframe, Some(jobID))).withSession {
               closeSessionRequest(request, sessionID) // Send Session Cookie
             }
           }
