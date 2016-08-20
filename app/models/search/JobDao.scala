@@ -19,8 +19,7 @@ import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
 
 class JobDao @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Named("jobs") indexAndType: IndexAndType)
   extends ElasticDsl with PlayElasticJsonSupport {
-  implicit val format = Json.format[Job]
-
+  
   private[this] lazy val client = elasticFactory(cs)
 
   /*def getJobById(jobId: String)(implicit ec: ExecutionContext): Future[Option[Job]] = client execute {
