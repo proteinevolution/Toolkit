@@ -11,6 +11,7 @@ import models.database.{Session, SessionData, User}
 import models.tel.TEL
 import models.tools._
 import modules.common.HTTPRequest
+import modules.tools.ToolMatcher
 import org.joda.time.DateTime
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
@@ -33,6 +34,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
                             system: ActorSystem,
                             mat: Materializer,
                             val tel : TEL,
+                            val toolMatcher : ToolMatcher,
                             @Named("userManager") userManager : ActorRef,    // Connect to JobManager
                             configuration: Configuration) extends Controller with I18nSupport
                                                                              with ReactiveMongoComponents
@@ -137,18 +139,8 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     */
   // TODO Replace via reflection
   def form(toolName: String) = Action { implicit request =>
-    val toolFrame = toolName match {
-      case "alnviz"     => views.html.tools.forms.alnviz(Alnviz.inputForm)
-      case "tcoffee"    => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
-      case "hmmer3"     => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm)
-      case "psiblast"   => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.fill(("", "", "", 1, 10, 11, 1, 200, "")))
-      case "mafft"      => views.html.tools.forms.mafft(Mafft.inputForm)
-      case "csblast"    => views.html.tools.forms.csblast(tel, Csblast.inputForm)
-      case "hhpred"     => views.html.tools.forms.hhpred(tel, HHpred.inputForm)
-      case "hhblits"    => views.html.tools.forms.hhblits(tel, HHblits.inputForm)
-      case "reformatb"  => views.html.tools.forms.reformatb(Reformatb.inputForm)
-      case "clans"      => views.html.tools.forms.clans(tel, Clans.inputForm)
-    }
+
+    val toolFrame = toolMatcher.matcher(toolName)
 
     Ok(views.html.general.submit(tel, toolName, toolFrame, None)).withSession {
 
