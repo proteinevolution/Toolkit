@@ -15,6 +15,7 @@ GET         /                                              @controllers.Applicat
 
 # Dashboard for Admin
 #GET         /login                                         @controllers.Auth.login
+#GET         /logout                                        @controllers.Auth.logout()
 #GET         /@/backend                                     @controllers.Auth.backend
 #POST        /login                                         @controllers.Auth.backendLogin()
 POST        /settings/clustermode                          @controllers.Settings.setClusterMode(clusterMode : String)
@@ -61,7 +62,6 @@ POST        /signin/submit/                                @controllers.Auth.sig
 GET         /signup                                        @controllers.Auth.signUp()
 POST        /signup/submit/                                @controllers.Auth.signUpSubmit()
 GET         /signout                                       @controllers.Auth.signOut()
-#GET         /logout                                        @controllers.Auth.logout()
 GET         /miniprofile                                   @controllers.Auth.miniProfile()
 GET         /profile                                       @controllers.Auth.profile()
 POST        /profile/submit/userData/                      @controllers.Auth.profileSubmit()
