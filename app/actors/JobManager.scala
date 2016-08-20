@@ -5,7 +5,6 @@ import javax.inject.{Named, Inject, Singleton}
 
 import actors.UserManager.MessageWithUserID
 import akka.actor.{Actor, ActorLogging, ActorRef}
-import com.typesafe.config.ConfigFactory
 import models.database.{Job, User}
 import models.database.JobState
 import org.joda.time.DateTime
@@ -44,9 +43,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   val random = scala.util.Random
 
 
-  // TODO All paths to Config
-  val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
-  val runscriptPath = s"TEL${SEPARATOR}runscripts$SEPARATOR"
+  // TODO All paths to Config - jobPath MOVED TO Constants trait, runscript path already is in TELConstants trait
+  //val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
+  //val runscriptPath = s"TEL${SEPARATOR}runscripts$SEPARATOR"
 
   //  Generates new jobID // TODO Save this state
   val jobIDSource: Iterator[Int] = Stream.continually(  random.nextInt(8999999) + 1000000 ).distinct.iterator

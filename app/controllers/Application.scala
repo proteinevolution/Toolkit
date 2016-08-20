@@ -48,7 +48,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEP"
 
   // get the collection 'users'
-  def userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
+  val userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
 
   /**
     * Opens the websocket
