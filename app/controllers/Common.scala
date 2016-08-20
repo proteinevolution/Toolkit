@@ -1,6 +1,6 @@
 package controllers
 
-import models.database.User
+
 import play.api.http.ContentTypes
 import play.api.mvc._
 import modules.GeoIP
