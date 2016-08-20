@@ -14,15 +14,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 
 
-/**
-  * Created by lukas on 1/27/16.
-  */
-object Tool {
-
-  // TODO Remove this
-  val tools : List[ToolModel] = List(Hmmer3, Tcoffee, Alnviz, Psiblast, Mafft, Reformatb, Clans, HHpred, HHblits) // list of all added tools
-
-}
 
 @Singleton
 class Tool @Inject()(val messagesApi: MessagesApi,
@@ -31,7 +22,7 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
   implicit val timeout = Timeout(5.seconds)
 
-  // submit file size is now restricted to 10 MB
+
   def submit(toolname: String, start : Boolean, jobID : Option[String]) = Action { implicit request =>
 
     // Fetch the job ID from the submission, might be the empty string
