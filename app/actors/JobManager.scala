@@ -117,14 +117,17 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   def receive : Receive = {
 
     // Get a request to send the job list
-    case GetJobList(userID : BSONObjectID) =>
+    case FetchJobs(userID, mainIDs : List[BSONObjectID]) =>
       // Find all jobs related to the session ID
-      val futureJobs = jobBSONCollection.map(_.find(BSONDocument(Job.USERID -> userID)).cursor[Job]())
+      val futureJobs = jobBSONCollection.map(_.find(BSONDocument(Job.IDDB ->
+                                                    BSONDocument("$in" -> mainIDs))).cursor[Job]())
+
       // Collect the list and then create the reply
       futureJobs.flatMap(_.collect[List]()).foreach { jobList =>
         //println("Found " + jobList.length.toString + " Job[s]. Sending.")
         userManager ! SendJobList(userID, jobList)
-      }
+    }
+
 
      // Reads parameters provided to the job from the job directory
     case Read(user : BSONObjectID, jobID : String) =>
@@ -255,8 +258,8 @@ object JobManager {
   // When the JobManager was asked to update a Job
   case class UpdateJob(job : Job)
 
-  // Get a request to send the job list
-  case class GetJobList(userID : BSONObjectID)
+  // Jobmanager is asked to find jobs
+  case class FetchJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID]) extends MessageWithUserID
 
   // Delete Job Entirely
   case class Delete(userID : BSONObjectID, jobID : String)
