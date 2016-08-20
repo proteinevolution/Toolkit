@@ -1,7 +1,7 @@
 package actors
 
 import actors.JobManager._
-import actors.UserManager.{UserDisconnect, UserConnect}
+import actors.UserManager._
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
