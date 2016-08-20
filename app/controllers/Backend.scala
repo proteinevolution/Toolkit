@@ -35,7 +35,7 @@ final class Backend @Inject()(webJarAssets         : WebJarAssets,
 
   def index = Action { implicit ctx =>
     val sessionID = requestSessionID(ctx)
-    val user : User = getUser(sessionID)
+    val user : User = getUser
     if(user.isSuperuser){//CheckBackendPath && user.isSuperuser && connectedUsers.get(user.userID).get.isBeforeNow) {
       NoCache(Ok(views.html.backend.backend(webJarAssets, views.html.backend.backend_maincontent(),"Backend")).withSession {
         closeSessionRequest(ctx, sessionID)
@@ -69,7 +69,7 @@ final class Backend @Inject()(webJarAssets         : WebJarAssets,
 
   def settings = Action { implicit ctx =>
     val sessionID = requestSessionID(ctx)
-    val user : User = getUser(sessionID)
+    val user : User = getUser
     if(CheckBackendPath) {
       NoCache(Ok(views.html.backend.backend(webJarAssets, views.html.backend.settings(settingsController.clusterMode),"Backend")).withSession {
         closeSessionRequest(ctx, sessionID)

@@ -4,17 +4,41 @@ import org.joda.time.DateTime
 import play.api.mvc.RequestHeader
 import play.api.{Logger, mvc}
 import reactivemongo.bson._
-import modules.common.HTTPRequest
 
 /**
   * Created by astephens on 01.03.16.
   * Session object used for a simple creation of a session cookie with the sessionID
   */
 
-case class SessionData(sessionID   : BSONObjectID,                    // Session ID of the User
-                       userID      : BSONObjectID,                    // User ID will be stored
-                       dateCreated : Option[DateTime],                // Creation time of the Session
-                       dateUpdated : Option[DateTime])                // Last Visit
+case class SessionData(ip        : String,
+                       userAgent : String,
+                       location  : Location,
+                       online    : Boolean)
+
+object SessionData {
+  final val IP        = "ip"
+  final val USERAGENT = "userAgent"
+  final val LOCATION  = "location"
+  final val ONLINE    = "online"
+
+  implicit object Reader extends BSONDocumentReader[SessionData] {
+    override def read(bson: BSONDocument): SessionData = SessionData(
+      ip        = bson.getAs[String](IP).getOrElse("none"),
+      userAgent = bson.getAs[String](USERAGENT).getOrElse("none"),
+      location  = bson.getAs[Location](LOCATION).getOrElse(Location("none",None,None,None)),
+      online    = bson.getAs[Boolean](ONLINE).getOrElse(false)
+    )
+  }
+
+  implicit object Writer extends BSONDocumentWriter [SessionData] {
+    override def write(sessionData : SessionData) : BSONDocument = BSONDocument(
+      IP        -> sessionData.ip,
+      USERAGENT -> sessionData.userAgent,
+      LOCATION  -> sessionData.location,
+      ONLINE    -> sessionData.online
+    )
+  }
+}
 
 object Sessions {
   val sessionUserMap = new scala.collection.mutable.HashMap[BSONObjectID, User]
@@ -48,35 +72,18 @@ trait Session extends {
     * Returns a User by its sessionID, or None if the sessionID is yet not
     * associated to a User.
     *
-    * @param sessionID The sessionID whose associated User should be returned
-    * @return The User of the SessionID, wrapped into an Option value, or None if the sessionID is not associated
-    *         with a User.
-    */
-  def getUser (sessionID : BSONObjectID) : User = {
-    Sessions.sessionUserMap.getOrElse(sessionID,
-                                        addUser(sessionID, User(userID        = BSONObjectID.generate(),
-                                                                sessionID     = Some(sessionID),
-                                                                sessionData   = BSONDocument(),
-                                                                accountType   = -1,
-                                                                jobs          = Nil,
-                                                                dateCreated   = Some(new DateTime()),
-                                                                dateLastLogin = Some(new DateTime()),
-                                                                dateUpdated   = Some(new DateTime()))))
-  }
-
-
-
-
-  /**
-    * Returns a User by its sessionID, or None if the sessionID is yet not
-    * associated to a User.
-    *
     * @param request The request which can identify the user
     * @return The User of the SessionID, wrapped into an Option value, or None if the sessionID is not associated
     *         with a User.
     */
   def getUser (implicit request: RequestHeader) : User = {
-    getUser(requestSessionID)
+    val sessionID : BSONObjectID = requestSessionID
+    Sessions.sessionUserMap.getOrElse(sessionID,
+      addUser(sessionID, User(userID        = BSONObjectID.generate(),
+                              sessionID     = Some(sessionID),
+                              dateCreated   = Some(new DateTime()),
+                              dateLastLogin = Some(new DateTime()),
+                              dateUpdated   = Some(new DateTime()))))
   }
 
   /**

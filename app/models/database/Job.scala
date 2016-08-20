@@ -42,17 +42,19 @@ import reactivemongo.play.json._
   */
 
 
-case class Job(mainID      : BSONObjectID,            // ID of the Job in the System
-               jobType     : String,                  // Type of job
-               parentID    : Option[BSONObjectID],    // ID of the Parent Job
-               jobID       : String,                  // User visible ID of the Job
-               userID      : BSONObjectID,            // User to whom the Job belongs
-               status      : JobState,                // Status of the Job
-               tool        : String,                  // Tool used for this Job
-               statID      : String,                  //
-               dateCreated : Option[DateTime],        // Creation time of the Job
-               dateUpdated : Option[DateTime],        // Last Updated on
-               dateViewed  : Option[DateTime]) {      // Last Viewed on
+case class Job(mainID      : BSONObjectID,                // ID of the Job in the System
+               jobType     : String,                      // Type of job
+               parentID    : Option[BSONObjectID] = None, // ID of the Parent Job
+               jobID       : String,                      // User visible ID of the Job
+               userID      : BSONObjectID,                // User to whom the Job belongs
+               status      : JobState,                    // Status of the Job
+               tool        : String,                      // Tool used for this Job
+               statID      : String,                      //
+               watchList   : Option[List[BSONObjectID]] = None, // List of the users who watch this job, None if not public
+               commentList : Option[List[BSONObjectID]] = None, // List of comments for the Job
+               dateCreated : Option[DateTime],            // Creation time of the Job
+               dateUpdated : Option[DateTime],            // Last Updated on
+               dateViewed  : Option[DateTime]) {          // Last Viewed on
 
   /**
     * Returns the output file paths for the results
@@ -102,6 +104,8 @@ object Job {
   val STATUS        = "status"        //              Status of the job field
   val TOOL          = "tool"          //              name of the tool field
   val STATID        = "statID"        //              ID of the stats for this Job
+  val WATCHLIST     = "watchList"     //              optional list of watching users references
+  val COMMENTLIST   = "commentList"   //              comment list references
   val DATECREATED   = "dateCreated"   //              created on field
   val DATEUPDATED   = "dateUpdated"   //              changed on field
   val DATEVIEWED    = "dateViewed"    //              last view on field
@@ -111,19 +115,22 @@ object Job {
   /**
     * Object containing the writer for the Class
     */
-  object JobReader extends BSONDocumentReader[Job] {
+  implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson : BSONDocument): Job = {
-      Job(mainID      = bson.getAs[BSONObjectID](IDDB).get,
-          jobType     = bson.getAs[String](JOBTYPE).get,
+      Job(mainID      = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID("Null")),
+          jobType     = bson.getAs[String](JOBTYPE).getOrElse("Error loading Job Type"),
           parentID    = bson.getAs[BSONObjectID](PARENTID),
-          jobID       = bson.getAs[String](JOBID).get,
-          userID      = bson.getAs[BSONObjectID](USERID).get,
-          status      = bson.getAs[JobState](STATUS).get,
-          tool        = bson.getAs[String](TOOL).get,
-          statID      = bson.getAs[String](STATID).get,
+          jobID       = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
+          userID      = bson.getAs[BSONObjectID](USERID).getOrElse(BSONObjectID("Null")),
+          status      = bson.getAs[JobState](STATUS).getOrElse(JobState.Error),
+          tool        = bson.getAs[String](TOOL).getOrElse(""),
+          statID      = bson.getAs[String](STATID).getOrElse(""),
+          watchList   = bson.getAs[List[BSONObjectID]](WATCHLIST),
+          commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST),
           dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
           dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)),
-          dateViewed  = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => new DateTime(dt.value)))
+          dateViewed  = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => new DateTime(dt.value))
+      )
     }
   }
 
@@ -140,8 +147,11 @@ object Job {
       STATUS      -> job.status,
       TOOL        -> job.tool,
       STATID      -> job.statID,
+      WATCHLIST   -> job.watchList,
+      COMMENTLIST -> job.commentList,
       DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
       DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
-      DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis)))
+      DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis))
+    )
   }
 }
