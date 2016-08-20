@@ -14,7 +14,7 @@ import play.twirl.api.Html
 
 @Singleton
 class ToolMatcher @Inject()( val messagesApi: MessagesApi,
-                             val tel : TEL) extends I18nSupport {
+                             val tel : TEL ) extends I18nSupport {
 
 
   def matcher(tool : String)(implicit request : RequestHeader) : Html = {

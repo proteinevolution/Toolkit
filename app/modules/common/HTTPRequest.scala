@@ -11,7 +11,7 @@ import scalaz._
 import Scalaz._
 
 
-case class HTTPRequest(val req: RequestHeader) {
+case class HTTPRequest(req: RequestHeader) {
 
   /**
     * Regex Matchers
@@ -31,7 +31,7 @@ case class HTTPRequest(val req: RequestHeader) {
     (req.headers get "X-Requested-With") contains "XMLHttpRequest"
 
   def isSocket: Boolean =
-    (req.headers get HeaderNames.UPGRADE) contains "websocket" // there might be problems with Microsoft Edge
+    (req.headers get HeaderNames.UPGRADE.toLowerCase) == Some("websocket")
 
   def isSynchronousHttp =
     !isXhr && !isSocket
