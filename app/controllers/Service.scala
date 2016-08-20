@@ -6,12 +6,17 @@ import actors.JobManager._
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
-import models.database.{JobState, Session, User}
+import models.Constants
+import models.database.{Job, JobState, Session, User}
 import models.tel.TEL
 import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-
+import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
+import reactivemongo.api.FailoverStrategy
+import reactivemongo.api.collections.bson.BSONCollection
+import better.files._
+import reactivemongo.bson.BSONDocument
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -23,14 +28,19 @@ import scala.concurrent.duration._
 @Singleton
 class Service @Inject() (webJarAssets: WebJarAssets,
                          val messagesApi: MessagesApi,
+                         val reactiveMongoApi : ReactiveMongoApi,
                          val tel : TEL,
                          @Named("jobManager") jobManager : ActorRef)
 
                  extends Controller with I18nSupport
+                                    with Constants
+                                    with ReactiveMongoComponents
                                     with Session {
 
   implicit val timeout = Timeout(1.seconds)
 
+  // get the collection 'jobs'
+  val jobCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
 
   def static(static : String)  = Action { implicit request =>
 
@@ -49,7 +59,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
         Ok(views.html.tools.forms.reformat(webJarAssets,"Utils")).withSession {
           closeSessionRequest(request, sessionID)
         }
-        
+
       case "seq2gi" =>
         Ok(views.html.tools.forms.seq2gi()).withSession {
           closeSessionRequest(request, requestSessionID)
@@ -101,15 +111,93 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     }
   } */
 
+
+  def jobInfo(jobID: String) = Action.async { implicit request =>
+    val sessionID = requestSessionID // Grab the Session ID
+    val user = getUser
+
+    val futureJob = jobCollection.flatMap(_.find(BSONDocument(Job.USERID -> user.userID, Job.JOBID -> jobID)).one[Job])
+    futureJob.flatMap {
+      case Some(job) =>
+        job.status match {
+
+          case JobState.Running  =>
+            Future.successful(Ok(views.html.job.running(jobID)))
+
+          case JobState.Prepared =>
+            val resultFiles = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map {f =>
+              f.name -> f.contentAsString
+            }.toMap
+            val toolFrame = job.tool match {
+              case "alnviz"   => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(resultFiles))
+              case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
+              case "hmmer3"   => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(resultFiles))
+              case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
+            }
+            Future.successful{
+              Ok(views.html.general.submit(tel, job.tool, toolFrame, Some(jobID))).withSession {
+                closeSessionRequest(request, sessionID) // Send Session Cookie
+              }
+            }
+
+          case JobState.Done =>
+            val toolFrame = job.tool match {
+              //  The tool anlviz just returns the BioJS MSA Viewer page
+              case "alnviz" =>
+                val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/result"))
+                views.html.job.result(vis, jobID, job.tool)
+              // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
+              case "tcoffee" =>
+                val vis = Map(
+                  "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+                  "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
+                views.html.job.result(vis, jobID, job.tool)
+              case "reformatb" =>
+                val vis = Map(
+                  "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+                  "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
+                views.html.job.result(vis, jobID, job.tool)
+              case "psiblast" =>
+                val vis = Map(
+                  "Results" -> views.html.visualization.alignment.blastvis(s"/files/${job.mainID.stringify}/out.psiblastp"),
+                  "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+                  "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
+                views.html.job.result(vis, jobID, job.tool)
+
+              // Hmmer just provides a simple file viewer.
+              case "hmmer3" => views.html.visualization.general.fileview(
+                Array(s"/files/${job.mainID.stringify}/domtbl",
+                  s"/files/${job.mainID.stringify}/outfile",
+                  s"/files/${job.mainID.stringify}/outfile_multi_sto",
+                  s"/files/${job.mainID.stringify}/tbl"))
+            }
+            Future.successful(Ok(toolFrame).withSession {
+              closeSessionRequest(request, sessionID)   // Send Session Cookie
+            })
+
+          case JobState.Error    =>
+            Future.successful(Ok(views.html.job.error(jobID)))
+
+          case _ =>
+            Future.successful(NotFound)
+        }
+      case None => Future.successful(NotFound)
+    }
+  }
+}
+
+
   /**
     * Returns JobState and toolname for a given jobID
     *
     * @param jobID
     * @return
     */
+  /**
   def jobInfo(jobID: String) = Action.async { implicit request =>
 
     val sessionID = requestSessionID // Grab the Session ID
+    val user = getUser
 
     (jobManager ? JobInfo(getUser.userID, jobID)).flatMap {
 
@@ -198,8 +286,8 @@ class Service @Inject() (webJarAssets: WebJarAssets,
           })
       }
     }
-  }
-}
+  }*/
+
 
 
   /*
