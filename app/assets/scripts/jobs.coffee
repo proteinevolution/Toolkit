@@ -91,14 +91,16 @@ jobs.controller = ->
 #here's the view
 jobs.view = ->
   [ [ jobs.vm.list.map((task) ->
-    m 'div[class=job' + ' ' + a[task.state()] + ']', {style: {display: 'flex', border: '1px solid lightgray', fontSize: '0.7em', paddingBottom: '0.75em', paddingTop: '0.75em'}},   [
+    m 'div[class=job' + ' ' + a[task.state()] + ']', {style: {display: 'flex', borderTop: 'none', borderBottom: '1px solid lightgray', borderLeft: '1px solid lightgray', borderRight: '1px solid lightgray', fontSize: '0.7em', paddingBottom: '0.1em', paddingTop: '0.75em'}},   [
       m('div[class=', {style: {width: '33.5%'}}
+        m('div[class=checkbox' + ' ' +  a[task.state()] + ']', {style: {height: '2em'}}
+          m('input[type=checkbox]', id: task.job_id(), name: task.job_id()),
+          m('label', for: task.job_id()),
+        )
+      )
 
-        m('span'), )
-
-      m('div', {style: {width: '33.5%', align: 'center'}}, m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
+      m('div', id: 'job_id', {style: {width: '33.5%', align: 'center'}}, m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
       m('div', {class: task.toolname()}, {style: {textAlign: "center", border: "0px solid black"}},
-
         m("div", {style: {marginLeft: '1.25em', cssFloat: "center", border: "0px solid black",}},
           task.toolname().substr(0,4)
         ))
