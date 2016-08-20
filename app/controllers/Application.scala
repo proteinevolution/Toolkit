@@ -7,19 +7,20 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
-import models.database.{SessionData, User, Session}
+import models.database.{Session, SessionData, User}
+import models.tel.TEL
 import models.tools._
 import modules.common.HTTPRequest
 import org.joda.time.DateTime
-import play.api.{Configuration, Logger}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
+import play.api.{Configuration, Logger}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.{BSONObjectID, BSONDateTime, BSONDocument}
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -31,6 +32,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
                             val reactiveMongoApi : ReactiveMongoApi,
                             system: ActorSystem,
                             mat: Materializer,
+                            val tel : TEL,
                             @Named("userManager") userManager : ActorRef,    // Connect to JobManager
                             configuration: Configuration) extends Controller with I18nSupport
                                                                              with ReactiveMongoComponents
@@ -137,17 +139,17 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     val toolFrame = toolName match {
       case "alnviz"     => views.html.tools.forms.alnviz(Alnviz.inputForm)
       case "tcoffee"    => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
-      case "hmmer3"     => views.html.tools.forms.hmmer3(Hmmer3.inputForm)
-      case "psiblast"   => views.html.tools.forms.psiblast(Psiblast.inputForm.fill(("", "", "", 1, 10, 11, 1, 200, "")))
+      case "hmmer3"     => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm)
+      case "psiblast"   => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.fill(("", "", "", 1, 10, 11, 1, 200, "")))
       case "mafft"      => views.html.tools.forms.mafft(Mafft.inputForm)
-      case "csblast"    => views.html.tools.forms.csblast(Csblast.inputForm)
-      case "hhpred"     => views.html.tools.forms.hhpred(HHpred.inputForm)
-      case "hhblits"    => views.html.tools.forms.hhblits(HHblits.inputForm)
+      case "csblast"    => views.html.tools.forms.csblast(tel, Csblast.inputForm)
+      case "hhpred"     => views.html.tools.forms.hhpred(tel, HHpred.inputForm)
+      case "hhblits"    => views.html.tools.forms.hhblits(tel, HHblits.inputForm)
       case "reformatb"  => views.html.tools.forms.reformatb(Reformatb.inputForm)
-      case "clans"      => views.html.tools.forms.clans(Clans.inputForm)
+      case "clans"      => views.html.tools.forms.clans(tel, Clans.inputForm)
     }
 
-    Ok(views.html.general.submit(toolName, toolFrame, None)).withSession {
+    Ok(views.html.general.submit(tel, toolName, toolFrame, None)).withSession {
 
       closeSessionRequest(request, requestSessionID) // Send Session Cookie
     }
