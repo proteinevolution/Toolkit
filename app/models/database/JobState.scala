@@ -33,6 +33,7 @@ object JobState {
     case 4 => Error
     case 5 => Done
     case 6 => Submitted
+    case _ => Error
 
   }
 
@@ -63,6 +64,7 @@ object JobState {
         case BSONInteger(4) => Error
         case BSONInteger(5) => Done
         case BSONInteger(6) => Submitted
+        case _ => Error
       }
     }
   }
