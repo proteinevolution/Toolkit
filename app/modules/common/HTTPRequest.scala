@@ -11,7 +11,7 @@ import scalaz._
 import Scalaz._
 
 
-case class HTTPRequest(req: RequestHeader) {
+final case class HTTPRequest(req: RequestHeader) {
 
   /**
     * Regex Matchers

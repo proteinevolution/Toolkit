@@ -11,7 +11,7 @@ import org.joda.time.DateTime
  * Created by zin on 21.08.16.
  */
 
-class Search  @Inject() (bookDao: JobDao) extends Controller {
+class Search  @Inject() (jobDao: JobDao) extends Controller {
 
 
   /*def get(bookId: String) = Action.async {
