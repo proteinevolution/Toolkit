@@ -18,15 +18,16 @@ object JobState {
   case object Done extends JobState(5)
   case object Submitted extends JobState(6)
 
+
   implicit object JobStateWrites extends Writes[JobState] {
     def writes(jobState: JobState) = jobState match {
-      case PartiallyPrepared => Json.toJson("PartiallyPrepared")
-      case Prepared          => Json.toJson("Prepared")
-      case Queued            => Json.toJson("Queued")
-      case Running           => Json.toJson("Running")
-      case Error             => Json.toJson("Error")
-      case Done              => Json.toJson("Done")
-      case Submitted         => Json.toJson("Submitted")
+      case PartiallyPrepared => Json.toJson(0)
+      case Prepared          => Json.toJson(1)
+      case Queued            => Json.toJson(2)
+      case Running           => Json.toJson(3)
+      case Error             => Json.toJson(4)
+      case Done              => Json.toJson(5)
+      case Submitted         => Json.toJson(6)
     }
   }
 

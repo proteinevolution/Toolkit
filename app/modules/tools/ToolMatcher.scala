@@ -13,7 +13,7 @@ import play.twirl.api.Html
 
 
 @Singleton
-class ToolMatcher @Inject()( val messagesApi: MessagesApi,
+final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
                              val tel : TEL ) extends I18nSupport {
 
 
