@@ -2,7 +2,7 @@ package models.database
 
 import JobState.JobState
 import org.joda.time.DateTime
-import play.api.libs.json.Writes
+
 import reactivemongo.bson._
 import play.api.libs.json._
 import reactivemongo.play.json._
