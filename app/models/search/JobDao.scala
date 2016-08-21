@@ -1,8 +1,6 @@
 package models.search
 
-/**
- * Created by zin on 21.08.16.
- */
+
 
 
 import javax.inject.{Named, Inject}
@@ -16,14 +14,14 @@ import com.sksamuel.elastic4s.{IndexAndType, ElasticDsl}
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
 
-class JobDao @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Named("jobs") indexAndType: IndexAndType)
+class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Named("jobs") indexAndType: IndexAndType)
   extends ElasticDsl with PlayElasticJsonSupport {
   
   private[this] lazy val client = elasticFactory(cs)
 
-  /*def getJobById(jobId: String)(implicit ec: ExecutionContext): Future[Option[Job]] = client execute {
+  def getJobById(jobId: String)(implicit ec: ExecutionContext): Future[Option[Job]] = client execute {
     get id jobId from indexAndType
-  } map (_.as[Job]) */
+  } map (_.as[Job])
 
   // the above .as[Book] conversion is available as an extension method
   // provided by PlayElasticJsonSupport
@@ -40,9 +38,9 @@ class JobDao @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     }
   }
 
-  /*def searchByQueryString(q: String)(implicit ec: ExecutionContext) = client execute {
+  def searchByQueryString(q: String)(implicit ec: ExecutionContext) = client execute {
     search in indexAndType query queryStringQuery(q)
-  } map (_.as[Job]) */
+  } map (_.as[Job])
 
 
   // the .as[T] conversion is available in elastic4s for any T with HitAs[T] instance available.

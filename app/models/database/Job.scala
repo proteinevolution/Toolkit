@@ -110,7 +110,8 @@ object Job {
   val DATEUPDATED   = "dateUpdated"   //              changed on field
   val DATEVIEWED    = "dateViewed"    //              last view on field
 
-  implicit val jobWrites = Json.writes[Job]
+
+  implicit val format: Format[Job] = Json.format[Job]
 
   /**
     * Object containing the writer for the Class

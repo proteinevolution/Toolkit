@@ -3,15 +3,13 @@ package controllers
 import play.api.libs.json.Json
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
-import models.search.JobDao
+import models.search.JobDAO
 import play.api.mvc.{Action, Controller}
 import org.joda.time.DateTime
 
-/**
- * Created by zin on 21.08.16.
- */
 
-class Search  @Inject() (jobDao: JobDao) extends Controller {
+
+class Search  @Inject() (jobDao: JobDAO) extends Controller {
 
 
   /*def get(bookId: String) = Action.async {

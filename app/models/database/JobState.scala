@@ -1,12 +1,16 @@
 package models.database
 
-import play.api.libs.json.{Json, Writes}
+
+import play.api.libs.json._
 import reactivemongo.bson.{BSONInteger, BSONReader, BSONWriter}
 
 /**
   * Created by lukas on 1/20/16.
   * Object which describes the job's status
   */
+
+
+
 object JobState {
   abstract class JobState(val no: Int)
 
@@ -17,6 +21,21 @@ object JobState {
   case object Error extends JobState(4)
   case object Done extends JobState(5)
   case object Submitted extends JobState(6)
+
+
+
+  implicit val rds: Reads[JobState] = (__ \ "status").read[Int].map{
+
+    case 0 => PartiallyPrepared
+    case 1 => Prepared
+    case 2 => Queued
+    case 3 => Running
+    case 4 => Error
+    case 5 => Done
+    case 6 => Submitted
+
+  }
+
 
 
   implicit object JobStateWrites extends Writes[JobState] {
@@ -30,7 +49,6 @@ object JobState {
       case Submitted         => Json.toJson(6)
     }
   }
-
 
   /**
     * Object containing the reader for the job state
