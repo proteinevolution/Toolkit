@@ -1,6 +1,7 @@
 package models.database
 
 import JobState.JobState
+import org.elasticsearch.common.joda.Joda
 import org.joda.time.DateTime
 
 import reactivemongo.bson._
@@ -58,6 +59,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
 
   /**
     * Returns the output file paths for the results
+    *
     * @return
     */
   def resultFiles () = {
@@ -112,6 +114,75 @@ object Job {
 
 
   implicit val format: Format[Job] = Json.format[Job]
+
+  implicit object JsonFormatter extends Format[Job] {
+    override def reads(json: JsValue): JsResult[Job] = json match {
+      case obj: JsObject => try {
+        /*
+        val mainID  = BSONObjectID.parse((obj \ IDDB).as[String]).get
+        val jobType = (obj \ JOBTYPE).as[String]
+        val parentID = BSONObjectID.parse((obj \ PARENTID).as[String]).toOption
+        val jobID   = (obj \ JOBID).as[String]
+        val userID  = BSONObjectID.parse((obj \ USERID).as[String]).get
+        val status  = (obj \ STATUS).as[JobState]
+        val tool    = (obj \ TOOL).as[String]
+        val statID  = (obj \ STATID).as[String]
+        val watchList = (obj \ WATCHLIST).asOpt[List[String]].map(_.map(string => BSONObjectID.parse(string).get))
+        val commentList = (obj \ COMMENTLIST).asOpt[List[String]].map(_.map(string => BSONObjectID.parse(string).get))
+        val dateCreated = (obj \ DATECREATED).asOpt[String].map(time => DateTime.parse(time))
+        val dateUpdated = (obj \ DATEUPDATED).asOpt[String].map(time => DateTime.parse(time))
+        val dateViewed  = (obj \ DATEVIEWED).asOpt[String].map(time => DateTime.parse(time))
+        JsSuccess(Job(
+          mainID      = mainID,
+          jobType     = jobType,
+          parentID    = parentID,
+          jobID       = jobID,
+          userID      = userID,
+          status      = status,
+          tool        = tool,
+          statID      = statID,
+          watchList   = watchList,
+          commentList = commentList,
+          dateCreated = dateCreated,
+          dateUpdated = dateUpdated,
+          dateViewed  = dateViewed))
+        */
+
+        val mainID      = (obj \ IDDB).asOpt[String]
+        val jobType     = (obj \ JOBTYPE).asOpt[String]
+        val parentID    = (obj \ PARENTID).asOpt[String]
+        val jobID       = (obj \ JOBID).asOpt[String]
+        val userID      = (obj \ USERID).asOpt[String]
+        val status      = (obj \ STATUS).asOpt[JobState]
+        val tool        = (obj \ TOOL).asOpt[String]
+        val statID      = (obj \ STATID).asOpt[String]
+        val watchList   = (obj \ WATCHLIST).asOpt[List[String]]
+        val commentList = (obj \ COMMENTLIST).asOpt[List[String]]
+        val dateCreated = (obj \ DATECREATED).asOpt[String]
+        val dateUpdated = (obj \ DATEUPDATED).asOpt[String]
+        val dateViewed  = (obj \ DATEVIEWED).asOpt[String]
+        JsSuccess(Job(
+          mainID      = BSONObjectID.generate(),  // TODO need to find out how to get the main id as it is needed for the job
+          jobType     = "",
+          parentID    = None,
+          jobID       = "",
+          userID      = BSONObjectID.generate(),
+          status      = status.get,
+          tool        = "",
+          statID      = "",
+          watchList   = None,
+          commentList = None,
+          dateCreated = Some(new DateTime()),
+          dateUpdated = Some(new DateTime()),
+          dateViewed  = Some(new DateTime())))
+       } catch {
+      case cause: Throwable => JsError(cause.getMessage)
+    }
+    case _ => JsError("expected.jsobject")
+  }
+
+    override def writes(job: Job): JsValue = Json.toJson(job)
+  }
 
   /**
     * Object containing the writer for the Class
