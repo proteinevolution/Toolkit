@@ -6,6 +6,7 @@ import actors.UserManager._
 import akka.actor.{ActorLogging, Actor, ActorRef}
 import akka.event.LoggingReceive
 import models.database.User
+import play.api.Logger
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
@@ -65,7 +66,7 @@ final class UserManager @Inject() (
       */
     // User Connected, add them to the connected users list
     case UserConnect(userID : BSONObjectID) =>
-      //Logger.info("User Connected: " + userID.stringify)
+      //Logger.info("User Connecting: " + userID.stringify)
       val actorRef = connectedUsers.getOrElseUpdate(userID, sender())
 
     // User Disconnected, Remove them from the connected users list.
@@ -74,6 +75,7 @@ final class UserManager @Inject() (
       val actorRef = connectedUsers.remove(userID)
 
     case GetJobList(userID : BSONObjectID) =>
+      //Logger.info("Connection stands, fetching jobs")
       findUser(userID).foreach {
         case Some(user) =>
           jobManager ! FetchJobs(user.userID, user.jobs)

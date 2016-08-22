@@ -59,7 +59,6 @@ class Application @Inject()(webJarAssets: WebJarAssets,
     * @return
     */
   def ws = WebSocket.accept[JsValue, JsValue] { implicit request =>
-    Logger.info("Application attaches WebSocket")
     ActorFlow.actorRef(WebSocketActor.props(getUser, userManager))
   }
 
