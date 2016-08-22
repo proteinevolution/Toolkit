@@ -2,19 +2,72 @@
 #  Handles the Connection to the WebSocket and its connection to ModelView elements like provided by
 #  Mithril.
 ###
-# The Websocket will be globally available
-@ws = new WebSocket $("body").data("ws-url")
+# The Websocket will be globally available, needs to be defined here
+@ws = null
+####connection stati, reconnection counter and timer####
+connected  = false
+connecting = false
+reconnecting = false
+retryCount = 1
+retryCountdown = 0
+retryCountdownInterval = null
 
-# requests the joblist
-ws.onopen = (event) ->
+####connection methods####
+connect = () ->
+  if !connecting
+    reconnecting = false
+    connecting   = true
+    clearInterval(retryCountdownInterval)
+    this.ws = new WebSocket $("body").data("ws-url")
+    this.ws.onopen    = (evt) -> onOpen(evt)
+    this.ws.onclose   = (evt) -> onClose(evt)
+    this.ws.onmessage = (evt) -> onMessage(evt)
+    this.ws.onerror   = (evt) -> onError(evt)
+
+connectionCountdown = () ->
+  retryCountdown = retryCountdown - 1
+  $("#offline-alert-timer").text(retryCountdown)
+  if(retryCountdown < 1)
+    retryCountdown = 1
+    clearInterval(retryCountdownInterval)
+    connect()
+
+connectionTimeRandomizer = () ->
+  if(retryCount < 38)
+    retryCount++
+  return parseInt(Math.random() * 3 * retryCount + 6)
+
+reconnect = (force = false) ->
+  if (!reconnecting && !connected && !connecting) || force
+    ws.close()
+    connected      = false
+    connecting     = false
+    reconnecting   = true
+    retryCountdown = parseInt(connectionTimeRandomizer())
+    $("#offline-alert").fadeIn()
+    connectionCountdown()
+    retryCountdownInterval = setInterval(connectionCountdown, 1000)
+
+####events####
+onOpen = (event) ->
+  # request the joblist
   ws.send(JSON.stringify("type":"GetJobList"))
+  clearInterval(retryCountdownInterval)
+  connected  = true
+  connecting = false
+  retryCount = 1
+  $("#offline-alert").fadeOut()
 
-#TODO add a check for this event instead of giving an alert
-ws.onclose = (event) ->
+onError = (event) ->
+  setTimeout(reconnect(true), 3000)
+
+onClose = (event) ->
+  connected      = false
+  setTimeout(reconnect, 5000)
   #alert "WS Closed " + event.code + " - " + event.reason + " - " + event.wasClean
 
 # Handles the behavior that occurs if the WebSocket receives data from the Server
-ws.onmessage = (event) ->
+onMessage = (event) ->
 
   # Need to make recalc of Mithril explicit here, since this code is not part of the Mithril view
   m.startComputation()
@@ -22,7 +75,7 @@ ws.onmessage = (event) ->
   message = JSON.parse event.data
 
   switch message.type
-    # Jobstate has changed
+  # Jobstate has changed
     when "UpdateJob"
       state = message.state.toString()
       console.log(state)
@@ -53,3 +106,9 @@ ws.onmessage = (event) ->
       ws.send(requestJson)
 
   m.endComputation()
+
+# everything is in the DOM, start the connection.
+connect()
+# let user reconnect manually
+$("#offline-alert").on 'click', (event) ->
+  connect()
