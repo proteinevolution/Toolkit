@@ -12,7 +12,7 @@ import org.joda.time.DateTime
 final class Search @Inject() (jobDao: JobDAO) extends Controller {
 
 
-  def get(jobId: String) = Action.async {
+  def getJob(jobId: String) = Action.async {
     jobDao.getJobById(jobId) map {
       case None => NotFound
       case Some(job) => Ok(Json.toJson(job))
@@ -20,7 +20,7 @@ final class Search @Inject() (jobDao: JobDAO) extends Controller {
   }
 
 
-  def search(q: String) = Action.async {
+  def searchJob(q: String) = Action.async {
     jobDao.searchByQueryString(q) map {
       case jobs if jobs.length > 0 =>
         Ok(Json.toJson(jobs)).withHeaders("X-Total-Count" -> jobs.length.toString)

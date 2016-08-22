@@ -1,10 +1,6 @@
 package models.tools
 
 
-import shapeless._
-
-
-
 /**
   * Created by lukas on 1/16/16.
   */
