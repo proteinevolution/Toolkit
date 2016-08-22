@@ -6,6 +6,7 @@ package models.search
 import javax.inject.{Named, Inject}
 
 import models.database.Job
+import play.api.libs.json.JsObject
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -19,10 +20,14 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   
   private[this] lazy val client = elasticFactory(cs)
 
+  // TODO mainID is not returned by the query function, so a Job can not be read this way. See if there is a get id with id function
   def getJobById(jobId: String)(implicit ec: ExecutionContext): Future[Option[Job]] = client execute {
     get id jobId from indexAndType
   } map (_.as[Job])
 
+  def getJobByIdAsJSObject(jobId: String)(implicit ec: ExecutionContext): Future[Option[JsObject]] = client execute {
+    get id jobId from indexAndType
+  } map (_.as[JsObject])
 
   def indexJobs(jobId: String, job: Job) = client execute {
     index into indexAndType source job id jobId

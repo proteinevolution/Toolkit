@@ -35,6 +35,7 @@ class Application @Inject()(webJarAssets: WebJarAssets,
                             mat: Materializer,
                             val tel : TEL,
                             val toolMatcher : ToolMatcher,
+                            val search : Search,
                             @Named("userManager") userManager : ActorRef,    // Connect to JobManager
                             configuration: Configuration) extends Controller with I18nSupport
                                                                              with ReactiveMongoComponents

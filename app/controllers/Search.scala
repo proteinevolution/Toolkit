@@ -12,10 +12,18 @@ import org.joda.time.DateTime
 final class Search @Inject() (jobDao: JobDAO) extends Controller {
 
 
+//  def getJob(jobId: String) = Action.async {
+//    jobDao.getJobById(jobId) map {
+//      case None => NotFound
+//      case Some(job) => Ok(job.toString)
+//    }
+//  }
+
+//  (TODO) this does not convert any output from the ES DB. see comment about function above as to why.
   def getJob(jobId: String) = Action.async {
-    jobDao.getJobById(jobId) map {
+    jobDao.getJobByIdAsJSObject(jobId) map {
       case None => NotFound
-      case Some(job) => Ok(Json.toJson(job))
+      case Some(job) => Ok(job)
     }
   }
 
