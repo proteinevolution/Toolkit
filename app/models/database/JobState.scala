@@ -2,6 +2,7 @@ package models.database
 
 
 import play.api.libs.json._
+import play.libs.Json
 import reactivemongo.bson.{BSONInteger, BSONReader, BSONWriter}
 
 /**
@@ -23,31 +24,35 @@ object JobState {
   case object Submitted extends JobState(6)
 
 
-
-  implicit val rds: Reads[JobState] = (__ \ "status").read[Int].map{
-
-    case 0 => PartiallyPrepared
-    case 1 => Prepared
-    case 2 => Queued
-    case 3 => Running
-    case 4 => Error
-    case 5 => Done
-    case 6 => Submitted
-    case _ => Error
-
+  implicit object JobStateReads extends Reads[JobState] {
+    override def reads(json: JsValue) : JsResult[JobState] = json match {
+      case obj: JsObject => try {
+        JsSuccess((obj \ "status").as[Int] match {
+          case 0 => PartiallyPrepared
+          case 1 => Prepared
+          case 2 => Queued
+          case 3 => Running
+          case 4 => Error
+          case 5 => Done
+          case 6 => Submitted
+          case _ => Error
+        })
+      } catch {
+        case cause: Throwable => JsError(cause.getMessage)
+      }
+      case _ => JsError("expected.jsobject")
+    }
   }
-
-
 
   implicit object JobStateWrites extends Writes[JobState] {
     def writes(jobState: JobState) = jobState match {
-      case PartiallyPrepared => Json.toJson(0)
-      case Prepared          => Json.toJson(1)
-      case Queued            => Json.toJson(2)
-      case Running           => Json.toJson(3)
-      case Error             => Json.toJson(4)
-      case Done              => Json.toJson(5)
-      case Submitted         => Json.toJson(6)
+      case PartiallyPrepared => JsNumber(0)
+      case Prepared          => JsNumber(1)
+      case Queued            => JsNumber(2)
+      case Running           => JsNumber(3)
+      case Error             => JsNumber(4)
+      case Done              => JsNumber(5)
+      case Submitted         => JsNumber(6)
     }
   }
 
