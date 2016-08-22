@@ -27,5 +27,6 @@ private[controllers] trait Common
     CACHE_CONTROL -> "no-cache, no-store, must-revalidate", EXPIRES -> "0"
   )
 
-  val geoIP = new GeoIP("/ebio/abt1_share/toolkit_support1/data/GeoLite2-City.mmdb")
+  protected lazy val geoIP = new GeoIP("/ebio/abt1_share/toolkit_support1/data/GeoLite2-City.mmdb")
+
 }
