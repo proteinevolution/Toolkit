@@ -67,7 +67,6 @@ lazy val root = (project in file("."))
       "org.webjars" % "dropzone" % "4.3.0",
       "org.webjars.bower" % "clipboard" % "1.5.10",
       "org.webjars" % "linkurious.js" % "1.5.1",
-      "org.webjars.bower" % "offline" % "0.7.11",
       "org.webjars.bower" % "tinymce" % "4.4.1",
       "org.webjars" % "highcharts" % highchartsVersion)),
     pipelineStages := Seq.empty,

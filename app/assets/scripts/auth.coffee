@@ -59,14 +59,17 @@ $ ->
     if (json.successful)
       $("#auth-link").html(json.user.nameLogin)
       $("#auth-dropdown").html(json.message)
-      $.ajax(
-        url: "/miniprofile"
-        method: 'GET').done (data) ->
-          $("#auth-dropdown").html(data)
+      setTimeout(loadMiniProfile,1000)
     else
       # add the error message to the view
       $("#auth-alert").html(json.message)
       $("#auth-alert").fadeIn()
+
+  loadMiniProfile = () ->
+    $.ajax(
+      url: "/miniprofile"
+      method: 'GET').done (data) ->
+        $("#auth-dropdown").html(data)
 
   # Remove message by clicking on it
   $("#auth-alert").on 'click', (event) ->
