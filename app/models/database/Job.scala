@@ -2,7 +2,7 @@ package models.database
 
 import JobState.JobState
 import org.joda.time.DateTime
-import play.api.libs.json.Writes
+
 import reactivemongo.bson._
 import play.api.libs.json._
 import reactivemongo.play.json._
@@ -110,7 +110,8 @@ object Job {
   val DATEUPDATED   = "dateUpdated"   //              changed on field
   val DATEVIEWED    = "dateViewed"    //              last view on field
 
-  implicit val jobWrites = Json.writes[Job]
+
+  implicit val format: Format[Job] = Json.format[Job]
 
   /**
     * Object containing the writer for the Class

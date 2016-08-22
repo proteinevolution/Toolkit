@@ -2,6 +2,7 @@ package models.tools
 
 import play.api.data.Form
 import play.api.data.Forms._
+import shapeless._
 
 
 // TODO Dependency injection might come in handy here
@@ -23,6 +24,13 @@ object Alnviz extends ToolModel {
 
   // --- Alnviz specific values ---
   // Input Form Definition of this tool
+
+  val hlist = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+  val myTuple = hlist.tupled
+
+  //println(myTuple)
+  //val test = Form(myTuple) TODO why doesn't this work?
+
   val inputForm = Form(
     tuple(
       "alignment" -> nonEmptyText,
