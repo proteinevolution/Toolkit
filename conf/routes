@@ -94,6 +94,10 @@ GET         /static/get/:static                            @controllers.Service.
 # Update
 PUT         /job                                           @controllers.Jobs.updateJob
 
+# ElasticSearch
+
+GET     /search/jobs/:id                                   @controllers.Search.getJob(id: String)
+GET     /search:q                                          @controllers.Search.searchJob(q: String)
 
 
 
