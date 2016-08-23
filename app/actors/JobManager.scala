@@ -7,6 +7,7 @@ import actors.UserManager.MessageWithUserID
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import models.database.{Job, User}
 import models.database.JobState
+import modules.tools.FNV
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
 import reactivemongo.api.collections.bson.BSONCollection
@@ -39,6 +40,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   def jobBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
   def userBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
+  def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
 
   val random = scala.util.Random
 
@@ -63,7 +65,10 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     * @param job
     */
   def updateJob(job : Job) = {
-     jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> job.mainID)).one[Job]).foreach {
+
+
+    jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> job.mainID)).one[Job]).foreach {
+
 
        case Some(oldJob) =>
          if(oldJob.status != job.status) {
@@ -73,6 +78,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                                             BSONDocument("$set"   -> BSONDocument(Job.STATUS -> job.status))))
 
        case None => jobBSONCollection.flatMap(_.insert(job))
+
      }
   }
 
@@ -232,6 +238,17 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
         // Write a JSON File with the job information to the JobDirectory
         s"$rootPath$jobJSONFileName".toFile.write(Json.toJson(newJob).toString())
+
+
+        // create job hash
+
+        val jobByteArray = new Array[Byte](1)
+        jobByteArray(0) = newJob.mainID.stringify.toByte
+        val hash = BSONDocument(
+          "_id" -> newJob.mainID,
+          "hash" -> FNV.hash64(jobByteArray).toString())
+
+        hashCollection.flatMap(_.insert(hash))
 
 
         // Also Start Job if requested
