@@ -77,9 +77,9 @@ onMessage = (event) ->
   switch message.type
   # Jobstate has changed
     when "UpdateJob"
-      state = message.state.toString()
+      state = message.job.state.toString()
       console.log(state)
-      jobs.vm.update(message.job_id, state, message.toolname)
+      jobs.vm.update(message.job)
 
       # Show user a popup with the submission
       if state == '0'
@@ -102,10 +102,12 @@ onMessage = (event) ->
       autocomplete.data.response(message.list)
 
     when "Ping"
-      requestJson = ("type":"Ping")
-      ws.send(requestJson)
-
+      ws.send(JSON.stringify("type":"Ping"))
   m.endComputation()
+
+@sendMessage = (object) ->
+  alert "object mainID: " + object.mainID.toString()
+  ws.send(JSON.stringify(object))
 
 # everything is in the DOM, start the connection.
 connect()

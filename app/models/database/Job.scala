@@ -113,7 +113,7 @@ object Job {
   val DATEVIEWED    = "dateViewed"    //              last view on field
 
   //implicit val format: Format[Job] = Json.format[Job]
-  
+
   implicit object JsonReader extends Reads[Job] {
     override def reads(json: JsValue): JsResult[Job] = json match {
       case obj: JsObject => try {
