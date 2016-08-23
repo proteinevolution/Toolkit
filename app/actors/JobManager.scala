@@ -236,19 +236,27 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         val script = tel.init(toolName, params, rootPath)
         this.updateJob(newJob.copy(status = JobState.Prepared))
 
+
+
+
         // Write a JSON File with the job information to the JobDirectory
         s"$rootPath$jobJSONFileName".toFile.write(Json.toJson(newJob).toString())
+        println("Test2")
 
+        // create job checksum, using FNV-1, a non-cryptographic hashing algorithm
+        // TODO use other parameters than the mainID of course, maybe to be done in the TEL object
+        // to guarantee the uniqueness of a job we should consider to optimize the algorithm and take following parameters: job parameters, inputfile, mtime of the database
 
-        // create job hash
-
-        val jobByteArray = new Array[Byte](1)
-        jobByteArray(0) = newJob.mainID.stringify.toByte
+        val jobByteArray = newJob.mainID.stringify.getBytes
         val hash = BSONDocument(
           "_id" -> newJob.mainID,
           "hash" -> FNV.hash64(jobByteArray).toString())
 
         hashCollection.flatMap(_.insert(hash))
+
+        Logger.info(FNV.hash64(jobByteArray).toString())
+
+
 
 
         // Also Start Job if requested
