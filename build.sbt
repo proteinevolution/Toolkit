@@ -27,7 +27,7 @@ val commonDeps = Seq(ws, filters, cache,
   "com.evojam" %% "play-elastic4s" % "0.3.1",
   "org.reactivemongo" %% "play2-reactivemongo" % reactiveMongoVersion,
   "org.reactivemongo" %% "reactivemongo-play-json" % reactiveMongoVersion,
-  "co.fs2" %% "fs2-core" % "0.9.0-M6",
+  "co.fs2" %% "fs2-core" % "0.9.0-RC2",
   "org.scalaz" %% "scalaz-core" % "7.2.5",
   "com.chuusai" %% "shapeless" % "2.3.2"
 )
@@ -59,7 +59,6 @@ lazy val root = (project in file("."))
       "org.webjars" % "foundation" % foundationVersion,
       "org.webjars" % "modernizr" % "2.8.3",
       "org.webjars.bower" % "fastclick" % "1.0.6",
-      "org.json4s" %% "json4s-jackson" % "3.3.0",
       "org.webjars" % "mithril" % mithrilVersion,
       "org.webjars.bower" % "d3" % d3Version,
       "org.webjars.bower" % "slick-carousel" % "1.6.0",
