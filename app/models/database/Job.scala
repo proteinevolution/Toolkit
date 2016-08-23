@@ -112,10 +112,9 @@ object Job {
   val DATEUPDATED   = "dateUpdated"   //              changed on field
   val DATEVIEWED    = "dateViewed"    //              last view on field
 
-
-  implicit val format: Format[Job] = Json.format[Job]
-
-  implicit object JsonFormatter extends Format[Job] {
+  //implicit val format: Format[Job] = Json.format[Job]
+  
+  implicit object JsonReader extends Reads[Job] {
     override def reads(json: JsValue): JsResult[Job] = json match {
       case obj: JsObject => try {
         /*
@@ -175,13 +174,30 @@ object Job {
           dateCreated = Some(new DateTime()),
           dateUpdated = Some(new DateTime()),
           dateViewed  = Some(new DateTime())))
-       } catch {
-      case cause: Throwable => JsError(cause.getMessage)
+      } catch {
+        case cause: Throwable => JsError(cause.getMessage)
+      }
+      case _ => JsError("expected.jsobject")
     }
-    case _ => JsError("expected.jsobject")
   }
 
-    override def writes(job: Job): JsValue = Json.toJson(job)
+
+  implicit object JobWrites extends Writes[Job] {
+    def writes (job : Job) : JsObject = Json.obj(
+      IDDB        -> job.mainID,
+      JOBTYPE     -> job.jobType,
+      PARENTID    -> job.parentID,
+      JOBID       -> job.jobID,
+      USERID      -> job.userID,
+      STATUS      -> job.status,
+      TOOL        -> job.tool,
+      STATID      -> job.statID,
+      WATCHLIST   -> job.watchList,
+      COMMENTLIST -> job.commentList,
+      DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
+      DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
+      DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis))
+    )
   }
 
   /**
