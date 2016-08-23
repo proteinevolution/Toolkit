@@ -704,6 +704,20 @@ TODO: Minify me
 
     }
 
+    function phylipParser() {
+
+        // TODO implement me
+
+    }
+
+
+    function stockholmParser() {
+
+        // TODO implement me
+    }
+
+
+
 
 
 
