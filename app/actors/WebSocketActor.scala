@@ -39,6 +39,34 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
         case "GetJobList" =>
           userManager ! GetJobList(userID)
 
+        case "DeleteJob" =>
+          (js \ "mainID").validate[String].asOpt match {
+            case Some(mainIDString) =>
+              BSONObjectID.parse(mainIDString).toOption match {
+                case Some(mainID) =>
+                  Logger.info(mainID.stringify)
+                  userManager ! DeleteJob(userID, mainID)
+                case None =>
+                  Logger.info("BSON Parser Error" + js.toString())
+              }
+            case None =>
+              Logger.info("JSON Parser Error " + js.toString())
+          }
+
+        case "ClearJob" =>
+          (js \ "mainID").validate[String].asOpt match {
+            case Some(mainIDString) =>
+              BSONObjectID.parse(mainIDString).toOption match {
+                case Some(mainID) =>
+                  Logger.info(mainID.stringify)
+                  userManager ! ClearJob(userID, mainID)
+                case None =>
+                  Logger.info("BSON Parser Error" + js.toString())
+              }
+            case None =>
+              Logger.info("JSON Parser Error " + js.toString())
+          }
+
         // connection test case
         case "Ping"       =>
           Logger.info("PING!")
@@ -52,16 +80,19 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
 
     // Messages the user about a change in the Job status
     case JobStateChanged(job, state) =>
-      out ! Json.obj("type"     -> "UpdateJob",
-                     "job_id"   -> job.jobID,
-                     "state"    -> state.no,
-                     "toolname" -> job.tool)
+      out ! Json.obj("type" -> "UpdateJob",
+                     "job"  ->
+                        Json.obj("mainID"   -> job.mainID.stringify,
+                                 "job_id"   -> job.jobID,
+                                 "state"    -> job.status.no,
+                                 "toolname" -> job.tool))
 
     // Sends the job list to the user
     case SendJobList(userID : BSONObjectID, jobList : List[Job]) =>
       out ! Json.obj("type" -> "JobList",
                      "list" -> jobList.map(job =>
-                        Json.obj("job_id"   -> job.jobID,
+                        Json.obj("mainID"   -> job.mainID.stringify,
+                                 "job_id"   -> job.jobID,
                                  "state"    -> job.status.no,
                                  "toolname" -> job.tool)))
   }

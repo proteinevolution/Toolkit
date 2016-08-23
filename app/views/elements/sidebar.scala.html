@@ -42,14 +42,12 @@
         function deleteIDs(){
 
             var IDs = $('input:checked').map(function(){
-
                 return $(this).val();
             });
 
             if(IDs.length > 0 && confirm("Do you really want to delete the selected jobs permanently?")) {
                 m.startComputation();
                 for (var i = 0; i < IDs.length; i++){
-
                     jobs.vm.delete(IDs[i]);
                 }
                 m.endComputation();
