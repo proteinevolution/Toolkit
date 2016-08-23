@@ -12,9 +12,6 @@ case class JobHash(mainID : BSONObjectID,
                    hashValue : String)
 
 
-// TODO decide on how to hash the jobs into the hash collection
-
-
 object JobHash {
 
   lazy val ID = "_id"
