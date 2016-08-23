@@ -83,6 +83,9 @@ final class UserManager @Inject() (
           // TODO this should not happen but we might need to catch unidentified Users who have a Websocket
       }
 
+    // User is requesting a job to be removed from the view (but not permanently)
+    case ClearJob(userID : BSONObjectID, mainID : BSONObjectID) =>
+      updateUser(userID, BSONDocument("$pull" -> BSONDocument(User.JOBS -> mainID)))
 
     /**
       * Outgoing Messages
@@ -117,6 +120,10 @@ object UserManager {
 
   // Get a request to send the job list
   case class GetJobList(userID : BSONObjectID) extends MessageWithUserID
+
+  case class ClearJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
+
+  case class DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
   // Messages to broadcast to the user
   case class Broadcast(message : String)
