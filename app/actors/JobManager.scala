@@ -144,9 +144,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
               f.name -> f.contentAsString
             }.toMap
           else // If jobID does not belong to the user
-            sender () ! PermissionDenied
+            sender () ! PermissionDenied(user)
         case None => // If jobID is unknown
-          sender () ! JobIDUnknown
+          sender () ! JobIDUnknown(user)
       }
 
 
@@ -159,14 +159,14 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
             if (job.userID == user) // Retrieve the Job Files
               replyTo ! job
             else // If jobID does not belong to the user
-              replyTo ! PermissionDenied
+              replyTo ! PermissionDenied(user)
           case None => // If jobID is unknown
-            replyTo ! JobIDUnknown
+            replyTo ! JobIDUnknown(user)
         }
 
     //  User asks to delete Job
-    case Delete(userID : BSONObjectID, jobID : String) =>
-      jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job]).foreach {
+    case DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) =>
+      jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).foreach {
         case Some(job) =>
           if (job.userID == userID) {
 
@@ -180,15 +180,22 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
               // Delete Job Path
               s"jobPath$SEPARATOR${job.mainID.stringify}".toFile.delete(swallowIOExceptions = false)
             }.onComplete {
-              case scala.util.Success(_) => sender() ! AckDeleted(userID, job)
-              case scala.util.Failure(_) => sender() ! FailDeleted(userID, job)
+              case scala.util.Success(_) =>
+                Logger.info("Successfully Deleted Job!")
+                userManager ! AckDeleted(userID, job)
+              case scala.util.Failure(_) =>
+                Logger.info("Failed To Delete Files")
+                userManager ! FailDeleted(userID, job)
             }
           } else {
-            sender() ! PermissionDenied
+            userManager ! PermissionDenied(userID)
+            Logger.info("Permission Denied")
           }
         case None      =>
           // Job ID is unknown.
-          sender() ! JobIDUnknown
+          userManager ! JobIDUnknown(userID)
+
+          Logger.info("Unknown ID " + mainID.toString())
       }
 
     case UpdateJob(job)  =>
@@ -287,8 +294,7 @@ object JobManager {
   case class FetchJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID]) extends MessageWithUserID
 
   // Delete Job Entirely
-  case class Delete(userID : BSONObjectID, jobID : String)
-
+  case class DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
   /**
     * Outgoing messages
@@ -297,9 +303,9 @@ object JobManager {
   case class SendJobList(userID : BSONObjectID, jobList : List[Job]) extends MessageWithUserID
 
   // Failure replies
-  case object JobIDUnknown
-  case object PermissionDenied
-  case class  FailDeleted(userID : BSONObjectID, job : Job) extends MessageWithUserID
+  case class JobIDUnknown(userID : BSONObjectID) extends MessageWithUserID
+  case class PermissionDenied(userID : BSONObjectID) extends MessageWithUserID
+  case class FailDeleted(userID : BSONObjectID, job : Job) extends MessageWithUserID
 
   // Success replies
   case class AckDeleted(userID : BSONObjectID, job : Job) extends MessageWithUserID

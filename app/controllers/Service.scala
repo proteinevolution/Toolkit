@@ -16,7 +16,7 @@ import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
 import better.files._
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONObjectID, BSONDocument}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -78,12 +78,12 @@ class Service @Inject() (webJarAssets: WebJarAssets,
   /**
     * User asks to delete the Job with the provided job_id
     *
-    * @param jobID
+    * @param mainID
     * @return
     */
-  def delJob(jobID: String) = Action { implicit request =>
-
-    jobManager ! Delete(getUser.userID, jobID)
+  def delJob(mainID: String) = Action { implicit request =>
+    // TODO We go over the Websocket for this now, we may keep this for testing until production?
+    jobManager ! DeleteJob(getUser.userID, BSONObjectID.parse(mainID).getOrElse(BSONObjectID.generate()))
     Ok
   }
 

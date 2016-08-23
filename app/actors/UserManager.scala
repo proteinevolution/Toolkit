@@ -1,7 +1,7 @@
 package actors
 
 import javax.inject.{Named, Inject, Singleton}
-import actors.JobManager.FetchJobs
+import actors.JobManager._
 import actors.UserManager._
 import akka.actor.{ActorLogging, Actor, ActorRef}
 import akka.event.LoggingReceive
@@ -62,7 +62,7 @@ final class UserManager @Inject() (
     */
   def receive: Receive = LoggingReceive {
     /**
-      * Incoming Messages
+      * Messages to User Manager
       */
     // User Connected, add them to the connected users list
     case UserConnect(userID : BSONObjectID) =>
@@ -86,6 +86,11 @@ final class UserManager @Inject() (
     // User is requesting a job to be removed from the view (but not permanently)
     case ClearJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       updateUser(userID, BSONDocument("$pull" -> BSONDocument(User.JOBS -> mainID)))
+
+    /**
+      * Messages to Job Manager
+      */
+    case msg : DeleteJob => jobManager ! msg
 
     /**
       * Outgoing Messages
@@ -122,8 +127,6 @@ object UserManager {
   case class GetJobList(userID : BSONObjectID) extends MessageWithUserID
 
   case class ClearJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
-
-  case class DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
   // Messages to broadcast to the user
   case class Broadcast(message : String)
