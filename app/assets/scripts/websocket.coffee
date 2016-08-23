@@ -106,7 +106,6 @@ onMessage = (event) ->
   m.endComputation()
 
 @sendMessage = (object) ->
-  alert "object mainID: " + object.mainID.toString()
   ws.send(JSON.stringify(object))
 
 # everything is in the DOM, start the connection.
