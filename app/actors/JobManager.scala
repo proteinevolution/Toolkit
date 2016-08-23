@@ -248,12 +248,16 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
         // Write a JSON File with the job information to the JobDirectory
         s"$rootPath$jobJSONFileName".toFile.write(Json.toJson(newJob).toString())
-        println("Test2")
+
 
         // create job checksum, using FNV-1, a non-cryptographic hashing algorithm
         // TODO use other parameters than the mainID of course, maybe to be done in the TEL object
         // to guarantee the uniqueness of a job we should consider to optimize the algorithm and take following parameters: job parameters, inputfile, mtime of the database
 
+
+        val nrDB: File = file"/ebio/abt1_share/toolkit_sync/databases/standard/nr" // get hold of mtime of the nr database for example, we need this for generating the checksum
+        Logger.info(nrDB.name)
+        Logger.info(nrDB.lastModifiedTime.toString)
         val jobByteArray = newJob.mainID.stringify.getBytes
         val hash = BSONDocument(
           "_id" -> newJob.mainID,
@@ -262,6 +266,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         hashCollection.flatMap(_.insert(hash))
 
         Logger.info(FNV.hash64(jobByteArray).toString())
+
 
 
 
