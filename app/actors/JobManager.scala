@@ -5,8 +5,7 @@ import javax.inject.{Named, Inject, Singleton}
 
 import actors.UserManager.MessageWithUserID
 import akka.actor.{Actor, ActorLogging, ActorRef}
-import models.database.{Job, User}
-import models.database.JobState
+import models.database.{JobHash, Job, User, JobState}
 import modules.tools.FNV
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
@@ -41,6 +40,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   def jobBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
   def userBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
   def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
+
 
   val random = scala.util.Random
 
@@ -244,8 +244,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         this.updateJob(newJob.copy(status = JobState.Prepared))
 
 
-
-
         // Write a JSON File with the job information to the JobDirectory
         s"$rootPath$jobJSONFileName".toFile.write(Json.toJson(newJob).toString())
 
@@ -257,24 +255,21 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         val DB = params.getOrElse("standarddb","").toFile  // get hold of the database in use
         val jobByteArray = params.toString().getBytes // convert params to hashable byte array
 
-        var hash = BSONDocument()
+        lazy val jobHash = {
+          params.get("standarddb") match {
+            case None => JobHash( mainID = newJob.mainID,
+                                  inputHash = FNV.hash64(jobByteArray).toString(), // TODO check the probability of collisions
+                                  dbName = None,
+                                  dbMtime = None )
 
-        if (params.get("standarddb").isDefined) { // checks if a database is used in this job, TODO: filter mapping instead of if/else
-        hash = BSONDocument(
-          "_id" -> newJob.mainID,
-          "hash" -> FNV.hash64(jobByteArray).toString(), // TODO check the probability of collisions
-          "dbname" -> DB.name,
-          "dbmtime" -> DB.lastModifiedTime.toString) }
+            case _ => JobHash( mainID = newJob.mainID,
+                               inputHash = FNV.hash64(jobByteArray).toString(), // TODO check the probability of collisions
+                               dbName = Some(DB.name),
+                               dbMtime = Some(DB.lastModifiedTime.toString) )
+          }
+        }
 
-        else {
-          hash = BSONDocument(
-            "_id" -> newJob.mainID,
-            "hash" -> FNV.hash64(jobByteArray).toString(),
-            "dbname" -> None,
-            "dbmtime" -> None) }
-
-        hashCollection.flatMap(_.insert(hash)) // insert hash into jobhashes collection
-
+        hashCollection.flatMap(_.insert(jobHash)) // insert hash into jobhashes collection
 
 
         // Also Start Job if requested
