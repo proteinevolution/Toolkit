@@ -178,7 +178,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
             Future {
               // Delete Job Path
-              s"jobPath$SEPARATOR${job.mainID.stringify}".toFile.delete(swallowIOExceptions = false)
+
+              s"$jobPath$SEPARATOR${job.mainID.stringify}".toFile.delete(swallowIOExceptions = false)
             }.onComplete {
               case scala.util.Success(_) =>
                 Logger.info("Successfully Deleted Job!")
