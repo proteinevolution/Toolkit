@@ -28,7 +28,30 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
     @Named("jobManager") jobManager       : ActorRef) extends Controller with I18nSupport with UserSessions {
 
   implicit val timeout = Timeout(5.seconds)
-  val userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
+  def userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
+  def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
+
+
+  def checkJobHash(toolname: String, start: Boolean, jobID: Option[String]) = Action { implicit request =>
+
+    val form = toolname match {
+      case "alnviz" => Some(Alnviz.inputForm)
+      case "tcoffee" => Some(Tcoffee.inputForm)
+      case "hmmer3" => Some(Hmmer3.inputForm)
+      case "hhpred" => Some(HHpred.inputForm)
+      case "hhblits" => Some(HHblits.inputForm)
+      case "psiblast" => Some(Psiblast.inputForm)
+      case "mafft" => Some(Mafft.inputForm)
+      case "reformatb" => Some(Reformatb.inputForm) // cluster version of reformat
+      case "clans" => Some(Clans.inputForm)
+      case _ => None
+    }
+
+    NotFound
+
+
+  }
+
 
 
   def submit(toolname: String, start : Boolean, jobID : Option[String]) = Action.async { implicit request =>
@@ -55,7 +78,8 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
       NotFound
 
     else {
-      val boundForm = form.get.bindFromRequest
+      val boundForm = form.get.bindFromRequest // <- params
+      println(boundForm.data.toString) // TODO create the job hashes rather here and do the check
 
       boundForm.fold(
         formWithErrors => {
@@ -65,6 +89,7 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
         _ => jobManager ! Prepare(user, jobID, toolname, boundForm.data, start = start)
       )
       Ok.withSession(sessionCookie(request, user.sessionID.get))
+      //Ok("Hello world")
     }
   }
   }

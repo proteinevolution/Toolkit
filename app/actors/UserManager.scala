@@ -5,7 +5,7 @@ import actors.JobManager._
 import actors.UserManager._
 import akka.actor.{ActorLogging, Actor, ActorRef}
 import akka.event.LoggingReceive
-import models.database.User
+import models.database.{SessionData, User}
 import play.api.Logger
 import play.api.cache._
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
@@ -71,12 +71,28 @@ final class UserManager @Inject() (
     // User Connected, add them to the connected users list
     case UserConnect(userID : BSONObjectID) =>
       //Logger.info("User Connecting: " + userID.stringify)
+
       val actorRef = connectedUsers.getOrElseUpdate(userID, sender())
+
 
     // User Disconnected, Remove them from the connected users list.
     case UserDisconnect(userID : BSONObjectID) =>
-      //Logger.info("User Disconnected: " + userID.stringify)
+      Logger.info("User Disconnected: " + userID.stringify)
       val actorRef = connectedUsers.remove(userID)
+
+      val modifier = BSONDocument(
+        "$set" -> BSONDocument(
+          "sessionData" ->
+            BSONDocument(
+              "ip" -> "123",
+              "userAgent" -> "",
+              "location" -> "",
+              "online" -> false) // TODO This nested structure could possibly be refactored with Lenses
+        )
+      )
+      Logger.info(userID + "user set offline") // TODO if a user is set offline, his sessionData is deleted too. This is due to the immutable character of SessionData.
+                                               // We would need a request at this place to keep this data in the database in order to request a new SessionData object.
+      val _ = userCollection.flatMap(_.update(BSONDocument(User.IDDB -> userID),modifier)) //to test logout, just delete your cookies in the browser
 
     case GetJobList(userID : BSONObjectID) =>
       //Logger.info("Connection stands, fetching jobs")
