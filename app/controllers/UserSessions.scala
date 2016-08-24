@@ -17,7 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by astephens on 24.08.16.
   */
-private[controllers] trait UserSessions {
+trait UserSessions {
   private final val SID = "sid"
   protected lazy val geoIP = new GeoIP("/ebio/abt1_share/toolkit_support1/data/GeoLite2-City.mmdb")
 
@@ -54,6 +54,7 @@ private[controllers] trait UserSessions {
         user
     }
   }
+
 
   /**
     * Returns a Future User
