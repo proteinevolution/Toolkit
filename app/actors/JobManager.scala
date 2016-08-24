@@ -254,20 +254,26 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         // TODO use other parameters than the mainID of course, maybe to be done in the TEL object
         // to guarantee the uniqueness of a job we should consider to optimize the algorithm and take following parameters: job parameters, inputfile, mtime of the database
 
+        val DB = params.getOrElse("standarddb","").toFile  // get hold of the database in use
+        val jobByteArray = params.toString().getBytes // convert params to hashable byte array
 
-        val nrDB: File = file"/ebio/abt1_share/toolkit_sync/databases/standard/nr" // get hold of mtime of the nr database for example, we need this for generating the checksum
-        Logger.info(nrDB.name)
-        Logger.info(nrDB.lastModifiedTime.toString)
-        val jobByteArray = newJob.mainID.stringify.getBytes
-        val hash = BSONDocument(
+        var hash = BSONDocument()
+
+        if (params.get("standarddb").isDefined) { // checks if a database is used in this job, TODO: filter mapping instead of if/else
+        hash = BSONDocument(
           "_id" -> newJob.mainID,
-          "hash" -> FNV.hash64(jobByteArray).toString())
+          "hash" -> FNV.hash64(jobByteArray).toString(), // TODO check the probability of collisions
+          "dbname" -> DB.name,
+          "dbmtime" -> DB.lastModifiedTime.toString) }
 
-        hashCollection.flatMap(_.insert(hash))
+        else {
+          hash = BSONDocument(
+            "_id" -> newJob.mainID,
+            "hash" -> FNV.hash64(jobByteArray).toString(),
+            "dbname" -> None,
+            "dbmtime" -> None) }
 
-        Logger.info(FNV.hash64(jobByteArray).toString())
-
-
+        hashCollection.flatMap(_.insert(hash)) // insert hash into jobhashes collection
 
 
 
