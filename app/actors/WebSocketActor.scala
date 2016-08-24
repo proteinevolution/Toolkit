@@ -17,8 +17,8 @@ import reactivemongo.bson.BSONObjectID
   *
   */
 object WebSocketActor {
-  def props(user : User, jobManager : ActorRef)(out: ActorRef) = {
-    Props(new WebSocketActor(user.userID, jobManager, out))
+  def props(userID : BSONObjectID, jobManager : ActorRef)(out: ActorRef) = {
+    Props(new WebSocketActor(userID, jobManager, out))
   }
 }
 
