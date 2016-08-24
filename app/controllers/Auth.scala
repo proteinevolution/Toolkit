@@ -7,6 +7,7 @@ import models.database.{Session, User}
 import models.auth._
 import org.joda.time.DateTime
 import play.Logger
+import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 
@@ -27,6 +28,7 @@ import scala.concurrent.Future
 @Singleton
 final class Auth @Inject() (webJarAssets     : WebJarAssets,
                         val messagesApi      : MessagesApi,
+   @NamedCache("userCache") userCache        : CacheApi,
                         val reactiveMongoApi : ReactiveMongoApi,
                         val mailing          : Mailing) // Mailing Controller
                     extends Controller with I18nSupport
@@ -34,7 +36,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                                        with backendLogin
                                        with ReactiveMongoComponents
                                        with Common
-                                       with Session {
+                                       with UserSessions {
 
   // get the collection 'users'
   private val userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
@@ -64,45 +66,49 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     *
     * @return
     */
-  def miniProfile() = Action { implicit request =>
-    val user = getUser
-    user.userData match {
-      case Some(userData) =>
-        Ok(views.html.auth.miniprofile(user))
-      case None =>
-        BadRequest
+  def miniProfile() = Action.async { implicit request =>
+    getUser(request, userCollection, userCache).map { user =>
+      user.userData match {
+        case Some(userData) =>
+          Ok(views.html.auth.miniprofile(user))
+        case None =>
+          BadRequest
+      }
     }
   }
 
   /**
     * User wants to sign out
     * -> remove the sessionID from the database, Overwrite their cookie and give them a new Session ID
+    *
     * @return
     */
-  def signOut() = Action { implicit request =>
-    val sessionID = requestSessionID // grab the Old Session ID
-    val user      = getUser
-    userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
-      BSONDocument("$unset"  -> BSONDocument(User.SESSIONID -> ""))))
-    removeUser(sessionID)  // Remove the User from the association
+  def signOut() = Action.async { implicit request =>
+    getUser(request, userCollection, userCache).map { user =>
+      userCache.remove(user.userID.stringify)
+      userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
+                                      BSONDocument("$unset" -> BSONDocument(User.SESSIONID -> ""))))
 
-    Redirect(routes.Application.index()).flashing(
-      "success" -> "You've been logged out"
-    )
+      Redirect(routes.Application.index()).withNewSession.flashing(
+        "success" -> "You've been logged out"
+      )
+    }
   }
 
   /**
     * A logged in User would like to edit their personal data
+    *
     * @return
     */
-  def profile() = Action { implicit request =>
-    val user  = getUser
-    user.userData match {
-      case Some(userData) =>
-        Ok(views.html.auth.profile(user))
-      case None =>
-        // User was not logged in
-        Redirect(routes.Application.index())
+  def profile() = Action.async { implicit request =>
+    getUser(request, userCollection, userCache).map { user =>
+      user.userData match {
+        case Some(userData) =>
+          Ok(views.html.auth.profile(user))
+        case None =>
+          // User was not logged in
+          Redirect(routes.Application.index())
+      }
     }
   }
 
@@ -114,9 +120,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signInSubmit() = Action.async { implicit request =>
-    val sessionID        = requestSessionID
-    val unregisteredUser = getUser
-    Logger.info(sessionID.stringify + " wants to Sign in!")
+    getUser(request, userCollection, userCache).flatMap { unregisteredUser =>
+    Logger.info(unregisteredUser.sessionID.get.stringify + " wants to Sign in!")
 
     // Evaluate the Form
     FormDefinitions.SignIn.bindFromRequest.fold(
@@ -135,15 +140,13 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
             if (databaseUser.checkPassword(signInFormUser.password)) {
               Future {
                 // add the remaining jobs from the previous session to the jobs of the now logged in user
-                val loggedInUser = databaseUser.copy(sessionID = Some(sessionID),
+                val loggedInUser = databaseUser.copy(sessionID = unregisteredUser.sessionID,
                                                      jobs      = databaseUser.jobs ::: unregisteredUser.jobs)
-                // add the user to the current sessions
-                editUser(sessionID, loggedInUser)
 
                 // create a modifier document to change the last login date in the Database
                 val selector = BSONDocument(User.IDDB          -> loggedInUser.userID)
                 val modifier = BSONDocument("$set"             ->
-                               BSONDocument(User.SESSIONID     -> sessionID,
+                               BSONDocument(User.SESSIONID     -> unregisteredUser.sessionID,
                                             User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
                                             "$addToSet"        ->
                                BSONDocument(User.JOBS          ->
@@ -152,8 +155,12 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                 userCollection.flatMap(_.update(selector, modifier))
                 // Remove the old, not logged in user
                 userCollection.flatMap(_.remove(BSONDocument(User.IDDB -> unregisteredUser.userID)))
+
+                // Make sure the Cache is updated
+                updateUser(loggedInUser, userCache)
+
                 // Everything is ok, let the user know that they are logged in now
-                Ok(LoggedIn(loggedInUser))
+                Ok(LoggedIn(loggedInUser)).withSession(sessionCookie(request, loggedInUser.sessionID.get))
               }
             } else {
               Future.successful {
@@ -167,7 +174,9 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
             }
         }
       })
+    }
   }
+
 
   /**
     * Submission of the sign up form, user wants to register
@@ -176,8 +185,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signUpSubmit() = Action.async { implicit request =>
-    val sessionID = requestSessionID
-    val user      = getUser
+    getUser(request, userCollection, userCache).flatMap { user =>
     FormDefinitions.SignUp(user).bindFromRequest.fold(
       errors =>
         // Something went wrong with the Form.
@@ -202,21 +210,20 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
             case None =>
               // Create the database entry.
               userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),signUpFormUser)).map { a =>
-                addUser(sessionID, signUpFormUser)
                 // All done. User is registered
-                Ok(LoggedIn(signUpFormUser)).withSession {
-                  closeSessionRequest(request, sessionID) // Send Session Cookie
-                }
+                // Make sure the Cache is updated
+                updateUser(user, userCache)
+                Ok(LoggedIn(signUpFormUser)).withSession(sessionCookie(request, user.sessionID.get))
               }
           }
         }
       }
     )
   }
+  }
 
   def profileSubmit() = Action.async { implicit request =>
-    val sessionID = requestSessionID
-    val user = getUser
+    getUser(request, userCollection, userCache).flatMap { user =>
     user.userData match {
       case Some(userData) =>
         FormDefinitions.ProfileEdit.bindFromRequest.fold(
@@ -233,13 +240,10 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                   Future {
                     // Create a modified user object
                     if (userFromDB.checkPassword(profileEditFormUser.password)) {
-                      val modifiedUser = userFromDB.copy(sessionID = Some(sessionID),
+                      val modifiedUser = userFromDB.copy(sessionID = user.sessionID,
                         userData = Some(profileEditFormUser.toUserData(userFromDB.getUserData)),
                         dateLastLogin = Some(new DateTime()),
                         dateUpdated = Some(new DateTime()))
-
-                      // overwrite the sessions based user
-                      editUser(sessionID, modifiedUser)
 
                       // create a modifier document to change the last login date in the Database
                       val selector = BSONDocument(User.IDDB -> userFromDB.userID)
@@ -263,6 +267,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
         // User was not logged in
         Future.successful(Ok(NotLoggedIn()))
     }
+  }
   }
 
   /**
@@ -390,11 +395,13 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
   }*/
 
   // Mock up function to let a user access to a page only when they are logged in as a user with certain rights
-  def backendAccess() = Action { implicit request =>
-    if (getUser.isSuperuser) {
-      NoCache(Redirect(routes.Backend.access))
-    } else {
-      NotFound
+  def backendAccess() = Action.async { implicit request =>
+    getUser(request, userCollection, userCache).map { user =>
+      if (user.isSuperuser) {
+        NoCache(Redirect(routes.Backend.access))
+      } else {
+        NotFound
+      }
     }
   }
 }

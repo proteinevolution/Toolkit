@@ -16,7 +16,7 @@ final class GeoIP(file: String) {
     }
   }
 
-  def getLocation(implicit request: RequestHeader) : Location = {
+  def getLocation(request: RequestHeader) : Location = {
     getLocation(request.remoteAddress)
   }
 }

@@ -8,22 +8,31 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import models.database.Session
 import models.tools._
+import play.api.cache._
+import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.api.FailoverStrategy
+import reactivemongo.api.collections.bson.BSONCollection
 
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 
 @Singleton
-class Tool @Inject()(val messagesApi: MessagesApi,
-                     implicit val mat: Materializer,
-                     @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport with Session {
+class Tool @Inject()(val messagesApi      : MessagesApi,
+@NamedCache("userCache") userCache        : CacheApi,
+                     val reactiveMongoApi : ReactiveMongoApi,
+            implicit val mat              : Materializer,
+    @Named("jobManager") jobManager       : ActorRef) extends Controller with I18nSupport with UserSessions {
 
   implicit val timeout = Timeout(5.seconds)
+  val userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
 
 
-  def submit(toolname: String, start : Boolean, jobID : Option[String]) = Action { implicit request =>
+  def submit(toolname: String, start : Boolean, jobID : Option[String]) = Action.async { implicit request =>
+    getUser(request, userCollection, userCache).map { user =>
 
     // Fetch the job ID from the submission, might be the empty string
     //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
@@ -53,12 +62,12 @@ class Tool @Inject()(val messagesApi: MessagesApi,
 
           BadRequest("There was an error with the Form")
         },
-        _ => jobManager ! Prepare(getUser, jobID, toolname, boundForm.data, start = start)
+        _ => jobManager ! Prepare(user, jobID, toolname, boundForm.data, start = start)
       )
-      Ok
+      Ok.withSession(sessionCookie(request, user.sessionID.get))
     }
   }
-
+  }
 }
 
 

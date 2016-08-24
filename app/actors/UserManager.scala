@@ -7,6 +7,7 @@ import akka.actor.{ActorLogging, Actor, ActorRef}
 import akka.event.LoggingReceive
 import models.database.User
 import play.api.Logger
+import play.api.cache._
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
@@ -17,13 +18,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 @Singleton
 final class UserManager @Inject() (
-                                       val reactiveMongoApi: ReactiveMongoApi,
-                      @Named("jobManager") jobManager  : ActorRef,
-                              implicit val materializer: akka.stream.Materializer)
-                                   extends Actor
-                                      with ActorLogging
-                                      with ReactiveMongoComponents {
+          @NamedCache("userCache") userCache        : CacheApi,
+                               val reactiveMongoApi : ReactiveMongoApi,
+              @Named("jobManager") jobManager       : ActorRef,
+                      implicit val materializer     : akka.stream.Materializer)
+                           extends Actor
+                              with ActorLogging
+                              with ReactiveMongoComponents {
+
   def userCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
+
 
   // Maps Session ID to Actor Ref of corresponding WebSocket
   val connectedUsers = new scala.collection.mutable.HashMap[BSONObjectID, ActorRef]
