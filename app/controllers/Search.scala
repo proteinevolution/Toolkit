@@ -36,5 +36,11 @@ final class Search @Inject() (jobDao: JobDAO) extends Controller {
     }
   }
 
+ /* def checkExistantJob(job: String) = Action.async {
+
+    NoContent
+
+  }*/
+
 
 }
