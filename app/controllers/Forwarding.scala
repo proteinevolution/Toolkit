@@ -32,9 +32,7 @@ class Forwarding @Inject() (val messagesApi: MessagesApi,
     lazy val sessionID = requestSessionID
     lazy val user : User = getUser
 
-    Ok(views.html.main(webJarAssets, toolFrame, section, user)).withSession {
-      closeSessionRequest(request, sessionID)
-    }
+    Ok(views.html.main(webJarAssets, toolFrame, section, user))
   }
 
 }

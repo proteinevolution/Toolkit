@@ -10,6 +10,7 @@ import models.Constants
 import models.database.{Job, JobState, Session, User}
 import models.tel.TEL
 import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
+import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
@@ -26,44 +27,37 @@ import scala.concurrent.duration._
   * Created by lukas on 2/27/16.
   */
 @Singleton
-class Service @Inject() (webJarAssets: WebJarAssets,
-                         val messagesApi: MessagesApi,
-                         val reactiveMongoApi : ReactiveMongoApi,
-                         val tel : TEL,
-                         @Named("jobManager") jobManager : ActorRef)
+class Service @Inject() (webJarAssets     : WebJarAssets,
+                     val messagesApi      : MessagesApi,
+@NamedCache("userCache") userCache        : CacheApi,
+                     val reactiveMongoApi : ReactiveMongoApi,
+                     val tel              : TEL,
+    @Named("jobManager") jobManager       : ActorRef)
 
                  extends Controller with I18nSupport
                                     with Constants
                                     with ReactiveMongoComponents
-                                    with Session {
+                                    with UserSessions {
 
   implicit val timeout = Timeout(1.seconds)
 
   // get the collection 'jobs'
   val jobCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
+  val userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
 
   def static(static : String)  = Action { implicit request =>
 
     static match {
 
       case "sitemap" =>
-        Ok(views.html.general.sitemap()).withSession {
-          closeSessionRequest(request, requestSessionID)
-        }
+        Ok(views.html.general.sitemap())
+
       // Frontend tools
       case "reformat" =>
-
-        val sessionID = requestSessionID
-        val user : User = getUser
-
-        Ok(views.html.tools.forms.reformat(webJarAssets,"Utils")).withSession {
-          closeSessionRequest(request, sessionID)
-        }
+        Ok(views.html.tools.forms.reformat(webJarAssets,"Utils"))
 
       case "seq2gi" =>
-        Ok(views.html.tools.forms.seq2gi()).withSession {
-          closeSessionRequest(request, requestSessionID)
-        }
+        Ok(views.html.tools.forms.seq2gi())
 
       case _ =>
 
@@ -81,10 +75,12 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     * @param mainID
     * @return
     */
-  def delJob(mainID: String) = Action { implicit request =>
-    // TODO We go over the Websocket for this now, we may keep this for testing until production?
-    jobManager ! DeleteJob(getUser.userID, BSONObjectID.parse(mainID).getOrElse(BSONObjectID.generate()))
-    Ok
+  def delJob(mainID: String) = Action.async { implicit request =>
+    getUser(request, userCollection, userCache).map { user =>
+      // TODO We go over the Websocket for this now, we may keep this for testing until production?
+      jobManager ! DeleteJob(user.userID, BSONObjectID.parse(mainID).getOrElse(BSONObjectID.generate()))
+      Ok.withSession(sessionCookie(request, user.sessionID.get))
+    }
   }
 
   /*
@@ -113,9 +109,7 @@ class Service @Inject() (webJarAssets: WebJarAssets,
 
 
   def jobInfo(jobID: String) = Action.async { implicit request =>
-    val sessionID = requestSessionID // Grab the Session ID
-    val user = getUser
-
+    getUser(request, userCollection, userCache).flatMap { user =>
     val futureJob = jobCollection.flatMap(_.find(BSONDocument(Job.USERID -> user.userID, Job.JOBID -> jobID)).one[Job])
     futureJob.flatMap {
       case Some(job) =>
@@ -135,9 +129,8 @@ class Service @Inject() (webJarAssets: WebJarAssets,
               case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
             }
             Future.successful{
-              Ok(views.html.general.submit(tel, job.tool, toolFrame, Some(jobID))).withSession {
-                closeSessionRequest(request, sessionID) // Send Session Cookie
-              }
+              Ok(views.html.general.submit(tel, job.tool, toolFrame, Some(jobID)))
+                .withSession(sessionCookie(request, user.sessionID.get))
             }
 
           case JobState.Done =>
@@ -171,18 +164,19 @@ class Service @Inject() (webJarAssets: WebJarAssets,
                   s"/files/${job.mainID.stringify}/outfile_multi_sto",
                   s"/files/${job.mainID.stringify}/tbl"))
             }
-            Future.successful(Ok(toolFrame).withSession {
-              closeSessionRequest(request, sessionID)   // Send Session Cookie
-            })
+            Future.successful(Ok(toolFrame)
+                                .withSession(sessionCookie(request, user.sessionID.get)))
 
           case JobState.Error    =>
-            Future.successful(Ok(views.html.job.error(jobID)))
+            Future.successful(Ok(views.html.job.error(jobID))
+                                .withSession(sessionCookie(request, user.sessionID.get)))
 
           case _ =>
             Future.successful(NotFound)
         }
       case None => Future.successful(NotFound)
     }
+  }
   }
 }
 
@@ -194,99 +188,97 @@ class Service @Inject() (webJarAssets: WebJarAssets,
     * @return
     */
   /**
-  def jobInfo(jobID: String) = Action.async { implicit request =>
+    * def jobInfo(jobID: String) = Action.async { implicit request =>
 
-    val sessionID = requestSessionID // Grab the Session ID
-    val user = getUser
+    * val sessionID = requestSessionID // Grab the Session ID
+    * val user = getUser
 
-    (jobManager ? JobInfo(getUser.userID, jobID)).flatMap {
+    * (jobManager ? JobInfo(getUser.userID, jobID)).flatMap {
 
-      case JobIDUnknown => Future.successful(NotFound)
-      case PermissionDenied => Future.successful(NotFound)
+    * case JobIDUnknown => Future.successful(NotFound)
+    * case PermissionDenied => Future.successful(NotFound)
 
-      case job : models.database.Job =>
+    * case job : models.database.Job =>
 
-        // Decide what to show depending on the JobState
-      job.status match {
+    * // Decide what to show depending on the JobState
+    * job.status match {
 
-        // User has requested a job whose state is Running
-        case JobState.Running => Future.successful(Ok(views.html.job.running(jobID)).withSession {
-          closeSessionRequest(request, sessionID)   // Send Session Cookie
-        })
+    * // User has requested a job whose state is Running
+    * case JobState.Running => Future.successful(Ok(views.html.job.running(jobID)).withSession {
+    * closeSessionRequest(request, sessionID)   // Send Session Cookie
+    * })
 
-        case JobState.Prepared =>
+    * case JobState.Prepared =>
 
-          (jobManager ? Read(getUser.userID, jobID)).mapTo[Map[String, String]].map { res =>
+    * (jobManager ? Read(getUser.userID, jobID)).mapTo[Map[String, String]].map { res =>
 
-            val toolframe = job.tool match {
-              case "alnviz" => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(res))
-              case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(res))
-              case "hmmer3" => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(res))
-              case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(res))
-            }
+    * val toolframe = job.tool match {
+    * case "alnviz" => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(res))
+    * case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(res))
+    * case "hmmer3" => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(res))
+    * case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(res))
+    * }
 
-            Ok(views.html.general.submit(tel, job.tool, toolframe, Some(jobID))).withSession {
-              closeSessionRequest(request, sessionID) // Send Session Cookie
-            }
-          }
+    * Ok(views.html.general.submit(tel, job.tool, toolframe, Some(jobID))).withSession {
+    * closeSessionRequest(request, sessionID) // Send Session Cookie
+    * }
+    * }
 
-        // User requested job whose execution is done
-        case JobState.Done =>
+    * // User requested job whose execution is done
+    * case JobState.Done =>
 
-          val toolframe = job.tool match {
+    * val toolframe = job.tool match {
 
-            //  The tool anlviz just returns the BioJS MSA Viewer page
-            case "alnviz" =>
-              val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/result"))
-              views.html.job.result(vis, jobID, job.tool)
+    * //  The tool anlviz just returns the BioJS MSA Viewer page
+    * case "alnviz" =>
+    * val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/result"))
+    * views.html.job.result(vis, jobID, job.tool)
 
+    * // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
+    * case "tcoffee" =>
 
-            // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
-            case "tcoffee" =>
+    * val vis = Map(
+    * "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+    * "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
 
-              val vis = Map(
-                "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
-                "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
+    * views.html.job.result(vis, jobID, job.tool)
 
-              views.html.job.result(vis, jobID, job.tool)
+    * case "reformatb" =>
 
+    * val vis = Map(
+    * "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+    * "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
 
-            case "reformatb" =>
+    * views.html.job.result(vis, jobID, job.tool)
 
-              val vis = Map(
-                "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
-                "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
+    * case "psiblast" =>
 
-              views.html.job.result(vis, jobID, job.tool)
+    * val vis = Map(
+    * "Results" -> views.html.visualization.alignment.blastvis(s"/files/${job.mainID.stringify}/out.psiblastp"),
+    * "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+    * "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
 
-            case "psiblast" =>
+    * views.html.job.result(vis, jobID, job.tool)
 
-              val vis = Map(
-                "Results" -> views.html.visualization.alignment.blastvis(s"/files/${job.mainID.stringify}/out.psiblastp"),
-                "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
-                "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
+    * // Hmmer just provides a simple file viewer.
+    * case "hmmer3" => views.html.visualization.general.fileview(
+    * Array(s"/files/${job.mainID.stringify}/domtbl",
+    * s"/files/${job.mainID.stringify}/outfile",
+    * s"/files/${job.mainID.stringify}/outfile_multi_sto",
+    * s"/files/${job.mainID.stringify}/tbl"))
+    * }
+    * Future.successful(Ok(toolframe).withSession {
+    * closeSessionRequest(request, sessionID)   // Send Session Cookie
+    * })
 
-              views.html.job.result(vis, jobID, job.tool)
+    * case JobState.Error =>
 
-            // Hmmer just provides a simple file viewer.
-            case "hmmer3" => views.html.visualization.general.fileview(
-              Array(s"/files/${job.mainID.stringify}/domtbl",
-                    s"/files/${job.mainID.stringify}/outfile",
-                    s"/files/${job.mainID.stringify}/outfile_multi_sto",
-                    s"/files/${job.mainID.stringify}/tbl"))
-          }
-          Future.successful(Ok(toolframe).withSession {
-            closeSessionRequest(request, sessionID)   // Send Session Cookie
-          })
-
-        case JobState.Error =>
-
-          Future.successful(Ok(views.html.job.error(jobID)).withSession {
-            closeSessionRequest(request, sessionID)   // Send Session Cookie
-          })
-      }
-    }
-  }*/
+    * Future.successful(Ok(views.html.job.error(jobID)).withSession {
+    * closeSessionRequest(request, sessionID)   // Send Session Cookie
+    * })
+    * }
+    * }
+    * }*/
 
 
 
