@@ -31,7 +31,7 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
   def userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
   def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
 
-
+/*
   def checkJobHash(toolname: String, start: Boolean, jobID: Option[String]) = Action { implicit request =>
 
     val form = toolname match {
@@ -50,7 +50,7 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
     NotFound
 
 
-  }
+  } */
 
 
 
@@ -89,7 +89,7 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
         _ => jobManager ! Prepare(user, jobID, toolname, boundForm.data, start = start)
       )
       Ok.withSession(sessionCookie(request, user.sessionID.get))
-      //Ok("Hello world")
+
     }
   }
   }
