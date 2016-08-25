@@ -45,18 +45,36 @@ body{
     background-color: #DBFFDB;
 
 }
+
+.d:hover {
+    background-color: #C3FFC3;
+}
+
 .e {
     background-color: #FFDDDD;
 }
+.e:hover {
+    background-color: #FFC5C5;
+}
+
 .r{
     background-color: #FFFF94;
+}
+.r:hover {
+    background-color: #FFF666;
 }
 .q {
     background-color: #FFDDAB;
 }
+.q:hover {
+    background-color: #FFD492;
+}
 
 .p {
     background-color: #f2f2f2;
+}
+.p:hover {
+    background-color: #DADADA;
 }
 
 
