@@ -28,8 +28,7 @@ trait UserSessions {
     val httpRequest    = HTTPRequest(request)
     val newSessionData = SessionData(ip        = request.remoteAddress,
                                      userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
-                                     location  = geoIP.getLocation(request),
-                                     online    = true)
+                                     location  = geoIP.getLocation(request))
 
     userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID)).one[User]).map {
       case Some(user)   =>
@@ -45,6 +44,7 @@ trait UserSessions {
       case None =>
         val user = User(userID        = BSONObjectID.generate(),
                         sessionID     = Some(sessionID),
+                        up            = Some(true),
                         sessionData   = List(newSessionData),
                         dateCreated   = Some(new DateTime()),
                         dateLastLogin = Some(new DateTime()),

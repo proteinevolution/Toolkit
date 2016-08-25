@@ -8,6 +8,7 @@ import reactivemongo.bson._
 case class User(userID        : BSONObjectID,                        // ID of the User
                 sessionID     : Option[BSONObjectID] = None,         // Session ID
                 sessionData   : List[SessionData]    = List.empty,   // Session data separately from sid
+                up            : Option[Boolean],
                 accountType   : Int                  = -1,           // User Access level
                 userData      : Option[UserData]     = None,         // Personal Data of the User //TODO possibly encrypt?
                 userConfig    : UserConfig           = UserConfig(), // Configurable parts for the user
@@ -44,6 +45,7 @@ object User {
   final val IDDB          = "_id"                               //              ID in MongoDB
   final val SESSIONID     = "sessionID"                         //              Session ID of the User
   final val SESSIONDATA   = "sessionData"                       //              session information
+  final val UP            = "up"                                // is the user online?
   final val ACCOUNTTYPE   = "accountType"                       //              account type field
   final val USERDATA      = "userData"                          //              user data object field
   final val NAMELOGIN     = USERDATA + "." + UserData.NAMELOGIN //              login name field
@@ -62,6 +64,7 @@ object User {
       userID        = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID("None")),
       sessionID     = bson.getAs[BSONObjectID](SESSIONID),
       sessionData   = bson.getAs[List[SessionData]](SESSIONDATA).getOrElse(List.empty),
+      up            = bson.getAs[Boolean](UP),
       accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
       userData      = bson.getAs[UserData](USERDATA),
       userConfig    = bson.getAs[UserConfig](USERCONFIG).getOrElse(UserConfig()),
@@ -76,6 +79,7 @@ object User {
       IDDB          -> user.userID,
       SESSIONID     -> user.sessionID,
       SESSIONDATA   -> user.sessionData,
+      UP            -> user.up,
       ACCOUNTTYPE   -> user.accountType,
       USERDATA      -> user.userData,
       USERCONFIG    -> user.userConfig,
