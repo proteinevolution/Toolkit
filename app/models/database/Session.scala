@@ -12,21 +12,19 @@ import reactivemongo.bson._
 
 case class SessionData(ip        : String,
                        userAgent : String,
-                       location  : Location,
-                       online    : Boolean)
+                       location  : Location)
 
 object SessionData {
   final val IP        = "ip"
   final val USERAGENT = "userAgent"
   final val LOCATION  = "location"
-  final val ONLINE    = "online"
+
 
   implicit object Reader extends BSONDocumentReader[SessionData] {
     override def read(bson: BSONDocument): SessionData = SessionData(
       ip        = bson.getAs[String](IP).getOrElse("none"),
       userAgent = bson.getAs[String](USERAGENT).getOrElse("none"),
-      location  = bson.getAs[Location](LOCATION).getOrElse(Location("none",None,None,None)),
-      online    = bson.getAs[Boolean](ONLINE).getOrElse(false)
+      location  = bson.getAs[Location](LOCATION).getOrElse(Location("none",None,None,None))
     )
   }
 
@@ -34,8 +32,7 @@ object SessionData {
     override def write(sessionData : SessionData) : BSONDocument = BSONDocument(
       IP        -> sessionData.ip,
       USERAGENT -> sessionData.userAgent,
-      LOCATION  -> sessionData.location,
-      ONLINE    -> sessionData.online
+      LOCATION  -> sessionData.location
     )
   }
 }
@@ -81,6 +78,7 @@ trait Session extends {
     Sessions.sessionUserMap.getOrElse(sessionID,
       addUser(sessionID, User(userID        = BSONObjectID.generate(),
                               sessionID     = Some(sessionID),
+                              up            = Some(true),
                               dateCreated   = Some(new DateTime()),
                               dateLastLogin = Some(new DateTime()),
                               dateUpdated   = Some(new DateTime()))))

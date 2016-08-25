@@ -81,15 +81,10 @@ final class UserManager @Inject() (
       val actorRef = connectedUsers.remove(userID)
 
       val modifier = BSONDocument(
-        "$set" -> BSONDocument(
-          "sessionData" ->
-            BSONDocument("online" -> false) // TODO This nested structure could possibly be refactored with Lenses
-        )
+        "$set" -> BSONDocument("up" -> false)
       )
 
-       // TODO if a user is set offline, his sessionData is deleted too. This is due to the immutable character of SessionData.
-       // We would need a request at this place to keep this data in the database in order to request a new SessionData object.
-      val _ = userCollection.flatMap(_.update(BSONDocument(User.IDDB -> userID),modifier)) //to test logout, just delete your cookies in the browser
+      val _ = userCollection.flatMap(_.update(BSONDocument(User.IDDB -> userID),modifier))
 
     case GetJobList(userID : BSONObjectID) =>
       //Logger.info("Connection stands, fetching jobs")
