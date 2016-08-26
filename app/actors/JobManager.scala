@@ -252,8 +252,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         // create job checksum, using FNV-1, a non-cryptographic hashing algorithm
         // to guarantee the uniqueness of a job we should consider to optimize the algorithm and take following parameters: job parameters, inputfile, mtime of the database
 
-        val DB = params.getOrElse("standarddb","").toFile  // get hold of the database in use
-        val jobByteArray = params.toString().getBytes // convert params to hashable byte array
+        lazy val DB = params.getOrElse("standarddb","").toFile  // get hold of the database in use
+        lazy val jobByteArray = params.toString().getBytes // convert params to hashable byte array
 
         lazy val jobHash = {
           params.get("standarddb") match {
@@ -269,7 +269,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           }
         }
 
-        hashCollection.flatMap(_.insert(jobHash)) // insert hash into jobhashes collection
+        hashCollection.flatMap(_.insert(jobHash)) // insert hash into jobhashes collection. This insertion should stay here even for the price of having code duplication
+        // in the tool controller because jobhashes should only get into the database when the job succeeds. TODO we need to check on each job with same signature if jobstate is 'done'.
 
 
         // Also Start Job if requested
