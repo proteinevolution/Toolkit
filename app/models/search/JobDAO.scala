@@ -1,11 +1,10 @@
 package models.search
 
 
-
-
 import javax.inject.{Named, Inject}
 
 import models.database.Job
+import play.Logger
 import play.api.libs.json.JsObject
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,6 +31,18 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   def indexJobs(jobId: String, job: Job) = client execute {
     index into indexAndType source job id jobId
   }
+
+
+  //inputHash : String, dbName : Option[String], dbMtime : Option[String]
+  def matchHash =  client.execute { search in "tkplay_dev" -> "jobhashes" query s"hash:675446171527794326"}
+
+  def getHash(hash : String, dbName : Option[String], dbMtime : Option[String]) = {
+    val resp = client.execute(
+      search in "tkplay_dev"->"jobhashes" query s"hash:${hash}"
+    )
+    resp
+  }
+
 
   def bulkIndex(jobs: Iterable[Job]) = client execute {
     bulk {
