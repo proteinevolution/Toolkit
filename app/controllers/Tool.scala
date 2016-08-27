@@ -72,10 +72,6 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
       lazy val inputHash = FNV.hash64(jobByteArray).toString()
 
 
-      println("Mtime: " + DB.lastModifiedTime.toString)
-
-
-
       lazy val dbName = {
         boundForm.data.get("standarddb") match {
           case None => Some("none")
