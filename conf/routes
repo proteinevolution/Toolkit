@@ -96,8 +96,8 @@ PUT         /job                                           @controllers.Jobs.upd
 
 # ElasticSearch
 
-GET     /search/jobs/:id                                   @controllers.Search.getJob(id: String)
-GET     /search:q                                          @controllers.Search.searchJob(q: String)
+#GET     /search/jobs/:id                                   @controllers.Search.getJob(id: String)
+#GET     /search:q                                          @controllers.Search.searchJob(q: String)
 
 
 
