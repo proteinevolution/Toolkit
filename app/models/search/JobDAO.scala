@@ -49,6 +49,17 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   }
 
 
+  def deleteJob(jobId : String) = {
+    client.execute {
+      bulk(
+        delete id jobId from "tkplay_dev" / "jobs",
+        delete id jobId from "tkplay_dev" / "jobhashes"
+        )
+    }
+  }
+
+
+
   def bulkIndex(jobs: Iterable[Job]) = client execute {
     bulk {
       jobs map (job => index into indexAndType source job)
