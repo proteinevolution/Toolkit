@@ -33,12 +33,17 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   }
 
 
-  //inputHash : String, dbName : Option[String], dbMtime : Option[String]
-  def matchHash =  client.execute { search in "tkplay_dev" -> "jobhashes" query s"hash:675446171527794326"}
-
-  def getHash(hash : String, dbName : Option[String], dbMtime : Option[String]) = {
+  def matchHash(hash : String, dbName : Option[String], dbMtime : Option[String]) = {
     val resp = client.execute(
-      search in "tkplay_dev"->"jobhashes" query s"hash:${hash}"
+      search in "tkplay_dev"->"jobhashes" query {
+          bool(
+            must(
+              termQuery("hash", hash),
+              termQuery("dbname", dbName.get),
+              termQuery("dbmtime", dbMtime.get)
+            )
+          )
+      }
     )
     resp
   }
@@ -53,6 +58,6 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   def searchByQueryString(q: String)(implicit ec: ExecutionContext) = client execute {
     search in indexAndType query queryStringQuery(q)
   } map (_.as[Job])
-  
+
 
 }

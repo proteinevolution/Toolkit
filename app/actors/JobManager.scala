@@ -259,13 +259,14 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           params.get("standarddb") match {
             case None => JobHash( mainID = newJob.mainID,
                                   inputHash = FNV.hash64(jobByteArray).toString(), // TODO check the probability of collisions
-                                  dbName = None,
-                                  dbMtime = None )
+                                  dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
+                                  dbMtime = Some("1970-01-01T00:00:00Z") ) //really weird bug in elasticsearch, "none" was not accepted when a timestamp-like string existed, so take unix epoch time
 
             case _ => JobHash( mainID = newJob.mainID,
                                inputHash = FNV.hash64(jobByteArray).toString(), // TODO check the probability of collisions
                                dbName = Some(DB.name),
-                               dbMtime = Some(DB.lastModifiedTime.toString) )
+                               dbMtime = Some(DB.lastModifiedTime.toString)
+            )
           }
         }
 
