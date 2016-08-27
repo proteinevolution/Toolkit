@@ -1,16 +1,7 @@
 package models.search
 
-
 import javax.inject.{Named, Inject}
-
-import models.database.Job
-import play.Logger
-import play.api.libs.json.JsObject
-
-import scala.concurrent.{ExecutionContext, Future}
-
 import com.sksamuel.elastic4s.{IndexAndType, ElasticDsl}
-
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
 

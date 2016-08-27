@@ -29,12 +29,12 @@ import scala.util.{Failure, Success}
 
 
 @Singleton
-class Tool @Inject()(val messagesApi      : MessagesApi,
-@NamedCache("userCache") userCache        : CacheApi,
-                     val reactiveMongoApi : ReactiveMongoApi,
-            implicit val mat              : Materializer,
-                     val jobDao : JobDAO,
-    @Named("jobManager") jobManager       : ActorRef) extends Controller with I18nSupport with UserSessions {
+final class Tool @Inject()(val messagesApi      : MessagesApi,
+      @NamedCache("userCache") userCache        : CacheApi,
+                           val reactiveMongoApi : ReactiveMongoApi,
+                  implicit val mat              : Materializer,
+                           val jobDao           : JobDAO,
+          @Named("jobManager") jobManager       : ActorRef) extends Controller with I18nSupport with UserSessions {
 
   implicit val timeout = Timeout(5.seconds)
   def userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
@@ -44,7 +44,10 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
 
 
   def submit(toolname: String, start : Boolean, jobID : Option[String]) = Action.async { implicit request =>
+
+
     getUser(request, userCollection, userCache).map { user =>
+
 
     // Fetch the job ID from the submission, might be the empty string
     //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
@@ -90,6 +93,7 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
       }
 
 
+
       lazy val hashQuery = jobDao.matchHash(inputHash, dbName, dbMtime)
 
       hashQuery.onComplete({
@@ -107,15 +111,16 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
               jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> BSONObjectID(x.getId))).one[Job]).foreach {
 
 
-
                 case Some(oldJob) =>
                   if (oldJob.status != Done) {
-                    println("job with same signature found but job failed, should submit the job again")
+                    println("job with same signature found but job failed or still running, should submit the job again")
                     jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> BSONObjectID(x.getId)))) // we should delete failed jobs only here because keeping them is normally useful for debuggin and statistics
                   }
+                  else {
+                    println("job found: " + oldJob.tool)
 
-                  println("job found: " + oldJob.tool)
-
+                    // TODO redirect here to the first found job or better: trigger a popup
+                  }
 
                 case None => println("Error: job in index but not in database")
 
@@ -151,6 +156,8 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
 
     }
   }
+    //Ok(views.html.general.contact())
+    //Redirect(s"http://www.google.de")
   }
 }
 
