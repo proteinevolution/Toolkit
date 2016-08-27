@@ -6,7 +6,8 @@ import actors.JobManager.Prepare
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
-import models.database.{JobHash, Session}
+import models.database.JobState.Done
+import models.database.{Job, JobHash, Session}
 import models.search.JobDAO
 import models.tools._
 import modules.tools.FNV
@@ -16,6 +17,7 @@ import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.bson.{BSONInteger, BSONObjectID, BSONDocument}
 
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -37,6 +39,7 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
   implicit val timeout = Timeout(5.seconds)
   def userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
   def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
+  def jobCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
 
 
 
@@ -87,20 +90,51 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
       }
 
 
+      lazy val hashQuery = jobDao.matchHash(inputHash, dbName, dbMtime)
 
-      val test = jobDao.matchHash(inputHash, dbName, dbMtime)
-
-      test.onComplete({
+      hashQuery.onComplete({
         case Success(s) =>
           println("success: " + s)
-          //println("Hits: " + s.getHits.getHits)
+          println("hits: " + s.totalHits)
+
+          if(s.totalHits >= 1) {
+
+            for(x <- s.getHits.getHits) {
+
+              println(x.getId)
+
+
+              jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> BSONObjectID(x.getId))).one[Job]).foreach {
+
+
+
+                case Some(oldJob) =>
+                  if (oldJob.status != Done) {
+                    println("job with same signature found but job failed, should submit the job again")
+                    jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> BSONObjectID(x.getId)))) // we should delete failed jobs only here because keeping them is normally useful for debuggin and statistics
+                  }
+
+                  println("job found: " + oldJob.tool)
+
+
+                case None => println("Error: job in index but not in database")
+
+              }
+            }
+
+          }
+
+         // else if (s.totalHits > 1) { println("too many jobs with same signature") } TODO we should take care that the exact same job exists only once in the database
+
+
+          else { println("no hits found, job should be processed") }
+
 
         case Failure(exception) =>
           println("An error has occured: " + exception)
 
       })
 
-      //TODO do something with the JSON response
 
 
       boundForm.fold(
