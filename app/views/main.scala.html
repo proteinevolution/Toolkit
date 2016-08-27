@@ -77,12 +77,6 @@
             Connection lost. Trying to reconnect in <span id="offline-alert-timer"></span> seconds.
         </div>
 
-        <div class="row fullwidth show-for-large" id="topnavi" style="opacity: 1;">
-            <div class="large-12 columns" align="center" id="subnav">
-                @elements.topnav(user)
-            </div>
-        </div>
-
         <div id="myNav" class="overlay">
             <button id="hamburgerInside" class="hamburger hamburger--elastic" type="button" style="float: right; margin: 41px 39px 0 0;" onclick="closeNav()">
                 <span class="hamburger-box">
@@ -100,8 +94,11 @@
 
 
         <!---Navigation Bar --->
-        <div class="row">
-            <div class="large-12 columns" align="center">
+        <div class="row " style="padding-top: 1em;">
+            <div class="large-1 columns" align="center">
+
+            </div>
+            <div class="large-11 columns" align="center">
             @elements.navbar()
             </div>
         </div>
@@ -140,6 +137,12 @@
                             </div>
                         </section>
                     </div>
+
+            <div class="row fullwidth show-for-large" id="topnavi" style="opacity: 1;">
+                <div class="large-12 columns" align="center" id="subnav">
+                @elements.topnav(user)
+                </div>
+            </div>
 
             </div>
 
