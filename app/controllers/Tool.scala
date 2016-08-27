@@ -6,7 +6,7 @@ import actors.JobManager.Prepare
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
-import models.database.JobState.Done
+import models.database.JobState.{Running, Done}
 import models.database.{Job, JobHash, Session}
 import models.search.JobDAO
 import models.tools._
@@ -19,6 +19,7 @@ import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONInteger, BSONObjectID, BSONDocument}
 
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
@@ -112,8 +113,8 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
 
                 case Some(oldJob) =>
-                  if (oldJob.status != Done) {
-                    println("job with same signature found but job failed or still running, should submit the job again")
+                  if (oldJob.status != Done || oldJob.status != Running) {
+                    println("job with same signature found but job failed, should submit the job again")
                     jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> BSONObjectID(x.getId)))) // we should delete failed jobs only here because keeping them is normally useful for debuggin and statistics
                   }
                   else {
@@ -157,7 +158,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
     }
   }
     //Ok(views.html.general.contact())
-    //Redirect(s"http://www.google.de")
+    Future{Redirect(s"http://www.google.de")}
   }
 }
 
