@@ -177,6 +177,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
               runningProcesses(job.mainID.stringify).destroy()
             }
             jobBSONCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID)))
+            hashCollection.flatMap(_.remove(BSONDocument(JobHash.ID -> job.mainID)))
             jobDao.deleteJob(job.mainID.stringify) // remove deleted jobs from elasticsearch job and hash indices
 
             Future {
