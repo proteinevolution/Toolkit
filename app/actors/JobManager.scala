@@ -6,6 +6,7 @@ import javax.inject.{Named, Inject, Singleton}
 import actors.UserManager.MessageWithUserID
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import models.database.{JobHash, Job, User, JobState}
+import models.search.JobDAO
 import modules.tools.FNV
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
@@ -31,6 +32,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                                   val reactiveMongoApi: ReactiveMongoApi,
                                   @Named("userManager") userManager : ActorRef,
                                   val tel : TEL,
+                                  val jobDao : JobDAO,
                                   implicit val materializer: akka.stream.Materializer)
   extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes {
 
@@ -175,6 +177,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
               runningProcesses(job.mainID.stringify).destroy()
             }
             jobBSONCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID)))
+            jobDao.deleteJob(job.mainID.stringify) // remove deleted jobs from elasticsearch job and hash indices
 
             Future {
               // Delete Job Path
