@@ -201,7 +201,7 @@ object Job {
   }
 
   /**
-    * Object containimport play.libs.Jsoning the writer for the Class
+    * Object containing the writer for the Class
     */
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson : BSONDocument): Job = {

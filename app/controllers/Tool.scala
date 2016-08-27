@@ -12,7 +12,7 @@ import models.tools._
 import modules.tools.FNV
 import play.Logger
 import play.api.cache._
-import play.libs.Json
+import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
@@ -71,40 +71,40 @@ class Tool @Inject()(val messagesApi      : MessagesApi,
       lazy val jobByteArray = boundForm.data.toString().getBytes // convert params to hashable byte array
       lazy val inputHash = FNV.hash64(jobByteArray).toString()
 
+
+      println("Mtime: " + DB.lastModifiedTime.toString)
+
+
+
       lazy val dbName = {
         boundForm.data.get("standarddb") match {
-          case None => None
+          case None => Some("none")
           case _ => Some(DB.name)
         }
       }
 
       lazy val dbMtime = {
         boundForm.data.get("standarddb") match {
-          case None => None
-          case _ => Some(DB.lastModifiedTime.toString)
+          case None => Some("1970-01-01T00:00:00Z")
+          case _ => Some("2016-08-09T12:46:51Z")
         }
       }
 
-      val test = jobDao.getHash("675446171527794326", dbName, dbMtime)
+
+
+      val test = jobDao.matchHash(inputHash, dbName, dbMtime)
 
       test.onComplete({
-        case Success(listInt) => {
+        case Success(s) =>
+          println("success: " + s)
+          //println("Hits: " + s.getHits.getHits)
 
-        }
-        case Failure(exception) => {
-          //Do something with my error
-        }
+        case Failure(exception) =>
+          println("An error has occured: " + exception)
+
       })
 
-
-      jobDao.getHash("675446171527794326", dbName, dbMtime).map{ response =>
-        Logger.info("response: "+response.toString)
-
-      }
-
-      //TODO get the id back from the es query
-      //val foundId = jobDao.getHash("675446171527794326", dbName, dbMtime).map{ response => response.as[JobHash] }
-
+      //TODO do something with the JSON response
 
 
       boundForm.fold(
