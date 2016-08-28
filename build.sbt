@@ -29,7 +29,8 @@ val commonDeps = Seq(ws, filters, cache,
   "org.reactivemongo" %% "reactivemongo-play-json" % reactiveMongoVersion,
   "co.fs2" %% "fs2-core" % "0.9.0-RC2",
   "org.scalaz" %% "scalaz-core" % "7.2.5",
-  "com.chuusai" %% "shapeless" % "2.3.2"
+  "com.chuusai" %% "shapeless" % "2.3.2",
+  "org.clapper" %% "classutil" % "1.0.11"
 )
 
 /*

@@ -121,6 +121,8 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                     println("job found: " + oldJob.tool)
 
                     // TODO redirect here to the first found job or better: trigger a popup
+
+
                   }
 
                 case None => println("Error: job in index but not in database")
@@ -157,8 +159,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
     }
   }
-    //Ok(views.html.general.contact())
-    Future{Redirect(s"http://www.google.de")}
+
   }
 }
 

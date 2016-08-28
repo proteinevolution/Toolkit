@@ -18,9 +18,9 @@ import play.api.mvc._
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import modules.tools.ReflectionDAO
 
 
 @Singleton
@@ -33,6 +33,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                         val tel              : TEL,
                         val toolMatcher      : ToolMatcher,
                         val search           : Search,
+                        val reflectionDao : ReflectionDAO,
       @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
                             configuration    : Configuration) extends Controller with I18nSupport
                                                                                  with ReactiveMongoComponents
@@ -67,6 +68,8 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     * Currently the index controller will assign a session id to the user for identification purpose.
     */
   def index = Action.async { implicit request =>
+
+    reflectionDao.invokeToolName("alnviz")
     getUser(request, userCollection, userCache).map { user =>
       Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user))
         .withSession(sessionCookie(request, user.sessionID.get))
@@ -139,7 +142,10 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     }
   }
 
+
+
 }
+
 
 /* Example RESTFUL  Actions
 
