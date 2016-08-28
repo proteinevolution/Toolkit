@@ -93,7 +93,7 @@ final class Backend @Inject()(webJarAssets       : WebJarAssets,
     }
   }
 
-  def log = {
+  def log() = {
 
   }
 }
