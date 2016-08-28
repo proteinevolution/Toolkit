@@ -13,7 +13,7 @@ import reflect.runtime.universe
  * Created by snam on 27.08.16.
  */
 
-final class ReflectionDAO {
+final class ToolMirror {
 
   // this method could be used in the Toolmatcher but unfortunately the inputForm is not inherent in the ToolModel trait
   // TODO either abstract over tuple arity and get the inputForm somehow into the trait or find another solution
