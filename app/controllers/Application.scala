@@ -33,7 +33,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                         val tel              : TEL,
                         val toolMatcher      : ToolMatcher,
                         val search           : Search,
-                        val reflectionDao : ReflectionDAO,
+                        val reflectionDao    : ReflectionDAO,
       @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
                             configuration    : Configuration) extends Controller with I18nSupport
                                                                                  with ReactiveMongoComponents
@@ -70,6 +70,8 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   def index = Action.async { implicit request =>
 
     reflectionDao.invokeToolName("alnviz")
+    //reflectionDao.getMembers
+    reflectionDao.findInstances
     getUser(request, userCollection, userCache).map { user =>
       Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user))
         .withSession(sessionCookie(request, user.sessionID.get))
