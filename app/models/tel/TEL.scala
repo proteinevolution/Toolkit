@@ -5,12 +5,10 @@ import javax.inject.{Inject, Singleton}
 
 import better.files.Cmds._
 import better.files._
-import com.google.inject.Guice
 
 import scala.sys.process._
 import models.Implicits._
-import models.tel.env.{Env, ExecFile}
-import play.api.Logger
+import models.tel.env.Env
 
 
 /**
@@ -21,57 +19,11 @@ import play.api.Logger
 class TEL @Inject() (env : Env) extends TELRegex with TELConstants   {
 
 
-  Logger.info(new ExecFile(testFile).load.toString())
-
-
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
 
   // Each tool exection consists of the following subdirectories
   val subdirs : Seq[String] = Array("params", "results", "temp", "logs")
-
-
-  // Loads the init file variables
-  private val inits =  Process(initFile.pathAsString).!!.split('\n').map { param =>
-      val spt = param.split('=')
-      spt(0) -> spt(1)
-    }.toMap
-
-
-  // Returns the context name currently set
-  //  TODO the CONTEXT variable can currently only be set in the init script - how do you want to set it?
-  private var getContext : String = inits.getOrElse("CONTEXT", "LOCAL")
-
-
-
-  //-----------------------------------------------------------------------------------------------------
-  // Constants (values statically set, available in each runscript)
-  //-----------------------------------------------------------------------------------------------------
-  private var constants = loadConstants()
-
-  private def loadConstants() = {
-
-    // Get lines from CONSTANTS file, ignore empty lines, Split by key,value separator and make key/value map
-    constantsFile
-      .lineIterator
-      .withoutComment(commentChar)
-      .noWSLines
-      .map { line =>
-
-        val spt = line.split("=")
-        spt(0).trim() -> spt(1).trim()
-
-    }.toMap
-  }
-
-  def getConstant(constant : String) = {
-
-    // TODO Check whether file which holds constants has changed, otherwise return old value
-    // TODO Currently just returns the loaded constants
-    // You probably want to use loadConstants here
-    constants(constant)
-  }
-
 
 
   //-----------------------------------------------------------------------------------------------------
@@ -219,7 +171,7 @@ class TEL @Inject() (env : Env) extends TELRegex with TELConstants   {
           matcher.group("expression").trim() match {
 
           // Replace constants
-          case constantsString(constant) => constants(constant)
+          case constantsString(constant) => env.get(constant)
 
           // Replace param String
           case parameterString(paramName, selector) =>
@@ -239,7 +191,7 @@ class TEL @Inject() (env : Env) extends TELRegex with TELConstants   {
     }.toSeq
     target.appendLines(newLines:_*)
 
-    val context = getContext
+    val context = env.get("CONTEXT")
     if(context == "LOCAL") {
 
       s"$dest${SEPARATOR}EXECUTION".toFile.appendLine(target.name)

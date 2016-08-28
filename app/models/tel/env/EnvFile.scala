@@ -2,6 +2,7 @@ package models.tel.env
 
 import better.files._
 import models.tel.Subject
+import play.api.Logger
 
 import scala.sys.process.Process
 
@@ -46,8 +47,6 @@ class ExecFile(path : String) extends EnvFile(path) {
 }
 
 
-
-
 /**
   * Represents a Prop file and enables loading
   * its content
@@ -65,8 +64,9 @@ class PropFile(path : String) extends EnvFile(path) {
         .foldLeft(Map.empty[String, String]) { (a, b) =>
 
           val spt = b.split('=')
-          a.updated(spt(0).trim(),
-            EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim())
+
+          val updated = EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim()
+          a.updated(spt(0).trim(), updated)
         }
   }
 }
