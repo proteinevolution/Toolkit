@@ -10,7 +10,7 @@ import models.database.JobState.{Running, Done}
 import models.database.{Job, JobHash, Session}
 import models.search.JobDAO
 import models.tools._
-import modules.tools.FNV
+import modules.tools.{ToolMatcher, FNV}
 import play.Logger
 import play.api.cache._
 import play.api.libs.json._
@@ -35,6 +35,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                            val reactiveMongoApi : ReactiveMongoApi,
                   implicit val mat              : Materializer,
                            val jobDao           : JobDAO,
+                           val toolMatcher      : ToolMatcher,
           @Named("jobManager") jobManager       : ActorRef) extends Controller with I18nSupport with UserSessions {
 
   implicit val timeout = Timeout(5.seconds)
@@ -53,19 +54,8 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
     // Fetch the job ID from the submission, might be the empty string
     //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
 
-    // TODO replace with reflection to avoid the need to mention each tool explicitly here
-    val form = toolname match {
-      case "alnviz" => Some(Alnviz.inputForm)
-      case "tcoffee" => Some(Tcoffee.inputForm)
-      case "hmmer3" => Some(Hmmer3.inputForm)
-      case "hhpred" => Some(HHpred.inputForm)
-      case "hhblits" => Some(HHblits.inputForm)
-      case "psiblast" => Some(Psiblast.inputForm)
-      case "mafft" => Some(Mafft.inputForm)
-      case "reformatb" => Some(Reformatb.inputForm) // cluster version of reformat
-      case "clans" => Some(Clans.inputForm)
-      case _ => None
-    }
+    
+    val form = toolMatcher.formMatcher(toolname)
 
     if (form.isEmpty)
       NotFound
@@ -125,7 +115,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
                   }
 
-                case None => println("Error: job in index but not in database")
+                case None => println("[WARNING]: job in index but not in database")
 
               }
             }
