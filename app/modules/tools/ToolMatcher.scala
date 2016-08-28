@@ -4,6 +4,7 @@ import models.tel.TEL
 import models.tools._
 import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.mvc.RequestHeader
+import play.data.Form
 import play.twirl.api.Html
 
 /**
@@ -30,8 +31,23 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "reformatb" => views.html.tools.forms.reformatb(Reformatb.inputForm)
       case "clans" => views.html.tools.forms.clans(tel, Clans.inputForm)
     }
-
     toolFrame
+  }
 
+
+  def formMatcher(tool : String) = {
+    lazy val toolForm = tool match {
+      case "alnviz" => Some(Alnviz.inputForm)
+      case "tcoffee" => Some(Tcoffee.inputForm)
+      case "hmmer3" => Some(Hmmer3.inputForm)
+      case "hhpred" => Some(HHpred.inputForm)
+      case "hhblits" => Some(HHblits.inputForm)
+      case "psiblast" => Some(Psiblast.inputForm)
+      case "mafft" => Some(Mafft.inputForm)
+      case "reformatb" => Some(Reformatb.inputForm) // cluster version of reformat
+      case "clans" => Some(Clans.inputForm)
+      case _ => None
+    }
+    toolForm
   }
 }
