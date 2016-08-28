@@ -20,7 +20,7 @@ import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import modules.tools.ReflectionDAO
+import modules.tools.ToolMirror
 
 
 @Singleton
@@ -33,7 +33,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                         val tel              : TEL,
                         val toolMatcher      : ToolMatcher,
                         val search           : Search,
-                        val reflectionDao    : ReflectionDAO,
+                        val toolMirror       : ToolMirror,
       @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
                             configuration    : Configuration) extends Controller with I18nSupport
                                                                                  with ReactiveMongoComponents
@@ -69,9 +69,9 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     */
   def index = Action.async { implicit request =>
 
-    reflectionDao.invokeToolName("alnviz")
+    toolMirror.invokeToolName("alnviz")
     //reflectionDao.getMembers
-    reflectionDao.findInstances
+    toolMirror.findInstances
     getUser(request, userCollection, userCache).map { user =>
       Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user))
         .withSession(sessionCookie(request, user.sessionID.get))
