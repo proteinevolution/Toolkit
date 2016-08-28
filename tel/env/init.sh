@@ -18,9 +18,7 @@ L_HOSTNAME=`hostname`
 if [ $L_HOSTNAME == "olt" ] ; then
 
 	echo "CONTEXT=sge"
-    export CONTEXT=sge
 else
 	echo "CONTEXT=LOCAL"
-	export CONTEXT=LOCAL
 fi		 
 
