@@ -51,13 +51,24 @@ final class ToolMirror {
   // This uses the clapper library and gets a dynamic list of all objects which implement ToolModel
   // this seems to be impossible with the current version of Scala's reflection API: http://stackoverflow.com/questions/28500804/get-all-classes-of-a-package
 
-  def findInstances = {
+  def findInstances() = {
 
-    import org.clapper.classutil.ClassFinder
     val classpath = List(".").map(new File(_))
     val finder = ClassFinder(classpath)
     val classes = finder.getClasses().filter(_.implements("models.tools.ToolModel")) // classes is an Iterator[ClassInfo]
     classes.foreach(println)
+
+    println(classes(0).name)
+    val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
+    val module = runtimeMirror.staticModule(classes(0).name)
+    val obj = runtimeMirror.reflectModule(module)
+    val someTrait2: ToolModel = obj.instance.asInstanceOf[ToolModel]
+    println(someTrait2.toolNameAbbreviation)
+
+  }
+
+  lazy val toolsList = {
+
 
   }
 
