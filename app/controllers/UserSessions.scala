@@ -18,9 +18,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by astephens on 24.08.16.
   */
-trait UserSessions {
+trait UserSessions extends GeoIP {
   private final val SID = "sid"
-  protected lazy val geoIP = new GeoIP(ConfigFactory.load().getString("maxmindDB"))
 
   /**
     * puts a user in the cache
@@ -29,7 +28,7 @@ trait UserSessions {
     val httpRequest    = HTTPRequest(request)
     val newSessionData = SessionData(ip        = request.remoteAddress,
                                      userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
-                                     location  = geoIP.getLocation(request))
+                                     location  = getLocation(request))
 
 
     userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID)).one[User]).map {
