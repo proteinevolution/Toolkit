@@ -1,11 +1,12 @@
 package modules
 
 import com.sanoma.cda.geoip.MaxMindIpGeo
+import com.typesafe.config.ConfigFactory
 import models.database.Location
 import play.api.mvc.RequestHeader
 
-final class GeoIP(file: String) {
-  private val geoIp = MaxMindIpGeo(file, 1000)
+trait GeoIP {
+  private val geoIp = MaxMindIpGeo(ConfigFactory.load().getString("maxmindDB"), 1000)
 
   def getLocation(ipAddress : String) : Location = {
     geoIp.getLocation.apply(ipAddress) match {
