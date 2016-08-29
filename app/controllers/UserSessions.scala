@@ -1,5 +1,6 @@
 package controllers
 
+import com.typesafe.config.ConfigFactory
 import models.database.{User, SessionData}
 import modules.GeoIP
 import modules.common.HTTPRequest
@@ -19,7 +20,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 trait UserSessions {
   private final val SID = "sid"
-  protected lazy val geoIP = new GeoIP("/ebio/abt1_share/toolkit_support1/data/GeoLite2-City.mmdb")
+  protected lazy val geoIP = new GeoIP(ConfigFactory.load().getString("maxmindDB"))
 
   /**
     * puts a user in the cache
@@ -29,6 +30,7 @@ trait UserSessions {
     val newSessionData = SessionData(ip        = request.remoteAddress,
                                      userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
                                      location  = geoIP.getLocation(request))
+
 
     userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID)).one[User]).map {
       case Some(user)   =>
