@@ -7,19 +7,15 @@ import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
 import models.database.JobState.{Running, Done}
-import models.database.{Job, JobHash, Session}
+import models.database.{Job}
 import models.search.JobDAO
-import models.tools._
-import modules.tools.{ToolMatcher, FNV}
-import play.Logger
-import play.api.cache._
-import play.api.libs.json._
-import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.FailoverStrategy
-import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.{BSONInteger, BSONObjectID, BSONDocument}
 
-import scala.concurrent.Future
+import modules.tools.{ToolMatcher, FNV}
+import play.api.cache._
+import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.bson.{BSONObjectID, BSONDocument}
+
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
@@ -31,18 +27,14 @@ import scala.util.{Failure, Success}
 
 @Singleton
 final class Tool @Inject()(val messagesApi      : MessagesApi,
-                           @NamedCache("userCache") userCache        : CacheApi,
+                           @NamedCache("userCache") userCache : CacheApi,
                            val reactiveMongoApi : ReactiveMongoApi,
-                           implicit val mat              : Materializer,
+                           implicit val mat     : Materializer,
                            val jobDao           : JobDAO,
                            val toolMatcher      : ToolMatcher,
-                           @Named("jobManager") jobManager       : ActorRef) extends Controller with I18nSupport with UserSessions {
+                           @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport with UserSessions with Common {
 
   implicit val timeout = Timeout(5.seconds)
-  def userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
-  def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
-  def jobCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
-
 
 
   def submit(toolname: String, start : Boolean, jobID : Option[String]) = Action.async { implicit request =>
