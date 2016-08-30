@@ -38,7 +38,7 @@ val commonDeps = Seq(ws, filters, cache,
  */
 val commonSettings = Seq(
   organization := "your.organization",
-  version := "2.5.5",
+  version := "2.5.6",
   scalaVersion := "2.11.8",
   logLevel := Level.Warn,
   dependencyOverrides ++= Set("org.webjars" % "jquery" % jqueryVersion,
