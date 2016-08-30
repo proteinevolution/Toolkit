@@ -31,7 +31,10 @@ private[controllers] trait Common
     CACHE_CONTROL -> "no-cache, no-store, must-revalidate", EXPIRES -> "0"
   )
 
+  protected def userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
 
-  def userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
+  protected def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
+
+  protected def jobCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
 
 }
