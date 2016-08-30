@@ -15,9 +15,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
-import reactivemongo.api.FailoverStrategy
-import reactivemongo.api.collections.bson.BSONCollection
+import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import modules.tools.ToolMirror
@@ -36,7 +34,6 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                         val toolMirror       : ToolMirror,
       @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
                             configuration    : Configuration) extends Controller with I18nSupport
-                                                                                 with ReactiveMongoComponents
                                                                                  with Common
                                                                                  with Constants
                                                                                  with UserSessions {
@@ -45,10 +42,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   implicit val implicitActorSystem: ActorSystem = system
   implicit val timeout = Timeout(5.seconds)
   val SID = "sid"
-  // get the collection 'users'
-  def userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
 
-  // TODO get this function into a trait if possible
 
   /**
     * Opens the websocket
@@ -69,9 +63,9 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     */
   def index = Action.async { implicit request =>
 
-    toolMirror.invokeToolName("alnviz")
-    //reflectionDao.getMembers
-    toolMirror.findInstances
+    toolMirror.invokeToolName("alnviz") // even though this is a runtime mirror, it seems fast enough
+
+    toolMirror.findInstances() // finds all tool instances in the models package but this seems to be rather slow: alternatives are macros or sealed trait enumeration
     getUser(request, userCollection, userCache).map { user =>
       Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user))
         .withSession(sessionCookie(request, user.sessionID.get))

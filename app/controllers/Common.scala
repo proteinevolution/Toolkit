@@ -3,14 +3,18 @@ package controllers
 
 import play.api.http.ContentTypes
 import play.api.mvc._
-import modules.GeoIP
+import play.modules.reactivemongo.ReactiveMongoComponents
+import reactivemongo.api.FailoverStrategy
+import reactivemongo.api.collections.bson.BSONCollection
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by zin on 03.08.16.
   */
 private[controllers] trait Common
     extends Controller
-    with ContentTypes {
+    with ContentTypes
+    with ReactiveMongoComponents {
 
   var loggedOut = true
 
@@ -27,6 +31,7 @@ private[controllers] trait Common
     CACHE_CONTROL -> "no-cache, no-store, must-revalidate", EXPIRES -> "0"
   )
 
-  //protected lazy val geoIP = new GeoIP("/ebio/abt1_share/toolkit_support1/data/GeoLite2-City.mmdb")
+
+  def userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
 
 }
