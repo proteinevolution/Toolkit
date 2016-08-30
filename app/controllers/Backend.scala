@@ -2,14 +2,11 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import models.database.{Session, User}
 import org.joda.time.DateTime
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
-import reactivemongo.api.FailoverStrategy
-import reactivemongo.api.collections.bson.BSONCollection
+import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -25,12 +22,9 @@ final class Backend @Inject()(webJarAssets       : WebJarAssets,
                           val reactiveMongoApi   : ReactiveMongoApi,
                           val messagesApi        : MessagesApi)
                       extends Controller with I18nSupport
-                                         with ReactiveMongoComponents
                                          with Common
                                          with UserSessions {
 
-  // get the collection 'users'
-  private val userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
 
   // Maps Session ID to Actor Ref of corresponding WebSocket
   val connectedUsers = new scala.collection.mutable.HashMap[BSONObjectID, DateTime]

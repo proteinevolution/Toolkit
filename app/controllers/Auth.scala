@@ -1,9 +1,8 @@
 package controllers
 
-import java.util.Calendar
 import javax.inject.{Singleton, Inject}
 
-import models.database.{Session, User}
+import models.database.User
 import models.auth._
 import org.joda.time.DateTime
 import play.Logger
@@ -11,9 +10,7 @@ import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
-import reactivemongo.api.FailoverStrategy
-import reactivemongo.api.collections.bson.BSONCollection
+import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -34,12 +31,9 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                     extends Controller with I18nSupport
                                        with JSONTemplate
                                        with backendLogin
-                                       with ReactiveMongoComponents
                                        with Common
                                        with UserSessions {
 
-  // get the collection 'users'
-  private val userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
 
   /**
     * Returns the sign in form
