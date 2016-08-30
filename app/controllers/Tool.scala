@@ -103,7 +103,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
 
                   case Some(oldJob) =>
-                    if (oldJob.status != Done || oldJob.status != Running) {
+                    if (oldJob.status != Done && oldJob.status != Running) {
                       println("job with same signature found but job failed, should submit the job again")
                       jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> BSONObjectID(x.getId)))) // we should delete failed jobs only here because keeping them is normally useful for debuggin and statistics
                     }
