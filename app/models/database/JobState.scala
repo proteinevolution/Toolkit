@@ -13,15 +13,16 @@ import reactivemongo.bson.{BSONInteger, BSONReader, BSONWriter}
 
 
 object JobState {
-  abstract class JobState(val no: Int)
 
-  case object PartiallyPrepared extends JobState(0)
-  case object Prepared extends JobState(1)
-  case object Queued extends JobState(2)
-  case object Running extends JobState(3)
-  case object Error extends JobState(4)
-  case object Done extends JobState(5)
-  case object Submitted extends JobState(6)
+  sealed trait JobState
+
+  case object PartiallyPrepared extends JobState
+  case object Prepared extends JobState
+  case object Queued extends JobState
+  case object Running extends JobState
+  case object Error extends JobState
+  case object Done extends JobState
+  case object Submitted extends JobState
 
 
   implicit object JobStateReads extends Reads[JobState] {
