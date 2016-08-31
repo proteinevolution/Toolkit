@@ -27,7 +27,7 @@ sealed trait MailTemplate {
     """.stripMargin
 }
 
-class NewUserWelcomeMail(token : String) extends MailTemplate {
+final case class NewUserWelcomeMail(token : String) extends MailTemplate {
   override def subject = "Bioinformatics Toolkit - Verification"
 
   def bodyText (user : User) = {
