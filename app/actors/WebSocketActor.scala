@@ -84,7 +84,7 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
                      "job"  ->
                         Json.obj("mainID"   -> job.mainID.stringify,
                                  "job_id"   -> job.jobID,
-                                 "state"    -> job.status.no,
+                                 "state"    -> job.status,
                                  "toolname" -> job.tool))
 
     // Sends the job list to the user
@@ -93,7 +93,7 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
                      "list" -> jobList.map(job =>
                         Json.obj("mainID"   -> job.mainID.stringify,
                                  "job_id"   -> job.jobID,
-                                 "state"    -> job.status.no,
+                                 "state"    -> job.status,
                                  "toolname" -> job.tool)))
   }
 }
