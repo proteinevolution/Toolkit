@@ -1,11 +1,10 @@
 package modules.tools
 
 import java.io.File
-
 import models.tools._
 import org.clapper.classutil.ClassFinder
 import reflect.runtime.universe
-
+import reflect.macros.Universe
 
 
 /**
@@ -33,6 +32,17 @@ final class ToolMirror {
 
   }
 
+
+  def listToolModels() = {
+
+    val tpe = universe.typeOf[ToolModel]
+    val clazz = tpe.typeSymbol.asClass
+    clazz.knownDirectSubclasses.foreach(println)
+    println(clazz.knownDirectSubclasses)
+
+  }
+
+
   /**
    * gets methods from class or trait
    */
@@ -40,7 +50,6 @@ final class ToolMirror {
   def getMembers = {
 
     val typ = universe.typeOf[ToolModel]
-    val memberzz = typ.members
 
     typ.members.collect{
      case m => println("Membertest: " + m)
@@ -51,11 +60,16 @@ final class ToolMirror {
   // This uses the clapper library and gets a dynamic list of all objects which implement ToolModel
   // this seems to be impossible with the current version of Scala's reflection API: http://stackoverflow.com/questions/28500804/get-all-classes-of-a-package
 
+
+  // This is really slow at the moment. Try to tweak this somehow.
+
+  // A possible alternative could be sealed traits with Scala macros
+
   def findInstances() = {
 
-    val classpath = List(".").map(new File(_))
+    val classpath = List("./").map(new File(_))
     val finder = ClassFinder(classpath)
-    val classes = finder.getClasses().filter(_.implements("models.tools.ToolModel")) // classes is an Iterator[ClassInfo]
+    val classes = finder.getClasses().filter(_.implements("models.tools.ToolModel"))
     classes.foreach(println)
 
     println(classes(0).name)
@@ -67,9 +81,5 @@ final class ToolMirror {
 
   }
 
-  lazy val toolsList = {
-
-
-  }
 
 }

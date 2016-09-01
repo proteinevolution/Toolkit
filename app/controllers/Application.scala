@@ -8,6 +8,7 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import models.Constants
 import models.tel.TEL
+import models.tools.ToolModel
 import modules.tools.ToolMatcher
 import play.api.Configuration
 import play.api.cache._
@@ -63,9 +64,11 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     */
   def index = Action.async { implicit request =>
 
-    toolMirror.invokeToolName("alnviz") // even though this is a runtime mirror, it seems fast enough
 
-    toolMirror.findInstances() // finds all tool instances in the models package but this seems to be rather slow: alternatives are macros or sealed trait enumeration
+    //toolMirror.invokeToolName("alnviz") // even though this is a runtime mirror, it seems fast enough
+    //toolMirror.listToolModels() // faster than clapper
+    println(ToolModel.values) // even faster than the scala api
+    //toolMirror.findInstances() // finds all tool instances in the models package but this seems to be rather slow: alternatives are macros or sealed trait enumeration
     getUser(request, userCollection, userCache).map { user =>
       Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user))
         .withSession(sessionCookie(request, user.sessionID.get))
