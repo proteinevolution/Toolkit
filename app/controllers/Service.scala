@@ -9,7 +9,7 @@ import akka.util.Timeout
 import models.Constants
 import models.database.{Job, JobState, Session, User}
 import models.tel.TEL
-import models.tools.{Alnviz, Hmmer3, Psiblast, Tcoffee}
+import models.tools.ToolModel.{Alnviz, Hmmer3, Psiblast, Tcoffee}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
