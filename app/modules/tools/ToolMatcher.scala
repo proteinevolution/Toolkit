@@ -1,11 +1,15 @@
 package modules.tools
+
+
 import javax.inject.{Inject, Singleton}
 import models.tel.TEL
 import models.tools.ToolModel._
 import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.mvc.RequestHeader
+import play.mvc.Http
 import play.twirl.api.Html
-
+import reflect.runtime.universe
+import play.api._
 
 /**
   * Created by zin on 20.08.16.
@@ -17,6 +21,23 @@ import play.twirl.api.Html
 final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
                              val tel : TEL, val toolMirror: ToolMirror ) extends I18nSupport {
 
+
+
+  // This gets the correct view but not the inputForm
+
+  val currentMirror = universe.runtimeMirror(getClass.getClassLoader)
+  val packageName = "views.html.tools.forms"
+  def loadTemplate(name: String) = {
+    val templateName = packageName + name
+    val moduleMirror = currentMirror.reflectModule(currentMirror.staticModule(templateName))
+    val methodSymbol = moduleMirror.symbol.info.member(universe.TermName("apply")).asMethod
+    val instanceMirror = currentMirror.reflect(moduleMirror.instance)
+    val methodMirror = instanceMirror.reflectMethod(methodSymbol)
+    methodMirror.apply().asInstanceOf[Html]
+
+    // TODO: get this: toolMirror.invokeToolName(name).inputForm and embed this in the template above
+
+  }
 
 
   def matcher(tool : String)(implicit request : RequestHeader) : Html = {

@@ -3,6 +3,7 @@ package models.tools
 import enumeratum._
 import play.api.data.Form
 import play.api.data.Forms._
+import play.twirl.api.Html
 import shapeless._
 
 
@@ -10,10 +11,11 @@ import shapeless._
 
 sealed trait ToolModel extends EnumEntry {
 
-val toolNameShort : String
-val toolNameLong : String
-val toolNameAbbreviation : String
-val section : String
+  val toolNameShort : String
+  val toolNameLong : String
+  val toolNameAbbreviation : String
+  val section : String
+  //val view: Html
 
 }
 
@@ -29,6 +31,7 @@ case object Alnviz extends ToolModel {
   val toolNameLong = "Alnviz"
   val toolNameAbbreviation = "avz"
   val section = "alignment"
+  //val view = views.html.tools.forms.alnviz
 
   // --- Alnviz specific values ---
   // Input Form Definition of this tool
