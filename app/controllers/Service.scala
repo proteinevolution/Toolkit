@@ -4,12 +4,11 @@ import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobManager._
 import akka.actor.ActorRef
-import akka.pattern.ask
 import akka.util.Timeout
 import models.Constants
-import models.database.{Job, JobState, Session, User}
+import models.database.{Job, JobState}
 import models.tel.TEL
-import models.tools.ToolModel.{Alnviz, Hmmer3, Psiblast, Tcoffee}
+import modules.tools.ToolMatcher
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
@@ -32,6 +31,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 @NamedCache("userCache") userCache        : CacheApi,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
+                     val toolMatcher      : ToolMatcher,
     @Named("jobManager") jobManager       : ActorRef)
 
                  extends Controller with I18nSupport
@@ -122,48 +122,14 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             val resultFiles = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map {f =>
               f.name -> f.contentAsString
             }.toMap
-            val toolFrame = job.tool match {
-              case "alnviz"   => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(resultFiles))
-              case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
-              case "hmmer3"   => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(resultFiles))
-              case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
-            }
+            val toolFrame = toolMatcher.resultPreparedMatcher(job.tool, resultFiles)
             Future.successful{
               Ok(views.html.general.submit(tel, job.tool, toolFrame, Some(jobID)))
                 .withSession(sessionCookie(request, user.sessionID.get))
             }
 
           case JobState.Done =>
-            val toolFrame = job.tool match {
-              //  The tool anlviz just returns the BioJS MSA Viewer page
-              case "alnviz" =>
-                val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/result"))
-                views.html.job.result(vis, jobID, job.tool)
-              // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
-              case "tcoffee" =>
-                val vis = Map(
-                  "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
-                  "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
-                views.html.job.result(vis, jobID, job.tool)
-              case "reformatb" =>
-                val vis = Map(
-                  "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
-                  "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
-                views.html.job.result(vis, jobID, job.tool)
-              case "psiblast" =>
-                val vis = Map(
-                  "Results" -> views.html.visualization.alignment.blastvis(s"/files/${job.mainID.stringify}/out.psiblastp"),
-                  "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
-                  "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
-                views.html.job.result(vis, jobID, job.tool)
-
-              // Hmmer just provides a simple file viewer.
-              case "hmmer3" => views.html.visualization.general.fileview(
-                Array(s"/files/${job.mainID.stringify}/domtbl",
-                  s"/files/${job.mainID.stringify}/outfile",
-                  s"/files/${job.mainID.stringify}/outfile_multi_sto",
-                  s"/files/${job.mainID.stringify}/tbl"))
-            }
+            val toolFrame = toolMatcher.resultDoneMatcher(jobID, job.tool, job.mainID)
             Future.successful(Ok(toolFrame)
                                 .withSession(sessionCookie(request, user.sessionID.get)))
 
