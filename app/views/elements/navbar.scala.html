@@ -141,7 +141,7 @@
 <ul class="tabs" data-tabs id="navbar-tabs">
     <li class="tabs-title"><a href="#panel1">Search</a></li>
     <li class="tabs-title"><a href="#panel2">Alignment</a></li>
-    <li class="tabs-title"><a href="#panel3">Sequence Analysis</a></li>
+    <li class="tabs-title"><a href="#panel3">Sequence Analysis (All tools for testing)</a></li>
     <li class="tabs-title"><a href="#panel4">2ary Structure</a></li>
     <li class="tabs-title"><a href="#panel5">3ary Structure</a></li>
     <li class="tabs-title"><a href="#panel6">Classification</a></li>
@@ -150,21 +150,24 @@
 <div class="tabs-content" data-tabs-content="navbar-tabs">
     <div class="tabs-panel" id="panel1">
         <ul id="toolsec">
-            <li class="tool-title"><a href='/#/tools/hmmer3'>Hmmer3</a></li>
-            <li class="tool-title"><a href='/#/tools/hhblits'>HHblits</a></li>
-            <li class="tool-title"><a href='/#/tools/hhpred'>HHpred</a></li>
-            <li class="tool-title"><a href='/#/tools/psiblast'>PSI-BLAST</a></li>
-            <li class="tool-title"><a href='/#/tools/csblast'>CS-BLAST</a></li>
+        @for(tool <- Tool.tools){
+            @if(tool.section == "search") {
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+            }
+        }
         </ul>
     </div>
     <div class="tabs-panel" id="panel2">
         <ul id="toolsec">
-            <li class="tool-title"><a href="/tools/alnviz">AlignmentViewer</a></li>
-            <li class="tool-title"><a href="/tools/tcoffee">T-Coffee</a></li>
-            <li class="tool-title"><a href='/#/tools/mafft'>MAFFT</a></li>
+        @for(tool <- Tool.tools){
+            @if(tool.section == "alignment") {
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+            }
+        }
         </ul>
     </div>
     <div class="tabs-panel" id="panel3">
+
     </div>
     <div class="tabs-panel" id="panel4">
     </div>
@@ -177,8 +180,11 @@
     </div>
     <div class="tabs-panel" id="panel7">
         <ul id="toolsec">
-            <li class="tool-title"><a href="/#/reformat">Reformat</a></li>
-            <li class="tool-title"><a href='/#/seq2gi'>ExtractGIs</a></li>
+        @for(tool <- Tool.tools){
+            @if(tool.section == "utils") {
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+            }
+        }
         </ul>
     </div>
 </div>

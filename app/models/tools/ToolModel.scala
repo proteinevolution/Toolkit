@@ -121,7 +121,7 @@ case object HHblits extends ToolModel{
 
   // --- Names for the Tool ---
   val toolNameShort        = "hhblits"
-  val toolNameLong         = "hhblits"
+  val toolNameLong         = "HHblits"
   val toolNameAbbreviation = "HHBL"
   val section = "search"
 
