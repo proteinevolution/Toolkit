@@ -209,11 +209,13 @@
     </div>
     <div class="tabs-panel" id="panel7">
         <ul id="toolsec">
-        @for(tool <- Tool.tools){
-            @if(tool.section == "utils") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+            <li><a id="reformat" href="/#/seq2gi">ExtractGIs</a></li>
+            @for(tool <- Tool.tools){
+                @if(tool.section == "utils") {
+                    <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                }
             }
-        }
+            <li><a id="reformat" href="/#/reformat">Reformat</a></li>
         </ul>
     </div>
 </div>
