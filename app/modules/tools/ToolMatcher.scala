@@ -3,6 +3,7 @@ package modules.tools
 
 import javax.inject.{Inject, Singleton}
 import models.tel.TEL
+import models.tools.ToolModel
 import models.tools.ToolModel._
 import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.mvc.RequestHeader
@@ -26,7 +27,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
   // This gets the correct view but not the inputForm
 
   val currentMirror = universe.runtimeMirror(getClass.getClassLoader)
-  val packageName = "views.html.tools.forms"
+  val packageName = "views.html.tools.forms."
   def loadTemplate(name: String) = {
     val templateName = packageName + name
     val moduleMirror = currentMirror.reflectModule(currentMirror.staticModule(templateName))
@@ -35,7 +36,8 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     val methodMirror = instanceMirror.reflectMethod(methodSymbol)
     methodMirror.apply().asInstanceOf[Html]
 
-    // TODO: get this: toolMirror.invokeToolName(name).inputForm and embed this in the template above
+
+    // TODO: get this: toolMirror.invokeToolName(name).inputForm and embed this in the template above or alternatively and preferably: ToolModel.withName(name.capitalize).inputForm
 
   }
 
