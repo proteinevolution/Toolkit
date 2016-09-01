@@ -222,7 +222,7 @@ case object Psiblast extends ToolModel {
       "desc" -> number,
       "standarddb" -> text
     )
-  )
+  ).fill(("", "", "", 1, 10, 11, 1, 200, ""))
   // TODO Move to TEL
   val parameterValues = Map(
     "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),

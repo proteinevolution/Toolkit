@@ -24,7 +24,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "alnviz" => views.html.tools.forms.alnviz(Alnviz.inputForm)
       case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
       case "hmmer3" => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm)
-      case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.fill(("", "", "", 1, 10, 11, 1, 200, "")))
+      case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm)
       case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm)
       case "csblast" => views.html.tools.forms.csblast(tel, Csblast.inputForm)
       case "hhpred" => views.html.tools.forms.hhpred(tel, HHpred.inputForm)
