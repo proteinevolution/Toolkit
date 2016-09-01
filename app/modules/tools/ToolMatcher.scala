@@ -1,11 +1,11 @@
 package modules.tools
 import javax.inject.{Inject, Singleton}
 import models.tel.TEL
-import models.tools._
+import models.tools.ToolModel._
 import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.mvc.RequestHeader
-import play.data.Form
 import play.twirl.api.Html
+
 
 /**
   * Created by zin on 20.08.16.
@@ -15,7 +15,8 @@ import play.twirl.api.Html
 
 @Singleton
 final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
-                             val tel : TEL ) extends I18nSupport {
+                             val tel : TEL, val toolMirror: ToolMirror ) extends I18nSupport {
+
 
 
   def matcher(tool : String)(implicit request : RequestHeader) : Html = {

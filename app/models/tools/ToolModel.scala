@@ -1,26 +1,34 @@
 package models.tools
 
+import enumeratum._
 import play.api.data.Form
 import play.api.data.Forms._
 import shapeless._
 
 
 
-sealed trait ToolModel {
 
-val toolNameShort: String
-val toolNameLong: String
-val toolNameAbbreviation: String
+sealed trait ToolModel extends EnumEntry {
+
+val toolNameShort : String
+val toolNameLong : String
+val toolNameAbbreviation : String
+val section : String
 
 }
+
+object ToolModel extends PlayEnum[ToolModel] {
+
+  val values = findValues
 
 case object Alnviz extends ToolModel {
 
 
   // --- Names for the Tool ---
-  val toolNameShort: String = "alnviz"
-  val toolNameLong: String = "Alnviz"
-  val toolNameAbbreviation: String = "avz"
+  val toolNameShort = "alnviz"
+  val toolNameLong = "Alnviz"
+  val toolNameAbbreviation = "avz"
+  val section = "alignment"
 
   // --- Alnviz specific values ---
   // Input Form Definition of this tool
@@ -50,9 +58,10 @@ case object Alnviz extends ToolModel {
 case object Clans extends ToolModel {
 
   // --- Names for the Tool ---
-  val toolNameShort:String        = "clans"
-  val toolNameLong:String         = "Clans"
-  val toolNameAbbreviation:String = "clns"
+  val toolNameShort        = "clans"
+  val toolNameLong         = "Clans"
+  val toolNameAbbreviation = "clns"
+  val section = "classification"
 
 
   // --- Clans specific values ---
@@ -81,9 +90,10 @@ case object Clans extends ToolModel {
 case object Csblast extends ToolModel {
 
   // --- Names for the Tool ---
-  val toolNameShort:String        = "csblast"
-  val toolNameLong:String         = "CS-BLAST"
-  val toolNameAbbreviation:String = "cbl"
+  val toolNameShort        = "csblast"
+  val toolNameLong         = "CS-BLAST"
+  val toolNameAbbreviation = "cbl"
+  val section = "search"
 
   // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
@@ -110,9 +120,10 @@ case object Csblast extends ToolModel {
 case object HHblits extends ToolModel{
 
   // --- Names for the Tool ---
-  val toolNameShort:String        = "hhblits"
-  val toolNameLong:String         = "hhblits"
-  val toolNameAbbreviation:String = "HHBL"
+  val toolNameShort        = "hhblits"
+  val toolNameLong         = "hhblits"
+  val toolNameAbbreviation = "HHBL"
+  val section = "search"
 
 
   // --- HHblits
@@ -130,9 +141,10 @@ case object HHpred extends ToolModel {
 
 
   // --- Names for the Tool ---
-  val toolNameShort:String        = "hhpred"
-  val toolNameLong:String         = "HHpred"
-  val toolNameAbbreviation:String = "HHPR"
+  val toolNameShort        = "hhpred"
+  val toolNameLong         = "HHpred"
+  val toolNameAbbreviation = "HHPR"
+  val section = "search"
 
 
   // --- HHPRED
@@ -149,9 +161,10 @@ case object HHpred extends ToolModel {
 case object Hmmer3 extends ToolModel {
 
   // --- Names for the Tool ---
-  val toolNameShort:String        = "hmmer3"
-  val toolNameLong:String         = "Hmmer3"
-  val toolNameAbbreviation:String = "hm3"
+  val toolNameShort        = "hmmer3"
+  val toolNameLong         = "Hmmer3"
+  val toolNameAbbreviation = "hm3"
+  val section = "search"
 
 
 
@@ -170,10 +183,10 @@ case object Hmmer3 extends ToolModel {
 case object Mafft extends ToolModel {
 
   // --- Names for the Tool ---
-  val toolNameShort:String        = "mafft"
-  val toolNameLong:String         = "Mafft"
-  val toolNameAbbreviation:String = "mft"
-
+  val toolNameShort        = "mafft"
+  val toolNameLong         = "Mafft"
+  val toolNameAbbreviation = "mft"
+  val section = "alignment"
 
   // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
@@ -190,10 +203,10 @@ case object Psiblast extends ToolModel {
 
 
   // --- Names for the Tool ---
-  val toolNameShort:String        = "psiblast"
-  val toolNameLong:String         = "PSI-BLAST"
-  val toolNameAbbreviation:String = "pbl"
-
+  val toolNameShort       = "psiblast"
+  val toolNameLong        = "PSI-BLAST"
+  val toolNameAbbreviation = "pbl"
+  val section = "search"
 
   // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
@@ -220,9 +233,10 @@ case object Psiblast extends ToolModel {
 case object Reformatb extends ToolModel {
 
   // --- Names for the Tool ---
-  val toolNameShort:String        = "reformatb"
-  val toolNameLong:String         = "Reformatb"
-  val toolNameAbbreviation:String = "form"
+  val toolNameShort        = "reformatb"
+  val toolNameLong         = "Reformatb"
+  val toolNameAbbreviation = "form"
+  val section = "utils"
 
 
   // --- Tcoffee specific values ---
@@ -239,9 +253,10 @@ case object Reformatb extends ToolModel {
 case object Tcoffee extends ToolModel {
 
   // --- Names for the Tool ---
-  val toolNameShort:String        = "tcoffee"
-  val toolNameLong:String         = "T-Coffee"
-  val toolNameAbbreviation:String = "tcf"
+  val toolNameShort = "tcoffee"
+  val toolNameLong = "T-Coffee"
+  val toolNameAbbreviation = "tcf"
+  val section = "alignment"
 
 
   // --- Tcoffee specific values ---
@@ -254,5 +269,6 @@ case object Tcoffee extends ToolModel {
       "mslow_pair" -> boolean
     )
   )
+  }
 }
 
