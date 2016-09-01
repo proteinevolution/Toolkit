@@ -172,16 +172,40 @@
         </ul>
     </div>
     <div class="tabs-panel" id="panel3">
-
+        <ul id="toolsec">
+        @for(tool <- Tool.tools){
+            @if(tool.section == "seqanal") {
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+            }
+        }
+        </ul>
     </div>
     <div class="tabs-panel" id="panel4">
+        <ul id="toolsec">
+        @for(tool <- Tool.tools){
+            @if(tool.section == "2ary") {
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+            }
+        }
+        </ul>
     </div>
     <div class="tabs-panel" id="panel5">
         <ul id="toolsec">
-            <li class="tool-title"><a href='/#/tools/hhpred'>HHpred</a></li>
+        @for(tool <- Tool.tools){
+            @if(tool.section == "3ary" || tool.optional == "3ary") {
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+            }
+        }
         </ul>
     </div>
     <div class="tabs-panel" id="panel6">
+        <ul id="toolsec">
+        @for(tool <- Tool.tools){
+            @if(tool.section == "classification") {
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+            }
+        }
+        </ul>
     </div>
     <div class="tabs-panel" id="panel7">
         <ul id="toolsec">
