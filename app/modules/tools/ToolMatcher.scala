@@ -9,6 +9,7 @@ import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.mvc.RequestHeader
 import play.mvc.Http
 import play.twirl.api.Html
+import reactivemongo.bson.BSONObjectID
 import reflect.runtime.universe
 import play.api._
 
@@ -59,6 +60,50 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     toolFrame
   }
 
+
+  def resultPreparedMatcher(tool: String, resultFiles : Map[String, String])(implicit request: RequestHeader) = {
+    tool match {
+      case "alnviz"   => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(resultFiles))
+      case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
+      case "hmmer3"   => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(resultFiles))
+      case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
+    }
+  }
+
+
+  def resultDoneMatcher(jobID : String, tool: String, mainID: BSONObjectID )(implicit request: RequestHeader) = {
+
+    tool match {
+    //  The tool anlviz just returns the BioJS MSA Viewer page
+    case "alnviz" =>
+      val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${mainID.stringify}/result"))
+      views.html.job.result(vis, jobID, tool)
+    // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
+    case "tcoffee" =>
+      val vis = Map(
+        "Simple" -> views.html.visualization.alignment.simple(s"/files/${mainID.stringify}/sequences.clustalw_aln"),
+        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${mainID.stringify}/sequences.clustalw_aln"))
+      views.html.job.result(vis, jobID, tool)
+    case "reformatb" =>
+      val vis = Map(
+        "Simple" -> views.html.visualization.alignment.simple(s"/files/${mainID.stringify}/sequences.clustalw_aln"),
+        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${mainID.stringify}/sequences.clustalw_aln"))
+      views.html.job.result(vis, jobID, tool)
+    case "psiblast" =>
+      val vis = Map(
+        "Results" -> views.html.visualization.alignment.blastvis(s"/files/${mainID.stringify}/out.psiblastp"),
+        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${mainID.stringify}/sequences.clustalw_aln"),
+        "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${mainID.stringify}/evalues.dat"))
+      views.html.job.result(vis, jobID, tool)
+
+    // Hmmer just provides a simple file viewer.
+    case "hmmer3" => views.html.visualization.general.fileview(
+      Array(s"/files/${mainID.stringify}/domtbl",
+        s"/files/${mainID.stringify}/outfile",
+        s"/files/${mainID.stringify}/outfile_multi_sto",
+        s"/files/${mainID.stringify}/tbl"))
+    }
+  }
 
   def formMatcher(tool : String) = {
     lazy val toolForm = tool match {
