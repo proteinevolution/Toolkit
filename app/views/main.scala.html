@@ -94,11 +94,13 @@
 
 
         <!---Navigation Bar --->
-        <div class="row " style="padding-top: 1em;">
-            <div class="large-1 columns" align="center">
-
+        <div class="row " style="padding-top: 1em; padding-bottom: 1em;">
+            <div class="large-2 columns" align="center">
+            <div>
+                <a href="@routes.Application.index()"><img  style="width: 40%;" src="@routes.Assets.at("images/logo5.svg")"></a>
             </div>
-            <div class="large-11 columns" align="center">
+            </div>
+            <div class="large-10 columns" align="center">
             @elements.navbar()
             </div>
         </div>
