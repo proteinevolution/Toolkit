@@ -4,7 +4,6 @@ import java.io.File
 import models.tools._
 import org.clapper.classutil.ClassFinder
 import reflect.runtime.universe
-import reflect.macros.Universe
 
 
 /**
@@ -18,7 +17,7 @@ final class ToolMirror {
   // TODO either abstract over tuple arity and get the inputForm somehow into the trait or find another solution
   // TODO 2 besides the ToolMatcher, we wish to generate the navigation with the template engine from a dynamic list of tools
 
-  def invokeToolName(tool :String) {
+  def invokeToolName(tool :String) = {
 
     val capitalName = tool.capitalize
     val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
@@ -27,9 +26,9 @@ final class ToolMirror {
 
     println("Tool: " + obj.instance.getClass.toString)
 
-    val someTrait: ToolModel = obj.instance.asInstanceOf[ToolModel]
-    println(someTrait.toolNameAbbreviation)
-
+    val toolInstance : ToolModel = obj.instance.asInstanceOf[ToolModel]
+    //println(someTrait.toolNameAbbreviation)
+    toolInstance
   }
 
 
