@@ -20,7 +20,8 @@ import play.api._
 
 @Singleton
 final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
-                             val tel : TEL, val toolMirror: ToolMirror ) extends I18nSupport {
+                                   val tel : TEL,
+                                   val toolMirror: ToolMirror ) extends I18nSupport {
 
 
 

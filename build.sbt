@@ -40,15 +40,21 @@ val commonDeps = Seq(ws, filters, cache,
  * Settings which apply to all modules of this application
  */
 val commonSettings = Seq(
-  organization := "your.organization",
-  version := "2.5.6",
+  version := "0.0.0",
   scalaVersion := "2.11.8",
   logLevel := Level.Warn,
   dependencyOverrides ++= Set("org.webjars" % "jquery" % jqueryVersion,
-                              "com.typesafe.akka" %% "akka-actor" % akkaVersion)
+                              "com.typesafe.akka" %% "akka-actor" % akkaVersion))
+
+lazy val metadata = List(
+  organization := "ebio.tuebingen.mpg.de",
+  developers   := List(
+    Developer("JoKuebler", "Jonas Kuebler", "jkuebler@tuebingen.mpg.de", url("https://github.com/JoKuebler")),
+    Developer("zy4", "Seung-Zin Nam", "seungzin.nam@tuebingen.mpg.de", url("https://github.com/zy4")),
+    Developer("anjestephens", "Andrew Jesse Stephens", "astephens@tuebingen.mpg.de", url("https://github.com/anjestephens")),
+    Developer("lkszmmn", "Lukas Zimmermann", "lukas.zimmermann@tuebingen.mpg.de", url("https://github.com/lkszmn"))
+  )
 )
-
-
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtWeb)
@@ -85,11 +91,6 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 
-/*
-resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
-resolvers += "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"
-resolvers += Resolver.url("Typesafe Ivy releases", url("https://repo.typesafe.com/typesafe/ivy-releases"))(Resolver.ivyStylePatterns)
-*/
 
 
 scalacOptions ++= Seq(

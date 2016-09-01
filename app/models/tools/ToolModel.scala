@@ -3,10 +3,7 @@ package models.tools
 import enumeratum._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.twirl.api.Html
 import shapeless._
-
-
 
 
 sealed trait ToolModel extends EnumEntry {
@@ -15,7 +12,9 @@ sealed trait ToolModel extends EnumEntry {
   val toolNameLong : String
   val toolNameAbbreviation : String
   val section : String
-  //val view: Html
+  val optional : String
+  val inputOptions : HList
+
 
 }
 
@@ -31,13 +30,13 @@ case object Alnviz extends ToolModel {
   val toolNameLong = "Alnviz"
   val toolNameAbbreviation = "avz"
   val section = "alignment"
-  //val view = views.html.tools.forms.alnviz
+  val optional = ""
 
   // --- Alnviz specific values ---
   // Input Form Definition of this tool
 
-  val hlist = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
-  val myTuple = hlist.tupled
+  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+  val myTuple = inputOptions.tupled
 
   //println(myTuple)
   //val test = Form(myTuple) TODO why doesn't this work?
@@ -65,6 +64,7 @@ case object Clans extends ToolModel {
   val toolNameLong         = "Clans"
   val toolNameAbbreviation = "clns"
   val section = "classification"
+  val optional = ""
 
 
   // --- Clans specific values ---
@@ -84,6 +84,9 @@ case object Clans extends ToolModel {
       "customid" -> text
     )
   )
+
+  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+
   val parameterValues = Map(
     "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
     "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
@@ -97,6 +100,7 @@ case object Csblast extends ToolModel {
   val toolNameLong         = "CS-BLAST"
   val toolNameAbbreviation = "cbl"
   val section = "search"
+  val optional = ""
 
   // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
@@ -114,6 +118,8 @@ case object Csblast extends ToolModel {
     )
   )
 
+  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+
   val parameterValues = Map(
     "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
     "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
@@ -127,6 +133,7 @@ case object HHblits extends ToolModel{
   val toolNameLong         = "HHblits"
   val toolNameAbbreviation = "HHBL"
   val section = "search"
+  val optional = ""
 
 
   // --- HHblits
@@ -138,6 +145,9 @@ case object HHblits extends ToolModel{
       "hhblitsdb" -> text
     )
   )
+
+  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+
 }
 
 case object HHpred extends ToolModel {
@@ -148,6 +158,7 @@ case object HHpred extends ToolModel {
   val toolNameLong         = "HHpred"
   val toolNameAbbreviation = "HHPR"
   val section = "search"
+  val optional = "3ary"
 
 
   // --- HHPRED
@@ -159,6 +170,9 @@ case object HHpred extends ToolModel {
       "hmmdb" -> text
     )
   )
+
+  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+
 }
 
 case object Hmmer3 extends ToolModel {
@@ -168,6 +182,7 @@ case object Hmmer3 extends ToolModel {
   val toolNameLong         = "Hmmer3"
   val toolNameAbbreviation = "hm3"
   val section = "search"
+  val optional = ""
 
 
 
@@ -181,6 +196,9 @@ case object Hmmer3 extends ToolModel {
       "standarddb" -> text
     )
   )
+
+  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+
 }
 
 case object Mafft extends ToolModel {
@@ -190,6 +208,7 @@ case object Mafft extends ToolModel {
   val toolNameLong         = "Mafft"
   val toolNameAbbreviation = "mft"
   val section = "alignment"
+  val optional = ""
 
   // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
@@ -200,6 +219,9 @@ case object Mafft extends ToolModel {
       "offset" -> bigDecimal(5,3)
     )
   )
+
+  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+
 }
 
 case object Psiblast extends ToolModel {
@@ -210,6 +232,7 @@ case object Psiblast extends ToolModel {
   val toolNameLong        = "PSI-BLAST"
   val toolNameAbbreviation = "pbl"
   val section = "search"
+  val optional = ""
 
   // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
@@ -226,6 +249,9 @@ case object Psiblast extends ToolModel {
       "standarddb" -> text
     )
   ).fill(("", "", "", 1, 10, 11, 1, 200, ""))
+
+  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+
   // TODO Move to TEL
   val parameterValues = Map(
     "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
@@ -240,6 +266,7 @@ case object Reformatb extends ToolModel {
   val toolNameLong         = "Reformatb"
   val toolNameAbbreviation = "form"
   val section = "utils"
+  val optional = ""
 
 
   // --- Tcoffee specific values ---
@@ -251,6 +278,9 @@ case object Reformatb extends ToolModel {
       "offset" -> bigDecimal(5,3)
     )
   )
+
+  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+
 }
 
 case object Tcoffee extends ToolModel {
@@ -260,6 +290,7 @@ case object Tcoffee extends ToolModel {
   val toolNameLong = "T-Coffee"
   val toolNameAbbreviation = "tcf"
   val section = "alignment"
+  val optional = ""
 
 
   // --- Tcoffee specific values ---
@@ -272,6 +303,8 @@ case object Tcoffee extends ToolModel {
       "mslow_pair" -> boolean
     )
   )
+  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
+
   }
 }
 
