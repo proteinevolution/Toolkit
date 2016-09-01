@@ -9,6 +9,7 @@ import akka.util.Timeout
 import models.database.JobState.{Running, Done}
 import models.database.{Job}
 import models.search.JobDAO
+import models.tools.ToolModel
 
 import modules.tools.{ToolMatcher, FNV}
 import play.api.cache._
@@ -22,6 +23,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import better.files._
 
 import scala.util.{Failure, Success}
+
+object Tool {
+
+  lazy val tools:Seq[ToolModel] = ToolModel.values // this list is completely dynamic and depends only on the case objects in the tool model. frontend tools are excluded at the moment.
+
+}
 
 
 @Singleton
