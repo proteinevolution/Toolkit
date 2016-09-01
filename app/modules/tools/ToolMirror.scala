@@ -22,7 +22,7 @@ final class ToolMirror {
 
     val capitalName = tool.capitalize
     val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
-    val module = runtimeMirror.staticModule(s"models.tools.$capitalName")
+    val module = runtimeMirror.staticModule(s"models.tools.ToolModel.$capitalName")
     val obj = runtimeMirror.reflectModule(module)
 
     println("Tool: " + obj.instance.getClass.toString)
