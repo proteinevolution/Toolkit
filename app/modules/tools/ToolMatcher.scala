@@ -15,6 +15,9 @@ import play.api._
 
 /**
   * Created by zin on 20.08.16.
+  *
+  * This module mainly exists to show at one glance how badly we need reflection
+  *
   */
 
 
