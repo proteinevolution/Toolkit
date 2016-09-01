@@ -7,7 +7,7 @@ import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
 import models.database.JobState.{Running, Done}
-import models.database.{Job}
+import models.database.Job
 import models.search.JobDAO
 import models.tools.ToolModel
 
