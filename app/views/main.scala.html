@@ -94,14 +94,19 @@
 
 
         <!---Navigation Bar --->
-        <div class="row " style="padding-top: 1em; padding-bottom: 1em;">
-            <div class="large-2 columns" align="center">
-            <div>
-                <a href="@routes.Application.index()"><img  style="width: 40%;" src="@routes.Assets.at("images/logo5.svg")"></a>
+        <div class="row" style="padding-top: 1em;">
+            <div class="large-2 columns" >
+                <a href="@routes.Application.index()"><img  style="width: 95%; margin-left:0.25em;margin-top:0.60em; margin-bottom: 0.55em;" src="@routes.Assets.at("images/logo7.svg")"></a>
             </div>
-            </div>
-            <div class="large-10 columns" align="center">
+            <div class="large-9 columns" align="center" >
             @elements.navbar()
+            </div>
+            <div class="large-1 columns sub-nav">
+                <dd><a href="#" id="auth-link" data-toggle="auth-dropdown" onclick="$('.dropdown-pane').show();">
+                @{user.userData match {
+                    case Some(userData) => userData.nameLogin
+                    case None           => "Sign in"
+                }}</a></dd>
             </div>
         </div>
 

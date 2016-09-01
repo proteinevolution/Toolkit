@@ -9,11 +9,6 @@
     <dd><a href="#">Tool Versions</a></dd>
     <dd><a href="/contact">Contact</a></dd>
     <dd><a href="#">Personal Databases</a></dd>
-    <dd><a href="#" id="auth-link" data-toggle="auth-dropdown" onclick="$('.dropdown-pane').show();">
-    @{user.userData match {
-        case Some(userData) => userData.nameLogin
-        case None           => "Sign in"
-    }}</a></dd>
 </dl>
 
 <script type="text/javascript" src="@routes.Assets.at("scripts/auth.js")"></script>
