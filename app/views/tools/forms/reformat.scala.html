@@ -4,39 +4,39 @@
 <link href="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.css"))" rel="stylesheet">
 <style>
 
-    div#content {
+div#content {
 
-        width: 100%;
-        background-color: #d1d1d1 !important;
-    }
+    width: 100%;
+    background-color: #d1d1d1 !important;
+}
 
-    .sidebar {
+.sidebar {
 
-        display: none;
-    }
+    display: none;
+}
 
-    .CodeMirror pre {
+.CodeMirror pre {
 
     font-family: Monaco, Consolas, "Lucida Console", monospace;
     font-size: 12px;
 
-    }
+}
 
-    .code { color: #ffae00; }
+.code { color: #ffae00; }
 
-    .has-tip {
-        border-bottom: dotted 0px;
+.has-tip {
+    border-bottom: dotted 0px;
 
-    }
+}
 
-    .dropzone{
+.dropzone{
 
     border: dashed 1px darkblue;
     background-color: #c6d6e5 ;
 
-    }
+}
 
-    #progress_bar {
+#progress_bar {
     margin: 10px 0;
     padding: 3px;
     border: 1px solid #000;
@@ -46,19 +46,19 @@
     -moz-transition: opacity 1s linear;
     -o-transition: opacity 1s linear;
     -webkit-transition: opacity 1s linear;
-    }
-    #progress_bar.loading {
+}
+#progress_bar.loading {
     opacity: 1.0;
-    }
-    #progress_bar .percent {
+}
+#progress_bar .percent {
     background-color: #99ccff;
     height: auto;
     width: 0;
-    }
+}
 
-    #sidebartoggle {
+#sidebartoggle {
     display: none;
-    }
+}
 
 
 </style>
@@ -80,7 +80,7 @@
 <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
     <div id="progress_bar"><div class="percent">0%</div></div>
     <input type="file" id="files" name="file" />
-    <!--<div id="drop_zone" type="file" class="dropzone" name="file" style="margin-top: 10px; text-align: center; line-height: 150px; vertical-align: middle;">Drop files here</div>-->
+        <!--<div id="drop_zone" type="file" class="dropzone" name="file" style="margin-top: 10px; text-align: center; line-height: 150px; vertical-align: middle;">Drop files here</div>-->
     <output id="list"></output>
 
 
@@ -96,49 +96,79 @@
                 })();" style="margin: 0 0 0 0;">Copy</button></span>
         </div>
     </div>
-<div class="large-6 columns">
-<div id="inputMirror" style="width: 100%;"></div>
-</div>
-<div class="large-6 columns">
-<div id="outputMirror" style="width: 100%;">
-</div>
+    <div class="large-6 columns">
+        <div id="inputMirror" style="width: 100%;"></div>
+    </div>
+    <div class="large-6 columns">
+        <div id="outputMirror" style="width: 100%;">
+        </div>
 
 
-</div>
+    </div>
 </div>
 <p>&nbsp;</p>
 
 <div class="show-for-medium large-12 columns" style="padding-top: 20px;">
-<div class="success callout" id="fastacallout" data-closable="slide-out-right" style="width: 50%; display: block; margin: auto;">
-    <p style="width: 80%; text-align: justify;">It looks as we found a <span id="nonalignedwarning" style="color: red; display: none;">non-aligned</span> FASTA formatted input. To which format do you want to convert it?</p>
-    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <div class="success callout" id="fastacallout" data-closable="slide-out-right" style="width: 50%; display: block; margin: auto;">
+        <p style="width: 80%; text-align: justify;">It looks as we found a <span id="nonalignedwarning" style="color: red; display: none;">non-aligned</span> FASTA formatted input. To which format do you want to convert it?</p>
+        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+            <span aria-hidden="true">&times;</span>
+        </button>
 
-    <label>Select Output Format
-        <select id="outformat_fas">
-            <option selected>Choose</option>
-            <option value="lowercase">Transform to lower case</option>
-            <option value="a3m">A3M</option>
-            <option value="clu" class="clustaloption">CLUSTAL</option>
-        </select>
-    </label>
-</div>
+        <label>Select Output Format
+            <select id="outformat_fas">
+                <option selected>Choose</option>
+                <option value="lowercase">Transform to lower case</option>
+                <option value="a3m">A3M</option>
+                <option value="clu" class="clustaloption">CLUSTAL</option>
+                <option value="phy" class="clustaloption">PHYLIP</option>
+                <option value="sto">STOCKHOLM</option>
+            </select>
+        </label>
+    </div>
+    <div class="sucess callout" id="phylipcallout" data-closable="slide-out-right" style="width: 50%; display: none; margin: auto;">
+        <p style="width: 80%; text-align: justify;">It looks as we found a PHYLIP formatted input. To which format do you want to convert it?</p>
+        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+            <span aria-hidden="true">&times;</span>
+        </button>
 
-<div class="primary callout" id="clustalcallout" data-closable="slide-out-right" style="width: 50%; display: none; margin: auto;">
-    <p style="width: 80%; text-align: justify;">It looks as we found a CLUSTAL formatted input. To which format do you want to convert it?</p>
-    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-        <span aria-hidden="true">&times;</span>
-    </button>
+        <label>Select Output Format
+            <select id="outformat_phy">
+                <option selected>Choose</option>
+                <option value="fas">FASTA</option>
+                <option value="sto">STOCKHOLM</option>
+            </select>
+        </label>
+    </div>
 
-    <label>Select Output Format
-        <select id="outformat_clu">
-            <option selected>Choose</option>
-            <option value="fas">FASTA</option>
-            <option value="a3m">A3M</option>
-        </select>
-    </label>
-</div>
+    <div class="sucess callout" id="stockholmcallout" data-closable="slide-out-right" style="width: 50%; display: none; margin: auto;">
+        <p style="width: 80%; text-align: justify;">It looks as we found a STOCKHOLM formatted input. To which format do you want to convert it?</p>
+        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+        <label>Select Output Format
+            <select id="outformat_sto">
+                <option selected>Choose</option>
+                <option value="fas">FASTA</option>
+                <option value="phy">PHYLIP</option>
+            </select>
+        </label>
+    </div>
+    <div class="primary callout" id="clustalcallout" data-closable="slide-out-right" style="width: 50%; display: none; margin: auto;">
+        <p style="width: 80%; text-align: justify;">It looks as we found a CLUSTAL formatted input. To which format do you want to convert it?</p>
+        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+        <label>Select Output Format
+            <select id="outformat_clu">
+                <option selected>Choose</option>
+                <option value="fas">FASTA</option>
+                <option value="a3m">A3M</option>
+            </select>
+        </label>
+    </div>
 </div>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -160,158 +190,284 @@
 <script src="@routes.Assets.at("scripts/validation.js")"></script>
 <script>
 
-    var inputFasta = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR\n";
-    // document.getElementById("alignment").value = inputFasta;
-    var inputClustal = "CLUSTAL multiple sequence alignment\n\ngi|33300828\tPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\ngi|11479639\tPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\ngi|11479645\tPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\ngi|29366706\tPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\ngi|68299729\tPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\ngi|77118174\tPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\ngi|17570796\tPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\ngi|11963775\tPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\n\ngi|33300828\tD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\ngi|11479639\tA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\ngi|11479645\tEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\ngi|29366706\t-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\ngi|68299729\tD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\ngi|77118174\t------DYYKGWACQITYMEETPDGSLRHPSFDQWR\ngi|17570796\tD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\ngi|11963775\tD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
+        var inputFasta = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR\n";
+        // document.getElementById("alignment").value = inputFasta;
+        var inputClustal = "CLUSTAL multiple sequence alignment\n\ngi|33300828\tPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\ngi|11479639\tPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\ngi|11479645\tPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\ngi|29366706\tPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\ngi|68299729\tPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\ngi|77118174\tPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\ngi|17570796\tPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\ngi|11963775\tPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\n\ngi|33300828\tD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\ngi|11479639\tA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\ngi|11479645\tEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\ngi|29366706\t-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\ngi|68299729\tD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\ngi|77118174\t------DYYKGWACQITYMEETPDGSLRHPSFDQWR\ngi|17570796\tD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\ngi|11963775\tD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
 
 
 
-    var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
-    value: inputFasta,
-    lineNumbers: false,
-    mode:  "none",
-    theme: "reformat"
-    });
+        var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
+            value: inputFasta,
+            lineNumbers: false,
+            mode:  "none",
+            theme: "reformat"
+        });
 
-    myCodeMirror.setSize("100%", 500);
-
-
-    var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
-    value: "",
-    lineNumbers: false,
-    readOnly: true,
-    mode:  "javascript",
-    theme: "reformat"
-    });
-
-    myCodeMirror2.setSize("100%", 500);
+        myCodeMirror.setSize("100%", 500);
 
 
+        var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
+            value: "",
+            lineNumbers: false,
+            readOnly: true,
+            mode:  "javascript",
+            theme: "reformat"
+        });
 
-    // on and off handler like in jQuery
-    myCodeMirror.on('change',function(cMirror){
-        // get value right from instance
-        if(validateFasta(myCodeMirror.getValue())) {
-            document.getElementById('fastacallout').style.display = 'block';
+        myCodeMirror2.setSize("100%", 500);
 
-            if (validateAlignment(myCodeMirror.getValue())) {
-                $(".clustaloption").show();
-                document.getElementById('nonalignedwarning').style.display= 'none';
+
+
+        // on and off handler like in jQuery
+        myCodeMirror.on('change',function(cMirror){
+            // get value right from instance
+            if(validateFasta(myCodeMirror.getValue())) {
+                document.getElementById('fastacallout').style.display = 'block';
+
+                if (validateAlignmentFasta(myCodeMirror.getValue())) {
+                    $(".clustaloption").show();
+                    document.getElementById('nonalignedwarning').style.display= 'none';
+                }
+                if (!validateAlignmentFasta(myCodeMirror.getValue())) {
+
+                    $(".clustaloption").hide();
+                    document.getElementById('nonalignedwarning').style.display= 'inline';
+
+                }
+
             }
-            if (!validateAlignment(myCodeMirror.getValue())) {
-
-                $(".clustaloption").hide();
-                document.getElementById('nonalignedwarning').style.display= 'inline';
-
-            }
-        }
-
-        if(!validateFasta(myCodeMirror.getValue())) {
-            document.getElementById('fastacallout').style.display = 'none';
-        }
-
-        if(checkClustal(myCodeMirror.getValue())) {
-            document.getElementById('clustalcallout').style.display = 'block';
-        }
-        if(!checkClustal(myCodeMirror.getValue())) {
-            document.getElementById('clustalcallout').style.display = 'none';
-        }
-
-
-    });
-
-
-    document.getElementById("outformat_fas").onchange = function() {
-        var currentVal = this.value;
-
-        if (currentVal == "a3m") {
-
-            myCodeMirror2.setValue(readA3mText(myCodeMirror.getValue()));
-            tempCode = myCodeMirror.getValue();
-            myCodeMirror.setValue('');
-            $(".CodeMirror-line").decodeEffect();
-            myCodeMirror.setValue(tempCode);
-        }
-
-        if (currentVal == "clu") {
-            myCodeMirror2.setValue(printClustalText(myCodeMirror.getValue()));
-            var tempCode = myCodeMirror.getValue();
-            myCodeMirror.setValue('');
-            $(".CodeMirror-line").decodeEffect();
-            myCodeMirror.setValue(tempCode);
-        }
-
-        if (currentVal == "lowercase") {
-
-            myCodeMirror2.setValue(printFastaObj(fastaToLowerCase(myCodeMirror.getValue())));
-            tempCode = myCodeMirror.getValue();
-            myCodeMirror.setValue('');
-            $(".CodeMirror-line").decodeEffect();
-            myCodeMirror.setValue(tempCode);
-
-        }
-
-
-        document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
-    };
-
-    document.getElementById("outformat_clu").onchange = function() {
-        var currentVal = this.value;
-
-        if (currentVal == "a3m") {
-
-            myCodeMirror2.setValue(readA3mText(clustal2Fasta(myCodeMirror.getValue())));
-            tempCode = myCodeMirror.getValue();
-            myCodeMirror.setValue('');
-            $(".CodeMirror-line").decodeEffect();
-            myCodeMirror.setValue(tempCode);
-        }
-
-        if (currentVal == "fas") {
-            myCodeMirror2.setValue(clustal2Fasta(myCodeMirror.getValue()));
-            tempCode = myCodeMirror.getValue();
-            myCodeMirror.setValue('');
-            $(".CodeMirror-line").decodeEffect();
-            myCodeMirror.setValue(tempCode);
-        }
-
-        document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
-    };
-
-    /* Export */
-
-    function downloadResult() {
-        if (myCodeMirror2.getValue())
-        $('a.download').attr('href', 'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,' + encodeURIComponent(myCodeMirror2.getValue()));
-        }
-
-
-
-    /* DropZone */
-    var reader;
-    var progress = document.querySelector('.percent');
-
-    function handleFileSelect(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-
-
-        var files = evt.dataTransfer.files; // FileList object.
-
-        // files is a FileList of File objects. List some properties.
-        var output = [];
-        progress.style.width = '0%';
-        progress.textContent = '0%';
-        reader = new FileReader();
-
-        for (var i = 0, f; f = files[i]; i++) {
-            if (!f.type.match('text/plain')) {
-                output.push('<li><strong>', 'Please drop only plain text files with *.txt as suffix.', '</strong> </li>');
-                continue;
+            if(validateStockholm(myCodeMirror.getValue())) {
+                document.getElementById('stockholmcallout').style.display = 'block';
             }
 
+            if(!validateFasta(myCodeMirror.getValue())) {
+                document.getElementById('fastacallout').style.display = 'none';
+            }
+
+            if(checkClustal(myCodeMirror.getValue())) {
+                document.getElementById('clustalcallout').style.display = 'block';
+            }
+            if(!checkClustal(myCodeMirror.getValue())) {
+                document.getElementById('clustalcallout').style.display = 'none';
+            }
+
+            if(validatePhylip(myCodeMirror.getValue())) {
+                document.getElementById('phylipcallout').style.display = 'block';
+
+                if (validateAlignmentFasta(myCodeMirror.getValue())) {
+                    $(".clustaloption").show();
+                    document.getElementById('nonalignedwarning').style.display= 'none';
+                }
+                if (!validateAlignmentFasta(myCodeMirror.getValue())) {
+
+                    $(".clustaloption").hide();
+                    document.getElementById('nonalignedwarning').style.display= 'inline';
+
+                }
+            }
+
+
+
+
+        });
+
+
+        document.getElementById("outformat_fas").onchange = function() {
+            var currentVal = this.value;
+
+            if (currentVal == "a3m") {
+
+                myCodeMirror2.setValue(readA3mText(myCodeMirror.getValue()));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+            if (currentVal == "clu") {
+                myCodeMirror2.setValue(printClustalText(myCodeMirror.getValue()));
+                var tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+            if (currentVal == "lowercase") {
+
+                myCodeMirror2.setValue(printFastaObj(fastaToLowerCase(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "phy") {
+
+                myCodeMirror2.setValue(json2phylip(fasta2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "sto") {
+
+                myCodeMirror2.setValue(json2stockholm(fasta2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+
+            document.getElementById('outputarea').value = myCodeMirror2.getValue();
+
+        };
+
+        document.getElementById("outformat_clu").onchange = function() {
+            var currentVal = this.value;
+
+            if (currentVal == "a3m") {
+
+                myCodeMirror2.setValue(readA3mText(clustal2Fasta(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+            if (currentVal == "fas") {
+                myCodeMirror2.setValue(clustal2Fasta(myCodeMirror.getValue()));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+            document.getElementById('outputarea').value = myCodeMirror2.getValue();
+
+        };
+
+        document.getElementById("outformat_phy").onchange = function() {
+            var currentVal = this.value;
+
+            if (currentVal == "fas") {
+                myCodeMirror2.setValue(json2fasta(phylip2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+            if (currentVal == "sto") {
+                myCodeMirror2.setValue(json2stockholm(phylip2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+
+            document.getElementById('outputarea').value = myCodeMirror2.getValue();
+
+        };
+
+        document.getElementById("outformat_sto").onchange = function() {
+            var currentVal = this.value;
+
+            if (currentVal == "fas") {
+                myCodeMirror2.setValue(json2fasta(stockholm2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+            if (currentVal == "phy") {
+                myCodeMirror2.setValue(json2phylip(stockholm2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+
+            document.getElementById('outputarea').value = myCodeMirror2.getValue();
+
+        };
+
+        /* Export */
+
+        function downloadResult() {
+            if (myCodeMirror2.getValue())
+                $('a.download').attr('href', 'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,' + encodeURIComponent(myCodeMirror2.getValue()));
+        }
+
+
+
+        /* DropZone */
+        var reader;
+        var progress = document.querySelector('.percent');
+
+        function handleFileSelect(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+
+
+            var files = evt.dataTransfer.files; // FileList object.
+
+            // files is a FileList of File objects. List some properties.
+            var output = [];
+            progress.style.width = '0%';
+            progress.textContent = '0%';
+            reader = new FileReader();
+
+            for (var i = 0, f; f = files[i]; i++) {
+                if (!f.type.match('text/plain')) {
+                    output.push('<li><strong>', 'Please drop only plain text files with *.txt as suffix.', '</strong> </li>');
+                    continue;
+                }
+
+
+                reader.onerror = errorHandler;
+                reader.onprogress = updateProgress;
+                reader.onabort = function(e) {
+                    alert('File read cancelled');
+                };
+                reader.onloadstart = function(e) {
+                    document.getElementById('progress_bar').className = 'loading';
+                };
+                reader.onload = function(e) {
+                    // Ensure that the progress bar displays 100% at the end.
+                    progress.style.width = '100%';
+                    progress.textContent = '100%';
+                    setTimeout("document.getElementById('progress_bar').className='';", 2000);
+                };
+
+                // Read in the image file as a binary string.
+                reader.readAsBinaryString(evt.target.files[i]);
+
+
+
+                output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                        f.size, ' bytes, last modified: ',
+                        f.lastModifiedDate.toLocaleDateString(), '</li>');
+
+            }
+
+            document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+        }
+
+
+
+        function handleFileSelect2(evt) {
+            // Reset progress indicator on new file selection.
+            progress.style.width = '0%';
+            progress.textContent = '0%';
+
+            reader = new FileReader();
 
             reader.onerror = errorHandler;
             reader.onprogress = updateProgress;
@@ -326,247 +482,209 @@
                 progress.style.width = '100%';
                 progress.textContent = '100%';
                 setTimeout("document.getElementById('progress_bar').className='';", 2000);
+                if (evt.target.files[0].type.match('text/plain')) {
+
+                    myCodeMirror.setValue(reader.result);
+
+                } else alert("type mismatch, please upload only plain text files.");
             };
 
+
             // Read in the image file as a binary string.
-            reader.readAsBinaryString(evt.target.files[i]);
+            //reader.readAsBinaryString(evt.target.files[0]);
 
+            reader.readAsText(evt.target.files[0]);
 
+        }
 
-            output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
-                    f.size, ' bytes, last modified: ',
-                    f.lastModifiedDate.toLocaleDateString(), '</li>');
-
-            }
-
-        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-    }
-
-
-
-    function handleFileSelect2(evt) {
-        // Reset progress indicator on new file selection.
-        progress.style.width = '0%';
-        progress.textContent = '0%';
-
-        reader = new FileReader();
-
-        reader.onerror = errorHandler;
-        reader.onprogress = updateProgress;
-        reader.onabort = function(e) {
-            alert('File read cancelled');
-        };
-        reader.onloadstart = function(e) {
-            document.getElementById('progress_bar').className = 'loading';
-        };
-        reader.onload = function(e) {
-            // Ensure that the progress bar displays 100% at the end.
-            progress.style.width = '100%';
-            progress.textContent = '100%';
-            setTimeout("document.getElementById('progress_bar').className='';", 2000);
-            if (evt.target.files[0].type.match('text/plain')) {
-
-                myCodeMirror.setValue(reader.result);
-
-            } else alert("type mismatch, please upload only plain text files.");
-        };
-
-
-        // Read in the image file as a binary string.
-        //reader.readAsBinaryString(evt.target.files[0]);
-
-        reader.readAsText(evt.target.files[0]);
-
-    }
-
-    function updateProgress(evt) {
-        // evt is an ProgressEvent.
-        if (evt.lengthComputable) {
-            var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
-            // Increase the progress bar length.
-            if (percentLoaded < 100) {
-                progress.style.width = percentLoaded + '%';
-                progress.textContent = percentLoaded + '%';
+        function updateProgress(evt) {
+            // evt is an ProgressEvent.
+            if (evt.lengthComputable) {
+                var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
+                // Increase the progress bar length.
+                if (percentLoaded < 100) {
+                    progress.style.width = percentLoaded + '%';
+                    progress.textContent = percentLoaded + '%';
+                }
             }
         }
-    }
 
-    function errorHandler(evt) {
-        switch(evt.target.error.code) {
-            case evt.target.error.NOT_FOUND_ERR:
-                alert('File Not Found!');
-                break;
-            case evt.target.error.NOT_READABLE_ERR:
-                alert('File is not readable');
-                break;
-            case evt.target.error.ABORT_ERR:
-                break; // noop
-            default:
-                alert('An error occurred reading this file.');
-        };
-    }
-
-    function abortRead() {
-        reader.abort();
-    }
-
-    function handleDragOver(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-        evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-    }
-
-    // Setup the dnd listeners.
-    //var dropZone = document.getElementById('drop_zone');
-    //dropZone.addEventListener('dragover', handleDragOver, false);
-    //dropZone.addEventListener('drop', handleFileSelect, false);
-    document.getElementById('files').addEventListener('change', handleFileSelect2, false);
-
-
-    // Dropzone Toggle
-
-    $("#dropzonetoggle").on("click", function(){
-        if($("#dropzonewrapper").css("display") == "none")
-        {
-            $("#dropzonewrapper").show();
-        } else {
-            $("#dropzonewrapper").hide();
+        function errorHandler(evt) {
+            switch(evt.target.error.code) {
+                case evt.target.error.NOT_FOUND_ERR:
+                    alert('File Not Found!');
+                    break;
+                case evt.target.error.NOT_READABLE_ERR:
+                    alert('File is not readable');
+                    break;
+                case evt.target.error.ABORT_ERR:
+                    break; // noop
+                default:
+                    alert('An error occurred reading this file.');
+            };
         }
 
-        return false;
-    });
-
-    /* Paste left */
-
-    function pasteLeft() {
-
-        if (myCodeMirror2.getValue()) {
-
-            myCodeMirror.setValue(myCodeMirror2.getValue());
-            myCodeMirror2.setValue("");
+        function abortRead() {
+            reader.abort();
         }
 
-        else alert("no output yet");
+        function handleDragOver(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+        }
 
-    }
+        // Setup the dnd listeners.
+        //var dropZone = document.getElementById('drop_zone');
+        //dropZone.addEventListener('dragover', handleDragOver, false);
+        //dropZone.addEventListener('drop', handleFileSelect, false);
+        document.getElementById('files').addEventListener('change', handleFileSelect2, false);
 
 
-    /* Decode Effect */
+        // Dropzone Toggle
 
-
-    jQuery.fn.decodeEffect = (function ($) {
-        var defaultOptions = {
-            duration:      1,
-            stepsPerGlyph: 1,
-            codeGlyphs:    "-ACDEFGHIKLMNPQRSTUVWY",
-            className:     "code"
-        };
-
-        // get a random string from the given set,
-        // or from the 33 - 125 ASCII range
-        function randomString(set, length) {
-            var string = "", i, glyph;
-            for(i = 0 ; i < length ; i++) {
-                glyph = Math.random() * set.length;
-                string += set[glyph | 0];
+        $("#dropzonetoggle").on("click", function(){
+            if($("#dropzonewrapper").css("display") == "none")
+            {
+                $("#dropzonewrapper").show();
+            } else {
+                $("#dropzonewrapper").hide();
             }
-            return string;
+
+            return false;
+        });
+
+        /* Paste left */
+
+        function pasteLeft() {
+
+            if (myCodeMirror2.getValue()) {
+
+                myCodeMirror.setValue(myCodeMirror2.getValue());
+                myCodeMirror2.setValue("");
+            }
+
+            else alert("no output yet");
+
         }
 
-        function animate(element, options) {
-            var text = element.text(),
-                    span = $("<span/>").addClass(options.className).insertAfter(element),
-                    interval = options.duration / (text.length * options.stepsPerGlyph),
-                    step = 0,
-                    length = 0,
-                    stepper = function () {
-                        if(++step % options.stepsPerGlyph === 0) {
-                            length++;
-                            element.text(text.slice(0, length));
-                        }
-                        if(length <= text.length) {
-                            span.text(randomString(options.codeGlyphs, text.length - length));
-                            setTimeout(stepper, interval);
-                        } else {
-                            span.remove();
-                        }
-                    };
-            element.text("");
-            stepper();
+
+        /* Decode Effect */
+
+
+        jQuery.fn.decodeEffect = (function ($) {
+            var defaultOptions = {
+                duration:      1,
+                stepsPerGlyph: 1,
+                codeGlyphs:    "-ACDEFGHIKLMNPQRSTUVWY",
+                className:     "code"
+            };
+
+            // get a random string from the given set,
+            // or from the 33 - 125 ASCII range
+            function randomString(set, length) {
+                var string = "", i, glyph;
+                for(i = 0 ; i < length ; i++) {
+                    glyph = Math.random() * set.length;
+                    string += set[glyph | 0];
+                }
+                return string;
+            }
+
+            function animate(element, options) {
+                var text = element.text(),
+                        span = $("<span/>").addClass(options.className).insertAfter(element),
+                        interval = options.duration / (text.length * options.stepsPerGlyph),
+                        step = 0,
+                        length = 0,
+                        stepper = function () {
+                            if(++step % options.stepsPerGlyph === 0) {
+                                length++;
+                                element.text(text.slice(0, length));
+                            }
+                            if(length <= text.length) {
+                                span.text(randomString(options.codeGlyphs, text.length - length));
+                                setTimeout(stepper, interval);
+                            } else {
+                                span.remove();
+                            }
+                        };
+                element.text("");
+                stepper();
+            }
+
+            // Basic jQuery plugin pattern
+            return function (options) {
+                options = $.extend({}, defaultOptions, (options || {}));
+                return this.each(function () {
+                    animate($(this), options);
+                });
+            };
+        }(jQuery));
+
+
+        /* MSA */
+
+        function initMSA(){
+
+            // this is a way how you use a bundled file parser
+            msa = require("msa");
+
+            var opts = {colorscheme: {"scheme": "clustal"}};
+
+            opts.el = document.getElementById("yourDiv");
+            opts.vis = {
+                conserv: false,
+                overviewbox: true,
+                seqlogo: true,
+
+                labels: true,
+                labelName: true,
+                labelId: false,
+                labelPartition: false,
+                labelCheckbox: false
+            };
+            opts.conf = {
+                dropImport: true
+            };
+            opts.zoomer = {
+                // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
+                // use script for handling
+                alignmentHeight: 525, alignmentWidth: 900, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
+            };
+            if (validateFasta(myCodeMirror.getValue())){
+                opts.seqs = readFastaText(myCodeMirror.getValue());
+            }
+            if (checkClustal(myCodeMirror.getValue())) {
+                opts.seqs = (clustalParser(myCodeMirror.getValue()));
+            }
+            if (!validateFasta(myCodeMirror.getValue()) && !checkClustal(myCodeMirror.getValue()))  { alert("currently, the alignmentviewer supports only fasta and clustal inputs."); }
+            // init msa
+
+            var ms = new msa.msa(opts);
+
+            // the menu is independent to the MSA container
+            var menuOpts = {};
+            menuOpts.el = document.getElementById('div');
+            menuOpts.msa = ms;
+            var defMenu = new msa.menu.defaultmenu(menuOpts);
+            //ms.addView("menu", defMenu);
+
+            // call render at the end to display the whole MSA
+            ms.render();
+
         }
 
-        // Basic jQuery plugin pattern
-        return function (options) {
-            options = $.extend({}, defaultOptions, (options || {}));
-            return this.each(function () {
-                animate($(this), options);
-            });
-        };
-    }(jQuery));
 
+        /* Forwarding */
 
-    /* MSA */
+        function forward() {
 
-    function initMSA(){
+            localStorage.setItem("resultcookie", myCodeMirror.getValue());
+            window.location.href="/#/tools/psiblast";
+        }
 
-    // this is a way how you use a bundled file parser
-    msa = require("msa");
-
-    var opts = {colorscheme: {"scheme": "clustal"}};
-
-    opts.el = document.getElementById("yourDiv");
-    opts.vis = {
-        conserv: false,
-        overviewbox: true,
-        seqlogo: true,
-
-        labels: true,
-        labelName: true,
-        labelId: false,
-        labelPartition: false,
-        labelCheckbox: false
-    };
-    opts.conf = {
-        dropImport: true
-    };
-    opts.zoomer = {
-        // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
-        // use script for handling
-        alignmentHeight: 525, alignmentWidth: 900, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
-    };
-    if (validateFasta(myCodeMirror.getValue())){
-        opts.seqs = readFastaText(myCodeMirror.getValue());
-    }
-    if (checkClustal(myCodeMirror.getValue())) {
-        opts.seqs = (clustalParser(myCodeMirror.getValue()));
-    }
-    if (!validateFasta(myCodeMirror.getValue()) && !checkClustal(myCodeMirror.getValue()))  { alert("currently, the alignmentviewer supports only fasta and clustal inputs."); }
-    // init msa
-
-        var ms = new msa.msa(opts);
-
-        // the menu is independent to the MSA container
-        var menuOpts = {};
-        menuOpts.el = document.getElementById('div');
-        menuOpts.msa = ms;
-        var defMenu = new msa.menu.defaultmenu(menuOpts);
-        //ms.addView("menu", defMenu);
-
-        // call render at the end to display the whole MSA
-        ms.render();
-
-    }
-
-
-    /* Forwarding */
-
-    function forward() {
-
-        localStorage.setItem("resultcookie", myCodeMirror.getValue());
-        window.location.href="/#/tools/psiblast";
-    }
-
-    $(document).foundation();
+        $(document).foundation();
 
 </script>
 

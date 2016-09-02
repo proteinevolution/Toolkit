@@ -1,441 +1,449 @@
 /*
 
-REFORMAT ES6 VERSION
-TODO: Minify me
+ REFORMAT ES6 VERSION
+ TODO: Minify me
 
  */
 
-    function readFastaText(fastaText){
+function readFastaText(fastaText){
 
-        // clean header from multiple occurences of > identifiers, will be missing in output for now.
-        var newlines = fastaText.split('\n');
-        for(var k = 0;k < newlines.length;k++){
-            if ((newlines[k].match(/>/g)||[]).length > 1) {
-                newlines[k] = newlines[k].replace(/(?!^)>/g, '');
-            }
+    // clean header from multiple occurences of > identifiers, will be missing in output for now.
+    var newlines = fastaText.split('\n');
+    for(var k = 0;k < newlines.length;k++){
+        if ((newlines[k].match(/>/g)||[]).length > 1) {
+            newlines[k] = newlines[k].replace(/(?!^)>/g, '');
         }
+    }
 
-        fastaText = newlines.join('\n');
+    fastaText = newlines.join('\n');
 
 
-        var splittedStrings = fastaText.split(">"),
-            result = [],
-            i = 1;
+    var splittedStrings = fastaText.split(">"),
+        result = [],
+        i = 1;
+
+    for (; i < splittedStrings.length; i++) {
+
+        result.push(new readFastaLine(splittedStrings[i]));
+
+    }
+
+
+    return result;
+}
+
+
+function printFastaObj(obj) {
+
+    result = [];
+
+    for(var i=0;i<obj.length;i++){
+        result +=">";
+        result += obj[i].name;
+        result += "\n";
+        result += obj[i].seq;
+        result += "\n";
+    }
+
+    return result;
+}
+
+
+function readA3mText(a3mtext){
+
+
+    // clean header from multiple occurences of > identifiers, will be missing in output for now.
+    var newlines = a3mtext.split('\n');
+    for(var k = 0;k < newlines.length;k++){
+        if ((newlines[k].match(/>/g)||[]).length > 1) {
+            newlines[k] = newlines[k].replace(/(?!^)>/g, '');
+        }
+    }
+
+    a3mtext = newlines.join('\n');
+
+
+
+    var splittedStrings = a3mtext.split(">"),
+        result = [],
+        i = 1;
+
+    for (; i < splittedStrings.length; i++) {
+
+        result += ">";
+        result += readA3mLine(splittedStrings[i]).name;
+        result += "\n";
+        result += readA3mLine(splittedStrings[i]).seq;
+        result += "\n";
+
+    }
+
+    return result;
+
+}
+
+
+function readA3mLine(a3mline){
+
+    var splittedStrings  = a3mline.split('\n'),
+        result = {},
+        i = 1;
+    result.name = splittedStrings[0].substr(0, 11);
+    result.seq = '';
+    for (; i < splittedStrings.length; i++) {
+        result.seq += splittedStrings[i];
+        result.seq = result.seq.split('.').join('');
+    }
+    return result;
+
+}
+
+
+function printClustalText(fastaText){
+
+
+    // clean header from multiple occurences of > identifiers, will be missing in output for now.
+    var newlines = fastaText.split('\n');
+    //console.log(newlines);
+    for(var k = 0;k < newlines.length;k++){
+        if ((newlines[k].match(/>/g)||[]).length > 1) {
+            newlines[k] = newlines[k].replace(/(?!^)>/g, '');
+        }
+    }
+
+    fastaText = newlines.join('\n');
+
+    var splittedStrings = fastaText.split(">"),
+        result = [],
+        i = 1,
+        j = 0;
+
+    result += "CLUSTAL multiple sequence alignment";
+    result += "\n\n";
+
+    for (; j < Math.trunc(getClustalSeq(splittedStrings[i]).length/60) + 1 ; j++){
 
         for (; i < splittedStrings.length; i++) {
 
-            result.push(new readFastaLine(splittedStrings[i]));
-
-        }
-
-        return result;
-    }
-
-
-    function printFastaObj(obj) {
-
-            result = [];
-
-        for(var i=0;i<obj.length;i++){
-            result +=">";
-            result += obj[i].name;
-            result += "\n";
-            result += obj[i].seq;
-            result += "\n";
-        }
-
-        return result;
-    }
-
-
-    function readA3mText(a3mtext){
-
-
-        // clean header from multiple occurences of > identifiers, will be missing in output for now.
-        var newlines = a3mtext.split('\n');
-        for(var k = 0;k < newlines.length;k++){
-            if ((newlines[k].match(/>/g)||[]).length > 1) {
-                newlines[k] = newlines[k].replace(/(?!^)>/g, '');
-            }
-        }
-
-        a3mtext = newlines.join('\n');
-
-
-
-        var splittedStrings = a3mtext.split(">"),
-            result = [],
-            i = 1;
-
-        for (; i < splittedStrings.length; i++) {
-
-            result += ">";
-            result += readA3mLine(splittedStrings[i]).name;
-            result += "\n";
-            result += readA3mLine(splittedStrings[i]).seq;
+            result += getClustalHeader(splittedStrings[i]);
+            result += "\t";
+            result += chunkString(getClustalSeq(splittedStrings[i]), 60)[j];
             result += "\n";
 
         }
 
-        return result;
+        result += "\n\n";
+        i = 1;
 
     }
 
-
-    function readA3mLine(a3mline){
-
-        var splittedStrings  = a3mline.split('\n'),
-            result = {},
-            i = 1;
-        result.name = splittedStrings[0].substr(0, 11);
-        result.seq = '';
-        for (; i < splittedStrings.length; i++) {
-            result.seq += splittedStrings[i];
-            result.seq = result.seq.split('.').join('');
-        }
-        return result;
-
-    }
+    result = result.slice(0, -3); //removes trailing whitespaces at EOF
+    result += "\n"; // hack for codemirror cursor bug with atomic ranges
 
 
-    function printClustalText(fastaText){
+    return result;
+}
 
 
-        // clean header from multiple occurences of > identifiers, will be missing in output for now.
-        var newlines = fastaText.split('\n');
-        for(var k = 0;k < newlines.length;k++){
-            if ((newlines[k].match(/>/g)||[]).length > 1) {
-                newlines[k] = newlines[k].replace(/(?!^)>/g, '');
-            }
-        }
+function getGIs(fastaText){
 
-        fastaText = newlines.join('\n');
+    var splittedStrings = fastaText.split(">"),
+        result = [],
+        i = 1;
 
-        var splittedStrings = fastaText.split(">"),
-            result = [],
-            i = 1,
-            j = 0;
+    for (; i < splittedStrings.length; i++) {
 
-            result += "CLUSTAL multiple sequence alignment";
-            result += "\n\n";
-
-        for (; j < Math.trunc(getClustalSeq(splittedStrings[i]).length/60) + 1 ; j++){
-
-            for (; i < splittedStrings.length; i++) {
-
-                    result += getClustalHeader(splittedStrings[i]);
-                    result += "\t";
-                    result += chunkString(getClustalSeq(splittedStrings[i]), 60)[j];
-                    result += "\n";
-
-            }
-
-            result += "\n\n";
-            i = 1;
-
-        }
-
-        result = result.slice(0, -3); //removes trailing whitespaces at EOF
-        result += "\n"; // hack for codemirror cursor bug with atomic ranges
-
-        return result;
-    }
-
-
-    function getGIs(fastaText){
-
-        var splittedStrings = fastaText.split(">"),
-            result = [],
-            i = 1;
-
-            for (; i < splittedStrings.length; i++) {
-
-                if (splittedStrings[i].substring(0,3) == 'gi|') {
-                result += getClustalHeader(splittedStrings[i]).substring(3).split('|')[0];
-                result += "\n";
-
-                }
-            }
-
-        return result;
-    }
-
-
-    function readFastaLine(fastaLine) {
-
-        var splittedStrings  = fastaLine.split('\n'),
-            result = {},
-            i = 1;
-
-        //if (splittedStrings[0].charAt(12) === '|'){
-        result.name = splittedStrings[0].substr(0, 28);
-        //else { result.name = splittedStrings[0].substr(0, 11) + ' '; }
-
-        result.seq = '';
-        for (; i < splittedStrings.length; i++) {
-            result.seq += splittedStrings[i];
-        }
-        return result;
-    }
-
-
-    function getClustalSeq (fastaLine) {
-
-        var fasta = readFastaLine(fastaLine);
-        return fasta.seq;
-
-    }
-
-    function getClustalHeader (fastaLine) {
-
-        var fasta = readFastaLine(fastaLine);
-        return fasta.name;
-
-    }
-
-    function chunkString(str, len) {
-        var _size = Math.ceil(str.length/len),
-            _ret  = new Array(_size),
-            _offset
-            ;
-
-        for (var _i=0; _i<_size; _i++) {
-            _offset = _i * len;
-            _ret[_i] = str.substring(_offset, _offset + len);
-        }
-
-        return _ret;
-    }
-
-
-    function printAsJSON(source) {
-
-        return JSON.stringify(readFastaText(source));
-
-    }
-
-    function clustalAsJSON(source){
-
-        return JSON.stringify(clustalParser(source));
-
-    }
-
-
-    function clustal2Fasta(text) {
-
-        var clustalObj = clustalParser(text),
-            result = [];
-
-
-        for(var i=0;i<clustalObj.length;i++){
-            result +=">";
-            result += clustalObj[i].untrimmed;
+        if (splittedStrings[i].substring(0,3) == 'gi|') {
+            result += getClustalHeader(splittedStrings[i]).substring(3).split('|')[0];
             result += "\n";
-            result += clustalObj[i].seq;
-            result += "\n";
+
         }
-
-        return result;
-
     }
 
+    return result;
+}
 
-    function _contains(text, search) {
-        return ''.indexOf.call(text, search, 0) !== -1;
+
+function readFastaLine(fastaLine) {
+
+    var splittedStrings  = fastaLine.split('\n'),
+        result = {},
+        i = 1;
+
+    //if (splittedStrings[0].charAt(12) === '|'){
+    result.name = splittedStrings[0].substr(0, 28);
+    //else { result.name = splittedStrings[0].substr(0, 11) + ' '; }
+
+    result.seq = '';
+    for (; i < splittedStrings.length; i++) {
+        result.seq += splittedStrings[i];
+    }
+    return result;
+}
+
+
+function getClustalSeq (fastaLine) {
+
+    var fasta = readFastaLine(fastaLine);
+    return fasta.seq;
+
+}
+
+function getClustalHeader (fastaLine) {
+
+    var fasta = readFastaLine(fastaLine);
+    return fasta.name;
+
+}
+
+function chunkString(str, len) {
+    var _size = Math.ceil(str.length/len),
+        _ret  = new Array(_size),
+        _offset
+        ;
+
+    for (var _i=0; _i<_size; _i++) {
+        _offset = _i * len;
+        _ret[_i] = str.substring(_offset, _offset + len);
     }
 
+    return _ret;
+}
 
-    function clustalParser(text) {
-        var blockstate, cSeq, k, keys, untrimmed, label, line, lines, match, obj, regex, seqCounter, seqs, sequence;
-        seqs = [];
-        if (Object.prototype.toString.call(text) === '[object Array]') {
-            lines = text;
+
+function printAsJSON(source) {
+
+    return JSON.stringify(readFastaText(source));
+
+}
+
+function clustalAsJSON(source){
+
+    return JSON.stringify(clustalParser(source));
+
+}
+
+
+function clustal2Fasta(text) {
+
+    var clustalObj = clustalParser(text),
+        result = [];
+
+
+    for(var i=0;i<clustalObj.length;i++){
+        result +=">";
+        result += clustalObj[i].untrimmed;
+        result += "\n";
+        result += clustalObj[i].seq;
+        result += "\n";
+    }
+
+    return result;
+
+}
+
+
+function _contains(text, search) {
+    return ''.indexOf.call(text, search, 0) !== -1;
+}
+
+
+function clustalParser(text) {
+    var blockstate, cSeq, k, keys, untrimmed, label, line, lines, match, obj, regex, seqCounter, seqs, sequence;
+    seqs = [];
+    if (Object.prototype.toString.call(text) === '[object Array]') {
+        lines = text;
+    } else {
+        lines = text.split("\n");
+    }
+    if (lines[0].slice(0, 6) === !"CLUSTAL") {
+        throw new Error("Invalid CLUSTAL Header");
+    }
+    k = 0;
+    blockstate = 1;
+    seqCounter = 0;
+    while (k < lines.length) {
+        k++;
+        line = lines[k];
+        if ((line == null) || line.length === 0) {
+            blockstate = 1;
+            continue;
+        }
+        if (line.trim().length === 0) {
+            blockstate = 1;
+            continue;
         } else {
-            lines = text.split("\n");
-        }
-        if (lines[0].slice(0, 6) === !"CLUSTAL") {
-            throw new Error("Invalid CLUSTAL Header");
-        }
-        k = 0;
-        blockstate = 1;
-        seqCounter = 0;
-        while (k < lines.length) {
-            k++;
-            line = lines[k];
-            if ((line == null) || line.length === 0) {
-                blockstate = 1;
+            if (_contains(line, "*")) {
                 continue;
             }
-            if (line.trim().length === 0) {
-                blockstate = 1;
-                continue;
-            } else {
-                if (_contains(line, "*")) {
-                    continue;
-                }
-                if (blockstate === 1) {
-                    seqCounter = 0;
-                    blockstate = 0;
-                }
-                regex = /^(?:\s*)(\S+)(?:\s+)(\S+)(?:\s*)(\d*)(?:\s*|$)/g;
-                match = regex.exec(line);
-                if (match != null) {
-                    label = match[1];
-                    untrimmed = label;
-                    sequence = match[2];
-                    if (seqCounter >= seqs.length) {
-                        obj = getMeta(label);
-                        label = obj.name;
-                        cSeq = new model(sequence, label, seqCounter);
-                        cSeq.untrimmed = untrimmed;
-                        cSeq.ids = obj.ids || {};
-                        cSeq.details = obj.details || {};
-                        keys = Object.keys(cSeq.ids);
-                        if (keys.length > 0) {
-                            cSeq.id = cSeq.ids[keys[0]];
-                        }
-                        seqs.push(cSeq);
-                    } else {
-                        seqs[seqCounter].seq += sequence;
+            if (blockstate === 1) {
+                seqCounter = 0;
+                blockstate = 0;
+            }
+            regex = /^(?:\s*)(\S+)(?:\s+)(\S+)(?:\s*)(\d*)(?:\s*|$)/g;
+            match = regex.exec(line);
+            if (match != null) {
+                label = match[1];
+                untrimmed = label;
+                sequence = match[2];
+                if (seqCounter >= seqs.length) {
+                    obj = getMeta(label);
+                    label = obj.name;
+                    cSeq = new model(sequence, label, seqCounter);
+                    cSeq.untrimmed = untrimmed;
+                    cSeq.ids = obj.ids || {};
+                    cSeq.details = obj.details || {};
+                    keys = Object.keys(cSeq.ids);
+                    if (keys.length > 0) {
+                        cSeq.id = cSeq.ids[keys[0]];
                     }
-                    seqCounter++;
+                    seqs.push(cSeq);
                 } else {
-                    //console.log("clustal parse error, maybe fasta?", line);
+                    seqs[seqCounter].seq += sequence;
                 }
+                seqCounter++;
+            } else {
+                //console.log("clustal parse error, maybe fasta?", line);
             }
         }
-
-        return seqs;
     }
 
+    return seqs;
+}
 
-    function getMeta(label) {
 
-            var full_id = false, full_desc = false;
-            var name, ids = {}, details = {}, description;
+function getMeta(label) {
 
-        // 	console.log( "getMeta.label: ", label );
+    var full_id = false, full_desc = false;
+    var name, ids = {}, details = {}, description;
 
-            var label_parts = label.split(" ");
+    // 	console.log( "getMeta.label: ", label );
 
-            if ( label_parts.length >= 1 ) {
-                full_id   = label_parts.shift();     // everything up to the first white space
-                full_desc = label_parts.join(" ");   // everything else
-            }
-            else {
-                full_id = label;
-            }
+    var label_parts = label.split(" ");
 
-        // 	console.log( "full_id", full_id );
-        // 	console.log( "full_desc", full_desc );
+    if ( label_parts.length >= 1 ) {
+        full_id   = label_parts.shift();     // everything up to the first white space
+        full_desc = label_parts.join(" ");   // everything else
+    }
+    else {
+        full_id = label;
+    }
 
-            if ( full_id ) {
-                var id_parts = full_id.split('|');
+    // 	console.log( "full_id", full_id );
+    // 	console.log( "full_desc", full_desc );
 
-                // the last item is the accession
-                name = id_parts.pop();
+    if ( full_id ) {
+        var id_parts = full_id.split('|');
 
-                details.en = name;
+        // the last item is the accession
+        name = id_parts.pop();
 
-                // everything else should be pairs: db|id
-                while ( id_parts.length != 0 ) {
-                    var db = id_parts.shift();
-                    var id = id_parts.shift();
-                    ids[ db ] = id;
-                }
-            }
-            else {
-                name = full_id;
-            }
+        details.en = name;
 
-            if ( full_desc ) {
+        // everything else should be pairs: db|id
+        while ( id_parts.length != 0 ) {
+            var db = id_parts.shift();
+            var id = id_parts.shift();
+            ids[ db ] = id;
+        }
+    }
+    else {
+        name = full_id;
+    }
 
-                var kv_parts = full_desc.split('=');
+    if ( full_desc ) {
 
-                if ( kv_parts.length > 1 ) {
+        var kv_parts = full_desc.split('=');
 
-                    var current_key, next_key;
-                    var kv;
-                    var kv_idx_max = kv_parts.length - 1;
-                    var kv_idx = 0;
-                    kv_parts.forEach( function( value_and_maybe_next_key ) {
+        if ( kv_parts.length > 1 ) {
 
-                        value_and_maybe_next_key = value_and_maybe_next_key.trim();
+            var current_key, next_key;
+            var kv;
+            var kv_idx_max = kv_parts.length - 1;
+            var kv_idx = 0;
+            kv_parts.forEach( function( value_and_maybe_next_key ) {
 
-                        var value_parts = value_and_maybe_next_key.split(" ");
-                        var value;
-                        if ( value_parts.length > 1 ) {
-                            next_key = value_parts.pop();
-                            value = value_parts.join(' ');
-                        }
-                        else {
-                            value = value_and_maybe_next_key;
-                        }
+                value_and_maybe_next_key = value_and_maybe_next_key.trim();
 
-                        if ( current_key ) {
-                            var key = current_key.toLowerCase();
-                            details[ key ] = value;
-                            //console.log( "details[" + key + "] = " + value );
-                        }
-                        else {
-                            description = value;
-                            //console.log( "description=" + value );
-                        }
-                        current_key = next_key;
-                    });
+                var value_parts = value_and_maybe_next_key.split(" ");
+                var value;
+                if ( value_parts.length > 1 ) {
+                    next_key = value_parts.pop();
+                    value = value_parts.join(' ');
                 }
                 else {
-                    description = kv_parts.shift();
+                    value = value_and_maybe_next_key;
                 }
-            }
 
-            var meta = {
-                name: name,
-                ids: ids,
-                details: details
-            };
-
-            if ( description ) {
-                meta.desc = description
-            }
-
-        // 	console.log( "meta", meta );
-
-            return meta;
+                if ( current_key ) {
+                    var key = current_key.toLowerCase();
+                    details[ key ] = value;
+                    //console.log( "details[" + key + "] = " + value );
+                }
+                else {
+                    description = value;
+                    //console.log( "description=" + value );
+                }
+                current_key = next_key;
+            });
         }
-
-
-    function model(seq, name, id) {
-
-        this.seq = seq;
-        this.name = name;
-        this.id = id;
-        this.ids = {};
-
+        else {
+            description = kv_parts.shift();
+        }
     }
 
-    function validateFasta(fasta) {
+    var meta = {
+        name: name,
+        ids: ids,
+        details: details
+    };
 
-        if (!fasta) {
-            return false;
-        }
+    if ( description ) {
+        meta.desc = description
+    }
+
+    // 	console.log( "meta", meta );
+
+    return meta;
+}
 
 
-        // checks double occurrences of ">" in the header
+function model(seq, name, id) {
 
-        var newlines = fasta.split('\n');
+    this.seq = seq;
+    this.name = name;
+    this.id = id;
+    this.ids = {};
+
+}
+
+function validateFasta(fasta) {
+
+    if (!fasta) {
+        return false;
+    }
+
+
+    // checks double occurrences of ">" in the header
+
+    var newlines = fasta.split('\n');
+    if (!newlines[0].startsWith("#")) {
+
         for(var k = 0;k < newlines.length;k++){
             if ((newlines[k].match(/>/g)||[]).length > 1) {
-                console.log("warning, header has more than one > identifier. file corrupt?");
-                //newlines[k] = newlines[k].replace(/(?!^)>/g, '');
+                throw new Error("warning, header has more than one > identifier. file corrupt?");
+                return false;
             }
+
         }
-
-
         //fasta = newlines.join('\n');
 
-        if (!fasta.startsWith('>')) { return false; }
-        if (fasta.indexOf('>') == -1) { return false; }
+        if (!fasta.startsWith('>')) {
+            return false;
+        }
+        if (fasta.indexOf('>') == -1) {
+            return false;
+        }
 
         var splittedStrings = fasta.split(">"),
             i = 1;
@@ -470,251 +478,511 @@ TODO: Minify me
         }
 
         return true;
+
     }
+    return false;
+}
 
 
 
-  function checkClustal (clustal) {
+function checkClustal (clustal) {
 
-      if(!clustal) { return false; }
+    if(!clustal) { return false; }
 
-        var header, headerSeen, i, len, lines, sequence;
-        clustal = clustal.split('\n');
-        headerSeen = false;
-        //check if it's an alignment:
-        var clustalObj = (clustalParser(clustal));
+    var header, headerSeen, i, len, lines, sequence;
+    clustal = clustal.split('\n');
+    headerSeen = false;
+    //check if it's an alignment:
+    var clustalObj = (clustalParser(clustal));
 
-        for (var j = 1; j < clustalObj.length; j++) {
-            if (clustalObj[j].seq.length !== clustalObj[j-1].seq.length) {
-                console.log('input is not an alignment');
-                return false; }
+
+    for (i = 0, len = clustal.length; i < len; i++) {
+        sequence = clustal[i];
+
+        if (sequence.match(/^\s*$/)) {
+            continue;
         }
 
+        if (headerSeen === true) {
+            sequence = sequence.trim();
+            lines = sequence.split(/\s+/g);
 
-        for (i = 0, len = clustal.length; i < len; i++) {
-            sequence = clustal[i];
+            if (lines.length !== 2 && lines.length !== 3) {
 
-            if (sequence.match(/^\s*$/)) {
-                continue;
+                console.log("Each line has to include name/sequence and optional length");
+                return false;
             }
+            if (lines[1].length > 60) {
 
-            if (headerSeen === true) {
-                sequence = sequence.trim();
-                lines = sequence.split(/\s+/g);
-
-                if (lines.length !== 2 && lines.length !== 3) {
-
-                    console.log("Each line has to include name/sequence and optional length");
-                    return false;
-                }
-                if (lines[1].length > 60) {
-
-                    console.log('More than 60 sequence symbols in one line');
-                    return false;
-                }
-
-                if (lines[1].search(/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i) != -1) {
-
-                    return false;
-                }
-
-            } else {
-                header = sequence.trim().replace(' ', '');
-                if (!header.startsWith('CLUSTAL')) {
-
-                    console.log('No CLUSTAL Header');
-                    return false;
-                }
-                headerSeen = true;
-            }
-        }
-      return true;
-    }
-
-    function validateA3m(a3m) {
-        if (a3m.indexOf('.') != -1) { return false; }
-        validateFasta(a3m);
-    }
-
-
-    function validateA2m(a2m) {
-
-        if ((a2m.indexOf('.') != -1) && (validateFasta(a2m)))
-            return true;
-    }
-
-    function validateAlignment(aln) {
-
-        // check whether a fasta input is an alignment. This will be useful for validating whether we can directly
-        // convert from fasta to clustal. if not -> suggest forwarding to Muscle.
-
-        var fastaObj = readFastaText(aln);
-        var firstlength = fastaObj[0].seq.length;
-
-
-        for (var i = 0; i < fastaObj.length; i++) {
-
-            if (fastaObj[i].seq.length !== firstlength) {
-                console.log("input is not an alignment");
-                if (_contains(fastaObj[i].seq, "-")) {
-
-                    console.log("warning: input contains dashes without being an alignment")
-                }
+                console.log('More than 60 sequence symbols in one line');
                 return false;
             }
 
-        }
+            if (lines[1].search(/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i) != -1) {
 
-        console.log("this is an alignment");
-        return true;
-
-    }
-
-
-    function aminoCountFasta(fas) {
-
-        var fastaObj = readFastaText(fas);
-
-        var dashcount, AA, BB, CC, DD, EE, FF, GG, HH, II, KK, LL, MM, NN, PP, QQ, RR, SS, TT, UU, VV, WW, XX, YY, ZZ;
-
-        for (var i = 0; i<fastaObj.length; i++) {
-
-
-            //TODO: loop through everything and count and return the result as an array
-        }
-
-
-    }
-
-    /* transform fasta sequences to lowercase and returns parsed json object */
-
-     function fastaToLowerCase(fas) {
-
-        var fastaObj = readFastaText(fas);
-        for (var i = 0; i<fastaObj.length; i++) {
-            fastaObj[i].seq = fastaObj[i].seq.toLowerCase();
-        }
-        return fastaObj;
-
-    }
-
-
-    /* transform fasta sequences to uppercase and returns parsed json object */
-
-    function fastaToUpperCase(fas) {
-
-        var fastaObj = readFastaText(fas);
-        for (var i = 0; i<fastaObj.length; i++) {
-            fastaObj[i].seq = fastaObj[i].seq.toUpperCase();
-        }
-        return fastaObj;
-
-    }
-
-    /* transform clustal sequences to lowercase and returns parsed json object */
-
-    function clustalToLowerCase(clu) {
-
-        var clustalObj = clustalParser(clu);
-        for (var i = 0; i<clustalObj.length; i++) {
-            clustalObj[i].seq = clustalObj[i].seq.toLowerCase();
-        }
-        return clustalObj;
-    }
-
-
-    /* transform clustal sequences to uppercase and returns parsed json object */
-
-    function clustalToUpperCase(clu) {
-
-        var clustalObj = clustalParser(clu);
-        for (var i = 0; i<clustalObj.length; i++) {
-            clustalObj[i].seq = clustalObj[i].seq.toUpperCase();
-        }
-        return clustalObj;
-    }
-
-
-
-    function aminoCountClustal(clu) {
-
-        aminoCountFasta(clustal2Fasta(clu));
-    }
-
-
-    function conservation(aln) {
-
-        //TODO: compute the conservation for an alignment
-
-    }
-
-
-    function getNumberOfFastaSeqs(fas) {
-        var fastaObj = readFastaText(fas);
-        return fastaObj.length;
-    }
-
-
-    function getNumberOfClustalSeqs(clustal) {
-
-        var clustalObj = clustalParser(clustal);
-        return clustalObj.length;
-
-    }
-
-    function validateClustalUpperCase(clu){
-
-        var clustalObj = clustalParser(clu);
-        for (var i = 0; i<clustalObj.length; i++) {
-            if((/[a-z]/.test(clustalObj[i].seq)))
                 return false;
-        }
-        return true;
+            }
 
-    }
 
-    function validateClustalLowerCase(clu){
 
-        var clustalObj = clustalParser(clu);
-        for (var i = 0; i<clustalObj.length; i++) {
-            if((/[A-Z]/.test(clustalObj[i].seq)))
+        } else {
+            header = sequence.trim().replace(' ', '');
+            if (!header.startsWith('CLUSTAL')) {
+
+                console.log('No CLUSTAL Header');
                 return false;
+            }else{
+                for (var j = 1; j < clustalObj.length; j++) {
+                    if (clustalObj[j].seq.length !== clustalObj[j-1].seq.length) {
+                        console.log('input is not an alignment');
+                        return false; }
+                }
+
+            }
+            headerSeen = true;
         }
-        return true;
     }
+    return true;
+}
 
-    function validateFastaUpperCase(fas){
+function validateA3m(a3m) {
+    if (a3m.indexOf('.') != -1) { return false; }
+    validateFasta(a3m);
+}
 
-        var fastaObj = readFastaText(fas);
-        for (var i = 0; i<fastaObj.length; i++) {
-            if((/[a-z]/.test(fastaObj[i].seq)))
+
+function validateA2m(a2m) {
+
+    if ((a2m.indexOf('.') != -1) && (validateFasta(a2m)))
+        return true;
+}
+
+function validateAlignmentFasta(aln) {
+    if(!aln)
+        return false;
+    // check whether a fasta input is an alignment. This will be useful for validating whether we can directly
+    // convert from fasta to clustal. if not -> suggest forwarding to Muscle.
+    var fastaObj = readFastaText(aln);
+    var firstlength = fastaObj[0].seq.length;
+
+
+    for (var i = 0; i < fastaObj.length; i++) {
+
+        if (fastaObj[i].seq.length !== firstlength) {
+            console.log("input is not an alignment");
+            if (_contains(fastaObj[i].seq, "-")) {
+
+                console.log("warning: input contains dashes without being an alignment")
+            }
             return false;
         }
-        return true;
+
     }
 
-    function validateFastaLowerCase(fas){
+    console.log("this is an alignment");
+    return true;
 
-        var fastaObj = readFastaText(fas);
-        for (var i = 0; i<fastaObj.length; i++) {
-            if((/[A-Z]/.test(fastaObj[i].seq)))
+}
+
+
+
+
+
+function aminoCountFasta(fas) {
+
+    var fastaObj = readFastaText(fas);
+
+    var dashcount, AA, BB, CC, DD, EE, FF, GG, HH, II, KK, LL, MM, NN, PP, QQ, RR, SS, TT, UU, VV, WW, XX, YY, ZZ;
+
+    for (var i = 0; i<fastaObj.length; i++) {
+
+
+        //TODO: loop through everything and count and return the result as an array
+    }
+
+
+}
+
+/* transform fasta sequences to lowercase and returns parsed json object */
+
+function fastaToLowerCase(fas) {
+
+    var fastaObj = readFastaText(fas);
+    for (var i = 0; i<fastaObj.length; i++) {
+        fastaObj[i].seq = fastaObj[i].seq.toLowerCase();
+    }
+    return fastaObj;
+
+}
+
+
+/* transform fasta sequences to uppercase and returns parsed json object */
+
+function fastaToUpperCase(fas) {
+
+    var fastaObj = readFastaText(fas);
+    for (var i = 0; i<fastaObj.length; i++) {
+        fastaObj[i].seq = fastaObj[i].seq.toUpperCase();
+    }
+    return fastaObj;
+
+}
+
+/* transform clustal sequences to lowercase and returns parsed json object */
+
+function clustalToLowerCase(clu) {
+
+    var clustalObj = clustalParser(clu);
+    for (var i = 0; i<clustalObj.length; i++) {
+        clustalObj[i].seq = clustalObj[i].seq.toLowerCase();
+    }
+    return clustalObj;
+}
+
+
+/* transform clustal sequences to uppercase and returns parsed json object */
+
+function clustalToUpperCase(clu) {
+
+    var clustalObj = clustalParser(clu);
+    for (var i = 0; i<clustalObj.length; i++) {
+        clustalObj[i].seq = clustalObj[i].seq.toUpperCase();
+    }
+    return clustalObj;
+}
+
+
+
+function aminoCountClustal(clu) {
+
+    aminoCountFasta(clustal2Fasta(clu));
+}
+
+
+function conservation(aln) {
+
+    //TODO: compute the conservation for an alignment
+
+}
+
+
+function getNumberOfFastaSeqs(fas) {
+    var fastaObj = readFastaText(fas);
+    return fastaObj.length;
+}
+
+
+function getNumberOfClustalSeqs(clustal) {
+
+    var clustalObj = clustalParser(clustal);
+    return clustalObj.length;
+
+}
+
+function validateClustalUpperCase(clu){
+
+    var clustalObj = clustalParser(clu);
+    for (var i = 0; i<clustalObj.length; i++) {
+        if((/[a-z]/.test(clustalObj[i].seq)))
+            return false;
+    }
+    return true;
+
+}
+
+function validateClustalLowerCase(clu){
+
+    var clustalObj = clustalParser(clu);
+    for (var i = 0; i<clustalObj.length; i++) {
+        if((/[A-Z]/.test(clustalObj[i].seq)))
+            return false;
+    }
+    return true;
+}
+
+function validateFastaUpperCase(fas){
+
+    var fastaObj = readFastaText(fas);
+    for (var i = 0; i<fastaObj.length; i++) {
+        if((/[a-z]/.test(fastaObj[i].seq)))
+            return false;
+    }
+    return true;
+}
+
+function validateFastaLowerCase(fas){
+
+    var fastaObj = readFastaText(fas);
+    for (var i = 0; i<fastaObj.length; i++) {
+        if((/[A-Z]/.test(fastaObj[i].seq)))
+            return false;
+    }
+    return true;
+
+}
+
+
+function addSpaceEveryNChars(str, n) {
+    var ret = '', i, len;
+    for(i = 0, len = str.length; i < len; i += n) {
+        ret += (str.substr(i, n));
+        ret += " ";
+    }
+    return ret
+}
+
+function validateAlignment(json) {
+    if (!json) {
+        return false;
+    }
+    // check whether jason object is an valid alignment.
+    if(json.length > 1 ) {
+        var firstlength = json[0].seq.length;
+        for (var i = 0; i < json.length; i++) {
+            if (json[i].seq.length !== firstlength) {
+                throw new Error("input is not an alignment");
+                if (_contains(json[i].seq, "-")) {
+                    throw new Error("warning: input contains dashes without being an alignment");
+                }
                 return false;
+            }
+            else if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(json[i].seq)) {
+                throw new Error("Alignment contains invalid symbols.");
+                return false;
+            }
         }
-        return true;
+        console.log("this is an alignment");
 
     }
+    return true;
 
-    function phylipParser() {
+}
 
-        // TODO implement me
 
+function json2fasta(json) {
+
+    var result = '';
+    for (var i = 0; i < json.length; i++) {
+        result += ">";
+        result += json[i].name;
+        result += "\n";
+        result += json[i].seq;
+        result += "\n";
     }
 
+    return result;
+}
 
-    function stockholmParser() {
 
-        // TODO implement me
+function fasta2json(fasta) {
+
+    var newlines  = fasta.split('\n'),
+        //remove empty lines
+        newlines = newlines.filter(Boolean);
+
+    var result = [], element;
+
+    for(var i = 0; i < newlines.length;){
+        element = {};
+        element.name = '';
+        if(newlines[i].startsWith('>')) {
+            element.name = newlines[i].substring(1);
+
+        }
+        i++;
+        element.seq = '';
+        while(i < newlines.length && !newlines[i].startsWith('>')) {
+            if(!newlines[i].startsWith(';'))
+                element.seq += newlines[i];
+
+            i++;
+        }
+        result.push(element);
     }
+
+    return result;
+
+}
+
+
+function validatePhylip(phylip){
+    if(!phylip)
+        return false;
+
+    var newlines, header, n, m, IDs = [], json = [], element;
+
+    newlines = phylip.split('\n');
+
+    header = newlines[0].match(/\S+/g);
+    // check if first char is whitespace (only phylip begins with whitespace)
+    if(newlines[0].startsWith(" ") || newlines[0].startsWith('\t')) {
+
+        n = header[0];
+        m = header[1];
+        if (header.length < 2 || n < 1 || m < 1 || parseInt(n) <= 0 || parseInt(m) <= 0) {
+            throw new Error("Incorrect header.");
+            return false;
+        }
+
+
+        // check dimension
+        else if (newlines.length != +n + 1) {
+            throw new Error("Number of IDs does not match with the header.");
+            return false;
+        }
+
+        else if (newlines[1].substring(10).replace(/ /g, '').length != m) {
+            throw new Error("Number of sequence does not match with the header.");
+            return false;
+        }
+        for (var i = 1; i < +n + 1; i++) {
+            element = {};
+            element.seq = (newlines[i].substring(10).replace(/ /g, ''));
+            json.push(element);
+        }
+
+        if (!validateAlignment(json))
+            return false;
+        return true
+    }
+    return false;
+}
+
+
+
+function json2phylip(json) {
+
+    var result = '', n, m;
+    n = json.length;
+    m = json[0].seq.length;
+    result += "\t";
+    result += n ;
+    result += "\t";
+    result += m;
+
+    console.log(n,m);
+    // extract name and sequence
+    for (var i = 0; i < json.length; i++) {
+        result += "\n";
+        // if header of fasta is shorter than 10, add whitespace
+        result += json[i].name.substring(0, 10);
+        if(json[i].name.substring(0, 10).length < 10) {
+            for (var j = 0; j < 10 - json[i].name.substring(0, 9).length;j++) {
+                result += " ";
+            }
+        }
+
+        result += addSpaceEveryNChars(json[i].seq,10);
+    }
+    return result;
+}
+
+
+function phylip2json(phylip) {
+
+    var newlines, header, n, result = [], element = {};
+
+    newlines = phylip.split('\n');
+    //remove empty lines
+    newlines = newlines.filter(Boolean);
+
+    header = newlines[0].match(/\S+/g);
+    n = header[0];
+    //get IDs and sequences
+    for (var i = 0; i < n; i++) {
+        element = {};
+        element.name = newlines[+i + 1].substring(0, 9);
+        console.log(newlines[+i + 1].substring(0, 9));
+        element.seq = newlines[+i + 1].substring(10).replace(/ /g, '');
+        result.push(element);
+    }
+    return result;
+}
+
+
+function validateStockholm(stockholm){
+    var newlines,split_seq, element, aln = [];
+    if (!stockholm)
+        return false;
+
+    newlines = stockholm.split('\n');
+    if(newlines[0].startsWith("#") && newlines.length > 1) {
+
+        if (!newlines[0].startsWith("# STOCKHOLM 1.0")) {
+            throw new Error("Invalid Stockholm Header");
+            return false;
+        }
+        //delete empty lines
+        newlines = newlines.filter(Boolean);
+
+        for (var i = 1; i < newlines.length; i++) {
+        if(newlines[i].startsWith("//")) {
+            break;
+        }
+
+            if(!newlines[i].startsWith("#")) {
+
+                split_seq = newlines[i].split(/\s/g);
+                split_seq = split_seq.filter(Boolean);
+                if (split_seq.length < 2) {
+                    throw new Error("Sequence or sequence name invalid.");
+                    return false;
+                }
+                element = {};
+                element.seq = split_seq[1];
+                aln.push(element);
+            }
+        }
+        if(!validateAlignment(aln))
+            return false;
+        else {
+            return true;
+        }
+    }
+    return false;
+}
+
+function json2stockholm(json){
+    var result = '';
+    result += '# STOCKHOLM 1.0';
+    result += "\n";
+    for (var i = 0; i < json.length; i++) {
+        result += json[i].name.replace(/\s/g, "_");
+        result += "\t";
+        result += json[i].seq;
+        result += "\n";
+    }
+
+    return result;
+}
+
+function stockholm2json(stockholm) {
+    var newlines, element, result = [],split_seq;
+
+    newlines = stockholm.split('\n');
+    // remove empty lines
+    newlines = newlines.filter(Boolean);
+    for (var i = 0; i < newlines.length; i++) {
+        if(!newlines[i].startsWith('#')){
+            if(newlines[i].startsWith("//"))
+                break;
+            element = {};
+            element.seq = '';
+            element.name= '';
+
+            split_seq = newlines[i].split(/\s/g);
+            //delete empty whitespace in string array
+            split_seq = split_seq.filter(Boolean);
+            element.name = split_seq[0];
+            element.seq = split_seq[1];
+            result.push(element);
+        }
+    }
+    return result;
+}
+
+
+
 
 
 
