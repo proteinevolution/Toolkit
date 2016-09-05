@@ -72,11 +72,15 @@
 
 
     <body onload="load()" data-ws-url="@routes.Application.ws().webSocketURL()">
+        <!---All purpose Modal --->
+        <div id="modal" class="reveal large" data-reveal></div>
 
+        <!---Offline Callout --->
         <div class="callout alert" id="offline-alert" style="display: none;">
             Connection lost. Trying to reconnect in <span id="offline-alert-timer"></span> seconds.
         </div>
 
+        <!---Hamburger Navbar --->
         <div id="myNav" class="overlay">
             <button id="hamburgerInside" class="hamburger hamburger--elastic" type="button" style="float: right; margin: 41px 39px 0 0;" onclick="closeNav()">
                 <span class="hamburger-box">
@@ -161,9 +165,6 @@
             @elements.footer()
         </footer>
 
-        <!---Search Modal --->
-        <div id="modal" class="reveal large" data-reveal></div>
-
         <!-- Script Inclusions -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
 
@@ -179,6 +180,7 @@
         <script src="@routes.Assets.at("scripts/form.js")"></script>
         <script src="@routes.Assets.at("scripts/alignment.js")"></script>
         <script src="@routes.Assets.at("scripts/validation.js")"></script>
+        <script src="@routes.Assets.at("scripts/search.js")"></script>
 
         <!-- Public Javascript Assets -->
         <script src="@routes.Assets.at("javascripts/msa.min.js")" type="text/javascript"></script>
