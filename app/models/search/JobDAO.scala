@@ -36,5 +36,11 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     }
   }
 
-
+  def findAutoComplete(queryString : String) = {
+    client.execute {
+      search in "tkplay_dev"->"jobs" suggestions {
+        termSuggestion("jobID").field("jobID").text(queryString)
+      }
+    }
+  }
 }

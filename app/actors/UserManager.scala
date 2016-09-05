@@ -1,6 +1,7 @@
 package actors
 
 import javax.inject.{Named, Inject, Singleton}
+import actors.ESManager.AutoComplete
 import actors.JobManager._
 import actors.UserManager._
 import akka.actor.{ActorLogging, Actor, ActorRef}
@@ -11,6 +12,7 @@ import play.api.cache._
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import views.html.auth.message
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -21,6 +23,7 @@ final class UserManager @Inject() (
           @NamedCache("userCache") userCache        : CacheApi,
                                val reactiveMongoApi : ReactiveMongoApi,
               @Named("jobManager") jobManager       : ActorRef,
+               @Named("esManager") esManager        : ActorRef,
                       implicit val materializer     : akka.stream.Materializer)
                            extends Actor
                               with ActorLogging
@@ -34,6 +37,7 @@ final class UserManager @Inject() (
 
   /**
     * Finds an user object in the database
+    *
     * @param userID ID of the user
     * @return
     */
@@ -43,6 +47,7 @@ final class UserManager @Inject() (
 
   /**
     * Adds an user object to the database
+    *
     * @param user ID of the user
     * @return
     */
@@ -52,6 +57,7 @@ final class UserManager @Inject() (
 
   /**
     * Updates the User object in the database with a modifier or with a replacement object
+    *
     * @param userID ID of the user
     * @param modifier User Object or Modifier
     * @return
@@ -62,6 +68,7 @@ final class UserManager @Inject() (
 
   /**
     * Receive for the Actor
+    *
     * @return
     */
   def receive: Receive = LoggingReceive {
@@ -73,7 +80,11 @@ final class UserManager @Inject() (
       //Logger.info("User Connecting: " + userID.stringify)
 
       val actorRef = connectedUsers.getOrElseUpdate(userID, sender())
+      val modifier = BSONDocument(
+        "$set" -> BSONDocument("up" -> true)
+      )
 
+      val _ = userCollection.flatMap(_.update(BSONDocument(User.IDDB -> userID),modifier))
 
     // User Disconnected, Remove them from the connected users list.
     case UserDisconnect(userID : BSONObjectID) =>
@@ -98,6 +109,12 @@ final class UserManager @Inject() (
     // User is requesting a job to be removed from the view (but not permanently)
     case ClearJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       updateUser(userID, BSONDocument("$pull" -> BSONDocument(User.JOBS -> mainID)))
+
+    /**
+      * Messages to Elastic Search Manager
+      */
+    case msg : AutoComplete =>
+      esManager ! msg
 
     /**
       * Messages to Job Manager

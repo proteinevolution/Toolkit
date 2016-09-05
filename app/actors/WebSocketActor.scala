@@ -1,5 +1,6 @@
 package actors
 
+import actors.ESManager.{AutoCompleteReply, AutoComplete}
 import actors.JobManager._
 import actors.UserManager._
 import akka.actor.Actor
@@ -53,6 +54,16 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
               Logger.info("JSON Parser Error " + js.toString())
           }
 
+        case "AutoComplete" =>
+          (js \ "queryString").validate[String].asOpt match {
+            case Some(queryString) =>
+              userManager ! AutoComplete(userID, queryString)
+              Logger.info("a")
+            case None =>
+              Logger.info("JSON Parser Error " + js.toString())
+          }
+
+
         case "ClearJob" =>
           (js \ "mainID").validate[String].asOpt match {
             case Some(mainIDString) =>
@@ -95,5 +106,9 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
                                  "job_id"   -> job.jobID,
                                  "state"    -> job.status,
                                  "toolname" -> job.tool)))
+
+    case AutoCompleteReply (userID : BSONObjectID, suggestionList : List[String]) =>
+      out ! Json.obj("type" -> "JobList", "list" -> suggestionList)
+
   }
 }
