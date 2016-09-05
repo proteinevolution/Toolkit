@@ -123,6 +123,26 @@ div#content {
                 <option value="clu" class="clustaloption">CLUSTAL</option>
                 <option value="phy" class="clustaloption">PHYLIP</option>
                 <option value="sto">STOCKHOLM</option>
+                <option value="pir">PIR</option>
+            </select>
+        </label>
+    </div>
+
+
+    <div class="success callout" id="pircallout" data-closable="slide-out-right" style="width: 50%; display: none; margin: auto;">
+        <p style="width: 80%; text-align: justify;">It looks as we found a PIR formatted input. To which format do you want to convert it?</p>
+        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+        <label>Select Output Format
+            <select id="outformat_pir">
+                <option selected>Choose</option>
+                <option value="fas">FASTA</option>
+                <option value="a3m">A3M</option>
+                <option value="clu" class="clustaloption">CLUSTAL</option>
+                <option value="phy" class="clustaloption">PHYLIP</option>
+                <option value="sto">STOCKHOLM</option>
             </select>
         </label>
     </div>
@@ -140,6 +160,7 @@ div#content {
                 <option value="clu" class="clustaloption">CLUSTAL</option>
                 <option value="phy" class="clustaloption">PHYLIP</option>
                 <option value="sto">STOCKHOLM</option>
+                <option value="pir">PIR</option>
             </select>
         </label>
     </div>
@@ -157,6 +178,7 @@ div#content {
                 <option value="a3m">A3M</option>
                 <option value="clu" class="clustaloption">CLUSTAL</option>
                 <option value="sto">STOCKHOLM</option>
+                <option value="pir">PIR</option>
             </select>
         </label>
     </div>
@@ -174,6 +196,7 @@ div#content {
                 <option value="a3m">A3M</option>
                 <option value="clu" class="clustaloption">CLUSTAL</option>
                 <option value="phy" class="clustaloption">PHYLIP</option>
+                <option value="pir">PIR</option>
             </select>
         </label>
     </div>
@@ -190,6 +213,7 @@ div#content {
                 <option value="a3m">A3M</option>
                 <option value="phy" class="clustaloption">PHYLIP</option>
                 <option value="sto">STOCKHOLM</option>
+                <option value="pir">PIR</option>
             </select>
         </label>
     </div>
@@ -291,6 +315,12 @@ div#content {
             if(!validatePhylip(myCodeMirror.getValue())) {
                 document.getElementById('phylipcallout').style.display = 'none';
             }
+            if(validatePir(myCodeMirror.getValue())) {
+                document.getElementById('pircallout').style.display = 'block';
+            }
+            if(!validatePir(myCodeMirror.getValue())) {
+                document.getElementById('pircallout').style.display = 'none';
+            }
 
 
 
@@ -355,6 +385,15 @@ div#content {
                 myCodeMirror.setValue(tempCode);
 
             }
+            if (currentVal == "pir") {
+
+                myCodeMirror2.setValue(json2pir(fasta2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
 
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
@@ -403,6 +442,69 @@ div#content {
             if (currentVal == "sto") {
 
                 myCodeMirror2.setValue(json2stockholm(a3m2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "pir") {
+
+                myCodeMirror2.setValue(json2pir(a3m2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            document.getElementById('outputarea').value = myCodeMirror2.getValue();
+
+        };
+
+        document.getElementById("outformat_pir").onchange = function() {
+            var currentVal = this.value;
+
+            if (currentVal == "fas") {
+                myCodeMirror2.setValue(json2fasta(pir2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+            if (currentVal == "a3m") {
+
+                myCodeMirror2.setValue(json2a3m(pir2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+            if (currentVal == "clu") {
+                myCodeMirror2.setValue(json2clustal(pir2json(myCodeMirror.getValue())));
+                var tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+
+            if (currentVal == "phy") {
+
+                myCodeMirror2.setValue(json2phylip(pir2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "sto") {
+
+                myCodeMirror2.setValue(json2stockholm(pir2json(myCodeMirror.getValue())));
                 tempCode = myCodeMirror.getValue();
                 myCodeMirror.setValue('');
                 $(".CodeMirror-line").decodeEffect();
@@ -464,6 +566,16 @@ div#content {
 
             }
 
+            if (currentVal == "pir") {
+
+                myCodeMirror2.setValue(json2pir(clustal2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
         };
@@ -518,6 +630,16 @@ div#content {
 
             }
 
+            if (currentVal == "pir") {
+
+                myCodeMirror2.setValue(json2pir(phylip2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
         };
@@ -563,6 +685,16 @@ div#content {
             if (currentVal == "phy") {
 
                 myCodeMirror2.setValue(json2phylip(stockholm2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "pir") {
+
+                myCodeMirror2.setValue(json2pir(stockholm2json(myCodeMirror.getValue())));
                 tempCode = myCodeMirror.getValue();
                 myCodeMirror.setValue('');
                 $(".CodeMirror-line").decodeEffect();
