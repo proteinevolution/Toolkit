@@ -536,15 +536,6 @@ div#content {
                 myCodeMirror.setValue(tempCode);
             }
 
-            if (currentVal == "lowercase") {
-
-                myCodeMirror2.setValue(printFastaObj(fastaToLowerCase(myCodeMirror.getValue())));
-                tempCode = myCodeMirror.getValue();
-                myCodeMirror.setValue('');
-                $(".CodeMirror-line").decodeEffect();
-                myCodeMirror.setValue(tempCode);
-
-            }
 
             if (currentVal == "phy") {
 

@@ -533,10 +533,7 @@ function validateClustal (clustal) {
 
 
 
-            if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(seq)) {
-                throw new Error("Alignment contains invalid symbols.");
-                return false;
-            }
+
 
 
 
@@ -551,6 +548,11 @@ function validateClustal (clustal) {
                     if (clustalObj[j].seq.length !== clustalObj[j-1].seq.length) {
                         console.log('input is not an alignment');
                         return false; }
+
+                    if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(clustalObj[j].seq)) {
+                        throw new Error("Alignment contains invalid symbols.");
+                        return false;
+                    }
                 }
 
             }
@@ -1003,7 +1005,7 @@ function stockholm2json(stockholm) {
 function clustal2json(clustal){
 
     var blockstate, cSeq, k, keys, untrimmed, label, line, lines, match, obj, regex, seqCounter, result, sequence, element;
-    if (Object.prototype.toString.call(text) === '[object Array]') {
+    if (Object.prototype.toString.call(clustal) === '[object Array]') {
         lines = clustal;
     } else {
         lines = clustal.split("\n");
@@ -1068,22 +1070,28 @@ function json2clustal(clustal){
     /*TODO: add line break to output for long sequences*/
 
     var result = [],
-        i = 1;
+        i = 0,
+        j =0;
 
     result += "CLUSTAL multiple sequence alignment";
     result += "\n\n";
 
 
+    for (; j < Math.trunc(clustal[i].seq.length/60) + 1 ; j++){
 
-    for (; i < clustal.length; i++) {
+        for (; i < clustal.length; i++) {
 
-        result += clustal[i].name;
-        result += "\t";
-        result += clustal[i].seq;
-        result += "\n";
+            result += clustal[i].name;
+            result += "\t";
+            result += chunkString(clustal[i].seq, 60)[j];
+            result += "\n";
+
+        }
+
+        result += "\n\n";
+        i = 0;
 
     }
-
     result += "\n"; // hack for codemirror cursor bug with atomic ranges
 
     return result;
