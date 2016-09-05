@@ -449,11 +449,20 @@ function validateFasta(fasta) {
             return false;
         }
 
+
+
+
         var splittedStrings = fasta.split(">"),
             i = 1;
+
+
+
         //console.log(splittedStrings);
         for (; i < splittedStrings.length; i++) {
 
+            // only pir format has a ';' as the 4. char
+            if(splittedStrings[i].charAt(4) == ';')
+                return false;
             //reinsert seperator
             var seq = ">" + splittedStrings[i];
 
@@ -474,8 +483,7 @@ function validateFasta(fasta) {
             // trailing or leading spaces
             seq = lines.join('').trim();
 
-            if (seq.search(/[^\-\\ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i) != -1) {
-
+            if (/[^\-\\ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(seq)) {
                 return false;
             }
 
@@ -520,13 +528,13 @@ function validateClustal (clustal) {
             if (lines[1].length > 60) {
 
                 console.log('More than 60 sequence symbols in one line');
-               return false;
+                return false;
             }
 
 
 
-            if (lines[1].search(/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i) != -1) {
-
+            if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(seq)) {
+                throw new Error("Alignment contains invalid symbols.");
                 return false;
             }
 
@@ -585,7 +593,7 @@ function validateAlignmentFasta(aln) {
         console.log("this is an alignment");
         return true;
     }
-return false;
+    return false;
 }
 
 
@@ -749,10 +757,7 @@ function validateAlignment(json) {
                     throw new Error("warning: input contains dashes without being an alignment");
                 }
                 return false;
-            }
-            else if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(json[i].seq)) {
-                throw new Error("Alignment contains invalid symbols.");
-                return false;
+
             }
         }
         console.log("this is an alignment");
@@ -798,7 +803,6 @@ function fasta2json(fasta) {
         while(i < newlines.length && !newlines[i].startsWith('>')) {
             if(!newlines[i].startsWith(';'))
                 element.seq += newlines[i];
-
             i++;
         }
         result.push(element);
@@ -846,6 +850,10 @@ function validatePhylip(phylip){
             json.push(element);
         }
 
+        if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(element.seq)) {
+            throw new Error("Alignment contains invalid symbols.");
+            return false;
+        }
 
         return true
     }
@@ -919,9 +927,9 @@ function validateStockholm(stockholm){
         newlines = newlines.filter(Boolean);
 
         for (var i = 1; i < newlines.length; i++) {
-        if(newlines[i].startsWith("//")) {
-            break;
-        }
+            if(newlines[i].startsWith("//")) {
+                break;
+            }
 
             if(!newlines[i].startsWith("#")) {
 
@@ -933,10 +941,15 @@ function validateStockholm(stockholm){
                 }
                 element = {};
                 element.seq = split_seq[1];
+
+                if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(element.seq)) {
+                    throw new Error("Alignment contains invalid symbols.");
+                    return false;
+                }
                 aln.push(element);
             }
         }
-            return true;
+        return true;
     }
     return false;
 }
@@ -949,7 +962,7 @@ function json2stockholm(json){
     result += '#GF SQ ' + json.length;
     result += "\n";
     for (var i = 0; i < json.length; i++) {
-        result += '#GF ' + json[i].name.replace(/\s/g, "") +  ' DE ' +  json[i].name;
+        result += '#GF ' + json[i].name.replace(/\s/g, "") +  ' DE ' +  json[i].name ;
         result += "\n";
         result += json[i].name.replace(/\s/g, "");
         result += "\t";
@@ -991,9 +1004,9 @@ function clustal2json(clustal){
 
     var blockstate, cSeq, k, keys, untrimmed, label, line, lines, match, obj, regex, seqCounter, result, sequence, element;
     if (Object.prototype.toString.call(text) === '[object Array]') {
-    lines = clustal;
+        lines = clustal;
     } else {
-    lines = clustal.split("\n");
+        lines = clustal.split("\n");
     }
     result = [];
 
@@ -1062,14 +1075,14 @@ function json2clustal(clustal){
 
 
 
-        for (; i < clustal.length; i++) {
+    for (; i < clustal.length; i++) {
 
-            result += clustal[i].name;
-            result += "\t";
-            result += clustal[i].seq;
-            result += "\n";
+        result += clustal[i].name;
+        result += "\t";
+        result += clustal[i].seq;
+        result += "\n";
 
-        }
+    }
 
     result += "\n"; // hack for codemirror cursor bug with atomic ranges
 
@@ -1133,23 +1146,117 @@ function validatea3m(a3m) {
     if (!a3m)
         return false;
 
-    if(!validateFasta(a3m)){
-        var splittedStrings = a3m.split(">"),
-            i = 1;
-        for (; i < splittedStrings.length; i++) {
+    if (!validateFasta(a3m)) {
 
-            var seq = ">" + splittedStrings[i];
+        var newlines = a3m.split('\n');
+        newlines = newlines.filter(Boolean);
 
-            // immediately remove trailing spaces
-            seq = seq.trim();
-            var lines = seq.split('\n');
-            seq = lines.join('').trim();
-            if(seq.indexOf('.') > -1) {
+
+        var element = fasta2json(a3m);
+        for (var i = 0; i < element.length; i++) {
+            if(!newlines[i].startsWith(">")){
+                return false;
+            }
+
+            if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(element[i].seq)) {
+                return false;
+            }
+
+
+            if (element[i].seq.indexOf('.') > -1) {
                 return true;
             }
+
+
+
+        }
+    }
+    return false;
+}
+
+function pir2json(pir){
+    var newlines  = pir.split('\n'),
+        //remove empty lines
+        newlines = newlines.filter(Boolean);
+
+    var result = [], element;
+
+    for(var i = 0; i < newlines.length;){
+        element = {};
+        element.name = '';
+        if(newlines[i].startsWith('>')) {
+            element.name = newlines[i].substring(1);
+            element.description += newlines[+i+1];
+        }
+        i++;
+        i++;
+        element.seq = '';
+        while(i < newlines.length && !newlines[i].startsWith('>')) {
+            if(!newlines[i].startsWith(';'))
+                element.seq += newlines[i].slice(0, -1);
+            i++;
+        }
+        result.push(element);
+    }
+
+    return result;
+
+}
+function json2pir(json) {
+
+    /*TODO: add line break to output for long sequences*/
+    var result = '';
+    for (var i = 0; i < json.length; i++) {
+        result += ">XX;";
+        result += json[i].name;
+        result += "\n";
+        if(json[i].description) {
+            result += json[i].description;
+            result += "\n";
+        }else {
+            result += "No description.";
+            result += "\n";
+
+        }
+        result += json[i].seq;
+        result += '*';
+        result += "\n";
+    }
+
+    return result;
+
+}
+function validatePir(pir){
+    if (!pir) {
+        return false;
+    }
+
+    var element = pir2json(pir);
+    for (var i = 0; i < element.length; i++) {
+
+        if (element[i].name.charAt(2) != ";") {
+            return false;
+        }
+        if (/[^\-\\.\\*ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(element[i].seq)) {
+            throw new Error("Alignment contains invalid symbols.");
+            return false;
+        }
+
+    }
+
+    var newlines  = pir.split('>'),
+        //remove empty lines
+        newlines = newlines.filter(Boolean);
+
+    for (var i = 0; i < newlines.length; i++) {
+        // remove whitespace
+
+        newlines[i] = newlines[i].replace(/\s/g, "");
+        if (!newlines[i].endsWith('*')) {
+            return false;
         }
     }
 
-return false;
+    return true;
 }
 
