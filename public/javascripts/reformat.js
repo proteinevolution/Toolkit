@@ -172,10 +172,10 @@ function getGIs(fastaText){
 function getAccessionversion(json){
     var result= '';
     for (; i < json.length; i++) {
-            var split = json[i].name.split('\s');
-            result += split[1];
-            result += "\n";
-        }
+        var split = json[i].name.split('\s');
+        result += split[1];
+        result += "\n";
+    }
 
     return result;
 }
@@ -624,7 +624,7 @@ function aminoCountFasta(json) {
         for (var j = 0; j < json[i].seq.length; j++) {
             //TODO: loop through everything and count and return the result as an array
 
-            
+
         }
     }
 
@@ -785,7 +785,6 @@ function validateAlignment(json) {
 
 
 function json2fasta(json) {
-    /*TODO: add line break to output for long sequences*/
     var result = '';
     for (var i = 0; i < json.length; i++) {
         result += ">";
@@ -850,7 +849,7 @@ function validatePhylip(phylip){
         }
 
         // delete first lines (it does not contain sequences)
-       newlines.shift();
+        newlines.shift();
 
         //checks number of sequences is correct
         if(newlines.length % n != 0)
@@ -865,7 +864,7 @@ function validatePhylip(phylip){
         }
 
 
-       //parse rest of the sequence that is separated through breaklines
+        //parse rest of the sequence that is separated through breaklines
         for (var i = n ,j = 0; i < newlines.length && newlines.length > n; i++, j++) {
 
             if(i % n == 0 )
@@ -881,9 +880,9 @@ function validatePhylip(phylip){
                 throw new Error("Alignment contains invalid symbols.");
                 return false;
             }
-        // check for number of symbols
+            // check for number of symbols
 
-           else if (seq[i].length != m) {
+            else if (seq[i].length != m) {
                 throw new Error("Number of sequence does not match with the header.");
                 return false;
             }
@@ -899,7 +898,6 @@ function validatePhylip(phylip){
 
 
 function json2phylip(json) {
-    /*TODO: add line break to output for long sequences*/
     var result = '', n, m, split;
     n = json.length;
     m = json[0].seq.length;
@@ -926,16 +924,16 @@ function json2phylip(json) {
 
     }
     for (var j = 1; j < split.length; j++) {
-    result += '\n\n';
-    for (var i = 0; i < n; i++) {
-        split = json[i].seq.match(/.{1,60}/g);
+        result += '\n\n';
+        for (var i = 0; i < n; i++) {
+            split = json[i].seq.match(/.{1,60}/g);
             result += '           ';
             result += addSpaceEveryNChars(split[j],10);
             result += '\n';
             console.log(split[i])
         }
     }
-    result += '\n\n'
+    result += '\n'
 
     result += "\n"; // hack for codemirror cursor bug with atomic ranges
     return result;
@@ -952,7 +950,7 @@ function phylip2json(phylip) {
     //remove empty lines
     newlines = newlines.filter(Boolean);
 
-    header = newlines[0].match(/\S+/g);
+    header = newlines[0].match(/\s/g);
     n = header[0];
 
     // delete first lines (it does not contain sequences)
@@ -1027,7 +1025,6 @@ function validateStockholm(stockholm){
 }
 
 function json2stockholm(json){
-    /*TODO: add line break to output for long sequences*/
     var result = '';
     result += '# STOCKHOLM 1.0';
     result += "\n";
@@ -1137,7 +1134,6 @@ function clustal2json(clustal){
 
 }
 function json2clustal(clustal){
-    /*TODO: add line break to output for long sequences*/
 
     var result = [],
         i = 0,
@@ -1151,7 +1147,7 @@ function json2clustal(clustal){
     for (; j < Math.trunc(clustal[i].seq.length/60) + 1 ; j++){
 
         for (; i < clustal.length; i++) {
-           splitted = clustal[i].name.split(/\s/g);
+            splitted = clustal[i].name.split(/\s/g);
             result += splitted[0];
             result += "\t";
             result += chunkString(clustal[i].seq, 60)[j];
@@ -1205,7 +1201,6 @@ function a3m2json(a3m){
 
 
 function json2a3m(json){
-    /*TODO: add line break to output for long sequences*/
     var result = '';
     for (var i = 0; i < json.length; i++) {
         result += ">";
@@ -1254,6 +1249,10 @@ function validatea3m(a3m) {
 }
 
 function pir2json(pir){
+
+    if (!pir) {
+        return false;
+    }
     var newlines  = pir.split('\n'),
         //remove empty lines
         newlines = newlines.filter(Boolean);
@@ -1283,7 +1282,6 @@ function pir2json(pir){
 }
 function json2pir(json) {
 
-    /*TODO: add line break to output for long sequences*/
     var result = '';
     for (var i = 0; i < json.length; i++) {
         result += ">XX;";
@@ -1342,7 +1340,7 @@ function validatePir(pir){
 function formatLongSeq(seq,n){
     var split, result = "";
 
-        split = seq.match(/.{1,60}/g);
+    split = seq.match(/.{1,60}/g);
 
     for (var i= 0; i < split.length; i++){
         result += split[i];
@@ -1351,3 +1349,148 @@ function formatLongSeq(seq,n){
     }
     return result;
 }
+
+
+function validateEMBL(embl) {
+
+    if (!embl) {
+        return false;
+    }
+
+    var newlines, element, result = [], split = [];
+
+    newlines = embl.split('\n');
+    // remove empty lines
+    newlines = newlines.filter(Boolean);
+
+
+    if (newlines[0].startsWith("ID") && newlines[newlines.length-1].endsWith("//")) {
+        element = embl2json(embl);
+
+        for (var i = 0; i < element.length; i++) {
+            if(element[i].seq == "")
+                return false;
+            else if(element[i].name == "")
+                return false;
+
+            if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(element[i].seq)) {
+                throw new Error("Alignment contains invalid symbols.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    return false;
+}
+
+function embl2json(embl){
+
+    if (!embl) {
+        return false;
+    }
+
+    var  element , result = [];
+
+   var split = embl.split('\n');
+    // remove empty lines
+    split = split.filter(Boolean);
+
+
+    for(var i = 0 ;i < split.length ;i++) {
+        element = {};
+            while (+i+1 < split.length && !split[+i+1].startsWith("ID")) {
+
+
+
+                if(split[i].startsWith("ID")) {
+                    element.name = '';
+                    element.name += split[i].substring(5);
+                }
+                if(split[i].startsWith("DE")) {
+                    element.description = '';
+                    element.description += split[i].substring(5);
+                }
+                if(split[i].startsWith("SQ")){
+                    element.seq = '';
+
+                    while(+i+1 < split.length && !split[+i+1].startsWith("//")){
+                        i++;
+                        element.seq += split[i].replace(/\s/g,"").replace(/[0-9]/g,"").toUpperCase();
+                    }
+                }
+                i++;
+
+            }
+        result.push(element);
+
+    }
+    return result;
+
+}
+function json2embl(json){
+    var result = '';
+    for (var i = 0; i < json.length; i++) {
+        result += "ID   ";
+        result += json[i].name.split(/\s/g)[0] +  "; " + "; "  + "; "  + "; "  + "; "  + json[i].seq.length + " BP.";
+        result += "\n";
+        result += "XX";
+        result += "\n";
+        // deleting the id that is already printed to results in order to
+        // print a long id into description
+        var splitName = json[i].name.split(/\s/g);
+        splitName.shift();
+        splitName = splitName.join(" ");
+
+
+        if(splitName != "" || json[i].description) {
+
+            result += "DE   ";
+            result += splitName;
+            if(json[i].description)
+            result += " " + json[i].description;
+            result += "\n";
+            result += "XX";
+            result += "\n";
+        }
+
+
+        result += "SQ   Sequence " + json[i].seq.length + " BP;";
+        result += "\n";
+        result += formatEmblSeq(json[i].seq).toLowerCase();
+        result += "\n";
+        result += "//";
+        result += "\n";
+
+    }
+
+
+    return result;
+
+}
+
+function formatEmblSeq(seq){
+    var split, result = "", charCount;
+
+    split = seq.match(/.{1,60}/g);
+    charCount = 0;
+    for (var i= 0; i < split.length; i++){
+        result += "     " + addSpaceEveryNChars(split[i],10);
+
+        //calculate number of whitespaces
+        var numOfSpace = 80 - split[i].length - 5 - (charCount + split[i].length).toString().length - ((''+(split[i].length-1))[0]);
+        console.log(numOfSpace)
+
+        // to have count formatted at the end of the line
+        for (var j = 0; j < numOfSpace ;j++) {
+            result += " ";
+        }
+
+        charCount =  charCount + split[i].length;
+        result += charCount;
+        if(i != split.length -1 )
+            result += '\n';
+    }
+    return result;
+}
+
