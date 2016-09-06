@@ -168,6 +168,18 @@ function getGIs(fastaText){
 }
 
 
+
+function getAccessionversion(json){
+    var result= '';
+    for (; i < json.length; i++) {
+            var split = json[i].name.split('\s');
+            result += split[1];
+            result += "\n";
+        }
+
+    return result;
+}
+
 function readFastaLine(fastaLine) {
 
     var splittedStrings  = fastaLine.split('\n'),
@@ -602,16 +614,18 @@ function validateAlignmentFasta(aln) {
 
 
 
-function aminoCountFasta(fas) {
+function aminoCountFasta(json) {
 
-    var fastaObj = readFastaText(fas);
 
     var dashcount, AA, BB, CC, DD, EE, FF, GG, HH, II, KK, LL, MM, NN, PP, QQ, RR, SS, TT, UU, VV, WW, XX, YY, ZZ;
 
-    for (var i = 0; i<fastaObj.length; i++) {
 
+    for (var i = 0; i<json[i].length; i++) {
+        for (var j = 0; j < json[i].seq.length; j++) {
+            //TODO: loop through everything and count and return the result as an array
 
-        //TODO: loop through everything and count and return the result as an array
+            
+        }
     }
 
 
@@ -777,7 +791,7 @@ function json2fasta(json) {
         result += ">";
         result += json[i].name;
         result += "\n";
-        result += json[i].seq;
+        result += formatLongSeq(json[i].seq,60);
         result += "\n";
     }
 
@@ -826,7 +840,7 @@ function validatePhylip(phylip){
 
     header = newlines[0].match(/\S+/g);
     // check if first char is whitespace (only phylip begins with whitespace)
-    if(newlines[0].startsWith(" ") || newlines[0].startsWith('\t')) {
+    if(newlines[0].startsWith(" ") || newlines[0].startsWith("\t")) {
 
         n = header[0];
         m = header[1];
@@ -835,26 +849,46 @@ function validatePhylip(phylip){
             return false;
         }
 
+        // delete first lines (it does not contain sequences)
+       newlines.shift();
 
-        // check dimension
-        else if (newlines.length != +n+1) {
-            throw new Error("Number of IDs does not match with the header.");
+        //checks number of sequences is correct
+        if(newlines.length % n != 0)
             return false;
+
+        // parse sequences
+        var seq = [];
+        for (var i = 0 ;i < n; i++) {
+            //delete whitespaces
+            newlines[i] = newlines[i].replace(/\s/g, "");
+            seq[i] = newlines[i].substring(10);
         }
 
-        else if (newlines[1].substring(10).replace(/ /g, '').length != m) {
-            throw new Error("Number of sequence does not match with the header.");
-            return false;
-        }
-        for (var i = 1; i < +n + 1; i++) {
-            element = {};
-            element.seq = (newlines[i].substring(10).replace(/ /g, ''));
-            json.push(element);
+
+       //parse rest of the sequence that is separated through breaklines
+        for (var i = n ,j = 0; i < newlines.length && newlines.length > n; i++, j++) {
+
+            if(i % n == 0 )
+                j = 0;
+            //delete whitespaces
+            newlines[i] = newlines[i].replace(/\s/g, "");
+            seq[j] += newlines[i];
         }
 
-        if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(element.seq)) {
-            throw new Error("Alignment contains invalid symbols.");
-            return false;
+        // check for wrong symbols
+        for (var i = 0; i < n; i++) {
+            if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(seq[i])) {
+                throw new Error("Alignment contains invalid symbols.");
+                return false;
+            }
+        // check for number of symbols
+
+           else if (seq[i].length != m) {
+                throw new Error("Number of sequence does not match with the header.");
+                return false;
+            }
+
+
         }
 
         return true
@@ -866,7 +900,7 @@ function validatePhylip(phylip){
 
 function json2phylip(json) {
     /*TODO: add line break to output for long sequences*/
-    var result = '', n, m;
+    var result = '', n, m, split;
     n = json.length;
     m = json[0].seq.length;
     result += "\t";
@@ -875,21 +909,39 @@ function json2phylip(json) {
     result += m;
 
     // extract name and sequence
-    for (var i = 0; i < json.length; i++) {
+    for (var i = 0; i < n; i++) {
         result += "\n";
         // if header of fasta is shorter than 10, add whitespace
         result += json[i].name.substring(0, 10);
+        result += " ";
         if(json[i].name.substring(0, 10).length < 10) {
             for (var j = 0; j < 10 - json[i].name.substring(0, 9).length;j++) {
                 result += " ";
             }
         }
 
-        result += addSpaceEveryNChars(json[i].seq,10);
+
+        split = json[i].seq.match(/.{1,60}/g);
+        result += addSpaceEveryNChars(split[0],10);
+
     }
+    for (var j = 1; j < split.length; j++) {
+    result += '\n\n';
+    for (var i = 0; i < n; i++) {
+        split = json[i].seq.match(/.{1,60}/g);
+            result += '           ';
+            result += addSpaceEveryNChars(split[j],10);
+            result += '\n';
+            console.log(split[i])
+        }
+    }
+    result += '\n\n'
+
     result += "\n"; // hack for codemirror cursor bug with atomic ranges
     return result;
 }
+
+
 
 
 function phylip2json(phylip) {
@@ -902,13 +954,31 @@ function phylip2json(phylip) {
 
     header = newlines[0].match(/\S+/g);
     n = header[0];
-    //get IDs and sequences
-    for (var i = 0; i < n; i++) {
-        element = {};
-        element.name = newlines[+i + 1].substring(0, 10);
-        element.seq = newlines[+i + 1].substring(11).replace(/ /g, '');
+
+    // delete first lines (it does not contain sequences)
+    newlines.shift();
+
+    // parse sequences
+    for (var i = 0 ;i < n; i++) {
+        var element = {};
+        //delete whitespaces
+        newlines[i] = newlines[i].replace(/\s/g, "");
+        element.name = newlines[i].substring(0,9);
+        element.seq = newlines[i].substring(10);
         result.push(element);
     }
+
+
+    //parse rest of the sequence that is separated through breaklines
+    for (var i = n ,j = 0; i < newlines.length; i++, j++) {
+
+        if(i % n == 0 )
+            j = 0;
+        //delete whitespaces
+        newlines[i] = newlines[i].replace(/\s/g, "");
+        result[j].seq += newlines[i];
+    }
+
     return result;
 }
 
@@ -1071,7 +1141,8 @@ function json2clustal(clustal){
 
     var result = [],
         i = 0,
-        j =0;
+        j =0,
+        splitted = [];
 
     result += "CLUSTAL multiple sequence alignment";
     result += "\n\n";
@@ -1080,8 +1151,8 @@ function json2clustal(clustal){
     for (; j < Math.trunc(clustal[i].seq.length/60) + 1 ; j++){
 
         for (; i < clustal.length; i++) {
-
-            result += clustal[i].name;
+           splitted = clustal[i].name.split(/\s/g);
+            result += splitted[0];
             result += "\t";
             result += chunkString(clustal[i].seq, 60)[j];
             result += "\n";
@@ -1140,8 +1211,8 @@ function json2a3m(json){
         result += ">";
         result += json[i].name;
         result += "\n";
-        result += json[i].seq.split('.').join('');
-        ;
+        result += formatLongSeq(json[i].seq.split('.').join(''));
+
         result += "\n";
     }
 
@@ -1226,7 +1297,7 @@ function json2pir(json) {
             result += "\n";
 
         }
-        result += json[i].seq;
+        result += formatLongSeq(json[i].seq,60);
         result += '*';
         result += "\n";
     }
@@ -1268,3 +1339,15 @@ function validatePir(pir){
     return true;
 }
 
+function formatLongSeq(seq,n){
+    var split, result = "";
+
+        split = seq.match(/.{1,60}/g);
+
+    for (var i= 0; i < split.length; i++){
+        result += split[i];
+        if(i != split.length -1 )
+            result += '\n';
+    }
+    return result;
+}
