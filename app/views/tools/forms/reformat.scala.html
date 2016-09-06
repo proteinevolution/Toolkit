@@ -124,6 +124,7 @@ div#content {
                 <option value="phy" class="clustaloption">PHYLIP</option>
                 <option value="sto">STOCKHOLM</option>
                 <option value="pir">PIR</option>
+                <option value="emb">EMBL</option>
             </select>
         </label>
     </div>
@@ -143,6 +144,7 @@ div#content {
                 <option value="clu" class="clustaloption">CLUSTAL</option>
                 <option value="phy" class="clustaloption">PHYLIP</option>
                 <option value="sto">STOCKHOLM</option>
+                <option value="emb">EMBL</option>
             </select>
         </label>
     </div>
@@ -161,6 +163,7 @@ div#content {
                 <option value="phy" class="clustaloption">PHYLIP</option>
                 <option value="sto">STOCKHOLM</option>
                 <option value="pir">PIR</option>
+                <option value="emb">EMBL</option>
             </select>
         </label>
     </div>
@@ -179,6 +182,7 @@ div#content {
                 <option value="clu" class="clustaloption">CLUSTAL</option>
                 <option value="sto">STOCKHOLM</option>
                 <option value="pir">PIR</option>
+                <option value="emb">EMBL</option>
             </select>
         </label>
     </div>
@@ -197,9 +201,11 @@ div#content {
                 <option value="clu" class="clustaloption">CLUSTAL</option>
                 <option value="phy" class="clustaloption">PHYLIP</option>
                 <option value="pir">PIR</option>
+                <option value="emb">EMBL</option>
             </select>
         </label>
     </div>
+
     <div class="success callout" id="clustalcallout" data-closable="slide-out-right" style="width: 50%; display: none; margin: auto;">
         <p style="width: 80%; text-align: justify;">It looks as we found a CLUSTAL formatted input. To which format do you want to convert it?</p>
         <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
@@ -214,9 +220,31 @@ div#content {
                 <option value="phy" class="clustaloption">PHYLIP</option>
                 <option value="sto">STOCKHOLM</option>
                 <option value="pir">PIR</option>
+                <option value="emb">EMBL</option>
             </select>
         </label>
     </div>
+
+
+    <div class="success callout" id="emblcallout" data-closable="slide-out-right" style="width: 50%; display: none; margin: auto;">
+        <p style="width: 80%; text-align: justify;">It looks as we found a EMBL formatted input. To which format do you want to convert it?</p>
+        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+        <label>Select Output Format
+            <select id="outformat_embl">
+                <option selected>Choose</option>
+                <option value="fas">FASTA</option>
+                <option value="a3m">A3M</option>
+                <option value="clu" class="clustaloption">CLUSTAL</option>
+                <option value="phy" class="clustaloption">PHYLIP</option>
+                <option value="sto">STOCKHOLM</option>
+                <option value="pir">PIR</option>
+            </select>
+        </label>
+    </div>
+
 </div>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -322,6 +350,12 @@ div#content {
                 document.getElementById('pircallout').style.display = 'none';
             }
 
+            if(validateEMBL(myCodeMirror.getValue())) {
+                document.getElementById('emblcallout').style.display = 'block';
+            }
+            if(!validateEMBL(myCodeMirror.getValue())) {
+                document.getElementById('emblcallout').style.display = 'none';
+            }
 
 
 
@@ -395,6 +429,16 @@ div#content {
 
             }
 
+            if (currentVal == "emb") {
+
+                myCodeMirror2.setValue(json2embl(fasta2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
@@ -459,6 +503,16 @@ div#content {
 
             }
 
+            if (currentVal == "emb") {
+
+                myCodeMirror2.setValue(json2embl(a3m2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
         };
@@ -505,6 +559,16 @@ div#content {
             if (currentVal == "sto") {
 
                 myCodeMirror2.setValue(json2stockholm(pir2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "emb") {
+
+                myCodeMirror2.setValue(json2embl(pir2json(myCodeMirror.getValue())));
                 tempCode = myCodeMirror.getValue();
                 myCodeMirror.setValue('');
                 $(".CodeMirror-line").decodeEffect();
@@ -560,6 +624,16 @@ div#content {
             if (currentVal == "pir") {
 
                 myCodeMirror2.setValue(json2pir(clustal2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "emb") {
+
+                myCodeMirror2.setValue(json2embl(clustal2json(myCodeMirror.getValue())));
                 tempCode = myCodeMirror.getValue();
                 myCodeMirror.setValue('');
                 $(".CodeMirror-line").decodeEffect();
@@ -631,6 +705,16 @@ div#content {
 
             }
 
+            if (currentVal == "emb") {
+
+                myCodeMirror2.setValue(json2embl(phylip2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
         };
@@ -686,6 +770,79 @@ div#content {
             if (currentVal == "pir") {
 
                 myCodeMirror2.setValue(json2pir(stockholm2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "emb") {
+
+                myCodeMirror2.setValue(json2embl(stockholm2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            document.getElementById('outputarea').value = myCodeMirror2.getValue();
+
+        };
+
+
+        document.getElementById("outformat_embl").onchange = function() {
+            var currentVal = this.value;
+
+            if (currentVal == "fas") {
+                myCodeMirror2.setValue(json2fasta(embl2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+            if (currentVal == "a3m") {
+
+                myCodeMirror2.setValue(json2a3m(embl2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+            if (currentVal == "clu") {
+                myCodeMirror2.setValue(json2clustal(embl2json(myCodeMirror.getValue())));
+                var tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+            }
+
+            if (currentVal == "phy") {
+
+                myCodeMirror2.setValue(json2phylip(embl2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "sto") {
+
+                myCodeMirror2.setValue(json2stockholm(embl2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "pir") {
+
+                myCodeMirror2.setValue(json2pir(embl2json(myCodeMirror.getValue())));
                 tempCode = myCodeMirror.getValue();
                 myCodeMirror.setValue('');
                 $(".CodeMirror-line").decodeEffect();
