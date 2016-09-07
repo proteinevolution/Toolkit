@@ -27,7 +27,7 @@ final class ESManager @Inject()(val messagesApi      : MessagesApi,
                                with Constants {
   def receive : Receive = {
     case AutoComplete(userID : BSONObjectID, queryString : String) =>
-      println("autoCompleteQuery: ")
+      println("Auto Complete Query: " + queryString)
       jobDao.findAutoComplete(queryString).foreach { rsr =>
         val jobIDEntries = rsr.suggestion("jobID")
         if (jobIDEntries.size > 0) {

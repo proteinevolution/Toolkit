@@ -6,13 +6,12 @@ import actors.JobManager._
 import actors.UserManager._
 import akka.actor.{ActorLogging, Actor, ActorRef}
 import akka.event.LoggingReceive
-import models.database.{SessionData, User}
+import models.database.{JobState, Job, User}
 import play.api.Logger
 import play.api.cache._
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
-import views.html.auth.message
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -80,22 +79,13 @@ final class UserManager @Inject() (
       //Logger.info("User Connecting: " + userID.stringify)
 
       val actorRef = connectedUsers.getOrElseUpdate(userID, sender())
-      val modifier = BSONDocument(
-        "$set" -> BSONDocument("up" -> true)
-      )
-
-      val _ = userCollection.flatMap(_.update(BSONDocument(User.IDDB -> userID),modifier))
+      updateUser(userID, BSONDocument("$set" -> BSONDocument("up" -> true)))
 
     // User Disconnected, Remove them from the connected users list.
     case UserDisconnect(userID : BSONObjectID) =>
       //Logger.info("User Disconnected: " + userID.stringify)
       val actorRef = connectedUsers.remove(userID)
-
-      val modifier = BSONDocument(
-        "$set" -> BSONDocument("up" -> false)
-      )
-
-      val _ = userCollection.flatMap(_.update(BSONDocument(User.IDDB -> userID),modifier))
+      updateUser(userID, BSONDocument("$set" -> BSONDocument("up" -> false)))
 
     case GetJobList(userID : BSONObjectID) =>
       //Logger.info("Connection stands, fetching jobs")
@@ -105,6 +95,10 @@ final class UserManager @Inject() (
         case None =>
           // TODO this should not happen but we might need to catch unidentified Users who have a Websocket
       }
+
+    // Add a Job to the Users view
+    case JobAdded(userID : BSONObjectID, mainID : BSONObjectID) =>
+      updateUser(userID, BSONDocument("$push" -> BSONDocument(User.JOBS -> mainID)))
 
     // User is requesting a job to be removed from the view (but not permanently)
     case ClearJob(userID : BSONObjectID, mainID : BSONObjectID) =>
@@ -116,13 +110,20 @@ final class UserManager @Inject() (
     case msg : AutoComplete =>
       esManager ! msg
 
+
+
     /**
       * Messages to Job Manager
       */
-    case msg : DeleteJob => jobManager ! msg
+    case msg : AddJob =>
+      jobManager ! msg
+    case msg : DeleteJob =>
+      jobManager ! msg
 
+
+      
     /**
-      * Outgoing Messages
+      * Websocket Messages
       */
     // Send message to all connected users
     case Broadcast(message : String) =>
@@ -130,9 +131,23 @@ final class UserManager @Inject() (
         user ! Broadcast(message)
       }
 
+    // Send job state changed message to all connected users
+    case JobStateChanged(job : Job, state : JobState.JobState) =>
+      for (user <- job.watchList.getOrElse(List.empty)) {
+        connectedUsers.get(user) match {
+          case Some(userActor) =>
+            userActor ! JobStateChanged (job, state)
+          case None =>
+            // TODO send the user a Email or give them a message on the page here
+        }
+      }
+
     case msg : MessageWithUserID =>
-      if (connectedUsers contains msg.userID) {
-        connectedUsers.get(msg.userID).get ! msg
+      connectedUsers.get(msg.userID) match {
+        case Some(userActor) =>
+          userActor ! msg
+        case None =>
+          // TODO the user might have disconnected while a message was sent
       }
   }
 }
@@ -154,7 +169,7 @@ object UserManager {
 
   // Get a request to send the job list
   case class GetJobList(userID : BSONObjectID) extends MessageWithUserID
-
+  case class JobAdded(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
   case class ClearJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
   // Messages to broadcast to the user
