@@ -99,10 +99,10 @@ onMessage = (event) ->
       jobs.vm.updateList(message.list)
 
     when "AutoComplete"
-      autocomplete.data.response(message.list)
+      autoCompleteList = message.list
 
     when "Ping"
-      ws.send(JSON.stringify("type":"Ping"))
+      sendMessage("type":"Ping")
   m.endComputation()
 
 @sendMessage = (object) ->

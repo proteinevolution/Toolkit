@@ -3,7 +3,7 @@ package actors
 import java.io.{BufferedWriter, FileWriter}
 import javax.inject.{Named, Inject, Singleton}
 
-import actors.UserManager.MessageWithUserID
+import actors.UserManager.{JobAdded, MessageWithUserID}
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import models.database.{JobHash, Job, User, JobState}
 import models.search.JobDAO
@@ -166,6 +166,15 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
             replyTo ! JobIDUnknown(user)
         }
 
+    case AddJob (userID : BSONObjectID, mainID : BSONObjectID) =>
+      jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).foreach {
+        case Some(job) =>
+          userManager ! JobAdded(userID, job.mainID)
+        case None =>
+          // Job ID is unknown.
+          userManager ! JobIDUnknown(userID)
+      }
+
     //  User asks to delete Job
     case DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).foreach {
@@ -223,6 +232,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                          status      = JobState.Submitted,
                          tool        = toolName,
                          statID      = "",
+                         watchList   = Some(List(user.userID)),
                          dateCreated = Some(jobCreationTime),
                          dateUpdated = Some(jobCreationTime),
                          dateViewed  = Some(jobCreationTime))
@@ -304,6 +314,9 @@ object JobManager {
 
   // Jobmanager is asked to find jobs
   case class FetchJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID]) extends MessageWithUserID
+
+  // Add a Job to a Users view
+  case class AddJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
   // Delete Job Entirely
   case class DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID

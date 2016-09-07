@@ -82,11 +82,11 @@ POST        /tools/:toolname                               @controllers.Tool.sub
 # Look up jobs with the matching job_id
 #POST        /jobs/search/:jobid             @controllers.Service.findJobID(jobid: String)
 # Loading a Job from the DB
-#POST        /jobs/add/:jobid                @controllers.Service.addJobID(jobid: String)
+GET         /jobs/add/:mainID                              @controllers.Service.addJob(mainID: String)
 # Get a Job the User Actor already has loaded
-GET         /jobs/get/:jobid                               @controllers.Service.jobInfo(jobid : String)
+GET         /jobs/get/:mainID                              @controllers.Service.showJobInfo(mainID : String)
 # Delete a Job
-POST        /jobs/del/:jobid                               @controllers.Service.delJob(jobid : String)
+POST        /jobs/del/:mainID                              @controllers.Service.delJob(mainID : String)
 GET         /static/get/:static                            @controllers.Service.static(static : String)
 
 

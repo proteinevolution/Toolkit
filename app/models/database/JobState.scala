@@ -17,12 +17,14 @@ object JobState {
   sealed trait JobState
 
   case object PartiallyPrepared extends JobState
-  case object Prepared extends JobState
-  case object Queued extends JobState
-  case object Running extends JobState
-  case object Error extends JobState
-  case object Done extends JobState
-  case object Submitted extends JobState
+  case object Prepared          extends JobState
+  case object Queued            extends JobState
+  case object Running           extends JobState
+  case object Error             extends JobState
+  case object Done              extends JobState
+  case object Submitted         extends JobState
+  case object DeletionRequested extends JobState
+  case object Deleted           extends JobState
 
 
   implicit object JobStateReads extends Reads[JobState] {
@@ -36,6 +38,8 @@ object JobState {
           case 4 => Error
           case 5 => Done
           case 6 => Submitted
+          case 7 => DeletionRequested
+          case 8 => Deleted
           case _ => Error
         })
       } catch {
@@ -54,6 +58,8 @@ object JobState {
       case Error             => JsNumber(4)
       case Done              => JsNumber(5)
       case Submitted         => JsNumber(6)
+      case DeletionRequested => JsNumber(7)
+      case Deleted           => JsNumber(8)
     }
   }
 
@@ -70,7 +76,9 @@ object JobState {
         case BSONInteger(4) => Error
         case BSONInteger(5) => Done
         case BSONInteger(6) => Submitted
-        case _ => Error
+        case BSONInteger(7) => DeletionRequested
+        case BSONInteger(8) => Deleted
+        case _              => Error
       }
     }
   }
@@ -88,6 +96,8 @@ object JobState {
         case Error             => BSONInteger(4)
         case Done              => BSONInteger(5)
         case Submitted         => BSONInteger(6)
+        case DeletionRequested => BSONInteger(7)
+        case Deleted           => BSONInteger(8)
       }
     }
   }
