@@ -85,7 +85,7 @@
         <div id="myNav" class="overlay">
             <button id="hamburgerInside" class="hamburger hamburger--elastic" type="button" style="float: right; margin: 41px 39px 0 0;" onclick="closeNav()">
                 <span class="hamburger-box">
-                    <span class="hamburger-inner overlayed" style="background-color: #000;"></span>
+                    <span class="hamburger-inner overlayed"></span>
                 </span>
             </button>
             <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
@@ -112,6 +112,13 @@
                     case Some(userData) => userData.nameLogin
                     case None           => "Sign in"
                 }}</a></dd>
+                <button class="hamburger hamburger--elastic" type="button" style="float: right; padding-right: 0.25em;" onclick="openNav()">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </button>
+
+
             </div>
         </div>
 
