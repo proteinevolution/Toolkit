@@ -1,70 +1,9 @@
 @import play.api.mvc.RequestHeader
 @(webJarAssets: WebJarAssets, sectionname : String)(implicit messages: Messages, request: RequestHeader)
 <link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
+<link href="@routes.Assets.at("styles/reformat-common.css")" rel="stylesheet">
 <link href="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.css"))" rel="stylesheet">
-<style>
 
-div#content {
-
-    width: 100%;
-    background-color: rgb(238, 238, 238 !important;
-}
-
-.sidebar {
-
-    display: none;
-}
-
-.CodeMirror pre {
-
-    font-family: Monaco, Consolas, "Lucida Console", monospace;
-    font-size: 12px;
-
-}
-
-.code { color: #ffae00; }
-
-.has-tip {
-    border-bottom: dotted 0px;
-
-}
-
-.dropzone{
-
-    border: dashed 1px darkblue;
-    background-color: #c6d6e5 ;
-
-}
-
-#progress_bar {
-    margin: 10px 0;
-    padding: 3px;
-    border: 1px solid #000;
-    font-size: 14px;
-    clear: both;
-
-    -moz-transition: opacity 1s linear;
-    -o-transition: opacity 1s linear;
-    -webkit-transition: opacity 1s linear;
-}
-#progress_bar.loading {
-    opacity: 1.0;
-}
-#progress_bar .percent {
-    background-color: #99ccff;
-    height: auto;
-    width: 0;
-}
-
-#sidebartoggle {
-    display: none;
-}
-
-    .button {
-        background-color: none;
-    }
-
-</style>
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("clipboard.min.js"))"></script>
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.js"))"></script>
 <div style="padding-top: 10px;"></div>
