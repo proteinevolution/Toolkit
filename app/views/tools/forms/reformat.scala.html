@@ -60,6 +60,9 @@ div#content {
     display: none;
 }
 
+    .button {
+        background-color: none;
+    }
 
 </style>
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("clipboard.min.js"))"></script>
@@ -86,21 +89,21 @@ div#content {
 
 </div>
 <div style="width: 95%; display: block; margin: auto; padding-top: 15px;">
-    <div class="large-12 columns">
+    <div class="large-12 columns" style="padding-right: 12px;">
         <div style="float: right; z-index: 9;">
             <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Paste output as input">
-                <button class="small button" id="copy-button" data-clipboard-target="#outputarea" onclick="pasteLeft()" style="margin: 0 -3px 0 0;">Paste left</button></span>
+                <button class="small button" id="copy-button" data-clipboard-target="#outputarea" onclick="pasteLeft()" style="margin: 0 -5px 0 0;">Paste</button></span>
             <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Copy output to clipboard">
                 <button class="small button warning" id="copy-button" data-clipboard-target="#outputarea" onclick="(function(){
                     new Clipboard('#copy-button');
                 })();" style="margin: 0 0 0 0;">Copy</button></span>
         </div>
     </div>
-    <div class="large-6 columns">
+    <div class="large-12 columns">
         <div id="inputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
     </div>
-    <div class="large-6 columns">
-        <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
+    <div class="large-12 columns">
+        <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ; padding-top: 8px;"></div>
         </div>
 
 
@@ -333,7 +336,7 @@ div#content {
             theme: "reformat"
         });
 
-        myCodeMirror.setSize("100%", 500);
+        myCodeMirror.setSize("100%", 300);
 
 
         var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
@@ -344,7 +347,7 @@ div#content {
             theme: "reformat"
         });
 
-        myCodeMirror2.setSize("100%", 500);
+        myCodeMirror2.setSize("100%", 300);
 
 
 
