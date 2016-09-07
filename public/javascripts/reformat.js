@@ -950,7 +950,7 @@ function phylip2json(phylip) {
     //remove empty lines
     newlines = newlines.filter(Boolean);
 
-    header = newlines[0].match(/\s/g);
+    header = newlines[0].match(/\S+/g);
     n = header[0];
 
     // delete first lines (it does not contain sequences)
@@ -979,7 +979,6 @@ function phylip2json(phylip) {
 
     return result;
 }
-
 
 function validateStockholm(stockholm){
     var newlines,split_seq, element, aln = [];
@@ -1043,6 +1042,8 @@ function json2stockholm(json){
 }
 
 function stockholm2json(stockholm) {
+
+    /* TODO: put long ids into description */
     var newlines, element, result = [],split_seq;
 
     newlines = stockholm.split('\n');
