@@ -442,4 +442,31 @@ textarea#alignment {width: 500px; height: 280px;}
     color: grey !important;
 }
 
+.nav-tabs {
+    color: #787878;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    padding: 0;
+    border: none;
+    width: 91%;
+    height: 40em;
+    display: none;
+    -webkit-box-shadow: 1px 1px 5px 0px rgba(102,102,102,1);
+    -moz-box-shadow: 1px 1px 5px 0px rgba(102,102,102,1);
+    box-shadow: 1px 1px 5px 0px rgba(102,102,102,1);
+}
+
+.ui-widget-header {
+    background: #eee url("images/ui-bg_highlight-soft_75_cccccc_1x100.png") 50% 50% repeat-x;
+    background-color:#eee;
+    background-image: url("images/ui-bg_highlight-soft_75_cccccc_1x100.png");
+    background-repeat: repeat-x;
+    background-attachment: scroll;
+    background-position: 50% 50%;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-size: auto auto;
+    border: none;
+}
 
