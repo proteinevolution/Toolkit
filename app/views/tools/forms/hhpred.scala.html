@@ -5,29 +5,52 @@
 
 
 <script src='@routes.Assets.at("javascripts/sampleseqs.js")' type="text/javascript" ></script>
+<script>
+        $( function() {
+    $( "#tabs" ).tabs();
+} );
 
-@helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 50,
-    '_label -> "",
-    'placeholder -> "Enter multiple sequence alignment",
-    'id -> "alignment", '_showConstraints -> false)
+    $(".nav-tabs").show();
+</script>
+
+<div class="nav-tabs" id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Paste Alignment</a></li>
+        <li><a href="#tabs-2">Upload File</a></li>
+        <li><a href="#tabs-3">Parameter</a></li>
+    </ul>
+    <div id="tabs-1">
+    @helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 50,
+        '_label -> "",
+        'placeholder -> "Enter multiple sequence alignment",
+        'id -> "alignment", '_showConstraints -> false)
+
+        <a onClick="$('#submitbutton').prop('disabled', false);$('#alignment').val(hhpred_example());$('#format').val('fas')">Paste example alignment</a>
+
+    </div>
+    <div id="tabs-2">
+
+    </div>
+    <div id="tabs-3">
+        @helper.select(
+            inputForm("alignment_format"),
+            helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("alignment_format"))),
+            '_label -> "Select alignment format",
+            'id -> "format"
+        )
+
+        @helper.select(
+            inputForm("hmmdb"),
+            helper.options(tel.getSetParam("hmmdb")),
+            '_label -> "Select HMM Database",
+            'id -> "hmmdb",
+            'class -> "forminput")
+
+    </div>
+
+</div>
 
 
-<a onClick="$('#submitbutton').prop('disabled', false);$('#alignment').val(hhpred_example());$('#format').val('fas')">Paste example alignment</a>
-
-
-@helper.select(
-    inputForm("alignment_format"),
-    helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("alignment_format"))),
-    '_label -> "Select alignment format",
-    'id -> "format"
-)
-
-@helper.select(
-    inputForm("hmmdb"),
-    helper.options(tel.getSetParam("hmmdb")),
-    '_label -> "Select HMM Database",
-    'id -> "hmmdb",
-    'class -> "forminput")
 
 
 
