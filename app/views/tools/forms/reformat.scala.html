@@ -105,7 +105,6 @@ div#content {
 
 
     </div>
-</div>
 <p>&nbsp;</p>
 
 <div class="show-for-medium large-12 columns" style="padding-top: 20px;">
@@ -126,6 +125,7 @@ div#content {
                 <option value="pir">PIR</option>
                 <option value="emb">EMBL</option>
                 <option value="nex">Nexus</option>
+                <option value="gen">Genbank</option>
             </select>
         </label>
     </div>
@@ -147,6 +147,7 @@ div#content {
                 <option value="sto">STOCKHOLM</option>
                 <option value="emb">EMBL</option>
                 <option value="nex">Nexus</option>
+                <option value="gen">Genbank</option>
             </select>
         </label>
     </div>
@@ -167,6 +168,7 @@ div#content {
                 <option value="pir">PIR</option>
                 <option value="emb">EMBL</option>
                 <option value="nex">Nexus</option>
+                <option value="gen">Genbank</option>
             </select>
         </label>
     </div>
@@ -187,6 +189,7 @@ div#content {
                 <option value="pir">PIR</option>
                 <option value="emb">EMBL</option>
                 <option value="nex">Nexus</option>
+                <option value="gen">Genbank</option>
             </select>
         </label>
     </div>
@@ -207,6 +210,7 @@ div#content {
                 <option value="pir">PIR</option>
                 <option value="emb">EMBL</option>
                 <option value="nex">Nexus</option>
+                <option value="gen">Genbank</option>
             </select>
         </label>
     </div>
@@ -227,6 +231,7 @@ div#content {
                 <option value="pir">PIR</option>
                 <option value="emb">EMBL</option>
                 <option value="nex">Nexus</option>
+                <option value="gen">Genbank</option>
             </select>
         </label>
     </div>
@@ -248,6 +253,7 @@ div#content {
                 <option value="sto">STOCKHOLM</option>
                 <option value="pir">PIR</option>
                 <option value="nex">Nexus</option>
+                <option value="gen">Genbank</option>
             </select>
         </label>
     </div>
@@ -260,6 +266,27 @@ div#content {
 
         <label>Select Output Format
             <select id="outformat_nexus">
+                <option selected>Choose</option>
+                <option value="fas">FASTA</option>
+                <option value="a3m">A3M</option>
+                <option value="clu" class="clustaloption">CLUSTAL</option>
+                <option value="phy" class="clustaloption">PHYLIP</option>
+                <option value="sto">STOCKHOLM</option>
+                <option value="pir">PIR</option>
+                <option value="emb">EMBL</option>
+                <option value="gen">Genbank</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="success callout" id="genbankcallout" data-closable="slide-out-right" style="width: 50%; display: none; margin: auto;">
+        <p style="width: 80%; text-align: justify;">It looks as we found a Genbank formatted input. To which format do you want to convert it?</p>
+        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+        <label>Select Output Format
+            <select id="outformat_genbank">
                 <option selected>Choose</option>
                 <option value="fas">FASTA</option>
                 <option value="a3m">A3M</option>
@@ -391,6 +418,13 @@ div#content {
                 document.getElementById('nexuscallout').style.display = 'none';
             }
 
+            if(validateGenbank(myCodeMirror.getValue())) {
+                document.getElementById('genbankcallout').style.display = 'block';
+            }
+            if(!validateGenbank(myCodeMirror.getValue())) {
+                document.getElementById('genbankcallout').style.display = 'none';
+            }
+
 
 
         });
@@ -483,6 +517,16 @@ div#content {
 
             }
 
+            if (currentVal == "gen") {
+
+                myCodeMirror2.setValue(json2genbank(fasta2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
@@ -567,6 +611,16 @@ div#content {
 
             }
 
+            if (currentVal == "gen") {
+
+                myCodeMirror2.setValue(json2genbank(a3m2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
         };
@@ -633,6 +687,16 @@ div#content {
             if (currentVal == "nex") {
 
                 myCodeMirror2.setValue(json2nexus(pir2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "gen") {
+
+                myCodeMirror2.setValue(json2genbank(pir2json(myCodeMirror.getValue())));
                 tempCode = myCodeMirror.getValue();
                 myCodeMirror.setValue('');
                 $(".CodeMirror-line").decodeEffect();
@@ -708,6 +772,16 @@ div#content {
             if (currentVal == "nex") {
 
                 myCodeMirror2.setValue(json2nexus(clustal2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "gen") {
+
+                myCodeMirror2.setValue(json2genbank(clustal2json(myCodeMirror.getValue())));
                 tempCode = myCodeMirror.getValue();
                 myCodeMirror.setValue('');
                 $(".CodeMirror-line").decodeEffect();
@@ -798,6 +872,16 @@ div#content {
 
             }
 
+            if (currentVal == "gen") {
+
+                myCodeMirror2.setValue(json2genbank(phylip2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
         };
@@ -880,6 +964,16 @@ div#content {
 
             }
 
+            if (currentVal == "gen") {
+
+                myCodeMirror2.setValue(json2genbank(stockholm2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
         };
@@ -945,7 +1039,17 @@ div#content {
 
             if (currentVal == "nex") {
 
-                myCodeMirror2.setValue(json2nexus(nex2json(myCodeMirror.getValue())));
+                myCodeMirror2.setValue(json2nexus(embl2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
+            if (currentVal == "gen") {
+
+                myCodeMirror2.setValue(json2genbank(embl2json(myCodeMirror.getValue())));
                 tempCode = myCodeMirror.getValue();
                 myCodeMirror.setValue('');
                 $(".CodeMirror-line").decodeEffect();
@@ -1025,8 +1129,100 @@ div#content {
 
             }
 
+            if (currentVal == "gen") {
+
+                myCodeMirror2.setValue(json2genebank(nexus2json(myCodeMirror.getValue())));
+                tempCode = myCodeMirror.getValue();
+                myCodeMirror.setValue('');
+                $(".CodeMirror-line").decodeEffect();
+                myCodeMirror.setValue(tempCode);
+
+            }
+
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
+        };
+            document.getElementById("outformat_genbank").onchange = function() {
+                var currentVal = this.value;
+
+                if (currentVal == "fas") {
+                    myCodeMirror2.setValue(json2fasta(genbank2json(myCodeMirror.getValue())));
+                    tempCode = myCodeMirror.getValue();
+                    myCodeMirror.setValue('');
+                    $(".CodeMirror-line").decodeEffect();
+                    myCodeMirror.setValue(tempCode);
+                }
+
+                if (currentVal == "a3m") {
+
+                    myCodeMirror2.setValue(json2a3m(genbank2json(myCodeMirror.getValue())));
+                    tempCode = myCodeMirror.getValue();
+                    myCodeMirror.setValue('');
+                    $(".CodeMirror-line").decodeEffect();
+                    myCodeMirror.setValue(tempCode);
+                }
+
+                if (currentVal == "clu") {
+                    myCodeMirror2.setValue(json2clustal(genbank2json(myCodeMirror.getValue())));
+                    var tempCode = myCodeMirror.getValue();
+                    myCodeMirror.setValue('');
+                    $(".CodeMirror-line").decodeEffect();
+                    myCodeMirror.setValue(tempCode);
+                }
+
+                if (currentVal == "phy") {
+
+                    myCodeMirror2.setValue(json2phylip(genbank2json(myCodeMirror.getValue())));
+                    tempCode = myCodeMirror.getValue();
+                    myCodeMirror.setValue('');
+                    $(".CodeMirror-line").decodeEffect();
+                    myCodeMirror.setValue(tempCode);
+
+                }
+
+                if (currentVal == "sto") {
+
+                    myCodeMirror2.setValue(json2stockholm(genbank2json(myCodeMirror.getValue())));
+                    tempCode = myCodeMirror.getValue();
+                    myCodeMirror.setValue('');
+                    $(".CodeMirror-line").decodeEffect();
+                    myCodeMirror.setValue(tempCode);
+
+                }
+
+                if (currentVal == "pir") {
+
+                    myCodeMirror2.setValue(json2pir(genbank2json(myCodeMirror.getValue())));
+                    tempCode = myCodeMirror.getValue();
+                    myCodeMirror.setValue('');
+                    $(".CodeMirror-line").decodeEffect();
+                    myCodeMirror.setValue(tempCode);
+
+                }
+
+                if (currentVal == "nex") {
+
+                    myCodeMirror2.setValue(json2nexus(genbankjson(myCodeMirror.getValue())));
+                    tempCode = myCodeMirror.getValue();
+                    myCodeMirror.setValue('');
+                    $(".CodeMirror-line").decodeEffect();
+                    myCodeMirror.setValue(tempCode);
+
+                }
+
+                if (currentVal == "emb") {
+
+                    myCodeMirror2.setValue(json2embl(genbank2json(myCodeMirror.getValue())));
+                    tempCode = myCodeMirror.getValue();
+                    myCodeMirror.setValue('');
+                    $(".CodeMirror-line").decodeEffect();
+                    myCodeMirror.setValue(tempCode);
+
+                }
+
+
+
+                document.getElementById('outputarea').value = myCodeMirror2.getValue();
 
         };
 
