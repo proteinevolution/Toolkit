@@ -1,70 +1,13 @@
 @import play.api.mvc.RequestHeader
 @(webJarAssets: WebJarAssets, sectionname : String)(implicit messages: Messages, request: RequestHeader)
 <link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
+<link href="@routes.Assets.at("styles/reformat-common.css")" rel="stylesheet">
 <link href="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.css"))" rel="stylesheet">
-<style>
 
-div#content {
-
-    width: 100%;
-    background-color: rgb(238, 238, 238 !important;
-}
-
-.sidebar {
-
-    display: none;
-}
-
-.CodeMirror pre {
-
-    font-family: Monaco, Consolas, "Lucida Console", monospace;
-    font-size: 12px;
-
-}
-
-.code { color: #ffae00; }
-
-.has-tip {
-    border-bottom: dotted 0px;
-
-}
-
-.dropzone{
-
-    border: dashed 1px darkblue;
-    background-color: #c6d6e5 ;
-
-}
-
-#progress_bar {
-    margin: 10px 0;
-    padding: 3px;
-    border: 1px solid #000;
-    font-size: 14px;
-    clear: both;
-
-    -moz-transition: opacity 1s linear;
-    -o-transition: opacity 1s linear;
-    -webkit-transition: opacity 1s linear;
-}
-#progress_bar.loading {
-    opacity: 1.0;
-}
-#progress_bar .percent {
-    background-color: #99ccff;
-    height: auto;
-    width: 0;
-}
-
-#sidebartoggle {
-    display: none;
-}
-
-
-</style>
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("clipboard.min.js"))"></script>
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.js"))"></script>
 <div style="padding-top: 10px;"></div>
+<div style="width: 80%; display: block; margin: auto;">
 <ul class="vertical menu" data-accordion-menu>
     <li>
         <a href="#" class="menu-icon"><i class="fi-list"></i> <span id="reformat">Reformat Converter</span></a>
@@ -77,6 +20,7 @@ div#content {
         </ul>
     </li>
 </ul>
+</div>
 <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
     <div id="progress_bar"><div class="percent">0%</div></div>
     <input type="file" id="files" name="file" />
@@ -86,21 +30,21 @@ div#content {
 
 </div>
 <div style="width: 95%; display: block; margin: auto; padding-top: 15px;">
-    <div class="large-12 columns">
+    <div class="large-12 columns" style="padding-right: 12px;">
         <div style="float: right; z-index: 9;">
             <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Paste output as input">
-                <button class="small button" id="copy-button" data-clipboard-target="#outputarea" onclick="pasteLeft()" style="margin: 0 -3px 0 0;">Paste left</button></span>
+                <button class="small button" id="copy-button" data-clipboard-target="#outputarea" onclick="pasteLeft()" style="margin: 0 -5px 0 0;">Paste</button></span>
             <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Copy output to clipboard">
                 <button class="small button warning" id="copy-button" data-clipboard-target="#outputarea" onclick="(function(){
                     new Clipboard('#copy-button');
                 })();" style="margin: 0 0 0 0;">Copy</button></span>
         </div>
     </div>
-    <div class="large-6 columns">
+    <div class="large-12 columns">
         <div id="inputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
     </div>
-    <div class="large-6 columns">
-        <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
+    <div class="large-12 columns">
+        <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ; padding-top: 8px;"></div>
         </div>
 
 
@@ -333,7 +277,7 @@ div#content {
             theme: "reformat"
         });
 
-        myCodeMirror.setSize("100%", 500);
+        myCodeMirror.setSize("100%", 300);
 
 
         var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
@@ -344,7 +288,7 @@ div#content {
             theme: "reformat"
         });
 
-        myCodeMirror2.setSize("100%", 500);
+        myCodeMirror2.setSize("100%", 300);
 
 
 
