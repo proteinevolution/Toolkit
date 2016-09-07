@@ -53,3 +53,7 @@ div#content {
 #sidebartoggle {
     display: none;
 }
+
+.vertical ul {
+    background-color: transparent;
+}
