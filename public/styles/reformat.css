@@ -18,7 +18,7 @@
 .cm-s-reformat span.cm-keyword {color: #cf6a4c;}
 .cm-s-reformat span.cm-string {color: #f9ee98;}
 
-.cm-s-reformat span.cm-variable {color: #c6d6e5;}
+/*.cm-s-reformat span.cm-variable {color: #c6d6e5;}
 .cm-s-reformat span.cm-variable-2 {color: #5ea6ea;}
 .cm-s-reformat span.cm-def {color: #a8d1ff;}
 /*.cm-s-reformat span.cm-error {background: #cf6a4c; color: #797977;} */
