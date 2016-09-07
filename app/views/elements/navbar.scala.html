@@ -137,7 +137,7 @@
     padding-right: 10px;
     padding-left: 10px;
     color: grey;
-    border-right: 1px solid lightgray;
+    border-right: 0px solid lightgray;
 }
 
 #toolsec li:last-child {
@@ -187,7 +187,7 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "search") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
             }
         }
         </ul>
@@ -196,7 +196,7 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "alignment") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
             }
         }
         </ul>
@@ -205,7 +205,7 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "seqanal") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
             }
         }
         </ul>
@@ -214,7 +214,7 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "2ary") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
             }
         }
         </ul>
@@ -223,7 +223,7 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "3ary" || tool.optional == "3ary") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
             }
         }
         </ul>
@@ -232,20 +232,20 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "classification") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
             }
         }
         </ul>
     </div>
     <div class="tabs-panel" id="panel7">
         <ul id="toolsec">
-            <li><a id="reformat" href="/#/seq2gi">ExtractGIs</a></li>
+            <li><a id="reformat" href="/#/seq2gi">ExtractGIs &nbsp;/</a></li>
             @for(tool <- Tool.tools){
                 @if(tool.section == "utils") {
-                    <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                    <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
                 }
             }
-            <li><a id="reformat" href="/#/reformat">Reformat</a></li>
+            <li><a id="reformat" href="/#/reformat">Reformat &nbsp;/</a></li>
         </ul>
     </div>
 </div>
