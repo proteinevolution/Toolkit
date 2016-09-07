@@ -969,12 +969,7 @@ function validateStockholm(stockholm){
         return false;
 
     newlines = stockholm.split('\n');
-    if(newlines[0].startsWith("#") && newlines.length > 1) {
-
-        if (!newlines[0].startsWith("# STOCKHOLM 1.0")) {
-            throw new Error("Invalid Stockholm Header");
-            return false;
-        }
+    if(newlines[0].startsWith("# STOCKHOLM 1.0") && newlines.length > 1) {
         //delete empty lines
         newlines = newlines.filter(Boolean);
 
@@ -1491,3 +1486,110 @@ function formatEmblSeq(seq){
     return result;
 }
 
+
+function validateNexus(nexus) {
+
+    if (!nexus) {
+        return false;
+    }
+    var element, ntax, nchar;
+    var split = nexus.split('\n');
+    // remove empty lines
+    split = split.filter(Boolean);
+    if(!nexus.startsWith("#NEXUS"))
+        return false;
+    if(!split[1].toUpperCase().startsWith("BEGIN"))
+        return false;
+    if(!split[split.length - 1].toUpperCase().startsWith("END;"))
+        return false;
+
+    element = nexus2json(nexus);
+
+    //get dimensions
+    var extractNumbers = split[2].toUpperCase().replace("NTAX="," ").replace("DIMENSIONS", "").replace("NCHAR="," ").replace(";"," ");
+
+    ntax = extractNumbers.split(/\s/g).filter(Boolean)[0];
+    nchar= extractNumbers.split(/\s/g).filter(Boolean)[1];
+
+   //check dimensions
+    if( ntax!= element.length) {
+        throw new Error("Number of sequences does not match with the header.");
+        return false;
+    }
+    for(var i = 0; i < element.length; i++){
+        if( nchar!= element[i].seq.length) {
+            throw new Error("Number of sequences does not match with the header.");
+            return false;
+        }
+    }
+
+
+    for(var i =0; i < element.length; i++){
+        if(element[i].name = "")
+            return false;
+        if(element[i].seq = "" )
+            return false;
+
+    }
+
+    return true;
+}
+
+function nexus2json(nexus){
+    if (!nexus) {
+        return false;
+    }
+
+    var  element , result = [];
+
+    var split = nexus.split('\n'), seq =[];
+    // remove empty lines
+    split = split.filter(Boolean);
+    split.shift();
+    for(var i = 0 ;i < split.length ;i++) {
+
+
+      if(split[i].toUpperCase().startsWith("MATRIX")){
+          while(+i+1 < split.length && !split[+i+1].startsWith(";")){
+              element = {};
+              i++;
+              element.name = split[i].split(/\s/g)[0];
+              seq = split[i].split(/\s/g);
+              seq.shift();
+              seq.filter(Boolean);
+              element.seq = seq.join("").replace(/\?/g, "-").toUpperCase();
+              result.push(element);
+
+          }
+          return result;
+      }
+
+    }
+}
+
+function json2nexus(json){
+    var result = '';
+    result += "#NEXUS";
+    result += "\n";
+    result += "Begin data;";
+    result += "\n";
+    result += "Dimensions ntax=" + json.length + " nchar=" + json[0].seq.length + ";";
+    result += "\n";
+    result += "format datatype= DNA missing=? gap= -;";
+    result += "\n";
+    result += "Matrix";
+    result += "\n";
+    for (var i = 0; i < json.length; i++) {
+        result += json[i].name.replace(/\s/g,"");
+        result += "\t";
+        result += json[i].seq.toLowerCase();
+        result += "\n";
+    }
+    result += ";";
+    result += "\n";
+    result += "End;";
+
+
+    return result;
+
+}
