@@ -86,7 +86,7 @@ jobs.view = ->
         )
       )
 
-      m('div', id: 'job_id', {style: {width: '33.5%', align: 'center'}}, m('a[href="/#/jobs/' + task.job_id() + '"]', task.job_id())),
+      m('div', id: 'job_id', {style: {width: '33.5%', align: 'center'}}, m('a[href="/#/jobs/' + task.mainID() + '"]', task.job_id())),
       m('div', {class: task.toolname()}, {style: {textAlign: "center", border: "0px solid black"}},
         m("div", {style: {marginLeft: '1.25em', cssFloat: "center", border: "0px solid black",}},
           task.toolname().substr(0,4)

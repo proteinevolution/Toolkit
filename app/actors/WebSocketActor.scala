@@ -63,6 +63,19 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
               Logger.info("JSON Parser Error " + js.toString())
           }
 
+        case "AddJob" =>
+          (js \ "mainID").validate[String].asOpt match {
+            case Some(mainIDString) =>
+              BSONObjectID.parse(mainIDString).toOption match {
+                case Some(mainID) =>
+                  Logger.info(mainID.stringify)
+                  userManager ! AddJob(userID, mainID)
+                case None =>
+                  Logger.info("BSON Parser Error" + js.toString())
+              }
+            case None =>
+              Logger.info("JSON Parser Error " + js.toString())
+          }
 
         case "ClearJob" =>
           (js \ "mainID").validate[String].asOpt match {
@@ -108,7 +121,8 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
                                  "toolname" -> job.tool)))
 
     case AutoCompleteReply (userID : BSONObjectID, suggestionList : List[String]) =>
-      out ! Json.obj("type" -> "JobList", "list" -> suggestionList)
+      println("AutoSuggestion: " + suggestionList)
+      //out ! Json.obj("type" -> "JobList", "list" -> suggestionList)
 
   }
 }

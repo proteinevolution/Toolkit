@@ -7,8 +7,3 @@ $ ->
       url: route
       type: 'POST').done (data) ->
         divobject.style.backgroundColor = "#22FF22"
-
-  $("searchInput").onChange = (event) -> onChange(event)
-
-onChange = (event) ->
-  alert "wasd!"
