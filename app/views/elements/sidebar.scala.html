@@ -1,15 +1,14 @@
 
     <div class="row collapse">
         <form class="jobsearchform" id="jobsearchform">
-        <div id="jobsearchformdiv" align="left">
+        <div id="jobsearchformdiv" align="left" style="display: flex;">
             <input type="text" placeholder="Show results by Job ID" class="jobsearch" id="jobsearch">
+            <div id="magnifier" class="button" align="center" data-tooltip aria-haspopup="true"  data-disable-hover="false" title="Search for job" >
+                <span><i class="icon-magnifying" style="color: grey;"></i></span>
+            </div>
         </div>
         </form>
         <div>
-            <div class="button sidebar-button" align="center" data-tooltip aria-haspopup="true"  data-disable-hover="false" title="Search for job" >
-                <span><i class="icon-magnifying" style="color: grey;"></i></span>
-            </div>
-
             <div class="button sidebar-button" align="center" data-tooltip aria-haspopup="true" data-disable-hover="false" title="Delete selected jobs" onclick="deleteIDs();">
                <span><i class="icon-trash_can" style="color: grey;"></i></span>
             </div>

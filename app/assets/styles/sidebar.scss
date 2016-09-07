@@ -40,7 +40,19 @@ ul#jobs li {
 #jobsearchform input {
   font-size: 0.75em;
   height: 3.35em;
+  width: 79%;
 }
+
+
+#magnifier {
+  height: 2.75em;
+  background-color: #E8EAF6;
+  border: 1px solid lightgray;
+  border-left: none;
+
+}
+
+
 
 .button-group .alert {
   margin-right: 0.8em !important;
@@ -74,7 +86,6 @@ ul#jobs li {
 .job-button div {
   width: 33.5%;
 }
-
 
 @-webkit-keyframes check {
   0% {
