@@ -444,14 +444,15 @@ function validateFasta(fasta) {
 
     var newlines = fasta.split('\n');
     if (!newlines[0].startsWith("#") && newlines[0].startsWith(">")) {
+        /*
+         for(var k = 0;k < newlines.length;k++){
+         if ((newlines[k].match(/>/g)||[]).length > 1) {
+         throw new Error("warning, header has more than one > identifier. file corrupt?");
+         return false;
+         }
 
-        for(var k = 0;k < newlines.length;k++){
-            if ((newlines[k].match(/>/g)||[]).length > 1) {
-                throw new Error("warning, header has more than one > identifier. file corrupt?");
-                return false;
-            }
-
-        }
+         }
+         */
         //fasta = newlines.join('\n');
 
         if (!fasta.startsWith('>')) {
@@ -616,10 +617,10 @@ function aminoCount(seq) {
     // returns array that contains char count of sequence at position result[sequence][Unicode(char)]
     var uni;
 
-        uni = new Uint32Array(91);
-        for (var i = 0; i < uni.byteLength; i++) {
-            uni[seq.charCodeAt(i)] += 1;
-        }
+    uni = new Uint32Array(91);
+    for (var i = 0; i < uni.byteLength; i++) {
+        uni[seq.charCodeAt(i)] += 1;
+    }
     return uni;
 }
 
@@ -883,6 +884,9 @@ function validatePhylip(phylip){
 
 
 function json2phylip(json) {
+
+    if(!json)
+        return false;
     var result = '', n, m, split;
     n = json.length;
     m = json[0].seq.length;
@@ -926,7 +930,8 @@ function json2phylip(json) {
 
 
 function phylip2json(phylip) {
-
+    if(!phylip)
+        return false;
     var newlines, header, n, result = [], element = {};
 
     newlines = phylip.split('\n');
@@ -1050,6 +1055,9 @@ function stockholm2json(stockholm) {
 
 function clustal2json(clustal){
 
+    if(!clustal)
+        return false;
+
     var blockstate, cSeq, k, keys, untrimmed, label, line, lines, match, obj, regex, seqCounter, result, sequence, element;
     if (Object.prototype.toString.call(clustal) === '[object Array]') {
         lines = clustal;
@@ -1113,6 +1121,7 @@ function clustal2json(clustal){
 
 }
 function json2clustal(clustal){
+
 
     var result = [],
         i = 0,
@@ -1511,7 +1520,7 @@ function validateNexus(nexus) {
     ntax = extractNumbers.split(/\s/g).filter(Boolean)[0];
     nchar= extractNumbers.split(/\s/g).filter(Boolean)[1];
 
-   //check dimensions
+    //check dimensions
     if( ntax!= element.length) {
         throw new Error("Number of sequences does not match with the header.");
         return false;
@@ -1549,20 +1558,20 @@ function nexus2json(nexus){
     for(var i = 0 ;i < split.length ;i++) {
 
 
-      if(split[i].toUpperCase().startsWith("MATRIX")){
-          while(+i+1 < split.length && !split[+i+1].startsWith(";")){
-              element = {};
-              i++;
-              element.name = split[i].split(/\s/g)[0];
-              seq = split[i].split(/\s/g);
-              seq.shift();
-              seq.filter(Boolean);
-              element.seq = seq.join("").replace(/\?/g, "-").toUpperCase();
-              result.push(element);
+        if(split[i].toUpperCase().startsWith("MATRIX")){
+            while(+i+1 < split.length && !split[+i+1].startsWith(";")){
+                element = {};
+                i++;
+                element.name = split[i].split(/\s/g)[0];
+                seq = split[i].split(/\s/g);
+                seq.shift();
+                seq.filter(Boolean);
+                element.seq = seq.join("").replace(/\?/g, "-").toUpperCase();
+                result.push(element);
 
-          }
-          return result;
-      }
+            }
+            return result;
+        }
 
     }
 }
@@ -1575,7 +1584,7 @@ function json2nexus(json){
     result += "\n";
     result += "Dimensions ntax=" + json.length + " nchar=" + json[0].seq.length + ";";
     result += "\n";
-    result += "format datatype= DNA missing=? gap= -;";
+    result += "format datatype=" + typeOfSequence(json) + " missing=? gap= -;";
     result += "\n";
     result += "Matrix";
     result += "\n";
@@ -1591,5 +1600,138 @@ function json2nexus(json){
 
 
     return result;
+
+}
+
+
+function validateGenbank(genbank){
+    if (!genbank) {
+        return false;
+    }
+    var element;
+    var split = genbank.split('\n');
+    // remove empty lines
+    split = split.filter(Boolean);
+    if(!genbank.toUpperCase().startsWith("LOCUS"))
+        return false;
+    if(!split[split.length-1].toUpperCase().replace(/\s/g,"").endsWith("//"))
+        return false;
+
+    element = genbank2json(genbank);
+
+    for(var i =0; i < element.length; i++){
+        if(element[i].name = "")
+            return false;
+        if(element[i].seq = "" )
+            return false;
+
+    }
+
+    return true;
+}
+
+function genbank2json(genbank){
+    if (!genbank) {
+        return false;
+    }
+
+    var  element , result = [] , accession, locus , definition;
+
+    var split = genbank.split('\n');
+    // remove empty lines
+
+    split = split.filter(Boolean);
+    for(var i = 0 ;i < split.length ;i++) {
+        element = {};
+        element.name = "";
+        element.seq = "";
+        element.description = "";
+        element.accession = "";
+
+
+            if(split[i].toUpperCase().startsWith("ACCESSION"))
+                element.accession = " " + split[i].replace("ACCESSION", "").trim();
+            if(split[i].toUpperCase().startsWith("DEFINITION"))
+                definition = " " + split[i].replace("DEFINITION", "").trim();
+            if(split[i].replace(" ", "").toUpperCase().startsWith("ORIGIN")){
+                while(+i+1 < split.length && !split[+i+1].startsWith("//")){
+                    i++;
+                    element.seq += split[i].replace(/\s/g,"").replace(/[0-9]/g,"").toUpperCase();
+                }
+                element.name += (element.accession + " " + definition).trim();
+
+
+
+            i++;
+            result.push(element);
+        }
+
+    }
+    return result;
+}
+
+function json2genbank(json){
+    var result = '';
+
+    for (var i = 0; i < json.length; i++) {
+        result += 'LOCUS\t\t\t\t\t\t' + json[i].seq.length + " bp\t\t\t" + typeOfSequence(json[i].seq) ;
+        result += '\n';
+        result += 'DEFINITION\t\t';
+        result += json[i].name;
+        result += '\n';
+        result += 'ACCESSION\t\t';
+        if(json[i].accession) {
+            result += json[i].accession;
+        }else{
+            result += json[i].name.substring(0,10);
+        }
+        result += '\n';
+        result += 'VERSION\t\t'
+        result += '\n';
+        result += 'KEYWORDS\t\t'
+        result += '\n';
+        result += 'SOURCE\t\t'
+        result += '\n';
+        result += 'ORGANISM\t\tLocation/Qualifiers';
+        result += '\n';
+        result += 'ORIGIN';
+        result += '\n';
+
+        var splitSeq =  json[i].seq.toLowerCase().match(/.{1,60}/g);
+        var count = 0;
+        for(var j = 0; j < splitSeq.length; j++){
+        count = splitSeq[j].length + count;
+            for (var k = 0; k < 9 - (count.toString().length);k++) {
+                result += " ";
+            }
+            // print num of sequence
+            result += count;
+            result += " ";
+            result += addSpaceEveryNChars(splitSeq[j],10);
+            result += '\n';
+        }
+
+        result += '//';
+        result += '\n';
+
+    }
+
+    return result;
+
+}
+
+
+function typeOfSequence(json) {
+    if (!/[^\-\\.AGUC\s]/i.test(json[0].seq)){
+        return "RNA"
+    }
+
+    if (!/[^\-\\.AGTC\s]/i.test(json[0].seq)){
+        return "DNA"
+    }
+    if (!/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(json[0].seq)){
+        return "Protein"
+    }
+    return  "undefined";
 
 }
