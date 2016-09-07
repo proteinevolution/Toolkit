@@ -611,24 +611,16 @@ function validateAlignmentFasta(aln) {
 }
 
 
+function aminoCount(seq) {
 
+    // returns array that contains char count of sequence at position result[sequence][Unicode(char)]
+    var uni;
 
-
-function aminoCountFasta(json) {
-
-
-    var dashcount, AA, BB, CC, DD, EE, FF, GG, HH, II, KK, LL, MM, NN, PP, QQ, RR, SS, TT, UU, VV, WW, XX, YY, ZZ;
-
-
-    for (var i = 0; i<json[i].length; i++) {
-        for (var j = 0; j < json[i].seq.length; j++) {
-            //TODO: loop through everything and count and return the result as an array
-
-
+        uni = new Uint32Array(91);
+        for (var i = 0; i < uni.byteLength; i++) {
+            uni[seq.charCodeAt(i)] += 1;
         }
-    }
-
-
+    return uni;
 }
 
 /* transform fasta sequences to lowercase and returns parsed json object */
@@ -677,13 +669,6 @@ function clustalToUpperCase(clu) {
         clustalObj[i].seq = clustalObj[i].seq.toUpperCase();
     }
     return clustalObj;
-}
-
-
-
-function aminoCountClustal(clu) {
-
-    aminoCountFasta(clustal2Fasta(clu));
 }
 
 
@@ -918,7 +903,6 @@ function json2phylip(json) {
             }
         }
 
-
         split = json[i].seq.match(/.{1,60}/g);
         result += addSpaceEveryNChars(split[0],10);
 
@@ -930,7 +914,6 @@ function json2phylip(json) {
             result += '           ';
             result += addSpaceEveryNChars(split[j],10);
             result += '\n';
-            console.log(split[i])
         }
     }
     result += '\n'
@@ -1393,36 +1376,36 @@ function embl2json(embl){
 
     var  element , result = [];
 
-   var split = embl.split('\n');
+    var split = embl.split('\n');
     // remove empty lines
     split = split.filter(Boolean);
 
 
     for(var i = 0 ;i < split.length ;i++) {
         element = {};
-            while (+i+1 < split.length && !split[+i+1].startsWith("ID")) {
+        while (+i+1 < split.length && !split[+i+1].startsWith("ID")) {
 
 
 
-                if(split[i].startsWith("ID")) {
-                    element.name = '';
-                    element.name += split[i].substring(5);
-                }
-                if(split[i].startsWith("DE")) {
-                    element.description = '';
-                    element.description += split[i].substring(5);
-                }
-                if(split[i].startsWith("SQ")){
-                    element.seq = '';
-
-                    while(+i+1 < split.length && !split[+i+1].startsWith("//")){
-                        i++;
-                        element.seq += split[i].replace(/\s/g,"").replace(/[0-9]/g,"").toUpperCase();
-                    }
-                }
-                i++;
-
+            if(split[i].startsWith("ID")) {
+                element.name = '';
+                element.name += split[i].substring(5);
             }
+            if(split[i].startsWith("DE")) {
+                element.description = '';
+                element.description += split[i].substring(5);
+            }
+            if(split[i].startsWith("SQ")){
+                element.seq = '';
+
+                while(+i+1 < split.length && !split[+i+1].startsWith("//")){
+                    i++;
+                    element.seq += split[i].replace(/\s/g,"").replace(/[0-9]/g,"").toUpperCase();
+                }
+            }
+            i++;
+
+        }
         result.push(element);
 
     }
@@ -1430,7 +1413,8 @@ function embl2json(embl){
 
 }
 function json2embl(json){
-    var result = '';
+    var result = '',count;
+
     for (var i = 0; i < json.length; i++) {
         result += "ID   ";
         result += json[i].name.split(/\s/g)[0] +  "; " + "; "  + "; "  + "; "  + "; "  + json[i].seq.length + " BP.";
@@ -1449,14 +1433,27 @@ function json2embl(json){
             result += "DE   ";
             result += splitName;
             if(json[i].description)
-            result += " " + json[i].description;
+                result += " " + json[i].description;
             result += "\n";
             result += "XX";
             result += "\n";
         }
 
 
-        result += "SQ   Sequence " + json[i].seq.length + " BP;";
+        count = aminoCount(json[i].seq);
+        result += "SQ   Sequence " + json[i].seq.length + " BP; " ;
+        result += count['A'.charCodeAt()] + " A; ";
+        result += count['C'.charCodeAt()] + " C; ";
+        result += count['G'.charCodeAt()] + " G; ";
+        result += count['T'.charCodeAt()] + " T; ";
+
+        var others = 0;
+        for(var j =0 ; j < count.length; j++){
+            if(j != 'A'.charCodeAt() && j != 'C'.charCodeAt() && j != 'G'.charCodeAt() && j != 'T'.charCodeAt()){
+                others += count[j];
+            }
+        }
+        result += others + " others; ";
         result += "\n";
         result += formatEmblSeq(json[i].seq).toLowerCase();
         result += "\n";
@@ -1480,7 +1477,6 @@ function formatEmblSeq(seq){
 
         //calculate number of whitespaces
         var numOfSpace = 80 - split[i].length - 5 - (charCount + split[i].length).toString().length - ((''+(split[i].length-1))[0]);
-        console.log(numOfSpace)
 
         // to have count formatted at the end of the line
         for (var j = 0; j < numOfSpace ;j++) {
