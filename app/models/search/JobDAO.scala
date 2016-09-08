@@ -27,11 +27,11 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   }
 
 
-  def deleteJob(jobId : String) = {
+  def deleteJob(mainID : String) = {
     client.execute {
       bulk(
-        delete id jobId from "tkplay_dev" / "jobs",
-        delete id jobId from "tkplay_dev" / "jobhashes"
+        delete id mainID from "tkplay_dev" / "jobs",
+        delete id mainID from "tkplay_dev" / "jobhashes"
         )
     }
   }

@@ -42,8 +42,8 @@ $ ->
       data: $(".jobform").serialize()
       error: (jqXHR, textStatus, errorThrown) -> alert errorThrown
     ).done (json) ->
-      if(json.JobSubmitted)
-        if (json.IdenticalJob != null)
+      if(json.jobSubmitted)
+        if (json.identicalJobs)
           alert "job submitted but there was an identical job"
       else
         alert "job NOT submitted"
