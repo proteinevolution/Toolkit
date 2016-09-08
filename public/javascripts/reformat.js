@@ -171,9 +171,9 @@ function getGIs(fastaText){
 
 function getAccessionversion(json){
     var result= '';
-    for (; i < json.length; i++) {
-        var split = json[i].name.split('\s');
-        result += split[1];
+    for (var i= 0; i < json.length; i++) {
+        var split = json[i].name.split(/\s/g);
+        result += split[0];
         result += "\n";
     }
 
