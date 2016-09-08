@@ -6,25 +6,21 @@ import actors.JobManager.Prepare
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
-import models.database.JobState.{Running, Done}
-import models.database.Job
+import better.files._
+import models.database.{Job, JobState}
 import models.search.JobDAO
 import models.tools.ToolModel
-
-import modules.tools.{ToolMatcher, FNV}
+import modules.tools.{FNV, ToolMatcher}
 import play.api.cache._
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
+import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONObjectID, BSONDocument}
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
-import play.api.libs.json.{JsValue, Json}
-import scala.concurrent.ExecutionContext.Implicits.global
-import better.files._
-
-import scala.util.{Failure, Success}
 
 object Tool {
 
@@ -95,49 +91,52 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
               println("success: " + richSearchResponse)
               println("hits: " + richSearchResponse.totalHits)
 
-              val richJobList = richSearchResponse.getHits.getHits.toList.map { searchHit =>
-                println(searchHit.getId)
+              // Generate a list of hits and convert them into a list of future option jobs
+              val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit => BSONObjectID(hit.getId) }
 
-                jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> BSONObjectID(searchHit.getId))).one[Job]).map {
-                  case Some(oldJob) =>
-                    if (oldJob.status != Done && oldJob.status != Running) {
-                      println("job with same signature found but job failed, should submit the job again")
-                      // we should delete failed jobs only here because keeping them is normally useful for debugging and statistics
-                      jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> BSONObjectID(searchHit.getId))))
-                      None
-                    } else {
-                      println("job found: " + oldJob.tool)
-                      Some(oldJob)
-                    }
+              // Find the Jobs in the Database
+              val futureJobs = jobCollection.map(_.find(BSONDocument(Job.IDDB ->
+                                                        BSONDocument("$in" -> mainIDs))).cursor[Job]())
 
-                  case None =>
-                    println("[WARNING]: job in index but not in database")
-                    None
+              // Collect the list
+              futureJobs.flatMap(_.collect[List]()).map { jobList =>
+                // all mainIDs from the DB
+                val foundMainIDs   = jobList.map(_.mainID)
+
+                // mainIDs which were not in the DB
+                val unfoundMainIDs = mainIDs.filterNot(mainID => foundMainIDs contains mainID)
+
+                // jobs with a partition of (Failed, NotFailed)
+                val jobsPatition   = jobList.partition(_.status == JobState.Error)
+
+                // Delete index-zombie jobs
+                unfoundMainIDs.foreach { mainID =>
+                  println("[WARNING]: job in index but not in database")
+                  jobDao.deleteJob(mainID.stringify)
                 }
-              }
 
-              richJobList.head.map {
-                // Found jobs, Prepare them but do not start them. Let the User decide what to do.
-                case Some(job) =>
-                  // TODO we should take care that the exact same job exists only once in the database
-                  if(richJobList.tail.nonEmpty)
-                    println("[WARNING]: " + richJobList.tail.length + " extra Jobs found.")
+                // Mark Failed Jobs
+                jobsPatition._1.foreach { job =>
+                  println("job with same signature found but job failed, should submit the job again")
+                  //TODO we should delete failed jobs only here because keeping them is normally useful for debugging and statistics
+                  //jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID))  // would only delete the database entry
+                  //jobManager ! DeleteJob(user.userID, job.mainID)                       // deletes all files and database entries
+                }
 
-                  jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = false)
-                  Ok(Json.toJson(Json.obj("JobSubmitted" -> true,
-                                          "JobStarted"   -> false,
-                                          "IdenticalJob" -> List(Json.obj("mainID"   -> job.mainID.stringify,
-                                                                          "job_id"   -> job.jobID,
-                                                                          "state"    -> job.status,
-                                                                          "toolname" -> job.tool))))
-                  ).withSession(sessionCookie(request, user.sessionID.get))
-
-                // Found no matching Jobs. Start the Job if needed.
-                case None =>
-                  jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = start)
-                  Ok(Json.toJson(Json.obj("JobSubmitted" -> true,
-                                          "JobStarted"   -> start))
-                  ).withSession(sessionCookie(request, user.sessionID.get))
+                jobsPatition._2.headOption match {
+                  case Some(job) =>
+                    jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = false)
+                    Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
+                                            "jobStarted"    -> false,
+                                            "identicalJobs" -> true))
+                    ).withSession(sessionCookie(request, user.sessionID.get))
+                  case None =>
+                    jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = start)
+                    Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
+                                            "jobStarted"    -> start,
+                                            "identicalJobs" -> false))
+                    ).withSession(sessionCookie(request, user.sessionID.get))
+                }
               }
             })
       }
