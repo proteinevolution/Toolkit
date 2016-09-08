@@ -36,12 +36,17 @@ $ ->
     event.preventDefault()
     submitRoute = jsRoutes.controllers.Tool.submit(toolname, true, jobID)
 
-    $.ajax
+    $.ajax(
       url: submitRoute.url
       type: "POST"
       data: $(".jobform").serialize()
       error: (jqXHR, textStatus, errorThrown) -> alert errorThrown
-
+    ).done (json) ->
+      if(json.JobSubmitted)
+        if (json.IdenticalJob != null)
+          alert "job submitted but there was an identical job"
+      else
+        alert "job NOT submitted"
 
   # Handles the behavior when the submit button is pressed in a job form
   $(".jobprepare").click  ->
