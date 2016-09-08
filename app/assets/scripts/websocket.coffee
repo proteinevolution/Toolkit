@@ -98,8 +98,11 @@ onMessage = (event) ->
     when "JobList"
       jobs.vm.updateList(message.list)
 
-    when "AutoComplete"
-      autoCompleteList = message.list
+    when "AutoCompleteReply"
+      $("#jobsearch").autocomplete(source:message.list)
+
+    when "SearchReply"
+      $("#modal").html(message.list).foundation('open')
 
     when "Ping"
       sendMessage("type":"Ping")
