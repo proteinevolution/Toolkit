@@ -173,8 +173,10 @@ function getAccessionversion(json){
     var result= '';
     for (var i= 0; i < json.length; i++) {
         var split = json[i].name.split(/\s/g);
-        result += split[0];
-        result += "\n";
+        if(!split[0].toUpperCase().match("GI")) {
+            result += split[0];
+            result += "\n";
+        }
     }
 
     return result;
@@ -1016,7 +1018,7 @@ function json2stockholm(json){
         result += '#GF ' + json[i].name.replace(/\s/g, "") +  ' DE ' +  json[i].name ;
         result += "\n";
         result += json[i].name.replace(/\s/g, "");
-        result += "\t";
+        result += " \t";
         result += json[i].seq;
         result += "\n";
     }
@@ -1720,6 +1722,55 @@ function json2genbank(json){
 
 }
 
+
+function searchRegex(text, regex, flag) {
+    if (!text) {
+        return false;
+    }
+    if (regex=="") {
+        return false;
+    }
+
+    var  result = [] , matches, split, reg, beginHit,endHit, tmp,lastBeginHit, lastEndHit;
+
+    split = text.split('\n');
+    // remove empty lines
+
+    split = split.filter(Boolean);
+
+    reg =  new RegExp(regex, flag) ;
+    if(reg != null) {
+
+        for (var i = 0; i < split.length; i++) {
+
+            if (split[i].match(reg) != null) {
+                beginHit =-2;
+                endHit = -2;
+
+                result += i + '\t\t\t';
+                matches = split[i].match(reg);
+                console.log("matches" + matches)
+                tmp = split[i];
+                lastBeginHit = 0;
+                lastEndHit = 0;
+                for(var j=0; j < matches.length; j++) {
+                    beginHit = tmp.indexOf(matches[j],endHit+2);
+                    endHit = tmp.indexOf(matches[j],endHit+2) + matches[j].length -1;
+                    tmp =  tmp.substr(0,beginHit) + '\'' + tmp.match(reg)[j] + '\'' +  tmp.substr(endHit+1);
+                    lastBeginHit = beginHit;
+                    lastEndHit = endHit;
+                }
+                result += tmp;
+                result += '\n';
+
+            }
+        }
+        return result;
+    }
+    return false;
+
+
+}
 
 function typeOfSequence(json) {
     if (!/[^\-\\.AGUC\s]/i.test(json[0].seq)){
