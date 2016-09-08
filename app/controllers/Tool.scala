@@ -16,9 +16,11 @@ import play.api.cache._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONObjectID, BSONDocument}
 
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
+import play.api.libs.json.{JsValue, Json}
 import scala.concurrent.ExecutionContext.Implicits.global
 import better.files._
 
@@ -43,20 +45,18 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
   implicit val timeout = Timeout(5.seconds)
 
 
-  def submit(toolname: String, start : Boolean, jobID : Option[String]) = Action.async { implicit request =>
+  def submit(toolName: String, start : Boolean, jobID : Option[String]) = Action.async { implicit request =>
 
 
-    getUser(request, userCollection, userCache).map { user =>
-
-
+    getUser(request, userCollection, userCache).flatMap { user =>
       // Fetch the job ID from the submission, might be the empty string
       //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
 
 
-      val form = toolMatcher.formMatcher(toolname)
+      val form = toolMatcher.formMatcher(toolName)
 
       if (form.isEmpty)
-        NotFound
+        Future.successful(NotFound)
 
       else {
         val boundForm = form.get.bindFromRequest // <- params
@@ -84,70 +84,64 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
 
         lazy val hashQuery = jobDao.matchHash(inputHash, dbName, dbMtime)
-
-        hashQuery.onComplete({
-          case Success(s) =>
-            println("success: " + s)
-            println("hits: " + s.totalHits)
-
-            if(s.totalHits >= 1) {
-
-              for(x <- s.getHits.getHits) {
-
-                println(x.getId)
-
-
-                jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> BSONObjectID(x.getId))).one[Job]).foreach {
-
-
-                  case Some(oldJob) =>
-                    if (oldJob.status != Done && oldJob.status != Running) {
-                      println("job with same signature found but job failed, should submit the job again")
-                      jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> BSONObjectID(x.getId)))) // we should delete failed jobs only here because keeping them is normally useful for debuggin and statistics
-                    }
-                    else {
-                      println("job found: " + oldJob.tool)
-
-                      // TODO redirect here to the first found job or better: trigger a popup
-
-
-                    }
-
-                  case None => println("[WARNING]: job in index but not in database")
-
-                }
-              }
-
-            }
-
-            // else if (s.totalHits > 1) { println("too many jobs with same signature") } TODO we should take care that the exact same job exists only once in the database
-
-
-            else { println("no hits found, job should be processed") }
-
-
-          case Failure(exception) =>
-            println("An error has occured: " + exception)
-
-        })
-
-
-
         boundForm.fold(
           formWithErrors => {
 
-            BadRequest("There was an error with the Form")
+            Future.successful(BadRequest("There was an error with the Form"))
           },
 
+          _ =>
+            hashQuery.flatMap { richSearchResponse =>
+              println("success: " + richSearchResponse)
+              println("hits: " + richSearchResponse.totalHits)
 
+              val richJobList = richSearchResponse.getHits.getHits.toList.map { searchHit =>
+                println(searchHit.getId)
 
-          _ => jobManager ! Prepare(user, jobID, toolname, boundForm.data, start = start)
-        )
-        Ok.withSession(sessionCookie(request, user.sessionID.get))
+                jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> BSONObjectID(searchHit.getId))).one[Job]).map {
+                  case Some(oldJob) =>
+                    if (oldJob.status != Done && oldJob.status != Running) {
+                      println("job with same signature found but job failed, should submit the job again")
+                      // we should delete failed jobs only here because keeping them is normally useful for debugging and statistics
+                      jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> BSONObjectID(searchHit.getId))))
+                      None
+                    } else {
+                      println("job found: " + oldJob.tool)
+                      Some(oldJob)
+                    }
 
+                  case None =>
+                    println("[WARNING]: job in index but not in database")
+                    None
+                }
+              }
+
+              richJobList.head.map {
+                // Found jobs, Prepare them but do not start them. Let the User decide what to do.
+                case Some(job) =>
+                  // TODO we should take care that the exact same job exists only once in the database
+                  if(richJobList.tail.nonEmpty)
+                    println("[WARNING]: " + richJobList.tail.length + " extra Jobs found.")
+
+                  jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = false)
+                  Ok(Json.toJson(Json.obj("JobSubmitted" -> true,
+                                          "JobStarted"   -> false,
+                                          "IdenticalJob" -> List(Json.obj("mainID"   -> job.mainID.stringify,
+                                                                          "job_id"   -> job.jobID,
+                                                                          "state"    -> job.status,
+                                                                          "toolname" -> job.tool))))
+                  ).withSession(sessionCookie(request, user.sessionID.get))
+
+                // Found no matching Jobs. Start the Job if needed.
+                case None =>
+                  jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = start)
+                  Ok(Json.toJson(Json.obj("JobSubmitted" -> true,
+                                          "JobStarted"   -> start))
+                  ).withSession(sessionCookie(request, user.sessionID.get))
+              }
+            })
       }
     }
-
   }
 }
 
