@@ -99,6 +99,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
       user.userData match {
         case Some(userData) =>
           Ok(views.html.auth.profile(user))
+            .withSession(sessionCookie(request, user.sessionID.get))
         case None =>
           // User was not logged in
           Redirect(routes.Application.index())
@@ -206,8 +207,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
               userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),signUpFormUser)).map { a =>
                 // All done. User is registered
                 // Make sure the Cache is updated
-                updateUser(user, userCache)
-                Ok(LoggedIn(signUpFormUser)).withSession(sessionCookie(request, user.sessionID.get))
+                updateUser(signUpFormUser, userCache)
+                Ok(LoggedIn(signUpFormUser)).withSession(sessionCookie(request, signUpFormUser.sessionID.get))
               }
           }
         }
