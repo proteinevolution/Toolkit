@@ -1721,55 +1721,55 @@ function json2genbank(json){
     return result;
 
 }
-
-
 function searchRegex(text, regex, flag) {
-    if (!text) {
-        return false;
-    }
-    if (regex=="") {
-        return false;
-    }
 
-    var  result = [] , matches, split, reg, beginHit,endHit, tmp,lastBeginHit, lastEndHit;
-
-    split = text.split('\n');
-    // remove empty lines
-
-    split = split.filter(Boolean);
-
-    reg =  new RegExp(regex, flag) ;
-    if(reg != null) {
-
-        for (var i = 0; i < split.length; i++) {
-
-            if (split[i].match(reg) != null) {
-                beginHit =-2;
-                endHit = -2;
-
-                result += i + '\t\t\t';
-                matches = split[i].match(reg);
-                console.log("matches" + matches)
-                tmp = split[i];
-                lastBeginHit = 0;
-                lastEndHit = 0;
-                for(var j=0; j < matches.length; j++) {
-                    beginHit = tmp.indexOf(matches[j],endHit+2);
-                    endHit = tmp.indexOf(matches[j],endHit+2) + matches[j].length -1;
-                    tmp =  tmp.substr(0,beginHit) + '\'' + tmp.match(reg)[j] + '\'' +  tmp.substr(endHit+1);
-                    lastBeginHit = beginHit;
-                    lastEndHit = endHit;
-                }
-                result += tmp;
-                result += '\n';
-
-            }
+    return new Promise(function(resolve, reject){
+        if (!text) {
+            reject("");
         }
-        return result;
-    }
-    return false;
+        if (regex == "") {
+            reject("");
+        }
 
+        var result = [], matches, split, reg, beginHit, endHit, tmp, lastBeginHit, lastEndHit;
+        console.log("matches" + regex)
+        split = text.split('\n');
+        // remove empty lines
 
+        split = split.filter(Boolean);
+
+        reg = new RegExp(regex, flag);
+        if (reg != null) {
+
+            for (var i = 0; i < split.length; i++) {
+
+                if (split[i].match(reg) != null) {
+                    beginHit = -2;
+                    endHit = -2;
+
+                    result += i + '\t\t\t';
+                    matches = split[i].match(reg);
+
+                    tmp = split[i];
+                    lastBeginHit = 0;
+                    lastEndHit = 0;
+                    for (var j = 0; j < matches.length; j++) {
+                        beginHit = tmp.indexOf(matches[j], endHit + 2);
+                        endHit = tmp.indexOf(matches[j], endHit + 2) + matches[j].length - 1;
+                        tmp = tmp.substr(0, beginHit) + '\'' + tmp.match(reg)[j] + '\'' + tmp.substr(endHit + 1);
+                        lastBeginHit = beginHit;
+                        lastEndHit = endHit;
+                    }
+                    result += tmp;
+                    result += '\n';
+
+                }
+            }
+
+            resolve(result);
+        }
+        reject("");
+    });
 }
 
 function typeOfSequence(json) {
