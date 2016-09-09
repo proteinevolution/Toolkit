@@ -94,6 +94,7 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
         case "Search" =>
           (js \ "queryString").validate[String].asOpt match {
             case Some(queryString) =>
+              Logger.info("WSactor: Find " + queryString)
               userManager ! Search(userID, queryString)
             case None =>
               Logger.info("JSON Parser Error " + js.toString())
@@ -133,6 +134,11 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
       out ! Json.obj("type" -> "AutoCompleteReply", "list" -> suggestionList)
 
     case SearchReply(userID : BSONObjectID, jobList : List[Job]) =>
-      out ! Json.obj("type" -> "SearchReply", "list" -> jobList)
+      out ! Json.obj("type" -> "SearchReply",
+                     "list" -> jobList.map(job =>
+                        Json.obj("mainID"   -> job.mainID.stringify,
+                                "job_id"   -> job.jobID,
+                                "state"    -> job.status,
+                                "toolname" -> job.tool)))
   }
 }
