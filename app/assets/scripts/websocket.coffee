@@ -102,7 +102,10 @@ onMessage = (event) ->
       $("#jobsearch").autocomplete(source:message.list)
 
     when "SearchReply"
-      $("#modal").html(message.list).foundation('open')
+      jobHTMLString = "<p>found jobs:</p>"
+      for job in message.list
+        jobHTMLString += "<p>MainID: " + job.mainID + " JobID: " + job.job_id + "</p>"
+      $("#modal").html(jobHTMLString).foundation('open')
 
     when "Ping"
       sendMessage("type":"Ping")

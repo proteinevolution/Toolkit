@@ -14,6 +14,7 @@ import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
 /**
   * Created by astephens on 02.09.16.
@@ -33,7 +34,7 @@ final class ESManager @Inject()(val messagesApi      : MessagesApi,
   def receive : Receive = {
     case AutoComplete(userID : BSONObjectID, queryString : String) =>
       println("Auto Complete Query: " + queryString)
-      jobDao.findAutoComplete(queryString).foreach { rsr =>
+      jobDao.findAutoCompleteJobID(queryString).foreach { rsr =>
         val jobIDEntries = rsr.suggestion("jobID")
         if (jobIDEntries.size > 0) {
           userManager ! AutoCompleteReply(userID, jobIDEntries.entry(queryString).optionsText.toList)
@@ -41,19 +42,24 @@ final class ESManager @Inject()(val messagesApi      : MessagesApi,
       }
 
     case Search(userID : BSONObjectID, queryString : String) =>
-      jobDao.findAutoComplete(queryString).foreach { rsr =>
-        val jobIDEntries = rsr.getHits.getHits
-        val mainIDs      = jobIDEntries.toList.map(hit => BSONObjectID(hit.getId))
-        val futureJobs   = jobBSONCollection.map(_.find(BSONDocument(Job.IDDB ->
-                                                        BSONDocument("$in" -> mainIDs))).cursor[Job]())
-
-        // Collect the list and then create the reply
-        futureJobs.flatMap(_.collect[List]()).foreach { jobList =>
-          //println("Found " + jobList.length.toString + " Job[s]. Sending.")
-          userManager ! SearchReply(userID, jobList)
+      jobDao.fuzzySearchJobID(queryString).foreach { richSearchResponse =>
+        if (richSearchResponse.totalHits > 0) {
+          val jobIDEntries = richSearchResponse.getHits.getHits
+          val mainIDs      = jobIDEntries.toList.map(hit => BSONObjectID(hit.id))
+          val futureJobs   = jobBSONCollection.map(_.find(BSONDocument(Job.IDDB ->
+                                                          BSONDocument("$in"    -> mainIDs))).cursor[Job]())
+          // Collect the list and then create the reply
+          futureJobs.flatMap(_.collect[List]()).andThen {
+            case Success(jobList) =>
+              println("Found " + jobList.length.toString + " Job[s]. Sending.")
+              userManager ! SearchReply(userID, jobList)
+            case Failure(error) =>
+              println(error.toString)
+          }
+        } else {
+          userManager ! SearchReplyEmpty(userID)
         }
       }
-
     case SearchForHash(userID : BSONObjectID, query : String) =>
 
   }
@@ -74,4 +80,5 @@ object ESManager {
   case class AutoCompleteReply(userID : BSONObjectID, suggestionList : List[String]) extends MessageWithUserID
   case class SearchForHashReply(userID : BSONObjectID, jobList : List[Job]) extends MessageWithUserID
   case class SearchReply(userID : BSONObjectID, jobList : List[Job]) extends MessageWithUserID
+  case class SearchReplyEmpty(userID : BSONObjectID) extends MessageWithUserID
 }
