@@ -51,7 +51,7 @@ reconnect = (force = false) ->
 ####events####
 onOpen = (event) ->
   # request the joblist
-  ws.send(JSON.stringify("type":"GetJobList"))
+  sendMessage("type":"GetJobList")
   clearInterval(retryCountdownInterval)
   connected  = true
   connecting = false
@@ -87,7 +87,7 @@ onMessage = (event) ->
 
     # get all jobs from the server
     when "UpdateAllJobs"
-      ws.send(JSON.stringify("type":"GetJobList"))
+      sendMessage("type":"GetJobList")
 
     # User was looking for a job id which was not valid
     when "JobIDUnknown"
