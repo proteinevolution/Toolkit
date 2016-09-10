@@ -39,7 +39,7 @@ ul#jobs li {
 
 #jobsearchform input {
   font-size: 0.75em;
-  height: 3.35em;
+  height: 3.3em;
   width: 77%;
 }
 
@@ -85,6 +85,28 @@ ul#jobs li {
 
 .job-button div {
   width: 33.5%;
+
+}
+
+.job-handle {
+  background-color: #f6f6f6 !important;
+  width: 100%;
+  border: solid 1px lightgray !important;
+  color: gray !important;
+  font-size: 0.8em !important;
+  margin-bottom: 1em !important;
+  padding: 0 !important;
+
+
+}
+
+.job-handle div {
+  width: 33.5%;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  background-color: #5f5f5f;
+  color: #eeeeee;
+
 }
 
 @-webkit-keyframes check {
@@ -159,7 +181,7 @@ ul#jobs li {
 .checkbox, .checkbox-alt {
   display: inline-block;
   height: 20px;
-  margin: 0 0.25em;
+  margin-left: 0.25em;
   width: 20px;
 }
 .checkbox label, .checkbox-alt label {
