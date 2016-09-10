@@ -57,7 +57,7 @@ final class ESManager @Inject()(val messagesApi      : MessagesApi,
               println(error.toString)
           }
         } else {
-          userManager ! SearchReplyEmpty(userID)
+          userManager ! SearchReply(userID, List.empty)
         }
       }
     case SearchForHash(userID : BSONObjectID, query : String) =>
@@ -80,5 +80,4 @@ object ESManager {
   case class AutoCompleteReply(userID : BSONObjectID, suggestionList : List[String]) extends MessageWithUserID
   case class SearchForHashReply(userID : BSONObjectID, jobList : List[Job]) extends MessageWithUserID
   case class SearchReply(userID : BSONObjectID, jobList : List[Job]) extends MessageWithUserID
-  case class SearchReplyEmpty(userID : BSONObjectID) extends MessageWithUserID
 }

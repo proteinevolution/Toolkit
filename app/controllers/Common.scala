@@ -1,11 +1,13 @@
 package controllers
 
 
+import models.database.{Job, User}
 import play.api.http.ContentTypes
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.bson.BSONDocument
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -35,6 +37,17 @@ private[controllers] trait Common
 
   protected def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
 
+  // Job DB access
   protected def jobCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
 
+  protected def findJob(selector : BSONDocument) = userCollection.flatMap(_.find(selector).one[Job])
+
+
+  // User DB access
+  protected def findUser(selector : BSONDocument) = userCollection.flatMap(_.find(selector).one[User])
+
+  protected def modifyUser(selector : BSONDocument, modifier : BSONDocument) = {
+    userCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[User]))
+  }
+  protected def removeUser(selector : BSONDocument) = userCollection.flatMap(_.remove(selector))
 }
