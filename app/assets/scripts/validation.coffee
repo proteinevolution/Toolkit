@@ -71,8 +71,7 @@ validator = new m.validator {
 
 }
 
-$("#alignment").bind 'input propertychange', (event) ->
-
+@revalidate = () ->
   alignment = $("#alignment").val()
   format = $("#format").val()
   val = validator.validate(new Validation())
@@ -83,19 +82,20 @@ $("#alignment").bind 'input propertychange', (event) ->
         error = val.errors['alignment']
         $('#alert').empty()
         $('#alert').prop('hidden',false).append(error)
-        $('#submitbutton').prop('disabled', true);
+        $('#submitJob').prop('disabled', true);
+        $('#prepareJob').prop('disabled', true);
       else
-        $('#submitbutton').prop('disabled', false);
+        $('#submitJob').prop('disabled', false);
+        $('#prepareJob').prop('disabled', false);
         $('#alert').prop('hidden',true)
     when "clu"
       if val.hasError('clustal')
         error = val.errors['clustal']
         $('#alert').empty()
         $('#alert').prop('hidden',false).append(error)
-        $('#submitbutton').prop('disabled', true);
+        $('#submitJob').prop('disabled', true);
+        $('#prepareJob').prop('disabled', true);
       else
-        $('#submitbutton').prop('disabled', false);
+        $('#submitJob').prop('disabled', false);
+        $('#prepareJob').prop('disabled', false);
         $('#alert').prop('hidden',true)
-
-
-

@@ -41,7 +41,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
   implicit val timeout = Timeout(5.seconds)
 
 
-  def submit(toolName: String, start : Boolean, jobID : Option[String]) = Action.async { implicit request =>
+  def submit(toolName: String, start : Boolean, mainID : Option[String]) = Action.async { implicit request =>
 
 
     getUser(request, userCollection, userCache).flatMap { user =>
@@ -104,7 +104,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                 val foundMainIDs   = jobList.map(_.mainID)
 
                 // mainIDs which were not in the DB
-                val unfoundMainIDs = mainIDs.filterNot(mainID => foundMainIDs contains mainID)
+                val unfoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
 
                 // jobs with a partition of (Failed, NotFailed)
                 val jobsPatition   = jobList.partition(_.status == JobState.Error)
@@ -125,13 +125,13 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
                 jobsPatition._2.headOption match {
                   case Some(job) =>
-                    jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = false)
+                    jobManager ! Prepare(user, Some(""), toolName, boundForm.data, start = false)
                     Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
                                             "jobStarted"    -> false,
                                             "identicalJobs" -> true))
                     ).withSession(sessionCookie(request, user.sessionID.get))
                   case None =>
-                    jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = start)
+                    jobManager ! Prepare(user, Some(""), toolName, boundForm.data, start = start)
                     Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
                                             "jobStarted"    -> start,
                                             "identicalJobs" -> false))
