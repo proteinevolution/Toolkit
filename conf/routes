@@ -77,16 +77,17 @@ POST        /tools/:toolname                               @controllers.Tool.sub
 
 
 # Interaction with Jobs
-# Show all jobs a user has
-#GET         /jobs/show/:userid              @controllers.Service.showJobs(userid: Long)
-# Look up jobs with the matching job_id
-#POST        /jobs/search/:jobid             @controllers.Service.findJobID(jobid: String)
 # Loading a Job from the DB
 GET         /jobs/add/:mainID                              @controllers.Service.addJob(mainID: String)
 # Get a Job the User Actor already has loaded
 GET         /jobs/get/:mainID                              @controllers.Service.showJobInfo(mainID : String)
 # Delete a Job
 POST        /jobs/del/:mainID                              @controllers.Service.delJob(mainID : String)
+# Find a Job
+POST        /jobs/find                                     @controllers.Search.getJob()
+
+
+# Static route
 GET         /static/get/:static                            @controllers.Service.static(static : String)
 
 
@@ -111,16 +112,3 @@ GET         /:static                                       @controllers.Applicat
 
 #Forwarding
 #GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
-
-
-
-# EXAMPLE RESTFUL ROUTES
-#GET     /user/{id}            Application.user
-#POST    /user/                Application.createUser
-#PUT     /user/{id}            Application.updateUser
-#DELETE  /user/{id}            Application.deleteUser
-
-
-# Home page
-#GET      /books                           controllers.Application.listBooks
-#POST     /books controllers.Application.saveBook

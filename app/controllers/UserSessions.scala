@@ -35,9 +35,9 @@ trait UserSessions extends GeoIP {
       case Some(user)   =>
         val selector = BSONDocument(User.IDDB          -> user.userID)
         val modifier = BSONDocument("$set"             ->
-          BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
-          "$addToSet"        ->
-            BSONDocument(User.SESSIONDATA   -> newSessionData))
+                       BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
+                                    "$addToSet"        ->
+                       BSONDocument(User.SESSIONDATA   -> newSessionData))
         userCollection.flatMap(_.update(selector,modifier))
         user.dateLastLogin.flatMap(dateLastLogin => Some(new DateTime()))
         userCache.set(user.sessionID.get.stringify, user, 10.minutes)
@@ -78,7 +78,7 @@ trait UserSessions extends GeoIP {
   /**
     * updates a user in the cache
     */
-  def updateUser(user : User, userCache : CacheApi) = {
+  def updateUserCache(user : User, userCache : CacheApi) = {
     userCache.set(user.sessionID.get.stringify, user)
   }
 
