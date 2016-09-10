@@ -12,17 +12,15 @@ $ ->
   # Whether Job submission is currently possible
   submissionAllowed = true
   # Elements taking care of the input of a custom Job ID
-  $('#jobid').prop('readonly', true).hide()
-  $('#customjobidwanted').change ->
-
+  $('#jobID').prop('readonly', true).hide()
+  $('#provideJobID').change ->
     if $(this).is(':checked')
       $('#jobid').prop('type', 'text').prop('readonly', false).show()
     else
       $('#jobid').prop('type', 'hidden').prop('readonly', true).hide()
       $('#jobid').val("")
 
-  $('#jobid').bind 'input propertychange', ->
-
+  $('#jobID').bind 'input propertychange', ->
     value = $(this).val()
     if value.match jobidPattern
       $(this).css('background-color', 'white')
@@ -31,54 +29,52 @@ $ ->
       $(this).css('background-color', 'rgba(255, 0, 0, 0.3)').
       submissionAllowed = false
 
-  # Handles the behavior when the submit button is pressed in a job form
-  $(".jobform").unbind('submit').submit (event) ->
-    event.preventDefault()
-    submitRoute = jsRoutes.controllers.Tool.submit(toolname, true, jobID)
+  # If the user hits the ID button
+  $("#provideJobID").click (event) ->
+    if $('#jobID').is(':visible')
+      $('#jobID').prop('type', 'text').prop('readonly', false).hide()
+      $('#jobID').val("")
+    else
+      $('#jobID').prop('type', 'text').prop('readonly', false).show()
+
+  #handles all types of submission
+  submitJob = (start) ->
+    submitRoute = jsRoutes.controllers.Tool.submit(toolname, start, if job != null then job.mainID else null)
 
     $.ajax(
       url: submitRoute.url
       type: "POST"
-      data: $(".jobform").serialize()
+      data: $(".jobForm").serialize()
       error: (jqXHR, textStatus, errorThrown) -> alert errorThrown
     ).done (json) ->
       if(json.jobSubmitted)
         if (json.identicalJobs)
+          #TODO refer to the alert div box here
           alert "job submitted but there was an identical job"
+        #TODO maybe link to the job page here
       else
         alert "job NOT submitted"
 
-  # Handles the behavior when the submit button is pressed in a job form
-  $(".jobprepare").click  ->
-
-    submitRoute = jsRoutes.controllers.Tool.submit(toolname, false, jobID)
-
-    $.ajax
-      url: submitRoute.url
-      type: "POST"
-      data: $(".jobform").serialize()
-      error: (jqXHR, textStatus, errorThrown) -> alert errorThrown
-
-    m.redraw.strategy("all")
-
-# If one hits the Reset button of the form
-  $(".jobformclear").click (event) ->
-    $('.jobform').trigger("reset")
-    $('#jobid').prop('readonly', true).hide().val("")
-    $('#foo').prop('disabled', true);
-
-
-# If one hits the ID button
-  $(".provideid").click (event) ->
-    if $('#jobid').is(':visible')
-      $('#jobid').prop('type', 'text').prop('readonly', false).hide()
-      $('#jobid').val("")
+  #event binding
+  #handles starting of an already prepared job
+  $("#startJob").bind 'click', (event) ->
+    if(job != null)
+      alert "works" #todo it does not ... at the moment... ;)
+      sendMessage("type":"StartJob", "mainID":job.mainID)
     else
-      $('#jobid').prop('type', 'text').prop('readonly', false).show()
+      alert "there is no Main ID for this job. Are you sure this job is submitted?"
 
+  # Handles the behavior when the submit or prepare button is pressed in a job form
+  $("#submitJob").bind 'click', (event) ->
+    submitJob(true)
+  $("#prepareJob").bind 'click', (event) ->
+    submitJob(false)
 
-
-
+  # Bind the validation to the form
+  $("#alignment").bind 'input propertychange', (event) ->
+    revalidate
+  revalidate
+  #TODO validation does nothing at the moment. had to take out the disable on the buttons.
 
 ###
 

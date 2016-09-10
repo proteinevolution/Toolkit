@@ -219,15 +219,14 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     // User asks to prepare new Job, might be directly executed (if start is true)
     case Prepare(user : User, jobID : Option[String], toolName : String, params, start) =>
       Future {
-      // Check whether jobID already exists, otherwise make new job
-      // This is a new Job Submission // TODO Only supports new Jobs currently
-      if(jobID.isEmpty) {
-
+      // TODO Currently jobID is a hack. we need to clean it up to make sure that it works correctly
         val jobCreationTime = DateTime.now()
+        val jobIDfromUser = params.getOrElse("jobID","")
+        val jobID         = if(jobIDfromUser.isEmpty) jobIDSource.next().toString else jobIDfromUser
         val newJob = Job(mainID      = BSONObjectID.generate(),
                          jobType     = "",
                          parentID    = None,
-                         jobID       = jobID.getOrElse(jobIDSource.next().toString), //TODO Refactor to name
+                         jobID       = jobID, //TODO Refactor to name
                          userID      = user.userID,
                          status      = JobState.Submitted,
                          tool        = toolName,
@@ -292,7 +291,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         if(start) {
           executeJob(newJob, script)
         }
-      }
     }
   }
 }
