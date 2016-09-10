@@ -1,43 +1,33 @@
 @import play.api.mvc.RequestHeader
 @import models.tel.TEL
-@(tel : TEL,  toolname : String, toolframe: Html, job_id : Option[String])(implicit messages: Messages, request: RequestHeader)
+@import models.database.Job
+@(tel : TEL,  toolName : String, toolFrame: Html, jobOption : Option[Job])(implicit messages: Messages, request: RequestHeader)
 
 <!--
     Javascript that holds for all tool input forms
 -->
 <script type="text/javascript">
-    toolname ='@toolname';
-    @if(job_id.isEmpty) {
-        jobID = null;
-    } else {
-        jobID = @job_id.get ;
-    }
-
+    toolname ='@toolName';
+    job      = @jobOption.getOrElse("null") ;
 
 </script>
-<script src="@routes.Assets.at("scripts/form.js")"></script>
 
-<form class="jobform">
+<form class="jobForm">
 
-        @toolframe
+        @toolFrame
 
-
-
-<script src="@routes.Assets.at("scripts/validation.js")"></script>
-
-<input class="secondary button small" id="submitbutton" type="submit" value="Submit Job" disabled>
-
-<input class="jobprepare secondary button small" type="button" value="Prepare Job" />
-<input class="jobformclear secondary button small" type="button" value="Clear form" />
 </div>
-<!-- This is a new Job submission -->
-<!-- No custom jobID allowed
-@if(job_id.isEmpty) {
-    <input class="provideid secondary button" type="button" value="Custom ID" />
-    <input type="hidden" id="jobid" name="jobid" placeholder="Custom Job ID" style="width: 420px"/>
+@if(jobOption.isEmpty) {
+    <!-- This is a new Job submission -->
+    <input class="secondary button small" id="submitJob"    type="button" value="Submit Job" />
+    <input class="secondary button small" id="prepareJob"   type="button" value="Prepare Job" />
+    <input class="secondary button small" id="clearJobForm" type="button" value="Clear form" />
+    <input class="secondary button small" id="provideJobID" type="button" value="Custom ID" />
+    <input type="hidden" id="jobID" name="jobID" placeholder="Custom Job ID" style="width: 420px"/>
 } else {
-
-    <input type="hidden" id="jobid" name="jobid" placeholder="Custom Job ID" style="width: 420px" value="@job_id.get"/>
+    <!-- This is an already submitted job -->
+    <input class="secondary button small" id="startJob" type="button" value="Start Job"/>
 }
--->
 </form>
+
+<script src="@routes.Assets.at("scripts/form.js")"></script>
