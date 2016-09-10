@@ -8,7 +8,7 @@
             </div>
         </div>
         </form>
-        <div>
+        <!--<div>
             <div class="button sidebar-button" align="center" data-tooltip aria-haspopup="true" data-disable-hover="false" title="Delete selected jobs" onclick="deleteIDs();">
                <span><i class="icon-trash_can" style="color: grey;"></i></span>
             </div>
@@ -21,6 +21,14 @@
                 <span style="color: grey; font-size: 0.85em;">Select all jobs</span>
             </div>
         </div>
+        -->
+
+        <div class="button job-handle" style="display: flex;">
+            <div style=" border-right: 1px solid #f6f6f6;" class="check" >Select</div>
+            <div style=" border-right: 1px solid #f6f6f6;" onclick="deleteIDs();">Delete</div>
+            <div onclick="clearIDs();">Clear</div>
+
+        </div>
 
         <div class="button job-button" style="display: flex;">
             <div>Status</div>
@@ -28,7 +36,8 @@
             <div>Tool</div>
         </div>
 
-        <div id="jobtable" style="display: table">
+
+        <div id="jobtable" style="display: table;">
 
         </div>
 
@@ -100,5 +109,6 @@
                         $('.tooltip')
                                 .css({ top: mousey, left: mousex })
                     });
+
 
         </script>
