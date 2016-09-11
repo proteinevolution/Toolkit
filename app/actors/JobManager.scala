@@ -46,11 +46,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   val random = scala.util.Random
 
-
-  // TODO All paths to Config - jobPath MOVED TO Constants trait, runscript path already is in TELConstants trait
-  //val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
-  //val runscriptPath = s"TEL${SEPARATOR}runscripts$SEPARATOR"
-
   //  Generates new jobID // TODO Save this state
   val jobIDSource: Iterator[Int] = Stream.continually(  random.nextInt(8999999) + 1000000 ).distinct.iterator
 
@@ -88,9 +83,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   /**
     * @param job
-    * @param scriptPath
     */
-  def executeJob(job : Job, scriptPath : String): Unit = {
+  def executeJob(job : Job): Unit = {
 
     val rootPath  = s"$jobPath$SEPARATOR${job.mainID.stringify}$SEPARATOR"
 
@@ -103,7 +97,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     this.updateJob(job.copy(status = JobState.Running))
 
     // Create new Process instance of the runscript to run the tool
-    val process = Process(scriptPath , new java.io.File(rootPath)).run(ProcessLogger(
+    val process = Process(job.scriptPath , new java.io.File(rootPath)).run(ProcessLogger(
       (fout) => out.write(fout),
       (ferr) => err.write(ferr)
     ))
@@ -216,6 +210,14 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       
       Logger.info("Job Manager was asked to update Job")
 
+    case StartJob(userID : BSONObjectID, mainID : BSONObjectID) =>
+      jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).foreach{
+        case Some(job) =>
+          executeJob(job)
+        case None =>
+          userManager ! JobIDUnknown(userID)
+      }
+
     // User asks to prepare new Job, might be directly executed (if start is true)
     case Prepare(user : User, jobID : Option[String], toolName : String, params, start) =>
       Future {
@@ -263,7 +265,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
 
         // create job checksum, using FNV-1, a non-cryptographic hashing algorithm
-        // to guarantee the uniqueness of a job we should consider to optimize the algorithm and take following parameters: job parameters, inputfile, mtime of the database
+        // to guarantee the uniqueness of a job we should consider to optimize the algorithm and take following parameters:
+        // job parameters, inputfile, mtime of the database
+        // TODO currently taking all parameters (including Job ID(Name)) into the hash, may need to change this
 
         lazy val DB = params.getOrElse("standarddb","").toFile  // get hold of the database in use
         lazy val jobByteArray = params.toString().getBytes // convert params to hashable byte array
@@ -289,7 +293,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
         // Also Start Job if requested
         if(start) {
-          executeJob(newJob, script)
+          executeJob(newJob)
         }
     }
   }
@@ -319,6 +323,8 @@ object JobManager {
   // Delete Job Entirely
   case class DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
+  // Start a Job that has been Prepared but not started
+  case class StartJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
   /**
     * Outgoing messages
     */

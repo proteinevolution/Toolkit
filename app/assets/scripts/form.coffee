@@ -15,10 +15,10 @@ $ ->
   $('#jobID').prop('readonly', true).hide()
   $('#provideJobID').change ->
     if $(this).is(':checked')
-      $('#jobid').prop('type', 'text').prop('readonly', false).show()
+      $('#jobID').prop('type', 'text').prop('readonly', false).show()
     else
-      $('#jobid').prop('type', 'hidden').prop('readonly', true).hide()
-      $('#jobid').val("")
+      $('#jobID').prop('type', 'hidden').prop('readonly', true).hide()
+      $('#jobID').val("")
 
   $('#jobID').bind 'input propertychange', ->
     value = $(this).val()
@@ -39,7 +39,7 @@ $ ->
 
   #handles all types of submission
   submitJob = (start) ->
-    submitRoute = jsRoutes.controllers.Tool.submit(toolname, start, if job != null then job.mainID else null)
+    submitRoute = jsRoutes.controllers.Tool.submit(toolname, start, mainID)
 
     $.ajax(
       url: submitRoute.url
@@ -58,11 +58,11 @@ $ ->
   #event binding
   #handles starting of an already prepared job
   $("#startJob").bind 'click', (event) ->
-    if(job != null)
-      alert "works" #todo it does not ... at the moment... ;)
-      sendMessage("type":"StartJob", "mainID":job.mainID)
+    if(mainID != null)
+      sendMessage("type":"StartJob", "mainID":mainID)
     else
       alert "there is no Main ID for this job. Are you sure this job is submitted?"
+      #TODO this should not happen, but we may need a catch for this so that the user still sees a reaction
 
   # Handles the behavior when the submit or prepare button is pressed in a job form
   $("#submitJob").bind 'click', (event) ->

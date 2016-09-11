@@ -33,7 +33,7 @@ final class Search @Inject() (
     val userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
     // Retrieve the user from the cache or the DB
     getUser(request, userCollection, userCache).flatMap { user =>
-      esManager ! Search(user.userID, "")
+      esManager ! Search(user.userID, "", -1)
       Future.successful(Ok)
     }
   }
