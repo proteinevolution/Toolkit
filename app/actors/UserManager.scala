@@ -122,7 +122,8 @@ final class UserManager @Inject() (
       jobManager ! msg
     case msg : DeleteJob =>
       jobManager ! msg
-
+    case msg : StartJob =>
+      jobManager ! msg
 
       
     /**
