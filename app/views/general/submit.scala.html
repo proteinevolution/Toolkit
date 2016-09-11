@@ -2,16 +2,18 @@
 @import models.tel.TEL
 @import models.database.Job
 @(tel : TEL,  toolName : String, toolFrame: Html, jobOption : Option[Job])(implicit messages: Messages, request: RequestHeader)
-
 <!--
     Javascript that holds for all tool input forms
 -->
 <script type="text/javascript">
-    toolname ='@toolName';
-    job      = @jobOption.getOrElse("null") ;
-
+    toolname = '@toolName';
+    @if(jobOption.isDefined){
+      mainID   = '@{jobOption.get.mainID.stringify}';
+    } else {
+      mainID   = null;
+    }
 </script>
-
+<h3>@{if (jobOption.isDefined) s"$toolName: ${jobOption.get.jobID}" else s"$toolName: New Job"}</h3>
 <form class="jobForm">
 
         @toolFrame

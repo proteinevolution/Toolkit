@@ -32,16 +32,16 @@ final class ESManager @Inject()(val messagesApi      : MessagesApi,
   def jobBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
 
   def receive : Receive = {
-    case AutoComplete(userID : BSONObjectID, queryString : String) =>
+    case AutoComplete(userID : BSONObjectID, queryString : String, element) =>
       println("Auto Complete Query: " + queryString)
       jobDao.findAutoCompleteJobID(queryString).foreach { rsr =>
         val jobIDEntries = rsr.suggestion("jobID")
         if (jobIDEntries.size > 0) {
-          userManager ! AutoCompleteReply(userID, jobIDEntries.entry(queryString).optionsText.toList)
+          userManager ! AutoCompleteReply(userID, jobIDEntries.entry(queryString).optionsText.toList, element)
         }
       }
 
-    case Search(userID : BSONObjectID, queryString : String) =>
+    case Search(userID : BSONObjectID, queryString : String, element) =>
       jobDao.fuzzySearchJobID(queryString).foreach { richSearchResponse =>
         if (richSearchResponse.totalHits > 0) {
           val jobIDEntries = richSearchResponse.getHits.getHits
@@ -52,12 +52,12 @@ final class ESManager @Inject()(val messagesApi      : MessagesApi,
           futureJobs.flatMap(_.collect[List]()).andThen {
             case Success(jobList) =>
               println("Found " + jobList.length.toString + " Job[s]. Sending.")
-              userManager ! SearchReply(userID, jobList)
+              userManager ! SearchReply(userID, jobList, element)
             case Failure(error) =>
               println(error.toString)
           }
         } else {
-          userManager ! SearchReply(userID, List.empty)
+          userManager ! SearchReply(userID, List.empty, element)
         }
       }
     case SearchForHash(userID : BSONObjectID, query : String) =>
@@ -70,14 +70,14 @@ object ESManager {
   /**
     * Incoming
     */
-  case class AutoComplete(userID : BSONObjectID, queryString : String) extends MessageWithUserID
-  case class Search(userID : BSONObjectID, queryString : String) extends MessageWithUserID
+  case class AutoComplete(userID : BSONObjectID, queryString : String, element : Int) extends MessageWithUserID
+  case class Search(userID : BSONObjectID, queryString : String, element : Int) extends MessageWithUserID
   case class SearchForHash(userID : BSONObjectID, queryString : String) extends MessageWithUserID
 
   /**
     * Outgoing
     */
-  case class AutoCompleteReply(userID : BSONObjectID, suggestionList : List[String]) extends MessageWithUserID
+  case class AutoCompleteReply(userID : BSONObjectID, suggestionList : List[String], element : Int) extends MessageWithUserID
+  case class SearchReply(userID : BSONObjectID, jobList : List[Job], element : Int) extends MessageWithUserID
   case class SearchForHashReply(userID : BSONObjectID, jobList : List[Job]) extends MessageWithUserID
-  case class SearchReply(userID : BSONObjectID, jobList : List[Job]) extends MessageWithUserID
 }
