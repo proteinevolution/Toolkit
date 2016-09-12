@@ -34,7 +34,7 @@ object FormDefinitions {
           userID        = user.userID,
           sessionID     = user.sessionID,
           sessionData   = user.sessionData,
-          up            = user.up,
+          connected     = user.connected,
           accountType   = if (acceptToS) 1 else 0,
           userData      = Some(UserData(nameLogin = nameLogin,
                                         password  = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
@@ -129,34 +129,5 @@ object FormDefinitions {
     } { password =>
       Some(("******","******"))
     }
-  )
-}
-
-
-
-
-/**
-  * Login form for the dashboard
- */
-
-trait backendLogin {
-
-  val loginForm = Form(
-    tuple(
-      "user_login"    -> nonEmptyText,
-      "password"      -> nonEmptyText
-    )
-  )
-}
-
-/**
-  * Form mapping for the forgot login/password form
-  */
-object Forgot {
-  val inputForm = Form(
-    tuple(
-      "name_login"    -> nonEmptyText,
-      "email"         -> email
-    )
   )
 }

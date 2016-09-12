@@ -33,7 +33,6 @@ private[controllers] trait Common
     CACHE_CONTROL -> "no-cache, no-store, must-revalidate", EXPIRES -> "0"
   )
 
-  protected def userCollection = reactiveMongoApi.database.map(_.collection("users").as[BSONCollection](FailoverStrategy()))
 
   protected def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
 
@@ -42,8 +41,18 @@ private[controllers] trait Common
 
   protected def findJob(selector : BSONDocument) = userCollection.flatMap(_.find(selector).one[Job])
 
+  protected def modifyJob(selector : BSONDocument, modifier : BSONDocument) = {
+    jobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
+  }
+
+  protected def removeJob(selector : BSONDocument) = jobCollection.flatMap(_.remove(selector))
+
 
   // User DB access
+  protected def userCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
+
+  protected def addUser(user : User) = userCollection.flatMap(_.insert(user))
+
   protected def findUser(selector : BSONDocument) = userCollection.flatMap(_.find(selector).one[User])
 
   protected def modifyUser(selector : BSONDocument, modifier : BSONDocument) = {
