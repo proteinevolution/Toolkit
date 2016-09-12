@@ -8,14 +8,26 @@
             </div>
         </div>
         </form>
-        <div>
+        <!--<div>
             <div class="button sidebar-button" align="center" data-tooltip aria-haspopup="true" data-disable-hover="false" title="Delete selected jobs" onclick="deleteIDs();">
                <span><i class="icon-trash_can" style="color: grey;"></i></span>
             </div>
-            
+
+            <div class="button sidebar-button" align="center" data-tooltip aria-haspopup="true" data-disable-hover="false" title="Clear selected jobs from joblist" onclick="clearIDs();">
+                <span style="color: grey; font-size: 0.85em;">Clear selected jobs</span>
+            </div>
+
             <div class="check button sidebar-button" align="center" data-tooltip aria-haspopup="true" data-disable-hover="false" title="Select all jobs in your job list. The size of the job widget is limited to 25 jobs.">
                 <span style="color: grey; font-size: 0.85em;">Select all jobs</span>
             </div>
+        </div>
+        -->
+
+        <div class="button job-handle" style="display: flex;">
+            <div style=" border-right: 1px solid #f6f6f6;" class="check" >Select</div>
+            <div style=" border-right: 1px solid #f6f6f6;" onclick="deleteIDs();">Delete</div>
+            <div onclick="clearIDs();">Clear</div>
+
         </div>
 
         <div class="button job-button" style="display: flex;">
@@ -24,7 +36,8 @@
             <div>Tool</div>
         </div>
 
-        <div id="jobtable" style="display: table">
+
+        <div id="jobtable" style="display: table;">
 
         </div>
 
@@ -49,6 +62,23 @@
 
             }
         }
+
+        function clearIDs(){
+
+            var IDs = $('input:checked').map(function(){
+                return $(this).val();
+            });
+
+            if(IDs.length > 0 && confirm("Do you really want to clear the selected jobs from the joblist?")) {
+                m.startComputation();
+                for (var i = 0; i < IDs.length; i++){
+                    jobs.vm.clear(IDs[i]);
+                }
+                m.endComputation();
+
+            }
+        }
+
 
         $('.check').click(function(){
             var checked = !$(this).data('checked');
@@ -79,5 +109,6 @@
                         $('.tooltip')
                                 .css({ top: mousey, left: mousex })
                     });
+
 
         </script>

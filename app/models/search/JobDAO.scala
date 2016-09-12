@@ -4,6 +4,7 @@ import javax.inject.{Named, Inject}
 import com.sksamuel.elastic4s.{IndexAndType, ElasticDsl}
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
+import org.elasticsearch.common.unit.Fuzziness
 
 class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Named("jobs") indexAndType: IndexAndType)
   extends ElasticDsl with PlayElasticJsonSupport {
@@ -36,10 +37,18 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     }
   }
 
-  def findAutoComplete(queryString : String) = {
+  def findAutoCompleteJobID(queryString : String) = {
     client.execute {
       search in "tkplay_dev"->"jobs" suggestions {
         termSuggestion("jobID").field("jobID").text(queryString)
+      }
+    }
+  }
+
+  def fuzzySearchJobID(queryString : String) = {
+    client.execute {
+      search in "tkplay_dev"->"jobs" query {
+        fuzzyQuery("jobID", queryString).fuzziness(Fuzziness.AUTO).prefixLength(4).maxExpansions(10)
       }
     }
   }

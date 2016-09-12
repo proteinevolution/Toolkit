@@ -1,6 +1,7 @@
 package models.database
 
 import JobState.JobState
+import models.Constants
 import org.elasticsearch.common.joda.Joda
 import org.joda.time.DateTime
 
@@ -55,7 +56,13 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
                commentList : Option[List[BSONObjectID]] = None, // List of comments for the Job
                dateCreated : Option[DateTime],            // Creation time of the Job
                dateUpdated : Option[DateTime],            // Last Updated on
-               dateViewed  : Option[DateTime]) {          // Last Viewed on
+               dateViewed  : Option[DateTime])            // Last Viewed on
+               extends Constants {
+
+  // Returns the runscript file path
+  def scriptPath = {
+    s"$jobPath$SEPARATOR${mainID.stringify}$SEPARATOR$tool.sh"
+  }
 
   /**
     * Returns the output file paths for the results
