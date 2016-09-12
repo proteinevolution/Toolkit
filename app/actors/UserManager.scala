@@ -1,7 +1,7 @@
 package actors
 
 import javax.inject.{Named, Inject, Singleton}
-import actors.ESManager.AutoComplete
+import actors.ESManager.{Search, AutoComplete}
 import actors.JobManager._
 import actors.UserManager._
 import akka.actor.{ActorLogging, Actor, ActorRef}
@@ -51,7 +51,7 @@ final class UserManager @Inject() (
     * @return
     */
   def insertUser(user : User) = {
-    userCollection.flatMap(_.insert(user))
+    userCollection.foreach(_.insert(user))
   }
 
   /**
@@ -62,7 +62,7 @@ final class UserManager @Inject() (
     * @return
     */
   def updateUser(userID : BSONObjectID, modifier: BSONDocument) = {
-    userCollection.flatMap(_.update(BSONDocument(User.IDDB -> userID), modifier))
+    userCollection.foreach(_.update(BSONDocument(User.IDDB -> userID), modifier))
   }
 
   /**
@@ -110,6 +110,9 @@ final class UserManager @Inject() (
     case msg : AutoComplete =>
       esManager ! msg
 
+    case msg : Search =>
+      esManager ! msg
+
 
 
     /**
@@ -119,7 +122,8 @@ final class UserManager @Inject() (
       jobManager ! msg
     case msg : DeleteJob =>
       jobManager ! msg
-
+    case msg : StartJob =>
+      jobManager ! msg
 
       
     /**

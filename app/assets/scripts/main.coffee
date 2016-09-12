@@ -4,13 +4,11 @@
 # Enables the foundation framework for the Toolkit
 Tools =
   controller: ->
-    { toolname: m.route.param('toolname') }
+    { toolName: m.route.param('toolName') }
   view: (controller) ->
-
-
     $.ajax(
       type: "POST"
-      url: "/tools/form/" + controller.toolname).done (data) ->
+      url: "/tools/form/" + controller.toolName).done (data) ->
         $('#content').empty().append data
         $("html, body").animate({ scrollTop: 0 }, "fast")
         window.removeEventListener 'resize', listener, false
@@ -18,14 +16,13 @@ Tools =
 
 Jobs =
   controller: ->
-    { job_id: m.route.param('jobid') }
+    { mainID: m.route.param('mainID') }
   view: (controller) ->
     $.ajax(
       type: "GET"
-      url: "/jobs/get/" + controller.job_id).done (data) ->
+      url: "/jobs/get/" + controller.mainID).done (data) ->
         $('#content').empty().prepend data
         $("html, body").animate({ scrollTop: 0 }, "fast")
-
 
 
 StaticRoute =
@@ -46,9 +43,8 @@ StaticRoute =
         $("html, body").animate({ scrollTop: 0 }, "fast")
 
 
-
 #setup routes to start w/ the `#` symbol
 m.route.mode = 'hash'
 
 #define a route
-m.route document.getElementById('content'), '/', { '/tools/:toolname': Tools,'/jobs/:jobid' : Jobs, '/:static' : StaticRoute }
+m.route document.getElementById('content'), '/', { '/tools/:toolName': Tools,'/jobs/:mainID' : Jobs, '/:static' : StaticRoute }
