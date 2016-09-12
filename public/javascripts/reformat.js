@@ -1786,3 +1786,29 @@ function typeOfSequence(json) {
     return  "undefined";
 
 }
+
+
+function getFormat(seqs){
+    if(validateFasta(seqs))
+        return "fasta";
+    else if(validatea3m(seqs))
+        return "a3m";
+    else if(validatePhylip(seqs))
+        return "phylip";
+    else if(validateA2m(seqs))
+        return "a2m";
+    else if(validateClustal(seqs))
+        return "clustal";
+    else if(validateEMBL(seqs))
+        return "embl";
+    else if (validateGenbank(seqs))
+        return "genbank";
+    else if(validateNexus(seqs))
+        return "nexus";
+    else if(validatePir(seqs))
+        return "pir";
+    else if(validateStockholm(seqs))
+        return "stockholm";
+    else
+        return "";
+}
