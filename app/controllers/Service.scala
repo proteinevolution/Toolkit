@@ -128,7 +128,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                   }.toMap
                   val toolFrame = toolMatcher.resultPreparedMatcher(job.tool, resultFiles)
                   Future.successful {
-                    Ok(views.html.general.submit(tel, job.tool, toolFrame, Some(job.jobID)))
+                    Ok(views.html.general.submit(tel, job.tool, toolFrame, Some(job)))
                       .withSession(sessionCookie(request, user.sessionID.get))
                   }
 

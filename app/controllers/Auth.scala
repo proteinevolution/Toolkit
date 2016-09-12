@@ -16,6 +16,7 @@ import reactivemongo.bson._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
   * Controller for Authentication interactions
@@ -81,7 +82,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     getUser(request, userCollection, userCache).map { user =>
       userCache.remove(user.userID.stringify)
       userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
-                                      BSONDocument("$unset" -> BSONDocument(User.SESSIONID -> ""))))
+                                      BSONDocument("$set"   -> BSONDocument(User.UP        -> false),
+                                                   "$unset" -> BSONDocument(User.SESSIONID -> ""))))
 
       Redirect(routes.Application.index()).withNewSession.flashing(
         "success" -> "You've been logged out"
@@ -116,8 +118,6 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     */
   def signInSubmit() = Action.async { implicit request =>
     getUser(request, userCollection, userCache).flatMap { unregisteredUser =>
-    Logger.info(unregisteredUser.sessionID.get.stringify + " wants to Sign in!")
-
     // Evaluate the Form
     FormDefinitions.SignIn.bindFromRequest.fold(
       errors =>
@@ -128,34 +128,33 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
       // if no error, then insert the user to the collection
       signInFormUser => {
-        val futureUser = userCollection.flatMap(_.find(BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin)).one[User])
+        val futureUser = findUser(BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
         futureUser.flatMap {
           case Some(databaseUser) =>
             // Check the password
             if (databaseUser.checkPassword(signInFormUser.password)) {
-              Future {
-                // add the remaining jobs from the previous session to the jobs of the now logged in user
-                val loggedInUser = databaseUser.copy(sessionID = unregisteredUser.sessionID,
-                                                     jobs      = databaseUser.jobs ::: unregisteredUser.jobs)
+              // create a modifier document to change the last login date in the Database
+              val selector = BSONDocument(User.IDDB          -> databaseUser.userID)
+              // TODO $addToSet and $each do not seem to work - anybody having any ideas why?
+              val modifier = BSONDocument("$set"             ->
+                             BSONDocument(User.SESSIONID     -> unregisteredUser.sessionID,
+                                          User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
+                                          "$addToSet"        ->
+                             BSONDocument(User.JOBS          ->
+                             BSONDocument("$each"            -> unregisteredUser.jobs)))
+              // Finally add the edits to the collection
+              modifyUser(selector, modifier).map {
+                case Some(loggedInUser) =>
+                  // Remove the old, not logged in user
+                  removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
 
-                // create a modifier document to change the last login date in the Database
-                val selector = BSONDocument(User.IDDB          -> loggedInUser.userID)
-                val modifier = BSONDocument("$set"             ->
-                               BSONDocument(User.SESSIONID     -> unregisteredUser.sessionID,
-                                            User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
-                                            "$addToSet"        ->
-                               BSONDocument(User.JOBS          ->
-                               BSONDocument("$each"            -> unregisteredUser.jobs)))
-                // Finally add the edits to the collection
-                userCollection.flatMap(_.update(selector, modifier))
-                // Remove the old, not logged in user
-                userCollection.flatMap(_.remove(BSONDocument(User.IDDB -> unregisteredUser.userID)))
+                  // Make sure the Cache is updated
+                  updateUserCache(loggedInUser, userCache)
 
-                // Make sure the Cache is updated
-                updateUser(loggedInUser, userCache)
-
-                // Everything is ok, let the user know that they are logged in now
-                Ok(LoggedIn(loggedInUser)).withSession(sessionCookie(request, loggedInUser.sessionID.get))
+                  // Everything is ok, let the user know that they are logged in now
+                  Ok(LoggedIn(loggedInUser)).withSession(sessionCookie(request, loggedInUser.sessionID.get))
+                case None =>
+                  Ok(LoginIncorrect())
               }
             } else {
               Future.successful {
@@ -181,92 +180,106 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     */
   def signUpSubmit() = Action.async { implicit request =>
     getUser(request, userCollection, userCache).flatMap { user =>
-    FormDefinitions.SignUp(user).bindFromRequest.fold(
-      errors =>
-        // Something went wrong with the Form.
-        Future.successful {
-          Ok(FormError())
-        },
-
-      // if no error, then insert the user to the collection
-      signUpFormUser => {
-        if (signUpFormUser.accountType < 1) {
-          // User did not accept the Terms of Service but managed to get around the JS form validation
+      FormDefinitions.SignUp(user).bindFromRequest.fold(
+        errors =>
+          // Something went wrong with the Form.
           Future.successful {
-            Ok(MustAcceptToS())
-          }
-        } else {
-          // Check database for existing users with the same login name
-          val futureUser = userCollection.flatMap(_.find(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin)).one[User])
-          futureUser.flatMap {
-            case Some(otherUser) =>
-              // Other user with the same username exists. Show error message.
-              Future.successful(Ok(AccountNameUsed()))
-            case None =>
-              // Create the database entry.
-              userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),signUpFormUser)).map { a =>
-                // All done. User is registered
-                // Make sure the Cache is updated
-                updateUser(signUpFormUser, userCache)
-                Ok(LoggedIn(signUpFormUser)).withSession(sessionCookie(request, signUpFormUser.sessionID.get))
-              }
+            Ok(FormError())
+          },
+
+        // if no error, then insert the user to the collection
+        signUpFormUser => {
+          if (signUpFormUser.accountType < 1) {
+            // User did not accept the Terms of Service but managed to get around the JS form validation
+            Future.successful {
+              Ok(MustAcceptToS())
+            }
+          } else {
+            // Check database for existing users with the same login name
+            val futureUser = findUser(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
+            futureUser.flatMap {
+              case Some(otherUser) =>
+                // Other user with the same username exists. Show error message.
+                Future.successful(Ok(AccountNameUsed()))
+              case None =>
+                // Create the database entry.
+                val selector = BSONDocument(User.IDDB     -> user.userID)
+                val modifier = BSONDocument("$set"        ->
+                               BSONDocument(User.USERDATA -> signUpFormUser.getUserData))
+                modifyUser(selector,modifier).map {
+                  case Some(registeredUser) =>
+                    // All done. User is registered
+                    // Make sure the Cache is updated
+                    updateUserCache(registeredUser, userCache)
+                    Ok(LoggedIn(registeredUser)).withSession(sessionCookie(request, registeredUser.sessionID.get))
+                  case None =>
+                    Ok(FormError())
+                }
+            }
           }
         }
-      }
-    )
-  }
+      )
+    }
   }
 
+  /**
+    * Function handles the profile edit form submission
+ *
+    * @return
+    */
   def profileSubmit() = Action.async { implicit request =>
     getUser(request, userCollection, userCache).flatMap { user =>
-    user.userData match {
-      case Some(userData) =>
-        FormDefinitions.ProfileEdit.bindFromRequest.fold(
-          errors =>
-            Future.successful{
-              Ok(FormError())
-            },
-          // if no error, then insert the user to the collection
-          profileEditFormUser => {
-            def futureUser = userCollection.flatMap(_.find(BSONDocument(User.IDDB -> user.userID)).one[User])
-            // Get the user option into the present
+      user.userData match {
+        case Some(userData) =>
+          FormDefinitions.ProfileEdit.bindFromRequest.fold(
+            errors =>
+              Future.successful{
+                Ok(FormError())
+              },
+            // when there are no errors, then insert the user to the collection
+            profileEditFormUser => {
+              def futureUser = findUser(BSONDocument(User.IDDB -> user.userID))
+              // Get the user option into the present
               futureUser.flatMap {
                 case Some(userFromDB) =>
-                  Future {
                     // Create a modified user object
                     if (userFromDB.checkPassword(profileEditFormUser.password)) {
-                      val modifiedUser = userFromDB.copy(sessionID = user.sessionID,
-                        userData = Some(profileEditFormUser.toUserData(userFromDB.getUserData)),
-                        dateLastLogin = Some(new DateTime()),
-                        dateUpdated = Some(new DateTime()))
-
                       // create a modifier document to change the last login date in the Database
-                      val selector = BSONDocument(User.IDDB -> userFromDB.userID)
-                      val modifier = BSONDocument("$set" -> modifiedUser)
-                      userCollection.flatMap(_.update(selector, modifier))
-
-                      // Everything is ok, let the user know that they are logged in now
-                      Ok(EditSuccessful(user))
+                      val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                      val selector = BSONDocument(User.IDDB -> user.userID)
+                      val modifier = BSONDocument("$set"    ->
+                                     BSONDocument(User.USERDATA      -> profileEditFormUser.toUserData(userFromDB.getUserData),
+                                                  User.DATELASTLOGIN -> bsonCurrentTime,
+                                                  User.DATEUPDATED   -> bsonCurrentTime))
+                      modifyUser(selector, modifier).map{
+                        case Some(updatedUser) =>
+                          // Update the user cache
+                          updateUserCache(updatedUser, userCache)
+                          // Everything is ok, let the user know that they are logged in now
+                          Ok(EditSuccessful(updatedUser))
+                        case None =>
+                          // User has been found in the DB at first but now it cant be retrieved
+                          Ok(LoginError())
+                      }
                     } else {
                       // Password did not match.
-                      Ok(PasswordWrong())
+                      Future.successful(Ok(PasswordWrong()))
                     }
-                  }
                 case None =>
                   // User got logged out while editing the form.
                   Future.successful(Ok(LoginError()))
               }
-          }
-        )
-      case None =>
-        // User was not logged in
-        Future.successful(Ok(NotLoggedIn()))
+            }
+          )
+        case None =>
+          // User was not logged in
+          Future.successful(Ok(NotLoggedIn()))
+      }
     }
-  }
   }
 
   /**
-    * Verifies a Users Email
+    * Verifies a Users Email // TODO need to reimplement this.
     *
     * @param name_login
     * @param token
@@ -276,118 +289,6 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     //val authAction = userManager.VerifyEmail(name_login, token)
     Ok(views.html.auth.message("Verification"))
   }
-
-
-
-  /*
-  def login = Action { implicit request =>
-
-    val sessionID = requestSessionID
-    val user : User = getUser
-
-    NoCache(Ok(views.html.backend.login(webJarAssets, "0")).withNewSession)
-
-  }
-
-  def backend = Action { implicit request =>
-
-    val sessionID = requestSessionID
-    val user : User = getUser
-
-    //TODO allow direct access to the backend route if user is already authenticated as admin
-
-    if((request.headers.get("referer").getOrElse("").equals("http://" + request.host + "/login") || request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")) && !this.loggedOut)  {
-
-      Ok(views.html.backend.backend(webJarAssets,views.html.backend.backend_maincontent(), "Backend")).withSession {
-        closeSessionRequest(request, sessionID)
-      }
-
-    }
-
-    else {
-
-      Status(404)(views.html.errors.pagenotfound())
-
-    }
-  }
-
-  var LoginCounter = 0
-
-
-  def backendLogin () = Action { implicit ctx =>
-
-    val sessionID = requestSessionID(ctx)
-    Logger.info(sessionID + " wants to Sign in!")
-
-    // Evaluate the Form
-    val form = loginForm.bindFromRequest
-
-
-    form.fold(
-      // Form has errors, return "Bad Request" - most likely timed out or user tampered with form
-      formWithErrors => {
-        LoginCounter = LoginCounter + 1
-
-        println("Login failed: "+LoginCounter+" attempts on " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress)
-
-        if (LoginCounter > 4) {
-
-          Thread.sleep(20000)
-          LoginCounter = 0
-
-        }
-
-        val sessionID = requestSessionID(ctx)
-        val user : User = getUser
-        Ok(views.html.backend.login(webJarAssets, LoginCounter.toString)).withSession {
-          closeSessionRequest(ctx, sessionID)
-        }
-      },
-      _ => {
-        // TODO Check the User Database for the user and return the User if there is a match.
-
-        if (form.get._1 == "test" && form.get._2 == "test") {
-          LoginCounter = 0
-
-          println("Login to backend detected on: " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress + " with session " + sessionID)
-          this.loggedOut = false
-          NoCache(Redirect("/@/backend")) // TODO if logged in, users should not need to re-authenticate
-
-        }
-        else {
-          LoginCounter = LoginCounter + 1
-
-          println("Login failed: "+LoginCounter+" attempts on " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress)
-
-          if (LoginCounter > 4) {
-
-            Thread.sleep(20000)
-            LoginCounter = 0
-
-          }
-
-          val sessionID = requestSessionID(ctx)
-          val user : User = getUser
-          Ok(views.html.backend.login(webJarAssets, LoginCounter.toString)).withSession {
-            closeSessionRequest(ctx, sessionID)
-          }
-
-        }
-
-      }
-    )
-
-
-
-  def logout() = Action { implicit ctx =>
-
-    println("logout from dashboard with on " + Calendar.getInstance().getTime + " from " + ctx.remoteAddress + " with " +  ctx.session)
-    this.loggedOut = true
-    NoCache(Redirect(routes.Application.index())).withNewSession
-
-
-  }
-  }*/
 
   // Mock up function to let a user access to a page only when they are logged in as a user with certain rights
   def backendAccess() = Action.async { implicit request =>

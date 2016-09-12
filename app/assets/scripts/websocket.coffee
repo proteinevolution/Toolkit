@@ -51,7 +51,7 @@ reconnect = (force = false) ->
 ####events####
 onOpen = (event) ->
   # request the joblist
-  ws.send(JSON.stringify("type":"GetJobList"))
+  sendMessage("type":"GetJobList")
   clearInterval(retryCountdownInterval)
   connected  = true
   connecting = false
@@ -87,7 +87,7 @@ onMessage = (event) ->
 
     # get all jobs from the server
     when "UpdateAllJobs"
-      ws.send(JSON.stringify("type":"GetJobList"))
+      sendMessage("type":"GetJobList")
 
     # User was looking for a job id which was not valid
     when "JobIDUnknown"
@@ -98,8 +98,14 @@ onMessage = (event) ->
     when "JobList"
       jobs.vm.updateList(message.list)
 
-    when "AutoComplete"
-      autoCompleteList = message.list
+    when "AutoCompleteReply"
+      $("#jobsearch").autocomplete(source:message.list)
+
+    when "SearchReply"
+      jobHTMLString = "<p>found jobs:</p>"
+      for job in message.list
+        jobHTMLString += "<p>MainID: " + job.mainID + " JobID: " + job.job_id + "</p>"
+      $("#modal").html(jobHTMLString).foundation('open')
 
     when "Ping"
       sendMessage("type":"Ping")

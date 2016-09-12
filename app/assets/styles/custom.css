@@ -437,9 +437,14 @@ textarea#alignment {width: 500px; height: 280px;}
     width: 33.5% !important;
 }
 
-#job_id a {
+#job_id span {
 
     color: grey !important;
+}
+
+#tool_name span {
+    color: grey !important;
+    padding-left: 1em;
 }
 
 .nav-tabs {
