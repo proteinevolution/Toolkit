@@ -1,4 +1,93 @@
+
 @import play.api.mvc.RequestHeader
+<style>
+
+textarea.reformatInput {
+    width: 100%;
+    height: 220px;
+    border: 3px solid #cccccc;
+    padding: 5px;
+    font-size: 0.625em;
+    font-family: Droid Sans Mono, sans-serif;
+
+}
+
+textarea#reformatOutput {
+    width: 100%;
+    height: 220px;
+    border: 3px solid #cccccc;
+    padding: 5px;
+    font-size: 0.625em;
+    font-family: Droid Sans Mono, sans-serif;
+
+}
+
+
+</style>
+
+
+<div style="padding-top: 10px;"></div>
+<h4>Alnviz</h4>
+<p></p>
+<textarea id="sequences" name="sequences" class="reformatInput"></textarea>
+
+
+
+
+
+    <div class="large-12 row" style="float: left; display: flex">
+
+        <button class="secondary button" onclick="initMSA()">View Alignment </button>
+        <div class="large-5 row" id="yourDiv"></div>
+
+    </div>
+
+
+
+    <script src="@routes.Assets.at("javascripts/reformat.js")" type="text/javascript"></script>
+    <script>
+
+        var seq = ">gi|119391784|emb| \n CAJPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGEDYYNGWACQVAYMEETSDGSLRHPSFVMFR \n >gi|72527918|gb|AAZ7297 \n PSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDPDYYKGWACQITYMEETPDGSLRHPSFDQWR\n >gi|72527918|gb|AAZ7297 \n PSEEAGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDPDYYKGWACQITYMEETPDGSLRHPSFDQWR";
+
+        function initMSA(){
+
+
+
+            var opts = {colorscheme: {"scheme": "clustal"} ,  bootstrapMenu: true};
+
+            opts.el = document.getElementById("yourDiv");
+            opts.vis = {
+                conserv: false,
+                overviewbox: true,
+                seqlogo: true,
+                labels: true,
+                labelName: true,
+                labelId: false,
+                labelPartition: false,
+                labelCheckbox: false
+            };
+            opts.zoomer = {
+                // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
+                // use script for handling
+             autoResize: true
+            };
+            opts.seqs = fasta2json(seq);
+            //opts.seqs = fasta2json(document.getElementById("alignment").value)
+            var ms = new msa.msa(opts);
+
+
+            // call render at the end to display the whole MSA
+            ms.render();
+
+        }
+        $(document).foundation();
+</script>
+
+    @*
+
+    ############ Pattern search ##########
+
+
 
 <link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
 <link href="@routes.Assets.at("styles/reformat-common.css")" rel="stylesheet">
@@ -19,7 +108,7 @@
             </div>
             <div style="margin-left: 1em; width: 15%;">
                 <input  type="text" id="flag" style="color: darkgrey;" placeholder="gmixXsuUAJ" />
-                <i style="
+                <i data-tooltip aria-haspopup="true"  title="" style="
                     position: relative;
                     z-index: 1;
                     left: 7.375em;
@@ -136,10 +225,11 @@
 </script>
 
 
-
+  *@
 
 @*
 
+############ extracts IDs ##########
 <style>
 
 textarea.reformatInput {
