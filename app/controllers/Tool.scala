@@ -31,7 +31,7 @@ object Tool {
 
 @Singleton
 final class Tool @Inject()(val messagesApi      : MessagesApi,
-                           @NamedCache("userCache") userCache : CacheApi,
+                           @NamedCache("userCache") implicit val userCache : CacheApi,
                            val reactiveMongoApi : ReactiveMongoApi,
                            implicit val mat     : Materializer,
                            val jobDao           : JobDAO,
@@ -44,7 +44,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
   def submit(toolName: String, start : Boolean, mainID : Option[String]) = Action.async { implicit request =>
 
 
-    getUser(request, userCollection, userCache).flatMap { user =>
+    getUser.flatMap { user =>
       // Fetch the job ID from the submission, might be the empty string
       //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
 
