@@ -25,7 +25,7 @@ import modules.tools.ToolMirror
 @Singleton
 class Application @Inject()(webJarAssets     : WebJarAssets,
                         val messagesApi      : MessagesApi,
-   @NamedCache("userCache") userCache        : CacheApi,
+@NamedCache("userCache") implicit val userCache : CacheApi,
                         val reactiveMongoApi : ReactiveMongoApi,
                             system           : ActorSystem,
                             mat              : Materializer,
@@ -51,7 +51,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     * @return
     */
   def ws = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
-    getUser(request, userCollection, userCache).map { user =>
+    getUser.map { user =>
       Right(ActorFlow.actorRef(WebSocketActor.props(user.userID, userManager)))
     }
   }
@@ -69,7 +69,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     //toolMirror.listToolModels() // faster than clapper
     println(ToolModel.values) // even faster than the scala api
     //toolMirror.findInstances() // finds all tool instances in the models package but this seems to be rather slow: alternatives are macros or sealed trait enumeration
-    getUser(request, userCollection, userCache).map { user =>
+    getUser.map { user =>
       Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user))
         .withSession(sessionCookie(request, user.sessionID.get))
     }
@@ -107,7 +107,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     */
   // TODO Replace via reflection
   def form(toolName: String) = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).map{ user =>
+    getUser.map{ user =>
       //val toolFrame = toolMatcher.loadTemplate(toolName)
       val toolFrame = toolMatcher.matcher(toolName)
       Ok(views.html.general.submit(tel, toolName, toolFrame, None))
@@ -118,7 +118,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
    * Allows to access result files by the filename and a given jobID
    */
   def file(filename : String, mainID : String) = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).map { user =>
+    getUser.map { user =>
 
       // mainID exists, allow send File
 

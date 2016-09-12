@@ -20,7 +20,7 @@ import scala.concurrent.Future
 
 @Singleton
 final class Search @Inject() (
-          @NamedCache("userCache") userCache        : CacheApi,
+          @NamedCache("userCache") implicit val userCache        : CacheApi,
                                val reactiveMongoApi : ReactiveMongoApi,
                @Named("esManager") esManager        : ActorRef)
                            extends Controller with Constants
@@ -32,7 +32,7 @@ final class Search @Inject() (
   def getJob() = Action.async { implicit request =>
     val userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
     // Retrieve the user from the cache or the DB
-    getUser(request, userCollection, userCache).flatMap { user =>
+    getUser.flatMap { user =>
       esManager ! Search(user.userID, "", -1)
       Future.successful(Ok)
     }

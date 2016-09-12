@@ -79,13 +79,13 @@ final class UserManager @Inject() (
       //Logger.info("User Connecting: " + userID.stringify)
 
       val actorRef = connectedUsers.getOrElseUpdate(userID, sender())
-      updateUser(userID, BSONDocument("$set" -> BSONDocument("up" -> true)))
+      updateUser(userID, BSONDocument("$set" -> BSONDocument(User.CONNECTED -> true)))
 
     // User Disconnected, Remove them from the connected users list.
     case UserDisconnect(userID : BSONObjectID) =>
       //Logger.info("User Disconnected: " + userID.stringify)
       val actorRef = connectedUsers.remove(userID)
-      updateUser(userID, BSONDocument("$set" -> BSONDocument("up" -> false)))
+      updateUser(userID, BSONDocument("$set" -> BSONDocument(User.CONNECTED -> false)))
 
     case GetJobList(userID : BSONObjectID) =>
       //Logger.info("Connection stands, fetching jobs")

@@ -16,7 +16,6 @@ import reactivemongo.bson._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 /**
   * Controller for Authentication interactions
@@ -24,16 +23,15 @@ import scala.util.{Failure, Success}
   */
 
 @Singleton
-final class Auth @Inject() (webJarAssets     : WebJarAssets,
-                        val messagesApi      : MessagesApi,
-   @NamedCache("userCache") userCache        : CacheApi,
-                        val reactiveMongoApi : ReactiveMongoApi,
-                        val mailing          : Mailing) // Mailing Controller
-                    extends Controller with I18nSupport
-                                       with JSONTemplate
-                                       with backendLogin
-                                       with Common
-                                       with UserSessions {
+final class Auth @Inject() (    webJarAssets     : WebJarAssets,
+                            val messagesApi      : MessagesApi,
+@NamedCache("userCache") implicit val userCache  : CacheApi,
+                            val reactiveMongoApi : ReactiveMongoApi,
+                            val mailing          : Mailing) // Mailing Controller
+        extends Controller with I18nSupport
+                           with JSONTemplate
+                           with Common
+                           with UserSessions {
 
 
   /**
@@ -62,7 +60,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def miniProfile() = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).map { user =>
+    getUser.map { user =>
       user.userData match {
         case Some(userData) =>
           Ok(views.html.auth.miniprofile(user))
@@ -79,11 +77,8 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signOut() = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).map { user =>
-      userCache.remove(user.userID.stringify)
-      userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
-                                      BSONDocument("$set"   -> BSONDocument(User.UP        -> false),
-                                                   "$unset" -> BSONDocument(User.SESSIONID -> ""))))
+    getUser.map { user =>
+      removeUser(user)
 
       Redirect(routes.Application.index()).withNewSession.flashing(
         "success" -> "You've been logged out"
@@ -97,7 +92,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def profile() = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).map { user =>
+    getUser.map { user =>
       user.userData match {
         case Some(userData) =>
           Ok(views.html.auth.profile(user))
@@ -117,7 +112,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signInSubmit() = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).flatMap { unregisteredUser =>
+    getUser.flatMap { unregisteredUser =>
     // Evaluate the Form
     FormDefinitions.SignIn.bindFromRequest.fold(
       errors =>
@@ -149,7 +144,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                   removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
 
                   // Make sure the Cache is updated
-                  updateUserCache(loggedInUser, userCache)
+                  updateUserCache(loggedInUser)
 
                   // Everything is ok, let the user know that they are logged in now
                   Ok(LoggedIn(loggedInUser)).withSession(sessionCookie(request, loggedInUser.sessionID.get))
@@ -179,7 +174,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def signUpSubmit() = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).flatMap { user =>
+    getUser.flatMap { user =>
       FormDefinitions.SignUp(user).bindFromRequest.fold(
         errors =>
           // Something went wrong with the Form.
@@ -210,7 +205,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                   case Some(registeredUser) =>
                     // All done. User is registered
                     // Make sure the Cache is updated
-                    updateUserCache(registeredUser, userCache)
+                    updateUserCache(registeredUser)
                     Ok(LoggedIn(registeredUser)).withSession(sessionCookie(request, registeredUser.sessionID.get))
                   case None =>
                     Ok(FormError())
@@ -228,7 +223,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def profileSubmit() = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).flatMap { user =>
+    getUser.flatMap { user =>
       user.userData match {
         case Some(userData) =>
           FormDefinitions.ProfileEdit.bindFromRequest.fold(
@@ -254,7 +249,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
                       modifyUser(selector, modifier).map{
                         case Some(updatedUser) =>
                           // Update the user cache
-                          updateUserCache(updatedUser, userCache)
+                          updateUserCache(updatedUser)
                           // Everything is ok, let the user know that they are logged in now
                           Ok(EditSuccessful(updatedUser))
                         case None =>
@@ -292,7 +287,7 @@ final class Auth @Inject() (webJarAssets     : WebJarAssets,
 
   // Mock up function to let a user access to a page only when they are logged in as a user with certain rights
   def backendAccess() = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).map { user =>
+    getUser.map { user =>
       if (user.isSuperuser) {
         NoCache(Redirect(routes.Backend.access))
       } else {

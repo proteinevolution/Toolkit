@@ -30,7 +30,7 @@ import scala.util.Success
 @Singleton
 class Service @Inject() (webJarAssets     : WebJarAssets,
                      val messagesApi      : MessagesApi,
-@NamedCache("userCache") userCache        : CacheApi,
+@NamedCache("userCache") implicit val userCache        : CacheApi,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
                      val toolMatcher      : ToolMatcher,
@@ -42,10 +42,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                                     with UserSessions {
 
   implicit val timeout = Timeout(1.seconds)
-
-  // get the collection 'jobs'
-  val jobCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
-  val userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
 
   def static(static: String) = Action { implicit request =>
 
@@ -77,7 +73,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def delJob(mainID: String) = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).map { user =>
+    getUser.map { user =>
       // TODO We go over the Websocket for this now, we may keep this for testing until production?
       jobManager ! DeleteJob(user.userID, BSONObjectID.parse(mainID).getOrElse(BSONObjectID.generate()))
       Ok.withSession(sessionCookie(request, user.sessionID.get))
@@ -90,7 +86,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
   def addJob(mainIDString : String) = Action.async { implicit request =>
-    getUser(request, userCollection, userCache).map { user =>
+    getUser.map { user =>
       BSONObjectID.parse(mainIDString) match {
         case Success(mainID) =>
           jobManager ! AddJob(user.userID, mainID)
@@ -108,7 +104,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     */
   def showJobInfo(mainIDString: String) = Action.async { implicit request =>
     // Retrieve the user from the cache or the DB
-    getUser(request, userCollection, userCache).flatMap { user =>
+    getUser.flatMap { user =>
       // Check if the ID is plausible (Right Format can be parsed into a BSON Object ID)
       BSONObjectID.parse(mainIDString) match {
         case Success(mainID) =>
