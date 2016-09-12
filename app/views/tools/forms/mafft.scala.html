@@ -16,3 +16,10 @@
 <div class="example-alignment">
 <a onClick="$('#submitbutton').prop('disabled', false);$('#sequences').val(pasteExample());$('#format').val('fas')">Paste example alignment</a>
 </div>
+
+    <script>
+
+            document.getElementById("alignment").value = localStorage.getItem("resultcookie");
+            localStorage.removeItem("resultcookie");
+
+    </script>

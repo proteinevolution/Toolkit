@@ -16,7 +16,21 @@
             <li><a id="dropzonetoggle">Upload</a></li>
             <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
             <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
-            <li><a onclick="forward()" > Forward to PSIBLAST</a></li>
+
+            <label>Forward to
+            <select style="width: 20%;">
+                <option selected>Choose</option>
+                <option  id="clans" onclick="forward('clans')" value="psi">Clans</option>
+                <option  id="csblast" onclick="forward('csblast')" value="psi">CS-BLAST</option>
+                <option  id="hhblits" onclick="forward('hhblits')" value="psi">HHblits</option>
+                <option  id="hhpred" onclick="forward('hhpred')" value="psi">HHpred</option>
+                <option  id="hmmer3" onclick="forward('hmmer3')" value="psi">Hmmer3</option>
+                <option  id="mafft" onclick="forward('mafft')" value="psi">Mafft</option>
+                <option  id="psiblast" onclick="forward('psiblast')" value="psi">PSI-BLAST</option>
+                <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
+
+            </select>
+            </label>
         </ul>
     </li>
 </ul>
@@ -264,6 +278,8 @@
 <script src="@routes.Assets.at("scripts/validation.js")"></script>
 <script>
 
+        var currentFormat = "";
+
         var inputFasta = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR\n";
         // document.getElementById("alignment").value = inputFasta;
         var inputClustal = "CLUSTAL multiple sequence alignment\n\ngi|33300828\tPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\ngi|11479639\tPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\ngi|11479645\tPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\ngi|29366706\tPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\ngi|68299729\tPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\ngi|77118174\tPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\ngi|17570796\tPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\ngi|11963775\tPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\n\ngi|33300828\tD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\ngi|11479639\tA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\ngi|11479645\tEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\ngi|29366706\t-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\ngi|68299729\tD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\ngi|77118174\t------DYYKGWACQITYMEETPDGSLRHPSFDQWR\ngi|17570796\tD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\ngi|11963775\tD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
@@ -377,6 +393,7 @@
 
         document.getElementById("outformat_fas").onchange = function() {
             var currentVal = this.value;
+            hideTools(currentVal);
 
             if (currentVal == "fas") {
                 myCodeMirror2.setValue(json2fasta(fasta2json(myCodeMirror.getValue())));
@@ -474,11 +491,12 @@
 
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
+            currentFormat =  getFormat(myCodeMirror2.getValue());
         };
 
         document.getElementById("outformat_a3m").onchange = function() {
             var currentVal = this.value;
+            hideTools(currentVal);
 
             if (currentVal == "fas") {
                 myCodeMirror2.setValue(json2fasta(a3m2json(myCodeMirror.getValue())));
@@ -567,11 +585,12 @@
             }
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
+            currentFormat =  getFormat(myCodeMirror2.getValue());
         };
 
         document.getElementById("outformat_pir").onchange = function() {
             var currentVal = this.value;
+            hideTools(currentVal);
 
             if (currentVal == "fas") {
                 myCodeMirror2.setValue(json2fasta(pir2json(myCodeMirror.getValue())));
@@ -650,11 +669,12 @@
             }
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
+            currentFormat =  getFormat(myCodeMirror2.getValue());
         };
 
         document.getElementById("outformat_clu").onchange = function() {
             var currentVal = this.value;
+            hideTools(currentVal);
 
             if (currentVal == "fas") {
                 myCodeMirror2.setValue(json2fasta(clustal2json(myCodeMirror.getValue())));
@@ -735,13 +755,14 @@
             }
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
+            currentFormat =  getFormat(myCodeMirror2.getValue());
         };
 
 
 
         document.getElementById("outformat_phy").onchange = function() {
             var currentVal = this.value;
+            hideTools(currentVal);
 
             if (currentVal == "fas") {
                 myCodeMirror2.setValue(json2fasta(phylip2json(myCodeMirror.getValue())));
@@ -828,11 +849,12 @@
             }
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
+            currentFormat =  getFormat(myCodeMirror2.getValue());
         };
 
         document.getElementById("outformat_sto").onchange = function() {
             var currentVal = this.value;
+            hideTools(currentVal);
 
             if (currentVal == "fas") {
                 myCodeMirror2.setValue(json2fasta(stockholm2json(myCodeMirror.getValue())));
@@ -920,12 +942,13 @@
             }
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
+            currentFormat =  getFormat(myCodeMirror2.getValue());
         };
 
 
         document.getElementById("outformat_embl").onchange = function() {
             var currentVal = this.value;
+            hideTools(currentVal);
 
             if (currentVal == "fas") {
                 myCodeMirror2.setValue(json2fasta(embl2json(myCodeMirror.getValue())));
@@ -1003,11 +1026,12 @@
             }
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
+            currentFormat =  getFormat(myCodeMirror2.getValue());
         };
 
         document.getElementById("outformat_nexus").onchange = function() {
             var currentVal = this.value;
+            hideTools(currentVal);
 
             if (currentVal == "fas") {
                 myCodeMirror2.setValue(json2fasta(nexus2json(myCodeMirror.getValue())));
@@ -1086,9 +1110,11 @@
 
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
+            currentFormat =  getFormat(myCodeMirror2.getValue());
         };
             document.getElementById("outformat_genbank").onchange = function() {
                 var currentVal = this.value;
+                hideTools(currentVal);
 
                 if (currentVal == "fas") {
                     myCodeMirror2.setValue(json2fasta(genbank2json(myCodeMirror.getValue())));
@@ -1168,7 +1194,7 @@
 
 
                 document.getElementById('outputarea').value = myCodeMirror2.getValue();
-
+                currentFormat =  getFormat(myCodeMirror2.getValue());
         };
 
         /* Export */
@@ -1427,6 +1453,7 @@
             };
             if (validateFasta(myCodeMirror.getValue())){
                 opts.seqs = readFastaText(myCodeMirror.getValue());
+                console.log(opts.seqs)
             }
             if (validateClustal(myCodeMirror.getValue())) {
                 opts.seqs = (clustalParser(myCodeMirror.getValue()));
@@ -1435,8 +1462,6 @@
             // init msa
 
             var ms = new msa.msa(opts);
-
-            // the menu is independent to the MSA container
             var menuOpts = {};
             menuOpts.el = document.getElementById('div');
             menuOpts.msa = ms;
@@ -1449,13 +1474,83 @@
         }
 
 
+
+        // hides tools for forwarding that are not able to process the current format
+        function hideTools(currentFormat) {
+            if (currentFormat == 'gen') {
+                $('#clans').prop('disabled', true);
+                $('#csblast').prop('disabled', true);
+                $('#hhblits').prop('disabled', true);
+                $('#hhpred').prop('disabled', true);
+                $('#hmmer3').prop('disabled', true);
+                $('#mafft').prop('disabled', true);
+                $('#psiblast').prop('disabled', true);
+                $('#tcoffee').prop('disabled', true);
+
+            }
+            else if (currentFormat == 'nex') {
+                $('#clans').prop('disabled', true);
+                $('#csblast').prop('disabled', true);
+                $('#hhblits').prop('disabled', true);
+                $('#hhpred').prop('disabled', true);
+                $('#hmmer3').prop('disabled', true);
+                $('#mafft').prop('disabled', true);
+                $('#psiblast').prop('disabled', true);
+                $('#tcoffee').prop('disabled', true);
+            }
+            else if (currentFormat == 'emb') {
+                $('#clans').prop('disabled', true);
+                $('#mafft').prop('disabled', true);
+                $('#tcoffee').prop('disabled', true);
+            }
+            else if (currentFormat == 'phy') {
+                $('#clans').prop('disabled', true);
+                $('#csblast').prop('disabled', true);
+                $('#hhblits').prop('disabled', true);
+                $('#hhpred').prop('disabled', true);
+                $('#hmmer3').prop('disabled', true);
+                $('#mafft').prop('disabled', true);
+                $('#psiblast').prop('disabled', true);
+                $('#tcoffee').prop('disabled', true);
+            }
+            else if (currentFormat == 'a3m') {
+                $('#clans').prop('disabled', true);
+                $('#mafft').prop('disabled', true);
+                $('#tcoffee').prop('disabled', true);
+            }
+            else if (currentFormat == 'clu') {
+                $('#clans').prop('disabled', true);
+                $('#mafft').prop('disabled', true);
+                $('#tcoffee').prop('disabled', true);
+            }
+            else if (currentFormat == 'fas') {
+
+            }
+            else if (currentFormat == 'sto') {
+                $('#clans').prop('disabled', true);
+                $('#mafft').prop('disabled', true);
+                $('#tcoffee').prop('disabled', true);
+            }
+            else if (currentFormat == 'pir') {
+                $('#clans').prop('disabled', true);
+                $('#mafft').prop('disabled', true);
+                $('#tcoffee').prop('disabled', true);
+            }
+        }
+
+
         /* Forwarding */
 
-        function forward() {
+        function forward(tool) {
 
-            localStorage.setItem("resultcookie", myCodeMirror.getValue());
-            window.location.href="/#/tools/psiblast";
+            console.log(currentFormat)
+            var seqs = myCodeMirror2.getValue();
+                localStorage.setItem("resultcookie", seqs);
+                window.location.href = "/#/tools/" + tool;
+
         }
+
+
 
         $(document).foundation();
 
