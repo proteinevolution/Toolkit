@@ -7,6 +7,7 @@ import actors.UserManager.{JobAdded, MessageWithUserID}
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import models.database.{JobHash, Job, User, JobState}
 import models.search.JobDAO
+import modules.Common
 import modules.tools.FNV
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
@@ -34,15 +35,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                                   val tel : TEL,
                                   val jobDao : JobDAO,
                                   implicit val materializer: akka.stream.Materializer)
-  extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes {
+  extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes with Common {
 
   import JobManager._
-
-
-  def jobBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
-  def userBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
-  def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
-
 
   val random = scala.util.Random
 
@@ -58,24 +53,24 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   /**
     * Updates Job in database or creates a new Job if job with mainID does not exist
-    *
+    * TODO refactor this to take less database accesses - only insert or find & update
     * @param job
     */
   def updateJob(job : Job) = {
-
-
-    jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> job.mainID)).one[Job]).foreach {
-
-
-       case Some(oldJob) =>
-         if(oldJob.status != job.status) {
-           userManager ! JobStateChanged(job, job.status)
-         }
-         jobBSONCollection.flatMap(_.update(BSONDocument(Job.IDDB -> job.mainID),
-                                            BSONDocument("$set"   -> BSONDocument(Job.STATUS -> job.status))))
-
-       case None => jobBSONCollection.flatMap(_.insert(job))
-
+    // Check if there already is a job with the mainID
+    findJob(BSONDocument(Job.IDDB -> job.mainID)).foreach {
+      // edit the old job
+      case Some(oldJob) =>
+        if(oldJob.status != job.status) {
+          // Inform the users about the change
+          userManager ! JobStateChanged(job, job.status)
+        }
+        // edit the job state in the database
+        modifyJob(BSONDocument(Job.IDDB -> job.mainID),
+                  BSONDocument("$set"   -> BSONDocument(Job.STATUS -> job.status)))
+      case None =>
+        // There was no such job in the database, editing
+        addJob(job)
      }
   }
 
@@ -94,7 +89,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     // Job will now be executed, change the job state to running
 
-    this.updateJob(job.copy(status = JobState.Running))
+    updateJob(job.copy(status = JobState.Running))
 
     // Create new Process instance of the runscript to run the tool
     val process = Process(job.scriptPath , new java.io.File(rootPath)).run(ProcessLogger(
@@ -121,11 +116,11 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     // Get a request to send the job list
     case FetchJobs(userID, mainIDs : List[BSONObjectID]) =>
       // Find all jobs related to the session ID
-      val futureJobs = jobBSONCollection.map(_.find(BSONDocument(Job.IDDB ->
-                                                    BSONDocument("$in" -> mainIDs))).cursor[Job]())
+      val futureJobs = findJobs(BSONDocument(Job.IDDB ->
+                                BSONDocument("$in" -> mainIDs)))
 
       // Collect the list and then create the reply
-      futureJobs.flatMap(_.collect[List]()).foreach { jobList =>
+      futureJobs.foreach { jobList =>
         //println("Found " + jobList.length.toString + " Job[s]. Sending.")
         userManager ! SendJobList(userID, jobList)
     }
@@ -133,7 +128,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
      // Reads parameters provided to the job from the job directory
     case Read(user : BSONObjectID, jobID : String) =>
-      jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job]).foreach {
+      findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
         case Some(job) => // Job Owner must be linked with the Session ID
           if (job.userID == user) // Retrieve the Job Files
             sender () ! s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map {f =>
@@ -150,7 +145,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case JobInfo(user : BSONObjectID, jobID : String) =>
     // TODO Move this logic to the Controller
       val replyTo = sender()
-        jobBSONCollection.flatMap(_.find(BSONDocument(Job.JOBID -> jobID)).one[Job]).foreach {
+        findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
           case Some(job) => // Job Owner must be linked with the Session ID
             if (job.userID == user) // Retrieve the Job Files
               replyTo ! job
@@ -161,7 +156,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         }
 
     case AddJob (userID : BSONObjectID, mainID : BSONObjectID) =>
-      jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).foreach {
+      findJob(BSONDocument(Job.IDDB -> mainID)).foreach {
         case Some(job) =>
           userManager ! JobAdded(userID, job.mainID)
         case None =>
@@ -171,7 +166,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     //  User asks to delete Job
     case DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) =>
-      jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).foreach {
+      findJob(BSONDocument(Job.IDDB -> mainID)).foreach {
         case Some(job) =>
           if (job.userID == userID) {
 
@@ -179,7 +174,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
             if (runningProcesses.contains(job.mainID.stringify)) {
               runningProcesses(job.mainID.stringify).destroy()
             }
-            jobBSONCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID)))
+            removeJob(BSONDocument(Job.IDDB -> job.mainID))
             hashCollection.flatMap(_.remove(BSONDocument(JobHash.ID -> job.mainID)))
             jobDao.deleteJob(job.mainID.stringify) // remove deleted jobs from elasticsearch job and hash indices
 
@@ -211,7 +206,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       Logger.info("Job Manager was asked to update Job")
 
     case StartJob(userID : BSONObjectID, mainID : BSONObjectID) =>
-      jobBSONCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).foreach{
+      findJob(BSONDocument(Job.IDDB -> mainID)).foreach{
         case Some(job) =>
           executeJob(job)
         case None =>
@@ -220,7 +215,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     // User asks to prepare new Job, might be directly executed (if start is true)
     case Prepare(user : User, jobID : Option[String], toolName : String, params, start) =>
-      Future {
       // TODO Currently jobID is a hack. we need to clean it up to make sure that it works correctly
         val jobCreationTime = DateTime.now()
         val jobIDfromUser = params.getOrElse("jobID","")
@@ -238,16 +232,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                          dateUpdated = Some(jobCreationTime),
                          dateViewed  = Some(jobCreationTime))
 
-        // Check if the User is in the Database
-        userBSONCollection.flatMap(_.find(BSONDocument(User.IDDB -> user.userID)).one[User]).foreach{
-          case Some(userFromDB) =>
-            // Add the jobID to the user
-            userBSONCollection.flatMap(_.update(BSONDocument(User.IDDB   -> user.userID),
-                                                BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> newJob.mainID))))
-          case None =>
-            // Add the user and their jobID to the collection
-            userBSONCollection.flatMap(_.insert(user.copy(jobs = List(newJob.mainID))))
-        }
+        // Add the job to the users watchlist
+        modifyUser(BSONDocument(User.IDDB   -> user.userID),
+                   BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> newJob.mainID)))
 
         // finally Add the job to the Database
         updateJob(newJob)
@@ -296,7 +283,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           executeJob(newJob)
         }
     }
-  }
 }
 
 object JobManager {
