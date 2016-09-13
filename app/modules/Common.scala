@@ -1,19 +1,18 @@
-package controllers
-
+package modules
 
 import models.database.{Job, User}
 import play.api.http.ContentTypes
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoComponents
-import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.BSONDocument
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by zin on 03.08.16.
   */
-private[controllers] trait Common
+trait Common
     extends Controller
     with ContentTypes
     with ReactiveMongoComponents {
@@ -39,7 +38,12 @@ private[controllers] trait Common
   // Job DB access
   protected def jobCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
 
-  protected def findJob(selector : BSONDocument) = userCollection.flatMap(_.find(selector).one[Job])
+  protected def addJob(job: Job) = jobCollection.flatMap(_.insert(job))
+
+  protected def findJob(selector : BSONDocument) = jobCollection.flatMap(_.find(selector).one[Job])
+  protected def findJobs(selector : BSONDocument) = {
+    jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List]())
+  }
 
   protected def modifyJob(selector : BSONDocument, modifier : BSONDocument) = {
     jobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
