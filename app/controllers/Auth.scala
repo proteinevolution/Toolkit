@@ -4,6 +4,7 @@ import javax.inject.{Singleton, Inject}
 
 import models.database.User
 import models.auth._
+import modules.Common
 import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._

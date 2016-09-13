@@ -10,6 +10,7 @@ import better.files._
 import models.database.{Job, JobState}
 import models.search.JobDAO
 import models.tools.ToolModel
+import modules.Common
 import modules.tools.{FNV, ToolMatcher}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}

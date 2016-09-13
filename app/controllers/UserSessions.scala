@@ -1,7 +1,7 @@
 package controllers
 
 import models.database.{User, SessionData}
-import modules.GeoIP
+import modules.{Common, GeoIP}
 import modules.common.HTTPRequest
 import org.joda.time.DateTime
 import play.api.cache._
