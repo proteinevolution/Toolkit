@@ -138,6 +138,10 @@
 
         // on and off handler like in jQuery
         myCodeMirror.on('change',function(cMirror){
+
+            hideTools(getFormat(myCodeMirror.getValue()));
+            hideFormats(getFormat(myCodeMirror.getValue()));
+
             // get value right from instance
             if(validateFasta(myCodeMirror.getValue())) {
                 document.getElementById('callout').style.display = 'block';
@@ -170,8 +174,6 @@
 
         document.getElementById("outformat").onchange = function() {
             var currentVal = this.value;
-            hideTools(currentVal);
-            hideFormats(currentVal);
                 myCodeMirror2.setValue(($('#inputMirror').val(myCodeMirror.getValue())).reformat(currentVal));
                 tempCode = myCodeMirror.getValue();
                 myCodeMirror.setValue('');
