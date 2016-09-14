@@ -18,7 +18,7 @@
             <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
 
             <label>Forward to
-            <select style="width: 20%;">
+            <select id="forwardTool" style="width: 20%;">
                 <option selected>Choose</option>
                 <option  id="clans" onclick="forward('clans')" value="psi">Clans</option>
                 <option  id="csblast" onclick="forward('csblast')" value="psi">CS-BLAST</option>
@@ -138,8 +138,6 @@
 
         // on and off handler like in jQuery
         myCodeMirror.on('change',function(cMirror){
-
-            hideTools(getFormat(myCodeMirror.getValue()));
             hideFormats(getFormat(myCodeMirror.getValue()));
 
             // get value right from instance
@@ -174,6 +172,7 @@
 
         document.getElementById("outformat").onchange = function() {
             var currentVal = this.value;
+             hideTools(currentVal);
                 myCodeMirror2.setValue(($('#inputMirror').val(myCodeMirror.getValue())).reformat(currentVal));
                 tempCode = myCodeMirror.getValue();
                 myCodeMirror.setValue('');
@@ -464,7 +463,7 @@
         // hides tools for forwarding that are not able to process the current format
         function hideTools(currentVal) {
                 console.log(currentVal)
-                var ddl = $('#outformat');
+                var ddl = $('#forwardTool');
                 for (var m = 0; m < ddl.length; m++) {
                     for (var i = 0; i < ddl[m].length; i++) {
                          ddl[m].options[i].disabled = false;
@@ -532,6 +531,13 @@
         }
 
         function hideFormats(currentVal) {
+
+                var ddl = $('#outformat');
+                for (var m = 0; m < ddl.length; m++) {
+                    for (var i = 0; i < ddl[m].length; i++) {
+                         ddl[m].options[i].disabled = false;
+                    }
+                }
                  switch(currentVal) {
             case "Fasta":
                 $('#Fasta').prop('disabled', true);
@@ -561,16 +567,7 @@
                 $('#Stockholm').prop('disabled', true);
                 break;
             default:
-                $('#Fasta').prop('disabled', true);
-                $('#A3M').prop('disabled', true);
-                $('#Phylip').prop('disabled', true);
-                $('#NEXUS').prop('disabled', true);
-                $('#Clustal').prop('disabled', true);
-                $('#EMBL').prop('disabled', true);
-                $('#Genbank').prop('disabled', true);
-                $('#PIR').prop('disabled', true);
-                $('#Stockholm').prop('disabled', true);
-                ;
+                break;
         }
 
             }
@@ -579,11 +576,9 @@
             /* Forwarding */
 
             function forward(tool) {
-
                 var seqs = myCodeMirror2.getValue();
                     localStorage.setItem("resultcookie", seqs);
                     window.location.href = "/#/tools/" + tool;
-
             }
 
 
