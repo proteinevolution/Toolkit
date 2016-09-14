@@ -2,6 +2,7 @@ package modules.tools
 
 
 import javax.inject.{Inject, Singleton}
+import models.database.Job
 import models.tel.TEL
 import models.tools.ToolModel
 import models.tools.ToolModel._
@@ -74,37 +75,37 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
   }
 
 
-  def resultDoneMatcher(jobID : String, tool: String, mainID: BSONObjectID )(implicit request: RequestHeader) = {
+  def resultDoneMatcher(job : Job)(implicit request: RequestHeader) = {
 
-    tool match {
+    job.tool match {
     //  The tool anlviz just returns the BioJS MSA Viewer page
     case "alnviz" =>
-      val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${mainID.stringify}/result"))
-      views.html.job.result(vis, jobID, tool)
+      val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/result"))
+      views.html.jobs.result(vis, job)
     // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
     case "tcoffee" =>
       val vis = Map(
-        "Simple" -> views.html.visualization.alignment.simple(s"/files/${mainID.stringify}/sequences.clustalw_aln"),
-        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${mainID.stringify}/sequences.clustalw_aln"))
-      views.html.job.result(vis, jobID, tool)
+        "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
+      views.html.jobs.result(vis, job)
     case "reformatb" =>
       val vis = Map(
-        "Simple" -> views.html.visualization.alignment.simple(s"/files/${mainID.stringify}/sequences.clustalw_aln"),
-        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${mainID.stringify}/sequences.clustalw_aln"))
-      views.html.job.result(vis, jobID, tool)
+        "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
+      views.html.jobs.result(vis, job)
     case "psiblast" =>
       val vis = Map(
-        "Results" -> views.html.visualization.alignment.blastvis(s"/files/${mainID.stringify}/out.psiblastp"),
-        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${mainID.stringify}/sequences.clustalw_aln"),
-        "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${mainID.stringify}/evalues.dat"))
-      views.html.job.result(vis, jobID, tool)
+        "Results" -> views.html.visualization.alignment.blastvis(s"/files/${job.mainID.stringify}/out.psiblastp"),
+        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+        "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
+      views.html.jobs.result(vis, job)
 
     // Hmmer just provides a simple file viewer.
     case "hmmer3" => views.html.visualization.general.fileview(
-      Array(s"/files/${mainID.stringify}/domtbl",
-        s"/files/${mainID.stringify}/outfile",
-        s"/files/${mainID.stringify}/outfile_multi_sto",
-        s"/files/${mainID.stringify}/tbl"))
+      Array(s"/files/${job.mainID.stringify}/domtbl",
+        s"/files/${job.mainID.stringify}/outfile",
+        s"/files/${job.mainID.stringify}/outfile_multi_sto",
+        s"/files/${job.mainID.stringify}/tbl"))
     }
   }
 
