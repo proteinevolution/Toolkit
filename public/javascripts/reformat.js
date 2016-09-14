@@ -749,24 +749,30 @@ function addSpaceEveryNChars(str, n) {
 
 function validateAlignment(json) {
     if (!json) {
+        throw new Error("No sequences.");
         return false;
     }
     // check whether jason object is an valid alignment.
-    if(json.length > 1 ) {
+    if(json.length < 2 ) {
+        throw new Error("Alignment needs at least two sequences");
+        return false;
+    }
         var firstlength = json[0].seq.length;
         for (var i = 0; i < json.length; i++) {
             if (json[i].seq.length !== firstlength) {
-                throw new Error("input is not an alignment");
+                throw new Error("Sequences are required to have the same length.");
                 if (_contains(json[i].seq, "-")) {
                     throw new Error("warning: input contains dashes without being an alignment");
                 }
                 return false;
 
             }
+            if(json[i].seq == ""){
+                throw new Error("Alignment contains an empty sequence.");
+                return false;
+            }
         }
         console.log("this is an alignment");
-
-    }
     return true;
 
 }
@@ -839,7 +845,7 @@ function validatePhylip(phylip){
         // delete first lines (it does not contain sequences)
         newlines.shift();
 
-        //checks number of sequences is correct
+        //checks if number of sequences is correct
         if(newlines.length % n != 0)
             return false;
 
@@ -1123,6 +1129,8 @@ function clustal2json(clustal){
 
 }
 function json2clustal(clustal){
+    if(!clustal)
+        return false;
 
 
     var result = [],
@@ -1528,6 +1536,10 @@ function validateNexus(nexus) {
         return false;
     }
     for(var i = 0; i < element.length; i++){
+        if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(element[i].seq)) {
+            throw new Error("Sequence contains invalid symbols.");
+            return false;
+        }
         if( nchar!= element[i].seq.length) {
             throw new Error("Number of sequences does not match with the header.");
             return false;
@@ -1622,6 +1634,10 @@ function validateGenbank(genbank){
     element = genbank2json(genbank);
 
     for(var i =0; i < element.length; i++){
+        if (/[^\-\\.ABCDEFGHIKLMNPQRSTUVWXYZ\s]/i.test(element[i].seq)) {
+            throw new Error("Sequence contains invalid symbols.");
+            return false;
+        }
         if(element[i].name = "")
             return false;
         if(element[i].seq = "" )
@@ -1790,25 +1806,96 @@ function typeOfSequence(json) {
 
 function getFormat(seqs){
     if(validateFasta(seqs))
-        return "fasta";
+        return "Fasta";
     else if(validatea3m(seqs))
-        return "a3m";
+        return "A3M";
     else if(validatePhylip(seqs))
-        return "phylip";
-    else if(validateA2m(seqs))
-        return "a2m";
+        return "Phylip";
     else if(validateClustal(seqs))
-        return "clustal";
+        return "Clustal";
     else if(validateEMBL(seqs))
-        return "embl";
+        return "EMBL";
     else if (validateGenbank(seqs))
-        return "genbank";
+        return "Genbank";
     else if(validateNexus(seqs))
-        return "nexus";
+        return "NEXUS";
     else if(validatePir(seqs))
-        return "pir";
+        return "PIR";
     else if(validateStockholm(seqs))
-        return "stockholm";
+        return "Stockholm";
     else
         return "";
 }
+
+
+(function( $ ){
+
+    $.fn.reformat = function(targetFormat){
+        var seqs = this.val();
+        var format = getFormat(seqs);
+        var json = [];
+        var result ="";
+        switch(format) {
+            case "Fasta":
+                json = fasta2json(seqs);
+                break;
+            case "A3M":
+                json = a3m2json(seqs);
+                break;
+            case "Phylip":
+                json = phylip2json(seqs);
+                break;
+            case "Clustal":
+                json = clustal2json(seqs);
+                break;
+            case "Nexus":
+                json = nexus2json(seqs);
+                break;
+            case "EMBL":
+                json = embl2json(seqs);
+                break;
+            case "Genbank":
+                json = genbank2json(seqs);
+                break;
+            case "PIR":
+                json = pir2json(seqs);
+                break;
+            case "Stockholm":
+                json = stockholm2json(seqs);
+                break;
+            default:json = null;
+        }
+
+        switch(targetFormat) {
+            case "Fasta":
+                result = json2fasta(json);
+                break;
+            case "A3M":
+                result = json2a3m(json);
+                break;
+            case "Phylip":
+                result = json2phylip(json);
+                break;
+            case "Clustal":
+                result = json2clustal(json);
+                break;
+            case "NEXUS":
+                result = json2nexus(json);
+                break;
+            case "EMBL":
+                result = json2embl(json);
+                break;
+            case "Genbank":
+                result = json2genbank(json);
+                break;
+            case "PIR":
+                result = json2pir(json);
+                break;
+            case "Stockholm":
+                result = json2stockholm(json);
+                break;
+            default: result = null;
+        }
+        return result;
+    };
+})( jQuery );
