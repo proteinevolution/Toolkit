@@ -130,7 +130,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case Read(user : BSONObjectID, jobID : String) =>
       findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
         case Some(job) => // Job Owner must be linked with the Session ID
-          if (job.userID == user) // Retrieve the Job Files
+          if (job.ownerID.getOrElse(BSONObjectID("Null")) == user) // Retrieve the Job Files
             sender () ! s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map {f =>
               f.name -> f.contentAsString
             }.toMap
@@ -147,7 +147,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       val replyTo = sender()
         findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
           case Some(job) => // Job Owner must be linked with the Session ID
-            if (job.userID == user) // Retrieve the Job Files
+            if (job.ownerID.getOrElse(BSONObjectID("Null")) == user) // Retrieve the Job Files
               replyTo ! job
             else // If jobID does not belong to the user
               replyTo ! PermissionDenied(user)
@@ -168,7 +168,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach {
         case Some(job) =>
-          if (job.userID == userID) {
+          if (job.ownerID.getOrElse(BSONObjectID("Null")) == userID) {
 
             //  Terminate running Process instance of the Job
             if (runningProcesses.contains(job.mainID.stringify)) {
@@ -217,13 +217,15 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case Prepare(user : User, jobID : Option[String], toolName : String, params, start) =>
       // TODO Currently jobID is a hack. we need to clean it up to make sure that it works correctly
         val jobCreationTime = DateTime.now()
-        val jobIDfromUser = params.getOrElse("jobID","")
-        val jobID         = if(jobIDfromUser.isEmpty) jobIDSource.next().toString else jobIDfromUser
+        val jobIDfromUser   = params.getOrElse("jobID","")
+        val isPrivate       = params.getOrElse("private","") == "true"
+        val jobID           = if (jobIDfromUser.isEmpty) jobIDSource.next().toString else jobIDfromUser
+        val ownerID         = if (isPrivate)             Some(user.userID)           else None
         val newJob = Job(mainID      = BSONObjectID.generate(),
                          jobType     = "",
                          parentID    = None,
                          jobID       = jobID, //TODO Refactor to name
-                         userID      = user.userID,
+                         ownerID     = ownerID,
                          status      = JobState.Submitted,
                          tool        = toolName,
                          statID      = "",
@@ -328,10 +330,8 @@ object JobManager {
   // Reads the parameters from a prepared job and provides them to the user
   case class Read(userID : BSONObjectID, jobID : String)
 
-  // Publish changes JobState
-  case class JobStateChanged(job : Job, state : JobState.JobState) extends MessageWithUserID {
-    override val userID : BSONObjectID = job.userID
-  }
+  // Publish changes to the JobState
+  case class JobStateChanged(job : Job, state : JobState.JobState)
 
   // Ask for jobInfo (tool name and state)
   case class JobInfo(userID : BSONObjectID, jobID : String)
