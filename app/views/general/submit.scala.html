@@ -5,7 +5,7 @@
 <!--
     Javascript that holds for all tool input forms
 -->
-<script type="text/javascript">
+<script type="text/javascript" xmlns="http://www.w3.org/1999/html">
     toolname = '@toolName';
     @if(jobOption.isDefined){
       mainID   = '@{jobOption.get.mainID.stringify}';
@@ -21,11 +21,16 @@
 </div>
 @if(jobOption.isEmpty) {
     <!-- This is a new Job submission -->
-    <input class="secondary button small" id="submitJob"    type="button" value="Submit Job" />
-    <input class="secondary button small" id="prepareJob"   type="button" value="Prepare Job" />
-    <input class="secondary button small" id="clearJobForm" type="button" value="Clear form" />
-    <input class="secondary button small" id="provideJobID" type="button" value="Custom ID" />
-    <input type="hidden" id="jobID" name="jobID" placeholder="Custom Job ID" style="width: 420px"/>
+    <input class="secondary button small" id="submitJob"     type="button" value="Submit Job" />
+    <input class="secondary button small" id="prepareJob"    type="button" value="Prepare Job" />
+    <input class="secondary button small" id="clearJobForm"  type="button" value="Clear form" />
+    <input class="secondary button small" id="jobPermission" type="button" value="Permissions" />
+    <div id="jobPermissionDiv" style="display: none;">
+        <label for="jobID">Job Name</label>
+        <input class="input"    type="text"     id="jobID"   name="jobID"   placeholder="Custom Job Name" style="width: 420px" />
+        <label for="private">Job as Private</label>
+        <input class="checkbox" type="checkbox" id="private" name="private" value="true" />
+    </div>
 } else {
     <!-- This is an already submitted job -->
     <input class="secondary button small" id="startJob" type="button" value="Start Job"/>

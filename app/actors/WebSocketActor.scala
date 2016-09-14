@@ -148,20 +148,12 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
     // Messages the user about a change in the Job status
     case JobStateChanged(job, state) =>
       out ! Json.obj("type" -> "UpdateJob",
-                     "job"  ->
-                        Json.obj("mainID"   -> job.mainID.stringify,
-                                 "job_id"   -> job.jobID,
-                                 "state"    -> job.status,
-                                 "toolname" -> job.tool))
+                     "job"  -> job.cleaned())
 
     // Sends the job list to the user
     case SendJobList(userID : BSONObjectID, jobList : List[Job]) =>
       out ! Json.obj("type" -> "JobList",
-                     "list" -> jobList.map(job =>
-                        Json.obj("mainID"   -> job.mainID.stringify,
-                                 "job_id"   -> job.jobID,
-                                 "state"    -> job.status,
-                                 "toolname" -> job.tool)))
+                     "list" -> jobList.map(_.cleaned()))
 
     // Sends a list of possible strings for the auto complete
     case AutoCompleteReply (userID : BSONObjectID, suggestionList : List[String], element) =>
@@ -171,11 +163,7 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
     // Sends a list of jobs for the search
     case SearchReply(userID : BSONObjectID, jobList : List[Job], element) =>
       out ! Json.obj("type" -> "SearchReply",
-                     "list" -> jobList.map(job =>
-                        Json.obj("mainID"   -> job.mainID.stringify,
-                                "job_id"   -> job.jobID,
-                                "state"    -> job.status,
-                                "toolname" -> job.tool)),
+                     "list" -> jobList.map(_.cleaned()),
                      "element" -> element)
   }
 }

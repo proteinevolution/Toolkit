@@ -12,13 +12,6 @@ $ ->
   # Whether Job submission is currently possible
   submissionAllowed = true
   # Elements taking care of the input of a custom Job ID
-  $('#jobID').prop('readonly', true).hide()
-  $('#provideJobID').change ->
-    if $(this).is(':checked')
-      $('#jobID').prop('type', 'text').prop('readonly', false).show()
-    else
-      $('#jobID').prop('type', 'hidden').prop('readonly', true).hide()
-      $('#jobID').val("")
 
   $('#jobID').bind 'input propertychange', ->
     value = $(this).val()
@@ -30,12 +23,12 @@ $ ->
       submissionAllowed = false
 
   # If the user hits the ID button
-  $("#provideJobID").click (event) ->
-    if $('#jobID').is(':visible')
-      $('#jobID').prop('type', 'text').prop('readonly', false).hide()
+  $("#jobPermission").click (event) ->
+    if $('#jobPermissionDiv').is(':visible')
+      $('#jobPermissionDiv').hide()
       $('#jobID').val("")
     else
-      $('#jobID').prop('type', 'text').prop('readonly', false).show()
+      $('#jobPermissionDiv').show()
 
   #handles all types of submission
   submitJob = (start) ->
