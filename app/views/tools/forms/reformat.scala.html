@@ -560,7 +560,17 @@
             case "Stockholm":
                 $('#Stockholm').prop('disabled', true);
                 break;
-            default:json = null;
+            default:
+                $('#Fasta').prop('disabled', true);
+                $('#A3M').prop('disabled', true);
+                $('#Phylip').prop('disabled', true);
+                $('#NEXUS').prop('disabled', true);
+                $('#Clustal').prop('disabled', true);
+                $('#EMBL').prop('disabled', true);
+                $('#Genbank').prop('disabled', true);
+                $('#PIR').prop('disabled', true);
+                $('#Stockholm').prop('disabled', true);
+                ;
         }
 
             }
