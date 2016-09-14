@@ -1,8 +1,10 @@
 @(visualizations : Map[String, Html], jobID : String, toolname : String)(implicit messages: Messages, request: RequestHeader)
 
+Share Link:
+
 <div>
     <ul class="tabs" data-tabs id="example-tabs">
-        @for((key, _) <- visualizations) {
+        @for(key <- visualizations.keys) {
 
             <li class="tabs-title"><a href="#@key" aria-selected="true">@key</a></li>
         }

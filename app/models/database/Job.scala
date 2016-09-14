@@ -1,12 +1,10 @@
 package models.database
 
-import JobState.JobState
 import models.Constants
-import org.elasticsearch.common.joda.Joda
+import models.database.JobState.JobState
 import org.joda.time.DateTime
-
-import reactivemongo.bson._
 import play.api.libs.json._
+import reactivemongo.bson._
 import reactivemongo.play.json._
 
 /** ?
@@ -15,7 +13,7 @@ import reactivemongo.play.json._
   * @param jobType
   * @param parentID     ID of the parent Job
   * @param jobID        User Visible Job ID
-  * @param userID       Logged in Users will have their ID here
+  * @param ownerID      Private Jobs will have a Owner
   * @param status       status of the Job
   * @param tool         name of the tool used for the Job
   * @param statID
@@ -48,7 +46,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
                jobType     : String,                      // Type of job
                parentID    : Option[BSONObjectID] = None, // ID of the Parent Job
                jobID       : String,                      // User visible ID of the Job
-               userID      : BSONObjectID,                // User to whom the Job belongs
+               ownerID     : Option[BSONObjectID] = None, // User to whom the Job belongs
                status      : JobState,                    // Status of the Job
                tool        : String,                      // Tool used for this Job
                statID      : String,                      //
@@ -58,6 +56,11 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
                dateUpdated : Option[DateTime],            // Last Updated on
                dateViewed  : Option[DateTime])            // Last Viewed on
                extends Constants {
+
+  // Returns if the job is private or not
+  def isPrivate = {
+    ownerID.isDefined
+  }
 
   // Returns the runscript file path
   def scriptPath = {
@@ -97,6 +100,18 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
           "table"     -> s"/files/${mainID.stringify}/tbl")
     }
   }
+
+
+  /**
+    * Returns a minified version of the job which can be sent over the web socket
+    * @return
+    */
+  def cleaned () = {
+    Json.obj("mainID"   -> mainID.stringify,
+             "job_id"   -> jobID,
+             "state"    -> status,
+             "toolname" -> tool)
+  }
 }
 
 
@@ -109,7 +124,7 @@ object Job {
   val JOBTYPE       = "jobType"       //              Type of the Job
   val PARENTID      = "parentID"      //              ID of the parent job
   val JOBID         = "jobID"         //              ID for the job
-  val USERID        = "userID"        //              ID of the job owner
+  val OWNERID       = "ownerID"       //              ID of the job owner
   val STATUS        = "status"        //              Status of the job field
   val TOOL          = "tool"          //              name of the tool field
   val STATID        = "statID"        //              ID of the stats for this Job
@@ -129,7 +144,7 @@ object Job {
         val jobType = (obj \ JOBTYPE).as[String]
         val parentID = BSONObjectID.parse((obj \ PARENTID).as[String]).toOption
         val jobID   = (obj \ JOBID).as[String]
-        val userID  = BSONObjectID.parse((obj \ USERID).as[String]).get
+        val ownerID = BSONObjectID.parse((obj \ USERID).as[String]).get
         val status  = (obj \ STATUS).as[JobState]
         val tool    = (obj \ TOOL).as[String]
         val statID  = (obj \ STATID).as[String]
@@ -143,7 +158,7 @@ object Job {
           jobType     = jobType,
           parentID    = parentID,
           jobID       = jobID,
-          userID      = userID,
+          ownerID     = ownerID,
           status      = status,
           tool        = tool,
           statID      = statID,
@@ -158,7 +173,7 @@ object Job {
         val jobType     = (obj \ JOBTYPE).asOpt[String]
         val parentID    = (obj \ PARENTID).asOpt[String]
         val jobID       = (obj \ JOBID).asOpt[String]
-        val userID      = (obj \ USERID).asOpt[String]
+        val ownerID     = (obj \ OWNERID).asOpt[String]
         val status      = (obj \ STATUS).asOpt[JobState]
         val tool        = (obj \ TOOL).asOpt[String]
         val statID      = (obj \ STATID).asOpt[String]
@@ -172,7 +187,7 @@ object Job {
           jobType     = "",
           parentID    = None,
           jobID       = "",
-          userID      = BSONObjectID.generate(),
+          ownerID     = Some(BSONObjectID.generate()),
           status      = status.get,
           tool        = "",
           statID      = "",
@@ -195,7 +210,7 @@ object Job {
       JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
-      USERID      -> job.userID,
+      OWNERID     -> job.ownerID,
       STATUS      -> job.status,
       TOOL        -> job.tool,
       STATID      -> job.statID,
@@ -216,7 +231,7 @@ object Job {
           jobType     = bson.getAs[String](JOBTYPE).getOrElse("Error loading Job Type"),
           parentID    = bson.getAs[BSONObjectID](PARENTID),
           jobID       = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
-          userID      = bson.getAs[BSONObjectID](USERID).getOrElse(BSONObjectID("Null")),
+          ownerID     = bson.getAs[BSONObjectID](OWNERID),
           status      = bson.getAs[JobState](STATUS).getOrElse(JobState.Error),
           tool        = bson.getAs[String](TOOL).getOrElse(""),
           statID      = bson.getAs[String](STATID).getOrElse(""),
@@ -238,7 +253,7 @@ object Job {
       JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
-      USERID      -> job.userID,
+      OWNERID     -> job.ownerID,
       STATUS      -> job.status,
       TOOL        -> job.tool,
       STATID      -> job.statID,
