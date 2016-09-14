@@ -115,7 +115,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               job.status match {
                 // Tell the user that the job is running at the moment
                 case JobState.Running =>
-                  Future.successful(Ok(views.html.job.running(job.jobID)))
+                  Future.successful(Ok(views.html.jobs.running(job.jobID)))
 
                 // Show the input form if the Job is Prepared or Submitted
                 case JobState.Prepared | JobState.Submitted =>
@@ -130,13 +130,13 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
                 // Since the job is Done show the Result pages
                 case JobState.Done =>
-                  val toolFrame = toolMatcher.resultDoneMatcher(job.jobID, job.tool, job.mainID)
+                  val toolFrame = toolMatcher.resultDoneMatcher(job)
                   Future.successful(Ok(toolFrame)
                     .withSession(sessionCookie(request, user.sessionID.get)))
 
                 // There was an error, show the user the Error page
                 case JobState.Error =>
-                  Future.successful(Ok(views.html.job.error(job.jobID))
+                  Future.successful(Ok(views.html.jobs.error(job.jobID))
                     .withSession(sessionCookie(request, user.sessionID.get)))
 
                 // Illegal state

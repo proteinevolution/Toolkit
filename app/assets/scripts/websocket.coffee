@@ -114,6 +114,9 @@ onMessage = (event) ->
 @sendMessage = (object) ->
   ws.send(JSON.stringify(object))
 
+@addJob = (mainID) ->
+  sendMessage("type":"AddJob","mainID":mainID)
+
 # everything is in the DOM, start the connection.
 connect()
 # let user reconnect manually
