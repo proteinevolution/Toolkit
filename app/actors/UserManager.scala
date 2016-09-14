@@ -70,10 +70,14 @@ final class UserManager @Inject() (
       }
 
     // Add a Job to the Users view
-    case JobAdded(userID : BSONObjectID, mainID : BSONObjectID) =>
-      modifyUser(BSONDocument(User.IDDB -> userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> mainID))).foreach{
+    case JobAdded(userID : BSONObjectID, job : Job) =>
+      modifyUser(BSONDocument(User.IDDB -> userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> job.mainID))).foreach{
         case Some(user) =>
-        case None =>
+          connectedUsers.get(user.userID) match {
+            case Some(userActor) =>
+              userActor ! JobStateChanged(job, job.status)
+            case None =>
+          }
       }
 
     // User is requesting a job to be removed from the view (but not permanently)
@@ -152,7 +156,7 @@ object UserManager {
 
   // Get a request to send the job list
   case class GetJobList(userID : BSONObjectID) extends MessageWithUserID
-  case class JobAdded(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
+  case class JobAdded(userID : BSONObjectID, job : Job) extends MessageWithUserID
   case class ClearJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
   // Messages to broadcast to the user

@@ -158,7 +158,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case AddJob (userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach {
         case Some(job) =>
-          userManager ! JobAdded(userID, job.mainID)
+          userManager ! JobAdded(userID, job)
         case None =>
           // Job ID is unknown.
           userManager ! JobIDUnknown(userID)

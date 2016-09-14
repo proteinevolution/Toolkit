@@ -1,6 +1,7 @@
-@(visualizations : Map[String, Html], jobID : String, toolname : String)(implicit messages: Messages, request: RequestHeader)
+@import models.database.Job
+@(visualizations : Map[String, Html], job : Job)(implicit messages: Messages, request: RequestHeader)
 
-Share Link:
+<a href="jobs/@{job.mainID.stringify}">Share Link</a> - <a onClick="addJob('@{job.mainID.stringify}')">Add</a>
 
 <div>
     <ul class="tabs" data-tabs id="example-tabs">
@@ -13,7 +14,7 @@ Share Link:
 </div>
 
 
-@helpmodals.modal(toolname)
+@helpmodals.modal(job.tool)
 
 <br />
 <div class="tabs-content" data-tabs-content="example-tabs">
@@ -26,7 +27,7 @@ Share Link:
 
 
 <div class="tabs-panel" id="toolkit-forward-panel">
-    @job.forward()
+    @jobs.forward(job)
 </div>
 </div>
 
