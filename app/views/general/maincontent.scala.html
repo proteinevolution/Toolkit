@@ -96,11 +96,11 @@ margin: 0;
 
     .tool-finder {
 
-        background: #ffffff; /* Old browsers */
-        background: -moz-linear-gradient(top, #ffffff 0%, #e5e5e5 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top, #ffffff 0%,#e5e5e5 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+        background: #f2f2f2; /* Old browsers */
+        background: -moz-linear-gradient(top, #f2f2f2 0%, #e5e5e5 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #f2f2f2 0%,#e5e5e5 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #f2f2f2 0%,#e5e5e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f2f2', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
         border: 1px solid #ccc;
         -webkit-border-radius: 4px;
         -moz-border-radius: 4px;
@@ -150,20 +150,6 @@ margin: 0;
 
 
 
-    .jobstate {
-
-        margin-right: 0px;
-        box-shadow: 0 0 5px rgba(0,0,0, .8);
-        display: block;
-        width: 30px;
-        height: 115px;
-        background: #ffff00;
-        -moz-border-radius: 4px;
-        -webkit-border-radius: 4px;
-        border-radius: 4px;
-        box-shadow: 0 0 10px orange;
-    }
-
     #sidebartoggle {
         display: none;
     }
@@ -173,9 +159,35 @@ margin: 0;
         padding: 1em;
 
     }
-
     .search-query input {
-        margin: 0;
+
+
+    /* round the corners */
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+
+    }
+
+    .search-query input:focus {
+
+    border: 1px solid #4195fc; /* some kind of blue border */
+
+    /* other CSS styles */
+
+    /* round the corners */
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+
+    /* make it glow! */
+    -webkit-box-shadow: 0px 0px 4px #4195fc;
+    -moz-box-shadow: 0px 0px 4px #4195fc;
+    box-shadow: 0px 0px 4px #4195fc; /* some variation of blue for the shadow */
+
+
 
     }
 
@@ -198,6 +210,10 @@ margin: 0;
         font-size: 0.75em;
     }
 
+    .gradient {
+    color: black;
+    }
+
 
 
 
@@ -215,130 +231,17 @@ margin: 0;
 <div class="grid" style="margin-top: 355px;">
 
   <div class="tool-finder show-for-medium row centered">
+        <div class="search-query large-12 medium-6">
+            <div class="columns large-12"><input type="text" id="searchInput" name="searchInput" value="" placeholder="Search Keywords"></div>
 
-        <div class="selectors large-3 medium-3">
-            <select id="toolselect" style="margin-right: 15em;"><option>Tools</option>
-                <option value="alnviz">AlignmentViewer</option>
-                <option value="reformat">Reformat</option>
-                <option value="seq2gi">Extract GIs</option>
-                <option value="reformatb">Reformat Cluster</option>
-                <option value="clans">Clans</option>
-                <option value="tcoffee">T-Coffee</option>
-            </select>
-            <select><option>Section</option></select>
         </div>
-        <div class="search-query large-6 medium-5">
-            <input type="text" id="searchInput" name="searchInput" value="" placeholder="Search Keywords">
-            <p><a data-open="advancedsearch-modal" style="margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
-        </div>
-        <div class="select-job large-3 medium-4">
-            <select>
-                <option value="AL">Find your job</option>
-                <option value="WY">123345</option>
-                <option value="WY">523125</option>
-                <option value="WY">222345</option>
-                <option value="WY">123345</option>
-            </select>
-        </div>
+      <div class="trafficbar" id="trafficbar"></div>
+
+
 
   </div>
 
 </div>
-
-
-
-    <!--
-    <div class="tool-finder show-for-medium row">
-        <div class="selections large-2 medium-3 columns" id="selections">
-            <select id="toolselect"><option>Tools</option>
-            <option value="alnviz">AlignmentViewer</option>
-            <option value="reformat">Reformat</option>
-            <option value="seq2gi">Extract GIs</option>
-            <option value="reformatb">Reformat Cluster</option>
-            <option value="clans">Clans</option>
-            <option value="tcoffee">T-Coffee</option>
-            </select>
-            <select><option>Section</option></select>
-        </div>
-        <div class="search-query large-5 medium-5 columns">
-            <input type="text" name="q" value="" placeholder="Search Keywords">
-            <p><a data-open="advancedsearch-modal" style="margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
-        </div>
-        <div class="select-job large-4 medium-3 columns" style="font-size: 0.80em;">
-            <select class="js-example-basic-single" style="margin-right:1.5em;">
-                <option value="AL">Find your job</option>
-                <option value="WY">123345</option>
-                <option value="WY">523125</option>
-                <option value="WY">222345</option>
-                <option value="WY">123345</option>
-            </select>
-        </div>
-
-        <span data-tooltip aria-haspopup="true" class="has-tip right" data-disable-hover="false" tabindex="3" title="you have still 2 running jobs: 124354 (HHpred), 658234 (Hmmer3)">
-            <div class="jobstate"></div>
-        </span>
-
-    </div>
-
-
-</div>
-
-<script>
-
-
-</script>
-        <!--<fieldset>
-            <div class="labels">
-                <
-            </div>
-            <div class="inputs">
-                <select id="toolselect"><option>Choose</option>
-                    <option value="alnviz">AlignmentViewer</option>
-                    <option value="reformat">Reformat</option>
-                    <option value="seq2gi">Extract GIs</option>
-                    <option value="reformatb">Reformat Cluster</option>
-                    <option value="clans">Clans</option>
-                    <option value="tcoffee">T-Coffee</option>
-                </select><br />
-                <select><option>Choose</option></select>
-            </div>
-
-        </fieldset>
-
-        <div class="keysearch">
-            <div class="large-7 columns">
-            <input class="search-query" type="text" name="q" value="" placeholder="Search Keywords">
-                <p><a data-open="advancedsearch-modal" style="margin-top: -25px; margin-left: 4px; font-size: 12px;">Advanced Search</a></p>
-            </div>
-            <div class="large-2 columns">
-            <button class="fi-magnifying-glass" type="submit" style="margin-left: -25px; margin-top: 10px;"></button>
-            </div>
-            <div class="large-3 columns">
-                <div style="margin-top: 5px;"> <! -- TODO: implement me: https://select2.github.io/examples.html
-                <select class="js-example-basic-single" style="position:relative;z-index:9999999;">
-                    <option value="AL">Find your job</option>
-                    <option value="WY">123345</option>
-                    <option value="WY">523125</option>
-                    <option value="WY">222345</option>
-                    <option value="WY">123345</option>
-                </select>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="trafficbar" id="trafficbar"></div> -->
-
-
-
-    <!--<div class="traffic">
-        <span data-tooltip aria-haspopup="true" class="has-tip right" data-disable-hover="false" tabindex="3" title="you have still 2 running jobs: 124354 (HHpred), 658234 (Hmmer3)">
-        <div class="jobstate"></div>
-        </span>
-    </div> -->
-
-
-
 
 
 <div class="lazy-container">
@@ -376,117 +279,8 @@ margin: 0;
         </div>
     </div>
 
-
 </div>
 
-
-<div class="reveal" id="advancedsearch-modal" data-reveal>
-
-    <form class="search-form" id="search-form" action="/#results" method="get">
-        <div class="search-content">
-            <center><h5>Advanced search</h5></center>
-
-            <div class="search-fields">
-
-                <div class="search-section">
-                    <h6>Words</h6>
-                    <div class="search-operator">
-                        <label for="query"> <strong>All</strong> these words </label>
-                        <div class="input-section">
-                            <input type="text" name="query" value="" id="query"/>
-                            <div class="query-note">
-
-                                You can use any of <a href="/info" target="_blank">these search
-                                operators</a> in this input field
-
-      </div>
-
-                        </div>
-                    </div>
-                    <div class="search-operator">
-                        <label for="query"> This <strong>exact</strong> phrase </label>
-                        <div class="input-section">
-                            <input type="text" name="exact_phrase" value="" id="exact_phrase"/>
-                            <div class="query-note">
-
-      </div>
-
-                        </div>
-                    </div>
-                    <div class="search-operator">
-                        <label for="query"> <strong>Any</strong> of these words </label>
-                        <div class="input-section">
-                            <input type="text" name="any_of" value="" id="any_of"/>
-                            <div class="query-note">
-
-      </div>
-
-                        </div>
-                    </div>
-                    <div class="search-operator">
-                        <label for="query"> <strong>Exclude</strong> these words </label>
-                        <div class="input-section">
-                            <input type="text" name="exclude_words" value="" id="exclude_words"/>
-                            <div class="query-note">
-
-      </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="search-section dates">
-                    <h6>Dates</h6>
-                    <div class="search-operator">
-                        <label> Origin or created </label>
-                        <div class="input-section date-range">
-                            <input
-                            type="text"
-                            id="document_date_start"
-                            name="document_date_start"
-                            value=""
-                            placeholder="yyyy-mm-dd"/>
-                            <div class="to">to</div>
-                            <input
-                            type="text"
-                            id="document_date_end"
-                            name="document_date_end"
-                            value=""
-                            placeholder="yyyy-mm-dd"/>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="input-section checkbox-group">
-                    <label>
-                        <input
-                        type="checkbox"
-                        name="include_external_sources"
-                        value="True"
-
-                        />
-                        Include external sources
-                    </label>
-                    <div class="query-note">
-                    e.g. NCBI, etc.
-                    </div>
-                </div>
-                <p>&nbsp;</p>
-                <div class="advanced-submit">
-                    <button class="button small" type="submit" name="new_search" value="True">Search</button>
-                </div>
-            </div>
-        </div>
-
-
-
-
-    </form>
-    <button class="close-button" data-close aria-label="Close modal" type="button">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
 
 
     <script>
