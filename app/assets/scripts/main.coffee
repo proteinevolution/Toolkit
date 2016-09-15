@@ -10,6 +10,7 @@ Tools =
       type: "POST"
       url: "/tools/form/" + controller.toolName).done (data) ->
         $('#content').empty().append data
+        $(document).foundation()
         $("html, body").animate({ scrollTop: 0 }, "fast")
         window.removeEventListener 'resize', listener, false
 
@@ -22,6 +23,7 @@ Jobs =
       type: "GET"
       url: "/jobs/get/" + controller.mainID).done (data) ->
         $('#content').empty().prepend data
+        $(document).foundation()
         $("html, body").animate({ scrollTop: 0 }, "fast")
 
 
@@ -42,6 +44,7 @@ StaticRoute =
           $('#content').empty().prepend data
         else
           $('body').empty().prepend data
+        $(document).foundation()
         $("html, body").animate({ scrollTop: 0 }, "fast")
 
 
