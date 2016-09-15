@@ -93,6 +93,7 @@ resolvers ++= Seq(
 )
 
 
+fork in run := false
 
 scalacOptions ++= Seq(
   "-target:jvm-1.8",

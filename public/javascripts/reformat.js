@@ -1828,11 +1828,19 @@ function getFormat(seqs){
 }
 
 
+/**
+ * @targetFormat {String} target format (Fasta, A3M, Phylip, Clustal, Nexus, EMBL, Genbank, Stockholm, PIR)
+ *
+ * @return {String} result containing the converted sequence
+ */
+
+
 (function( $ ){
 
     $.fn.reformat = function(targetFormat){
         var seqs = this.val();
         var format = getFormat(seqs);
+        targetFormat = targetFormat.toUpperCase();
         var json = [];
         var result ="";
         switch(format) {
@@ -1867,16 +1875,16 @@ function getFormat(seqs){
         }
 
         switch(targetFormat) {
-            case "Fasta":
+            case "FASTA":
                 result = json2fasta(json);
                 break;
             case "A3M":
                 result = json2a3m(json);
                 break;
-            case "Phylip":
+            case "PHYLIP":
                 result = json2phylip(json);
                 break;
-            case "Clustal":
+            case "CLUSTAL":
                 result = json2clustal(json);
                 break;
             case "NEXUS":
@@ -1885,13 +1893,13 @@ function getFormat(seqs){
             case "EMBL":
                 result = json2embl(json);
                 break;
-            case "Genbank":
+            case "GENBANK":
                 result = json2genbank(json);
                 break;
             case "PIR":
                 result = json2pir(json);
                 break;
-            case "Stockholm":
+            case "STOCKHOLM":
                 result = json2stockholm(json);
                 break;
             default: result = null;

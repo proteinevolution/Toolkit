@@ -74,7 +74,9 @@ textarea#reformatOutput {
 
 
         function initMSA(){
-
+            var seqs = $('#sequences').reformat('Fasta');
+            if(!seqs)
+                return;
             var opts = {
                 el: document.getElementById("yourDiv"),
                 vis: {
@@ -93,8 +95,8 @@ textarea#reformatOutput {
                 // smaller menu for JSBin
                 menu: "small",
             };
-
-            opts.seqs = fasta2json($('#sequences').val());
+            
+            opts.seqs = fasta2json(seqs);
             var m = new msa.msa(opts);
 
             // the menu is independent to the MSA container
