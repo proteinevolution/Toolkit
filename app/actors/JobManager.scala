@@ -54,6 +54,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   /**
     * Updates Job in database or creates a new Job if job with mainID does not exist
     * TODO refactor this to take less database accesses - only insert or find & update
+    *
     * @param job
     */
   def updateJob(job : Job) = {
@@ -111,6 +112,34 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     err.close()
   }
 
+  /**
+    * Deletes a Job from the Database and from the file system
+    * @param job
+    * @param userID
+    */
+  def deleteJob(job : Job, userID : BSONObjectID) = {
+    //  Terminate running Process instance of the Job
+    if (runningProcesses.contains(job.mainID.stringify)) {
+      runningProcesses(job.mainID.stringify).destroy()
+    }
+    removeJob(BSONDocument(Job.IDDB -> job.mainID))
+    hashCollection.flatMap(_.remove(BSONDocument(JobHash.ID -> job.mainID)))
+    jobDao.deleteJob(job.mainID.stringify) // remove deleted jobs from elasticsearch job and hash indices
+
+    Future {
+      // Delete Job Path
+
+      s"$jobPath$SEPARATOR${job.mainID.stringify}".toFile.delete(swallowIOExceptions = false)
+    }.onComplete {
+      case scala.util.Success(_) =>
+        Logger.info("Successfully Deleted Job!")
+        userManager ! AckDeleted(userID, job)
+      case scala.util.Failure(_) =>
+        Logger.info("Failed To Delete Files")
+        userManager ! FailDeleted(userID, job)
+    }
+  }
+
   def receive : Receive = {
 
     // Get a request to send the job list
@@ -128,16 +157,24 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
      // Reads parameters provided to the job from the job directory
     case Read(user : BSONObjectID, jobID : String) =>
+      val replyTo = sender()
       findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
         case Some(job) => // Job Owner must be linked with the Session ID
-          if (job.ownerID.getOrElse(BSONObjectID("Null")) == user) // Retrieve the Job Files
-            sender () ! s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map {f =>
-              f.name -> f.contentAsString
-            }.toMap
-          else // If jobID does not belong to the user
-            sender () ! PermissionDenied(user)
+          job.ownerID match {
+            case Some(ownerID) =>
+              if (ownerID == user) // Retrieve the Job Files
+                replyTo ! s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map { f =>
+                  f.name -> f.contentAsString
+                }.toMap
+              else // If jobID does not belong to the user
+                replyTo ! PermissionDenied(user)
+            case None =>
+              replyTo ! s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map { f =>
+                f.name -> f.contentAsString
+              }.toMap
+          }
         case None => // If jobID is unknown
-          sender () ! JobIDUnknown(user)
+          replyTo ! JobIDUnknown(user)
       }
 
 
@@ -147,10 +184,15 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       val replyTo = sender()
         findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
           case Some(job) => // Job Owner must be linked with the Session ID
-            if (job.ownerID.getOrElse(BSONObjectID("Null")) == user) // Retrieve the Job Files
-              replyTo ! job
-            else // If jobID does not belong to the user
-              replyTo ! PermissionDenied(user)
+            job.ownerID match {
+              case Some(ownerID) =>
+                if (ownerID == user) // Retrieve the Job Files
+                  replyTo ! job
+                else // If jobID does not belong to the user
+                  replyTo ! PermissionDenied(user)
+              case None =>
+                replyTo ! job
+            }
           case None => // If jobID is unknown
             replyTo ! JobIDUnknown(user)
         }
@@ -168,31 +210,17 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach {
         case Some(job) =>
-          if (job.ownerID.getOrElse(BSONObjectID("Null")) == userID) {
-
-            //  Terminate running Process instance of the Job
-            if (runningProcesses.contains(job.mainID.stringify)) {
-              runningProcesses(job.mainID.stringify).destroy()
-            }
-            removeJob(BSONDocument(Job.IDDB -> job.mainID))
-            hashCollection.flatMap(_.remove(BSONDocument(JobHash.ID -> job.mainID)))
-            jobDao.deleteJob(job.mainID.stringify) // remove deleted jobs from elasticsearch job and hash indices
-
-            Future {
-              // Delete Job Path
-
-              s"$jobPath$SEPARATOR${job.mainID.stringify}".toFile.delete(swallowIOExceptions = false)
-            }.onComplete {
-              case scala.util.Success(_) =>
-                Logger.info("Successfully Deleted Job!")
-                userManager ! AckDeleted(userID, job)
-              case scala.util.Failure(_) =>
-                Logger.info("Failed To Delete Files")
-                userManager ! FailDeleted(userID, job)
-            }
-          } else {
-            userManager ! PermissionDenied(userID)
-            Logger.info("Permission Denied")
+          job.ownerID match {
+            case Some(ownerID) =>
+              if (ownerID == userID) {
+                deleteJob(job, userID)
+              } else {
+                userManager ! PermissionDenied(userID)
+                Logger.info("Permission Denied")
+              }
+            case None =>
+              // TODO decide on what to do with public jobs
+              deleteJob(job, userID)
           }
         case None      =>
           // Job ID is unknown.
