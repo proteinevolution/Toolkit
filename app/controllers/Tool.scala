@@ -129,7 +129,8 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                     jobManager ! Prepare(user, Some(""), toolName, boundForm.data, start = false)
                     Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
                                             "jobStarted"    -> false,
-                                            "identicalJobs" -> true))
+                                            "identicalJobs" -> true,
+                                            "job"           -> job.cleaned()))
                     ).withSession(sessionCookie(request, user.sessionID.get))
                   case None =>
                     jobManager ! Prepare(user, Some(""), toolName, boundForm.data, start = start)

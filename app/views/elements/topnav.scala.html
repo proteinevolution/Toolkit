@@ -10,13 +10,3 @@
     <dd><a href="/contact">Contact</a></dd>
     <dd><a href="#">Personal Databases</a></dd>
 </dl>
-
-<script type="text/javascript" src="@routes.Assets.at("scripts/auth.js")"></script>
-<div class="dropdown-pane" id="auth-dropdown" data-dropdown data-auto-focus="true" data-close-on-click="true" data-animation-out="spin-out">
-@{user.userData match {
-    case Some(userData) =>
-        views.html.auth.miniprofile(user)
-    case None =>
-        views.html.auth.tabber()
-}}
-</div>
