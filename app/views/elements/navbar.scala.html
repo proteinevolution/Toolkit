@@ -26,6 +26,7 @@
     </div>
     <div class="tabs-panel" id="panel2">
         <ul id="toolsec">
+            <li><a id="alignment" href="/#/alnvizfrontend">Alnviz (frontend) &nbsp;/</a></li>
         @for(tool <- Tool.tools){
             @if(tool.section == "alignment") {
                 <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
@@ -71,7 +72,8 @@
     </div>
     <div class="tabs-panel" id="panel7">
         <ul id="toolsec">
-            <li><a id="reformat" href="/#/seq2gi">ExtractGIs &nbsp;/</a></li>
+            <li><a id="reformat" href="/#/extractIDs">ExtractIDs &nbsp;/</a></li>
+            <li><a id="reformat" href="/#/patSearch">PatSearch &nbsp;/</a></li>
             @for(tool <- Tool.tools){
                 @if(tool.section == "utils") {
                     <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
