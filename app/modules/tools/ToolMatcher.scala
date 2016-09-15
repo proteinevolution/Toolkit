@@ -61,7 +61,6 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "reformatb" => views.html.tools.forms.reformatb(Reformatb.inputForm)
       case "clans" => views.html.tools.forms.clans(tel, Clans.inputForm)
       case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm)
-      case "patsearch" => views.html.tools.forms.patSearch(tel, PatSearch.inputForm)
     }
     toolFrame
   }
