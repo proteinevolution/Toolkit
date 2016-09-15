@@ -71,6 +71,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
       case "hmmer3"   => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(resultFiles))
       case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
+      case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm.bind(resultFiles))
     }
   }
 
@@ -87,6 +88,11 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       val vis = Map(
         "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
+      views.html.jobs.result(vis, job)
+    case "mafft" =>
+      val vis = Map(
+        "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/out"),
+        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/out"))
       views.html.jobs.result(vis, job)
     case "reformatb" =>
       val vis = Map(

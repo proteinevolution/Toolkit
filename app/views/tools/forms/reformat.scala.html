@@ -17,9 +17,9 @@
             <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
             <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
 
-            <label>Forward to
-            <select id="forwardTool" style="width: 20%;">
-                <option selected>Choose</option>
+            <li>
+            <select id="forwardTool">
+                <option selected>Forward To</option>
                 <option  id="clans" onclick="forward('clans')" value="psi">Clans</option>
                 <option  id="csblast" onclick="forward('csblast')" value="psi">CS-BLAST</option>
                 <option  id="hhblits" onclick="forward('hhblits')" value="psi">HHblits</option>
@@ -30,7 +30,7 @@
                 <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
 
             </select>
-            </label>
+            </li>
         </ul>
     </li>
 </ul>
@@ -576,9 +576,11 @@
             /* Forwarding */
 
             function forward(tool) {
-                var seqs = myCodeMirror2.getValue();
-                    localStorage.setItem("resultcookie", seqs);
-                    window.location.href = "/#/tools/" + tool;
+                if(myCodeMirror2.lineCount()>1) {
+                var seqs = myCodeMirror2.getValue ( ) ;
+                localStorage.setItem ( "resultcookie", seqs ) ;
+                window.location.href = "/#/tools/" + tool ;
+                } else alert("No output to forward.");
             }
 
 
