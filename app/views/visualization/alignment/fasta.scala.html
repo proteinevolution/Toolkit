@@ -1,0 +1,18 @@
+@import play.api.mvc.RequestHeader
+@(pathToFastaFile : String)(implicit messages: Messages, request: RequestHeader)
+
+
+<table id="fasta" class="hover alignment">
+
+</table>
+
+
+<table id="alignstats">
+
+</table>
+
+
+
+<script>
+fastaSimple("fasta", "alignstats", '@pathToFastaFile')
+</script>
