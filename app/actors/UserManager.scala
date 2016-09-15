@@ -78,6 +78,7 @@ final class UserManager @Inject() (
               userActor ! JobStateChanged(job, job.status)
             case None =>
           }
+        case None =>
       }
 
     // User is requesting a job to be removed from the view (but not permanently)
