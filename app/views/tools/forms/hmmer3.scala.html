@@ -1,5 +1,5 @@
 @import play.api.mvc.RequestHeader
-@import models.tools.ToolModel.Alnviz
+@import models.tools.ToolModel.Hmmer3
 @import models.tel.TEL
 @(tel : TEL, inputForm: Form[(String, String, String)])(implicit messages: Messages, request: RequestHeader)
 
@@ -10,12 +10,15 @@
   'placeholder -> "Enter multiple sequence alignment",
   'id -> "alignment", '_showConstraints -> false)
 
+<div class="callout" id="alert"  hidden>
 
-    <a onClick="$('#submitbutton').prop('disabled', false);$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
+</div>
+
+    <a onClick="$('#alert').prop('hidden',true);$('#submitbutton').prop('disabled', false);$('#alignment').val(alnviz_example());$('#format').val('fas');">Paste example alignment</a>
 
     @helper.select(
         inputForm("alignment_format"),
-        helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("alignment_format"))),
+        helper.options(Values.fullNames.filterKeys(Hmmer3.parameterValues("alignment_format"))),
         '_label -> "Select alignment format",
         'id -> "format"
     )
@@ -27,6 +30,12 @@
     'id -> "standarddb"
 )
     <script>
+
+
+
             document.getElementById("alignment").value = localStorage.getItem("resultcookie");
             localStorage.removeItem("resultcookie");
+
+
+
     </script>
