@@ -282,5 +282,51 @@ case object Tcoffee extends ToolModel {
   )
 
   }
+
+
+  case object GLProbs extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "glprobs"
+    val toolNameLong = "GLProbs"
+    val toolNameAbbreviation = "glp"
+    val section = "alignment"
+    val optional = ""
+
+
+    // --- Tcoffee specific values ---
+    // Returns the Input Form Definition of this tool
+    val inputForm = Form(
+      single(
+        "sequences" -> nonEmptyText
+      )
+    )
+
+  }
+
+
+  case object PatSearch extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "patsearch"
+    val toolNameLong = "PatSearch"
+    val toolNameAbbreviation = "pts"
+    val section = "search"
+    val optional = ""
+
+
+    // --- Tcoffee specific values ---
+    // Returns the Input Form Definition of this tool
+    val inputForm = Form(
+      tuple(
+        "sequences" -> nonEmptyText,
+        "pattern" ->nonEmptyText,
+        "standarddb" -> text
+
+      )
+    )
+
+  }
+
 }
 
