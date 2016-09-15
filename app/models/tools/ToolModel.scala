@@ -20,35 +20,6 @@ object ToolModel extends PlayEnum[ToolModel] {
 
   val values = findValues
 
-case object Alnviz extends ToolModel {
-
-
-  // --- Names for the Tool ---
-  val toolNameShort = "alnviz"
-  val toolNameLong = "Alnviz"
-  val toolNameAbbreviation = "avz"
-  val section = "alignment"
-  val optional = ""
-
-  // --- Alnviz specific values ---
-  // Input Form Definition of this tool
-
-
-  val inputForm = Form(
-    tuple(
-      "alignment" -> nonEmptyText,
-      "alignment_format" -> text
-    )
-  )
-
-  val resultFileNames = Vector("result")
-
-  // Specifies a finite set of values the parameter is allowed to assumepe
-  val parameterValues = Map(
-    "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
-  )
-}
-
 
 case object Clans extends ToolModel {
 
@@ -136,6 +107,11 @@ case object HHblits extends ToolModel{
     )
   )
 
+  val parameterValues = Map(
+    "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
+    "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
+  )
+
 }
 
 case object HHpred extends ToolModel {
@@ -157,6 +133,11 @@ case object HHpred extends ToolModel {
       "alignment_format" -> text,
       "hmmdb" -> text
     )
+  )
+
+  val parameterValues = Map(
+    "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
+    "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
 
 }
@@ -243,27 +224,6 @@ case object Psiblast extends ToolModel {
   )
 }
 
-case object Reformatb extends ToolModel {
-
-  // --- Names for the Tool ---
-  val toolNameShort        = "reformatb"
-  val toolNameLong         = "Reformatb"
-  val toolNameAbbreviation = "form"
-  val section = "utils"
-  val optional = ""
-
-
-  // --- Tcoffee specific values ---
-  // Returns the Input Form Definition of this tool
-  val inputForm = Form(
-    tuple(
-      "sequences" -> nonEmptyText,
-      "gapopen" -> bigDecimal(5,3),
-      "offset" -> bigDecimal(5,3)
-    )
-  )
-
-}
 
 case object Tcoffee extends ToolModel {
 
