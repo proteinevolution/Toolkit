@@ -419,9 +419,10 @@ hr {
 .trafficbar {
 
     z-index: 99;
+    margin-top: 0.5em;
     margin-right: 10em;
     margin-bottom: 0px;
-    height: 0.75em;
+    height: 0.1em;
     width: 100%;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
