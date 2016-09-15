@@ -86,7 +86,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
     case "tcoffee" =>
       val vis = Map(
-        "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+        "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
       views.html.jobs.result(vis, job)
     case "mafft" =>
