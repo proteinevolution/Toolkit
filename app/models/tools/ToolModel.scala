@@ -183,6 +183,11 @@ case object Hmmer3 extends ToolModel {
     )
   )
 
+  val parameterValues = Map(
+    "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
+    "alignment_format" -> Set("fas", "clu")
+  )
+
 }
 
 case object Mafft extends ToolModel {
