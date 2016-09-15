@@ -16,7 +16,6 @@
             <li><a id="dropzonetoggle">Upload</a></li>
             <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
             <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
-
             <li>
             <select id="forwardTool">
                 <option selected>Forward To</option>
@@ -28,7 +27,6 @@
                 <option  id="mafft" onclick="forward('mafft')" value="psi">Mafft</option>
                 <option  id="psiblast" onclick="forward('psiblast')" value="psi">PSI-BLAST</option>
                 <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
-
             </select>
             </li>
         </ul>
@@ -109,6 +107,8 @@
 <script src="@routes.Assets.at("scripts/validation.js")"></script>
 <script>
 
+
+           hideTools("");
         var inputFasta = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR\n";
         // document.getElementById("alignment").value = inputFasta;
         var inputClustal = "CLUSTAL multiple sequence alignment\n\ngi|33300828\tPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\ngi|11479639\tPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\ngi|11479645\tPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\ngi|29366706\tPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\ngi|68299729\tPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\ngi|77118174\tPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\ngi|17570796\tPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\ngi|11963775\tPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\n\ngi|33300828\tD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\ngi|11479639\tA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\ngi|11479645\tEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\ngi|29366706\t-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\ngi|68299729\tD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\ngi|77118174\t------DYYKGWACQITYMEETPDGSLRHPSFDQWR\ngi|17570796\tD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\ngi|11963775\tD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
@@ -527,6 +527,15 @@
                 $('#clans').prop('disabled', true);
                 $('#mafft').prop('disabled', true);
                 $('#tcoffee').prop('disabled', true);
+            }else{
+                $('#clans').prop('disabled', true);
+                $('#csblast').prop('disabled', true);
+                $('#hhblits').prop('disabled', true);
+                $('#hhpred').prop('disabled', true);
+                $('#hmmer3').prop('disabled', true);
+                $('#mafft').prop('disabled', true);
+                $('#psiblast').prop('disabled', true);
+                $('#tcoffee').prop('disabled', true);
             }
         }
 
@@ -567,6 +576,15 @@
                 $('#Stockholm').prop('disabled', true);
                 break;
             default:
+                $('#Fasta').prop('disabled', true);
+                $('#A3M').prop('disabled', true);
+                $('#Phylip').prop('disabled', true);
+                $('#Clustal').prop('disabled', true);
+                $('#NEXUS').prop('disabled', true);
+                $('#EMBL').prop('disabled', true);
+                $('#Genbank').prop('disabled', true);
+                $('#PIR').prop('disabled', true);
+                $('#Stockholm').prop('disabled', true);
                 break;
         }
 
@@ -581,8 +599,7 @@
                 localStorage.setItem ( "resultcookie", seqs ) ;
                 window.location.href = "/#/tools/" + tool ;
                 } else alert("No output to forward.");
-            }
-
+               }
 
 
             $(document).foundation();
