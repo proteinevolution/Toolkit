@@ -14,6 +14,8 @@ sealed trait ToolModel extends EnumEntry {
   val section : String
   val optional : String
   val inputOptions : HList
+  //val minimalForm : Form[]
+  //val inputFormAlignment: Form[(String, String, Option[String])]
 
 
 }
@@ -24,6 +26,9 @@ object ToolModel extends PlayEnum[ToolModel] {
 
 case object Alnviz extends ToolModel {
 
+
+
+  case class Test(id: Int, name: String)
 
   // --- Names for the Tool ---
   val toolNameShort = "alnviz"
@@ -40,6 +45,16 @@ case object Alnviz extends ToolModel {
 
   //println(myTuple)
   //val test = Form(myTuple) TODO why doesn't this work?
+
+  val inputFormAlignment = Form(
+  tuple(
+    "alignment" -> nonEmptyText,
+    "alignment_format" -> text,
+    "text" -> text
+  )
+  )
+
+
 
   val inputForm = Form(
     tuple(
@@ -136,6 +151,7 @@ case object HHblits extends ToolModel{
   val optional = ""
 
 
+
   // --- HHblits
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
@@ -210,7 +226,7 @@ case object Mafft extends ToolModel {
   val section = "alignment"
   val optional = ""
 
-  // --- Tcoffee specific values ---
+  // --- Mafft specific values ---
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
@@ -218,7 +234,7 @@ case object Mafft extends ToolModel {
       "gapopen" -> bigDecimal(5,3),
       "offset" -> bigDecimal(5,3)
     )
-  )
+  )fill(("",1.53,0.00))
 
   val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
 
