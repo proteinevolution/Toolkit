@@ -60,6 +60,8 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "hhblits" => views.html.tools.forms.hhblits(tel, HHblits.inputForm)
       case "reformatb" => views.html.tools.forms.reformatb(Reformatb.inputForm)
       case "clans" => views.html.tools.forms.clans(tel, Clans.inputForm)
+      case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm)
+      case "patsearch" => views.html.tools.forms.patSearch(tel, PatSearch.inputForm)
     }
     toolFrame
   }
@@ -72,6 +74,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "hmmer3"   => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(resultFiles))
       case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
       case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm.bind(resultFiles))
+      case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm.bind(resultFiles))
     }
   }
 
@@ -105,6 +108,16 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
         "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
       views.html.jobs.result(vis, job)
+    case "patsearch" =>
+      val vis = Map(
+        "Results" -> views.html.visualization.alignment.blastvis(s"/files/${job.mainID.stringify}/result.out"))
+      views.html.jobs.result(vis, job)
+    case "glprobs" =>
+      val vis = Map(
+        "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/glprobs_aln"),
+        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/glprobs_aln"))
+      views.html.jobs.result(vis, job)
+
 
     // Hmmer just provides a simple file viewer.
     case "hmmer3" => views.html.visualization.general.fileview(
@@ -126,6 +139,8 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "mafft" => Some(Mafft.inputForm)
       case "reformatb" => Some(Reformatb.inputForm) // cluster version of reformat
       case "clans" => Some(Clans.inputForm)
+      case "patsearch" => Some(PatSearch.inputForm)
+      case "glprobs" => Some(GLProbs.inputForm)
       case _ => None
     }
     toolForm
