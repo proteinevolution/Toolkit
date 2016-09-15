@@ -356,7 +356,7 @@ hr {
     border: none;
 }
 #auth-tabs .ui-tabs-nav .ui-state-active {
-    background: transparent url(images/arrow-up.png) no-repeat bottom center;
+    background: transparent;
     border: none;
 }
 #auth-tabs .ui-tabs-nav .ui-state-default a {
