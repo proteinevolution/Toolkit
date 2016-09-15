@@ -1,5 +1,5 @@
 @import play.api.mvc.RequestHeader
-@import models.tools.ToolModel.Alnviz
+@import models.tools.ToolModel.HHpred
 @import models.tel.TEL
 @(tel : TEL, inputForm: Form[(String, String, String)])(implicit messages: Messages, request: RequestHeader)
 
@@ -36,7 +36,7 @@
     <div class="tabs-panel" id="tool-tabs-3">
         @helper.select(
             inputForm("alignment_format"),
-            helper.options(Values.fullNames.filterKeys(Alnviz.parameterValues("alignment_format"))),
+            helper.options(Values.fullNames.filterKeys(HHpred.parameterValues("alignment_format"))),
             '_label -> "Select alignment format",
             'id -> "format"
         )

@@ -50,7 +50,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
 
   def matcher(tool : String)(implicit request : RequestHeader) : Html = {
     lazy val toolFrame = tool match {
-      case "alnviz" => views.html.tools.forms.alnviz(Alnviz.inputForm)
+
       case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
       case "hmmer3" => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm)
       case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm)
@@ -58,7 +58,6 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "csblast" => views.html.tools.forms.csblast(tel, Csblast.inputForm)
       case "hhpred" => views.html.tools.forms.hhpred(tel, HHpred.inputForm)
       case "hhblits" => views.html.tools.forms.hhblits(tel, HHblits.inputForm)
-      case "reformatb" => views.html.tools.forms.reformatb(Reformatb.inputForm)
       case "clans" => views.html.tools.forms.clans(tel, Clans.inputForm)
       case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm)
     }
@@ -68,7 +67,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
 
   def resultPreparedMatcher(tool: String, resultFiles : Map[String, String])(implicit request: RequestHeader) = {
     tool match {
-      case "alnviz"   => views.html.tools.forms.alnviz(Alnviz.inputForm.bind(resultFiles))
+
       case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
       case "hmmer3"   => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(resultFiles))
       case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
@@ -81,10 +80,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
   def resultDoneMatcher(job : Job)(implicit request: RequestHeader) = {
 
     job.tool match {
-    //  The tool anlviz just returns the BioJS MSA Viewer page
-    case "alnviz" =>
-      val vis = Map("BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/result"))
-      views.html.jobs.result(vis, job)
+
     // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
     case "tcoffee" =>
       val vis = Map(
@@ -95,11 +91,6 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       val vis = Map(
         "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/out"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/out"))
-      views.html.jobs.result(vis, job)
-    case "reformatb" =>
-      val vis = Map(
-        "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
-        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
       views.html.jobs.result(vis, job)
     case "psiblast" =>
       val vis = Map(
@@ -116,8 +107,6 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
         "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/glprobs_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/glprobs_aln"))
       views.html.jobs.result(vis, job)
-
-
     // Hmmer just provides a simple file viewer.
     case "hmmer3" => views.html.visualization.general.fileview(
       Array(s"/files/${job.mainID.stringify}/domtbl",
@@ -129,14 +118,13 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
 
   def formMatcher(tool : String) = {
     lazy val toolForm = tool match {
-      case "alnviz" => Some(Alnviz.inputForm)
+
       case "tcoffee" => Some(Tcoffee.inputForm)
       case "hmmer3" => Some(Hmmer3.inputForm)
       case "hhpred" => Some(HHpred.inputForm)
       case "hhblits" => Some(HHblits.inputForm)
       case "psiblast" => Some(Psiblast.inputForm)
       case "mafft" => Some(Mafft.inputForm)
-      case "reformatb" => Some(Reformatb.inputForm) // cluster version of reformat
       case "clans" => Some(Clans.inputForm)
       case "patsearch" => Some(PatSearch.inputForm)
       case "glprobs" => Some(GLProbs.inputForm)
