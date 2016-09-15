@@ -91,7 +91,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       views.html.jobs.result(vis, job)
     case "mafft" =>
       val vis = Map(
-        "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/out"),
+        "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/out"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/out"))
       views.html.jobs.result(vis, job)
     case "reformatb" =>
