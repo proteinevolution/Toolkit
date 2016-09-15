@@ -70,7 +70,7 @@ lazy val root = (project in file("."))
       "org.webjars" % "foundation" % foundationVersion,
       "org.webjars" % "modernizr" % "2.8.3",
       "org.webjars.bower" % "fastclick" % "1.0.6",
-      "org.webjars" % "mithril" % mithrilVersion,
+      "org.webjars.npm" % "mithril" % mithrilVersion,
       "org.webjars.bower" % "d3" % d3Version,
       "org.webjars.bower" % "slick-carousel" % "1.6.0",
       "org.webjars.npm" % "codemirror-minified" % "5.15.2",
