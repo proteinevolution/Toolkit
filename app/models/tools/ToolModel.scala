@@ -13,10 +13,6 @@ sealed trait ToolModel extends EnumEntry {
   val toolNameAbbreviation : String
   val section : String
   val optional : String
-  val inputOptions : HList
-  //val minimalForm : Form[]
-  //val inputFormAlignment: Form[(String, String, Option[String])]
-
 
 }
 
@@ -27,9 +23,6 @@ object ToolModel extends PlayEnum[ToolModel] {
 case object Alnviz extends ToolModel {
 
 
-
-  case class Test(id: Int, name: String)
-
   // --- Names for the Tool ---
   val toolNameShort = "alnviz"
   val toolNameLong = "Alnviz"
@@ -39,21 +32,6 @@ case object Alnviz extends ToolModel {
 
   // --- Alnviz specific values ---
   // Input Form Definition of this tool
-
-  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
-  val myTuple = inputOptions.tupled
-
-  //println(myTuple)
-  //val test = Form(myTuple) TODO why doesn't this work?
-
-  val inputFormAlignment = Form(
-  tuple(
-    "alignment" -> nonEmptyText,
-    "alignment_format" -> text,
-    "text" -> text
-  )
-  )
-
 
 
   val inputForm = Form(
@@ -100,8 +78,6 @@ case object Clans extends ToolModel {
     )
   )
 
-  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
-
   val parameterValues = Map(
     "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
     "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
@@ -133,8 +109,6 @@ case object Csblast extends ToolModel {
     )
   )
 
-  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
-
   val parameterValues = Map(
     "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
     "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
@@ -162,8 +136,6 @@ case object HHblits extends ToolModel{
     )
   )
 
-  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
-
 }
 
 case object HHpred extends ToolModel {
@@ -186,8 +158,6 @@ case object HHpred extends ToolModel {
       "hmmdb" -> text
     )
   )
-
-  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
 
 }
 
@@ -213,8 +183,6 @@ case object Hmmer3 extends ToolModel {
     )
   )
 
-  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
-
 }
 
 case object Mafft extends ToolModel {
@@ -235,9 +203,6 @@ case object Mafft extends ToolModel {
       "offset" -> bigDecimal(5,3)
     )
   )fill(("",1.53,0.00))
-
-  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
-
 }
 
 case object Psiblast extends ToolModel {
@@ -266,8 +231,6 @@ case object Psiblast extends ToolModel {
     )
   ).fill(("", "", "", 1, 10, 11, 1, 200, ""))
 
-  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
-
   // TODO Move to TEL
   val parameterValues = Map(
     "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
@@ -295,8 +258,6 @@ case object Reformatb extends ToolModel {
     )
   )
 
-  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
-
 }
 
 case object Tcoffee extends ToolModel {
@@ -319,7 +280,6 @@ case object Tcoffee extends ToolModel {
       "mslow_pair" -> boolean
     )
   )
-  val inputOptions = "alignment" -> nonEmptyText :: "alignment_format" -> text :: HNil
 
   }
 }
