@@ -11,6 +11,15 @@
 # @param {string} statid The ID of the HMTL table the statistic elements should be added to
 # @param {string} pathToAlignmentFile The path to the alignment file made available by the server.
 ###
+@fastaSimple = (tabid, statid, pathToFastaFile) ->
+
+  # Makes AJAX call to the file on server
+  $.get(pathToFastaFile, (content) ->
+
+    $('#' + tabid ).append content
+
+  )
+
 @simple = (tabid, statid, pathToAlignmentFile) ->
 
   # Makes AJAX call to the file on server
@@ -54,6 +63,8 @@
     $('#' + tabid ).append content
 
    )
+
+
 
 
 
