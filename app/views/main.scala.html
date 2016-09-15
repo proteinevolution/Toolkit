@@ -104,28 +104,61 @@
         </div>
 
 
-
+        <!-- Test grid TODO remove this for production - I just used it as a ruler
+        <div class="row show-for-medium" style="padding-top: 1em;">
+            <div class="large-1 columns" style="border: 1px solid black;">1</div>
+            <div class="large-1 columns" style="border: 1px solid black;">2</div>
+            <div class="large-1 columns" style="border: 1px solid black;">3</div>
+            <div class="large-1 columns" style="border: 1px solid black;">4</div>
+            <div class="large-1 columns" style="border: 1px solid black;">5</div>
+            <div class="large-1 columns" style="border: 1px solid black;">6</div>
+            <div class="large-1 columns" style="border: 1px solid black;">7</div>
+            <div class="large-1 columns" style="border: 1px solid black;">8</div>
+            <div class="large-1 columns" style="border: 1px solid black;">9</div>
+            <div class="large-1 columns" style="border: 1px solid black;">0</div>
+            <div class="large-1 columns" style="border: 1px solid black;">1</div>
+            <div class="large-1 columns" style="border: 1px solid black;">2</div>
+        </div>
+        -->
         <!---Navigation Bar --->
         <div class="row show-for-medium" style="padding-top: 1em;">
+
+            <!--logo-->
             <div class="large-2 columns" >
                 <a href="@routes.Application.index()"><img  style="width: 100%; margin-left:0.25em;margin-top:0.60em; margin-bottom: 2em;" src="@routes.Assets.at("images/logo14.svg")"></a>
             </div>
-            <div class="large-9 columns" align="center" >
-            @elements.navbar()
+            <!--navbar-->
+            <div class="large-8 columns" align="center" >
+                @elements.navbar()
             </div>
-            <div class="large-1 columns sub-nav">
-                <dd><a href="#" id="auth-link" data-toggle="auth-dropdown" onclick="$('.dropdown-pane').show();">
+
+            <!--auth TODO make a modal out of this? -->
+            <div class="large-1 columns align-self-middle" align="right" style="margin-top:0.9em; margin-bottom: 2em;" >
+                <a id="auth-link" data-toggle="auth-dropdown" >
                 @{user.userData match {
                     case Some(userData) => userData.nameLogin
                     case None           => "Sign in"
-                }}</a></dd>
+                }}
+                </a>
+
+                <div id="auth-dropdown" class="dropdown-pane float-left bottom" data-dropdown data-auto-focus="true" data-close-on-click="true" align="left">
+                @{user.userData match {
+                    case Some(userData) =>
+                        views.html.auth.miniprofile(user)
+                    case None =>
+                        views.html.auth.tabber()
+                }}
+                </div>
+
+            </div>
+
+            <!--hamburger button-->
+            <div class="large-1 columns">
                 <button class="hamburger hamburger--elastic" type="button" style="float: right; padding-right: 0.25em;" onclick="openNav()">
-                <span class="hamburger-box">
-                    <span class="hamburger-inner"></span>
-                </span>
-            </button>
-
-
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
             </div>
         </div>
 
@@ -196,6 +229,7 @@
         <script src="@routes.Assets.at("scripts/alignment.js")"></script>
         <script src="@routes.Assets.at("scripts/validation.js")"></script>
         <script src="@routes.Assets.at("scripts/search.js")"></script>
+        <script src="@routes.Assets.at("scripts/auth.js")"></script>
 
         <!-- Public Javascript Assets -->
         <script src="@routes.Assets.at("javascripts/msa.min.js")" type="text/javascript"></script>
