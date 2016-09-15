@@ -134,8 +134,9 @@
 
             <!--auth TODO make a modal out of this? -->
             <div class="large-1 columns align-self-middle" align="right" style="margin-top:0.9em; margin-bottom: 2em;" >
+                <i class="icon-user"></i>
                 <a id="auth-link" data-toggle="auth-dropdown" >
-                @{user.userData match {
+                    @{user.userData match {
                     case Some(userData) => userData.nameLogin
                     case None           => "Sign in"
                 }}
