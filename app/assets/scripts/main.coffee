@@ -35,7 +35,9 @@ StaticRoute =
         if [
           'sitemap'
           'reformat'
-          'seq2gi'
+          'alnvizfrontend'
+          'patSearch'
+          'extractIDs'
         ].indexOf(controller['static']) >= 0
           $('#content').empty().prepend data
         else

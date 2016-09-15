@@ -54,8 +54,12 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       case "reformat" =>
         Ok(views.html.tools.forms.reformat(webJarAssets, "Utils"))
 
-      case "seq2gi" =>
-        Ok(views.html.tools.forms.seq2gi())
+      case "patSearch" =>
+        Ok(views.html.tools.forms.patSearch())
+      case "extractIDs" =>
+        Ok(views.html.tools.forms.extractIDs())
+      case "alnvizfrontend" =>
+        Ok(views.html.tools.forms.alnvizfrontend())
 
       case _ =>
 
