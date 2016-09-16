@@ -46,9 +46,10 @@ ul#jobs li {
 
 #magnifier {
   height: 2.75em;
-  background-color: #E8EAF6;
+  background-color: rgba(220,220,220,0.5);
   border: 1px solid lightgray;
   border-left: none;
+  color: white;
 
 }
 
@@ -74,7 +75,7 @@ ul#jobs li {
 }
 
 .job-button {
-  background-color: #E8EAF6 !important;
+  background-color: rgba(220,220,220,0.5) !important;
   width: 100%;
   border: solid 1px lightgray !important;
   color: gray !important;
