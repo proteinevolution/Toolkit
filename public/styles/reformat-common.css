@@ -4,10 +4,6 @@ div#content {
     background-color: rgb(238, 238, 238) !important;
 }
 
-.sidebar {
-
-    display: none;
-}
 
 .CodeMirror pre {
 
