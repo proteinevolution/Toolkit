@@ -76,3 +76,7 @@ option#forwardTool {
     border-top:1px solid #444;
     padding:.3em 1em .3em 1em;
 }
+
+[data-accordion-menu] ul {
+    display: none;
+}
