@@ -144,11 +144,11 @@
             if(validateFasta(myCodeMirror.getValue())) {
                 document.getElementById('callout').style.display = 'block';
 
-                if (validateAlignment(fasta2json(myCodeMirror.getValue())).hasError()) {
+                if (validateAlignment(fasta2json(myCodeMirror.getValue()))) {
                     $(".clustaloption").show();
                     document.getElementById('nonalignedwarning').style.display= 'none';
                 }
-               if(!validateAlignment(fasta2json(myCodeMirror.getValue())).hasError()) {
+               if(!validateAlignment(fasta2json(myCodeMirror.getValue()))) {
 
                     $(".clustaloption").hide();
                     document.getElementById('nonalignedwarning').style.display= 'inline';
