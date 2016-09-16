@@ -59,7 +59,7 @@
 
                 @helper.select(
                     inputForm("type"),
-                    helper.options(Values.fullNames.filterKeys(PatSearch.parameterValues("type"))),
+                    helper.options(PatSearch.parameterValues("type").toList),
                     '_label -> "Select pattern type",
                     'id -> "type")
 
