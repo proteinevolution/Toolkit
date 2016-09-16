@@ -280,18 +280,44 @@ case object Tcoffee extends ToolModel {
     val optional = ""
 
 
+    // --- PatSearch specific values ---
+    // Returns the Input Form Definition of this tool
+    val inputForm = Form(
+      tuple(
+        "inputpattern" ->nonEmptyText,
+        "type" -> text,
+        "standarddb" -> text
+      )
+    )
+
+    val parameterValues = Map(
+      "type" -> Set("pro","reg")
+    )
+  }
+
+
+  case object ClustalOmega extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "clustalomega"
+    val toolNameLong = "Clustal Omega"
+    val toolNameAbbreviation = "clo"
+    val section = "alignment"
+    val optional = ""
+
+
     // --- Tcoffee specific values ---
     // Returns the Input Form Definition of this tool
     val inputForm = Form(
       tuple(
         "sequences" -> nonEmptyText,
-        "pattern" ->nonEmptyText,
-        "standarddb" -> text
+        "otheradvanced" -> text
 
       )
     )
 
   }
+
 
 }
 
