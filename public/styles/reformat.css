@@ -31,4 +31,4 @@
 .cm-s-reformat .CodeMirror-activeline-background { background: #404040; }
 */
 
-.cm-s-reformat span.cm-string { font-weight: bold }
+.cm-s-reformat span.cm-string { font-weight: bold; color: red; }
