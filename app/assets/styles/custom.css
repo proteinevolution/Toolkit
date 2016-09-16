@@ -517,7 +517,7 @@ textarea#alignment {width: 500px; height: 280px;}
 
 .tabs {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-    color: #707070;
+    color: red !important;
     overflow-x: hidden;
     background-color: rgb(238, 238, 238);
     background-repeat: repeat;
@@ -526,12 +526,12 @@ textarea#alignment {width: 500px; height: 280px;}
     background-clip: border-box;
     background-origin: padding-box;
     background-size: auto auto;
+    text-shadow: 0 1px 1px #fff;
 }
 
 
 .tabs-title{
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-    color: #747474;
     overflow-x: hidden;
     background-color: rgb(238, 238, 238);
     background-repeat: repeat;
@@ -540,18 +540,21 @@ textarea#alignment {width: 500px; height: 280px;}
     background-clip: border-box;
     background-origin: padding-box;
     background-size: auto auto;
+    text-shadow: 0 1px 1px white;
 }
 
 .tabs-title.is-active a:link{
-    color: #747474;
+    color: #888;
     margin-top:-1px;
     margin-bottom:-1px;
     background: rgba(220,220,220,0.5);
     #border-bottom: 3px solid green !important;
+    text-shadow: 0 1px 1px white;
 }
 
 .tabs-title a:link{
-    color: grey;
+    color: #888;
+    text-shadow: 0 1px 1px white;
 }
 .tabs-title a:hover{
 
@@ -560,14 +563,15 @@ textarea#alignment {width: 500px; height: 280px;}
 .tabs-title > a {
 
     overflow: hidden;
-    color: grey;
+    color: #888;
     position:relative;
+    text-shadow: 0 1px 1px white;
 }
 
 .tabs-title > a:focus, .tabs-title > a[aria-selected='true']::after {
     -webkit-transform: translate3d(0,0,0);
     transform: translate3d(0,0,0);
-    color: #747474;
+    color: #888;
 
 }
 
