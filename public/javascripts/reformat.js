@@ -20,7 +20,7 @@ function getGIs(fastaText){
     for (; i < splittedStrings.length; i++) {
 
         if (splittedStrings[i].substring(0,3) == 'gi|') {
-            result += getClustalHeader(splittedStrings[i]).substring(3).split('|')[0];
+            result += splittedStrings[i].substring(3).split('|')[0];
             result += "\n";
 
         }
@@ -45,20 +45,6 @@ function getAccessionversion(json){
 }
 
 
-
-function getClustalSeq (fastaLine) {
-
-    var fasta = readFastaLine(fastaLine);
-    return fasta.seq;
-
-}
-
-function getClustalHeader (fastaLine) {
-
-    var fasta = readFastaLine(fastaLine);
-    return fasta.name;
-
-}
 
 function chunkString(str, len) {
     var _size = Math.ceil(str.length/len),
