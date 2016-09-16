@@ -60,6 +60,8 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "hhblits" => views.html.tools.forms.hhblits(tel, HHblits.inputForm)
       case "clans" => views.html.tools.forms.clans(tel, Clans.inputForm)
       case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm)
+      case "patsearch" => views.html.tools.forms.patSearch(tel, PatSearch.inputForm)
+      case "clustalomega" => views.html.tools.forms.clustalomega(ClustalOmega.inputForm)
     }
     toolFrame
   }
@@ -73,6 +75,8 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
       case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm.bind(resultFiles))
       case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm.bind(resultFiles))
+      case "clustalomega" => views.html.tools.forms.clustalomega(ClustalOmega.inputForm.bind(resultFiles))
+      case "patsearch" => views.html.tools.forms.patSearch(tel, PatSearch.inputForm.bind(resultFiles))
     }
   }
 
@@ -100,13 +104,20 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       views.html.jobs.result(vis, job)
     case "patsearch" =>
       val vis = Map(
-        "Results" -> views.html.visualization.alignment.blastvis(s"/files/${job.mainID.stringify}/result.out"))
+        "Results" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/patsearch_result"))
       views.html.jobs.result(vis, job)
     case "glprobs" =>
       val vis = Map(
         "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/glprobs_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/glprobs_aln"))
       views.html.jobs.result(vis, job)
+
+    case "clustalomega" =>
+      val vis = Map(
+        "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/clustalo_aln"),
+        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/clustalo_aln"))
+      views.html.jobs.result(vis, job)
+
     // Hmmer just provides a simple file viewer.
     case "hmmer3" => views.html.visualization.general.fileview(
       Array(s"/files/${job.mainID.stringify}/domtbl",
@@ -128,6 +139,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "clans" => Some(Clans.inputForm)
       case "patsearch" => Some(PatSearch.inputForm)
       case "glprobs" => Some(GLProbs.inputForm)
+      case "clustalomega" => Some(ClustalOmega.inputForm)
       case _ => None
     }
     toolForm
