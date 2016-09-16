@@ -5,6 +5,8 @@
 
 <style>
 
+
+
 .cm-s-reformat span.cm-string { font-weight: bold; color: red; }
 
 </style>
@@ -91,18 +93,18 @@
 
 // don't know why this does not work
 
-$('#tab1').onclick =function() {
-$('#submitJob').hide()
-$('#prepareJob').hide()
-$('#clearJobForm').hide()
-$('#jobPermission').hide()
+$('#tab1-label').onclick =function() {
+$('#submitJob').hide();
+$('#prepareJob').hide();
+$('#clearJobForm').hide();
+$('#jobPermission').hide();
 };
 
-$('#tab2').onclick =function() {
-$('#submitJob').show()
-$('#prepareJob').show()
-$('#clearJobForm').show()
-$('#jobPermission').show()
+$('#tab2-label').onclick =function() {
+$('#submitJob').show();
+$('#prepareJob').show();
+$('#clearJobForm').show();
+$('#jobPermission').show();
 };
 
 
@@ -142,7 +144,6 @@ $('#jobPermission').show()
             myCodeMirror2.setValue(result);
 
         }
-        $(document).foundation();
 
 
     // forwarding
