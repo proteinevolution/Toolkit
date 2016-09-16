@@ -68,7 +68,6 @@ lazy val root = (project in file("."))
       "org.webjars.bower" % "jquery.lazyload" % jqueryLazyloadVersion,
       "org.webjars" % "jquery-ui" % jqueryUIVersion,
       "org.webjars" % "foundation" % foundationVersion,
-      "org.webjars" % "modernizr" % "2.8.3",
       "org.webjars.bower" % "fastclick" % "1.0.6",
       "org.webjars.npm" % "mithril" % mithrilVersion,
       "org.webjars.bower" % "d3" % d3Version,

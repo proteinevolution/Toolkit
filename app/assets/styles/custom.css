@@ -652,10 +652,6 @@ textarea#alignment {width: 500px; height: 280px;}
     margin-right: -1px;
 }
 
-
-
-
-
 /*Login Widget*/
 #auth-link {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
@@ -669,3 +665,8 @@ textarea#alignment {width: 500px; height: 280px;}
     background-origin: padding-box;
     background-size: auto auto;
 }
+
+[data-accordion-menu] ul {
+    display: none;
+}
+
