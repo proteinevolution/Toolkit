@@ -5,12 +5,6 @@
 
  */
 
-
-
-
-
-
-
 function getGIs(fastaText){
 
     var splittedStrings = fastaText.split(">"),
@@ -44,8 +38,6 @@ function getAccessionversion(json){
     return result;
 }
 
-
-
 function chunkString(str, len) {
     var _size = Math.ceil(str.length/len),
         _ret  = new Array(_size),
@@ -58,26 +50,6 @@ function chunkString(str, len) {
     }
 
     return _ret;
-}
-
-
-
-function clustal2Fasta(text) {
-
-    var clustalObj = clustalParser(text),
-        result = [];
-
-
-    for(var i=0;i<clustalObj.length;i++){
-        result +=">";
-        result += clustalObj[i].untrimmed;
-        result += "\n";
-        result += clustalObj[i].seq;
-        result += "\n";
-    }
-
-    return result;
-
 }
 
 
@@ -411,114 +383,9 @@ function aminoCount(seq) {
     return uni;
 }
 
-/* transform fasta sequences to lowercase and returns parsed json object */
-
-function fastaToLowerCase(fas) {
-
-    var fastaObj = readFastaText(fas);
-    for (var i = 0; i<fastaObj.length; i++) {
-        fastaObj[i].seq = fastaObj[i].seq.toLowerCase();
-    }
-    return fastaObj;
-
-}
-
-
-/* transform fasta sequences to uppercase and returns parsed json object */
-
-function fastaToUpperCase(fas) {
-
-    var fastaObj = readFastaText(fas);
-    for (var i = 0; i<fastaObj.length; i++) {
-        fastaObj[i].seq = fastaObj[i].seq.toUpperCase();
-    }
-    return fastaObj;
-
-}
-
-/* transform clustal sequences to lowercase and returns parsed json object */
-
-function clustalToLowerCase(clu) {
-
-    var clustalObj = clustalParser(clu);
-    for (var i = 0; i<clustalObj.length; i++) {
-        clustalObj[i].seq = clustalObj[i].seq.toLowerCase();
-    }
-    return clustalObj;
-}
-
-
-/* transform clustal sequences to uppercase and returns parsed json object */
-
-function clustalToUpperCase(clu) {
-
-    var clustalObj = clustalParser(clu);
-    for (var i = 0; i<clustalObj.length; i++) {
-        clustalObj[i].seq = clustalObj[i].seq.toUpperCase();
-    }
-    return clustalObj;
-}
-
-
 function conservation(aln) {
 
     //TODO: compute the conservation for an alignment
-
-}
-
-
-function getNumberOfFastaSeqs(fas) {
-    var fastaObj = readFastaText(fas);
-    return fastaObj.length;
-}
-
-
-function getNumberOfClustalSeqs(clustal) {
-
-    var clustalObj = clustalParser(clustal);
-    return clustalObj.length;
-
-}
-
-function validateClustalUpperCase(clu){
-
-    var clustalObj = clustalParser(clu);
-    for (var i = 0; i<clustalObj.length; i++) {
-        if((/[a-z]/.test(clustalObj[i].seq)))
-            return false;
-    }
-    return true;
-
-}
-
-function validateClustalLowerCase(clu){
-
-    var clustalObj = clustalParser(clu);
-    for (var i = 0; i<clustalObj.length; i++) {
-        if((/[A-Z]/.test(clustalObj[i].seq)))
-            return false;
-    }
-    return true;
-}
-
-function validateFastaUpperCase(fas){
-
-    var fastaObj = readFastaText(fas);
-    for (var i = 0; i<fastaObj.length; i++) {
-        if((/[a-z]/.test(fastaObj[i].seq)))
-            return false;
-    }
-    return true;
-}
-
-function validateFastaLowerCase(fas){
-
-    var fastaObj = readFastaText(fas);
-    for (var i = 0; i<fastaObj.length; i++) {
-        if((/[A-Z]/.test(fastaObj[i].seq)))
-            return false;
-    }
-    return true;
 
 }
 
