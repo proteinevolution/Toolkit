@@ -1392,16 +1392,13 @@ function json2genbank(json){
 }
 function searchRegex(text, regex, flag) {
 
-    return new Promise(function(resolve, reject){
         if (!text) {
-            reject("");
+            return null;
         }
         if (regex == "") {
-            reject("");
+            return null;
         }
-
         var result = [], matches, split, reg, beginHit, endHit, tmp, lastBeginHit, lastEndHit;
-        console.log("matches" + regex)
         split = text.split('\n');
         // remove empty lines
 
@@ -1435,10 +1432,10 @@ function searchRegex(text, regex, flag) {
                 }
             }
 
-            resolve(result);
+            return result;
         }
-        reject("");
-    });
+        return null;
+
 }
 
 function typeOfSequence(json) {
