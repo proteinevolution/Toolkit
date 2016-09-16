@@ -6,5 +6,5 @@ perl %BIOPROGS/helpers/search.pl \
                     -i  '%inputpattern.content' \
                     -d %standarddb.content \
                     -o results/patsearch_result \
-                    %type \
+                    -%type.content \
                      > report_patsearch

@@ -76,6 +76,7 @@
 
 
 
+
 <script src="@routes.Assets.at("javascripts/reformat.js")" type="text/javascript"></script>
 <script src="@routes.Assets.at("scripts/validation.js")"></script>
 <script src='@routes.Assets.at("javascripts/sampleseqs.js")' type="text/javascript" ></script>
@@ -129,8 +130,6 @@ $('#jobPermission').show()
         myCodeMirror2.setSize("100%", 300);
 
 
-
-
         function search() {
 
 
@@ -138,54 +137,9 @@ $('#jobPermission').show()
             var flag = document.getElementById("flag").value;
             var text = myCodeMirror.getValue();
             myCodeMirror2.setValue('');
-            var p1 = new Promise(function(resolve, reject){
-                if (!text) {
-                    reject();
-                }
-                if (regex == "") {
-                    reject();
-                }
-                var result = [], matches, split, reg, beginHit, endHit, tmp, lastBeginHit, lastEndHit;
-                split = text.split('\n');
-                // remove empty lines
 
-                split = split.filter(Boolean);
-
-                reg = new RegExp(regex, flag);
-                if (reg != null) {
-
-                    for (var i = 0; i < split.length; i++) {
-
-                        if (split[i].match(reg) != null) {
-                            beginHit = -2;
-                            endHit = -2;
-
-                            result += i + '\t\t\t';
-                            matches = split[i].match(reg);
-
-                            tmp = split[i];
-                            lastBeginHit = 0;
-                            lastEndHit = 0;
-                            for (var j = 0; j < matches.length; j++) {
-                                beginHit = tmp.indexOf(matches[j], endHit + 2);
-                                endHit = tmp.indexOf(matches[j], endHit + 2) + matches[j].length - 1;
-                                tmp = tmp.substring(0, beginHit) + '\'' + tmp.match(reg)[j] + '\'' + tmp.substring(endHit + 1);
-                                lastBeginHit = beginHit;
-                                lastEndHit = endHit;
-                            }
-                            result += tmp;
-                            result += '\n';
-
-                        }
-                    }
-                   resolve(result);
-                }
-            });
-
-            p1.then(function(result) {
-                myCodeMirror2.setValue(result);
-            });
-
+            var result = searchRegex(text, regex, flag);
+            myCodeMirror2.setValue(result);
 
         }
         $(document).foundation();
