@@ -4,10 +4,6 @@ div#content {
     background-color: rgb(238, 238, 238) !important;
 }
 
-.sidebar {
-
-    display: none;
-}
 
 .CodeMirror pre {
 
@@ -56,4 +52,27 @@ div#content {
 
 .vertical ul {
     background-color: transparent;
+}
+
+select#forwardTool {
+
+    height: 35px;
+    font-size: 0.75em;
+
+    border: 1px solid black;
+    box-shadow: 0 2px 1px 0 rgba(255,255,255,1);
+    background-color:#fff;
+    color:#333;
+
+}
+
+
+option#forwardTool {
+    background:#fff;
+    border-top:1px solid #444;
+    padding:.3em 1em .3em 1em;
+}
+
+[data-accordion-menu] ul {
+    display: none;
 }

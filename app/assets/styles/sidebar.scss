@@ -46,9 +46,10 @@ ul#jobs li {
 
 #magnifier {
   height: 2.75em;
-  background-color: #E8EAF6;
+  background-color: rgba(220,220,220,0.5);
   border: 1px solid lightgray;
   border-left: none;
+  color: white;
 
 }
 
@@ -74,10 +75,9 @@ ul#jobs li {
 }
 
 .job-button {
-  background-color: #E8EAF6 !important;
+  background-color: rgba(220,220,220,0.5) !important;
   width: 100%;
   border: solid 1px lightgray !important;
-  border-bottom: solid 1px grey !important;
   color: gray !important;
   font-size: 0.8em !important;
   margin-bottom: 0 !important;
@@ -104,10 +104,19 @@ ul#jobs li {
   width: 33.5%;
   padding-top: 1em;
   padding-bottom: 1em;
-  background-color: #5f5f5f;
-  color: #eeeeee;
+  background-color: rgba(220,220,220,0.5);
+  color: gray;
 
 }
+
+.job-handle div:hover {
+
+  background-color: #f2f2f2;
+
+
+}
+
+
 
 @-webkit-keyframes check {
   0% {
