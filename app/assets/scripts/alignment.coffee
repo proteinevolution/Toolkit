@@ -16,14 +16,61 @@
   # Makes AJAX call to the file on server
   $.get(pathToFastaFile, (content) ->
 
-    $('#' + tabid ).append content
+    lines = content.split "\>"
+    seq = ""
+    counter = 0
+    seqlines = 0
+    firstHeader = true
+
+
+    for line in lines
+
+        line = ">" + line
+
+        if line != '>'
+          $('#' + tabid).first().append("<tr><td><pre>#{line}</pre></td></tr>")
+
+
+
+
+    ###
+        #find out how many lines per sequence incl. header
+        for line in lines
+
+          if line.startsWith(">") and firstHeader == false
+            break
+
+          else
+            firstHeader = false
+            seqlines++
+
+
+
+        #append sequence incl. header to one table row for better visualization
+        for line in lines
+
+          if counter < seqlines
+            seq = seq + line + "\n"
+            counter++
+
+          else
+            $('#' + tabid).first().append("<tr><td><pre>#{seq}</pre></td></tr>")
+
+            seq = line
+            counter = 1
+
+    ###
 
   )
 
+
+
 @simple = (tabid, statid, pathToAlignmentFile) ->
+
 
   # Makes AJAX call to the file on server
   $.get(pathToAlignmentFile, (content) ->
+
 
     # Counts the number of sequences
     counter = 0
