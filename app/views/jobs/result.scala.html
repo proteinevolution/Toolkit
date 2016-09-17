@@ -1,9 +1,40 @@
 @import models.database.Job
 @(visualizations : Map[String, Html], job : Job)(implicit messages: Messages, request: RequestHeader)
 
-<a href="jobs/@{job.mainID.stringify}">Share Link</a> - <a onClick="addJob('@{job.mainID.stringify}')">Add</a>
 
-<div>
+
+
+<style>
+
+#tabs-content {
+    background-color: white;
+    -webkit-box-shadow: 3px 3px 5px 0px lightgray;
+    -moz-box-shadow: 3px 3px 5px 0px lightgray;
+    box-shadow: 3px 3px 5px 0px lightgray;
+    border: none;
+
+}
+
+
+#result-nav {
+    width: 100%;
+    display: flex;
+
+
+}
+
+#result-nav-buttons {
+    font-size: 0.8em;
+    display: flex;
+    margin-left: 36em;
+}
+
+
+
+
+</style>
+
+<div id="result-nav">
     <ul class="tabs" data-tabs id="example-tabs">
         @for(key <- visualizations.keys) {
 
@@ -11,13 +42,28 @@
         }
     <li class="tabs-title"><a href="#toolkit-forward-panel" aria-selected="true">Child Job</a></li>
     </ul>
+
+    <div id="result-nav-buttons">
+        <div style="padding-right: 2em;">
+        @helpmodals.modal(job.tool)
+        </div>
+
+        <div>
+            <a href="jobs/@{job.mainID.stringify}">Share Result - </a>
+            <a onClick="addJob('@{job.mainID.stringify}')">Add</a>
+        </div>
+    </div>
+
 </div>
 
 
-@helpmodals.modal(job.tool)
 
-<br />
-<div class="tabs-content" data-tabs-content="example-tabs">
+
+
+
+
+
+<div class="tabs-content" data-tabs-content="example-tabs" id="tabs-content">
 @for((key, value) <- visualizations) {
 
     <div class="tabs-panel" id="@key">
