@@ -87,13 +87,18 @@ jobs.view = ->
       )
 
       m('div', id: 'job_id', {style: {width: '33.5%', align: 'center'}}, m('a[href="/#/jobs/' + task.mainID() + '"]', task.job_id())),
-      m('div', id: 'tool_name', {class: task.toolname()}, {style: {width: '33.5%', align: "center",}}, m('span', task.toolname().substr(0,4))),
+      m('div', id: 'tool_name', {class: task.toolname()}, {style: {width: '33.5%', align: "center",}}, m('span[class=toolname]', task.toolname().substr(0,4))),
 
     ]
   ) ]]
 
 
+
+
+
 m.mount(document.getElementById('jobtable'),  { controller: jobs.controller, view: jobs.view})
+
+
 
 
 

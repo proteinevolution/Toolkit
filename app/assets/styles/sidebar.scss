@@ -85,6 +85,7 @@ ul#jobs li {
 
 .job-button div {
   width: 33.5%;
+  height: 100%;
 
 }
 
@@ -101,7 +102,7 @@ ul#jobs li {
 }
 
 .job-handle div {
-  width: 33.5%;
+  width: 50%;
   padding-top: 1em;
   padding-bottom: 1em;
   background-color: rgba(220,220,220,0.5);
@@ -220,7 +221,8 @@ ul#jobs li {
   display: block;
   position: absolute;
   height: 17px;
-  top: 12px;
+  top: 8px;
+  left: 7px;
   width: 10px;
 }
 .checkbox label:hover:after, .checkbox-alt label:hover:after {
