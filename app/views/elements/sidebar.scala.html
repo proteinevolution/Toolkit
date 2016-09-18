@@ -24,14 +24,13 @@
         -->
 
         <div class="button job-handle" style="display: flex;">
-            <div style=" border-right: 1px solid lightgray;" class="check" >All</div>
-            <div style=" border-right: 1px solid lightgray;" onclick="deleteIDs();">Delete</div>
-            <div onclick="clearIDs();">Clear</div>
+            <div style=" border-right: 1px solid lightgray;" onclick="deleteIDs();" data-tooltip title="Delete selected jobs from database">Delete</div>
+            <div onclick="clearIDs();" data-tooltip title="Clear selected jobs from joblist">Clear</div>
 
         </div>
 
         <div class="button job-button" style="display: flex;">
-            <div>Select</div>
+            <div class="check" style="padding-right: 1em;">All</div>
             <div>ID</div>
             <div>Tool</div>
         </div>
@@ -47,6 +46,8 @@
 
 
     <script type="text/javascript">
+
+
         function deleteIDs(){
 
             var IDs = $('input:checked').map(function(){
