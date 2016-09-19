@@ -57,6 +57,6 @@ if (currentVal == "acc" && validateFasta(document.getElementById("sequences").va
 document.getElementById("reformatOutput").value = getAccessionversion(fasta2json(document.getElementById("sequences").value));
 }
 }
-document.getElementById("alignment").value = localStorage.getItem("resultcookie");
+document.getElementById("sequences").value = localStorage.getItem("resultcookie");
 localStorage.removeItem("resultcookie");
 </script>
