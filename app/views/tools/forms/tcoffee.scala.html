@@ -16,3 +16,7 @@
 @helper.checkbox(field = inputForm("mfast_pair"), '_showConstraints -> false)
 @helper.checkbox(field = inputForm("mslow_pair"), '_showConstraints -> false)
 -->
+    <script>
+    document.getElementById("sequences").value = localStorage.getItem("resultcookie");
+    localStorage.removeItem("resultcookie");
+    </script>
