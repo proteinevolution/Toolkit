@@ -676,3 +676,7 @@ textarea#alignment {width: 500px; height: 280px;}
     display: none;
 }
 
+#resultmeta {
+
+    font-family: Monaco, Consolas, "Lucida Console", monospace; font-weight: bold; font-size: 0.75em; padding-left: 15px;
+}

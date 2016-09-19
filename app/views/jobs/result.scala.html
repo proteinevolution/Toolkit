@@ -1,6 +1,6 @@
 @import models.database.Job
 @(visualizations : Map[String, Html], job : Job)(implicit messages: Messages, request: RequestHeader)
-
+@import org.joda.time.format.DateTimeFormat
 
 
 
@@ -43,7 +43,7 @@ border-right: 1px solid lightgray;
 
 </style>
 <div class="columns large-10">
-        Results View: @job.tool.toUpperCase, @job.jobID, @job.dateCreated
+    <span id="resultmeta">@job.tool.toUpperCase RESULTS VIEW&nbsp;&nbsp; Job-ID: @job.jobID, Date: @job.dateCreated</span>
 </div>
 <div class="columns large-2">
 @helpmodals.modal(job.tool)
