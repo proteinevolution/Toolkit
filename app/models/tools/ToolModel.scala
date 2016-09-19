@@ -55,6 +55,27 @@ case object Clans extends ToolModel {
   )
 }
 
+  case object ClustalOmega extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "clustalomega"
+    val toolNameLong = "Clustal Omega"
+    val toolNameAbbreviation = "clo"
+    val section = "alignment"
+    val optional = ""
+
+
+    // --- Tcoffee specific values ---
+    // Returns the Input Form Definition of this tool
+    val inputForm = Form(
+      tuple(
+        "sequences" -> nonEmptyText,
+        "otheradvanced" -> text
+
+      )
+    )
+
+  }
 case object Csblast extends ToolModel {
 
   // --- Names for the Tool ---
@@ -85,7 +106,25 @@ case object Csblast extends ToolModel {
     "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   )
 }
+  case object GLProbs extends ToolModel {
 
+    // --- Names for the Tool ---
+    val toolNameShort = "glprobs"
+    val toolNameLong = "GLProbs"
+    val toolNameAbbreviation = "glp"
+    val section = "alignment"
+    val optional = ""
+
+
+    // --- Tcoffee specific values ---
+    // Returns the Input Form Definition of this tool
+    val inputForm = Form(
+      single(
+        "sequences" -> nonEmptyText
+      )
+    )
+
+  }
 case object HHblits extends ToolModel{
 
   // --- Names for the Tool ---
@@ -170,7 +209,33 @@ case object Hmmer3 extends ToolModel {
   )
 
 }
+  case object Kalign extends ToolModel {
 
+    // --- Names for the Tool ---
+    val toolNameShort = "kalign"
+    val toolNameLong = "Kalign"
+    val toolNameAbbreviation = "kal"
+    val section = "alignment"
+    val optional = ""
+
+
+    // --- PatSearch specific values ---
+    // Returns the Input Form Definition of this tool
+    val inputForm = Form(
+      tuple(
+        "sequences" -> nonEmptyText,
+        "outorder" -> text,
+        "gapopen" -> bigDecimal,
+        "gapextension" -> bigDecimal,
+        "termgap" -> bigDecimal,
+        "bonusscore" -> bigDecimal
+      )
+    )fill(("","input", 11.0, 0.85, 0.45, 0.0))
+
+    val parameterValues = Map(
+      "outorder" -> Set("input","tree", "gaps")
+    )
+  }
 case object Mafft extends ToolModel {
 
   // --- Names for the Tool ---
@@ -190,7 +255,30 @@ case object Mafft extends ToolModel {
     )
   )fill(("",1.53,0.00))
 }
+  case object PatSearch extends ToolModel {
 
+    // --- Names for the Tool ---
+    val toolNameShort = "patsearch"
+    val toolNameLong = "PatSearch"
+    val toolNameAbbreviation = "pts"
+    val section = "search"
+    val optional = ""
+
+
+    // --- PatSearch specific values ---
+    // Returns the Input Form Definition of this tool
+    val inputForm = Form(
+      tuple(
+        "inputpattern" ->nonEmptyText,
+        "type" -> text,
+        "standarddb" -> text
+      )
+    )
+
+    val parameterValues = Map(
+      "type" -> Set("pro","reg")
+    )
+  }
 case object Psiblast extends ToolModel {
 
 
@@ -249,74 +337,16 @@ case object Tcoffee extends ToolModel {
   }
 
 
-  case object GLProbs extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "glprobs"
-    val toolNameLong = "GLProbs"
-    val toolNameAbbreviation = "glp"
-    val section = "alignment"
-    val optional = ""
 
 
-    // --- Tcoffee specific values ---
-    // Returns the Input Form Definition of this tool
-    val inputForm = Form(
-      single(
-        "sequences" -> nonEmptyText
-      )
-    )
-
-  }
 
 
-  case object PatSearch extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "patsearch"
-    val toolNameLong = "PatSearch"
-    val toolNameAbbreviation = "pts"
-    val section = "search"
-    val optional = ""
 
 
-    // --- PatSearch specific values ---
-    // Returns the Input Form Definition of this tool
-    val inputForm = Form(
-      tuple(
-        "inputpattern" ->nonEmptyText,
-        "type" -> text,
-        "standarddb" -> text
-      )
-    )
-
-    val parameterValues = Map(
-      "type" -> Set("pro","reg")
-    )
-  }
 
 
-  case object ClustalOmega extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "clustalomega"
-    val toolNameLong = "Clustal Omega"
-    val toolNameAbbreviation = "clo"
-    val section = "alignment"
-    val optional = ""
 
 
-    // --- Tcoffee specific values ---
-    // Returns the Input Form Definition of this tool
-    val inputForm = Form(
-      tuple(
-        "sequences" -> nonEmptyText,
-        "otheradvanced" -> text
-
-      )
-    )
-
-  }
 
 
 }
