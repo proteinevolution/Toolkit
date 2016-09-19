@@ -9,4 +9,5 @@ trap 'kill $(jobs -p)' EXIT
                                    -t %termgap.content \
                                    -m %bonusscore.content \
                                    -c %outorder.content \
+                                   -f fasta \
                                       > logs/status.log
