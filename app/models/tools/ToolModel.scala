@@ -233,7 +233,7 @@ case object Hmmer3 extends ToolModel {
     )fill(("","input", 11.0, 0.85, 0.45, 0.0))
 
     val parameterValues = Map(
-      "outorder" -> Set("input","tree", "gaps")
+      "outorder" -> Set("Input","Tree", "Gaps")
     )
   }
 case object Mafft extends ToolModel {
@@ -278,6 +278,27 @@ case object Mafft extends ToolModel {
     val parameterValues = Map(
       "type" -> Set("pro","reg")
     )
+  }
+
+  case object Muscle extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "muscle"
+    val toolNameLong = "MUSCLE"
+    val toolNameAbbreviation = "msc"
+    val section = "alignment"
+    val optional = ""
+
+    // --- MUSCLE specific values ---
+    // Returns the Input Form Definition of this tool
+    val inputForm = Form(
+      tuple(
+        "sequences" -> nonEmptyText,
+        "maxrounds" -> number,
+        "otheradvanced" -> text
+      )
+    )fill("",16,"")
+
   }
 case object Psiblast extends ToolModel {
 
