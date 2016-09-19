@@ -1,0 +1,14 @@
+@import play.api.mvc.RequestHeader
+@(Colored : String)(implicit messages: Messages, request: RequestHeader)
+@import scala.io.Source
+
+<table id="colored">
+
+</table>
+
+
+<script>
+tcoffeeColored("colored", '@Colored')
+</script>
+
+
