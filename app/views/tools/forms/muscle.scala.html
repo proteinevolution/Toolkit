@@ -1,0 +1,26 @@
+@import play.api.mvc.RequestHeader
+@import models.tools.ToolModel.Muscle
+@(inputForm: Form[(String, Int, String)])(implicit messages: Messages, request: RequestHeader)
+<script src='@routes.Assets.at("javascripts/sampleseqs.js")' type="text/javascript" ></script>
+@helper.textarea(field = inputForm("sequences"), args = 'rows -> 20, 'cols -> 50,
+    'placeholder -> "Enter sequences to be aligned in Multi-FASTA format",
+    '_label -> "",
+    'id -> "sequences", '_showConstraints -> false)
+
+<div class="example-alignment">
+    <a onClick="$('#submitbutton').prop('disabled', false);$('#sequences').val(muscle_example());$('#format').val('fas')">Paste example alignment</a>
+</div>
+
+@helper.inputText(field = inputForm("maxrounds"),
+    'placeholder -> "Maximum number of iterations", '_label -> "",
+    'id -> "maxrounds", '_showConstraints -> false)
+@helper.inputText(field = inputForm("otheradvanced"),
+    'placeholder -> "Other advanced options", '_label -> "",
+    'id -> "otheradvanced", '_showConstraints -> false)
+
+
+<script>
+            document.getElementById("sequences").value = localStorage.getItem("resultcookie");
+            localStorage.removeItem("resultcookie");
+
+   </script>
