@@ -90,10 +90,11 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     job.tool match {
 
     // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
-    case "tcoffee" =>
-      val vis = Map(
-        "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
-        "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"))
+      case "tcoffee" =>
+        val vis = Map(
+          "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+          "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
+          "Colored" -> views.html.visualization.alignment.tcoffee_extra(s"/files/${job.mainID.stringify}/sequences.score_html"))
       views.html.jobs.result(vis, job)
     case "mafft" =>
       val vis = Map(

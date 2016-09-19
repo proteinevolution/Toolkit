@@ -77,6 +77,8 @@
     noSeq = null
     headerseen = false
 
+
+
     for line in content.split "\n"
 
         # No of sequences in the alignment has been determined
@@ -102,6 +104,7 @@
   , 'text')
 
 
+
 @blastOutput = (tabid, statid, pathToBlastOutput) ->
 
     # Makes AJAX call to the file on server
@@ -110,6 +113,15 @@
     $('#' + tabid ).append content
 
    )
+
+@tcoffeeColored = (tabid, Colored) ->
+
+  # Makes AJAX call to the file on server
+  $.get(Colored, (content) ->
+
+    $('#' + tabid ).prepend content
+
+  )
 
 
 

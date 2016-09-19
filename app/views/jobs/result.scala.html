@@ -7,33 +7,33 @@
 <style>
 
 #tabs-content {
-    background-color: white;
-    -webkit-box-shadow: 3px 3px 5px 0px lightgray;
-    -moz-box-shadow: 3px 3px 5px 0px lightgray;
-    box-shadow: 3px 3px 5px 0px lightgray;
-    border: none;
+background-color: white;
+-webkit-box-shadow: 3px 3px 5px 0px lightgray;
+-moz-box-shadow: 3px 3px 5px 0px lightgray;
+box-shadow: 3px 3px 5px 0px lightgray;
+border: none;
 
 }
 
 
 #result-nav {
-    width: 100%;
-    display: flex;
+width: 100%;
+display: flex;
 
 
 }
 
 #result-nav-buttons {
-    font-size: 0.8em;
-    display: flex;
-    margin-left: 36em;
+font-size: 0.8em;
+display: flex;
+float: right;
 }
 
 #example-tabs {
-    border-bottom: solid 2px #2E8C81;
-    border-top: 1px solid lightgray;
-    border-left: 1px solid lightgray;
-    border-right: 1px solid lightgray;
+border-bottom: 1px solid lightgray;
+border-top: 1px solid lightgray;
+border-left: 1px solid lightgray;
+border-right: 1px solid lightgray;
 
 }
 
@@ -42,26 +42,26 @@
 
 
 </style>
-
+<div class="columns large-10">
+        Results View: @job.tool.toUpperCase, @job.jobID, @job.dateCreated
+</div>
+<div class="columns large-2">
+@helpmodals.modal(job.tool)
+</div>
 <div id="result-nav">
-    <ul class="tabs" data-tabs id="example-tabs">
-        @for(key <- visualizations.keys) {
 
-            <li class="tabs-title"><a href="#@key" aria-selected="true">@key</a></li>
-        }
-    <li class="tabs-title"><a href="#toolkit-forward-panel" aria-selected="true">Child Job</a></li>
-    </ul>
+    <div class="columns large-12">
+        <ul class="tabs" data-tabs id="example-tabs">
+            @for(key <- visualizations.keys) {
 
-    <div id="result-nav-buttons">
-        <div style="padding-right: 2em;">
-        @helpmodals.modal(job.tool)
-        </div>
-
-        <div>
-            <a href="jobs/@{job.mainID.stringify}">Share Result - </a>
-            <a onClick="addJob('@{job.mainID.stringify}')">Add</a>
-        </div>
+                <li class="tabs-title"><a href="#@key" aria-selected="true">@key</a></li>
+            }
+        <li class="tabs-title"><a href="#toolkit-forward-panel" aria-selected="true">Child Job</a></li>
+        <li class="tabs-title" style="float: right;"><a onClick="addJob('@{job.mainID.stringify}')">Add</a></li>
+        <li class="tabs-title" style="float: right;"><a href="jobs/@{job.mainID.stringify}">Share Result - </a></li>
+        </ul>
     </div>
+
 
 </div>
 
@@ -73,15 +73,15 @@
 
 
 <div class="tabs-content" data-tabs-content="example-tabs" id="tabs-content">
-@for((key, value) <- visualizations) {
+    @for((key, value) <- visualizations) {
 
-    <div class="tabs-panel" id="@key">
+        <div class="tabs-panel" id="@key">
         @value
-    </div>
-}
+        </div>
+    }
 
 
 <div class="tabs-panel" id="toolkit-forward-panel">
-    @jobs.forward(job)
+@jobs.forward(job)
 </div>
 </div>
