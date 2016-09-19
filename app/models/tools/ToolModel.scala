@@ -255,6 +255,27 @@ case object Mafft extends ToolModel {
     )
   )fill(("",1.53,0.00))
 }
+
+  case object Muscle extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "muscle"
+    val toolNameLong = "MUSCLE"
+    val toolNameAbbreviation = "msc"
+    val section = "alignment"
+    val optional = ""
+
+    // --- MUSCLE specific values ---
+    // Returns the Input Form Definition of this tool
+    val inputForm = Form(
+      tuple(
+        "sequences" -> nonEmptyText,
+        "maxrounds" -> number,
+        "otheradvanced" -> text
+      )
+    )fill("",16,"")
+
+  }
   case object PatSearch extends ToolModel {
 
     // --- Names for the Tool ---
@@ -280,26 +301,30 @@ case object Mafft extends ToolModel {
     )
   }
 
-  case object Muscle extends ToolModel {
+  case object ProbCons extends ToolModel {
 
     // --- Names for the Tool ---
-    val toolNameShort = "muscle"
-    val toolNameLong = "MUSCLE"
-    val toolNameAbbreviation = "msc"
+    val toolNameShort = "probcons"
+    val toolNameLong = "ProbCons"
+    val toolNameAbbreviation = "pcns"
     val section = "alignment"
     val optional = ""
 
-    // --- MUSCLE specific values ---
+
+    // --- Tcoffee specific values ---
     // Returns the Input Form Definition of this tool
     val inputForm = Form(
       tuple(
         "sequences" -> nonEmptyText,
-        "maxrounds" -> number,
+        "consistency" -> number,
+        "itrefine" -> number,
+        "pretrain" -> number,
         "otheradvanced" -> text
       )
-    )fill("",16,"")
+    )fill("", 2, 100, 0, "")
 
   }
+
 case object Psiblast extends ToolModel {
 
 
