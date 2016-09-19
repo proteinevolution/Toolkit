@@ -147,8 +147,9 @@ $('#jobPermission').show();
 
 
     // forwarding
-
+    if(localStorage.getItem("resultcookie") != null){
     myCodeMirror.setValue(localStorage.getItem("resultcookie"));
     localStorage.removeItem("resultcookie");
+    }
 
 </script>
