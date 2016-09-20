@@ -21,10 +21,12 @@
 </div>
 @if(jobOption.isEmpty) {
     <!-- This is a new Job submission -->
+    <div id="submitbuttons">
     <input class="secondary button small" id="submitJob"     type="button" value="Submit Job" />
     <input class="secondary button small" id="prepareJob"    type="button" value="Prepare Job" />
     <input class="secondary button small" id="clearJobForm"  type="button" value="Clear form" />
     <input class="secondary button small" id="jobPermission" type="button" value="Permissions" />
+    </div>
     <div id="jobPermissionDiv" style="display: none;">
         <label for="jobID">Job Name</label>
         <input class="input"    type="text"     id="jobID"   name="jobID"   placeholder="Custom Job Name" style="width: 420px" />
