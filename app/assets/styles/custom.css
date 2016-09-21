@@ -488,23 +488,10 @@ hr {
     border-radius: 4px;
     -webkit-animation: background 10s cubic-bezier(1,0,0,1) infinite;
     animation: background 10s cubic-bezier(1,0,0,1) infinite;
-}
-
-
-@-webkit-keyframes background {
-    0% { background: #ff0000; box-shadow: 0 0 10px #d2071d ; }
-    33% { background: #ffff00; box-shadow: 0 0 10px #ffce27 ; }
-    66% { background: green; box-shadow: 0 0 10px darkgreen ; }
-    100% { display: none; }
 
 }
 
-@keyframes background {
-    0% { background: #ff0000; box-shadow: 0 0 10px #d2071d ; }
-    33% { background: #ffff00; box-shadow: 0 0 10px #ffce27 ; }
-    66% { background: green; box-shadow: 0 0 10px darkgreen ; }
-    100% { display: none; }
-}
+
 
 :focus {
     outline: 0;
