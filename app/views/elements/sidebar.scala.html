@@ -31,8 +31,8 @@
 
         <div class="button job-button" style="display: flex;">
             <div class="check" style="padding-right: 1em;">All</div>
-            <div>ID</div>
-            <div>Tool</div>
+            <div class="idsort">ID</div>
+            <div class="toolsort">Tool</div>
         </div>
 
 
@@ -46,6 +46,27 @@
 
 
     <script type="text/javascript">
+
+        var $divs = $("div.job");
+
+        $('.toolsort').on('click', function () {
+            console.log(JSON.stringify(jobs.vm.list));
+            m.startComputation();
+            jobs.vm.alphaSort();
+            m.endComputation();
+
+            console.log(JSON.stringify(jobs.vm.list));
+        });
+
+
+        $('.idsort').on('click', function () {
+            console.log(JSON.stringify(jobs.vm.list));
+            m.startComputation();
+            jobs.vm.numericSort();
+            m.endComputation();
+        });
+
+
 
 
         function deleteIDs(){
