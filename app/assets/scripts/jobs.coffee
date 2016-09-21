@@ -1,3 +1,23 @@
+sortObjectsArray = (objectsArray, sortKey) ->
+  # Quick Sort:
+  retVal = undefined
+  if 1 < objectsArray.length
+    pivotIndex = Math.floor((objectsArray.length - 1) / 2)
+    # middle index
+    pivotItem = objectsArray[pivotIndex]
+    # value in the middle index
+    less = []
+    more = []
+    objectsArray.splice pivotIndex, 1
+    # remove the item in the pivot position
+    objectsArray.forEach (value, index, array) ->
+      if value[sortKey] <= pivotItem[sortKey] then less.push(value) else more.push(value)
+      return
+    retVal = sortObjectsArray(less, sortKey).concat([ pivotItem ], sortObjectsArray(more, sortKey))
+  else
+    retVal = objectsArray
+  retVal
+
 
 
 @a = ['0', 'p', 'q', 'r', 'e', 'd','i']
@@ -59,14 +79,23 @@ jobs.vm = do ->
       vm.list.push(updatedJob)
       m.redraw()
 
+
     # Update the joblist
     vm.updateList = (jobList) ->
+
       m.startComputation()
-      vm.list = new (jobs.JobList)
       for job in jobList
         vm.update(job)
-        m.redraw.strategy("all")
       m.endComputation()
+
+
+    # Sort by toolname // TODO the sorting algorithm works (tested it with the same JSON data in a plain html file), the sorting here does not stabilize, though
+    vm.alphaSort = () ->
+      vm.list = sortObjectsArray(vm.list, 'toolname')
+
+    # Sort by job id
+    vm.numericSort = () ->
+      vm.list = sortObjectsArray(vm.list, 'job_id')
 
   vm
 #the controller defines what part of the model is relevant for the current page
