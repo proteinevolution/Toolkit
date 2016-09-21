@@ -97,6 +97,19 @@ jobs.vm = do ->
     vm.numericSort = () ->
       vm.list = sortObjectsArray(vm.list, 'job_id')
 
+      
+    vm.jobOverview = () ->
+
+      jsonString = JSON.stringify(vm.list)
+      if jsonString.indexOf('\"state\":3') > -1
+        return 'running'
+      else if jsonString.indexOf('\"state\":4') > -1
+        return 'error'
+      else if jsonString.indexOf('\"state\":5') > -1
+        return 'done'
+      else
+        return 'other'
+
   vm
 #the controller defines what part of the model is relevant for the current page
 #in our case, there's only one view-model that handles everything
