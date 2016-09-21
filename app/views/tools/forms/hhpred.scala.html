@@ -18,17 +18,20 @@
 <div class="tool-tabs" id="tool-tabs">
     <ul>
         <li><a href="#tool-tabs-1">Paste Alignment</a></li>
-        <li><a href="#tool-tabs-2">Upload File</a></li>
-        <li><a href="#tool-tabs-3">Parameter</a></li>
+        <li id="tab2"><a href="#tool-tabs-2">Upload File</a></li>
+        <li id="tab2"><a href="#tool-tabs-3">Parameter</a></li>
+        <span style="float: right; padding: 0.35em 1em 0 0";>HHpred</span>
     </ul>
+
     <div class="tabs-panel" id="tool-tabs-1">
-    @helper.textarea(field = inputForm("alignment"), args = 'rows -> 20, 'cols -> 50,
+    @helper.textarea(field = inputForm("alignment"), args = 'rows -> 10, 'cols -> 70,
         '_label -> "",
         'placeholder -> "Enter multiple sequence alignment",
         'id -> "alignment", '_showConstraints -> false)
 
-        <a onClick="$('#submitbutton').prop('disabled', false);$('#alignment').val(hhpred_example());$('#format').val('fas')">Paste example alignment</a>
-
+        <div id="past_example">
+            <a onClick="$('#submitbutton').prop('disabled', false);$('#alignment').val(hhpred_example());$('#format').val('fas')">Paste example alignment</a>
+        </div>
     </div>
     <div class="tabs-panel" id="tool-tabs-2">
 
@@ -49,6 +52,8 @@
             'class -> "forminput")
 
     </div>
+
+
 
 </div>
 
