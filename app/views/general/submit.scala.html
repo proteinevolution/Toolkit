@@ -13,12 +13,11 @@
       mainID   = null;
     }
 </script>
-<h3>@{if (jobOption.isDefined) s"$toolName: ${jobOption.get.jobID}" else s"$toolName: New Job"}</h3>
-<form class="jobForm">
+
+<form style="background-color: white;" class="jobForm">
 
         @toolFrame
 
-</div>
 @if(jobOption.isEmpty) {
     <!-- This is a new Job submission -->
     <div id="submitbuttons">
