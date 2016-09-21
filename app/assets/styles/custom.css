@@ -342,7 +342,7 @@ hr {
 }
 #auth-tabs .ui-widget-header {
     font-size: 0.7em;
-    background: transparent;
+    background: white;
     border: none;
     border-bottom: 1px solid #c0c0c0;
     -moz-border-radius: 0px;
@@ -350,28 +350,68 @@ hr {
     border-radius: 0px;
 }
 #auth-tabs .ui-tabs-nav .ui-state-default {
-    background: transparent;
+    background: white;
     border: none;
 }
 #auth-tabs .ui-tabs-nav .ui-state-active {
-    background: transparent;
+    background: white;
     border: none;
 }
 #auth-tabs .ui-tabs-nav .ui-state-default a {
-    color: #c0c0c0;
+    color: #888;
 }
 #auth-tabs .ui-tabs-nav .ui-state-active a {
-    color: #000000;
+    color: #888 !important;
+    font-size: 0.7em;
+}
+
+.ui-corner-top {
+    border-top-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+}
+
+.ui-state-default a {
+    font-size: 0.75em !important;
+}
+
+.ui-state-default {
+    background: #eee !important;
+    border: 1px solid #d3d3d3 !important;
+
+
+}
+
+.ui-state-active {
+    background: #e5e5e5 !important;
+    -webkit-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.55);
+    -moz-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.55);
+    box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.55);
+
+
+}
+
+.ui-state-active a:link {
+    color: #888;
+}
+
+.ui-state-default a:link {
+    color: #888;
 }
 
 #tool-tabs {
     background: transparent;
     border: none;
+    padding: 0;
+}
+
+#tab2 {
+    margin-left: -1px;
+
 }
 
 #auth-tabs .ui-widget-header {
     font-size: 0.7em;
-    background: transparent;
+    background: white;
     border: none;
     border-bottom: 1px solid #c0c0c0;
     -moz-border-radius: 0px;
@@ -386,21 +426,44 @@ hr {
     background: transparent url(images/arrow-up.png) no-repeat bottom center;
     border: none;
 }
-#auth-tabs .ui-tabs-nav .ui-state-default a {
-    color: #c0c0c0;
+
+.ui-widget-header {
+    background: #eee url("images/ui-bg_highlight-soft_75_cccccc_1x100.png") 50% 50% repeat-x;
+    background-color: white;
+    background-image: url("images/ui-bg_highlight-soft_75_cccccc_1x100.png");
+    background-repeat: repeat-x;
+    background-attachment: scroll;
+    background-position: 50% 50%;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-size: auto auto;
+    border: none;
+    margin-top: 0;
 }
-#auth-tabs .ui-tabs-nav .ui-state-active a {
-    color: #000000;
+
+
+.ui-widget-header li {
+    margin-top: 0;
 }
 
-
-
-
-.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+.ui-tabs-anchor {
     float: left;
     padding: .5em .5em;
     text-decoration: none;
 }
+
+.ui-tabs .ui-tabs-nav {
+    padding: 0 !important;
+}
+
+.ui-tabs .ui-tabs-nav li {
+    margin: 0;
+}
+
+.ui-tabs-panel {
+    padding: 1em !important;
+}
+
 
 .off-canvas {
     z-index: 99;
@@ -410,8 +473,6 @@ hr {
     position: relative;
     overflow: hidden;
 }
-
-
 
 
 .trafficbar {
@@ -453,7 +514,7 @@ textarea { resize:both; }
 
 #alnviz_ta { position: absolute; z-index: 1; }
 
-textarea#alignment {width: 500px; height: 280px;}
+
 
 #alnviz_ctl {
     position: relative;
@@ -496,21 +557,6 @@ textarea#alignment {width: 500px; height: 280px;}
     -moz-box-shadow: 1px 1px 5px 0px rgba(102,102,102,1);
     box-shadow: 1px 1px 5px 0px rgba(102,102,102,1);
 }
-
-.ui-widget-header {
-    background: #eee url("images/ui-bg_highlight-soft_75_cccccc_1x100.png") 50% 50% repeat-x;
-    background-color:#eee;
-    background-image: url("images/ui-bg_highlight-soft_75_cccccc_1x100.png");
-    background-repeat: repeat-x;
-    background-attachment: scroll;
-    background-position: 50% 50%;
-    background-clip: border-box;
-    background-origin: padding-box;
-    background-size: auto auto;
-    border: none;
-}
-
-
 
 
 
@@ -679,4 +725,40 @@ textarea#alignment {width: 500px; height: 280px;}
 #resultmeta {
 
     font-family: Monaco, Consolas, "Lucida Console", monospace; font-weight: bold; font-size: 0.75em; padding-left: 15px;
+}
+
+.jobForm {
+    -webkit-box-shadow: 3px 3px 5px 0px lightgray;
+    -moz-box-shadow: 3px 3px 5px 0px lightgray;
+    box-shadow: 3px 3px 5px 0px lightgray;
+}
+
+#submitbuttons {
+    padding-left: 1.15em;
+}
+
+#submitbuttons input {
+    background-color: #e5e5e5;
+    color: #666666;
+    border: 1px solid lightgrey;
+}
+
+#submitbuttons input:hover {
+    background-color: lightgrey;
+}
+
+#past_example {
+    font-size: 0.75em;
+
+}
+#past_example a {
+      background-color: #e5e5e5;
+      color: #666666;
+      padding: 0.5em 0.5em 0.5em 0.5em;
+      border: 1px solid lightgrey;
+   }
+
+#past_example a:hover {
+    background-color: lightgrey;
+
 }
