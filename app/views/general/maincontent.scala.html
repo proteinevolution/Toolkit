@@ -234,13 +234,12 @@ margin: 0;
         </div>
       <div class="trafficbar" id="trafficbar"></div>
 
-
-
   </div>
 
-
-
 </div>
+
+
+
 
 
 <div class="lazy-container">
@@ -283,33 +282,6 @@ margin: 0;
 
 
     <script>
-
-    $( document ).ready(function() {
-    // TODO somehow here the correct jobOverview state is not detectet when loading this view
-
-
-    if (jobs.vm.jobOverview() === 'running') {
-        $('#trafficbar').css({
-        'background': '#ffff00',
-        'box-shadow': '0 0 10px #ffce27'
-        });
-    } else if (jobs.vm.jobOverview() === 'error') {
-        $('#trafficbar').css({
-        'background': '#ff0000',
-        'box-shadow': '0 0 10px #d2071d'
-        });
-    } else if (jobs.vm.jobOverview() === 'done') {
-        $('#trafficbar').css({
-        'background': 'green',
-        'box-shadow': '0 0 10px darkgreen'
-        });
-    } else if (jobs.vm.jobOverview() === 'other') {
-        $('#trafficbar').css({
-        'background': 'transparent',
-        'box-shadow': '0 0 10px transparent'
-        });
-    }
-    });
 
 
     $("img.lazy").lazyload({
