@@ -1,0 +1,13 @@
+@import play.api.mvc.RequestHeader
+@(Blastviz : String)(implicit messages: Messages, request: RequestHeader)
+@import scala.io.Source
+
+<table id="blastviz">
+
+</table>
+<script src="@routes.Assets.at("javascripts/toolkit.js")" type="text/javascript"></script>
+<script>
+psiblastBlastviz("blastviz", '@Blastviz');
+</script>
+
+
