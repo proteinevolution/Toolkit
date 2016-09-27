@@ -98,9 +98,9 @@ jobs.vm = do ->
       vm.list = sortObjectsArray(vm.list, 'job_id')
 
       
-    vm.jobOverview = () ->
+    vm.getJobState = (receivedJob) ->
 
-      jsonString = JSON.stringify(vm.list)
+      jsonString = JSON.stringify(receivedJob)
       if jsonString.indexOf('\"state\":3') > -1
         return 'running'
       else if jsonString.indexOf('\"state\":4') > -1
