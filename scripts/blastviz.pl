@@ -282,8 +282,6 @@ my $domain_end = $qlen;
 # my $domain_start = scalar(@hits) ? $hits[0]->{"qbeg"} : 1;
 # my $domain_end = scalar(@hits) ? $hits[0]->{"qend"} : $qlen;
 print HTMLFILE "
-<HTML>
-<BODY>
 <style type='text/css'>
 div.slider {position: absolute; height:40px;}
 div.slider div.label {position:absolute; top: 0px; height:12px; width:30px; cursor:default;}
@@ -309,12 +307,10 @@ div.slider div.bar div.span {position:absolute; top:6px; height:6px; background-
 </div>
 </div>
 <script type='text/javascript'>domain_slider_show($qlen, $domain_start, $domain_end);
-test();
 </script>
 ";
-print HTMLFILE "<p><img src=$imgfile\ border=\"0\" alt=\"blasthits\" usemap=\"#blastmap\"></p>";
-print HTMLFILE "</BODY>
-</HTML>";
+print HTMLFILE "<p><img src=$imgfile border=\"0\" alt=\"blasthits\" usemap=\"#blastmap\"></p>";
+
 close(HTMLFILE);
 
 # write image to file
