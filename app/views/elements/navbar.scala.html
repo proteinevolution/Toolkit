@@ -19,17 +19,17 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "search") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
         }
         </ul>
     </div>
     <div class="tabs-panel" id="panel2">
         <ul id="toolsec">
-            <li><a id="alignment" href="/#/alnvizfrontend">AilgnmentViewer &nbsp;/</a></li>
+            <li><a id="alignment" href="/#/alnvizfrontend">AlignmentViewer</a></li>
         @for(tool <- Tool.tools){
             @if(tool.section == "alignment") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
         }
         </ul>
@@ -38,7 +38,7 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "seqanal") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
         }
         </ul>
@@ -47,7 +47,7 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "2ary") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
         }
         </ul>
@@ -56,7 +56,7 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "3ary" || tool.optional == "3ary") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
         }
         </ul>
@@ -65,20 +65,20 @@
         <ul id="toolsec">
         @for(tool <- Tool.tools){
             @if(tool.section == "classification") {
-                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
+                <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
         }
         </ul>
     </div>
     <div class="tabs-panel" id="panel7">
         <ul id="toolsec">
-            <li><a id="reformat" href="/#/extractIDs">ExtractIDs &nbsp;/</a></li>
+            <li><a id="reformat" href="/#/extractIDs">ExtractIDs</a></li>
             @for(tool <- Tool.tools){
                 @if(tool.section == "utils") {
-                    <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong &nbsp;/</a></li>
+                    <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
                 }
             }
-            <li><a id="reformat" href="/#/reformat">Reformat &nbsp;/</a></li>
+            <li><a id="reformat" href="/#/reformat">Reformat</a></li>
         </ul>
     </div>
 </div>
