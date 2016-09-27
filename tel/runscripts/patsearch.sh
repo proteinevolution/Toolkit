@@ -2,7 +2,7 @@
 
 trap 'kill $(jobs -p)' EXIT
 
-perl %BIOPROGS/helpers/search.pl \
+perl ../../scripts/search.pl \
                     -i  '%inputpattern.content' \
                     -d %standarddb.content \
                     -o results/patsearch_result \

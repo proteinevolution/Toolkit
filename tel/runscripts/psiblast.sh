@@ -15,7 +15,15 @@ trap 'kill $(jobs -p)' EXIT
                                             -out results/out.psiblastp \
                                             -outfmt 0 \
                                             -html\
-                                            -out_pssm results/out.ksf 
+                                            -out_pssm results/out.ksf
+
+
+# create HTML and PNG for blastviz visualisation
+perl ../../scripts/blastviz.pl results/out.psiblastp blastviz results >> logs/blastviz.log
+
+# extract alignment from
+perl ../../alignhits_html.pl results/out.psiblastp -e out.align -Q out.fasta %evalue.content -fas -no_link -blastplus
+
 # Produce some extra files:
 < results/out.psiblastp grep Expect | awk '{ print $8; }' | sed 's/,$//' > results/evalues.dat
 
