@@ -124,6 +124,14 @@
   )
 
 
+@psiblastBlastviz = (tabid, Blastviz) ->
+
+# Makes AJAX call to the file on server
+  $.get(Blastviz, (content) ->
+    $('#' + tabid ).prepend content
+  )
+
+
 
 
 
