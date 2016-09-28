@@ -105,8 +105,8 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       views.html.jobs.result(vis, job)
     case "psiblast" =>
       val vis = Map(
-        "Results" -> views.html.visualization.alignment.blastvis(s"/files/${job.mainID.stringify}/out.psiblastp"),
-        "Blastviz" -> views.html.visualization.alignment.blastviz_extra(s"/files/${job.mainID.stringify}/blastviz.html"),
+        "Results" -> views.html.visualization.alignment.blastviz_extra(s"/files/${job.mainID.stringify}/"),
+        "Alignment" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/out.align"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
         "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
       views.html.jobs.result(vis, job)
