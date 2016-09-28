@@ -1,34 +1,44 @@
 @import play.api.mvc.RequestHeader
 @(pathToFastaFile : String)(implicit messages: Messages, request: RequestHeader)
+<script src="@routes.Assets.at("javascripts/toolkit.js")"></script>
 
 <style>
-
 #fasta tr {
-
     background-color: white;
-
 }
-
-
 #fasta tr:hover {
     background-color: #ececec;
 }
-
-
 </style>
 
 
-<table id="fasta" class="hover alignment">
 
+
+<div style="height: 40em;overflow:auto;">
+    <button onclick="selectAll()">Select All</button>
+<table id="fasta" class="hover alignment">
 </table>
+</div>
+
 
 
 <table id="alignstats">
-
 </table>
 
 
 
 <script>
 fastaSimple("fasta", "alignstats", '@pathToFastaFile')
+
+function selectAll() {
+$('input:checkbox.hits').each(function () {
+            var checked = !$(this).data('checked');
+            $('input:checkbox.hits').prop('checked', checked);
+            $(this).val(checked ? 'uncheck all' : 'check all' )
+            $(this).data('checked', checked);
+  });
+}
+
+
+
 </script>

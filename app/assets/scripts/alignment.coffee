@@ -24,7 +24,7 @@
         line = ">" + line
 
         if line != '>'
-          $('#' + tabid).first().append("<tr><td><input style='margin: 5px; padding: 5px;'  type='checkbox' checked='checked' name='hits[]' value=#{index})></td><td><pre>#{line}</pre></td></tr>")
+          $('#' + tabid).first().append("<tr><td><input style='margin: 0px; padding: 0px;'  type='checkbox' checked='checked' class='hits' value=#{index})></td><td><pre>#{line}</pre></td></tr>")
 
 
 
@@ -104,7 +104,7 @@
 @blastOutput = (tabid, statid, pathToBlastOutput) ->
 
     # Makes AJAX call to the file on server
-  $.get(pathToBlastOutput, (content) ->
+  $.get(pathToBlastOutput+"out.psiblastp", (content) ->
 
     $('#' + tabid ).append content
 
@@ -123,7 +123,7 @@
 @psiblastBlastviz = (tabid, Blastviz) ->
 
 # Makes AJAX call to the file on server
-  $.get(Blastviz, (content) ->
+  $.get(Blastviz+"blastviz.html", (content) ->
 
     $('#' + tabid ).prepend content
 
