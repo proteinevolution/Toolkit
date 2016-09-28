@@ -376,26 +376,29 @@ hr {
 
 .ui-state-default {
     background: #eee !important;
-    border: 1px solid #d3d3d3 !important;
+    border: none !important;
+    height: 2.5em;
+
 
 
 }
 
 .ui-state-active {
     background: #e5e5e5 !important;
-    -webkit-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.55);
-    -moz-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.55);
-    box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.55);
+
 
 
 }
 
 .ui-state-active a:link {
     color: #888;
+    margin-top: 0.5em;
+
 }
 
 .ui-state-default a:link {
     color: #888;
+    margin-top: 0.5em;
 }
 
 #tool-tabs {
@@ -428,8 +431,8 @@ hr {
 }
 
 .ui-widget-header {
-    background: #eee url("images/ui-bg_highlight-soft_75_cccccc_1x100.png") 50% 50% repeat-x;
-    background-color: white;
+    background: #888 url("images/ui-bg_highlight-soft_75_cccccc_1x100.png") 50% 50% repeat-x;
+    background-color: #eee;
     background-image: url("images/ui-bg_highlight-soft_75_cccccc_1x100.png");
     background-repeat: repeat-x;
     background-attachment: scroll;
@@ -437,8 +440,12 @@ hr {
     background-clip: border-box;
     background-origin: padding-box;
     background-size: auto auto;
-    border: none;
+    border: 1px solid lightgray;
     margin-top: 0;
+    height: 2.6em;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
 }
 
 
@@ -725,27 +732,16 @@ textarea { resize:both; }
 }
 
 #submitbuttons input {
-    background-color: #e5e5e5;
-    color: #666666;
+    background-color: #008979;
+    color: white;
     border: 1px solid lightgrey;
 }
 
 #submitbuttons input:hover {
-    background-color: lightgrey;
+    background-color: #006F62;
 }
 
-#past_example {
-    font-size: 0.75em;
-
-}
 #past_example a {
-      background-color: #e5e5e5;
-      color: #666666;
-      padding: 0.5em 0.5em 0.5em 0.5em;
-      border: 1px solid lightgrey;
-   }
-
-#past_example a:hover {
-    background-color: lightgrey;
-
+    color: #006F62;
+    font-size: 0.85em;
 }
