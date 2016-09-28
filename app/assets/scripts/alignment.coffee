@@ -17,18 +17,14 @@
   $.get(pathToFastaFile, (content) ->
 
     lines = content.split "\>"
-    seq = ""
-    counter = 0
-    seqlines = 0
-    firstHeader = true
 
 
-    for line in lines
+    for line,index in lines
 
         line = ">" + line
 
         if line != '>'
-          $('#' + tabid).first().append("<tr><td><pre>#{line}</pre></td></tr>")
+          $('#' + tabid).first().append("<tr><td><input style='margin: 5px; padding: 5px;'  type='checkbox' checked='checked' name='hits[]' value=#{index})></td><td><pre>#{line}</pre></td></tr>")
 
 
 
@@ -128,7 +124,9 @@
 
 # Makes AJAX call to the file on server
   $.get(Blastviz, (content) ->
+
     $('#' + tabid ).prepend content
+
   )
 
 
