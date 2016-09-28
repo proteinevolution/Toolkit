@@ -17,18 +17,14 @@
   $.get(pathToFastaFile, (content) ->
 
     lines = content.split "\>"
-    seq = ""
-    counter = 0
-    seqlines = 0
-    firstHeader = true
 
 
-    for line in lines
+    for line,index in lines
 
         line = ">" + line
 
         if line != '>'
-          $('#' + tabid).first().append("<tr><td><pre>#{line}</pre></td></tr>")
+          $('#' + tabid).first().append("<tr><td><input style='margin: 0px; padding: 0px;'  type='checkbox' checked='checked' class='hits' value=#{index})></td><td><pre>#{line}</pre></td></tr>")
 
 
 
@@ -108,7 +104,7 @@
 @blastOutput = (tabid, statid, pathToBlastOutput) ->
 
     # Makes AJAX call to the file on server
-  $.get(pathToBlastOutput, (content) ->
+  $.get(pathToBlastOutput+"out.psiblastp", (content) ->
 
     $('#' + tabid ).append content
 
@@ -118,6 +114,16 @@
 
   # Makes AJAX call to the file on server
   $.get(Colored, (content) ->
+
+    $('#' + tabid ).prepend content
+
+  )
+
+
+@psiblastBlastviz = (tabid, Blastviz) ->
+
+# Makes AJAX call to the file on server
+  $.get(Blastviz+"blastviz.html", (content) ->
 
     $('#' + tabid ).prepend content
 
