@@ -1,0 +1,20 @@
+@import play.api.mvc.RequestHeader
+@(pathToBlastOutput : String)(implicit messages: Messages, request: RequestHeader)
+<div id="blastviz">
+
+</div>
+<table id="blastout" class="hover alignment">
+
+</table>
+
+<script src="@routes.Assets.at("javascripts/dhtmlx.js")"></script>
+<link href="@routes.Assets.at("styles/dhtmlx.css")" rel="stylesheet">
+<script src="@routes.Assets.at("javascripts/toolkit.js")"></script>
+
+
+<script>
+psiblastBlastviz("blastviz", '@pathToBlastOutput');
+blastOutput("blastout", "blaststats", '@pathToBlastOutput')
+</script>
+
+

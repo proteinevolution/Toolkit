@@ -80,19 +80,20 @@ onMessage = (event) ->
       state = message.job.state.toString()
       console.log(state)
       jobs.vm.update(message.job)
-      if jobs.vm.jobOverview() == 'running'
+
+      if jobs.vm.getJobState(message.job) == 'running'
         $('#trafficbar').css
           'background': '#ffff00'
           'box-shadow': '0 0 10px #ffce27'
-      else if jobs.vm.jobOverview() == 'error'
+      else if jobs.vm.getJobState(message.job) == 'error'
         $('#trafficbar').css
           'background': '#ff0000'
           'box-shadow': '0 0 10px #d2071d'
-      else if jobs.vm.jobOverview() == 'done'
+      else if jobs.vm.getJobState(message.job) == 'done'
         $('#trafficbar').css
           'background': 'green'
           'box-shadow': '0 0 10px darkgreen'
-      else if jobs.vm.jobOverview() == 'other'
+      else if jobs.vm.getJobState(message.job) == 'other'
         $('#trafficbar').css
           'background': 'transparent'
           'box-shadow': '0 0 10px transparent'
