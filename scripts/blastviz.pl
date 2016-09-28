@@ -53,8 +53,8 @@ my @rows;
 
 
 # check arguments
-if((scalar @ARGV)!=3){
-    print "Usage: blastviz.pl BLASTRESFILE ID BASEDIR [max_seqs (default:100)]\n";
+if((scalar @ARGV)!=4){
+    print "Usage: blastviz.pl BLASTRESFILE ID BASEDIR PNGPATH [max_seqs (default:100)]\n";
     exit(1);
 }else{
     $resfile = $ARGV[0];
@@ -62,7 +62,7 @@ if((scalar @ARGV)!=3){
     $progtype=$1;
     $id = $ARGV[1];
     $basedir = $ARGV[2];
-    $imgdir = "";
+    $imgdir = $ARGV[3];
     $htmlfile = $id.".html";
     $imgfile = $id.".png";
 }
@@ -282,35 +282,17 @@ my $domain_end = $qlen;
 # my $domain_start = scalar(@hits) ? $hits[0]->{"qbeg"} : 1;
 # my $domain_end = scalar(@hits) ? $hits[0]->{"qend"} : $qlen;
 print HTMLFILE "
-<style type='text/css'>
-div.slider {position: absolute; height:40px;}
-div.slider div.label {position:absolute; top: 0px; height:12px; width:30px; cursor:default;}
-div.slider div.bar {position:absolute; top:14px; height:16px;}
-div.slider div.bar div.handle {position:absolute; width:16px; height:16px; cursor:move;}
-div.slider div.bar div.span {position:absolute; top:6px; height:6px; background-color:#000000;}
+<style>
+#sliderObj {width: 500px !important; height: 30px; margin-left: 60px; margin-top: 20px;}
 </style>
 
-<div class='row' style='position:relative; height:${border}px'>
-<div id='slider' class='slider' style='top:5px; left: " . int($xscale - 7) . "px; width: ${slider_width}px;'>
-<div id='slider_label_left' class='label' style='text-align:right;'></div>
-<div id='slider_label_right' class='label' style='text-align:left;'></div>
-<div id='slider_bar' class='bar' style='width: ${slider_width}px;'>
-<div id='slider_bar_handle_left' class='handle'><img src='/assets/images/arrow_right.png' alt=''/></div>
-<div id='slider_bar_handle_right' class='handle'><img src='/assets/images/arrow_left.png' alt=''/></div>
-<div id='slider_bar_span' class='span'></div>
+<div id='sliderObj'></div>
 </div>
-</div>
-<div class='row' style='position:absolute; top:${headsep}px; width: " . ($border + $qlen * $xscale - 5) ."px;'>
-<input type='hidden' id='domain_start' name='domain_start'/>
-<input type='hidden' id='domain_end' name='domain_end'/>
-<input type='submit' name='submitform_slider' onClick=\"setFwActionDirect('${progtype}_form', '/$progtype/resubmit_domain/$id')\" class='feedbutton' style='border-width:2px;' value='Resubmit'/>
-</div>
-</div>
-<script type='text/javascript'>domain_slider_show($qlen, $domain_start, $domain_end);
-</script>
-";
-print HTMLFILE "<p><img src=$imgfile border=\"0\" alt=\"blasthits\" usemap=\"#blastmap\"></p>";
 
+<script type='text/javascript'>slider_show($qlen, $domain_start, $domain_end);
+</script>";
+
+print HTMLFILE "<p><img src=\"$imgdir/$imgfile\" border=\"0\" alt=\"blasthits\" usemap=\"#blastmap\"></p>";
 close(HTMLFILE);
 
 # write image to file
