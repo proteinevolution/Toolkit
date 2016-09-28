@@ -1,13 +1,20 @@
 @import play.api.mvc.RequestHeader
-@(Blastviz : String)(implicit messages: Messages, request: RequestHeader)
-@import scala.io.Source
+@(pathToBlastOutput : String)(implicit messages: Messages, request: RequestHeader)
+<div id="blastviz">
 
-<table id="blastviz">
+</div>
+<table id="blastout" class="hover alignment">
 
 </table>
-<script src="@routes.Assets.at("javascripts/toolkit.js")" type="text/javascript"></script>
+
+<script src="@routes.Assets.at("javascripts/dhtmlx.js")"></script>
+<link href="@routes.Assets.at("styles/dhtmlx.css")" rel="stylesheet">
+<script src="@routes.Assets.at("javascripts/toolkit.js")"></script>
+
+
 <script>
-psiblastBlastviz("blastviz", '@Blastviz');
+psiblastBlastviz("blastviz", '@pathToBlastOutput');
+blastOutput("blastout", "blaststats", '@pathToBlastOutput')
 </script>
 
 

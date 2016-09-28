@@ -19,10 +19,14 @@ trap 'kill $(jobs -p)' EXIT
 
 
 # create HTML and PNG for blastviz visualisation
-perl ../../scripts/blastviz.pl results/out.psiblastp blastviz results >> logs/blastviz.log
+
+ID=$(<JOB.json jq '._id'| awk '{ print $2; }'| sed 's/"//g'| tr -d '\n')
+
+perl ../../scripts/blastviz.pl results/out.psiblastp blastviz results files/$ID >> logs/blastviz.log
+
 
 # extract alignment from
-perl ../../alignhits_html.pl results/out.psiblastp -e out.align -Q out.fasta %evalue.content -fas -no_link -blastplus
+perl ../../scripts/alignhits_html.pl results/out.psiblastp results/out.align -e %evalue.content -fas -no_link -blastplus
 
 # Produce some extra files:
 < results/out.psiblastp grep Expect | awk '{ print $8; }' | sed 's/,$//' > results/evalues.dat
