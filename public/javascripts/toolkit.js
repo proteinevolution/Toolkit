@@ -248,31 +248,6 @@ function sleep(numberMillis)
     }
 }
 
-// creates slider with two handles for selecting domains of a sequence
-function domain_slider_show(sequence_length, start, end) {
-  var s = $('slider_bar');
-  new Control.Slider(s.select(".handle"), s, {
-    range: $R(1, sequence_length, false),
-    step: 1,
-    sliderValue: [start, end],
-    spans: [s.down('.span')],
-    restricted: true,
-    onSlide: function(v) {domain_slider_update(v);}
-  });
-  domain_slider_update(new Array(start, end));
-}
-
-function domain_slider_update(v) {
-  var i = Math.floor(v[0]);
-  $('domain_start').value = i;
-  $('slider_label_left').innerHTML = i;
-  $('slider_label_left').style.left = parseInt($('slider_bar_handle_left').style.left) - 17;
-  var i = Math.floor(v[1]);
-  $('domain_end').value = i;
-  $('slider_label_right').innerHTML = i;
-  $('slider_label_right').style.left = parseInt($('slider_bar_handle_right').style.left) + 2;
-}
-
 function calculate_forwarding(){
 	var number_of_lines_per_sequence = $('NUMBER_OF_LINES_PER_SEQUENCE') == undefined ? 1 : $('NUMBER_OF_LINES_PER_SEQUENCE').value;
 	var checked_checkboxes = Math.floor($$('input[type="checkbox"]:checked').length / number_of_lines_per_sequence);
@@ -337,36 +312,44 @@ function calculate_forwarding(){
 }
 
 
-var mySlider;
-var myPop;
+
+
 
 function slider_show(sequence_length, start, end) {
 
-    // init slider
-    mySlider = new dhtmlXSlider({
-        parent: "sliderObj",
-        step: 1,
+    var tooltip = $('<div id="tooltip" />').css({
+        position: 'absolute',
+        top: -25
+    }).hide();
+
+    var tooltip2 = $('<div id="tooltip2" />').css({
+        position: 'absolute',
+        top: -25
+    }).hide();
+
+
+
+    $("#flat-slider").slider({
+        range: true,
+        orientation: 'horizontal',
         min: 1,
         max: sequence_length,
-        value: [start, end],
-        range: true
-    });
+        step: 1,
+        values: [start, end],
+        slide: function(event, ui) {
+            tooltip.text(ui.values[0]);
+            tooltip2.text(ui.values[1]);
+        },
+        change: function(event, ui) {}
+    }).find(".ui-slider-handle:first").append(tooltip).hover(function() {
+        tooltip.show()
+    }, function() {
+        tooltip.hide()
+    })
 
-    // attach popup to slider
-    myPop = new dhtmlXPopup({slider: mySlider});
-
-    // set initial value for popup
-    mySlider.attachEvent("onMouseDown", function(runner){
-        updatePopupValue(mySlider.getValue(), runner);
-    });
-
-    // change popup value when slider moved
-    mySlider.attachEvent("onChange", function(value, slider, runner){
-        if (runner != null) updatePopupValue(value, runner);
-    });
-
-}
-
-function updatePopupValue(value, runner) {
-    myPop.attachHTML(window.dhx4.template("Current value: #value#", {value:value[runner]}));
+    $("#flat-slider").find(".ui-slider-handle:last").append(tooltip2).hover(function() {
+        tooltip2.show()
+    }, function() {
+        tooltip2.hide()
+    })
 }

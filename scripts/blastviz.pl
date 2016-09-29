@@ -279,16 +279,13 @@ print HTMLFILE "</map>\n";
 my $slider_width = int($imgwidth + $border + 2 - $xscale);
 my $domain_start = 1;
 my $domain_end = $qlen;
+my $slider_length = $imgwidth-16;
+
 # my $domain_start = scalar(@hits) ? $hits[0]->{"qbeg"} : 1;
 # my $domain_end = scalar(@hits) ? $hits[0]->{"qend"} : $qlen;
 print HTMLFILE "
-<style>
-#sliderObj {width: 500px !important; height: 30px; margin-left: 60px; margin-top: 20px;}
-</style>
 
-<div id='sliderObj'></div>
-</div>
-
+<div style='width: ${slider_length}px ;position: absolute; margin-top: 0.600em; margin-left: 0.560em' class='flat-slider' id='flat-slider'></div>
 <script type='text/javascript'>slider_show($qlen, $domain_start, $domain_end);
 </script>";
 
