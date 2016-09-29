@@ -30,7 +30,7 @@
         </div>
 
         <div class="button job-button" style="display: flex;">
-            <div onclick="selectAllJobs()" style="padding-right: 1em;">All</div>
+            <div onclick="selectAllJobs()"  style="padding-right: 1em;">All</div>
             <div class="idsort">ID</div>
             <div class="toolsort">Tool</div>
         </div>
@@ -102,13 +102,14 @@
         }
 
         function selectAllJobs(){
+
         $('input:checkbox.check').each(function () {
             var checked = !$(this).data('checked');
             $('input:checkbox.check').prop('checked', checked);
             $(this).val(checked ? 'uncheck all' : 'check all' )
             $(this).data('checked', checked);
         });
-        }
+}
 
 
         // Tooltip only Text
