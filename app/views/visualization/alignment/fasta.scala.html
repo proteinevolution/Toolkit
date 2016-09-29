@@ -15,7 +15,13 @@
 
 
 <div style="height: 40em;overflow:auto;">
+    <div>
     <button onclick="selectAll()">Select All</button>
+    <select style="width: 8em; float: right; margin-right: 1em" id="forwardTool">
+        <option selected>Forward To</option>
+        <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
+    </select>
+    </div>
 <table id="fasta" class="hover alignment">
 </table>
 </div>
@@ -39,6 +45,24 @@ $('input:checkbox.hits').each(function () {
   });
 }
 
+
+
+
+/* Forwarding */
+
+function forward(tool) {
+    var seqs = "";
+    $('input:checkbox.hits').each(function () {
+    if(this.checked){
+    // get sequences of checked checkboxes
+        seqs += $(this).closest('tr').text();
+    }
+    })
+    console.log(seqs)
+    localStorage.setItem ( "resultcookie", seqs ) ;
+    window.location.href = "/#/tools/" + tool ;
+
+   }
 
 
 </script>
