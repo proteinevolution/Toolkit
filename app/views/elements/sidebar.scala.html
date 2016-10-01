@@ -103,9 +103,9 @@
 
         function selectAllJobs(){
 
-        $('input:checkbox.check').each(function () {
+        $('input:checkbox.sidebarCheck').each(function () {
             var checked = !$(this).data('checked');
-            $('input:checkbox.check').prop('checked', checked);
+            $('input:checkbox.sidebarCheck').prop('checked', checked);
             $(this).val(checked ? 'uncheck all' : 'check all' )
             $(this).data('checked', checked);
         });
