@@ -232,18 +232,18 @@ ul#jobs li {
   display: none;
 }
 .checkbox input:checked + label:after, .checkbox-alt input:checked + label:after {
-  -webkit-animation: check 0.8s;
-  -moz-animation: check 0.8s;
-  -o-animation: check 0.8s;
-  animation: check 0.8s;
+  -webkit-animation: check 0.4s;
+  -moz-animation: check 0.4s;
+  -o-animation: check 0.4s;
+  animation: check 0.4s;
   border-color: #6aa;
 
 }
 .checkbox.checkbox-alt label:hover:after, .checkbox-alt.checkbox-alt label:hover:after {
-  -webkit-animation: check 0.8s ease infinite;
-  -moz-animation: check 0.8s ease infinite;
-  -o-animation: check 0.8s ease infinite;
-  animation: check 0.8s ease infinite;
+  -webkit-animation: check 0.4s ease infinite;
+  -moz-animation: check 0.4s ease infinite;
+  -o-animation: check 0.4s ease infinite;
+  animation: check 0.4s ease infinite;
 }
 .checkbox.checkbox-alt input:checked + label:after, .checkbox-alt.checkbox-alt input:checked + label:after {
   -webkit-animation: none;
