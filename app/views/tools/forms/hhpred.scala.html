@@ -17,9 +17,9 @@
 
 <div class="tool-tabs" id="tool-tabs">
     <ul>
-        <li onclick="hideTabOne()" id="tab1"><a href="#tool-tabs-1">Paste Alignment</a></li>
-        <li onclick="hideTabTwo()" id="tab2"><a href="#tool-tabs-2">Upload File</a></li>
-        <li onclick="hideTabThree()" id="tab3"><a href="#tool-tabs-3">Parameter</a></li>
+        <li onclick="getIndex(0)" id="tab1"><a href="#tool-tabs-1">Paste Alignment</a></li>
+        <li onclick="getIndex(0)" id="tab2"><a href="#tool-tabs-2">Upload File</a></li>
+        <li onclick="getIndex(0)" id="tab3"><a href="#tool-tabs-3">Parameter</a></li>
         <span style="float: right; padding: 0.5em 1em 0 0";>HHpred</span>
     </ul>
 
@@ -64,31 +64,31 @@
             $('#prepareJob').hide();
 
 
-            function hideTabOne() {
-                $('.secondary').show();
-                $('#jobPermission').hide();
-                $('#clearJobForm').hide();
-                $('#prepareJob').hide();
+            $("#continue").click(function () {
+                $( "#tool-tabs" ).tabs( "option", "active", $("#tool-tabs").tabs('option', 'active')+1 );
+            });
 
+            function getIndex(curIndex) {
+                var index = $("#tool-tabs").tabs('option', 'active') + curIndex;
+                console.log(index)
+                if(index == 0) {
+                    $('.secondary').show();
+                    $('#jobPermission').hide();
+                    $('#clearJobForm').hide();
+                    $('#prepareJob').hide();
+                } else if (index == 1) {
+                    $('.secondary').show();
+                    $('#jobPermission').hide();
+                    $('#clearJobForm').hide()
+                    $('#prepareJob').hide();
+                } else if(index == 2) {
+                    $('.secondary').show();
+                    $('#jobPermission').hide();
+                    $('#clearJobForm').hide()
+                    $('#continue').hide()
+                    $('#prepareJob').hide();
+                }
             }
-
-            function hideTabTwo() {
-
-                $('.secondary').show();
-                $('#jobPermission').hide();
-                $('#clearJobForm').hide()
-                $('#prepareJob').hide();
-            }
-
-            function hideTabThree() {
-
-                $('.secondary').show();
-                $('#jobPermission').hide();
-                $('#clearJobForm').hide()
-                $('#continue').hide()
-                $('#prepareJob').hide();
-            }
-
 
 
 
