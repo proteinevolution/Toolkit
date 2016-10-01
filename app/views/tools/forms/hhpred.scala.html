@@ -15,7 +15,7 @@
         localStorage.removeItem("resultcookie");
 </script>
 
-<div class="tool-tabs" id="tool-tabs">
+<div class="tool-tabs" id="tool-tabs" style="display: none;">
     <ul>
         <li onclick="getIndex(0)" id="tab1"><a href="#tool-tabs-1">Paste Alignment</a></li>
         <li onclick="getIndex(0)" id="tab2"><a href="#tool-tabs-2">Upload File</a></li>
@@ -89,6 +89,9 @@
                     $('#prepareJob').hide();
                 }
             }
+
+          $(".jobForm").show();
+          $(".tool-tabs").show();
 
 
 
