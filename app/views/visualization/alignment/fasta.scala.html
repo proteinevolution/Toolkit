@@ -48,21 +48,5 @@ $('input:checkbox.hits').each(function () {
 
 
 
-/* Forwarding */
-
-function forward(tool) {
-    var seqs = "";
-    $('input:checkbox.hits').each(function () {
-    if(this.checked){
-    // get sequences of checked checkboxes
-        seqs += $(this).closest('tr').text();
-    }
-    })
-    console.log(seqs)
-    localStorage.setItem ( "resultcookie", seqs ) ;
-    window.location.href = "/#/tools/" + tool ;
-
-   }
-
 
 </script>
