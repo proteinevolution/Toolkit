@@ -340,7 +340,25 @@ function slider_show(sequence_length, start, end) {
             tooltip.text(ui.values[0]);
             tooltip2.text(ui.values[1]);
         },
-        change: function(event, ui) {}
+        change: function(event, ui) {
+            var sliderCoords =  $('#flat-slider').slider("option", "values");
+
+
+            $('area').each(function (index) {
+                var coords = $(this).attr('coords').split(',');
+
+                // calculating length of seq relative to sequence length and the width of the png (800px)
+               var left = parseInt((sequence_length/800)*coords[0],10);
+                var right = parseInt((sequence_length/800)*coords[2],10);
+
+                if (left >= sliderCoords[0] && right <= sliderCoords[1]) {
+                  $('input[type=checkbox][value=index]').prop('checked', true);
+                }
+            })
+
+
+
+        }
     }).find(".ui-slider-handle:first").append(tooltip).hover(function() {
         tooltip.show()
     }, function() {
@@ -353,3 +371,19 @@ function slider_show(sequence_length, start, end) {
         tooltip2.hide()
     })
 }
+
+/* Forwarding */
+
+function forward(tool) {
+    var seqs = "";
+    $('input:checkbox.hits').each(function () {
+        if(this.checked){
+            // get sequences of checked checkboxes
+            seqs += $(this).closest('tr').text();
+        }
+    })
+    localStorage.setItem ( "resultcookie", seqs ) ;
+    window.location.href = "/#/tools/" + tool ;
+
+}
+

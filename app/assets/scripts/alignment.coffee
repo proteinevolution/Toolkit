@@ -24,7 +24,7 @@
         line = ">" + line
 
         if line != '>'
-          $('#' + tabid).first().append("<tr><td><input style='margin: 0px; padding: 0px;'  type='checkbox' checked='checked' class='hits' value=#{index})></td><td><pre>#{line}</pre></td></tr>")
+          $('#' + tabid).first().append("<tr><td><input style='margin: 0px; padding: 0px;'  type='checkbox' class='hits' value=#{index})></td><td><pre>#{line}</pre></td></tr>")
 
 
 
