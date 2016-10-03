@@ -11,3 +11,4 @@ trap 'kill $(jobs -p)' EXIT
                                    -c %outorder.content \
                                    -f fasta \
                                       > logs/status.log
+
