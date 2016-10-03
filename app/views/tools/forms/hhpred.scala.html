@@ -33,6 +33,9 @@
         </div>
     </div>
     <div class="tabs-panel" id="tool-tabs-2">
+        <label for="FileUpload" class="button">Upload File</label>
+        <input type="file" id="FileUpload"  class="show-for-sr">
+        <button onclick="pasteUpload()">FIle</button>
 
     </div>
     <div class="tabs-panel" id="tool-tabs-3">
@@ -70,7 +73,6 @@
 
             function getIndex(curIndex) {
                 var index = $("#tool-tabs").tabs('option', 'active') + curIndex;
-                console.log(index)
                 if(index == 0) {
                     $('.secondary').show();
                     $('#jobPermission').hide();
@@ -90,7 +92,12 @@
                 }
             }
 
-          $(".jobForm").show();
+
+            function pasteUpload() {
+               var input = document.getElementById('FileUpload');
+                console.log(input.files[0]);
+
+            }
           $(".tool-tabs").show();
 
 

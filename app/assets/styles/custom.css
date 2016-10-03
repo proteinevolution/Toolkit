@@ -384,9 +384,7 @@ hr {
 }
 
 .ui-state-active {
-    background: #e5e5e5 !important;
-
-
+    background: white !important;
 
 }
 
@@ -441,8 +439,10 @@ hr {
     background-origin: padding-box;
     background-size: auto auto;
     border: 1px solid lightgray;
+    border-bottom: none;
     margin-top: 0;
-    height: 2.6em;
+    height: 2.5em;
+    width: 50.05em;
     -moz-border-radius: 0px;
     -webkit-border-radius: 0px;
     border-radius: 0px;
