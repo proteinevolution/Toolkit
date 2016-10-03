@@ -2,9 +2,10 @@ package modules.tools
 
 
 import javax.inject.{Inject, Singleton}
+import controllers.tools.PSIBlast
 import models.database.Job
 import models.tel.TEL
-import models.tools.ToolModel
+
 import models.tools.ToolModel._
 import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.mvc.RequestHeader
@@ -105,7 +106,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       views.html.jobs.result(vis, job)
     case "psiblast" =>
       val vis = Map(
-        "Results" -> views.html.visualization.alignment.blastviz_extra(s"/files/${job.mainID.stringify}/"),
+        "Results" -> views.html.visualization.alignment.blastviz_extra(job.mainID.stringify, s"/files/${job.mainID.stringify}/"),
         "Alignment" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/out.align"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
         "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
