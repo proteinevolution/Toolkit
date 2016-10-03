@@ -203,19 +203,6 @@ hr {
 
 }
 
-.forminput {
-    height: 2.0375rem;
-    font-size: 0.75em;
-    width: 53%;
-
-}
-
-
-.forminput label {
-   font-size: 0.2rem !important;
-
-}
-
 
 #sequences{
 
@@ -470,6 +457,36 @@ hr {
 .ui-tabs-panel {
     padding: 1em !important;
 }
+
+#parameters div {
+    width: 50%;
+    font-size: 0.75em;
+}
+
+#parameters select {
+    color: #000;
+    color: rgba(0,0,0,0);
+    text-shadow: 0 0 0 #000;
+    height: 2.5em;
+    width: 20em;
+}
+
+#parameters input {
+    color: #000;
+    color: rgba(0,0,0,0);
+    text-shadow: 0 0 0 #878787;
+    height: 2.5em;
+    width: 20em;
+}
+
+#parameters input:focus {
+    color: #000;
+    color: rgba(0,0,0,0);
+    text-shadow: 0 0 0 #000;
+    height: 2.5em;
+    width: 20em;
+}
+
 
 
 .off-canvas {
@@ -745,3 +762,4 @@ textarea { resize:both; }
     color: #006F62;
     font-size: 0.85em;
 }
+
