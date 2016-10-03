@@ -1,5 +1,8 @@
+@import controllers.tools.PSIBlast
+
 @import play.api.mvc.RequestHeader
-@(pathToBlastOutput : String)(implicit messages: Messages, request: RequestHeader)
+
+@(jobID : String, pathToBlastOutput : String)(implicit messages: Messages, request: RequestHeader)
 <style>
 .flat-slider.ui-corner-all,
 .flat-slider .ui-corner-all {
@@ -67,6 +70,9 @@
 
     </div>
 </table>
+
+@jobID
+
 
 <script src="@routes.Assets.at("javascripts/dhtmlx.js")"></script>
 <link href="@routes.Assets.at("styles/dhtmlx.css")" rel="stylesheet">
