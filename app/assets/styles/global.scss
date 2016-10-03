@@ -3,8 +3,9 @@
 @import 'footer';
 @import 'sidebar';
 @import 'topbar';
-@import 'navbar';
 @import 'settings';
+@import 'navbar';
+@import 'tools';
 
 @include foundation-global-styles;
 @include foundation-grid;

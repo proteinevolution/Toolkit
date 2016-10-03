@@ -26,7 +26,7 @@
     </div>
     <div class="tabs-panel" id="panel2">
         <ul id="toolsec">
-            <li><a id="alignment" href="/#/alnvizfrontend">AlignmentViewer</a></li>
+            <li><a id="alnviz" href="/#/alnvizfrontend">AlignmentViewer</a></li>
         @for(tool <- Tool.tools){
             @if(tool.section == "alignment") {
                 <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>

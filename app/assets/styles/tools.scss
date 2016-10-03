@@ -1,26 +1,161 @@
-.input-form {
-  font-size: 0.8em;
-  height: auto;
-  width: auto;
-  font-family: Monaco, Consolas, "Lucida Console", monospace;
+#auth-tabs {
+  background: transparent;
+  border: none;
+}
+#auth-tabs .ui-widget-header {
+  font-size: 0.7em;
+  background: white;
+  border: none;
+  border-bottom: 1px solid #c0c0c0;
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
+#auth-tabs .ui-tabs-nav .ui-state-default {
+  background: white;
+  border: none;
+}
+#auth-tabs .ui-tabs-nav .ui-state-active {
+  background: white;
+  border: none;
+}
+#auth-tabs .ui-tabs-nav .ui-state-default a {
+  color: #888;
+}
+#auth-tabs .ui-tabs-nav .ui-state-active a {
+  color: #888 !important;
+  font-size: 0.7em;
 }
 
-.tool-header {
-  background-color: #f6f6f6 !important;
-  width: 95.35%;
-  border: solid 1px lightgray !important;
-  border-bottom: solid 1px grey !important;
-  color: gray !important;
-  font-size: 0.8em !important;
-  margin-left: 2em;
+.ui-corner-top {
+  border-top-right-radius: 0 !important;
+  border-top-left-radius: 0 !important;
 }
 
-.param-header {
-  background-color: #f6f6f6 !important;
-  width: 95%;
-  border: solid 1px lightgray !important;
-  border-bottom: solid 1px grey !important;
-  color: gray !important;
-  font-size: 0.8em !important;
-  margin-left: 2em;
+.ui-state-default a {
+  font-size: 0.75em !important;
+}
+
+.ui-state-default {
+  background: #eee !important;
+  border: none !important;
+  height: 2.5em;
+
+}
+
+.ui-state-active {
+  background: white !important;
+
+}
+
+.ui-state-active a:link {
+  color: #888;
+  margin-top: 0.5em;
+
+}
+
+.ui-state-default a:link {
+  color: #888;
+  margin-top: 0.5em;
+}
+
+#tool-tabs {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+#tab2 {
+  margin-left: -1px;
+
+}
+
+#auth-tabs .ui-widget-header {
+  font-size: 0.7em;
+  background: white;
+  border: none;
+  border-bottom: 1px solid #c0c0c0;
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
+#auth-tabs .ui-tabs-nav .ui-state-default {
+  background: transparent;
+  border: none;
+}
+#auth-tabs .ui-tabs-nav .ui-state-active {
+  background: transparent url(images/arrow-up.png) no-repeat bottom center;
+  border: none;
+}
+
+.ui-widget-header {
+  background: #888 url("images/ui-bg_highlight-soft_75_cccccc_1x100.png") 50% 50% repeat-x;
+  background-color: #eee;
+  background-image: url("images/ui-bg_highlight-soft_75_cccccc_1x100.png");
+  background-repeat: repeat-x;
+  background-attachment: scroll;
+  background-position: 50% 50%;
+  background-clip: border-box;
+  background-origin: padding-box;
+  background-size: auto auto;
+  border: 1px solid lightgray;
+  border-bottom: none;
+  margin-top: 0;
+  height: 2.5em;
+  width: 50.05em;
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
+
+
+.ui-widget-header li {
+  margin-top: 0;
+}
+
+.ui-tabs-anchor {
+  float: left;
+  padding: .5em .5em;
+  text-decoration: none;
+}
+
+.ui-tabs .ui-tabs-nav {
+  padding: 0 !important;
+}
+
+.ui-tabs .ui-tabs-nav li {
+  margin: 0;
+}
+
+.ui-tabs-panel {
+  padding: 1em !important;
+}
+
+#parameters div {
+  width: 50%;
+  font-size: 0.75em;
+}
+
+#parameters select {
+  color: #000;
+  color: rgba(0,0,0,0);
+  text-shadow: 0 0 0 #000;
+  height: 2.5em;
+  width: 15em;
+}
+
+#parameters input {
+  color: #000;
+  color: rgba(0,0,0,0);
+  text-shadow: 0 0 0 #878787;
+  height: 2.5em;
+  width: 15em;
+}
+
+#parameters input:focus {
+  color: #000;
+  color: rgba(0,0,0,0);
+  text-shadow: 0 0 0 #000;
+  height: 2.5em;
+  width: 15em;
 }
