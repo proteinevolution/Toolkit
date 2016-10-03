@@ -29,16 +29,16 @@
         'placeholder -> "Enter multiple sequence alignment",
         'id -> "alignment", '_showConstraints -> false)
         <div id="past_example">
-            <a onClick="$('#submitbutton').prop('disabled', false);fillTextArea();$('#format').val('fas')">Paste example alignment</a>
+            <a onClick="$('#submitbutton').prop('disabled', false);$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
         </div>
     </div>
     <div class="tabs-panel" id="tool-tabs-2">
-        <label for="FileUpload" class="button">Upload File</label>
-        <input type="file" id="FileUpload"  class="show-for-sr">
-        <button onclick="pasteUpload()">FIle</button>
+        <label for="exampleFileUpload" class="button">Upload File</label>
+        <input type="file" id="exampleFileUpload" class="show-for-sr">
 
     </div>
-    <div class="tabs-panel" id="tool-tabs-3">
+    <div class="tabs-panel" id="tool-tabs-3" align="center">
+        <div id="parameters" >
         @helper.select(
             inputForm("alignment_format"),
             helper.options(Values.fullNames.filterKeys(HHpred.parameterValues("alignment_format"))),
@@ -52,6 +52,9 @@
             '_label -> "Select HMM Database",
             'id -> "hmmdb",
             'class -> "forminput")
+        </div>
+
+
 
     </div>
 
@@ -93,11 +96,7 @@
             }
 
 
-            function pasteUpload() {
-               var input = document.getElementById('FileUpload');
-                console.log(input.files[0]);
-
-            }
+          $(".jobForm").show();
           $(".tool-tabs").show();
 
 
