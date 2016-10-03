@@ -10,7 +10,6 @@
     $( "#tool-tabs" ).tabs();
 } );
 
-    $(".nav-tabs").show();
         document.getElementById("alignment").value = localStorage.getItem("resultcookie");
         localStorage.removeItem("resultcookie");
 </script>
@@ -39,19 +38,21 @@
     </div>
     <div class="tabs-panel" id="tool-tabs-3" align="center">
         <div id="parameters" >
-        @helper.select(
-            inputForm("alignment_format"),
-            helper.options(Values.fullNames.filterKeys(HHpred.parameterValues("alignment_format"))),
-            '_label -> "Select alignment format",
-            'id -> "format"
-        )
+            <div>
+                @helper.select(
+                    inputForm("alignment_format"),
+                    helper.options(Values.fullNames.filterKeys(HHpred.parameterValues("alignment_format"))),
+                    '_label -> "Select alignment format",
+                    'id -> "format"
+                )
 
-        @helper.select(
-            inputForm("hmmdb"),
-            helper.options(tel.getSetParam("hmmdb")),
-            '_label -> "Select HMM Database",
-            'id -> "hmmdb",
-            'class -> "forminput")
+                @helper.select(
+                    inputForm("hmmdb"),
+                    helper.options(tel.getSetParam("hmmdb")),
+                    '_label -> "Select HMM Database",
+                    'id -> "hmmdb",
+                    'class -> "forminput")
+            </div>
         </div>
 
 
