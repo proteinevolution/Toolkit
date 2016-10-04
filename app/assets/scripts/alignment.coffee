@@ -104,7 +104,7 @@
 @blastOutput = (tabid, statid, pathToBlastOutput) ->
 
     # Makes AJAX call to the file on server
-  $.get(pathToBlastOutput+"out.psiblastp", (content) ->
+  $.get(pathToBlastOutput+"out.psiblastp_processed", (content) ->
 
     $('#' + tabid ).append content
 
@@ -128,6 +128,8 @@
     $('#' + tabid ).prepend content
 
   )
+
+
 
 
 
