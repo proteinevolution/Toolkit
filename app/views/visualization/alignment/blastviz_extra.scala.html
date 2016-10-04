@@ -64,24 +64,46 @@
 }
 </style>
 
+<script src="@routes.Assets.at("javascripts/toolkit.js")"></script>
+
+
+<script>
+
+
+psiblastBlastviz("blastviz", '@pathToBlastOutput');
+blastOutput("blastout", "blaststats", '@pathToBlastOutput')
+
+
+
+// links two checkboxes with the same id
+$('input:checkbox.hits').click(function(e){
+    var currentVal = $(this).val();
+    if($(this).attr('checked')==true) {
+        $('input[value='+currentVal+']').each(function() {
+        $(this).attr('checked',true);
+    })}else{
+    $('input[value='+currentVal+']').each(function() {
+        $(this).attr('checked',true)
+    })}
+});
+
+
+$('#metaReferences').hide()
+function showReferences() {
+$('#metaReferences').show()
+}
+</script>
+
 
 <table id="blastout" class="hover alignment">
     <div style="margin-top: 1em" id="blastviz">
 
     </div>
+    <button onclick="showReferences()">Show References</button>
+
 </table>
 
-@jobID
 
 
-<script src="@routes.Assets.at("javascripts/dhtmlx.js")"></script>
-<link href="@routes.Assets.at("styles/dhtmlx.css")" rel="stylesheet">
-<script src="@routes.Assets.at("javascripts/toolkit.js")"></script>
-
-
-<script>
-psiblastBlastviz("blastviz", '@pathToBlastOutput');
-blastOutput("blastout", "blaststats", '@pathToBlastOutput')
-</script>
 
 
