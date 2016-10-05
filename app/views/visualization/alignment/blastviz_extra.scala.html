@@ -1,4 +1,3 @@
-@import controllers.tools.PSIBlast
 
 @import play.api.mvc.RequestHeader
 
@@ -62,48 +61,86 @@
     left: 0;
     width: 6px;
 }
+
+
+#alignmentDetail{
+    font-size: 0.78em;
+}
+#overview{
+    font-size: 0.78em;
+}
 </style>
 
 <script src="@routes.Assets.at("javascripts/toolkit.js")"></script>
 
 
+
+<ul class="accordion" data-accordion data-allow-all-closed="true" data-multi-expand="true">
+    <li class="accordion-item " data-accordion-item >
+        <a class="accordion-title" >BlastViz</a>
+        <div class="accordion-content" data-tab-content >
+            <span>Choose range of input query: </span>
+            <p>
+
+            </p>
+            <div id="blastviz">
+
+            </div>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a class="accordion-title" onclick="$('#metaReferences').hide()">Overview</a>
+        <div class="accordion-content" data-tab-content>
+            <button class="revealReference">Show references</button>
+            <div id="overview">
+
+            </div>
+
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a class="accordion-title">Blast output alignment</a>
+        <div class="accordion-content" data-tab-content id="alignmentDetail" >
+        </div>
+    </li>
+</ul>
+
+
+
+
+
 <script>
 
 
-psiblastBlastviz("blastviz", '@pathToBlastOutput');
-blastOutput("blastout", "blaststats", '@pathToBlastOutput')
+$(document).ready(function(){
 
 
+// loading results into accorion
+psiblastBlastviz('blastviz', '@pathToBlastOutput')
+blastOutputOverview('overview', 'blaststats', '@pathToBlastOutput')
+blastOutputAlignment('alignmentDetail', 'blaststats', '@pathToBlastOutput')
 
-// links two checkboxes with the same id
-$('input:checkbox.hits').click(function(e){
-    var currentVal = $(this).val();
-    if($(this).attr('checked')==true) {
-        $('input[value='+currentVal+']').each(function() {
-        $(this).attr('checked',true);
-    })}else{
-    $('input[value='+currentVal+']').each(function() {
-        $(this).attr('checked',true)
-    })}
+
+$("button.revealReference").click(function(){
+    if ($.trim($(this).text()) === 'Show references') {
+        $(this).text('Hide references');
+        $('#metaReferences').show()
+    } else {
+        $(this).text('Show references');
+        $('#metaReferences').hide()
+    }
+
+    return false;
 });
 
 
-$('#metaReferences').hide()
-function showReferences() {
-$('#metaReferences').show()
-}
+
+$('.accordion-content').hide()
+
+
+$(document).foundation();
+
+});
 </script>
-
-
-<table id="blastout" class="hover alignment">
-    <div style="margin-top: 1em" id="blastviz">
-
-    </div>
-    <button onclick="showReferences()">Show References</button>
-
-</table>
-
-
-
 
 

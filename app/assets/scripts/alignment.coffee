@@ -101,14 +101,23 @@
 
 
 
-@blastOutput = (tabid, statid, pathToBlastOutput) ->
+@blastOutputOverview = (id, statid, pathToBlastOutput) ->
 
     # Makes AJAX call to the file on server
-  $.get(pathToBlastOutput+"out.psiblastp_processed", (content) ->
+  $.get(pathToBlastOutput+"out.psiblastp_overview", (content) ->
 
-    $('#' + tabid ).append content
+    $('#' + id ).append content
 
    )
+
+@blastOutputAlignment = (id, statid, pathToBlastOutput) ->
+
+# Makes AJAX call to the file on server
+  $.get(pathToBlastOutput+"out.psiblastp_alignment", (content) ->
+
+    $('#' + id ).append content
+
+  )
 
 @tcoffeeColored = (tabid, Colored) ->
 
@@ -120,12 +129,12 @@
   )
 
 
-@psiblastBlastviz = (tabid, Blastviz) ->
+@psiblastBlastviz = (id, Blastviz) ->
 
 # Makes AJAX call to the file on server
   $.get(Blastviz+"blastviz.html", (content) ->
 
-    $('#' + tabid ).prepend content
+    $('#' + id ).prepend content
 
   )
 

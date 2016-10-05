@@ -6,61 +6,84 @@ object psiblastpPostProcess {
     val outfile = args(0)
     var index = 0
     var index2 =0
-    var firstAlignmentSeen = false;
-    val file = new File(outfile + "_processed")
+    var database = ""
+    var scoreE = ""
+    var pattern = ("""[0-9]><\/a>(.*)\s*""").r;
+    var stopParsing = false;
+    val file = new File(outfile + "_overview")
     val bw = new BufferedWriter(new FileWriter(file))
     for (line <- Source.fromFile(outfile).getLines()) {
       // adds div to references of PSIBLAST
       // output in order to be able to hide id
-      if(line.startsWith("<b>PSIBLAST 2.3.0+</b>")){
-        bw.newLine()
-        bw.write("<div id='metaReferences'>" + line)
-        bw.newLine()
-
-      } else if(line.matches("\\s*Score\\s*E\\s*")){
-        bw.write("        " + line)
-        bw.newLine()
-      }
-      else if(line.startsWith("Sequences producing significant alignments: ")){
-        bw.newLine()
-        bw.write("</div>")
-        bw.write("         "+line)
-        bw.newLine()
-      }
-      else if (line.startsWith("<a title=")) {
-        if(!firstAlignmentSeen){
+      if(!stopParsing) {
+        if (line.startsWith("<b>PSIBLAST 2.3.0+</b>")) {
           bw.newLine()
-          bw.write("<div class='alignmentDetail'>")
+          bw.write("<div id='metaReferences'>" + line)
+        }else if(line.startsWith("Database")){
+          database = line
+        }
+        else if (line.matches("\\s*Score\\s*E\\s*")) {
+          scoreE = "        " + line
+        }
+        else if (line.startsWith("Sequences producing significant alignments: ")) {
+          bw.write("</div>")
+          bw.write(database)
+          bw.newLine()
+          bw.write(scoreE)
+          bw.newLine()
+          bw.write("         " + line)
           bw.newLine()
         }
-        // adds checkboxes to the hits overview
-        var indexadd = index +1
-        bw.write(s"<input type='checkbox' style='margin: 9px; padding: 9px;'  class='hits' value= '$index'> $indexadd  $line")
-        bw.newLine()
-        index = index + 1
-        // adds checkboxes to the alignments
-        // (including the respective value 'index' from overview checkboxes)
+        else if (line.startsWith("<a title=")) {
+          // adds checkboxes to the hits overview
+          var indexadd = index + 1
+          bw.write(s"<input type='checkbox' style='margin: 9px; padding: 9px;'  class='hits' value= '$index'> $indexadd  $line")
+          bw.newLine()
+          index = index + 1
+          // adds checkboxes to the alignments
+          // (including the respective value 'index' from overview checkboxes)
+        }
+        else if (line.startsWith("><a title=")) {
+          stopParsing = true
+        }
+        else {
+          bw.write(line)
+          bw.newLine()
+        }
+      }
+    }
+    bw.write("</PRE>\n</BODY>\n</HTML>")
+    bw.close()
 
-        firstAlignmentSeen = true
-
-      } else if (line.startsWith("><a title=")) {
-        var index2add = index2 +1
-        bw.write(s"Number: $index2add")
-        bw.newLine()
-        bw.write(s"<input type='checkbox' style='margin: 5px; padding: 5px;'  class='hits' value= '$index2'>$line")
-        bw.newLine()
-        index2 = index2 + 1
-      } else if(line.startsWith("Window for multiple hits")) {
-        bw.newLine()
-      } else {
-        bw.write(line)
-        bw.newLine()
+    var startParsing = false
+    val file2 = new File(outfile + "_alignment")
+    val bw2 = new BufferedWriter(new FileWriter(file2))
+    bw2.write("<PRE>")
+    bw2.newLine()
+    for (line <- Source.fromFile(outfile).getLines()) {
+      if (line.startsWith("><a title=")) {
+        startParsing = true
+      }
+      if (startParsing) {
+        if (line.startsWith("><a title=")) {
+          var index2add = index2 + 1
+          bw2.write(s"Number: $index2add")
+          bw2.newLine()
+          bw2.write(s"<input type='checkbox' style='margin: 5px; padding: 5px;'  class='hits' value= '$index2'>$line")
+          bw2.newLine()
+          index2 = index2 + 1
+        } else if (line.startsWith("Window for multiple hits")) {
+          bw2.write(line)
+          bw2.newLine()
+        } else {
+          bw2.write(line)
+          bw2.newLine()
+        }
       }
     }
     bw.newLine()
-    bw.write("</div>")
-    bw.newLine()
-    bw.close()
+    bw.write("</PRE>")
+    bw2.close()
   }
 }
 
