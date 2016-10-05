@@ -319,12 +319,12 @@ function slider_show(sequence_length, start, end) {
 
     var tooltip = $('<div id="tooltip" />').css({
         position: 'absolute',
-        top: -25
+        top: +25
     }).hide();
 
     var tooltip2 = $('<div id="tooltip2" />').css({
         position: 'absolute',
-        top: -25
+        top: +25
     }).hide();
 
 
@@ -342,22 +342,6 @@ function slider_show(sequence_length, start, end) {
         },
         change: function(event, ui) {
             var sliderCoords =  $('#flat-slider').slider("option", "values");
-
-
-            $('area').each(function (index) {
-                var coords = $(this).attr('coords').split(',');
-
-                // calculating length of seq relative to sequence length and the width of the png (800px)
-               var left = parseInt((sequence_length/800)*coords[0],10);
-                var right = parseInt((sequence_length/800)*coords[2],10);
-
-                if (left >= sliderCoords[0] && right <= sliderCoords[1]) {
-                  $('input[type=checkbox][value=index]').prop('checked', true);
-                }
-            })
-
-
-
         }
     }).find(".ui-slider-handle:first").append(tooltip).hover(function() {
         tooltip.show()
