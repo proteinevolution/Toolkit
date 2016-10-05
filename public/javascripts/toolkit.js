@@ -387,3 +387,17 @@ function forward(tool) {
 
 }
 
+
+// links two checkboxes with id 'hits' with the same id
+$('input:checkbox.hits').click(function(e){
+    var currentVal = $(this).val();
+    if($(this).attr('checked')==true) {
+        $('input[value='+currentVal+']').each(function() {
+            $(this).attr('checked',true);
+        })}else{
+        $('input[value='+currentVal+']').each(function() {
+            $(this).attr('checked',true)
+        })}
+});
+
+
