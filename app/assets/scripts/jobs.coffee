@@ -110,6 +110,9 @@ jobs.vm = do ->
       else
         return 'other'
 
+    vm.getLastJob = () ->
+      return vm.list[vm.list.length-1]
+
   vm
 #the controller defines what part of the model is relevant for the current page
 #in our case, there's only one view-model that handles everything
