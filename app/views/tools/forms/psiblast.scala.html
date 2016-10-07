@@ -21,7 +21,7 @@
 <div class="tool-tabs" id="tool-tabs" style="display: none;">
     <ul>
         <li onclick="getIndex(0)" id="tab1"><a href="#tool-tabs-1">Paste Alignment</a></li>
-        <li onclick="getIndex(0)" id="tab2"><a href="#tool-tabs-2">Upload File</a></li>
+       <!-- <li onclick="getIndex(0)" id="tab2"><a href="#tool-tabs-2">Upload File</a></li> -->
         <li onclick="getIndex(0)" id="tab3"><a href="#tool-tabs-3">Parameter</a></li>
         <span style="float: right; padding: 0.5em 1em 0 0";>PSI-Blast</span>
     </ul>
@@ -34,10 +34,10 @@
     <div id="past_example">
         <a onClick="$('#alert').prop('hidden',true);$('#submitbutton').prop('disabled', false);$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>    </div>
     </div>
+
     <div class="tabs-panel" id="tool-tabs-2">
         <label for="exampleFileUpload" class="button">Upload File</label>
         <input type="file" id="exampleFileUpload" class="show-for-sr">
-
     </div>
     <div class="tabs-panel" id="tool-tabs-3" align="center">
         <div id="parameters" style="display: flex;">
