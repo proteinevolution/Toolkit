@@ -1,4 +1,4 @@
-@(parametersections : Map[String,String])
+@(parametersections : Map[String, Html])
 
 
 <div class="tool-tabs" id="tool-tabs">
@@ -16,6 +16,11 @@
         <div class="tabs-panel" id="tabpanel-@section">
 
             @parametersections(section)
+
+            <!-- Show control buttons in all panels -->
+            <div id="submitbuttons">
+                <input class="secondary button small" id="submitJob"     type="button" value="Submit Job" />
+            </div>
         </div>
     }
     </form>
