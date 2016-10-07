@@ -52,7 +52,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
   def matcher(tool : String)(implicit request : RequestHeader) : Html = {
     lazy val toolFrame = tool match {
 
-      case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
+    //  case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
       case "hmmer3" => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm)
       case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm)
       case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm)
@@ -74,7 +74,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
   def resultPreparedMatcher(tool: String, resultFiles : Map[String, String])(implicit request: RequestHeader) = {
     tool match {
 
-      case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
+     // case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
       case "hmmer3"   => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(resultFiles))
       case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
       case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm.bind(resultFiles))

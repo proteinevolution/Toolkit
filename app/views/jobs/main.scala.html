@@ -1,0 +1,27 @@
+@(parametersections : Map[String,String])
+
+
+<div class="tool-tabs" id="tool-tabs">
+
+    <form class="jobForm" >
+    <ul>
+    @for(section <- parametersections.keys) {
+
+        <li id="tab-@section"><a href="#tabpanel-@section">@section</a></li>
+    }
+    </ul>
+
+    @for(section <- parametersections.keys) {
+
+        <div class="tabs-panel" id="tabpanel-@section">
+
+            @parametersections(section)
+        </div>
+    }
+    </form>
+</div>
+
+
+<script>
+        $("#tool-tabs").tabs();
+</script>
