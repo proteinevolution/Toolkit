@@ -102,11 +102,15 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     Redirect(s"/#/$static")
   }
 
+  def form(toolname : String) = Action { implicit request =>
 
+    //val toolFrame = toolMatcher.matcher(toolname)
+    Ok(views.html.jobs.main(Map("foo" -> "bar", "baz" -> "goo")))
+  }
+
+
+  // Old input form with submit view
   /*
-    *  Return the Input form of the corresponding tool
-    */
-  // TODO Replace via reflection
   def form(toolName: String) = Action.async { implicit request =>
     getUser.map{ user =>
       //val toolFrame = toolMatcher.loadTemplate(toolName)
@@ -114,6 +118,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
       Ok(views.html.general.submit(tel, toolName, toolFrame, None))
     }
   }
+  */
 
   /**
    * Allows to access result files by the filename and a given jobID
