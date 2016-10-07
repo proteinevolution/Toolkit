@@ -332,7 +332,6 @@ case object Mafft extends ToolModel {
 
 case object Psiblast extends ToolModel {
 
-
   // --- Names for the Tool ---
   val toolNameShort       = "psiblast"
   val toolNameLong        = "PSI-BLAST"
@@ -340,7 +339,6 @@ case object Psiblast extends ToolModel {
   val section = "search"
   val optional = ""
 
-  // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
@@ -373,7 +371,6 @@ case object Tcoffee extends ToolModel {
   val section = "alignment"
   val optional = ""
 
-
   // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
@@ -384,8 +381,7 @@ case object Tcoffee extends ToolModel {
       "mslow_pair" -> boolean
     )
   )
-
-  }
+}
 
 
 
