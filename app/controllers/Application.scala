@@ -18,9 +18,12 @@ import play.api.libs.json.JsValue
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import modules.tools.ToolMirror
+import play.api.data.Forms._
+import play.api.data.{Form, _}
 
 
 @Singleton
@@ -44,6 +47,23 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   implicit val implicitActorSystem: ActorSystem = system
   implicit val timeout = Timeout(5.seconds)
   val SID = "sid"
+
+  /*
+    Template Form for all Tools
+   */
+  val jobForm = Form(
+    tuple(
+      "alignment" -> nonEmptyText,
+      "alignment_format" -> text,
+      "standarddb" -> text,
+      "matrix" -> text,
+      "num_iter" -> number,
+      "evalue" -> number,
+      "gap_open" -> number,
+      "gap_ext" -> number,
+      "desc" -> number
+    )
+  )
 
 
   /**
@@ -105,6 +125,8 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   def form(toolname : String) = Action { implicit request =>
 
     //val toolFrame = toolMatcher.matcher(toolname)
+    val toolframe = toolname
+
     Ok(views.html.jobs.main(Map("foo" -> "bar", "baz" -> "goo")))
   }
 
