@@ -140,7 +140,6 @@ case object HHblits extends ToolModel{
   val optional = ""
 
 
-
   // --- HHblits
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
@@ -382,19 +381,6 @@ case object Tcoffee extends ToolModel {
     )
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
 
