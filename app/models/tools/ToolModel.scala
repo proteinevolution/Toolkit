@@ -3,7 +3,6 @@ package models.tools
 import enumeratum._
 import play.api.data.Form
 import play.api.data.Forms._
-import shapeless._
 
 
 sealed trait ToolModel extends EnumEntry {
@@ -19,6 +18,12 @@ sealed trait ToolModel extends EnumEntry {
 object ToolModel extends PlayEnum[ToolModel] {
 
   val values = findValues
+
+  // Related to the parameter specification of the tools
+  val parameterGroups : Map[String, Seq[String]] = Map(
+    "Alignment" -> List("alignment", "alignment_format", "standarddb")
+  )
+  val parameterCatchAllName : String = "Parameter"
 
 
 case object Clans extends ToolModel {
