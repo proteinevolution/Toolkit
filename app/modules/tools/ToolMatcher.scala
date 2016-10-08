@@ -2,18 +2,14 @@ package modules.tools
 
 
 import javax.inject.{Inject, Singleton}
-import controllers.tools.PSIBlast
 import models.database.Job
 import models.tel.TEL
 
 import models.tools.ToolModel._
 import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.mvc.RequestHeader
-import play.mvc.Http
 import play.twirl.api.Html
-import reactivemongo.bson.BSONObjectID
 import reflect.runtime.universe
-import play.api._
 
 /**
   * Created by zin on 20.08.16.
@@ -69,7 +65,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     }
     toolFrame
   }
-z
+
 
   def resultPreparedMatcher(tool: String, resultFiles : Map[String, String])(implicit request: RequestHeader) = {
     tool match {
