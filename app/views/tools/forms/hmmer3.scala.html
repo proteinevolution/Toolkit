@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
 @import models.tools.ToolModel.Hmmer3
 @import models.tel.TEL
-@(tel : TEL, inputForm: Form[(String, String, String)])(implicit messages: Messages, request: RequestHeader)
+@(values : Values, tel : TEL, inputForm: Form[(String, String, String)])(implicit messages: Messages, request: RequestHeader)
 
 
 <script src='@routes.Assets.at("javascripts/sampleseqs.js")' type="text/javascript" ></script>
@@ -18,7 +18,7 @@
 
     @helper.select(
         inputForm("alignment_format"),
-        helper.options(Values.fullNames.filterKeys(Hmmer3.parameterValues("alignment_format"))),
+        helper.options(values.fullNames.filterKeys(Hmmer3.parameterValues("alignment_format"))),
         '_label -> "Select alignment format",
         'id -> "format"
     )

@@ -6,12 +6,12 @@ import actors.WebSocketActor
 import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import akka.util.Timeout
-import models.Constants
+import models.{Constants, Values}
 import models.tel.TEL
 import models.tools.{ToolModel, ToolModel2}
 import modules.Common
 import modules.tools.ToolMatcher
-import play.api.{Configuration, Logger}
+import play.api.Configuration
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
@@ -22,12 +22,12 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import modules.tools.ToolMirror
-import play.twirl.api.Html
 
 
 @Singleton
 class Application @Inject()(webJarAssets     : WebJarAssets,
                         val messagesApi      : MessagesApi,
+                            final val values : Values,
 @NamedCache("userCache") implicit val userCache : CacheApi,
                         val reactiveMongoApi : ReactiveMongoApi,
                             system           : ActorSystem,
@@ -107,25 +107,12 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   def form(toolname : String) = Action { implicit request =>
 
     val toolModel = ToolModel2.toolMap(toolname)
-
-    val sections = toolModel.paramGroups.mapValues { values =>
-      views.html.jobs.parampanel(values, ToolModel2.jobForm)
-    } + (toolModel.remainParamName -> views.html.jobs.parampanel(toolModel.remainParams, ToolModel2.jobForm))
-
-    Ok(views.html.jobs.main(sections))
+    Ok(views.html.jobs.main(toolModel.paramGroups.mapValues { vals =>
+      views.html.jobs.parampanel(values, vals, ToolModel2.jobForm)
+    } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm))))
   }
 
 
-  // Old input form with submit view
-  /*
-  def form(toolName: String) = Action.async { implicit request =>
-    getUser.map{ user =>
-      //val toolFrame = toolMatcher.loadTemplate(toolName)
-      val toolFrame = toolMatcher.matcher(toolName)
-      Ok(views.html.general.submit(tel, toolName, toolFrame, None))
-    }
-  }
-  */
 
   /**
    * Allows to access result files by the filename and a given jobID
