@@ -35,4 +35,6 @@ object Param {
   final val CONSISTENCY = "consistency"
   final val ITREFINE = "itrefine"
   final val PRETRAIN = "pretrain"
+  final val MAXROUNDS = "maxrounds"
+  final val OFFSET = "offset"
 }

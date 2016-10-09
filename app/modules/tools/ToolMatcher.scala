@@ -54,7 +54,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     //  case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
       case "hmmer3" => views.html.tools.forms.hmmer3(values, tel, Hmmer3.inputForm)
       //case "psiblast" => views.html.tools.forms.psiblast(values, tel, Psiblast.inputForm)
-      case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm)
+    //  case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm)
       case "csblast" => views.html.tools.forms.csblast(values, tel, Csblast.inputForm)
       case "hhpred" => views.html.tools.forms.hhpred(values, tel, HHpred.inputForm)
       case "hhblits" => views.html.tools.forms.hhblits(values, tel, HHblits.inputForm)
@@ -63,7 +63,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "patsearch" => views.html.tools.forms.patSearch(tel, PatSearch.inputForm)
       case "clustalomega" => views.html.tools.forms.clustalomega(ClustalOmega.inputForm)
       case "kalign" => views.html.tools.forms.kalign(Kalign.inputForm)
-      case "muscle" => views.html.tools.forms.muscle(Muscle.inputForm)
+     //case "muscle" => views.html.tools.forms.muscle(Muscle.inputForm)
     //  case "probcons" => views.html.tools.forms.probcons(ProbCons.inputForm)
     }
     toolFrame
@@ -76,12 +76,12 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
      // case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
       case "hmmer3"   => views.html.tools.forms.hmmer3(values, tel, Hmmer3.inputForm.bind(resultFiles))
       //case "psiblast" => views.html.tools.forms.psiblast(values, tel, Psiblast.inputForm.bind(resultFiles))
-      case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm.bind(resultFiles))
+      // case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm.bind(resultFiles))
       case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm.bind(resultFiles))
       case "clustalomega" => views.html.tools.forms.clustalomega(ClustalOmega.inputForm.bind(resultFiles))
       case "patsearch" => views.html.tools.forms.patSearch(tel, PatSearch.inputForm.bind(resultFiles))
       case "kalign" => views.html.tools.forms.kalign(Kalign.inputForm.bind(resultFiles))
-      case "muscle" => views.html.tools.forms.muscle(Muscle.inputForm.bind(resultFiles))
+      //case "muscle" => views.html.tools.forms.muscle(Muscle.inputForm.bind(resultFiles))
       //case "probcons" => views.html.tools.forms.probcons(ProbCons.inputForm.bind(resultFiles))
     }
   }
