@@ -1,5 +1,6 @@
 package models.tools
 
+import models.Param
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -9,13 +10,13 @@ import play.api.data.Forms._
 object ToolModel2 {
 
   /*
-    Template Form for all Tools
+    Specifies the form mapping of the parameters
   */
-  val jobForm = Form(
+  final val jobForm = Form(
     tuple(
-      "alignment_sequences" -> nonEmptyText, // Input Alignment or input sequences
-      "alignment_format" -> text,
-      "standarddb" -> text,
+      Param.ALIGNMENT -> nonEmptyText, // Input Alignment or input sequences
+      Param.ALIGNMENT_FORMAT -> nonEmptyText,
+      Param.STANDARD_DB -> text,
       "matrix" -> text,
       "num_iter" -> number,
       "evalue" -> number,
@@ -45,7 +46,7 @@ abstract class ToolModel2 {
   val params : Seq[String]
   val paramGroups = Map(
 
-   "Alignment" -> Seq("alignment_sequences", "alignment_format")
+   "Alignment" -> Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
   )
 
 
@@ -63,7 +64,7 @@ object PsiBlast extends ToolModel2 {
   val toolNameAbbrev = "pbl"
   val category = "search"
 
-  val params = Seq("alignment_sequences", "alignment_format", "standarddb", "matrix",
+  val params = Seq("alignment", "alignment_format", "standarddb", "matrix",
     "num_iter", "evalue", "gap_open", "gap", "gap_ext", "desc")
 }
 
