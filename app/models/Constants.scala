@@ -31,10 +31,13 @@ object Param {
   final val EVALUE = "evalue"
   final val GAP_OPEN = "gap_open"
   final val GAP_EXT = "gap_ext"
+  final val GAP_TERM = "gap_term"
   final val DESC = "desc"
   final val CONSISTENCY = "consistency"
   final val ITREFINE = "itrefine"
   final val PRETRAIN = "pretrain"
   final val MAXROUNDS = "maxrounds"
   final val OFFSET = "offset"
+  final val BONUSSCORE = "bonusscore"
+  final val OUTORDER = "outorder"
 }
