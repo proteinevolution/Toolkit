@@ -1,32 +1,3 @@
-#auth-tabs {
-  background: transparent;
-  border: none;
-}
-#auth-tabs .ui-widget-header {
-  font-size: 0.7em;
-  background: white;
-  border: none;
-  border-bottom: 1px solid #c0c0c0;
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
-}
-#auth-tabs .ui-tabs-nav .ui-state-default {
-  background: white;
-  border: none;
-}
-#auth-tabs .ui-tabs-nav .ui-state-active {
-  background: white;
-  border: none;
-}
-#auth-tabs .ui-tabs-nav .ui-state-default a {
-  color: #888;
-}
-#auth-tabs .ui-tabs-nav .ui-state-active a {
-  color: #888 !important;
-  font-size: 0.7em;
-}
-
 .ui-corner-top {
   border-top-right-radius: 0 !important;
   border-top-left-radius: 0 !important;
@@ -39,7 +10,7 @@
 .ui-state-default {
   background: #eee !important;
   border: none !important;
-  height: 2.5em;
+  height: 2.45em;
 
 }
 
@@ -70,23 +41,6 @@
 
 }
 
-#auth-tabs .ui-widget-header {
-  font-size: 0.7em;
-  background: white;
-  border: none;
-  border-bottom: 1px solid #c0c0c0;
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
-}
-#auth-tabs .ui-tabs-nav .ui-state-default {
-  background: transparent;
-  border: none;
-}
-#auth-tabs .ui-tabs-nav .ui-state-active {
-  background: transparent url(images/arrow-up.png) no-repeat bottom center;
-  border: none;
-}
 
 .ui-widget-header {
   background: #888 url("images/ui-bg_highlight-soft_75_cccccc_1x100.png") 50% 50% repeat-x;
@@ -148,7 +102,7 @@
   color: #000;
   color: rgba(0,0,0,0);
   text-shadow: 0 0 0 #878787;
-  height: 2.5em;
+  height: 2.45em;
   width: 15em;
 }
 
@@ -159,3 +113,73 @@
   height: 2.5em;
   width: 15em;
 }
+
+#auth-tabs {
+  border: none;
+  width: 25%;
+  min-height: 20em;
+  padding: 0;
+  overflow: hidden;
+}
+#auth-tabs .ui-widget-header {
+  font-size: 1.1em;
+  background: #eeeeee;
+  border: none;
+  width: 24.7em;
+
+}
+#auth-tabs .ui-tabs-nav .ui-state-default {
+  background: #eeeeee;
+  border: none;
+  height: 2.5em;
+}
+#auth-tabs .ui-tabs-nav .ui-state-active {
+  border: 1px solid grey;
+}
+#auth-tabs .ui-tabs-nav .ui-state-default a {
+  color: grey;
+}
+#auth-tabs .ui-tabs-nav .ui-state-active a {
+  color: grey;
+}
+
+#auth-tabs .ui-tabs-panel  {
+  background: white;
+}
+
+#signin-form {
+  margin-top: 4em;
+}
+
+#forgot-form {
+  font-size: 0.85em;
+  margin-top: 4em;
+}
+
+#signin-form input, #signup-form input, #forgot-form input {
+  background-color: transparent;
+}
+
+#signin-form input:focus, #signup-form input:focus, #forgot-form input:focus  {
+  outline: none !important;
+  border:1px solid #2E8C81;
+  box-shadow: 0 0 10px #2E8C81;
+}
+
+#signin-submit, #signup-submit, #forgot-submit {
+  width: 40%;
+  background-color: #2E8C81;
+  font-size: 0.9em;
+
+}
+
+#checklabel {
+  position: absolute;
+  left: 140px;
+  top: 360px;
+}
+
+#toS {
+  margin-bottom: 1em;
+}
+

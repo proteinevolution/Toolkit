@@ -1,41 +1,37 @@
 @import play.api.mvc.RequestHeader
 @()(implicit messages: Messages, request: RequestHeader)
 
-<form id="signup-form" data-abide="ajax" novalidate>
-    <div class="row">
-        <div class="small-12 columns">
+<form data-abide="ajax" novalidate>
+    <div class="row" id="signup-form">
+        <div class="small-offset-3 small-6 padded-column columns">
             <label>
-                Username:
-                <input type="text" id="nameLogin" name="nameLogin" placeholder="JDoe11186" required pattern="[a-zA-Z0-9_]{6,40}">
+                <input type="text" id="nameLogin" name="nameLogin" placeholder="Username" required pattern="[a-zA-Z0-9_]{6,40}">
                 <span class="form-error">Username must be at least 6 characters long!</span>
             </label>
         </div>
-        <div class="small-12 columns">
+        <div class="small-offset-3 small-6 padded-column columns">
             <label>
-                Password:
                 <input type="password" id="passwordCheck" placeholder="Password" required pattern=".{8,128}">
                 <span class="form-error">Passwords must be at least 8 characters long!</span>
             </label>
         </div>
-        <div class="small-12 columns">
+        <div class="small-offset-3 small-6 padded-column columns">
             <label>
-                Repeat Password:
-                <input type="password" id="password" name="password" placeholder="Repeat password" data-equalTo="passwordCheck" required pattern=".{8,128}">
+                <input type="password" id="password" name="password" placeholder="Confirm password" data-equalTo="passwordCheck" required pattern=".{8,128}">
                 <span class="form-error">Passwords must match!</span>
             </label>
         </div>
-        <div class="small-12 columns">
+        <div class="small-offset-3 small-6 padded-column columns">
             <label>
-                E-Mail:
-                <input type="text" id="eMail" name="eMail" placeholder="JohnDoe&#64;SomePlace.net" pattern="email">
+                <input type="text" id="eMail" name="eMail" placeholder="E-Mail" pattern="email">
                     <span class="form-error">Please enter a valid e-Mail address!</span>
             </label>
         </div>
-        <div class="small-12 columns">
-            <label>
-                I Accept the Terms of Sevice &nbsp;
+        <div id="toS" class="small-offset-3 small-6 padded-column columns">
+            <label id="checklabel">
                 <input type="checkbox" id="acceptToS" name="acceptToS" value="false" required>
-                <span class="form-error">You must accept the ToS!</span>
+                I Accept the Terms of Sevice
+                <span id="acceptToSText" class="form-error">You must accept the ToS!</span>
             </label>
         </div>
     </div>
