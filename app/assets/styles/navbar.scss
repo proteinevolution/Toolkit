@@ -160,15 +160,15 @@ i {
   z-index: 999;
   top: 0;
   left: 0;
-  background-color: rgb(172,205,255);
-  background-color: rgba(172,205,255, 1);
+  background-color: #57a39a;
   overflow-y: hidden;
   transition: 0.5s;
+  opacity: 0.98;
 }
 
 .overlay-content {
   position: relative;
-  top: 25%;
+  top: 15%;
   width: 100%;
   text-align: center;
   margin-top: 30px;
@@ -204,8 +204,8 @@ i {
   }
 }
 
-.overlayed:after {background-color: #006F62;}
-.overlayed:before {background-color: #006F62;}
+.overlayed:after {background-color: #eeeeee;}
+.overlayed:before {background-color: #eeeeee;}
 
 
 /* current Navbar */
