@@ -78,9 +78,11 @@
         <div id="modal" class="reveal large" data-reveal></div>
 
         <!---Offline Callout --->
-        <div class="callout alert" id="offline-alert" style="display: none;">
-            Connection lost. Trying to reconnect in <span id="offline-alert-timer"></span> seconds.
-        </div>
+            <div class="row callout alert" id="offline-alert" >
+                <div class="large-2 columns loader"></div>
+                <div class="large-10 columns">Connection lost, trying to reconnect in <span id="offline-alert-timer"></span> seconds.</div>
+            </div>
+
 
         <!---Hamburger Navbar --->
         <div id="myNav" class="overlay">
@@ -106,12 +108,12 @@
                 <a href="@routes.Application.index()"><img  style="width: 90%; margin-left:0.25em;margin-top:0.60em; margin-bottom: 2em;" src="@routes.Assets.at("images/logo3.svg")"></a>
             </div>
             <!--navbar-->
-            <div class="large-8 columns" align="center" style="padding-left: 2.5em; padding-right:4.375em;">
+            <div class="large-8 columns" style="padding-left: 2.5em; padding-right:4.375em;">
                 @elements.navbar()
             </div>
 
             <!--signin TODO make a modal out of this? -->
-            <div class="large-1 columns align-self-middle" align="right" style="margin-top:0.9em; margin-bottom: 2em;" >
+            <div class="large-1 columns align-self-middle" style="margin-top:0.9em; margin-bottom: 2em;" >
                 <i class="icon-user"></i>
                 <a style="color: #888; font-size: 0.85em;" id="signin-link" onclick="openNav()" >
                     @{user.userData match {
