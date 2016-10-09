@@ -6,6 +6,6 @@ trap 'kill $(jobs -p)' EXIT
 export MAFFT_BINARIES='%BIOPROGS/tools/mafft2/binaries'
 
 %BIOPROGS/tools/mafft2/scripts/mafft \
-                           --op %gapopen.content \
+                           --op %gap_open.content \
                            --ep %offset.content \
-                            %sequences.path  > results/out
+                            %alignment.path  > results/out
