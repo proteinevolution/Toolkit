@@ -40,7 +40,8 @@ object ToolModel2 {
     "probcons" -> Probcons,
     "muscle" -> Muscle,
     "mafft" -> Mafft,
-    "kalign" -> Kalign
+    "kalign" -> Kalign,
+    "hmmer3" -> Hmmer3
   )
 
 
@@ -136,5 +137,16 @@ object Kalign extends ToolModel2 {
   val category = "alignment"
 
   val params = Seq(Param.ALIGNMENT, Param.OUTORDER, Param.GAP_OPEN, Param.GAP_EXT, Param.GAP_TERM, Param.BONUSSCORE)
+}
 
+object Hmmer3 extends ToolModel2 {
+
+
+  // --- Names for the Tool ---
+  val toolNameShort        = "hmmer3"
+  val toolNameLong         = "Hmmer3"
+  val toolNameAbbrev       = "hm3"
+  val category = "search"
+
+  val params = Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
 }
