@@ -4,12 +4,13 @@
 <!-- Render all the parameters from params in the given order -->
 @for(param <- params) {
 
-
     @{param match {
         case Param.ALIGNMENT => helper.textarea(field = jobForm(Param.ALIGNMENT), args = 'rows -> 10, 'cols -> 70,
                                                       '_label -> "",
                                                       'placeholder -> "Enter multiple sequence alignment of single sequence",
                                                       'id -> "alignment", '_showConstraints -> false)
+
+
         case Param.ALIGNMENT_FORMAT => helper.select(field = jobForm(Param.ALIGNMENT_FORMAT),
                                        helper.options(values.fullNames.filterKeys(values.alignmentFormats)),
                                        '_label -> "Select alignment format",
@@ -18,13 +19,35 @@
                                                 helper.options(values.standardDBParams),
                                                '_label -> "Select Database",
                                                'id -> "standarddb", '_showConstraints -> false)
+        case Param.MATRIX =>  helper.select(field = jobForm(Param.MATRIX),
+                              helper.options(values.fullNames.filterKeys(values.matrixParams)),
+                              '_label -> "Select Scoring Matrix",
+                              'id -> "matrix")
+        case Param.NUM_ITER => helper.inputText(jobForm(Param.NUM_ITER).copy(value=Some("1")),
+                               '_label  -> "Set the number of iterations",
+                               'id -> "num_iter",
+                               '_showConstraints -> false)
+        case Param.EVALUE =>   helper.inputText(jobForm(Param.EVALUE).copy(value=Some("10")),
+                               '_label  -> "E-Value",
+                               'id -> "evalue",
+                               '_showConstraints -> false)
+        case Param.GAP_OPEN => helper.inputText(jobForm(Param.GAP_OPEN).copy(value=Some("11")),
+                               '_label  -> "Gap Open penalty",
+                               'id -> "gap_open",
+                               '_showConstraints -> false)
+        case Param.GAP_EXT =>  helper.inputText(jobForm(Param.GAP_EXT).copy(value=Some("1")),
+                               '_label  -> "Gap Extension penalty",
+                               'id -> "gap_ext",
+                               '_showConstraints -> false)
+
+        case Param.DESC =>     helper.inputText(jobForm(Param.DESC).copy(value=Some("200")),
+                               '_label  -> "Number of alignments and descriptions",
+                               'id -> "desc",
+                               '_showConstraints -> false)
+
         case _ =>
     }}
 }
 
 
-<!--
-    ("standarddb", "matrix",
-    "num_iter", "evalue", "gap_open", "gap", "gap_ext", "desc")
--->
 

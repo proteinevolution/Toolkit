@@ -3,6 +3,27 @@
 # job from the UI.
 ###
 $ ->
+  #handles all types of submission
+  submitJob = (start) ->
+    submitRoute = jsRoutes.controllers.Tool.submit(toolname, start, mainID)
+
+    $.ajax(
+      url: submitRoute.url
+      type: "POST"
+      data: $(".jobForm").serialize()
+      error: (jqXHR, textStatus, errorThrown) -> alert errorThrown
+    ).done (json) ->
+      if(json.jobSubmitted)
+        if (json.identicalJobs)
+  #TODO refer to the alert div box here
+          alert "job submitted but there was an identical job"
+  #TODO maybe link to the job page here
+      else
+        alert "job NOT submitted"
+
+  $("#submitJob").bind 'click', (event) ->
+    submitJob(true)
+
   # Variables in Scope of the Input form
   # JobIDs have to obey this regular expression
   jobidPattern = /// ^
@@ -30,24 +51,6 @@ $ ->
     else
       $('#jobPermissionDiv').show()
 
-  #handles all types of submission
-  submitJob = (start) ->
-    submitRoute = jsRoutes.controllers.Tool.submit(toolname, start, mainID)
-
-    $.ajax(
-      url: submitRoute.url
-      type: "POST"
-      data: $(".jobForm").serialize()
-      error: (jqXHR, textStatus, errorThrown) -> alert errorThrown
-    ).done (json) ->
-      if(json.jobSubmitted)
-        if (json.identicalJobs)
-          #TODO refer to the alert div box here
-          alert "job submitted but there was an identical job"
-        #TODO maybe link to the job page here
-      else
-        alert "job NOT submitted"
-
   #event binding
   #handles starting of an already prepared job
   $("#startJob").bind 'click', (event) ->
@@ -58,8 +61,6 @@ $ ->
       #TODO this should not happen, but we may need a catch for this so that the user still sees a reaction
 
   # Handles the behavior when the submit or prepare button is pressed in a job form
-  $("#submitJob").bind 'click', (event) ->
-    submitJob(true)
   $("#prepareJob").bind 'click', (event) ->
     submitJob(false)
 
