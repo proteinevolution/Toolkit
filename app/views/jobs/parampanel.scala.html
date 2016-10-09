@@ -6,6 +6,9 @@
         Option[Int],
         Option[Int],
         Option[Int],
+        Option[Int],
+        Option[Int],
+        Option[Int],
         Option[Int])])(implicit messages: Messages, request: RequestHeader)
 
 
@@ -53,6 +56,15 @@
                                'id -> "desc",
                                '_showConstraints -> false)
 
+        case Param.CONSISTENCY => helper.inputText(field = jobForm("consistency"),
+                                  'placeholder -> "", '_label -> "Passes of consistency transformation",
+                                  'id -> "consistency", '_showConstraints -> false)
+        case Param.ITREFINE => helper.inputText(field = jobForm("itrefine"),
+                               'placeholder -> "", '_label -> "Passes of iterative refinement",
+                               'id -> "itrefine", '_showConstraints -> false)
+        case Param.PRETRAIN => helper.inputText(field = jobForm("pretrain"),
+                               'placeholder -> "", '_label -> "Rounds of pretraining",
+                               'id -> "pretrain", '_showConstraints -> false)
         case _ =>
     }}
 }
