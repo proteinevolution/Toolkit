@@ -11,6 +11,13 @@
 
         <li id="tab-@section"><a href="#tabpanel-@section">@section</a></li>
     }
+    <!-- Show additional information if this is an already existing job -->
+    @if(jobOption.isDefined) {
+
+        <li id="tab-foobar"><a href="#tabpanel-foobar">Foobar</a></li>
+    }
+
+
     <span style="float: right; padding: 0.5em 1em 0 0";>@toolModel.toolNameLong</span>
     </ul>
 

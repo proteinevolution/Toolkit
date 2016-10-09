@@ -52,7 +52,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     lazy val toolFrame = tool match {
 
     //  case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
-      case "hmmer3" => views.html.tools.forms.hmmer3(values, tel, Hmmer3.inputForm)
+      //case "hmmer3" => views.html.tools.forms.hmmer3(values, tel, Hmmer3.inputForm)
       //case "psiblast" => views.html.tools.forms.psiblast(values, tel, Psiblast.inputForm)
     //  case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm)
       case "csblast" => views.html.tools.forms.csblast(values, tel, Csblast.inputForm)
@@ -74,7 +74,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     tool match {
 
      // case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
-      case "hmmer3"   => views.html.tools.forms.hmmer3(values, tel, Hmmer3.inputForm.bind(resultFiles))
+     // case "hmmer3"   => views.html.tools.forms.hmmer3(values, tel, Hmmer3.inputForm.bind(resultFiles))
       //case "psiblast" => views.html.tools.forms.psiblast(values, tel, Psiblast.inputForm.bind(resultFiles))
       // case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm.bind(resultFiles))
       case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm.bind(resultFiles))
