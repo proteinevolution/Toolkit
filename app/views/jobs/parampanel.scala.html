@@ -11,7 +11,8 @@
         Option[Int],
         Option[Int],
         Option[Int],
-        Option[Int])])(implicit messages: Messages, request: RequestHeader)
+        Option[Int],
+        Option[Int],  Option[Int],  Option[String])])(implicit messages: Messages, request: RequestHeader)
 
 
 <!-- Render all the parameters from params in the given order -->
@@ -52,29 +53,40 @@
                                '_label  -> "Gap Extension penalty",
                                'id -> "gap_ext",
                                '_showConstraints -> false)
+        case Param.GAP_TERM => helper.inputText(field = jobForm(Param.GAP_TERM),
+                                'placeholder -> "", '_label -> "Terminal gap penalties",
+                                'id -> "termgap", '_showConstraints -> false)
 
         case Param.DESC =>     helper.inputText(jobForm(Param.DESC).copy(value=Some("200")),
                                '_label  -> "Number of alignments and descriptions",
                                'id -> "desc",
                                '_showConstraints -> false)
 
-        case Param.CONSISTENCY => helper.inputText(field = jobForm("consistency"),
+        case Param.CONSISTENCY => helper.inputText(field = jobForm(Param.CONSISTENCY),
                                   'placeholder -> "", '_label -> "Passes of consistency transformation",
                                   'id -> "consistency", '_showConstraints -> false)
-        case Param.ITREFINE => helper.inputText(field = jobForm("itrefine"),
+        case Param.ITREFINE => helper.inputText(field = jobForm(Param.ITREFINE),
                                'placeholder -> "", '_label -> "Passes of iterative refinement",
                                'id -> "itrefine", '_showConstraints -> false)
-        case Param.PRETRAIN => helper.inputText(field = jobForm("pretrain"),
+        case Param.PRETRAIN => helper.inputText(field = jobForm(Param.PRETRAIN),
                                'placeholder -> "", '_label -> "Rounds of pretraining",
                                'id -> "pretrain", '_showConstraints -> false)
-        case Param.MAXROUNDS => helper.inputText(field = jobForm("maxrounds"),
+        case Param.MAXROUNDS => helper.inputText(field = jobForm(Param.MAXROUNDS),
                                 'placeholder -> "Maximum number of iterations",
                                 '_label -> "Maximum number of iterations",
                                 'id -> "maxrounds", '_showConstraints -> false)
-        case Param.OFFSET => helper.inputText(field = jobForm("offset"),
+        case Param.OFFSET => helper.inputText(field = jobForm(Param.OFFSET),
                              'placeholder -> "Offset", '_label -> "",
                              'id -> "offset",
                              '_showConstraints -> false)
+        case Param.BONUSSCORE => helper.inputText(field = jobForm(Param.BONUSSCORE),
+                                  'placeholder -> "", '_label -> "Bonus score",
+                                 'id -> "bonusscore", '_showConstraints -> false)
+
+        case Param.OUTORDER => helper.select(jobForm(Param.OUTORDER),
+                               helper.options(values.outOrderParams.toList),
+                               '_label -> "Output Sequence order",
+                                'id -> "outorder")
         case _ =>
     }}
 }
