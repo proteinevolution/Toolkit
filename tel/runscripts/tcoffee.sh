@@ -10,7 +10,7 @@ export CACHE_4_TCOFFEE=./tmp
 
 
 %BIOPROGS/tools/tcoffee/bin/t_coffee \
-                   -in %sequences.path \
+                   -in %alignment.path \
                    -cache=no \
                    -output clustalw_aln score_pdf score_html
 

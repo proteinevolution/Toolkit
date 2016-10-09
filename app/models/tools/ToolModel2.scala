@@ -15,19 +15,20 @@ object ToolModel2 {
   final val jobForm = Form(
     tuple(
       Param.ALIGNMENT -> nonEmptyText, // Input Alignment or input sequences
-      Param.ALIGNMENT_FORMAT -> nonEmptyText,
-      Param.STANDARD_DB -> text,
-      Param.MATRIX -> text,
-      Param.NUM_ITER -> number,
-      Param.EVALUE -> number,
-      Param.GAP_OPEN -> number,
-      Param.GAP_EXT -> number,
-      Param.DESC -> number
+      Param.ALIGNMENT_FORMAT -> optional(nonEmptyText),
+      Param.STANDARD_DB -> optional(text),
+      Param.MATRIX -> optional(text),
+      Param.NUM_ITER -> optional(number),
+      Param.EVALUE -> optional(number),
+      Param.GAP_OPEN -> optional(number),
+      Param.GAP_EXT -> optional(number),
+      Param.DESC -> optional(number)
     )
   )
 
   val toolMap : Map[String, ToolModel2] = Map(
-    "psiblast" -> PsiBlast
+    "psiblast" -> PsiBlast,
+    "tcoffee" -> Tcoffee
   )
 
 
@@ -64,8 +65,21 @@ object PsiBlast extends ToolModel2 {
   val toolNameAbbrev = "pbl"
   val category = "search"
 
-  val params = Seq("alignment", "alignment_format", "standarddb", "matrix",
+  val params = Seq(Param.ALIGNMENT, "alignment_format", "standarddb", "matrix",
     "num_iter", "evalue", "gap_open", "gap", "gap_ext", "desc")
+}
+
+
+object Tcoffee extends  ToolModel2 {
+
+  // --- Names for the Tool ---
+  val toolNameShort = "tcoffee"
+  val toolNameLong = "T-Coffee"
+  val toolNameAbbrev = "tcf"
+  val category = "alignment"
+
+  val params = Seq(Param.ALIGNMENT)
+
 }
 
 
