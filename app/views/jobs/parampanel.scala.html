@@ -1,4 +1,12 @@
-@(values: Values, params : Seq[String], jobForm :  Form[(String, String, String, String, Int, Int, Int, Int, Int)])(implicit messages: Messages, request: RequestHeader)
+@(values: Values, params : Seq[String], jobForm :  Form[(String,
+        Option[String],
+        Option[String],
+        Option[String],
+        Option[Int],
+        Option[Int],
+        Option[Int],
+        Option[Int],
+        Option[Int])])(implicit messages: Messages, request: RequestHeader)
 
 
 <!-- Render all the parameters from params in the given order -->

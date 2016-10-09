@@ -11,7 +11,7 @@ $ ->
       url: submitRoute.url
       type: "POST"
       data: $(".jobForm").serialize()
-      error: (jqXHR, textStatus, errorThrown) -> alert errorThrown
+      error: (e) -> alert JSON.stringify(e)
     ).done (json) ->
       if(json.jobSubmitted)
         if (json.identicalJobs)

@@ -112,8 +112,9 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   def form(toolname : String) = Action { implicit request =>
 
     val toolModel = ToolModel2.toolMap(toolname)
-    Ok(views.html.jobs.main(None, toolModel, toolModel.paramGroups.mapValues { vals =>
-      views.html.jobs.parampanel(values, vals, ToolModel2.jobForm)
+    Ok(views.html.jobs.main(None, toolModel, toolModel.paramGroups
+      .mapValues { vals =>
+      views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
     } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm))))
   }
 
