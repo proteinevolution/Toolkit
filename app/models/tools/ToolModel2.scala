@@ -24,6 +24,13 @@ object ToolModel2 {
       "desc" -> number
     )
   )
+
+  val toolMap : Map[String, ToolModel2] = Map(
+    "psiblast" -> PsiBlast
+  )
+
+
+
 }
 
 abstract class ToolModel2 {
@@ -41,7 +48,10 @@ abstract class ToolModel2 {
    "Alignment" -> Seq("alignment_sequences", "alignment_format")
   )
 
-  val paramRemainderName : String = "Parameter"
+
+  // Params which are not a part of any group
+  val remainParamName : String = "Parameter"
+  lazy val remainParams : Seq[String] = params.diff(paramGroups.values.flatten.toSeq)
 }
 
 
