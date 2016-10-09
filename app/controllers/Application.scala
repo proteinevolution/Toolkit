@@ -8,10 +8,10 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import models.Constants
 import models.tel.TEL
-import models.tools.ToolModel
+import models.tools.{ToolModel, ToolModel2}
 import modules.Common
 import modules.tools.ToolMatcher
-import play.api.Configuration
+import play.api.{Configuration, Logger}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
@@ -22,8 +22,6 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import modules.tools.ToolMirror
-import play.api.data.Forms._
-import play.api.data.{Form, _}
 import play.twirl.api.Html
 
 
@@ -108,7 +106,13 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
 
   def form(toolname : String) = Action { implicit request =>
 
-    Ok(views.html.jobs.main(Map("foo" -> Html("bar"), "baz" -> Html("goo"))))
+    val toolModel = ToolModel2.toolMap(toolname)
+
+    val sections = toolModel.paramGroups.mapValues { values =>
+      views.html.jobs.parampanel(values, ToolModel2.jobForm)
+    } + (toolModel.remainParamName -> views.html.jobs.parampanel(toolModel.remainParams, ToolModel2.jobForm))
+
+    Ok(views.html.jobs.main(sections))
   }
 
 
