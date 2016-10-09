@@ -2,11 +2,11 @@
 
 trap 'kill $(jobs -p)' EXIT
 
-%BIOPROGS/tools/kalign/kalign -i %sequences.path \
+%BIOPROGS/tools/kalign/kalign -i %alignment.path \
                                    -o results/kalign_aln \
-                                   -s %gapopen.content \
-                                   -e %gapextension.content \
-                                   -t %termgap.content \
+                                   -s %gap_open.content \
+                                   -e %gap_ext.content \
+                                   -t %gap_term.content \
                                    -m %bonusscore.content \
                                    -c %outorder.content \
                                    -f fasta \
