@@ -32,4 +32,7 @@ object Param {
   final val GAP_OPEN = "gap_open"
   final val GAP_EXT = "gap_ext"
   final val DESC = "desc"
+  final val CONSISTENCY = "consistency"
+  final val ITREFINE = "itrefine"
+  final val PRETRAIN = "pretrain"
 }
