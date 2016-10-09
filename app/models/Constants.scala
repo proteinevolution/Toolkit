@@ -21,3 +21,13 @@ trait ExitCodes {
   val SUCCESS = 0
   val TERMINATED = 143
 }
+
+object Param {
+
+  final val ALIGNMENT = "alignment"
+  final val ALIGNMENT_FORMAT = "alignment_format"
+  final val STANDARD_DB = "standarddb"
+
+
+
+}

@@ -2,13 +2,15 @@ package modules.tools
 
 
 import javax.inject.{Inject, Singleton}
+
+import models.Values
 import models.database.Job
 import models.tel.TEL
-
 import models.tools.ToolModel._
-import play.api.i18n.{MessagesApi, I18nSupport}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.RequestHeader
 import play.twirl.api.Html
+
 import reflect.runtime.universe
 
 /**
@@ -23,6 +25,7 @@ import reflect.runtime.universe
 @Singleton
 final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
                                    val tel : TEL,
+                                   val values : Values,
                                    val toolMirror: ToolMirror ) extends I18nSupport {
 
 
@@ -49,13 +52,13 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     lazy val toolFrame = tool match {
 
     //  case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
-      case "hmmer3" => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm)
-      case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm)
+      case "hmmer3" => views.html.tools.forms.hmmer3(values, tel, Hmmer3.inputForm)
+      case "psiblast" => views.html.tools.forms.psiblast(values, tel, Psiblast.inputForm)
       case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm)
-      case "csblast" => views.html.tools.forms.csblast(tel, Csblast.inputForm)
-      case "hhpred" => views.html.tools.forms.hhpred(tel, HHpred.inputForm)
-      case "hhblits" => views.html.tools.forms.hhblits(tel, HHblits.inputForm)
-      case "clans" => views.html.tools.forms.clans(tel, Clans.inputForm)
+      case "csblast" => views.html.tools.forms.csblast(values, tel, Csblast.inputForm)
+      case "hhpred" => views.html.tools.forms.hhpred(values, tel, HHpred.inputForm)
+      case "hhblits" => views.html.tools.forms.hhblits(values, tel, HHblits.inputForm)
+      case "clans" => views.html.tools.forms.clans(values, tel, Clans.inputForm)
       case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm)
       case "patsearch" => views.html.tools.forms.patSearch(tel, PatSearch.inputForm)
       case "clustalomega" => views.html.tools.forms.clustalomega(ClustalOmega.inputForm)
@@ -71,8 +74,8 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     tool match {
 
      // case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
-      case "hmmer3"   => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(resultFiles))
-      case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
+      case "hmmer3"   => views.html.tools.forms.hmmer3(values, tel, Hmmer3.inputForm.bind(resultFiles))
+      case "psiblast" => views.html.tools.forms.psiblast(values, tel, Psiblast.inputForm.bind(resultFiles))
       case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm.bind(resultFiles))
       case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm.bind(resultFiles))
       case "clustalomega" => views.html.tools.forms.clustalomega(ClustalOmega.inputForm.bind(resultFiles))
