@@ -64,7 +64,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "clustalomega" => views.html.tools.forms.clustalomega(ClustalOmega.inputForm)
       case "kalign" => views.html.tools.forms.kalign(Kalign.inputForm)
       case "muscle" => views.html.tools.forms.muscle(Muscle.inputForm)
-      case "probcons" => views.html.tools.forms.probcons(ProbCons.inputForm)
+    //  case "probcons" => views.html.tools.forms.probcons(ProbCons.inputForm)
     }
     toolFrame
   }
@@ -82,7 +82,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
       case "patsearch" => views.html.tools.forms.patSearch(tel, PatSearch.inputForm.bind(resultFiles))
       case "kalign" => views.html.tools.forms.kalign(Kalign.inputForm.bind(resultFiles))
       case "muscle" => views.html.tools.forms.muscle(Muscle.inputForm.bind(resultFiles))
-      case "probcons" => views.html.tools.forms.probcons(ProbCons.inputForm.bind(resultFiles))
+      //case "probcons" => views.html.tools.forms.probcons(ProbCons.inputForm.bind(resultFiles))
     }
   }
 
