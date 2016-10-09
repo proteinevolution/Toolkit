@@ -22,12 +22,15 @@ object ToolModel2 {
       Param.EVALUE -> optional(number),
       Param.GAP_OPEN -> optional(number),
       Param.GAP_EXT -> optional(number),
+      Param.GAP_TERM -> optional(number),
       Param.DESC -> optional(number),
       Param.CONSISTENCY -> optional(number),
       Param.ITREFINE -> optional(number),
       Param.PRETRAIN -> optional(number),
       Param.MAXROUNDS -> optional(number),
-      Param.OFFSET -> optional(number)
+      Param.OFFSET -> optional(number),
+      Param.BONUSSCORE -> optional(number),
+      Param.OUTORDER -> optional(text)
     )
   )
 
@@ -36,7 +39,8 @@ object ToolModel2 {
     "tcoffee" -> Tcoffee,
     "probcons" -> Probcons,
     "muscle" -> Muscle,
-    "mafft" -> Mafft
+    "mafft" -> Mafft,
+    "kalign" -> Kalign
   )
 
 
@@ -120,5 +124,17 @@ object Mafft extends ToolModel2 {
   val toolNameAbbrev = "mft"
   val category = "alignment"
   val params = Seq(Param.ALIGNMENT, Param.GAP_OPEN, Param.OFFSET)
+
+}
+
+object Kalign extends ToolModel2 {
+
+  // --- Names for the Tool ---
+  val toolNameShort = "kalign"
+  val toolNameLong = "Kalign"
+  val toolNameAbbrev = "kal"
+  val category = "alignment"
+
+  val params = Seq(Param.ALIGNMENT, Param.OUTORDER, Param.GAP_OPEN, Param.GAP_EXT, Param.GAP_TERM, Param.BONUSSCORE)
 
 }
