@@ -17,12 +17,12 @@ object ToolModel2 {
       Param.ALIGNMENT -> nonEmptyText, // Input Alignment or input sequences
       Param.ALIGNMENT_FORMAT -> nonEmptyText,
       Param.STANDARD_DB -> text,
-      "matrix" -> text,
-      "num_iter" -> number,
-      "evalue" -> number,
-      "gap_open" -> number,
-      "gap_ext" -> number,
-      "desc" -> number
+      Param.MATRIX -> text,
+      Param.NUM_ITER -> number,
+      Param.EVALUE -> number,
+      Param.GAP_OPEN -> number,
+      Param.GAP_EXT -> number,
+      Param.DESC -> number
     )
   )
 

@@ -1,4 +1,6 @@
-@(parametersections : Map[String, Html])
+@import models.tools.ToolModel2
+@import models.database.Job
+@(jobOption : Option[Job], toolModel : ToolModel2, parametersections : Map[String, Html])
 
 
 <div class="tool-tabs" id="tool-tabs">
@@ -9,6 +11,7 @@
 
         <li id="tab-@section"><a href="#tabpanel-@section">@section</a></li>
     }
+    <span style="float: right; padding: 0.5em 1em 0 0";>@toolModel.toolNameLong</span>
     </ul>
 
     @for(section <- parametersections.keys) {
@@ -19,7 +22,7 @@
 
             <!-- Show control buttons in all panels -->
             <div id="submitbuttons">
-                <input class="secondary button small" id="submitJob"     type="button" value="Submit Job" />
+                <input class="secondary button small" id="submitJob"  type="button" value="Submit Job" />
             </div>
         </div>
     }
@@ -28,5 +31,15 @@
 
 
 <script>
+        toolname = '@toolModel.toolNameShort';
+        @if(jobOption.isDefined){
+        mainID   = '@{jobOption.get.mainID.stringify}';
+        } else {
+        mainID   = null;
+        }
+
+
         $("#tool-tabs").tabs();
+</script>
+<script src="@routes.Assets.at("scripts/form.js")">
 </script>
