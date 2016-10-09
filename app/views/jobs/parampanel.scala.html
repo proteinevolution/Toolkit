@@ -9,6 +9,8 @@
         Option[Int],
         Option[Int],
         Option[Int],
+        Option[Int],
+        Option[Int],
         Option[Int])])(implicit messages: Messages, request: RequestHeader)
 
 
@@ -65,6 +67,14 @@
         case Param.PRETRAIN => helper.inputText(field = jobForm("pretrain"),
                                'placeholder -> "", '_label -> "Rounds of pretraining",
                                'id -> "pretrain", '_showConstraints -> false)
+        case Param.MAXROUNDS => helper.inputText(field = jobForm("maxrounds"),
+                                'placeholder -> "Maximum number of iterations",
+                                '_label -> "Maximum number of iterations",
+                                'id -> "maxrounds", '_showConstraints -> false)
+        case Param.OFFSET => helper.inputText(field = jobForm("offset"),
+                             'placeholder -> "Offset", '_label -> "",
+                             'id -> "offset",
+                             '_showConstraints -> false)
         case _ =>
     }}
 }

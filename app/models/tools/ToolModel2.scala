@@ -25,14 +25,18 @@ object ToolModel2 {
       Param.DESC -> optional(number),
       Param.CONSISTENCY -> optional(number),
       Param.ITREFINE -> optional(number),
-      Param.PRETRAIN -> optional(number)
+      Param.PRETRAIN -> optional(number),
+      Param.MAXROUNDS -> optional(number),
+      Param.OFFSET -> optional(number)
     )
   )
 
   val toolMap : Map[String, ToolModel2] = Map(
     "psiblast" -> PsiBlast,
     "tcoffee" -> Tcoffee,
-    "probcons" -> Probcons
+    "probcons" -> Probcons,
+    "muscle" -> Muscle,
+    "mafft" -> Mafft
   )
 
 
@@ -98,3 +102,23 @@ object Probcons extends ToolModel2 {
 
 }
 
+object Muscle extends ToolModel2 {
+
+  // --- Names for the Tool ---
+  val toolNameShort = "muscle"
+  val toolNameLong = "MUSCLE"
+  val toolNameAbbrev = "msc"
+  val category = "alignment"
+
+  val params = Seq("alignment", "maxrounds")
+}
+
+object Mafft extends ToolModel2 {
+
+  val toolNameShort        = "mafft"
+  val toolNameLong         = "Mafft"
+  val toolNameAbbrev = "mft"
+  val category = "alignment"
+  val params = Seq(Param.ALIGNMENT, Param.GAP_OPEN, Param.OFFSET)
+
+}
