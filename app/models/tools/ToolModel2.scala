@@ -22,13 +22,17 @@ object ToolModel2 {
       Param.EVALUE -> optional(number),
       Param.GAP_OPEN -> optional(number),
       Param.GAP_EXT -> optional(number),
-      Param.DESC -> optional(number)
+      Param.DESC -> optional(number),
+      Param.CONSISTENCY -> optional(number),
+      Param.ITREFINE -> optional(number),
+      Param.PRETRAIN -> optional(number)
     )
   )
 
   val toolMap : Map[String, ToolModel2] = Map(
     "psiblast" -> PsiBlast,
-    "tcoffee" -> Tcoffee
+    "tcoffee" -> Tcoffee,
+    "probcons" -> Probcons
   )
 
 
@@ -70,7 +74,7 @@ object PsiBlast extends ToolModel2 {
 }
 
 
-object Tcoffee extends  ToolModel2 {
+object Tcoffee extends ToolModel2 {
 
   // --- Names for the Tool ---
   val toolNameShort = "tcoffee"
@@ -82,5 +86,15 @@ object Tcoffee extends  ToolModel2 {
 
 }
 
+object Probcons extends ToolModel2 {
 
+  // --- Names for the Tool ---
+  val toolNameShort = "probcons"
+  val toolNameLong = "ProbCons"
+  val toolNameAbbrev = "pcns"
+  val category = "alignment"
+
+  val params = Seq(Param.ALIGNMENT, Param.CONSISTENCY, Param.ITREFINE, Param.PRETRAIN)
+
+}
 
