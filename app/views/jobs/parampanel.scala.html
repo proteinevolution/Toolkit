@@ -1,6 +1,12 @@
 @(params : Seq[String], jobForm :  Form[(String, String, String, String, Int, Int, Int, Int, Int)])
 
 
+<!-- Render all the parameters from params in the given order -->
+@for(param <- params) {
+
+    This will render @param <br />
+}
+
 
 
 
