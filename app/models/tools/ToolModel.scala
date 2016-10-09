@@ -70,7 +70,6 @@ case object Clans extends ToolModel {
     val optional = ""
 
 
-    // --- Tcoffee specific values ---
     // Returns the Input Form Definition of this tool
     val inputForm = Form(
       tuple(
@@ -90,7 +89,6 @@ case object Csblast extends ToolModel {
   val section = "search"
   val optional = ""
 
-  // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
@@ -121,7 +119,6 @@ case object Csblast extends ToolModel {
     val optional = ""
 
 
-    // --- Tcoffee specific values ---
     // Returns the Input Form Definition of this tool
     val inputForm = Form(
       single(
@@ -315,7 +312,6 @@ case object Mafft extends ToolModel {
     val optional = ""
 
 
-    // --- Tcoffee specific values ---
     // Returns the Input Form Definition of this tool
     val inputForm = Form(
       tuple(
