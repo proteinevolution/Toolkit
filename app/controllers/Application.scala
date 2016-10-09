@@ -104,10 +104,15 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     Redirect(s"/#/$static")
   }
 
+  /**
+    * Shows the submission view of a new job instance to be created.
+    *
+    * @param toolname  Which tool the submission view should be created for.
+    */
   def form(toolname : String) = Action { implicit request =>
 
     val toolModel = ToolModel2.toolMap(toolname)
-    Ok(views.html.jobs.main(toolModel.paramGroups.mapValues { vals =>
+    Ok(views.html.jobs.main(None, toolModel, toolModel.paramGroups.mapValues { vals =>
       views.html.jobs.parampanel(values, vals, ToolModel2.jobForm)
     } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm))))
   }
