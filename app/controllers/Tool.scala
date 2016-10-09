@@ -12,6 +12,7 @@ import models.search.JobDAO
 import models.tools.ToolModel
 import modules.Common
 import modules.tools.{FNV, ToolMatcher}
+import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -78,16 +79,8 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
           }
         }
 
-
-
         lazy val hashQuery = jobDao.matchHash(inputHash, dbName, dbMtime)
-        boundForm.fold(
-          formWithErrors => {
 
-            Future.successful(BadRequest("There was an error with the Form"))
-          },
-
-          _ =>
             hashQuery.flatMap { richSearchResponse =>
               println("success: " + richSearchResponse)
               println("hits: " + richSearchResponse.totalHits)
@@ -140,7 +133,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                     ).withSession(sessionCookie(request, user.sessionID.get))
                 }
               }
-            })
+            }
       }
     }
   }
