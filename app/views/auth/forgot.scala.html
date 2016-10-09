@@ -1,20 +1,19 @@
 @import play.api.mvc.RequestHeader
 @()(implicit messages: Messages, request: RequestHeader)
 
-<form id="forgot-form" data-abide="ajax" novalidate>
-  <p>Forgot your password or username? No problem! We can send you a E-Mail with further instructions on how to reset your password.</p>
-  <div class="row">
-    <div class="small-12 columns">
-      <label>
-        Username:
-        <input type="text" id="nameLogin" name="nameLogin" placeholder="JDoe11186" pattern="text">
-      </label>
-    </div>
-    <div class="small-12 columns">
-      <label>
-        E-Mail:
-        <input type="text" id="eMail" name="eMail" placeholder="JohnDoe&#64;SomePlace.net" required pattern="email">
-      </label>
+<form data-abide="ajax" novalidate>
+  <div id="forgot-form">
+    <div class="row">
+      <div class="small-6 padded-column columns">
+        <label>
+          <input type="text" id="nameLogin" name="nameLogin" placeholder="Username" pattern="text">
+        </label>
+      </div>
+      <div class="small-6 padded-column columns">
+        <label>
+          <input type="text" id="eMail" name="eMail" placeholder="E-Mail" required pattern="email">
+        </label>
+      </div>
     </div>
   </div>
   <input id="forgot-submit" type="submit" class="small expanded secondary button" value="Reset Password">
