@@ -29,7 +29,7 @@ perl %BIOPROGS/helpers/blastviz.pl results/out.psiblastp blastviz results files/
 perl %BIOPROGS/helpers/alignhits_html.pl results/out.psiblastp results/out.align -e %evalue.content -fas -no_link -blastplus
 
 
-scala %BIOPROGS/helpers/psiblastpPostProcess.scala results/out.psiblastp
+#scala %BIOPROGS/helpers/psiblastpPostProcess.scala results/out.psiblastp
 
 # Produce some extra files:
 < results/out.psiblastp grep Expect | awk '{ print $8; }' | sed 's/,$//' > results/evalues.dat
