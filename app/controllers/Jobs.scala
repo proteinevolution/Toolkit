@@ -12,7 +12,9 @@ import play.api.mvc._
 class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef) extends Controller  {
 
 
+
   def updateJob = Action(BodyParsers.parse.json) { request =>
+
 
     /*
     val j = request.body.validate[Job]
@@ -29,8 +31,6 @@ class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef) extends Control
     ) */
     Ok
   }
-
-
 
 }
 

@@ -87,7 +87,9 @@ object PsiBlast extends ToolModel2 {
 
   val results = Map(
     "blast" -> "",
-    "evalue" -> "evalues.dat"
+    "evalue" -> "evalues.dat",
+    "fasta" -> "out.align",
+    "biojs" -> "out.align"
   )
 }
 
