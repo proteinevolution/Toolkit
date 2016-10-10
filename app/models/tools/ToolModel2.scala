@@ -171,5 +171,7 @@ object Hmmer3 extends ToolModel2 {
 
   val params = Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
 
-  val results = Map.empty[String, String]
+  val results = Map(
+    "fileview" -> "domtbl"
+  )
 }
