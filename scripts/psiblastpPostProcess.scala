@@ -81,8 +81,8 @@ object psiblastpPostProcess {
         }
       }
     }
-    bw.newLine()
-    bw.write("</PRE>")
+    bw2.newLine()
+    bw2.write("</PRE>")
     bw2.close()
   }
 }
