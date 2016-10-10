@@ -2,8 +2,7 @@
 
 <div id="hcontainer" style="min-width: 610px; height: 400px; margin: 0 auto"></div>
 
-<script type="text/javascript">
-
+<script>
         var bins = Array.apply(null, new Array(300)).map(function() { return 0});
 
         $.get('@pathToEvalues', function (content) {
@@ -50,6 +49,5 @@
                 }]
             });
         });
-
 </script>
 
