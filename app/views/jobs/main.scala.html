@@ -1,5 +1,6 @@
 @import models.tools.ToolModel2
 @import models.database.Job
+@import models.database.JobState
 @(jobOption : Option[Job], toolModel : ToolModel2, parametersections : Map[String, Html])
 
 
@@ -12,15 +13,26 @@
         <li id="tab-@section"><a href="#tabpanel-@section">@section</a></li>
     }
     <!-- Show additional information if this is an already existing job -->
+
+
     @if(jobOption.isDefined) {
 
-        <li id="tab-foobar"><a href="#tabpanel-foobar">Foobar</a></li>
+        <!-- Show information dependent on the job state  TODO Use field constructor-->
+        @{
+            jobOption.get.status match {
+
+                case JobState.Done =>  Html("<li id=\"tab-done\"><a href=\"#tabpanel-done\">Results</a></li>")
+                case JobState.Running =>  Html("<li id=\"tab-running\"><a href=\"#tabpanel-running\">Running</a></li>")
+                case JobState.Error =>  Html("<li id=\"tab-error\"><a href=\"#tabpanel-error\">Error</a></li>")
+                case _ => Html("<li id=\"tab-unknown\"><a href=\"#tabpanel-unknown\">Unknown</a></li>")
+            }
+        }
     }
-
-
     <span style="float: right; padding: 0.5em 1em 0 0";>@toolModel.toolNameLong</span>
     </ul>
 
+
+    <!-- Parameter views -->
     @for(section <- parametersections.keys) {
 
         <div class="tabs-panel" id="tabpanel-@section">
@@ -34,6 +46,28 @@
         </div>
     }
     </form>
+
+   <!-- Running View -->
+    <div class="tabs-panel" id="tabpanel-running">
+        <div class="callout secondary">
+
+            The job is currently being executed. Please have patience.
+        </div>
+    </div>
+
+    <div class="tabs-panel" id="tabpanel-error">
+
+        <div class="callout alert">
+            The job with ID  has failed.
+        </div>
+    </div>
+
+
+
+
+
+
+
 </div>
 
 
