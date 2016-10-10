@@ -86,7 +86,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
     }
   }
 
-
+  /*
   def resultDoneMatcher(job : Job)(implicit request: RequestHeader) = {
 
     job.tool match {
@@ -97,49 +97,49 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
           "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
           "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
           "Colored" -> views.html.visualization.alignment.tcoffee_extra(s"/files/${job.mainID.stringify}/sequences.score_html"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "mafft" =>
       val vis = Map(
         "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/out"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/out"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "psiblast" =>
       val vis = Map(
         "Results" -> views.html.visualization.alignment.blastviz_extra(job.mainID.stringify, s"/files/${job.mainID.stringify}/"),
         "Alignment" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/out.align"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
         "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "patsearch" =>
       val vis = Map(
         "Results" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/patsearch_result"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "glprobs" =>
       val vis = Map(
         "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/glprobs_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/glprobs_aln"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
 
     case "clustalomega" =>
       val vis = Map(
         "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/clustalo_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/clustalo_aln"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "kalign" =>
       val vis = Map(
         "Results" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/kalign_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/kalign_aln"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "muscle" =>
       val vis = Map(
         "Results" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/muscle_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/muscle_aln"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
       case "probcons" =>
         val vis = Map(
           "Results" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/probcons_aln"),
           "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/probcons_aln"))
-        views.html.jobs.result(vis, job)
+        views.html.jobs.resultpanel(vis, job)
 
 
       // Hmmer just provides a simple file viewer.
@@ -149,7 +149,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
         s"/files/${job.mainID.stringify}/outfile_multi_sto",
         s"/files/${job.mainID.stringify}/tbl"))
     }
-  }
+  }*/
 
   def formMatcher(tool : String) = {
     lazy val toolForm = tool match {

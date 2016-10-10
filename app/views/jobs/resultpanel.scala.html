@@ -1,0 +1,24 @@
+@(resultsections : Map[String, String], jobID : String)(implicit messages: Messages, request: RequestHeader)
+
+
+
+
+<!-- Decide which result view to show dependent on the result key -->
+@for((key, value) <- resultsections) {
+
+
+
+    @{ key match {
+
+        case "simple" => views.html.jobs.resultpanels.simple(s"/files/$jobID/$value")
+        case "biojs" => views.html.jobs.resultpanels.msaviewer(s"/files/$jobID/$value")
+        case _ => //
+    }}
+}
+
+
+
+
+
+
+

@@ -1,8 +1,10 @@
 @import models.tools.ToolModel2
 @import models.database.Job
 @import models.database.JobState
-@(jobOption : Option[Job], toolModel : ToolModel2, parametersections : Map[String, Html],
-        resultsections : Option[Map[String, Html]])(implicit messages: Messages, request: RequestHeader)
+@(jobOption : Option[Job],
+              toolModel : ToolModel2,
+              parametersections : Map[String, Html],
+              resultsections : Option[Map[String, String]])(implicit messages: Messages, request: RequestHeader)
 
 
 
@@ -23,11 +25,11 @@
         @{
             jobOption.get.status match {
 
-                // If the job state is done, the result panels headings are generated here
+                // If the job state is done, the resultpanel panels headings are generated here
                 case JobState.Done =>
-                    for(result <- resultsections.get) {
-                        Html(result._1)
-                    }
+                    Html(resultsections.get.keysIterator.map{ key =>
+                        "<li id=\"tab-" + key + "\"><a href=\"#tabpanel-" + key + "\">" + key + "</a></li>"
+                    }.mkString)
 
 
                 case JobState.Running =>  Html("<li id=\"tab-running\"><a href=\"#tabpanel-running\">Running</a></li>")
@@ -79,13 +81,14 @@
             </div>
         }
 
-
-         <!-- Result View -->
         @if(jobOption.get.status == JobState.Done) {
-            <div class="tabs-panel" id="tabpanel-done">
+            @for((key, value) <- resultsections.get) {
 
-                @jobs.result(Map.empty, jobOption.get)
-            </div>
+                <div class="tabs-panel" id="tabpanel-@key">
+
+                    @jobs.resultpanel(resultsections.get, jobOption.get.mainID.stringify)
+                </div>
+            }
         }
     }
 </div>
