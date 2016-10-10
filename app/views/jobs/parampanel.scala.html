@@ -19,11 +19,19 @@
 @for(param <- params) {
 
     @{param match {
+
+        case Param.ALIGNMENT => helper.alignment(field = jobForm(Param.ALIGNMENT), args = 'rows -> 10, 'cols -> 70,
+            '_label -> "",
+            'placeholder -> "Enter multiple sequence alignment of single sequence",
+            'id -> "alignment", '_showConstraints -> false)
+
+
+        /*
         case Param.ALIGNMENT => helper.textarea(field = jobForm(Param.ALIGNMENT), args = 'rows -> 10, 'cols -> 70,
                                                       '_label -> "",
                                                       'placeholder -> "Enter multiple sequence alignment of single sequence",
                                                       'id -> "alignment", '_showConstraints -> false)
-
+                                                      */
 
         case Param.ALIGNMENT_FORMAT => helper.select(field = jobForm(Param.ALIGNMENT_FORMAT),
                                        helper.options(values.fullNames.filterKeys(values.alignmentFormats)),
