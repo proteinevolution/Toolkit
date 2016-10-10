@@ -1,0 +1,19 @@
+@import play.api.mvc.RequestHeader
+@(filepath : String)(implicit messages: Messages, request: RequestHeader)
+
+
+
+@filepath
+
+<pre style="font-size: 12px;width: 800px; height: 30pc; overflow-y: scroll;">
+
+
+</pre>
+
+
+<script>
+        $( "#@filepath.split('/').last pre" ).load("@filepath");
+</script>
+
+
+
