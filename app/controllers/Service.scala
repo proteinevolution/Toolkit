@@ -111,10 +111,16 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
           futureJob.flatMap {
             case jobOption@Some(job) =>
               val toolModel = ToolModel2.toolMap(job.tool)
-              Future.successful(Ok(views.html.jobs.main(jobOption,ToolModel2.toolMap(job.tool),toolModel.paramGroups
+
+              // Assemble Parameter Sections
+              val paramSections = toolModel.paramGroups
                 .mapValues { vals =>
                   views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
-                } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm)))))
+                } + (toolModel.remainParamName -> views.html.jobs.parampanel(values,
+                                                                             toolModel.remainParams,
+                                                                             ToolModel2.jobForm))
+
+              Future.successful(Ok(views.html.jobs.main(jobOption,ToolModel2.toolMap(job.tool),paramSections, None)))
 
             case None =>
               Future.successful(NotFound)

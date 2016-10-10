@@ -1,5 +1,5 @@
 @import models.database.Job
-@(visualizations : Map[String, Html], job : Job)(implicit messages: Messages, request: RequestHeader)
+@(resultsections : Map[String, Html], job : Job)(implicit messages: Messages, request: RequestHeader)
 @import org.joda.time.format.DateTimeFormat
 
 
@@ -36,29 +36,26 @@ border-left: 1px solid lightgray;
 border-right: 1px solid lightgray;
 
 }
-
-
-
-
-
 </style>
+
+
+<!--
 <div class="columns large-10">
     <span id="resultmeta">@job.tool.toUpperCase RESULTS VIEW&nbsp;&nbsp; Job-ID: @job.jobID, Date: @job.dateCreated</span>
 </div>
+
 <div class="columns large-2">
 @helpmodals.modal(job.tool)
 </div>
+-->
+
 <div id="result-nav">
 
     <div class="columns large-12">
         <ul class="tabs" data-tabs id="example-tabs">
-            @for(key <- visualizations.keys) {
-
-                <li class="tabs-title"><a href="#@key" aria-selected="true">@key</a></li>
-            }
-        <li class="tabs-title"><a href="#toolkit-forward-panel" aria-selected="true">Child Job</a></li>
-        <li class="tabs-title" style="float: right;"><a onClick="addJob('@{job.mainID.stringify}')">Add</a></li>
-        <li class="tabs-title" style="float: right;"><a href="jobs/@{job.mainID.stringify}">Share Result - </a></li>
+        <li class="tabs-title"><a href="#toolkit-forward-panel" >Child Job</a></li>
+        <li class="tabs-title"><a >Add</a></li>
+        <li class="tabs-title"><a href="">Share Result - </a></li>
         </ul>
     </div>
 
@@ -73,15 +70,8 @@ border-right: 1px solid lightgray;
 
 
 <div class="tabs-content" data-tabs-content="example-tabs" id="tabs-content">
-    @for((key, value) <- visualizations) {
-
-        <div class="tabs-panel" id="@key">
-        @value
-        </div>
-    }
 
 
 <div class="tabs-panel" id="toolkit-forward-panel">
-@jobs.forward(job)
 </div>
 </div>
