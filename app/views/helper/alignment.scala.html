@@ -1,0 +1,17 @@
+@**
+* Generate an Alignment input HTML element.
+*
+*
+* @param field The form field.
+* @param args Set of extra attributes.
+* @param handler The field constructor.
+*@
+@(field: play.api.data.Field, args: (Symbol,Any)*)(implicit messages: play.api.i18n.Messages)
+
+@helper.input(field, args:_*) { (id, name, value, htmlArgs) =>
+    <textarea id="@id" name="@name" @toHtmlArgs(htmlArgs)>@value</textarea>
+    <script src='@routes.Assets.at("javascripts/sampleseqs.js")'></script>
+    <div id="past_example">
+        <a onClick="$('#alert').prop('hidden',true);$('#submitbutton').prop('disabled', false);$('#alignment').val(alnviz_example());$('#format').val('fas')">Paste example alignment</a>
+    </div>
+}
