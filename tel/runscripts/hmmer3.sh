@@ -5,7 +5,7 @@ trap 'kill $(jobs -p)' EXIT
 #% alignment : STO
 
 
-perl ../../scripts/reformat.pl -i=%alignment_format.content \
+perl %BIOPROGS/helpers/reformat.pl -i=%alignment_format.content \
                                    -o=sto \
                                    -f=%alignment.path \
                                    -a=temp/infile_sto

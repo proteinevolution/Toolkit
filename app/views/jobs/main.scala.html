@@ -1,0 +1,114 @@
+@import models.tools.ToolModel2
+@import models.database.Job
+@import models.database.JobState
+@(jobOption : Option[Job],
+              toolModel : ToolModel2,
+              parametersections : Map[String, Html],
+              resultsections : Option[Map[String, String]])(implicit messages: Messages, request: RequestHeader)
+
+
+
+<div class="tool-tabs" id="tool-tabs">
+
+    <form class="jobForm" >
+    <ul>
+    @for(section <- parametersections.keys) {
+
+        <li id="tab-@section"><a href="#tabpanel-@section">@section</a></li>
+    }
+    <!-- Show additional information if this is an already existing job -->
+
+
+    @if(jobOption.isDefined) {
+
+        <!-- Show information dependent on the job state  TODO Use field constructor-->
+        @{
+            jobOption.get.status match {
+
+                // If the job state is done, the resultpanel panels headings are generated here
+                case JobState.Done =>
+                    Html(resultsections.get.keysIterator.map{ key =>
+                        "<li id=\"tab-" + key + "\"><a href=\"#tabpanel-" + key + "\">" + key + "</a></li>"
+                    }.mkString)
+
+
+                case JobState.Running =>  Html("<li id=\"tab-running\"><a href=\"#tabpanel-running\">Running</a></li>")
+                case JobState.Error =>  Html("<li id=\"tab-error\"><a href=\"#tabpanel-error\">Error</a></li>")
+                case _ => Html("<li id=\"tab-unknown\"><a href=\"#tabpanel-unknown\">Unknown</a></li>")
+            }
+        }
+    }
+    <span style="float: right; padding: 0.5em 1em 0 0";>@toolModel.toolNameLong</span>
+    </ul>
+
+
+    <!-- Parameter views -->
+    @for(section <- parametersections.keys) {
+
+        <div class="tabs-panel" id="tabpanel-@section">
+
+            @parametersections(section)
+
+            <!-- Show control buttons in all panels -->
+            <div id="submitbuttons">
+
+                <input class="secondary button small submitJob" type="button" value="Submit Job" />
+                <input class="secondary button small resetJob" type="reset" value="Reset" />
+            </div>
+        </div>
+    }
+    </form>
+
+
+    @if(jobOption.isDefined) {
+
+       <!-- Running View -->
+        @if(jobOption.get.status == JobState.Running) {
+            <div class="tabs-panel" id="tabpanel-running">
+                <div class="callout secondary">
+
+                    The job is currently being executed. Please have patience.
+                </div>
+            </div>
+        }
+
+
+         <!-- Error View -->
+        @if(jobOption.get.status == JobState.Error) {
+            <div class="tabs-panel" id="tabpanel-error">
+
+                <div class="callout alert">
+                    The job with ID  has failed.
+                </div>
+            </div>
+        }
+
+        @if(jobOption.get.status == JobState.Done) {
+            @for((key, value) <- resultsections.get) {
+
+                <div class="tabs-panel" id="tabpanel-@key">
+
+                    @jobs.resultpanel(key, value, jobOption.get.mainID.stringify)
+                </div>
+            }
+        }
+    }
+</div>
+
+
+
+
+
+<script>
+        toolname = '@toolModel.toolNameShort';
+        @if(jobOption.isDefined){
+        mainID   = '@{jobOption.get.mainID.stringify}';
+        } else {
+        mainID   = null;
+        }
+
+
+        $("#tool-tabs").tabs();
+</script>
+<script src="@routes.Assets.at("scripts/form.js")">
+</script>

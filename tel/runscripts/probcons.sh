@@ -8,6 +8,5 @@ trap 'kill $(jobs -p)' EXIT
                             -c %consistency.content \
                             -ir %itrefine.content \
                             -pre %pretrain.content \
-                            %otheradvanced.content \
-                            %sequences.path \
+                            %alignment.path \
                             > results/probcons_aln
