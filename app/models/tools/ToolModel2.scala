@@ -85,7 +85,9 @@ object PsiBlast extends ToolModel2 {
   val params = Seq(Param.ALIGNMENT, "alignment_format", "standarddb", "matrix",
     "num_iter", "evalue", "gap_open", "gap", "gap_ext", "desc")
 
-  val results = Map.empty[String, String]
+  val results = Map(
+    "blast" -> ""
+  )
 }
 
 
