@@ -119,8 +119,15 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                 } + (toolModel.remainParamName -> views.html.jobs.parampanel(values,
                                                                              toolModel.remainParams,
                                                                              ToolModel2.jobForm))
+              // Assemble Result Sections
+              val resultSections : Option[Map[String, String]] = job.status match {
 
-              Future.successful(Ok(views.html.jobs.main(jobOption,ToolModel2.toolMap(job.tool),paramSections, None)))
+                case JobState.Done => Some(toolModel.results)
+                case _ => None
+              }
+
+              Future.successful(Ok(views.html.jobs.main(jobOption,ToolModel2.toolMap(job.tool),
+                                    paramSections, resultSections)))
 
 
             case None =>

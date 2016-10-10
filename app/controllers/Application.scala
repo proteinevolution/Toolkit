@@ -122,7 +122,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
 
 
   /**
-   * Allows to access result files by the filename and a given jobID
+   * Allows to access resultpanel files by the filename and a given jobID
    */
   def file(filename : String, mainID : String) = Action.async { implicit request =>
     getUser.map { user =>

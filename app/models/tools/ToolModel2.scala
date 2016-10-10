@@ -63,10 +63,13 @@ abstract class ToolModel2 {
    "Alignment" -> Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
   )
 
-
   // Params which are not a part of any group
   val remainParamName : String = "Parameter"
   lazy val remainParams : Seq[String] = params.diff(paramGroups.values.flatten.toSeq)
+
+  // The results the tool is associated with
+  val results : Map[String, String]
+
 }
 
 
@@ -78,8 +81,11 @@ object PsiBlast extends ToolModel2 {
   val toolNameAbbrev = "pbl"
   val category = "search"
 
+
   val params = Seq(Param.ALIGNMENT, "alignment_format", "standarddb", "matrix",
     "num_iter", "evalue", "gap_open", "gap", "gap_ext", "desc")
+
+  val results = Map.empty[String, String]
 }
 
 
@@ -93,6 +99,10 @@ object Tcoffee extends ToolModel2 {
 
   val params = Seq(Param.ALIGNMENT)
 
+  val results = Map(
+
+    "simple" -> "alignment.clustalw_aln"
+  )
 }
 
 object Probcons extends ToolModel2 {
@@ -105,6 +115,7 @@ object Probcons extends ToolModel2 {
 
   val params = Seq(Param.ALIGNMENT, Param.CONSISTENCY, Param.ITREFINE, Param.PRETRAIN)
 
+  val results = Map.empty[String, String]
 }
 
 object Muscle extends ToolModel2 {
@@ -116,6 +127,8 @@ object Muscle extends ToolModel2 {
   val category = "alignment"
 
   val params = Seq("alignment", "maxrounds")
+
+  val results = Map.empty[String, String]
 }
 
 object Mafft extends ToolModel2 {
@@ -125,6 +138,8 @@ object Mafft extends ToolModel2 {
   val toolNameAbbrev = "mft"
   val category = "alignment"
   val params = Seq(Param.ALIGNMENT, Param.GAP_OPEN, Param.OFFSET)
+
+  val results = Map.empty[String, String]
 
 }
 
@@ -137,6 +152,8 @@ object Kalign extends ToolModel2 {
   val category = "alignment"
 
   val params = Seq(Param.ALIGNMENT, Param.OUTORDER, Param.GAP_OPEN, Param.GAP_EXT, Param.GAP_TERM, Param.BONUSSCORE)
+
+  val results = Map.empty[String, String]
 }
 
 object Hmmer3 extends ToolModel2 {
@@ -149,4 +166,6 @@ object Hmmer3 extends ToolModel2 {
   val category = "search"
 
   val params = Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
+
+  val results = Map.empty[String, String]
 }
