@@ -21,7 +21,7 @@ $ ->
       else
         alert "job NOT submitted"
 
-  $("#submitJob").bind 'click', (event) ->
+  $(".submitJob").bind 'click', (event) ->
     submitJob(true)
 
   # Variables in Scope of the Input form
