@@ -70,7 +70,6 @@ case object Clans extends ToolModel {
     val optional = ""
 
 
-    // --- Tcoffee specific values ---
     // Returns the Input Form Definition of this tool
     val inputForm = Form(
       tuple(
@@ -90,7 +89,6 @@ case object Csblast extends ToolModel {
   val section = "search"
   val optional = ""
 
-  // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
@@ -121,7 +119,6 @@ case object Csblast extends ToolModel {
     val optional = ""
 
 
-    // --- Tcoffee specific values ---
     // Returns the Input Form Definition of this tool
     val inputForm = Form(
       single(
@@ -138,7 +135,6 @@ case object HHblits extends ToolModel{
   val toolNameAbbreviation = "HHBL"
   val section = "search"
   val optional = ""
-
 
 
   // --- HHblits
@@ -316,7 +312,6 @@ case object Mafft extends ToolModel {
     val optional = ""
 
 
-    // --- Tcoffee specific values ---
     // Returns the Input Form Definition of this tool
     val inputForm = Form(
       tuple(
@@ -332,7 +327,6 @@ case object Mafft extends ToolModel {
 
 case object Psiblast extends ToolModel {
 
-
   // --- Names for the Tool ---
   val toolNameShort       = "psiblast"
   val toolNameLong        = "PSI-BLAST"
@@ -340,7 +334,6 @@ case object Psiblast extends ToolModel {
   val section = "search"
   val optional = ""
 
-  // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
     tuple(
@@ -373,7 +366,6 @@ case object Tcoffee extends ToolModel {
   val section = "alignment"
   val optional = ""
 
-
   // --- Tcoffee specific values ---
   // Returns the Input Form Definition of this tool
   val inputForm = Form(
@@ -384,21 +376,7 @@ case object Tcoffee extends ToolModel {
       "mslow_pair" -> boolean
     )
   )
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 }
 

@@ -6,9 +6,9 @@ import actors.WebSocketActor
 import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import akka.util.Timeout
-import models.Constants
+import models.{Constants, Values}
 import models.tel.TEL
-import models.tools.ToolModel
+import models.tools.{ToolModel, ToolModel2}
 import modules.Common
 import modules.tools.ToolMatcher
 import play.api.Configuration
@@ -18,6 +18,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import modules.tools.ToolMirror
@@ -26,6 +27,7 @@ import modules.tools.ToolMirror
 @Singleton
 class Application @Inject()(webJarAssets     : WebJarAssets,
                         val messagesApi      : MessagesApi,
+                            final val values : Values,
 @NamedCache("userCache") implicit val userCache : CacheApi,
                         val reactiveMongoApi : ReactiveMongoApi,
                             system           : ActorSystem,
@@ -102,21 +104,25 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     Redirect(s"/#/$static")
   }
 
-
-  /*
-    *  Return the Input form of the corresponding tool
+  /**
+    * Shows the submission view of a new job instance to be created.
+    *
+    * @param toolname  Which tool the submission view should be created for.
     */
-  // TODO Replace via reflection
-  def form(toolName: String) = Action.async { implicit request =>
-    getUser.map{ user =>
-      //val toolFrame = toolMatcher.loadTemplate(toolName)
-      val toolFrame = toolMatcher.matcher(toolName)
-      Ok(views.html.general.submit(tel, toolName, toolFrame, None))
-    }
+  def form(toolname : String) = Action { implicit request =>
+
+    val toolModel = ToolModel2.toolMap(toolname)
+    Ok(views.html.jobs.main(None, toolModel, toolModel.paramGroups
+      .mapValues { vals =>
+      views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
+    } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm)), None))
+
   }
 
+
+
   /**
-   * Allows to access result files by the filename and a given jobID
+   * Allows to access resultpanel files by the filename and a given jobID
    */
   def file(filename : String, mainID : String) = Action.async { implicit request =>
     getUser.map { user =>

@@ -2,18 +2,16 @@ package modules.tools
 
 
 import javax.inject.{Inject, Singleton}
-import controllers.tools.PSIBlast
+
+import models.Values
 import models.database.Job
 import models.tel.TEL
-
 import models.tools.ToolModel._
-import play.api.i18n.{MessagesApi, I18nSupport}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.RequestHeader
-import play.mvc.Http
 import play.twirl.api.Html
-import reactivemongo.bson.BSONObjectID
+
 import reflect.runtime.universe
-import play.api._
 
 /**
   * Created by zin on 20.08.16.
@@ -27,6 +25,7 @@ import play.api._
 @Singleton
 final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
                                    val tel : TEL,
+                                   val values : Values,
                                    val toolMirror: ToolMirror ) extends I18nSupport {
 
 
@@ -52,20 +51,20 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
   def matcher(tool : String)(implicit request : RequestHeader) : Html = {
     lazy val toolFrame = tool match {
 
-      case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
-      case "hmmer3" => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm)
-      case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm)
-      case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm)
-      case "csblast" => views.html.tools.forms.csblast(tel, Csblast.inputForm)
-      case "hhpred" => views.html.tools.forms.hhpred(tel, HHpred.inputForm)
-      case "hhblits" => views.html.tools.forms.hhblits(tel, HHblits.inputForm)
-      case "clans" => views.html.tools.forms.clans(tel, Clans.inputForm)
+    //  case "tcoffee" => views.html.tools.forms.tcoffee(Tcoffee.inputForm)
+      //case "hmmer3" => views.html.tools.forms.hmmer3(values, tel, Hmmer3.inputForm)
+      //case "psiblast" => views.html.tools.forms.psiblast(values, tel, Psiblast.inputForm)
+    //  case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm)
+      case "csblast" => views.html.tools.forms.csblast(values, tel, Csblast.inputForm)
+      case "hhpred" => views.html.tools.forms.hhpred(values, tel, HHpred.inputForm)
+      case "hhblits" => views.html.tools.forms.hhblits(values, tel, HHblits.inputForm)
+      case "clans" => views.html.tools.forms.clans(values, tel, Clans.inputForm)
       case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm)
       case "patsearch" => views.html.tools.forms.patSearch(tel, PatSearch.inputForm)
       case "clustalomega" => views.html.tools.forms.clustalomega(ClustalOmega.inputForm)
-      case "kalign" => views.html.tools.forms.kalign(Kalign.inputForm)
-      case "muscle" => views.html.tools.forms.muscle(Muscle.inputForm)
-      case "probcons" => views.html.tools.forms.probcons(ProbCons.inputForm)
+      //case "kalign" => views.html.tools.forms.kalign(Kalign.inputForm)
+     //case "muscle" => views.html.tools.forms.muscle(Muscle.inputForm)
+    //  case "probcons" => views.html.tools.forms.probcons(ProbCons.inputForm)
     }
     toolFrame
   }
@@ -74,20 +73,20 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
   def resultPreparedMatcher(tool: String, resultFiles : Map[String, String])(implicit request: RequestHeader) = {
     tool match {
 
-      case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
-      case "hmmer3"   => views.html.tools.forms.hmmer3(tel, Hmmer3.inputForm.bind(resultFiles))
-      case "psiblast" => views.html.tools.forms.psiblast(tel, Psiblast.inputForm.bind(resultFiles))
-      case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm.bind(resultFiles))
+     // case "tcoffee"  => views.html.tools.forms.tcoffee(Tcoffee.inputForm.bind(resultFiles))
+     // case "hmmer3"   => views.html.tools.forms.hmmer3(values, tel, Hmmer3.inputForm.bind(resultFiles))
+      //case "psiblast" => views.html.tools.forms.psiblast(values, tel, Psiblast.inputForm.bind(resultFiles))
+      // case "mafft" => views.html.tools.forms.mafft(Mafft.inputForm.bind(resultFiles))
       case "glprobs" => views.html.tools.forms.glprobs(GLProbs.inputForm.bind(resultFiles))
       case "clustalomega" => views.html.tools.forms.clustalomega(ClustalOmega.inputForm.bind(resultFiles))
       case "patsearch" => views.html.tools.forms.patSearch(tel, PatSearch.inputForm.bind(resultFiles))
-      case "kalign" => views.html.tools.forms.kalign(Kalign.inputForm.bind(resultFiles))
-      case "muscle" => views.html.tools.forms.muscle(Muscle.inputForm.bind(resultFiles))
-      case "probcons" => views.html.tools.forms.probcons(ProbCons.inputForm.bind(resultFiles))
+      //case "kalign" => views.html.tools.forms.kalign(Kalign.inputForm.bind(resultFiles))
+      //case "muscle" => views.html.tools.forms.muscle(Muscle.inputForm.bind(resultFiles))
+      //case "probcons" => views.html.tools.forms.probcons(ProbCons.inputForm.bind(resultFiles))
     }
   }
 
-
+  /*
   def resultDoneMatcher(job : Job)(implicit request: RequestHeader) = {
 
     job.tool match {
@@ -98,49 +97,49 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
           "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
           "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
           "Colored" -> views.html.visualization.alignment.tcoffee_extra(s"/files/${job.mainID.stringify}/sequences.score_html"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "mafft" =>
       val vis = Map(
         "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/out"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/out"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "psiblast" =>
       val vis = Map(
         "Results" -> views.html.visualization.alignment.blastviz_extra(job.mainID.stringify, s"/files/${job.mainID.stringify}/"),
         "Alignment" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/out.align"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/sequences.clustalw_aln"),
         "Evalue" -> views.html.visualization.alignment.evalues(s"/files/${job.mainID.stringify}/evalues.dat"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "patsearch" =>
       val vis = Map(
         "Results" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/patsearch_result"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "glprobs" =>
       val vis = Map(
         "Simple" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/glprobs_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/glprobs_aln"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
 
     case "clustalomega" =>
       val vis = Map(
         "Simple" -> views.html.visualization.alignment.simple(s"/files/${job.mainID.stringify}/clustalo_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/clustalo_aln"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "kalign" =>
       val vis = Map(
         "Results" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/kalign_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/kalign_aln"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
     case "muscle" =>
       val vis = Map(
         "Results" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/muscle_aln"),
         "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/muscle_aln"))
-      views.html.jobs.result(vis, job)
+      views.html.jobs.resultpanel(vis, job)
       case "probcons" =>
         val vis = Map(
           "Results" -> views.html.visualization.alignment.fasta(s"/files/${job.mainID.stringify}/probcons_aln"),
           "BioJS" -> views.html.visualization.alignment.msaviewer(s"/files/${job.mainID.stringify}/probcons_aln"))
-        views.html.jobs.result(vis, job)
+        views.html.jobs.resultpanel(vis, job)
 
 
       // Hmmer just provides a simple file viewer.
@@ -150,7 +149,7 @@ final class ToolMatcher @Inject()( val messagesApi: MessagesApi,
         s"/files/${job.mainID.stringify}/outfile_multi_sto",
         s"/files/${job.mainID.stringify}/tbl"))
     }
-  }
+  }*/
 
   def formMatcher(tool : String) = {
     lazy val toolForm = tool match {

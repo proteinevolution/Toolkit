@@ -5,18 +5,20 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.Constants
+import models.{Constants, Values}
 import models.database.{Job, JobState}
 import models.tel.TEL
 import modules.tools.ToolMatcher
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
 import better.files._
-import reactivemongo.bson.{BSONObjectID, BSONDocument}
+import models.tools.ToolModel2
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -33,6 +35,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 @NamedCache("userCache") implicit val userCache        : CacheApi,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
+                         final val values : Values,
                      val toolMatcher      : ToolMatcher,
     @Named("jobManager") jobManager       : ActorRef)
 
@@ -98,11 +101,47 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     }
   }
 
-  /**
-    * Return the job info page
-    * @param mainIDString
-    * @return
-    */
+  def showJobInfo(mainIDString: String) = Action.async { implicit request =>
+    // Retrieve the user from the cache or the DB
+    getUser.flatMap { user =>
+      // Check if the ID is plausible (Right Format can be parsed into a BSON Object ID)
+      BSONObjectID.parse(mainIDString) match {
+        case Success(mainID) =>
+          val futureJob = jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job])
+          futureJob.flatMap {
+            case jobOption@Some(job) =>
+              val toolModel = ToolModel2.toolMap(job.tool)
+
+              // Assemble Parameter Sections
+              val paramSections = toolModel.paramGroups
+                .mapValues { vals =>
+                  views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
+                } + (toolModel.remainParamName -> views.html.jobs.parampanel(values,
+                                                                             toolModel.remainParams,
+                                                                             ToolModel2.jobForm))
+              // Assemble Result Sections
+              val resultSections : Option[Map[String, String]] = job.status match {
+
+                case JobState.Done => Some(toolModel.results)
+                case _ => None
+              }
+
+              Future.successful(Ok(views.html.jobs.main(jobOption,ToolModel2.toolMap(job.tool),
+                                    paramSections, resultSections)))
+
+
+            case None =>
+              Future.successful(NotFound)
+          }
+        case _ =>
+          Future.successful(NotFound)
+      }
+    }
+  }
+
+
+
+  /*
   def showJobInfo(mainIDString: String) = Action.async { implicit request =>
     // Retrieve the user from the cache or the DB
     getUser.flatMap { user =>
@@ -153,4 +192,5 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       }
     }
   }
+  */
 }
