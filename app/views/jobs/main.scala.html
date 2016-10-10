@@ -1,7 +1,8 @@
 @import models.tools.ToolModel2
 @import models.database.Job
 @import models.database.JobState
-@(jobOption : Option[Job], toolModel : ToolModel2, parametersections : Map[String, Html])
+@(jobOption : Option[Job], toolModel : ToolModel2, parametersections : Map[String, Html],
+        resultsections : Option[Map[String, Html]])(implicit messages: Messages, request: RequestHeader)
 
 
 <div class="tool-tabs" id="tool-tabs">
@@ -21,7 +22,13 @@
         @{
             jobOption.get.status match {
 
-                case JobState.Done =>  Html("<li id=\"tab-done\"><a href=\"#tabpanel-done\">Results</a></li>")
+                // If the job state is done, the result panels headings are generated here
+                case JobState.Done =>
+                    for(result <- resultsections.get) {
+                        Html(result._1)
+                    }
+
+
                 case JobState.Running =>  Html("<li id=\"tab-running\"><a href=\"#tabpanel-running\">Running</a></li>")
                 case JobState.Error =>  Html("<li id=\"tab-error\"><a href=\"#tabpanel-error\">Error</a></li>")
                 case _ => Html("<li id=\"tab-unknown\"><a href=\"#tabpanel-unknown\">Unknown</a></li>")
@@ -47,29 +54,40 @@
     }
     </form>
 
-   <!-- Running View -->
-    <div class="tabs-panel" id="tabpanel-running">
-        <div class="callout secondary">
 
-            The job is currently being executed. Please have patience.
-        </div>
-    </div>
+    @if(jobOption.isDefined) {
 
-    <div class="tabs-panel" id="tabpanel-error">
+       <!-- Running View -->
+        @if(jobOption.get.status == JobState.Running) {
+            <div class="tabs-panel" id="tabpanel-running">
+                <div class="callout secondary">
 
-        <div class="callout alert">
-            The job with ID  has failed.
-        </div>
-    </div>
+                    The job is currently being executed. Please have patience.
+                </div>
+            </div>
+        }
 
 
+         <!-- Error View -->
+        @if(jobOption.get.status == JobState.Error) {
+            <div class="tabs-panel" id="tabpanel-error">
+
+                <div class="callout alert">
+                    The job with ID  has failed.
+                </div>
+            </div>
+        }
 
 
+         <!-- Result View -->
+        @if(jobOption.get.status == JobState.Done) {
+            <div class="tabs-panel" id="tabpanel-done">
 
-
-
+                @jobs.result(Map.empty, jobOption.get)
+            </div>
+        }
+    }
 </div>
-
 
 <script>
         toolname = '@toolModel.toolNameShort';
