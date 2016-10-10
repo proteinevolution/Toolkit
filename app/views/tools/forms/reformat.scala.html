@@ -272,7 +272,7 @@
                 setTimeout("document.getElementById('progress_bar').className='';", 2000);
                 if (evt.target.files[0].type.match('text/plain')) {
 
-                    myCodeMirror.setValue(reader.result);
+                    myCodeMirror.setValue(reader.resultpanel);
 
                 } else alert("type mismatch, please upload only plain text files.");
             };

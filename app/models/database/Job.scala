@@ -79,7 +79,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
     tool match {
     //  The tool anlviz just returns the BioJS MSA Viewer page
     case "alnviz" =>
-      Map("BioJS" -> s"/files/${mainID.stringify}/result")
+      Map("BioJS" -> s"/files/${mainID.stringify}/resultpanel")
 
     // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
     case "tcoffee" =>

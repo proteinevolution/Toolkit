@@ -18,7 +18,7 @@ object Implicits {
        //      -> results in ""
        //
        // I'm just fooling, these are of course not two distinct types, I just want to make clear that comment-lines
-       // result in empty Strings in the iterator and not in removing the string from the iterator!
+       // resultpanel in empty Strings in the iterator and not in removing the string from the iterator!
        def withoutComment(c : Char) = s.map(_.split(c)(0))
 
        // Removed all Lines that just consist of whitespace
