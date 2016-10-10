@@ -104,7 +104,8 @@ object Tcoffee extends ToolModel2 {
 
   val results = Map(
 
-    "simple" -> "alignment.clustalw_aln"
+    "simple" -> "alignment.clustalw_aln",
+    "biojs" -> "alignment.clustalw_aln"
   )
 }
 
