@@ -1,18 +1,18 @@
 package actors
 
 import java.io.{BufferedWriter, FileWriter}
-import javax.inject.{Named, Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 
 import actors.UserManager.{JobAdded, MessageWithUserID}
 import akka.actor.{Actor, ActorLogging, ActorRef}
-import models.database.{JobHash, Job, User, JobState}
+import models.database.{Job, JobHash, JobState, User}
 import models.search.JobDAO
 import modules.Common
 import modules.tools.FNV
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONDocument, BSONObjectID, BSONValue}
 
 import scala.concurrent.Future
 import better.files._
@@ -233,6 +233,15 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       
       Logger.info("Job Manager was asked to update Job")
 
+
+    case UpdateJobStatus(jobID) =>
+      findJob(BSONDocument(Job.IDDB -> jobID)).foreach {
+        case Some(job) =>
+          updateJob(job.copy(status = JobState.Queued))
+        case None =>
+          userManager ! JobIDUnknown(BSONObjectID(jobID))
+      }
+
     case StartJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach{
         case Some(job) =>
@@ -332,6 +341,9 @@ object JobManager {
 
   // When the JobManager was asked to update a Job
   case class UpdateJob(job : Job)
+
+  // When the JobManager was asked to update a Job status
+  case class UpdateJobStatus(job : String)
 
   // Jobmanager is asked to find jobs
   case class FetchJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID]) extends MessageWithUserID
