@@ -11,8 +11,8 @@
     @{ key match {
 
         case "simple" => views.html.jobs.resultpanels.simple(s"/files/$jobID/$value")
-        case "biojs" => views.html.jobs.resultpanels.msaviewer(s"/files/$jobID/$value")
-        case _ => //
+        case "biojs"  => views.html.jobs.resultpanels.msaviewer(s"/files/$jobID/$value")
+        case "blast"  => views.html.jobs.resultpanels.blastviz_extra(jobID, s"/files/$jobID/$value")
     }}
 }
 
