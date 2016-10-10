@@ -3,6 +3,7 @@ package controllers
 import akka.actor.ActorRef
 import javax.inject.{Inject, Named, Singleton}
 
+import actors.JobManager
 import models.database.Job
 import play.api.Logger
 import play.api.libs.json.JsError
@@ -25,11 +26,17 @@ class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef) extends Control
         BadRequest(Json.obj("status" -> "OK", "message" -> JsError.toJson(errors)))
       },
       job => {
-        Logger.info("Job successfully received")
+
         Ok
       }
     ) */
+    Logger.info("Job successfully received")
     Ok
+  }
+
+  def updateJobStatus(jobID : String) = Action { request =>
+    JobManager.UpdateJobStatus(jobID)
+    Ok(jobID)
   }
 
 }
