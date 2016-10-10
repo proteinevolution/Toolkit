@@ -1,15 +1,20 @@
 package models
 
+import javax.inject.{Inject, Singleton}
+
+import models.tel.TEL
+
 /**
  *
  * Stores certain attributes to particular Values, like the full descriptive names of the parameter values.
  *
  * Created by lzimmermann on 14.12.15.
  */
-object Values {
+@Singleton
+class Values @Inject() (tel : TEL) {
 
-  // Maps parameter values onto their full names descriptions
-  val fullNames = Map(
+  // Maps parameter values onto their full names descriptions, as they should appear in the view
+  final val fullNames = Map(
 
     "fas"  -> "FASTA",
     "clu" -> "CLUSTALW",
@@ -27,6 +32,10 @@ object Values {
     "PAM30" -> "PAM30",
     "PAM70" -> "PAM70"
   )
+  final val alignmentFormats = Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
+  final val standardDBParams = tel.getSetParam("standarddb")
+  final val matrixParams = Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70")
+  final val outOrderParams = Set("Input", "Tree", "Gaps")
 }
 
 
