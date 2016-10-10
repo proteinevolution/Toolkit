@@ -116,6 +116,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
       .mapValues { vals =>
       views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
     } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm)), None))
+
   }
 
 
