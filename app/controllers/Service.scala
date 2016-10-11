@@ -17,6 +17,7 @@ import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
 import better.files._
 import models.tools.ToolModel2
+import play.api.Logger
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -112,23 +113,32 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             case jobOption@Some(job) =>
               val toolModel = ToolModel2.toolMap(job.tool)
 
-              // Assemble Parameter Sections
-              val paramSections = toolModel.paramGroups
-                .mapValues { vals =>
-                  views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
-                } + (toolModel.remainParamName -> views.html.jobs.parampanel(values,
-                                                                             toolModel.remainParams,
-                                                                             ToolModel2.jobForm))
-              // Assemble Result Sections
-              val resultSections : Option[Map[String, String]] = job.status match {
+              // Read Parameters of Job
+              Future {
 
-                case JobState.Done => Some(toolModel.results)
-                case _ => None
+                val params = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map{ file =>
+
+                  file.name -> file.contentAsString
+                }.toMap
+
+                // Assemble Parameter Sections
+                val paramSections = toolModel.paramGroups
+                  .mapValues { vals =>
+                    views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)),
+                      ToolModel2.jobForm.bind(params))
+                  } + (toolModel.remainParamName -> views.html.jobs.parampanel(values,
+                  toolModel.remainParams,
+                  ToolModel2.jobForm.bind(params)))
+                // Assemble Result Sections
+                val resultSections : Option[Map[String, String]] = job.status match {
+
+                  case JobState.Done => Some(toolModel.results)
+                  case _ => None
+                }
+                Ok(views.html.jobs.main(jobOption,ToolModel2.toolMap(job.tool),
+                  paramSections, resultSections))
+
               }
-
-              Future.successful(Ok(views.html.jobs.main(jobOption,ToolModel2.toolMap(job.tool),
-                                    paramSections, resultSections)))
-
 
             case None =>
               Future.successful(NotFound)
