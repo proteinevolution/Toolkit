@@ -66,7 +66,8 @@
                 <!-- Show control buttons in all panels -->
                 <div id="submitbuttons">
 
-                    <input class="secondary button small submitJob" type="button" value="Submit Job" />
+                    <input class="secondary button small submitJob" type="button"
+                           value="@if(jobOption.isDefined){Resubmit Job}else{Submit Job}" />
                     <input class="secondary button small resetJob" type="reset" value="Reset" />
                 </div>
             </div>
