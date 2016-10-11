@@ -110,9 +110,10 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
         case Success(mainID) =>
           val futureJob = jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job])
           futureJob.flatMap {
+
+
             case jobOption@Some(job) =>
               val toolModel = ToolModel2.toolMap(job.tool)
-
               // Read Parameters of Job
               Future {
 
@@ -129,6 +130,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                   } + (toolModel.remainParamName -> views.html.jobs.parampanel(values,
                   toolModel.remainParams,
                   ToolModel2.jobForm.bind(params)))
+
+
                 // Assemble Result Sections
                 val resultSections : Option[Map[String, String]] = job.status match {
 
@@ -148,59 +151,4 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       }
     }
   }
-
-
-
-  /*
-  def showJobInfo(mainIDString: String) = Action.async { implicit request =>
-    // Retrieve the user from the cache or the DB
-    getUser.flatMap { user =>
-      // Check if the ID is plausible (Right Format can be parsed into a BSON Object ID)
-      BSONObjectID.parse(mainIDString) match {
-        case Success(mainID) =>
-          val futureJob = jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job])
-          futureJob.flatMap {
-            case Some(job) =>
-              // Return the Right Page for each Status
-              job.status match {
-                // Tell the user that the job is running at the moment
-                case JobState.Running =>
-                  Future.successful(Ok(views.html.jobs.running(job.jobID)))
-
-                // Show the input form if the Job is Prepared or Submitted
-                case JobState.Prepared | JobState.Submitted =>
-                  val resultFiles = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map { f =>
-                    f.name -> f.contentAsString
-                  }.toMap
-                  val toolFrame = toolMatcher.resultPreparedMatcher(job.tool, resultFiles)
-                  Future.successful {
-                    Ok(views.html.general.submit(tel, job.tool, toolFrame, Some(job)))
-                      .withSession(sessionCookie(request, user.sessionID.get))
-                  }
-
-                // Since the job is Done show the Result pages
-                case JobState.Done =>
-                  val toolFrame = toolMatcher.resultDoneMatcher(job)
-                  Future.successful(Ok(toolFrame)
-                    .withSession(sessionCookie(request, user.sessionID.get)))
-
-                // There was an error, show the user the Error page
-                case JobState.Error =>
-                  Future.successful(Ok(views.html.jobs.error(job.jobID))
-                    .withSession(sessionCookie(request, user.sessionID.get)))
-
-                // Illegal state
-                case _ =>
-                  println("Illegal Job State: " + job.status.toString)
-                  Future.successful(NotFound)
-              }
-            case None =>
-              Future.successful(NotFound)
-          }
-        case _ =>
-          Future.successful(NotFound)
-      }
-    }
-  }
-  */
 }
