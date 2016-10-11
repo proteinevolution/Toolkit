@@ -5,13 +5,12 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.WebSocketActor
 import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
-import akka.util.Timeout
 import models.{Constants, Values}
 import models.tel.TEL
 import models.tools.{ToolModel, ToolModel2}
 import modules.Common
 import modules.tools.ToolMatcher
-import play.api.Configuration
+import play.api.{Configuration, Logger}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
@@ -20,8 +19,8 @@ import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
 import modules.tools.ToolMirror
+import play.twirl.api.Html
 
 
 @Singleton
@@ -29,6 +28,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                         val messagesApi      : MessagesApi,
                             final val values : Values,
 @NamedCache("userCache") implicit val userCache : CacheApi,
+@NamedCache("viewCache") val viewCache: CacheApi,
                         val reactiveMongoApi : ReactiveMongoApi,
                             system           : ActorSystem,
                             mat              : Materializer,
@@ -44,7 +44,6 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
 
   implicit val implicitMaterializer: Materializer = mat
   implicit val implicitActorSystem: ActorSystem = system
-  implicit val timeout = Timeout(5.seconds)
   val SID = "sid"
 
 
@@ -105,18 +104,23 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   }
 
   /**
-    * Shows the submission view of a new job instance to be created.
+    * Returns the submission view for a particular tool.
     *
     * @param toolname  Which tool the submission view should be created for.
     */
   def form(toolname : String) = Action { implicit request =>
 
     val toolModel = ToolModel2.toolMap(toolname)
-    Ok(views.html.jobs.main(None, toolModel, toolModel.paramGroups
-      .mapValues { vals =>
-      views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
-    } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm)), None))
 
+    val paramSections = viewCache.getOrElse[Map[String, Html]](toolname) {
+      val x = toolModel.paramGroups
+        .mapValues { vals =>
+          views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
+        } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm))
+      viewCache.set(toolname, x)
+      x
+    }
+    Ok(views.html.jobs.main(None, toolModel, paramSections, None))
   }
 
 
@@ -147,9 +151,6 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
         "error" -> "Missing file")
     }
   }
-
-
-
 }
 
 
