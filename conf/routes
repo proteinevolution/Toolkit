@@ -91,10 +91,7 @@ POST        /jobs/find                                     @controllers.Search.g
 GET         /static/get/:static                            @controllers.Service.static(static : String)
 
 
-# RESTFUL API for jobs
-# Update
-PUT         /job                                           @controllers.Jobs.updateJob
-POST        /jobs/update/:jobID                     @controllers.Jobs.updateJobStatus(jobID : String)
+
 
 # ElasticSearch
 
