@@ -18,7 +18,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 final class Backend @Inject()(webJarAssets       : WebJarAssets,
                               settingsController : Settings,
-                              contentController  : Content,
 @NamedCache("userCache") implicit val userCache  : CacheApi,
                           val reactiveMongoApi   : ReactiveMongoApi,
                           val messagesApi        : MessagesApi)
