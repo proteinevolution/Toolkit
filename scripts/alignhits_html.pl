@@ -10,7 +10,7 @@ BEGIN {
 };
 
 use strict;
-use lib "/ebio/abt1_share/toolkit_support1/snam/toolkit/lib";
+use lib "../lib";
 use MyPaths; 
 use constant ROUND_START_PATTERN => qr/Results from round\s+(\d+)/;
 use constant END_OF_HEADER => qr/(No hits found)|(^Sequences)/;
