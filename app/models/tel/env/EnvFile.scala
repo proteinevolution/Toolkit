@@ -2,7 +2,6 @@ package models.tel.env
 
 import better.files._
 import models.tel.Subject
-import play.api.Logger
 
 import scala.sys.process.Process
 
