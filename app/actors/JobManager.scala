@@ -234,13 +234,17 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       Logger.info("Job Manager was asked to update Job")
 
 
-    case UpdateJobStatus(jobID) =>
+    case UpdateJobStatus(jobID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> jobID)).foreach {
         case Some(job) =>
-          updateJob(job.copy(status = JobState.Queued))
+          updateJob(job.copy(status = JobState.Done))
+          userManager ! JobStateChanged(job, JobState.Done)
+          Logger.info("Successfully updated Job status " + jobID.toString)
         case None =>
-          userManager ! JobIDUnknown(BSONObjectID(jobID))
+          userManager ! JobIDUnknown(jobID)
+          Logger.info("Unknown ID " + jobID.toString())
       }
+
 
     case StartJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach{
@@ -343,7 +347,7 @@ object JobManager {
   case class UpdateJob(job : Job)
 
   // When the JobManager was asked to update a Job status
-  case class UpdateJobStatus(job : String)
+  case class UpdateJobStatus(job : BSONObjectID)
 
   // Jobmanager is asked to find jobs
   case class FetchJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID]) extends MessageWithUserID
