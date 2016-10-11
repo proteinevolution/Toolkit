@@ -3,7 +3,6 @@
     background: white;
 }
 
-
 /*
  Parameter panels
 */
@@ -40,3 +39,13 @@
     height: 2.5em;
     width: 15em;
 }
+
+.jobline .jobinfo {
+    float: right;
+    font-size: small;
+}
+.jobline .jobid {
+
+    padding-right: 1cm;
+}
+
