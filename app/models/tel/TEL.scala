@@ -5,10 +5,9 @@ import javax.inject.{Inject, Singleton}
 
 import better.files.Cmds._
 import better.files._
-
-import scala.sys.process._
 import models.Implicits._
 import models.tel.env.Env
+import models.tel.param.Params
 
 
 /**
@@ -16,7 +15,8 @@ import models.tel.env.Env
   * Created by lzimmermann on 26.05.16.
   */
 @Singleton
-class TEL @Inject() (env : Env) extends TELRegex with TELConstants   {
+class TEL @Inject() (env : Env,
+                     params: Params) extends TELRegex with TELConstants   {
 
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
@@ -30,51 +30,13 @@ class TEL @Inject() (env : Env) extends TELRegex with TELConstants   {
   // Set params (Parameters whose values can be taken from a predefined set)
   //-----------------------------------------------------------------------------------------------------
 
-  // Keeps a map of all setParams with their respective allowed values, together with the plain text name
-  private var setParams : Map[String, Map[String, String]] = loadSetParams()
-
-  // Reloads all the set Params from the scripts in params.d
-  private def loadSetParams() = {
-
-    // Only consider .sh and .dat files in the params.d directory
-   paramsDFile.list
-     .withFilter( f => f.isRegularFile && f.hasExtension)  // Ensure that only regular files with extension are used
-     .withFilter { f =>
-     val ext = f.extension.get
-     ext == ".sh" || ext == ".dat"    // Only ".sh" files and ".dat" files are considered
-   }.map { f =>
-
-      f.name.replaceAll("(.sh|.dat)", "") ->   { f.extension.get match {
-
-        case ".sh"   =>  Process(f.pathAsString).!!.split('\n').map { param =>
-          val spt = param.split(' ')
-          spt(0) -> spt(1)
-        }.toMap
-
-        case ".dat" => f.lineIterator.map { line =>
-          val spt = line.split(' ')
-          spt(0) -> spt(1)
-        }.toMap
-      }
-      }
-      }
-    }.toMap
-
-
-
 
   /**
     * Returns the Array of all values and plain text names of the set params
     *
     * @param param
     */
-  def getSetParam(param : String) = {
-
-    // TODO Reload contents of params.d if changed
-    // You probably want to use load set params here
-
-    setParams(param)
-  }
+  def generateValues(param : String) : Map[String, String] = params.generateValues(param)
 
 
 
@@ -97,42 +59,6 @@ class TEL @Inject() (env : Env) extends TELRegex with TELConstants   {
       }.toMap
   }
 
-
-
-  //-----------------------------------------------------------------------------------------------------
-  // Other stuff
-  //-----------------------------------------------------------------------------------------------------
-
-  /**
-    * Uses reflection to invoke the Method
-    *
-    * @param methodname
-    * @param t
-    * @param content
-    */
-  def invoke(methodname : String, t : String, content : String): Unit = {
-
-    val clazz = Class.forName("models.tel.TEL_" + t )
-
-    // TODO Implement me
-
-  }
-
-
-
-  //-----------------------------------------------------------------------------------------------------
-  // Private methods
-  //-----------------------------------------------------------------------------------------------------
-
-  /**
-    *
-    *
-    *
-    */
-  def parseParams(): Unit = {
-
-
-  }
 
 
 
