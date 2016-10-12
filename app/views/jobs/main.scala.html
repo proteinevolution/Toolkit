@@ -1,6 +1,7 @@
 @import models.tools.ToolModel2
 @import models.database.Job
 @import models.database.JobState
+@import org.joda.time.format.DateTimeFormat
 @(jobOption : Option[Job],
               toolModel : ToolModel2,
               parametersections : Map[String, Html],
@@ -18,7 +19,11 @@
         @if(jobOption.isDefined) {
             <span class="jobinfo">
              <span class="jobid"> JobID: @jobOption.get.jobID </span>
-             <span class="createdon">Created on: @jobOption.get.dateCreated.get</span>
+
+                @defining(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")) { dateFormatter =>
+                    <span class="createdon">Created on: @dateFormatter.print(jobOption.get.dateCreated.get)</span>
+                }
+
             </span>
         }
     </div> <br />
