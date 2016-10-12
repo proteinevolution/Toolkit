@@ -229,7 +229,7 @@ margin: 0;
             <div class="columns large-12"><input type="text" id="searchInput" name="searchInput" value="" placeholder="Search Keywords"></div>
 
         </div>
-      <div class="trafficbar" id="trafficbar"></div>
+      <div data-disable-hover="false" class="trafficbar" id="trafficbar"></div>
 
   </div>
 
@@ -314,6 +314,29 @@ margin: 0;
 
 
     setTimeout(function() {
+        var json = JSON.parse(JSON.stringify(jobs.vm.getLastJob()));
+        var status;
+
+       switch (json.state) {
+            case 3:
+            status = "running";
+            break;
+            case 4:
+            status = "error";
+            break;
+            case 5:
+            status = "done";
+            break;
+       }
+
+        $('#trafficbar').attr('data-tooltip');
+        $('#trafficbar').attr('title', 'Click to view job: '+json.job_id+', status: '+status);
+
+        $('.trafficbar').on('click', function () {
+            //console.log(JSON.stringify(jobs.vm.getLastJob()));
+            window.location.href = "/#/jobs/"+json.mainID;
+
+        });
 
 
         if (jobs.vm.getJobState(jobs.vm.getLastJob()) == 'done')
