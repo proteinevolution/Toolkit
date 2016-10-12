@@ -67,7 +67,7 @@
 
                 @helper.select(
                     inputForm("standarddb"),
-                    helper.options(tel.getSetParam("standarddb")),
+                    helper.options(tel.generateValues("standarddb")),
                     '_label -> "Select Database",
                     'id -> "standarddb")
             </div>
