@@ -31,11 +31,10 @@
 <table id="alignstats">
 </table>
 
-
+@pathToFastaFile
 
 <script>
 fastaSimple("fasta", "alignstats", '@pathToFastaFile')
-
 function selectAll() {
 $('input:checkbox.hits').each(function () {
             var checked = !$(this).data('checked');
