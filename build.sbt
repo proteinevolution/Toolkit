@@ -63,7 +63,7 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "mpi-toolkit",
     libraryDependencies ++= (commonDeps ++ Seq(
-      "org.webjars" %% "webjars-play" % "2.5.0",
+      "org.webjars" %% "webjars-play" % "2.5.0-3",
       "org.webjars" % "jquery" % jqueryVersion,
       "org.webjars.bower" % "jquery.lazyload" % jqueryLazyloadVersion,
       "org.webjars" % "jquery-ui" % jqueryUIVersion,
