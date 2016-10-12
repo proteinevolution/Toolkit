@@ -14,7 +14,6 @@ trait TELConstants extends Constants {
   val commentChar = '#'
 
   // FILES
-  val paramsDFile =  s"$TELPath${SEPARATOR}params.d".toFile
   val typesFile = s"$TELPath${SEPARATOR}types".toFile
 
   // PATHS
