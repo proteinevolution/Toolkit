@@ -1,3 +1,5 @@
+@import play.api.mvc.RequestHeader
+@(webJarAssets: WebJarAssets, sectionname : String)(implicit messages: Messages, request: RequestHeader)
 <style>
 
 
@@ -39,7 +41,7 @@ textarea#reformatOutput {
 
 <textarea id="reformatOutput"></textarea>
 
-<script src="@routes.Assets.at("javascripts/reformat.js")" type="text/javascript"></script>
+<script src="@routes.WebJarAssets.at(webJarAssets.locate("reformat.js"))"></script>
 <script src="@routes.Assets.at("scripts/validation.js")"></script>
 <script>
 
@@ -50,11 +52,11 @@ document.getElementById("output").onchange = function() {
 var currentVal = this.value;
 
 if (currentVal == "gis" && validateFasta(document.getElementById("sequences").value)) {
-document.getElementById("reformatOutput").value = getGIs(document.getElementById("sequences").value);
+document.getElementById("reformatOutput").value = $('#sequences').reformat('getgis');
 }
 
 if (currentVal == "acc" && validateFasta(document.getElementById("sequences").value)) {
-document.getElementById("reformatOutput").value = getAccessionversion(fasta2json(document.getElementById("sequences").value));
+document.getElementById("reformatOutput").value = $('#sequences').reformat('getaccessions');
 }
 }
 document.getElementById("sequences").value = localStorage.getItem("resultcookie");
