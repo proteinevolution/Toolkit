@@ -48,7 +48,7 @@
 
                 @helper.select(
                     inputForm("hmmdb"),
-                    helper.options(tel.getSetParam("hmmdb")),
+                    helper.options(tel.generateValues("hmmdb")),
                     '_label -> "Select HMM Database",
                     'id -> "hmmdb",
                     'class -> "forminput")
