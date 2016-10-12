@@ -366,11 +366,6 @@ textarea { resize:both; }
     font-family: Monaco, Consolas, "Lucida Console", monospace; font-weight: bold; font-size: 0.75em; padding-left: 15px;
 }
 
-.jobForm {
-    -webkit-box-shadow: 3px 3px 5px 0px lightgray;
-    -moz-box-shadow: 3px 3px 5px 0px lightgray;
-    box-shadow: 3px 3px 5px 0px lightgray;
-}
 
 #submitbuttons {
     padding-left: 1.15em;

@@ -49,3 +49,14 @@
     padding-right: 1cm;
 }
 
+.not-active {
+    pointer-events: none;
+    cursor: default;
+}
+
+
+#image{
+    width: 35%;
+    margin-top: 0.1em;
+}
+

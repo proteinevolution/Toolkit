@@ -34,8 +34,14 @@
         <!-- Show additional information if this is an already existing job -->
 
 
-        @if(jobOption.isDefined) {
 
+
+        @if(jobOption.isDefined) {
+            @if(jobOption.get.status == JobState.Done) {
+
+                <li id="tab-results" class="not-active"><a href="">Results</a></li>
+                <li><img id="image" src="@routes.Assets.at("images/arrow.svg")"></li>
+            }
             <!-- Show information dependent on the job state  TODO Use field constructor-->
             @{
                 jobOption.get.status match {
@@ -45,8 +51,6 @@
                         Html(resultsections.get.keysIterator.map{ key =>
                             "<li id=\"tab-" + key + "\"><a href=\"#tabpanel-" + key + "\">" + key + "</a></li>"
                         }.mkString)
-
-
                     case JobState.Running =>  Html("<li id=\"tab-running\"><a href=\"#tabpanel-running\">Running</a></li>")
                     case JobState.Error =>  Html("<li id=\"tab-error\"><a href=\"#tabpanel-error\">Error</a></li>")
                     case _ => Html("<li id=\"tab-unknown\"><a href=\"#tabpanel-unknown\">Unknown</a></li>")
@@ -102,7 +106,6 @@
                 @for((key, value) <- resultsections.get) {
 
                     <div class="tabs-panel" id="tabpanel-@key">
-
                         @jobs.resultpanel(key, value, jobOption.get.mainID.stringify)
                     </div>
                 }
