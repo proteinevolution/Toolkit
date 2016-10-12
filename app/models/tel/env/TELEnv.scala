@@ -1,7 +1,6 @@
 package models.tel.env
 
 import javax.inject.Singleton
-
 import models.tel.Observer
 import play.api.Logger
 

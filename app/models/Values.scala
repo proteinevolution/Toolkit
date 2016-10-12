@@ -33,7 +33,7 @@ class Values @Inject() (tel : TEL) {
     "PAM70" -> "PAM70"
   )
   final val alignmentFormats = Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
-  final val standardDBParams = tel.getSetParam("standarddb")
+  final val standardDBParams = tel.generateValues("standarddb")
   final val matrixParams = Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70")
   final val outOrderParams = Set("Input", "Tree", "Gaps")
 }
