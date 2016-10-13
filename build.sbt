@@ -10,7 +10,7 @@ val highchartsVersion = "4.2.4"
 val d3Version = "3.5.16"
 val scalaGuiceVersion = "4.0.1"
 val playMailerVersion = "5.0.0-M1"
-val reactiveMongoVersion = "0.11.14"
+val reactiveMongoVersion = "0.12-RC5"
 
 val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
