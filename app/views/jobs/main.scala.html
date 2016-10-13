@@ -33,7 +33,7 @@
     </div> <br />
 
     <!-- Job Tabs -->
-    <div class="tool-tabs" id="tool-tabs">
+    <div class="tool-tabs" id="tool-tabs" style="display: none;">
         <form class="jobForm" >
         <ul>
         @for(section <- parametersections.keys) {
@@ -127,7 +127,9 @@
 
 <script>
 
-        $('#arrowimage' ).show();
+        $('#tool-tabs').show();
+        $('#arrowimage').show();
+
         toolname = '@toolModel.toolNameShort';
         $("#tool-tabs").tabs();
 </script>
