@@ -258,7 +258,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case Prepare(user : User, jobID : Option[String], toolName : String, params, start) =>
         val jobCreationTime = DateTime.now()
         val isPrivate       = params.getOrElse("private","") == "true"
-        val ownerID         = if (isPrivate)             Some(user.userID)           else None
+        val ownerID         = if (isPrivate) Some(user.userID) else None
         val newJob = Job(mainID      = BSONObjectID.generate(),
                          jobType     = "",
                          parentID    = None,
