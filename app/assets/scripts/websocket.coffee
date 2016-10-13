@@ -80,7 +80,6 @@ onMessage = (event) ->
       state = message.job.state.toString()
       console.log(state)
       jobs.vm.update(message.job)
-
       if jobs.vm.getJobState(message.job) == 'running'
         $('#trafficbar').css
           'background': '#ffff00'
@@ -90,6 +89,12 @@ onMessage = (event) ->
           'background': '#ff0000'
           'box-shadow': '0 0 10px #d2071d'
       else if jobs.vm.getJobState(message.job) == 'done'
+        if window.Notification and Notification.permission != 'denied'
+          Notification.requestPermission (status) ->
+          n = new Notification('Bioinformatics Toolkit',
+            body: 'Job ' + message.job.mainID + " has finished!"
+            icon: '')
+          return
         $('#trafficbar').css
           'background': 'green'
           'box-shadow': '0 0 10px darkgreen'
@@ -97,7 +102,6 @@ onMessage = (event) ->
         $('#trafficbar').css
           'background': 'transparent'
           'box-shadow': '0 0 10px transparent'
-
 
       # Show user a popup with the submission
       if state == '0'
