@@ -256,16 +256,13 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
     // User asks to prepare new Job, might be directly executed (if start is true)
     case Prepare(user : User, jobID : Option[String], toolName : String, params, start) =>
-      // TODO Currently jobID is a hack. we need to clean it up to make sure that it works correctly
         val jobCreationTime = DateTime.now()
-        val jobIDfromUser   = params.getOrElse("jobID","")
         val isPrivate       = params.getOrElse("private","") == "true"
-        val jobID           = if (jobIDfromUser.isEmpty) jobIDSource.next().toString else jobIDfromUser
         val ownerID         = if (isPrivate)             Some(user.userID)           else None
         val newJob = Job(mainID      = BSONObjectID.generate(),
                          jobType     = "",
                          parentID    = None,
-                         jobID       = jobID, //TODO Refactor to name
+                         jobID       = jobID.getOrElse(jobIDSource.next().toString), //TODO Refactor to name
                          ownerID     = ownerID,
                          status      = JobState.Submitted,
                          tool        = toolName,
