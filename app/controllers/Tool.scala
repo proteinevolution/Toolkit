@@ -117,18 +117,21 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
                   //  Identical job has been found
                   case Some(job) =>
-                    Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
-                                            "jobStarted"    -> false,
-                                            "identicalJobs" -> true,
-                                            "job"           -> job.cleaned()))
+                    Ok(Json.obj("jobSubmitted"  -> true,
+                                "jobStarted"    -> false,
+                                "identicalJobs" -> true,
+                                "job"           -> job.cleaned(),
+                                "mainID"        -> job.mainID.stringify)
                     ).withSession(sessionCookie(request, user.sessionID.get))
 
-                  // No identical job submission has been found
+                  // No identical job submission, a new Job Instance will be prepared
                   case None =>
-                    jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = start)
-                    Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
-                                            "jobStarted"    -> start,
-                                            "identicalJobs" -> false))
+                    val newMainID = BSONObjectID.generate()
+                    jobManager ! Prepare(user, jobID, newMainID, toolName, boundForm.data, start = start)
+                    Ok(Json.obj("jobSubmitted"  -> true,
+                                "jobStarted"    -> start,
+                                "identicalJobs" -> false,
+                                "mainID"        -> newMainID.stringify)
                     ).withSession(sessionCookie(request, user.sessionID.get))
                 }
               }
