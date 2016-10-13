@@ -5,7 +5,12 @@
 $ ->
   #handles all types of submission
   submitJob = (start) ->
-    submitRoute = jsRoutes.controllers.Tool.submit(toolname, start, mainID)
+
+    jobID = $(".jobid").val()
+    if jobID == ""
+      jobID = null
+
+    submitRoute = jsRoutes.controllers.Tool.submit(toolname, start, jobID)
 
     $.ajax(
       url: submitRoute.url
@@ -23,6 +28,11 @@ $ ->
 
   $(".submitJob").bind 'click', (event) ->
     submitJob(true)
+
+   # Change of the value in the ID field are performed for all such field
+  $(".jobid").change () ->
+    $(".jobid").val($(this).val())
+
 
   # Variables in Scope of the Input form
   # JobIDs have to obey this regular expression

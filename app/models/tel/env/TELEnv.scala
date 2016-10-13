@@ -24,8 +24,6 @@ class TELEnv extends Env with Observer[EnvFile]    {
     // If the Environmental file triggers a change, reload it and add new variables to the
     // env
     subject.load.foreach { kv =>
-
-      Logger.info("Key Value Pair received:  " + kv.toString())
       this.env = this.env + kv
     }
   }

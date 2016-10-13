@@ -43,14 +43,10 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
   implicit val timeout = Timeout(5.seconds)
 
 
-  def submit(toolName: String, start : Boolean, mainID : Option[String]) = Action.async { implicit request =>
-
+  def submit(toolName: String, start : Boolean, jobID : Option[String]) = Action.async { implicit request =>
 
     getUser.flatMap { user =>
       // Fetch the job ID from the submission, might be the empty string
-      //val jobID = request.body.asFormUrlEncoded.get("jobid").head --- There won't be a job ID in the request
-
-
       val form = toolMatcher.formMatcher(toolName)
 
       if (form.isEmpty)
@@ -119,14 +115,14 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
                 jobsPatition._2.headOption match {
                   case Some(job) =>
-                    jobManager ! Prepare(user, Some(""), toolName, boundForm.data, start = false)
+                    jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = false)
                     Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
                                             "jobStarted"    -> false,
                                             "identicalJobs" -> true,
                                             "job"           -> job.cleaned()))
                     ).withSession(sessionCookie(request, user.sessionID.get))
                   case None =>
-                    jobManager ! Prepare(user, Some(""), toolName, boundForm.data, start = start)
+                    jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = start)
                     Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
                                             "jobStarted"    -> start,
                                             "identicalJobs" -> false))
