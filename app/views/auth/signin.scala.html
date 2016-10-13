@@ -1,14 +1,16 @@
 @import play.api.mvc.RequestHeader
 @(nameLogin : String)(implicit messages: Messages, request: RequestHeader)
 
-<form data-abide="ajax" novalidate>
-    <div class="row" id="signin-form">
-        <div class="small-6 padded-column columns">
+<div class="auth-form">
+    <form id="signin-form" data-abide="ajax" novalidate>
+        <div class="row">
+            <div class="small-6 padded-column columns">
                 <input style="font-size: 0.80em" type="text" id="nameLogin" name="nameLogin" placeholder="Username" value="@nameLogin" required pattern="[a-zA-Z0-9_]{6,40}">
-        </div>
-        <div class="small-6 padded-column columns">
+            </div>
+            <div class="small-6 padded-column columns">
                 <input style="font-size: 0.80em" type="password" id="password" name="password" placeholder="Password" required pattern=".{8,40}">
+            </div>
         </div>
-    </div>
-    <input id="signin-submit" type="submit" class="small expanded secondary button" value="Sign In">
-</form>
+        <input id="signin-submit" type="submit" class="small expanded secondary button" value="Sign In">
+    </form>
+</div>
