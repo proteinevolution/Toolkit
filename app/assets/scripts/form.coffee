@@ -20,9 +20,10 @@ $ ->
     ).done (json) ->
       if(json.jobSubmitted)
         if (json.identicalJobs)
-  #TODO refer to the alert div box here
           alert "job submitted but there was an identical job"
-  #TODO maybe link to the job page here
+
+        m.route("/jobs/" + json.mainID)
+
       else
         alert "job NOT submitted"
 

@@ -255,11 +255,11 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       }
 
     // User asks to prepare new Job, might be directly executed (if start is true)
-    case Prepare(user : User, jobID : Option[String], toolName : String, params, start) =>
+    case Prepare(user, jobID, mainID, toolName, params, start) =>
         val jobCreationTime = DateTime.now()
         val isPrivate       = params.getOrElse("private","") == "true"
         val ownerID         = if (isPrivate) Some(user.userID) else None
-        val newJob = Job(mainID      = BSONObjectID.generate(),
+        val newJob = Job(mainID      = mainID,
                          jobType     = "",
                          parentID    = None,
                          jobID       = jobID.getOrElse(jobIDSource.next().toString), //TODO Refactor to name
@@ -336,6 +336,7 @@ object JobManager {
   // Prepare Job with new parameters or create new job with specified parameters for the given tool
   case class Prepare(user     : User,
                      jobID    : Option[String],
+                     mainID   : BSONObjectID,
                      toolName : String,
                      params   : Map[String, String],
                      start    : Boolean)
