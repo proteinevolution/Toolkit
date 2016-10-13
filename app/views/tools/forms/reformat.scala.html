@@ -2,10 +2,7 @@
 @(webJarAssets: WebJarAssets, sectionname : String)(implicit messages: Messages, request: RequestHeader)
 <link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
 <link href="@routes.Assets.at("styles/reformat-common.css")" rel="stylesheet">
-<link href="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.css"))" rel="stylesheet">
 
-<script src="@routes.WebJarAssets.at(webJarAssets.locate("clipboard.min.js"))"></script>
-<script src="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.js"))"></script>
 <div style="padding-top: 10px;"></div>
 <div style="width: 80%; display: block; margin: auto;">
 <ul class="vertical menu" data-accordion-menu>
