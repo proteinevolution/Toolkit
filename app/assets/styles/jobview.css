@@ -63,8 +63,9 @@
 }
 
 
-#image{
+#arrowimage{
     width: 35%;
     margin-top: 0.1em;
+    display: none;
 }
 
