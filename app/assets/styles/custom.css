@@ -371,14 +371,20 @@ textarea { resize:both; }
     padding-left: 1.15em;
 }
 
-#submitbuttons input {
+#submitbuttons .button {
     background-color: #008979;
     color: white;
     border: 1px solid lightgrey;
 }
 
-#submitbuttons input:hover {
+#submitbuttons .button:hover {
     background-color: #006F62;
+}
+
+#jobid {
+
+    font-size: 0.65em;
+    width: 250px;
 }
 
 #past_example a {
