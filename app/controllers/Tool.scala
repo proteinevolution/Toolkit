@@ -114,13 +114,16 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                 }
 
                 jobsPatition._2.headOption match {
+
+                  //  Identical job has been found
                   case Some(job) =>
-                    jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = false)
                     Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
                                             "jobStarted"    -> false,
                                             "identicalJobs" -> true,
                                             "job"           -> job.cleaned()))
                     ).withSession(sessionCookie(request, user.sessionID.get))
+
+                  // No identical job submission has been found
                   case None =>
                     jobManager ! Prepare(user, jobID, toolName, boundForm.data, start = start)
                     Ok(Json.toJson(Json.obj("jobSubmitted"  -> true,
