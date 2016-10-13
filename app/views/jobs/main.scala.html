@@ -73,12 +73,17 @@
                 @parametersections(section)
 
                 <!-- Show control buttons in all panels -->
-                <div id="submitbuttons">
-
+                <div id="submitbuttons" class="row">
+                    <div class="columns large-4">
+                        <input type="text" placeholder="Custom job id" class="jobid" id="jobid" /></div>
+                    <div class="columns large-4"></div>
+                    <div class="columns large-4">
                     <input class="secondary button small submitJob" type="button"
-                           value="@if(jobOption.isDefined){Resubmit Job}else{Submit Job}" />
-                    <input class="secondary button small resetJob" type="reset" value="Reset" />
-                    <input type="text" placeholder="jobID" class="jobid" />
+                           value="@if(jobOption.isDefined){Resubmit Job}else{Submit Job}" style="float: right;" />
+
+                    <input class="secondary button small resetJob" type="reset" value="Reset" style="float: right;"/></div>
+
+
                 </div>
             </div>
         }
