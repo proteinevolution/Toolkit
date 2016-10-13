@@ -85,6 +85,12 @@ onMessage = (event) ->
           'background': '#ffff00'
           'box-shadow': '0 0 10px #ffce27'
       else if jobs.vm.getJobState(message.job) == 'error'
+        if window.Notification and Notification.permission != 'denied'
+          Notification.requestPermission (status) ->
+          n = new Notification('Bioinformatics Toolkit',
+            body: 'Job ' + message.job.mainID + " has failed!"
+            icon: '')
+          titlenotifier.add();
         $('#trafficbar').css
           'background': '#ff0000'
           'box-shadow': '0 0 10px #d2071d'
@@ -94,7 +100,7 @@ onMessage = (event) ->
           n = new Notification('Bioinformatics Toolkit',
             body: 'Job ' + message.job.mainID + " has finished!"
             icon: '')
-          return
+          titlenotifier.add();
         $('#trafficbar').css
           'background': 'green'
           'box-shadow': '0 0 10px darkgreen'
@@ -144,3 +150,4 @@ connect()
 # let user reconnect manually
 $("#offline-alert").on 'click', (event) ->
   connect()
+
