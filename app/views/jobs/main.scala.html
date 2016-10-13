@@ -45,7 +45,7 @@
             @if(jobOption.get.status == JobState.Done) {
 
                 <li id="tab-results" class="not-active"><a href="">Results</a></li>
-                <li><img id="image" src="@routes.Assets.at("images/arrow.svg")"></li>
+                <li><img id="arrowimage" src="@routes.Assets.at("images/arrow.svg")" style="display: none;"></li>
             }
             <!-- Show information dependent on the job state  TODO Use field constructor-->
             @{
@@ -122,6 +122,8 @@
 
 
 <script>
+
+        $('#arrowimage' ).show();
         toolname = '@toolModel.toolNameShort';
         $("#tool-tabs").tabs();
 </script>
