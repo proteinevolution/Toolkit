@@ -1,20 +1,22 @@
 @import play.api.mvc.RequestHeader
 @()(implicit messages: Messages, request: RequestHeader)
 
-<form data-abide="ajax" novalidate>
-  <div id="forgot-form">
+<div class="auth-form">
+  <form id="forgot-form" data-abide="ajax" novalidate>
     <div class="row">
       <div class="small-6 padded-column columns">
         <label>
           <input type="text" id="nameLogin" name="nameLogin" placeholder="Username" pattern="text">
         </label>
       </div>
+
       <div class="small-6 padded-column columns">
         <label>
           <input type="text" id="eMail" name="eMail" placeholder="E-Mail" required pattern="email">
         </label>
       </div>
     </div>
-  </div>
-  <input id="forgot-submit" type="submit" class="small expanded secondary button" value="Reset Password">
-</form>
+
+    <input id="forgot-submit" type="submit" class="small expanded secondary button" value="Reset Password">
+  </form>
+</div>

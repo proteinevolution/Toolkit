@@ -1,0 +1,68 @@
+
+#auth-tabs {
+  border: none;
+  width: 25%;
+  min-height: 20em;
+  padding: 0;
+  overflow: hidden;
+}
+#auth-tabs .ui-widget-header {
+  font-size: 1.1em;
+  background: #eeeeee;
+  border: none;
+  width: 24.7em;
+
+}
+#auth-tabs .ui-tabs-nav .ui-state-default {
+  background: #eeeeee;
+  border: none;
+  height: 2.5em;
+}
+#auth-tabs .ui-tabs-nav .ui-state-active {
+  border: 1px solid grey;
+}
+#auth-tabs .ui-tabs-nav .ui-state-default a {
+  color: grey;
+}
+#auth-tabs .ui-tabs-nav .ui-state-active a {
+  color: grey;
+}
+
+#auth-tabs .ui-tabs-panel  {
+  background: white;
+}
+
+#signin-form {
+  margin-top: 4em;
+}
+
+#forgot-form {
+  font-size: 0.85em;
+  margin-top: 4em;
+}
+
+.auth-form input {
+  background-color: transparent;
+}
+
+.auth-form input:focus {
+  outline: none !important;
+  border:1px solid #2E8C81;
+  box-shadow: 0 0 10px #2E8C81;
+}
+
+#signin-submit, #signup-submit, #forgot-submit {
+  width: 40%;
+  background-color: #2E8C81;
+  font-size: 0.9em;
+}
+
+#checklabel {
+  position: absolute;
+  left: 140px;
+  top: 360px;
+}
+
+#toS {
+  margin-bottom: 1em;
+}
