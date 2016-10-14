@@ -8,7 +8,8 @@ import better.files._
 import models.Implicits._
 import models.tel.env.Env
 import models.tel.param.Params
-
+import play.Logger
+import scala.io.Source
 
 /**
   *
@@ -73,6 +74,7 @@ class TEL @Inject() (env : Env,
     */
   def init(runscript : String, params : Map[String, String], dest : String): String = {
 
+    val jobID = dest.split('/').last
     // Create directories necessary for tool execution
     subdirs.foreach { s => (dest + SEPARATOR + s).toFile.createDirectories() }
 
@@ -87,6 +89,7 @@ class TEL @Inject() (env : Env,
     }
 
     //
+    val jobStatusDoneSource = s"$runscriptPath/JobStatusDone.sh"
     val source = s"$runscriptPath$runscript.sh"
     val target = s"$dest$runscript.sh".toFile
 
@@ -118,7 +121,9 @@ class TEL @Inject() (env : Env,
     target.appendLines(newLines:_*)
 
     val context = env.get("CONTEXT")
+
     if(context == "LOCAL") {
+
 
       s"$dest${SEPARATOR}EXECUTION".toFile.appendLine(target.name)
 
@@ -138,6 +143,10 @@ class TEL @Inject() (env : Env,
       val contextFile = s"$dest$context.sh".toFile
 
       contextFile.appendLines(contextLines:_*)
+
+      // add HTTP request POST to update job status to 'Done'
+      contextFile.appendLines(Source.fromFile(jobStatusDoneSource).getLines.mkString)
+
       chmod_+(PosixFilePermission.OWNER_EXECUTE, contextFile)
 
       s"$dest${SEPARATOR}EXECUTION".toFile.appendLine(contextFile.name)
