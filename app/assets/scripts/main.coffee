@@ -53,3 +53,11 @@ m.route.mode = 'hash'
 
 #define a route
 m.route document.getElementById('content'), '/', { '/tools/:toolName': Tools,'/jobs/:mainID' : Jobs, '/:static' : StaticRoute }
+
+
+window.onfocus = ->
+    titlenotifier.reset();
+window.onclick = ->
+    titlenotifier.reset();
+
+
