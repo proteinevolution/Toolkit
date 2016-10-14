@@ -86,7 +86,9 @@ POST        /jobs/del/:mainID                              @controllers.Service.
 # Find a Job
 POST        /jobs/find                                     @controllers.Search.getJob()
 # Update Job status
-POST        /jobs/update/:jobID                             @controllers.Jobs.updateJobStatus(jobID : String)
+POST        /jobs/done/:jobID                              @controllers.Jobs.jobStatusDone(jobID : String)
+POST        /jobs/error/:jobID                             @controllers.Jobs.jobStatusError(jobID : String)
+POST        /jobs/running/:jobID                            @controllers.Jobs.jobStatusRunning(jobID : String)
 
 # Static route
 GET         /static/get/:static                            @controllers.Service.static(static : String)
