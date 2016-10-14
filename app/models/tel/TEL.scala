@@ -130,6 +130,8 @@ class TEL @Inject() (env : Env,
       // Make the runscript executable
       chmod_+(PosixFilePermission.OWNER_EXECUTE, target)
 
+      // Rename executable file to tool.sh to make it uniform
+      target.renameTo("tool.sh")
       target.pathAsString
     } else {
 
@@ -150,6 +152,7 @@ class TEL @Inject() (env : Env,
       chmod_+(PosixFilePermission.OWNER_EXECUTE, contextFile)
 
       s"$dest${SEPARATOR}EXECUTION".toFile.appendLine(contextFile.name)
+      contextFile.renameTo("tool.sh")
       contextFile.pathAsString
     }
   }
