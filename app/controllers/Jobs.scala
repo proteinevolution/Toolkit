@@ -4,9 +4,8 @@ import akka.actor.ActorRef
 import akka.pattern._
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager
-import actors.JobManager.UpdateJobStatus
-import models.database.Job
+import actors.JobManager._
+import models.database.{Job, JobState}
 import play.api.Logger
 import play.api.libs.json.JsError
 import play.api.libs.json._
@@ -16,9 +15,16 @@ import reactivemongo.bson.BSONObjectID
 class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef) extends Controller  {
 
   
-  def updateJobStatus(jobID : String) = Action { request =>
-    jobManager ! UpdateJobStatus(BSONObjectID(jobID))
+  def jobStatusDone(jobID : String) = Action { request =>
+    jobManager ! UpdateJobStatus(BSONObjectID(jobID), JobState.Done)
     Ok
   }
-
+  def jobStatusError(jobID : String) = Action { request =>
+    jobManager ! UpdateJobStatus(BSONObjectID(jobID), JobState.Error)
+    Ok
+  }
+  def jobStatusRunning(jobID : String) = Action { request =>
+    jobManager ! UpdateJobStatus(BSONObjectID(jobID), JobState.Running)
+    Ok
+  }
 }

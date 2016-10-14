@@ -1,1 +1,0 @@
-curl -X POST http://localhost:8555/jobs/done/$1

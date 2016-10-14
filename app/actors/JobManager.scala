@@ -16,6 +16,7 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID, BSONValue}
 
 import scala.concurrent.Future
 import better.files._
+import models.database.JobState.JobState
 import models.{Constants, ExitCodes}
 import models.tel.TEL
 import play.api.Logger
@@ -83,33 +84,11 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   def executeJob(job : Job): Unit = {
 
     val rootPath  = s"$jobPath$SEPARATOR${job.mainID.stringify}$SEPARATOR"
-
-    // Log files output buffer
-    val out = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stdout.out")))
-    val err = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stderr.err")))
-
-    // Job will now be executed, change the job state to running
-
-    updateJob(job.copy(status = JobState.Running))
-
     // Create new Process instance of the runscript to run the tool
-    val process = Process(job.scriptPath , new java.io.File(rootPath)).run(ProcessLogger(
-      (fout) => out.write(fout),
-      (ferr) => err.write(ferr)
-    ))
+    val process = Process(job.scriptPath , new java.io.File(rootPath)).run()
     runningProcesses.put(job.mainID.stringify, process)
-
-    // Treat Exit code of job process
-    process.exitValue() match {
-
-      case SUCCESS => updateJob(job.copy(status = JobState.Done))
-      case TERMINATED => // Ignore
-      case x: Int => updateJob(job.copy(status = JobState.Error))
-    }
-    runningProcesses.remove(job.mainID.stringify)
-
-    out.close()
-    err.close()
+    // set job state to queued
+    updateJob(job.copy(status = JobState.Queued))
   }
 
   /**
@@ -229,17 +208,14 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           Logger.info("Unknown ID " + mainID.toString())
       }
 
-    case UpdateJob(job)  =>
-      
-      Logger.info("Job Manager was asked to update Job")
-
-
-    case UpdateJobStatus(jobID : BSONObjectID) =>
+    case UpdateJobStatus(jobID : BSONObjectID, status : JobState) =>
       findJob(BSONDocument(Job.IDDB -> jobID)).foreach {
         case Some(job) =>
-          updateJob(job.copy(status = JobState.Done))
-          userManager ! JobStateChanged(job, JobState.Done)
-          Logger.info("Successfully updated Job status " + jobID.toString)
+          if (status == JobState.Done)
+            runningProcesses.remove(job.mainID.stringify)
+          updateJob(job.copy(status = status))
+          userManager ! JobStateChanged(job, status)
+          Logger.info("Successfully updated Job status " + jobID.toString + " to " + status)
         case None =>
           userManager ! JobIDUnknown(jobID)
           Logger.info("Unknown ID " + jobID.toString())
@@ -341,11 +317,8 @@ object JobManager {
                      params   : Map[String, String],
                      start    : Boolean)
 
-  // When the JobManager was asked to update a Job
-  case class UpdateJob(job : Job)
-
   // When the JobManager was asked to update a Job status
-  case class UpdateJobStatus(job : BSONObjectID)
+  case class UpdateJobStatus(job : BSONObjectID, status : JobState)
 
   // Jobmanager is asked to find jobs
   case class FetchJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID]) extends MessageWithUserID
