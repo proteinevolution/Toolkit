@@ -250,11 +250,37 @@ JobTabsComponent =
                  comp = formComponents[paramElem[0]](paramElem[1])
                  m.component comp[0], comp[1]
              ]
+           m.component(JobSubmissionComponent)
+
            ]
     ]
 
 
+JobSubmissionComponent =
+  view: ->
+    m "div", {class: "submitbuttons"}, [
+        m "input", {type: "button", class: "success button small submitJob", value: "Submit Job"}  #TODO
+        m "input", {type: "reset", class: "alert button small resetJob", value: "Reset"}
+        m "input", {type: "text", class: "jobid", placeholder: "Custom JobID"}
+    ]
+###
 
+  <!-- Show control buttons in all panels -->
+                <div id="submitbuttons" class="row">
+                    <div class="columns large-4">
+                        <input type="text" placeholder="Custom job id" class="jobid" id="jobid" /></div>
+                    <div class="columns large-4"></div>
+                    <div class="columns large-4">
+                    <input class="secondary button small submitJob" type="button"
+                           value="@if(jobOption.isDefined){Resubmit Job}else{Submit Job}" style="float: right;" />
+
+                    <input class="secondary button small resetJob" type="reset" value="Reset" style="float: right;"/></div>
+
+
+                </div>
+            </div>
+
+###
 
 # The component mounted in "content" which displays the tool submission form and the result pages
 JobViewComponent =
