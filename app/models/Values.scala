@@ -1,7 +1,6 @@
 package models
 
 import javax.inject.{Inject, Singleton}
-
 import models.tel.TEL
 
 /**
@@ -32,24 +31,25 @@ class Values @Inject() (tel : TEL) {
     "PAM30" -> "PAM30",
     "PAM70" -> "PAM70"
   )
+
+  // TODO This will go soon
   final val alignmentFormats = Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
   final val standardDBParams = tel.generateValues("standarddb")
   final val matrixParams = Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70")
   final val outOrderParams = Set("Input", "Tree", "Gaps")
+  // ------
+
+  // encompasses for certain parameters the allowed values with a clear text name
+  final val allowed : Map[String, Seq[(String, String)]] = Map(
+   Param.ALIGNMENT_FORMAT -> alignmentFormats.map  { format =>
+
+     format -> fullNames(format)
+   }.toSeq,
+    Param.STANDARD_DB -> standardDBParams.toSeq,
+    Param.MATRIX -> matrixParams.map  { matrix =>
+
+      matrix -> fullNames(matrix)
+    }.toSeq
+  )
 }
 
-
-
-/*
-case object CLU extends AlignmentFormat("clu")
-case object STO extends AlignmentFormat("sto")
-case object EMB extends AlignmentFormat("emb")
-case object GBK extends AlignmentFormat("gbk")
-case object MEG extends AlignmentFormat("meg")
-case object MSF extends AlignmentFormat("msf")
-case object NEX extends AlignmentFormat("nex")
-case object PHY extends AlignmentFormat("phy")
-case object PIR extends AlignmentFormat("pir")
-case object TRE extends AlignmentFormat("tre")
-
- */
