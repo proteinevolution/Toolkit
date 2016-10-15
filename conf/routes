@@ -113,3 +113,9 @@ GET         /:static                                       @controllers.Applicat
 
 #Forwarding
 #GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
+
+
+# Some experimental things
+GET         /api/tools/:toolname                           @controllers.TestController.getTool(toolname)
+
+

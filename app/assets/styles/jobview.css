@@ -13,7 +13,7 @@
 
 .parameters div {
     width: 50%;
-    font-size: 0.75em;
+    font-size: smaller;
 }
 
 .parameters select {
@@ -40,6 +40,11 @@
     width: 15em;
 }
 
+
+.jobline {
+
+    margin-bottom: 0.5cm;
+}
 
 .jobline .toolname {
 
