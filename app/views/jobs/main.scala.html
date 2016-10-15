@@ -8,9 +8,6 @@
               resultsections : Option[Map[String, String]])(implicit messages: Messages, request: RequestHeader)
 
 
-<link href="@routes.Assets.at("styles/jobview.css")" rel="stylesheet">
-
-
 <div id="jobview">
 
     <!-- Job Descriptor Line -->
@@ -41,10 +38,6 @@
             <li id="tab-@section"><a href="#tabpanel-@section">@section</a></li>
         }
         <!-- Show additional information if this is an already existing job -->
-
-
-
-
         @if(jobOption.isDefined) {
             @if(jobOption.get.status == JobState.Done) {
 
