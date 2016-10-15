@@ -90,9 +90,10 @@ Tool.get = (toolname) ->
 #######################################################################################################################
 #######################################################################################################################
 
+# Model for the Job currently loaded
 JobModel =
   isJob: false
-  jobid: null
+  jobid: m.prop null
   createdOn: null
   tool: null
   alignmentPresent: false
@@ -229,58 +230,47 @@ JobTabsComponent =
          m "li",  {id: "tab-#{param[0]}"},  m "a", {href: "#tabpanel-#{param[0]}"}, param[0]
 
        # Generate views for all Parameter groups
-       ctrl.params.map (paramGroup) ->
-         elements = paramGroup[1].filter((paramElem) -> paramElem[0] != "alignment")
-         split = elements.length / 2
-         m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
+      m "form", {id: "jobform"},
+         ctrl.params.map (paramGroup) ->
+           elements = paramGroup[1].filter((paramElem) -> paramElem[0] != "alignment")
+           split = elements.length / 2
+           m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
 
-           if ctrl.alignmentPresent and paramGroup[0] is "Alignment"
-             comp = formComponents["alignment"]([])
-             m.component comp[0], comp[1]
+             if ctrl.alignmentPresent and paramGroup[0] is "Alignment"
+               comp = formComponents["alignment"]([])
+               m.component comp[0], comp[1]
 
-           # Show everything except for the alignment in the parameters div
-           m "div", {class: "parameters"},
+             # Show everything except for the alignment in the parameters div
+             m "div", {class: "parameters"},
 
-             [
-               m "div", elements.slice(0,split).map (paramElem) ->
-                 comp = formComponents[paramElem[0]](paramElem[1])
-                 m.component comp[0], comp[1]
+               [
+                 m "div", elements.slice(0,split).map (paramElem) ->
+                   comp = formComponents[paramElem[0]](paramElem[1])
+                   m.component comp[0], comp[1]
 
-               m "div", elements.slice(split,elements.length).map (paramElem) ->
-                 comp = formComponents[paramElem[0]](paramElem[1])
-                 m.component comp[0], comp[1]
-             ]
-           m.component(JobSubmissionComponent)
-
+                 m "div", elements.slice(split,elements.length).map (paramElem) ->
+                   comp = formComponents[paramElem[0]](paramElem[1])
+                   m.component comp[0], comp[1]
+               ]
+             m.component(JobSubmissionComponent)
            ]
     ]
 
 
+
 JobSubmissionComponent =
-  view: ->
+  controller: ->
+    jobid: JobModel.jobid
+
+  view: (ctrl) ->
     m "div", {class: "submitbuttons"}, [
-        m "input", {type: "button", class: "success button small submitJob", value: "Submit Job"}  #TODO
+        m "input", {type: "submit", class: "success button small submitJob", value: "Submit Job"}  #TODO
         m "input", {type: "reset", class: "alert button small resetJob", value: "Reset"}
-        m "input", {type: "text", class: "jobid", placeholder: "Custom JobID"}
+        m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", JobModel.jobid), value: JobModel.jobid()}
     ]
-###
-
-  <!-- Show control buttons in all panels -->
-                <div id="submitbuttons" class="row">
-                    <div class="columns large-4">
-                        <input type="text" placeholder="Custom job id" class="jobid" id="jobid" /></div>
-                    <div class="columns large-4"></div>
-                    <div class="columns large-4">
-                    <input class="secondary button small submitJob" type="button"
-                           value="@if(jobOption.isDefined){Resubmit Job}else{Submit Job}" style="float: right;" />
-
-                    <input class="secondary button small resetJob" type="reset" value="Reset" style="float: right;"/></div>
 
 
-                </div>
-            </div>
 
-###
 
 # The component mounted in "content" which displays the tool submission form and the result pages
 JobViewComponent =
@@ -317,8 +307,3 @@ window.onfocus = ->
 window.onclick = ->
   titlenotifier.reset();
 
-###
-  param[1].filter((paramElem) -> paramElem[0] != "alignment").map (paramElem) ->
-              comp = formComponents[paramElem[0]](paramElem[1])
-              m.component comp[0], comp[1]
-###
