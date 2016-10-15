@@ -52,6 +52,17 @@
     font-weight: bold;
 }
 
+.submitbuttons .jobid {
+
+    color: #000;
+    color: rgba(0,0,0,0);
+    text-shadow: 0 0 0 #878787;
+    height: 2em;
+    width: 15em;
+    float: right;
+}
+
+
 
 .jobline .jobinfo {
     float: right;
