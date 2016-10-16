@@ -70,6 +70,9 @@ StaticRoute =
         $(document).foundation()
         $("html, body").animate({ scrollTop: 0 }, "fast")
 ###
+# Helper functions
+renderParameter = (content, moreClasses) ->
+  m "div", {class: "parameter #{moreClasses}"}, content
 
 # Configuration
 tabulated = (element, isInit) ->
@@ -89,7 +92,6 @@ Tool.get = (toolname) ->
 
 #######################################################################################################################
 #######################################################################################################################
-
 # Model for the Job currently loaded
 JobModel =
   isJob: false
@@ -117,7 +119,10 @@ ParameterAlignmentComponent =
     name: "alignment"
 
   view: (ctrl) ->
-    m "textarea", {name: ctrl.name, placeholder: "Enter multiple sequence alignment", rows: 10, cols: 70}
+    renderParameter [
+      m "textarea", {name: ctrl.name, placeholder: "Enter multiple sequence alignment", rows: 10, cols: 70, id: "alignment"}
+      m "input", {type: "button", class: "button small alignmentExample", value: "Paste Example"}
+    ], "alignmentParameter"  # TODO Should be a controller argument
 
 
 ParameterSelectComponent =
@@ -128,7 +133,7 @@ ParameterSelectComponent =
     label: args.label
 
   view: (ctrl) ->
-    m "div", {class: "parameter"}, [
+    renderParameter [
       m "label", {for: ctrl.id}, ctrl.label
       m "select", {name: ctrl.name, id: ctrl.id}, ctrl.options.map (entry) ->
         m "option", {value: entry[0]}, entry[1]
@@ -141,7 +146,7 @@ ParameterNumberComponent =
     label: args.label
 
   view: (ctrl) ->
-    m "div", {class: "parameter"}, [
+    renderParameter [
       m "label", {for: ctrl.id}, ctrl.label
       m "input", {type: "number", id: ctrl.id, name: ctrl.name}
     ]
@@ -285,8 +290,6 @@ JobViewComponent =
       m.component(JobLineComponent),
       m.component(JobTabsComponent)
     ]
-
-
 
 
 
