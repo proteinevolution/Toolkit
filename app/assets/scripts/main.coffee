@@ -117,19 +117,22 @@ JobLineComponent =
 # Components for generating form input fields. Also allows to encapsulate value validation
 ParameterAlignmentComponent =
   model: ->
-    value: m.prop null
+    value: m.prop null    # Alignment Text
+    format: m.prop null   # Alignment Format
 
-  controller: ->
+  controller: (args) ->     # TODO Introduce function for automatic alignment format detection
     alignment: new ParameterAlignmentComponent.model
     name: "alignment"
     id: "alignment"
     placeholder: "Enter multiple sequence alignment"
+    formatOptions : args.options
     pasteExample: () ->
       alignment.value = alnviz_example()
 
+
   view: (ctrl) ->
     renderParameter [
-      m "textarea",
+      m "textarea",                   # Textarea field for alignment input
         name: ctrl.name
         placeholder: ctrl.placeholder
         rows: 10
@@ -137,7 +140,16 @@ ParameterAlignmentComponent =
         id: ctrl.id
         onchange: m.withAttr("value", ctrl.alignment.value)
         value: ctrl.alignment.value()
-      m "input", {type: "button", class: "button small alignmentExample", value: "Paste Example", onclick: ctrl.pasteExample}
+      m "input",                     # Place example alignment
+        type: "button"
+        class: "button small alignmentExample"
+        value: "Paste Example"
+        onclick: ctrl.pasteExample
+      m "div", {class: "alignmentFormatBlock"}, [
+        m "label", {for: "alignment_format"}, "Alignment Format"
+        m "select", {name: "alignment_format", id: "alignment_format", label: "Select Alignment format", class: "alignmentFormat"}, ctrl.formatOptions.map (entry) ->
+          m "option", {value: entry[0]}, entry[1]
+      ]
     ], "alignmentParameter"  # TODO Should be a controller argument
 
 
@@ -186,11 +198,7 @@ ParameterNumberComponent =
     ]
 
 
-
-
-# Associates each parameter name with the respective component
-formComponents =
-  "alignment" : (toolargs) -> [ParameterAlignmentComponent, {}]
+###
   "alignment_format": (toolargs) -> [
                       ParameterSelectComponent
                     ,
@@ -199,6 +207,11 @@ formComponents =
                       id: "alignment_format"
                       label: "Select Alignment format"
   ]
+###
+
+# Associates each parameter name with the respective component
+formComponents =
+  "alignment" : (toolargs) -> [ParameterAlignmentComponent, {options: toolargs}]
   "standarddb": (toolargs) -> [
                       ParameterSelectComponent
                     ,
@@ -276,7 +289,7 @@ JobTabsComponent =
            m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
 
              if ctrl.alignmentPresent and paramGroup[0] is "Alignment"
-               comp = formComponents["alignment"]([])
+               comp = formComponents["alignment"](paramGroup[1][0][1])
                m.component comp[0], comp[1]
 
              # Show everything except for the alignment in the parameters div
