@@ -309,12 +309,35 @@ JobTabsComponent =
     ]
 
 
+###
+  submitJob = (start) ->
+
+    submitRoute = jsRoutes.controllers.Tool.submit(toolname, start, jobID)
+
+    $.ajax(
+      url: submitRoute.url
+      type: "POST"
+      data: $(".jobForm").serialize()
+      error: (e) -> alert JSON.stringify(e)
+    ).done (json) ->
+      if(json.jobSubmitted)
+        if (json.identicalJobs)
+          alert "job submitted but there was an identical job"
+
+        m.route("/jobs/" + json.mainID)
+
+      else
+        alert "job NOT submitted"
+###
+
 # Job Submission input elements
 JobSubmissionComponent =
   controller: ->
-    jobid: JobModel.jobid
     submit: ->
-      alert "Submit pressed"
+      jobid = JobModel.jobid()    # TODO Maybe merge with jobID validation
+      if not jobid
+        jobid = null
+      alert "Job Submitted with JobID: #{jobid}"
 
 
 
