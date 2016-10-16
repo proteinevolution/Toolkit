@@ -41,7 +41,7 @@ class Values @Inject() (tel : TEL) {
 
   // encompasses for certain parameters the allowed values with a clear text name
   final val allowed : Map[String, Seq[(String, String)]] = Map(
-   Param.ALIGNMENT_FORMAT -> alignmentFormats.map  { format =>
+   Param.ALIGNMENT -> alignmentFormats.map  { format =>
 
      format -> fullNames(format)
    }.toSeq,

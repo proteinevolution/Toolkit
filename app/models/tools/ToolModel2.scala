@@ -82,7 +82,7 @@ object PsiBlast extends ToolModel2 {
   val category = "search"
 
 
-  val params = Seq(Param.ALIGNMENT, "alignment_format", "standarddb", "matrix",
+  val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
     "num_iter", "evalue", "gap_open", "gap_ext", "desc")
 
   val results = Map(
