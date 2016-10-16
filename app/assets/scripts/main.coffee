@@ -113,16 +113,50 @@ JobLineComponent =
 
 
 
+
 # Components for generating form input fields. Also allows to encapsulate value validation
 ParameterAlignmentComponent =
+  model: ->
+    value: m.prop null
+
   controller: ->
+    alignment: new ParameterAlignmentComponent.model
     name: "alignment"
+    id: "alignment"
+    placeholder: "Enter multiple sequence alignment"
+    pasteExample: () ->
+      alignment.value = alnviz_example()
 
   view: (ctrl) ->
     renderParameter [
-      m "textarea", {name: ctrl.name, placeholder: "Enter multiple sequence alignment", rows: 10, cols: 70, id: "alignment"}
-      m "input", {type: "button", class: "button small alignmentExample", value: "Paste Example"}
+      m "textarea",
+        name: ctrl.name
+        placeholder: ctrl.placeholder
+        rows: 10
+        cols: 70
+        id: ctrl.id
+        onchange: m.withAttr("value", ctrl.alignment.value)
+        value: ctrl.alignment.value()
+      m "input", {type: "button", class: "button small alignmentExample", value: "Paste Example", onclick: ctrl.pasteExample}
     ], "alignmentParameter"  # TODO Should be a controller argument
+
+
+###
+//a contrived example of bi-directional data binding
+var User = {
+    model: function(name) {
+        this.name = m.prop(name);
+    },
+    controller: function() {
+        this.user = new User.model("John Doe");
+    },
+    view: function(controller) {
+        m.render("body", [
+            m("input", {onchange: m.withAttr("value", controller.user.name), value: controller.user.name()})
+        ]);
+    }
+};
+###
 
 
 ParameterSelectComponent =
