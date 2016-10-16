@@ -309,14 +309,19 @@ JobTabsComponent =
     ]
 
 
-
+# Job Submission input elements
 JobSubmissionComponent =
   controller: ->
     jobid: JobModel.jobid
+    submit: ->
+      alert "Submit pressed"
+
+
+
 
   view: (ctrl) ->
     m "div", {class: "submitbuttons"}, [
-        m "input", {type: "submit", class: "success button small submitJob", value: "Submit Job"}  #TODO
+        m "input", {type: "button", class: "success button small submitJob", value: "Submit Job", onclick: ctrl.submit}  #TODO
         m "input", {type: "reset", class: "alert button small resetJob", value: "Reset"}
         m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", JobModel.jobid), value: JobModel.jobid()}
     ]
