@@ -27,9 +27,6 @@ $ ->
       else
         alert "job NOT submitted"
 
-  $(".submitJob").bind 'click', (event) ->
-    submitJob(true)
-
   # Variables in Scope of the Input form
   # JobIDs have to obey this regular expression
   jobidPattern = /// ^
