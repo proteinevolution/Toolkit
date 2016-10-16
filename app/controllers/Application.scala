@@ -103,27 +103,6 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     Redirect(s"/#/$static")
   }
 
-  /**
-    * Returns the submission view for a particular tool.
-    *
-    * @param toolname  Which tool the submission view should be created for.
-    */
-  def form(toolname : String) = Action { implicit request =>
-
-    val toolModel = ToolModel2.toolMap(toolname)
-
-    val paramSections = viewCache.getOrElse[Map[String, Html]](toolname) {
-      val x = toolModel.paramGroups
-        .mapValues { vals =>
-          views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
-        } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm))
-      viewCache.set(toolname, x)
-      x
-    }
-    Ok(views.html.jobs.main(None, toolModel, paramSections, None))
-  }
-
-
 
   /**
    * Allows to access resultpanel files by the filename and a given jobID
