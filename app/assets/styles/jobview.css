@@ -3,6 +3,16 @@
     background: white;
 }
 
+
+/* Configuration of individual parameters */
+.parameter #alignment {
+
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    font-size: 0.625em;
+}
+
+
+
 /*
  Parameter panels
 */
