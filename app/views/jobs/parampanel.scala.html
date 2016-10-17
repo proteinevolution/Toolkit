@@ -14,6 +14,9 @@
         Option[Int],
         Option[Int],  Option[Int],  Option[String])])(implicit messages: Messages, request: RequestHeader)
 
+
+
+
     @matcher(param: String) = @{
 
         param match {
@@ -90,41 +93,35 @@
     }
 
 
-@numElements = @{params.size}
+    @numElements = @{params.size}
 
 
-<!-- Render alignment field first, as it will always be displayed in two columns -->
+    <!-- Render alignment field first, as it will always be displayed in two columns -->
 @if(params.contains(Param.ALIGNMENT)) {
-
     @matcher(Param.ALIGNMENT)
+
 }
-    <div class="parameters">
-        <div>
 
-            @for(i <- 0 until numElements/2 + 1) {
+<div class="parameters">
+    <div>
 
-                @if(params(i) != Param.ALIGNMENT) {
+    @for(i <- 0 until numElements/2 + 1) {
 
-                    @matcher(params(i))
-                }
-            }
-        </div>
-        <div>
+        @if(params(i) != Param.ALIGNMENT) {
 
-            @for(i <- (numElements/2 + 1) until numElements) {
-                @if(params(i) != Param.ALIGNMENT) {
-
-                    @matcher(params(i))
-                }
-            }
-        </div>
+            @matcher(params(i))
+        }
+    }
     </div>
+    <div>
 
+    @for(i <- (numElements/2 + 1) until numElements) {
+        @if(params(i) != Param.ALIGNMENT) {
 
-
-
-
-
-
+            @matcher(params(i))
+        }
+    }
+    </div>
+</div>
 
 
