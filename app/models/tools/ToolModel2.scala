@@ -1,14 +1,24 @@
 package models.tools
 
-import models.Param
+
+import models.{Param, Values}
+import models.tools.ToolModel2.Toolitem
 import play.api.data.Form
 import play.api.data.Forms._
 
 /**
   * Created by lzimmermann on 10/8/16.
   */
+
+
 object ToolModel2 {
 
+
+  case class Toolitem(toolname : String,
+                      toolnameLong : String,
+                      toolnameAbbrev : String,
+                      category : String,
+                      params : Seq[(String, Seq[(String, Seq[(String, String)])])])
   /*
     Specifies the form mapping of the parameters
   */
@@ -48,8 +58,7 @@ object ToolModel2 {
 
 }
 
-abstract class ToolModel2 {
-
+abstract class ToolModel2  {
 
   val toolNameShort : String
   val toolNameLong : String
@@ -70,6 +79,24 @@ abstract class ToolModel2 {
   // The results the tool is associated with
   val results : Map[String, String]
 
+  def toolitem(values : Values) : Toolitem = Toolitem(
+
+    this.toolNameShort,
+    this.toolNameLong,
+    this.toolNameAbbrev,
+    this.category, this.paramGroups.keysIterator.map { group =>
+
+      group ->  this.paramGroups(group).filter(this.params.contains(_)).map { param =>
+
+        param -> values.allowed.getOrElse(param, Seq.empty)
+      }
+    }.toSeq :+
+      this.remainParamName -> this.remainParams.map { param =>
+
+        param -> values.allowed.getOrElse(param, Seq.empty)
+
+      }
+  )
 }
 
 
