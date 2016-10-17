@@ -7,10 +7,10 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import models.{Constants, Values}
 import models.tel.TEL
-import models.tools.{ToolModel, ToolModel2}
+import models.tools.ToolModel
 import modules.Common
 import modules.tools.ToolMatcher
-import play.api.{Configuration, Logger}
+import play.api.Configuration
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
@@ -20,7 +20,6 @@ import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import modules.tools.ToolMirror
-import play.twirl.api.Html
 
 
 @Singleton
