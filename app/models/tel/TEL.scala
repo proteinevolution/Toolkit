@@ -1,14 +1,16 @@
 package models.tel
 
-import java.net.InetAddress
 import java.nio.file.attribute.PosixFilePermission
 import javax.inject.{Inject, Singleton}
+import play.Play
 
+import scala.sys.process._
 import better.files.Cmds._
 import better.files._
 import models.Implicits._
 import models.tel.env.Env
 import models.tel.param.Params
+
 
 import scala.io.Source
 
@@ -26,6 +28,8 @@ class TEL @Inject() (env : Env,
 
   // Each tool exection consists of the following subdirectories
   val subdirs : Seq[String] = Array("params", "results", "temp", "logs")
+
+  var port = ""
 
 
   //-----------------------------------------------------------------------------------------------------
@@ -83,7 +87,7 @@ class TEL @Inject() (env : Env,
     for((paramName, value) <- params ) {
 
       // TODO This is a hack and needs to go
-      if(! ignore.contains(paramName)) {
+      if(!ignore.contains(paramName)) {
 
         s"$dest${SEPARATOR}params$SEPARATOR$paramName".toFile.write(value)
       }
@@ -91,12 +95,6 @@ class TEL @Inject() (env : Env,
 
     val source = s"$runscriptPath$runscript.sh"
     val target = s"$dest$runscript.sh".toFile
-    val hostname = InetAddress.getLocalHost().getHostName();
-    val portNumber = play.Play.application.configuration.getString("http.port")
-
-    // add HTTP request POST to update job status to 'Running'
-    target.appendLines(s"#!/bin/bash\ntrap catch_errors ERR;\nfunction catch_errors() {\n   curl -X POST http://$hostname:$portNumber/jobs/error/%JOBID\n   echo 'script aborted, because of errors';\n   exit 0;\n}\ncurl -X POST http://$hostname:$portNumber/jobs/running/$jobID\n")
-
 
 
     lazy val newLines = source.toFile.lines.map { line =>
@@ -127,8 +125,11 @@ class TEL @Inject() (env : Env,
 
     target.appendLines(newLines:_*)
     // add HTTP request POST to update job status to 'Done'
-      // TODO write port number dynamically into 'jobStatus*.sh'
-        target.appendLines(s"cp *.sh.e* logs/stderr.err\ncp *.sh.o* logs/stdout.out\ncurl -X POST http://$hostname:$portNumber/jobs/done/$jobID")
+    // TODO write port number dynamically into 'jobStatus*.sh'
+    val hostname_cmd = "hostname"
+    val hostname = hostname_cmd.!!.dropRight(1)
+
+    target.appendLines(s"cp *.sh.e* logs/stderr.err\ncp *.sh.o* logs/stdout.out\ncurl -X POST http://$hostname:$port/jobs/done/$jobID")
 
 
     val context = env.get("CONTEXT")
@@ -156,6 +157,8 @@ class TEL @Inject() (env : Env,
       val contextFile = s"$dest$context.sh".toFile
 
       contextFile.appendLines(contextLines:_*)
+
+      contextFile.appendLines(s"#!/bin/bash\ntrap catch_errors ERR;\nfunction catch_errors() {\n   curl -X POST http://$hostname:$port/jobs/error/$jobID\n   echo 'script aborted, because of errors';\n   exit 0;\n}\ncurl -X POST http://$hostname:$port/jobs/running/$jobID\n")
 
 
       chmod_+(PosixFilePermission.OWNER_EXECUTE, contextFile)
