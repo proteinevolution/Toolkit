@@ -3,9 +3,9 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import models.Values
+import models.database.Job
 import models.tools.ToolModel2
 import models.tools.ToolModel2.Toolitem
-import play.api.Logger
 import play.api.cache.{CacheApi, _}
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
@@ -13,6 +13,12 @@ import play.api.mvc.{Action, Controller}
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsError
 import play.api.libs.functional.syntax._
+import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
+
+import scala.concurrent.Future
+import scala.util.Success
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 /**
@@ -22,8 +28,10 @@ import play.api.libs.functional.syntax._
   */
 @Singleton
 class TestController @Inject() (val values: Values,
-                                @NamedCache("toolitemCache") val toolitemCache: CacheApi) extends Controller {
-
+                                val reactiveMongoApi : ReactiveMongoApi,
+                                @NamedCache("userCache") implicit val userCache : CacheApi,
+                                @NamedCache("toolitemCache") val toolitemCache: CacheApi)
+  extends Controller with UserSessions{
 
   // TODO Add validation
   // TODO Condense to Format
@@ -64,4 +72,28 @@ class TestController @Inject() (val values: Values,
       x
     }))
   }
+
+
+  def getJob(mainIDString: String) = Action.async { implicit request =>
+    // Retrieve the user from the cache or the DB
+    getUser.flatMap { user =>
+      // Check if the ID is plausible (Right Format can be parsed into a BSON Object ID)
+      BSONObjectID.parse(mainIDString) match {
+        case Success(mainID) =>
+          val futureJob = jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job])
+          futureJob.flatMap {
+
+            case jobOption@Some(job) => Future.successful(NotFound)
+
+
+
+            case None =>
+              Future.successful(NotFound)
+          }
+        case _ =>
+          Future.successful(NotFound)
+      }
+    }
+  }
 }
+
