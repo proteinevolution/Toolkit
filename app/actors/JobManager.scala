@@ -82,13 +82,12 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     * @param job
     */
   def executeJob(job : Job): Unit = {
-
+    updateJob(job.copy(status = JobState.Queued))
     val rootPath  = s"$jobPath$SEPARATOR${job.mainID.stringify}$SEPARATOR"
     // Create new Process instance of the runscript to run the tool
     val process = Process(job.scriptPath , new java.io.File(rootPath)).run()
     runningProcesses.put(job.mainID.stringify, process)
     // set job state to queued
-    updateJob(job.copy(status = JobState.Queued))
   }
 
   /**
