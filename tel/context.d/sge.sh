@@ -2,4 +2,4 @@
 
 qsub -sync n \
       -cwd  \
-       %r
+       %r | grep -oE "[0-9]+" >> jobIDCluster
