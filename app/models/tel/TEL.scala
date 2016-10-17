@@ -1,12 +1,15 @@
 package models.tel
 
+import java.net.InetAddress
 import java.nio.file.attribute.PosixFilePermission
 import javax.inject.{Inject, Singleton}
+
 import better.files.Cmds._
 import better.files._
 import models.Implicits._
 import models.tel.env.Env
 import models.tel.param.Params
+
 import scala.io.Source
 
 /**
@@ -86,13 +89,17 @@ class TEL @Inject() (env : Env,
       }
     }
 
-    //
-    val jobStatusRunningSource = s"$runscriptPath/jobStatusRunning.sh"
-    val jobStatusDoneSource = s"$runscriptPath/jobStatusDone.sh"
     val source = s"$runscriptPath$runscript.sh"
     val target = s"$dest$runscript.sh".toFile
-    lazy val newLines = source.toFile.lines.map { line =>
+    val hostname = InetAddress.getLocalHost().getHostName();
+    val portNumber = play.Play.application.configuration.getString("http.port")
 
+    // add HTTP request POST to update job status to 'Running'
+    target.appendLines(s"#!/bin/bash\ntrap catch_errors ERR;\nfunction catch_errors() {\n   curl -X POST http://$hostname:$portNumber/jobs/error/%JOBID\n   echo 'script aborted, because of errors';\n   exit 0;\n}\ncurl -X POST http://$hostname:$portNumber/jobs/running/$jobID\n")
+
+
+
+    lazy val newLines = source.toFile.lines.map { line =>
       replaceString.replaceAllIn(line, { matcher =>
 
           matcher.group("expression").trim() match {
@@ -119,12 +126,10 @@ class TEL @Inject() (env : Env,
 
 
     target.appendLines(newLines:_*)
-    // add HTTP request POST to update job status to 'Done', replace by jobID in 'jobStatusDone.sh'
+    // add HTTP request POST to update job status to 'Done'
       // TODO write port number dynamically into 'jobStatus*.sh'
-      jobStatusDoneSource.toFile.lines.map { line =>
-        target.appendLine(regexJobID.replaceAllIn(line, jobID))
-        target.appendNewLine()
-    }
+        target.appendLines(s"cp *.sh.e* logs/stderr.err\ncp *.sh.o* logs/stdout.out\ncurl -X POST http://$hostname:$portNumber/jobs/done/$jobID")
+
 
     val context = env.get("CONTEXT")
 
@@ -151,9 +156,6 @@ class TEL @Inject() (env : Env,
       val contextFile = s"$dest$context.sh".toFile
 
       contextFile.appendLines(contextLines:_*)
-
-      // add HTTP request POST to update job status to 'Running'
-      contextFile.appendLines(Source.fromFile(jobStatusRunningSource).getLines.mkString + jobID)
 
 
       chmod_+(PosixFilePermission.OWNER_EXECUTE, contextFile)
