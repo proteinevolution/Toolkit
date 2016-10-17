@@ -110,5 +110,5 @@ GET         /:static                                       @controllers.Applicat
 
 # Some experimental things
 GET         /api/tools/:toolname                           @controllers.TestController.getTool(toolname)
-
+POST        /api/submit                                    @controllers.Tool.submit(toolname : String, start : Boolean, jobID : Option[String])
 
