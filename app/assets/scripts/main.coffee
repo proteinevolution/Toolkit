@@ -338,7 +338,7 @@ JobSubmissionComponent =
       if not jobid
         jobid = null
       submitRoute = jsRoutes.controllers.Tool.submit(JobModel.tool().toolname, true, jobid)
-      formData = new FormData(document.getElementId("jobform"))
+      formData = new FormData(document.getElementById("jobform"))
       m.request {url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}
 
   view: (ctrl) ->
