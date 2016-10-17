@@ -29,7 +29,7 @@ class TEL @Inject() (env : Env,
   // Each tool exection consists of the following subdirectories
   val subdirs : Seq[String] = Array("params", "results", "temp", "logs")
 
-  var port = ""
+  var port = "" // TODO (REMINDER) : REMOVE THIS FOR PRODUCTION !!!
 
 
   //-----------------------------------------------------------------------------------------------------
@@ -64,10 +64,6 @@ class TEL @Inject() (env : Env,
         spt(0).trim() -> spt(1).split("\\s+")
       }.toMap
   }
-
-
-
-
 
   //-----------------------------------------------------------------------------------------------------
   // Public methods
@@ -124,10 +120,9 @@ class TEL @Inject() (env : Env,
 
 
     target.appendLines(newLines:_*)
-    // add HTTP request POST to update job status to 'Done'
-    // TODO write port number dynamically into 'jobStatus*.sh'
+
     val hostname_cmd = "hostname"
-    val hostname = hostname_cmd.!!.dropRight(1)
+    val hostname = hostname_cmd.!!.dropRight(1) // remove trailing whitespace
 
     target.appendLines(s"cp *.sh.e* logs/stderr.err\ncp *.sh.o* logs/stdout.out\ncurl -X POST http://$hostname:$port/jobs/done/$jobID")
 
