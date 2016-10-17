@@ -4,6 +4,9 @@ import javax.inject.{Inject, Singleton}
 
 import models.Values
 import models.tools.ToolModel2
+import models.tools.ToolModel2.Toolitem
+import play.api.Logger
+import play.api.cache.{CacheApi, _}
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 import play.api.mvc.{Action, Controller}
@@ -18,31 +21,27 @@ import play.api.libs.functional.syntax._
   * Created by lzimmermann on 10/14/16.
   */
 @Singleton
-class TestController @Inject() (val values: Values) extends Controller {
+class TestController @Inject() (val values: Values,
+                                @NamedCache("toolitemCache") val toolitemCache: CacheApi) extends Controller {
 
-  case class Tool(toolname : String,
-                  toolnameLong : String,
-                  toolnameAbbrev : String,
-                  category : String,
-                  params : Seq[(String, Seq[(String, Seq[(String, String)])])])
 
   // TODO Add validation
   // TODO Condense to Format
-  implicit val toolReads: Reads[Tool] = (
+  implicit val toolReads: Reads[Toolitem] = (
       (JsPath \ "toolname").read[String] and
       (JsPath \ "toolnameLong").read[String] and
       (JsPath \ "toolnameAbbrev").read[String] and
       (JsPath \ "category").read[String] and
       (JsPath \ "params").read[Seq[(String, Seq[(String, Seq[(String, String)])])]]
-    )(Tool.apply _)
+    )(Toolitem.apply _)
 
-  implicit val toolWrites: Writes[Tool] = (
+  implicit val toolWrites: Writes[Toolitem] = (
       (JsPath \ "toolname").write[String] and
       (JsPath \ "toolnameLong").write[String] and
       (JsPath \ "toolnameAbbrev").write[String] and
       (JsPath \ "category").write[String] and
       (JsPath \ "params").write[Seq[(String, Seq[(String, Seq[(String, String)])])]]
-    )(unlift(Tool.unapply))
+    )(unlift(Toolitem.unapply))
 
 
   implicit def tuple2Reads[A, B](implicit aReads: Reads[A], bReads: Reads[B]): Reads[(A, B)] = Reads[(A, B)] {
@@ -59,40 +58,10 @@ class TestController @Inject() (val values: Values) extends Controller {
 
   def getTool(toolname : String) = Action {
 
-     val toolModel = ToolModel2.toolMap(toolname)
-
-    // assemble parameter representation
-     val params : Seq[(String, Seq[(String, Seq[(String, String)])])] = toolModel.paramGroups.keysIterator.map { group =>
-
-       group ->  toolModel.paramGroups(group).filter(toolModel.params.contains(_)).map { param =>
-
-         param -> values.allowed.getOrElse(param, Seq.empty)
-       }
-     }.toSeq
-
-    val remainParams = toolModel.remainParamName -> toolModel.remainParams.map { param =>
-
-      param -> values.allowed.getOrElse(param, Seq.empty)
-
-    }
-
-    Ok(Json.toJson(Tool(toolModel.toolNameShort,
-                        toolModel.toolNameLong,
-                        toolModel.toolNameAbbrev,
-                        toolModel.category, params :+ remainParams
-      )))
+    Ok(Json.toJson(toolitemCache.getOrElse(toolname) {
+      val x = ToolModel2.toolMap(toolname).toolitem(values)   // Reset toolitem in cache
+      toolitemCache.set(toolname, x)
+      x
+    }))
   }
 }
-
-/*
-
-
-
- toolModel.paramGroups
-        .mapValues { vals =>
-          views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
-        } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm))
-      viewCache.set(toolname, x)
-
- */
-
