@@ -78,37 +78,36 @@ renderParameter = (content, moreClasses) ->
 tabulated = (element, isInit) ->
   if not isInit then $(element).tabs()
 
-# On client-side, a tool consists of a bunch of different names and its category
-Tool = (data) ->
-  this.toolname = m.prop data.toolname
-  this.toolnameLong = m.prop data.toolnameLong
-  this.toolnameAbbrev = m.prop data.toolnameAbbrev
-  this.category = m.prop data.category
-  this.params = m.prop data.params   # Parameter except for the alignment, sequences
 
-# Retrieve all data for a particular tool based on the toolname
-Tool.get = (toolname) ->
-  m.request {method: 'GET', url: "/api/tools/#{toolname}"}
 
 #######################################################################################################################
 #######################################################################################################################
 # Model for the Job currently loaded
 JobModel =
-  isJob: false
+  isJob: m.prop false
   jobid: m.prop null
-  createdOn: null
-  tool: null
+  createdOn: m.prop null
+  tool: m.prop null
   alignmentPresent: false
-
+  getTool: (toolname) ->
+    m.request {method: 'GET', url: "/api/tools/#{toolname}"}
+  getJob: (mainID) ->
+    m.request {method: 'GET', url: "/api/jobs/#{mainID}"}
 
 # Component for the Jobline in the unified JobView
 JobLineComponent =
   controller: ->
     toolnameLong: JobModel.tool().toolnameLong
+    jobid : JobModel.jobid()
+    createdOn : JobModel.createdOn()
   view: (ctrl) ->
     m "div", {class: "jobline"}, [
       m "span", {class: "toolname"}, ctrl.toolnameLong     # Long toolname in Job Descriptor Line
-      m "span", {class: "jobinfo"}, "Submit a new Job"      # TODO Switch JobInfo dependent on new or already existing job
+      m "span", {class: "jobinfo"},
+        if ctrl.jobid
+          "JobID: #{ctrl.jobid} CreatedOn: #{ctrl.createdOn}"
+        else
+          "Submit a new Job"
     ]
 
 
@@ -349,14 +348,18 @@ JobSubmissionComponent =
     ]
 
 
-
-
-# The component mounted in "content" which displays the tool submission form and the result pages
 JobViewComponent =
 
-  controller: ->
-    # Update tool information in Model
-    JobModel.tool = Tool.get(m.route.param("toolname"))
+  controller: (args) ->
+    if args.isJob
+      JobModel.getJob(m.route.param("mainid")).then (data) ->
+        JobModel.tool = m.prop data.toolitem
+        JobModel.jobid = m.prop data.jobID
+        JobModel.createdOn = m.prop data.createdOn
+    else
+      JobModel.tool = JobModel.getTool(m.route.param("toolname"))
+      JobModel.jobid(null)
+
 
   view: (ctrl) ->
     m "div", {id: "jobview"}, [
@@ -370,12 +373,11 @@ JobViewComponent =
 #setup routes to start w/ the `#` symbol
 m.route.mode = 'hash'
 
-
 # Mount the JobViewComponent into the Client-side application via associated routed
 #m.route document.getElementById('content'), '/', { '/tools/:toolname': JobViewComponent, '/jobs/:mainID'   : Jobs, '/:static' : StaticRoute }
-m.route document.getElementById('content'), '/', { '/tools/:toolname': JobViewComponent}
-
-
+m.route document.getElementById('content'), '/',
+  '/tools/:toolname': m.component JobViewComponent, {isJob: false}
+  '/jobs/:mainid': m.component JobViewComponent, {isJob : true}
 
 
 # Miscellaneous code that is present across the whole web application
@@ -383,4 +385,3 @@ window.onfocus = ->
   titlenotifier.reset();
 window.onclick = ->
   titlenotifier.reset();
-
