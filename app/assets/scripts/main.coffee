@@ -337,10 +337,9 @@ JobSubmissionComponent =
       jobid = JobModel.jobid()    # TODO Maybe merge with jobID validation
       if not jobid
         jobid = null
-      alert "Job Submitted with JobID: #{jobid}"
-
-
-
+      submitRoute = jsRoutes.controllers.Tool.submit(JobModel.tool().toolname, true, jobid)
+      formData = new FormData(document.getElementId("jobform"))
+      m.request {url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}
 
   view: (ctrl) ->
     m "div", {class: "submitbuttons"}, [
