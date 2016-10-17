@@ -1,14 +1,10 @@
 package controllers
 
 import akka.actor.ActorRef
-import akka.pattern._
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobManager._
-import models.database.{Job, JobState}
-import play.api.Logger
-import play.api.libs.json.JsError
-import play.api.libs.json._
+import models.database.JobState
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
 @Singleton
