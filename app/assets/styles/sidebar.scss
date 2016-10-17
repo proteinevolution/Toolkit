@@ -40,20 +40,20 @@ ul#jobs li {
 #jobsearchform input {
   font-size: 0.65em;
   height: 3.3em;
-  width: 77%;
+  width: 13.2em;
 }
 
 
 #magnifier {
-  height: 2.75em;
+  height: 2.4em;
+  line-height: 0.75em;
   background-color: rgba(220,220,220,0.5);
   border: 1px solid lightgray;
   border-left: none;
   color: white;
+  vertical-align: middle;
 
 }
-
-
 
 .button-group .alert {
   margin-right: 0.8em !important;
