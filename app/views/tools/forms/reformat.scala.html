@@ -553,14 +553,9 @@
                 // use script for handling
                 alignmentHeight: 525, alignmentWidth: 900, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
             };
-            if (validateFasta(myCodeMirror.getValue())){
-                opts.seqs = readFastaText(myCodeMirror.getValue());
-                console.log(opts.seqs)
-            }
-            if (validateClustal(myCodeMirror.getValue())) {
-                opts.seqs = (clustalParser(myCodeMirror.getValue()));
-            }
-            if (!validateFasta(myCodeMirror.getValue()) && !validateClustal(myCodeMirror.getValue()))  { alert("currently, the alignmentviewer supports only fasta and clustal inputs."); }
+            
+                opts.seqs = (clustalParser($('#inputMirror').val(myCodeMirror.getValue()).reformat("clustal")));
+
             // init msa
 
             var ms = new msa.msa(opts);
