@@ -118,7 +118,7 @@
             mode:  "none",
             theme: "reformat"
         });
-        myCodeMirror.setSize("100%", 300);
+        myCodeMirror.setSize("100%", 220);
 
 
         var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
@@ -129,7 +129,7 @@
             theme: "reformat"
         });
 
-        myCodeMirror2.setSize("100%", 300);
+        myCodeMirror2.setSize("100%", 220);
 
         if(localStorage.getItem("resultcookie")  != null){
         myCodeMirror.setValue(localStorage.getItem("resultcookie"));
