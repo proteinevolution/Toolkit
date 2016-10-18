@@ -137,6 +137,9 @@
 
         toolname = '@toolModel.toolNameShort';
         $("#tool-tabs").tabs();
+        document.getElementById("alignment").value = localStorage.getItem("resultcookie");
+        localStorage.removeItem("resultcookie");
+
 </script>
 <script src="@routes.Assets.at("scripts/form.js")">
 </script>
