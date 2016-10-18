@@ -73,7 +73,7 @@ lazy val root = (project in file("."))
       "org.webjars.bower" % "d3" % d3Version,
       "org.webjars.bower" % "slick-carousel" % "1.6.0",
       "org.webjars.npm" % "codemirror-minified" % "5.15.2",
-      "org.webjars.npm" % "reformat.js" % "0.0.7",
+      "org.webjars.npm" % "reformat.js" % "0.0.8",
       "org.webjars" % "dropzone" % "4.3.0",
       "org.webjars.bower" % "clipboard" % "1.5.10",
       "org.webjars" % "linkurious.js" % "1.5.1",
