@@ -39,7 +39,6 @@ StaticRoute =
           'reformat'
           'alnvizfrontend'
           'patSearch'
-          'extractIDs'
         ].indexOf(controller['static']) >= 0
           $('#content').empty().prepend data
         else
