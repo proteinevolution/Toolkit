@@ -253,7 +253,7 @@
         }
 
         $(function() {
-
+        var width= $("#tool-tabs").width() - 30;
         var chart = new Highcharts.Chart({
             title: {
             text: 'Relative Frequencies of Amino Acids',
@@ -281,7 +281,8 @@
             borderWidth: 0
             },
             chart: {
-            renderTo: 'hcontainer'
+            renderTo: 'hcontainer',
+            width: width
             },
             series: [{
             name: 'Relative Freq.',
