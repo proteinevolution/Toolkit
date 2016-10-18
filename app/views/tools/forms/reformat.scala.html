@@ -229,9 +229,20 @@
 
         var resultArr = resultdict.split ( "" ) ;
         var bins = new Array () ;
-        for ( var a = 1 ; a <= resultdict.length - 1 ; a ++ ) {
+        if(resultdict.indexOf('-') > -1){
+            for ( var a = 1 ; a <= resultdict.length - 1 ; a ++ ) {
 
-        bins[ a - 1 ] = resultArr[ a ] ;
+            bins[ a - 1 ] = resultArr[ a ] ;
+            }
+
+        } else {
+
+            for ( var a = 0 ; a <= resultdict.length; a ++ ) {
+
+            bins[ a ] = resultArr[ a ] ;
+
+            }
+
         }
             return bins;
         }
@@ -239,8 +250,7 @@
         function getFreqs() {
 
         var freqs = $('#inputMirror').val(myCodeMirror.getValue()).reformat("freq");
-
-
+        
         var freqVals = new Array();
 
             for (var index in freqs) {
