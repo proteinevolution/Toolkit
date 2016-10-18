@@ -83,16 +83,28 @@ tabulated = (element, isInit) ->
 #######################################################################################################################
 #######################################################################################################################
 # Model for the Job currently loaded
+# TODO Refactor this model
 JobModel =
   isJob: m.prop false
   jobid: m.prop null
+  jobstate: m.prop null
   createdOn: m.prop null
   tool: m.prop null
   alignmentPresent: false
+  views:  m.prop false
+  paramValues : {}
+
   getTool: (toolname) ->
     m.request {method: 'GET', url: "/api/tools/#{toolname}"}
   getJob: (mainID) ->
     m.request {method: 'GET', url: "/api/jobs/#{mainID}"}
+
+  getParamValue: (param) ->
+    val = JobModel.paramValues[param]
+    if val then val else ""
+
+
+
 
 # Component for the Jobline in the unified JobView
 JobLineComponent =
@@ -115,18 +127,17 @@ JobLineComponent =
 
 # Components for generating form input fields. Also allows to encapsulate value validation
 ParameterAlignmentComponent =
-  model: ->
-    value: m.prop null    # Alignment Text
-    format: m.prop null   # Alignment Format
+  model: (args) ->
+    value: m.prop args.value    # Alignment Text
+    format: m.prop null         # Alignment Format
 
   controller: (args) ->     # TODO Introduce function for automatic alignment format detection
-    alignment: new ParameterAlignmentComponent.model
+    this.param = new ParameterAlignmentComponent.model args
     name: "alignment"
     id: "alignment"
     placeholder: "Enter multiple sequence alignment"
     formatOptions : args.options
-    pasteExample: () ->
-      alignment.value = alnviz_example()
+    param : this.param
 
 
   view: (ctrl) ->
@@ -137,13 +148,13 @@ ParameterAlignmentComponent =
         rows: 10
         cols: 70
         id: ctrl.id
-        onchange: m.withAttr("value", ctrl.alignment.value)
-        value: ctrl.alignment.value()
+        onchange: m.withAttr("value", ctrl.param.value)
+        value: ctrl.param.value()
       m "input",                     # Place example alignment
         type: "button"
         class: "button small alignmentExample"
         value: "Paste Example"
-        onclick: ctrl.pasteExample
+        onclick: () -> ctrl.param.value = m.prop alnviz_example()
       m "div", {class: "alignmentFormatBlock"}, [
         m "label", {for: "alignment_format"}, "Alignment Format"
         m "select", {name: "alignment_format", id: "alignment_format", label: "Select Alignment format", class: "alignmentFormat"}, ctrl.formatOptions.map (entry) ->
@@ -152,30 +163,16 @@ ParameterAlignmentComponent =
     ], "alignmentParameter"  # TODO Should be a controller argument
 
 
-###
-//a contrived example of bi-directional data binding
-var User = {
-    model: function(name) {
-        this.name = m.prop(name);
-    },
-    controller: function() {
-        this.user = new User.model("John Doe");
-    },
-    view: function(controller) {
-        m.render("body", [
-            m("input", {onchange: m.withAttr("value", controller.user.name), value: controller.user.name()})
-        ]);
-    }
-};
-###
-
-
 ParameterSelectComponent =
+  model: (args) ->
+    value: m.prop args.value
+
   controller: (args) ->
     options: args.options
     name: args.name
     id: args.id
     label: args.label
+    param: new ParameterSelectComponent.model args
 
   view: (ctrl) ->
     renderParameter [
@@ -185,100 +182,119 @@ ParameterSelectComponent =
     ]
 
 ParameterNumberComponent =
+
+  model: (args) ->
+    value: m.prop args.value
+
   controller: (args ) ->
+    this.param = new ParameterNumberComponent.model args
     name: args.name
     id: args.id
     label: args.label
+    param : this.param
 
   view: (ctrl) ->
     renderParameter [
       m "label", {for: ctrl.id}, ctrl.label
-      m "input", {type: "number", id: ctrl.id, name: ctrl.name}
+      m "input", {type: "text", id: ctrl.id, name: ctrl.name, value: ctrl.param.value(), onchange: m.withAttr("value", ctrl.param.value) }
     ]
 
 
-###
-  "alignment_format": (toolargs) -> [
-                      ParameterSelectComponent
-                    ,
-                      options: toolargs
-                      name: "alignment_format"
-                      id: "alignment_format"
-                      label: "Select Alignment format"
-  ]
-###
 
 # Associates each parameter name with the respective component
 formComponents =
-  "alignment" : (toolargs) -> [ParameterAlignmentComponent, {options: toolargs}]
-  "standarddb": (toolargs) -> [
+  "alignment" : (args) -> [ ParameterAlignmentComponent, {options: args.options, value: args.value}]
+  "standarddb": (args) -> [
                       ParameterSelectComponent
                     ,
-                      options: toolargs
+                      options: args.options
                       name: "standarddb"
                       id: "standarddb"
                       label: "Select Standard Database"
+                      value: args.value
   ]
 
-  "matrix": (toolargs) -> [
+  "matrix": (args) -> [
                       ParameterSelectComponent
                     ,
-                      options: toolargs
+                      options: args.options
                       name: "matrix"
                       id: "matrix"
                       label: "Scoring Matrix"
+                      value: args.value
   ]
-  "num_iter": (toolargs) -> [
+  "num_iter": (args) -> [
                        ParameterNumberComponent
                     ,
                        name: "num_iter"
                        id: "num_iter"
                        label: "Number of Iterations"
+                       value: args.value
   ]
 
-  "evalue": (toolargs) -> [
+  "evalue": (args) -> [
                       ParameterNumberComponent
                     ,
                       name: "evalue"
                       id: "evalue"
                       label: "E-Value"
+                      value: args.value
   ]
-  "gap_open": (toolargs) -> [
+  "gap_open": (args) -> [
                       ParameterNumberComponent
                     ,
                       name: "gap_open"
                       id: "gap_open"
                       label: "Gap Open penalty"
+                      value: args.value
   ]
-  "gap_ext":  (toolargs) -> [
+  "gap_ext":  (args) -> [
                       ParameterNumberComponent
                     ,
                       name: "gap_ext"
                       id: "gap_ext"
                       label: "Gap Extension penalty"
+                      value: args.value
   ]
-  "desc": (toolargs) -> [
+  "desc": (args) -> [
                       ParameterNumberComponent
                     ,
                       name: "desc"
                       id: "desc"
                       label: "Number of alignments and descriptions"
+                      value: args.value
   ]
+
+
 
 
 # Encompasses the individual sections of a Job, usually rendered as tabs
 JobTabsComponent =
   controller: ->
     params = JobModel.tool().params
+
+    listitems = params.map (param) -> param[0]
+    views = JobModel.views()
+    if views
+      listitems = listitems.concat views.map (view) -> view[0]
+
     # Determine whether the parameters contain an alignment
     params: params
     alignmentPresent: params[0][1][0][0] is "alignment"
+    isJob : JobModel.isJob()
+    state: JobModel.jobstate()
+    listitems: listitems
+    views: views
+    getParamValue : JobModel.getParamValue
+
 
   view: (ctrl) ->
     m "div", {class: "tool-tabs", id: "tool-tabs", config: tabulated}, [
 
-       m "ul", ctrl.params.map (param) ->
-         m "li",  {id: "tab-#{param[0]}"},  m "a", {href: "#tabpanel-#{param[0]}"}, param[0]
+      # Generate the list of jobsections
+      m "ul", ctrl.listitems.map (item) ->
+        m "li",  {id: "tab-#{item}"},  m "a", {href: "#tabpanel-#{item}"}, item
+
 
        # Generate views for all Parameter groups
       m "form", {id: "jobform"},
@@ -288,23 +304,30 @@ JobTabsComponent =
            m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
 
              if ctrl.alignmentPresent and paramGroup[0] is "Alignment"
-               comp = formComponents["alignment"](paramGroup[1][0][1])
+
+               # Controller arguments of the Component to be mounted
+               ctrlArgs = {options: paramGroup[1][0][1],  value: ctrl.getParamValue("alignment")}
+               comp = formComponents["alignment"](ctrlArgs)
                m.component comp[0], comp[1]
 
              # Show everything except for the alignment in the parameters div
              m "div", {class: "parameters"},
-
                [
                  m "div", elements.slice(0,split).map (paramElem) ->
-                   comp = formComponents[paramElem[0]](paramElem[1])
+                   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                   comp = formComponents[paramElem[0]](ctrlArgs)
                    m.component comp[0], comp[1]
 
                  m "div", elements.slice(split,elements.length).map (paramElem) ->
-                   comp = formComponents[paramElem[0]](paramElem[1])
+                   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                   comp = formComponents[paramElem[0]](ctrlArgs)
                    m.component comp[0], comp[1]
                ]
              m.component(JobSubmissionComponent)
            ]
+      if ctrl.views
+        ctrl.views.map (view) ->
+          m "div", {class: "tabs-panel", id: "tabpanel-#{view[0]}"}, m.trust view[1]
     ]
 
 
@@ -352,14 +375,21 @@ JobViewComponent =
 
   controller: (args) ->
     if args.isJob
-      JobModel.getJob(m.route.param("mainid")).then (data) ->
+      JobModel.getJob(m.route.param("mainid")).then (data) ->    #TODO Introduce a meaningful JobModel
         JobModel.tool = m.prop data.toolitem
         JobModel.jobid = m.prop data.jobID
         JobModel.createdOn = m.prop data.createdOn
+        JobModel.jobstate = m.prop data.state
+        JobModel.views = m.prop data.views
+        JobModel.paramValues = data.paramValues
+
     else
       JobModel.tool = JobModel.getTool(m.route.param("toolname"))
+      JobModel.isJob(false)
+      JobModel.jobstate(null)
       JobModel.jobid(null)
-
+      JobModel.views(null)
+      JobModel.paramValues = {}
 
   view: (ctrl) ->
     m "div", {id: "jobview"}, [
