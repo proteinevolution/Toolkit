@@ -199,7 +199,7 @@ $y2=$border+$headheight;
 $im->filledRectangle($x1,$y1,$x2,$y2,$grey);
 
 for(my $i=10;$i<=$qlen;$i+=10) {
-    if ($i%100==0) {
+    if ($i%50==0) {
 	my $xoffset=length($i)*(5/2);
 	$im->line($border+$i*$xscale,$border,$border+$i*$xscale,$border+$headheight+2*$marklen,$grey);
 	$im->string(gdSmallFont,$border+$i*$xscale-$xoffset,$border+$headheight+2*$marklen,$i,$black);
@@ -279,13 +279,13 @@ print HTMLFILE "</map>\n";
 my $slider_width = int($imgwidth + $border + 2 - $xscale);
 my $domain_start = 1;
 my $domain_end = $qlen;
-my $slider_length = $imgwidth-16;
+my $slider_length = $imgwidth-26;
 
 # my $domain_start = scalar(@hits) ? $hits[0]->{"qbeg"} : 1;
 # my $domain_end = scalar(@hits) ? $hits[0]->{"qend"} : $qlen;
 print HTMLFILE "
 
-<div style='width: ${slider_length}px ;position: absolute; margin-top: 0.600em; margin-left: 0.560em' class='flat-slider' id='flat-slider'></div>
+<div style='width: ${slider_length}px ;position: absolute; margin-top: 0.560em; margin-left: 1.1em' class='flat-slider' id='flat-slider'></div>
 <script type='text/javascript'>slider_show($qlen, $domain_start, $domain_end);
 </script>";
 
@@ -366,7 +366,7 @@ sub printMapEntry() {
     if ($y1 =~ /(\d+)\.\d+/) {$y1 = $1};
     if ($x2 =~ /(\d+)\.\d+/) {$x2 = $1};
     if ($y2 =~ /(\d+)\.\d+/) {$y2 = $1};
-    print $fh "<area shape=\"rect\" coords=\"$x1,$y1,$x2,$y2\" href=\"/$progtype/results/$id#$m\" title=\"$mapstring\" />\n";
+    print $fh "<area shape=\"rect\" coords=\"$x1,$y1,$x2,$y2\" href=\"#/$progtype/results/$id#$m\" title=\"$mapstring\" />\n";
 }
 
 # Data structure:
