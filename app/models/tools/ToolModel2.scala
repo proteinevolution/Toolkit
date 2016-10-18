@@ -89,7 +89,7 @@ object PsiBlast extends ToolModel2 {
     "blast" -> "",
     "evalue" -> "evalues.dat",
     "fasta" -> "out.align",
-    "biojs" -> "out.align"
+    "biojs" -> "out.align_clu"
   )
 }
 
