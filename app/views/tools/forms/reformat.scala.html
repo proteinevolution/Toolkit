@@ -27,6 +27,32 @@
 
                 <div id="reformatcontainer" style="min-width: 610px; min-height: 800px; margin: 0 auto">
 
+                    <ul class="vertical menu" data-accordion-menu>
+                        <li>
+                            <a href="#" class="menu-icon"><i class="fi-list"></i> <span id="reformat">Reformat Converter</span></a>
+                            <ul class="menu horizontal nested">
+                                <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
+                                <li><a id="dropzonetoggle">Upload</a></li>
+                                <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
+                                <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
+                                <li style="padding-top: 15px; padding-left: 10px;">
+                                    <select id="forwardTool">
+                                        <option selected>Forward To</option>
+                                        <option  id="clans" onclick="forward('clans')" value="psi">Clans</option>
+                                        <option  id="csblast" onclick="forward('csblast')" value="psi">CS-BLAST</option>
+                                        <option  id="hhblits" onclick="forward('hhblits')" value="psi">HHblits</option>
+                                        <option  id="hhpred" onclick="forward('hhpred')" value="psi">HHpred</option>
+                                        <option  id="hmmer3" onclick="forward('hmmer3')" value="psi">Hmmer3</option>
+                                        <option  id="mafft" onclick="forward('mafft')" value="psi">Mafft</option>
+                                        <option  id="psiblast" onclick="forward('psiblast')" value="psi">PSI-BLAST</option>
+                                        <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
+                                    </select>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+
                 <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
                     <div id="progress_bar"><div class="percent">0%</div></div>
                     <input type="file" id="files" name="file" />
@@ -107,35 +133,6 @@
 
 
     </div>
-
-
-    <!--
-<ul class="vertical menu" data-accordion-menu>
-    <li>
-        <a href="#" class="menu-icon"><i class="fi-list"></i> <span id="reformat">Reformat Converter</span></a>
-        <ul class="menu horizontal nested">
-            <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
-            <li><a id="dropzonetoggle">Upload</a></li>
-            <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
-            <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
-            <li style="padding-top: 15px; padding-left: 10px;">
-            <select id="forwardTool">
-                <option selected>Forward To</option>
-                <option  id="clans" onclick="forward('clans')" value="psi">Clans</option>
-                <option  id="csblast" onclick="forward('csblast')" value="psi">CS-BLAST</option>
-                <option  id="hhblits" onclick="forward('hhblits')" value="psi">HHblits</option>
-                <option  id="hhpred" onclick="forward('hhpred')" value="psi">HHpred</option>
-                <option  id="hmmer3" onclick="forward('hmmer3')" value="psi">Hmmer3</option>
-                <option  id="mafft" onclick="forward('mafft')" value="psi">Mafft</option>
-                <option  id="psiblast" onclick="forward('psiblast')" value="psi">PSI-BLAST</option>
-                <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
-            </select>
-            </li>
-        </ul>
-    </li>
-</ul>
-</div> -->
-
 
 
 <textarea id="outputarea" style="height: 1px; position: relative; top: -10000px; left: -10000px;"></textarea>
