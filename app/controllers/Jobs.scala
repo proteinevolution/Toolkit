@@ -11,16 +11,16 @@ import reactivemongo.bson.BSONObjectID
 class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef) extends Controller  {
 
   
-  def jobStatusDone(jobID : String) = Action { request =>
-    jobManager ! UpdateJobStatus(BSONObjectID(jobID), JobState.Done)
+  def jobStatusDone(mainID : String) = Action { request =>
+    jobManager ! UpdateJobStatus(BSONObjectID(mainID), JobState.Done)
     Ok
   }
-  def jobStatusError(jobID : String) = Action { request =>
-    jobManager ! UpdateJobStatus(BSONObjectID(jobID), JobState.Error)
+  def jobStatusError(mainID : String) = Action { request =>
+    jobManager ! UpdateJobStatus(BSONObjectID(mainID), JobState.Error)
     Ok
   }
-  def jobStatusRunning(jobID : String) = Action { request =>
-    jobManager ! UpdateJobStatus(BSONObjectID(jobID), JobState.Running)
+  def jobStatusRunning(mainID : String) = Action { request =>
+    jobManager ! UpdateJobStatus(BSONObjectID(mainID), JobState.Running)
     Ok
   }
 }
