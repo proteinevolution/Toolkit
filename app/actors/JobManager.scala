@@ -89,33 +89,36 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     // set job state to queued
   }
 
+
+
   /**
     * Deletes a Job from the Database and from the file system
     * @param job
     * @param userID
     */
   def deleteJob(job : Job, userID : BSONObjectID) = {
+
     //  Terminate running Process instance of the Job
     if (runningProcesses.contains(job.mainID.stringify)) {
       runningProcesses(job.mainID.stringify).destroy()
     }
-    removeJob(BSONDocument(Job.IDDB -> job.mainID))
+
     hashCollection.flatMap(_.remove(BSONDocument(JobHash.ID -> job.mainID)))
     jobDao.deleteJob(job.mainID.stringify) // remove deleted jobs from elasticsearch job and hash indices
 
-    Future {
-      // Delete Job Path
 
-      s"$jobPath$SEPARATOR${job.mainID.stringify}".toFile.delete(swallowIOExceptions = false)
-    }.onComplete {
-      case scala.util.Success(_) =>
-        Logger.info("Successfully Deleted Job!")
-        userManager ! AckDeleted(userID, job)
-      case scala.util.Failure(_) =>
-        Logger.info("Failed To Delete Files")
-        userManager ! FailDeleted(userID, job)
+    val jobIDFile = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}jobIDCluster"
+    val jobIDCluster = scala.io.Source.fromFile(jobIDFile).mkString
+    if(job.status == JobState.Running || job.status == JobState.Queued) {
+      // deleting job on sge
+      s"qdel $jobIDCluster".!
+      Logger.info("Deleted Job on SGE")
     }
+    // set jobStatus to deleted
+    UpdateJobStatus(job.mainID,JobState.Deleted)
+    Logger.info(s"Updated job status of ${job.mainID.stringify} to Deleted")
   }
+
 
   def receive : Receive = {
 

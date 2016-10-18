@@ -88,9 +88,19 @@ class TEL @Inject() (env : Env,
         s"$dest${SEPARATOR}params$SEPARATOR$paramName".toFile.write(value)
       }
     }
-
+    val hostname_cmd = "hostname"
+    val hostname = hostname_cmd.!!.dropRight(1) // remove trailing whitespace
     val source = s"$runscriptPath$runscript.sh"
     val target = s"$dest$runscript.sh".toFile
+
+    target.append(s"#!/bin/bash\n " +
+      s"trap catch_errors ERR;\n" +
+      s"function catch_errors() {\n" +
+      s"   curl -X POST http://$hostname:$port/jobs/error/$jobID\n " +
+      s"  echo 'script aborted, because of errors';\n" +
+      s"   exit 0;\n" +
+      s"}\n" +
+      s"curl -X POST http://$hostname:$port/jobs/running/$jobID\n")
 
 
     lazy val newLines = source.toFile.lines.map { line =>
@@ -121,10 +131,9 @@ class TEL @Inject() (env : Env,
 
     target.appendLines(newLines:_*)
 
-    val hostname_cmd = "hostname"
-    val hostname = hostname_cmd.!!.dropRight(1) // remove trailing whitespace
-
-    target.appendLines(s"cp *.sh.e* logs/stderr.err\ncp *.sh.o* logs/stdout.out\ncurl -X POST http://$hostname:$port/jobs/done/$jobID")
+    target.appendLines(s"cp *.sh.e* logs/stderr.err\n" +
+      s"cp *.sh.o* logs/stdout.out\n" +
+      s"curl -X POST http://$hostname:$port/jobs/done/$jobID")
 
 
     val context = env.get("CONTEXT")
@@ -152,10 +161,6 @@ class TEL @Inject() (env : Env,
       val contextFile = s"$dest$context.sh".toFile
 
       contextFile.appendLines(contextLines:_*)
-
-      contextFile.appendLines(s"#!/bin/bash\ntrap catch_errors ERR;\nfunction catch_errors() {\n   curl -X POST http://$hostname:$port/jobs/error/$jobID\n   echo 'script aborted, because of errors';\n   exit 0;\n}\ncurl -X POST http://$hostname:$port/jobs/running/$jobID\n")
-
-
       chmod_+(PosixFilePermission.OWNER_EXECUTE, contextFile)
 
       s"$dest${SEPARATOR}EXECUTION".toFile.appendLine(contextFile.name)
