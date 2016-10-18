@@ -57,8 +57,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       // Frontend tools
       case "reformat" =>
         Ok(views.html.tools.forms.reformat(webJarAssets, "Utils"))
-      case "extractIDs" =>
-        Ok(views.html.tools.forms.extractIDs(webJarAssets, "Utils"))
       case "alnvizfrontend" =>
         Ok(views.html.tools.forms.alnvizfrontend(webJarAssets, "Alignment"))
 
