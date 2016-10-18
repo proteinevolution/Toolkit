@@ -136,6 +136,7 @@
         localStorage.removeItem("resultcookie");
         }
 
+
         // on and off handler like in jQuery
         myCodeMirror.on('change',function(cMirror){
             hideFormats(getFormat(myCodeMirror.getValue()));
@@ -146,13 +147,11 @@
 
                 if (validateAlignment(fasta2json(myCodeMirror.getValue()))) {
                     $(".clustaloption").show();
-                    document.getElementById('nonalignedwarning').style.display= 'none';
+                    document.getElementById('nonalignedwarning').style.display = 'none';
                 }
-               if(!validateAlignment(fasta2json(myCodeMirror.getValue()))) {
-
+                else {
                     $(".clustaloption").hide();
-                    document.getElementById('nonalignedwarning').style.display= 'inline';
-
+                    document.getElementById('nonalignedwarning').style.display = 'inline';
                 }
 
             }
