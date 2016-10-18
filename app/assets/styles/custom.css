@@ -393,14 +393,14 @@ textarea { resize:both; }
 }
 
 #offline-alert {
-    margin-left: 35%;
-    width: 30%;
-    height: 4em;
+    margin-left: 25%;
+    width: 50%;
     text-align: center;
     background-color: #57a39a;
     color: #eeeeee;
     opacity: 0.8;
     display: none;
+    font-size: 0.78em;
 
 }
 
