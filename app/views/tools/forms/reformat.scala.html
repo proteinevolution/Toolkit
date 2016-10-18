@@ -287,7 +287,10 @@
             series: [{
             name: 'Relative Freq.',
             data: getFreqs()
-            }]
+            }],
+            credits: {
+            enabled: false
+            }
         });
 
         $('#tab-Freqs').click(function() {
@@ -553,7 +556,7 @@
                 // use script for handling
                 alignmentHeight: 525, alignmentWidth: 900, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
             };
-            
+
                 opts.seqs = (clustalParser($('#inputMirror').val(myCodeMirror.getValue()).reformat("clustal")));
 
             // init msa
