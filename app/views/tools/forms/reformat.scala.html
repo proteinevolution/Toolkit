@@ -225,7 +225,7 @@
         /* Highchart */
 
         function getBins() {
-        var resultdict = alphabet ( fasta2json ( myCodeMirror.getValue ( ) ) ) ;
+        var resultdict = $('#inputMirror').val(myCodeMirror.getValue()).reformat("alphabet");
 
         var resultArr = resultdict.split ( "" ) ;
         var bins = new Array ( resultArr.length - 1 ) ;
@@ -238,7 +238,7 @@
 
         function getFreqs() {
 
-        var freqs = relative_frequency(fasta2json(myCodeMirror.getValue()));
+        var freqs = $('#inputMirror').val(myCodeMirror.getValue()).reformat("freq");
 
 
         var freqVals = new Array();
