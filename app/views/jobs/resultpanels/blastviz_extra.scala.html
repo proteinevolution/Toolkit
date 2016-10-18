@@ -49,7 +49,7 @@
 .flat-slider .ui-slider-range {
     border: 0;
     border-radius: 7px;
-    background: #58a5e9;
+    background: black;
 }
 
 .flat-slider.ui-slider-horizontal .ui-slider-range {
@@ -64,21 +64,16 @@
 
 
 #alignmentDetail{
-    font-size: 0.78em;
+    font-size: 0.65em !important;
 }
 #overview{
-    font-size: 0.78em;
+    font-size: 0.65em !important;
 }
 </style>
 
 <script src="@routes.Assets.at("javascripts/toolkit.js")"></script>
 
 
-
-<ul class="accordion" data-accordion data-allow-all-closed="true" data-multi-expand="true">
-    <li class="accordion-item " data-accordion-item >
-        <a class="accordion-title" >BlastViz</a>
-        <div class="accordion-content" data-tab-content >
             <span>Choose range of input query: </span>
             <p>
 
@@ -86,24 +81,14 @@
             <div id="blastviz">
 
             </div>
-        </div>
-    </li>
-    <li class="accordion-item" data-accordion-item>
-        <a class="accordion-title" onclick="$('#metaReferences').hide()">Overview</a>
-        <div class="accordion-content" data-tab-content>
             <button class="revealReference">Show references</button>
             <div id="overview">
 
             </div>
 
+        <div  id="alignmentDetail" >
         </div>
-    </li>
-    <li class="accordion-item" data-accordion-item>
-        <a class="accordion-title">Blast output alignment</a>
-        <div class="accordion-content" data-tab-content id="alignmentDetail" >
-        </div>
-    </li>
-</ul>
+
 
 
 
@@ -115,12 +100,12 @@
 $(document).ready(function(){
 
 
-// loading results into accorion
+
 psiblastBlastviz('blastviz', '@pathToBlastOutput')
 blastOutputOverview('overview', 'blaststats', '@pathToBlastOutput')
 blastOutputAlignment('alignmentDetail', 'blaststats', '@pathToBlastOutput')
 
-
+$('#metaReferences').hide()
 $("button.revealReference").click(function(){
     if ($.trim($(this).text()) === 'Show references') {
         $(this).text('Hide references');
@@ -133,9 +118,6 @@ $("button.revealReference").click(function(){
     return false;
 });
 
-
-
-$('.accordion-content').hide()
 
 
 $(document).foundation();
