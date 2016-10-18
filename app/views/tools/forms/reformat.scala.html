@@ -228,7 +228,7 @@
         var resultdict = $('#inputMirror').val(myCodeMirror.getValue()).reformat("alphabet");
 
         var resultArr = resultdict.split ( "" ) ;
-        var bins = new Array ( resultArr.length - 1 ) ;
+        var bins = new Array () ;
         for ( var a = 1 ; a <= resultdict.length - 1 ; a ++ ) {
 
         bins[ a - 1 ] = resultArr[ a ] ;
@@ -260,6 +260,9 @@
             x: -20 //center
             },
             xAxis: {
+            title: {
+            text: 'Amino Acids'
+            },
             categories: getBins()
             },
             yAxis: {
