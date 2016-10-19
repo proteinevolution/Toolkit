@@ -71,6 +71,10 @@ tr.spaceUnder > td
     padding-right: 3.125em;
 }
 
+#content {
+    width: 100%;
+    padding: 0.625em 0.625em 0.625em 0.625em;
+}
 
 
 .alnviz{
@@ -445,4 +449,24 @@ textarea { resize:both; }
 
 .slick-arrow {
     display: none !important;
+}
+
+.reformat-small {
+    color: black;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    font-size: small;
+}
+
+.reformat-small li {
+    display: block;
+    width: 6em;
+}
+
+.reformat-small a:hover {
+    color: black;
+}
+
+.reformat-small select {
+    width: 30%;
+    margin-left: 1.5em;
 }
