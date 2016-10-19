@@ -31,6 +31,8 @@ class TEL @Inject() (env : Env,
 
   var port = "" // TODO (REMINDER) : REMOVE THIS FOR PRODUCTION !!!
 
+  val context = env.get("CONTEXT")
+
 
   //-----------------------------------------------------------------------------------------------------
   // Set params (Parameters whose values can be taken from a predefined set)
@@ -131,12 +133,20 @@ class TEL @Inject() (env : Env,
 
     target.appendLines(newLines:_*)
 
-    target.appendLines(s"cp *.sh.e* logs/stderr.err\n" +
-      s"cp *.sh.o* logs/stdout.out\n" +
-      s"curl -X POST http://$hostname:$port/jobs/done/$jobID")
+    target.appendLines("""
+      | outfile=(*.sh.e*)
+      |errfile=(*.sh.o*)
+      |if [ -a "${outfile[0]}" ];
+      |then
+      |cp *.sh.o* logs/stdout.out
+      |fi
+      |if [ -a "${errfile[0]}" ];
+      |then
+      |cp *.sh.e* logs/stderr.err
+      |fi
+      |""".stripMargin)
+    target.appendLines(s"curl -X POST http://$hostname:$port/jobs/done/$jobID")
 
-
-    val context = env.get("CONTEXT")
 
     if(context == "LOCAL") {
 
