@@ -1,19 +1,20 @@
-@(pathToEvalues : String)(implicit request: RequestHeader)
+@import models.results.PsiBlast
+
+@(jobID : String)(implicit request: RequestHeader)
+
 
 <div id="hcontainer" style="min-width: 610px; height: 400px; margin: 0 auto"></div>
 
 <script>
-        var bins = Array.apply(null, new Array(300)).map(function() { return 0});
+        var bins = new Array();
 
-        $.get('@pathToEvalues', function (content) {
+        @for(lines <- PsiBlast.evalues(jobID)){
+            bins.push(@lines);
+        }
 
-            content.split('\n').forEach(function(item, index) {
+        //console.log(bins);
 
-                for(var i = Math.ceil(-Math.log(parseFloat(item))); i < bins.length; i++) {
-                    bins[i]++;
-                }
-            });
-        }).done(function() {
+        $(function() {
 
             $('#hcontainer').highcharts({
                 title: {
@@ -46,7 +47,10 @@
                 series: [{
                     name: 'No. HSPs',
                     data: bins
-                }]
+                }],
+                credits: {
+                enabled: false
+                }
             });
         });
 </script>
