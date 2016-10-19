@@ -121,9 +121,9 @@
             </div>
 
             <!--signin -->
-            <div id="signin-link" class="large-1 columns align-self-middle">
+            <div class="large-1 columns align-self-middle" style="margin-top: 0.9em; margin-bottom: 2em;">
                 <i class="icon-user"></i>
-                <a onclick="openNav()" >
+                <a id="auth-link" onclick="openNav()" >
                 @{user.userData match {
                     case Some(userData) => userData.nameLogin
                     case None           => "Sign in"
