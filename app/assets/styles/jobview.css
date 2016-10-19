@@ -22,6 +22,7 @@
     text-shadow: 0 0 0 #000;
     height: 2.5em;
     width: 15em;
+    border-radius: 3px;
 }
 
 .parameters input {
