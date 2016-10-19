@@ -108,8 +108,8 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
 
     val jobIDFile = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}jobIDCluster"
-    val jobIDCluster = scala.io.Source.fromFile(jobIDFile).mkString
     if(job.status == JobState.Running || job.status == JobState.Queued || tel.context != "LOCAL") {
+      val jobIDCluster = scala.io.Source.fromFile(jobIDFile).mkString
       // deleting job on sge
       s"qdel $jobIDCluster".!
       Logger.info("Deleted Job on SGE")
