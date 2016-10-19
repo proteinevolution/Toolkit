@@ -107,7 +107,7 @@
   $.get(pathToBlastOutput+"out.psiblastp_overview", (content) ->
 
     $('#' + id ).append content
-
+    $('#metaReferences').hide()
    )
 
 @blastOutputAlignment = (id, statid, pathToBlastOutput) ->
