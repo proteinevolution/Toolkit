@@ -40,10 +40,10 @@ body{
     background-color: #FFF666;
 }
 .q {
-    background-color: #FFDDAB;
+    background-color: #d6c1c3;
 }
 .q:hover {
-    background-color: #FFD492;
+    background-color: #c0b5bf;
 }
 
 .p {
@@ -56,12 +56,6 @@ body{
 
 .clear{
     border: 0;
-}
-
-
-.alignment {
-    font-family: monospace;
-    font-size: 0.875em;
 }
 
 tr.spaceUnder > td
@@ -77,6 +71,10 @@ tr.spaceUnder > td
     padding-right: 3.125em;
 }
 
+#content {
+    width: 100%;
+    padding: 0.625em 0.625em 0.625em 0.625em;
+}
 
 
 .alnviz{
@@ -144,13 +142,6 @@ tr.job a:visited {
     min-height: 100%;
     display: flex;
 
-
-}
-
-#alignment{
-
-    font-family: Monaco, Consolas, "Lucida Console", monospace;
-    font-size: 0.625em;
 
 }
 
@@ -257,7 +248,7 @@ tr.job a:visited {
     background-color: white;
 }
 
-.vertical ul {
+#responsive-menu ul {
     background-color: #e6e6e6;
 }
 
@@ -382,7 +373,7 @@ textarea { resize:both; }
 }
 
 #jobid {
-
+    border-radius: 3px;
     font-size: 0.65em;
     width: 250px;
 }
@@ -393,14 +384,14 @@ textarea { resize:both; }
 }
 
 #offline-alert {
-    margin-left: 35%;
-    width: 30%;
-    height: 4em;
+    margin-left: 25%;
+    width: 50%;
     text-align: center;
     background-color: #57a39a;
     color: #eeeeee;
     opacity: 0.8;
     display: none;
+    font-size: 0.78em;
 
 }
 
@@ -449,3 +440,33 @@ textarea { resize:both; }
     }
 }
 
+.dropzone{
+    border: 0px;
+    box-shadow: 0px 1px 6px 0px lightgray;
+    color: gray;
+}
+
+
+.slick-arrow {
+    display: none !important;
+}
+
+.reformat-small {
+    color: black;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    font-size: small;
+}
+
+.reformat-small li {
+    display: block;
+    width: 6em;
+}
+
+.reformat-small a:hover {
+    color: black;
+}
+
+.reformat-small select {
+    width: 30%;
+    margin-left: 1.5em;
+}

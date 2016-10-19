@@ -72,7 +72,6 @@
     </div>
     <div class="tabs-panel" id="panel7">
         <ul id="toolsec">
-            <li><a id="reformat" href="/#/extractIDs">ExtractIDs</a></li>
             @for(tool <- Tool.tools){
                 @if(tool.section == "utils") {
                     <li><a id="@tool.toolNameAbbreviation" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>

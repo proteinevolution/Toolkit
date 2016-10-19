@@ -3,6 +3,32 @@
     background: white;
 }
 
+
+/* Configuration of individual parameters */
+.parameter #alignment {
+
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    font-size: 0.625em;
+    margin: 0 0 0;
+}
+.parameter .alignmentFormat {
+
+    width: 15em;
+    margin-left: 1em;
+}
+.parameter .alignmentFormatBlock {
+    float: right;
+}
+
+.parameter .alignmentFormatBlock label {
+    display: inline-block;
+    width: 140px;
+    text-align: right;
+}
+
+
+
+
 /*
  Parameter panels
 */
@@ -13,7 +39,7 @@
 
 .parameters div {
     width: 50%;
-    font-size: 0.75em;
+    font-size: smaller;
 }
 
 .parameters select {
@@ -22,6 +48,7 @@
     text-shadow: 0 0 0 #000;
     height: 2.5em;
     width: 15em;
+    border-radius: 3px;
 }
 
 .parameters input {
@@ -30,6 +57,7 @@
     text-shadow: 0 0 0 #878787;
     height: 2.45em;
     width: 15em;
+    border-radius: 3px;
 }
 
 .parameters input:focus {
@@ -41,11 +69,27 @@
 }
 
 
+.jobline {
+
+    margin-bottom: 0.5cm;
+}
+
 .jobline .toolname {
 
     font-size: large;
     font-weight: bold;
 }
+
+.submitbuttons .jobid {
+
+    color: #000;
+    color: rgba(0,0,0,0);
+    text-shadow: 0 0 0 #878787;
+    height: 2em;
+    width: 15em;
+    float: right;
+}
+
 
 
 .jobline .jobinfo {
@@ -69,3 +113,15 @@
     display: none;
 }
 
+
+.result-panel{
+font-size: 0.65em !important;
+
+}
+
+.result-title-big{
+    font-size: 1.6em !important;
+}
+.result-title-small{
+    font-size: 1.46em !important;
+}
