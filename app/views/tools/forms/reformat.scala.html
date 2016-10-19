@@ -4,7 +4,9 @@
 <link href="@routes.Assets.at("styles/reformat-common.css")" rel="stylesheet">
 <link href="@routes.Assets.at("styles/reformat-jobview.css")" rel="stylesheet">
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("reformat.js"))"></script>
-<div style="padding-top: 10px;"></div>
+<div class="jobline">
+    <span class="toolname">Reformat</span>
+</div>
 <div style="display: block; margin: auto;">
 
 
@@ -25,9 +27,9 @@
 
             <div class="tabs-panel ui-tabs-panel ui-widget-content ui-corner-bottom" id="tabpanel-Alignment" aria-labelledby="ui-id-4" role="tabpanel" aria-hidden="false">
 
-                <div id="reformatcontainer" style="min-width: 610px; min-height: 800px; margin: 0 auto">
+                <div id="reformatcontainer" style="min-height: 800px; margin: 0 auto">
 
-                    <ul class="vertical menu" data-accordion-menu>
+                    <ul class="vertical menu show-for-medium" data-accordion-menu>
                         <li>
                             <a href="#"><span id="reformat">&nbsp;<i class="icon-chevron_down"></i> Reformat Converter</span></a>
                             <ul class="menu horizontal nested">
@@ -51,6 +53,25 @@
                             </ul>
                         </li>
                     </ul>
+
+                    <ul class="reformat-small menu show-for-small-only">
+                        <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
+                        <li><a id="dropzonetoggle">Upload</a></li>
+                        <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
+                        <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
+                        <select id="forwardTool">
+                            <option selected>Forward To</option>
+                            <option  id="clans" onclick="forward('clans')" value="psi">Clans</option>
+                            <option  id="csblast" onclick="forward('csblast')" value="psi">CS-BLAST</option>
+                            <option  id="hhblits" onclick="forward('hhblits')" value="psi">HHblits</option>
+                            <option  id="hhpred" onclick="forward('hhpred')" value="psi">HHpred</option>
+                            <option  id="hmmer3" onclick="forward('hmmer3')" value="psi">Hmmer3</option>
+                            <option  id="mafft" onclick="forward('mafft')" value="psi">Mafft</option>
+                            <option  id="psiblast" onclick="forward('psiblast')" value="psi">PSI-BLAST</option>
+                            <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
+                        </select>
+                    </ul>
+
 
 
                 <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
