@@ -113,3 +113,15 @@
     display: none;
 }
 
+
+.result-panel{
+font-size: 0.65em !important;
+
+}
+
+.result-title-big{
+    font-size: 1.6em !important;
+}
+.result-title-small{
+    font-size: 1.46em !important;
+}
