@@ -319,12 +319,12 @@ function slider_show(sequence_length, start, end) {
 
     var tooltip = $('<div id="tooltip" />').css({
         position: 'absolute',
-        top: +25
+        top: +30
     }).hide();
 
     var tooltip2 = $('<div id="tooltip2" />').css({
         position: 'absolute',
-        top: +25
+        top: +30
     }).hide();
 
 
