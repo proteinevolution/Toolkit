@@ -1,7 +1,8 @@
 @import play.api.mvc.RequestHeader
 @import models.database.User
 @(user : User)(implicit messages: Messages, request: RequestHeader)
-<div></div>
+
+<div id="auth-tabs" >
 <p>@{user.getUserData.nameLogin}</p>
 <p>@{user.getUserData.eMail}</p>
 <p></p>
@@ -10,3 +11,4 @@
 }
 <p><a id="profile-open">Edit Profile</a></p>
 <p><a href="@routes.Auth.signOut()">Sign Out</a></p>
+</div>
