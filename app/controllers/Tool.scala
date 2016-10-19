@@ -55,6 +55,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
       else {
         val boundForm = form.get.bindFromRequest // <- params
 
+        Logger.info(boundForm.data.mkString)
 
         lazy val DB = boundForm.data.getOrElse("standarddb","").toFile  // get hold of the database in use
         lazy val jobByteArray = boundForm.data.toString().getBytes // convert params to hashable byte array
