@@ -58,7 +58,7 @@ $ ->
   checkAuthResponse = (json) ->
     if (json.successful)
       $("#auth-link").html(json.user.nameLogin)
-      $("#auth-dropdown").html(json.message)
+      $("#overlay-content").html(json.message)
       sendMessage("type":"GetJobList")  #ask for the complete job list again
       setTimeout(loadMiniProfile,1000)
     else
@@ -70,7 +70,7 @@ $ ->
     $.ajax(
       url: "/miniprofile"
       method: 'GET').done (data) ->
-        $("#auth-dropdown").html(data)
+        $("#overlay-content").html(data)
 
   # Remove message by clicking on it
   $("#auth-alert").on 'click', (event) ->
