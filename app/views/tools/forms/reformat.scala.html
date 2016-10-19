@@ -175,7 +175,7 @@
         localStorage.removeItem("resultcookie");
         }
 
-
+        $('#format').text(getFormat(myCodeMirror.getValue()));
         // on and off handler like in jQuery
         myCodeMirror.on('change',function(cMirror){
             hideFormats(getFormat(myCodeMirror.getValue()));
@@ -197,7 +197,7 @@
 
             if(getFormat(myCodeMirror.getValue()) != "") {
                  document.getElementById('callout').style.display = 'block';
-                 $('#format').text(getFormat(myCodeMirror.getValue()))
+                 $('#format').text(getFormat(myCodeMirror.getValue()));
             }
 
             if(getFormat(myCodeMirror.getValue()) == "") {
