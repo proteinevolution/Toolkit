@@ -67,7 +67,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
 
   // Returns the runscript file path
   def scriptPath = {
-    s"$jobPath$SEPARATOR${mainID.stringify}$SEPARATOR$tool.sh"
+    s"$jobPath$SEPARATOR${mainID.stringify}${SEPARATOR}tool.sh"
   }
 
   /**

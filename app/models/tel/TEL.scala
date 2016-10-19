@@ -2,13 +2,17 @@ package models.tel
 
 import java.nio.file.attribute.PosixFilePermission
 import javax.inject.{Inject, Singleton}
+import play.Play
 
+import scala.sys.process._
 import better.files.Cmds._
 import better.files._
 import models.Implicits._
 import models.tel.env.Env
 import models.tel.param.Params
 
+
+import scala.io.Source
 
 /**
   *
@@ -24,6 +28,10 @@ class TEL @Inject() (env : Env,
 
   // Each tool exection consists of the following subdirectories
   val subdirs : Seq[String] = Array("params", "results", "temp", "logs")
+
+  var port = "" // TODO (REMINDER) : REMOVE THIS FOR PRODUCTION !!!
+
+  val context = env.get("CONTEXT")
 
 
   //-----------------------------------------------------------------------------------------------------
@@ -59,10 +67,6 @@ class TEL @Inject() (env : Env,
       }.toMap
   }
 
-
-
-
-
   //-----------------------------------------------------------------------------------------------------
   // Public methods
   //-----------------------------------------------------------------------------------------------------
@@ -73,6 +77,7 @@ class TEL @Inject() (env : Env,
     */
   def init(runscript : String, params : Map[String, String], dest : String): String = {
 
+    val jobID = dest.split('/').last
     // Create directories necessary for tool execution
     subdirs.foreach { s => (dest + SEPARATOR + s).toFile.createDirectories() }
 
@@ -80,19 +85,28 @@ class TEL @Inject() (env : Env,
     for((paramName, value) <- params ) {
 
       // TODO This is a hack and needs to go
-      if(! ignore.contains(paramName)) {
+      if(!ignore.contains(paramName)) {
 
         s"$dest${SEPARATOR}params$SEPARATOR$paramName".toFile.write(value)
       }
     }
-
-    //
+    val hostname_cmd = "hostname"
+    val hostname = hostname_cmd.!!.dropRight(1) // remove trailing whitespace
     val source = s"$runscriptPath$runscript.sh"
     val target = s"$dest$runscript.sh".toFile
 
-    lazy val newLines = source.toFile.lines.map { line =>
+    target.append(s"#!/bin/bash\n " +
+      s"trap catch_errors ERR;\n" +
+      s"function catch_errors() {\n" +
+      s"   curl -X POST http://$hostname:$port/jobs/error/$jobID\n " +
+      s"  echo 'script aborted, because of errors';\n" +
+      s"   exit 0;\n" +
+      s"}\n" +
+      s"curl -X POST http://$hostname:$port/jobs/running/$jobID\n")
 
-      replaceeString.replaceAllIn(line, { matcher =>
+
+    lazy val newLines = source.toFile.lines.map { line =>
+      replaceString.replaceAllIn(line, { matcher =>
 
           matcher.group("expression").trim() match {
 
@@ -115,16 +129,35 @@ class TEL @Inject() (env : Env,
         }
       })
     }.toSeq
+
+
     target.appendLines(newLines:_*)
 
-    val context = env.get("CONTEXT")
+    target.appendLines("""
+      | outfile=(*.sh.e*)
+      |errfile=(*.sh.o*)
+      |if [ -a "${outfile[0]}" ];
+      |then
+      |cp *.sh.o* logs/stdout.out
+      |fi
+      |if [ -a "${errfile[0]}" ];
+      |then
+      |cp *.sh.e* logs/stderr.err
+      |fi
+      |""".stripMargin)
+    target.appendLines(s"curl -X POST http://$hostname:$port/jobs/done/$jobID")
+
+
     if(context == "LOCAL") {
+
 
       s"$dest${SEPARATOR}EXECUTION".toFile.appendLine(target.name)
 
       // Make the runscript executable
       chmod_+(PosixFilePermission.OWNER_EXECUTE, target)
 
+      // Rename executable file to tool.sh to make it uniform
+      target.renameTo("tool.sh")
       target.pathAsString
     } else {
 
@@ -141,6 +174,7 @@ class TEL @Inject() (env : Env,
       chmod_+(PosixFilePermission.OWNER_EXECUTE, contextFile)
 
       s"$dest${SEPARATOR}EXECUTION".toFile.appendLine(contextFile.name)
+      contextFile.renameTo("tool.sh")
       contextFile.pathAsString
     }
   }

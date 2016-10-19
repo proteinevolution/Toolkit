@@ -1,10 +1,5 @@
 <style>
 
-#content {
-width: 100%;
-padding: 0 0 0 0;
-}
-
 #sidebar-switch {
 
 display: none;
@@ -208,16 +203,52 @@ margin: 0;
     color: black;
     }
 
+    .slider { cursor: default }
 
+.slide-caption{
+min-height: 80px;
+position: absolute;
+width: 100%;
+z-index: 2;
+background: rgba(51,51,51,0.8);
+color:white;
+font-family:'Roboto', Helvetica, sans-serif;
+font-size: 1rem;
+letter-spacing:1px;
+line-height:1.5rem;
+height:100%;
+width:22%;
+bottom:0;
+right: 0;
+padding:40px 32px 35px;
+}
 
 
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
 
-<section class="slider" style="margin-top:-10px;">
-    <div><img src="@routes.Assets.at("images/proteinCoverart.jpg")" style="width: 100%"></div>
-    <div><img src="@routes.Assets.at("images/protfromfragments3.png")" style="width: 100%"></div>
+<section class="slider show-for-medium">
+    <div>
+        <img src="@routes.Assets.at("images/lambda0.5_crop2.png")" style="width: 100%">
+        <a href="https://elifesciences.org/content/4/e09410">
+            <div class="slide-caption">This is a galaxy of folds.</div>
+        </a>
+    </div>
+    <!--
+    <div>
+        <img src="@routes.Assets.at("images/proteinCoverart.jpg")" style="width: 100%">
+        <a href="https://elifesciences.org/content/4/e09410">
+            <div class="slide-caption">The total number of different proteins existing today is estimated to be a trillion.</div>
+        </a>
+    </div>
+    -->
+    <div>
+        <img src="@routes.Assets.at("images/protfromfragments3.png")" style="width: 100%">
+        <a href="https://elifesciences.org/content/4/e09410">
+            <div class="slide-caption">The seemingly limitless diversity of proteins in nature arose from only a few thousand domain prototypes, but the origin of these themselves has remained unclear. We are pursuing the hypothesis that they arose by fusion and accretion.</div>
+        </a>
+    </div>
 </section>
 
 
@@ -239,6 +270,8 @@ margin: 0;
 
 
 
+
+<!--
 <div class="lazy-container">
     <div style="margin-left: 0;  margin-right: 0;" class="row elements">
     <div class="content-wrapper-half large-5 columns">
@@ -275,6 +308,7 @@ margin: 0;
     </div>
 
 </div>
+-->
 
 
 
@@ -314,6 +348,7 @@ margin: 0;
 
 
     setTimeout(function() {
+        console.log(JSON.stringify(jobs.vm.getLastJob()));
         var json = JSON.parse(JSON.stringify(jobs.vm.getLastJob()));
         var status;
 

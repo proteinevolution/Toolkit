@@ -8,14 +8,11 @@
 .sub-nav a {
   color: gray;
   font-size: 0.575em;
+  padding: 0 1em 0 1em;
 }
 
 #subnav {
-  background-color: transparent;
-
-
+  opacity: 1;
+  text-align: center;
 }
 
-#subnav a:hover {
-  color: black;
-}

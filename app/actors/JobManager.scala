@@ -11,11 +11,11 @@ import modules.Common
 import modules.tools.FNV
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
-import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID, BSONValue}
 
 import scala.concurrent.Future
 import better.files._
+import models.database.JobState.JobState
 import models.{Constants, ExitCodes}
 import models.tel.TEL
 import play.api.Logger
@@ -81,36 +81,15 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     * @param job
     */
   def executeJob(job : Job): Unit = {
-
+    updateJob(job.copy(status = JobState.Queued))
     val rootPath  = s"$jobPath$SEPARATOR${job.mainID.stringify}$SEPARATOR"
-
-    // Log files output buffer
-    val out = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stdout.out")))
-    val err = new BufferedWriter(new FileWriter(new java.io.File(rootPath + "logs/stderr.err")))
-
-    // Job will now be executed, change the job state to running
-
-    updateJob(job.copy(status = JobState.Running))
-
     // Create new Process instance of the runscript to run the tool
-    val process = Process(job.scriptPath , new java.io.File(rootPath)).run(ProcessLogger(
-      (fout) => out.write(fout),
-      (ferr) => err.write(ferr)
-    ))
+    val process = Process(job.scriptPath , new java.io.File(rootPath)).run()
     runningProcesses.put(job.mainID.stringify, process)
-
-    // Treat Exit code of job process
-    process.exitValue() match {
-
-      case SUCCESS => updateJob(job.copy(status = JobState.Done))
-      case TERMINATED => // Ignore
-      case x: Int => updateJob(job.copy(status = JobState.Error))
-    }
-    runningProcesses.remove(job.mainID.stringify)
-
-    out.close()
-    err.close()
+    // set job state to queued
   }
+
+
 
   /**
     * Deletes a Job from the Database and from the file system
@@ -118,27 +97,28 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     * @param userID
     */
   def deleteJob(job : Job, userID : BSONObjectID) = {
+
     //  Terminate running Process instance of the Job
     if (runningProcesses.contains(job.mainID.stringify)) {
       runningProcesses(job.mainID.stringify).destroy()
     }
-    removeJob(BSONDocument(Job.IDDB -> job.mainID))
+
     hashCollection.flatMap(_.remove(BSONDocument(JobHash.ID -> job.mainID)))
     jobDao.deleteJob(job.mainID.stringify) // remove deleted jobs from elasticsearch job and hash indices
 
-    Future {
-      // Delete Job Path
 
-      s"$jobPath$SEPARATOR${job.mainID.stringify}".toFile.delete(swallowIOExceptions = false)
-    }.onComplete {
-      case scala.util.Success(_) =>
-        Logger.info("Successfully Deleted Job!")
-        userManager ! AckDeleted(userID, job)
-      case scala.util.Failure(_) =>
-        Logger.info("Failed To Delete Files")
-        userManager ! FailDeleted(userID, job)
+    val jobIDFile = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}jobIDCluster"
+    if(job.status == JobState.Running || job.status == JobState.Queued || tel.context != "LOCAL") {
+      val jobIDCluster = scala.io.Source.fromFile(jobIDFile).mkString
+      // deleting job on sge
+      s"qdel $jobIDCluster".!
+      Logger.info("Deleted Job on SGE")
     }
+    // set jobStatus to deleted
+    UpdateJobStatus(job.mainID,JobState.Deleted)
+    Logger.info(s"Updated job status of ${job.mainID.stringify} to Deleted")
   }
+
 
   def receive : Receive = {
 
@@ -229,17 +209,14 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           Logger.info("Unknown ID " + mainID.toString())
       }
 
-    case UpdateJob(job)  =>
-      
-      Logger.info("Job Manager was asked to update Job")
-
-
-    case UpdateJobStatus(jobID : BSONObjectID) =>
+    case UpdateJobStatus(jobID : BSONObjectID, status : JobState) =>
       findJob(BSONDocument(Job.IDDB -> jobID)).foreach {
         case Some(job) =>
-          updateJob(job.copy(status = JobState.Done))
-          userManager ! JobStateChanged(job, JobState.Done)
-          Logger.info("Successfully updated Job status " + jobID.toString)
+          if (status == JobState.Done)
+            runningProcesses.remove(job.mainID.stringify)
+          updateJob(job.copy(status = status))
+          userManager ! JobStateChanged(job, status)
+          Logger.info("Successfully updated Job status " + jobID.stringify + " to " + status)
         case None =>
           userManager ! JobIDUnknown(jobID)
           Logger.info("Unknown ID " + jobID.toString())
@@ -341,11 +318,8 @@ object JobManager {
                      params   : Map[String, String],
                      start    : Boolean)
 
-  // When the JobManager was asked to update a Job
-  case class UpdateJob(job : Job)
-
   // When the JobManager was asked to update a Job status
-  case class UpdateJobStatus(job : BSONObjectID)
+  case class UpdateJobStatus(job : BSONObjectID, status : JobState)
 
   // Jobmanager is asked to find jobs
   case class FetchJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID]) extends MessageWithUserID

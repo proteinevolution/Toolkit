@@ -57,8 +57,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       // Frontend tools
       case "reformat" =>
         Ok(views.html.tools.forms.reformat(webJarAssets, "Utils"))
-      case "extractIDs" =>
-        Ok(views.html.tools.forms.extractIDs(webJarAssets, "Utils"))
       case "alnvizfrontend" =>
         Ok(views.html.tools.forms.alnvizfrontend(webJarAssets, "Alignment"))
 
@@ -102,53 +100,4 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     }
   }
 
-  def showJobInfo(mainIDString: String) = Action.async { implicit request =>
-    // Retrieve the user from the cache or the DB
-    getUser.flatMap { user =>
-      // Check if the ID is plausible (Right Format can be parsed into a BSON Object ID)
-      BSONObjectID.parse(mainIDString) match {
-        case Success(mainID) =>
-          val futureJob = jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job])
-          futureJob.flatMap {
-
-
-            case jobOption@Some(job) =>
-              val toolModel = ToolModel2.toolMap(job.tool)
-              // Read Parameters of Job
-              Future {
-
-                val params = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map{ file =>
-
-                  file.name -> file.contentAsString
-                }.toMap
-
-                // Assemble Parameter Sections
-                val paramSections = toolModel.paramGroups
-                  .mapValues { vals =>
-                    views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)),
-                      ToolModel2.jobForm.bind(params))
-                  } + (toolModel.remainParamName -> views.html.jobs.parampanel(values,
-                  toolModel.remainParams,
-                  ToolModel2.jobForm.bind(params)))
-
-
-                // Assemble Result Sections
-                val resultSections : Option[Map[String, String]] = job.status match {
-
-                  case JobState.Done => Some(toolModel.results)
-                  case _ => None
-                }
-                Ok(views.html.jobs.main(jobOption,ToolModel2.toolMap(job.tool),
-                  paramSections, resultSections))
-
-              }
-
-            case None =>
-              Future.successful(NotFound)
-          }
-        case _ =>
-          Future.successful(NotFound)
-      }
-    }
-  }
 }
