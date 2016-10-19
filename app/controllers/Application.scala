@@ -7,10 +7,10 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import models.{Constants, Values}
 import models.tel.TEL
-import models.tools.{ToolModel, ToolModel2}
+import models.tools.ToolModel
 import modules.Common
 import modules.tools.ToolMatcher
-import play.api.{Configuration, Logger}
+import play.api.Configuration
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
@@ -20,7 +20,6 @@ import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import modules.tools.ToolMirror
-import play.twirl.api.Html
 
 
 @Singleton
@@ -98,27 +97,6 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
 
     Redirect(s"/#/$static")
   }
-
-  /**
-    * Returns the submission view for a particular tool.
-    *
-    * @param toolname  Which tool the submission view should be created for.
-    */
-  def form(toolname : String) = Action { implicit request =>
-
-    val toolModel = ToolModel2.toolMap(toolname)
-
-    val paramSections = viewCache.getOrElse[Map[String, Html]](toolname) {
-      val x = toolModel.paramGroups
-        .mapValues { vals =>
-          views.html.jobs.parampanel(values, vals.filter(toolModel.params.contains(_)), ToolModel2.jobForm)
-        } + (toolModel.remainParamName -> views.html.jobs.parampanel(values, toolModel.remainParams, ToolModel2.jobForm))
-      viewCache.set(toolname, x)
-      x
-    }
-    Ok(views.html.jobs.main(None, toolModel, paramSections, None))
-  }
-
 
 
   /**
