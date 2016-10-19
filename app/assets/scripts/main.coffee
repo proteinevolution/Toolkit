@@ -93,17 +93,29 @@ JobModel =
   alignmentPresent: false
   views:  m.prop false
   paramValues : {}
+  defaultValues:
+    "num_iter": 1
+    "evalue": 10
+    "gap_open": 11
+    "gap_ext": 1
+    "desc": 5
+    "matrix": "BLOSUM62"
 
   getTool: (toolname) ->
     m.request {method: 'GET', url: "/api/tools/#{toolname}"}
+
   getJob: (mainID) ->
     m.request {method: 'GET', url: "/api/jobs/#{mainID}"}
 
   getParamValue: (param) ->
     val = JobModel.paramValues[param]
-    if val then val else ""
-
-
+    defVal = JobModel.defaultValues[param]
+    if val
+      val
+    else if defVal
+      defVal
+    else
+      ""
 
 
 # Component for the Jobline in the unified JobView
@@ -173,12 +185,16 @@ ParameterSelectComponent =
     id: args.id
     label: args.label
     param: new ParameterSelectComponent.model args
+    value: args.value
 
   view: (ctrl) ->
     renderParameter [
       m "label", {for: ctrl.id}, ctrl.label
       m "select", {name: ctrl.name, id: ctrl.id}, ctrl.options.map (entry) ->
-        m "option", {value: entry[0]}, entry[1]
+        if entry[0] == ctrl.value
+          m "option", {value: entry[0], selected: "selected"}, entry[1]
+        else
+          m "option", {value: entry[0]}, entry[1]
     ]
 
 ParameterNumberComponent =
