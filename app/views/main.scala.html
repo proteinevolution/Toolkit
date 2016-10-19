@@ -107,16 +107,16 @@
         <div class="row show-for-large" style="padding-top: 1em;">
 
             <!--logo-->
-            <div class="large-2 medium-3 columns" >
+            <div class="large-2 columns" >
                 <a href="@routes.Application.index()"><img  style="width: 90%; margin-left:0.25em;margin-top:0.60em; margin-bottom: 2em;" src="@routes.Assets.at("images/logo3.svg")"></a>
             </div>
             <!--navbar-->
-            <div class="large-8 columns show-for-large" style="padding-left: 2.5em; padding-right:4.375em;">
+            <div class="large-9 columns show-for-large" style="padding-left: 2.5em; padding-right:4.375em;">
                 @elements.navbar()
             </div>
 
             <!--signin TODO make a modal out of this? -->
-            <div class="large-2 medium-3 columns align-self-middle" style="margin-top:0.9em; margin-bottom: 2em;" >
+            <div class="large-1 columns align-self-middle" style="margin-top:0.9em; margin-bottom: 2em;" >
                 <i class="icon-user"></i>
                 <a style="color: #888; font-size: 0.85em;" id="signin-link" onclick="openNav()" >
                     @{user.userData match {
@@ -166,7 +166,7 @@
 
 
 
-                            <div id="content" class="large-9 small-10 columns padded-column" style="float: left;">
+                            <div id="content" class="large-9 small-10 columns" style="float: left;">
                             @content
                             </div>
                         </section>
