@@ -57,13 +57,7 @@ body{
 .clear{
     border: 0;
 }
-
-
-.alignment {
-    font-family: monospace;
-    font-size: 0.78em;
-}
-
+1
 tr.spaceUnder > td
 {
     padding-bottom: 0em;
@@ -144,13 +138,6 @@ tr.job a:visited {
     min-height: 100%;
     display: flex;
 
-
-}
-
-#alignment{
-
-    font-family: Monaco, Consolas, "Lucida Console", monospace;
-    font-size: 0.625em;
 
 }
 
