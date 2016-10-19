@@ -31,7 +31,7 @@
 
                     <ul class="vertical menu show-for-medium" data-accordion-menu>
                         <li>
-                            <a href="#"><span id="reformat">&nbsp;<i class="icon-chevron_down"></i> Reformat Converter</span></a>
+                            <a href="#"><span id="reformat">&nbsp;<i class="icon-chevron_down"></i> More Options</span></a>
                             <ul class="menu horizontal nested">
                                 <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
                                 <li><a id="dropzonetoggle">Upload</a></li>
@@ -591,7 +591,7 @@
             opts.zoomer = {
                 // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
                 // use script for handling
-                alignmentHeight: 525, alignmentWidth: 900, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
+                alignmentHeight: 525, alignmentWidth: 900, labelNameLength: 165, labelWidth: 85,labelFontsize: 10, labelIdLength: 75,menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
             };
 
                 opts.seqs = (clustalParser($('#inputMirror').val(myCodeMirror.getValue()).reformat("clustal")));
