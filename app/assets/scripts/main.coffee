@@ -324,7 +324,8 @@ JobTabsComponent =
            ]
       if ctrl.views
         ctrl.views.map (view) ->
-          m "div", {class: "tabs-panel", id: "tabpanel-#{view[0]}"}, m.trust view[1]
+          m "div", {class: "tabs-panel", id: "tabpanel-#{view[0]}"},
+            m "div", {class: "result-panel"}, m.trust view[1]
     ]
 
 
