@@ -382,7 +382,7 @@ textarea { resize:both; }
 }
 
 #jobid {
-
+    border-radius: 3px;
     font-size: 0.65em;
     width: 250px;
 }
