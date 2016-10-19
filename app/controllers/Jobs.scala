@@ -2,25 +2,24 @@ package controllers
 
 import akka.actor.ActorRef
 import javax.inject.{Inject, Named, Singleton}
-
+import reactivemongo.bson._
 import actors.JobManager._
 import models.database.JobState
 import play.api.mvc._
-import reactivemongo.bson.BSONObjectID
 @Singleton
 class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef) extends Controller  {
 
   
   def jobStatusDone(mainID : String) = Action { request =>
-    jobManager ! UpdateJobStatus(BSONObjectID(mainID), JobState.Done)
+    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, JobState.Done)
     Ok
   }
   def jobStatusError(mainID : String) = Action { request =>
-    jobManager ! UpdateJobStatus(BSONObjectID(mainID), JobState.Error)
+    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, JobState.Error)
     Ok
   }
   def jobStatusRunning(mainID : String) = Action { request =>
-    jobManager ! UpdateJobStatus(BSONObjectID(mainID), JobState.Running)
+    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, JobState.Running)
     Ok
   }
 }
