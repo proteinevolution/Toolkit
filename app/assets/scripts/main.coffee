@@ -89,6 +89,12 @@ JobModel =
     m.request {method: 'GET', url: "/api/jobs/#{mainID}"}
 
   getParamValue: (param) ->
+
+    # Prefer the alignment from the local storage, if found
+    resultcookie = localStorage.getItem("resultcookie")
+    if resultcookie
+      JobModel.paramValues["alignment"] = resultcookie
+      localStorage.removeItem("resultcookie")
     val = JobModel.paramValues[param]
     defVal = JobModel.defaultValues[param]
     if val
