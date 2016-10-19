@@ -68,13 +68,6 @@ POST        /profile/submit/userData/                      @controllers.Auth.pro
 POST        /profile/submit/password/                      @controllers.Auth.profileSubmit()
 GET         /verification/:name_login/:token               @controllers.Auth.verification(name_login : String, token : String)
 
-# Get the input form of the tools
-POST        /tools/form/:toolname                          @controllers.Application.form(toolname : String)
-
-
-# Submit Route
-POST        /tools/:toolname                               @controllers.Tool.submit(toolname : String, start : Boolean, mainID: Option[String])
-
 
 # Interaction with Jobs
 # Loading a Job from the DB
@@ -113,3 +106,12 @@ GET         /:static                                       @controllers.Applicat
 
 #Forwarding
 #GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
+
+
+# Some experimental things
+# Get ToolInformation as JSON based on toolname
+GET         /api/tools/:toolname                           @controllers.TestController.getTool(toolname)
+# Submit new Job
+POST        /api/submit                                    @controllers.Tool.submit(toolname : String, start : Boolean, jobID : Option[String])
+# Get JobInformation based on Toolname
+GET         /api/jobs/:mainid                              @controllers.TestController.getJob(mainid)
