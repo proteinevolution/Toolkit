@@ -98,7 +98,12 @@
             </button>
             <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
             <div class="overlay-content" id="overlay-content">
-                @general.auth()
+            @{user.userData match {
+                case Some(userData) =>
+                    views.html.auth.miniprofile(user)
+                case None =>
+                    views.html.general.auth()
+            }}
             </div>
         </div>
 
@@ -115,25 +120,15 @@
                 @elements.navbar()
             </div>
 
-            <!--signin TODO make a modal out of this? -->
-            <div class="large-1 columns align-self-middle" style="margin-top:0.9em; margin-bottom: 2em;" >
+            <!--signin -->
+            <div class="large-1 columns align-self-middle" style="margin-top: 0.9em; margin-bottom: 2em;">
                 <i class="icon-user"></i>
-                <a style="color: #888; font-size: 0.85em;" id="signin-link" onclick="openNav()" >
-                    @{user.userData match {
+                <a id="auth-link" onclick="openNav()" >
+                @{user.userData match {
                     case Some(userData) => userData.nameLogin
                     case None           => "Sign in"
                 }}
                 </a>
-
-                <div id="signin-dropdown" class="dropdown-pane float-left bottom" data-dropdown data-auto-focus="true" data-close-on-click="true" align="left">
-                @{user.userData match {
-                    case Some(userData) =>
-                        views.html.auth.miniprofile(user)
-                    case None =>
-                        views.html.general.auth()
-                }}
-                </div>
-
             </div>
         </div>
 

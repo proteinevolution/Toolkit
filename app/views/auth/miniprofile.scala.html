@@ -1,12 +1,16 @@
 @import play.api.mvc.RequestHeader
 @import models.database.User
 @(user : User)(implicit messages: Messages, request: RequestHeader)
-<div></div>
-<p>@{user.getUserData.nameLogin}</p>
-<p>@{user.getUserData.eMail}</p>
-<p></p>
-@{if(user.isSuperuser){
-    <p><a href="/@/backend/access">Link zum Backend</a></p>} // Only visible when logged in as a Superuser
-}
-<p><a id="profile-open">Edit Profile</a></p>
-<p><a href="@routes.Auth.signOut()">Sign Out</a></p>
+
+<div align="center">
+    <div id="auth-tabs">
+        <p>@{user.getUserData.nameLogin}</p>
+        <p>@{user.getUserData.eMail}</p>
+        <p></p>
+        @{if(user.isSuperuser){
+            <p><a href="/@/backend/access">Link zum Backend</a></p>} // Only visible when logged in as a Superuser
+        }
+        <p><a id="profile-open">Edit Profile</a></p>
+        <p><a href="@routes.Auth.signOut()">Sign Out</a></p>
+    </div>
+</div>
