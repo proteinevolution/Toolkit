@@ -342,12 +342,13 @@ case object Psiblast extends ToolModel {
       "matrix" -> text,
       "num_iter" -> number,
       "evalue" -> number,
+      "inclusion_ethresh" -> bigDecimal,
       "gap_open" -> number,
       "gap_ext" -> number,
       "desc" -> number,
       "standarddb" -> text
     )
-  ).fill(("", "", "", 1, 10, 11, 1, 200, ""))
+  ).fill(("", "", "", 1, 10, 0.001, 11, 1, 200, ""))
 
   // TODO Move to TEL
   val parameterValues = Map(

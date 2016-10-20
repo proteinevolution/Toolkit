@@ -30,6 +30,7 @@ object ToolModel2 {
       Param.MATRIX -> optional(text),
       Param.NUM_ITER -> optional(number),
       Param.EVALUE -> optional(number),
+      Param.ETRESH -> optional(bigDecimal),
       Param.GAP_OPEN -> optional(number),
       Param.GAP_EXT -> optional(number),
       Param.GAP_TERM -> optional(number),
@@ -110,7 +111,7 @@ object PsiBlast extends ToolModel2 {
 
 
   val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
-    "num_iter", "evalue", "gap_open", "gap_ext", "desc")
+    "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
 
   val results = Map(
     "blast" -> "",
