@@ -359,17 +359,18 @@ JobTabsComponent =
 # Job Submission input elements
 JobSubmissionComponent =
   controller: ->
-    submit: ->
+    submit: (startJob) ->
       jobid = JobModel.jobid()    # TODO Maybe merge with jobID validation
       if not jobid
         jobid = null
-      submitRoute = jsRoutes.controllers.Tool.submit(JobModel.tool().toolname, true, jobid)
+      submitRoute = jsRoutes.controllers.Tool.submit(JobModel.tool().toolname, startJob, jobid)
       formData = new FormData(document.getElementById("jobform"))
       m.request {url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}
 
   view: (ctrl) ->
     m "div", {class: "submitbuttons"}, [
-        m "input", {type: "button", class: "success button small submitJob", value: "Submit Job", onclick: ctrl.submit}  #TODO
+        m "input", {type: "button", class: "success button small submitJob", value: "Submit Job", onclick: ctrl.submit.bind(ctrl, true)}  #TODO
+        m "input", {type: "button", class: "success button small prepareJob", value: "Prepare Job", onclick: ctrl.submit.bind(ctrl, false)}
         m "input", {type: "reset", class: "alert button small resetJob", value: "Reset"}
         m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", JobModel.jobid), value: JobModel.jobid()}
     ]

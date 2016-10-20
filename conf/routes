@@ -109,8 +109,8 @@ GET         /:static                                       @controllers.Applicat
 
 # Some experimental things
 # Get ToolInformation as JSON based on toolname
-GET         /api/tools/:toolname                           @controllers.TestController.getTool(toolname)
+GET         /api/tools/:toolname                           @controllers.Service.getTool(toolname)
 # Submit new Job
 POST        /api/submit                                    @controllers.Tool.submit(toolname : String, start : Boolean, jobID : Option[String])
 # Get JobInformation based on Toolname
-GET         /api/jobs/:mainid                              @controllers.TestController.getJob(mainid)
+GET         /api/jobs/:mainid                              @controllers.Service.getJob(mainid)
