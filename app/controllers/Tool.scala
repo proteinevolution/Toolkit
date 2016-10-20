@@ -9,7 +9,7 @@ import akka.util.Timeout
 import better.files._
 import models.database.{Job, JobState}
 import models.search.JobDAO
-import models.tools.ToolModel
+import models.tools.{ToolModel, ToolModel2}
 import modules.Common
 import modules.tools.{FNV, ToolMatcher}
 import play.api.Logger
@@ -46,16 +46,8 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
   def submit(toolName: String, start : Boolean, jobID : Option[String]) = Action.async { implicit request =>
 
     getUser.flatMap { user =>
-      // Fetch the job ID from the submission, might be the empty string
-      val form = toolMatcher.formMatcher(toolName)
 
-      if (form.isEmpty)
-        Future.successful(NotFound)
-
-      else {
-        val boundForm = form.get.bindFromRequest // <- params
-
-        Logger.info(boundForm.data.mkString)
+        val boundForm = ToolModel2.jobForm.bindFromRequest
 
         lazy val DB = boundForm.data.getOrElse("standarddb","").toFile  // get hold of the database in use
         lazy val jobByteArray = boundForm.data.toString().getBytes // convert params to hashable byte array
@@ -137,7 +129,6 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                 }
               }
             }
-      }
     }
   }
 }

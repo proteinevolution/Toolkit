@@ -1,5 +1,5 @@
 sortObjectsArray = (objectsArray, sortKey) ->
-  # Quick Sort:
+# Quick Sort:
   retVal = undefined
   if 1 < objectsArray.length
     pivotIndex = Math.floor((objectsArray.length - 1) / 2)
@@ -18,6 +18,16 @@ sortObjectsArray = (objectsArray, sortKey) ->
     retVal = objectsArray
   retVal
 
+
+window.JobListComponent =
+
+  controller: ->
+    jobs :  ["apple", "orange"]
+
+
+  view: (ctrl) ->
+    m "ul", ctrl.jobs.map (job) ->
+      m "li", job
 
 
 @a = ['0', 'p', 'q', 'r', 'e', 'd','i']
@@ -97,7 +107,7 @@ jobs.vm = do ->
     vm.numericSort = () ->
       vm.list = sortObjectsArray(vm.list, 'job_id')
 
-      
+
     vm.getJobState = (receivedJob) ->
 
       jsonString = JSON.stringify(receivedJob)
@@ -136,8 +146,6 @@ jobs.view = ->
 
     ]
   ) ]]
-
-
 
 
 

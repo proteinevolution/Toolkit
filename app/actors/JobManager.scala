@@ -135,47 +135,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     }
 
 
-     // Reads parameters provided to the job from the job directory
-    case Read(user : BSONObjectID, jobID : String) =>
-      val replyTo = sender()
-      findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
-        case Some(job) => // Job Owner must be linked with the Session ID
-          job.ownerID match {
-            case Some(ownerID) =>
-              if (ownerID == user) // Retrieve the Job Files
-                replyTo ! s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map { f =>
-                  f.name -> f.contentAsString
-                }.toMap
-              else // If jobID does not belong to the user
-                replyTo ! PermissionDenied(user)
-            case None =>
-              replyTo ! s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map { f =>
-                f.name -> f.contentAsString
-              }.toMap
-          }
-        case None => // If jobID is unknown
-          replyTo ! JobIDUnknown(user)
-      }
-
-
-    // User Requests State of Job
-    case JobInfo(user : BSONObjectID, jobID : String) =>
-    // TODO Move this logic to the Controller
-      val replyTo = sender()
-        findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
-          case Some(job) => // Job Owner must be linked with the Session ID
-            job.ownerID match {
-              case Some(ownerID) =>
-                if (ownerID == user) // Retrieve the Job Files
-                  replyTo ! job
-                else // If jobID does not belong to the user
-                  replyTo ! PermissionDenied(user)
-              case None =>
-                replyTo ! job
-            }
-          case None => // If jobID is unknown
-            replyTo ! JobIDUnknown(user)
-        }
 
     case AddJob (userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach {
@@ -346,12 +305,6 @@ object JobManager {
   // Success replies
   case class AckDeleted(userID : BSONObjectID, job : Job) extends MessageWithUserID
 
-  // Reads the parameters from a prepared job and provides them to the user
-  case class Read(userID : BSONObjectID, jobID : String)
-
   // Publish changes to the JobState
   case class JobStateChanged(job : Job, state : JobState.JobState)
-
-  // Ask for jobInfo (tool name and state)
-  case class JobInfo(userID : BSONObjectID, jobID : String)
 }
