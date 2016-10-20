@@ -41,7 +41,7 @@ object PsiBlast extends Constants {
 
     for (line <- Source.fromFile(outfile).getLines()) {
 
-      result = result.concat(line)
+      result = result.concat("<br>"+line)
 
     }
 
