@@ -14,9 +14,10 @@ window.JobModel =
   defaultValues:
     "num_iter": 1
     "evalue": 10
+    "inclusion_ethresh": 0.001
     "gap_open": 11
     "gap_ext": 1
-    "desc": 5
+    "desc": 500
     "matrix": "BLOSUM62"
 
   getTool: (toolname) ->
