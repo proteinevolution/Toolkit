@@ -8,7 +8,7 @@ object psiblastpPostProcess {
     var index2 =0
     var database = ""
     var scoreE = ""
-    var pattern = ("""[0-9]><\/a>(.*)\s*""").r;
+    var pattern = ("""[0-9]><\/a>(.*)\s*""").r
     var stopParsing = false;
     val file = new File(outfile + "_overview")
     val bw = new BufferedWriter(new FileWriter(file))
@@ -37,7 +37,7 @@ object psiblastpPostProcess {
         else if (line.startsWith("<a title=")) {
           // adds checkboxes to the hits overview
           var indexadd = index + 1
-          bw.write(s"<input type='checkbox' style='margin: 9px; padding: 9px;'  class='hits' value= '$index'> $indexadd  $line")
+          bw.write(s"<input type='checkbox' style='margin: 9px; padding: 9px;'  class='hits' value= '$index'> $indexadd <b>$line</b>")
           bw.newLine()
           index = index + 1
           // adds checkboxes to the alignments
@@ -67,9 +67,10 @@ object psiblastpPostProcess {
       if (startParsing) {
         if (line.startsWith("><a title=")) {
           var index2add = index2 + 1
+	  bw2.write(s"<hr>")
           bw2.write(s"Number: $index2add")
           bw2.newLine()
-          bw2.write(s"<input type='checkbox' style='margin: 5px; padding: 5px;'  class='hits' value= '$index2'>$line")
+          bw2.write(s"<input type='checkbox' style='margin: 5px; padding: 5px;'  class='hits' value= '$index2'><b>$line</b>")
           bw2.newLine()
           index2 = index2 + 1
         } else if (line.startsWith("Window for multiple hits")) {

@@ -17,8 +17,7 @@ import scala.io.Source
 object PsiBlast extends Constants {
 
 
-
-  def evalues(mainID:String) = {
+  def evalues(mainID: String) = {
 
     // Convention over configuration! No need to configure the result files in some models or to pass the job object to the view
 
@@ -31,6 +30,24 @@ object PsiBlast extends Constants {
   }
 
 
+  def overview(mainID: String) = {
 
+
+    val outfile = s"$jobPath$mainID/results/out.psiblastp"
+
+
+    var result = ""
+    val regex = "(?s)(?<=\bIngredients\b).*?(?=\bMethod\b)".r
+
+    for (line <- Source.fromFile(outfile).getLines()) {
+
+      result = result.concat(line)
+
+    }
+
+    result
+
+  }
 
 }
+

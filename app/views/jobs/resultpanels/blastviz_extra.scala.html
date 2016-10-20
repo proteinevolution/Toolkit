@@ -1,26 +1,34 @@
-
+@import models.results.PsiBlast
 @import play.api.mvc.RequestHeader
 
-@(jobID : String, pathToBlastOutput : String)(implicit request: RequestHeader)
+@(mainID : String)(implicit request: RequestHeader)
 <link href="@routes.Assets.at("styles/psiblast-resultview.css")" rel="stylesheet">
 
 <span class="result-title-big" style="color: grey">Choose range of input query:</span>
 <p>
 </p>
 <div id="blastviz">
+
+
+
 </div>
+
 <button class="revealReference">Show references</button>
 <div id="alignment_overview">
+    @PsiBlast.overview(mainID)
 </div>
 <div  id="alignmentDetail" >
 </div>
 
+
+
+
+
+
+
+
 <script>
 $(document).ready(function(){
-psiblastBlastviz('blastviz', '@pathToBlastOutput')
-blastOutputOverview('alignment_overview', 'blaststats', '@pathToBlastOutput')
-blastOutputAlignment('alignmentDetail', 'blaststats', '@pathToBlastOutput')
-
 
 $("button.revealReference").click(function(){
     if ($.trim($(this).text()) === 'Show references') {
@@ -34,7 +42,6 @@ $("button.revealReference").click(function(){
     return false;
 });
 
-$(document).foundation();
 });
 </script>
 
