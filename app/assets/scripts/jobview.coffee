@@ -259,6 +259,16 @@ formComponents =
     label: "E-Value"
     value: args.value
   ]
+
+  "inclusion_ethresh": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "inclusion_ethresh"
+    id: "inclusion_ethresh"
+    label: "E-value inclusion threshold"
+    value: args.value
+  ]
+
   "gap_open": (args) -> [
     ParameterNumberComponent
   ,

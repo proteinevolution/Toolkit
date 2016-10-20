@@ -40,4 +40,5 @@ object Param {
   final val OFFSET = "offset"
   final val BONUSSCORE = "bonusscore"
   final val OUTORDER = "outorder"
+  final val ETRESH = "inclusion_ethresh"
 }

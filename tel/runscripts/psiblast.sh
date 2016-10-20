@@ -2,6 +2,7 @@
                                             -matrix %matrix.content \
                                             -num_iterations %num_iter.content \
                                             -evalue %evalue.content \
+                                            -inclusion_ethresh 0.001 \
                                             -gapopen %gap_open.content \
                                             -gapextend %gap_ext.content \
                                             -num_threads 4 \
