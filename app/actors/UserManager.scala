@@ -59,15 +59,6 @@ final class UserManager @Inject() (
         case None =>
       }
 
-    case GetJobList(userID : BSONObjectID) =>
-      //Logger.info("Connection stands, fetching jobs")
-      findUser(BSONDocument(User.IDDB -> userID)).foreach {
-        case Some(user) =>
-          // TODO since Common module has a link to all dbs we could just find every job here instead of querying the jobmanager
-          jobManager ! FetchJobs(user.userID, user.jobs)
-        case None =>
-          // TODO this should not happen but we might need to catch unidentified Users who have a Websocket
-      }
 
     // Add a Job to the Users view
     case JobAdded(userID : BSONObjectID, job : Job) =>
@@ -156,7 +147,6 @@ object UserManager {
   case class UserDisconnect(userID : BSONObjectID)
 
   // Get a request to send the job list
-  case class GetJobList(userID : BSONObjectID) extends MessageWithUserID
   case class JobAdded(userID : BSONObjectID, job : Job) extends MessageWithUserID
   case class ClearJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 

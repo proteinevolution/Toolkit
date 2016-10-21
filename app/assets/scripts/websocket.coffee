@@ -50,8 +50,6 @@ reconnect = (force = false) ->
 
 ####events####
 onOpen = (event) ->
-  # request the joblist
-  sendMessage("type":"GetJobList")
   clearInterval(retryCountdownInterval)
   connected  = true
   connecting = false
@@ -121,10 +119,6 @@ onMessage = (event) ->
     when "JobIDUnknown"
       text = "Sorry, but there is no such Job ID."
       $(".jobsearchform").notify(text)
-
-    # Updates the Joblist by handing over a Json Array of Jobs
-    when "JobList"
-      jobs.vm.updateList(message.list)
 
     when "AutoCompleteReply"
       $("#jobsearch").autocomplete(source:message.list)

@@ -23,7 +23,7 @@ sortObjectsArray = (objectsArray, sortKey) ->
 @jobs = {}
 
 
-class jobs.Job
+class Job
   constructor: (params) ->
     @mainID =  params.mainID
     @toolname = params.toolname
@@ -37,7 +37,11 @@ jobs.vm = do ->
   vm = {}
 
   vm.init = ->
-    vm.list = new (jobs.JobList)
+
+    m.request({url: "/api/jobs", method: "GET"}).then (jobs) ->
+      vm.list = jobs.map (job) -> new Job(job)
+
+
     vm.stateList = {"0": "Partially Prepared", "p": "Prepared", "q": "Queued", "r": "Running", "e": "Error", "d": "Done", "i": "Submitted"}
 
     # Remove on Job with a certain mainID from the JObList
@@ -51,7 +55,7 @@ jobs.vm = do ->
 
     # Update a Job Object
     vm.update = (receivedJob) ->
-      updatedJob = new jobs.Job(receivedJob)
+      updatedJob = new Job(receivedJob)
       i = 0
       while i < vm.list.length
         job = vm.list[i]
@@ -60,14 +64,6 @@ jobs.vm = do ->
           return
         i++
       vm.list.push(updatedJob)
-
-
-    # Update the joblist
-    vm.updateList = (jobList) ->
-
-      for job in jobList
-        vm.update(job)
-
 
 
     # Sort by toolname // TODO the sorting algorithm works (tested it with the same JSON data in a plain html file), the sorting here does not stabilize, though
