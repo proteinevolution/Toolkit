@@ -1,5 +1,4 @@
 
-
         <form class="jobsearchform" id="jobsearchform">
         <div id="jobsearchformdiv" align="left" style="display: flex;">
             <input type="text" placeholder="Show results by Job ID" class="jobsearch" id="jobsearch">
@@ -23,71 +22,5 @@
         </div>
         -->
 
-        <div class="button job-handle" style="display: flex;">
-            <div style=" border-right: 1px solid lightgray;" onclick="deleteIDs();" data-tooltip title="Delete selected jobs from database">Delete</div>
-            <div onclick="clearIDs();" data-tooltip title="Clear selected jobs from joblist">Clear</div>
-
-        </div>
-
 
         <div id="joblist"></div>
-
-
-
-    <script type="text/javascript">
-
-        var $divs = $("div.job");
-
-        $('.toolsort').on('click', function () {
-            console.log(JSON.stringify(jobs.vm.list));
-            m.startComputation();
-            jobs.vm.alphaSort();
-            m.endComputation();
-
-            console.log(JSON.stringify(jobs.vm.list));
-        });
-
-
-        $('.idsort').on('click', function () {
-            console.log(JSON.stringify(jobs.vm.list));
-            m.startComputation();
-            jobs.vm.numericSort();
-            m.endComputation();
-        });
-
-
-
-
-        function deleteIDs(){
-
-            var IDs = $('input:checked').map(function(){
-                return $(this).val();
-            });
-
-            if(IDs.length > 0 && confirm("Do you really want to delete the selected jobs permanently?")) {
-                m.startComputation();
-                for (var i = 0; i < IDs.length; i++){
-                    jobs.vm.delete(IDs[i], true);
-                }
-                m.endComputation();
-
-            }
-        }
-
-        function clearIDs(){
-
-            var IDs = $('input:checked').map(function(){
-                return $(this).val();
-            });
-
-            if(IDs.length > 0 && confirm("Do you really want to clear the selected jobs from the joblist?")) {
-                m.startComputation();
-                for (var i = 0; i < IDs.length; i++){
-                    jobs.vm.delete(IDs[i], false);
-                }
-                m.endComputation();
-
-            }
-        }
-
-        </script>
