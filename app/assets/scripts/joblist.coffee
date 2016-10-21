@@ -97,8 +97,24 @@ jobs.vm = do ->
 jobs.controller = ->
   jobs.vm.init()
 
+  select: (all) ->
+    $('input:checkbox.sidebarCheck').each ->
+      $(this).prop 'checked', if all then "checked" else ""
+
 #here's the view
-jobs.view = ->
+jobs.view = (ctrl) -> [
+
+  m "div", {class: "button job-button"}, [
+
+    m "div", [
+      m "span",  {onclick: ctrl.select.bind(ctrl, true)}, "All"
+      m "span", "/"
+      m "span",  {onclick: ctrl.select.bind(ctrl, false)}, "None"
+    ]
+    m "div", {class: "idsort"}, "ID"
+    m "div", {class: "toolsort"}, "Tool"
+  ]
+
   jobs.vm.list.map (job) ->
     m "div", {class: "job #{a[job.state()]}"},  [
 
@@ -110,7 +126,7 @@ jobs.view = ->
 
       m "div", {class: "toolname"}, job.toolname.substr(0,4)
     ]
-
+]
 
 
 
