@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager.Prepare
+import actors.JobManager.{StartJob, Prepare}
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
@@ -18,6 +18,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.api.Cursor
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -47,88 +48,94 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
     getUser.flatMap { user =>
 
-        val boundForm = ToolModel2.jobForm.bindFromRequest
+      val boundForm = ToolModel2.jobForm.bindFromRequest
 
-        lazy val DB = boundForm.data.getOrElse("standarddb","").toFile  // get hold of the database in use
-        lazy val jobByteArray = boundForm.data.toString().getBytes // convert params to hashable byte array
-        lazy val inputHash = FNV.hash64(jobByteArray).toString()
+      // Prepare the Job
+      val newMainID = BSONObjectID.generate()
+      jobManager ! Prepare(user, jobID, newMainID, toolName, boundForm.data)
+
+      lazy val DB = boundForm.data.getOrElse("standarddb","").toFile  // get hold of the database in use
+      lazy val jobByteArray = boundForm.data.toString().getBytes // convert params to hashable byte array
+      lazy val inputHash = FNV.hash64(jobByteArray).toString()
 
 
-        lazy val dbName = {
-          boundForm.data.get("standarddb") match {
-            case None => Some("none")
-            case _ => Some(DB.name)
-          }
+      lazy val dbName = {
+        boundForm.data.get("standarddb") match {
+          case None => Some("none")
+          case _ => Some(DB.name)
+        }
+      }
+
+      lazy val dbMtime = {
+        boundForm.data.get("standarddb") match {
+          case None => Some("1970-01-01T00:00:00Z")
+          case _ => Some("2016-08-09T12:46:51Z")
+        }
+      }
+
+      lazy val hashQuery = jobDao.matchHash(inputHash, dbName, dbMtime)
+
+      hashQuery.flatMap { richSearchResponse =>
+        println("success: " + richSearchResponse)
+        println("hits: " + richSearchResponse.totalHits)
+
+        // Generate a list of hits and convert them into a list of future option jobs
+        val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
+          BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate()) // Not optimal, as a fake Object ID is generated, but apply(id : String) was deprecated
         }
 
-        lazy val dbMtime = {
-          boundForm.data.get("standarddb") match {
-            case None => Some("1970-01-01T00:00:00Z")
-            case _ => Some("2016-08-09T12:46:51Z")
+        // Find the Jobs in the Database
+        val futureJobs = jobCollection.map(_.find(BSONDocument(Job.IDDB ->
+          BSONDocument("$in" -> mainIDs))).cursor[Job]())
+
+        // Collect the list
+        futureJobs.flatMap(_.collect[List](1, Cursor.FailOnError[List[Job]]())).map { jobList =>
+          // all mainIDs from the DB
+          val foundMainIDs   = jobList.map(_.mainID)
+
+          // mainIDs which were not in the DB
+          val unfoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
+
+          // jobs with a partition of (Failed, NotFailed)
+          val jobsPatition   = jobList.partition(_.status == JobState.Error)
+
+          // Delete index-zombie jobs
+          unfoundMainIDs.foreach { mainID =>
+            println("[WARNING]: job in index but not in database")
+            jobDao.deleteJob(mainID.stringify)
           }
-        }
 
-        lazy val hashQuery = jobDao.matchHash(inputHash, dbName, dbMtime)
+          // Mark Failed Jobs
+          jobsPatition._1.foreach { job =>
+            println("job with same signature found but job failed, should submit the job again")
+            //TODO we should delete failed jobs only here because keeping them is normally useful for debugging and statistics
+            //jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID))  // would only delete the database entry
+            //jobManager ! DeleteJob(user.userID, job.mainID)                       // deletes all files and database entries
+          }
 
-            hashQuery.flatMap { richSearchResponse =>
-              println("success: " + richSearchResponse)
-              println("hits: " + richSearchResponse.totalHits)
+          jobsPatition._2.headOption match {
+            //  Identical job has been found
+            case Some(job) =>
+              Ok(Json.obj("jobSubmitted"  -> true,
+                          "jobStarted"    -> false,
+                          "identicalJobs" -> true,
+                          "job"           -> job.cleaned(),
+                          "mainID"        -> job.mainID.stringify)
+              ).withSession(sessionCookie(request, user.sessionID.get))
 
-              // Generate a list of hits and convert them into a list of future option jobs
-              val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit => BSONObjectID(hit.getId) }
-
-              // Find the Jobs in the Database
-              val futureJobs = jobCollection.map(_.find(BSONDocument(Job.IDDB ->
-                                                        BSONDocument("$in" -> mainIDs))).cursor[Job]())
-
-              // Collect the list
-              futureJobs.flatMap(_.collect[List]()).map { jobList =>
-                // all mainIDs from the DB
-                val foundMainIDs   = jobList.map(_.mainID)
-
-                // mainIDs which were not in the DB
-                val unfoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-
-                // jobs with a partition of (Failed, NotFailed)
-                val jobsPatition   = jobList.partition(_.status == JobState.Error)
-
-                // Delete index-zombie jobs
-                unfoundMainIDs.foreach { mainID =>
-                  println("[WARNING]: job in index but not in database")
-                  jobDao.deleteJob(mainID.stringify)
-                }
-
-                // Mark Failed Jobs
-                jobsPatition._1.foreach { job =>
-                  println("job with same signature found but job failed, should submit the job again")
-                  //TODO we should delete failed jobs only here because keeping them is normally useful for debugging and statistics
-                  //jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID))  // would only delete the database entry
-                  //jobManager ! DeleteJob(user.userID, job.mainID)                       // deletes all files and database entries
-                }
-
-                jobsPatition._2.headOption match {
-
-                  //  Identical job has been found
-                  case Some(job) =>
-                    Ok(Json.obj("jobSubmitted"  -> true,
-                                "jobStarted"    -> false,
-                                "identicalJobs" -> true,
-                                "job"           -> job.cleaned(),
-                                "mainID"        -> job.mainID.stringify)
-                    ).withSession(sessionCookie(request, user.sessionID.get))
-
-                  // No identical job submission, a new Job Instance will be prepared
-                  case None =>
-                    val newMainID = BSONObjectID.generate()
-                    jobManager ! Prepare(user, jobID, newMainID, toolName, boundForm.data, start = start)
-                    Ok(Json.obj("jobSubmitted"  -> true,
-                                "jobStarted"    -> start,
-                                "identicalJobs" -> false,
-                                "mainID"        -> newMainID.stringify)
-                    ).withSession(sessionCookie(request, user.sessionID.get))
-                }
+            // No identical job submission, Start the job right away.
+            case None =>
+              if (start) {
+                jobManager ! StartJob(user.userID, newMainID)
               }
-            }
+              Ok(Json.obj("jobSubmitted"  -> true,
+                          "jobStarted"    -> start,
+                          "identicalJobs" -> false,
+                          "mainID"        -> newMainID.stringify)
+              ).withSession(sessionCookie(request, user.sessionID.get))
+          }
+        }
+      }
     }
   }
 }

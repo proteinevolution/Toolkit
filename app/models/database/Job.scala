@@ -1,6 +1,7 @@
 package models.database
 
 import models.Constants
+import models.database.JobDeletionFlag.JobDeletionFlag
 import models.database.JobState.JobState
 import org.joda.time.DateTime
 import play.api.libs.json._
@@ -48,6 +49,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
                jobID       : String,                      // User visible ID of the Job
                ownerID     : Option[BSONObjectID] = None, // User to whom the Job belongs
                status      : JobState,                    // Status of the Job
+               deletion    : Option[JobDeletionFlag] = None,    // Deletion Flag showing the reason for the deletion
                tool        : String,                      // Tool used for this Job
                statID      : String,                      //
                watchList   : Option[List[BSONObjectID]] = None, // List of the users who watch this job, None if not public
@@ -107,6 +109,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
 
   /**
     * Returns a minified version of the job which can be sent over the web socket
+ *
     * @return
     */
   def cleaned () = {
@@ -129,6 +132,7 @@ object Job {
   val JOBID         = "jobID"         //              ID for the job
   val OWNERID       = "ownerID"       //              ID of the job owner
   val STATUS        = "status"        //              Status of the job field
+  val DELETION      = "deletion"      //              Deletion status flag
   val TOOL          = "tool"          //              name of the tool field
   val STATID        = "statID"        //              ID of the stats for this Job
   val WATCHLIST     = "watchList"     //              optional list of watching users references
@@ -181,6 +185,7 @@ object Job {
         val jobID       = (obj \ JOBID).asOpt[String]
         val ownerID     = (obj \ OWNERID).asOpt[String]
         val status      = (obj \ STATUS).asOpt[JobState]
+        val deletion    = (obj \ DELETION).asOpt[JobDeletionFlag]
         val tool        = (obj \ TOOL).asOpt[String]
         val statID      = (obj \ STATID).asOpt[String]
         val watchList   = (obj \ WATCHLIST).asOpt[List[String]]
@@ -198,6 +203,7 @@ object Job {
           jobID       = "",
           ownerID     = Some(BSONObjectID.generate()),
           status      = status.get,
+          deletion    = deletion,
           tool        = "",
           statID      = "",
           watchList   = None,
@@ -224,6 +230,7 @@ object Job {
       JOBID       -> job.jobID,
       OWNERID     -> job.ownerID,
       STATUS      -> job.status,
+      DELETION    -> job.deletion,
       TOOL        -> job.tool,
       STATID      -> job.statID,
       WATCHLIST   -> job.watchList,
@@ -248,6 +255,7 @@ object Job {
           jobID       = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
           ownerID     = bson.getAs[BSONObjectID](OWNERID),
           status      = bson.getAs[JobState](STATUS).getOrElse(JobState.Error),
+          deletion    = bson.getAs[JobDeletionFlag](DELETION),
           tool        = bson.getAs[String](TOOL).getOrElse(""),
           statID      = bson.getAs[String](STATID).getOrElse(""),
           watchList   = bson.getAs[List[BSONObjectID]](WATCHLIST),
@@ -273,6 +281,7 @@ object Job {
       JOBID       -> job.jobID,
       OWNERID     -> job.ownerID,
       STATUS      -> job.status,
+      DELETION    -> job.deletion,
       TOOL        -> job.tool,
       STATID      -> job.statID,
       WATCHLIST   -> job.watchList,
