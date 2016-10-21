@@ -39,28 +39,14 @@ jobs.vm = do ->
     vm.list = new (jobs.JobList)
     vm.stateList = {"0": "Partially Prepared", "p": "Prepared", "q": "Queued", "r": "Running", "e": "Error", "d": "Done", "i": "Submitted"}
 
-    # Remove a Job from the View
-    vm.clear = (mainID) ->
-      i = 0
-      toClear = -1
-      while i < vm.list.length
-        job = vm.list[i]
-        if job.mainID() == mainID
-          toClear = i
-          break
-        i++
-      if(toClear > -1)
-        sendMessage("type":"ClearJob","mainID":mainID)
-        vm.list.splice(toClear, 1)
-        return true
-      return false
+    # Remove on Job with a certain mainID from the JObList
+    vm.delete = (mainID, fromServer=false) ->
 
+      oldLen = vm.list.length
+      vm.list = vm.list.filter (job) -> job.mainID() != mainID
+      if vm.list.length < oldLen
+        sendMessage("type": (if fromServer then "DeleteJob" else "ClearJob") ,"mainID":mainID)
 
-    # Delete a Job
-    vm.delete = (mainID) ->
-      isCleared = vm.clear(mainID)
-      if (isCleared)
-        sendMessage("type":"DeleteJob","mainID":mainID)
 
     # Update a Job Object
     vm.update = (receivedJob) ->
