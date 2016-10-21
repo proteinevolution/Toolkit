@@ -23,12 +23,13 @@ sortObjectsArray = (objectsArray, sortKey) ->
 @jobs = {}
 
 
-jobs.Job = (data) ->
-  @mainID = m.prop(data.mainID)
-  @toolname = m.prop(data.toolname)
-  @job_id = m.prop(data.job_id)
-  @state = m.prop(data.state)
-  return # This return statement is important!
+class jobs.Job
+  constructor: (params) ->
+    @mainID =  params.mainID
+    @toolname = params.toolname
+    @job_id = m.prop params.job_id
+    @state = m.prop params.state
+
 
 jobs.JobList = Array
 
@@ -43,18 +44,18 @@ jobs.vm = do ->
     vm.delete = (mainID, fromServer=false) ->
 
       oldLen = vm.list.length
-      vm.list = vm.list.filter (job) -> job.mainID() != mainID
+      vm.list = vm.list.filter (job) -> job.mainID != mainID
       if vm.list.length < oldLen
         sendMessage("type": (if fromServer then "DeleteJob" else "ClearJob") ,"mainID":mainID)
 
 
     # Update a Job Object
     vm.update = (receivedJob) ->
-      updatedJob = new jobs.Job(mainID:receivedJob.mainID, toolname:receivedJob.toolname, job_id:receivedJob.job_id, state:receivedJob.state)
+      updatedJob = new jobs.Job(receivedJob)
       i = 0
       while i < vm.list.length
         job = vm.list[i]
-        if job.mainID() == updatedJob.mainID()
+        if job.mainID == updatedJob.mainID
           vm.list[i] = updatedJob
           return
         i++
@@ -106,12 +107,12 @@ jobs.view = ->
     m "div", {class: "job #{a[job.state()]}"},  [
 
       m "div", {class: "checkbox"}, [
-            m "input", {type: "checkbox", class: 'sidebarCheck', name: job.mainID(), value: job.mainID(), id: job.mainID()}
-            m "label", {for: job.mainID()}
+            m "input", {type: "checkbox", class: 'sidebarCheck', name: job.mainID, value: job.mainID, id: job.mainID}
+            m "label", {for: job.mainID}
         ]
-      m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.mainID() + '"]', job.job_id()
+      m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.mainID + '"]', job.job_id()
 
-      m "div", {class: "toolname"}, job.toolname().substr(0,4)
+      m "div", {class: "toolname"}, job.toolname.substr(0,4)
     ]
 
 
