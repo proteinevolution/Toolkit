@@ -84,7 +84,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     // Create new Process instance of the runscript to run the tool
     val process = Process(job.scriptPath , new java.io.File(rootPath)).run()
     runningProcesses.put(job.mainID.stringify, process)
-    // set job state to queued
   }
 
 
@@ -112,9 +111,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       s"qdel $jobIDCluster".!
       Logger.info("Deleted Job on SGE")
     }
-    // set jobStatus to deleted
-    UpdateJobStatus(job.mainID,JobState.Deleted)
-    Logger.info(s"Updated job status of ${job.mainID.stringify} to Deleted")
+
   }
 
 
