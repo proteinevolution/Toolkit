@@ -1,23 +1,3 @@
-sortObjectsArray = (objectsArray, sortKey) ->
-# Quick Sort:
-  retVal = undefined
-  if 1 < objectsArray.length
-    pivotIndex = Math.floor((objectsArray.length - 1) / 2)
-    # middle index
-    pivotItem = objectsArray[pivotIndex]
-    # value in the middle index
-    less = []
-    more = []
-    objectsArray.splice pivotIndex, 1
-    # remove the item in the pivot position
-    objectsArray.forEach (value, index, array) ->
-      if value[sortKey] <= pivotItem[sortKey] then less.push(value) else more.push(value)
-      return
-    retVal = sortObjectsArray(less, sortKey).concat([ pivotItem ], sortObjectsArray(more, sortKey))
-  else
-    retVal = objectsArray
-  retVal
-
 
 @a = ['0', 'p', 'q', 'r', 'e', 'd','i']
 @jobs = {}
@@ -66,14 +46,11 @@ jobs.vm = do ->
       vm.list.push(updatedJob)
 
 
-    # Sort by toolname // TODO the sorting algorithm works (tested it with the same JSON data in a plain html file), the sorting here does not stabilize, though
-    vm.alphaSort = () ->
-      vm.list = sortObjectsArray(vm.list, 'toolname')
+    vm.sortToolname =  ->
+      vm.list = vm.list.sort (job1, job2) -> job2.toolname.localeCompare(job1.job_id)
 
-    # Sort by job id
-    vm.numericSort = () ->
-      vm.list = sortObjectsArray(vm.list, 'job_id')
-
+    vm.sortJobID =  ->
+      vm.list = vm.list.sort (job1, job2) -> job1.job_id().localeCompare(job2.job_id())
 
     vm.getJobState = (receivedJob) ->
 
@@ -110,9 +87,9 @@ jobs.controller = ->
       for id in ids
         jobs.vm.delete(id, fromServer)
 
-  toolsort: -> jobs.vm.alphaSort()
+  sortToolname : -> jobs.vm.sortToolname()
+  sortJobID: -> jobs.vm.sortJobID()
 
-  idsort: -> jobs.vm.numericSort()
 
 
 
@@ -132,8 +109,8 @@ jobs.view = (ctrl) -> [
       m "span", "/"
       m "span",  {onclick: ctrl.select.bind(ctrl, false)}, "None"
     ]
-    m "div", {class: "idsort", onclick: ctrl.idsort}, "ID"
-    m "div", {class: "toolsort", onclick: ctrl.toolsort}, "Tool"
+    m "div", {class: "idsort", onclick: ctrl.sortJobID}, "ID"
+    m "div", {class: "toolsort", onclick: ctrl.sortToolname}, "Tool"
   ]
 
   jobs.vm.list.map (job) ->
