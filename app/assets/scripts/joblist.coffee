@@ -101,8 +101,29 @@ jobs.controller = ->
     $('input:checkbox.sidebarCheck').each ->
       $(this).prop 'checked', if all then "checked" else ""
 
+  delete: (fromServer) ->
+
+    message = if fromServer then "Do you really want to delete the selected jobs permanently?"
+    else "Do you really want to clear the selected jobs from the joblist?"
+    ids = ($("input:checkbox.sidebarCheck:checked").map () -> $(this).val())
+    if ids.length > 0 and confirm(message)
+      for id in ids
+        jobs.vm.delete(id, fromServer)
+
+  toolsort: -> jobs.vm.alphaSort()
+
+  idsort: -> jobs.vm.numericSort()
+
+
+
 #here's the view
 jobs.view = (ctrl) -> [
+
+  m "div", {class: "button job-handle"}, [
+
+    m "div", {class: "delete", onclick: ctrl.delete.bind(ctrl, true)}, "Delete"
+    m "div", {onclick: ctrl.delete.bind(ctrl, false)} ,"Clear"
+  ]
 
   m "div", {class: "button job-button"}, [
 
@@ -111,8 +132,8 @@ jobs.view = (ctrl) -> [
       m "span", "/"
       m "span",  {onclick: ctrl.select.bind(ctrl, false)}, "None"
     ]
-    m "div", {class: "idsort"}, "ID"
-    m "div", {class: "toolsort"}, "Tool"
+    m "div", {class: "idsort", onclick: ctrl.idsort}, "ID"
+    m "div", {class: "toolsort", onclick: ctrl.toolsort}, "Tool"
   ]
 
   jobs.vm.list.map (job) ->
@@ -129,7 +150,13 @@ jobs.view = (ctrl) -> [
 ]
 
 
+###
+  <div class="button job-handle" style="display: flex;">
+            <div style=" border-right: 1px solid lightgray;" onclick="deleteIDs();" data-tooltip title="Delete selected jobs from database">Delete</div>
+            <div onclick="clearIDs();" data-tooltip title="Clear selected jobs from joblist">Clear</div>
 
+        </div>
+###
 
 
 
