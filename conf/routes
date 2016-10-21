@@ -114,3 +114,6 @@ GET         /api/tools/:toolname                           @controllers.Service.
 POST        /api/submit                                    @controllers.Tool.submit(toolname : String, start : Boolean, jobID : Option[String])
 # Get JobInformation based on Toolname
 GET         /api/jobs/:mainid                              @controllers.Service.getJob(mainid)
+
+# Get list of userjobs
+GET         /api/jobs                                      @controllers.Service.listJobs

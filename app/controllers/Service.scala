@@ -17,12 +17,15 @@ import better.files._
 import models.database.JobState.JobState
 import models.tools.ToolModel2
 import models.tools.ToolModel2.Toolitem
+import modules.Common
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONDocument, BSONInteger, BSONObjectID, BSONValue}
+import models.database.JobState._
+import play.api.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -48,7 +51,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                  extends Controller with I18nSupport
                                     with Constants
                                     with ReactiveMongoComponents
-                                    with UserSessions {
+                                    with UserSessions with Common {
 
   implicit val timeout = Timeout(1.seconds)
 
@@ -69,6 +72,18 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
         Ok(views.html.errors.pagenotfound()) //Bug: Mithril only accepts 200 to re-route
 
+    }
+  }
+
+
+  def listJobs = Action.async { implicit request =>
+
+    getUser.flatMap { user =>
+
+      findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
+
+        Ok(Json.toJson( jobs.map(_.cleaned)))
+      }
     }
   }
 
