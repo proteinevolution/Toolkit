@@ -19,17 +19,6 @@ sortObjectsArray = (objectsArray, sortKey) ->
   retVal
 
 
-window.JobListComponent =
-
-  controller: ->
-    jobs :  ["apple", "orange"]
-
-
-  view: (ctrl) ->
-    m "ul", ctrl.jobs.map (job) ->
-      m "li", job
-
-
 @a = ['0', 'p', 'q', 'r', 'e', 'd','i']
 @jobs = {}
 
@@ -47,8 +36,6 @@ jobs.vm = do ->
   vm = {}
 
   vm.init = ->
-    m.redraw.strategy("all")
-
     vm.list = new (jobs.JobList)
     vm.stateList = {"0": "Partially Prepared", "p": "Prepared", "q": "Queued", "r": "Running", "e": "Error", "d": "Done", "i": "Submitted"}
 
@@ -83,20 +70,17 @@ jobs.vm = do ->
         job = vm.list[i]
         if job.mainID() == updatedJob.mainID()
           vm.list[i] = updatedJob
-          m.redraw()
           return
         i++
       vm.list.push(updatedJob)
-      m.redraw()
 
 
     # Update the joblist
     vm.updateList = (jobList) ->
 
-      m.startComputation()
       for job in jobList
         vm.update(job)
-      m.endComputation()
+
 
 
     # Sort by toolname // TODO the sorting algorithm works (tested it with the same JSON data in a plain html file), the sorting here does not stabilize, though
