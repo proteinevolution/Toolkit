@@ -1,0 +1,59 @@
+
+/* The containder for the JobListComponent. Let is behave like a table and occupy the full width1 */
+#joblist {
+
+    display: table;
+    width: 100%;
+}
+
+/*  One job in the Joblist */
+#joblist .job {
+
+    display: flex;
+    border-top: none;
+    border-bottom: 1px solid lightgray;
+    border-left: 1px solid lightgray;
+    border-right: 1px solid lightgray;
+    font-size: 0.7em;
+    padding-bottom: 0.1em;
+    padding-top: 0.75em;
+}
+
+#joblist .job-handle {
+
+    display: flex;
+}
+
+#joblist .job-handle .delete {
+
+    border-right: 1px solid lightgray;
+}
+
+
+#joblist .job-button {
+    display: flex;
+}
+
+
+#joblist .job div {
+
+     width: 33%;
+}
+
+#joblist .job .checkbox {
+
+    width: 33%;
+    text-align: center;
+
+}
+
+#joblist .job .jobid {
+
+    width: 33%;
+    text-align: center;
+
+}
+
+/*
+<div style=" border-right: 1px solid lightgray;" onclick="deleteIDs();" data-tooltip title="Delete selected jobs from database">Delete</div>
+*/
