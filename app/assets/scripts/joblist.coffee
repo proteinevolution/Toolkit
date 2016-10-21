@@ -132,26 +132,17 @@ jobs.controller = ->
 
 #here's the view
 jobs.view = ->
-  [ [ jobs.vm.list.map((task) ->
-    m 'div[class=job' + ' ' + a[task.state()] + ']', {style: {display: 'flex', borderTop: 'none', borderBottom: '1px solid lightgray', borderLeft: '1px solid lightgray', borderRight: '1px solid lightgray', fontSize: '0.7em', paddingBottom: '0.1em', paddingTop: '0.75em'}},   [
-      m('div[class=', {style: {width: '33.5%'}}
-        m('div[class=checkbox]', id: 'check',  {style: {height: '2em'}}
-          m('input[type=checkbox]', class: 'sidebarCheck', id: task.mainID(), name: task.mainID(), value: task.mainID()),
-          m('label', for: task.mainID()),
-        )
-      )
+  jobs.vm.list.map (job) ->
+    m "div", {class: "job #{a[job.state()]}"},  [
 
-      m('div', id: 'job_id', {style: {width: '33.5%', align: 'center'}}, m('a[href="/#/jobs/' + task.mainID() + '"]', task.job_id())),
-      m('div', id: 'tool_name', {class: task.toolname()}, {style: {width: '33.5%', align: "center",}}, m('span[class=toolname]', task.toolname().substr(0,4))),
+      m "div", {class: "checkbox"}, [
+            m "input", {type: "checkbox", class: 'sidebarCheck', name: job.mainID(), value: job.mainID(), id: job.mainID()}
+            m "label", {for: job.mainID()}
+        ]
+      m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.mainID() + '"]', job.job_id()
 
+      m "div", {class: "toolname"}, job.toolname().substr(0,4)
     ]
-  ) ]]
-
-
-
-m.mount(document.getElementById('jobtable'),  { controller: jobs.controller, view: jobs.view})
-
-
 
 
 

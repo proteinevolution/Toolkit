@@ -70,6 +70,13 @@ StaticRoute =
         $("html, body").animate({ scrollTop: 0 }, "fast")
 
 
+
+
+# Mount JobList
+m.mount(document.getElementById('joblist'),  { controller: jobs.controller, view: jobs.view})
+
+
+
 #setup routes to start w/ the `#` symbol
 m.route.mode = 'hash'
 
