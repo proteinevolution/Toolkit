@@ -29,12 +29,6 @@
 
         </div>
 
-        <div class="button job-button" style="display: flex;">
-            <div onclick="selectAllJobs()"  style="padding-right: 1em;">All</div>
-            <div class="idsort">ID</div>
-            <div class="toolsort">Tool</div>
-        </div>
-
 
         <div id="joblist"></div>
 
@@ -95,16 +89,5 @@
 
             }
         }
-
-        function selectAllJobs(){
-
-        $('input:checkbox.sidebarCheck').each(function () {
-            var checked = !$(this).data('checked');
-            $('input:checkbox.sidebarCheck').prop('checked', checked);
-            $(this).val(checked ? 'uncheck all' : 'check all' )
-            $(this).data('checked', checked);
-        });
-}
-
 
         </script>
