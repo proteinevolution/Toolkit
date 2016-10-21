@@ -40,10 +40,6 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
         /**
           * Job interaction Requests
           */
-        // User requests the job list for the widget
-        case "GetJobList" =>
-          userManager ! GetJobList(userID)
-
         // Request to delete a job completely
         case "DeleteJob" =>
           (js \ "mainID").validate[String].asOpt match {
@@ -149,11 +145,6 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
     case JobStateChanged(job, state) =>
       out ! Json.obj("type" -> "UpdateJob",
                      "job"  -> job.cleaned())
-
-    // Sends the job list to the user
-    case SendJobList(userID : BSONObjectID, jobList : List[Job]) =>
-      out ! Json.obj("type" -> "JobList",
-                     "list" -> jobList.map(_.cleaned()))
 
     // Sends a list of possible strings for the auto complete
     case AutoCompleteReply (userID : BSONObjectID, suggestionList : List[String], element) =>

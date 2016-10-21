@@ -1,6 +1,5 @@
 package actors
 
-import java.io.{BufferedWriter, FileWriter}
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.UserManager.{JobAdded, MessageWithUserID}
@@ -11,9 +10,8 @@ import modules.Common
 import modules.tools.FNV
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID, BSONValue}
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
-import scala.concurrent.Future
 import better.files._
 import models.database.JobState.JobState
 import models.{Constants, ExitCodes}
@@ -121,20 +119,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
 
   def receive : Receive = {
-
-    // Get a request to send the job list
-    case FetchJobs(userID, mainIDs : List[BSONObjectID]) =>
-      // Find all jobs related to the session ID
-      val futureJobs = findJobs(BSONDocument(Job.IDDB ->
-                                BSONDocument("$in" -> mainIDs)))
-
-      // Collect the list and then create the reply
-      futureJobs.foreach { jobList =>
-        //println("Found " + jobList.length.toString + " Job[s]. Sending.")
-        userManager ! SendJobList(userID, jobList)
-    }
-
-
 
     case AddJob (userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach {
@@ -280,8 +264,6 @@ object JobManager {
   // When the JobManager was asked to update a Job status
   case class UpdateJobStatus(job : BSONObjectID, status : JobState)
 
-  // Jobmanager is asked to find jobs
-  case class FetchJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID]) extends MessageWithUserID
 
   // Add a Job to a Users view
   case class AddJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
@@ -294,8 +276,6 @@ object JobManager {
   /**
     * Outgoing messages
     */
-  // Send the job list to the user
-  case class SendJobList(userID : BSONObjectID, jobList : List[Job]) extends MessageWithUserID
 
   // Failure replies
   case class JobIDUnknown(userID : BSONObjectID) extends MessageWithUserID
