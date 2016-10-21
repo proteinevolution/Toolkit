@@ -73,7 +73,7 @@
             if(IDs.length > 0 && confirm("Do you really want to delete the selected jobs permanently?")) {
                 m.startComputation();
                 for (var i = 0; i < IDs.length; i++){
-                    jobs.vm.delete(IDs[i]);
+                    jobs.vm.delete(IDs[i], true);
                 }
                 m.endComputation();
 
@@ -89,7 +89,7 @@
             if(IDs.length > 0 && confirm("Do you really want to clear the selected jobs from the joblist?")) {
                 m.startComputation();
                 for (var i = 0; i < IDs.length; i++){
-                    jobs.vm.clear(IDs[i]);
+                    jobs.vm.delete(IDs[i], false);
                 }
                 m.endComputation();
 
