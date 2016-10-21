@@ -101,17 +101,15 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     }
 
     hashCollection.flatMap(_.remove(BSONDocument(JobHash.ID -> job.mainID)))
-    jobDao.deleteJob(job.mainID.stringify) // remove deleted jobs from elasticsearch job and hash indices
+    jobDao.deleteJob(job.mainID.stringify) // remove deleted job from elasticsearch job and hash indices
 
-
-    val jobIDFile = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}jobIDCluster"
-    if(job.status == JobState.Running || job.status == JobState.Queued || tel.context != "LOCAL") {
+    if(tel.context != "LOCAL" && (job.status == JobState.Running || job.status == JobState.Queued)) {
+      val jobIDFile = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}jobIDCluster"
       val jobIDCluster = scala.io.Source.fromFile(jobIDFile).mkString
       // deleting job on sge
       s"qdel $jobIDCluster".!
       Logger.info("Deleted Job on SGE")
     }
-
   }
 
 
@@ -172,7 +170,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       }
 
     // User asks to prepare new Job, might be directly executed (if start is true)
-    case Prepare(user, jobID, mainID, toolName, params, start) =>
+    case Prepare(user, jobID, mainID, toolName, params) =>
         val jobCreationTime = DateTime.now()
         val isPrivate       = params.getOrElse("private","") == "true"
         val ownerID         = if (isPrivate) Some(user.userID) else None
@@ -239,9 +237,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
 
         // Also Start Job if requested
-        if(start) {
-          executeJob(newJob)
-        }
+        //if(start) {
+        //  executeJob(newJob)
+        //}
     }
 }
 
@@ -255,8 +253,7 @@ object JobManager {
                      jobID    : Option[String],
                      mainID   : BSONObjectID,
                      toolName : String,
-                     params   : Map[String, String],
-                     start    : Boolean)
+                     params   : Map[String, String])
 
   // When the JobManager was asked to update a Job status
   case class UpdateJobStatus(job : BSONObjectID, status : JobState)
