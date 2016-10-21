@@ -2,7 +2,6 @@ package models.database
 
 
 import play.api.libs.json._
-import play.libs.Json
 import reactivemongo.bson.{BSONInteger, BSONReader, BSONWriter}
 
 /**
@@ -23,7 +22,6 @@ object JobState {
   case object Error             extends JobState
   case object Done              extends JobState
   case object Submitted         extends JobState
-  case object Deleted           extends JobState
 
 
   implicit object JobStateReads extends Reads[JobState] {
@@ -37,7 +35,6 @@ object JobState {
           case 4 => Error
           case 5 => Done
           case 6 => Submitted
-          case 7 => Deleted
           case _ => Error
         })
       } catch {
@@ -56,7 +53,6 @@ object JobState {
       case Error             => JsNumber(4)
       case Done              => JsNumber(5)
       case Submitted         => JsNumber(6)
-      case Deleted           => JsNumber(7)
     }
   }
 
@@ -73,7 +69,6 @@ object JobState {
         case BSONInteger(4) => Error
         case BSONInteger(5) => Done
         case BSONInteger(6) => Submitted
-        case BSONInteger(7) => Deleted
         case _              => Error
       }
     }
@@ -92,7 +87,6 @@ object JobState {
         case Error             => BSONInteger(4)
         case Done              => BSONInteger(5)
         case Submitted         => BSONInteger(6)
-        case Deleted           => BSONInteger(7)
       }
     }
   }
