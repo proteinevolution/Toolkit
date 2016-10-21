@@ -1,8 +1,7 @@
 package models.tel
 
 import java.nio.file.attribute.PosixFilePermission
-import javax.inject.{Inject, Singleton}
-import play.Play
+import javax.inject.{Inject, Named, Singleton}
 
 import scala.sys.process._
 import better.files.Cmds._
@@ -10,9 +9,8 @@ import better.files._
 import models.Implicits._
 import models.tel.env.Env
 import models.tel.param.Params
+import models.tel.runscripts.RunscriptManager
 
-
-import scala.io.Source
 
 /**
   *
@@ -20,7 +18,9 @@ import scala.io.Source
   */
 @Singleton
 class TEL @Inject() (env : Env,
-                     params: Params) extends TELRegex with TELConstants   {
+                     params: Params,
+                     @Named("telRunscriptManager") runscriptManager : RunscriptManager)
+  extends TELRegex with TELConstants   {
 
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
@@ -47,25 +47,6 @@ class TEL @Inject() (env : Env,
   def generateValues(param : String) : Map[String, String] = params.generateValues(param)
 
 
-
-  //-----------------------------------------------------------------------------------------------------
-  // Types
-  //-----------------------------------------------------------------------------------------------------
-
-  private var types : Map[String, Array[String]] = loadTypes()
-
-  // Reloads all the set Params from the scripts in params.d
-  private def loadTypes() = {
-    typesFile
-      .lineIterator
-      .withoutComment(commentChar)
-      .noWSLines
-      .map { line =>
-
-        val spt = line.split(":")
-        spt(0).trim() -> spt(1).split("\\s+")
-      }.toMap
-  }
 
   //-----------------------------------------------------------------------------------------------------
   // Public methods
