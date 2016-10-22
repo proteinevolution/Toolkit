@@ -6,6 +6,18 @@
     width: 100%;
 }
 
+/* Searchform */
+#joblist #jobsearchform div {
+
+    display: flex;
+}
+#joblist #jobsearchform #iconsidebar {
+
+    color: gray;
+}
+
+
+
 /*  One job in the Joblist */
 #joblist .job {
 
