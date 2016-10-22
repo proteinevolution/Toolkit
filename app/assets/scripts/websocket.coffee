@@ -76,7 +76,7 @@ onMessage = (event) ->
   # Jobstate has changed
     when "UpdateJob"
       state = message.job.state.toString()
-      console.log(state)
+      console.log("State:" + state)
       jobs.vm.update(message.job)
       if jobs.vm.getJobState(message.job) == 'running'
         $('#trafficbar').css
@@ -110,10 +110,6 @@ onMessage = (event) ->
       # Show user a popup with the submission
       if state == '0'
         $('.jobformclear').click()
-
-    # get all jobs from the server
-    when "UpdateAllJobs"
-      sendMessage("type":"GetJobList")
 
     # User was looking for a job id which was not valid
     when "JobIDUnknown"

@@ -64,6 +64,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           // Inform the users about the change
           userManager ! JobStateChanged(job, job.status)
         }
+        if (job.status == JobState.Done) {
+          runningProcesses.remove(job.mainID.stringify)
+        }
         // edit the job state in the database
         modifyJob(BSONDocument(Job.IDDB -> job.mainID),
                   BSONDocument("$set"   -> BSONDocument(Job.STATUS -> job.status)))
@@ -79,7 +82,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     * @param job
     */
   def executeJob(job : Job): Unit = {
-    updateJob(job.copy(status = JobState.Queued))
     val rootPath  = s"$jobPath$SEPARATOR${job.mainID.stringify}$SEPARATOR"
     // Create new Process instance of the runscript to run the tool
     val process = Process(job.scriptPath , new java.io.File(rootPath)).run()
@@ -89,7 +91,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
 
   /**
-    * Deletes a Job from the Database and from the file system
+    * Deletes a Job from the Database
     * @param job
     * @param userID
     */
@@ -143,21 +145,15 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         case None      =>
           // Job ID is unknown.
           userManager ! JobIDUnknown(userID)
-
           Logger.info("Unknown ID " + mainID.toString())
       }
 
     case UpdateJobStatus(jobID : BSONObjectID, status : JobState) =>
       findJob(BSONDocument(Job.IDDB -> jobID)).foreach {
         case Some(job) =>
-          if (status == JobState.Done)
-            runningProcesses.remove(job.mainID.stringify)
           updateJob(job.copy(status = status))
-          userManager ! JobStateChanged(job, status)
-          Logger.info("Successfully updated Job status " + jobID.stringify + " to " + status)
         case None =>
           userManager ! JobIDUnknown(jobID)
-          Logger.info("Unknown ID " + jobID.toString())
       }
 
 
@@ -202,6 +198,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         val rootPath = s"$jobPath$SEPARATOR${newJob.mainID.stringify}$SEPARATOR"
 
         val script = tel.init(toolName, params, rootPath)
+
         this.updateJob(newJob.copy(status = JobState.Prepared))
 
 
