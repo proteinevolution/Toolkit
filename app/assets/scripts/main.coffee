@@ -44,12 +44,6 @@ window.JobModel =
 
 
 
-
-
-
-
-
-
 StaticRoute =
   controller: ->
     { static: m.route.param('static') }
@@ -81,7 +75,6 @@ m.mount(document.getElementById('joblist'),  { controller: jobs.controller, view
 m.route.mode = 'hash'
 
 # Mount the JobViewComponent into the Client-side application via associated routed
-#m.route document.getElementById('content'), '/', { '/tools/:toolname': JobViewComponent, '/jobs/:mainID'   : Jobs, '/:static' : StaticRoute }
 m.route document.getElementById('content'), '/',
   '/:static' : StaticRoute,
   '/tools/:toolname': m.component JobViewComponent, {isJob: false}
