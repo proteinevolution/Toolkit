@@ -68,28 +68,8 @@ jobs.vm = do ->
       return vm.list[vm.list.length-1]
 
   vm
-#the controller defines what part of the model is relevant for the current page
-#in our case, there's only one view-model that handles everything
 
-jobs.controller = ->
-  jobs.vm.init()
-
-  select: (all) ->
-    $('input:checkbox.sidebarCheck').each ->
-      $(this).prop 'checked', if all then "checked" else ""
-
-  delete: (fromServer) ->
-
-    message = if fromServer then "Do you really want to delete the selected jobs permanently?"
-    else "Do you really want to clear the selected jobs from the joblist?"
-    ids = ($("input:checkbox.sidebarCheck:checked").map () -> $(this).val())
-    if ids.length > 0 and confirm(message)
-      for id in ids
-        jobs.vm.delete(id, fromServer)
-
-  sortToolname : -> jobs.vm.sortToolname()
-  sortJobID: -> jobs.vm.sortJobID()
-
+###################################################################################################################3
 
 tooltipSearch = (elem, isInit) ->
   if not isInit
@@ -98,46 +78,67 @@ tooltipSearch = (elem, isInit) ->
     elem.setAttribute "data-disable-hover", "false"
     elem.setAttribute "title", "Search for job"
 
+window.JobListComponent =
+  controller: ->
+    jobs.vm.init()
 
-#here's the view
-jobs.view = (ctrl) -> [
+    select: (all) ->
+      $('input:checkbox.sidebarCheck').each ->
+        $(this).prop 'checked', if all then "checked" else ""
 
-  m "form", {id: "jobsearchform"},
-    m "div", [
-      m "input", {type: "text", placeholder: "Search by JobID", id: "jobsearch"}
-      m "div", {id: "magnifier", class: "button", config: tooltipSearch},
-        m "i", {class: "icon-magnifying", id: "iconsidebar" }
-    ]
+    delete: (fromServer) ->
 
-  m "div", {class: "button job-handle"}, [
+      message = if fromServer then "Do you really want to delete the selected jobs permanently?"
+      else "Do you really want to clear the selected jobs from the joblist?"
+      ids = ($("input:checkbox.sidebarCheck:checked").map () -> $(this).val())
+      if ids.length > 0 and confirm(message)
+        for id in ids
+          jobs.vm.delete(id, fromServer)
 
-    m "div", {class: "delete", onclick: ctrl.delete.bind(ctrl, true)}, "Delete"
-    m "div", {onclick: ctrl.delete.bind(ctrl, false)} ,"Clear"
-  ]
+    sortToolname : -> jobs.vm.sortToolname()
+    sortJobID: -> jobs.vm.sortJobID()
 
-  m "div", {class: "button job-button"}, [
+  view: (ctrl) ->
 
-    m "div", [
-      m "span",  {onclick: ctrl.select.bind(ctrl, true)}, "All"
-      m "span", "/"
-      m "span",  {onclick: ctrl.select.bind(ctrl, false)}, "None"
-    ]
-    m "div", {class: "idsort", onclick: ctrl.sortJobID}, "ID"
-    m "div", {class: "toolsort", onclick: ctrl.sortToolname}, "Tool"
-  ]
+    m "div", {id: "joblist"}, [
+      m "form", {id: "jobsearchform"},
+        m "div", [
+          m "input", {type: "text", placeholder: "Search by JobID", id: "jobsearch"}
+          m "div", {id: "magnifier", class: "button", config: tooltipSearch},
+            m "i", {class: "icon-magnifying", id: "iconsidebar" }
+        ]
 
-  jobs.vm.list.map (job) ->
-    m "div", {class: "job #{a[job.state()]}"},  [
+      m "div", {class: "button job-handle"}, [
 
-      m "div", {class: "checkbox"}, [
+        m "div", {class: "delete", onclick: ctrl.delete.bind(ctrl, true)}, "Delete"
+        m "div", {onclick: ctrl.delete.bind(ctrl, false)} ,"Clear"
+      ]
+
+      m "div", {class: "button job-button"}, [
+
+        m "div", [
+          m "span",  {onclick: ctrl.select.bind(ctrl, true)}, "All"
+          m "span", "/"
+          m "span",  {onclick: ctrl.select.bind(ctrl, false)}, "None"
+        ]
+        m "div", {class: "idsort", onclick: ctrl.sortJobID}, "ID"
+        m "div", {class: "toolsort", onclick: ctrl.sortToolname}, "Tool"
+      ]
+
+      jobs.vm.list.map (job) ->
+        m "div", {class: "job #{a[job.state()]}"},  [
+
+          m "div", {class: "checkbox"}, [
             m "input", {type: "checkbox", class: 'sidebarCheck', name: job.mainID, value: job.mainID, id: job.mainID}
             m "label", {for: job.mainID}
-        ]
-      m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.mainID + '"]', job.job_id()
+          ]
+          m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.mainID + '"]', job.job_id()
 
-      m "div", {class: "toolname"}, job.toolname.substr(0,4)
+          m "div", {class: "toolname"}, job.toolname.substr(0,4)
+        ]
     ]
-]
+
+
 
 
 ###
