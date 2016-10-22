@@ -73,11 +73,6 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   }
 
 
-  def contact(title: String = "Contact") = Action { implicit request =>
-    Ok(views.html.general.contact())
-  }
-
-
 
   // Route is handled by Mithril
   def showTool(toolname: String) = Action { implicit request =>
