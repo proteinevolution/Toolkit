@@ -29,6 +29,9 @@
 
 
         <!-- Mithril -->
+        <link href="@routes.Assets.at("styles/index.css")" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
         <link href="@routes.Assets.at("styles/jobview.css")" rel="stylesheet">
         <link href="@routes.Assets.at("styles/joblist.css")" rel="stylesheet">
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("mithril.min.js"))" type="text/javascript" ></script>
@@ -127,38 +130,38 @@
         <div class="off-canvas-wrapper">
             <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
                 <div class="off-canvas position-left" id="offCanvas" data-off-canvas>
-
                     @elements.offcanvas()
-
                 </div>
 
-                    <!---Off Canvas Content includes main content--->
-                    <div class="off-canvas-content" data-off-canvas-content>
+                 <!---Off Canvas Content includes main content--->
+                 <div class="off-canvas-content" data-off-canvas-content>
                             <div class="title-bar hide-for-large">
                                 <div class="title-bar-left">
                                     <button class="menu-icon dark" type="button" data-open="offCanvasLeft"></button>
                                     <span class="title-bar-title">Toolkit</span>
                                 </div>
                             </div>
-                        </div>
+                 </div>
 
-                    <!---Main Content Section includes Sidebar and Content frame -->
-                        <section class="row fullwidth" id="main-content">
+                  <!--- Mount point for Mithril Application -->
+                  <div class="row" id="main-content">
+
+                            <!--
                             <div class="large-2 show-for-large columns sidebar padded-column show-for-large" id="sidebar-switch">
                                 <div id="joblist"></div>
                             </div>
 
                             <div id="content" class="large-9 small-10 columns" style="float: left;">
-                            @content
                             </div>
-                        </section>
-                    </div>
+                            -->
+                   </div>
+                </div>
 
             <div class="row show-for-large large-12 columns" id="subnav">
                 @elements.topnav(user)
             </div>
 
-            </div>
+        </div>
 
         <footer>
             @elements.footer()
@@ -172,8 +175,11 @@
 
 
         <!-- CoffeeScript Assets -->
+        <script src="@routes.Assets.at("scripts/index.js")"></script>
+        <script src="@routes.Assets.at("scripts/toolkit.js")"></script>
         <script src="@routes.Assets.at("scripts/joblist.js")"></script>
         <script src="@routes.Assets.at("scripts/jobview.js")"></script>
+        <script src="@routes.Assets.at("scripts/application.js")"></script>
         <script src="@routes.Assets.at("scripts/main.js")"></script>
         <script src="@routes.Assets.at("scripts/websocket.js")"></script>
         <script src="@routes.Assets.at("scripts/validation.js")"></script>

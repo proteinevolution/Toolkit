@@ -64,21 +64,25 @@ StaticRoute =
         $("html, body").animate({ scrollTop: 0 }, "fast")
 
 
-
-
-# Mount JobList
-m.mount(document.getElementById('joblist'),  { controller: jobs.controller, view: jobs.view})
-
-
-
 #setup routes to start w/ the `#` symbol
 m.route.mode = 'hash'
 
+
+
+m.route document.getElementById('main-content'), '/',
+  '/' : Index
+  '/:section/:argument': Toolkit
+
+
+
 # Mount the JobViewComponent into the Client-side application via associated routed
-m.route document.getElementById('content'), '/',
-  '/:static' : StaticRoute,
-  '/tools/:toolname': m.component JobViewComponent, {isJob: false}
-  '/jobs/:mainid': m.component JobViewComponent, {isJob : true}
+#m.route document.getElementById('content'), '/',
+#  '/:static' : StaticRoute,
+#  '/tools/:toolname': m.component JobViewComponent, {isJob: false}
+#  '/jobs/:mainid': m.component JobViewComponent, {isJob : true}
+
+
+
 
 
 # Miscellaneous code that is present across the whole web application

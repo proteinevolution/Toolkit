@@ -2,7 +2,7 @@ window.JobViewComponent =
 
   controller: (args) ->
     if args.isJob
-      JobModel.getJob(m.route.param("mainid")).then (data) ->    #TODO Introduce a meaningful JobModel
+      JobModel.getJob(args.mainID).then (data) ->    #TODO Introduce a meaningful JobModel
         JobModel.tool = m.prop data.toolitem
         JobModel.jobid = m.prop data.jobID
         JobModel.createdOn = m.prop data.createdOn
@@ -11,7 +11,7 @@ window.JobViewComponent =
         JobModel.paramValues = data.paramValues
 
     else
-      JobModel.tool = JobModel.getTool(m.route.param("toolname"))
+      JobModel.tool = JobModel.getTool(args.toolname)
       JobModel.isJob(false)
       JobModel.jobstate(null)
       JobModel.jobid(null)
