@@ -53,8 +53,6 @@ POST       /upload                                         @controllers.Applicat
 
 # Contact
 
-GET         /contact                                       @controllers.Application.contact()
-
 # Routes for Auth Service
 GET         /signin                                        @controllers.Auth.signIn(name_login : String = "")
 GET         /signin/:name_login                            @controllers.Auth.signIn(name_login : String)
