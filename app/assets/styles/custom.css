@@ -136,13 +136,10 @@ tr.job a:visited {
     padding: 0.625em;
 }
 
-.main-content {
+#main-content {
 
-    min-height: 100%;
     min-height: 100%;
     display: flex;
-
-
 }
 
 
