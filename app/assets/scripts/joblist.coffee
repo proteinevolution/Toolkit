@@ -91,10 +91,23 @@ jobs.controller = ->
   sortJobID: -> jobs.vm.sortJobID()
 
 
+tooltipSearch = (elem, isInit) ->
+  if not isInit
+    elem.setAttribute "data-tooltip", "data-tooltip"
+    elem.setAttribute "aria-haspopup", "true"
+    elem.setAttribute "data-disable-hover", "false"
+    elem.setAttribute "title", "Search for job"
 
 
 #here's the view
 jobs.view = (ctrl) -> [
+
+  m "form", {id: "jobsearchform"},
+    m "div", [
+      m "input", {type: "text", placeholder: "Search by JobID", id: "jobsearch"}
+      m "div", {id: "magnifier", class: "button", config: tooltipSearch},
+        m "i", {class: "icon-magnifying", id: "iconsidebar" }
+    ]
 
   m "div", {class: "button job-handle"}, [
 
