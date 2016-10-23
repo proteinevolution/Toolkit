@@ -49,11 +49,11 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
                jobID       : String,                      // User visible ID of the Job
                ownerID     : Option[BSONObjectID] = None, // User to whom the Job belongs
                status      : JobState,                    // Status of the Job
-               deletion    : Option[JobDeletion] = None,    // Deletion Flag showing the reason for the deletion
+               deletion    : Option[JobDeletion] = None,      // Deletion Flag showing the reason for the deletion
                tool        : String,                      // Tool used for this Job
                statID      : String,                      //
-               watchList   : Option[List[BSONObjectID]] = None, // List of the users who watch this job, None if not public
-               commentList : Option[List[BSONObjectID]] = None, // List of comments for the Job
+               watchList   : List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
+               commentList : List[BSONObjectID] = List.empty, // List of comments for the Job
                runtime     : Option[String],
                memory      : Option[Int],
                threads     : Option[Int],
@@ -177,8 +177,6 @@ object Job {
           deletion    = deletion,
           tool        = "",
           statID      = "",
-          watchList   = None,
-          commentList = None,
           runtime     = Some(""),
           memory      = Some(0),
           threads     = Some(0),
@@ -220,7 +218,7 @@ object Job {
     */
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson : BSONDocument): Job = {
-      Job(mainID      = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID("Null")),
+      Job(mainID      = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
           jobType     = bson.getAs[String](JOBTYPE).getOrElse("Error loading Job Type"),
           parentID    = bson.getAs[BSONObjectID](PARENTID),
           jobID       = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
@@ -229,8 +227,8 @@ object Job {
           deletion    = bson.getAs[JobDeletion](DELETION),
           tool        = bson.getAs[String](TOOL).getOrElse(""),
           statID      = bson.getAs[String](STATID).getOrElse(""),
-          watchList   = bson.getAs[List[BSONObjectID]](WATCHLIST),
-          commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST),
+          watchList   = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
+          commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
           runtime     = bson.getAs[String](RUNTIME),
           memory      = bson.getAs[Int](MEMORY),
           threads     = bson.getAs[Int](THREADS),

@@ -115,3 +115,5 @@ GET         /api/jobs/:mainid                              @controllers.Service.
 
 # Get list of userjobs
 GET         /api/jobs                                      @controllers.Service.listJobs
+
+GET         /api/jobs2/del                                  @controllers.Service.delJobs()

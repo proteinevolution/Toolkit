@@ -5,10 +5,12 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
+import models.database.JobState
 import models.{Constants, Values}
-import models.database.{Job, JobState}
+import models.database._
 import models.tel.TEL
 import modules.tools.ToolMatcher
+import org.joda.time.DateTime
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
@@ -28,6 +30,7 @@ import models.database.JobState._
 import play.api.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.Success
 
@@ -90,21 +93,26 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
   // TODO  Handle Acknowledgement
   /**
-    * User asks to delete the Job with the provided job_id
+    * User asks to delete the Job with the provided mainID
     *
-    * @param mainID
+    * @param mainIDString
     * @return
     */
-  def delJob(mainID: String) = Action.async { implicit request =>
+  def delJob(mainIDString: String) = Action.async { implicit request =>
     getUser.map { user =>
-      // TODO We go over the Websocket for this now, we may keep this for testing until production?
-      jobManager ! DeleteJob(user.userID, BSONObjectID.parse(mainID).getOrElse(BSONObjectID.generate()))
-      Ok.withSession(sessionCookie(request, user.sessionID.get))
+      BSONObjectID.parse(mainIDString) match {
+        case Success(mainID) =>
+          jobManager ! DeleteJob(user.userID, mainID)
+          Ok.withSession(sessionCookie(request, user.sessionID.get))
+        case _ =>
+          NotFound
+      }
     }
   }
 
   /**
     * Add a job to the view
+    *
     * @param mainIDString
     * @return
     */
@@ -120,6 +128,40 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     }
   }
 
+  /**
+    * Remove multiple Jobs at once - get request needs to be of format: ?mainIDs=<mainID1>,<mainID2>,...,<mainIDx>
+    * @return
+    */
+
+  def delJobs() = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      request.getQueryString("mainIDs") match {
+        case Some(mainIDsString) =>
+          // Parse the main ID string and put the mainIDs in a list
+          val mainIDs = mainIDsString.split(",")
+                          .map(mainIDString => BSONObjectID.parse(mainIDString).toOption)
+                          .filter(_.isDefined)
+                          .flatten.toList
+
+          // Tell the Jobmanager to remove the user from the jobs and mark the jobs which have no more watchers
+          jobManager ! DeleteJobs(user.userID, mainIDs)
+
+          // Remove the main IDs from the users view
+          modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$pull" -> BSONDocument(User.JOBS -> BSONDocument("$in" -> mainIDs)))).map {
+            case Some(updatedUser) =>
+              // Update the user cache
+              updateUserCache(updatedUser)
+              Ok(mainIDs.toString()).withSession(sessionCookie(request, updatedUser.sessionID.get))
+            case None =>
+              // User has not been found in the database
+              NotFound
+          }
+        case None =>
+          // No get request for the mainIDs
+          Future.successful(NotFound)
+      }
+    }
+  }
 
   // Allows serialization of tuples
   implicit def tuple2Reads[A, B](implicit aReads: Reads[A], bReads: Reads[B]): Reads[(A, B)] = Reads[(A, B)] {

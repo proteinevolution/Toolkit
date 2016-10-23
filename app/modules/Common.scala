@@ -49,6 +49,10 @@ trait Common
     jobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
   }
 
+  protected def updateJob(selector : BSONDocument, modifier : BSONDocument) = {
+    jobCollection.flatMap(_.update(selector, modifier, multi = true))
+  }
+
   protected def removeJob(selector : BSONDocument) = jobCollection.flatMap(_.remove(selector))
 
 

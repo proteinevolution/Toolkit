@@ -112,7 +112,7 @@ final class UserManager @Inject() (
 
     // Send job state changed message to all connected users
     case JobStateChanged(job : Job, state : JobState.JobState) =>
-      for (user <- job.watchList.getOrElse(List.empty)) {
+      for (user <- job.watchList) {
         connectedUsers.get(user) match {
           case Some(userActor) =>
             userActor ! JobStateChanged (job, state)
