@@ -4,7 +4,7 @@ import javax.inject.{Inject, Named, Singleton}
 
 import actors.UserManager.{JobAdded, MessageWithUserID}
 import akka.actor.{Actor, ActorLogging, ActorRef}
-import models.database.{Job, JobHash, JobState, User}
+import models.database._
 import models.search.JobDAO
 import modules.Common
 import modules.tools.FNV
@@ -92,6 +92,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   /**
     * Deletes a Job from the Database
+    *
     * @param job
     * @param userID
     */
@@ -130,22 +131,36 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     case DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach {
         case Some(job) =>
-          job.ownerID match {
-            case Some(ownerID) =>
-              if (ownerID == userID) {
-                deleteJob(job, userID)
-              } else {
-                userManager ! PermissionDenied(userID)
-                Logger.info("Permission Denied")
-              }
-            case None =>
-              // TODO decide on what to do with public jobs
-              deleteJob(job, userID)
+          if (job.ownerID.contains(userID) || (job.ownerID.isEmpty && job.watchList.isEmpty)) {
+            deleteJob(job, userID)
           }
         case None      =>
           // Job ID is unknown.
           userManager ! JobIDUnknown(userID)
           Logger.info("Unknown ID " + mainID.toString())
+      }
+
+    // User removed the Jobs from their view
+    case DeleteJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID]) =>
+      findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).foreach { foundJobs =>
+        // Mark jobs for deletion when they only have one user or if the user who requested the deletion is the owner
+        val partJobs = foundJobs.partition(job =>
+               job.ownerID.contains(userID)
+            || job.watchList.length <= 1
+        )
+
+        if (partJobs._1.nonEmpty) {
+          // mark the Jobs for deletion in the DB and remove the watchlist
+          updateJob(BSONDocument(Job.IDDB -> BSONDocument("$in" -> partJobs._1.map(_.mainID))),
+                    BSONDocument("$set"   -> BSONDocument(Job.DELETION  ->
+                         JobDeletion(JobDeletionFlag.PublicRequest, Some(DateTime.now.plusWeeks(2)))),
+                                 "$unset" -> BSONDocument(Job.WATCHLIST -> "")))
+        }
+        if (partJobs._2.nonEmpty) {
+          // remove the user from the jobs watchlist
+          updateJob(BSONDocument(Job.IDDB -> BSONDocument("$in" -> partJobs._2.map(_.mainID))),
+                    BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
+        }
       }
 
     case UpdateJobStatus(jobID : BSONObjectID, status : JobState) =>
@@ -178,7 +193,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                          status      = JobState.Submitted,
                          tool        = toolName,
                          statID      = "",
-                         watchList   = Some(List(user.userID)),
+                         watchList   = List(user.userID),
                          runtime     = Some(""),
                          memory      = Some(0),
                          threads     = Some(0),
@@ -261,6 +276,9 @@ object JobManager {
 
   // Delete Job Entirely
   case class DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
+
+  // mark multiple Jobs for deletion
+  case class DeleteJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID])
 
   // Start a Job that has been Prepared but not started
   case class StartJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
