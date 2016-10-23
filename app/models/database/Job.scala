@@ -49,7 +49,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
                jobID       : String,                      // User visible ID of the Job
                ownerID     : Option[BSONObjectID] = None, // User to whom the Job belongs
                status      : JobState,                    // Status of the Job
-               deletion    : Option[JobDeletionFlag] = None,    // Deletion Flag showing the reason for the deletion
+               deletion    : Option[JobDeletion] = None,    // Deletion Flag showing the reason for the deletion
                tool        : String,                      // Tool used for this Job
                statID      : String,                      //
                watchList   : Option[List[BSONObjectID]] = None, // List of the users who watch this job, None if not public
@@ -147,45 +147,16 @@ object Job {
   //implicit val format: Format[Job] = Json.format[Job]
 
   implicit object JsonReader extends Reads[Job] {
+    // TODO this is unused at the moment, as there is no convertion of JSON -> Job needed.
     override def reads(json: JsValue): JsResult[Job] = json match {
       case obj: JsObject => try {
-        /*
-        val mainID  = BSONObjectID.parse((obj \ IDDB).as[String]).get
-        val jobType = (obj \ JOBTYPE).as[String]
-        val parentID = BSONObjectID.parse((obj \ PARENTID).as[String]).toOption
-        val jobID   = (obj \ JOBID).as[String]
-        val ownerID = BSONObjectID.parse((obj \ USERID).as[String]).get
-        val status  = (obj \ STATUS).as[JobState]
-        val tool    = (obj \ TOOL).as[String]
-        val statID  = (obj \ STATID).as[String]
-        val watchList = (obj \ WATCHLIST).asOpt[List[String]].map(_.map(string => BSONObjectID.parse(string).get))
-        val commentList = (obj \ COMMENTLIST).asOpt[List[String]].map(_.map(string => BSONObjectID.parse(string).get))
-        val dateCreated = (obj \ DATECREATED).asOpt[String].map(time => DateTime.parse(time))
-        val dateUpdated = (obj \ DATEUPDATED).asOpt[String].map(time => DateTime.parse(time))
-        val dateViewed  = (obj \ DATEVIEWED).asOpt[String].map(time => DateTime.parse(time))
-        JsSuccess(Job(
-          mainID      = mainID,
-          jobType     = jobType,
-          parentID    = parentID,
-          jobID       = jobID,
-          ownerID     = ownerID,
-          status      = status,
-          tool        = tool,
-          statID      = statID,
-          watchList   = watchList,
-          commentList = commentList,
-          dateCreated = dateCreated,
-          dateUpdated = dateUpdated,
-          dateViewed  = dateViewed))
-        */
-
-        val mainID      = (obj \ IDDB).asOpt[String]
+        val mainID      = (obj \ ID).asOpt[String]
         val jobType     = (obj \ JOBTYPE).asOpt[String]
         val parentID    = (obj \ PARENTID).asOpt[String]
         val jobID       = (obj \ JOBID).asOpt[String]
         val ownerID     = (obj \ OWNERID).asOpt[String]
         val status      = (obj \ STATUS).asOpt[JobState]
-        val deletion    = (obj \ DELETION).asOpt[JobDeletionFlag]
+        val deletion    = (obj \ DELETION).asOpt[JobDeletion]
         val tool        = (obj \ TOOL).asOpt[String]
         val statID      = (obj \ STATID).asOpt[String]
         val watchList   = (obj \ WATCHLIST).asOpt[List[String]]
@@ -255,7 +226,7 @@ object Job {
           jobID       = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
           ownerID     = bson.getAs[BSONObjectID](OWNERID),
           status      = bson.getAs[JobState](STATUS).getOrElse(JobState.Error),
-          deletion    = bson.getAs[JobDeletionFlag](DELETION),
+          deletion    = bson.getAs[JobDeletion](DELETION),
           tool        = bson.getAs[String](TOOL).getOrElse(""),
           statID      = bson.getAs[String](STATID).getOrElse(""),
           watchList   = bson.getAs[List[BSONObjectID]](WATCHLIST),
