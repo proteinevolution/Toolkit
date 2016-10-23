@@ -81,7 +81,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     getUser.flatMap { user =>
 
       findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-
         Ok(Json.toJson( jobs.map(_.cleaned)))
       }
     }
