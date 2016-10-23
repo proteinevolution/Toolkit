@@ -10,8 +10,12 @@ import javax.inject.Inject
   */
 class Mailing @Inject() (mailerClient: MailerClient) {
 
+  /**
+    * Send a eMail to the user with the given template
+    * @param user
+    * @param template
+    */
   def sendEmail(user : User, template : MailTemplate) {
-    //val cid = user.nameLogin TODO What is that supposed to mean ?
     val email = Email(
       template.subject,
       "Toolkit Team <toolkitmpg@gmail.com>",
@@ -21,6 +25,5 @@ class Mailing @Inject() (mailerClient: MailerClient) {
       bodyHtml = Some(template.bodyHtml(user))  // HTML formatted E-Mail content
     )
     mailerClient.send(email)
-    ()
   }
 }
