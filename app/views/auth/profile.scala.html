@@ -4,98 +4,45 @@
 @(user : User)(implicit messages: Messages, request: RequestHeader)
 
 <form id="profile-edit-form" data-abide="ajax" novalidate>
-  <div class="row">
-    <div class="small-12 columns">
-      <label>
-        First Name:
-        <input type="text" id="nameFirst" name="nameFirst" placeholder="John" pattern="text" value="@{user.getUserData.nameFirst.getOrElse("")}">
-      </label>
+  <div class="row" align="center">
+    <div class="small-6 small-offset-3 columns">
+        <input type="text" id="nameFirst" name="nameFirst" placeholder="First Name" pattern="text" value="@{user.getUserData.nameFirst.getOrElse("")}">
     </div>
-    <div class="small-12 columns">
-      <label>
-        Last Name:
-        <input type="text" id="nameLast" name="nameLast" placeholder="Doe" pattern="text" value="@{user.getUserData.nameLast.getOrElse("")}">
-      </label>
+    <div class="small-6 small-offset-3 columns">
+        <input type="text" id="nameLast" name="nameLast" placeholder="Last Name" pattern="text" value="@{user.getUserData.nameLast.getOrElse("")}">
     </div>
-    <div class="small-12 columns">
-      <label>
-        Institute:
-        <input type="text" id="institute" name="institute" pattern="text" value="@{user.getUserData.institute.getOrElse("")}">
-      </label>
+    <div class="small-6 small-offset-3 columns">
+        <input type="text" id="institute" name="institute" pattern="text" placeholder="Institute" value="@{user.getUserData.institute.getOrElse("")}">
     </div>
-    <div class="small-12 columns">
-      <label>
-        Street:
-        <input type="text" id="street" name="street" pattern="text" value="@{user.getUserData.street.getOrElse("")}">
-      </label>
+    <div class="small-6 small-offset-3 columns">
+        <input type="text" id="street" name="street" pattern="text" placeholder="Street" value="@{user.getUserData.street.getOrElse("")}">
     </div>
-    <div class="small-12 columns">
-      <label>
-        City:
-        <input type="text" id="city" name="city" pattern="text" value="@{user.getUserData.city.getOrElse("")}">
-      </label>
+    <div class="small-6 small-offset-3 columns">
+        <input type="text" id="city" name="city" pattern="text" placeholder="City" value="@{user.getUserData.city.getOrElse("")}">
     </div>
-    <div class="small-12 columns">
-      <label>
-        Country:
+    <div class="small-6 small-offset-3 columns">
         <select id="country" name="country">
-          <option value="">None</option>
+          <option value="">Country</option>
             @for(region <- RegionCodes.regions){
                 <option value="@{region._1}"@if(region._1.matches(user.getUserData.country.getOrElse(""))){ selected="selected"}>@{region._2}</option>
             }
         </select>
-      </label>
     </div>
-    <div class="small-12 columns">
-      <label>
-        Group:
-        <input type="text" id="groups" name="groups" pattern="text" value="@{user.getUserData.groups.getOrElse("")}">
-      </label>
+    <div class="small-6 small-offset-3 columns">
+        <input type="text" id="groups" name="groups" pattern="text" placeholder="Group" value="@{user.getUserData.groups.getOrElse("")}">
     </div>
-    <div class="small-12 columns">
-      <label>
-        Role:
-        <input type="text" id="roles" name="roles" pattern="text" value="@{user.getUserData.roles.getOrElse("")}">
-      </label>
+    <div class="small-6 small-offset-3 columns">
+        <input type="text" id="roles" name="roles" pattern="text" placeholder="Role" value="@{user.getUserData.roles.getOrElse("")}">
     </div>
-    <div class="small-12 columns">
-      <label>
-        E-Mail:
-        <input type="text" id="eMail" name="eMail" placeholder="JohnDoe&#64;SomePlace.net" value="@{user.getUserData.eMail}" required pattern="email">
-      </label>
+    <div class="small-6 small-offset-3 columns" style="float: left;">
+        <input type="text" id="eMail" name="eMail" placeholder="E-Mail" value="@{user.getUserData.eMail}" required pattern="email">
     </div>
-  </div>
-  <div class="small-12 columns">
-    <label>
-        Password:
+    <div class="small-6 small-offset-3 columns">
         <input type="password" id="password" name="password" placeholder="Password" pattern=".{8,128}">
-      </label>
+    </div>
+          <input id="edit-submit" type="submit" class="small expanded secondary button" value="Save Changes">
   </div>
-  <input id="signup-submit" type="submit" class="small expanded secondary button" value="Save Changes">
 </form>
 
-<form id="profile-passwort-edit-form" data-abide="ajax" novalidate>
-  <div class="row">
-    <div class="small-12 columns">
-      <label>
-        Password:
-        <input type="password" id="passwordOld" placeholder="Old Password" pattern=".{8,128}">
-      </label>
-    </div>
-    <div class="small-12 columns">
-      <label>
-        Password:
-        <input type="password" id="passwordCheck" placeholder="Password" pattern=".{8,128}">
-      </label>
-    </div>
-    <div class="small-12 columns">
-      <label>
-        Repeat Password:
-        <input type="password" id="password" name="password" placeholder="Repeat password" pattern=".{8,128}" data-equalTo="passwordCheck">
-        <span class="form-error">(Passwords must match!)</span>
-      </label>
-    </div>
-  </div>
-  <input id="signup-submit" type="submit" class="small expanded secondary button" value="Save Changes">
-</form>
+
 <script src="@routes.Assets.at("scripts/profile.js")"></script>
