@@ -51,10 +51,16 @@
   box-shadow: 0 0 10px #2E8C81;
 }
 
-#signin-submit, #signup-submit, #forgot-submit {
+#signin-submit, #signup-submit, #forgot-submit, #signout-submit {
   width: 40%;
   background-color: #2E8C81;
   font-size: 0.9em;
+}
+
+#edit-submit {
+  width: 50%;
+  background-color: #2E8C81;
+  height: 3em !important;
 }
 
 #checklabel {
@@ -70,4 +76,14 @@
 
 #toS {
   margin-bottom: 1em;
+}
+
+#profile-edit-form input, #profile-edit-form select {
+  font-size: 0.8em;
+  height: 2.5em;
+}
+
+#profile-password-edit-form input,  #profile-password-edit-form select {
+  font-size: 0.8em;
+  height: 2.5em;
 }
