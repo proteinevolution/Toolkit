@@ -15,57 +15,51 @@ jobs.JobList = Array
 
 jobs.vm = do ->
   vm = {}
+  m.request({url: "/api/jobs", method: "GET"}).then (jobs) ->
+    vm.list = jobs.map (job) -> new Job(job)
 
-  vm.init = ->
+  # Remove on Job with a certain mainID from the JObList
+  vm.delete = (mainID, fromServer=false) ->
 
-    m.request({url: "/api/jobs", method: "GET"}).then (jobs) ->
-      vm.list = jobs.map (job) -> new Job(job)
-
-
-    vm.stateList = {"0": "Partially Prepared", "p": "Prepared", "q": "Queued", "r": "Running", "e": "Error", "d": "Done", "i": "Submitted"}
-
-    # Remove on Job with a certain mainID from the JObList
-    vm.delete = (mainID, fromServer=false) ->
-
-      oldLen = vm.list.length
-      vm.list = vm.list.filter (job) -> job.mainID != mainID
-      if vm.list.length < oldLen
-        sendMessage("type": (if fromServer then "DeleteJob" else "ClearJob") ,"mainID":mainID)
+    oldLen = vm.list.length
+    vm.list = vm.list.filter (job) -> job.mainID != mainID
+    if vm.list.length < oldLen
+      sendMessage("type": (if fromServer then "DeleteJob" else "ClearJob") ,"mainID":mainID)
 
 
-    # Update a Job Object
-    vm.update = (receivedJob) ->
-      updatedJob = new Job(receivedJob)
-      i = 0
-      while i < vm.list.length
-        job = vm.list[i]
-        if job.mainID == updatedJob.mainID
-          vm.list[i] = updatedJob
-          return
-        i++
-      vm.list.push(updatedJob)
+  # Update a Job Object
+  vm.update = (receivedJob) ->
+    updatedJob = new Job(receivedJob)
+    i = 0
+    while i < vm.list.length
+      job = vm.list[i]
+      if job.mainID == updatedJob.mainID
+        vm.list[i] = updatedJob
+        return
+      i++
+    vm.list.push(updatedJob)
 
 
-    vm.sortToolname =  ->
-      vm.list = vm.list.sort (job1, job2) -> job2.toolname.localeCompare(job1.job_id)
+  vm.sortToolname =  ->
+    vm.list = vm.list.sort (job1, job2) -> job2.toolname.localeCompare(job1.job_id)
 
-    vm.sortJobID =  ->
-      vm.list = vm.list.sort (job1, job2) -> job1.job_id().localeCompare(job2.job_id())
+  vm.sortJobID =  ->
+    vm.list = vm.list.sort (job1, job2) -> job1.job_id().localeCompare(job2.job_id())
 
-    vm.getJobState = (receivedJob) ->
+  vm.getJobState = (receivedJob) ->
 
-      jsonString = JSON.stringify(receivedJob)
-      if jsonString.indexOf('\"state\":3') > -1
-        return 'running'
-      else if jsonString.indexOf('\"state\":4') > -1
-        return 'error'
-      else if jsonString.indexOf('\"state\":5') > -1
-        return 'done'
-      else
-        return 'other'
+    jsonString = JSON.stringify(receivedJob)
+    if jsonString.indexOf('\"state\":3') > -1
+      return 'running'
+    else if jsonString.indexOf('\"state\":4') > -1
+      return 'error'
+    else if jsonString.indexOf('\"state\":5') > -1
+      return 'done'
+    else
+      return 'other'
 
-    vm.getLastJob = () ->
-      return vm.list[vm.list.length-1]
+  vm.getLastJob = () ->
+    return vm.list[vm.list.length-1]
 
   vm
 
@@ -80,7 +74,6 @@ tooltipSearch = (elem, isInit) ->
 
 window.JobListComponent =
   controller: ->
-    jobs.vm.init()
 
     select: (all) ->
       $('input:checkbox.sidebarCheck').each ->
