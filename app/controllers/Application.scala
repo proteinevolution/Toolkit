@@ -7,9 +7,7 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import models.{Constants, Values}
 import models.tel.TEL
-import models.tools.ToolModel
 import modules.Common
-import modules.tools.ToolMatcher
 import play.api.Configuration
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -32,7 +30,6 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                             system           : ActorSystem,
                             mat              : Materializer,
                         val tel              : TEL,
-                        val toolMatcher      : ToolMatcher,
                         val search           : Search,
                         val toolMirror       : ToolMirror,
                         val settings : Settings,

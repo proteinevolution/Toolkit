@@ -11,7 +11,7 @@ import models.database.{Job, JobState}
 import models.search.JobDAO
 import models.tools.{ToolModel, ToolModel2}
 import modules.Common
-import modules.tools.{FNV, ToolMatcher}
+import modules.tools.{FNV}
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -38,7 +38,6 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                            val reactiveMongoApi : ReactiveMongoApi,
                            implicit val mat     : Materializer,
                            val jobDao           : JobDAO,
-                           val toolMatcher      : ToolMatcher,
                            @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport with UserSessions with Common {
 
   implicit val timeout = Timeout(5.seconds)
