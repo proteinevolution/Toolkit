@@ -21,10 +21,14 @@ body{
     background-color: #DBFFDB;
 
 }
-
 .d:hover {
     background-color: #C3FFC3;
 }
+.d.selected {
+    background-color: #C3FFC3;
+}
+
+
 
 .e {
     background-color: #FFDDDD;
@@ -32,6 +36,10 @@ body{
 .e:hover {
     background-color: #FFC5C5;
 }
+.e.selected {
+    background-color: #FFC5C5;
+}
+
 
 .r{
     background-color: #FFFF94;
@@ -39,10 +47,17 @@ body{
 .r:hover {
     background-color: #FFF666;
 }
+.r.selected {
+    background-color: #FFF666;
+}
+
 .q {
     background-color: #d6c1c3;
 }
 .q:hover {
+    background-color: #c0b5bf;
+}
+.q.selected {
     background-color: #c0b5bf;
 }
 
@@ -50,6 +65,9 @@ body{
     background-color: #f2f2f2;
 }
 .p:hover {
+    background-color: #DADADA;
+}
+.p.selected {
     background-color: #DADADA;
 }
 
