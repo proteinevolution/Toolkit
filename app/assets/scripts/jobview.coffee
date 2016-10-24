@@ -1,46 +1,23 @@
+
 window.JobViewComponent =
 
-  controller: (args) ->
-    if args.isJob
-      JobModel.getJob(m.route.param("mainid")).then (data) ->    #TODO Introduce a meaningful JobModel
-        JobModel.tool = m.prop data.toolitem
-        JobModel.jobid = m.prop data.jobID
-        JobModel.createdOn = m.prop data.createdOn
-        JobModel.jobstate = m.prop data.state
-        JobModel.views = m.prop data.views
-        JobModel.paramValues = data.paramValues
-
-    else
-      JobModel.tool = JobModel.getTool(m.route.param("toolname"))
-      JobModel.isJob(false)
-      JobModel.jobstate(null)
-      JobModel.jobid(null)
-      JobModel.views(null)
-      JobModel.paramValues = {}
-
-  view: (ctrl) ->
+  view: (ctrl, args) ->
+    job = args.job()
     m "div", {id: "jobview"}, [
-
-      m.component(JobLineComponent),
-      m.component(JobTabsComponent)
+      m JobLineComponent, {toolnameLong: job.tool.toolnameLong, isJob: job.isJob, jobID: job.jobid }
+      m JobTabsComponent, {job: job}
     ]
+
 ##############################################################################
-
-
-# Component for the Jobline in the unified JobView
+# Component for the Jobline
 JobLineComponent =
-  controller: ->
-    toolnameLong: JobModel.tool().toolnameLong
-    jobid : JobModel.jobid()
-    createdOn : JobModel.createdOn()
-  view: (ctrl) ->
+  controller: (args) ->
+    jobinfo: if args.isJob then "JobID: #{args.jobID()}" else "Submit a new Job"
+
+  view: (ctrl, args) ->
     m "div", {class: "jobline"}, [
-      m "span", {class: "toolname"}, ctrl.toolnameLong     # Long toolname in Job Descriptor Line
-      m "span", {class: "jobinfo"},
-        if ctrl.jobid
-          "JobID: #{ctrl.jobid} CreatedOn: #{ctrl.createdOn}"
-        else
-          "Submit a new Job"
+      m "span", {class: "toolname"}, args.toolnameLong     # Long toolname in Job Descriptor Line
+      m "span", {class: "jobinfo"}, ctrl.jobinfo
     ]
 ##############################################################################
 
@@ -57,22 +34,22 @@ renderParameter = (content, moreClasses) ->
 
 # Encompasses the individual sections of a Job, usually rendered as tabs
 JobTabsComponent =
-  controller: ->
-    params = JobModel.tool().params
-
+  controller: (args) ->
+    params = args.job.tool.params
     listitems = params.map (param) -> param[0]
-    views = JobModel.views()
+    views = args.job.views
     if views
       listitems = listitems.concat views.map (view) -> view[0]
 
     # Determine whether the parameters contain an alignment
     params: params
     alignmentPresent: params[0][1][0][0] is "alignment"
-    isJob : JobModel.isJob()
-    state: JobModel.jobstate()
+    isJob : args.job.isJob
+    state: args.job.jobstate
     listitems: listitems
     views: views
     getParamValue : JobModel.getParamValue
+    job : args.job
 
 
   view: (ctrl) ->
@@ -110,7 +87,7 @@ JobTabsComponent =
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
               ]
-            m.component(JobSubmissionComponent)
+            m JobSubmissionComponent, {job: ctrl.job}
           ]
       if ctrl.views
         ctrl.views.map (view) ->
@@ -120,21 +97,21 @@ JobTabsComponent =
 ##############################################################################
 # Job Submission input elements
 JobSubmissionComponent =
-  controller: ->
+  controller: (args) ->
     submit: (startJob) ->
-      jobid = JobModel.jobid()    # TODO Maybe merge with jobID validation
+      jobid = args.job.jobid()    # TODO Maybe merge with jobID validation
       if not jobid
         jobid = null
-      submitRoute = jsRoutes.controllers.Tool.submit(JobModel.tool().toolname, startJob, jobid)
+      submitRoute = jsRoutes.controllers.Tool.submit(args.job.tool.toolname, startJob, jobid)
       formData = new FormData(document.getElementById("jobform"))
       m.request {url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}
 
-  view: (ctrl) ->
+  view: (ctrl, args) ->
     m "div", {class: "submitbuttons"}, [
       m "input", {type: "button", class: "success button small submitJob", value: "Submit Job", onclick: ctrl.submit.bind(ctrl, true)}  #TODO
       m "input", {type: "button", class: "success button small prepareJob", value: "Prepare Job", onclick: ctrl.submit.bind(ctrl, false)}
       m "input", {type: "reset", class: "alert button small resetJob", value: "Reset"}
-      m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", JobModel.jobid), value: JobModel.jobid()}
+      m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job.jobid), value: args.job.jobid()}
     ]
 ##############################################################################
 
