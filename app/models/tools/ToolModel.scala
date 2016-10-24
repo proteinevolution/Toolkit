@@ -1,383 +1,218 @@
 package models.tools
 
-import enumeratum._
+
+import enumeratum.{PlayEnum, EnumEntry}
+import models.tools.ToolModel.Toolitem
+
+import models.{Param, Values}
 import play.api.data.Form
 import play.api.data.Forms._
 
 
+
+
 sealed trait ToolModel extends EnumEntry {
+
+
 
   val toolNameShort : String
   val toolNameLong : String
-  val toolNameAbbreviation : String
-  val section : String
+  val toolNameAbbrev : String
+  val category : String
   val optional : String
 
+  // Set of parameter values that are used in the tool
+  val params : Seq[String]
+
+  // The results the tool is associated with
+  val results : Map[String, String]
+
+  val paramGroups = Map(
+
+    "Alignment" -> Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
+  )
+
+  // Params which are not a part of any group
+  val remainParamName : String = "Parameter"
+  lazy val remainParams : Seq[String] = params.diff(paramGroups.values.flatten.toSeq)
+
+  def toolitem(values : Values) : Toolitem = Toolitem(
+
+    this.toolNameShort,
+    this.toolNameLong,
+    this.toolNameAbbrev,
+    this.optional,
+    this.category, this.paramGroups.keysIterator.map { group =>
+
+      group ->  this.paramGroups(group).filter(this.params.contains(_)).map { param =>
+
+        param -> values.allowed.getOrElse(param, Seq.empty)
+      }
+    }.toSeq :+
+      this.remainParamName -> this.remainParams.map { param =>
+
+        param -> values.allowed.getOrElse(param, Seq.empty)
+
+      }
+  )
 }
 
 object ToolModel extends PlayEnum[ToolModel] {
 
+  case class Toolitem(toolname : String,
+                      toolnameLong : String,
+                      toolnameAbbrev : String,
+                      category : String,
+                      optional : String,
+                      params : Seq[(String, Seq[(String, Seq[(String, String)])])])
+
   val values = findValues
 
-  // Related to the parameter specification of the tools
-  val parameterGroups : Map[String, Seq[String]] = Map(
-    "Alignment" -> List("alignment", "alignment_format", "standarddb")
-  )
-  val parameterCatchAllName : String = "Parameter"
-
-
-case object Clans extends ToolModel {
-
-  // --- Names for the Tool ---
-  val toolNameShort        = "clans"
-  val toolNameLong         = "Clans"
-  val toolNameAbbreviation = "clns"
-  val section = "classification"
-  val optional = ""
-
-
-  // --- Clans specific values ---
-  // Returns the Input Form Definition of this tool
-  val inputForm = Form(
+  final val jobForm = Form(
     tuple(
-      "alignment" -> nonEmptyText,
-      "matrix" -> text,
-      "num_iter" -> number,
-      "evalue" -> number,
-      "standarddb" -> text,
-      "psiblastmode" -> boolean,
-      "protblastmode" -> boolean,
-      "firstevalue" -> number,
-      "complexityfilter" -> boolean,
-      "ungapped" -> boolean,
-      "customid" -> text
+      Param.ALIGNMENT -> nonEmptyText, // Input Alignment or input sequences
+      Param.ALIGNMENT_FORMAT -> optional(nonEmptyText),
+      Param.STANDARD_DB -> optional(text),
+      Param.MATRIX -> optional(text),
+      Param.NUM_ITER -> optional(number),
+      Param.EVALUE -> optional(number),
+      Param.ETRESH -> optional(bigDecimal),
+      Param.GAP_OPEN -> optional(number),
+      Param.GAP_EXT -> optional(number),
+      Param.GAP_TERM -> optional(number),
+      Param.DESC -> optional(number),
+      Param.CONSISTENCY -> optional(number),
+      Param.ITREFINE -> optional(number),
+      Param.PRETRAIN -> optional(number),
+      Param.MAXROUNDS -> optional(number),
+      Param.OFFSET -> optional(number),
+      Param.BONUSSCORE -> optional(number),
+      Param.OUTORDER -> optional(text)
     )
   )
 
-  val parameterValues = Map(
-    "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
-    "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
+  val toolMap : Map[String, ToolModel] = Map(
+    "psiblast" -> PsiBlast,
+    "tcoffee" -> Tcoffee,
+    "probcons" -> Probcons,
+    "muscle" -> Muscle,
+    "mafft" -> Mafft,
+    "kalign" -> Kalign,
+    "hmmer3" -> Hmmer3
   )
-}
 
-  case object ClustalOmega extends ToolModel {
+
+
+  case object PsiBlast extends ToolModel {
 
     // --- Names for the Tool ---
-    val toolNameShort = "clustalomega"
-    val toolNameLong = "Clustal Omega"
-    val toolNameAbbreviation = "clo"
-    val section = "alignment"
+    val toolNameShort = "psiblast"
+    val toolNameLong = "PSI-BLAST"
+    val toolNameAbbrev = "pbl"
+    val category = "search"
     val optional = ""
 
 
-    // Returns the Input Form Definition of this tool
-    val inputForm = Form(
-      tuple(
-        "sequences" -> nonEmptyText,
-        "otheradvanced" -> text
+    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
+      "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
 
-      )
+    val results = Map(
+      "blast" -> "",
+      "evalue" -> "evalues.dat",
+      "fasta" -> "out.align",
+      "biojs" -> "out.align_clu"
     )
-
   }
-case object Csblast extends ToolModel {
 
-  // --- Names for the Tool ---
-  val toolNameShort        = "csblast"
-  val toolNameLong         = "CS-BLAST"
-  val toolNameAbbreviation = "cbl"
-  val section = "search"
-  val optional = ""
 
-  // Returns the Input Form Definition of this tool
-  val inputForm = Form(
-    tuple(
-      "alignment" -> nonEmptyText,
-      "alignment_format" -> text,
-      "matrix" -> text,
-      "num_iter" -> number,
-      "evalue" -> number,
-      "gap_open" -> number,
-      "gap_ext" -> number,
-      "desc" -> number,
-      "standarddb" -> text
-    )
-  )
-
-  val parameterValues = Map(
-    "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
-    "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
-  )
-}
-  case object GLProbs extends ToolModel {
+  case object Tcoffee extends ToolModel {
 
     // --- Names for the Tool ---
-    val toolNameShort = "glprobs"
-    val toolNameLong = "GLProbs"
-    val toolNameAbbreviation = "glp"
-    val section = "alignment"
+    val toolNameShort = "tcoffee"
+    val toolNameLong = "T-Coffee"
+    val toolNameAbbrev = "tcf"
+    val category = "alignment"
     val optional = ""
 
+    val params = Seq(Param.ALIGNMENT)
 
-    // Returns the Input Form Definition of this tool
-    val inputForm = Form(
-      single(
-        "sequences" -> nonEmptyText
-      )
+    val results = Map(
+
+      "simple" -> "alignment.clustalw_aln",
+      "biojs" -> "alignment.clustalw_aln"
     )
-
   }
-case object HHblits extends ToolModel{
 
-  // --- Names for the Tool ---
-  val toolNameShort        = "hhblits"
-  val toolNameLong         = "HHblits"
-  val toolNameAbbreviation = "HHBL"
-  val section = "search"
-  val optional = ""
-
-
-  // --- HHblits
-  // Returns the Input Form Definition of this tool
-  val inputForm = Form(
-    tuple(
-      "alignment" -> nonEmptyText,
-      "alignment_format" -> text,
-      "hhblitsdb" -> text
-    )
-  )
-
-  val parameterValues = Map(
-    "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
-    "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
-  )
-
-}
-
-case object HHpred extends ToolModel {
-
-
-  // --- Names for the Tool ---
-  val toolNameShort        = "hhpred"
-  val toolNameLong         = "HHpred"
-  val toolNameAbbreviation = "HHPR"
-  val section = "search"
-  val optional = "3ary"
-
-
-  // --- HHPRED
-  // Returns the Input Form Definition of this tool
-  val inputForm = Form(
-    tuple(
-      "alignment" -> nonEmptyText,
-      "alignment_format" -> text,
-      "hmmdb" -> text
-    )
-  )
-
-  val parameterValues = Map(
-    "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
-    "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
-  )
-
-}
-
-case object Hmmer3 extends ToolModel {
-
-  // --- Names for the Tool ---
-  val toolNameShort        = "hmmer3"
-  val toolNameLong         = "Hmmer3"
-  val toolNameAbbreviation = "hm3"
-  val section = "search"
-  val optional = ""
-
-
-
-
-  // --- Hmmer3 specific values ---
-  // Returns the Input Form Definition of this tool
-  val inputForm = Form(
-    tuple(
-      "alignment" -> nonEmptyText,
-      "alignment_format" -> text,
-      "standarddb" -> text
-    )
-  )
-
-  val parameterValues = Map(
-    "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
-    "alignment_format" -> Set("fas", "clu")
-  )
-
-}
-  case object Kalign extends ToolModel {
+  case object Probcons extends ToolModel {
 
     // --- Names for the Tool ---
-    val toolNameShort = "kalign"
-    val toolNameLong = "Kalign"
-    val toolNameAbbreviation = "kal"
-    val section = "alignment"
+    val toolNameShort = "probcons"
+    val toolNameLong = "ProbCons"
+    val toolNameAbbrev = "pcns"
+    val category = "alignment"
     val optional = ""
 
+    val params = Seq(Param.ALIGNMENT, Param.CONSISTENCY, Param.ITREFINE, Param.PRETRAIN)
 
-    // --- PatSearch specific values ---
-    // Returns the Input Form Definition of this tool
-    val inputForm = Form(
-      tuple(
-        "sequences" -> nonEmptyText,
-        "outorder" -> text,
-        "gapopen" -> bigDecimal,
-        "gapextension" -> bigDecimal,
-        "termgap" -> bigDecimal,
-        "bonusscore" -> bigDecimal
-      )
-    )fill(("","input", 11.0, 0.85, 0.45, 0.0))
-
-    val parameterValues = Map(
-      "outorder" -> Set("Input","Tree", "Gaps")
-    )
+    val results = Map.empty[String, String]
   }
-case object Mafft extends ToolModel {
-
-  // --- Names for the Tool ---
-  val toolNameShort        = "mafft"
-  val toolNameLong         = "Mafft"
-  val toolNameAbbreviation = "mft"
-  val section = "alignment"
-  val optional = ""
-
-  // --- Mafft specific values ---
-  // Returns the Input Form Definition of this tool
-  val inputForm = Form(
-    tuple(
-      "sequences" -> nonEmptyText,
-      "gapopen" -> bigDecimal(5,3),
-      "offset" -> bigDecimal(5,3)
-    )
-  )fill(("",1.53,0.00))
-}
 
   case object Muscle extends ToolModel {
 
     // --- Names for the Tool ---
     val toolNameShort = "muscle"
     val toolNameLong = "MUSCLE"
-    val toolNameAbbreviation = "msc"
-    val section = "alignment"
+    val toolNameAbbrev = "msc"
+    val category = "alignment"
     val optional = ""
 
-    // --- MUSCLE specific values ---
-    // Returns the Input Form Definition of this tool
-    val inputForm = Form(
-      tuple(
-        "sequences" -> nonEmptyText,
-        "maxrounds" -> number,
-        "otheradvanced" -> text
-      )
-    )fill("",16,"")
+    val params = Seq("alignment", "maxrounds")
+
+    val results = Map.empty[String, String]
+  }
+
+  case object Mafft extends ToolModel {
+
+    val toolNameShort = "mafft"
+    val toolNameLong = "Mafft"
+    val toolNameAbbrev = "mft"
+    val category = "alignment"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT, Param.GAP_OPEN, Param.OFFSET)
+
+    val results = Map.empty[String, String]
 
   }
-  case object PatSearch extends ToolModel {
+
+  case object Kalign extends ToolModel {
 
     // --- Names for the Tool ---
-    val toolNameShort = "patsearch"
-    val toolNameLong = "PatSearch"
-    val toolNameAbbreviation = "pts"
-    val section = "search"
+    val toolNameShort = "kalign"
+    val toolNameLong = "Kalign"
+    val toolNameAbbrev = "kal"
+    val category = "alignment"
     val optional = ""
 
+    val params = Seq(Param.ALIGNMENT, Param.OUTORDER, Param.GAP_OPEN, Param.GAP_EXT, Param.GAP_TERM, Param.BONUSSCORE)
 
-    // --- PatSearch specific values ---
-    // Returns the Input Form Definition of this tool
-    val inputForm = Form(
-      tuple(
-        "inputpattern" ->nonEmptyText,
-        "type" -> text,
-        "standarddb" -> text
-      )
-    )
-
-    val parameterValues = Map(
-      "type" -> Set("pro","reg")
-    )
+    val results = Map.empty[String, String]
   }
 
-  case object ProbCons extends ToolModel {
+  case object Hmmer3 extends ToolModel {
+
 
     // --- Names for the Tool ---
-    val toolNameShort = "probcons"
-    val toolNameLong = "ProbCons"
-    val toolNameAbbreviation = "pcns"
-    val section = "alignment"
+    val toolNameShort = "hmmer3"
+    val toolNameLong = "Hmmer3"
+    val toolNameAbbrev = "hm3"
+    val category = "search"
     val optional = ""
 
+    val params = Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
 
-    // Returns the Input Form Definition of this tool
-    val inputForm = Form(
-      tuple(
-        "sequences" -> nonEmptyText,
-        "consistency" -> number,
-        "itrefine" -> number,
-        "pretrain" -> number,
-        "otheradvanced" -> text
-      )
-    )fill("", 2, 100, 0, "")
-
+    val results = Map(
+      "fileview" -> "domtbl"
+    )
   }
 
-case object Psiblast extends ToolModel {
-
-  // --- Names for the Tool ---
-  val toolNameShort       = "psiblast"
-  val toolNameLong        = "PSI-BLAST"
-  val toolNameAbbreviation = "pbl"
-  val section = "search"
-  val optional = ""
-
-  // Returns the Input Form Definition of this tool
-  val inputForm = Form(
-    tuple(
-      "alignment" -> nonEmptyText,
-      "alignment_format" -> text,
-      "matrix" -> text,
-      "num_iter" -> number,
-      "evalue" -> number,
-      "inclusion_ethresh" -> bigDecimal,
-      "gap_open" -> number,
-      "gap_ext" -> number,
-      "desc" -> number,
-      "standarddb" -> text
-    )
-  ).fill(("", "", "", 1, 10, 0.001, 11, 1, 200, ""))
-
-  // TODO Move to TEL
-  val parameterValues = Map(
-    "matrix" -> Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70"),
-    "alignment_format" -> Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
-  )
 }
-
-
-case object Tcoffee extends ToolModel {
-
-  // --- Names for the Tool ---
-  val toolNameShort = "tcoffee"
-  val toolNameLong = "T-Coffee"
-  val toolNameAbbreviation = "tcf"
-  val section = "alignment"
-  val optional = ""
-
-  // --- Tcoffee specific values ---
-  // Returns the Input Form Definition of this tool
-  val inputForm = Form(
-    tuple(
-      "sequences" -> nonEmptyText,
-      "mlalign_id_pair" -> boolean,
-      "mfast_pair" -> boolean,
-      "mslow_pair" -> boolean
-    )
-  )
-}
-
-}
-

@@ -6,6 +6,7 @@ import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.database.JobState
+import models.tools.ToolModel
 import models.{Constants, Values}
 import models.database._
 import models.tel.TEL
@@ -15,8 +16,7 @@ import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
 import models.database.JobState.JobState
-import models.tools.ToolModel2
-import models.tools.ToolModel2.Toolitem
+import models.tools.ToolModel._
 import modules.Common
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
@@ -183,6 +183,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       (JsPath \ "toolnameLong").write[String] and
       (JsPath \ "toolnameAbbrev").write[String] and
       (JsPath \ "category").write[String] and
+      (JsPath \ "optional").write[String] and
       (JsPath \ "params").write[Seq[(String, Seq[(String, Seq[(String, String)])])]]
     ) (unlift(Toolitem.unapply))
 
@@ -210,7 +211,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   def getTool(toolname: String) = Action {
 
     Ok(Json.toJson(toolitemCache.getOrElse(toolname) {
-      val x = ToolModel2.toolMap(toolname).toolitem(values) // Reset toolitem in cache
+      val x = ToolModel.toolMap(toolname).toolitem(values) // Reset toolitem in cache
       toolitemCache.set(toolname, x)
       x
     }))
@@ -227,7 +228,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
         jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).map {
 
           case Some(job) =>
-            val toolModel = ToolModel2.toolMap(job.tool)
+            val toolModel = ToolModel.toolMap(job.tool)
 
             val toolitem = toolitemCache.getOrElse(job.tool) {
               val x = toolModel.toolitem(values) // Reset toolitem in cache
