@@ -68,7 +68,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
 
     tel.port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
     println("[CONFIG:] running on port "+tel.port)
-    println("[CONFIG:] execution mode: " + settings.clusterMode)
+    println("[CONFIG:] execution mode: "+settings.clusterMode)
     getUser.map { user =>
       Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user))
         .withSession(sessionCookie(request, user.sessionID.get))
