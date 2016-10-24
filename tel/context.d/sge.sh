@@ -1,5 +1,3 @@
-#!/bin/bash
-
 qsub -sync n \
       -l h_vmem=128G \
       -cwd  \
