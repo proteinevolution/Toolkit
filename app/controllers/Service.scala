@@ -201,6 +201,9 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               case JobState.Running => Seq(
                 "Running" -> Html("Job is currently being executed"))
 
+              case JobState.Error => Seq(
+                "Error" -> Html("Job has reached error state"))
+
               case JobState.Done => toolModel.results.map { kv =>
 
                 kv._1 -> views.html.jobs.resultpanel(kv._1, kv._2, job.mainID.stringify)
