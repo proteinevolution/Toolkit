@@ -9,6 +9,7 @@ class Job
     @toolname = params.toolname
     @job_id = m.prop params.job_id
     @state = m.prop params.state
+    @selected = m.prop false
 
 
 jobs.JobList = Array
@@ -74,8 +75,13 @@ tooltipSearch = (elem, isInit) ->
     elem.setAttribute "title", "Search for job"
 
 window.JobListComponent =
-  controller: ->
+  controller: (args) ->
+    # Select Job
+    for job in jobs.vm.list
+        job.selected(args.selected == job.mainID)
+
     console.log "JobList Controller"
+
 
     select: (all) ->
       $('input:checkbox.sidebarCheck').each ->
@@ -94,7 +100,6 @@ window.JobListComponent =
     sortJobID: -> jobs.vm.sortJobID()
 
   view: (ctrl) ->
-
     m "div", {id: "joblist"}, [
       m "form", {id: "jobsearchform"},
         m "div", [
@@ -121,7 +126,7 @@ window.JobListComponent =
       ]
 
       jobs.vm.list.map (job) ->
-        m "div", {class: "job #{a[job.state()]}"},  [
+        m "div", {class: "job #{a[job.state()]}".concat(if job.selected() then " selected" else "")},  [
 
           m "div", {class: "checkbox"}, [
             m "input", {type: "checkbox", class: 'sidebarCheck', name: job.mainID, value: job.mainID, id: job.mainID}
@@ -142,6 +147,8 @@ window.JobListComponent =
             <div onclick="clearIDs();" data-tooltip title="Clear selected jobs from joblist">Clear</div>
 
         </div>
+
+  a[href="/#/jobs/' + job.mainID + '"]
 ###
 
 

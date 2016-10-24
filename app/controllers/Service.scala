@@ -193,7 +193,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
 
   // Server returns such an object when asked for a job
-  case class Jobitem(jobID: String,
+  case class Jobitem(mainID: String,
+                     jobID: String,
                      state: JobState,
                      createdOn: String,
                      toolitem: Toolitem,
@@ -201,7 +202,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                      paramValues: Map[String, String])
 
   implicit val jobitemWrites: Writes[Jobitem] = (
-    (JsPath \ "jobID").write[String] and
+      (JsPath \ "mainID").write[String] and
+      (JsPath \ "jobID").write[String] and
       (JsPath \ "state").write[JobState] and
       (JsPath \ "createdOn").write[String] and
       (JsPath \ "toolitem").write[Toolitem] and
@@ -259,7 +261,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             }.toMap
 
 
-            Ok(Json.toJson(Jobitem(job.jobID,
+            Ok(Json.toJson(Jobitem(job.mainID.stringify, job.jobID,
               job.status, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get) ,toolitem,  jobViews, paramValues)))
         }
     }
