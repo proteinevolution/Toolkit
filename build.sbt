@@ -26,12 +26,15 @@ val commonDeps = Seq(ws, filters, cache,
   "org.reactivemongo" %% "play2-reactivemongo" % reactiveMongoVersion,
   "org.reactivemongo" %% "reactivemongo-play-json" % reactiveMongoVersion,
   "co.fs2" %% "fs2-core" % "0.9.0-RC2",
-  "org.scalaz" %% "scalaz-core" % "7.2.5",
+  "org.scalaz" %% "scalaz-core" % "7.2.6",
   "com.chuusai" %% "shapeless" % "2.3.2",
   "org.clapper" %% "classutil" % "1.0.11",
   "com.beachape" %% "enumeratum" % "1.4.13",
   "com.beachape" %% "enumeratum-play" % "1.4.13",
-  "com.beachape" %% "enumeratum-play-json" % "1.4.13"
+  "com.beachape" %% "enumeratum-play-json" % "1.4.13",
+  "org.tpolecat" %% "atto-core"  % "0.5.0-M3",
+  "org.tpolecat" %% "atto-compat-scalaz72" % "0.5.0-M3",
+  "net.ruippeixotog" %% "scala-scraper" % "1.1.0"
 )
 
 /*
