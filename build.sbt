@@ -1,14 +1,13 @@
 val akkaVersion = "2.4.11"
-val jqueryVersion = "2.2.4"
+val jqueryVersion = "3.1.1"
 val jqueryLazyloadVersion = "1.9.7"
-val jqueryUIVersion = "1.11.4"
+val jqueryUIVersion = "1.12.1"
 val foundationVersion = "6.2.4"
 val mithrilVersion = "0.2.5"
-val betterfilesVersion = "2.16.1-SNAPSHOT"
+val betterfilesVersion = "2.16.0"
 val bcryptVersion = "0.3m"
 val highchartsVersion = "4.2.4"
 val d3Version = "3.5.16"
-val scalaGuiceVersion = "4.0.1"
 val playMailerVersion = "5.0.0"
 val reactiveMongoVersion = "0.12-RC5"
 
@@ -21,7 +20,6 @@ val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
   "com.typesafe.akka" %% "akka-persistence" % akkaVersion,
   "com.typesafe.play" %% "play-mailer" % playMailerVersion,  // Mailer Plugin: https://github.com/playframework/play-mailer
-  "net.codingwell" %% "scala-guice" % scalaGuiceVersion,
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
   "org.mindrot" % "jbcrypt" % bcryptVersion,
   "com.evojam" %% "play-elastic4s" % "0.3.1",
