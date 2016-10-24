@@ -1,0 +1,229 @@
+
+#sidebar-switch {
+
+    display: none;
+
+}
+
+.switch {
+    display: none;
+}
+
+#hideSwitch {
+
+    display: none;
+}
+
+.orbit-slide {
+    max-height: 380px;
+}
+
+body {
+    font-family: inherit;
+    margin: 0;
+}
+
+.lazy-container {
+
+    float: left;
+    width: 100%;
+}
+
+.content-wrapper-half {
+    margin-top: 2em;
+    border: 2px solid;
+    border-color:  #8a8a8a;
+    font-family: 'Vollkorn', 'Palatino', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
+    background-color: white;
+
+
+}
+
+.content-wrapper-quarter {
+    margin-top: 2em;
+    font-family: 'Vollkorn', 'Palatino', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
+    border: 2px solid;
+    border-color:  #8a8a8a;
+    background-color: white;
+
+}
+
+.text-wrapper-half {
+    padding: 2em 5em;
+    background-color: white;
+}
+
+.text-wrapper-quarter {
+    padding: 2em 3em;
+
+
+}
+
+.lazy-container h5 {
+    font-family: 'Liberation Serif', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
+    text-align: justify;
+    font-weight: bold;
+}
+
+.elements {
+    display: flex;
+    margin-bottom: 2em;
+
+}
+
+.lazy-container p {
+    font-size: 0.90em;
+}
+
+
+.grid {
+    display: block;
+    margin: auto;
+    width: 55%;
+}
+
+
+.grid div {
+    float: left;
+
+}
+
+.tool-finder {
+
+    background: #f2f2f2; /* Old browsers */
+    background: -moz-linear-gradient(top, #f2f2f2 0%, #e5e5e5 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #f2f2f2 0%,#e5e5e5 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #f2f2f2 0%,#e5e5e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f2f2', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+    border: 1px solid #ccc;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -ms-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -o-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    z-index: 9;
+    position: relative;
+    height: 8em !important;
+    width: 100% !important;
+    -webkit-box-shadow: 3px 3px 5px 0px lightgray;
+    -moz-box-shadow: 3px 3px 5px 0px lightgray;
+    box-shadow: 3px 3px 5px 0px lightgray;
+
+
+}
+
+FIELDSET {
+    margin-top: 14px;
+    display: inline-block;
+    line-height: 200%;
+}
+
+
+select {
+    height: 31px;
+    font-size: 12px;
+    font-family: font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+}
+
+
+.slider {
+
+    width: 100%;
+
+}
+
+.slick-slide {
+    height:430px;
+}
+
+.slick-slide img {
+    height: 430px;
+}
+
+
+
+#sidebartoggle {
+    display: none;
+}
+
+.search-query {
+    margin-top: 1.8em;
+    padding: 1em;
+
+}
+.search-query input {
+
+
+    /* round the corners */
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+
+}
+
+.search-query input:focus {
+
+    border: 1px solid rgba(81, 203, 238, 1);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 0px 0px 4px rgba(81, 203, 238, 1);
+    -moz-box-shadow: 0px 0px 4px rgba(81, 203, 238, 1);
+    box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+
+}
+
+.selectors {
+    padding-left: 1.5em;
+    padding-top: 1.5em;
+
+}
+
+.selectors select {
+    width: 100% !important;
+    float: left;
+    display: block;
+
+}
+
+.select-job  {
+    margin-top: 3em;
+    padding: 1em;
+    font-size: 0.75em;
+}
+
+.gradient {
+    color: black;
+}
+
+.slider { cursor: default }
+
+.slide-caption{
+    min-height: 80px;
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+    background: rgba(51,51,51,0.8);
+    color:white;
+    font-family:'Roboto', Helvetica, sans-serif;
+    font-size: 1rem;
+    letter-spacing:1px;
+    line-height:1.5rem;
+    height:100%;
+    width:22%;
+    bottom:0;
+    right: 0;
+    padding:40px 32px 35px;
+}
+
+
+.slider img {
+
+    width: 100%;
+}
