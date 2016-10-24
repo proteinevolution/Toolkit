@@ -406,6 +406,7 @@ textarea { resize:both; }
     margin-top: 1.15em;
     color: red;
     display: none;
+    text-align: center;
 }
 
 
@@ -438,4 +439,8 @@ textarea { resize:both; }
 .reformat-small select {
     width: 30%;
     margin-left: 1.5em;
+}
+
+#site-notifications i::before {
+     padding-left: 15px;
 }
