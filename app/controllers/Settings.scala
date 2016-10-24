@@ -31,6 +31,7 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
 
   val clusterSettings = reactiveMongoApi.database.map(_.collection("settings").as[BSONCollection](FailoverStrategy()))
   val toolSettings = reactiveMongoApi.database.map(_.collection("toolSettings").as[BSONCollection](FailoverStrategy()))
+  private[this] var cm = ""
 
   /**
     *
@@ -64,7 +65,6 @@ final class Settings @Inject() (val messagesApi: MessagesApi,
 
   def clusterMode : String = {
 
-    var cm = ""
     val hostname_cmd = "hostname"
     val hostname = hostname_cmd.!!.dropRight(1)
 
