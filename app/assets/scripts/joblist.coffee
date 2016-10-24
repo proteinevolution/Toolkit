@@ -75,6 +75,7 @@ tooltipSearch = (elem, isInit) ->
 
 window.JobListComponent =
   controller: ->
+    console.log "JobList Controller"
 
     select: (all) ->
       $('input:checkbox.sidebarCheck').each ->
