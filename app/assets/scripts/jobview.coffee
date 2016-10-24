@@ -110,7 +110,6 @@ JobSubmissionComponent =
     m "div", {class: "submitbuttons"}, [
       m "input", {type: "button", class: "success button small submitJob", value: "Submit Job", onclick: ctrl.submit.bind(ctrl, true)}  #TODO
       m "input", {type: "button", class: "success button small prepareJob", value: "Prepare Job", onclick: ctrl.submit.bind(ctrl, false)}
-      m "input", {type: "reset", class: "alert button small resetJob", value: "Reset"}
       m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job.jobid), value: args.job.jobid()}
     ]
 ##############################################################################
