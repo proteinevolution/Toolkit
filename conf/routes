@@ -79,6 +79,7 @@ POST        /jobs/find                                     @controllers.Search.g
 POST        /jobs/done/:jobID                              @controllers.Jobs.jobStatusDone(jobID : String)
 POST        /jobs/error/:jobID                             @controllers.Jobs.jobStatusError(jobID : String)
 POST        /jobs/running/:jobID                           @controllers.Jobs.jobStatusRunning(jobID : String)
+POST        /jobs/queued/:jobID                            @controllers.Jobs.jobStatusQueued(jobID : String)
 
 # Static route
 GET         /static/get/:static                            @controllers.Service.static(static : String)
