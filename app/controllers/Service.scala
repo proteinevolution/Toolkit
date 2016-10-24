@@ -84,7 +84,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     getUser.flatMap { user =>
 
       findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-
         Ok(Json.toJson( jobs.map(_.cleaned)))
       }
     }
@@ -243,6 +242,9 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
               case JobState.Running => Seq(
                 "Running" -> Html("Job is currently being executed"))
+
+              case JobState.Error => Seq(
+                "Error" -> Html("Job has reached error state"))
 
               case JobState.Done => toolModel.results.map { kv =>
 
