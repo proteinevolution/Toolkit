@@ -17,7 +17,6 @@ import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import modules.tools.ToolMirror
 
 
 @Singleton
@@ -31,7 +30,6 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                             mat              : Materializer,
                         val tel              : TEL,
                         val search           : Search,
-                        val toolMirror       : ToolMirror,
                         val settings : Settings,
       @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
                             configuration    : Configuration) extends Controller with I18nSupport
