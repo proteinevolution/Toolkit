@@ -14,6 +14,10 @@
                                             -html\
                                             -out_pssm results/out.ksf
 
+# add links to psiblast output
+
+mv results/out.psiblastp results/out.psiblastp_without_links
+python %BIOPROGS/helpers/Psiblast_add_links.py -i results/out.psiblastp_without_links >> results/out.psiblastp
 
 # create HTML and PNG for blastviz visualisation
 
