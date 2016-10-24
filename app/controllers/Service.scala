@@ -9,8 +9,6 @@ import models.database.JobState
 import models.{Constants, Values}
 import models.database._
 import models.tel.TEL
-import modules.tools.ToolMatcher
-import org.joda.time.DateTime
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
@@ -25,9 +23,8 @@ import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
-import reactivemongo.bson.{BSONDocument, BSONInteger, BSONObjectID, BSONValue}
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import models.database.JobState._
-import play.api.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -46,9 +43,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                          @NamedCache("toolitemCache") val toolitemCache: CacheApi,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
-                         final val values : Values,
-                     val toolMatcher      : ToolMatcher,
-
+                     final val values     : Values,
     @Named("jobManager") jobManager       : ActorRef)
 
                  extends Controller with I18nSupport
