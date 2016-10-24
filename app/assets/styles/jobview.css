@@ -1,6 +1,7 @@
 #tool-tabs {
 
     background: white;
+    min-height: 600px;
 }
 
 
@@ -78,6 +79,13 @@
 
     font-size: large;
     font-weight: bold;
+}
+
+.submitbuttons {
+    position:absolute;
+    bottom:30px;
+    left:30px;
+    width: 80%;
 }
 
 .submitbuttons .jobid {
