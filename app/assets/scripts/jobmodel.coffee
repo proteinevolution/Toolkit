@@ -21,11 +21,22 @@ window.JobModel =
     "desc": 500
     "matrix": "BLOSUM62"
 
-  getTool: (toolname) ->
-    m.request {method: 'GET', url: "/api/tools/#{toolname}"}
-
-  getJob: (mainID) ->
-    m.request {method: 'GET', url: "/api/jobs/#{mainID}"}
+  update: (args, value) ->
+    if args.isJob
+      m.request({method: 'GET', url: "/api/jobs/#{value}"}).then (data) ->
+        JobModel.paramValues = data.paramValues
+        tool : data.toolitem
+        isJob: true
+        jobid : m.prop data.jobID
+        createdOn : data.createdOn
+        jobstate :  data.state
+        views : data.views
+    else
+       m.request({method: 'GET', url: "/api/tools/#{value}"}).then (data) ->
+        JobModel.paramValues = {}
+        tool : data
+        isJob: false
+        jobid: m.prop ""
 
   getParamValue: (param) ->
 
@@ -42,3 +53,5 @@ window.JobModel =
       defVal
     else
       ""
+
+

@@ -16,6 +16,7 @@ jobs.JobList = Array
 jobs.vm = do ->
   vm = {}
   m.request({url: "/api/jobs", method: "GET"}).then (jobs) ->
+    console.log JSON.stringify jobs
     vm.list = jobs.map (job) -> new Job(job)
 
   # Remove on Job with a certain mainID from the JObList
