@@ -11,7 +11,7 @@ StaticRoute =
           'alnvizfrontend'
           'patSearch'
         ].indexOf(controller['static']) >= 0
-          $('#content').empty().prepend data
+          $('#main-content').empty().prepend data
         else
           $('body').empty().prepend data
         $(document).foundation()
@@ -21,15 +21,14 @@ StaticRoute =
 #setup routes to start w/ the `#` symbol
 m.route.mode = 'hash'
 
-
-
 m.route document.getElementById('main-content'), '/',
   '/' : Index
   '/tools/:toolname': m Toolkit, {isJob: false}
   '/jobs/:mainID': m Toolkit, {isJob: true}
+  '/:static' : StaticRoute
 
 
-
+1
 # Mount the JobViewComponent into the Client-side application via associated routed
 #m.route document.getElementById('content'), '/',
 #  '/:static' : StaticRoute,
