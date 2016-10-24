@@ -104,15 +104,21 @@
                 <a href="/#/"><img  style="width: 90%; margin-left:0.25em;margin-top:0.60em; margin-bottom: 2em;" src="@routes.Assets.at("images/logo3.svg")"></a>
             </div>
             <!--navbar-->
-            <div class="large-8 columns show-for-large" style="padding-left: 2.5em; padding-right:4.375em;">
-                @elements.navbar()
+            <div class="large-8 columns show-for-large">
+                <div class="row">
+                    <div class="columns large-10">
+                        @elements.navbar()
+                    </div>
+                    <div class="columns large-2">
+                        <!--offline callout-->
+                        <div class="alert callout" id="offline-alert">Reconnecting...</div>
+                    </div>
+                </div>
             </div>
 
-            <!--offline callout-->
-            <div class="large-1 columns alert callout" id="offline-alert">Reconnecting...</div>
-
             <!--signin -->
-            <div class="large-1 columns align-self-middle" style="margin-top: 0.6em; margin-bottom: 2em;">
+            <div id="site-notifications" class="large-2 columns align-self-middle" style="margin-top: 0.6em; margin-bottom: 2em;">
+                <i class="icon-ringbell"></i>
                 <i class="icon-user"></i>
                 <a id="auth-link" onclick="openNav()" >
                 @{user.userData match {
