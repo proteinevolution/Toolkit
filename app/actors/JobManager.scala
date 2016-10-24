@@ -4,6 +4,7 @@ import javax.inject.{Inject, Named, Singleton}
 
 import actors.UserManager.{JobAdded, MessageWithUserID}
 import akka.actor.{Actor, ActorLogging, ActorRef}
+import controllers.Settings
 import models.database._
 import models.search.JobDAO
 import modules.Common
@@ -32,6 +33,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                                   @Named("userManager") userManager : ActorRef,
                                   val tel : TEL,
                                   val jobDao : JobDAO,
+                                  val settings : Settings,
                                   implicit val materializer: akka.stream.Materializer)
   extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes with Common {
 
@@ -77,7 +79,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   }
 
 
-
   /**
     * @param job
     */
@@ -86,8 +87,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     // Create new Process instance of the runscript to run the tool
     val process = Process(job.scriptPath , new java.io.File(rootPath)).run()
     runningProcesses.put(job.mainID.stringify, process)
+    if (settings.clusterMode.equals("sge")) // only sets jobstate to queued when on olt and submitting to the cluster
+      updateJob(job.copy(status = JobState.Queued))
   }
-
 
 
   /**
