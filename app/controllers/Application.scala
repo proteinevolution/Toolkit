@@ -35,6 +35,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                         val toolMatcher      : ToolMatcher,
                         val search           : Search,
                         val toolMirror       : ToolMirror,
+                        val settings : Settings,
       @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
                             configuration    : Configuration) extends Controller with I18nSupport
                                                                                  with Common
@@ -66,6 +67,8 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   def index = Action.async { implicit request =>
 
     tel.port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
+    println("[CONFIG:] running on port "+tel.port)
+    println("[CONFIG:] execution mode: " + settings.clusterMode)
     getUser.map { user =>
       Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user))
         .withSession(sessionCookie(request, user.sessionID.get))
