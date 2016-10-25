@@ -16,6 +16,12 @@ body{
 
 }
 
+div#main {
+    width:1200px;
+    margin: auto;
+    padding-top: 1em;
+}
+
 
 .d {
     background-color: #DBFFDB;
@@ -81,6 +87,7 @@ tr.spaceUnder > td
     padding-bottom: 0em;
 }
 
+/*
 .content {
     width: 60%;
     margin-left: 6.250em;
@@ -93,7 +100,7 @@ tr.spaceUnder > td
     width: 100%;
     padding: 0.625em 0.625em 0.625em 0.625em;
 }
-
+*/
 
 .alnviz{
 

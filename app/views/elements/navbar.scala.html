@@ -27,7 +27,7 @@
     </div>
     <div class="tabs-panel" id="panel2">
         <ul id="toolsec">
-            <li><a id="alnviz" href="/#/alnvizfrontend">AlignmentViewer</a></li>
+            <li><a id="alnviz" href="/#/tools/alnviz">AlignmentViewer</a></li>
         @for(tool <- Tool.tools){
             @if(tool.category == "alignment") {
                 <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
@@ -79,7 +79,6 @@
                 }
             }
             <li><a id="reformat" href="/#/tools/reformat">Reformat</a></li>
-            <li><a id="reformat" href="/#/tools/alnviz">Alignment Viewer</a></li>
         </ul>
     </div>
 </div>
