@@ -24,8 +24,6 @@ D------FYNGWACQVNYMEATPDGSLRHPSFEKFR
 PECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE
 D------YYNGWACQVAYMEETSDGSLRHPSFVMFR
 """
-
-
 window.FrontendAlnvizComponent =
   controller: ->
     pasteExample: () ->
@@ -70,3 +68,41 @@ window.FrontendAlnvizComponent =
       m "div", {id: "menuDiv"}
       m "div", {id: "yourDiv"}
     ]
+
+
+window.FrontendReformatComponent =
+  controller: ->
+
+  view: ->
+    m "div", {id: "jobview"}, [
+
+      m "div", {class: "jobline"},
+        m "span", {class: "toolname"}, "Reformat"
+
+
+
+    ]
+
+
+
+
+GeneralTabComponent =
+
+  controller: ->
+
+
+  view: ->
+
+
+
+
+
+
+###
+
+
+
+
+###
+
+

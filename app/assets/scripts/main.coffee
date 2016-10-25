@@ -23,9 +23,10 @@ m.route.mode = 'hash'
 
 m.route document.getElementById('main-content'), '/',
   '/' : Index
+  '/:static' : StaticRoute
   '/tools/:toolname': m Toolkit, {isJob: false}
   '/jobs/:mainID': m Toolkit, {isJob: true}
-  '/:static' : StaticRoute
+
 
 
 1

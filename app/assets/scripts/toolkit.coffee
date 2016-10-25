@@ -1,5 +1,6 @@
 FrontendTools =
   "alnviz": FrontendAlnvizComponent
+  "reformat": FrontendReformatComponent
 
 
 
