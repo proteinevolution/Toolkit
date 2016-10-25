@@ -70,6 +70,14 @@ window.FrontendAlnvizComponent =
     ]
 
 
+######################################################################################################################
+# Reformat
+
+# Mithril Configs for JobViewComponent
+tabulated = (element, isInit) ->
+  if not isInit then $(element).tabs()
+
+
 window.FrontendReformatComponent =
   controller: ->
 
@@ -79,19 +87,28 @@ window.FrontendReformatComponent =
       m "div", {class: "jobline"},
         m "span", {class: "toolname"}, "Reformat"
 
-
-
+      m GeneralTabComponent, {tabs: ["Alignment", "Freqs"]}
     ]
 
 
-
-
+# Used to abstract over the tabulated view as it is used for all views
 GeneralTabComponent =
 
   controller: ->
 
+  view: (ctrl, args) ->
+    m "div", {class: "tool-tabs", id: "tool-tabs", config: tabulated}, [
 
-  view: ->
+      # List of categories
+      m "ul", args.tabs.map (tab) ->
+        m "li", {id: "tab-#{tab}"}, m "a", {href: "#tabpanel-#{tab}"}, tab
+
+
+      # The corresponding panels
+      args.tabs.map (tab) ->
+        m "div", {class: "tabs-panel", id: "tabpanel-#{tab}"}, "Content"
+    ]
+
 
 
 
@@ -99,7 +116,7 @@ GeneralTabComponent =
 
 
 ###
-
+ m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
 
 
 

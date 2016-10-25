@@ -208,7 +208,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "search"
     val optional = ""
 
-    val params = Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
+    val params = Seq(Param.ALIGNMENT, Param.STANDARD_DB)
 
     val results = Map(
       "fileview" -> "domtbl"
