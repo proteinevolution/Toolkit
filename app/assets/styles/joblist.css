@@ -2,6 +2,7 @@
 /* The containder for the JobListComponent. Let is behave like a table and occupy the full width1 */
 #joblist {
 
+    padding-top: 50px;
     display: table;
     width: 100%;
 }
