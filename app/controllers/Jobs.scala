@@ -9,11 +9,6 @@ import play.api.mvc._
 @Singleton
 class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef) extends Controller  {
 
-  def jobStatusQueued(mainID : String) = Action { request =>
-    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, JobState.Queued)
-    Ok
-  }
-
   def jobStatusDone(mainID : String) = Action { request =>
     jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, JobState.Done)
     Ok
