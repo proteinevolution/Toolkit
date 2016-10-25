@@ -67,9 +67,6 @@ onClose = (event) ->
 # Handles the behavior that occurs if the WebSocket receives data from the Server
 onMessage = (event) ->
 
-  # Need to make recalc of Mithril explicit here, since this code is not part of the Mithril view
-  m.startComputation()
-
   message = JSON.parse event.data
 
   switch message.type
@@ -77,7 +74,9 @@ onMessage = (event) ->
     when "UpdateJob"
       state = message.job.state.toString()
       console.log("State:" + state)
+      m.startComputation()
       jobs.vm.update(message.job)
+      m.endComputation()
       if jobs.vm.getJobState(message.job) == 'running'
         $('#trafficbar').css
           'background': '#ffff00'
@@ -127,7 +126,6 @@ onMessage = (event) ->
 
     when "Ping"
       sendMessage("type":"Ping")
-  m.endComputation()
 
 @sendMessage = (object) ->
   ws.send(JSON.stringify(object))
