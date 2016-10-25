@@ -25,6 +25,7 @@ window.JobModel =
     if args.isJob
       m.request({method: 'GET', url: "/api/jobs/#{value}"}).then (data) ->
         JobModel.paramValues = data.paramValues
+        mainID: data.mainID
         tool : data.toolitem
         isJob: true
         jobid : m.prop data.jobID

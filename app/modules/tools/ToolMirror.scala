@@ -11,12 +11,12 @@ import reflect.runtime.universe
  * Created by snam on 27.08.16.
  */
 
-final class ToolMirror {
+final class ToolMirror { // keep this as some kind of gist for using this again, e.g. for the dashboard where we might reflect something in the future
 
   // this method could be used in the Toolmatcher but unfortunately the inputForm is not inherent in the ToolModel trait
   // TODO either abstract over tuple arity and get the inputForm somehow into the trait or find another solution
   // TODO 2 besides the ToolMatcher, we wish to generate the navigation with the template engine from a dynamic list of tools
-
+/*
   def invokeToolName(tool :String) = {
 
     val capitalName = tool.capitalize
@@ -80,5 +80,6 @@ final class ToolMirror {
 
   }
 
+*/
 
 }
