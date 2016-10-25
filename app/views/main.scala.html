@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
 @import models.database.User
-@(webJarAssets: WebJarAssets, content: Html, sectionname : String, user: User)(implicit messages: Messages, request: RequestHeader)
+@(webJarAssets: WebJarAssets, user: User)(implicit messages: Messages, request: RequestHeader)
 
 <!DOCTYPE html>
 
@@ -78,139 +78,144 @@
 
 
     <body onload="load()" data-ws-url="@routes.Application.ws().webSocketURL()">
-        <!---All purpose Modal --->
-        <div id="modal" class="reveal large" data-reveal></div>
+
+        <div id="main">
+            <!---All purpose Modal --->
+            <div id="modal" class="reveal large" data-reveal></div>
 
 
-        <!---Hamburger Navbar --->
-        <div id="myNav" class="overlay">
-            <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" style="float: right; margin: 41px 39px 0 0;" onclick="closeNav()">
-                <span class="hamburger-box">
-                    <span class="hamburger-inner overlayed"></span>
-                </span>
-            </button>
-            <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
-            <div class="overlay-content" id="overlay-content">
-            @{user.userData match {
-                case Some(userData) =>
-                    views.html.auth.miniprofile(user)
-                case None =>
-                    views.html.general.auth()
-            }}
-            </div>
-        </div>
-
-
-        <!---Navigation Bar --->
-        <div class="row show-for-large" style="padding-top: 1em;">
-
-            <!--logo-->
-            <div class="large-2 columns" >
-                <a href="/#/"><img  style="width: 90%; margin-left:0.25em;margin-top:1.2em; margin-bottom: 2em;" src="@routes.Assets.at("images/logo3.svg")"></a>
-            </div>
-            <!--navbar-->
-            <div class="large-8 columns show-for-large">
-                <div class="row">
-                    <div class="columns large-11" style="padding-left: 1.5em; padding-right: 3em;">
-                        @elements.navbar()
-                    </div>
-                    <div class="columns large-1">
-                        <!--offline callout-->
-                        <div class="alert callout" id="offline-alert">Reconnecting...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!--signin -->
-            <div id="site-notifications" class="large-2 columns align-self-middle" style="margin-top: 0.6em; margin-bottom: 2em; padding-left: 4em;">
-                <i class="icon-ringbell"></i>
-                <i class="icon-user"></i>
-                <a id="auth-link" onclick="openNav()" >
+            <!---Hamburger Navbar --->
+            <div id="myNav" class="overlay">
+                <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" style="float: right; margin: 41px 39px 0 0;" onclick="closeNav()">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner overlayed"></span>
+                    </span>
+                </button>
+                <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
+                <div class="overlay-content" id="overlay-content">
                 @{user.userData match {
-                    case Some(userData) => userData.nameLogin
-                    case None           => "Sign in"
+                    case Some(userData) =>
+                        views.html.auth.miniprofile(user)
+                    case None =>
+                        views.html.general.auth()
                 }}
-                </a>
+                </div>
             </div>
-        </div>
 
-        <!--Off Canvas Menu for mobile version of Toolkit-->
-        <div class="off-canvas-wrapper">
-            <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
-                <div class="off-canvas position-left" id="offCanvas" data-off-canvas>
-                    @elements.offcanvas()
+
+            <!---Navigation Bar --->
+            <div class="row show-for-large">
+
+                <!--logo-->
+                <div class="large-2 columns" >
+                    <a href="/#/"><img  style="width: 90%; margin-left:0.25em;margin-top:1.2em; margin-bottom: 2em;" src="@routes.Assets.at("images/logo3.svg")"></a>
+                </div>
+                <!--navbar-->
+                <div class="large-8 columns show-for-large">
+                    <div class="row">
+                        <div class="columns large-11" style="padding-left: 1.5em; padding-right: 3em;">
+                            @elements.navbar()
+                        </div>
+                        <div class="columns large-1">
+                            <!--offline callout-->
+                            <div class="alert callout" id="offline-alert">Reconnecting...</div>
+                        </div>
+                    </div>
                 </div>
 
-                 <!---Off Canvas Content includes main content--->
-                 <div class="off-canvas-content" data-off-canvas-content>
-                            <div class="title-bar hide-for-large">
-                                <div class="title-bar-left">
-                                    <button class="menu-icon dark" type="button" data-open="offCanvasLeft"></button>
-                                    <span class="title-bar-title">Toolkit</span>
+                <!--signin -->
+                <div id="site-notifications" class="large-2 columns align-self-middle" style="margin-top: 0.6em; margin-bottom: 2em; padding-left: 4em;">
+                    <div id="user-control">
+                        <i class="icon-ringbell"></i>
+                        <i class="icon-user"></i>
+                        <a id="auth-link" onclick="openNav()" >
+                        @{user.userData match {
+                            case Some(userData) => userData.nameLogin
+                            case None           => "Sign in"
+                        }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!--Off Canvas Menu for mobile version of Toolkit-->
+            <div class="off-canvas-wrapper">
+                <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+                    <div class="off-canvas position-left" id="offCanvas" data-off-canvas>
+                        @elements.offcanvas()
+                    </div>
+
+                     <!---Off Canvas Content includes main content--->
+                     <div class="off-canvas-content" data-off-canvas-content>
+                                <div class="title-bar hide-for-large">
+                                    <div class="title-bar-left">
+                                        <button class="menu-icon dark" type="button" data-open="offCanvasLeft"></button>
+                                        <span class="title-bar-title">Toolkit</span>
+                                    </div>
                                 </div>
-                            </div>
-                 </div>
+                     </div>
 
-                  <!--- Mount point for Mithril Application -->
-                  <div class="row" id="main-content">
+                      <!--- Mount point for Mithril Application -->
+                      <div class="row" id="main-content">
 
 
-                   </div>
+                       </div>
+                    </div>
+
+                <div class="row show-for-large large-12 columns" id="subnav">
+                    @elements.topnav(user)
                 </div>
 
-            <div class="row show-for-large large-12 columns" id="subnav">
-                @elements.topnav(user)
             </div>
 
+            <footer>
+                @elements.footer()
+            </footer>
+
+            <!-- Script Inclusions -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
+
+            <!-- Foundation 6 -->
+            <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
+
+            <!-- Reformat Javascript Library -->
+            <script src="@routes.WebJarAssets.at(webJarAssets.locate("reformat.js"))"></script>
+
+
+            <!-- CoffeeScript Assets -->
+            <script src="@routes.Assets.at("scripts/index.js")"></script>
+            <script src="@routes.Assets.at("scripts/frontend.js")"></script>
+            <script src="@routes.Assets.at("scripts/jobmodel.js")"></script>
+            <script src="@routes.Assets.at("scripts/toolkit.js")"></script>
+            <script src="@routes.Assets.at("scripts/joblist.js")"></script>
+            <script src="@routes.Assets.at("scripts/jobview.js")"></script>
+            <script src="@routes.Assets.at("scripts/main.js")"></script>
+            <script src="@routes.Assets.at("scripts/websocket.js")"></script>
+            <script src="@routes.Assets.at("scripts/validation.js")"></script>
+            <script src="@routes.Assets.at("scripts/alignment.js")"></script>
+            <script src="@routes.Assets.at("scripts/search.js")"></script>
+            <script src="@routes.Assets.at("scripts/auth.js")"></script>
+            <script src="@routes.Assets.at("scripts/notification.js")"></script>
+
+            <!-- Public Javascript Assets -->
+            <script src="@routes.Assets.at("javascripts/msa.min.js")" type="text/javascript"></script>
+            <script src='@routes.Assets.at("javascripts/sampleseqs.js")'></script>
+
+            <script type="text/javascript">
+
+                    function openNav() {
+                        document.getElementById("myNav").style.height = "100%";
+                    }
+
+                    function closeNav() {
+                        document.getElementById("myNav").style.height = "0%";
+                    }
+
+
+                    $(document).ready(function() {
+                        $(document).foundation();
+                    })
+            </script>
         </div>
-
-        <footer>
-            @elements.footer()
-        </footer>
-
-        <!-- Script Inclusions -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
-
-        <!-- Foundation 6 -->
-        <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
-
-        <!-- Reformat Javascript Library -->
-        <script src="@routes.WebJarAssets.at(webJarAssets.locate("reformat.js"))"></script>
-
-
-        <!-- CoffeeScript Assets -->
-        <script src="@routes.Assets.at("scripts/index.js")"></script>
-        <script src="@routes.Assets.at("scripts/frontend.js")"></script>
-        <script src="@routes.Assets.at("scripts/jobmodel.js")"></script>
-        <script src="@routes.Assets.at("scripts/toolkit.js")"></script>
-        <script src="@routes.Assets.at("scripts/joblist.js")"></script>
-        <script src="@routes.Assets.at("scripts/jobview.js")"></script>
-        <script src="@routes.Assets.at("scripts/main.js")"></script>
-        <script src="@routes.Assets.at("scripts/websocket.js")"></script>
-        <script src="@routes.Assets.at("scripts/validation.js")"></script>
-        <script src="@routes.Assets.at("scripts/alignment.js")"></script>
-        <script src="@routes.Assets.at("scripts/search.js")"></script>
-        <script src="@routes.Assets.at("scripts/auth.js")"></script>
-        <script src="@routes.Assets.at("scripts/notification.js")"></script>
-
-        <!-- Public Javascript Assets -->
-        <script src="@routes.Assets.at("javascripts/msa.min.js")" type="text/javascript"></script>
-        <script src='@routes.Assets.at("javascripts/sampleseqs.js")'></script>
-
-        <script type="text/javascript">
-
-                function openNav() {
-                    document.getElementById("myNav").style.height = "100%";
-                }
-
-                function closeNav() {
-                    document.getElementById("myNav").style.height = "0%";
-                }
-                
-
-                $(document).ready(function() {
-                    $(document).foundation();
-                })
-        </script>
     </body>
 </html>

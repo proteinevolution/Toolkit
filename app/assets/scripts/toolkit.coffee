@@ -27,5 +27,5 @@ window.Toolkit =
 
   view: (ctrl) -> [
     m "div", {class: "large-2 padded-column columns show-for-large", id: "sidebar"}, ctrl.listComponent()
-    m "div", {id: "content", class: "large-9 small-10 columns"}, ctrl.viewComponent()
+    m "div", {id: "content", class: "large-10 small-10 columns padded-column"}, ctrl.viewComponent()
   ]

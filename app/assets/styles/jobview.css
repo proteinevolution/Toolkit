@@ -28,8 +28,6 @@
 }
 
 
-
-
 /*
  Parameter panels
 */
@@ -70,16 +68,7 @@
 }
 
 
-.jobline {
 
-    margin-bottom: 0.5cm;
-}
-
-.jobline .toolname {
-
-    font-size: large;
-    font-weight: bold;
-}
 
 .submitbuttons {
     position:absolute;
@@ -98,16 +87,6 @@
     float: right;
 }
 
-
-
-.jobline .jobinfo {
-    float: right;
-    font-size: small;
-}
-.jobline .jobid {
-
-    padding-right: 1cm;
-}
 
 .not-active {
     pointer-events: none;
@@ -132,4 +111,25 @@ font-size: 0.65em !important;
 }
 .result-title-small{
     font-size: 1.46em !important;
+}
+
+/* Jobline */
+.jobline {
+
+    height: 50px;
+}
+
+.jobline .toolname {
+
+    font-size: large;
+    font-weight: bold;
+}
+
+.jobline .jobinfo {
+    float: right;
+    font-size: small;
+}
+.jobline .jobid {
+
+    padding-right: 1cm;
 }
