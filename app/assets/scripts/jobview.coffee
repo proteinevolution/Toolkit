@@ -79,11 +79,13 @@ JobTabsComponent =
               [
                 m "div", elements.slice(0,split).map (paramElem) ->
                   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                  console.log paramElem[0]
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
 
                 m "div", elements.slice(split,elements.length).map (paramElem) ->
                   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                  console.log paramElem[0]
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
               ]
