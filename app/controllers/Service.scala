@@ -6,28 +6,25 @@ import actors.JobManager._
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.database.JobState
+import models.tools.ToolModel
 import models.{Constants, Values}
 import models.database._
 import models.tel.TEL
-import modules.tools.ToolMatcher
-import org.joda.time.DateTime
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
 import models.database.JobState.JobState
-import models.tools.ToolModel2
-import models.tools.ToolModel2.Toolitem
+import models.tools.ToolModel._
 import modules.Common
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
-import reactivemongo.bson.{BSONDocument, BSONInteger, BSONObjectID, BSONValue}
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import models.database.JobState._
-import play.api.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -46,9 +43,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                          @NamedCache("toolitemCache") val toolitemCache: CacheApi,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
-                         final val values : Values,
-                     val toolMatcher      : ToolMatcher,
-
+                     final val values     : Values,
     @Named("jobManager") jobManager       : ActorRef)
 
                  extends Controller with I18nSupport
@@ -188,12 +183,14 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       (JsPath \ "toolnameLong").write[String] and
       (JsPath \ "toolnameAbbrev").write[String] and
       (JsPath \ "category").write[String] and
+      (JsPath \ "optional").write[String] and
       (JsPath \ "params").write[Seq[(String, Seq[(String, Seq[(String, String)])])]]
     ) (unlift(Toolitem.unapply))
 
 
   // Server returns such an object when asked for a job
-  case class Jobitem(jobID: String,
+  case class Jobitem(mainID: String,
+                     jobID: String,
                      state: JobState,
                      createdOn: String,
                      toolitem: Toolitem,
@@ -201,7 +198,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                      paramValues: Map[String, String])
 
   implicit val jobitemWrites: Writes[Jobitem] = (
-    (JsPath \ "jobID").write[String] and
+      (JsPath \ "mainID").write[String] and
+      (JsPath \ "jobID").write[String] and
       (JsPath \ "state").write[JobState] and
       (JsPath \ "createdOn").write[String] and
       (JsPath \ "toolitem").write[Toolitem] and
@@ -213,7 +211,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   def getTool(toolname: String) = Action {
 
     Ok(Json.toJson(toolitemCache.getOrElse(toolname) {
-      val x = ToolModel2.toolMap(toolname).toolitem(values) // Reset toolitem in cache
+      val x = ToolModel.toolMap(toolname).toolitem(values) // Reset toolitem in cache
       toolitemCache.set(toolname, x)
       x
     }))
@@ -230,7 +228,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
         jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).map {
 
           case Some(job) =>
-            val toolModel = ToolModel2.toolMap(job.tool)
+            val toolModel = ToolModel.toolMap(job.tool)
 
             val toolitem = toolitemCache.getOrElse(job.tool) {
               val x = toolModel.toolitem(values) // Reset toolitem in cache
@@ -259,7 +257,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             }.toMap
 
 
-            Ok(Json.toJson(Jobitem(job.jobID,
+            Ok(Json.toJson(Jobitem(job.mainID.stringify, job.jobID,
               job.status, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get) ,toolitem,  jobViews, paramValues)))
         }
     }

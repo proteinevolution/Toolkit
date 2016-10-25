@@ -5,18 +5,9 @@ window.Toolkit =
 
   view: (ctrl) -> [
     m "div", {class: "large-2 padded-column columns show-for-large", id: "sidebar"},
-      JobListComponent
+      m JobListComponent, {selected: ctrl.job().mainID}
 
 
     m "div", {id: "content", class: "large-9 small-10 columns"},
       m JobViewComponent, {job : ctrl.job}
   ]
-
-
-###
-
-                            <div id="content" class="large-9 small-10 columns" style="float: left;">
-                            </div>
-                            -->
-
-###

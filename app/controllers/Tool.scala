@@ -9,10 +9,9 @@ import akka.util.Timeout
 import better.files._
 import models.database.{Job, JobState}
 import models.search.JobDAO
-import models.tools.{ToolModel, ToolModel2}
+import models.tools.ToolModel
 import modules.Common
-import modules.tools.{FNV, ToolMatcher}
-import play.api.Logger
+import modules.tools.FNV
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -22,7 +21,6 @@ import reactivemongo.api.Cursor
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import scala.concurrent.duration._
 
 object Tool {
@@ -38,7 +36,6 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                            val reactiveMongoApi : ReactiveMongoApi,
                            implicit val mat     : Materializer,
                            val jobDao           : JobDAO,
-                           val toolMatcher      : ToolMatcher,
                            @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport with UserSessions with Common {
 
   implicit val timeout = Timeout(5.seconds)
@@ -48,7 +45,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
     getUser.flatMap { user =>
 
-      val boundForm = ToolModel2.jobForm.bindFromRequest
+      val boundForm = ToolModel.jobForm.bindFromRequest
 
       // Prepare the Job
       val newMainID = BSONObjectID.generate()

@@ -7,9 +7,7 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import models.{Constants, Values}
 import models.tel.TEL
-import models.tools.ToolModel
 import modules.Common
-import modules.tools.ToolMatcher
 import play.api.Configuration
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -19,7 +17,6 @@ import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import modules.tools.ToolMirror
 
 
 @Singleton
@@ -32,9 +29,8 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                             system           : ActorSystem,
                             mat              : Materializer,
                         val tel              : TEL,
-                        val toolMatcher      : ToolMatcher,
                         val search           : Search,
-                        val toolMirror       : ToolMirror,
+                        val settings : Settings,
       @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
                             configuration    : Configuration) extends Controller with I18nSupport
                                                                                  with Common
@@ -66,6 +62,8 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   def index = Action.async { implicit request =>
 
     tel.port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
+    println("[CONFIG:] running on port "+tel.port)
+    println("[CONFIG:] execution mode: "+settings.clusterMode)
     getUser.map { user =>
       Ok(views.html.main(webJarAssets, views.html.general.maincontent(), "Home", user))
         .withSession(sessionCookie(request, user.sessionID.get))
