@@ -45,7 +45,6 @@ window.Index =
       m "div", {class: "grid", style: "margin-top: 355px;"},
         m "div", {class: "tool-finder show-for-medium row centered"},
           m "div", {class: "search-query large-12 medium-6"},
-            m "div", {class: "columns large-12"},
               m "input", {type: "text", id: "searchInput", name: "searchInput", value: "", placeholder: "Search Keywords"}
   ]
 
@@ -53,4 +52,30 @@ window.Index =
 ###
       <div data-disable-hover="false" class="trafficbar" id="trafficbar"></div>
 
+    $('#trafficbar').attr('data-tooltip');
+        $('#trafficbar').attr('title', 'Click to view last job: '+json.job_id+', status: '+status);
+        $('#trafficbar' ).css({'cursor': 'pointer'});
+
+        $('.trafficbar').on('click', function () {
+            //console.log(JSON.stringify(jobs.vm.getLastJob()));
+            window.location.href = "/#/jobs/"+json.mainID;
+
+        });
+
+
+        if (jobs.vm.getJobState(jobs.vm.getLastJob()) == 'done')
+            $('#trafficbar').css({
+            'background': 'green',
+            'box-shadow': '0 0 10px darkgreen'
+            });
+        else if (jobs.vm.getJobState(jobs.vm.getLastJob()) == 'error')
+            $('#trafficbar').css({
+            'background': '#ff0000',
+            'box-shadow': '0 0 10px #d2071d'
+            });
+        else if (jobs.vm.getJobState(jobs.vm.getLastJob()) == 'running')
+            $('#trafficbar').css({
+            'background': '#ffff00',
+            'box-shadow': '0 0 10px #ffce27'
+            });
 ###
