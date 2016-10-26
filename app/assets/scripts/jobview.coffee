@@ -90,7 +90,7 @@ JobTabsComponent =
       m "form", {id: "jobform"},
         ctrl.params.map (paramGroup) ->
           elements = paramGroup[1].filter((paramElem) -> paramElem[0] != "alignment")
-          split = elements.length / 2
+          split = (elements.length / 2)
           m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
 
             if ctrl.alignmentPresent and paramGroup[0] is "Alignment"
@@ -167,7 +167,7 @@ window.ParameterAlignmentComponent =
         id: ctrl.id
         onchange: m.withAttr("value", ctrl.param.value)
         value: ctrl.param.value()
-      m "input",                     # Place example alignment
+      m "input",                         # Place example alignment
         type: "button"
         class: "button small alignmentExample"
         value: "Paste Example"
