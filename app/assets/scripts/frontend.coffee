@@ -27,10 +27,10 @@ D------YYNGWACQVAYMEETSDGSLRHPSFVMFR
 window.FrontendAlnvizComponent =
   controller: ->
     pasteExample: () ->
-      $('#sequences').val(exampleSequence)
+      $('#alignment').val(exampleSequence)
 
     initMSA: ->
-      seqs = $('#sequences').reformat('Fasta')
+      seqs = $('#alignment').reformat('Fasta')
       if !seqs
         return
       opts =
@@ -59,16 +59,12 @@ window.FrontendAlnvizComponent =
 
   view: (ctrl) ->
     m "div", {id: "jobview"}, [
-      m "div", {class: "alnviz-content"}, [
-          m "h4", "Alignment Viewer"
-          m "textarea", {id: "sequences", name: "sequences", class: "alnvizInput"}
-          m "a", {onclick: ctrl.pasteExample}, "Paste example alignment"
-          m "button", {class: "secondary button", onclick: ctrl.initMSA, id: "viewAlignment"}, "View Alignment"
-        ]
-      m "div", {id: "menuDiv"}
-      m "div", {id: "yourDiv"}
-    ]
 
+      m "div", {class: "jobline"},
+        m "span", {class: "toolname"}, "Alignment Viewer"
+
+      m GeneralTabComponent, {tabs: ["Alignment", "Visualization"], ctrl: ctrl}
+    ]
 
 ######################################################################################################################
 # Reformat
@@ -81,13 +77,13 @@ tabulated = (element, isInit) ->
 window.FrontendReformatComponent =
   controller: ->
 
-  view: ->
+  view: (ctrl) ->
     m "div", {id: "jobview"}, [
 
       m "div", {class: "jobline"},
         m "span", {class: "toolname"}, "Reformat"
 
-      m GeneralTabComponent, {tabs: ["Alignment", "Freqs"]}
+      m GeneralTabComponent, {tabs: ["Alignment", "Freqs"], ctrl: ctrl}
     ]
 
 
@@ -106,10 +102,8 @@ GeneralTabComponent =
 
       # The corresponding panels
       args.tabs.map (tab) ->
-        m "div", {class: "tabs-panel", id: "tabpanel-#{tab}"}, "Content"
+        m "div", {class: "tabs-panel", id: "tabpanel-#{tab}"}, tabsContents[tab](args.ctrl)
     ]
-
-
 
 
 
@@ -118,8 +112,20 @@ GeneralTabComponent =
 ###
  m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
 
-
-
 ###
 
 
+tabsContents =
+  "Alignment": (ctrl) ->
+    m "div", {class: "parameter"}, [
+      m ParameterAlignmentComponent, {options: [["fas", "FASTA"]], value: ""}
+      m "button", {class: "secondary button", onclick: ctrl.initMSA, id: "viewAlignment"}, "View Alignment"
+    ]
+
+  "Visualization": (ctrl) ->
+    m "div", [
+      m "div", {id: "menuDiv"}
+      m "div", {id: "yourDiv"}
+    ]
+  "Freqs": (ctrl) ->
+    "Test"

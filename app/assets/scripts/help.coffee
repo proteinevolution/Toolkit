@@ -36,11 +36,11 @@ exampleContent =
   ]
 
 
-helpContent = (tool, category)  ->
+helpContent = (tool)  ->
   if exampleContent[tool]
-    exampleContent[tool][category]
+    exampleContent[tool]
   else
-    ""
+    ["",[],""]
 
 
 accordion = (elem, isInit) ->
@@ -58,9 +58,9 @@ accordionContent = (elem, isInit) ->
 window.HelpModalComponent =
 
   view: (ctrl, args) ->
-    overview = helpContent args.toolname, 0
-    params = helpContent args.toolname, 1
-    results = helpContent args.toolname, 2
+    overview = helpContent(args.toolname)[0]
+    params = helpContent(args.toolname)[1]
+    results = helpContent(args.toolname)[2]
 
     m "div", {id: "help-#{args.toolname}", class: "reveal", config: helpModalReveal},
       m "div", {id: "help-tabs", config: helpModalTabs}, [
@@ -87,17 +87,3 @@ window.HelpModalComponent =
         m "div", {id: "help-tabs3"}, results
       ]
 
-
-###
-
-  <ul class="accordion" data-accordion>
-  <li class="accordion-item is-active" data-accordion-item>
-    <a href="#" class="accordion-title">Accordion 1</a>
-    <div class="accordion-content" data-tab-content>
-      I would start in the open state, due to using the `is-active` state class.
-    </div>
-  </li>
-  <!-- ... -->
-</ul>
-
-###
