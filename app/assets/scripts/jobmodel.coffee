@@ -29,7 +29,7 @@ window.JobModel =
         tool : data.toolitem
         isJob: true
         jobid : m.prop data.jobID
-        createdOn : data.createdOn
+        createdOn : m.prop data.createdOn
         jobstate :  data.state
         views : data.views
     else
