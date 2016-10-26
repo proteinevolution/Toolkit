@@ -10,6 +10,7 @@ import models.tools.ToolModel
 import models.{Constants, Values}
 import models.database._
 import models.tel.TEL
+import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
@@ -39,8 +40,8 @@ import scala.util.Success
 @Singleton
 class Service @Inject() (webJarAssets     : WebJarAssets,
                      val messagesApi      : MessagesApi,
-@NamedCache("userCache") implicit val userCache        : CacheApi,
-                         @NamedCache("toolitemCache") val toolitemCache: CacheApi,
+@NamedCache("userCache") implicit val userCache : CacheApi,
+@NamedCache("toolitemCache") val toolitemCache : CacheApi,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
                      final val values     : Values,
@@ -90,11 +91,11 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     * @param mainIDString
     * @return
     */
-  def delJob(mainIDString: String) = Action.async { implicit request =>
+  def forceDeleteJob(mainIDString: String) = Action.async { implicit request =>
     getUser.map { user =>
       BSONObjectID.parse(mainIDString) match {
         case Success(mainID) =>
-          jobManager ! DeleteJob(user.userID, mainID)
+          jobManager ! ForceDeleteJob(user.userID, mainID)
           Ok.withSession(sessionCookie(request, user.sessionID.get))
         case _ =>
           NotFound
@@ -125,18 +126,28 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     * @return
     */
 
-  def delJobs() = Action.async { implicit request =>
+  def deleteJobs() = Action.async { implicit request =>
     getUser.flatMap { user =>
       request.getQueryString("mainIDs") match {
         case Some(mainIDsString) =>
-          // Parse the main ID string and put the mainIDs in a list
+          // Parse the main ID string and put the mainIDs in a list.
           val mainIDs = mainIDsString.split(",")
                           .map(mainIDString => BSONObjectID.parse(mainIDString).toOption)
                           .filter(_.isDefined)
                           .flatten.toList
 
+          Logger.info(
+            if (request.getQueryString("deleteCompletely").contains("true")) {
+              "Deleting: " + mainIDs.map(_.stringify).toString
+            }
+            else {
+              "Clearing: "+ mainIDs.map(_.stringify).toString
+            }
+          )
+
           // Tell the Jobmanager to remove the user from the jobs and mark the jobs which have no more watchers
-          jobManager ! DeleteJobs(user.userID, mainIDs)
+          if (request.getQueryString("deleteCompletely").contains("true"))
+            jobManager ! DeleteJobs(user.userID, mainIDs)
 
           // Remove the main IDs from the users view
           modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$pull" -> BSONDocument(User.JOBS -> BSONDocument("$in" -> mainIDs)))).map {
