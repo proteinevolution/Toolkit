@@ -151,7 +151,7 @@ class TEL @Inject() (env : Env,
 
       val contextFile = s"$dest$context.sh".toFile
       contextFile.appendLines("#!/bin/bash\n")
-      contextFile.appendLines(s"curl -X POST http://$hostname:$port/jobs/queued/$jobID\n")
+      //contextFile.appendLines(s"curl -X POST http://$hostname:$port/jobs/queued/$jobID\n")
       contextFile.appendLines(contextLines:_*)
       chmod_+(PosixFilePermission.OWNER_EXECUTE, contextFile)
 
