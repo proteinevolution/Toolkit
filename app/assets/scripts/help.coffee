@@ -9,6 +9,12 @@ helpModalTabs = (elem, isInit) ->
     $(elem).tabs()
 
 
+parameterContent =
+  "alignment": "Enter single protein sequence or protein sequence alignment and choose its format from the dropdown menu."
+  "standarddb": "The selected databases are used by BLAST to perform the search"
+  "matrix": "Select the Scoring Matrix used by the tool."
+  "num_iter": "Select the number of iterations"
+
 exampleContent =
   "psiblast" : [
     """
@@ -17,9 +23,17 @@ exampleContent =
     from the best local hits. This alignment is then used as a query for the next round of search.
     After each successive round the search alignment is updated.
     """
-    "These are parameter specific information"
-    "These are result descriptions"
-    ]
+    ["alignment", "standarddb", "matrix", "num_iter"]
+    """
+    At the top of the results page is a "View alignment"-"button, that shows the multiple alignment of all hits.
+    Then there is a list with brief information about all hits that were found.
+    They are listed together with their scores and e-values.
+    There you can select the ones, you want to work with. Below this you can find more information.
+    There are all pairwise alignments and there is also additional information about the method,
+    the identities and the positives. There you also have the possibility to select the hits, you want to work with.
+    At the bottom you can find more information about the database and the matrix.
+    """
+  ]
 
 
 helpContent = (tool, category)  ->
@@ -27,6 +41,19 @@ helpContent = (tool, category)  ->
     exampleContent[tool][category]
   else
     ""
+
+
+accordion = (elem, isInit) ->
+  if not isInit
+    elem.setAttribute "data-accordion", "data-accordion"
+
+accordionItem = (elem, isInit) ->
+  if not isInit
+    elem.setAttribute "data-accordion-item",  "data-accordion-item"
+
+accordionContent = (elem, isInit) ->
+  if not isInit
+    elem.setAttribute "data-tab-content",  "data-tab-content"
 
 window.HelpModalComponent =
 
@@ -50,7 +77,27 @@ window.HelpModalComponent =
         ]
 
         m "div", {id: "help-tabs1"}, overview
-        m "div", {id: "help-tabs2"}, params
+        m "div", {id: "help-tabs2"},
+          m "ul", {class: "accordion", config: accordion}, params.map (param) ->
+            m "li", {class: "accordion-item", config: accordionItem}, [
+              m "a", {href: "#", class: "accordion-title"}, param
+              m "div", {class: "accordion-content",  config: accordionContent}, parameterContent[param]
+            ]
+
         m "div", {id: "help-tabs3"}, results
       ]
 
+
+###
+
+  <ul class="accordion" data-accordion>
+  <li class="accordion-item is-active" data-accordion-item>
+    <a href="#" class="accordion-title">Accordion 1</a>
+    <div class="accordion-content" data-tab-content>
+      I would start in the open state, due to using the `is-active` state class.
+    </div>
+  </li>
+  <!-- ... -->
+</ul>
+
+###
