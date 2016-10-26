@@ -47,7 +47,7 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
               BSONObjectID.parse(mainIDString).toOption match {
                 case Some(mainID) =>
                   Logger.info(mainID.stringify)
-                  userManager ! DeleteJob(userID, mainID)
+                  userManager ! ForceDeleteJob(userID, mainID)
                 case None =>
                   Logger.info("BSON Parser Error" + js.toString())
               }
