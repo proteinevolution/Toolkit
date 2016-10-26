@@ -1,10 +1,16 @@
+# Config for displaying the help modals:
+helpModalAccess = (elem, isInit) ->
+  if not isInit
+    elem.setAttribute "data-open", "help-#{this.toolname}"
+    $(elem).foundation()
+
 
 window.JobViewComponent =
 
   view: (ctrl, args) ->
     job = args.job()
     m "div", {id: "jobview"}, [
-      m JobLineComponent, {toolnameLong: job.tool.toolnameLong, isJob: job.isJob, jobID: job.jobid }
+      m JobLineComponent, {toolnameLong: job.tool.toolnameLong, isJob: job.isJob, jobID: job.jobid, toolname: job.tool.toolname}
       m JobTabsComponent, {job: job}
     ]
 
@@ -16,10 +22,30 @@ JobLineComponent =
 
   view: (ctrl, args) ->
     m "div", {class: "jobline"}, [
-      m "span", {class: "toolname"}, args.toolnameLong     # Long toolname in Job Descriptor Line
+      m "span", {class: "toolname"}, [
+        args.toolnameLong
+        m "a", {config: helpModalAccess.bind(args)},
+          m "img", {src: "/assets/images/help.svg", class: "helpsymbol", width: 15, height: 15}
+        m HelpModalComponent, {toolname: args.toolname}
+      ]
       m "span", {class: "jobinfo"}, ctrl.jobinfo
     ]
 ##############################################################################
+
+
+
+###
+<div class="reveal" id="exampleModal1" data-reveal>
+  <h1>Awesome. I Have It.</h1>
+  <p class="lead">Your couch. It is mine.</p>
+  <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
+  <button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+###
+
+
 
 
 # Mithril Configs for JobViewComponent

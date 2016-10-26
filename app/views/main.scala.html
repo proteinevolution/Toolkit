@@ -178,12 +178,19 @@
             <!-- Foundation 6 -->
             <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
 
+            <!--
+            The file foundation.reveal.js must be included in your JavaScript to use this plugin, along with foundation.core.js.
+             This plugin also requires these utility libraries:
+            -->
+
+
             <!-- Reformat Javascript Library -->
             <script src="@routes.WebJarAssets.at(webJarAssets.locate("reformat.js"))"></script>
 
 
             <!-- CoffeeScript Assets -->
             <script src="@routes.Assets.at("scripts/index.js")"></script>
+            <script src="@routes.Assets.at("scripts/help.js")"></script>
             <script src="@routes.Assets.at("scripts/frontend.js")"></script>
             <script src="@routes.Assets.at("scripts/jobmodel.js")"></script>
             <script src="@routes.Assets.at("scripts/toolkit.js")"></script>
