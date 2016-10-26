@@ -10,7 +10,7 @@ window.JobViewComponent =
   view: (ctrl, args) ->
     job = args.job()
     m "div", {id: "jobview"}, [
-      m JobLineComponent, {toolnameLong: job.tool.toolnameLong, isJob: job.isJob, jobID: job.jobid, toolname: job.tool.toolname}
+      m JobLineComponent, {toolnameLong: job.tool.toolnameLong, isJob: job.isJob, jobID: job.jobid, toolname: job.tool.toolname, createdOn : job.createdOn}
       m JobTabsComponent, {job: job}
     ]
 
@@ -19,6 +19,8 @@ window.JobViewComponent =
 JobLineComponent =
   controller: (args) ->
     jobinfo: if args.isJob then "JobID: #{args.jobID()}" else "Submit a new Job"
+    jobdate: if args.isJob then "Created: #{args.createdOn()}" else "Submit a new Job"
+
 
   view: (ctrl, args) ->
     m "div", {class: "jobline"}, [
@@ -28,7 +30,9 @@ JobLineComponent =
           m "i", {class: "icon-white_question"}
         m HelpModalComponent, {toolname: args.toolname}
       ]
+      m "span", {class: "jobdate"}, ctrl.jobdate
       m "span", {class: "jobinfo"}, ctrl.jobinfo
+
     ]
 ##############################################################################
 
