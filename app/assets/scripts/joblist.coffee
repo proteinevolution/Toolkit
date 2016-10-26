@@ -16,18 +16,18 @@ jobs.JobList = Array
 
 jobs.vm = do ->
   vm = {}
-  m.request({url: "/api/jobs", method: "GET"}).then (jobs) ->
-    console.log JSON.stringify jobs
-    vm.list = jobs.map (job) -> new Job(job)
+  vm.list = []
 
-  # Remove on Job with a certain mainID from the JObList
-  vm.delete = (mainID, fromServer=false) ->
+  vm.loadList = () ->
+    m.request({url: "/api/jobs", method: "GET"}).then (jobs) ->
+      console.log JSON.stringify jobs
+      vm.list = jobs.map (job) -> new Job(job)
 
-    oldLen = vm.list.length
+  vm.loadList()
+
+  # Remove on Job with a certain mainID from the Job List
+  vm.remove = (mainID) ->
     vm.list = vm.list.filter (job) -> job.mainID != mainID
-    if vm.list.length < oldLen
-      sendMessage("type": (if fromServer then "DeleteJob" else "ClearJob") ,"mainID":mainID)
-
 
   # Update a Job Object
   vm.update = (receivedJob) ->
@@ -87,14 +87,19 @@ window.JobListComponent =
       $('input:checkbox.sidebarCheck').each ->
         $(this).prop 'checked', if all then "checked" else ""
 
-    delete: (fromServer) ->
-
-      message = if fromServer then "Do you really want to delete the selected jobs permanently?"
+    delete: (deleteCompletely) ->
+      message = if deleteCompletely then "Do you really want to delete the selected jobs permanently?"
       else "Do you really want to clear the selected jobs from the joblist?"
-      ids = ($("input:checkbox.sidebarCheck:checked").map () -> $(this).val())
-      if ids.length > 0 and confirm(message)
-        for id in ids
-          jobs.vm.delete(id, fromServer)
+      mainIDs = ($("input:checkbox.sidebarCheck:checked").map () -> $(this).val())
+      if mainIDs.length > 0 and confirm(message)
+        #TODO this is a hackjob of a String builder, may want to change this (needed: <mainID>,<mainID2>,...)
+        mainIDString = ""
+        #remove all items from the List
+        for mainID in mainIDs
+          mainIDString += mainID + ","
+          jobs.vm.remove(mainID)
+        if(deleteCompletely) then mainIDString += "&deleteCompletely=true"
+        m.request({url: "/jobs?mainIDs="+mainIDString, method: "DELETE"})
 
     sortToolname : -> jobs.vm.sortToolname()
     sortJobID: -> jobs.vm.sortJobID()

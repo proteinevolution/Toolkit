@@ -33,7 +33,7 @@ GET         /ws                                            @controllers.Applicat
 
 
 # Serve files
-GET         /files/:jobid/:filename                        @controllers.Application.file(filename: String, jobid: String)
+GET         /files/:mainID/:filename                       @controllers.Application.file(filename: String, mainID: String)
 
 
 
@@ -44,7 +44,7 @@ GET         /assets/*file                                  controllers.Assets.at
 
 # Route for direct get requests
 GET         /tools/:toolname                               @controllers.Application.showTool(toolname : String)
-GET         /jobs/:jobid                                   @controllers.Application.showJob(jobid: String)
+GET         /jobs/:mainID                                  @controllers.Application.showJob(mainID: String)
 
 # File Uploader
 
@@ -72,7 +72,8 @@ GET         /verification/:name_login/:token               @controllers.Auth.ver
 GET         /jobs/add/:mainID                              @controllers.Service.addJob(mainID: String)
 # Get a Job the User Actor already has loaded
 # Delete a Job
-POST        /jobs/del/:mainID                              @controllers.Service.delJob(mainID : String)
+DELETE      /jobs/:mainID                                  @controllers.Service.forceDeleteJob(mainID : String)
+DELETE      /jobs                                          @controllers.Service.deleteJobs()
 # Find a Job
 POST        /jobs/find                                     @controllers.Search.getJob()
 # Update Job status
@@ -116,5 +117,3 @@ GET         /api/jobs/:mainid                              @controllers.Service.
 
 # Get list of userjobs
 GET         /api/jobs                                      @controllers.Service.listJobs
-
-GET         /api/jobs2/del                                  @controllers.Service.delJobs()
