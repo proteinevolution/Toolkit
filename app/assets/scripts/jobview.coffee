@@ -19,7 +19,7 @@ window.JobViewComponent =
 JobLineComponent =
   controller: (args) ->
     jobinfo: if args.isJob then "JobID: #{args.jobID()}" else "Submit a new Job"
-    jobdate: if args.isJob then "Created: #{args.createdOn()}" else "Submit a new Job"
+    jobdate: if args.isJob then "Created: #{args.createdOn()}" else ""
 
 
   view: (ctrl, args) ->
