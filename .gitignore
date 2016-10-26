@@ -29,7 +29,6 @@ target
 mvc/conf/application.conf
 mvc/logs
 mvc/mvc.iml
-clean.sh
 .DS_Store
 jobDB/src/main/resources/application.conf
 application.conf
