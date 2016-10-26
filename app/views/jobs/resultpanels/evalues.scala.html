@@ -15,8 +15,8 @@
         //console.log(bins);
 
         $(function() {
-
-            $('#hcontainer').highcharts({
+            var width= $("#tool-tabs").width() - 30;
+            var chart = new Highcharts.Chart({
                 title: {
                     text: 'E-Value Distribution',
                     x: -20 //center
@@ -43,6 +43,10 @@
                     align: 'right',
                     verticalAlign: 'middle',
                     borderWidth: 0
+                },
+                chart: {
+                renderTo: 'hcontainer',
+                width: width
                 },
                 series: [{
                     name: 'No. HSPs',
