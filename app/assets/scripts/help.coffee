@@ -10,17 +10,30 @@ helpModalTabs = (elem, isInit) ->
 
 
 exampleContent =
-  "psiblast" : ["This is the General HelpPage", "These are parameter specific information", "These are result descriptions"]
+  "psiblast" : [
+    """
+    Search with an amino acid sequence against protein databases for locally similar sequences.
+    Similar to Protein BLAST+ but more sensitive. PSI-BLAST+ first performs a BLAST+ search and builds an alignment
+    from the best local hits. This alignment is then used as a query for the next round of search.
+    After each successive round the search alignment is updated.
+    """
+    "These are parameter specific information"
+    "These are result descriptions"
+    ]
 
 
-
+helpContent = (tool, category)  ->
+  if exampleContent[tool]
+    exampleContent[tool][category]
+  else
+    ""
 
 window.HelpModalComponent =
 
   view: (ctrl, args) ->
-    overview = exampleContent[args.toolname][0]
-    params = exampleContent[args.toolname][1]
-    results = exampleContent[args.toolname][2]
+    overview = helpContent args.toolname, 0
+    params = helpContent args.toolname, 1
+    results = helpContent args.toolname, 2
 
     m "div", {id: "help-#{args.toolname}", class: "reveal", config: helpModalReveal},
       m "div", {id: "help-tabs", config: helpModalTabs}, [
