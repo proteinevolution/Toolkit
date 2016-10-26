@@ -130,10 +130,10 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       }
 
     //  User asks to delete Job
-    case DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) =>
+    case ForceDeleteJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach {
         case Some(job) =>
-          if (job.ownerID.contains(userID) || (job.ownerID.isEmpty && job.watchList.isEmpty)) {
+          if (job.ownerID.contains(userID)) {
             deleteJob(job, userID)
           }
         case None      =>
@@ -210,6 +210,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         // finally Add the job to the Database
         updateJob(newJob)
 
+        // Tell the User Manager that the job was added
+        userManager ! JobAdded(user.userID, newJob)
+
         // Interfaces with TEL to make a new job directory, returns the  path to the script which then
         // needs to be executed
         val rootPath = s"$jobPath$SEPARATOR${newJob.mainID.stringify}$SEPARATOR"
@@ -277,7 +280,7 @@ object JobManager {
   case class AddJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
   // Delete Job Entirely
-  case class DeleteJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
+  case class ForceDeleteJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
   // mark multiple Jobs for deletion
   case class DeleteJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID])
