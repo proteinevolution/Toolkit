@@ -144,7 +144,7 @@ JobSubmissionComponent =
 
 
 # Components for generating form input fields. Also allows to encapsulate value validation
-ParameterAlignmentComponent =
+window.ParameterAlignmentComponent =
   model: (args) ->
     value: m.prop args.value    # Alignment Text
     format: m.prop null         # Alignment Format
