@@ -6,6 +6,7 @@ import actors.JobManager._
 import actors.UserManager._
 import akka.actor.{ActorLogging, Actor, ActorRef}
 import akka.event.LoggingReceive
+import controllers.UserSessions
 import models.database.{JobState, Job, User}
 import modules.Common
 import play.api.Logger
@@ -27,6 +28,7 @@ final class UserManager @Inject() (
                            extends Actor
                               with ActorLogging
                               with ReactiveMongoComponents
+                              with UserSessions
                               with Common {
 
   // Maps Session ID to Actor Ref of corresponding WebSocket
@@ -66,6 +68,7 @@ final class UserManager @Inject() (
         case Some(user) =>
           connectedUsers.get(user.userID) match {
             case Some(userActor) =>
+              updateUserCache(user)
               userActor ! JobStateChanged(job, job.status)
             case None =>
           }
@@ -95,7 +98,7 @@ final class UserManager @Inject() (
       */
     case msg : AddJob =>
       jobManager ! msg
-    case msg : DeleteJob =>
+    case msg : ForceDeleteJob =>
       jobManager ! msg
     case msg : StartJob =>
       jobManager ! msg
