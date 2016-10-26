@@ -25,7 +25,7 @@ JobLineComponent =
       m "span", {class: "toolname"}, [
         args.toolnameLong
         m "a", {config: helpModalAccess.bind(args)},
-          m "img", {src: "/assets/images/help.svg", class: "helpsymbol", width: 15, height: 15}
+          m "i", {class: "icon-white_question"}
         m HelpModalComponent, {toolname: args.toolname}
       ]
       m "span", {class: "jobinfo"}, ctrl.jobinfo
