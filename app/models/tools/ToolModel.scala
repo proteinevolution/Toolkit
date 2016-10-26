@@ -29,7 +29,7 @@ sealed trait ToolModel extends EnumEntry {
 
   val paramGroups = Map(
 
-    "Alignment" -> Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
+    "Alignment" -> Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT)
   )
 
   // Params which are not a part of any group
