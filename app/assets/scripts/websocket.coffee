@@ -55,6 +55,7 @@ onOpen = (event) ->
   connecting = false
   retryCount = 1
   $("#offline-alert").fadeOut()
+  jobs.vm.loadList()
 
 onError = (event) ->
   setTimeout(reconnect(true), 3000)

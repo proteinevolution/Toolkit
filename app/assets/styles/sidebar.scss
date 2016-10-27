@@ -8,15 +8,9 @@
   max-width: 17.500em;
 }
 
-
-
-
 .clear{
   border: 0 solid #ccc;
 }
-
-
-
 
 .clock {
   background-color: transparent;
@@ -52,7 +46,6 @@ ul#jobs li {
   border-left: none;
   color: white;
   vertical-align: middle;
-
 }
 
 .button-group .alert {
@@ -68,7 +61,6 @@ ul#jobs li {
   margin-bottom: 1em;
   width: 100%;
   background-color: transparent !important;
-
 }
 .sidebar-button:hover {
   background-color: lightgray !important;
@@ -86,7 +78,6 @@ ul#jobs li {
 .job-button div {
   width: 45%;
   height: 100%;
-
 }
 
 .job-handle {
@@ -97,8 +88,6 @@ ul#jobs li {
   font-size: 0.8em !important;
   margin-bottom: 1em !important;
   padding: 0 !important;
-
-
 }
 
 .job-handle div {
@@ -107,14 +96,10 @@ ul#jobs li {
   padding-bottom: 1em;
   background-color: rgba(220,220,220,0.5);
   color: gray;
-
 }
 
 .job-handle div:hover {
-
   background-color: #f2f2f2;
-
-
 }
 
 
@@ -269,6 +254,5 @@ a.boxclose{
 }
 
 .boxclose:before {
-  content: "×";
-
+  content: "\00d7"; // TODO Times in the file makes my Activator unhappy ~ Andrew
 }
