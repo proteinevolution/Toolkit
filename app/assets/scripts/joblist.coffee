@@ -117,7 +117,7 @@ window.JobListComponent =
         m "div", {class: "job #{a[job.state()]}".concat(if job.selected() then " selected" else "")},  [
 
           m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.mainID + '"]', job.job_id()
-          m "div", {class: "toolname"}, job.toolname.substr(0,4)
+          m "span", {class: "toolname"}, job.toolname.substr(0,4)
           m "a", {class: "boxclose", onclick: ctrl.delete.bind(ctrl, false, job.mainID)}
         ]
     ]
