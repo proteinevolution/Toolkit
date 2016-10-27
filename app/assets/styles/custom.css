@@ -13,14 +13,26 @@ body{
     background-clip: border-box;
     background-origin: padding-box;
     background-size: auto auto;
+    background-color: rgb(245, 245, 245);
+    width: 100%;
+    height: 100%;
+}
 
+div#main-container {
+    height: 100%;
 }
 
 div#main {
-    width:1200px;
-    margin: auto;
-    padding-top: 1em;
+    background-color: rgb(238, 238, 238);
+    height: 100%;
 }
+
+
+#sidebar {
+
+    padding-left: 1em;
+}
+
 
 
 .d {
