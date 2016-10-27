@@ -12,5 +12,3 @@ export CACHE_4_TCOFFEE=./tmp
 
 mv alignment.* results/
 
-#%OUT CLUSTALW alignment.clustalw_aln   
-

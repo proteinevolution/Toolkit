@@ -59,6 +59,7 @@ tabulated = (element, isInit) ->
 # View template helper for generating parameter input fields
 renderParameter = (content, moreClasses) ->
   m "div", {class: "parameter #{moreClasses}"}, content
+
 ##############################################################################
 
 
@@ -109,13 +110,11 @@ JobTabsComponent =
               [
                 m "div", elements.slice(0,split).map (paramElem) ->
                   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                  console.log paramElem[0]
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
 
                 m "div", elements.slice(split,elements.length).map (paramElem) ->
                   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                  console.log paramElem[0]
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
               ]
@@ -168,23 +167,51 @@ window.ParameterAlignmentComponent =
 
   view: (ctrl) ->
     renderParameter [
-      m "textarea",                   # Textarea field for alignment input
-        name: ctrl.name
-        placeholder: ctrl.placeholder
-        rows: 10
-        cols: 70
-        id: ctrl.id
-        onchange: m.withAttr("value", ctrl.param.value)
-        value: ctrl.param.value()
-      m "input",                         # Place example alignment
-        type: "button"
-        class: "button small alignmentExample"
-        value: "Paste Example"
-        onclick: () -> ctrl.param.value = m.prop alnviz_example()
-      m "div", {class: "alignmentFormatBlock"}, [
-        m "label", {for: "alignment_format"}, "Alignment Format"
-        m "select", {name: "alignment_format", id: "alignment_format", label: "Select Alignment format", class: "alignmentFormat"}, ctrl.formatOptions.map (entry) ->
-          m "option", {value: entry[0]}, entry[1]
+        m "div", [
+          m "textarea",                   # Textarea field for alignment input
+            name: ctrl.name
+            placeholder: ctrl.placeholder
+            rows: 10
+            cols: 70
+            id: ctrl.id
+            onchange: m.withAttr("value", ctrl.param.value)
+            value: ctrl.param.value()
+        ]
+        m "div", [
+          m "input",                         # Place example alignment
+            type: "button"
+            class: "button small alignmentExample"
+            value: "Paste Example"
+            onclick: () -> ctrl.param.value = m.prop alnviz_example()
+        ]
+      m "div", {class: "fileUpload"}, [
+        m "label",
+        for: "FileUpload"
+        class: "button",
+        "Browse..."
+        m "form",
+          enctype: "multipart/form-data"
+          m "input",
+            class: "show-for-sr"
+            id: "FileUpload"
+            name: "file"
+            type: "file"
+          m "input",
+            class: "button uploadButton"
+            type: "button"
+            value: "Upload File"
+            onclick: () ->
+              console.log "Click"
+              file = $('input[type=file]')[0].files[0]
+              alert(file.name)
+              data = new FormData
+              data.append 'file', file
+              m.request
+                method: 'POST'
+                url: '/upload'
+                data: data
+                serialize: (data) ->
+                  data
       ]
     ], "alignmentParameter"  # TODO Should be a controller argument
 
