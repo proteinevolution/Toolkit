@@ -18,6 +18,9 @@ jobs.vm = do ->
   vm = {}
   vm.list = []
 
+  vm.lastStatus = -1
+  vm.lastmainID = "undefined"
+
   vm.loadList = () ->
     m.request({url: "/api/jobs", method: "GET"}).then (jobs) ->
       console.log JSON.stringify jobs
@@ -78,10 +81,10 @@ window.JobListComponent =
   controller: (args) ->
     # Select Job
     for job in jobs.vm.list
-        job.selected(args.selected == job.mainID)
-
-    console.log "JobList Controller"
-
+      job.selected(args.selected == job.mainID)
+      if args.selected == job.mainID
+        jobs.vm.lastStatus = job.state()
+        jobs.vm.lastmainID = job.mainID
 
     select: (all) ->
       $('input:checkbox.sidebarCheck').each ->
