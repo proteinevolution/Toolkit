@@ -118,7 +118,7 @@ JobTabsComponent =
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
               ]
-            m JobSubmissionComponent, {job: ctrl.job}
+            m JobSubmissionComponent, {job: ctrl.job, isJob: ctrl.isJob}
           ]
       if ctrl.views
         ctrl.views.map (view) ->
@@ -141,10 +141,10 @@ JobSubmissionComponent =
 
   view: (ctrl, args) ->
     m "div", {class: "submitbuttons"}, [
-      m "input", {type: "button", class: "success button small submitJob", value: "Submit Job", onclick: ctrl.submit.bind(ctrl, true)}  #TODO
-      m "input", {type: "button", class: "success button small submitJob", value: "Prepare Job", onclick: ctrl.submit.bind(ctrl, false)}  #TODO
-      m "input", {type: "button", class: "success button small submitJob", value: "Resubmit Job", onclick: ctrl.submit.bind(ctrl, true)}  #TODO
-      m "input", {type: "button", class: "button small", value: "Add Job", onclick: ctrl.addJob}  #TODO
+      if !args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Submit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
+      if !args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Prepare Job", onclick: ctrl.submit.bind(ctrl, false)} else null   #TODO
+      if  args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Resubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null   #TODO
+      if  args.isJob then m "input", {type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob} else null  #TODO
       m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job.jobid), value: args.job.jobid()}
     ]
 ##############################################################################
