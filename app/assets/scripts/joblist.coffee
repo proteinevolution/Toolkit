@@ -18,6 +18,9 @@ jobs.vm = do ->
   vm = {}
   vm.list = []
 
+  vm.lastStatus = -1
+  vm.lastmainID = "undefined"
+
   vm.loadList = () ->
     m.request({url: "/api/jobs", method: "GET"}).then (jobs) ->
       console.log JSON.stringify jobs
@@ -78,28 +81,19 @@ window.JobListComponent =
   controller: (args) ->
     # Select Job
     for job in jobs.vm.list
-        job.selected(args.selected == job.mainID)
-
-    console.log "JobList Controller"
-
+      job.selected(args.selected == job.mainID)
+      if args.selected == job.mainID
+        jobs.vm.lastStatus = job.state()
+        jobs.vm.lastmainID = job.mainID
 
     select: (all) ->
       $('input:checkbox.sidebarCheck').each ->
         $(this).prop 'checked', if all then "checked" else ""
 
-    delete: (deleteCompletely) ->
-      message = if deleteCompletely then "Do you really want to delete the selected jobs permanently?"
-      else "Do you really want to clear the selected jobs from the joblist?"
-      mainIDs = ($("input:checkbox.sidebarCheck:checked").map () -> $(this).val())
-      if mainIDs.length > 0 and confirm(message)
-        #TODO this is a hackjob of a String builder, may want to change this (needed: <mainID>,<mainID2>,...)
-        mainIDString = ""
-        #remove all items from the List
-        for mainID in mainIDs
-          mainIDString += mainID + ","
-          jobs.vm.remove(mainID)
-        if(deleteCompletely) then mainIDString += "&deleteCompletely=true"
-        m.request({url: "/jobs?mainIDs="+mainIDString, method: "DELETE"})
+    delete: (deleteCompletely, mainID) ->
+      jobs.vm.remove(mainID)
+      if(deleteCompletely) then mainID += "&deleteCompletely=true"
+      m.request({url: "/jobs?mainIDs="+mainID.toString(), method: "DELETE"})
 
     sortToolname : -> jobs.vm.sortToolname()
     sortJobID: -> jobs.vm.sortJobID()
@@ -113,33 +107,17 @@ window.JobListComponent =
             m "i", {class: "icon-magnifying", id: "iconsidebar" }
         ]
 
-      m "div", {class: "button job-handle"}, [
-
-        m "div", {class: "delete", onclick: ctrl.delete.bind(ctrl, true)}, "Delete"
-        m "div", {onclick: ctrl.delete.bind(ctrl, false)} ,"Clear"
-      ]
-
       m "div", {class: "button job-button"}, [
-
-        m "div", [
-          m "span",  {onclick: ctrl.select.bind(ctrl, true)}, "All"
-          m "span", "/"
-          m "span",  {onclick: ctrl.select.bind(ctrl, false)}, "None"
-        ]
         m "div", {class: "idsort", onclick: ctrl.sortJobID}, "ID"
         m "div", {class: "toolsort", onclick: ctrl.sortToolname}, "Tool"
       ]
 
-      jobs.vm.list.map (job) ->
+      m "div", jobs.vm.list.map (job) ->
         m "div", {class: "job #{a[job.state()]}".concat(if job.selected() then " selected" else "")},  [
 
-          m "div", {class: "checkbox"}, [
-            m "input", {type: "checkbox", class: 'sidebarCheck', name: job.mainID, value: job.mainID, id: job.mainID}
-            m "label", {for: job.mainID}
-          ]
           m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.mainID + '"]', job.job_id()
-
-          m "div", {class: "toolname"}, job.toolname.substr(0,4)
+          m "span", {class: "toolname"}, job.toolname.substr(0,4)
+          m "a", {class: "boxclose", onclick: ctrl.delete.bind(ctrl, false, job.mainID)}
         ]
     ]
 

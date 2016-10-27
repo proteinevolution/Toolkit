@@ -9,6 +9,7 @@
 .parameter {
     width: 100% !important;
     text-align: right;
+    height: 6em;
 }
 
 .parameter label {
@@ -114,14 +115,17 @@
 }
 
 
-
-
-
 .submitbuttons {
     position:absolute;
     bottom:30px;
     left:30px;
     width: 80%;
+}
+.submitbuttons .submitJob {
+
+    background-color: rgba(0, 110, 98, 166);
+    float: left;
+    margin-right: 0.5em;
 }
 
 .submitbuttons .jobid {
@@ -130,8 +134,10 @@
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #878787;
     height: 2em;
-    width: 15em;
-    float: right;
+    width: 10em;
+    float: left;
+    border-radius: 3px;
+    font-size: 0.88em
 }
 
 
@@ -188,8 +194,51 @@ font-size: 0.65em !important;
     padding-right: 1cm;
 }
 
-
 .jobline i {
 
     margin-left: 0.5em;
+}
+.jobline .helpicon {
+
+    color: grey;
+}
+
+.reveal {
+
+    width: 80%;
+}
+
+.not-active {
+    pointer-events: none;
+    cursor: default;
+}
+
+#help-tabs ul .toolname {
+
+    float: right;
+    font-weight: bold;
+}
+
+.jobid{
+    padding-left: 1em;
+}
+
+
+.job .toolname{
+    padding-left: 2em;
+}
+
+
+/* File Upload */
+
+.fileUploadBox{
+margin-top: 2em;
+    float: left;
+    display: flex;
+    padding: 0.5em;
+}
+
+.uploadButton{
+    background-color: rgba(0, 110, 98, 166);
+
 }
