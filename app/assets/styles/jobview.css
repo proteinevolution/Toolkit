@@ -124,6 +124,8 @@
 .submitbuttons .submitJob {
 
     background-color: rgba(0, 110, 98, 166);
+    float: left;
+    margin-right: 0.5em;
 }
 
 .submitbuttons .jobid {
@@ -133,7 +135,7 @@
     text-shadow: 0 0 0 #878787;
     height: 2em;
     width: 10em;
-    float: right;
+    float: left;
     border-radius: 3px;
     font-size: 0.88em
 }
@@ -192,7 +194,6 @@ font-size: 0.65em !important;
     padding-right: 1cm;
 }
 
-
 .jobline i {
 
     margin-left: 0.5em;
@@ -222,6 +223,22 @@ font-size: 0.65em !important;
     padding-left: 1em;
 }
 
-.toolname{
+
+.job .toolname{
     padding-left: 2em;
+}
+
+
+/* File Upload */
+
+.fileUploadBox{
+margin-top: 2em;
+    float: left;
+    display: flex;
+    padding: 0.5em;
+}
+
+.uploadButton{
+    background-color: rgba(0, 110, 98, 166);
+
 }
