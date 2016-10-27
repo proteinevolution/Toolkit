@@ -121,9 +121,14 @@
     left:30px;
     width: 80%;
 }
-.submitbuttons .submitJob {
 
+.submitbuttons .submitJob {
     background-color: rgba(0, 110, 98, 166);
+    float: left;
+    margin-right: 0.5em;
+}
+
+.submitbuttons .addJob {
     float: left;
     margin-right: 0.5em;
 }
