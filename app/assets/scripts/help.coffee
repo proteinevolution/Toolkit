@@ -74,6 +74,9 @@ window.HelpModalComponent =
 
           m "li",
             m "a", {href: "#help-tabs3"}, "Results"
+
+           m "li", {class: "toolname" },
+             m "a", {href: "#", class: "not-active"}, args.toolnameLong
         ]
 
         m "div", {id: "help-tabs1"}, overview
