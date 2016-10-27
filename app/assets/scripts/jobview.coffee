@@ -24,11 +24,11 @@ JobLineComponent =
 
   view: (ctrl, args) ->
     m "div", {class: "jobline"}, [
+      m HelpModalComponent, {toolname: args.toolname, toolnameLong: args.toolnameLong}
       m "span", {class: "toolname"}, [
         args.toolnameLong
         m "a", {config: helpModalAccess.bind(args)},
-          m "i", {class: "icon-white_question"}
-        m HelpModalComponent, {toolname: args.toolname}
+          m "i", {class: "icon-white_question helpicon"}
       ]
       m "span", {class: "jobdate"}, ctrl.jobdate
       m "span", {class: "jobinfo"}, ctrl.jobinfo
