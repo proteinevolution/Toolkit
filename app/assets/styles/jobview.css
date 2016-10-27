@@ -132,8 +132,10 @@
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #878787;
     height: 2em;
-    width: 15em;
+    width: 10em;
     float: right;
+    border-radius: 3px;
+    font-size: 0.88em
 }
 
 
@@ -214,4 +216,12 @@ font-size: 0.65em !important;
 
     float: right;
     font-weight: bold;
+}
+
+.jobid{
+    padding-left: 1em;
+}
+
+.toolname{
+    padding-left: 2em;
 }
