@@ -74,6 +74,25 @@ tabulated = (element, isInit) ->
   if not isInit then $(element).tabs()
 
 
+fndt = (elem, isInit) ->
+  if not isInit
+    $(elem).foundation()
+
+window.FrontendReformatComponent =
+    controller: ->
+      html: m.request {method: "GET", url: "/static/get/reformat", deserialize: (data) -> data}
+
+    view: (ctrl) ->
+      m "div", {id: "jobview", config: fndt},
+        m.trust ctrl.html()
+
+
+
+###
+
+      $(document).foundation()
+      $("html, body").animate({ scrollTop: 0 }, "fast")
+
 window.FrontendReformatComponent =
   controller: ->
 
@@ -85,7 +104,7 @@ window.FrontendReformatComponent =
 
       m GeneralTabComponent, {tabs: ["Alignment", "Freqs"], ctrl: ctrl}
     ]
-
+###
 
 # Used to abstract over the tabulated view as it is used for all views
 GeneralTabComponent =
