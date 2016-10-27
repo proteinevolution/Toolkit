@@ -9,6 +9,7 @@
 .parameter {
     width: 100% !important;
     text-align: right;
+    height: 6em;
 }
 
 .parameter label {
@@ -193,4 +194,24 @@ font-size: 0.65em !important;
 .jobline i {
 
     margin-left: 0.5em;
+}
+.jobline .helpicon {
+
+    color: grey;
+}
+
+.reveal {
+
+    width: 80%;
+}
+
+.not-active {
+    pointer-events: none;
+    cursor: default;
+}
+
+#help-tabs ul .toolname {
+
+    float: right;
+    font-weight: bold;
 }
