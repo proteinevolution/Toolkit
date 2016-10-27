@@ -66,9 +66,9 @@ final class UserManager @Inject() (
     case JobAdded(userID : BSONObjectID, job : Job) =>
       modifyUser(BSONDocument(User.IDDB -> userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> job.mainID))).foreach{
         case Some(user) =>
+          updateUserCache(user)
           connectedUsers.get(user.userID) match {
             case Some(userActor) =>
-              updateUserCache(user)
               userActor ! JobStateChanged(job, job.status)
             case None =>
           }

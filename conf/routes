@@ -73,7 +73,8 @@ GET         /jobs/add/:mainID                              @controllers.Service.
 # Get a Job the User Actor already has loaded
 # Delete a Job
 DELETE      /jobs/:mainID                                  @controllers.Service.forceDeleteJob(mainID : String)
-DELETE      /jobs                                          @controllers.Service.deleteJobs()
+# Clear or delete multiple jobs
+DELETE      /jobs                                          @controllers.Service.removeJobs()
 # Find a Job
 POST        /jobs/find                                     @controllers.Search.getJob()
 # Update Job status

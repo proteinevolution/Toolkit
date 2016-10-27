@@ -114,6 +114,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       BSONObjectID.parse(mainIDString) match {
         case Success(mainID) =>
           jobManager ! AddJob(user.userID, mainID)
+          Logger.info("Adding job: " + mainID.stringify)
+          //Redirect(s"/#/jobs/${mainID.stringify}").withSession(sessionCookie(request, user.sessionID.get))
           Ok.withSession(sessionCookie(request, user.sessionID.get))
         case _ =>
           NotFound
@@ -122,11 +124,14 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   }
 
   /**
-    * Remove multiple Jobs at once - get request needs to be of format: ?mainIDs=<mainID1>,<mainID2>,...,<mainIDx>
+    * Remove multiple Jobs at once
+    * get request needs to be of format: ?mainIDs=<mainID1>,<mainID2>,...,<mainIDx>[&deleteCompletely=true]
+    * mainIDs contains the list of mainIDs which should be cleared or deleted
+    * deleteCompletely boolean for a "deletion" of the job
     * @return
     */
 
-  def deleteJobs() = Action.async { implicit request =>
+  def removeJobs() = Action.async { implicit request =>
     getUser.flatMap { user =>
       request.getQueryString("mainIDs") match {
         case Some(mainIDsString) =>
@@ -154,7 +159,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             case Some(updatedUser) =>
               // Update the user cache
               updateUserCache(updatedUser)
-              Ok(mainIDs.toString()).withSession(sessionCookie(request, updatedUser.sessionID.get))
+              Ok.withSession(sessionCookie(request, updatedUser.sessionID.get))
             case None =>
               // User has not been found in the database
               NotFound

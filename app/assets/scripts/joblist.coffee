@@ -44,6 +44,8 @@ jobs.vm = do ->
       i++
     vm.list.push(updatedJob)
 
+  vm.addJob = (mainID) ->
+    m.request({url: "/jobs/add/" + mainID, method: "GET"})
 
   vm.sortToolname =  ->
     vm.list = vm.list.sort (job1, job2) -> job2.toolname.localeCompare(job1.job_id)
