@@ -107,13 +107,12 @@ window.JobListComponent =
             m "i", {class: "icon-magnifying", id: "iconsidebar" }
         ]
 
-
       m "div", {class: "button job-button"}, [
         m "div", {class: "idsort", onclick: ctrl.sortJobID}, "ID"
         m "div", {class: "toolsort", onclick: ctrl.sortToolname}, "Tool"
       ]
 
-      jobs.vm.list.map (job) ->
+      m "div", jobs.vm.list.map (job) ->
         m "div", {class: "job #{a[job.state()]}".concat(if job.selected() then " selected" else "")},  [
 
           m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.mainID + '"]', job.job_id()

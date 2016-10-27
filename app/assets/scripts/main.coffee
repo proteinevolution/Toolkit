@@ -11,7 +11,7 @@ StaticRoute =
           'alnvizfrontend'
           'patSearch'
         ].indexOf(controller['static']) >= 0
-          $('#main-content').empty().prepend data
+          $('#content').empty().prepend data
         else
           $('body').empty().prepend data
         $(document).foundation()
@@ -23,7 +23,6 @@ m.route.mode = 'hash'
 
 m.route document.getElementById('main-content'), '/',
   '/' : Index
-  '/:static' : StaticRoute
   '/tools/:toolname': m Toolkit, {isJob: false}
   '/jobs/:mainID': m Toolkit, {isJob: true}
 
