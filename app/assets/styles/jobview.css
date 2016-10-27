@@ -114,14 +114,15 @@
 }
 
 
-
-
-
 .submitbuttons {
     position:absolute;
     bottom:30px;
     left:30px;
     width: 80%;
+}
+.submitbuttons .submitJob {
+
+    background-color: rgba(0, 110, 98, 166);
 }
 
 .submitbuttons .jobid {
