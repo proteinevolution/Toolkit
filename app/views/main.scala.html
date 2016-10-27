@@ -76,13 +76,15 @@
         <link href='http://fonts.googleapis.com/css?family=Vollkorn:400,700' rel='stylesheet' type='text/css'>
     </head>
 
-
     <body onload="load()" data-ws-url="@routes.Application.ws().webSocketURL()">
 
-        <div id="main">
+        <div id="main-container">
+
+            <div id="main" class="row">
+                <div class="medium-12 large-12 small-12 padded-column columns">
+
             <!---All purpose Modal --->
             <div id="modal" class="reveal large" data-reveal></div>
-
 
             <!---Hamburger Navbar --->
             <div id="myNav" class="overlay">
@@ -223,6 +225,8 @@
                         $(document).foundation();
                     })
             </script>
+                </div>
+        </div>
         </div>
     </body>
 </html>
