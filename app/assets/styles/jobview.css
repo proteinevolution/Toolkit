@@ -173,12 +173,12 @@ font-size: 0.65em !important;
 }
 
 .jobline .jobinfo {
+    padding-right: 1em;
     float: right;
     font-size: small;
 }
 
 .jobline .jobdate {
-    padding-left: 1em;
     float: right;
     font-size: small;
 }
