@@ -8,7 +8,7 @@ import akka.stream.Materializer
 import models.{Constants, Values}
 import models.tel.TEL
 import modules.Common
-import play.api.Configuration
+import play.api.{Configuration, Logger}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
@@ -106,15 +106,19 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     }
   }
 
+
+
   def upload = Action(parse.multipartFormData) { request =>
-    request.body.file("picture").map { picture =>
+    request.body.file("file").map { picture =>
+      // TODO: Handle file storage, pass uploaded sequences to model, validate uploaded files
       import java.io.File
       val filename = picture.filename
       val contentType = picture.contentType
-      picture.ref.moveTo(new File(s"/tmp/picture/$filename"))
+      println(picture)
+      picture.ref.moveTo(new File(s"/tmp/$filename"))
       Ok("File uploaded")
     }.getOrElse {
-      Redirect(s"/#/upload").flashing(
+      Redirect(s"/upload").flashing(
         "error" -> "Missing file")
     }
   }
