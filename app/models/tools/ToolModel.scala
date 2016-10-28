@@ -117,10 +117,10 @@ object ToolModel extends PlayEnum[ToolModel] {
       "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
 
     val results = Map(
-      "blast" -> "",
-      "evalue" -> "evalues.dat",
-      "fasta" -> "out.align",
-      "biojs" -> "out.align_clu"
+      "Hits" -> "",
+      "E-Values" -> "evalues.dat",
+      "Fasta" -> "out.align",
+      "AlignmentViewer" -> "out.align_clu"
     )
   }
 
