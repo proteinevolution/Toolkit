@@ -514,3 +514,22 @@ textarea { resize:both; }
     padding: 0 1em 0 1em;
 }
 
+.dropzone{
+
+    border: dashed 1px darkblue;
+    background-color: #c6d6e5 ;
+    margin-top: 15px;
+    width: 40%;
+    max-height: 20%;
+    display: block;
+    margin: auto;
+
+}
+
+#dropzoneContainer {
+    padding-top: 25px;
+}
+
+body {
+    overflow-y: scroll;
+}
