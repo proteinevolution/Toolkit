@@ -233,6 +233,12 @@ font-size: 0.65em !important;
     padding-left: 2em;
 }
 
+.job .jobid {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 7em;
+}
+
 
 /* File Upload */
 
