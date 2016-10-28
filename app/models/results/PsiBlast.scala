@@ -10,12 +10,18 @@ package models.results
 
 
 import models.Constants
+import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import scala.io.Source
-
+import net.ruippeixotog.scalascraper.dsl.DSL._
+import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
+import net.ruippeixotog.scalascraper.dsl.DSL.Parse._
+import net.ruippeixotog.scalascraper.model.Element
 
 
 object PsiBlast extends Constants {
 
+
+  val browser = JsoupBrowser()
 
   def evalues(mainID: String) = {
 
@@ -30,22 +36,42 @@ object PsiBlast extends Constants {
   }
 
 
+  def blastviz(mainID: String) = {
+
+    val blastviz = s"$jobPath$mainID/results/blastviz.html"
+
+    Source.fromFile(blastviz).getLines().mkString
+
+  }
+
+
   def overview(mainID: String) = {
 
 
     val outfile = s"$jobPath$mainID/results/out.psiblastp"
+    val doc = browser.parseFile(outfile)
 
-
+    //var result : String = doc >> text("TITLE")
     var result = ""
-    val regex = "(?s)(?<=\bIngredients\b).*?(?=\bMethod\b)".r
+
+    //val metaItems = doc >> elements("b")
+
+    val regex = """(?s)<b>PSIBLAST(.*?)29:2994-3005.""".r
+
 
     for (line <- Source.fromFile(outfile).getLines()) {
 
-      result = result.concat("<br>"+line)
+      if (!line.startsWith("<b>") && !line.startsWith("href"))
+        result = result.concat(line + "<br>")
+      else
+        result = result.concat(line + " ")
 
     }
 
-    result
+
+    val overviewText = regex.findFirstIn(result)
+
+    overviewText
 
   }
 
