@@ -33,7 +33,7 @@ sealed trait ToolModel extends EnumEntry {
   )
 
   // Params which are not a part of any group
-  val remainParamName : String = "Parameter"
+  val remainParamName : String = "Parameters"
   lazy val remainParams : Seq[String] = params.diff(paramGroups.values.flatten.toSeq)
 
   def toolitem(values : Values) : Toolitem = Toolitem(
