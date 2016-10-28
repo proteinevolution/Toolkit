@@ -1,3 +1,4 @@
+
 # Config for displaying the help modals:
 helpModalAccess = (elem, isInit) ->
   if not isInit
@@ -98,7 +99,7 @@ JobTabsComponent =
           split = (elements.length / 2)
           m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
 
-            if ctrl.alignmentPresent and paramGroup[0] is "Alignment"
+            if ctrl.alignmentPresent and paramGroup[0] is "Input"
 
 # Controller arguments of the Component to be mounted
               ctrlArgs = {options: paramGroup[1][0][1],  value: ctrl.getParamValue("alignment")}
@@ -147,6 +148,47 @@ JobSubmissionComponent =
       m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job.jobid), value: args.job.jobid()}
     ]
 ##############################################################################
+m.capture = (eventName, handler) ->
+
+  bindCapturingHandler = (element) ->
+    element.addEventListener eventName, handler, true
+    return
+
+  (element, init) ->
+    if !init
+      bindCapturingHandler element
+    return
+
+
+dropzone_psi  = (element, isInit) ->
+
+  handleFileSelect = (evt) ->
+    evt.stopPropagation()
+    evt.preventDefault()
+    files = evt.dataTransfer.files
+    # FileList object.
+    # files is a FileList of File objects. List some properties.
+    output = []
+    i = 0
+    f = undefined
+    while f = files[i]
+      output.push '<li><strong>', escape(f.name), '</strong> (', f.type or 'n/a', ') - ', f.size, ' bytes, last modified: ', f.lastModifiedDate.toLocaleDateString(), '</li>'
+      i++
+    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>'
+    return
+
+  handleDragOver = (evt) ->
+    evt.stopPropagation()
+    evt.preventDefault()
+    evt.dataTransfer.dropEffect = 'copy'
+      # Explicitly show this is a copy.
+    return
+
+  if not isInit
+
+    $(element).addEventListener 'dragover', handleDragOver, false
+    $(element).addEventListener 'drop', handleFileSelect, false
+
 
 
 # Components for generating form input fields. Also allows to encapsulate value validation
@@ -183,36 +225,19 @@ window.ParameterAlignmentComponent =
             value: "Paste Example"
             onclick: () -> ctrl.param.value = m.prop alnviz_example()
         ]
-      m "div", {class: "fileUpload"}, [
-        m "label",
-        for: "FileUpload"
-        class: "button",
-        "Browse..."
-        m "form",
-          enctype: "multipart/form-data"
-          m "input",
-            class: "show-for-sr"
-            id: "FileUpload"
-            name: "file"
-            type: "file"
-          m "input",
-            class: "button uploadButton"
-            type: "button"
-            value: "Upload File"
-            onclick: () ->
-              console.log "Click"
-              file = $('input[type=file]')[0].files[0]
-              alert(file.name)
-              data = new FormData
-              data.append 'file', file
-              m.request
-                method: 'POST'
-                url: '/upload'
-                data: data
-                serialize: (data) ->
-                  data
-      ]
+
     ], "alignmentParameter"  # TODO Should be a controller argument
+
+###
+  <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
+                    <div id="progress_bar"><div class="percent">0%</div></div>
+                    <input type="file" id="files" name="file" />
+                        <!--<div id="drop_zone" type="file" class="dropzone" name="file" style="margin-top: 10px; text-align: center; line-height: 150px; vertical-align: middle;">Drop files here</div>-->
+                    <output id="list"></output>
+
+
+                </div>###
+
 
 
 ParameterSelectComponent =
