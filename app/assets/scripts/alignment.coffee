@@ -129,15 +129,6 @@
   )
 
 
-@psiblastBlastviz = (id, Blastviz) ->
-
-# Makes AJAX call to the file on server
-  $.get(Blastviz+"blastviz.html", (content) ->
-
-    $('#' + id ).prepend content
-
-  )
-
 
 
 
