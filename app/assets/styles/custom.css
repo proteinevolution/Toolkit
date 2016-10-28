@@ -318,6 +318,7 @@ tr.job a:visited {
 
 .trafficbar {
 
+    cursor: pointer;
     z-index: 99;
     margin-top: 0.6em;
     margin-right: 10em;
