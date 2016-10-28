@@ -38,7 +38,7 @@ trafficbar = (elem, isInit) ->
   if not isInit
     elem.setAttribute "data-disable-hover", "false"
     elem.setAttribute "data-tooltip", "data-tooltip"
-    elem.setAttribute "title", "Click to view last visited job"
+    elem.setAttribute "title", "Click to view last job: " +jobs.vm.lastjobID
     status = jobs.vm.lastStatus
     if status == -1
       $(elem).hide()
