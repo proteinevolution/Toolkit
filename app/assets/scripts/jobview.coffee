@@ -135,14 +135,14 @@ JobSubmissionComponent =
         jobid = null
       submitRoute = jsRoutes.controllers.Tool.submit(args.job.tool.toolname, startJob, jobid)
       formData = new FormData(document.getElementById("jobform"))
-      m.request {url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}
+      m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (data) ->
+        m.route "/jobs/#{data.mainID}"
     addJob: ->
       jobs.vm.addJob(args.job.mainID)
 
   view: (ctrl, args) ->
     m "div", {class: "submitbuttons"}, [
       if !args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Submit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
-      if !args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Prepare Job", onclick: ctrl.submit.bind(ctrl, false)} else null   #TODO
       if  args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Resubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null   #TODO
       if  args.isJob then m "input", {type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob} else null  #TODO
       m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job.jobid), value: args.job.jobid()}
