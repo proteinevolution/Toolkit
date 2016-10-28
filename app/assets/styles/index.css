@@ -202,7 +202,10 @@ select {
     color: black;
 }
 
-.slider { cursor: default }
+.slider {
+    cursor: default;
+    background-color:  rgb(238, 238, 238);
+}
 
 .slide-caption{
     min-height: 80px;

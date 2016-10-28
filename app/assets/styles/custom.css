@@ -13,9 +13,11 @@ body{
     background-clip: border-box;
     background-origin: padding-box;
     background-size: auto auto;
-    background-color: rgb(245, 245, 245);
+    /*background-color: rgb(245, 245, 245); */
     width: 100%;
     height: 100%;
+    /*background-image: linear-gradient(to bottom,#d7d7d7 0%,#eeeeee 116px) !important; */
+    background-color: #ccc;
 }
 
 div#main-container {
@@ -23,8 +25,24 @@ div#main-container {
 }
 
 div#main {
+    background-color: #cecece;
     background-color: rgb(238, 238, 238);
     height: 100%;
+
+    -webkit-box-shadow: 1px 3px 7px 2px rgba(0,0,0,0.60);
+    -moz-box-shadow: 1px 3px 7px 2px rgba(0,0,0,0.60);
+    box-shadow: 1px 3px 7px 2px rgba(0,0,0,0.60);
+}
+
+
+#navcontainer {
+
+
+
+}
+#metanav {
+
+    min-height: 25px;
 }
 
 
@@ -37,13 +55,16 @@ div#main {
 
 .d {
     background-color: #DBFFDB;
-
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .d:hover {
     background-color: #C3FFC3;
+    border: solid red thick;
 }
 .d.selected {
     background-color: #C3FFC3;
+    border-right: solid #2E8C81 3px !important;
 }
 
 
