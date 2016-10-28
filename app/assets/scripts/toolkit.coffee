@@ -25,6 +25,8 @@ jobs.vm = do ->
 
   vm.lastStatus = -1
   vm.lastmainID = "undefined"
+  vm.lastjobID = "undefined"
+
 
   vm.loadList = () ->
     m.request({url: "/api/jobs", method: "GET"}).then (jobs) ->
@@ -72,6 +74,7 @@ jobs.vm = do ->
 
   vm.getLastJob = () ->
     return vm.list[vm.list.length-1]
+
 
   vm
 
