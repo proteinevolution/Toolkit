@@ -9,13 +9,16 @@
 </p>
 <div id="blastviz">
 
-
+    @Html(PsiBlast.blastviz(mainID))
 
 </div>
 
 <button class="revealReference">Show references</button>
-<div id="alignment_overview">
-    @Html(PsiBlast.overview(mainID))
+<div id="alignment_overview" style="display: none;">
+
+        @Html(PsiBlast.overview(mainID).get)
+
+
 </div>
 <div  id="alignmentDetail" >
 </div>
@@ -33,10 +36,10 @@ $(document).ready(function(){
 $("button.revealReference").click(function(){
     if ($.trim($(this).text()) === 'Show references') {
         $(this).text('Hide references');
-        $('#metaReferences').show()
+        $('#alignment_overview').show()
     } else {
         $(this).text('Show references');
-        $('#metaReferences').hide()
+        $('#alignment_overview').hide()
     }
 
     return false;
