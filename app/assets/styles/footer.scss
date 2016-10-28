@@ -1,12 +1,10 @@
 
 .footer  {
-
   background-color: #272727;
   color: #fff;
   text-align: center;
-  font-size: small;
-  width: 100%;
-  max-width: 100%;
+  width: 40%;
+  max-width: 40%;
   margin-bottom: 0px;
   bottom: 0;
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
@@ -17,34 +15,28 @@
   background-color: #272727;
 }
 
-.footer a {
-  display: block;
+#footer a {
   color: #fff;
 
 }
 
-.footer a:active {
+#footer a:active {
   display: block;
   color: #006F62;
-
 }
 
-.footer a:hover {
-  display: block;
+#footer a:hover {
   background-color: #006F62;
 
 }
 
-.footer a:visited {
-  display: block;
+#footer a:visited {
   color: #fff;
-
 }
 
 
-.socket {
+#socket {
   margin: auto;
-  max-width: 75rem;
   color: #848484;
   padding: 3px 5px;
   border-top-color: rgb(204, 204, 204);
@@ -58,11 +50,11 @@
   border-image-source: none;
   border-image-repeat: stretch stretch;
   text-align: center;
-  font-size: 0.825em;
+  font-size: 0.7em;
   height: 20px;
   bottom: 0;
+  width: 100%;
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-  margin-bottom: 0px;
 
 }
 
