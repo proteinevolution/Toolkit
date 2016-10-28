@@ -1,5 +1,6 @@
 @import play.api.mvc.RequestHeader
 @import models.database.User
+@import java.util.Date
 @(webJarAssets: WebJarAssets, user: User)(implicit messages: Messages, request: RequestHeader)
 
 <!DOCTYPE html>
@@ -81,6 +82,10 @@
         <div id="main-container">
 
             <div id="main" class="row">
+             <div class="medium-12 large-12 small-12 padded-column columns">
+
+
+            <div class="row">
                 <div class="medium-12 large-12 small-12 padded-column columns">
 
             <!---All purpose Modal --->
@@ -167,22 +172,31 @@
 
                        </div>
                     </div>
-
-                <div class="row show-for-large large-12 columns" id="subnav">
-                    @elements.topnav(user)
-                </div>
-
             </div>
-
-            <footer>
-                @elements.footer()
-            </footer>
+            </div>
+            </div>
+                 <footer class="row">
+                            <div class="columns large-12">
+                              <div id="sub-nav">
+                                    <a href="#">Help</a>
+                                    <a href="#">Disclaimer</a>
+                                    <a href="http://www.eb.tuebingen.mpg.de/impressum" target="_blank">Imprint</a>
+                                    <a href="#">Tool Versions</a>
+                                    <a href="/contact">Contact</a>
+                                    <a href="#">Personal Databases</a>
+                             </div>
+                                <div id="socket"> © 2008-@(new Date().format("yyyy")) , Dept. of Protein Evolution at the Max Planck Institute for Developmental Biology, Tübingen </div>
+                            </div>
+                 </footer>
+                </div>
+            </div>
+        </div>
 
             <!-- Script Inclusions -->
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
 
             <!-- Foundation 6 -->
-            <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
 
             <!--
             The file foundation.reveal.js must be included in your JavaScript to use this plugin, along with foundation.core.js.
@@ -191,30 +205,30 @@
 
 
             <!-- Reformat Javascript Library -->
-            <script src="@routes.WebJarAssets.at(webJarAssets.locate("reformat.js"))"></script>
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("reformat.js"))"></script>
 
 
             <!-- CoffeeScript Assets -->
-            <script src="@routes.Assets.at("scripts/index.js")"></script>
-            <script src="@routes.Assets.at("scripts/help.js")"></script>
-            <script src="@routes.Assets.at("scripts/frontend.js")"></script>
-            <script src="@routes.Assets.at("scripts/jobmodel.js")"></script>
-            <script src="@routes.Assets.at("scripts/toolkit.js")"></script>
-            <script src="@routes.Assets.at("scripts/joblist.js")"></script>
-            <script src="@routes.Assets.at("scripts/jobview.js")"></script>
-            <script src="@routes.Assets.at("scripts/main.js")"></script>
-            <script src="@routes.Assets.at("scripts/websocket.js")"></script>
-            <script src="@routes.Assets.at("scripts/validation.js")"></script>
-            <script src="@routes.Assets.at("scripts/alignment.js")"></script>
-            <script src="@routes.Assets.at("scripts/search.js")"></script>
-            <script src="@routes.Assets.at("scripts/auth.js")"></script>
-            <script src="@routes.Assets.at("scripts/notification.js")"></script>
+        <script src="@routes.Assets.at("scripts/index.js")"></script>
+        <script src="@routes.Assets.at("scripts/help.js")"></script>
+        <script src="@routes.Assets.at("scripts/frontend.js")"></script>
+        <script src="@routes.Assets.at("scripts/jobmodel.js")"></script>
+        <script src="@routes.Assets.at("scripts/toolkit.js")"></script>
+        <script src="@routes.Assets.at("scripts/joblist.js")"></script>
+        <script src="@routes.Assets.at("scripts/jobview.js")"></script>
+        <script src="@routes.Assets.at("scripts/main.js")"></script>
+        <script src="@routes.Assets.at("scripts/websocket.js")"></script>
+        <script src="@routes.Assets.at("scripts/validation.js")"></script>
+        <script src="@routes.Assets.at("scripts/alignment.js")"></script>
+        <script src="@routes.Assets.at("scripts/search.js")"></script>
+        <script src="@routes.Assets.at("scripts/auth.js")"></script>
+        <script src="@routes.Assets.at("scripts/notification.js")"></script>
 
             <!-- Public Javascript Assets -->
-            <script src="@routes.Assets.at("javascripts/msa.min.js")" type="text/javascript"></script>
-            <script src='@routes.Assets.at("javascripts/sampleseqs.js")'></script>
+        <script src="@routes.Assets.at("javascripts/msa.min.js")" type="text/javascript"></script>
+        <script src='@routes.Assets.at("javascripts/sampleseqs.js")'></script>
 
-            <script type="text/javascript">
+        <script type="text/javascript">
 
                     function openNav() {
                         document.getElementById("myNav").style.height = "100%";
@@ -229,8 +243,6 @@
                         $(document).foundation();
                     })
             </script>
-                </div>
-        </div>
-        </div>
+
     </body>
 </html>
