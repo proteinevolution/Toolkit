@@ -135,8 +135,7 @@ JobSubmissionComponent =
         jobid = null
       submitRoute = jsRoutes.controllers.Tool.submit(args.job.tool.toolname, startJob, jobid)
       formData = new FormData(document.getElementById("jobform"))
-      m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (data) ->
-        m.route "/jobs/#{data.mainID}"
+      m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data})
     addJob: ->
       jobs.vm.addJob(args.job.mainID)
 
