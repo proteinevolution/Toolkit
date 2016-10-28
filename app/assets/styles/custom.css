@@ -25,6 +25,7 @@ div#main-container {
 }
 
 div#main {
+    margin-bottom: 55px;
     background-color: #cecece;
     background-color: rgb(238, 238, 238);
     -webkit-box-shadow: 1px 3px 7px 2px rgba(0,0,0,0.60);
