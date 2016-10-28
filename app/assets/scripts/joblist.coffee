@@ -14,6 +14,8 @@ window.JobListComponent =
       if args.selected == job.mainID
         jobs.vm.lastStatus = job.state()
         jobs.vm.lastmainID = job.mainID
+        jobs.vm.lastjobID = job.job_id()
+
 
     select: (all) ->
       $('input:checkbox.sidebarCheck').each ->
