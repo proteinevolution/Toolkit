@@ -8,29 +8,33 @@
 }
 
 .ui-state-default {
-  background: #eee !important;
+  background: #f2f2f2 !important;
   border: none !important;
   height: 2.45em;
 
 }
 
 .ui-state-active {
-  background: white !important;
+  background: #f2f2f2 !important;
+  color: white;
 
 }
 
 .ui-state-active a:link {
-  color: #888;
+  color: white;
   margin-top: 0.5em;
 
 }
 
 .ui-state-default a:link {
-  color: #888;
+  color: inherit;
   margin-top: 0.5em;
 }
 
 #tool-tabs {
+  -webkit-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.4);
   background: transparent;
   border: none;
   padding: 0;
@@ -43,9 +47,9 @@
 
 
 .ui-widget-header {
-  -webkit-box-shadow: 0px 1px 6px 0px lightgray;
-  -moz-box-shadow: 0px 1px 6px 0px lightgray;
-  box-shadow: 0px 1px 6px 0px lightgray;
+  -webkit-box-shadow: 0px 1px 6px 0px #ccc;
+  -moz-box-shadow: 0px 1px 6px 0px #ccc;
+  box-shadow: 0px 1px 6px 0px #ccc;
   background: #888 url("images/ui-bg_highlight-soft_75_cccccc_1x100.png") 50% 50% repeat-x;
   background-color: #eee;
   background-image: url("images/ui-bg_highlight-soft_75_cccccc_1x100.png");
