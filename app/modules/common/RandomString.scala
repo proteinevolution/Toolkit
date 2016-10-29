@@ -1,4 +1,4 @@
-package models.misc
+package modules.common
 
 /**
   * Object contains methods to create random strings

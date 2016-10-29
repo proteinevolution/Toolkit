@@ -1,6 +1,8 @@
+@import modules.common.RegionCodes
+
 @import play.api.mvc.RequestHeader
 @import models.database.User
-@import models.misc.RegionCodes
+
 @(user : User)(implicit messages: Messages, request: RequestHeader)
 
 <form id="profile-edit-form" data-abide="ajax" novalidate>

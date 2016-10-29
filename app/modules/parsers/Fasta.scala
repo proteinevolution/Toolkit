@@ -1,4 +1,4 @@
-package models.misc.parsers
+package modules.parsers
 import scala.util.parsing.combinator._
 
 object FASTA {
