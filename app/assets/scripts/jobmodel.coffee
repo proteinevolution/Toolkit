@@ -4,6 +4,7 @@
 # TODO Refactor this model
 # Information about the current Job
 window.JobModel =
+  mainID: m.prop ""
   isJob: m.prop false
   jobid: m.prop null
   jobstate: m.prop null
@@ -26,6 +27,7 @@ window.JobModel =
     if args.isJob
       m.request({method: 'GET', url: "/api/jobs/#{value}"}).then (data) ->
         JobModel.paramValues = data.paramValues
+        JobModel.mainID(data.mainID)
         mainID: data.mainID
         tool : data.toolitem
         isJob: true
@@ -37,9 +39,11 @@ window.JobModel =
     else
        m.request({method: 'GET', url: "/api/tools/#{value}"}).then (data) ->
         JobModel.paramValues = {}
-        tool : data
+        JobModel.mainID(data.newMainID)
+        tool : data.toolitem
         isJob: false
         jobid: m.prop ""
+        mainID: data.newMainID
 
   getParamValue: (param) ->
 

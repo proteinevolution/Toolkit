@@ -56,7 +56,7 @@ onOpen = (event) ->
   retryCount = 1
   $("#offline-alert").fadeOut()
   m.startComputation()
-  jobs.vm.loadList()
+  #jobs.vm.loadList()
   m.endComputation()
 
 onError = (event) ->
@@ -76,9 +76,9 @@ onMessage = (event) ->
   # Jobstate has changed
     when "UpdateJob"
       state = message.job.state.toString()
-      console.log("State:" + state)
+      mainID = message.job.mainID.toString()
       m.startComputation()
-      jobs.vm.update(message.job)
+      Job.updateState(mainID, state)
       m.endComputation()
       if jobs.vm.getJobState(message.job) == 'running'
         $('#trafficbar').css

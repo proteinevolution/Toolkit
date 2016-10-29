@@ -42,9 +42,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   val random = scala.util.Random
 
-  //  Generates new jobID // TODO Save this state
-  val jobIDSource: Iterator[Int] = Stream.continually(  random.nextInt(8999999) + 1000000 ).distinct.iterator
-
   // Ignore the following keys when writing parameters
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
 
@@ -191,7 +188,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         val newJob = Job(mainID      = mainID,
                          jobType     = "",
                          parentID    = None,
-                         jobID       = jobID.getOrElse(jobIDSource.next().toString), //TODO Refactor to name
+                         jobID       = jobID,
                          ownerID     = ownerID,
                          status      = JobState.Submitted,
                          tool        = toolName,
@@ -268,7 +265,7 @@ object JobManager {
     */
   // Prepare Job with new parameters or create new job with specified parameters for the given tool
   case class Prepare(user     : User,
-                     jobID    : Option[String],
+                     jobID    : String,
                      mainID   : BSONObjectID,
                      toolName : String,
                      params   : Map[String, String])

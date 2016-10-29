@@ -134,12 +134,10 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "alignment"
     val optional = ""
 
+
     val params = Seq(Param.ALIGNMENT)
-
     val results = Map(
-
-      "simple" -> "alignment.clustalw_aln",
-      "biojs" -> "alignment.clustalw_aln"
+      "AlignmentViewer" -> "alignment.clustalw_aln"
     )
   }
 
