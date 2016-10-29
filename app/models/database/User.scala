@@ -61,7 +61,7 @@ object User {
     */
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User = User(
-      userID        = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID("None")),
+      userID        = bson.getAs[BSONObjectID](IDDB).get,
       sessionID     = bson.getAs[BSONObjectID](SESSIONID),
       sessionData   = bson.getAs[List[SessionData]](SESSIONDATA).getOrElse(List.empty),
       connected     = bson.getAs[Boolean](CONNECTED).getOrElse(false),

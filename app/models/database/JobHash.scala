@@ -28,7 +28,7 @@ object JobHash {
 
   implicit object Reader extends BSONDocumentReader[JobHash] {
     override def read(bson: BSONDocument): JobHash = JobHash(
-      mainID = bson.getAs[BSONObjectID](ID).getOrElse(BSONObjectID("Null")),
+      mainID = bson.getAs[BSONObjectID](ID).get,
       bson.getAs[String](INPUTHASH).getOrElse("No matching hash value found"),
       bson.getAs[String](DBNAME),
       bson.getAs[String](DBMTIME)
