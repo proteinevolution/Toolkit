@@ -5,6 +5,7 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.UserManager.{JobAdded, MessageWithUserID}
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import controllers.Settings
+import models.database.JobDeletionFlag.JobDeletionFlag
 import models.database._
 import models.search.JobDAO
 import modules.Common
@@ -143,19 +144,19 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       }
 
     // User removed the Jobs from their view
-    case DeleteJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID]) =>
+    case DeleteJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID], flag : JobDeletionFlag, deletionTime : DateTime) =>
       findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).foreach { foundJobs =>
         // Mark jobs for deletion when they only have one user or if the user who requested the deletion is the owner
         val partJobs = foundJobs.partition(job =>
-               job.ownerID.contains(userID)
-            || job.watchList.length <= 1
+               job.ownerID.contains(userID) // Owner deletes the job -> gets marked for deletion
+            || job.watchList.length <= 1    // Public job loses its last watcher
         )
 
         if (partJobs._1.nonEmpty) {
           // mark the Jobs for deletion in the DB and remove the watchlist
           updateJob(BSONDocument(Job.IDDB -> BSONDocument("$in" -> partJobs._1.map(_.mainID))),
                     BSONDocument("$set"   -> BSONDocument(Job.DELETION  ->
-                         JobDeletion(JobDeletionFlag.PublicRequest, Some(DateTime.now.plusWeeks(2)))),
+                         JobDeletion(flag, Some(deletionTime))),
                                  "$unset" -> BSONDocument(Job.WATCHLIST -> "")))
         }
         if (partJobs._2.nonEmpty) {
@@ -283,7 +284,10 @@ object JobManager {
   case class ForceDeleteJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
   // mark multiple Jobs for deletion
-  case class DeleteJobs(userID : BSONObjectID, mainIDs : List[BSONObjectID])
+  case class DeleteJobs(userID       : BSONObjectID,       // ID of the user who requested the deletion
+                        mainIDs      : List[BSONObjectID], // List of the mainIDs to delete
+                        flag         : JobDeletionFlag = JobDeletionFlag.PublicRequest, // Flag to use for deletion
+                        deletionTime : DateTime = DateTime.now.plusWeeks(2))            // Date to delete the files
 
   // Start a Job that has been Prepared but not started
   case class StartJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID

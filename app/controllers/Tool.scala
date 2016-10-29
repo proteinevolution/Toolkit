@@ -2,12 +2,12 @@ package controllers
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager.{StartJob, Prepare}
+import actors.JobManager.{DeleteJobs, StartJob, Prepare}
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
 import better.files._
-import models.database.{Job, JobState}
+import models.database.{JobDeletionFlag, Job, JobState}
 import models.search.JobDAO
 import models.tools.ToolModel
 import modules.Common
@@ -70,9 +70,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
         }
       }
 
-      lazy val hashQuery = jobDao.matchHash(inputHash, dbName, dbMtime)
-
-      hashQuery.flatMap { richSearchResponse =>
+      jobDao.matchHash(inputHash, dbName, dbMtime).flatMap { richSearchResponse =>
         println("success: " + richSearchResponse)
         println("hits: " + richSearchResponse.totalHits)
 
@@ -82,11 +80,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
         }
 
         // Find the Jobs in the Database
-        val futureJobs = jobCollection.map(_.find(BSONDocument(Job.IDDB ->
-          BSONDocument("$in" -> mainIDs))).cursor[Job]())
-
-        // Collect the list
-        futureJobs.flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]())).map { jobList =>
+        findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
           // all mainIDs from the DB
           val foundMainIDs   = jobList.map(_.mainID)
 
@@ -98,17 +92,19 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
           // Delete index-zombie jobs
           unfoundMainIDs.foreach { mainID =>
-            println("[WARNING]: job in index but not in database")
+            println("[WARNING]: job in index but not in database: " + mainID.stringify)
             jobDao.deleteJob(mainID.stringify)
           }
 
           // Mark Failed Jobs
+          jobManager ! DeleteJobs(user.userID, jobsPatition._1.map(_.mainID), JobDeletionFlag.Automated) // marks all database entries for automated deletion
+          /*
           jobsPatition._1.foreach { job =>
             println("job with same signature found but job failed, should submit the job again")
             //TODO we should delete failed jobs only here because keeping them is normally useful for debugging and statistics
             //jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID))  // would only delete the database entry
-            //jobManager ! DeleteJob(user.userID, job.mainID)                       // deletes all files and database entries
           }
+          */
 
           jobsPatition._2.headOption match {
             //  Identical job has been found
