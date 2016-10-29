@@ -10,7 +10,8 @@ BEGIN {
 };
 
 use strict;
-use lib "../lib";
+use lib "/home/soeding/perl";  
+use lib $rootdir."/lib";             # for chimaera webserver: ConfigServer.pm
 use MyPaths; 
 use constant ROUND_START_PATTERN => qr/Results from round\s+(\d+)/;
 use constant END_OF_HEADER => qr/(No hits found)|(^Sequences)/;

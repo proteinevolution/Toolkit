@@ -1,5 +1,6 @@
+@import models.results.PsiBlast
 @import play.api.mvc.RequestHeader
-@(pathToFastaFile : String)(implicit request: RequestHeader)
+@(mainID : String)(implicit request: RequestHeader)
 <script src="@routes.Assets.at("javascripts/toolkit.js")"></script>
 
 <style>
@@ -23,6 +24,11 @@
     </select>
     </div>
 <table id="fasta" class="hover_alignment">
+@for((pair, index) <- PsiBlast.fastaAlignment(mainID).zipWithIndex){
+
+    <tr><td><input style='margin: 0px; padding: 0px;'  type='checkbox' class='hits' value='@index')></td><td><pre> >@pair.description <br> @pair.sequence </pre></td></tr>
+
+}
 </table>
 </div>
 
@@ -32,7 +38,7 @@
 </table>
 
 <script>
-fastaSimple("fasta", "alignstats", '@pathToFastaFile')
+
 function selectAll() {
 $('input:checkbox.hits').each(function () {
             var checked = !$(this).data('checked');
