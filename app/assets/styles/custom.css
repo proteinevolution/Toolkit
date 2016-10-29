@@ -52,6 +52,8 @@ div#main {
 
 
 
+
+
 .d {
     background-color: #DBFFDB;
     text-overflow: ellipsis;
@@ -96,6 +98,16 @@ div#main {
 }
 .q.selected {
     background-color: #c0b5bf;
+}
+
+.i {
+    background-color: #f2f2f2;
+}
+.i:hover {
+    background-color: #DADADA;
+}
+.i.selected {
+    background-color: #DADADA;
 }
 
 .p {

@@ -41,15 +41,15 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
   implicit val timeout = Timeout(5.seconds)
 
 
-  def submit(toolName: String, start : Boolean, jobID : Option[String]) = Action.async { implicit request =>
+  def submit(toolname: String, mainID: String, jobID : String) = Action.async { implicit request =>
 
     getUser.flatMap { user =>
 
       val boundForm = ToolModel.jobForm.bindFromRequest
 
       // Prepare the Job
-      val newMainID = BSONObjectID.generate()
-      jobManager ! Prepare(user, jobID, newMainID, toolName, boundForm.data)
+      val newMainID = BSONObjectID.parse(mainID).get
+      jobManager ! Prepare(user, jobID, newMainID, toolname, boundForm.data)
 
       lazy val DB = boundForm.data.getOrElse("standarddb","").toFile  // get hold of the database in use
       lazy val jobByteArray = boundForm.data.toString().getBytes // convert params to hashable byte array
@@ -118,11 +118,9 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
             // No identical job submission, Start the job right away.
             case None =>
-              if (start) {
-                jobManager ! StartJob(user.userID, newMainID)
-              }
+
+              jobManager ! StartJob(user.userID, newMainID)
               Ok(Json.obj("jobSubmitted"  -> true,
-                          "jobStarted"    -> start,
                           "identicalJobs" -> false,
                           "mainID"        -> newMainID.stringify)
               ).withSession(sessionCookie(request, user.sessionID.get))

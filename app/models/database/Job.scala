@@ -83,6 +83,14 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
              "state"    -> status,
              "toolname" -> tool)
   }
+  def cleaned2() = {
+
+    Json.obj("mainID"   -> mainID.stringify,
+             "jobID"   -> jobID,
+             "state"    -> status,
+             "createdOn" -> dateCreated.get,
+             "toolname" -> tool)
+  }
 }
 
 

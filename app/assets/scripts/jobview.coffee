@@ -12,7 +12,7 @@ window.JobViewComponent =
     job = args.job()
     m "div", {id: "jobview"}, [
       m JobLineComponent, {toolnameLong: job.tool.toolnameLong, isJob: job.isJob, jobID: job.jobid, toolname: job.tool.toolname, ownerName: job.ownerName, createdOn : job.createdOn}
-      m JobTabsComponent, {job: job}
+      m JobTabsComponent, {job: job, add: args.add}
     ]
 
 ##############################################################################
@@ -86,7 +86,7 @@ JobTabsComponent =
     job : args.job
 
 
-  view: (ctrl) ->
+  view: (ctrl, args) ->
     m "div", {class: "tool-tabs", id: "tool-tabs", config: tabulated}, [
 
 # Generate the list of jobsections
@@ -121,7 +121,7 @@ JobTabsComponent =
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
               ]
-            m JobSubmissionComponent, {job: ctrl.job, isJob: ctrl.isJob}
+            m JobSubmissionComponent, {job: ctrl.job, isJob: ctrl.isJob, add: args.add}
           ]
       if ctrl.views
         ctrl.views.map (view) ->
@@ -135,10 +135,14 @@ JobSubmissionComponent =
     this.submitting = false
     submit: (startJob) ->
       submitting:true
+      mainID = JobModel.mainID()
+
       jobid = args.job.jobid()    # TODO Maybe merge with jobID validation
-      if not jobid
-        jobid = null
-      submitRoute = jsRoutes.controllers.Tool.submit(args.job.tool.toolname, startJob, jobid)
+      if not jobid                # TODO Prevent submission if validation fails
+        jobid = window.Job.generateJobID()
+      args.add(new Job({mainID: mainID, jobID: jobid, state: 6, createdOn: "now", toolname: args.job.tool.toolname}))
+
+      submitRoute = jsRoutes.controllers.Tool.submit(args.job.tool.toolname, mainID, jobid)
       formData = new FormData(document.getElementById("jobform"))
       m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
         #this.submitting = false
@@ -375,9 +379,5 @@ formComponents =
     label: "Number of alignments and descriptions"
     value: args.value
   ]
-
-
-
-
 
 

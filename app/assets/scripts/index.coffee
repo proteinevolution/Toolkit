@@ -33,26 +33,37 @@ slickSlider = (elem, isInit) ->
         });
 ###
 
+###
+  this.selected = m.prop -1
+  this.lastUpdated = m.prop -1
+  this.lastUpdatedState = m.prop -1
+###
+
 
 trafficbar = (elem, isInit) ->
   if not isInit
     elem.setAttribute "data-disable-hover", "false"
     elem.setAttribute "data-tooltip", "data-tooltip"
-    elem.setAttribute "title", "Click to view last job: " +jobs.vm.lastjobID
-    status = jobs.vm.lastStatus
-    if status == -1
+    elem.setAttribute "title", "Click to view last job: " + Job.lastUpdated()
+    status = Job.lastUpdatedState()
+    console.log "Traffic bar sees status " + status
+    if status == "-1"
+      console.log "Hide Trafficbar"
       $(elem).hide()
-    else if status == 5
+    else if status == "5"
+      console.log "Traffic Bar goes to done"
       $(elem).css
         'background': 'green',
         'box-shadow': '0 0 10px darkgreen'
 
-    else if status == 4
+    else if status == "4"
+      console.log "Traffic Bar goes to error"
       $(elem).css
         'background': '#ff0000',
         'box-shadow': '0 0 10px #d2071d'
 
-    else if status == 3
+    else if status == "3"
+      console.log "Traffic Bar goes to running"
       $(elem).css
         'background': '#ffff00',
         'box-shadow': '0 0 10px #ffce27'
@@ -84,7 +95,7 @@ window.Index =
           m "div", {class: "search-query large-12 medium-6"},
             m "div", {class: "columns large-12"},
               m "input", {type: "text", id: "searchInput", name: "searchInput", placeholder: "Search Keywords"}
-          m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{jobs.vm.lastmainID}"}
+          m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated()}"}
         ]
   ]
 
