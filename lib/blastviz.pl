@@ -281,14 +281,12 @@ my $domain_start = 1;
 my $domain_end = $qlen;
 my $slider_length = $imgwidth-26;
 
+print HTMLFILE "
+<div style='width: ${slider_length}px ;position: absolute; margin-top: 0.560em; margin-left: 1.1em' class='flat-slider' id='flat-slider'></div>
+<script type='text/javascript'>setTimeout(function() {slider_show($qlen, $domain_start, $domain_end)}, 1000);</script>";
+
 # my $domain_start = scalar(@hits) ? $hits[0]->{"qbeg"} : 1;
 # my $domain_end = scalar(@hits) ? $hits[0]->{"qend"} : $qlen;
-print HTMLFILE "
-
-<div style='width: ${slider_length}px ;position: absolute; margin-top: 0.560em; margin-left: 1.1em' class='flat-slider' id='flat-slider'></div>
-<script type='text/javascript'>slider_show($qlen, $domain_start, $domain_end);
-</script>";
-
 print HTMLFILE "<p><img src=\"$imgdir/$imgfile\" border=\"0\" alt=\"blasthits\" usemap=\"#blastmap\"></p>";
 close(HTMLFILE);
 
