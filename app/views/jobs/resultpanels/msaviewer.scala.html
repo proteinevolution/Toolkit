@@ -21,7 +21,7 @@
         msa = require("msa");
 
         var opts = {colorscheme: {"scheme": "clustal"}};
-        var seqs =  msa.io.clustal.parse(seqs);
+        seqs =  msa.io.clustal.parse(seqs);
         var width= $("#tool-tabs").width() - 200;
 
         opts.el = document.getElementById("rootDiv");
