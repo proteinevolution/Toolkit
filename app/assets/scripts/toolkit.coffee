@@ -31,6 +31,12 @@ class window.Job
     Job.list().splice(idx, 1)
 
   this.updateState = (mainID, state) ->
+
+    # If the job is selected, do something
+    if mainID == Job.selected()
+      m.route("/jobs/#{mainID}")  # This is not my final solution. I stil have some other ideas1
+
+
     Job.lastUpdated(mainID)
     Job.lastUpdatedState(state)
     for job in Job.list()
@@ -81,6 +87,8 @@ jobs.vm = do ->
 window.Toolkit =
 
   controller: (args)  ->
+
+
     console.log "Controller of Toolkit"
     if args.isJob
       Job.selected(m.route.param("mainID"))
@@ -93,10 +101,17 @@ window.Toolkit =
       viewComponent = () -> FrontendTools[toolname]
     else
       job = JobModel.update(args, if args.isJob then m.route.param("mainID") else m.route.param("toolname"))
+      # Which job the user has selected
+      ###
+      job = Job.list.then (jobs) ->
+        for job in jobs
+          if job.mainID == Job.selected()
+            return job
+      ###
       viewComponent = () -> m JobViewComponent, {job : job, add: Job.add}
     jobs : Job.list
     viewComponent : viewComponent
-    selected: Job.selected()
+    selected: Job.selected
     clear: Job.clear
 
 
@@ -107,4 +122,3 @@ window.Toolkit =
     m "div", {id: "content", class: "large-10 small-10 columns padded-column"},
       ctrl.viewComponent()
   ]
-

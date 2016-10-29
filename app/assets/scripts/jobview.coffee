@@ -14,6 +14,7 @@ window.JobViewComponent =
       m JobLineComponent, {toolnameLong: job.tool.toolnameLong, isJob: job.isJob, jobID: job.jobid, toolname: job.tool.toolname, ownerName: job.ownerName, createdOn : job.createdOn}
       m JobTabsComponent, {job: job, add: args.add}
     ]
+###
 
 ##############################################################################
 # Component for the Jobline
@@ -22,7 +23,6 @@ JobLineComponent =
     jobinfo: if args.isJob then "JobID: #{args.jobID()}" else "Submit a new Job"
     ownername: if args.ownerName then args.ownerName() else ""
     jobdate: if args.isJob then "Created: #{args.createdOn()}" else ""
-
 
   view: (ctrl, args) ->
     m "div", {class: "jobline"}, [
@@ -35,7 +35,6 @@ JobLineComponent =
       m "span", {class: "jobdate"}, ctrl.jobdate
       m "span", {class: "jobinfo"}, ctrl.jobinfo
       m "span", {class: "ownername"}, ctrl.ownername
-
     ]
 ##############################################################################
 
@@ -146,6 +145,8 @@ JobSubmissionComponent =
 
       submitRoute = jsRoutes.controllers.Tool.submit(args.job.tool.toolname, mainID, jobid)
       formData = new FormData(document.getElementById("jobform"))
+
+      # Send submission request and see whether server accepts or job already exists
       m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
         #this.submitting = false
         if (json.existingJobs)
@@ -153,6 +154,12 @@ JobSubmissionComponent =
             m.route("/jobs/#{json.existingJob.mainID}")
           else
             sendMessage("type":"StartJob", "mainID":json.mainID)
+        else
+          m.route("/jobs/#{mainID}")
+
+
+
+
 
 
     addJob: ->
