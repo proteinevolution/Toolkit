@@ -214,7 +214,7 @@ font-size: 0.65em !important;
 
 .jobline .jobid {
 
-    padding-right: 1cm;
+    padding-right: 1em;
 }
 
 .jobline i {
@@ -229,7 +229,7 @@ font-size: 0.65em !important;
 .jobline .ownername {
     float: right;
     font-size: small;
-    margin-right: 0.5em;
+    padding-right: 1em;
 }
 
 .reveal {
