@@ -25,9 +25,19 @@ class window.Job
   # This is currently just a hack for the presentation
   this.requestTool = m.prop false
 
+  # Determines whether Job with the provided mainID is in the JobList
+  this.contains = (mainID) ->
+    Job.list.then (jobs) ->
+      for job in  jobs
+        if job.mainID == mainID
+          return true
+      return false
+
+
   this.list = do ->
     console.log "Reloading Job List"
     m.request({url: "/api/jobs", method: "GET", type: Job})
+
 
   # Clears a job from the joblist by index
   this.clear = (idx) ->
@@ -41,14 +51,13 @@ class window.Job
     # If the job is selected, do something
     if mainID == Job.selected()
       m.route("/jobs/#{mainID}")  # This is not my final solution. I stil have some other ideas1
-
-
     Job.lastUpdated(mainID)
     Job.lastUpdatedState(state)
     for job in Job.list()
       if job.mainID == mainID
         job.state(state)
         break
+
   # Adds a new Job to the JobList.
   this.add = (job) -> Job.list().push(job)
 
@@ -92,11 +101,15 @@ jobs.vm = do ->
 window.Toolkit =
 
   controller: (args)  ->
-
     if args.isJob
-      Job.selected(m.route.param("mainID"))
+      mainID = m.route.param("mainID")
+      Job.selected(mainID)
+      console.log JSON.stringify Job.contains(mainID)
+
     else
       Job.selected(-1)
+
+
 
     toolname = m.route.param("toolname")
     # Case that the requested tool is a Frontend tool
