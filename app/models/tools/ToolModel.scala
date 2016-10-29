@@ -113,9 +113,121 @@ object ToolModel extends PlayEnum[ToolModel] {
     "repper" -> Repper,
     "tprpred" -> TPRpred,
     "hhomp" -> HHomp,
-    "quick2d" -> Quick2D
+    "quick2d" -> Quick2D,
+    "samcc" -> SamCC,
+    "blastclust" -> BlastClust,
+    "hhblits" -> HHblits,
+    "hhpred" -> HHpred,
+    "patternsearch" -> PatternSearch,
+    "blastp" -> BlastP,
+    "simshiftdb" -> SimShiftDB
   )
 
+
+  case object SimShiftDB extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "simshiftdb"
+    val toolNameLong = "SimShiftDB"
+    val toolNameAbbrev = "ssd"
+    val category = "search"
+    val optional = ""
+
+
+    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
+      "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
+
+    val results = Map(
+      "Hits" -> "",
+      "E-Values" -> "evalues.dat",
+      "Fasta" -> "out.align",
+      "AlignmentViewer" -> "out.align_clu"
+    )
+  }
+
+  case object BlastP extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "blastp"
+    val toolNameLong = "BLASTP"
+    val toolNameAbbrev = "blp"
+    val category = "search"
+    val optional = ""
+
+
+    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
+      "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
+
+    val results = Map(
+      "Hits" -> "",
+      "E-Values" -> "evalues.dat",
+      "Fasta" -> "out.align",
+      "AlignmentViewer" -> "out.align_clu"
+    )
+  }
+
+  case object PatternSearch extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "patternsearch"
+    val toolNameLong = "PatternSearch"
+    val toolNameAbbrev = "pas"
+    val category = "search"
+    val optional = ""
+
+
+    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
+      "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
+
+    val results = Map(
+      "Hits" -> "",
+      "E-Values" -> "evalues.dat",
+      "Fasta" -> "out.align",
+      "AlignmentViewer" -> "out.align_clu"
+    )
+  }
+
+  case object HHblits extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "hhblits"
+    val toolNameLong = "HHblits"
+    val toolNameAbbrev = "hhb"
+    val category = "search"
+    val optional = ""
+
+
+    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
+      "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
+
+    val results = Map(
+      "Hits" -> "",
+      "E-Values" -> "evalues.dat",
+      "Fasta" -> "out.align",
+      "AlignmentViewer" -> "out.align_clu"
+    )
+  }
+
+  case object HHpred extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "hhpred"
+    val toolNameLong = "HHpred"
+    val toolNameAbbrev = "hhp"
+    val category = "search"
+    val optional = ""
+
+
+    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
+      "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
+
+    val results = Map(
+      "Hits" -> "",
+      "E-Values" -> "evalues.dat",
+      "Fasta" -> "out.align",
+      "AlignmentViewer" -> "out.align_clu"
+    )
+  }
 
 
   case object PsiBlast extends ToolModel {
@@ -409,6 +521,17 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameShort = "hhcluster"
     val toolNameLong = "HHcluster"
     val toolNameAbbrev = "hhc"
+    val category = "classification"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+  case object BlastClust extends ToolModel {
+
+    val toolNameShort = "blastclust"
+    val toolNameLong = "BLASTClust"
+    val toolNameAbbrev = "bcl"
     val category = "classification"
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
