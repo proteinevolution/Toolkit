@@ -101,24 +101,6 @@
 
 
 
-@blastOutputOverview = (id, statid, pathToBlastOutput) ->
-
-    # Makes AJAX call to the file on server
-  $.get(pathToBlastOutput+"out.psiblastp_overview", (content) ->
-
-    $('#' + id ).append content
-    $('#metaReferences').hide()
-   )
-
-@blastOutputAlignment = (id, statid, pathToBlastOutput) ->
-
-# Makes AJAX call to the file on server
-  $.get(pathToBlastOutput+"out.psiblastp_alignment", (content) ->
-
-    $('#' + id ).append content
-
-  )
-
 @tcoffeeColored = (tabid, Colored) ->
 
   # Makes AJAX call to the file on server
