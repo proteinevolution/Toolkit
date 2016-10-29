@@ -70,6 +70,7 @@ GET         /verification/:name_login/:token               @controllers.Auth.ver
 # Interaction with Jobs
 # Loading a Job from the DB
 GET         /jobs/add/:mainID                              @controllers.Service.addJob(mainID: String)
+GET         /jobs/load/:mainID                              @controllers.Service.loadJob(mainID: String)
 # Get a Job the User Actor already has loaded
 # Delete a Job
 DELETE      /jobs/:mainID                                  @controllers.Service.forceDeleteJob(mainID : String)
