@@ -11,6 +11,7 @@ import models.search.JobDAO
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
+import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,15 +42,18 @@ final class ESManager @Inject()(val messagesApi      : MessagesApi,
         }
       }
 
-    case Search(userID : BSONObjectID, queryString : String, element) =>
+    case ElasticSearch(userID : BSONObjectID, queryString : String, element) =>
       jobDao.fuzzySearchJobID(queryString).foreach { richSearchResponse =>
         if (richSearchResponse.totalHits > 0) {
           val jobIDEntries = richSearchResponse.getHits.getHits
           val mainIDs      = jobIDEntries.toList.map(hit => BSONObjectID.parse(hit.id).get)
           val futureJobs   = jobBSONCollection.map(_.find(BSONDocument(Job.IDDB ->
                                                           BSONDocument("$in"    -> mainIDs))).cursor[Job]())
+
+          jobBSONCollection
           // Collect the list and then create the reply
-          futureJobs.flatMap(_.collect[List]()).andThen {
+          futureJobs.flatMap{ _.collect[List](-1, Cursor.FailOnError[List[Job]]())
+          }.andThen {
             case Success(jobList) =>
               println("Found " + jobList.length.toString + " Job[s]. Sending.")
               userManager ! SearchReply(userID, jobList, element)
@@ -71,7 +75,7 @@ object ESManager {
     * Incoming
     */
   case class AutoComplete(userID : BSONObjectID, queryString : String, element : Int) extends MessageWithUserID
-  case class Search(userID : BSONObjectID, queryString : String, element : Int) extends MessageWithUserID
+  case class ElasticSearch(userID : BSONObjectID, queryString : String, element : Int) extends MessageWithUserID
   case class SearchForHash(userID : BSONObjectID, queryString : String) extends MessageWithUserID
 
   /**

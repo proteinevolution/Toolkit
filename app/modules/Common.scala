@@ -4,6 +4,7 @@ import models.database.{Job, User}
 import play.api.http.ContentTypes
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoComponents
+import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.BSONDocument
 
@@ -42,7 +43,7 @@ trait Common
 
   protected def findJob(selector : BSONDocument) = jobCollection.flatMap(_.find(selector).one[Job])
   protected def findJobs(selector : BSONDocument) = {
-    jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List]())
+    jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
   protected def modifyJob(selector : BSONDocument, modifier : BSONDocument) = {

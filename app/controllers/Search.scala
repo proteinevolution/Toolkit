@@ -1,6 +1,6 @@
 package controllers
 
-import actors.ESManager.Search
+import actors.ESManager.ElasticSearch
 import akka.actor.ActorRef
 import models.Constants
 import play.api.cache._
@@ -29,11 +29,10 @@ final class Search @Inject() (
 
   // TODO more actions from the views
 
-  def getJob() = Action.async { implicit request =>
-    val userCollection = reactiveMongoApi.database.map(_.collection("jobs").as[BSONCollection](FailoverStrategy()))
+  def getJob = Action.async { implicit request =>
     // Retrieve the user from the cache or the DB
     getUser.flatMap { user =>
-      esManager ! Search(user.userID, "", -1)
+      esManager ! ElasticSearch(user.userID, "", -1)
       Future.successful(Ok)
     }
   }
