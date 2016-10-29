@@ -8,7 +8,7 @@ object psiblastpPostProcess {
     var index2 =0
     var database = ""
     var scoreE = ""
-    var pattern = ("""[0-9]><\/a>(.*)\s*""").r
+    var pattern = ("""[0-9]><\/a>(.*)\s*""").r;
     var stopParsing = false;
     val file = new File(outfile + "_overview")
     val bw = new BufferedWriter(new FileWriter(file))
