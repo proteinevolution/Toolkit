@@ -1,7 +1,7 @@
 package actors
 
 import javax.inject.{Named, Inject, Singleton}
-import actors.ESManager.{Search, AutoComplete}
+import actors.ESManager.{ElasticSearch, AutoComplete}
 import actors.JobManager._
 import actors.UserManager._
 import akka.actor.{ActorLogging, Actor, ActorRef}
@@ -88,7 +88,7 @@ final class UserManager @Inject() (
     case msg : AutoComplete =>
       esManager ! msg
 
-    case msg : Search =>
+    case msg : ElasticSearch =>
       esManager ! msg
 
 
