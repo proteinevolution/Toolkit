@@ -45,7 +45,7 @@ final class ESManager @Inject()(val messagesApi      : MessagesApi,
       jobDao.fuzzySearchJobID(queryString).foreach { richSearchResponse =>
         if (richSearchResponse.totalHits > 0) {
           val jobIDEntries = richSearchResponse.getHits.getHits
-          val mainIDs      = jobIDEntries.toList.map(hit => BSONObjectID(hit.id))
+          val mainIDs      = jobIDEntries.toList.map(hit => BSONObjectID.parse(hit.id).get)
           val futureJobs   = jobBSONCollection.map(_.find(BSONDocument(Job.IDDB ->
                                                           BSONDocument("$in"    -> mainIDs))).cursor[Job]())
           // Collect the list and then create the reply
