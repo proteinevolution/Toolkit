@@ -18,6 +18,8 @@ body{
     height: 100%;
     /*background-image: linear-gradient(to bottom,#d7d7d7 0%,#eeeeee 116px) !important; */
     background-color: #666;
+    overflow-y: scroll;
+
 }
 
 div#main-container {
@@ -547,6 +549,16 @@ textarea { resize:both; }
     padding-top: 25px;
 }
 
-body {
-    overflow-y: scroll;
+
+#social {
+    float: right;
+    padding-right: 35px;
+    margin-top: -5px;
+
+}
+
+#social i{
+    padding-left: 4px;
+    color: #bf616a;
+
 }
