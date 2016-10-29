@@ -29,7 +29,7 @@ sealed trait ToolModel extends EnumEntry {
 
   val paramGroups = Map(
 
-    "Input" -> Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT)
+    "Input" -> Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
   )
 
   // Params which are not a part of any group
@@ -98,7 +98,22 @@ object ToolModel extends PlayEnum[ToolModel] {
     "muscle" -> Muscle,
     "mafft" -> Mafft,
     "kalign" -> Kalign,
-    "hmmer3" -> Hmmer3
+    "hmmer3" -> Hmmer3,
+    "hhcluster" -> HHcluster,
+    "ancescon" -> ANCESCON,
+    "clans" -> CLANS,
+    "bfit" -> Bfit,
+    "modeller" -> Modeller,
+    "ali2d" -> Ali2D,
+    "hhfrag" -> HHfrag,
+    "pcoils" -> PCoils,
+    "frpred" -> FRpred,
+    "hhrep" -> HHrep,
+    "marcoil" -> Marcoil,
+    "repper" -> Repper,
+    "tprpred" -> TPRpred,
+    "hhomp" -> HHomp,
+    "quick2d" -> Quick2D
   )
 
 
@@ -213,4 +228,191 @@ object ToolModel extends PlayEnum[ToolModel] {
     )
   }
 
+  case object PCoils extends ToolModel {
+
+    val toolNameShort = "pcoils"
+    val toolNameLong = "PCOILS"
+    val toolNameAbbrev = "pco"
+    val category = "seqanal"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+
+  }
+
+  case object FRpred extends ToolModel {
+
+    val toolNameShort = "frpred"
+    val toolNameLong = "FRpred"
+    val toolNameAbbrev = "frp"
+    val category = "seqanal"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+
+  }
+
+  case object HHrep extends ToolModel {
+
+    val toolNameShort = "hhrep"
+    val toolNameLong = "HHrep"
+    val toolNameAbbrev = "hhr"
+    val category = "seqanal"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+
+  case object Marcoil extends ToolModel {
+
+    val toolNameShort = "marcoil"
+    val toolNameLong = "Marcoil"
+    val toolNameAbbrev = "mar"
+    val category = "seqanal"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+
+  case object Repper extends ToolModel {
+
+    val toolNameShort = "repper"
+    val toolNameLong = "Repper"
+    val toolNameAbbrev = "rep"
+    val category = "seqanal"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+
+  case object TPRpred extends ToolModel {
+
+    val toolNameShort = "tprpred"
+    val toolNameLong = "TPRpred"
+    val toolNameAbbrev = "tpr"
+    val category = "seqanal"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+
+  case object HHomp extends ToolModel {
+
+    val toolNameShort = "hhomp"
+    val toolNameLong = "HHomp"
+    val toolNameAbbrev = "hho"
+    val category = "2ary"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+
+  case object Quick2D extends ToolModel {
+
+    val toolNameShort = "quick2d"
+    val toolNameLong = "Quick2D"
+    val toolNameAbbrev = "q2d"
+    val category = "2ary"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+
+  case object Ali2D extends ToolModel {
+
+    val toolNameShort = "ali2d"
+    val toolNameLong = "Ali2D"
+    val toolNameAbbrev = "a2d"
+    val category = "2ary"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+
+  case object Modeller extends ToolModel {
+
+    val toolNameShort = "modeller"
+    val toolNameLong = "Modeller"
+    val toolNameAbbrev = "mod"
+    val category = "3ary"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+  case object Bfit extends ToolModel {
+
+    val toolNameShort = "bfit"
+    val toolNameLong = "Bfit"
+    val toolNameAbbrev = "bft"
+    val category = "3ary"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+  case object HHfrag extends ToolModel {
+
+    val toolNameShort = "hhfrag"
+    val toolNameLong = "HHfrag"
+    val toolNameAbbrev = "hhf"
+    val category = "3ary"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+  case object SamCC extends ToolModel {
+
+    val toolNameShort = "samcc"
+    val toolNameLong = "SamCC"
+    val toolNameAbbrev = "scc"
+    val category = "3ary"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+  case object ANCESCON extends ToolModel {
+
+    val toolNameShort = "ancescon"
+    val toolNameLong = "ANCESCON"
+    val toolNameAbbrev = "anc"
+    val category = "classification"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+  case object CLANS extends ToolModel {
+
+    val toolNameShort = "clans"
+    val toolNameLong = "CLANS"
+    val toolNameAbbrev = "anc"
+    val category = "classification"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
+  case object HHcluster extends ToolModel {
+
+    val toolNameShort = "hhcluster"
+    val toolNameLong = "HHcluster"
+    val toolNameAbbrev = "hhc"
+    val category = "classification"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT)
+
+    val results = Map.empty[String, String]
+  }
 }
