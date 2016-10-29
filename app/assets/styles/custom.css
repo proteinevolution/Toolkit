@@ -562,3 +562,12 @@ textarea { resize:both; }
     color: #bf616a;
 
 }
+
+.biojs_msa_labels{
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+    font-size: 12px;
+}
+
+.helpicon:hover{
+    color: #008979;
+}
