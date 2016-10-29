@@ -8,15 +8,15 @@ object psiblastpPostProcess {
     var index2 =0
     var database = ""
     var scoreE = ""
-    var pattern = ("""[0-9]><\/a>(.*)\s*""").r;
-    var stopParsing = false;
+    var pattern = """[0-9]><\/a>(.*)\s*""".r
+    var stopParsing = false
     val file = new File(outfile + "_overview")
     val bw = new BufferedWriter(new FileWriter(file))
     for (line <- Source.fromFile(outfile).getLines()) {
       // adds div to references of PSIBLAST
       // output in order to be able to hide id
       if(!stopParsing) {
-        if (line.startsWith("<b>PSIBLAST 2.3.0+</b>")) {
+        if (line.startsWith("<b>PSIBLAST")) {
           bw.newLine()
           bw.write("<div id='metaReferences'>" + line)
         }else if(line.startsWith("Database")){
