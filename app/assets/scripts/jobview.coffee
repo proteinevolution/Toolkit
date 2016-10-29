@@ -98,7 +98,7 @@ JobTabsComponent =
       m "form", {id: "jobform"},
         ctrl.params.map (paramGroup) ->
           elements = paramGroup[1].filter((paramElem) -> paramElem[0] != "alignment")
-          split = (elements.length / 2)
+          split = (elements.length / 2) + 1
           m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
 
             if ctrl.alignmentPresent and paramGroup[0] is "Input"
@@ -113,11 +113,13 @@ JobTabsComponent =
               [
                 m "div", elements.slice(0,split).map (paramElem) ->
                   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                  console.log paramElem[0]
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
 
                 m "div", elements.slice(split,elements.length).map (paramElem) ->
                   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                  console.log paramElem[0]
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
               ]
@@ -379,5 +381,67 @@ formComponents =
     label: "Number of alignments and descriptions"
     value: args.value
   ]
-
-
+  "consistency": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "consistency"
+    id: "consistency"
+    label: "Passes of consistency transformation"
+    value: args.value
+  ]
+  "itrefine": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "itrefine"
+    id: "itrefine"
+    label: "Passes of iterative refinements"
+    value: args.value
+  ]
+  "pretrain": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "pretrain"
+    id: "pretrain"
+    label: "Rounds of pretraining"
+    value: args.value
+  ]
+  "maxrounds": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "maxrounds"
+    id: "maxrounds"
+    label: "Maximum number of iterations"
+    value: args.value
+  ]
+  "offset": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "offset"
+    id: "offset"
+    label: "Offset"
+    value: args.value
+  ]
+  "outorder": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "outorder"
+    id: "outorder"
+    label: "Outorder"
+    value: args.value
+  ]
+  "gap_term": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "gap_term"
+    id: "gap_term"
+    label: "Gap Termination penalty"
+    value: args.value
+  ]
+  "bonusscore": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "bonusscore"
+    id: "bonusscore"
+    label: "Bonus Score"
+    value: args.value
+  ]
