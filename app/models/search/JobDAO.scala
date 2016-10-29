@@ -12,6 +12,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   private[this] lazy val client = elasticFactory(cs)
 
 
+  // Searches for a matching hash in the Hash DB
   def matchHash(hash : String, dbName : Option[String], dbMtime : Option[String]) = {
     val resp = client.execute(
       search in "tkplay_dev"->"jobhashes" query {
@@ -27,6 +28,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     resp
   }
 
+  // Removes a Hash from ES
   def deleteJob(mainID : String) = {
     client.execute {
       bulk(
@@ -36,6 +38,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     }
   }
 
+  // tries to find a matching Job ID String
   def findAutoCompleteJobID(queryString : String) = {
     client.execute {
       search in "tkplay_dev"->"jobs" suggestions {
@@ -44,6 +47,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     }
   }
 
+  // tries to find a matching Job with the Job ID
   def fuzzySearchJobID(queryString : String) = {
     client.execute {
       search in "tkplay_dev"->"jobs" query {

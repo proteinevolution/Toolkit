@@ -97,7 +97,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
           }
 
           // Mark Failed Jobs
-          jobManager ! DeleteJobs(user.userID, jobsPatition._1.map(_.mainID), JobDeletionFlag.Automated) // marks all database entries for automated deletion
+          jobManager ! DeleteJobs(user.userID, jobsPatition._1.map(_.mainID), JobDeletionFlag.Automated) // marks all database entries with failed jobs for deletion
           /*
           jobsPatition._1.foreach { job =>
             println("job with same signature found but job failed, should submit the job again")
@@ -111,9 +111,9 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
             case Some(job) =>
               Ok(Json.obj("jobSubmitted"  -> true,
                           "jobStarted"    -> false,
-                          "identicalJobs" -> true,
-                          "job"           -> job.cleaned(),
-                          "mainID"        -> job.mainID.stringify)
+                          "existingJobs"  -> true,
+                          "existingJob"   -> job.cleaned(),
+                          "mainID"        -> newMainID.stringify)
               ).withSession(sessionCookie(request, user.sessionID.get))
 
             // No identical job submission, Start the job right away.
