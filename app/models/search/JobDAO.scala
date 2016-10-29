@@ -27,7 +27,6 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     resp
   }
 
-
   def deleteJob(mainID : String) = {
     client.execute {
       bulk(

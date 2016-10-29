@@ -8,6 +8,7 @@ import akka.actor.{ActorLogging, Actor, ActorRef}
 import models.Constants
 import models.database.Job
 import models.search.JobDAO
+import modules.Common
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
@@ -15,6 +16,7 @@ import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 /**
@@ -28,41 +30,44 @@ final class ESManager @Inject()(val messagesApi      : MessagesApi,
                             extends Actor
                                with ActorLogging
                                with ReactiveMongoComponents
-                               with Constants {
+                               with Constants
+                               with Common {
 
-  def jobBSONCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
+  def AutoComplete(userID : BSONObjectID, queryString : String) = {
+    jobDao.findAutoCompleteJobID(queryString).map { richSearchResponse =>
+      val jobIDEntries = richSearchResponse.suggestion("jobID")
+      if (jobIDEntries.size > 0) {
+        jobIDEntries.entry(queryString).optionsText.toList
+      } else {
+        List.empty[String]
+      }
+    }
+  }
+
+  def ElasticSearch(userID : BSONObjectID, queryString : String) = {
+    jobDao.fuzzySearchJobID(queryString).flatMap { richSearchResponse =>
+      if (richSearchResponse.totalHits > 0) {
+        val jobIDEntries = richSearchResponse.getHits.getHits
+        val mainIDs      = jobIDEntries.toList.map(hit => BSONObjectID.parse(hit.id).get)
+
+        // Collect the list of jobs
+        findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in"-> mainIDs)))
+      } else {
+        Future.successful(List.empty[Job])
+      }
+    }
+  }
 
   def receive : Receive = {
     case AutoComplete(userID : BSONObjectID, queryString : String, element) =>
       println("Auto Complete Query: " + queryString)
-      jobDao.findAutoCompleteJobID(queryString).foreach { rsr =>
-        val jobIDEntries = rsr.suggestion("jobID")
-        if (jobIDEntries.size > 0) {
-          userManager ! AutoCompleteReply(userID, jobIDEntries.entry(queryString).optionsText.toList, element)
-        }
+      AutoComplete(userID, queryString).foreach { jobIDStrings =>
+        userManager ! AutoCompleteReply(userID, jobIDStrings, element)
       }
 
     case ElasticSearch(userID : BSONObjectID, queryString : String, element) =>
-      jobDao.fuzzySearchJobID(queryString).foreach { richSearchResponse =>
-        if (richSearchResponse.totalHits > 0) {
-          val jobIDEntries = richSearchResponse.getHits.getHits
-          val mainIDs      = jobIDEntries.toList.map(hit => BSONObjectID.parse(hit.id).get)
-          val futureJobs   = jobBSONCollection.map(_.find(BSONDocument(Job.IDDB ->
-                                                          BSONDocument("$in"    -> mainIDs))).cursor[Job]())
-
-          jobBSONCollection
-          // Collect the list and then create the reply
-          futureJobs.flatMap{ _.collect[List](-1, Cursor.FailOnError[List[Job]]())
-          }.andThen {
-            case Success(jobList) =>
-              println("Found " + jobList.length.toString + " Job[s]. Sending.")
-              userManager ! SearchReply(userID, jobList, element)
-            case Failure(error) =>
-              println(error.toString)
-          }
-        } else {
-          userManager ! SearchReply(userID, List.empty, element)
-        }
+      ElasticSearch(userID, queryString).foreach { jobList =>
+        userManager ! SearchReply(userID, jobList, element)
       }
     case SearchForHash(userID : BSONObjectID, query : String) =>
 
