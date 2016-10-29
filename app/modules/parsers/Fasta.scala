@@ -6,7 +6,7 @@ object FASTA {
   case class Entry( description: String, sequence: String )
 
   def fromFile( fn: String ): List[Entry] = {
-    val lines = scala.io.Source.fromFile(fn).getLines.mkString("\n")
+    val lines = scala.io.Source.fromFile(fn).getLines().mkString("\n")
     fromString( lines )
   }
 

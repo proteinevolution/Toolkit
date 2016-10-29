@@ -28,7 +28,11 @@ class window.Job
 
   # Clears a job from the joblist by index
   this.clear = (idx) ->
-    Job.list().splice(idx, 1)
+    Job.list.then (jobs) ->
+      m.request({url: "/jobs?mainIDs=#{jobs[idx].mainID}", method: "DELETE"})
+      Job.list().splice(idx, 1)
+
+
 
   this.updateState = (mainID, state) ->
 
