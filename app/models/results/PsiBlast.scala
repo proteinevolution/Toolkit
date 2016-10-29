@@ -12,7 +12,7 @@ package models.results
 import models.Constants
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import scala.io.Source
-import models.misc.parsers.FASTA
+import modules.parsers.FASTA
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL.Parse._
