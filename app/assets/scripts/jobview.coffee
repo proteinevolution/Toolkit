@@ -32,9 +32,9 @@ JobLineComponent =
         m "a", {config: helpModalAccess.bind(args)},
           m "i", {class: "icon-white_question helpicon"}
       ]
-      m "span", {class: "jobowner"}, ctrl.ownername
       m "span", {class: "jobdate"}, ctrl.jobdate
       m "span", {class: "jobinfo"}, ctrl.jobinfo
+      m "span", {class: "ownername"}, ctrl.ownername
 
     ]
 ##############################################################################
