@@ -50,7 +50,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                  extends Controller with I18nSupport
                                     with Constants
                                     with ReactiveMongoComponents
-                                    with UserSessions with Common {
+                                    with UserSessions
+                                    with Common {
 
   implicit val timeout = Timeout(1.seconds)
 
@@ -78,7 +79,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     getUser.flatMap { user =>
 
       findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Ok(Json.toJson( jobs.map(_.cleaned)))
+        Ok(Json.toJson( jobs.map(_.cleaned2)))
       }
     }
   }
@@ -228,11 +229,15 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
   def getTool(toolname: String) = Action {
 
-    Ok(Json.toJson(toolitemCache.getOrElse(toolname) {
+    val toolitemJson = Json.toJson(toolitemCache.getOrElse(toolname) {
       val x = ToolModel.toolMap(toolname).toolitem(values) // Reset toolitem in cache
       toolitemCache.set(toolname, x)
       x
-    }))
+    })
+    Ok(Json.obj(
+      "toolitem" -> toolitemJson,
+      "newMainID" -> BSONObjectID.generate().stringify
+    ))
   }
 
 
@@ -280,7 +285,10 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               case JobState.Error => Seq(
                 "Error" -> Html("Job has reached error state"))
 
-              case JobState.Done => toolModel.results.map { kv =>
+              case JobState.Done =>
+                Logger.info("Done Job requested")
+
+                toolModel.results.map { kv =>
 
                 kv._1 -> views.html.jobs.resultpanel(kv._1, kv._2, job.mainID.stringify)
               }.toSeq
