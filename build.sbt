@@ -34,7 +34,8 @@ val commonDeps = Seq(ws, filters, cache,
   "com.beachape" %% "enumeratum-play-json" % "1.4.13",
   "org.tpolecat" %% "atto-core"  % "0.5.0-M3",
   "org.tpolecat" %% "atto-compat-scalaz72" % "0.5.0-M3",
-  "net.ruippeixotog" %% "scala-scraper" % "1.1.0"
+  "net.ruippeixotog" %% "scala-scraper" % "1.1.0",
+  "com.lihaoyi" %% "fastparse" % "0.4.1"
 )
 
 /*
