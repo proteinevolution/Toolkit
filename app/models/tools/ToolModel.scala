@@ -119,31 +119,9 @@ object ToolModel extends PlayEnum[ToolModel] {
     "hhblits" -> HHblits,
     "hhpred" -> HHpred,
     "patternsearch" -> PatternSearch,
-    "blastp" -> BlastP,
-    "simshiftdb" -> SimShiftDB
+    "blastp" -> BlastP
   )
 
-
-  case object SimShiftDB extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "simshiftdb"
-    val toolNameLong = "SimShiftDB"
-    val toolNameAbbrev = "ssd"
-    val category = "search"
-    val optional = ""
-
-
-    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
-      "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
-
-    val results = Map(
-      "Hits" -> "",
-      "E-Values" -> "evalues.dat",
-      "Fasta" -> "out.align",
-      "AlignmentViewer" -> "out.align_clu"
-    )
-  }
 
   case object BlastP extends ToolModel {
 
