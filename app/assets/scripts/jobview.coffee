@@ -174,6 +174,12 @@ JobSubmissionComponent =
   view: (ctrl, args) ->
     m "div", {class: "submitbuttons"}, [
       if !this.submitting then m "input", {type: "button", class: "success button small submitJob", value: "#{if args.isJob then "Res" else "S"}ubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
+      if !args.isJob
+        m "label", [
+          m "input", {type: "checkbox", name:"private", value: "true", checked: "checked"}  #TODO style me
+          "Private"
+        ]
+      else null #TODO
       #if !args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Prepare Job", onclick: ctrl.submit.bind(ctrl, false)} else null #TODO
       if  args.isJob && args.job.jobstate == 1 then m "input", {type: "button", class: "button small addJob", value: "Start Job", onclick: ctrl.startJob} else null  #TODO
       if  args.isJob then m "input", {type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob} else null  #TODO
