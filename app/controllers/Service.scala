@@ -252,6 +252,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
         jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).flatMap {
 
           case Some(job) =>
+            Logger.info("Job has been found")
+
             val toolModel = ToolModel.toolMap(job.tool)
 
             val toolitem = toolitemCache.getOrElse(job.tool) {
@@ -287,10 +289,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                 "Error" -> Html("Job has reached error state"))
 
               case JobState.Done =>
-                Logger.info("Done Job requested")
 
                 toolModel.results.map { kv =>
-
                 kv._1 -> views.html.jobs.resultpanel(kv._1, kv._2, job.mainID.stringify)
               }.toSeq
 
@@ -317,6 +317,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             }
 
           case _ =>
+            Logger.info("Job could not be found")
             Future.successful(NotFound)
         }
       case _ =>
