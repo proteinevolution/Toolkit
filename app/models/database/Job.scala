@@ -73,41 +73,6 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
   }
 
   /**
-    * Returns the output file paths for the results
-    *
-    * @return
-    */
-  def resultFiles () = {
-    tool match {
-    //  The tool anlviz just returns the BioJS MSA Viewer page
-    case "alnviz" =>
-      Map("BioJS" -> s"/files/${mainID.stringify}/resultpanel")
-
-    // For T-Coffee, we provide a simple alignment visualiation and the BioJS View
-    case "tcoffee" =>
-      Map("Simple" -> s"/files/${mainID.stringify}/sequences.clustalw_aln",
-          "BioJS"  -> s"/files/${mainID.stringify}/sequences.clustalw_aln")
-
-    case "reformatb" =>
-      Map("Simple" -> s"/files/${mainID.stringify}/sequences.clustalw_aln",
-          "BioJS"  -> s"/files/${mainID.stringify}/sequences.clustalw_aln")
-
-    case "psiblast" =>
-      Map("Results" -> s"/files/${mainID.stringify}/out.psiblastp",
-          "BioJS"   -> s"/files/${mainID.stringify}/sequences.clustalw_aln",
-          "Evalue"  -> s"/files/${mainID.stringify}/evalues.dat")
-
-    // Hmmer just provides a simple file viewer.
-    case "hmmer3" =>
-      Map("domtbl"    -> s"/files/${mainID.stringify}/domtbl",
-          "outfile"   -> s"/files/${mainID.stringify}/outfile",
-          "multi_sto" -> s"/files/${mainID.stringify}/outfile_multi_sto",
-          "table"     -> s"/files/${mainID.stringify}/tbl")
-    }
-  }
-
-
-  /**
     * Returns a minified version of the job which can be sent over the web socket
  *
     * @return
