@@ -11,7 +11,7 @@ window.JobViewComponent =
   view: (ctrl, args) ->
     job = args.job()
     m "div", {id: "jobview"}, [
-      m JobLineComponent, {toolnameLong: job.tool.toolnameLong, isJob: job.isJob, jobID: job.jobid, toolname: job.tool.toolname, createdOn : job.createdOn}
+      m JobLineComponent, {toolnameLong: job.tool.toolnameLong, isJob: job.isJob, jobID: job.jobid, toolname: job.tool.toolname, ownerName: job.ownerName, createdOn : job.createdOn}
       m JobTabsComponent, {job: job}
     ]
 
@@ -20,6 +20,7 @@ window.JobViewComponent =
 JobLineComponent =
   controller: (args) ->
     jobinfo: if args.isJob then "JobID: #{args.jobID()}" else "Submit a new Job"
+    ownername: if args.ownerName then args.ownerName() else ""
     jobdate: if args.isJob then "Created: #{args.createdOn()}" else ""
 
 
@@ -31,6 +32,7 @@ JobLineComponent =
         m "a", {config: helpModalAccess.bind(args)},
           m "i", {class: "icon-white_question helpicon"}
       ]
+      m "span", {class: "jobowner"}, ctrl.ownername
       m "span", {class: "jobdate"}, ctrl.jobdate
       m "span", {class: "jobinfo"}, ctrl.jobinfo
 
@@ -139,11 +141,14 @@ JobSubmissionComponent =
       m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data})
     addJob: ->
       jobs.vm.addJob(args.job.mainID)
+    startJob: ->
+      sendMessage("type":"StartJob", "mainID":args.job.mainID)
 
   view: (ctrl, args) ->
     m "div", {class: "submitbuttons"}, [
       if !args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Submit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
       if  args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Resubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null   #TODO
+      if  args.isJob && args.job.jobstate == 1 then m "input", {type: "button", class: "button small addJob", value: "Start Job", onclick: ctrl.startJob} else null  #TODO
       if  args.isJob then m "input", {type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob} else null  #TODO
       m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job.jobid), value: args.job.jobid()}
     ]

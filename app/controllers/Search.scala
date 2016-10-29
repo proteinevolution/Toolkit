@@ -3,12 +3,14 @@ package controllers
 import actors.ESManager.ElasticSearch
 import akka.actor.ActorRef
 import models.Constants
+import models.database.Job
 import play.api.cache._
 import play.api.libs.json.Json
 import javax.inject.{Named, Singleton, Inject}
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.search.JobDAO
@@ -22,18 +24,43 @@ import scala.concurrent.Future
 final class Search @Inject() (
           @NamedCache("userCache") implicit val userCache        : CacheApi,
                                val reactiveMongoApi : ReactiveMongoApi,
+                               val jobDao           : JobDAO,
                @Named("esManager") esManager        : ActorRef)
                            extends Controller with Constants
                                               with ReactiveMongoComponents
                                               with UserSessions {
 
-  // TODO more actions from the views
+  def AutoComplete(userID : BSONObjectID, queryString : String) = {
+    jobDao.findAutoCompleteJobID(queryString).map { richSearchResponse =>
+      val jobIDEntries = richSearchResponse.suggestion("jobID")
+      if (jobIDEntries.size > 0) {
+        jobIDEntries.entry(queryString).optionsText.toList
+      } else {
+        List.empty[String]
+      }
+    }
+  }
 
-  def getJob = Action.async { implicit request =>
+  def ElasticSearch(userID : BSONObjectID, queryString : String) = {
+    jobDao.fuzzySearchJobID(queryString).flatMap { richSearchResponse =>
+      if (richSearchResponse.totalHits > 0) {
+        val jobIDEntries = richSearchResponse.getHits.getHits
+        val mainIDs      = jobIDEntries.toList.map(hit => BSONObjectID.parse(hit.id).get)
+
+        // Collect the list of jobs
+        findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in"-> mainIDs)))
+      } else {
+        Future.successful(List.empty[Job])
+      }
+    }
+  }
+
+  def getJob(queryString : String) = Action.async { implicit request =>
     // Retrieve the user from the cache or the DB
     getUser.flatMap { user =>
-      esManager ! ElasticSearch(user.userID, "", -1)
-      Future.successful(Ok)
+      ElasticSearch(user.userID, queryString).map{ jobList =>
+        Ok(Json.obj("jobs" -> jobList.map(_.cleaned())))
+      }
     }
   }
 }

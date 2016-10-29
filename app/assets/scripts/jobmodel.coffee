@@ -7,6 +7,7 @@ window.JobModel =
   isJob: m.prop false
   jobid: m.prop null
   jobstate: m.prop null
+  ownerName: m.prop null
   createdOn: m.prop null
   tool: m.prop null
   alignmentPresent: false
@@ -29,6 +30,7 @@ window.JobModel =
         tool : data.toolitem
         isJob: true
         jobid : m.prop data.jobID
+        ownerName : m.prop data.ownerName
         createdOn : m.prop data.createdOn
         jobstate :  data.state
         views : data.views

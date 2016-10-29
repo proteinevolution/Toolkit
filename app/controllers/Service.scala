@@ -128,6 +128,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     * get request needs to be of format: ?mainIDs=<mainID1>,<mainID2>,...,<mainIDx>[&deleteCompletely=true]
     * mainIDs contains the list of mainIDs which should be cleared or deleted
     * deleteCompletely boolean for a "deletion" of the job
+    *
     * @return
     */
 
@@ -151,8 +152,9 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
           )
 
           // Tell the Jobmanager to remove the user from the jobs and mark the jobs which have no more watchers
-          if (request.getQueryString("deleteCompletely").contains("true"))
-            jobManager ! DeleteJobs(user.userID, mainIDs)
+          if (request.getQueryString("deleteCompletely").contains("true")) {
+            jobManager ! DeleteJobs(user.userID, mainIDs, JobDeletionFlag.PublicRequest)
+          }
 
           // Remove the main IDs from the users view
           modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$pull" -> BSONDocument(User.JOBS -> BSONDocument("$in" -> mainIDs)))).map {
@@ -206,6 +208,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   case class Jobitem(mainID: String,
                      jobID: String,
                      state: JobState,
+                     ownerName : String,
                      createdOn: String,
                      toolitem: Toolitem,
                      views: Seq[(String, Html)],
@@ -215,6 +218,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       (JsPath \ "mainID").write[String] and
       (JsPath \ "jobID").write[String] and
       (JsPath \ "state").write[JobState] and
+      (JsPath \ "ownerName").write[String] and
       (JsPath \ "createdOn").write[String] and
       (JsPath \ "toolitem").write[Toolitem] and
       (JsPath \ "views").write[Seq[(String, Html)]] and
@@ -239,7 +243,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
       case Success(mainID) =>
 
-        jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).map {
+        jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).flatMap {
 
           case Some(job) =>
             val toolModel = ToolModel.toolMap(job.tool)
@@ -249,6 +253,24 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               toolitemCache.set(job.tool, x)
               x
             }
+
+            val ownerName =
+              if (job.ownerID.isDefined) {
+                findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map{
+                  case Some(owner) =>
+                    owner.userData match {
+                      case Some(ownerData) => // Owner is registered
+                        ownerData.nameLogin
+                      case None => // Owner is not registered
+                        "Guest"
+                    }
+                  case None => // User does no longer exist in the Database.
+                    "Deleted User"
+                }
+              } else {
+                Future.successful("Public Job")
+              }
+
             // The jobState decides which views will be appended to the job
             val jobViews: Seq[(String, Html)] = job.status match {
 
@@ -272,10 +294,20 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             }.toMap
 
 
-            Ok(Json.toJson(Jobitem(job.mainID.stringify, job.jobID,
-              job.status, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get) ,toolitem,  jobViews, paramValues)))
+            ownerName.map{ ownerN =>
+              Ok(Json.toJson(
+                Jobitem(job.mainID.stringify,
+                        job.jobID,
+                        job.status,
+                        ownerN,
+                        DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get),
+                        toolitem,
+                        jobViews,
+                        paramValues)))
+            }
+
           case _ =>
-            NotFound
+            Future.successful(NotFound)
         }
       case _ =>
         Future.successful(NotFound)
