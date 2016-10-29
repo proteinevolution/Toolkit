@@ -9,32 +9,31 @@ helpModalAccess = (elem, isInit) ->
 window.JobViewComponent =
 
   view: (ctrl, args) ->
-    job = args.job()
-    m "div", {id: "jobview"}, [
-      m JobLineComponent, {toolnameLong: job.tool.toolnameLong, isJob: job.isJob, jobID: job.jobid, toolname: job.tool.toolname, ownerName: job.ownerName, createdOn : job.createdOn}
-      m JobTabsComponent, {job: job, add: args.add}
-    ]
+    if not args.job()
+      m "div", "Waiting for Job"
+    else
+      m "div", {id: "jobview"}, [
+        m JobLineComponent, {job: args.job}
+        m JobTabsComponent, {job: args.job, add: args.add}
+      ]
+
 ###
 
 ##############################################################################
 # Component for the Jobline
 JobLineComponent =
-  controller: (args) ->
-    jobinfo: if args.isJob then "JobID: #{args.jobID()}" else "Submit a new Job"
-    ownername: if args.ownerName then args.ownerName() else ""
-    jobdate: if args.isJob then "Created: #{args.createdOn()}" else ""
 
   view: (ctrl, args) ->
     m "div", {class: "jobline"}, [
-      m HelpModalComponent, {toolname: args.toolname, toolnameLong: args.toolnameLong}
+      m HelpModalComponent, {toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong}
       m "span", {class: "toolname"}, [
-        args.toolnameLong
+        args.job().tool.toolnameLong
         m "a", {config: helpModalAccess.bind(args)},
           m "i", {class: "icon-white_question helpicon"}
       ]
-      m "span", {class: "jobdate"}, ctrl.jobdate
-      m "span", {class: "jobinfo"}, ctrl.jobinfo
-      m "span", {class: "ownername"}, ctrl.ownername
+      m "span", {class: "jobdate"}, if args.job().isJob then "Created: #{args.job().createdOn()}" else ""
+      m "span", {class: "jobinfo"}, if args.job().isJob then "JobID: #{args.job().jobID()}" else "Submit a new Job"
+      m "span", {class: "ownername"}, if args.job().ownerName then args.job().ownerName() else ""
     ]
 ##############################################################################
 
@@ -68,17 +67,17 @@ renderParameter = (content, moreClasses) ->
 # Encompasses the individual sections of a Job, usually rendered as tabs
 JobTabsComponent =
   controller: (args) ->
-    params = args.job.tool.params
+    params = args.job().tool.params
     listitems = params.map (param) -> param[0]
-    views = args.job.views
+    views = args.job().views
     if views
       listitems = listitems.concat views.map (view) -> view[0]
 
     # Determine whether the parameters contain an alignment
     params: params
     alignmentPresent: params[0][1][0][0] is "alignment"
-    isJob : args.job.isJob
-    state: args.job.jobstate
+    isJob : args.job().isJob
+    state: args.job().jobstate
     listitems: listitems
     views: views
     getParamValue : JobModel.getParamValue
@@ -112,13 +111,11 @@ JobTabsComponent =
               [
                 m "div", elements.slice(0,split).map (paramElem) ->
                   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                  console.log paramElem[0]
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
 
                 m "div", elements.slice(split,elements.length).map (paramElem) ->
                   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                  console.log paramElem[0]
                   comp = formComponents[paramElem[0]](ctrlArgs)
                   m.component comp[0], comp[1]
               ]
@@ -131,6 +128,15 @@ JobTabsComponent =
     ]
 ##############################################################################
 # Job Submission input elements
+###
+if (json.existingJobs)
+          if confirm("There is an identical job, would You like to see it?")  # This blocks mithril
+            m.route("/jobs/#{json.existingJob.mainID}")
+          else
+            sendMessage("type":"StartJob", "mainID":json.mainID)
+        else
+          m.route("/jobs/#{mainID}")
+###
 JobSubmissionComponent =
   controller: (args) ->
     this.submitting = false
@@ -138,29 +144,18 @@ JobSubmissionComponent =
       submitting:true
       mainID = JobModel.mainID()
 
-      jobid = args.job.jobid()    # TODO Maybe merge with jobID validation
+      jobid = args.job().jobID()    # TODO Maybe merge with jobID validation
       if not jobid                # TODO Prevent submission if validation fails
         jobid = window.Job.generateJobID()
-      args.add(new Job({mainID: mainID, jobID: jobid, state: 6, createdOn: "now", toolname: args.job.tool.toolname}))
+      args.add(new Job({mainID: mainID, jobID: jobid, state: 6, createdOn: "now", toolname: args.job().tool.toolname}))
 
-      submitRoute = jsRoutes.controllers.Tool.submit(args.job.tool.toolname, mainID, jobid)
+      submitRoute = jsRoutes.controllers.Tool.submit(args.job().tool.toolname, mainID, jobid)
       formData = new FormData(document.getElementById("jobform"))
+      Job.requestTool(true)
 
       # Send submission request and see whether server accepts or job already exists
       m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
-        #this.submitting = false
-        if (json.existingJobs)
-          if confirm("There is an identical job, would You like to see it?")  # This blocks mithril
-            m.route("/jobs/#{json.existingJob.mainID}")
-          else
-            sendMessage("type":"StartJob", "mainID":json.mainID)
-        else
           m.route("/jobs/#{mainID}")
-
-
-
-
-
 
     addJob: ->
       jobs.vm.addJob(args.job.mainID)
@@ -181,9 +176,9 @@ JobSubmissionComponent =
         ]
       else null #TODO
       #if !args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Prepare Job", onclick: ctrl.submit.bind(ctrl, false)} else null #TODO
-      if  args.isJob && args.job.jobstate == 1 then m "input", {type: "button", class: "button small addJob", value: "Start Job", onclick: ctrl.startJob} else null  #TODO
+      if  args.isJob && args.job().jobstate == 1 then m "input", {type: "button", class: "button small addJob", value: "Start Job", onclick: ctrl.startJob} else null  #TODO
       if  args.isJob then m "input", {type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob} else null  #TODO
-      m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job.jobid), value: args.job.jobid()}
+      m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job().jobID), value: args.job().jobID()}
     ]
 ##############################################################################
 m.capture = (eventName, handler) ->

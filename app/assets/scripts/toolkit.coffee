@@ -22,6 +22,9 @@ class window.Job
   this.lastUpdated = m.prop -1
   this.lastUpdatedState = m.prop -1
 
+  # This is currently just a hack for the presentation
+  this.requestTool = m.prop false
+
   this.list = do ->
     console.log "Reloading Job List"
     m.request({url: "/api/jobs", method: "GET", type: Job})
@@ -31,7 +34,6 @@ class window.Job
     Job.list.then (jobs) ->
       m.request({url: "/jobs?mainIDs=#{jobs[idx].mainID}", method: "DELETE"})
       Job.list().splice(idx, 1)
-
 
 
   this.updateState = (mainID, state) ->
@@ -87,13 +89,10 @@ jobs.vm = do ->
       return 'other'
   vm
 
-
 window.Toolkit =
 
   controller: (args)  ->
 
-
-    console.log "Controller of Toolkit"
     if args.isJob
       Job.selected(m.route.param("mainID"))
     else
@@ -104,14 +103,12 @@ window.Toolkit =
     if FrontendTools[toolname]
       viewComponent = () -> FrontendTools[toolname]
     else
-      job = JobModel.update(args, if args.isJob then m.route.param("mainID") else m.route.param("toolname"))
-      # Which job the user has selected
-      ###
-      job = Job.list.then (jobs) ->
-        for job in jobs
-          if job.mainID == Job.selected()
-            return job
-      ###
+      if Job.requestTool()
+        job = JobModel.update({isJob: false}, m.route.param("toolname"))
+        Job.requestTool(false)
+      else
+        job = JobModel.update(args, if args.isJob then m.route.param("mainID") else m.route.param("toolname"))
+
       viewComponent = () -> m JobViewComponent, {job : job, add: Job.add}
     jobs : Job.list
     viewComponent : viewComponent
