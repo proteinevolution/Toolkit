@@ -86,7 +86,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
           BSONDocument("$in" -> mainIDs))).cursor[Job]())
 
         // Collect the list
-        futureJobs.flatMap(_.collect[List](1, Cursor.FailOnError[List[Job]]())).map { jobList =>
+        futureJobs.flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]())).map { jobList =>
           // all mainIDs from the DB
           val foundMainIDs   = jobList.map(_.mainID)
 

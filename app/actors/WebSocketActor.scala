@@ -1,6 +1,6 @@
 package actors
 
-import actors.ESManager.{SearchReply, Search, AutoCompleteReply, AutoComplete}
+import actors.ESManager.{SearchReply, ElasticSearch, AutoCompleteReply, AutoComplete}
 import actors.JobManager._
 import actors.UserManager._
 import akka.actor.Actor
@@ -122,7 +122,7 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
               // To keep this small we might use an int as identifier from which search element the request came
               val element = (js \ "element").validate[Int].asOpt.getOrElse(0)
               Logger.info("WSactor: Find " + queryString)
-              userManager ! Search(userID, queryString, element)
+              userManager ! ElasticSearch(userID, queryString, element)
             case None =>
               Logger.info("JSON Parser Error " + js.toString())
         }
