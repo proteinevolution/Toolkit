@@ -125,6 +125,25 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   }
 
   /**
+
+   */
+  def loadJob(mainIDString : String) = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      BSONObjectID.parse(mainIDString) match {
+        case Success(mainID) =>
+
+          findJob(BSONDocument(Job.IDDB -> mainID)).map {
+            case Some(job) => Ok(job.cleaned2())
+            case None => NotFound
+          }
+        case _ =>
+          Future.successful(NotFound)
+      }
+    }
+  }
+
+
+  /**
     * Remove multiple Jobs at once
     * get request needs to be of format: ?mainIDs=<mainID1>,<mainID2>,...,<mainIDx>[&deleteCompletely=true]
     * mainIDs contains the list of mainIDs which should be cleared or deleted
