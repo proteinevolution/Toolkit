@@ -90,6 +90,7 @@ div#main {
 }
 .r.selected {
     background-color: #FFF666;
+    border-right: solid #8c840f 3px !important;
 }
 
 .q {
