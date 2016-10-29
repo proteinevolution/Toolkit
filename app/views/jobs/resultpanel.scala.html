@@ -5,9 +5,11 @@
 @{ resultpanel match {
 
         case "simple" => views.html.jobs.resultpanels.simple(s"/files/$jobID/$filename")
-        case "AlignmentViewer"  => views.html.jobs.resultpanels.msaviewer(s"/files/$jobID/$filename")
+        case "AlignmentViewer"  => views.html.jobs.resultpanels.msaviewer(jobID)
         case "Hits"  => views.html.jobs.resultpanels.blastviz_extra(jobID)
         case "E-Values" => views.html.jobs.resultpanels.evalues(jobID)
         case "fileview" => views.html.jobs.resultpanels.fileview(s"/files/$jobID/$filename")
         case "Fasta" => views.html.jobs.resultpanels.fasta(jobID)
-}}
+
+    }
+}

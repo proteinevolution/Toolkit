@@ -1,36 +1,36 @@
+@import models.results.PsiBlast
 @import play.api.mvc.RequestHeader
 
-@(pathToAlignmentFile : String)(implicit request: RequestHeader)
+@(mainID : String)(implicit request: RequestHeader)
 <a href="http://msa.biojs.net" target="_blank">BioJS MSA Viewer</a> (Full Alignment)
+
 
 <div id="menuDiv"></div>
 <div id="yourDiv">Loading ... </div>
 
 
-<style>
-
-
-//div[style] {
-
-//top: 275px !important;
-
-//}
-
-</style>
-
-
 <script>
-        // this is a way how you use a bundled file parser
+
+
+    var seqs = '';
+
+    @for(line <- PsiBlast.alnviz(mainID)){
+
+        seqs += '@line' + "\n";
+    }
+
+
         msa = require("msa");
 
         var opts = {colorscheme: {"scheme": "clustal"}};
+        var seqs =  msa.io.clustal.parse(seqs);
 
         opts.el = document.getElementById("yourDiv");
+        opts.seqs = seqs;
         opts.vis = {
             conserv: false,
             overviewbox: false,
             seqlogo: false,
-
             labels: true,
             labelName: true,
             labelId: false,
@@ -48,9 +48,6 @@
 
         // init msa
         var ms = new msa.msa(opts);
-        var url = '@pathToAlignmentFile';
-
-        ms.u.file.importURL(url, renderMSA);
 
         function renderMSA() {
 
@@ -61,18 +58,11 @@
             var defMenu = new msa.menu.defaultmenu(menuOpts);
             ms.addView("menu", defMenu);
 
-            // Author: Seung-Zin Nam
-            // bugfix: here we shift the sequence ids back to their correct value via the backbone.js api !!!
-            // TODO: We need to speed up this process or find a workaround
-
-            //var sequenceId = new Array(m.seqs.length);
-            //for (var i=0; i<sequenceId.length; i++) {
-            //sequenceId[i] = m.seqs.at(i).get("id");
-            //if(!isNaN(sequenceId[i])){
-            //m.seqs.at(i).set("id", sequenceId[i]-1);}}
-
 
             // call render at the end to display the whole MSA
             ms.render();
         }
+
+    renderMSA();
+
 </script>
