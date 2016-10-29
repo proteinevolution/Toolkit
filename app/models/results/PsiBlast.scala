@@ -12,6 +12,7 @@ package models.results
 import models.Constants
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import scala.io.Source
+import models.misc.parsers.FASTA
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL.Parse._
@@ -78,11 +79,12 @@ object PsiBlast extends Constants {
 
   }
 
+  /* returns blast alignhits with links */
 
   def alignhits(mainID: String) = {
 
     val outfile = s"$jobPath$mainID/results/out.psiblastp"
-    val doc = browser.parseFile(outfile)
+    //val doc = browser.parseFile(outfile)
     var index = 0
     var index2 =0
     val regex = """(?s)</a><a title="(.*?)</PRE>""".r
@@ -110,6 +112,16 @@ object PsiBlast extends Constants {
 
     alignHits
 
+  }
+
+
+  def fastaAlignment(mainID: String) = {
+
+    val outfile = s"$jobPath$mainID/results/out.align"
+
+    val fastaList = FASTA.fromFile(outfile)
+
+    fastaList
   }
 
 }
