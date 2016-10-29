@@ -291,7 +291,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               case JobState.Done =>
 
                 toolModel.results.map { kv =>
-                kv._1 -> views.html.jobs.resultpanel(kv._1, kv._2, job.mainID.stringify)
+                kv._1 -> views.html.jobs.resultpanel(kv._1, kv._2, job.mainID.stringify, job.tool)
               }.toSeq
 
               case JobState.Prepared => Seq.empty
