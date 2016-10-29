@@ -264,6 +264,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               }.toSeq
 
               case JobState.Prepared => Seq.empty
+              case _ => Seq.empty // TODO add more elements for different states to show the status
             }
             val paramValues = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map{ file =>
 
@@ -273,10 +274,11 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
             Ok(Json.toJson(Jobitem(job.mainID.stringify, job.jobID,
               job.status, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get) ,toolitem,  jobViews, paramValues)))
+          case _ =>
+            NotFound
         }
+      case _ =>
+        Future.successful(NotFound)
     }
   }
-
-
-
 }
