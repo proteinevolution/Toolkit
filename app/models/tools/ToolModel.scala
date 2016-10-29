@@ -222,6 +222,7 @@ object ToolModel extends PlayEnum[ToolModel] {
       "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
 
     val results = Map(
+      "Hits" -> "",
       "E-Values" -> "evalues.dat",
       "Fasta" -> "out.align",
       "AlignmentViewer" -> "out.align_clu"

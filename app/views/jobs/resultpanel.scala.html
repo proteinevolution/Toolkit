@@ -1,15 +1,12 @@
-@(resultpanel : String, filename : String, jobID : String)(implicit request: RequestHeader)
+@(resultpanel : String, filename : String, jobID : String, toolname: String)(implicit request: RequestHeader)
 
 
-<!-- Decide which result view to show dependent on the result key -->
-@{ resultpanel match {
-
-        case "simple" => views.html.jobs.resultpanels.simple(s"/files/$jobID/$filename")
-        case "AlignmentViewer"  => views.html.jobs.resultpanels.msaviewer(jobID)
-        case "Hits"  => views.html.jobs.resultpanels.blastviz_extra(jobID)
-        case "E-Values" => views.html.jobs.resultpanels.evalues(jobID)
-        case "fileview" => views.html.jobs.resultpanels.fileview(s"/files/$jobID/$filename")
-        case "Fasta" => views.html.jobs.resultpanels.fasta(jobID)
-
-    }
+@{ (toolname, resultpanel) match {
+      case  ("psiblast", "Hits") => views.html.jobs.resultpanels.blastviz_extra(jobID)
+      case  ("psiblast", "E-Values") => views.html.jobs.resultpanels.evalues(jobID)
+      case  ("psiblast", "Fasta") => views.html.jobs.resultpanels.fasta(jobID)
+      case  ("psiblast", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_psiblast(jobID)
+      case ("tcoffee", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
 }
+}
+
