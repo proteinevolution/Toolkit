@@ -287,6 +287,11 @@ tr.job a:visited {
    font-weight: bold;
 }
 
+#help-psiblast  {
+    font-size: 0.8em !important;
+}
+
+
 .off-canvas-wrapper {
 
     min-height: 31.250em;

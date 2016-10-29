@@ -1,4 +1,4 @@
-package models.misc
+package modules.common
 
 /**
   * Object containing the region codes for ISO-3166-1 - Alpha 3 Codes
