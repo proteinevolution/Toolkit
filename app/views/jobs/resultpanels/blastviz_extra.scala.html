@@ -5,48 +5,41 @@
 <link href="@routes.Assets.at("styles/psiblast-resultview.css")" rel="stylesheet">
 
 <span class="result-title-big" style="color: grey">Choose range of input query:</span>
-<p>
-</p>
+
 <div id="blastviz">
 
-    @Html(PsiBlast.blastviz(mainID))
+         @Html(PsiBlast.blastviz(mainID))
 
 </div>
 
-<button class="revealReference">Show references</button>
+    <button class="revealReference">Show references</button>
 <div id="alignment_overview" style="display: none;">
 
-        @Html(PsiBlast.overview(mainID).get)
-
+         @Html(PsiBlast.overview(mainID).get)
 
 </div>
+
 <div  id="alignmentDetail" >
-    @Html(PsiBlast.alignhits(mainID).get)
+         @Html(PsiBlast.alignhits(mainID).get)
 </div>
-
-
-
-
-
-
 
 
 <script>
-$(document).ready(function(){
+    $(document).ready(function(){
 
-$("button.revealReference").click(function(){
-    if ($.trim($(this).text()) === 'Show references') {
-        $(this).text('Hide references');
-        $('#alignment_overview').show()
-    } else {
-        $(this).text('Show references');
-        $('#alignment_overview').hide()
-    }
+        $("button.revealReference").click(function(){
+            if ($.trim($(this).text()) === 'Show references') {
+                $(this).text('Hide references');
+                $('#alignment_overview').show()
+            } else {
+                $(this).text('Show references');
+                $('#alignment_overview').hide()
+            }
 
-    return false;
-});
+            return false;
+        });
 
-});
+    });
 </script>
 
 

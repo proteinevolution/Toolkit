@@ -13,25 +13,22 @@
 </style>
 
 
-
-
-<div style="height: 40em;overflow:auto;">
+<div style="height: 40em; overflow:auto;">
     <div>
     <button onclick="selectAll()">Select All</button>
-    <select style="width: 8em; float: right; margin-right: 1em" id="forwardTool">
-        <option selected>Forward To</option>
-        <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
-    </select>
+        <select style="width: 8em; float: right; margin-right: 1em" id="forwardTool">
+            <option selected>Forward To</option>
+            <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
+        </select>
     </div>
 <table id="fasta" class="hover_alignment">
-@for((pair, index) <- PsiBlast.fastaAlignment(mainID).zipWithIndex){
+    @for((pair, index) <- PsiBlast.fastaAlignment(mainID).zipWithIndex){
 
-    <tr><td><input style='margin: 0px; padding: 0px;'  type='checkbox' class='hits' value='@index')></td><td><pre> >@pair.description <br> @pair.sequence </pre></td></tr>
+        <tr><td><input style='margin: 0; padding: 0;'  type='checkbox' class='hits' value='@index'></td><td><pre> >@pair.description <br> @pair.sequence </pre></td></tr>
 
-}
+    }
 </table>
 </div>
-
 
 
 <table id="alignstats">
@@ -39,17 +36,13 @@
 
 <script>
 
-function selectAll() {
-$('input:checkbox.hits').each(function () {
-            var checked = !$(this).data('checked');
-            $('input:checkbox.hits').prop('checked', checked);
-            $(this).val(checked ? 'uncheck all' : 'check all' )
-            $(this).data('checked', checked);
-  });
-}
-
-
-
-
+    function selectAll() {
+        $('input:checkbox.hits').each(function () {
+                    var checked = !$(this).data('checked');
+                    $('input:checkbox.hits').prop('checked', checked);
+                    $(this).val(checked ? 'uncheck all' : 'check all' )
+                    $(this).data('checked', checked);
+          });
+    }
 
 </script>
