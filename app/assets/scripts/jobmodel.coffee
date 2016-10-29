@@ -6,7 +6,7 @@
 window.JobModel =
   mainID: m.prop ""
   isJob: m.prop false
-  jobid: m.prop null
+  jobID: m.prop null
   jobstate: m.prop null
   ownerName: m.prop null
   createdOn: m.prop null
@@ -26,23 +26,25 @@ window.JobModel =
   update: (args, value) ->
     if args.isJob
       m.request({method: 'GET', url: "/api/jobs/#{value}"}).then (data) ->
+        alert JSON.stringify data
         JobModel.paramValues = data.paramValues
         JobModel.mainID(data.mainID)
         mainID: data.mainID
         tool : data.toolitem
         isJob: true
-        jobid : m.prop data.jobID
+        jobID : m.prop data.jobID
         ownerName : m.prop data.ownerName
         createdOn : m.prop data.createdOn
         jobstate :  data.state
         views : data.views
     else
        m.request({method: 'GET', url: "/api/tools/#{value}"}).then (data) ->
+        alert JSON.stringify data
         JobModel.paramValues = {}
         JobModel.mainID(data.newMainID)
         tool : data.toolitem
         isJob: false
-        jobid: m.prop ""
+        jobID: m.prop ""
         mainID: data.newMainID
 
   getParamValue: (param) ->
