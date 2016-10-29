@@ -208,6 +208,12 @@ font-size: 0.65em !important;
     color: grey;
 }
 
+.jobline .ownername {
+    float: right;
+    font-size: small;
+    margin-right: 0.5em;
+}
+
 .reveal {
 
     width: 80%;
@@ -238,7 +244,6 @@ font-size: 0.65em !important;
     overflow: hidden;
     max-width: 7em;
 }
-
 
 /* File Upload */
 

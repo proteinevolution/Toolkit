@@ -255,14 +255,14 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             }
 
             val ownerName =
-              if (job.ownerID.isDefined) {
+              if (job.isPrivate) {
                 findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map{
                   case Some(owner) =>
                     owner.userData match {
                       case Some(ownerData) => // Owner is registered
-                        ownerData.nameLogin
+                        s"Owner: ${ownerData.nameLogin}"
                       case None => // Owner is not registered
-                        "Guest"
+                        "Owner: Guest"
                     }
                   case None => // User does no longer exist in the Database.
                     "Deleted User"
