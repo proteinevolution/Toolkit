@@ -598,3 +598,8 @@ textarea { resize:both; }
     font-size: 1em;
 }
 
+img#logomin {
+
+    display: block;
+    margin: auto;
+}
