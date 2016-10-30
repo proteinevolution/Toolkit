@@ -354,8 +354,8 @@ tr.job a:visited {
     z-index: 99;
     margin-top: 0.6em;
     margin-right: 10em;
-    margin-bottom: 0px;
-    height: 0.1em;
+    margin-bottom: 0;
+    height: 0.4em;
     width: 100%;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
