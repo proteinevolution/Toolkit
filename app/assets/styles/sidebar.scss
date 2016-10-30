@@ -34,8 +34,10 @@ ul#jobs li {
 
 #jobsearchform {
 
-  max-width: 18%;
-  margin-left: 80%;
+  display: none;
+  margin: auto;
+  max-width: 25%;
+  padding-right: 1em;
   position: relative;
 
 }
@@ -45,12 +47,12 @@ ul#jobs li {
   font-size: 0.65em;
   height: 3.3em;
   width: 100%;
-  text-align: right;
+  text-align: left;
   padding:10px 10px 10px 5px;
   display:block;
-  background: #fefefe;
-  border: none;
-  border-bottom:2px solid #b8ffd6;
+  background: rgb(238, 238, 238);
+  border: none !important;
+  border-bottom:2px solid #666;
 }
 
 #jobsearchform input:focus {
