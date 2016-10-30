@@ -3,6 +3,16 @@
 
 @(mainID : String)(implicit request: RequestHeader)
 
+<style>
+
+#rootDiv SPAN {
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+}
+
+</style>
+
 <div id="menuDiv"></div>
 <div id="rootDiv">Loading ... </div>
 
@@ -42,7 +52,7 @@
         opts.zoomer = {
             // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
             // use script for handling
-            alignmentHeight: 825, alignmentWidth: width, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
+            alignmentHeight: 600, alignmentWidth: width, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
         };
 
         // init msa
