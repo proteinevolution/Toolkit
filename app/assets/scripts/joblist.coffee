@@ -7,11 +7,6 @@ tooltipSearch = (elem, isInit) ->
     elem.setAttribute "title", "Search for job"
 
 window.JobListComponent =
-  controller: (args) ->
-    # Select Job
-
-    sortToolname : -> jobs.vm.sortToolname()
-    sortJobID: -> jobs.vm.sortJobID()
 
   view: (ctrl, args) ->
 
@@ -23,8 +18,8 @@ window.JobListComponent =
         ]
 
       m "div", {class: "button job-button"}, [
-        m "div", {class: "idsort", onclick: ctrl.sortJobID}, "ID"
-        m "div", {class: "toolsort", onclick: ctrl.sortToolname}, "Tool"
+        m "div", {class: "idsort", onclick: Job.sortToolname}, "ID"
+        m "div", {class: "toolsort", onclick: Job.sortJobID}, "Tool"
       ]
 
       m "div",{id: "joblistbottom"}, args.jobs().map (job, idx) ->
