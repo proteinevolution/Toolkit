@@ -68,8 +68,9 @@ div#main {
 .d.selected {
     background-color: #C3FFC3;
     box-shadow: 0 0 10px darkgreen;
+    margin-right: 2px;
+    margin-top: 2px;
     margin-bottom: 3px;
-    margin-right: 16px;
 }
 
 
@@ -81,6 +82,10 @@ div#main {
 }
 .e.selected {
     background-color: #FFC5C5;
+    box-shadow: 0 0 10px #d2071d;
+    margin-top: 2px;
+    margin-right: 2px;
+    margin-bottom: 3px;
 }
 
 
@@ -92,7 +97,11 @@ div#main {
 }
 .r.selected {
     background-color: #FFF666;
-    border-right: solid #8c840f 3px !important;
+    box-shadow: 0 0 10px #ffce27;
+    margin-right: 2px;
+    margin-top: 2px;
+    margin-bottom: 3px;
+
 }
 
 .q {
