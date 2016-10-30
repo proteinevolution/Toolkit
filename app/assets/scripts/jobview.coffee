@@ -61,20 +61,54 @@ foundationTable = (elem, isInit) ->
   if not isInit
     $(elem).foundation()
 
+# Timer for the Job execution time
 
-tm = (elem, isInit, ctx) ->
-  if not isInit
-    ctx.sec = 0
-  else
+###
+  var myVar = setInterval(function(){ myTimer() }, 1000);
+
+function myTimer() {
+    var d = new Date();
+    var t = d.toLocaleTimeString();
+    document.getElementById("demo").innerHTML = t;
+}
+
+function myStopFunction() {
+    clearInterval(myVar);
+}
+###
+
+###
+console.log "JobRunningComponent Loaded"
+
     pad = (val) -> if val > 9 then val else '0' + val
-    setInterval (->
-      document.getElementById('runningSeconds').innerHTML = pad(++ctx.sec % 60)
-      document.getElementById('runningMinutes').innerHTML = pad(parseInt(sec / 60, 10))
+    @timer = setInterval (->
+      document.getElementById('runningSeconds').innerHTML = pad(++JobModel.executionTime % 60)
+      document.getElementById('runningMinutes').innerHTML = pad(parseInt(JobModel.executionTime / 60, 10))
     ), 1000
+    onunload: ->
+      clearInterval(@timer)
+
+   m "tr", [
+            m "td", "Execution Time"
+            m "td", [
+              m "span", {id: "runningMinutes"}, "00"
+              m "span", ":"
+              m "span", {id: "runningSeconds"}, "00"
+            ]
+          ]
+###
+JobErrorComponent =
+  controller: ->
+
+  view: ->
+    m "div", {class: "error-panel"},
+      m "p", "Job has reached Error state"
+
 
 
 JobRunningComponent =
   controller: ->
+
   view: (ctrl, args) ->
     m "div", {class: "running-panel"}, [
 
@@ -92,23 +126,10 @@ JobRunningComponent =
               m "td", "Created On"
               m "td", args.job().createdOn()
           ]
-          m "tr", [
-            m "td", "Execution Time"
-            m "td", {config: tm}, [
-              m "span", {id: "runningMinutes"}, "00"
-              m "span", {id: "runningSeconds"}, "00"
-            ]
-          ]
         ]
-
         m "ul", args.messages().map (msg) ->
           m "li", msg
         ]
-
-
-
-
-
 
 # Mithril Configs for JobViewComponent
 tabulated = (element, isInit) ->
@@ -140,6 +161,7 @@ JobTabsComponent =
           listitems = listitems.concat "Running"   # Add the Running Tab if the JobState is Running
         when 4
           active = listitems.length
+          listitems = listitems.concat "Error"   # Add the Running Tab if the JobState is Running
         when 5
           active = listitems.length
     else
@@ -200,6 +222,10 @@ JobTabsComponent =
           m "div", {class: "tabs-panel", id: "tabpanel-Running"},
             m JobRunningComponent, {messages: args.messages, job: ctrl.job}
 
+        if ctrl.isJob and ctrl.state == 4
+          m "div", {class: "tabs-panel", id: "tabpanel-Error"},
+            JobErrorComponent
+
       if ctrl.views
         ctrl.views.map (view) ->
           m "div", {class: "tabs-panel", id: "tabpanel-#{view[0]}"},
@@ -236,9 +262,6 @@ JobSubmissionComponent =
       # Send submission request and see whether server accepts or job already exists
       m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
           m.route("/jobs/#{mainID}")
-
-    addJob: ->
-      jobs.vm.addJob(args.job.mainID)
 
     startJob: ->
       sendMessage("type":"StartJob", "mainID":args.job.mainID)
