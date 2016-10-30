@@ -100,7 +100,7 @@ label[for="standarddb"] {
     color: #000;
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #000;
-    height: 2.5em;
+    height: 2.7em;
     width: 15em;
     border-radius: 3px;
 }
@@ -276,3 +276,5 @@ margin-top: 2em;
     background-color: rgba(0, 110, 98, 166);
 
 }
+
+.addJob { display: none; }
