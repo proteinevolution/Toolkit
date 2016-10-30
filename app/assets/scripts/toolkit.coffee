@@ -64,9 +64,9 @@ class window.Job
         break
 
   # Adds a new Job to the JobList.
-  this.add = (job) -> Job.list().push(job)
+  this.add = (job) -> Job.list.then (list) -> list.push(job)
 
-
+  # TODO Can this be a bit more elegant?
   this.generateJobID = () -> [
     Math.floor((Math.random()) * 9)
     Math.floor((Math.random()) * 9)
@@ -125,14 +125,11 @@ window.Toolkit =
         Job.requestTool(false)
       else
         job = JobModel.update(args, if args.isJob then m.route.param("mainID") else m.route.param("toolname"))
-
-      viewComponent = () -> m JobViewComponent, {job : job, add: Job.add}
+      viewComponent = () -> m JobViewComponent, {job : job, add: Job.add, messages: JobModel.messages}
     jobs : Job.list
     viewComponent : viewComponent
     selected: Job.selected
     clear: Job.clear
-
-
 
   view: (ctrl) -> [
     m "div", {class: "large-2 padded-column columns show-for-large", id: "sidebar"},
