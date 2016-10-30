@@ -118,6 +118,17 @@ styleComponent =
 
   view: ->
     m "style", "#jobsearchform { display: none;}"
+
+
+quickSearchComponent =
+  view: ->
+
+
+
+
+
+
+
 ###
 
   <div class="grid" style="margin-top: 355px;">

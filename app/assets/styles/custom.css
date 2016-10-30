@@ -422,19 +422,6 @@ textarea { resize:both; }
 
 
 
-/*Login Widget*/
-#auth-link {
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-    font-size: 0.75em;
-    color: #707070;
-    overflow-x: hidden;
-    background-repeat: repeat;
-    background-attachment: scroll;
-    background-position: 0% 0%;
-    background-clip: border-box;
-    background-origin: padding-box;
-    background-size: auto auto;
-}
 
 [data-accordion-menu] ul {
     display: none;
@@ -603,6 +590,7 @@ img#logomin {
 
     display: block;
     margin: auto;
+    margin-top: -35px;
 }
 
 .jobid a {

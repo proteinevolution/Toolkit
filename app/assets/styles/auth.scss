@@ -87,3 +87,20 @@
   font-size: 0.8em;
   height: 2.5em;
 }
+
+/*Login Widget*/
+#auth-link {
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+  font-size: 0.75em;
+  color: #707070;
+  overflow-x: hidden;
+  background-repeat: repeat;
+  background-attachment: scroll;
+  background-position: 0% 0%;
+  background-clip: border-box;
+  background-origin: padding-box;
+  background-size: auto auto;
+  margin: 3px 0.5em 0 0;
+  border-color: #d85000;
+  padding: 1px 5px;
+}
