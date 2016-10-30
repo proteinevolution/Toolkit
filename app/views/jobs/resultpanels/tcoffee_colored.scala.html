@@ -1,0 +1,30 @@
+@import models.results.Tcoffee
+
+@(mainID : String)(implicit request: RequestHeader)
+
+<style>
+
+#tcoffee_colored SPAN { font-family: courier new, courier-new, courier, monospace; font-weight: bold; font-size: 11pt;}
+#tcoffee_colored SPAN { line-height:100%}
+#tcoffee_colored SPAN {  white-space: pre}
+#tcoffee_colored SPAN.value0 {background: #9B92FF}
+#tcoffee_colored SPAN.value1 {background: #B4FFB4}
+#tcoffee_colored SPAN.value2 {background: #BEFFBE}
+#tcoffee_colored SPAN.value3 {background: #C8FFC8}
+#tcoffee_colored SPAN.value4 {background: #FFFFB7}
+#tcoffee_colored SPAN.value5 {background: #FFFFAD}
+#tcoffee_colored SPAN.value6 {background: #FFFFAD}
+#tcoffee_colored SPAN.value7 {background: #FFE6E6}
+#tcoffee_colored SPAN.value8 {background: #FFDCDC}
+#tcoffee_colored SPAN.value9 {background: #FFC8C8}
+#tcoffee_colored SPAN.valuedefault {}
+#tcoffee_colored SPAN.valuegap {}
+#tcoffee_colored SPAN.valueink {background: #000000}
+
+
+</style>
+
+
+<div id="tcoffee_colored">
+    @Html(Tcoffee.colored(mainID))
+</div>
