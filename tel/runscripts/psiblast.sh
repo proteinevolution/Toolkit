@@ -34,7 +34,7 @@ perl %BIOPROGS/helpers/reformat.pl -i=fas \
                                    -f=results/out.align \
                                    -a=results/out.align_clu
 
-#scala %BIOPROGS/helpers/psiblastpPostProcess.scala results/out.psiblastp
+scala %BIOPROGS/helpers/psiblastpPostProcess.scala results/out.psiblastp
 
 # Produce some extra files:
 < results/out.psiblastp grep Expect | awk '{ print $8; }' | sed 's/,$//' > results/evalues.dat
