@@ -96,16 +96,28 @@ window.Index =
             ]
         ]
 
-      m "div", {class: "grid", style: "margin-top: 355px;"},
-        m "div", {class: "tool-finder show-for-medium row centered"},[
-          m "div", {class: "search-query large-12 medium-6"},
-            m "div", {class: "columns large-12"},
-              m "input", {type: "text", id: "searchInput", name: "searchInput", placeholder: "Search Keywords"}
-          m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated()}"}
-        ]
+      trafficBarComponent
+      styleComponent
   ]
 
 
+trafficBarComponent =
+
+  view: ->
+    m "div", {class: "grid", style: "margin-top: 355px;"},
+      m "div", {class: "tool-finder show-for-medium row centered"},[
+        m "div", {class: "search-query large-12 medium-6"},
+          m "div", {class: "columns large-12"},
+            m "input", {type: "text", id: "searchInput", name: "searchInput", placeholder: "Search Keywords"}
+        m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated()}"}
+      ]
+
+
+
+styleComponent =
+
+  view: ->
+    m "style", "#jobsearchform { display: none;}"
 ###
 
   <div class="grid" style="margin-top: 355px;">
