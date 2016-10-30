@@ -4,10 +4,22 @@
 @(mainID : String)(implicit request: RequestHeader)
 <link href="@routes.Assets.at("styles/psiblast-resultview.css")" rel="stylesheet">
 
+<style>
+    #blastviz img{
+        display: block;
+        margin: auto;
+    }
+
+    #flat-slider {
+        display: block;
+        margin-left: 30px !important;
+    }
+</style>
+
 <span class="result-title-big" style="color: grey">Choose range of input query:</span>
 
 <div id="blastviz">
-
+    <div style='width: 774px ;position: absolute; margin-top: 0.560em;' class='flat-slider' id='flat-slider'></div>
          @Html(PsiBlast.blastviz(mainID))
 
 </div>
@@ -15,16 +27,26 @@
     <button class="revealReference">Show references</button>
 <div id="alignment_overview" style="display: none;">
 
-         @Html(PsiBlast.overview(mainID).get)
+         @Html(PsiBlast.ov_alt(mainID))
 
 </div>
 
-<div  id="alignmentDetail" >
-         @Html(PsiBlast.alignhits(mainID).get)
+
+
+
+<div id="alignmentDetail">
+         @Html(PsiBlast.alignhits_alt(mainID))
 </div>
 
 
 <script>
+
+    function getSliderWidth() {
+
+        return document.getElementById('slider_length').value
+    }
+
+
     $(document).ready(function(){
 
         $("button.revealReference").click(function(){

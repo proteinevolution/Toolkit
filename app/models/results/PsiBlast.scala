@@ -73,9 +73,42 @@ object PsiBlast extends Constants {
     }
 
     lazy val overviewText = regex.findFirstIn(result)
-
     overviewText
 
+  }
+
+  /* embeds the file which was produced on the cluster */
+
+  def alignhits_alt(mainID: String) : String = {
+
+    val outfile = s"$jobPath$mainID/results/out.psiblastp_alignment"
+
+    var result = ""
+
+    for (line <- Source.fromFile(outfile).getLines()) {
+      result = result.concat(line + "<br>")
+
+    }
+
+
+    result
+  }
+
+  /* embeds the file which was produced on the cluster */
+
+  def ov_alt(mainID: String) : String = {
+
+    val outfile = s"$jobPath$mainID/results/out.psiblastp_overview"
+
+    var result = ""
+
+    for (line <- Source.fromFile(outfile).getLines()) {
+      result = result.concat(line + "<br>")
+
+    }
+
+
+    result
   }
 
   /* returns blast alignhits with links */
@@ -94,14 +127,18 @@ object PsiBlast extends Constants {
 
       if(line.startsWith("<a") || line.startsWith("</a><a")) {
         val indexAdd = index + 1
-        result = result.concat(s"<input type='checkbox' style='margin: 9px; padding: 9px;'  class='hits' value= '$index'> $indexAdd <b>$line</b><br>")
+        result = result.concat(s"<input type='checkbox' style='margin: 9px; padding: 9px;'  class='hits' value= '$index'> $indexAdd $line<br>")
         index = index + 1
       }
+
+
       else if(line.startsWith("><a")) {
         val index2add = index2 + 1
         result = result.concat(s"<input type='checkbox' style='margin: 5px; padding: 5px;'  class='hits' value= '$index2'><b>$line</b><br>")
         index2 = index2 + 1
       }
+
+
       else
         result = result.concat(line + " <br>")
 
@@ -124,6 +161,9 @@ object PsiBlast extends Constants {
     fastaList
 
   }
+
+
+
 
 
   /* returns the clustal output to be embedded in biojs msa via twirl */
