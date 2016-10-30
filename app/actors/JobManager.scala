@@ -2,7 +2,7 @@ package actors
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.UserManager.{JobAdded, MessageWithUserID}
+import actors.UserManager.{AddJobWatchList, JobAdded, MessageWithUserID}
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import controllers.Settings
 import models.database.JobDeletionFlag.JobDeletionFlag
@@ -13,7 +13,6 @@ import modules.tools.FNV
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
-
 import better.files._
 import models.database.JobState.JobState
 import models.{Constants, ExitCodes}
@@ -215,15 +214,17 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                          dateUpdated = Some(jobCreationTime),
                          dateViewed  = Some(jobCreationTime))
 
-        // Add the job to the users watchlist
-        modifyUser(BSONDocument(User.IDDB   -> user.userID),
-                   BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> newJob.mainID)))
+
+        Logger.info("New Job instance created")
+
+       // Add the job to the users watchlist
+        //modifyUser(BSONDocument(User.IDDB   -> user.userID),
+        // BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> newJob.mainID)))
+        // Tell the User Manager that the job was added
+        userManager ! AddJobWatchList(user.userID, mainID)
 
         // finally Add the job to the Database
         updateJob(newJob)
-
-        // Tell the User Manager that the job was added
-        userManager ! JobAdded(user.userID, newJob)
 
         // Interfaces with TEL to make a new job directory, returns the  path to the script which then
         // needs to be executed

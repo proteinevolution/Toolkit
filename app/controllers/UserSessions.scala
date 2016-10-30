@@ -1,11 +1,11 @@
 package controllers
 
-import models.database.{User, SessionData}
+import models.database.{SessionData, User}
 import modules.{Common, GeoIP}
 import modules.common.HTTPRequest
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.mvc
+import play.api.{Logger, mvc}
 import play.api.mvc.RequestHeader
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
@@ -84,6 +84,7 @@ trait UserSessions extends GeoIP with Common {
     * updates a user in the cache
     */
   def updateUserCache(user : User) = {
+    Logger.info("User WatchList is now: " + user.jobs.mkString)
     userCache.set(user.sessionID.get.stringify, user)
   }
 
