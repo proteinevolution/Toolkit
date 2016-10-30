@@ -260,7 +260,12 @@ JobSubmissionComponent =
 
       # Send submission request and see whether server accepts or job already exists
       m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
-          m.route("/jobs/#{mainID}")
+          if json.existingJobs
+            alert "Job Already existing"
+          else
+            console.log "New Job Submission"
+            m.route("/jobs/#{mainID}")
+
 
     startJob: ->
       sendMessage("type":"StartJob", "mainID":args.job.mainID)
