@@ -98,17 +98,22 @@ jobs.vm = do ->
       return 'other'
   vm
 
+
+###
+  GET                                 @controllers.Service.loadJob(mainID: String)
+###
 window.Toolkit =
 
   controller: (args)  ->
     if args.isJob
       mainID = m.route.param("mainID")
       Job.selected(mainID)
-      console.log JSON.stringify Job.contains(mainID)
-
+      # Load the Job into the Joblist if it is not there
+      Job.contains(mainID).then (jobIsPresent) ->
+        if not jobIsPresent
+          m.request({url: "/jobs/load/#{mainID}", method: "GET"}).then (data) -> Job.add(new Job(data))
     else
       Job.selected(-1)
-
 
 
     toolname = m.route.param("toolname")
