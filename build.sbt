@@ -1,4 +1,4 @@
-val akkaVersion = "2.4.11"
+val akkaVersion = "2.4.12"
 val jqueryVersion = "3.1.1"
 val jqueryLazyloadVersion = "1.9.7"
 val jqueryUIVersion = "1.12.1"
