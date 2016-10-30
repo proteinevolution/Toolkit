@@ -50,7 +50,7 @@
 
     function forward2(tool) {
 
-        var seqs = '', arr = [ ], submit = '', counter = 0;
+        var arr = [ ], submit = '';
         @for((pair, index) <- PsiBlast.fastaAlignment(mainID).zipWithIndex){
 
             arr['@index'] = ">" + '@pair.description' + "\n" + '@pair.sequence';
