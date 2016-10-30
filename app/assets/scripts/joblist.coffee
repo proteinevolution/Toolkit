@@ -19,8 +19,7 @@ window.JobListComponent =
       m "form", {id: "jobsearchform"},
         m "div", [
           m "input", {type: "text", placeholder: "Search by JobID", id: "jobsearch"}
-          m "div", {id: "magnifier", class: "button", config: tooltipSearch},
-            m "i", {class: "icon-magnifying", id: "iconsidebar" }
+          m "span", {class: "bar"}
         ]
 
       m "div", {class: "button job-button"}, [
@@ -28,7 +27,7 @@ window.JobListComponent =
         m "div", {class: "toolsort", onclick: ctrl.sortToolname}, "Tool"
       ]
 
-      m "div", args.jobs().map (job, idx) ->
+      m "div",{id: "joblistbottom"}, args.jobs().map (job, idx) ->
         m "div", {class: "job #{a[job.state()]}".concat(if job.mainID == args.selected() then " selected" else "")}, [
           m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.mainID + '"]', job.jobID()
           m "span", {class: "toolname"}, job.toolname.substr(0,4).toUpperCase()
