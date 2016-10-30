@@ -573,13 +573,13 @@ textarea { resize:both; }
 
 #social i{
     padding-left: 6px;
-    color: #008979;
+    color: #666;
 
 }
 
 #social i:hover{
 
-    color: #bf616a;
+    color: #008979;
 
 }
 
