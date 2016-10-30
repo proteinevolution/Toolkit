@@ -11,81 +11,83 @@
 ############################################################################
 
 # Index Page requested by user. Note that the controller is injected
-GET         /                                              @controllers.Application.index
+GET           /                                       @controllers.Application.index
 
 # Dashboard for Admin
 #GET         /login                                         @controllers.Auth.login
 #GET         /logout                                        @controllers.Auth.logout()
 #GET         /@/backend                                     @controllers.Auth.backend
 #POST        /login                                         @controllers.Auth.backendLogin()
-POST        /settings/clustermode                          @controllers.Settings.setClusterMode(clusterMode : String)
-POST        /settings/memset                               @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
+POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)
+POST          /settings/memset                        @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
 
-GET         /@/backend                                     @controllers.Backend.index
-GET         /@/backend/settings                            @controllers.Backend.settings
-GET         /@/backend/edit                                @controllers.Backend.edit
-GET         /@/backend/access                              @controllers.Backend.access
-GET         /@/backend/logout                              @controllers.Backend.logOut
+GET           /@/backend                              @controllers.Backend.index
+GET           /@/backend/settings                     @controllers.Backend.settings
+GET           /@/backend/edit                         @controllers.Backend.edit
+GET           /@/backend/access                       @controllers.Backend.access
+GET           /@/backend/logout                       @controllers.Backend.logOut
 
 
 # Websocket
-GET         /ws                                            @controllers.Application.ws
+GET           /ws                                     @controllers.Application.ws
 
 
 # Serve files
-GET         /files/:mainID/:filename                       @controllers.Application.file(filename: String, mainID: String)
+GET           /files/:mainID/:filename                @controllers.Application.file(filename: String, mainID: String)
 
 
 
 # Assets
-GET         /webjars/*file                                 controllers.WebJarAssets.at(file)
-GET         /assets/*file                                  controllers.Assets.at(path="/public", file)
+GET           /webjars/*file                          controllers.WebJarAssets.at(file)
+GET           /assets/*file                           controllers.Assets.at(path="/public", file)
 
 
 # Route for direct get requests
-GET         /tools/:toolname                               @controllers.Application.showTool(toolname : String)
-GET         /jobs/:mainID                                  @controllers.Application.showJob(mainID: String)
+GET           /tools/:toolname                        @controllers.Application.showTool(toolname : String)
+GET           /jobs/:mainID                           @controllers.Application.showJob(mainID: String)
 
 # File Uploader
 
-POST       /upload                                         @controllers.Application.upload()
+POST          /upload                                 @controllers.Application.upload()
 
 
 # Contact
 
 # Routes for Auth Service
-GET         /signin                                        @controllers.Auth.signIn(name_login : String = "")
-GET         /signin/:name_login                            @controllers.Auth.signIn(name_login : String)
-POST        /signin/submit/                                @controllers.Auth.signInSubmit()
-GET         /signup                                        @controllers.Auth.signUp()
-POST        /signup/submit/                                @controllers.Auth.signUpSubmit()
-GET         /signout                                       @controllers.Auth.signOut()
-GET         /miniprofile                                   @controllers.Auth.miniProfile()
-GET         /profile                                       @controllers.Auth.profile()
-POST        /profile/submit/userData/                      @controllers.Auth.profileSubmit()
-POST        /profile/submit/password/                      @controllers.Auth.profileSubmit()
-GET         /verification/:name_login/:token               @controllers.Auth.verification(name_login : String, token : String)
+GET           /signin                                 @controllers.Auth.signIn(name_login : String = "")
+GET           /signin/:name_login                     @controllers.Auth.signIn(name_login : String)
+POST          /signin/submit/                         @controllers.Auth.signInSubmit()
+GET           /signup                                 @controllers.Auth.signUp()
+POST          /signup/submit/                         @controllers.Auth.signUpSubmit()
+GET           /signout                                @controllers.Auth.signOut()
+GET           /miniprofile                            @controllers.Auth.miniProfile()
+GET           /profile                                @controllers.Auth.profile()
+POST          /profile/submit/userData/               @controllers.Auth.profileSubmit()
+POST          /profile/submit/password/               @controllers.Auth.profileSubmit()
+GET           /verification/:name_login/:token        @controllers.Auth.verification(name_login : String, token : String)
 
 
 # Interaction with Jobs
 # Loading a Job from the DB
-GET         /jobs/add/:mainID                              @controllers.Service.addJob(mainID: String)
-GET         /jobs/load/:mainID                              @controllers.Service.loadJob(mainID: String)
+GET           /jobs/add/:mainID                       @controllers.Service.addJob(mainID: String)
+GET           /jobs/load/:mainID                      @controllers.Service.loadJob(mainID: String)
 # Get a Job the User Actor already has loaded
 # Delete a Job
-DELETE      /jobs/:mainID                                  @controllers.Service.forceDeleteJob(mainID : String)
+DELETE        /jobs/:mainID                           @controllers.Service.forceDeleteJob(mainID : String)
 # Clear or delete multiple jobs
-DELETE      /jobs                                          @controllers.Service.removeJobs()
+DELETE        /jobs                                   @controllers.Service.removeJobs()
 # Find a Job
-GET         /jobs/find/:queryString                        @controllers.Search.getJob(queryString : String)
+GET           /jobs/find/:queryString                 @controllers.Search.getJob(queryString : String)
 # Update Job status
-POST        /jobs/done/:jobID                              @controllers.Jobs.jobStatusDone(jobID : String)
-POST        /jobs/error/:jobID                             @controllers.Jobs.jobStatusError(jobID : String)
-POST        /jobs/running/:jobID                           @controllers.Jobs.jobStatusRunning(jobID : String)
-POST        /jobs/queued/:jobID                            @controllers.Jobs.jobStatusQueued(jobID : String)
+POST          /jobs/done/:jobID                       @controllers.Jobs.jobStatusDone(jobID : String)
+POST          /jobs/error/:jobID                      @controllers.Jobs.jobStatusError(jobID : String)
+POST          /jobs/running/:jobID                    @controllers.Jobs.jobStatusRunning(jobID : String)
+POST          /jobs/queued/:jobID                     @controllers.Jobs.jobStatusQueued(jobID : String)
+POST          /jobs/sge/:jobID/:sgeID                 @controllers.Jobs.SGEID(jobID: String, sgeID: String)
+
 
 # Static route
-GET         /static/get/:static                            @controllers.Service.static(static : String)
+GET           /static/get/:static                     @controllers.Service.static(static : String)
 
 
 
@@ -103,7 +105,7 @@ GET         /static/get/:static                            @controllers.Service.
 
 # Sitemap
 # Routes for static assets
-GET         /:static                                       @controllers.Application.static(static : String)
+GET           /:static                                @controllers.Application.static(static : String)
 
 #Forwarding
 #GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
@@ -111,11 +113,11 @@ GET         /:static                                       @controllers.Applicat
 
 # Some experimental things
 # Get ToolInformation as JSON based on toolname
-GET         /api/tools/:toolname                           @controllers.Service.getTool(toolname)
+GET           /api/tools/:toolname                    @controllers.Service.getTool(toolname)
 # Submit new Job
-POST        /api/submit                                    @controllers.Tool.submit(toolname : String, mainID : String, jobID : String)
+POST          /api/submit                             @controllers.Tool.submit(toolname : String, mainID : String, jobID : String)
 # Get JobInformation based on Toolname
-GET         /api/jobs/:mainid                              @controllers.Service.getJob(mainid)
+GET           /api/jobs/:mainid                       @controllers.Service.getJob(mainid)
 
 # Get list of userjobs
-GET         /api/jobs                                      @controllers.Service.listJobs
+GET           /api/jobs                               @controllers.Service.listJobs

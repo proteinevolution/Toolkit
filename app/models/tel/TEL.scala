@@ -83,7 +83,8 @@ class TEL @Inject() (env : Env,
       s"  echo 'script aborted, because of errors';\n" +
       s"   exit 0;\n" +
       s"}\n" +
-      s"curl -X POST http://$hostname:$port/jobs/running/$jobID\n")
+      s"curl -X POST http://$hostname:$port/jobs/running/$jobID\n" +
+      s"curl -X POST http://$hostname:$port/jobs/sge/$jobID/$${JOB_ID}\n")
 
 
     lazy val newLines = source.toFile.lines.map { line =>
