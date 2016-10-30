@@ -1,8 +1,8 @@
 .sidebar {
-
+  margin-right: -15px;
   padding-left: 1.250em;
   padding-top: 3.8em !important;
-  padding-right: 1.250em;
+  padding-right: 0;
   background-color: transparent;
   min-height: 31.250em;
   max-width: 17.500em;
@@ -32,10 +32,19 @@ ul#jobs li {
 }
 
 #jobsearchform input {
+  display: none !important;
   font-size: 0.65em;
   height: 3.3em;
-  width: 13.2em;
+  width: 100%;
+
+  padding:10px 10px 10px 5px;
+  display:block;
+
+  border:none;
+  border-bottom:1px solid #757575;
 }
+
+input:focus     { outline:none; }
 
 
 #magnifier {
@@ -67,11 +76,16 @@ ul#jobs li {
 }
 
 .job-button {
-  background-color: rgba(220,220,220,0.5) !important;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
+  background: rgb(238,238,238); /* Old browsers */
+  background: -moz-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 ); /* IE6-9 */
   width: 100%;
   border: solid 1px lightgray !important;
   color: gray !important;
-  font-size: 0.8em !important;
+  font-size: 0.7em !important;
   margin-bottom: 0 !important;
 }
 

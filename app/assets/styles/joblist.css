@@ -4,7 +4,14 @@
 
     padding-top: 50px;
     display: table;
-    width: 100%;
+    width: 90%;
+    margin-left: 15px;
+}
+
+#joblistbottom {
+    -webkit-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
+    -moz-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
+    box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
 }
 
 /* Searchform */
@@ -53,5 +60,8 @@
 
 #joblist .job-button {
     display: flex;
+    -webkit-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
+    -moz-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
+    box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
 }
 
