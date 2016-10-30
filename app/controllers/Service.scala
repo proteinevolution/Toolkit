@@ -3,6 +3,7 @@ package controllers
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobManager._
+import actors.UserManager.AddJobWatchList
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.database.JobState
@@ -45,6 +46,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
                      final val values     : Values,
+    @Named("userManager") userManager : ActorRef,
     @Named("jobManager") jobManager       : ActorRef)
 
                  extends Controller with I18nSupport
@@ -133,7 +135,9 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
         case Success(mainID) =>
 
           findJob(BSONDocument(Job.IDDB -> mainID)).map {
-            case Some(job) => Ok(job.cleaned2())
+            case Some(job) =>
+              userManager ! AddJobWatchList(user.userID, mainIDString)
+              Ok(job.cleaned2())
             case None => NotFound
           }
         case _ =>
@@ -226,6 +230,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
   // Server returns such an object when asked for a job
   case class Jobitem(mainID: String,
+                     newMainID: String,  // Used for job resubmission
                      jobID: String,
                      state: JobState,
                      ownerName : String,
@@ -236,6 +241,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
   implicit val jobitemWrites: Writes[Jobitem] = (
       (JsPath \ "mainID").write[String] and
+      (JsPath \ "newMainID").write[String] and
       (JsPath \ "jobID").write[String] and
       (JsPath \ "state").write[JobState] and
       (JsPath \ "ownerName").write[String] and
@@ -322,10 +328,10 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               file.name -> file.contentAsString
             }.toMap
 
-
             ownerName.map{ ownerN =>
               Ok(Json.toJson(
                 Jobitem(job.mainID.stringify,
+                        BSONObjectID.generate().stringify, // Used for resubmitting
                         job.jobID,
                         job.status,
                         ownerN,

@@ -45,6 +45,11 @@ class window.Job
       m.request({url: "/jobs?mainIDs=#{jobs[idx].mainID}", method: "DELETE"})
       Job.list().splice(idx, 1)
 
+  this.sortToolname =  ->
+    (Job.list.then (list) -> list.sort (job1, job2) -> job2.toolname.localeCompare(job1.toolname)).then(Job.list)
+
+  this.sortJobID =  ->
+    (Job.list.then (list) -> list.sort (job1, job2) -> job2.jobID().localeCompare(job1.jobID())).then(Job.list)
 
   this.updateState = (mainID, state) ->
 
@@ -79,12 +84,6 @@ jobs.vm = do ->
   vm = {}
   vm.list = []
 
-  vm.sortToolname =  ->
-    vm.list = vm.list.sort (job1, job2) -> job2.toolname.localeCompare(job1.job_id)
-
-  vm.sortJobID =  ->
-    vm.list = vm.list.sort (job1, job2) -> job1.job_id().localeCompare(job2.job_id())
-
   vm.getJobState = (receivedJob) ->
 
     jsonString = JSON.stringify(receivedJob)
@@ -98,17 +97,22 @@ jobs.vm = do ->
       return 'other'
   vm
 
+
+###
+  GET                                 @controllers.Service.loadJob(mainID: String)
+###
 window.Toolkit =
 
   controller: (args)  ->
     if args.isJob
       mainID = m.route.param("mainID")
       Job.selected(mainID)
-      console.log JSON.stringify Job.contains(mainID)
-
+      # Load the Job into the Joblist if it is not there
+      Job.contains(mainID).then (jobIsPresent) ->
+        if not jobIsPresent
+          m.request({url: "/jobs/load/#{mainID}", method: "GET"}).then (data) -> Job.add(new Job(data))
     else
       Job.selected(-1)
-
 
 
     toolname = m.route.param("toolname")
