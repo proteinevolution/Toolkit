@@ -12,6 +12,7 @@ window.JobViewComponent =
       m "div", "Waiting for Job" # TODO Show at least JobLine here
     else
       m "div", {id: "jobview"}, [
+        m SearchformComponent
         m JobLineComponent, {job: args.job}
         m JobTabsComponent, {job: args.job, add: args.add, messages: args.messages}
       ]
@@ -34,6 +35,10 @@ JobLineComponent =
     ]
 ##############################################################################
 
+SearchformComponent =
+  view: () ->
+    m "div", {id: "jobsearchform"},
+      m "input", {type: "text", placeholder: "Search by JobID, e.g. 6881313", id: "jobsearch"}
 
 ###
 m HelpModalComponent, {toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong}
