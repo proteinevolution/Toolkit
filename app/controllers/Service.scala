@@ -168,6 +168,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
           Logger.info(
             if (request.getQueryString("deleteCompletely").contains("true")) {
+
               "Deleting: " + mainIDs.map(_.stringify).toString
             }
             else {
@@ -311,8 +312,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               // The view of the Running job is handled on client-side
               case JobState.Running => Seq.empty
 
-              case JobState.Error => Seq(
-                "Error" -> Html("Job has reached error state"))
+              // Error view is handled client-side
+              case JobState.Error => Seq.empty
 
               case JobState.Done =>
 
