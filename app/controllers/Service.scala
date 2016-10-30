@@ -226,6 +226,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
   // Server returns such an object when asked for a job
   case class Jobitem(mainID: String,
+                     newMainID: String,  // Used for job resubmission
                      jobID: String,
                      state: JobState,
                      ownerName : String,
@@ -236,6 +237,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
   implicit val jobitemWrites: Writes[Jobitem] = (
       (JsPath \ "mainID").write[String] and
+      (JsPath \ "newMainID").write[String] and
       (JsPath \ "jobID").write[String] and
       (JsPath \ "state").write[JobState] and
       (JsPath \ "ownerName").write[String] and
@@ -322,10 +324,10 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               file.name -> file.contentAsString
             }.toMap
 
-
             ownerName.map{ ownerN =>
               Ok(Json.toJson(
                 Jobitem(job.mainID.stringify,
+                        BSONObjectID.generate().stringify, // Used for resubmitting
                         job.jobID,
                         job.status,
                         ownerN,
