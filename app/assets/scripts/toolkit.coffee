@@ -45,6 +45,11 @@ class window.Job
       m.request({url: "/jobs?mainIDs=#{jobs[idx].mainID}", method: "DELETE"})
       Job.list().splice(idx, 1)
 
+  this.sortToolname =  ->
+    (Job.list.then (list) -> list.sort (job1, job2) -> job2.toolname.localeCompare(job1.toolname)).then(Job.list)
+
+  this.sortJobID =  ->
+    (Job.list.then (list) -> list.sort (job1, job2) -> job2.jobID().localeCompare(job1.jobID())).then(Job.list)
 
   this.updateState = (mainID, state) ->
 
@@ -78,12 +83,6 @@ jobs.JobList = Array
 jobs.vm = do ->
   vm = {}
   vm.list = []
-
-  vm.sortToolname =  ->
-    vm.list = vm.list.sort (job1, job2) -> job2.toolname.localeCompare(job1.job_id)
-
-  vm.sortJobID =  ->
-    vm.list = vm.list.sort (job1, job2) -> job1.job_id().localeCompare(job2.job_id())
 
   vm.getJobState = (receivedJob) ->
 
