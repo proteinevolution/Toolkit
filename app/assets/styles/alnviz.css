@@ -8,18 +8,15 @@ textarea.alnvizInput {
     margin-bottom: 0;
 }
 
-.alnviz-content {
-    width: 70%;
-    display: block;
-}
+
 
 .smenubar {
-    background-color: #EEEEEE !important;
+    background-color: #fff !important;
     padding-bottom: 2em !important;
 }
 
 .smenubar div {
-    background-color: #EEEEEE !important;
+    background-color: #fff !important;
 }
 
 .smenubar a {
@@ -27,14 +24,14 @@ textarea.alnvizInput {
 }
 
 .smenubar_alink {
-    background: #EEEEEE !important;
+    background: #fff !important;
 }
 
-.smenu-dropdown {
-    top: 24.063em !important;
-
-}
 #viewAlignment {
 
     float: right;
+}
+
+.smenu-dropdown {
+    position: absolute !important;
 }
