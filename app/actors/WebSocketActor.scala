@@ -137,6 +137,12 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
           Logger.error("Undefined Message: " + js.toString())
       }
 
+    case RunningJobMessage(mainID, message) =>
+      out ! Json.obj("type" -> "jobMessage",
+                     "mainID" -> mainID.stringify,
+                     "message" -> message)
+
+
     // Messages the user that there was a problem in handling the Job ID
     case JobIDUnknown =>
       out ! Json.obj("type" -> "JobIDUnknown")
