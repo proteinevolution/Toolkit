@@ -67,7 +67,9 @@ div#main {
 }
 .d.selected {
     background-color: #C3FFC3;
-    border-right: solid #2E8C81 3px !important;
+    box-shadow: 0 0 10px darkgreen;
+    margin-bottom: 3px;
+    margin-right: 16px;
 }
 
 
@@ -571,4 +573,9 @@ textarea { resize:both; }
 
 .helpicon:hover{
     color: #008979;
+}
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif !important;
+    font-size: 1em;
 }

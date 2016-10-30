@@ -14,7 +14,7 @@ object Tcoffee extends Constants {
 
   /* returns the clustal output to be embedded in biojs msa via twirl */
 
-  def alnviz(mainID: String) = {
+  def alnviz(mainID: String) : Iterator[String] = {
 
     val outfile = s"$jobPath$mainID/results/alignment.clustalw_aln"
 
