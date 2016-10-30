@@ -3,6 +3,7 @@ package controllers
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobManager._
+import actors.UserManager.AddJobWatchList
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.database.JobState
@@ -45,6 +46,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
                      final val values     : Values,
+    @Named("userManager") userManager : ActorRef,
     @Named("jobManager") jobManager       : ActorRef)
 
                  extends Controller with I18nSupport
@@ -133,7 +135,9 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
         case Success(mainID) =>
 
           findJob(BSONDocument(Job.IDDB -> mainID)).map {
-            case Some(job) => Ok(job.cleaned2())
+            case Some(job) =>
+              userManager ! AddJobWatchList(user.userID, mainIDString)
+              Ok(job.cleaned2())
             case None => NotFound
           }
         case _ =>

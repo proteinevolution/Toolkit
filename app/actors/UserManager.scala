@@ -62,6 +62,17 @@ final class UserManager @Inject() (
       }
 
 
+      /* TODO I thought about having this case class replacing JobAdded, since JobAdded used JobStateChanged,
+       which I do not think is approriate here (After all, the job state has not changed) The message is
+       sent in loadJObs in the Service Controller */
+    case AddJobWatchList(userID, mainID) =>
+      modifyUser(BSONDocument(User.IDDB -> userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> mainID))).foreach {
+        case Some(user) =>
+          updateUserCache(user)
+        case None =>
+      }
+
+
     // Add a Job to the Users view
     case JobAdded(userID : BSONObjectID, job : Job) =>
       modifyUser(BSONDocument(User.IDDB -> userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> job.mainID))).foreach{
@@ -149,9 +160,14 @@ object UserManager {
   // User disconnect cleanup, mediated by WebSocket
   case class UserDisconnect(userID : BSONObjectID)
 
+
   // Get a request to send the job list
   case class JobAdded(userID : BSONObjectID, job : Job) extends MessageWithUserID
   case class ClearJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
+
+
+  case class AddJobWatchList(userID : BSONObjectID, mainID : String) extends MessageWithUserID
+
 
   // Messages to broadcast to the user
   case class Broadcast(message : String)
