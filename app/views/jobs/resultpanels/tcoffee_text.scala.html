@@ -1,0 +1,22 @@
+@import models.results.Tcoffee
+@import play.api.mvc.RequestHeader
+@(mainID : String)(implicit request: RequestHeader)
+
+<style>
+
+    #tcoffee_ta {
+
+        font-family: Monaco, Consolas, "Lucida Console", monospace;
+        font-size: 12px;
+        line-height: 12px;
+        height: 600px;
+    }
+
+</style>
+
+<textarea id="tcoffee_ta">
+    @for(line <- Tcoffee.alnviz(mainID)){
+        @line
+    }
+
+</textarea>

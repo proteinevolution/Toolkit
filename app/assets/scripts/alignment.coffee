@@ -36,7 +36,7 @@
           $('#' + tabid).first().append("<div style='height: 30px;'></div>")
 
         if spt.length == 2
-          $('#' + tabid).first().append("<tr><td>#{counter}</td><td><input style='padding-right: 5px;'  type='checkbox' name='hits' class='hits' value='#{counter}'> &nbsp;&nbsp;</td><td>#{spt[0]}</td><td>#{spt[1]}</td></tr>")
+          $('#' + tabid).first().append("<tr><td>#{counter}</td><td><input style='margin-top: 16px; padding-right: 5px;'  type='checkbox' name='hits' class='hits' value='#{counter}'> &nbsp;&nbsp;</td><td>#{spt[0]}</td><td>#{spt[1]}</td></tr>")
           counter++
 
         else if spt.length == 1 and beforeLength != spt.length
