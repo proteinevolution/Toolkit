@@ -64,7 +64,6 @@ window.HelpModalComponent =
     overview = helpContent(args.toolname)[0]
     params = helpContent(args.toolname)[1]
     results = helpContent(args.toolname)[2]
-
     m "div", {id: "help-#{args.toolname}", class: "reveal", config: helpModalReveal},
       m "div", {id: "help-tabs", config: helpModalTabs}, [
         m "ul", [

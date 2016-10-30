@@ -4,7 +4,7 @@
 # TODO Refactor this model
 # Information about the current Job
 window.JobModel =
-  mainID: m.prop ""
+  mainID: m.prop ""       # MainID that is used for job submission
   isJob: m.prop false
   jobID: m.prop null
   jobstate: m.prop null
@@ -27,7 +27,7 @@ window.JobModel =
     if args.isJob
       m.request({method: 'GET', url: "/api/jobs/#{value}"}).then (data) ->
         JobModel.paramValues = data.paramValues
-        JobModel.mainID(data.mainID)
+        JobModel.mainID(data.newMainID)
         mainID: data.mainID
         tool : data.toolitem
         isJob: true
