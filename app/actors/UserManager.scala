@@ -83,6 +83,8 @@ final class UserManager @Inject() (
     case AddJobWatchList(userID, mainID) =>
       modifyUser(BSONDocument(User.IDDB -> userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> mainID))).foreach {
         case Some(user) =>
+          Logger.info("User Watch list was upated to " + user.jobs.mkString)
+
           updateUserCache(user)
         case None =>
       }
@@ -179,7 +181,7 @@ object UserManager {
   case class JobAdded(userID : BSONObjectID, job : Job) extends MessageWithUserID
   case class ClearJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
-  case class AddJobWatchList(userID : BSONObjectID, mainID : String) extends MessageWithUserID
+  case class AddJobWatchList(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
   // Messages to broadcast to the user
   case class Broadcast(message : String)

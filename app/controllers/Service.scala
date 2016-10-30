@@ -79,8 +79,11 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   def listJobs = Action.async { implicit request =>
 
     getUser.flatMap { user =>
+      Logger.info("Requested user list is " + user.jobs.mkString)
 
       findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
+        Logger.info("Jobs found " + jobs.map(_.cleaned2).length)
+
         Ok(Json.toJson( jobs.map(_.cleaned2)))
       }
     }
@@ -136,7 +139,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
           findJob(BSONDocument(Job.IDDB -> mainID)).map {
             case Some(job) =>
-              userManager ! AddJobWatchList(user.userID, mainIDString)
+              userManager ! AddJobWatchList(user.userID, job.mainID)
               Ok(job.cleaned2())
             case None => NotFound
           }
