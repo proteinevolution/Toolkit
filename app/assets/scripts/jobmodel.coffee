@@ -9,7 +9,7 @@ window.JobModel =
   jobID: m.prop null
   jobstate: m.prop null
   ownerName: m.prop null
-  messages : m.prop ["Test1", "Test2"]             # All messages that were received with the WebSocket
+  messages : m.prop []             # All messages that were received with the WebSocket
   createdOn: m.prop null
   tool: m.prop null
   alignmentPresent: false
