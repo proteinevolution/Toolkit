@@ -40,6 +40,21 @@ final class UserManager @Inject() (
     * @return
     */
   def receive: Receive = LoggingReceive {
+
+    /* User Manager passes Message from Job to all concerned users*/
+    case  msg@RunningJobMessage(mainID, message) =>
+
+      findJob(BSONDocument(Job.IDDB -> mainID)).foreach {
+        case Some(job) =>
+          job.watchList.foreach { user =>
+            connectedUsers.get(user) match {
+              case Some(userActor) => userActor ! msg
+            }
+          }
+        case None =>
+      }
+
+
     /**
       * Messages to User Manager
       */
@@ -160,16 +175,15 @@ object UserManager {
   // User disconnect cleanup, mediated by WebSocket
   case class UserDisconnect(userID : BSONObjectID)
 
-
   // Get a request to send the job list
   case class JobAdded(userID : BSONObjectID, job : Job) extends MessageWithUserID
   case class ClearJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
-
   case class AddJobWatchList(userID : BSONObjectID, mainID : String) extends MessageWithUserID
-
 
   // Messages to broadcast to the user
   case class Broadcast(message : String)
   case class MessageUser(userID : BSONObjectID, message : String) extends MessageWithUserID
+
+  case class RunningJobMessage(mainID : BSONObjectID, message : String)
 }
