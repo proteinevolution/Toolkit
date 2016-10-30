@@ -44,6 +44,7 @@ import reactivemongo.play.json._
 
 
 case class Job(mainID      : BSONObjectID,                // ID of the Job in the System
+               sgeID       : String,
                jobType     : String,                      // Type of job
                parentID    : Option[BSONObjectID] = None, // ID of the Parent Job
                jobID       : String,                      // User visible ID of the Job
@@ -100,6 +101,7 @@ object Job {
   // Constants for the JSON object identifiers
   val ID            = "id"            // name for the ID in scala
   val IDDB          = "_id"           //              ID in MongoDB
+  val SGEID         = "sgeid"         // sun grid engine job id
   val JOBTYPE       = "jobType"       //              Type of the Job
   val PARENTID      = "parentID"      //              ID of the parent job
   val JOBID         = "jobID"         //              ID for the job
@@ -124,6 +126,7 @@ object Job {
     override def reads(json: JsValue): JsResult[Job] = json match {
       case obj: JsObject => try {
         val mainID      = (obj \ ID).asOpt[String]
+        val sgeID       = (obj \ SGEID).asOpt[String]
         val jobType     = (obj \ JOBTYPE).asOpt[String]
         val parentID    = (obj \ PARENTID).asOpt[String]
         val jobID       = (obj \ JOBID).asOpt[String]
@@ -142,6 +145,7 @@ object Job {
         val dateViewed  = (obj \ DATEVIEWED).asOpt[String]
         JsSuccess(Job(
           mainID      = BSONObjectID.generate(),  // TODO need to find out how to get the main id as it is needed for the job
+          sgeID       = "",
           jobType     = "",
           parentID    = None,
           jobID       = "",
@@ -167,6 +171,7 @@ object Job {
   implicit object JobWrites extends Writes[Job] {
     def writes (job : Job) : JsObject = Json.obj(
       IDDB        -> job.mainID,
+      SGEID       -> job.sgeID,
       JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
@@ -192,6 +197,7 @@ object Job {
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson : BSONDocument): Job = {
       Job(mainID      = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
+          sgeID       = bson.getAs[String](SGEID).getOrElse(""),
           jobType     = bson.getAs[String](JOBTYPE).getOrElse("Error loading Job Type"),
           parentID    = bson.getAs[BSONObjectID](PARENTID),
           jobID       = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
@@ -218,6 +224,7 @@ object Job {
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job) : BSONDocument = BSONDocument(
       IDDB        -> job.mainID,
+      SGEID       -> job.sgeID,
       JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
