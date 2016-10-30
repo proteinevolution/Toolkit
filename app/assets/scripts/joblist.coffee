@@ -11,11 +11,6 @@ window.JobListComponent =
   view: (ctrl, args) ->
 
     m "div", {id: "joblist"}, [
-      m "form", {id: "jobsearchform"},
-        m "div", [
-          m "input", {type: "text", placeholder: "Search by JobID", id: "jobsearch"}
-          m "span", {class: "bar"}
-        ]
 
       m "div", {class: "button job-button"}, [
         m "div", {class: "idsort", onclick: Job.sortToolname}, "ID"
