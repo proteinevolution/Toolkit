@@ -12,7 +12,6 @@ window.JobViewComponent =
       m "div", "Waiting for Job" # TODO Show at least JobLine here
     else
       m "div", {id: "jobview"}, [
-        m SearchformComponent
         m JobLineComponent, {job: args.job}
         m JobTabsComponent, {job: args.job, add: args.add, messages: args.messages}
       ]
