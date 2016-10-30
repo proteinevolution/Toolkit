@@ -112,7 +112,9 @@
 
             <!---Navigation Bar --->
              <div class="row" id="metanav">
-
+                 <div id="jobsearchform">
+                     <input placeholder="Search" id="jobsearch" type="text">
+                 </div>
                  <div id="social">
                      <a href="https://github.com/zy4/Toolkit"><i class="icon-octopus"></i></a>
                      <a href="https://www.facebook.com/MPI.ENTW/"><i class="icon-facebook"></i></a>
@@ -142,13 +144,16 @@
                 <!--signin -->
                 <div id="site-notifications" class="large-2 columns align-self-middle" style="margin-top: 0.6em; margin-bottom: 2em; padding-left: 4em;">
                     <div id="user-control">
-                        <i class="icon-ringbell"></i>
-                        <i class="icon-user"></i>
-                        <a id="auth-link" onclick="openNav()" >
+                        @if(user.userData){
+                            @Html("<i class=\"icon-ringbell\"></i><i class=\"icon-user\"></i>")
+                        }
+                        <a id="auth-link" onclick="openNav()" style="float: right; padding-right: 15px;">
+
                         @{user.userData match {
                             case Some(userData) => userData.nameLogin
                             case None           => "Sign in"
                         }}
+
                         </a>
                     </div>
 
