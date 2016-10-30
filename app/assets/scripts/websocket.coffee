@@ -56,7 +56,7 @@ onOpen = (event) ->
   retryCount = 1
   $("#offline-alert").fadeOut()
   m.startComputation()
-  #jobs.vm.loadList()
+  Job.reloadList()
   m.endComputation()
 
 onError = (event) ->

@@ -10,6 +10,7 @@ window.JobModel =
   jobstate: m.prop null
   ownerName: m.prop null
   messages : m.prop []             # All messages that were received with the WebSocket
+  executionTime : 0         # Seconds
   createdOn: m.prop null
   tool: m.prop null
   alignmentPresent: false
