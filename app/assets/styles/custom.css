@@ -572,13 +572,13 @@ textarea { resize:both; }
 
 #social i{
     padding-left: 5px;
-    color: #bf616a;
+    color: #008979;
 
 }
 
 #social i:hover{
 
-    color: #008979;
+    color: #bf616a;
 
 }
 
@@ -602,4 +602,12 @@ img#logomin {
 
     display: block;
     margin: auto;
+}
+
+.jobid a {
+    color: #666;
+}
+
+.jobid a:visited {
+    color: #666;
 }

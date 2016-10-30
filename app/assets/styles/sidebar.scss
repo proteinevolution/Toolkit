@@ -31,8 +31,18 @@ ul#jobs li {
   display:inline;
 }
 
+#searchform {
+
+  margin-left: 80%;
+
+
+}
+#jobsearchform {
+
+}
+
 #jobsearchform input {
-  display: none !important;
+
   font-size: 0.65em;
   height: 3.3em;
   width: 100%;
@@ -47,15 +57,6 @@ ul#jobs li {
 input:focus     { outline:none; }
 
 
-#magnifier {
-  height: 2.39em;
-  line-height: 0.75em;
-  background-color: rgba(220,220,220,0.5);
-  border: 1px solid lightgray;
-  border-left: none;
-  color: white;
-  vertical-align: middle;
-}
 
 .button-group .alert {
   margin-right: 0.8em !important;
