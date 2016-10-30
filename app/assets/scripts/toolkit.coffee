@@ -33,16 +33,25 @@ class window.Job
           return true
       return false
 
-
   this.list = do ->
     console.log "Reloading Job List"
     m.request({url: "/api/jobs", method: "GET", type: Job})
 
+  this.reloadList =  ->
+    console.log "Reloading Job List"
+    Job.list = m.request({url: "/api/jobs", method: "GET", type: Job})
+
+  this.getJobByMainID = (mainID) ->
+    Job.list.then (jobs) ->
+      for job in jobs
+        if job.mainID == mainID
+          return job
+      return null
 
   # Clears a job from the joblist by index
   this.clear = (idx) ->
     Job.list.then (jobs) ->
-      m.request({url: "/jobs?mainIDs=#{jobs[idx].mainID}", method: "DELETE"})
+      m.request({url: "/jobs?mainIDs=#{jobs[idx].mainID}&deleteCompletely=false", method: "DELETE"})
       Job.list().splice(idx, 1)
 
   this.sortToolname =  ->
@@ -125,7 +134,7 @@ window.Toolkit =
         Job.requestTool(false)
       else
         job = JobModel.update(args, if args.isJob then m.route.param("mainID") else m.route.param("toolname"))
-      viewComponent = () -> m JobViewComponent, {job : job, add: Job.add, messages: JobModel.messages}
+      viewComponent = () -> m JobViewComponent, {job : job, add: Job.add, messages: JobModel.messages, joblistItem: Job.getJobByMainID(mainID)}
     jobs : Job.list
     viewComponent : viewComponent
     selected: Job.selected

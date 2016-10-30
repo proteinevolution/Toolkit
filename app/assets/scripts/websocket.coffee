@@ -56,7 +56,7 @@ onOpen = (event) ->
   retryCount = 1
   $("#offline-alert").fadeOut()
   m.startComputation()
-  #jobs.vm.loadList()
+  Job.reloadList()
   m.endComputation()
 
 onError = (event) ->
@@ -71,9 +71,12 @@ onClose = (event) ->
 onMessage = (event) ->
 
   message = JSON.parse event.data
-
   switch message.type
   # Jobstate has changed
+    when "jobMessage"
+      m.startComputation()
+      JobModel.messages().push(message.message)
+      m.endComputation()
     when "UpdateJob"
       state = message.job.state.toString()
       mainID = message.job.mainID.toString()
