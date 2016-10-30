@@ -225,7 +225,8 @@ object ToolModel extends PlayEnum[ToolModel] {
       "Hits" -> "",
       "E-Values" -> "evalues.dat",
       "Fasta" -> "out.align",
-      "AlignmentViewer" -> "out.align_clu"
+      "AlignmentViewer" -> "out.align_clu",
+      "Extra" -> "out.psiblast"
     )
   }
 

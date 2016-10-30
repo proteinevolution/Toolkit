@@ -6,9 +6,10 @@
       case ("psiblast", "E-Values") => views.html.jobs.resultpanels.evalues(jobID)
       case ("psiblast", "Fasta") => views.html.jobs.resultpanels.fasta(jobID)
       case ("psiblast", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_psiblast(jobID)
+      case ("psiblast", "Extra") => views.html.jobs.resultpanels.blast_exp(jobID)
       case ("tcoffee", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
       case ("tcoffee", "Conservation") => views.html.jobs.resultpanels.tcoffee_colored(jobID)
-      case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.tcoffee_aln(jobID)
+      case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/$filename")
     }
 }
 
