@@ -25,4 +25,10 @@ class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef) extends Control
     jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, JobState.Queued)
     Ok
   }
+
+  def SGEID(mainID: String, sgeID: String) = Action { request =>
+    jobManager ! AddSGEjobID(reactivemongo.bson.BSONObjectID.parse(mainID).get, sgeID)
+    Ok
+
+  }
 }

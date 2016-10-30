@@ -171,6 +171,19 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           userManager ! JobIDUnknown(jobID)
       }
 
+    case AddSGEjobID(jobID: BSONObjectID, sgeID: String) =>
+      findJob(BSONDocument(Job.IDDB -> jobID)).foreach {
+
+        case Some(job) =>
+          modifyJob(BSONDocument(Job.IDDB -> job.mainID),
+            BSONDocument("$set"   -> BSONDocument(Job.SGEID -> sgeID)))
+          Logger.info(jobID + " gets job-ID " + sgeID + " on SGE")
+        case None =>
+          userManager ! JobIDUnknown(jobID)
+          Logger.info("Unknown ID " + jobID.toString())
+
+      }
+
 
     case StartJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach{
@@ -186,6 +199,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         val isPrivate       = params.getOrElse("private","") == "true"
         val ownerID         = if (isPrivate) Some(user.userID) else None
         val newJob = Job(mainID      = mainID,
+                         sgeID       = "",
                          jobType     = "",
                          parentID    = None,
                          jobID       = jobID,
@@ -273,6 +287,8 @@ object JobManager {
   // When the JobManager was asked to update a Job status
   case class UpdateJobStatus(job : BSONObjectID, status : JobState)
 
+
+  case class AddSGEjobID(job: BSONObjectID, sgeID: String)
 
   // Add a Job to a Users view
   case class AddJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
