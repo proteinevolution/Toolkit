@@ -50,13 +50,56 @@ m HelpModalComponent, {toolname: args.job().tool.toolname, toolnameLong: args.jo
 ###
 
 ## Component that is displayed once the Job is running
+
+foundationTable = (elem, isInit) ->
+
+  if not isInit
+    $(elem).foundation()
+
+
+tm = (elem, isInit, ctx) ->
+  if not isInit
+    ctx.sec = 0
+  else
+    pad = (val) -> if val > 9 then val else '0' + val
+    setInterval (->
+      document.getElementById('runningSeconds').innerHTML = pad(++ctx.sec % 60)
+      document.getElementById('runningMinutes').innerHTML = pad(parseInt(sec / 60, 10))
+    ), 1000
+
+
 JobRunningComponent =
   controller: ->
-
   view: (ctrl, args) ->
-    m "div", {class: "running-panel"},
-      m "ul", args.messages().map (msg) ->
-        m "li", msg
+    m "div", {class: "running-panel"}, [
+
+      m "table", {config: foundationTable},
+        m "tbody", [
+          m "tr", [
+            m "td", "MainID"
+            m "td", args.job().mainID
+          ]
+          m "tr", [
+            m "td", "JobID"
+            m "td", args.job().jobID()
+          ]
+          m "tr", [
+              m "td", "Created On"
+              m "td", args.job().createdOn()
+          ]
+          m "tr", [
+            m "td", "Execution Time"
+            m "td", {config: tm}, [
+              m "span", {id: "runningMinutes"}, "00"
+              m "span", {id: "runningSeconds"}, "00"
+            ]
+          ]
+        ]
+
+        m "ul", args.messages().map (msg) ->
+          m "li", msg
+        ]
+
 
 
 
@@ -148,8 +191,9 @@ JobTabsComponent =
                 ]
               m JobSubmissionComponent, {job: ctrl.job, isJob: ctrl.isJob, add: args.add}
             ]
-        m "div", {class: "tabs-panel", id: "tabpanel-Running"},
-          m JobRunningComponent, {messages: args.messages}
+        if ctrl.isJob and ctrl.state == 3
+          m "div", {class: "tabs-panel", id: "tabpanel-Running"},
+            m JobRunningComponent, {messages: args.messages, job: ctrl.job}
 
       if ctrl.views
         ctrl.views.map (view) ->
@@ -178,6 +222,7 @@ JobSubmissionComponent =
       if not jobid                # TODO Prevent submission if validation fails
         jobid = window.Job.generateJobID()
       args.add(new Job({mainID: mainID, jobID: jobid, state: 6, createdOn: "now", toolname: args.job().tool.toolname}))
+      JobModel.messages([])
 
       submitRoute = jsRoutes.controllers.Tool.submit(args.job().tool.toolname, mainID, jobid)
       formData = new FormData(document.getElementById("jobform"))
