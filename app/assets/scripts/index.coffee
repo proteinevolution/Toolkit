@@ -78,6 +78,12 @@ window.Index =
       m "section", {class: "slider show-for-medium", config: slickSlider}, [
 
           m "div", [
+            m "img", {src: "/assets/images/institute.jpg"}
+            m "a", {href: "https://elifesciences.org/content/4/e09410"},
+              m "div", {class: "slide-caption"}, "This is a building"
+          ]
+
+          m "div", [
             m "img", {src: "/assets/images/lambda0.5_crop2.png"}
             m "a", {href: "https://elifesciences.org/content/4/e09410"},
               m "div", {class: "slide-caption"}, "This is a galaxy of folds"

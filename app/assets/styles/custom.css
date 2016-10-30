@@ -70,7 +70,8 @@ div#main {
     box-shadow: 0 0 10px darkgreen;
     margin-right: 2px;
     margin-top: 2px;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
+
 }
 
 
@@ -85,7 +86,6 @@ div#main {
     box-shadow: 0 0 10px #d2071d;
     margin-right: 2px;
     margin-top: 2px;
-    margin-right: 2px;
     margin-bottom: 3px;
 }
 
@@ -99,7 +99,6 @@ div#main {
 .r.selected {
     background-color: #FFF666;
     box-shadow: 0 0 10px #ffce27;
-    margin-right: 2px;
     margin-right: 2px;
     margin-top: 2px;
     margin-bottom: 3px;
@@ -572,8 +571,14 @@ textarea { resize:both; }
 }
 
 #social i{
-    padding-left: 4px;
+    padding-left: 5px;
     color: #bf616a;
+
+}
+
+#social i:hover{
+
+    color: #008979;
 
 }
 
