@@ -16,7 +16,7 @@ GET           /                                       @controllers.Application.i
 # Dashboard for Admin
 #GET         /login                                         @controllers.Auth.login
 #GET         /logout                                        @controllers.Auth.logout()
-#GET         /@/backend                                     @controllers.Auth.backend
+#GET         /@/backend                                  `   @controllers.Auth.backend
 #POST        /login                                         @controllers.Auth.backendLogin()
 POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)
 POST          /settings/memset                        @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
@@ -84,7 +84,7 @@ POST          /jobs/error/:jobID                      @controllers.Jobs.jobStatu
 POST          /jobs/running/:jobID                    @controllers.Jobs.jobStatusRunning(jobID : String)
 POST          /jobs/queued/:jobID                     @controllers.Jobs.jobStatusQueued(jobID : String)
 POST          /jobs/sge/:jobID/:sgeID                 @controllers.Jobs.SGEID(jobID: String, sgeID: String)
-
+POST          /jobs/message/:mainID                   @controllers.Jobs.pushMessage(mainID, message: String)
 
 # Static route
 GET           /static/get/:static                     @controllers.Service.static(static : String)
