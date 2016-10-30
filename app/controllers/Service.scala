@@ -307,8 +307,9 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             // The jobState decides which views will be appended to the job
             val jobViews: Seq[(String, Html)] = job.status match {
 
-              case JobState.Running => Seq(
-                "Running" -> Html("Job is currently being executed"))
+
+              // The view of the Running job is handled on client-side
+              case JobState.Running => Seq.empty
 
               case JobState.Error => Seq(
                 "Error" -> Html("Job has reached error state"))
