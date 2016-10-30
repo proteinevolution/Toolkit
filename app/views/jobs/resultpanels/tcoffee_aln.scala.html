@@ -1,0 +1,10 @@
+@import models.results.Tcoffee
+@import play.api.mvc.RequestHeader
+@(mainID : String)(implicit request: RequestHeader)
+
+
+@for(line <- Tcoffee.alnviz(mainID)){
+
+    @line<br>
+
+}

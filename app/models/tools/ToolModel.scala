@@ -242,6 +242,8 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val params = Seq(Param.ALIGNMENT)
     val results = Map(
+      "Alignment" -> "alignment.clustalw_aln",
+      "Conservation" -> "alignment.score_html",
       "AlignmentViewer" -> "alignment.clustalw_aln"
     )
   }
