@@ -9,11 +9,11 @@ window.JobViewComponent =
 
   view: (ctrl, args) ->
     if not args.job()
-      m "div", "Waiting for Job"
+      m "div", "Waiting for Job" # TODO Show at least JobLine here
     else
       m "div", {id: "jobview"}, [
         m JobLineComponent, {job: args.job}
-        m JobTabsComponent, {job: args.job, add: args.add}
+        m JobTabsComponent, {job: args.job, add: args.add, messages: args.messages}
       ]
 
 #############################################################################
@@ -49,12 +49,22 @@ m HelpModalComponent, {toolname: args.job().tool.toolname, toolnameLong: args.jo
 </div>
 ###
 
+## Component that is displayed once the Job is running
+JobRunningComponent =
+  controller: ->
+
+  view: (ctrl, args) ->
+    m "div", {class: "running-panel"},
+      m "ul", args.messages().map (msg) ->
+        m "li", msg
+
+
 
 
 
 # Mithril Configs for JobViewComponent
 tabulated = (element, isInit) ->
-  if not isInit then $(element).tabs()
+  if not isInit then $(element).tabs({active: this.active})
 
 # View template helper for generating parameter input fields
 renderParameter = (content, moreClasses) ->
@@ -66,13 +76,30 @@ renderParameter = (content, moreClasses) ->
 # Encompasses the individual sections of a Job, usually rendered as tabs
 JobTabsComponent =
   controller: (args) ->
+
+    # Show parameter tabs in all cases
     params = args.job().tool.params
     listitems = (params.filter (param) -> param[1].length != 0).map (param) -> param[0]
+
+    # Modify the displayed view depending on the JobState
+    active = null
+    if args.job().isJob
+      state = args.job().jobstate
+      # Activate first tab after parameters
+      switch state
+        when 3
+          active = listitems.length
+          listitems = listitems.concat "Running"   # Add the Running Tab if the JobState is Running
+        when 4
+          active = listitems.length
+        when 5
+          active = listitems.length
+    else
+      active = 0
+
     views = args.job().views
     if views
       listitems = listitems.concat views.map (view) -> view[0]
-
-    # Determine whether the parameters contain an alignment
     params: params
     alignmentPresent: params[0][1][0][0] is "alignment"
     isJob : args.job().isJob
@@ -81,10 +108,10 @@ JobTabsComponent =
     views: views
     getParamValue : JobModel.getParamValue
     job : args.job
-
+    active : active
 
   view: (ctrl, args) ->
-    m "div", {class: "tool-tabs", id: "tool-tabs", config: tabulated}, [
+    m "div", {class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl)}, [
 
 # Generate the list of jobsections
       m "ul", ctrl.listitems.map (item) ->
@@ -121,6 +148,9 @@ JobTabsComponent =
                 ]
               m JobSubmissionComponent, {job: ctrl.job, isJob: ctrl.isJob, add: args.add}
             ]
+        m "div", {class: "tabs-panel", id: "tabpanel-Running"},
+          m JobRunningComponent, {messages: args.messages}
+
       if ctrl.views
         ctrl.views.map (view) ->
           m "div", {class: "tabs-panel", id: "tabpanel-#{view[0]}"},
