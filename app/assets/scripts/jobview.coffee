@@ -2,8 +2,7 @@
 # Config for displaying the help modals:
 helpModalAccess = (elem, isInit) ->
   if not isInit
-    elem.setAttribute "data-open", "help-#{this.toolname}"
-    $(elem).foundation()
+    elem.setAttribute "data-open", "help-#{this.job().tool.toolname}"
 
 
 window.JobViewComponent =
@@ -17,9 +16,7 @@ window.JobViewComponent =
         m JobTabsComponent, {job: args.job, add: args.add}
       ]
 
-###
-
-##############################################################################
+#############################################################################
 # Component for the Jobline
 JobLineComponent =
 
@@ -38,7 +35,9 @@ JobLineComponent =
 ##############################################################################
 
 
-
+###
+m HelpModalComponent, {toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong}
+###
 ###
 <div class="reveal" id="exampleModal1" data-reveal>
   <h1>Awesome. I Have It.</h1>
