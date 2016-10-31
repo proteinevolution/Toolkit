@@ -264,14 +264,8 @@ input.delete:focus {
     font-weight: bold;
 }
 
-.jobid{
-    padding-left: 1em;
-}
 
 
-.job .toolname{
-    padding-left: 2em;
-}
 
 .job .jobid {
     text-overflow: ellipsis;
