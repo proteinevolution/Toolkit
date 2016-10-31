@@ -36,18 +36,6 @@ div#main {
 }
 
 
-#navcontainer {
-
-
-
-}
-#metanav {
-
-    min-height: 49px;
-
-}
-
-
 #sidebar {
 
     padding-left: 1.2em;
@@ -586,12 +574,6 @@ textarea { resize:both; }
     font-size: 1em;
 }
 
-img#logomin {
-
-    display: block;
-    margin: auto;
-    margin-top: -35px;
-}
 
 .jobid a {
     color: #666;
