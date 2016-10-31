@@ -134,12 +134,10 @@ JobRunningComponent =
 tabulated = (element, isInit) ->
   if not isInit then $(element).tabs({active: this.active})
 
+
 # View template helper for generating parameter input fields
 renderParameter = (content, moreClasses) ->
   m "div", {class: "parameter #{moreClasses}"}, content
-
-##############################################################################
-
 
 # Encompasses the individual sections of a Job, usually rendered as tabs
 JobTabsComponent =
@@ -178,13 +176,24 @@ JobTabsComponent =
     getParamValue : JobModel.getParamValue
     job : args.job
     active : active
+    delete: (event) ->
+      event.preventDefault()
+
 
   view: (ctrl, args) ->
     m "div", {class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl)}, [
 
 # Generate the list of jobsections
-      m "ul", ctrl.listitems.map (item) ->
-        m "li",  {id: "tab-#{item}"},  m "a", {href: "#tabpanel-#{item}"}, item
+      m "ul", [
+        ctrl.listitems.map (item) ->
+          m "li",  {id: "tab-#{item}"},  m "a", {href: "#tabpanel-#{item}"}, item
+
+        if ctrl.isJob
+          m "li", {style: "float: right;" },
+            m "input", {type: "button", class: "button small delete", value: "Delete Job"}
+      ]
+
+
 
 
 # Generate views for all Parameter groups
