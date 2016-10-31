@@ -13,7 +13,7 @@ window.JobListComponent =
     m "div", {id: "joblist"}, [
       m "form", {id: "jobsearchform"},
         m "div", [
-          m "input", {type: "text", placeholder: "Search by JobID", id: "jobsearch"}
+          m "input", {type: "text", placeholder1: "Search by JobID", id: "jobsearch"}
           m "span", {class: "bar"}
         ]
 
