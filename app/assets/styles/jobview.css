@@ -9,13 +9,23 @@
     background: white;
     min-height: 600px;
 }
+.parameter-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 600px;
+}
+
+.tabs-panel {
+    background: inherit;
+}
 
 
 /* Configuration of individual parameters */
 .parameter {
     width: 100% !important;
-    text-align: right;
     height: 6em;
+
 }
 
 .parameter label {
@@ -23,11 +33,12 @@
 }
 
 .parameter select {
-    margin-right: 2em;
+    float: right;
+    border-radius: 3px;
 }
 
 .parameter input {
-    margin-left: 21em;
+    float: right;
 }
 
 .parameter span {
@@ -36,7 +47,6 @@
 .parameter #alignment {
 
     font-family: Monaco, Consolas, "Lucida Console", monospace;
-    font-size: 0.625em;
     margin: 0 0 0;
 }
 .parameter .alignmentFormat {
@@ -57,11 +67,20 @@
     color: #000;
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #000;
-    height: 2.4em;
     width: 14em;
     border-radius: 3px;
     font-size: 0.75em;
 }
+.alignmentParameter {
+
+    height: 25em;
+}
+
+.parameter select {
+    width:  14em;
+}
+
+
 
 .alignmentParameter input {
     background-color: white;
@@ -80,33 +99,29 @@
     background-color: white;
     color: black;
 }
-
-#standarddb {
-    margin-top: 8em;
-}
-
-label[for="standarddb"] {
-    margin-top: 7em;
-    margin-left: 2em;
-}
 /*
  Parameter panels
 */
 .parameters {
-
     display: flex;
+}
+
+.parameters .left {
+    padding-right: 1em;
+}
+
+.parameter {
+    font-size: small;
 }
 
 .parameters div {
     width: 50%;
-    font-size: smaller;
 }
 
 .parameters select {
     color: #000;
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #000;
-    height: 2.7em;
     width: 15em;
     border-radius: 3px;
 }
@@ -115,7 +130,6 @@ label[for="standarddb"] {
     color: #000;
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #878787;
-    height: 2.45em;
     width: 15em;
     border-radius: 3px;;
 }
@@ -124,17 +138,13 @@ label[for="standarddb"] {
     color: #000;
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #000;
-    height: 2.5em;
     width: 15em;
 }
 
 
 .submitbuttons {
-    position:absolute;
-    bottom:30px;
-    left:30px;
-    width: 80%;
-
+    clear: both;
+    width: 100%;
 }
 
 .submitbuttons .submitJob {
