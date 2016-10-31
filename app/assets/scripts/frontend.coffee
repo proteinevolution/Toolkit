@@ -31,6 +31,7 @@ window.FrontendAlnvizComponent =
 
     initMSA: ->
       seqs = $('#alignment').reformat('Fasta')
+      width = $('#tool-tabs').width() - 180
       if !seqs
         return
       opts =
@@ -48,6 +49,7 @@ window.FrontendAlnvizComponent =
           labelCheckbox: false
         menu: 'small'
       opts.seqs = fasta2json(seqs)
+      opts.zoomer = {alignmentWidth: width}
       alignment = new (msa.msa)(opts)
       # the menu is independent to the MSA container
       menuOpts = {}
@@ -56,6 +58,11 @@ window.FrontendAlnvizComponent =
       defMenu = new (msa.menu.defaultmenu)(menuOpts)
       alignment.addView 'menu', defMenu
       alignment.render()
+      $('#tool-tabs').tabs 'option', 'active', $('#tool-tabs').tabs('option', 'active') + 1
+
+    forwardTab: () ->
+      $('#tool-tabs').tabs 'option', 'active', $('#tool-tabs').tabs('option', 'active') + 1
+
 
   view: (ctrl) ->
     m "div", {id: "jobview"}, [
@@ -142,7 +149,7 @@ tabsContents =
     ]
 
   "Visualization": (ctrl) ->
-    m "div", [
+    m "div",[
       m "div", {id: "menuDiv"}
       m "div", {id: "yourDiv"}
     ]
