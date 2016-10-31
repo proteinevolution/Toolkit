@@ -151,8 +151,9 @@
     background-color: gray;
     border-radius: 3px;
     float: left;
-    margin-right: 0.5em;
+    margin-right: 1em;
     color: white;
+    padding-right: 15px !important;
 
 }
 
@@ -177,8 +178,8 @@
     float: left;
     border-radius: 3px;
     font-size: 0.88em
-}
 
+}
 
 
 
