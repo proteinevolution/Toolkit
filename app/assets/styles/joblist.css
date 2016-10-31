@@ -9,9 +9,9 @@
 }
 
 #joblistbottom {
-    -webkit-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
-    -moz-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
-    box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
+    -webkit-box-shadow: 2px 2px 15px -5px rgba(153,153,153,1);
+    -moz-box-shadow: 2px 2px 15px -5px rgba(153,153,153,1);
+    box-shadow: 2px 2px 15px -5px rgba(153,153,153,1);
 }
 
 /* Searchform */
@@ -104,9 +104,14 @@ a.boxclose{
 #joblist .job-button {
     height: 2.5em;
     display: flex;
+    -webkit-box-shadow: 0 1px 6px 0 #ccc;
+    -moz-box-shadow: 0 1px 6px 0 #ccc;
+    box-shadow: 0 1px 6px 0 #ccc;
+    /*
     -webkit-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
     -moz-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
     box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
+    */
 }
 
 .job-button {

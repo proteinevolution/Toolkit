@@ -125,8 +125,7 @@ FIELDSET {
 
 
 select {
-    height: 31px;
-    font-size: 12px;
+    font-size: 1em !important;
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
 }
 
