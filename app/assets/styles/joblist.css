@@ -51,7 +51,7 @@
 .textcenter {
     text-align: center;
     vertical-align: middle;
-    line-height: 2.5em;
+    line-height: 2.2em;
 }
 
 
@@ -125,5 +125,5 @@ a.boxclose{
     border: solid 1px lightgray !important;
     color: gray !important;
     font-size: 0.7em !important;
-    margin-bottom: 0 !important;
+    margin-bottom: 3px !important;
 }
