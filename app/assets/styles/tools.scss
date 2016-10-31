@@ -8,16 +8,16 @@
 }
 
 .ui-state-default {
-  background: #f2f2f2 !important;
+  background: inherit !important;
   border: none !important;
-  height: 2.45em;
+  height: 100%;
 
 }
 
 .ui-state-active {
-  background: #f2f2f2 !important;
+  background: white !important;
   color: white;
-
+  box-shadow: 0 0 0 0 gray;
 }
 
 .ui-state-active a:link {
