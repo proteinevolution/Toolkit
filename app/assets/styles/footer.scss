@@ -1,11 +1,12 @@
 
 .footer  {
+  padding-top: 55px;
   background-color: #272727;
   color: #fff;
   text-align: center;
   width: 40%;
   max-width: 40%;
-
+  padding-bottom: 15px;
   bottom: 0;
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
   font-size: 0.625em;
@@ -38,7 +39,7 @@
 #socket {
   margin: auto;
   color: #848484;
-  padding: 3px 5px;
+  padding: 5px 5px 40px 5px;
   border-top-color: rgb(204, 204, 204);
   border-right-color: rgb(204, 204, 204);
   border-bottom-color: rgb(204, 204, 204);
