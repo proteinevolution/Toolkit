@@ -202,30 +202,30 @@ JobTabsComponent =
           if paramGroup[1].length != 0
             elements = paramGroup[1]
             split = (elements.length / 2) + 1
-            m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
+            m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"},
+              m "div", {class: "parameter-panel"}, [
 
-              if paramGroup[0] is "Input"
-
-                paramGroup[1].map (paramElem) ->
-                  ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                  comp = formComponents[paramElem[0]](ctrlArgs)
-                  m.component comp[0], comp[1]
-
-  # Show everything except for the alignment in the parameters div
-              else
-                m "div", {class: "parameters"},
-                  [
-                    m "div", elements.slice(0,split).map (paramElem) ->
+                if paramGroup[0] is "Input"
+                    paramGroup[1].map (paramElem) ->
                       ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
                       comp = formComponents[paramElem[0]](ctrlArgs)
                       m.component comp[0], comp[1]
 
-                    m "div", elements.slice(split,elements.length).map (paramElem) ->
-                      ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                      comp = formComponents[paramElem[0]](ctrlArgs)
-                      m.component comp[0], comp[1]
-                  ]
-              m JobSubmissionComponent, {job: ctrl.job, isJob: ctrl.isJob, add: args.add}
+    # Show everything except for the alignment in the parameters div
+                else
+                  m "div", {class: "parameters"},
+                    [
+                      m "div", {class: "left"}, elements.slice(0,split).map (paramElem) ->
+                        ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                        comp = formComponents[paramElem[0]](ctrlArgs)
+                        m.component comp[0], comp[1]
+
+                      m "div", {class: "right"}, elements.slice(split,elements.length).map (paramElem) ->
+                        ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                        comp = formComponents[paramElem[0]](ctrlArgs)
+                        m.component comp[0], comp[1]
+                    ]
+                m JobSubmissionComponent, {job: ctrl.job, isJob: ctrl.isJob, add: args.add}
             ]
         if ctrl.isJob and ctrl.state == 3
           m "div", {class: "tabs-panel", id: "tabpanel-Running"},
@@ -296,6 +296,7 @@ JobSubmissionComponent =
       if  args.isJob && args.job().jobstate == 1 then m "input", {type: "button", class: "button small addJob", value: "Start Job", onclick: ctrl.startJob} else null  #TODO
       if  args.isJob then m "input", {type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob} else null  #TODO
       m "input", {type: "text", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job().jobID), value: args.job().jobID()}
+      m "input", {type: "text", class: "jobid", placeholder: "E-Mail Notification", style: "width: 16em; float: right;"}
     ]
 ##############################################################################
 m.capture = (eventName, handler) ->
