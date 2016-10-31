@@ -33,12 +33,9 @@ class window.Job
           return true
       return false
 
-  this.list = do ->
-    console.log "Reloading Job List"
-    m.request({url: "/api/jobs", method: "GET", type: Job})
+  this.list = m.request({url: "/api/jobs", method: "GET", type: Job})
 
   this.reloadList =  ->
-    console.log "Reloading Job List"
     Job.list = m.request({url: "/api/jobs", method: "GET", type: Job})
 
   this.getJobByMainID = (mainID) ->
@@ -51,8 +48,15 @@ class window.Job
   # Clears a job from the joblist by index
   this.clear = (idx) ->
     Job.list.then (jobs) ->
-      m.request({url: "/jobs?mainIDs=#{jobs[idx].mainID}&deleteCompletely=false", method: "DELETE"})
-      Job.list().splice(idx, 1)
+      job = Job.list()[idx]
+      # TODO We have to guarantee that the Job has vanished from the users watch list once the Request has finished.
+      m.request({url: "/jobs?mainIDs=#{job.mainID}&deleteCompletely=false", method: "DELETE"}).then () ->
+        Job.list()[idx] = null
+        Job.list().splice(idx, 1)
+        if job.mainID == Job.selected()
+          m.route("/tools/#{job.toolname}")
+
+
 
   this.sortToolname =  ->
     (Job.list.then (list) -> list.sort (job1, job2) -> job2.toolname.localeCompare(job1.toolname)).then(Job.list)
@@ -64,7 +68,7 @@ class window.Job
 
     # If the job is selected, do something
     if mainID == Job.selected()
-      m.route("/jobs/#{mainID}")  # This is not my final solution. I stil have some other ideas1
+      m.route("/jobs/#{mainID}")  # This is not my final solution. I stil have some other ideas
     Job.lastUpdated(mainID)
     Job.lastUpdatedState(state)
     for job in Job.list()
