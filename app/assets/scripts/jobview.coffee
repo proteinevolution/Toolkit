@@ -176,8 +176,8 @@ JobTabsComponent =
     getParamValue : JobModel.getParamValue
     job : args.job
     active : active
-    delete: (event) ->
-      event.preventDefault()
+    delete: (mainID) -> Job.delete(mainID)
+
 
 
   view: (ctrl, args) ->
@@ -190,7 +190,7 @@ JobTabsComponent =
 
         if ctrl.isJob
           m "li", {style: "float: right;" },
-            m "input", {type: "button", class: "button small delete", value: "Delete Job"}
+            m "input", {type: "button", class: "button small delete", value: "Delete Job", onclick: ctrl.delete.bind(ctrl, ctrl.job().mainID)}
       ]
 
 
