@@ -269,6 +269,13 @@ font-size: 0.65em !important;
     max-width: 7em;
 }
 
+/* Running Panel */
+.running-panel {
+
+    font-size: smaller;
+}
+
+
 /* File Upload */
 
 .fileUploadBox{
