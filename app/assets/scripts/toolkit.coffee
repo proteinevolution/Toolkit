@@ -58,7 +58,6 @@ class window.Job
 
 
   this.delete = (mainID) ->
-    alert "Job with ID #{mainID} deleted"
     Job.list.then (jobs) ->
       jobs.map (job, idx) ->
         if job.mainID == mainID
