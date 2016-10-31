@@ -5,6 +5,9 @@
   min-height: 20em;
   padding: 0;
   overflow: hidden;
+  display: block;
+  margin: auto;
+
 }
 #auth-tabs .ui-widget-header {
   font-size: 1.1em;
@@ -103,4 +106,15 @@
   margin: 3px 0.5em 0 0;
   border-color: #d85000;
   padding: 1px 5px;
+}
+
+#authoverlay {
+  display: block;
+  margin: auto;
+}
+
+
+#hamburgerInside {
+  position: absolute;
+  margin: 20px 0 0 90%;
 }
