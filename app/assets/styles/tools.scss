@@ -1,85 +1,47 @@
 .ui-corner-top {
-  border-top-right-radius: 0 !important;
-  border-top-left-radius: 0 !important;
-}
-
-.ui-state-default a {
-  font-size: 0.75em !important;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
 }
 
 .ui-state-default {
   background: inherit !important;
   border: none !important;
   height: 100%;
-
+}
+.ui-state-default a {
+  font-size: small;
 }
 
 .ui-state-active {
   background: white !important;
-  color: white;
-  box-shadow: 0 0 0 0 gray;
-}
-
-.ui-state-active a:link {
-  color: white;
-  margin-top: 0.5em;
-
-}
-
-.ui-state-default a:link {
-  color: inherit;
-  margin-top: 0.5em;
+  height: 120%;
 }
 
 #tool-tabs {
-  -webkit-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.4);
-  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.4);
-  background: transparent;
   border: none;
   padding: 0;
 }
 
-#tab2 {
-  margin-left: -1px;
-
-}
-
-
 .ui-widget-header {
-  -webkit-box-shadow: 0px 1px 6px 0px #ccc;
-  -moz-box-shadow: 0px 1px 6px 0px #ccc;
-  box-shadow: 0px 1px 6px 0px #ccc;
+  -webkit-box-shadow: 0 1px 6px 0 #ccc;
+  -moz-box-shadow: 0 1px 6px 0 #ccc;
+  box-shadow: 0 1px 6px 0 #ccc;
   background: #888;
   background-color: #eee;
-  background-repeat: repeat-x;
-  background-attachment: scroll;
-  background-position: 50% 50%;
   background-clip: border-box;
   background-origin: padding-box;
   background-size: auto auto;
   border: none;
-  border-bottom: none;
   margin-top: 0;
   height: 2.5em;
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  border-radius: 5px !important;
-}
-
-
-.ui-widget-header li {
-  margin-top: 0;
 }
 
 .ui-tabs-anchor {
-  float: left;
-  padding: .5em .5em;
-  text-decoration: none;
+  margin-top: 0.5em;
 }
 
 .ui-tabs .ui-tabs-nav {
-  padding: 0 !important;
+  padding: 0;
 }
 
 .ui-tabs .ui-tabs-nav li {
