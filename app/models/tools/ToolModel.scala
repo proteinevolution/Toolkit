@@ -25,7 +25,7 @@ sealed trait ToolModel extends EnumEntry {
   val params : Seq[String]
 
   // The results the tool is associated with
-  val results : Map[String, String]
+  val results : Seq[String]
 
   val paramGroups = Map(
 
@@ -136,12 +136,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
       "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
 
-    val results = Map(
-      "Hits" -> "",
-      "E-Values" -> "evalues.dat",
-      "Fasta" -> "out.align",
-      "AlignmentViewer" -> "out.align_clu"
-    )
+    val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
+
   }
 
   case object PatternSearch extends ToolModel {
@@ -157,12 +153,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
       "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
 
-    val results = Map(
-      "Hits" -> "",
-      "E-Values" -> "evalues.dat",
-      "Fasta" -> "out.align",
-      "AlignmentViewer" -> "out.align_clu"
-    )
+    val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
   }
 
   case object HHblits extends ToolModel {
@@ -178,12 +169,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
       "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
 
-    val results = Map(
-      "Hits" -> "",
-      "E-Values" -> "evalues.dat",
-      "Fasta" -> "out.align",
-      "AlignmentViewer" -> "out.align_clu"
-    )
+    val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
   }
 
   case object HHpred extends ToolModel {
@@ -195,16 +181,10 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "search"
     val optional = ""
 
-
     val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
       "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
 
-    val results = Map(
-      "Hits" -> "",
-      "E-Values" -> "evalues.dat",
-      "Fasta" -> "out.align",
-      "AlignmentViewer" -> "out.align_clu"
-    )
+    val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
   }
 
 
@@ -221,13 +201,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
       "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
 
-    val results = Map(
-      "Hits" -> "",
-      "E-Values" -> "evalues.dat",
-      "Fasta" -> "out.align",
-      "AlignmentViewer" -> "out.align_clu",
-      "Extra" -> "out.psiblast"
-    )
+    val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer", "Extra")
   }
 
 
@@ -240,14 +214,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "alignment"
     val optional = ""
 
-
     val params = Seq(Param.ALIGNMENT)
-    val results = Map(
-      "Alignment" -> "alignment.clustalw_aln",
-      "Conservation" -> "alignment.score_html",
-      "AlignmentViewer" -> "alignment.clustalw_aln",
-      "Text" -> "alignment.clustalw_aln"
-    )
+    val results = Seq("Alignment", "AlignmentViewer", "Conservation", "Text")
   }
 
   case object Probcons extends ToolModel {
@@ -261,7 +229,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val params = Seq(Param.ALIGNMENT, Param.CONSISTENCY, Param.ITREFINE, Param.PRETRAIN)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 
   case object Muscle extends ToolModel {
@@ -275,7 +243,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val params = Seq("alignment", "maxrounds")
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 
   case object Mafft extends ToolModel {
@@ -287,7 +255,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT, Param.GAP_OPEN, Param.OFFSET)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
 
   }
 
@@ -302,7 +270,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val params = Seq(Param.ALIGNMENT, Param.OUTORDER, Param.GAP_OPEN, Param.GAP_EXT, Param.GAP_TERM, Param.BONUSSCORE)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 
   case object Hmmer3 extends ToolModel {
@@ -317,9 +285,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val params = Seq(Param.ALIGNMENT, Param.STANDARD_DB)
 
-    val results = Map(
-      "fileview" -> "domtbl"
-    )
+    val results = Seq("fileview")
   }
 
   case object PCoils extends ToolModel {
@@ -331,7 +297,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
 
   }
 
@@ -344,7 +310,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
 
   }
 
@@ -357,7 +323,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 
   case object Marcoil extends ToolModel {
@@ -369,7 +335,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 
   case object Repper extends ToolModel {
@@ -381,7 +347,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 
   case object TPRpred extends ToolModel {
@@ -393,7 +359,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 
   case object HHomp extends ToolModel {
@@ -405,7 +371,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 
   case object Quick2D extends ToolModel {
@@ -417,7 +383,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 
   case object Ali2D extends ToolModel {
@@ -429,7 +395,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 
   case object Modeller extends ToolModel {
@@ -441,7 +407,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
   case object Bfit extends ToolModel {
 
@@ -452,7 +418,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
   case object HHfrag extends ToolModel {
 
@@ -463,7 +429,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
   case object SamCC extends ToolModel {
 
@@ -474,7 +440,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
   case object ANCESCON extends ToolModel {
 
@@ -485,7 +451,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
   case object CLANS extends ToolModel {
 
@@ -496,7 +462,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
   case object HHcluster extends ToolModel {
 
@@ -507,7 +473,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
   case object BlastClust extends ToolModel {
 
@@ -518,6 +484,6 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT)
 
-    val results = Map.empty[String, String]
+    val results = Seq.empty[String]
   }
 }
