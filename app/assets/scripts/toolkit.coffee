@@ -45,7 +45,7 @@ class window.Job
           return job
       return null
 
-  # Clears a job from the joblist by index
+  # Clears a job from the joblist by index  # TODO Abstract over clear and delete
   this.clear = (idx) ->
     Job.list.then (jobs) ->
       job = Job.list()[idx]
@@ -55,6 +55,19 @@ class window.Job
         Job.list().splice(idx, 1)
         if job.mainID == Job.selected()
           m.route("/tools/#{job.toolname}")
+
+
+  this.delete = (mainID) ->
+    alert "Job with ID #{mainID} deleted"
+    Job.list.then (jobs) ->
+      jobs.map (job, idx) ->
+        if job.mainID == mainID
+          # TODO We have to guarantee that the Job has vanished from the users watch list once the Request has finished
+          m.request({url: "/jobs?mainIDs=#{job.mainID}&deleteCompletely=true", method: "DELETE"}).then () ->
+            Job.list()[idx] = null
+            Job.list().splice(idx, 1)
+            if job.mainID == Job.selected()
+              m.route("/tools/#{job.toolname}")
 
 
 
