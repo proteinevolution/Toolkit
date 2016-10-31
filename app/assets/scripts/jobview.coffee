@@ -200,30 +200,31 @@ JobTabsComponent =
       m "form", {id: "jobform"},
         ctrl.params.map (paramGroup) ->
           if paramGroup[1].length != 0
-            elements = paramGroup[1].filter((paramElem) -> paramElem[0] != "alignment")
+            elements = paramGroup[1]
             split = (elements.length / 2) + 1
             m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
 
-              if ctrl.alignmentPresent and paramGroup[0] is "Input"
+              if paramGroup[0] is "Input"
 
-  # Controller arguments of the Component to be mounted
-                ctrlArgs = {options: paramGroup[1][0][1],  value: ctrl.getParamValue("alignment")}
-                comp = formComponents["alignment"](ctrlArgs)
-                m.component comp[0], comp[1]
+                paramGroup[1].map (paramElem) ->
+                  ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                  comp = formComponents[paramElem[0]](ctrlArgs)
+                  m.component comp[0], comp[1]
 
   # Show everything except for the alignment in the parameters div
-              m "div", {class: "parameters"},
-                [
-                  m "div", elements.slice(0,split).map (paramElem) ->
-                    ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                    comp = formComponents[paramElem[0]](ctrlArgs)
-                    m.component comp[0], comp[1]
+              else
+                m "div", {class: "parameters"},
+                  [
+                    m "div", elements.slice(0,split).map (paramElem) ->
+                      ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                      comp = formComponents[paramElem[0]](ctrlArgs)
+                      m.component comp[0], comp[1]
 
-                  m "div", elements.slice(split,elements.length).map (paramElem) ->
-                    ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                    comp = formComponents[paramElem[0]](ctrlArgs)
-                    m.component comp[0], comp[1]
-                ]
+                    m "div", elements.slice(split,elements.length).map (paramElem) ->
+                      ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+                      comp = formComponents[paramElem[0]](ctrlArgs)
+                      m.component comp[0], comp[1]
+                  ]
               m JobSubmissionComponent, {job: ctrl.job, isJob: ctrl.isJob, add: args.add}
             ]
         if ctrl.isJob and ctrl.state == 3
