@@ -176,7 +176,7 @@ JobTabsComponent =
     getParamValue : JobModel.getParamValue
     job : args.job
     active : active
-    delete: (mainID) -> Job.delete(mainID)
+    delete: (mainID) -> if confirm "Do you really want to delete this Job (ID: #{this.job().jobID()})" then Job.delete(mainID)
 
 
 
