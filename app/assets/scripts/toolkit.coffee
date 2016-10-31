@@ -77,13 +77,12 @@ class window.Job
   this.sortJobID =  ->
     (Job.list.then (list) -> list.sort (job1, job2) -> job2.jobID().localeCompare(job1.jobID())).then(Job.list)
 
-  this.updateState = (mainID, state) ->
-
+  this.updateState = (mainID, jobID, state) ->
+    Job.lastUpdated(jobID)
+    Job.lastUpdatedState(state)
     # If the job is selected, do something
     if mainID == Job.selected()
       m.route("/jobs/#{mainID}")  # This is not my final solution. I stil have some other ideas
-    Job.lastUpdated(mainID)
-    Job.lastUpdatedState(state)
     for job in Job.list()
       if job.mainID == mainID
         job.state(state)

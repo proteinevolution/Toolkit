@@ -80,8 +80,9 @@ onMessage = (event) ->
     when "UpdateJob"
       state = message.job.state.toString()
       mainID = message.job.mainID.toString()
+      jobID = message.job.job_id.toString()
       m.startComputation()
-      Job.updateState(mainID, state)
+      Job.updateState(mainID, jobID, state)
       m.endComputation()
       if jobs.vm.getJobState(message.job) == 'running'
         $('#trafficbar').css
