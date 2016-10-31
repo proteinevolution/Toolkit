@@ -4,6 +4,8 @@
 ###
 
 
+### TODO this script should be replaced with server side processing ###
+
 @simple = (metaid, tabid, statid, pathToAlignmentFile) ->
 
 
@@ -25,7 +27,8 @@
           noSeq = counter
 
         spt = line.split(/[ \t]+/)
-
+        if(line.indexOf('*') > -1)
+          continue
         if headerseen == false
           header = spt.toString()
           header = header.replace(/,/g, " ");
