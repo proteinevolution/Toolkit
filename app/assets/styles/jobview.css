@@ -170,10 +170,6 @@ label[for="standarddb"] {
 }
 
 
-.not-active {
-    pointer-events: none;
-    cursor: default;
-}
 
 
 #arrowimage{
@@ -199,6 +195,24 @@ font-size: 0.65em !important;
 .jobline {
 
     height: 50px;
+}
+
+input.delete {
+    color: #e66f72 !important;
+    background-color: inherit;
+    margin-top: 0.5em;
+}
+input.delete:hover {
+    background-color: inherit;
+    margin-top: 0.5em;
+}
+input.delete:active {
+    background-color: inherit;
+    margin-top: 0.5em;
+}
+input.delete:focus {
+    background-color: inherit;
+    margin-top: 0.5em;
 }
 
 .jobline .toolname {
@@ -243,10 +257,6 @@ font-size: 0.65em !important;
     width: 80%;
 }
 
-.not-active {
-    pointer-events: none;
-    cursor: default;
-}
 
 #help-tabs ul .toolname {
 
