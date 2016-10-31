@@ -1,4 +1,4 @@
-@(resultpanel : String, filename : String, jobID : String, toolname: String)(implicit request: RequestHeader)
+@(resultpanel : String, jobID : String, toolname: String)(implicit request: RequestHeader)
 
 
 @{ (toolname, resultpanel) match {
@@ -9,7 +9,7 @@
       case ("psiblast", "Extra") => views.html.jobs.resultpanels.blast_exp(jobID)
       case ("tcoffee", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
       case ("tcoffee", "Conservation") => views.html.jobs.resultpanels.tcoffee_colored(jobID)
-      case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/$filename")
+      case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       case ("tcoffee", "Text") => views.html.jobs.resultpanels.tcoffee_text(jobID)
     }
 }
