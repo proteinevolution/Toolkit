@@ -17,9 +17,9 @@ window.JobListComponent =
           m "span", {class: "bar"}
         ]
 
-      m "div", {class: "button job-button"}, [
-        m "div", {class: "idsort", onclick: Job.sortToolname}, "ID"
-        m "div", {class: "toolsort", onclick: Job.sortJobID}, "Tool"
+      m "div", {class: "job-button"}, [
+        m "div", {class: "idsort textcenter", onclick: Job.sortToolname}, "ID"
+        m "div", {class: "toolsort textcenter", onclick: Job.sortJobID}, "Tool"
       ]
 
       m "div",{id: "joblistbottom"}, args.jobs().map (job, idx) ->
