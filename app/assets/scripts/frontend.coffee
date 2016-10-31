@@ -149,7 +149,7 @@ tabsContents =
     ]
 
   "Visualization": (ctrl) ->
-    m "div",[
+    m "div", [
       m "div", {id: "menuDiv"}
       m "div", {id: "yourDiv"}
     ]
