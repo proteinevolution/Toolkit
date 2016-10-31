@@ -277,8 +277,8 @@ JobSubmissionComponent =
     m "div", {class: "submitbuttons"}, [
       if !this.submitting then m "input", {type: "button", class: "success button small submitJob", value: "#{if args.isJob then "Res" else "S"}ubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
       if !args.isJob
-        m "label", [
-          m "input", {type: "checkbox", name:"private", value: "true", checked: "checked"}  #TODO style me
+        m "label",{hidden: "hidden"}, [
+          m "input", {type: "checkbox", name:"private", value: "private", hidden: "hidden"}  #TODO style me
           "Private"
         ]
       else null #TODO
