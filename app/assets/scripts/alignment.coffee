@@ -27,7 +27,7 @@
           noSeq = counter
 
         spt = line.split(/[ \t]+/)
-        if(line.indexOf('*') > -1)
+        if(line.match(/\*+/))
           continue
         if headerseen == false
           header = spt.toString()
