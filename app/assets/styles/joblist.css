@@ -126,4 +126,13 @@ a.boxclose{
     color: gray !important;
     font-size: 0.7em !important;
     margin-bottom: 3px !important;
+
+}
+
+.idsort {
+    cursor: pointer;
+}
+
+.toolsort {
+    cursor: pointer;
 }
