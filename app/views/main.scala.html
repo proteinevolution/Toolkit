@@ -93,7 +93,7 @@
 
             <!---Hamburger Navbar --->
             <div id="myNav" class="overlay">
-                <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" style="float: right; margin: 41px 39px 0 0;" onclick="closeNav()">
+                <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" onclick="closeNav()">
                     <span class="hamburger-box">
                         <span class="hamburger-inner overlayed"></span>
                     </span>
@@ -180,6 +180,9 @@
                                 </div>
                      </div>
 
+
+                     <div class="row" id="nav-spacer"></div>
+
                       <!--- Mount point for Mithril Application -->
                       <div class="row" id="main-content">
 
@@ -244,6 +247,9 @@
         <script src='@routes.Assets.at("javascripts/sampleseqs.js")'></script>
 
         <script type="text/javascript">
+
+
+
 
                     function openNav() {
                         document.getElementById("myNav").style.height = "100%";
