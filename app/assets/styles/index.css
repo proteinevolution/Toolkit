@@ -25,32 +25,51 @@ body {
 
 .lazy-container {
 
-    float: left;
     width: 100%;
+    margin-top: 32em;
 }
 
 .content-wrapper-half {
     margin-top: 2em;
-    border: 2px solid;
+    border: 1px solid;
     border-color:  #8a8a8a;
     font-family: 'Vollkorn', 'Palatino', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
     background-color: white;
+    border-radius: 4px;
+    float: left !important;
+    height: 29em;
 
+}
 
+.margin-tile {
+    margin-left: 2em;
+}
+
+.header-font {
+    font-size: 0.9em;
+    font-weight: bold;
+    font-family: 'Liberation Serif', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
+    margin-bottom: 1em;
+}
+
+.tile-row {
+    margin-left: 9em;
+    height: 50em;
+    width: 100%;
 }
 
 .content-wrapper-quarter {
     margin-top: 2em;
-    font-family: 'Vollkorn', 'Palatino', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
+    font-family: "Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
     border: 2px solid;
     border-color:  #8a8a8a;
     background-color: white;
+    margin-bottom: 2em;
 
 }
 
 .text-wrapper-half {
-    padding: 2em 5em;
-    background-color: white;
+    padding: 1em 2em;
 }
 
 .text-wrapper-quarter {
@@ -58,6 +77,7 @@ body {
 
 
 }
+
 
 .lazy-container h5 {
     font-family: 'Liberation Serif', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
@@ -75,6 +95,15 @@ body {
     font-size: 0.90em;
 }
 
+.hr-index {
+    width: 5em;
+    border: 1px solid lightgray;
+    margin-left: 0;
+}
+
+.icon-index {
+    float: right;
+}
 
 .grid {
     display: block;
@@ -236,7 +265,7 @@ select {
     position: absolute;
     width: 100%;
     z-index: 2;
-    background: rgba(51,51,51,0.8);
+    background: rgba(51,51,51,0.7);
     color:white;
     font-family:'Roboto', Helvetica, sans-serif;
     font-size: 1rem;
