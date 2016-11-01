@@ -82,19 +82,19 @@ window.Index =
           m "div", [
             m "img", {src: "/assets/images/institute.jpg"}
             m "a", {href: "https://elifesciences.org/content/4/e09410"},
-              m "div", {class: "slide-caption"}, "This is a building"
+              m "div", {class: "slide-caption"}, "Max Planck Institute for Developmental Biology"
           ]
 
           m "div", [
             m "img", {src: "/assets/images/lambda0.5_crop2.png"}
             m "a", {href: "https://elifesciences.org/content/4/e09410"},
-              m "div", {class: "slide-caption"}, "This is a galaxy of folds"
+              m "div", {class: "slide-caption"}, "A galaxy of protein folds."
             ]
 
           m "div", [
             m "img", {src: "/assets/images/protfromfragments3.png"}
             m "a", {href: "https://elifesciences.org/content/4/e09410"},
-              m "div", {class: "slide-caption"}, "The seemingly limitless diversity of proteins in nature arose from only a few thousand domain prototypes, but the origin of these themselves has remained unclear. We are pursuing the hypothesis that they arose by fusion and accretion."
+              m "div", {class: "slide-caption"}, "Folded proteins from peptides."
             ]
         ]
 
@@ -135,7 +135,34 @@ styleComponent =
 tilescomponent =
 
   view: ->
-    m "div"
+    m "div", {class: "lazy-container"},[
+      m "div", {class: "tile-row"}, [
+          m "div", {class: "content-wrapper-half large-3 columns"}, [
+            m "div", {class: "image-wrapper"},
+              m "img", { src: '/assets/images/EBGebaeude-04.tif'}
+            m "div", {class: "text-wrapper-half"}, [
+              m "hr", {class: "hr-index"}
+              m "div", {class: "header-font"}, "Department of Protein Evolution, MPI for Developmental Biology"
+              m "p", "The seemingly limitless diversity of proteins arose from only a few thousand domain prototypes."
+              m "a", {href: "http://www.eb.tuebingen.mpg.de/research/departments/protein-evolution.html"},
+                m "i", {class: "icon-index icon-chevron_right"}
+
+            ]
+          ]
+          m "div", {class: "content-wrapper-half margin-tile large-6 columns"}, [
+            m "div", {class: "image-wrapper"},
+              m "img", { src: '/assets/images/bioj.jpg'}
+            m "div", {class: "text-wrapper-half"}, [
+              m "hr", {class: "hr-index"}
+              m "div", {class: "header-font"}, "The MPI bioinformatics Toolkit"
+              m "p", "is an open, interactive web service for protein bioinformatic analysis. It offers a wide array of interconnected, state-of-the-art bioinformatics tools to experts and non-experts alike, developed both externally (e.g. BLAST+, HMMER3, MUSCLE) and internally (e.g. HHpred, HHblits, PCOILS). "
+              m "a", {href: "https://www.ncbi.nlm.nih.gov/pubmed/27131380"},
+                m "i", {class: "icon-index icon-chevron_right"}
+         ]
+        ]
+      ]
+    ]
+
 
 
 
