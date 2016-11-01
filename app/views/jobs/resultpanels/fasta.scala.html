@@ -9,19 +9,30 @@
 #fasta tr:hover {
     background-color: #ececec;
 }
+
+.inp {
+    margin: 0 auto !important;
+    margin-top: 0.4em !important
+}
+
+
+.centered {
+    text-align: center; /* center checkbox horizontally */
+    vertical-align: middle; /* center checkbox vertically *
+}
+
+
 </style>
 
 
-<div style="height: 50em; overflow:auto;">
-    <div>
+<div>
     <button class="button hollow secondary" onclick="selectAll()" style="padding-left: 15px;">Select All</button>
-        <select style="width: 20%; height: 40px; float: right; margin-right: 1em;">
-            <option selected>Forward To</option>
-            <option  id="tcoffee" onclick="forward2('tcoffee')" value="psi">T-Coffee</option>
-        </select>
-    </div>
-
-
+    <select style="width: 20%; height: 40px; float: right; margin-right: 1em;">
+        <option selected>Forward To</option>
+        <option  id="tcoffee" onclick="forward2('tcoffee')" value="psi">T-Coffee</option>
+    </select>
+</div>
+<div style="height: 50em; overflow:auto; width: 100%;">
 <table id="fasta" class="hover_alignment">
     @for((pair, index) <- PsiBlast.fastaAlignment(mainID).zipWithIndex){
 
