@@ -157,6 +157,19 @@
 
 }
 
+.submitJob {
+    background-color: gray !important;
+    border-radius: 3px !important;
+    float: left !important;
+    margin-right: 1em !important;
+    color: white !important;
+    padding-right: 15px !important;
+}
+
+.submitJob:hover {
+    background-color: rgba(0, 110, 98, 166) !important;
+}
+
 .submitbuttons .submitJob:hover {
     background-color: rgba(0, 110, 98, 166);
 
