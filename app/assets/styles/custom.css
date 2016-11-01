@@ -292,15 +292,11 @@ tr.job a:visited {
 }
 
 #help-psiblast  {
-    font-size: 0.8em !important;
+    font-size: 0.85em !important;
 }
 
 .accordion a {
     color: #000 !important;
-}
-
-.accordion-item {
-    background-color: #e6e6e6;
 }
 
 .accordion-title {

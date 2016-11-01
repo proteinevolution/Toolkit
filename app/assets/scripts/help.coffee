@@ -98,10 +98,8 @@ window.HelpModalComponent =
         ]
 
         m "div", {id: "help-tabs1"},
-          m "h5", {id: "helpmodal-heading"}, 'Overview'
-            overview
+          m "div", overview
         m "div", {id: "help-tabs2"},
-          m "h5", {id: "helpmodal-heading"}, 'Parameters'
             m "ul", {class: "accordion", config: accordion}, params.map (param) ->
               m "li", {class: "accordion-item", config: accordionItem}, [
                 m "a", {href: "#", class: "accordion-title"}, param
@@ -109,7 +107,6 @@ window.HelpModalComponent =
               ]
 
         m "div", {id: "help-tabs3"},
-          m "h5", {id: "helpmodal-heading"}, 'Results'
               m "div", results
               m("img", { src: '/assets/images/psiblast.png'
               , style: { marginTop: '2em' } })
