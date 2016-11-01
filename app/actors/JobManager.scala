@@ -244,15 +244,19 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         // job parameters, inputfile, mtime of the database
         // TODO currently taking all parameters (including Job ID(Name)) into the hash, may need to change this
 
+        val paramsWithoutMainID = params - "mainID" // need to hash without mainID
+
+
         lazy val DB = params.getOrElse("standarddb","").toFile  // get hold of the database in use
-        lazy val jobByteArray = params.toString().getBytes // convert params to hashable byte array
+        lazy val jobByteArray = paramsWithoutMainID.toString().getBytes // convert params to hashable byte array
 
         lazy val jobHash = {
           params.get("standarddb") match {
             case None => JobHash( mainID = newJob.mainID,
                                   inputHash = FNV.hash64(jobByteArray).toString(), // TODO check the probability of collisions
                                   dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
-                                  dbMtime = Some("1970-01-01T00:00:00Z") ) //really weird bug in elasticsearch, "none" was not accepted when a timestamp-like string existed, so take unix epoch time
+                                  dbMtime = Some("1970-01-01T00:00:00Z") ) //really weird bug in elasticsearch, "none" was not accepted when a timestamp-like string existed, so take unix epoch time#
+
 
             case _ => JobHash( mainID = newJob.mainID,
                                inputHash = FNV.hash64(jobByteArray).toString(), // TODO check the probability of collisions
