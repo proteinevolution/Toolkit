@@ -57,7 +57,8 @@ $ ->
   # or puts the miniprofile into view
   checkAuthResponse = (json) ->
     if (json.successful)
-      $("#auth-link").html(json.user.nameLogin)
+      #change the "sign in" to the user login name
+      $("#auth-link-text").html(json.user.nameLogin)
       $("#overlay-content").html(json.message)
       Job.reloadList() #ask for the complete job list again
       setTimeout(loadMiniProfile,1000)
