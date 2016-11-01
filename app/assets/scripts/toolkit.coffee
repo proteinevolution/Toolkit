@@ -20,6 +20,8 @@ class window.Job
   # MainID of the currently selected job
   this.selected = m.prop -1
   this.lastUpdated = m.prop -1
+  this.lastUpdated = m.prop -1
+  this.lastUpdatedMainID  = m.prop -1
   this.lastUpdatedState = m.prop -1
 
   # This is currently just a hack for the presentation
@@ -78,6 +80,7 @@ class window.Job
 
   this.updateState = (mainID, jobID, state) ->
     Job.lastUpdated(jobID)
+    Job.lastUpdatedMainID(mainID)
     Job.lastUpdatedState(state)
     # If the job is selected, do something
     if mainID == Job.selected()
