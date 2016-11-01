@@ -103,6 +103,12 @@ window.Index =
       tilescomponent
   ]
 
+searchField = (elem, isInit) ->
+  if not isInit
+    $("#searchInput").keyup (event) ->
+      if event.keyCode == 13
+        m.route("/tools/#{ $("#searchInput").val()}")
+
 
 trafficBarComponent =
 
@@ -111,7 +117,7 @@ trafficBarComponent =
       m "div", {class: "tool-finder show-for-medium row centered"},[
         m "div", {class: "search-query large-12 medium-6"},
           m "div", {class: "columns large-12"},
-            m "input", {type: "text", id: "searchInput", name: "searchInput", placeholder: "Search Keywords"}
+            m "input", {type: "text", id: "searchInput", name: "searchInput", placeholder: "Search Keywords", config: searchField}
         m "div", {class: "quicklink-box"}, [
           m "div", {class: "quicklink"}, "Quick Links: "
           m "div", {class: "quicklink"},
