@@ -63,8 +63,8 @@ if((scalar @ARGV)!=4){
     $id = $ARGV[1];
     $basedir = $ARGV[2];
     $imgdir = $ARGV[3];
-    $htmlfile = $id.".html";
-    $imgfile = $id.".png";
+    $htmlfile = "blastviz.html";
+    $imgfile = "blastviz.png";
 }
 if (defined $ARGV[4]) {
 	$max_seqs = $ARGV[4];
@@ -282,7 +282,8 @@ my $domain_end = $qlen;
 my $slider_length = $imgwidth-26;
 
 print HTMLFILE "
-<div style='width: ${slider_length}px ;position: absolute; margin-top: 0.560em; margin-left: 1.1em' class='flat-slider' id='flat-slider'></div>
+<div style=' width: ${slider_length}px ;position: absolute; margin-top: 0.560em; margin-left: 1.1em' class='flat-slider' id='flat-slider'></div>
+<input id='slider_length' value='$slider_length' style='display: none;'>
 <script type='text/javascript'>setTimeout(function() {slider_show($qlen, $domain_start, $domain_end)}, 1000);</script>";
 
 # my $domain_start = scalar(@hits) ? $hits[0]->{"qbeg"} : 1;
@@ -364,7 +365,7 @@ sub printMapEntry() {
     if ($y1 =~ /(\d+)\.\d+/) {$y1 = $1};
     if ($x2 =~ /(\d+)\.\d+/) {$x2 = $1};
     if ($y2 =~ /(\d+)\.\d+/) {$y2 = $1};
-    print $fh "<area shape=\"rect\" coords=\"$x1,$y1,$x2,$y2\" href=\"#/$progtype/results/$id#$m\" title=\"$mapstring\" />\n";
+    print $fh "<area shape=\"rect\" coords=\"$x1,$y1,$x2,$y2\" href=\"#/jobs/$id#$m\" title=\"$mapstring\" />\n";
 }
 
 # Data structure:
