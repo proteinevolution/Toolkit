@@ -100,6 +100,7 @@ window.Index =
 
       trafficBarComponent
       styleComponent
+      tilescomponent
   ]
 
 
@@ -131,8 +132,12 @@ styleComponent =
     m "style", "#jobsearchform { display: none;}"
 
 
-quickSearchComponent =
+tilescomponent =
+
   view: ->
+    m "div"
+
+
 
 
 

@@ -295,7 +295,25 @@ tr.job a:visited {
     font-size: 0.8em !important;
 }
 
+.accordion a {
+    color: #000 !important;
+}
 
+.accordion-item {
+    background-color: #e6e6e6;
+}
+
+.accordion-title {
+    font-weight: bold;
+}
+
+#help-tabs {
+    font-size: 0.95em;
+}
+
+#help-tabs .ui-widget-header {
+    height: 3.5em;
+}
 .off-canvas-wrapper {
 
     min-height: 31.250em;
