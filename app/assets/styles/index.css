@@ -152,8 +152,10 @@ select {
 }
 
 .search-query {
-    margin-top: 1.8em;
-    padding: 1em;
+
+    padding: 1em 1em 0em 1em;
+    margin-top: 0.5em;
+
 
 }
 .search-query input {
@@ -177,6 +179,28 @@ select {
     -moz-box-shadow: 0 0 4px #f1e6f9;;
     box-shadow: 0 0 5px #f1e6f9;;
 
+}
+
+.quicklink-box {
+    width: 100%;
+    padding-left: 1em;
+    padding-right: 1em;
+    text-align: center;
+    font-size: 0.95em;
+}
+
+.quicklink {
+    width: 25%;
+    padding-bottom: 1.5em;
+    color:  grey;
+}
+
+.quicklink a {
+    color: #565656;
+}
+
+.quicklink a:hover {
+    color: rgba(0, 110, 98, 166);
 }
 
 .selectors {

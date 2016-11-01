@@ -111,6 +111,15 @@ trafficBarComponent =
         m "div", {class: "search-query large-12 medium-6"},
           m "div", {class: "columns large-12"},
             m "input", {type: "text", id: "searchInput", name: "searchInput", placeholder: "Search Keywords"}
+        m "div", {class: "quicklink-box"}, [
+          m "div", {class: "quicklink"}, "Quick Links: "
+          m "div", {class: "quicklink"},
+            m "a", {href: "/#/tools/tcoffee"}, "T-Coffee"
+          m "div", {class: "quicklink"},
+            m "a", {href: "/#/tools/psiblast"}, "PSI-Blast"
+          m "div", {class: "quicklink"},
+            m "a", {href: "/#/tools/reformat"}, "Reformat"
+        ]
         m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated()}"}
       ]
 
@@ -124,10 +133,6 @@ styleComponent =
 
 quickSearchComponent =
   view: ->
-
-
-
-
 
 
 
