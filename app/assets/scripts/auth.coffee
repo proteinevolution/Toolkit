@@ -59,7 +59,7 @@ $ ->
     if (json.successful)
       $("#auth-link").html(json.user.nameLogin)
       $("#overlay-content").html(json.message)
-      jobs.vm.loadList() #ask for the complete job list again
+      Job.reloadList() #ask for the complete job list again
       setTimeout(loadMiniProfile,1000)
     else
       # add the error message to the view
