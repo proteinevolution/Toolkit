@@ -82,7 +82,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       Logger.info("Requested user list is " + user.jobs.mkString)
 
       findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Logger.info("Jobs found " + jobs.map(_.cleaned2).length)
+        Logger.info(jobs.map(_.cleaned2).length + " jobs for userID " + user.userID + " found")
 
         Ok(Json.toJson( jobs.map(_.cleaned2)))
       }
@@ -281,7 +281,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
         jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).flatMap {
 
           case Some(job) =>
-            Logger.info("Job has been found")
+            Logger.info("Requested job has been found in MongoDB")
 
             val toolModel = ToolModel.toolMap(job.tool)
 
