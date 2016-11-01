@@ -1,3 +1,22 @@
+exampleSequence = """
+>gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]
+PEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEE
+>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]
+PSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRD
+>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7
+PGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQD
+>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565
+PDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRA
+>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|
+PEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQE
+>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297
+PSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRA
+>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B
+PECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRA
+>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ
+PECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQT
+"""
+
 
 # Config for displaying the help modals:
 helpModalAccess = (elem, isInit) ->
@@ -370,7 +389,7 @@ window.ParameterAlignmentComponent =
             type: "button"
             class: "button small alignmentExample"
             value: "Paste Example"
-            onclick: () -> ctrl.param.value = m.prop alnviz_example()
+            onclick: () -> ctrl.param.value(exampleSequence)
           m "input",                         # Place example alignment
             type: "button"
             class: "button small alignmentExample"
