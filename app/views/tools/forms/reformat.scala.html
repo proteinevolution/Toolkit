@@ -29,16 +29,13 @@
 
                 <div id="reformatcontainer" style="min-height: 800px; margin: 0 auto">
 
-                    <ul class="vertical menu show-for-medium" data-accordion-menu>
-                        <li>
-                            <a href="#"><span id="reformat">&nbsp;<i class="icon-chevron_down"></i> More Options</span></a>
-                            <ul class="menu horizontal nested">
+                            <ul class="menu horizontal nested" style="font-size: 12px;">
                                 <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
                                 <li><a id="dropzonetoggle">Upload</a></li>
                                 <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
                                 <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
                                 <li style="padding-top: 15px; padding-left: 10px;">
-                                    <select id="forwardTool">
+                                    <select id="forwardTool" style="font-size: 12px;">
                                         <option selected>Forward To</option>
                                         <option  id="clans" onclick="forward('clans')" value="psi">Clans</option>
                                         <option  id="csblast" onclick="forward('csblast')" value="psi">CS-BLAST</option>
@@ -51,8 +48,6 @@
                                     </select>
                                 </li>
                             </ul>
-                        </li>
-                    </ul>
 
                     <ul class="reformat-small menu show-for-small-only">
                         <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
@@ -83,6 +78,7 @@
 
                 </div>
                 <div style="width: 95%; display: block; margin: auto; padding-top: 15px;">
+                    <!--
                     <div class="large-12 columns" style="padding-right: 12px;">
                         <div style="float: right; z-index: 9;">
                             <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Paste output as input">
@@ -93,8 +89,11 @@
                                 })();" style="margin: 0 0 0 0;">Copy</button></span>
                         </div>
                     </div>
+                    -->
                     <div class="large-12 columns">
                         <div id="inputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
+                        <input type="button" id="reformatExample" class="button small alignmentExample exampleReformat" value="Paste Example">
+
                     </div>
                     <div class="large-12 columns" style="padding-top: 9px;">
                         <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
@@ -162,6 +161,9 @@
 
 <textarea id="outputarea" style="height: 1px; position: relative; top: -10000px; left: -10000px;"></textarea>
 
+
+
+
 <script src="@routes.Assets.at("scripts/validation.js")"></script>
 <script src="@routes.Assets.at("scripts/dropzone.js")"></script>
 <script>
@@ -173,14 +175,17 @@
         var inputClustal = "CLUSTAL multiple sequence alignment\n\ngi|33300828\tPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\ngi|11479639\tPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\ngi|11479645\tPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\ngi|29366706\tPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\ngi|68299729\tPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\ngi|77118174\tPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\ngi|17570796\tPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\ngi|11963775\tPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\n\ngi|33300828\tD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\ngi|11479639\tA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\ngi|11479645\tEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\ngi|29366706\t-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\ngi|68299729\tD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\ngi|77118174\t------DYYKGWACQITYMEETPDGSLRHPSFDQWR\ngi|17570796\tD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\ngi|11963775\tD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
 
 
-
         var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
-            value: inputFasta,
+            value: "",
             lineNumbers: false,
             mode:  "none",
             theme: "reformat"
         });
         myCodeMirror.setSize("100%", 220);
+        $("#reformatExample").click(function() {
+
+            myCodeMirror.setValue(inputClustal);
+        });
 
 
         var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
@@ -191,6 +196,7 @@
             theme: "reformat"
         });
 
+        myCodeMirror.setSize("100%", 220);
         myCodeMirror2.setSize("100%", 220);
 
         if(localStorage.getItem("resultcookie")  != null){
