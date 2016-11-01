@@ -45,7 +45,7 @@ JobLineComponent =
       m "span", {class: "toolname"}, [
         args.job().tool.toolnameLong
         m "a", {config: helpModalAccess.bind(args)},
-          m "i", {class: "icon-white_question helpicon"}
+          m "i", {class: "icon-information_white helpicon"}
       ]
       m "span", {class: "jobdate"}, if args.job().isJob then "Created: #{args.job().createdOn()}" else ""
       m "span", {class: "jobinfo"}, if args.job().isJob then "JobID: #{args.job().jobID()}" else "Submit a new Job"
