@@ -315,8 +315,8 @@ tr.job a:visited {
 
 .vertical a {
     color: black;
-    font-family: Monaco, Consolas, "Lucida Console", monospace;
-    font-size: medium;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+    font-size: 0.8em;
 }
 
 .vertical a:hover {
