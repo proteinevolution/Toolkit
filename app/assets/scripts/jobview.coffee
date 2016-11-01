@@ -271,7 +271,7 @@ JobSubmissionComponent =
       # Send submission request and see whether server accepts or job already exists
       m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
           if json.existingJobs
-            if confirm "Already existing job found: " + JSON.stringify(json.existingJob.job_id) + ".\n\n Do you want to load the existing job?"
+            if confirm " Already existing job found: " + JSON.stringify(json.existingJob.job_id) + ".\n\n You could save some time and just fetch it. Even the timestamp of the database is the same! \n Do you want to load the existing job? Click on cancel to run the job again."
               #window.open('http://olt.eb.local:6500/#/jobs/' + json.existingJob.mainID, '_self')
               m.route("/jobs/#{json.existingJob.mainID}")
             else
