@@ -7,8 +7,6 @@ package models.results
  * Tool model for parsing result files
  *
  */
-
-
 import models.Constants
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import scala.io.Source
@@ -17,7 +15,7 @@ import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL.Parse._
 import net.ruippeixotog.scalascraper.model.Element
-
+import better.files._
 
 object PsiBlast extends Constants {
 
@@ -98,17 +96,7 @@ object PsiBlast extends Constants {
 
   def ov_alt(mainID: String) : String = {
 
-    val outfile = s"$jobPath$mainID/results/out.psiblastp_overview"
-
-    var result = ""
-
-    for (line <- Source.fromFile(outfile).getLines()) {
-      result = result.concat(line + "<br>")
-
-    }
-
-
-    result
+    s"$jobPath$mainID/results/out.psiblastp_overview".toFile.contentAsString
   }
 
   /* returns blast alignhits with links */

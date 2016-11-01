@@ -18,11 +18,7 @@ ID=$(<JOB.json jq '._id'| awk '{ print $2; }'| sed 's/"//g'| tr -d '\n')
 
 #curl -X POST  "localhost:6111/jobs/message/${ID}?message=PSI-BLAST+run+has+been+finished+successfully"
 
-
-mv results/out.psiblastp results/out.psiblastp_without_links
-
 #curl -X POST  "localhost:6111/jobs/message/${ID}?message=Supplementing+Links+to+the+PSI-BLAST+result+page"
-python %BIOPROGS/helpers/Psiblast_add_links.py -i results/out.psiblastp_without_links >> results/out.psiblastp
 #curl -X POST  "localhost:6111/jobs/message/${ID}?message=Links+supplemented"
 
 
@@ -50,6 +46,9 @@ perl %BIOPROGS/helpers/reformat.pl -i=fas \
 
 #curl -X POST  "localhost:6111/jobs/message/${ID}?message=Make+some+fancy+Scala+stuff"
 scala %BIOPROGS/helpers/psiblastpPostProcess.scala results/out.psiblastp
+
+# Produce new PSIBLAST Overview
+python %BIOPROGS/helpers/parse_BLAST_HTML.py results/out.psiblastp > results/out.psiblastp_overview
 
 # Produce some extra files:
 < results/out.psiblastp grep Expect | awk '{ print $8; }' | sed 's/,$//' > results/evalues.dat

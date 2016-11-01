@@ -24,8 +24,8 @@
 
 </div>
 
-    <button class="revealReference">Show references</button>
-<div id="alignment_overview" style="display: none;">
+
+<div id="alignment_overview">
 
          @Html(PsiBlast.ov_alt(mainID))
 
@@ -33,22 +33,34 @@
 
 
 
-
+<!--
 <div id="alignmentDetail">
          @Html(PsiBlast.alignhits_alt(mainID))
 </div>
+-->
 
+<div>
+<a data-open="referenceModal">Show references</a>
+</div>
 
 <script>
-
     function getSliderWidth() {
 
         return document.getElementById('slider_length').value
     }
-
+    (function($) {
+        $.fn.goTo = function() {
+            $('html, body').animate({
+                scrollTop: $(this).offset().top + 'px'
+            }, 'fast');
+            return this;
+        };
+    })(jQuery);
 
     $(document).ready(function(){
 
+        $(document).foundation();
+        /*
         $("button.revealReference").click(function(){
             if ($.trim($(this).text()) === 'Show references') {
                 $(this).text('Hide references');
@@ -60,8 +72,9 @@
 
             return false;
         });
-
+        */
     });
+
 </script>
 
 
