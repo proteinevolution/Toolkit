@@ -400,6 +400,8 @@ window.ParameterAlignmentComponent =
     ], "alignmentParameter"  # TODO Should be a controller argument
 
 ###
+
+
   <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
                     <div id="progress_bar"><div class="percent">0%</div></div>
                     <input type="file" id="files" name="file" />
