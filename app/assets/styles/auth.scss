@@ -57,7 +57,10 @@
 #signin-submit, #signup-submit, #forgot-submit, #signout-submit {
   width: 40%;
   background-color: #2E8C81;
-  font-size: 0.9em;
+  font-size-adjust: none;
+  font-size: 0.8em !important;
+  margin: auto;
+
 }
 
 #edit-submit {
