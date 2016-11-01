@@ -151,7 +151,7 @@
                             <i class="icon-user" style="font-size:1.5em;"></i>
                             <span id="auth-link-text">
                             @{user.userData match {
-                                case Some(userData) => userData.nameLogin.subSequence(0,8)
+                                case Some(userData) => userData.nameLogin
                                 case None           => "Sign in"
                             }}
                             </span>
