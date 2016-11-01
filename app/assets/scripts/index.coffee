@@ -121,7 +121,7 @@ trafficBarComponent =
           m "div", {class: "quicklink"},
             m "a", {href: "/#/tools/reformat"}, "Reformat"
         ]
-        m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated()}"}
+        m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdatedMainID()}"}
       ]
 
 
