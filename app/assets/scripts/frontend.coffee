@@ -35,20 +35,26 @@ window.FrontendAlnvizComponent =
       if !seqs
         return
       opts =
+        colorscheme: {"scheme": "mae"}
         el: document.getElementById('yourDiv')
         vis:
           conserv: false
           overviewbox: false
           conserv: false
-          overviewbox: true
-          seqlogo: true
-          labels: true
+          overviewbox: false
+          seqlogo: false
+          labels: false
           labelName: true
           labelId: false
           labelPartition: false
           labelCheckbox: false
         menu: 'small'
       opts.seqs = fasta2json(seqs)
+
+      opts.zoomer = {alignmentHeight: 600, alignmentWidth: width, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true}
+
+
+
       opts.zoomer = {alignmentWidth: width}
       alignment = new (msa.msa)(opts)
       # the menu is independent to the MSA container
@@ -143,9 +149,10 @@ GeneralTabComponent =
 
 tabsContents =
   "Alignment": (ctrl) ->
-    m "div", {class: "parameter"}, [
+    m "div", {class: "parameter-panel"}, [
       m ParameterAlignmentComponent, {options: [["fas", "FASTA"]], value: ""}
-      m "button", {class: "secondary button", onclick: ctrl.initMSA, id: "viewAlignment"}, "View Alignment"
+      m "div", {class: "submitbuttons"},
+        m "input", { type: "button", class: "success button small submitJob", value: "View Alignment", onclick: ctrl.initMSA, id: "viewAlignment"}
     ]
 
   "Visualization": (ctrl) ->
