@@ -242,9 +242,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         // create job checksum, using FNV-1, a non-cryptographic hashing algorithm
         // to guarantee the uniqueness of a job we should consider to optimize the algorithm and take following parameters:
         // job parameters, inputfile, mtime of the database
-        // TODO currently taking all parameters (including Job ID(Name)) into the hash, may need to change this
 
-        val paramsWithoutMainID = params - "mainID" // need to hash without mainID
+
+        lazy val paramsWithoutMainID = params - "mainID" - "jobID" // need to hash without mainID and without the jobID
 
 
         lazy val DB = params.getOrElse("standarddb","").toFile  // get hold of the database in use

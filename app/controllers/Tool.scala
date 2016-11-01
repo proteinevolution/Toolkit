@@ -2,12 +2,13 @@ package controllers
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager.{DeleteJobs, StartJob, Prepare}
+import actors.JobManager.{StartJob, Prepare}
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
 import better.files._
-import models.database.{JobDeletionFlag, Job, JobState}
+
+import models.database.{Job, JobState}
 import models.search.JobDAO
 import models.tools.ToolModel
 import modules.Common
@@ -17,11 +18,12 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.Cursor
+
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+
 
 object Tool {
 
@@ -52,8 +54,14 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
       jobManager ! Prepare(user, jobID, newMainID, toolname, boundForm.data)
 
       lazy val DB = boundForm.data.getOrElse("standarddb","").toFile  // get hold of the database in use
-      lazy val jobByteArray = boundForm.data.toString().getBytes // convert params to hashable byte array
+
+
+      lazy val hashParams = boundForm.data - "mainID" - "jobID" // don't hash the mainID or the jobID
+
+      lazy val jobByteArray = hashParams.toString().getBytes // convert params to hashable byte array
       lazy val inputHash = FNV.hash64(jobByteArray).toString()
+
+      println("job hash: " + inputHash)
 
 
       lazy val dbName = {
@@ -66,9 +74,10 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
       lazy val dbMtime = {
         boundForm.data.get("standarddb") match {
           case None => Some("1970-01-01T00:00:00Z")
-          case _ => Some("2016-08-09T12:46:51Z")
+          case _ => Some(DB.lastModifiedTime.toString)
         }
       }
+
 
       jobDao.matchHash(inputHash, dbName, dbMtime).flatMap { richSearchResponse =>
         println("success: " + richSearchResponse)
@@ -79,19 +88,21 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
           BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate()) // Not optimal, as a fake Object ID is generated, but apply(id : String) was deprecated
         }
 
+
+
         // Find the Jobs in the Database
         findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
           // all mainIDs from the DB
           val foundMainIDs   = jobList.map(_.mainID)
 
           // mainIDs which were not in the DB
-          val unfoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
+          val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
 
           // jobs with a partition of (Failed, NotFailed)
-          val jobsPatition   = jobList.partition(_.status == JobState.Error)
+          val jobsPartition   = jobList.partition(_.status == JobState.Error)
 
           // Delete index-zombie jobs
-          unfoundMainIDs.foreach { mainID =>
+          unFoundMainIDs.foreach { mainID =>
             println("[WARNING]: job in index but not in database: " + mainID.stringify)
             jobDao.deleteJob(mainID.stringify)
           }
@@ -106,7 +117,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
           }
           */
 
-          jobsPatition._2.headOption match {
+          jobsPartition._2.headOption match {
             //  Identical job has been found
             case Some(job) =>
               Ok(Json.obj("jobSubmitted"  -> true,
