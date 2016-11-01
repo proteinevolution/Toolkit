@@ -2,12 +2,11 @@ package controllers
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager.{StartJob, Prepare}
+import actors.JobManager.{Prepare, StartJob}
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
 import better.files._
-
 import models.database.{Job, JobState}
 import models.search.JobDAO
 import models.tools.ToolModel
@@ -18,10 +17,10 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
-
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
 
 
@@ -53,6 +52,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
       val newMainID = BSONObjectID.parse(mainID).get
       jobManager ! Prepare(user, jobID, newMainID, toolname, boundForm.data)
 
+      /*
       lazy val DB = boundForm.data.getOrElse("standarddb","").toFile  // get hold of the database in use
 
 
@@ -109,17 +109,19 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
           // Mark Failed Jobs
           //jobManager ! DeleteJobs(user.userID, jobsPatition._1.map(_.mainID), JobDeletionFlag.Automated) // marks all database entries with failed jobs for deletion
-          /*
+
           jobsPatition._1.foreach { job =>
             println("job with same signature found but job failed, should submit the job again")
             //TODO we should delete failed jobs only here because keeping them is normally useful for debugging and statistics
             //jobCollection.flatMap(_.remove(BSONDocument(Job.IDDB -> job.mainID))  // would only delete the database entry
-          }
-          */
+          } */
+          Future.successful(Ok)
 
+          /*
           jobsPartition._2.headOption match {
             //  Identical job has been found
             case Some(job) =>
+              jobManager ! StartJob(user.userID, newMainID)
               Ok(Json.obj("jobSubmitted"  -> true,
                           "jobStarted"    -> false,
                           "existingJobs"  -> true,
@@ -129,18 +131,16 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
             // No identical job submission, Start the job right away.
             case None =>
-
               jobManager ! StartJob(user.userID, newMainID)
               Ok(Json.obj("jobSubmitted"  -> true,
                           "identicalJobs" -> false,
                           "existingJobs"  -> false,
                           "mainID"        -> newMainID.stringify)
               ).withSession(sessionCookie(request, user.sessionID.get))
+              */
+
           }
         }
-      }
-    }
-  }
 }
 
 
