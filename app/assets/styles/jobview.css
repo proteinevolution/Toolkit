@@ -80,6 +80,23 @@
     width:  14em;
 }
 
+.exampleReformat {
+    background-color: white !important;
+    color: black !important;
+    float: left !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+}
+
+.exampleReformat:hover{
+    background-color: white !important;
+    color: black !important;
+}
+
+.exampleReformat:focus {
+    background-color: white !important;
+    color: black !important;
+}
 
 
 .alignmentParameter input {
