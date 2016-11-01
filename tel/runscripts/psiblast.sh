@@ -1,5 +1,5 @@
 ID=$(<JOB.json jq '._id'| awk '{ print $2; }'| sed 's/"//g'| tr -d '\n')
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Starting+PSI-BLAST+run"
+curl -X POST  "localhost:6111/jobs/message/${ID}?message=Starting+PSI-BLAST+run"
 %BIOPROGS/tools/ncbi-blast-2.5.0+/bin/psiblast -db %standarddb.content \
                                             -matrix %matrix.content \
                                             -num_iterations %num_iter.content \
@@ -16,7 +16,7 @@ ID=$(<JOB.json jq '._id'| awk '{ print $2; }'| sed 's/"//g'| tr -d '\n')
                                             -html\
                                             -out_pssm results/out.ksf
 
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=PSI-BLAST+run+has+been+finished+successfully"
+curl -X POST  "localhost:6111/jobs/message/${ID}?message=PSI-BLAST+run+has+been+finished+successfully"
 
 #curl -X POST  "localhost:6111/jobs/message/${ID}?message=Supplementing+Links+to+the+PSI-BLAST+result+page"
 #curl -X POST  "localhost:6111/jobs/message/${ID}?message=Links+supplemented"
@@ -26,7 +26,7 @@ ID=$(<JOB.json jq '._id'| awk '{ print $2; }'| sed 's/"//g'| tr -d '\n')
 
 ID=$(<JOB.json jq '._id'| awk '{ print $2; }'| sed 's/"//g'| tr -d '\n')
 
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Start+Computing+PSI-BLAST+visualization"
+curl -X POST  "localhost:6111/jobs/message/${ID}?message=Start+Computing+PSI-BLAST+visualization"
 perl %BIOPROGS/helpers/blastviz.pl results/out.psiblastp $ID results files/$ID >> logs/blastviz.log
 #curl -X POST  "localhost:6111/jobs/message/${ID}?message=Visualization+computed"
 
@@ -34,17 +34,17 @@ perl %BIOPROGS/helpers/blastviz.pl results/out.psiblastp $ID results files/$ID >
 
 # extract alignment from
 
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Extracting+alignment+from+BLAST+result+page"
+curl -X POST  "localhost:6111/jobs/message/${ID}?message=Extracting+alignment+from+BLAST+result+page"
 perl %BIOPROGS/helpers/alignhits_html.pl results/out.psiblastp results/out.align -e %evalue.content -fas -no_link -blastplus
 
 # reformat alignment to clustal
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Reformating+to+CLUSTALW"
+curl -X POST  "localhost:6111/jobs/message/${ID}?message=Reformating+to+CLUSTALW"
 perl %BIOPROGS/helpers/reformat.pl -i=fas \
                                    -o=clu \
                                    -f=results/out.align \
                                    -a=results/out.align_clu
 
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Make+some+fancy+Scala+stuff"
+curl -X POST  "localhost:6111/jobs/message/${ID}?message=Make+some+fancy+Scala+stuff"
 scala %BIOPROGS/helpers/psiblastpPostProcess.scala results/out.psiblastp
 
 # Produce new PSIBLAST Overview
