@@ -215,7 +215,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   }
 
 
-  implicit def htmlWrites = new Writes[Html] {
+  implicit def htmlWrites : Writes[Html] = new Writes[Html] {
 
     def writes(html: Html) = JsString(html.body)
   }

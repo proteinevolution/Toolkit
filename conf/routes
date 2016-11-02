@@ -85,7 +85,7 @@ POST          /jobs/running/:jobID                    @controllers.Jobs.jobStatu
 POST          /jobs/queued/:jobID                     @controllers.Jobs.jobStatusQueued(jobID : String)
 POST          /jobs/sge/:jobID/:sgeID                 @controllers.Jobs.SGEID(jobID: String, sgeID: String)
 POST          /jobs/message/:mainID                   @controllers.Jobs.pushMessage(mainID, message: String)
-
+POST          /jobs/dateviewed/:mainID                @controllers.Jobs.updateDateViewed(mainID)
 # Static route
 GET           /static/get/:static                     @controllers.Service.static(static : String)
 
