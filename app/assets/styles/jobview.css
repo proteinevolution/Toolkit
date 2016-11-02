@@ -336,3 +336,6 @@ margin-top: 2em;
 }
 
 .addJob { display: none; }
+
+
+map[name="blastmap"] area { cursor: pointer; }
