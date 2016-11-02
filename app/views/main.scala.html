@@ -68,7 +68,10 @@
         <link href="@routes.Assets.at("styles/custom.css")" rel="stylesheet">
 
         <!-- Javascript Router -->
-        @helper.javascriptRouter("jsRoutes")(routes.javascript.Tool.submit)
+        @helper.javascriptRouter("jsRoutes")(
+            routes.javascript.Tool.submit,
+            routes.javascript.Tool.submitAgain)
+
 
 
         <!-- Google Fonts -->

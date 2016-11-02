@@ -284,12 +284,24 @@ JobSubmissionComponent =
       JobModel.messages([])
 
       submitRoute = jsRoutes.controllers.Tool.submit(args.job().tool.toolname, mainID, jobid)
+      submitRoute2 = jsRoutes.controllers.Tool.submitAgain(args.job().tool.toolname, mainID, jobid)
       formData = new FormData(document.getElementById("jobform"))
       Job.requestTool(true)
 
       # Send submission request and see whether server accepts or job already exists
       m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
-        m.route("/jobs/#{mainID}")
+        if json.existingJobs
+          if confirm " Already existing job found: " + JSON.stringify(json.existingJob.job_id) + ".\n\n You could save some time and just fetch it. Even the timestamp of the database is the same! \n Do you want to load the existing job? Click on cancel to run the job again."
+            #window.open('http://olt.eb.local:6500/#/jobs/' + json.existingJob.mainID, '_self')
+            Job.delete(mainID)
+            m.route("/jobs/#{json.existingJob.mainID}") # TODO: job gets reloaded but not selected
+          else
+            console.log "job was found but will be submitted anew"
+            m.request({url: submitRoute2.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
+              m.route("/jobs/#{mainID}")
+        else
+          console.log "New Job Submission"
+          m.route("/jobs/#{mainID}")
 
     startJob: ->
       sendMessage("type":"StartJob", "mainID":args.job.mainID)
@@ -594,15 +606,3 @@ formComponents =
     value: args.value
   ]
 
-
-###
-     if confirm " Already existing job found: " + JSON.stringify(json.existingJob.job_id) + ".\n\n You could save some time and just fetch it. Even the timestamp of the database is the same! \n Do you want to load the existing job? Click on cancel to run the job again."
-              #window.open('http://olt.eb.local:6500/#/jobs/' + json.existingJob.mainID, '_self')
-              m.route("/jobs/#{json.existingJob.mainID}")
-            else
-              console.log("job on halt")
-
-          else
-            console.log "New Job Submission"
-            m.route("/jobs/#{mainID}")
-###

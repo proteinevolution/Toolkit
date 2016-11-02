@@ -17,7 +17,7 @@ L_HOSTNAME=`hostname`
 
 if [ $L_HOSTNAME == "olt" ] ; then
 
-	echo "CONTEXT=LOCAL"
+	echo "CONTEXT=sge"
 else
 	echo "CONTEXT=LOCAL"
 fi		 

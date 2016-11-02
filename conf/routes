@@ -116,6 +116,8 @@ GET           /:static                                @controllers.Application.s
 GET           /api/tools/:toolname                    @controllers.Service.getTool(toolname)
 # Submit new Job
 POST          /api/submit                             @controllers.Tool.submit(toolname : String, mainID : String, jobID : String)
+# Submit job again after being found in the jobhashes collection
+POST          /api/submitagain                        @controllers.Tool.submitAgain(toolname : String, mainID : String, jobID : String)
 # Get JobInformation based on Toolname
 GET           /api/jobs/:mainid                       @controllers.Service.getJob(mainid)
 
