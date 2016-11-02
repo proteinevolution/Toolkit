@@ -111,11 +111,11 @@
   padding: 1px 5px;
 }
 
-#auth-link-text {
-
+span#auth-link-text {
   text-overflow: ellipsis;
   overflow: hidden;
-
+  max-width: 68px;
+  display: inline-block;
 }
 
 #authoverlay {
