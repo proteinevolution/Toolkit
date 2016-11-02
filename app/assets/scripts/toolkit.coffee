@@ -93,17 +93,8 @@ class window.Job
   # Adds a new Job to the JobList.
   this.add = (job) -> Job.list.then (list) -> list.push(job)
 
-  # TODO Can this be a bit more elegant?
-  this.generateJobID = () -> [
-    Math.floor((Math.random()) * 9)
-    Math.floor((Math.random()) * 9)
-    Math.floor((Math.random()) * 9)
-    Math.floor((Math.random()) * 9)
-    Math.floor((Math.random()) * 9)
-    Math.floor((Math.random()) * 9)
-    Math.floor((Math.random()) * 9)
-  ].join('')
-
+  this.generateJobID = () ->
+    (""+Math.random()).substring(2,9)
 
 jobs.JobList = Array
 
