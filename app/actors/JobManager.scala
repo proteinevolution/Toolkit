@@ -12,7 +12,7 @@ import modules.Common
 import modules.tools.FNV
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 import better.files._
 import models.database.JobState.JobState
 import models.{Constants, ExitCodes}
@@ -183,6 +183,19 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
       }
 
+    case UpdateDateViewed(jobID: BSONObjectID) =>
+      findJob(BSONDocument(Job.IDDB -> jobID)).foreach {
+
+        case Some(job) =>
+          modifyJob(BSONDocument(Job.IDDB -> job.mainID),
+            BSONDocument("$set"   -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis))))
+
+        case None =>
+          userManager ! JobIDUnknown(jobID)
+          Logger.info("Unknown ID " + jobID.toString())
+
+      }
+
 
     case StartJob(userID : BSONObjectID, mainID : BSONObjectID) =>
       findJob(BSONDocument(Job.IDDB -> mainID)).foreach{
@@ -290,6 +303,8 @@ object JobManager {
 
 
   case class AddSGEjobID(job: BSONObjectID, sgeID: String)
+
+  case class UpdateDateViewed(job: BSONObjectID)
 
   // Add a Job to a Users view
   case class AddJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
