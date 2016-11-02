@@ -52,4 +52,9 @@ class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef,
     userManager ! RunningJobMessage(reactivemongo.bson.BSONObjectID.parse(mainID).get, message)
     Ok
   }
+
+  def updateDateViewed(mainID : String)  = Action { request =>
+    userManager ! UpdateDateViewed(reactivemongo.bson.BSONObjectID.parse(mainID).get)
+    Ok
+  }
 }
