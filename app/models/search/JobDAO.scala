@@ -38,6 +38,19 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     }
   }
 
+  // Checks if a jobID already exists
+  def existsJobID(jobID : String) = {
+    client.execute{
+      search in "tkplay_dev"->"jobs" query {
+        bool(
+          must(
+            termQuery("jobID", jobID)
+          )
+        )
+      }
+    }
+  }
+
   // tries to find a matching Job ID String
   def findAutoCompleteJobID(queryString : String) = {
     client.execute {

@@ -63,4 +63,10 @@ final class Search @Inject() (
       }
     }
   }
+
+  def checkJobID(jobID : String) = Action.async{
+    jobDao.existsJobID(jobID).map{ richSearchResponse =>
+      Ok(Json.obj("exists" -> {richSearchResponse.getHits.getTotalHits > 0}))
+    }
+  }
 }
