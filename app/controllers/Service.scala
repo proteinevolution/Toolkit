@@ -17,7 +17,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
-import models.database.JobState.JobState
+import models.database.JobState
 import models.tools.ToolModel._
 import modules.Common
 import org.joda.time.format.DateTimeFormat
@@ -26,7 +26,6 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
-import models.database.JobState._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -313,18 +312,18 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
 
               // The view of the Running job is handled on client-side
-              case JobState.Running => Seq.empty
+              case Running => Seq.empty
 
               // Error view is handled client-side
-              case JobState.Error => Seq.empty
+              case Error => Seq.empty
 
-              case JobState.Done =>
+              case Done =>
 
                 toolModel.results.map { resultName =>
                 resultName -> views.html.jobs.resultpanel(resultName, job.mainID.stringify, job.tool)
               }
 
-              case JobState.Prepared => Seq.empty
+              case Prepared => Seq.empty
 
                 Seq.empty // TODO add more elements for different states to show the status
             }
