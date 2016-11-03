@@ -56,14 +56,15 @@ div#content {
 
 select#forwardTool {
 
-    height: 2em;
-    font-size: 0.75em !important;
+    height: 3em;
+    width: 10em;
+    font-size: 0.85em !important;
     border: 1px solid black;
     box-shadow: 0 2px 1px 0 rgba(255,255,255,1);
     background-color:#fff;
     color:#333;
     padding-top: 0;
-    padding-left: 0;
+    padding-left: 5px;
     padding-bottom: 0;
 }
 
