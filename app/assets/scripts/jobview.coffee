@@ -289,8 +289,10 @@ JobSubmissionComponent =
             #window.open('http://olt.eb.local:6500/#/jobs/' + json.existingJob.mainID, '_self')
             m.route("/jobs/#{mainID}")
             Job.delete(mainID)
-            m.route("/jobs/#{json.existingJob.mainID}") # TODO: job gets reloaded but not selected
-
+            m.route("/jobs/#{json.existingJob.mainID}")
+            m.request
+              method: 'POST'
+              url: '/jobs/dateviewed/' + json.existingJob.mainID
           else
             console.log "job was found but will be submitted anew"
             m.request({url: submitRoute2.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
