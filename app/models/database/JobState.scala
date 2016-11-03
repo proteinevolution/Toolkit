@@ -10,18 +10,20 @@ import reactivemongo.bson.{BSONInteger, BSONReader, BSONWriter}
   */
 
 
+sealed trait JobState
+
+case object PartiallyPrepared extends JobState
+case object Prepared          extends JobState
+case object Queued            extends JobState
+case object Running           extends JobState
+case object Error             extends JobState
+case object Done              extends JobState
+case object Submitted         extends JobState
+
+
 
 object JobState {
 
-  sealed trait JobState
-
-  case object PartiallyPrepared extends JobState
-  case object Prepared          extends JobState
-  case object Queued            extends JobState
-  case object Running           extends JobState
-  case object Error             extends JobState
-  case object Done              extends JobState
-  case object Submitted         extends JobState
 
 
   implicit object JobStateReads extends Reads[JobState] {
@@ -91,6 +93,7 @@ object JobState {
     }
   }
 }
+
 
 
 

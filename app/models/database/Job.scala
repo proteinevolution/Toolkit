@@ -1,8 +1,9 @@
 package models.database
 
+import akka.actor.{FSM, Actor}
 import models.Constants
-import models.database.JobDeletionFlag.JobDeletionFlag
-import models.database.JobState.JobState
+
+import models.database.JobState
 import org.joda.time.DateTime
 import play.api.libs.json._
 import reactivemongo.bson._
@@ -92,6 +93,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
              "createdOn" -> dateCreated.get,
              "toolname" -> tool)
   }
+
 }
 
 
@@ -202,7 +204,7 @@ object Job {
           parentID    = bson.getAs[BSONObjectID](PARENTID),
           jobID       = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
           ownerID     = bson.getAs[BSONObjectID](OWNERID),
-          status      = bson.getAs[JobState](STATUS).getOrElse(JobState.Error),
+          status      = bson.getAs[JobState](STATUS).getOrElse(Error),
           deletion    = bson.getAs[JobDeletion](DELETION),
           tool        = bson.getAs[String](TOOL).getOrElse(""),
           statID      = bson.getAs[String](STATID).getOrElse(""),
@@ -244,3 +246,5 @@ object Job {
     )
   }
 }
+
+
