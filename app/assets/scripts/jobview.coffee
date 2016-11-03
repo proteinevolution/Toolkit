@@ -261,15 +261,7 @@ JobTabsComponent =
     ]
 ##############################################################################
 # Job Submission input elements
-###
-if (json.existingJobs)
-          if confirm("There is an identical job, would You like to see it?")  # This blocks mithril
-            m.route("/jobs/#{json.existingJob.mainID}")
-          else
-            sendMessage("type":"StartJob", "mainID":json.mainID)
-        else
-          m.route("/jobs/#{mainID}")
-###
+
 JobSubmissionComponent =
   controller: (args) ->
     this.submitting = false
@@ -281,6 +273,8 @@ JobSubmissionComponent =
       if not jobid                # TODO Prevent submission if validation fails
         jobid = window.Job.generateJobID()
       args.add(new Job({mainID: mainID, jobID: jobid, state: 6, createdOn: "now", toolname: args.job().tool.toolname}))
+
+
       JobModel.messages([])
 
       submitRoute = jsRoutes.controllers.Tool.submit(args.job().tool.toolname, mainID, jobid)
@@ -293,8 +287,10 @@ JobSubmissionComponent =
         if json.existingJobs
           if confirm " Already existing job found: " + JSON.stringify(json.existingJob.job_id) + ".\n\n You could save some time and just fetch it. Even the timestamp of the database is the same! \n Do you want to load the existing job? Click on cancel to run the job again."
             #window.open('http://olt.eb.local:6500/#/jobs/' + json.existingJob.mainID, '_self')
+            m.route("/jobs/#{mainID}")
             Job.delete(mainID)
             m.route("/jobs/#{json.existingJob.mainID}") # TODO: job gets reloaded but not selected
+
           else
             console.log "job was found but will be submitted anew"
             m.request({url: submitRoute2.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
