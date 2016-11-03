@@ -5,7 +5,7 @@ import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobManager._
 import actors.UserManager.RunningJobMessage
-import models.database.JobState
+import models.database._
 import play.api.mvc._
 
 /*
@@ -19,26 +19,26 @@ We can introduce auto-coercion of the Job MainID to the BSONObject ID
   *
   */
 @Singleton
-class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef,
+final class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef,
                      @Named("userManager") userManager : ActorRef) extends Controller {
 
   def jobStatusDone(mainID: String) = Action { request =>
-    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, JobState.Done)
+    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, Done)
     Ok
   }
 
   def jobStatusError(mainID: String) = Action { request =>
-    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, JobState.Error)
+    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, Error)
     Ok
   }
 
   def jobStatusRunning(mainID: String) = Action { request =>
-    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, JobState.Running)
+    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, Running)
     Ok
   }
 
   def jobStatusQueued(mainID: String) = Action { request =>
-    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, JobState.Queued)
+    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, Queued)
     Ok
   }
 

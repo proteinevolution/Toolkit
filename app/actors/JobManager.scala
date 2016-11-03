@@ -14,7 +14,7 @@ import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 import better.files._
-import models.database.JobState.JobState
+import models.database.JobState
 import models.{Constants, ExitCodes}
 import models.tel.TEL
 import play.api.Logger
@@ -63,7 +63,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           // Inform the users about the change
           userManager ! JobStateChanged(job, job.status)
         }
-        if (job.status == JobState.Done) {
+        if (job.status == Done) {
           runningProcesses.remove(job.mainID.stringify)
         }
         // edit the job state in the database
@@ -85,7 +85,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     val process = Process(job.scriptPath , new java.io.File(rootPath)).run()
     runningProcesses.put(job.mainID.stringify, process)
     if (settings.clusterMode.equals("sge")) // only sets jobstate to queued when on olt and submitting to the cluster
-      updateJob(job.copy(status = JobState.Queued))
+      updateJob(job.copy(status = Queued))
   }
 
 
@@ -105,7 +105,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     hashCollection.flatMap(_.remove(BSONDocument(JobHash.ID -> job.mainID)))
     jobDao.deleteJob(job.mainID.stringify) // remove deleted job from elasticsearch job and hash indices
 
-    if(tel.context != "LOCAL" && (job.status == JobState.Running || job.status == JobState.Queued)) {
+    if(tel.context != "LOCAL" && (job.status == Running || job.status == Queued)) {
       val jobIDFile = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}jobIDCluster"
       val jobIDCluster = scala.io.Source.fromFile(jobIDFile).mkString
       // deleting job on sge
@@ -216,7 +216,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                          parentID    = None,
                          jobID       = jobID,
                          ownerID     = ownerID,
-                         status      = JobState.Submitted,
+                         status      = Submitted,
                          tool        = toolName,
                          statID      = "",
                          watchList   = List(user.userID),
@@ -245,7 +245,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
         val script = tel.init(toolName, params, rootPath)
 
-        this.updateJob(newJob.copy(status = JobState.Prepared))
+        this.updateJob(newJob.copy(status = Prepared))
 
 
         // Write a JSON File with the job information to the JobDirectory
@@ -333,5 +333,5 @@ object JobManager {
   case class AckDeleted(userID : BSONObjectID, job : Job) extends MessageWithUserID
 
   // Publish changes to the JobState
-  case class JobStateChanged(job : Job, state : JobState.JobState)
+  case class JobStateChanged(job : Job, state : JobState)
 }

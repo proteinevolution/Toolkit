@@ -8,7 +8,7 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import better.files._
 
-import models.database.{Job, JobState}
+import models.database._
 import models.search.JobDAO
 import models.tools.ToolModel
 import modules.Common
@@ -97,7 +97,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
           val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
 
           // jobs with a partition of (Failed, NotFailed)
-          val jobsPartition   = jobList.partition(_.status == JobState.Error)
+          val jobsPartition   = jobList.partition(_.status == Error)
 
           // Delete index-zombie jobs
           unFoundMainIDs.foreach { mainID =>
