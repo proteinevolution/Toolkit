@@ -35,7 +35,8 @@ val commonDeps = Seq(ws, filters, cache,
   "org.tpolecat" %% "atto-core"  % "0.5.0-M3",
   "org.tpolecat" %% "atto-compat-scalaz72" % "0.5.0-M3",
   "net.ruippeixotog" %% "scala-scraper" % "1.1.0",
-  "com.lihaoyi" %% "fastparse" % "0.4.1"
+  "com.lihaoyi" %% "fastparse" % "0.4.1",
+  "com.vmunier" %% "scalajs-scripts" % "1.0.0"
 )
 
 /*
