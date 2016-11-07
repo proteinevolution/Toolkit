@@ -116,6 +116,7 @@
 
             <!---Navigation Bar --->
              <div class="row" id="metanav">
+
                  <!--
                  <div id="jobsearchform">
                      <input placeholder="Search" id="jobsearch" type="text">
@@ -174,25 +175,21 @@
 
                      <!---Off Canvas Content includes main content--->
                      <div class="off-canvas-content" data-off-canvas-content>
-                                <div class="title-bar hide-for-large">
-                                    <div class="title-bar-left">
-                                        <button class="menu-icon dark" type="button" data-open="offCanvasLeft"></button>
-                                        <span class="title-bar-title">Toolkit</span>
-                                    </div>
+                           <div class="title-bar hide-for-large">
+                                <div class="title-bar-left">
+                                    <button id="hambutton" type="button" data-open="offCanvasLeft"><i class="icon-reorder icon2x"></i></button>
                                 </div>
+
+                           </div>
                      </div>
-
-
-                     <div class="row" id="nav-spacer"></div>
 
                       <!--- Mount point for Mithril Application -->
                       <div class="row" id="main-content">
 
+                      </div>
+                </div>
+            </div>
 
-                       </div>
-                    </div>
-            </div>
-            </div>
             </div>
                  <footer class="row">
                             <div class="columns large-12">
@@ -210,6 +207,7 @@
                 </div>
             </div>
         </div>
+            </div>
 
             <!-- Script Inclusions -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
@@ -259,6 +257,10 @@
 
                     function closeNav() {
                         document.getElementById("myNav").style.height = "0%";
+                    }
+
+                    function myFunction(x) {
+                        x.classList.toggle("change");
                     }
 
 
