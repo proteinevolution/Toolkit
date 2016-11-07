@@ -69,10 +69,23 @@ i {
 
 .title-bar {
   background-color: transparent !important;
+
+}
+
+.title-bar-title {
+  color: #0a0a0a;
+  padding: 0.5em;
+  font-size: 1em;
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
 }
 
 .title-bar-left {
-  color: #000;;
+  color: #000;
+}
+
+.title-bar-left span {
+  margin-top: 20%;
+  margin-bottom: 20%;
 }
 
 .top-bar-left {
