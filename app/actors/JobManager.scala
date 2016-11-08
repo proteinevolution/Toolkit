@@ -39,11 +39,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
 
   import JobManager._
 
-  val random = scala.util.Random
-
-  // Ignore the following keys when writing parameters
-  val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
-
 
   // Keeps track of all running processes. // TODO Should be restored after toolkit reboots
   val runningProcesses = new collection.mutable.HashMap[String, Process]
