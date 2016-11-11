@@ -268,7 +268,7 @@ JobSubmissionComponent =
     submit: (startJob) ->
       submitting:true
       mainID = JobModel.mainID()
-
+      $('#submitJobButton').hide()
       jobid = args.job().jobID()    # TODO Maybe merge with jobID validation
       if not jobid                # TODO Prevent submission if validation fails
         jobid = window.Job.generateJobID()
@@ -317,7 +317,7 @@ JobSubmissionComponent =
 
   view: (ctrl, args) ->
     m "div", {class: "submitbuttons"}, [
-      if !this.submitting then m "input", {type: "button", class: "success button small submitJob", value: "#{if args.isJob then "Res" else "S"}ubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
+      if !this.submitting then m "input", {type: "button", id: "submitJobButton", class: "success button small submitJob", value: "#{if args.isJob then "Res" else "S"}ubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
       if !args.isJob
         m "label",{hidden: "hidden"}, [
           m "input", {type: "checkbox", name:"private", value: "true", checked:"checked", hidden: "hidden"}  #TODO style me
@@ -373,6 +373,7 @@ dropzone_psi  = (element, isInit) ->
 
     $(element).addEventListener 'dragover', handleDragOver, false
     $(element).addEventListener 'drop', handleFileSelect, false
+
 
 
 
