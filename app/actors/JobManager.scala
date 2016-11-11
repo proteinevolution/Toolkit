@@ -24,6 +24,10 @@ import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 
+import akka.actor.ActorSystem
+import akka.actor.Props
+
+
 /**
   * Created by lzimmermann on 10.05.16.
   */
@@ -40,9 +44,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
   import JobManager._
 
 
-  // Keeps track of all running processes. // TODO Should be restored after toolkit reboots
-  val runningProcesses = new collection.mutable.HashMap[String, Process]
-
   /**
     * Updates Job in database or creates a new Job if job with mainID does not exist
     * TODO refactor this to take less database accesses - only insert or find & update
@@ -50,16 +51,15 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     * @param job
     */
   def updateJob(job : Job) = {
+
+
     // Check if there already is a job with the mainID
     findJob(BSONDocument(Job.IDDB -> job.mainID)).foreach {
-      // edit the old job
+            // edit the old job
       case Some(oldJob) =>
         if(oldJob.status != job.status) {
           // Inform the users about the change
           userManager ! JobStateChanged(job, job.status)
-        }
-        if (job.status == Done) {
-          runningProcesses.remove(job.mainID.stringify)
         }
         // edit the job state in the database
         modifyJob(BSONDocument(Job.IDDB -> job.mainID),
@@ -78,7 +78,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     val rootPath  = s"$jobPath$SEPARATOR${job.mainID.stringify}$SEPARATOR"
     // Create new Process instance of the runscript to run the tool
     val process = Process(job.scriptPath , new java.io.File(rootPath)).run()
-    runningProcesses.put(job.mainID.stringify, process)
     if (settings.clusterMode.equals("sge")) // only sets jobstate to queued when on olt and submitting to the cluster
       updateJob(job.copy(status = Queued))
   }
@@ -92,10 +91,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
     */
   def deleteJob(job : Job, userID : BSONObjectID) = {
 
-    //  Terminate running Process instance of the Job
-    if (runningProcesses.contains(job.mainID.stringify)) {
-      runningProcesses(job.mainID.stringify).destroy()
-    }
 
     hashCollection.flatMap(_.remove(BSONDocument(JobHash.ID -> job.mainID)))
     jobDao.deleteJob(job.mainID.stringify) // remove deleted job from elasticsearch job and hash indices
@@ -263,7 +258,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
             case None => JobHash( mainID = newJob.mainID,
                                   inputHash = FNV.hash64(jobByteArray).toString(), // TODO check the probability of collisions
                                   dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
-                                  dbMtime = Some("1970-01-01T00:00:00Z") ) //really weird bug in elasticsearch, "none" was not accepted when a timestamp-like string existed, so take unix epoch time#
+                                  dbMtime = Some("1970-01-01T00:00:00Z") ) // use unix epoch time
 
 
             case _ => JobHash( mainID = newJob.mainID,
