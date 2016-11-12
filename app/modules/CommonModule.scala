@@ -13,25 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by zin on 03.08.16.
   */
-trait Common
-    extends Controller
-    with ContentTypes
-    with ReactiveMongoComponents {
-
-  var loggedOut = true
-
-
-  protected implicit final class PimpedResult(result: Result) {
-    def fuccess = scala.concurrent.Future successful result
-  }
-
-  protected def CheckBackendPath(implicit request: RequestHeader) : Boolean = {
-    request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")
-  }
-
-  protected def NoCache(res: Result): Result = res.withHeaders(
-    CACHE_CONTROL -> "no-cache, no-store, must-revalidate", EXPIRES -> "0"
-  )
+trait CommonModule extends ReactiveMongoComponents {
 
 
   protected def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))

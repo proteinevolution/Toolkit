@@ -4,7 +4,6 @@ import javax.inject.{Singleton, Inject}
 
 import models.database.User
 import models.auth._
-import modules.Common
 import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
@@ -31,8 +30,8 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
                             val mailing          : Mailing) // Mailing Controller
         extends Controller with I18nSupport
                            with JSONTemplate
-                           with Common
-                           with UserSessions {
+                           with UserSessions
+                           with Common {
 
 
   /**
