@@ -1,4 +1,4 @@
-package models.tel
+package modules.tel
 
 import java.nio.file.attribute.PosixFilePermission
 import javax.inject.{Inject, Named, Singleton}
@@ -7,9 +7,9 @@ import scala.sys.process._
 import better.files.Cmds._
 import better.files._
 import models.Implicits._
-import models.tel.env.Env
-import models.tel.param.Params
-import models.tel.runscripts.RunscriptManager
+import modules.tel.env.Env
+import modules.tel.param.Params
+import modules.tel.runscripts.RunscriptManager
 
 
 /**
