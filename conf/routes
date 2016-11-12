@@ -97,7 +97,7 @@ GET           /static/get/:static                     @controllers.Service.stati
 #GET     /search/jobs/:id                                   @controllers.Search.getJob(id: String)
 #GET     /search:q                                          @controllers.Search.searchJob(q: String)
 GET           /search/checkJobID/:jobID               @controllers.Search.checkJobID(jobID : String)
-
+GET           /search/suggestJobIDs/:jobID            @controllers.Search.autoComplete(jobID: String)
 
 
 # Add a Child Job

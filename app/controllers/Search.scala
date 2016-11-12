@@ -24,18 +24,17 @@ final class Search @Inject() (
                                               with ReactiveMongoComponents
                                               with UserSessions {
 
-  def AutoComplete(userID : BSONObjectID, queryString : String) = {
+
+
+
+  def autoComplete(queryString : String) = Action.async{
     jobDao.findAutoCompleteJobID(queryString).map { richSearchResponse =>
-      val jobIDEntries = richSearchResponse.suggestion("jobID")
-      if (jobIDEntries.size > 0) {
-        jobIDEntries.entry(queryString).optionsText.toList
-      } else {
-        List.empty[String]
-      }
+      //val jobIDEntries = richSearchResponse.suggestion("jobID")
+      Ok(Json.obj("exists" -> {richSearchResponse.getHits.getTotalHits > 0}))
     }
   }
 
-  def ElasticSearch(userID : BSONObjectID, queryString : String) = {
+  def elasticSearch(userID : BSONObjectID, queryString : String) = {
     jobDao.fuzzySearchJobID(queryString).flatMap { richSearchResponse =>
       if (richSearchResponse.totalHits > 0) {
         val jobIDEntries = richSearchResponse.getHits.getHits
@@ -52,7 +51,7 @@ final class Search @Inject() (
   def getJob(queryString : String) = Action.async { implicit request =>
     // Retrieve the user from the cache or the DB
     getUser.flatMap { user =>
-      ElasticSearch(user.userID, queryString).map{ jobList =>
+      elasticSearch(user.userID, queryString).map{ jobList =>
         Ok(Json.obj("jobs" -> jobList.map(_.cleaned())))
       }
     }
