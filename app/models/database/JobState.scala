@@ -12,13 +12,13 @@ import reactivemongo.bson.{BSONInteger, BSONReader, BSONWriter}
 
 sealed trait JobState
 
-case object PartiallyPrepared extends JobState
 case object Prepared          extends JobState
 case object Queued            extends JobState
 case object Running           extends JobState
 case object Error             extends JobState
 case object Done              extends JobState
 case object Submitted         extends JobState
+
 
 
 
@@ -30,7 +30,6 @@ object JobState {
     override def reads(json: JsValue) : JsResult[JobState] = json match {
       case obj: JsObject => try {
         JsSuccess((obj \ "status").as[Int] match {
-          case 0 => PartiallyPrepared
           case 1 => Prepared
           case 2 => Queued
           case 3 => Running
@@ -48,7 +47,6 @@ object JobState {
 
   implicit object JobStateWrites extends Writes[JobState] {
     def writes(jobState: JobState) = jobState match {
-      case PartiallyPrepared => JsNumber(0)
       case Prepared          => JsNumber(1)
       case Queued            => JsNumber(2)
       case Running           => JsNumber(3)
@@ -64,7 +62,6 @@ object JobState {
   implicit object JobStateReader extends BSONReader[BSONInteger, JobState] {
     def read(state: BSONInteger) = {
       state match {
-        case BSONInteger(0) => PartiallyPrepared
         case BSONInteger(1) => Prepared
         case BSONInteger(2) => Queued
         case BSONInteger(3) => Running
@@ -82,7 +79,6 @@ object JobState {
   implicit object JobStateWriter extends BSONWriter[JobState, BSONInteger] {
     def write(state : JobState)  = {
       state match {
-        case PartiallyPrepared => BSONInteger(0)
         case Prepared          => BSONInteger(1)
         case Queued            => BSONInteger(2)
         case Running           => BSONInteger(3)
