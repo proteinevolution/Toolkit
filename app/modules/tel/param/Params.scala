@@ -1,4 +1,4 @@
-package models.tel.param
+package modules.tel.param
 
 /**
   * Created by lzimmermann on 10/12/16.

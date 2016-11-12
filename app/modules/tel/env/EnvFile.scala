@@ -1,7 +1,7 @@
-package models.tel.env
+package modules.tel.env
 
 import better.files._
-import models.tel.Subject
+import modules.tel.Subject
 
 import scala.sys.process.Process
 

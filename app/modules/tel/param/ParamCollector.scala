@@ -1,4 +1,4 @@
-package models.tel.param
+package modules.tel.param
 
 import javax.inject.Singleton
 
