@@ -16,7 +16,7 @@ import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 import better.files._
 import models.database.JobState
 import models.{Constants, ExitCodes}
-import models.tel.TEL
+import modules.tel.TEL
 import play.api.Logger
 import play.api.libs.json.Json
 

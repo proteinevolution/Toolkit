@@ -9,7 +9,7 @@ import akka.util.Timeout
 import models.tools.ToolModel
 import models.{Constants, Values}
 import models.database._
-import models.tel.TEL
+import modules.tel.TEL
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}

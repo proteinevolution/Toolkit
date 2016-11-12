@@ -6,7 +6,7 @@ import actors.WebSocketActor
 import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import models.{Constants, Values}
-import models.tel.TEL
+import modules.tel.TEL
 import modules.Common
 import play.api.{Configuration, Logger}
 import play.api.cache._
