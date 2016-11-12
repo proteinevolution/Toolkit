@@ -8,7 +8,7 @@ import controllers.Settings
 import models.database.JobDeletionFlag.JobDeletionFlag
 import models.database._
 import models.search.JobDAO
-import modules.Common
+import modules.CommonModule
 import modules.tools.FNV
 import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
@@ -16,7 +16,7 @@ import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 import better.files._
 import models.database.JobState
 import models.{Constants, ExitCodes}
-import models.tel.TEL
+import modules.tel.TEL
 import play.api.Logger
 import play.api.libs.json.Json
 
@@ -39,7 +39,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
                                   val jobDao : JobDAO,
                                   val settings : Settings,
                                   implicit val materializer: akka.stream.Materializer)
-  extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes with Common {
+  extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes with CommonModule {
 
   import JobManager._
 

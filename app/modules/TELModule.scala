@@ -3,11 +3,11 @@ package modules
 import javax.inject.{Inject, Provider}
 
 import com.google.inject.AbstractModule
-import models.tel.env.{Env, ExecFile, PropFile, TELEnv}
-import models.tel.param.{GenerativeParamFileParser, ParamCollector, Params}
+import modules.tel.env.{Env, ExecFile, PropFile, TELEnv}
+import modules.tel.param.{GenerativeParamFileParser, ParamCollector, Params}
 import play.api.{Configuration, Logger}
 import com.google.inject.name.Names
-import models.tel.runscripts.RunscriptManager
+import modules.tel.runscripts.RunscriptManager
 
 
 

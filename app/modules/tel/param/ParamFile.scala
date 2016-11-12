@@ -1,4 +1,4 @@
-package models.tel.param
+package modules.tel.param
 
 import better.files._
 import models.Implicits._
