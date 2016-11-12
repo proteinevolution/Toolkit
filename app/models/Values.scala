@@ -1,7 +1,7 @@
 package models
 
 import javax.inject.{Inject, Singleton}
-import models.tel.TEL
+import modules.tel.TEL
 
 /**
  *

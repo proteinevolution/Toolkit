@@ -1,4 +1,4 @@
-package models.tel.runscripts
+package modules.tel.runscripts
 
 import javax.inject.{Inject, Named, Singleton}
 

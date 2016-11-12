@@ -1,4 +1,4 @@
-package models.tel
+package modules.tel
 
 /**
   * Stuff for the observer pattern

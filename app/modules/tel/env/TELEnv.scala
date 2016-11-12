@@ -1,7 +1,7 @@
-package models.tel.env
+package modules.tel.env
 
 import javax.inject.Singleton
-import models.tel.Observer
+import modules.tel.Observer
 import play.api.Logger
 
 /**
