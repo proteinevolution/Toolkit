@@ -268,7 +268,7 @@ JobSubmissionComponent =
     submit: (startJob) ->
       submitting:true
       mainID = JobModel.mainID()
-      $('#submitJobButton').hide()
+      $('#submitJobButton').attr 'readonly', 'true'
       jobid = args.job().jobID()    # TODO Maybe merge with jobID validation
       if not jobid                # TODO Prevent submission if validation fails
         jobid = window.Job.generateJobID()
