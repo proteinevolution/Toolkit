@@ -2,7 +2,6 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import modules.Common
 import org.joda.time.DateTime
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -21,8 +20,7 @@ final class Backend @Inject()(webJarAssets       : WebJarAssets,
 @NamedCache("userCache") implicit val userCache  : CacheApi,
                           val reactiveMongoApi   : ReactiveMongoApi,
                           val messagesApi        : MessagesApi)
-                      extends Controller with I18nSupport
-                                         with Common
+                      extends Controller with I18nSupport with Common
                                          with UserSessions {
 
 

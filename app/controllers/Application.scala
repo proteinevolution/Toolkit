@@ -7,7 +7,7 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
 import models.{Constants, Values}
 import modules.tel.TEL
-import modules.Common
+import modules.CommonModule
 import play.api.{Configuration, Logger}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,7 +33,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                         val settings : Settings,
       @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
                             configuration    : Configuration) extends Controller with I18nSupport
-                                                                                 with Common
+                                                                                 with CommonModule
                                                                                  with Constants
                                                                                  with UserSessions {
 
