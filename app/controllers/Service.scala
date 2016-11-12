@@ -18,7 +18,7 @@ import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
 import models.database.JobState
 import models.tools.ToolModel._
-import modules.Common
+import modules.CommonModule
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
@@ -51,7 +51,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                                     with Constants
                                     with ReactiveMongoComponents
                                     with UserSessions
-                                    with Common {
+                                    with CommonModule {
 
   implicit val timeout = Timeout(1.seconds)
 

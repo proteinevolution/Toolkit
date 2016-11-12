@@ -1,7 +1,7 @@
 package controllers
 
 import models.database.{SessionData, User}
-import modules.{Common, GeoIP}
+import modules.{CommonModule, GeoIP}
 import modules.common.HTTPRequest
 import org.joda.time.DateTime
 import play.api.cache._
@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by astephens on 24.08.16.
   */
-trait UserSessions extends GeoIP with Common {
+trait UserSessions extends GeoIP with CommonModule {
   private final val SID = "sid"
   implicit val userCache : CacheApi
 
