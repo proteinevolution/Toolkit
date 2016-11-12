@@ -1,6 +1,6 @@
 package controllers
 
-import actors.ESManager.ElasticSearch
+
 import akka.actor.ActorRef
 import models.Constants
 import models.database.Job
@@ -8,15 +8,10 @@ import play.api.cache._
 import play.api.libs.json.Json
 import javax.inject.{Named, Singleton, Inject}
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
-import reactivemongo.api.FailoverStrategy
-import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.search.JobDAO
 import play.api.mvc.{Action, Controller}
-import org.joda.time.DateTime
-
 import scala.concurrent.Future
 
 
@@ -24,8 +19,7 @@ import scala.concurrent.Future
 final class Search @Inject() (
           @NamedCache("userCache") implicit val userCache        : CacheApi,
                                val reactiveMongoApi : ReactiveMongoApi,
-                               val jobDao           : JobDAO,
-               @Named("esManager") esManager        : ActorRef)
+                               val jobDao           : JobDAO)
                            extends Controller with Constants
                                               with ReactiveMongoComponents
                                               with UserSessions {

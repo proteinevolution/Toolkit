@@ -1,7 +1,6 @@
 package actors
 
 import javax.inject.{Named, Inject, Singleton}
-import actors.ESManager.{ElasticSearch, AutoComplete}
 import actors.JobManager._
 import actors.UserManager._
 import akka.actor.{ActorLogging, Actor, ActorRef}
@@ -23,7 +22,6 @@ final class UserManager @Inject() (
 @NamedCache("userCache") implicit val userCache        : CacheApi,
                                val reactiveMongoApi : ReactiveMongoApi,
               @Named("jobManager") jobManager       : ActorRef,
-               @Named("esManager") esManager        : ActorRef,
                       implicit val materializer     : akka.stream.Materializer)
                            extends Actor
                               with ActorLogging
@@ -109,17 +107,6 @@ final class UserManager @Inject() (
         case Some(user) =>
         case None =>
       }
-
-    /**
-      * Messages to Elastic Search Manager
-      */
-    case msg : AutoComplete =>
-      esManager ! msg
-
-    case msg : ElasticSearch =>
-      esManager ! msg
-
-
 
     /**
       * Messages to Job Manager
