@@ -11,7 +11,7 @@ import better.files._
 import models.database._
 import models.search.JobDAO
 import models.tools.ToolModel
-import modules.Common
+import modules.CommonModule
 import modules.tools.FNV
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -38,7 +38,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                            val reactiveMongoApi : ReactiveMongoApi,
                            implicit val mat     : Materializer,
                            val jobDao           : JobDAO,
-                           @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport with UserSessions with Common {
+                           @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport with UserSessions with CommonModule {
 
   implicit val timeout = Timeout(5.seconds)
 

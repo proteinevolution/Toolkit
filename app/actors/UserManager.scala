@@ -7,7 +7,7 @@ import akka.actor.{ActorLogging, Actor, ActorRef}
 import akka.event.LoggingReceive
 import controllers.UserSessions
 import models.database.{JobState, Job, User}
-import modules.Common
+import modules.CommonModule
 import play.api.Logger
 import play.api.cache._
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
@@ -27,7 +27,7 @@ final class UserManager @Inject() (
                               with ActorLogging
                               with ReactiveMongoComponents
                               with UserSessions
-                              with Common {
+                              with CommonModule {
 
   // Maps Session ID to Actor Ref of corresponding WebSocket
   val connectedUsers = new scala.collection.mutable.HashMap[BSONObjectID, ActorRef]
