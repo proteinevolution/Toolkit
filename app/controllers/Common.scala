@@ -13,7 +13,7 @@ import play.api.http.ContentTypes
  */
 
 
-protected trait Common extends Controller with ContentTypes with ReactiveMongoComponents {
+private[controllers] trait Common extends Controller with ContentTypes with ReactiveMongoComponents {
 
   var loggedOut = true
 
