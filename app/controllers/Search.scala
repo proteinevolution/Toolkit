@@ -2,6 +2,7 @@ package controllers
 
 
 import akka.actor.ActorRef
+import com.google.api.client.json.JsonString
 import models.Constants
 import models.database.Job
 import play.api.cache._
@@ -31,6 +32,7 @@ final class Search @Inject() (
     jobDao.findAutoCompleteJobID(queryString).map { richSearchResponse =>
       //val jobIDEntries = richSearchResponse.suggestion("jobID")
       Ok(Json.obj("exists" -> {richSearchResponse.getHits.getTotalHits > 0}))
+
     }
   }
 
@@ -62,4 +64,12 @@ final class Search @Inject() (
       Ok(Json.obj("exists" -> {richSearchResponse.getHits.getTotalHits > 0}))
     }
   }
+
+  def test(query: String) = Action{
+
+
+
+    Ok(Json.toJson("Test"))
+  }
+
 }
