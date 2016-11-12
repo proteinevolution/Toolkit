@@ -6,7 +6,6 @@ import actors.JobManager._
 import actors.UserManager.AddJobWatchList
 import akka.actor.ActorRef
 import akka.util.Timeout
-import models.database.JobState
 import models.tools.ToolModel
 import models.{Constants, Values}
 import models.database._

@@ -1,6 +1,5 @@
 package actors
 
-import actors.ESManager.{SearchReply, ElasticSearch, AutoCompleteReply, AutoComplete}
 import actors.JobManager._
 import actors.UserManager._
 import akka.actor.Actor
@@ -101,33 +100,6 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
           }
 
         /**
-          * Search oriented requests
-          */
-        // Request to get an auto complete
-        case "AutoComplete" =>
-          (js \ "queryString").validate[String].asOpt match {
-            case Some(queryString) =>
-              // To keep this small we might use an int as identifier from which search element the request came
-              val element = (js \ "element").validate[Int].asOpt.getOrElse(0)
-              userManager ! AutoComplete(userID, queryString, element)
-              Logger.info("a")
-            case None =>
-              Logger.info("JSON Parser Error " + js.toString())
-          }
-
-        // User wants to search the database
-        case "Search" =>
-          (js \ "queryString").validate[String].asOpt match {
-            case Some(queryString) =>
-              // To keep this small we might use an int as identifier from which search element the request came
-              val element = (js \ "element").validate[Int].asOpt.getOrElse(0)
-              Logger.info("WSactor: Find " + queryString)
-              userManager ! ElasticSearch(userID, queryString, element)
-            case None =>
-              Logger.info("JSON Parser Error " + js.toString())
-        }
-
-        /**
           * Connection oriented requests
           */
         // connection test case
@@ -152,15 +124,5 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
       out ! Json.obj("type" -> "UpdateJob",
                      "job"  -> job.cleaned())
 
-    // Sends a list of possible strings for the auto complete
-    case AutoCompleteReply (userID : BSONObjectID, suggestionList : List[String], element) =>
-      println("AutoSuggestion: " + suggestionList)
-      out ! Json.obj("type" -> "AutoCompleteReply", "list" -> suggestionList, "element" -> element)
-
-    // Sends a list of jobs for the search
-    case SearchReply(userID : BSONObjectID, jobList : List[Job], element) =>
-      out ! Json.obj("type" -> "SearchReply",
-                     "list" -> jobList.map(_.cleaned()),
-                     "element" -> element)
   }
 }
