@@ -1,4 +1,4 @@
-package models.tel
+package modules.tel
 
 /**
   * Created by lzimmermann on 6/30/16.
