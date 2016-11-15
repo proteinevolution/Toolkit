@@ -26,7 +26,23 @@ final class Search @Inject() (
                                               with UserSessions {
 
 
+  implicit val jobWrites = Job.JobWrites
 
+  def ac(queryString : String) = Action.async{ implicit request =>
+    jobDao.findAutoCompleteJobID(queryString).map { richSearchResponse =>
+      val jobIDEntries = richSearchResponse.suggestion("jobID")
+      if (jobIDEntries.size > 0) {
+
+        val resp = jobIDEntries.entry(queryString).optionsText.toList
+        println(resp.toString())
+        Ok(Json.toJson(resp))
+
+      } else {
+
+        Ok(Json.toJson(List.empty[String]))
+      }
+    }
+  }
 
   def autoComplete(queryString : String) = Action.async{
     jobDao.findAutoCompleteJobID(queryString).map { richSearchResponse =>
@@ -67,9 +83,11 @@ final class Search @Inject() (
 
   def test(query: String) = Action{
 
-
-
-    Ok(Json.toJson("Test"))
+    Ok(Json.obj(
+      "name" -> "Bigwig",
+      "age" -> 6,
+      "role" -> "Owsla"
+    ))
   }
 
 }

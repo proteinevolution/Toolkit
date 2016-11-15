@@ -20,6 +20,36 @@ slickSlider = (elem, isInit) ->
         }
       }]
 
+
+
+
+
+typeAhead = (elem, isInit) ->
+  if not isInit
+
+    engine = new Bloodhound(
+      remote:
+        url: '/suggest/%QUERY%'
+        wildcard: '%QUERY%'
+      datumTokenizer: Bloodhound.tokenizers.whitespace('q')
+      queryTokenizer: Bloodhound.tokenizers.whitespace)
+
+    $(elem).typeahead {
+        hint: true
+        highlight: true
+        minLength: 1
+      },
+      source: engine.ttAdapter()
+      name: 'jobList'
+      templates:
+        empty: [ '<div class="list-group search-results-dropdown"><div class="list-group-item">Nothing found.</div></div>' ]
+        header: [ '<div class="list-group search-results-dropdown">' ]
+        suggestion: (data) ->
+          console.log(data)
+          '<a href="' + data.age + '" class="list-group-item">' + data.name + '</a>'
+
+
+
 ###
 
   $('#trafficbar').attr('data-tooltip');
@@ -116,8 +146,8 @@ trafficBarComponent =
     m "div", {class: "grid", style: "margin-top: 355px;"},
       m "div", {class: "tool-finder show-for-medium row centered"},[
         m "div", {class: "search-query large-12 medium-6"},
-          m "div", {class: "columns large-12"},
-            m "input", {type: "text", id: "searchInput", name: "searchInput", placeholder: "Search Keywords", config: searchField}
+          m "div", {class: "columns large-12 form-group"},
+            m "input", {type: "text", id: "searchInput", name: "q", placeholder: "Search Keywords", config: typeAhead}
         m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdatedMainID()}"}
       ]
 

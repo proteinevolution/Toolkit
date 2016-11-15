@@ -1,7 +1,7 @@
 package models.search
 
 import javax.inject.{Named, Inject}
-import com.sksamuel.elastic4s.{IndexAndType, ElasticDsl}
+import com.sksamuel.elastic4s.{SuggestMode, IndexAndType, ElasticDsl}
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
 import org.elasticsearch.common.unit.Fuzziness
@@ -53,11 +53,12 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
 
   // tries to find a matching Job ID String
   def findAutoCompleteJobID(queryString : String) = {
-    client.execute {
+    val resp = client.execute {
       search in "tkplay_dev"->"jobs" suggestions {
-        termSuggestion("jobID").field("jobID").text(queryString)
+        termSuggestion("jobID").field("jobID").text(queryString).mode(SuggestMode.Always)
       }
     }
+    resp
   }
 
   // tries to find a matching Job with the Job ID
