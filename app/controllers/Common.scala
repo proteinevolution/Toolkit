@@ -1,6 +1,5 @@
 package controllers
 
-import modules.common.HTTPRequest
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoComponents
 import play.api.mvc.{Action, Controller}
