@@ -31,7 +31,7 @@ class TEL @Inject() (env : Env,
 
   var port = "" // TODO (REMINDER) : REMOVE THIS FOR PRODUCTION !!!
 
-  val context = env.get("CONTEXT")
+  lazy val context = env.get("CONTEXT")
 
 
   //-----------------------------------------------------------------------------------------------------
@@ -115,18 +115,20 @@ class TEL @Inject() (env : Env,
 
     target.appendLines(newLines:_*)
 
-    target.appendLines("""
-      | outfile=(*.sh.e*)
-      |errfile=(*.sh.o*)
-      |if [ -a "${outfile[0]}" ];
-      |then
-      |cp *.sh.o* logs/stdout.out
-      |fi
-      |if [ -a "${errfile[0]}" ];
-      |then
-      |cp *.sh.e* logs/stderr.err
-      |fi
-      |""".stripMargin)
+    val log_cmds = """
+                      | outfile=(*.sh.e*)
+                      |errfile=(*.sh.o*)
+                      |if [ -a "${outfile[0]}" ];
+                      |then
+                      |cp *.sh.o* logs/stdout.out
+                      |fi
+                      |if [ -a "${errfile[0]}" ];
+                      |then
+                      |cp *.sh.e* logs/stderr.err
+                      |fi
+                      |""".stripMargin
+
+    target.appendLines(log_cmds)
     target.appendLines(s"curl -X POST http://$hostname:$port/jobs/done/$jobID")
 
 
