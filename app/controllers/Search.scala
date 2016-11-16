@@ -1,13 +1,10 @@
 package controllers
 
-
-import akka.actor.ActorRef
-import com.google.api.client.json.JsonString
 import models.Constants
 import models.database.Job
 import play.api.cache._
 import play.api.libs.json.Json
-import javax.inject.{Named, Singleton, Inject}
+import javax.inject.{Singleton, Inject}
 import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,7 +23,6 @@ final class Search @Inject() (
                                               with UserSessions {
 
 
-  implicit val jobWrites = Job.JobWrites
 
   def ac(queryString : String) = Action.async{ implicit request =>
     jobDao.findAutoCompleteJobID(queryString).map { richSearchResponse =>
@@ -34,23 +30,16 @@ final class Search @Inject() (
       if (jobIDEntries.size > 0) {
 
         val resp = jobIDEntries.entry(queryString).optionsText.toList
-        println(resp.toString())
         Ok(Json.toJson(resp))
 
       } else {
 
-        Ok(Json.toJson(List.empty[String]))
+        Ok
+
       }
     }
   }
 
-  def autoComplete(queryString : String) = Action.async{
-    jobDao.findAutoCompleteJobID(queryString).map { richSearchResponse =>
-      //val jobIDEntries = richSearchResponse.suggestion("jobID")
-      Ok(Json.obj("exists" -> {richSearchResponse.getHits.getTotalHits > 0}))
-
-    }
-  }
 
   def elasticSearch(userID : BSONObjectID, queryString : String) = {
     jobDao.fuzzySearchJobID(queryString).flatMap { richSearchResponse =>
@@ -66,6 +55,7 @@ final class Search @Inject() (
     }
   }
 
+
   def getJob(queryString : String) = Action.async { implicit request =>
     // Retrieve the user from the cache or the DB
     getUser.flatMap { user =>
@@ -75,19 +65,12 @@ final class Search @Inject() (
     }
   }
 
+
   def checkJobID(jobID : String) = Action.async{
     jobDao.existsJobID(jobID).map{ richSearchResponse =>
       Ok(Json.obj("exists" -> {richSearchResponse.getHits.getTotalHits > 0}))
     }
   }
 
-  def test(query: String) = Action{
-
-    Ok(Json.obj(
-      "name" -> "Bigwig",
-      "age" -> 6,
-      "role" -> "Owsla"
-    ))
-  }
 
 }

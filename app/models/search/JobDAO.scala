@@ -61,6 +61,20 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     resp
   }
 
+
+  // tries to find a matching Job ID String
+  def autoCompleteJobSearch(queryString : String) = {
+    val resp = client.execute {
+      search in "tkplay_dev"->"jobs" suggestions {
+        completionSuggestion("jobID").field("jobID").text(queryString)
+      }
+    }
+    resp
+  }
+
+
+
+
   // tries to find a matching Job with the Job ID
   def fuzzySearchJobID(queryString : String) = {
     client.execute {

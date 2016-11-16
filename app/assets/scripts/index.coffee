@@ -46,7 +46,7 @@ typeAhead = (elem, isInit) ->
         header: [ '<div class="list-group search-results-dropdown">' ]
         suggestion: (data) ->
           console.log(data)
-          '<a href="' + data.age + '" class="list-group-item">' + data.name + '</a>'
+          '<a href="' + data + '" class="list-group-item">' + data + '</a>'
 
 
 
