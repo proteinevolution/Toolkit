@@ -25,11 +25,12 @@ final class Search @Inject() (
 
 
   def ac(queryString : String) = Action.async{ implicit request =>
-    jobDao.findAutoCompleteJobID(queryString).map { richSearchResponse =>
+    jobDao.jobIDtermSuggester(queryString).map { richSearchResponse =>
       val jobIDEntries = richSearchResponse.suggestion("jobID")
       if (jobIDEntries.size > 0) {
 
         val resp = jobIDEntries.entry(queryString).optionsText.toList
+
         Ok(Json.toJson(resp))
 
       } else {

@@ -14,7 +14,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
 
   // Searches for a matching hash in the Hash DB
   def matchHash(hash : String, dbName : Option[String], dbMtime : Option[String]) = {
-    val resp = client.execute(
+    client.execute(
       search in "tkplay_dev"->"jobhashes" query {
           bool(
             must(
@@ -25,7 +25,6 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
           )
       }
     )
-    resp
   }
 
   // Removes a Hash from ES
@@ -51,28 +50,25 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     }
   }
 
-  // tries to find a matching Job ID String
-  def findAutoCompleteJobID(queryString : String) = {
-    val resp = client.execute {
+
+  def jobIDtermSuggester(queryString : String) = { // this is a spelling correction mechanism
+   client.execute {
       search in "tkplay_dev"->"jobs" suggestions {
-        termSuggestion("jobID").field("jobID").text(queryString).mode(SuggestMode.Always)
+        termSuggestion("jobID") field "jobID" text queryString mode SuggestMode.Always
       }
     }
-    resp
+
   }
 
 
-  // tries to find a matching Job ID String
-  def autoCompleteJobSearch(queryString : String) = {
-    val resp = client.execute {
+
+  def jobIDcompletionSuggester(queryString : String) = { // this is a auto-completion mechanism
+    client.execute {
       search in "tkplay_dev"->"jobs" suggestions {
-        completionSuggestion("jobID").field("jobID").text(queryString)
+        completionSuggestion("job-completion") field "jobID" text queryString size 10
       }
     }
-    resp
   }
-
-
 
 
   // tries to find a matching Job with the Job ID

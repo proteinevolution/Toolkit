@@ -21,9 +21,6 @@ slickSlider = (elem, isInit) ->
       }]
 
 
-
-
-
 typeAhead = (elem, isInit) ->
   if not isInit
 
