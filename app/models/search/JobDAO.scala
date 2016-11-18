@@ -55,7 +55,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   def jobIDtermSuggester(queryString : String) = { // this is a spelling correction mechanism
    client.execute {
       search in "tkplay_dev"->"jobs" suggestions {
-        termSuggestion("jobID") field "jobID" text queryString size 1
+        termSuggestion("jobID") field "jobID" text queryString mode SuggestMode.Always
       }
     }
 
@@ -64,9 +64,10 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
 
   def jobIDcompletionSuggester(queryString : String) = { // this is an auto-completion mechanism
     client.execute {
-      search in "tkplay_dev"->"jobs" suggestions {
-        completionSuggestion("jobs") field "jobID" context "jobs" text queryString size 10
-      }
+      search in "tkplay_dev"->"jobs" types "jobs" suggestions (
+        //completionSuggestion("jobs-completer") field "jobID" text queryString size 10
+        completionSuggestion field "jobID" text queryString size 10
+      )
     }
   }
 
