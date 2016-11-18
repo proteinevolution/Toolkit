@@ -288,3 +288,38 @@ select {
     width: 100% !important;
 
 }
+
+.list-group {
+    
+    background-color: white;
+}
+
+.tt-menu, .tt-dataset {
+-webkit-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
+-moz-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
+box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
+width: 100% !important;
+}
+
+.tt-suggestion {
+    display: block;
+    margin: auto;
+    text-align: center;
+    background-color: white;
+}
+
+.search-results-dropdown {
+    background-color: white;
+    margin-top: 0px;
+    width: 100%;
+}
+
+.list-group-item {
+    padding: 5px 5px 5px 5px;
+}
+
+.list-group-item-notfound {
+    
+    background-color: pink; 
+}
+

@@ -22,7 +22,7 @@ final class Search @Inject() (
                                               with ReactiveMongoComponents
                                               with UserSessions {
 
-
+  
 
   def ac(queryString : String) = Action.async{ implicit request =>
     jobDao.jobIDtermSuggester(queryString).map { richSearchResponse =>
