@@ -295,11 +295,41 @@ select {
 }
 
 .tt-menu, .tt-dataset {
+position: relative;
 -webkit-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
 -moz-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
 box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
 width: 100% !important;
+display: block;
+margin: auto;
 }
+
+.tt-menu:before, .tt-menu:after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 100%;
+  width: 0;
+  height: 0;
+}
+.tt-menu:before {
+  left: 15px;
+  top: -8px;
+  border: 13px solid transparent;
+  border-bottom-color: #dimgray;
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
+  -moz-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
+  box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
+  transform:rotate(45deg);
+  -ms-transform:rotate(45deg);
+  -webkit-transform:rotate(45deg);
+}
+.tt-menu:after {
+  left: 16px;
+  border: 12px solid transparent;
+  border-bottom-color: #fff;
+}
+
 
 .tt-suggestion {
     display: block;
@@ -319,7 +349,10 @@ width: 100% !important;
 }
 
 .list-group-item-notfound {
-    
-    background-color: pink; 
+    display: block;
+    margin: auto;
+    text-align: center;
+    color: lightgrey;
+    padding: 5px 5px 5px 15px;
 }
 
