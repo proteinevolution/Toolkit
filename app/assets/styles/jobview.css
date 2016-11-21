@@ -338,4 +338,14 @@ margin-top: 2em;
 .addJob { display: none; }
 
 
+.checkJob {
+    background-color: gray;
+    border-radius: 3px;
+    float: left;
+    margin-right: 1em;
+    color: white;
+    margin-left: 1em;
+}
+
+
 map[name="blastmap"] area { cursor: pointer; }
