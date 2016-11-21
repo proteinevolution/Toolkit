@@ -95,13 +95,13 @@ div#main {
 }
 
 .q {
-    background-color: #d6c1c3;
+    background-color: #bcd4b6;
 }
 .q:hover {
-    background-color: #c0b5bf;
+    background-color: #c3debc;
 }
 .q.selected {
-    background-color: #c0b5bf;
+    background-color: #c3debc;
 }
 
 .i {
