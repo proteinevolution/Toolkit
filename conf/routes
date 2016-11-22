@@ -44,7 +44,8 @@ GET           /assets/*file                           controllers.Assets.at(path
 
 # Route for direct get requests
 GET           /tools/:toolname                        @controllers.Application.showTool(toolname : String)
-GET           /jobs/:mainID                           @controllers.Application.showJob(mainID: String)
+# Redirects to a job with the jobID // mainID
+GET           /jobs/:idString                         @controllers.Application.showJob(idString: String)
 
 # File Uploader
 
