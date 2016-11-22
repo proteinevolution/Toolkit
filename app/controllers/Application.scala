@@ -5,6 +5,7 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.WebSocketActor
 import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
+import models.search.JobDAO
 import models.{Constants, Values}
 import modules.tel.TEL
 import modules.CommonModule
@@ -15,8 +16,10 @@ import play.api.libs.json.JsValue
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 
 @Singleton
@@ -25,6 +28,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                             final val values : Values,
 @NamedCache("userCache") implicit val userCache : CacheApi,
 @NamedCache("viewCache") val viewCache: CacheApi,
+                         val jobDao : JobDAO,
                         val reactiveMongoApi : ReactiveMongoApi,
                             system           : ActorSystem,
                             mat              : Materializer,
@@ -73,15 +77,26 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
 
 
   // Route is handled by Mithril
-  def showTool(toolname: String) = Action { implicit request =>
+  def showTool(toolName: String) = Action { implicit request =>
 
-    Redirect(s"/#/tools/$toolname")
+    Redirect(s"/#/tools/$toolName")
   }
 
 
-  def showJob(job_id : String) = Action { implicit request =>
-
-    Redirect(s"/#/jobs/$job_id")
+  def showJob(idString : String) = Action.async { implicit request =>
+    BSONObjectID.parse(idString).toOption match {
+      case Some(mainID) =>
+        Future.successful(Redirect(s"/#/jobs/${mainID.stringify}"))
+      case None =>
+        jobDao.fuzzySearchJobID(idString).map { hit =>
+          hit.getHits.getHits.headOption match {
+            case Some(jobHit) =>
+              Redirect(s"/#/jobs/${jobHit.getId}")
+            case None =>
+              NotFound
+          }
+        }
+    }
   }
 
 
