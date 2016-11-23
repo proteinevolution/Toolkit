@@ -2,8 +2,9 @@ package controllers
 
 import javax.inject.{Singleton, Inject}
 
-import models.database.User
+import models.database.{UserToken, User}
 import models.auth._
+import modules.common.RandomString
 import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
@@ -198,9 +199,13 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
                 Future.successful(Ok(AccountNameUsed()))
               case None =>
                 // Create the database entry.
-                val selector = BSONDocument(User.IDDB     -> user.userID)
-                val modifier = BSONDocument("$set"        ->
-                               BSONDocument(User.USERDATA -> signUpFormUser.getUserData))
+                val selector = BSONDocument(User.IDDB       -> user.userID)
+                val modifier = BSONDocument("$set"          ->
+                               BSONDocument(User.USERDATA   -> signUpFormUser.getUserData),
+                                            "$push"         ->
+                               BSONDocument(User.USERTOKENS -> BSONDocument(UserToken.TYPE       getMillis-> BSONInteger(0),
+                                                                            UserToken.TOKEN      -> RandomString.randomAlphaNumString(15),
+                                                                            UserToken.CHANGEDATE -> BSONDateTime(DateTime.now.getMillis))))
                 modifyUser(selector,modifier).map {
                   case Some(registeredUser) =>
                     // All done. User is registered
