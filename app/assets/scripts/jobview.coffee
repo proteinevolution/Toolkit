@@ -23,6 +23,9 @@ helpModalAccess = (elem, isInit) ->
   if not isInit
     elem.setAttribute "data-open", "help-#{this.job().tool.toolname}"
 
+selectBoxAccess = (elem, isInit) ->
+  if not isInit
+    $(elem).niceSelect()
 
 window.JobViewComponent =
 
@@ -448,7 +451,7 @@ ParameterSelectComponent =
   view: (ctrl) ->
     renderParameter [
       m "label", {for: ctrl.id}, ctrl.label
-      m "select", {name: ctrl.name, id: ctrl.id}, ctrl.options.map (entry) ->
+      m "select", {name: ctrl.name, id: ctrl.id, config: selectBoxAccess}, ctrl.options.map (entry) ->
         if entry[0] == ctrl.value
           m "option", {value: entry[0], selected: "selected"}, entry[1]
         else
@@ -614,4 +617,6 @@ formComponents =
     label: "Bonus Score"
     value: args.value
   ]
+
+
 
