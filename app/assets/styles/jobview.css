@@ -32,9 +32,11 @@
     float: left;
 }
 
-.parameter select {
+.parameter .nice-select {
     float: right;
     border-radius: 3px;
+    height: 2.5em;
+    width: 5em;
 }
 
 .parameter input {
@@ -135,18 +137,34 @@
     width: 50%;
 }
 
-.parameters select {
+.parameters .nice-select {
     color: #000;
-    color: rgba(0,0,0,0);
+    color: rgba(0, 0, 0, 0);
     text-shadow: 0 0 0 #000;
-    width: 15em;
+    width: 17em;
     border-radius: 3px;
+    position: absolute;
+    left: 22.75em;
+    height: 2.5em;
+    line-height: 2.3em;
+    font-size:  0.9em;
+}
+
+.parameters .nice-select .list {
+    width: 17em;
+    margin-left: 0;
+}
+
+.parameters .nice-select .list li {
+    line-height: 2.3em;
+    min-height: 0;
+
 }
 
 .parameters input {
     text-shadow: 0 0 0 #878787;
     width: 15em;
-    border: solid grey;
+    border: solid lightgray;
     border-width: 0 0 1px 0;
     box-shadow: none;
 }
