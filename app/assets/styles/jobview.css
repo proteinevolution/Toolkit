@@ -144,20 +144,24 @@
 }
 
 .parameters input {
-    color: #000;
-    color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #878787;
     width: 15em;
-    border-radius: 3px;;
+    border: solid grey;
+    border-width: 0 0 1px 0;
+    box-shadow: none;
 }
 
 .parameters input:focus {
-    color: #000;
-    color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #000;
     width: 15em;
-}
+    border: solid rgba(0, 110, 98, 166);
+    border-width: 0 0 2px 0;
+    box-shadow: none;
+    -webkit-transition : border 100ms ease-out;
+    -moz-transition : border 100ms ease-out;
+    -o-transition : border 100ms ease-out;
 
+}
 
 .submitbuttons {
     clear: both;
