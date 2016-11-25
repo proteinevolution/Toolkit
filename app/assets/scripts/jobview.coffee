@@ -471,6 +471,7 @@ ParameterNumberComponent =
     renderParameter [
       m "label", {for: ctrl.id}, ctrl.label
       m "input", {type: "text", id: ctrl.id, name: ctrl.name, value: ctrl.param.value(), onchange: m.withAttr("value", ctrl.param.value) }
+
     ]
 
 
