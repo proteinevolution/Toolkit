@@ -172,7 +172,7 @@
 .parameters input:focus {
     text-shadow: 0 0 0 #000;
     width: 15em;
-    border: solid rgba(0, 110, 98, 166);
+    border: solid rgb(113, 113, 113);
     border-width: 0 0 2px 0;
     box-shadow: none;
     -webkit-transition : border 100ms ease-out;
