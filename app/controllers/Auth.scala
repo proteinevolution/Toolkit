@@ -4,12 +4,14 @@ import javax.inject.{Singleton, Inject}
 
 import models.database.{UserToken, User}
 import models.auth._
+import models.mailing.NewUserWelcomeMail
 import modules.common.RandomString
 import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
+import play.api.libs.mailer._
 
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson._
@@ -26,9 +28,9 @@ import scala.concurrent.Future
 @Singleton
 final class Auth @Inject() (    webJarAssets     : WebJarAssets,
                             val messagesApi      : MessagesApi,
+                   implicit val mailerClient     : MailerClient,
 @NamedCache("userCache") implicit val userCache  : CacheApi,
-                            val reactiveMongoApi : ReactiveMongoApi,
-                            val mailing          : Mailing) // Mailing Controller
+                            val reactiveMongoApi : ReactiveMongoApi) // Mailing Controller
         extends Controller with I18nSupport
                            with JSONTemplate
                            with UserSessions
@@ -206,7 +208,9 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
                                BSONDocument(User.USERTOKENS -> UserToken(tokenType = 1)))
                 modifyUser(selector,modifier).map {
                   case Some(registeredUser) =>
-                    // All done. User is registered
+                    // All done. User is registered, now send the welcome eMail
+                    val eMail = NewUserWelcomeMail(registeredUser, registeredUser.userTokens.head.token)
+                    eMail.send
                     // Make sure the Cache is updated
                     updateUserCache(registeredUser)
                     Ok(LoggedIn(registeredUser)).withSession(sessionCookie(request, registeredUser.sessionID.get))
