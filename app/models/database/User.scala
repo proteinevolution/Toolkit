@@ -12,7 +12,7 @@ case class User(userID        : BSONObjectID,                        // ID of th
                 accountType   : Int                  = -1,           // User Access level
                 userData      : Option[UserData]     = None,         // Personal Data of the User //TODO possibly encrypt?
                 userConfig    : UserConfig           = UserConfig(), // Configurable parts for the user
-                userTokens    : List[UserToken.UserToken] = List.empty,
+                userTokens    : List[UserToken]      = List.empty,
                 jobs          : List[BSONObjectID]   = List.empty,   // List of Jobs the User has
                 dateLastLogin : Option[DateTime],                    // Last seen on
                 dateCreated   : Option[DateTime],                    // Account creation date
@@ -70,7 +70,7 @@ object User {
       accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
       userData      = bson.getAs[UserData](USERDATA),
       userConfig    = bson.getAs[UserConfig](USERCONFIG).getOrElse(UserConfig()),
-      userTokens    = bson.getAs[List[UserToken.UserToken]](USERTOKENS).get,
+      userTokens    = bson.getAs[List[UserToken]](USERTOKENS).get,
       jobs          = bson.getAs[List[BSONObjectID]](JOBS).getOrElse(List.empty),
       dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => new DateTime(dt.value)),
       dateCreated   = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
