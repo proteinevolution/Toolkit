@@ -203,9 +203,7 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
                 val modifier = BSONDocument("$set"          ->
                                BSONDocument(User.USERDATA   -> signUpFormUser.getUserData),
                                             "$push"         ->
-                               BSONDocument(User.USERTOKENS -> BSONDocument(UserToken.TYPE       -> BSONInteger(0),
-                                                                            UserToken.TOKEN      -> RandomString.randomAlphaNumString(15),
-                                                                            UserToken.CHANGEDATE -> BSONDateTime(DateTime.now.getMillis))))
+                               BSONDocument(User.USERTOKENS -> UserToken(tokenType = 1)))
                 modifyUser(selector,modifier).map {
                   case Some(registeredUser) =>
                     // All done. User is registered
