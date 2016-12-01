@@ -2,7 +2,7 @@
 @import play.api.mvc.RequestHeader
 
 @(mainID : String)(implicit request: RequestHeader)
-<link href="@routes.Assets.at("styles/psiblast-resultview.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/psiblast-resultview.css")" rel="stylesheet">
 
 <style>
     #blastviz img{

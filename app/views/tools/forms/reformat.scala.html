@@ -1,8 +1,8 @@
 @import play.api.mvc.RequestHeader
 @(webJarAssets: WebJarAssets, sectionname : String)(implicit messages: Messages, request: RequestHeader)
-<link href="@routes.Assets.at("styles/reformat.css")" rel="stylesheet">
-<link href="@routes.Assets.at("styles/reformat-common.css")" rel="stylesheet">
-<link href="@routes.Assets.at("styles/reformat-jobview.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/reformat-common.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("reformat.js"))"></script>
 <div class="jobline">
     <span class="toolname">Reformat</span>
@@ -163,8 +163,8 @@
 
 
 
-<script src="@routes.Assets.at("scripts/validation.js")"></script>
-<script src="@routes.Assets.at("scripts/dropzone.js")"></script>
+<script src="@routes.Assets.versioned("scripts/validation.js")"></script>
+<script src="@routes.Assets.versioned("scripts/dropzone.js")"></script>
 <script>
         $("#tool-tabs").tabs();
 
