@@ -36,7 +36,8 @@ val commonDeps = Seq(ws, filters, cache,
   "org.tpolecat" %% "atto-compat-scalaz72" % "0.5.0-M3",
   "net.ruippeixotog" %% "scala-scraper" % "1.1.0",
   "com.lihaoyi" %% "fastparse" % "0.4.1",
-  "com.vmunier" %% "scalajs-scripts" % "1.0.0"
+  "com.vmunier" %% "scalajs-scripts" % "1.0.0",
+  "org.typelevel" %% "cats" % "0.8.1"
 )
 
 /*
@@ -83,7 +84,7 @@ lazy val root = (project in file("."))
       "org.webjars.bower" % "tinymce" % "4.4.1",
       "org.webjars.bower" % "datatables" % "1.10.12",
       "org.webjars" % "highcharts" % highchartsVersion)),
-    pipelineStages := Seq.empty,
+    pipelineStages := Seq(rjs, digest, gzip),
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
   )
