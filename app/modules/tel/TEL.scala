@@ -52,25 +52,30 @@ class TEL @Inject() (env : Env,
   // Public methods
   //-----------------------------------------------------------------------------------------------------
 
+
   /**
     *  Assembles all scripts to create a new executable Job and
     *  returns the name of the executable script for job execution.
     */
-  def init(runscript : String, params : Map[String, String], dest : String): String = {
+  def init(runscript : String,  dest : String, params : Option[Map[String, String]] = None): String = {
 
     val jobID = dest.split('/').last
     // Create directories necessary for tool execution
-    subdirs.foreach { s => (dest + SEPARATOR + s).toFile.createDirectories() }
 
-    // Write parameters to file
-    for((paramName, value) <- params ) {
+    // Do not create directories when no params are provided
+    if(params.isDefined) {
+      subdirs.foreach { s => (dest + SEPARATOR + s).toFile.createDirectories() }
 
-      // TODO This is a hack and needs to go
-      if(!ignore.contains(paramName)) {
+      // Write parameters to file
+      for((paramName, value) <- params.get ) {
+        // TODO This is a hack and needs to go
+        if(!ignore.contains(paramName)) {
 
-        s"$dest${SEPARATOR}params$SEPARATOR$paramName".toFile.write(value)
+          s"$dest${SEPARATOR}params$SEPARATOR$paramName".toFile.write(value)
+        }
       }
     }
+
     val hostname_cmd = "hostname"
     val hostname = hostname_cmd.!!.dropRight(1) // remove trailing whitespace
     val source = s"$runscriptPath$runscript.sh"
