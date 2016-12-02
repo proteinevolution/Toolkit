@@ -1,6 +1,6 @@
 package modules
 
-import actors.{JobMonitor, UserManager, JobManager}
+import actors.{JobActor, JobManager, UserManager, JobMonitor}
 import com.google.inject.AbstractModule
 import play.api.libs.concurrent.AkkaGuiceSupport
 
@@ -12,5 +12,6 @@ class ActorModule extends AbstractModule with AkkaGuiceSupport {
     bindActor[JobManager]("jobManager") // Has information about the jobs
     bindActor[UserManager]("userManager") // Has information about the users
     bindActor[JobMonitor]("jobMonitor") // Real time monitoring
+    bindActorFactory[JobActor, JobActor.Factory]
   }
 }

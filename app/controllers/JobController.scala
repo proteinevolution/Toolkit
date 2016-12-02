@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import actors.JobActor
 import actors.JobActor.Delete
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, Props}
 import models.job.JobIDProvider
 import play.api.Logger
 import play.api.cache.CacheApi
@@ -20,6 +20,7 @@ import scala.concurrent.Future
 @Singleton
 class JobController @Inject() (jobIDProvider: JobIDProvider,
                                actorSystem : ActorSystem,
+                               jobActorFactory : JobActor.Factory,
                                implicit val userCache : CacheApi,
                                val reactiveMongoApi: ReactiveMongoApi)
   extends Controller with UserSessions {
@@ -39,10 +40,15 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
     getUser.map { user =>
 
           Logger.info(s"JobID: $jobID -- Spawn JobActor")
-          val jobActor = actorSystem.actorOf(JobActor.props(jobID, user.userID.stringify), jobID)
+          val jobActor = actorSystem.actorOf(Props(jobActorFactory(jobID, user.userID.stringify)), jobID)
           Ok
         }
     }
+
+  /*
+  context.actorOf(props(Props(create)), name)
+
+   */
 
   def delete(jobID : String) = Action {
 
