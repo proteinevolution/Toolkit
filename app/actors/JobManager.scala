@@ -233,7 +233,7 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
         // needs to be executed
         val rootPath = s"$jobPath$SEPARATOR${newJob.mainID.stringify}$SEPARATOR"
 
-        val script = tel.init(toolName, params, rootPath)
+        val script = tel.init(toolName, rootPath, Some(params))
 
         this.updateJob(newJob.copy(status = Prepared))
 
