@@ -51,6 +51,15 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     }
   }
 
+  // Simple multiple jobID search
+  def getJobIDs(jobIDs : List[String]) = {
+    client.execute{
+      search in "tkplay_dev" -> "jobs" query {
+        //termsQuery("jobID", jobIDs) // - termsQuery does not seem to work
+        termQuery("jobID", jobIDs.headOption.getOrElse("")) // Currently just looking for the first jobID
+      }
+    }
+  }
 
   def jobIDtermSuggester(queryString : String) = { // this is a spelling correction mechanism
    client.execute {
@@ -58,7 +67,6 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
         termSuggestion("jobID") field "jobID" text queryString mode SuggestMode.Always
       }
     }
-
   }
 
 
