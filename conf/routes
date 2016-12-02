@@ -129,3 +129,8 @@ GET           /api/jobs/:mainid                       @controllers.Service.getJo
 
 # Get list of userjobs
 GET           /api/jobs                               @controllers.Service.listJobs
+
+
+# New routes defined for the JobActor per job stuff
+POST          /api/job                                @controllers.JobController.create(jobID: Option[String])
+DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
