@@ -1,8 +1,15 @@
 package actors
 
-import actors.JobActor.{Initialized, JobEvent}
-import akka.actor.{FSM, Props}
+import javax.inject.Inject
+
+import actors.JobActor._
+import akka.actor.{Actor, FSM, Props}
+import com.google.inject.assistedinject.Assisted
 import models.database._
+import modules.tel.TEL
+import play.api.Logger
+
+import scala.concurrent.duration._
 
 
 /**
@@ -13,26 +20,37 @@ import models.database._
 object JobActor {
 
   // Job Events that might occur
-  sealed trait JobEvent
-  case object Delete extends JobEvent
-  case object Initialized extends JobEvent
+  case object Delete
 
 
-  def props(jobID : String, ownerUserID: String) = Props(new JobActor(jobID, ownerUserID))
+  // Internal Data of the JobActor to work on
+  sealed trait Data
+  case object Empty extends Data
+
+
+  trait Factory {
+
+    def apply(@Assisted("jobID") jobID: String,
+              @Assisted("ownerUserID") ownerUserID: String) : Actor
+  }
 }
 
 
-class JobActor(val jobID: String, val ownerUserID: String) extends FSM[JobState, JobEvent] {
+class JobActor @Inject() (tel : TEL,
+                          @Assisted("jobID") val jobID: String,
+                          @Assisted("ownerUserID") val ownerUserID: String) extends FSM[JobState, Data] {
 
   // Set of sessionIDs of all users that are subscribed to this Job
   private var subscribers = Set(ownerUserID)
-  startWith(Submitted, Initialized)
+  startWith(Submitted, Empty)
 
 
+  when(Submitted, stateTimeout = 1.second ) {
 
-
-
-
+    case Event(StateTimeout, Empty) =>
+      Logger.info("JobActor Timeout in Submitted")
+      stay using Empty
+  }
 
 
   initialize()
