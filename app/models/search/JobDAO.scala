@@ -55,8 +55,9 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   def getJobIDs(jobIDs : List[String]) = {
     client.execute{
       search in "tkplay_dev" -> "jobs" query {
-        //termsQuery("jobID", jobIDs) // - termsQuery does not seem to work
-        termQuery("jobID", jobIDs.headOption.getOrElse("")) // Currently just looking for the first jobID
+        termsQuery("jobID", jobIDs : _*) // - termsQuery does not seem to work
+
+        //termQuery("jobID", jobIDs.headOption.getOrElse("")) // Currently just looking for the first jobID
       }
     }
   }
