@@ -34,16 +34,17 @@ typeAhead = (elem, isInit) ->
     $(elem).typeahead {
         hint: true
         highlight: true
-        minLength: 1
+        minLength: 6
       },
       source: engine.ttAdapter()
       name: 'jobList'
+      displayKey: "jobID",
       templates:
         empty: [ '<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>' ]
-        header: [ '<div class="list-group search-results-dropdown">' ]
+        #header: [ '<div class="list-group search-results-dropdown">Hello World</div>' ]
         suggestion: (data) ->
           console.log(data)
-          '<a href="' + data + '" class="list-group-item">' + data + '</a></div>'
+          '<div class="list-group-item"><a href="#/jobs/' + data.mainID + '">' + data.jobID + '</a> - ' + data.toolname + '</div>'
 
 
 
