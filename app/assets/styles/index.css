@@ -345,6 +345,8 @@ margin: auto;
 }
 
 .list-group-item {
+    width: 100%;
+    text-align: left;
     padding: 5px 5px 5px 5px;
 }
 
