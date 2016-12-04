@@ -397,7 +397,7 @@ window.ParameterAlignmentComponent =
 
   view: (ctrl) ->
     renderParameter [
-        m "div", [
+        m "div", {class: "alignment_textarea"}, [
           m "textarea",                   # Textarea field for alignment input
             name: ctrl.name
             placeholder: ctrl.placeholder
@@ -407,7 +407,7 @@ window.ParameterAlignmentComponent =
             onchange: m.withAttr("value", ctrl.param.value)
             value: ctrl.param.value()
         ]
-        m "div", [
+        m "div", {class: "alignment_buttons"}, [
           m "input",                         # Place example alignment
             type: "button"
             class: "button small alignmentExample"
