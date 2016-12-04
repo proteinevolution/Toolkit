@@ -26,10 +26,13 @@
     width: 100% !important;
     height: 6em;
 
+
 }
 
 .parameter label {
     float: left;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+    font-size: 0.9em;
 }
 
 .parameter .nice-select {
@@ -41,6 +44,7 @@
 
 .parameter input {
     float: right;
+    font-size: 0.9em;
 }
 
 .parameter span {
@@ -75,7 +79,11 @@
 }
 .alignmentParameter {
 
-    height: 25em;
+    height: 10em;
+}
+
+.alignment_buttons {
+    height: 5em;
 }
 
 .parameter select {
@@ -143,6 +151,7 @@
     text-shadow: 0 0 0 #000;
     width: 17em;
     border-radius: 3px;
+    border: 1px solid grey;
     position: absolute;
     left: 22.75em;
     height: 2.5em;
@@ -153,6 +162,9 @@
 .parameters .nice-select .list {
     width: 17em;
     margin-left: 0;
+    border: 1px solid grey;
+    border-radius: 0px;
+    margin-top: 3px;
 }
 
 .parameters .nice-select .list li {
@@ -161,12 +173,19 @@
 
 }
 
+.parameters .nice-select .list li:hover {
+    background-color: #eeeeee;
+
+}
+
 .parameters input {
     text-shadow: 0 0 0 #878787;
     width: 15em;
+    height: 2.3em;
     border: solid lightgray;
     border-width: 0 0 1px 0;
     box-shadow: none;
+    background-color: #eeeeee;
 }
 
 .parameters input:focus {
@@ -178,6 +197,7 @@
     -webkit-transition : border 100ms ease-out;
     -moz-transition : border 100ms ease-out;
     -o-transition : border 100ms ease-out;
+    background-color: #eeeeee;
 
 }
 
@@ -369,6 +389,38 @@ margin-top: 2em;
     margin-left: 1em;
 }
 
+#tabpanel-Input .nice-select {
+    width: 15em;
+    font-size: 0.9em;
+    color: #000;
+    color: rgba(0, 0, 0, 0);
+    text-shadow: 0 0 0 #000;
+    text-shadow: 0 0 0 #000;
+    border: 1px solid grey;
+    position: absolute;
+    left: 65.6em;
+    height: 2.5em;
+    line-height: 2.3em;
+
+}
+
+#tabpanel-Input .nice-select .list {
+    width: 15em;
+    margin-left: 0;
+    border: 1px solid grey;
+    height: 15em;
+    overflow-y: scroll;
+    margin-top: 3px;
+    border-radius: 0px;
+}
+
+#tabpanel-Input .nice-select .list li {
+    line-height: 2.3em;
+    min-height: 0;
+
+}
+
+
 
 map[name="blastmap"] area { cursor: pointer; }
 
@@ -377,5 +429,5 @@ map[name="blastmap"] area { cursor: pointer; }
     .jobline .toolname {
         padding-left: 0.5em;
     }
-
+    
 }
