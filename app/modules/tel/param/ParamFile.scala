@@ -16,7 +16,7 @@ object GenerativeParamFileParser {
 
     f.lineIterator.noWSLines.map { line =>
 
-      val spt = line.split(' ')
+      val spt = line.split("\\s+")
       val fileending = spt(2).substring(spt(2).lastIndexOf('.'))
 
       (spt(1), fileending) match {

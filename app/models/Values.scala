@@ -5,7 +5,7 @@ import modules.tel.TEL
 
 /**
  *
- * Stores certain attributes to particular Values, like the full descriptive names of the parameter values.
+ * Interfaces with TEL and provides access to the values which are allowed for generative Params
  *
  * Created by lzimmermann on 14.12.15.
  */
@@ -34,18 +34,19 @@ class Values @Inject() (tel : TEL) {
 
   // TODO This will go soon
   final val alignmentFormats = Set("fas", "clu", "sto", "a2m", "a3m", "emb", "meg", "msf", "pir", "tre")
-  final val standardDBParams = tel.generateValues("standarddb")
   final val matrixParams = Set("BLOSUM62", "BLOSUM45", "BLOSUM80", "PAM30", "PAM70")
   final val outOrderParams = Set("Input", "Tree", "Gaps")
   // ------
 
   // encompasses for certain parameters the allowed values with a clear text name
+  // TODO Needs to be reloaded if TEL refreshed the parameter lists
   final val allowed : Map[String, Seq[(String, String)]] = Map(
    Param.ALIGNMENT -> alignmentFormats.map  { format =>
 
      format -> fullNames(format)
    }.toSeq,
-    Param.STANDARD_DB -> standardDBParams.toSeq,
+    Param.STANDARD_DB -> tel.generateValues(Param.STANDARD_DB).toSeq,
+    Param.HHBLITSDB -> tel.generateValues(Param.HHBLITSDB).toSeq,
     Param.MATRIX -> matrixParams.map  { matrix =>
 
       matrix -> fullNames(matrix)
