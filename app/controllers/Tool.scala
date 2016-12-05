@@ -2,12 +2,11 @@ package controllers
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager.{StartJob, Prepare}
+import actors.JobManager.{Prepare, StartJob}
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
 import better.files._
-
 import models.database._
 import models.search.JobDAO
 import models.tools.ToolModel
@@ -18,8 +17,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
-
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
+
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -45,16 +44,13 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
   def submit(toolname: String, mainID: String, jobID : String) = Action.async { implicit request =>
 
+    val paramMap = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
+
     getUser.flatMap { user =>
 
-      val boundForm = ToolModel.jobForm.bindFromRequest
 
-
-
-      lazy val DB = boundForm.data.getOrElse("standarddb","").toFile  // get hold of the database in use
-
-
-      lazy val hashParams = boundForm.data - "mainID" - "jobID" // don't hash the mainID or the jobID
+      lazy val DB = paramMap.getOrElse("standarddb","").toFile  // get hold of the database in use
+      lazy val hashParams = paramMap - "mainID" - "jobID" // don't hash the mainID or the jobID
 
       lazy val jobByteArray = hashParams.toString().getBytes // convert params to hashable byte array
       lazy val inputHash = FNV.hash64(jobByteArray).toString()
@@ -63,14 +59,14 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
 
       lazy val dbName = {
-        boundForm.data.get("standarddb") match {
+        paramMap.get("standarddb") match {
           case None => Some("none")
           case _ => Some(DB.name)
         }
       }
 
       lazy val dbMtime = {
-        boundForm.data.get("standarddb") match {
+        paramMap.get("standarddb") match {
           case None => Some("1970-01-01T00:00:00Z")
           case _ => Some(DB.lastModifiedTime.toString)
         }
@@ -131,7 +127,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
             case None =>
               // Prepare the Job
 
-              jobManager ! Prepare(user, jobID, newMainID, toolname, boundForm.data)
+              jobManager ! Prepare(user, jobID, newMainID, toolname, paramMap)
               jobManager ! StartJob(user.userID, newMainID)
               Ok(Json.obj("jobSubmitted"  -> true,
                 "identicalJobs" -> false,
@@ -144,20 +140,17 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
     }
   }
 
-
-
   def submitAgain(toolname: String, mainID: String, jobID : String) = Action.async { implicit request =>
 
     getUser.flatMap { user =>
 
-      val boundForm = ToolModel.jobForm.bindFromRequest
+      val paramMap = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
 
       // Prepare the Job
       val newMainID = BSONObjectID.parse(mainID).get
-      jobManager ! Prepare(user, jobID, newMainID, toolname, boundForm.data)
+      jobManager ! Prepare(user, jobID, newMainID, toolname, paramMap)
       jobManager ! StartJob(user.userID, newMainID)
       Future.successful(Ok)
     }
   }
-
 }
