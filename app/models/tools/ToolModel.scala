@@ -68,29 +68,6 @@ object ToolModel extends PlayEnum[ToolModel] {
 
   val values = findValues
 
-  final val jobForm = Form(
-    tuple(
-      Param.ALIGNMENT -> nonEmptyText, // Input Alignment or input sequences
-      Param.ALIGNMENT_FORMAT -> optional(nonEmptyText),
-      Param.STANDARD_DB -> optional(text),
-      Param.MATRIX -> optional(text),
-      Param.NUM_ITER -> optional(number),
-      Param.EVALUE -> optional(number),
-      Param.ETRESH -> optional(bigDecimal),
-      Param.GAP_OPEN -> optional(number),
-      Param.GAP_EXT -> optional(number),
-      Param.GAP_TERM -> optional(number),
-      Param.DESC -> optional(number),
-      Param.CONSISTENCY -> optional(number),
-      Param.ITREFINE -> optional(number),
-      Param.PRETRAIN -> optional(number),
-      Param.MAXROUNDS -> optional(number),
-      Param.OFFSET -> optional(number),
-      Param.BONUSSCORE -> optional(number),
-      Param.OUTORDER -> optional(text)
-    )
-  )
-
   val toolMap : Map[String, ToolModel] = Map(
     "psiblast" -> PsiBlast,
     "tcoffee" -> Tcoffee,
