@@ -143,8 +143,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
 
 
-    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
-      "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
+    val params = Seq(Param.ALIGNMENT, "hhblitsdb", "maxrounds")
 
     val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
   }
