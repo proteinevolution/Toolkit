@@ -492,7 +492,15 @@ formComponents =
     label: "Select Standard Database"
     value: args.value
   ]
-
+  "hhblitsdb": (args) -> [
+    ParameterSelectComponent
+  ,
+    options: args.options
+    name: "hhblitsdb"
+    id: "hhblitsdb"
+    label: "Select Target Database"
+    value: args.value
+  ]
   "matrix": (args) -> [
     ParameterSelectComponent
   ,
@@ -510,7 +518,6 @@ formComponents =
     label: "Number of Iterations"
     value: args.value
   ]
-
   "evalue": (args) -> [
     ParameterNumberComponent
   ,

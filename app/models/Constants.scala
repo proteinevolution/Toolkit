@@ -9,7 +9,7 @@ import com.typesafe.config.ConfigFactory
   */
 trait Constants {
 
-  val SEPARATOR = File.separator
+  val SEPARATOR: String = File.separator
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
   val jobJSONFileName = "JOB.json"
 }
@@ -41,4 +41,5 @@ object Param {
   final val BONUSSCORE = "bonusscore"
   final val OUTORDER = "outorder"
   final val ETRESH = "inclusion_ethresh"
+  final val HHBLITSDB  = "hhblitsdb"
 }
