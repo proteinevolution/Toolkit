@@ -15,7 +15,7 @@ class Values @Inject() (tel : TEL) {
   // Maps parameter values onto their full names descriptions, as they should appear in the view
   final val fullNames = Map(
 
-    "fas"  -> "FASTA",
+    "fas" -> "FASTA",
     "clu" -> "CLUSTALW",
     "sto" -> "Stockholm",
     "a2m" -> "A2M",
@@ -40,14 +40,14 @@ class Values @Inject() (tel : TEL) {
 
   // encompasses for certain parameters the allowed values with a clear text name
   // TODO Needs to be reloaded if TEL refreshed the parameter lists
-  final val allowed : Map[String, Seq[(String, String)]] = Map(
-   Param.ALIGNMENT -> alignmentFormats.map  { format =>
+  final val allowed: Map[String, Seq[(String, String)]] = Map(
+    Param.ALIGNMENT -> alignmentFormats.map { format =>
 
-     format -> fullNames(format)
-   }.toSeq,
+      format -> fullNames(format)
+    }.toSeq,
     Param.STANDARD_DB -> tel.generateValues(Param.STANDARD_DB).toSeq,
     Param.HHBLITSDB -> tel.generateValues(Param.HHBLITSDB).toSeq,
-    Param.MATRIX -> matrixParams.map  { matrix =>
+    Param.MATRIX -> matrixParams.map { matrix =>
 
       matrix -> fullNames(matrix)
     }.toSeq
