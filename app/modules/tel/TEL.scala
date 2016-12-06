@@ -9,7 +9,6 @@ import better.files._
 import models.Implicits._
 import modules.tel.env.Env
 import modules.tel.param.Params
-import modules.tel.runscripts.RunscriptManager
 
 
 /**
@@ -18,8 +17,7 @@ import modules.tel.runscripts.RunscriptManager
   */
 @Singleton
 class TEL @Inject() (env : Env,
-                     params: Params,
-                     @Named("telRunscriptManager") runscriptManager : RunscriptManager)
+                     params: Params)
   extends TELRegex with TELConstants   {
 
 
