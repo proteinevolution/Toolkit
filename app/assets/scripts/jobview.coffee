@@ -434,7 +434,30 @@ window.ParameterAlignmentComponent =
 
                 </div>###
 
+ParameterRadioComponent =
+  model: (args) ->
+    value: m.prop args.value
 
+  controller: (args) ->
+    options: args.options
+    name: args.name
+    id: args.id
+    label: args.label
+    param: new ParameterRadioComponent.model args
+    value: args.value
+
+  view: (ctrl) ->
+    renderParameter [
+      m "label", {for: ctrl.id}, ctrl.label
+      ctrl.options.map (entry) ->
+        m "input", {type: "radio", name: ctrl.name, value: entry[0]}, entry[1]
+    ]
+
+###
+<input type="radio" name="gender" value="male" checked> Male<br>
+<input type="radio" name="gender" value="female"> Female<br>
+<input type="radio" name="gender" value="other"> Other
+###
 
 ParameterSelectComponent =
   model: (args) ->
