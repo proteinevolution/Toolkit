@@ -42,4 +42,5 @@ object Param {
   final val OUTORDER = "outorder"
   final val ETRESH = "inclusion_ethresh"
   final val HHBLITSDB  = "hhblitsdb"
+  final val ALIGNMODE = "alignmode"
 }
