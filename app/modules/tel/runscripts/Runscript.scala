@@ -7,10 +7,6 @@ import better.files._
   * Created by lzimmermann on 10/19/16.
   */
 
-object Runscript {
-
-  def apply(path : String) = new Runscript(path)
-}
 
 /**
   * Represents one particular runscript, specified by the path of the corresponding file.
@@ -18,6 +14,7 @@ object Runscript {
   *
   * @param path The path to the runscript that belongs to the instance of this class
   */
+/*
 class Runscript(path : String) {
 
   private val f = path.toFile
@@ -50,8 +47,6 @@ class Runscript(path : String) {
   }
 }
 
-
-/*
 
 this.typeClass = this.f.lineIterator
         .map(_.split('#')(0)) // Trim comment lines
