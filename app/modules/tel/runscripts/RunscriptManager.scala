@@ -2,7 +2,11 @@ package modules.tel.runscripts
 
 import javax.inject.{Inject, Named, Singleton}
 
-import play.api.Logger
+import better.files._
+import shapeless.ops.tuple.Modifier
+
+
+
 
 /**
   * Class watches the directory of runscripts and monitors changes. Reloads information about runscripts once
@@ -13,6 +17,7 @@ import play.api.Logger
 @Singleton
 class RunscriptManager @Inject() (@Named("runscriptPath") runscriptPath : String) {
 
-
-    Logger.info("Going to use " + runscriptPath)
 }
+
+
+
