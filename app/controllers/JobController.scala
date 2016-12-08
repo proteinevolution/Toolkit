@@ -3,7 +3,8 @@ package controllers
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor
-import actors.JobActor.Delete
+import actors.JobActor.RunscriptData
+import actors.Master.CreateJob
 import akka.actor.{ActorRef, ActorSystem, Props}
 import models.job.JobIDProvider
 import play.api.Logger
@@ -29,26 +30,29 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
 
   // Job Controller can directly send message to the JobActor if Possible, otherwise
   // the Master Actor needs to be used
-
+  // TODO We might introduce more Masters and split them up on jobID ranges
   /**
-    * Creates a new Job by instanciating a corresponding job actor
+    * Action requests a new Job instance at the Master.
     *
     */
-  def create(jobIDoption : Option[String]):Action[AnyContent] = Action.async { implicit request =>
+  def create(toolname: String, jobIDoption : Option[String]):Action[AnyContent] = Action.async { implicit request =>
 
-    if(jobIDoption.isDefined && !jobIDProvider.isAvailable(jobIDoption.get)) {
+    // Determine whether the user Provided jobID is valid
+    if (jobIDoption.isDefined && !jobIDProvider.isAvailable(jobIDoption.get)) {
 
       Future.successful(BadRequest)
-    }
-    val jobID = jobIDoption.getOrElse(jobIDProvider.provide)
+    } else {
 
-    getUser.map { user =>
+      val jobID = jobIDoption.getOrElse(jobIDProvider.provide)
 
-          Logger.info(s"JobID: $jobID -- Spawn JobActor")
-          val jobActor = actorSystem.actorOf(Props(jobActorFactory(jobID, user.userID.stringify)), jobID)
-          Ok
-        }
+      getUser.map { user =>
+
+        master ! CreateJob(jobID, RunscriptData(toolname,
+          request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)))
+        Ok
+      }
     }
+  }
 
   /*
   context.actorOf(props(Props(create)), name)
@@ -57,7 +61,6 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
 
   def delete(jobID : String) = Action {
 
-    actorSystem.actorSelection(s"user/$jobID") ! Delete
     Ok
   }
 
