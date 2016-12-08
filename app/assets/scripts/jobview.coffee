@@ -269,40 +269,19 @@ JobSubmissionComponent =
   controller: (args) ->
     this.submitting = false
     submit: (startJob) ->
-      submitting:true
-      mainID = JobModel.mainID()
-      $('#submitJobButton').attr 'disabled', 'disabled'
-      jobid = args.job().jobID()    # TODO Maybe merge with jobID validation
-      if not jobid                # TODO Prevent submission if validation fails
-        jobid = window.Job.generateJobID()
-      args.add(new Job({mainID: mainID, jobID: jobid, state: 6, createdOn: "now", toolname: args.job().tool.toolname}))
 
+      # Either use custom jobID or declare not using an own
+      jobid = args.job().jobID()
+      if not jobid
+        jobid = null
+      submitRoute = jsRoutes.controllers.JobController.create(args.job().tool.toolname, jobid)
 
-      JobModel.messages([])
+      m.request
+        method: submitRoute.method
+        url: submitRoute.url
+        data: new FormData(document.getElementById("jobform"))
+        serialize: (data) -> data
 
-      submitRoute = jsRoutes.controllers.Tool.submit(args.job().tool.toolname, mainID, jobid)
-      submitRoute2 = jsRoutes.controllers.Tool.submitAgain(args.job().tool.toolname, mainID, jobid)
-      formData = new FormData(document.getElementById("jobform"))
-      Job.requestTool(true)
-
-      # Send submission request and see whether server accepts or job already exists
-      m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
-        if json.existingJobs
-          if confirm " Already existing job found: " + JSON.stringify(json.existingJob.job_id) + ".\n\n You could save some time and just fetch it. Even the timestamp of the database is the same! \n Do you want to load the existing job? Click on cancel to run the job again."
-            #window.open('http://olt.eb.local:6500/#/jobs/' + json.existingJob.mainID, '_self')
-            m.route("/jobs/#{mainID}")
-            Job.delete(mainID)
-            m.route("/jobs/#{json.existingJob.mainID}")
-            m.request
-              method: 'POST'
-              url: '/jobs/dateviewed/' + json.existingJob.mainID
-          else
-            console.log "job was found but will be submitted anew"
-            m.request({url: submitRoute2.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
-              m.route("/jobs/#{mainID}")
-        else
-          console.log "New Job Submission"
-          m.route("/jobs/#{mainID}")
 
     startJob: ->
       sendMessage("type":"StartJob", "mainID":args.job.mainID)

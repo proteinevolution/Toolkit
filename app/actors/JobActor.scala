@@ -1,9 +1,10 @@
 package actors
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 import actors.JobActor._
-import akka.actor.{Actor, FSM}
+import actors.Master.CreateJob
+import akka.actor.{Actor, ActorRef, FSM}
 import com.google.inject.assistedinject.Assisted
 import models.database._
 import modules.tel.TEL
@@ -19,37 +20,37 @@ import scala.concurrent.duration._
 
 object JobActor {
 
-  // Job Events that might occur
-  case object Delete
+
+  // The JobActor is either Idle or represent a Jobstate
+  sealed trait JobActorState
+  case class Employed(state: JobState) extends JobActorState
+  case object Unemployed extends JobActorState
 
 
   // Internal Data of the JobActor to work on
   sealed trait JobData
   case object Empty extends JobData
-  case class RunscriptData(toolname: String)
+  case class RunscriptData(toolname: String, params: Map[String, String]) extends JobData
 
 
   trait Factory {
 
-    def apply(@Assisted("jobID") jobID: String,
-              @Assisted("ownerUserID") ownerUserID: String) : Actor
+    def apply : Actor
   }
 }
 
-
 class JobActor @Inject() (tel : TEL,
-                          @Assisted("jobID") val jobID: String,
-                          @Assisted("ownerUserID") val ownerUserID: String) extends Actor with FSM[JobState, JobData] {
+                          @Named("master") master: ActorRef) extends Actor with FSM[JobActorState, JobData] {
 
   // Set of sessionIDs of all users that are subscribed to this Job
-  private var subscribers = Set(ownerUserID)
-  startWith(Submitted, Empty)
+  startWith(Unemployed, Empty)
 
+  when(Unemployed) {
 
-  when(Submitted, stateTimeout = 1.second ) {
+    case Event(CreateJob(jobID, RunscriptData(toolname, params)), Empty) =>
 
-    case Event(StateTimeout, Empty) =>
-      Logger.info("JobActor Timeout in Submitted")
+      Logger.info("Deal with " + toolname)
+      Logger.info("Params " + params.mkString)
       stay using Empty
   }
 
