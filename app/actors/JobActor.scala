@@ -3,7 +3,7 @@ package actors
 import javax.inject.Inject
 
 import actors.JobActor._
-import akka.actor.{Actor, FSM, Props}
+import akka.actor.{Actor, FSM}
 import com.google.inject.assistedinject.Assisted
 import models.database._
 import modules.tel.TEL
@@ -24,8 +24,9 @@ object JobActor {
 
 
   // Internal Data of the JobActor to work on
-  sealed trait Data
-  case object Empty extends Data
+  sealed trait JobData
+  case object Empty extends JobData
+  case class RunscriptData(toolname: String)
 
 
   trait Factory {
@@ -38,7 +39,7 @@ object JobActor {
 
 class JobActor @Inject() (tel : TEL,
                           @Assisted("jobID") val jobID: String,
-                          @Assisted("ownerUserID") val ownerUserID: String) extends FSM[JobState, Data] {
+                          @Assisted("ownerUserID") val ownerUserID: String) extends Actor with FSM[JobState, JobData] {
 
   // Set of sessionIDs of all users that are subscribed to this Job
   private var subscribers = Set(ownerUserID)
