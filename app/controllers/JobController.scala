@@ -1,13 +1,13 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor
 import actors.JobActor.Delete
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import models.job.JobIDProvider
 import play.api.Logger
-import play.api.cache.CacheApi
+import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 
@@ -22,8 +22,13 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
                                actorSystem : ActorSystem,
                                jobActorFactory : JobActor.Factory,
                                implicit val userCache : CacheApi,
+                               @Named("master") master: ActorRef,
+                               @NamedCache("jobActorCache") val jobActorCache: CacheApi,
                                val reactiveMongoApi: ReactiveMongoApi)
   extends Controller with UserSessions {
+
+  // Job Controller can directly send message to the JobActor if Possible, otherwise
+  // the Master Actor needs to be used
 
   /**
     * Creates a new Job by instanciating a corresponding job actor
@@ -55,4 +60,8 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
     actorSystem.actorSelection(s"user/$jobID") ! Delete
     Ok
   }
+
+
+
+
 }
