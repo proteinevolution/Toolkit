@@ -132,5 +132,5 @@ GET           /api/jobs                               @controllers.Service.listJ
 
 
 # New routes defined for the JobActor per job stuff
-POST          /api/job                                @controllers.JobController.create(jobID: Option[String])
+POST          /api/job                                @controllers.JobController.create(toolname: String, jobID: Option[String])
 DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
