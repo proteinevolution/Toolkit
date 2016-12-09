@@ -1,41 +1,52 @@
 package actors
-import akka.actor.{Props, Actor, FSM}
-import models.database._
-import scala.concurrent.duration._
 
+import javax.inject.{Named, Inject}
+
+import actors.JobMonitor.UpdateJobStatus
+import akka.actor.{ActorLogging, ActorRef, Actor}
+import controllers.Settings
+import models.{ExitCodes, Constants}
+import models.database._
+import models.search.JobDAO
+import modules.CommonModule
+import modules.tel.TEL
+import play.api.i18n.MessagesApi
+import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
+import javax.inject.Singleton
+
+import reactivemongo.bson.BSONObjectID
 
 /**
- *
+ * Real time logging of jobstate transitions
  * Created by snam on 11.11.16.
  */
 
 
+object JobMonitor {
 
-object JobStateMonitor {
+  case class UpdateJobStatus(job : BSONObjectID, status : JobState)
 
-  def props(job : Job) = Props(new JobStateMonitor(job))
-
-
-  trait Factory {
-    def apply(key: String): Actor
-  }
 }
 
 
-// Problem is that we need either database connection or actorref
-
-class JobStateMonitor(job: Job) extends Actor with FSM[JobState, JobState] {
-
- // startWith(Submitted, job.status)
-
-  //when(Submitted) {
-
-    //case _ => goto(Prepared) forMax 5.seconds replying Submitted
-    //case _ => goto(Error) replying Error
-
-  //}
+@Singleton
+final class JobMonitor @Inject() (val messagesApi: MessagesApi,
+                                  val reactiveMongoApi: ReactiveMongoApi,
+                                  @Named("userManager") userManager : ActorRef,
+                                  val tel : TEL,
+                                  val jobDao : JobDAO,
+                                  val settings : Settings,
+                                  implicit val materializer: akka.stream.Materializer)
+  extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes with CommonModule {
 
 
+
+  def receive :Receive = {
+
+    case UpdateJobStatus(job: BSONObjectID, status: JobState) =>
+
+
+  }
 
 }
 
