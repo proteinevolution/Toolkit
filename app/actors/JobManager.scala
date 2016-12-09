@@ -24,8 +24,6 @@ import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 
-import akka.actor.ActorSystem
-import akka.actor.Props
 
 
 /**

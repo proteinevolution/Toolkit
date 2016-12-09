@@ -316,7 +316,7 @@ margin: auto;
   left: 15px;
   top: -8px;
   border: 13px solid transparent;
-  border-bottom-color: #dimgray;
+  border-bottom-color: dimgray;
   -webkit-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
   -moz-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
   box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
@@ -340,7 +340,7 @@ margin: auto;
 
 .search-results-dropdown {
     background-color: white;
-    margin-top: 0px;
+    margin-top: 0;
     width: 100%;
 }
 
@@ -358,3 +358,9 @@ margin: auto;
     padding: 5px 5px 5px 15px;
 }
 
+.jobTicker {
+    margin-top: 355px;
+    display: block;
+    margin: auto;
+    max-width: 60rem;
+}
