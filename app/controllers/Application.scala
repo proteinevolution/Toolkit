@@ -36,6 +36,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                         val search           : Search,
                         val settings : Settings,
       @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
+                           @Named("master") master: ActorRef,
                             configuration    : Configuration) extends Controller with I18nSupport
                                                                                  with CommonModule
                                                                                  with Constants
@@ -53,7 +54,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     */
   def ws = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
     getUser.map { user =>
-      Right(ActorFlow.actorRef(WebSocketActor.props(user.userID, userManager)))
+      Right(ActorFlow.actorRef(WebSocketActor.props(user.userID, userManager, master)))
     }
   }
 

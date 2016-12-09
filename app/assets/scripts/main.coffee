@@ -24,7 +24,7 @@ m.route.mode = 'hash'
 m.route document.getElementById('main-content'), '/',
   '/' : Index
   '/tools/:toolname': m Toolkit, {isJob: false}
-  '/jobs/:mainID': m Toolkit, {isJob: true}
+  '/jobs/:jobID': m Toolkit, {isJob: true}
 
 
 

@@ -1,13 +1,13 @@
 package actors
 
-import actors.JobManager._
+import actors.JobActor.JobStateChanged
+import actors.JobManager.{AddJob, ForceDeleteJob, JobIDUnknown, StartJob}
 import actors.UserManager._
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import akka.actor.Props
-import models.database.{User, Job}
 import play.api.libs.json.{JsValue, Json}
 import play.api.Logger
 import reactivemongo.bson.BSONObjectID
@@ -17,15 +17,17 @@ import reactivemongo.bson.BSONObjectID
   *
   */
 object WebSocketActor {
-  def props(userID : BSONObjectID, jobManager : ActorRef)(out: ActorRef) = {
-    Props(new WebSocketActor(userID, jobManager, out))
+  def props(userID : BSONObjectID, jobManager : ActorRef, master: ActorRef)(out: ActorRef) = {
+    Props(new WebSocketActor(userID, jobManager, master, out))
   }
 }
 
-private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef, out: ActorRef)  extends Actor with ActorLogging {
+private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef, master: ActorRef, out: ActorRef)  extends Actor with ActorLogging {
+
   override def preStart =
     // Connect to JobManager via Session ID
     userManager ! UserConnect(userID)
+    master ! UserConnect(userID)
 
   override def postStop =
     // User Disconnected
@@ -119,10 +121,8 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
     case JobIDUnknown =>
       out ! Json.obj("type" -> "JobIDUnknown")
 
-    // Messages the user about a change in the Job status
-    case JobStateChanged(job, state) =>
-      out ! Json.obj("type" -> "UpdateJob",
-                     "job"  -> job.cleaned())
+    case JobStateChanged(jobID, state) =>
 
+      out ! Json.obj("type" -> "UpdateJob", "jobID" -> jobID, "state" -> state)
   }
 }

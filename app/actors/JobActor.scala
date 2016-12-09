@@ -5,16 +5,15 @@ import javax.inject.{Inject, Named}
 import actors.JobActor._
 import actors.Master.CreateJob
 import akka.actor.{Actor, ActorRef, FSM}
-import com.google.inject.assistedinject.Assisted
 import models.Constants
 import models.database._
-import modules.tel.TEL
 import modules.tel.runscripts._
-import play.api.Logger
 import better.files._
 import modules.tel.runscripts.Runscript.Evaluation
+import play.api.Logger
+import play.api.cache.{CacheApi, NamedCache}
 
-import scala.concurrent.duration._
+import scala.collection.mutable
 
 
 /**
@@ -45,14 +44,20 @@ object JobActor {
     def apply : Actor
   }
 
+  // Messages sent to the Watchers
+  case class JobStateChanged(jobID: String, newState: JobState)
 }
 
 class JobActor @Inject() (runscriptManager : RunscriptManager,
-                          @Named("master") master: ActorRef)
+                         @NamedCache("jobitem") jobitemCache : CacheApi,
+                         @Named("master") master: ActorRef)
   extends Actor with FSM[JobActorState, JobData] with Constants {
 
   var currentJobID : Option[String] = None
   var executionContext: Option[ExecutionContext] = None
+
+  // All actors that are currently monitoring this job
+  val watchers : mutable.Set[ActorRef] = mutable.Set[ActorRef]()
 
 
   /** Supplies a value for a particular Parameter. Returns params again if the parameter
@@ -86,18 +91,22 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
     params.forall( item  => item._2._2.isDefined)
   }
 
-
-
   // Set of sessionIDs of all users that are subscribed to this Job
   startWith(Unemployed, Empty)
 
+
+  // ------   Unemployed   ---------------------------------------------------
   when(Unemployed) {
 
-    case Event(CreateJob(jobID, RunscriptData(toolname, params)), Empty) =>
+    case Event(CreateJob(jobID, user,  RunscriptData(toolname, params)), Empty) =>
 
-      // Change to current JobID
+      // Job Initialization
       this.currentJobID = Some(jobID)
       this.executionContext = Some(ExecutionContext(jobPath/jobID))
+      this.watchers.clear()
+      user match {
+        case Right(actorRef) => this.watchers.add(actorRef)
+      }
 
       // Representation of the current State of the job submission
       var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscriptManager(toolname).parameters.map { t =>
@@ -107,13 +116,42 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
 
         parameters  = supply(paramName, value, parameters)
       }
+      // Decide if we go to pending (parameters missing) or Running
+      if(isComplete(parameters)) {
 
-      Logger.info("JobActor has supplied all parameters and now decides what to do")
-      Logger.info(isComplete(parameters).toString)
+        goto(Employed(Running))
 
+      } else {
 
-      stay using Empty
+        stay using Empty
+      }
   }
+  // -----------------------------------------------------------------
+
+  when(Employed(Running)) {
+
+
+    case Event(_,_) =>
+
+        Logger.info("Now working")
+        stay using Empty
+  }
+
+
+  onTransition {
+
+    // If we change to a new Employed state, notify all watchers
+    case _ -> Employed(state) =>
+
+
+
+
+      Logger.info("Notify watchlist")
+      watchers.foreach(_ ! JobStateChanged(currentJobID.get, state))
+  }
+
+
+
 
 
   initialize()
