@@ -1,6 +1,6 @@
 package modules
 
-import models.database.{Job, User}
+import models.database.{FrontendJob, Job, User}
 import play.api.http.ContentTypes
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoComponents
@@ -21,9 +21,16 @@ trait CommonModule extends ReactiveMongoComponents {
   // Job DB access
   protected def jobCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
 
+  protected def frontendJobCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("frontendjobs"))
+
   protected def addJob(job: Job) = jobCollection.flatMap(_.insert(job))
 
+  protected def addFrontendJob(frontendJob: FrontendJob) = frontendJobCollection.flatMap(_.insert(frontendJob))
+
   protected def findJob(selector : BSONDocument) = jobCollection.flatMap(_.find(selector).one[Job])
+
+  protected def findFrontendJob(selector : BSONDocument) = frontendJobCollection.flatMap(_.find(selector).one[Job])
+
   protected def findJobs(selector : BSONDocument) = {
     jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
@@ -32,8 +39,16 @@ trait CommonModule extends ReactiveMongoComponents {
     jobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
   }
 
+  protected def modifyFrontendJob(selector : BSONDocument, modifier : BSONDocument) = {
+    frontendJobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
+  }
+
   protected def updateJob(selector : BSONDocument, modifier : BSONDocument) = {
     jobCollection.flatMap(_.update(selector, modifier, multi = true))
+  }
+
+  protected def updateFrontendJob(selector : BSONDocument, modifier : BSONDocument) = {
+    frontendJobCollection.flatMap(_.update(selector, modifier, multi = true))
   }
 
   protected def removeJob(selector : BSONDocument) = jobCollection.flatMap(_.remove(selector))

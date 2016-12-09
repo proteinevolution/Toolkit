@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager.{Prepare, StartJob}
+import actors.JobManager.{AddFrontendJob, Prepare, StartJob}
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
@@ -40,6 +40,18 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                            @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport with UserSessions with CommonModule {
 
   implicit val timeout = Timeout(5.seconds)
+
+
+  // counts usage of frontend tools in order to keep track for our stats
+
+  def frontendCount(toolname: String, mainID: String) = Action.async { implicit ctx =>
+
+    getUser.flatMap { user =>
+      val newMainID = BSONObjectID.parse(mainID).get
+      jobManager ! AddFrontendJob(user, newMainID, toolname)
+      Future.successful(Ok)
+    }
+  }
 
 
   def submit(toolname: String, mainID: String, jobID : String) = Action.async { implicit request =>

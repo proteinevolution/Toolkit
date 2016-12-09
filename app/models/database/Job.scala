@@ -1,47 +1,13 @@
 package models.database
 
-import akka.actor.{FSM, Actor}
+
 import models.Constants
 
-import models.database.JobState
 import org.joda.time.DateTime
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
 
-/** ?
-  *
-  * @param mainID       ID of the Job in the database
-  * @param jobType
-  * @param parentID     ID of the parent Job
-  * @param jobID        User Visible Job ID
-  * @param ownerID      Private Jobs will have a Owner
-  * @param status       status of the Job
-  * @param tool         name of the tool used for the Job
-  * @param statID
-  * @param dateCreated  date on which the Job was created
-  * @param dateUpdated  date on which the Job was updated last
-  * @param dateViewed   date on which the Job was viewed last
-  *
-  * Maps MySQL schema with some fields renamed (e.g. type is a reserved word in Scala)
-  * +------------+------------------+------+-----+-------------------+-----------------------------+
-    | Field      | Type             | Null | Key | Default           | Extra                       |
-    +------------+------------------+------+-----+-------------------+-----------------------------+
-    | main_id    | int(10) unsigned | NO   | PRI | NULL              | auto_increment              |
-    | type       | varchar(50)      | YES  |     | NULL              |                             |
-    | parent_id  | int(11)          | YES  |     | NULL              |                             |
-    | job_id     | varchar(100)     | YES  |     | NULL              |                             |
-    | user_id    | int(11)          | YES  |     | NULL              |                             |
-    | status     | char(1)          | YES  |     | NULL              |                             |
-    | tool       | varchar(100)     | YES  |     | NULL              |                             |
-    | stat_id    | int(11)          | YES  |     | NULL              |                             |
-    | created_on | timestamp        | NO   |     | CURRENT_TIMESTAMP |                             |
-    | updated_on | timestamp        | NO   |     | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |
-    | viewed_on  | timestamp        | NO   |     | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |
-    +------------+------------------+------+-----+-------------------+-----------------------------+
-  *
-  *
-  */
 
 
 case class Job(mainID      : BSONObjectID,                // ID of the Job in the System
@@ -93,6 +59,13 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
              "createdOn" -> dateCreated.get,
              "toolname" -> tool)
   }
+
+  def updateState(newStatus : JobState) = {
+
+    this.copy(status = newStatus)
+
+  }
+
 
 }
 
