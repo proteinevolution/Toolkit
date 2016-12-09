@@ -26,6 +26,11 @@ div#main-container {
     height: 100%;
 }
 
+#main-container .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
 div#main {
     margin-bottom: 55px;
     background-color: #cecece;
@@ -40,10 +45,6 @@ div#main {
 
     padding-left: 1.2em;
 }
-
-
-
-
 
 .d {
     background-color: #DBFFDB;
@@ -217,6 +218,8 @@ tr.job a:visited {
 
     min-height: 100%;
     display: flex;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 
@@ -507,8 +510,9 @@ textarea { resize:both; }
     margin-left: 1.5em;
 }
 
+
 #site-notifications i::before {
-     padding-left: 15px;
+     padding-left: 10px;
 }
 
 

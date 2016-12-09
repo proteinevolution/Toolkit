@@ -94,7 +94,7 @@
 
         <div id="main-container">
 
-            <div id="main" class="row">
+            <div id="main" class="row" style="max-width: 75rem; margin: 0 auto">
              <div class="medium-12 large-12 small-12 padded-column columns">
 
 
@@ -143,36 +143,39 @@
 
                 <!--logo-->
                 <div class="large-2 columns" >
-                    <a href="/#/"><img  style="width: 90%; margin-left:1.5em; margin-bottom: 2em;" src="@routes.Assets.versioned("images/logo3.svg")"></a>
+                    <a href="/#/"><img  style="width: 90%; margin-bottom: 2em;" src="@routes.Assets.versioned("images/logo3.svg")"></a>
                 </div>
                 <!--navbar-->
-                <div class="large-8 columns show-for-large">
+                <div class="large-10 columns show-for-large">
                     <div class="row">
-                        <div class="columns large-11" style="padding-left: 4em; padding-right: 0.8em;">
+                        <div class="columns large-10" style="padding-left: 4em; padding-right: 0.8em;">
                             @elements.navbar()
                         </div>
                         <div class="columns large-1">
                             <!--offline callout-->
                             <div class="alert callout" id="offline-alert">Reconnecting...</div>
                         </div>
+                        <div class="columns large-1">
+                                <!--signin -->
+                            <div id="site-notifications" class="align-self-middle">
+                                <div id="user-control">
+                                    <a id="auth-link" onclick="openNav()" style="float: right; padding-right: 15px;">
+                                        <i class="icon-user" style="font-size:1.5em; padding-right: 0.5em;"></i>
+                                        <span id="auth-link-text">
+                                        @{user.userData match {
+                                            case Some(userData) => userData.nameLogin
+                                            case None           => "Sign in"
+                                        }}
+                                        </span>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!--signin -->
-                <div id="site-notifications" class="large-2 columns align-self-middle" style="margin-top: 0.6em; margin-bottom: 2em; padding-left: 4em;">
-                    <div id="user-control">
-                        <a id="auth-link" onclick="openNav()" style="float: right; padding-right: 15px;">
-                            <i class="icon-user" style="font-size:1.5em;"></i>
-                            <span id="auth-link-text">
-                            @{user.userData match {
-                                case Some(userData) => userData.nameLogin
-                                case None           => "Sign in"
-                            }}
-                            </span>
-                        </a>
-                    </div>
 
-                </div>
             </div>
 
             <!--Off Canvas Menu for mobile version of Toolkit-->

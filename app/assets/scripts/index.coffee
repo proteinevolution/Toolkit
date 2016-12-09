@@ -169,9 +169,17 @@ recentUpdatesComponent =
 tilescomponent =
 
   view: ->
+
+
     m "div", {class: "lazy-container"},[
+      m "div", {class: "row"}, [
+        m "div", {class: "large-8 columns"}, [
+
+        ]
+        m "div", {class: "large-4 columns"}
+      ]
       m "div", {class: "tile-row"}, [
-          m "div", {class: "content-wrapper-half large-3 columns"}, [
+          m "div", {class: "content-wrapper-half large-3 large-offset-2 columns"}, [
             m "div", {class: "image-wrapper"},
               m "img", { src: '/assets/images/EBGebaeude-04.tif'}
             m "div", {class: "text-wrapper-half"}, [
@@ -183,7 +191,7 @@ tilescomponent =
 
             ]
           ]
-          m "div", {class: "content-wrapper-half margin-tile large-6 columns"}, [
+          m "div", {class: "content-wrapper-half margin-tile large-5 columns"}, [
             m "div", {class: "image-wrapper"},
               m "img", { src: '/assets/images/bioj.jpg'}
             m "div", {class: "text-wrapper-half"}, [
