@@ -117,9 +117,9 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           userManager ! JobIDUnknown(userID)
       }
 
-    case AddFrontendJob (user : BSONObjectID, mainID : BSONObjectID, toolName : String) =>
+    case AddFrontendJob (user: BSONObjectID, mainID : BSONObjectID, toolName : String) =>
       val jobCreationTime = DateTime.now()
-      val ownerID         = Some(user)
+      val ownerID         = None
       val newJob = FrontendJob(
         mainID     = mainID,
         jobType     = "",
