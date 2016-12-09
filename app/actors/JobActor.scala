@@ -6,9 +6,13 @@ import actors.JobActor._
 import actors.Master.CreateJob
 import akka.actor.{Actor, ActorRef, FSM}
 import com.google.inject.assistedinject.Assisted
+import models.Constants
 import models.database._
 import modules.tel.TEL
+import modules.tel.runscripts._
 import play.api.Logger
+import better.files._
+import modules.tel.runscripts.Runscript.Evaluation
 
 import scala.concurrent.duration._
 
@@ -27,20 +31,62 @@ object JobActor {
   case object Unemployed extends JobActorState
 
 
-  // Internal Data of the JobActor to work on
+  // Data that can be send to the JobActor via a message
   sealed trait JobData
   case object Empty extends JobData
   case class RunscriptData(toolname: String, params: Map[String, String]) extends JobData
 
+  // Data that the JobActor operates on
+  sealed trait JobActorData
+  case class ParameterSupply(params: Map[String, Boolean], toolname: String) extends JobActorData
 
   trait Factory {
 
     def apply : Actor
   }
+
 }
 
-class JobActor @Inject() (tel : TEL,
-                          @Named("master") master: ActorRef) extends Actor with FSM[JobActorState, JobData] {
+class JobActor @Inject() (runscriptManager : RunscriptManager,
+                          @Named("master") master: ActorRef)
+  extends Actor with FSM[JobActorState, JobData] with Constants {
+
+  var currentJobID : Option[String] = None
+  var executionContext: Option[ExecutionContext] = None
+
+
+  /** Supplies a value for a particular Parameter. Returns params again if the parameter
+    * is not present
+    * @param name
+    * @param value
+    * @param params
+    */
+  private def supply(name: String, value: String, params: Seq[(String, (Runscript.Evaluation, Option[Argument]))])
+  : Seq[(String, (Runscript.Evaluation, Option[Argument]))] = {
+
+      params.map  {
+        case (paramName, (evaluation, _)) if paramName == name =>
+
+          val x = Some(evaluation(RString(value), executionContext.get))
+          (name, (evaluation, x))
+
+        case q => q
+      }
+  }
+
+  /**
+    * Determines whether the parameter list is completely supplied
+    *
+    * @param params
+    * @return
+    */
+  private def isComplete(params: Seq[(String, (Runscript.Evaluation, Option[Argument]))]) : Boolean  = {
+
+    // If we have an argument for all parameters, we are done
+    params.forall( item  => item._2._2.isDefined)
+  }
+
+
 
   // Set of sessionIDs of all users that are subscribed to this Job
   startWith(Unemployed, Empty)
@@ -49,8 +95,23 @@ class JobActor @Inject() (tel : TEL,
 
     case Event(CreateJob(jobID, RunscriptData(toolname, params)), Empty) =>
 
-      Logger.info("Deal with " + toolname)
-      Logger.info("Params " + params.mkString)
+      // Change to current JobID
+      this.currentJobID = Some(jobID)
+      this.executionContext = Some(ExecutionContext(jobPath/jobID))
+
+      // Representation of the current State of the job submission
+      var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscriptManager(toolname).parameters.map { t =>
+        t._1 -> (t._2 -> None)
+      }
+      for((paramName, value) <- params) {
+
+        parameters  = supply(paramName, value, parameters)
+      }
+
+      Logger.info("JobActor has supplied all parameters and now decides what to do")
+      Logger.info(isComplete(parameters).toString)
+
+
       stay using Empty
   }
 

@@ -37,6 +37,8 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
     */
   def create(toolname: String, jobIDoption : Option[String]):Action[AnyContent] = Action.async { implicit request =>
 
+
+
     // Determine whether the user Provided jobID is valid
     if (jobIDoption.isDefined && !jobIDProvider.isAvailable(jobIDoption.get)) {
 

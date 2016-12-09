@@ -1,55 +1,37 @@
 package modules.tel.runscripts
 
-import better.files._
+import better.files.File
 
-/**
-  * The context in which a runscript is being executed
-  *
-  * Created by lzimmermann on 07.12.16.
-  */
-class ExecutionContext(val workingDirectory : File) extends Cleanable {
+
+class ExecutionContext(val root: File) {
+
+  private val repFileBase = root./("params").createDirectories()
 
   /*
-   * Definition of subdirectories (TODO Get them from configuration)
+   Creates a new file in this ExecutionContext with a certain name and content.
+   A preexisting file with the same name will be overridden
    */
-  val children = Map(
+  def getFile(name: String, content: String) : File = {
 
-    "params" -> "params"
-  )
-  for(child <- children.valuesIterator) {
-    workingDirectory./(child).createDirectories()
-  }
-
-  /**
-    * Returns subdirectory of execution context
-    * @param name
-    * @return
-    */
-  def /(name: String): File = workingDirectory./(children(name))
-
-
-  /**
-    * Cleaning of an execution Context will at least remove the working directory
-    */
-  def clean(): Unit = {
-
-    for(child <- children.valuesIterator) {
-      workingDirectory./(child).delete(swallowIOExceptions = true)
-    }
-    workingDirectory.delete(swallowIOExceptions = true)
+    val x = repFileBase./(name)
+    x.delete(swallowIOExceptions = true)
+    x.write(content)
+    x
   }
 }
-
 object ExecutionContext {
 
-  def apply(workingDirectory : File): ExecutionContext = {
+  def apply(root: File): ExecutionContext ={
 
-    if(workingDirectory.isDirectory) {
-      new ExecutionContext(workingDirectory)
+    if(root.exists) {
+
+      throw FileAlreadyExists("Directory for Execution context already exists.")
     }
     else {
-      throw NotADirectoryException(s"Provided file ${workingDirectory.toString} is not a directory." )
+      new ExecutionContext(root)
     }
   }
 }
+
 case class NotADirectoryException(msg : String) extends IllegalArgumentException(msg)
+case class FileAlreadyExists(msg: String) extends IllegalArgumentException(msg)
