@@ -20,7 +20,6 @@ class window.Job
   # MainID of the currently selected job
   this.selected = m.prop -1
   this.lastUpdated = m.prop -1
-  this.lastUpdated = m.prop -1
   this.lastUpdatedMainID  = m.prop -1
   this.lastUpdatedState = m.prop -1
 
@@ -28,10 +27,10 @@ class window.Job
   this.requestTool = m.prop false
 
   # Determines whether Job with the provided mainID is in the JobList
-  this.contains = (mainID) ->
+  this.contains = (jobID) ->
     Job.list.then (jobs) ->
       for job in  jobs
-        if job.mainID == mainID
+        if job.jobID == jobID
           return true
       return false
 
@@ -40,10 +39,10 @@ class window.Job
   this.reloadList =  ->
     Job.list = m.request({url: "/api/jobs", method: "GET", type: Job})
 
-  this.getJobByMainID = (mainID) ->
+  this.getJobByID = (jobID) ->
     Job.list.then (jobs) ->
       for job in jobs
-        if job.mainID == mainID
+        if job.jobID == jobID
           return job
       return null
 
@@ -78,42 +77,20 @@ class window.Job
   this.sortJobID =  ->
     (Job.list.then (list) -> list.sort (job1, job2) -> job2.jobID().localeCompare(job1.jobID())).then(Job.list)
 
-  this.updateState = (mainID, jobID, state) ->
+  this.updateState = (jobID, state) ->
     Job.lastUpdated(jobID)
-    Job.lastUpdatedMainID(mainID)
     Job.lastUpdatedState(state)
-    # If the job is selected, do something
-    if mainID == Job.selected()
-      m.route("/jobs/#{mainID}")  # This is not my final solution. I stil have some other ideas
     for job in Job.list()
-      if job.mainID == mainID
+      if job.jobID() == jobID
         job.state(state)
         break
 
   # Adds a new Job to the JobList.
-  this.add = (job) -> Job.list.then (list) -> list.push(job)
+  this.add = (job) ->
+    Job.list.then (list) -> list.push(job)
 
-  this.generateJobID = () ->
-    (""+Math.random()).substring(2,9)
 
-jobs.JobList = Array
 
-jobs.vm = do ->
-  vm = {}
-  vm.list = []
-
-  vm.getJobState = (receivedJob) ->
-
-    jsonString = JSON.stringify(receivedJob)
-    if jsonString.indexOf('\"state\":3') > -1
-      return 'running'
-    else if jsonString.indexOf('\"state\":4') > -1
-      return 'error'
-    else if jsonString.indexOf('\"state\":5') > -1
-      return 'done'
-    else
-      return 'other'
-  vm
 
 
 ###
@@ -123,12 +100,13 @@ window.Toolkit =
 
   controller: (args)  ->
     if args.isJob
-      mainID = m.route.param("mainID")
-      Job.selected(mainID)
+      jobID  = m.route.param("jobID")
+      Job.selected(jobID)
       # Load the Job into the Joblist if it is not there
-      Job.contains(mainID).then (jobIsPresent) ->
+      Job.contains(jobID).then (jobIsPresent) ->
         if not jobIsPresent
-          m.request({url: "/jobs/load/#{mainID}", method: "GET"}).then (data) -> Job.add(new Job(data))
+          console.log("Loading Requested Job with JobID #{jobID}")
+          m.request({url: "/jobs/load/#{jobID}", method: "GET"}).then (data) -> Job.add(new Job(data))
     else
       Job.selected(-1)
 
@@ -142,8 +120,8 @@ window.Toolkit =
         job = JobModel.update({isJob: false}, m.route.param("toolname"))
         Job.requestTool(false)
       else
-        job = JobModel.update(args, if args.isJob then m.route.param("mainID") else m.route.param("toolname"))
-      viewComponent = () -> m JobViewComponent, {job : job, add: Job.add, messages: JobModel.messages, joblistItem: Job.getJobByMainID(mainID)}
+        job = JobModel.update(args, if args.isJob then m.route.param("jobID") else m.route.param("toolname"))
+      viewComponent = () -> m JobViewComponent, {job : job, add: Job.add, messages: JobModel.messages, joblistItem: Job.getJobByID(jobID)}
     jobs : Job.list
     viewComponent : viewComponent
     selected: Job.selected

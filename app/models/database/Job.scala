@@ -2,9 +2,10 @@ package models.database
 
 
 import models.Constants
-
+import models.tools.ToolModel.Toolitem
 import org.joda.time.DateTime
 import play.api.libs.json._
+import play.twirl.api.Html
 import reactivemongo.bson._
 import reactivemongo.play.json._
 
@@ -61,6 +62,17 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
   }
 
 }
+
+// Server returns such an object when asked for a job
+case class Jobitem(mainID: String,
+                   newMainID: String,  // Used for job resubmission
+                   jobID: String,
+                   state: JobState,
+                   ownerName : String,
+                   createdOn: String,
+                   toolitem: Toolitem,
+                   views: Seq[(String, Html)],
+                   paramValues: Map[String, String])
 
 
 

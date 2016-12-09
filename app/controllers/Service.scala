@@ -41,6 +41,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                      val messagesApi      : MessagesApi,
 @NamedCache("userCache") implicit val userCache : CacheApi,
 @NamedCache("toolitemCache") val toolitemCache : CacheApi,
+@NamedCache("jobitem") jobitemCache : CacheApi,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
                      final val values     : Values,
@@ -130,19 +131,47 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   /**
 
    */
-  def loadJob(mainIDString : String) = Action.async { implicit request =>
-    getUser.flatMap { user =>
-      BSONObjectID.parse(mainIDString) match {
-        case Success(mainID) =>
+  def loadJob(jobID : String) = Action.async { implicit request =>
 
-          findJob(BSONDocument(Job.IDDB -> mainID)).map {
-            case Some(job) =>
-              userManager ! AddJobWatchList(user.userID, job.mainID)
-              Ok(job.cleaned2())
-            case None => NotFound
-          }
-        case _ =>
-          Future.successful(NotFound)
+    Logger.info("Trying to Load Job")
+
+    /*
+      def cleaned2() = {
+
+    Json.obj("mainID"   -> mainID.stringify,
+             "jobID"   -> jobID,
+             "state"    -> status,
+             "createdOn" -> dateCreated.get,
+             "toolname" -> tool)
+  }
+     */
+
+    val x = jobitemCache.get[Jobitem](jobID)
+
+    if(x.isDefined) {
+
+      val y = x.get
+      Logger.info("Job has been found in Cache, returning")
+      Future.successful(Ok(Json.obj("mainID" -> y.mainID,
+        "jobID" -> y.jobID,
+        "state" -> y.state,
+        "createdOn" -> y.createdOn,
+        "toolname" -> y.toolitem.toolname )))
+    } else {
+
+      getUser.flatMap { user =>
+        BSONObjectID.parse(jobID) match {
+          case Success(mainID) =>
+
+            findJob(BSONDocument(Job.IDDB -> mainID)).map {
+              case Some(job) =>
+                userManager ! AddJobWatchList(user.userID, job.mainID)
+                Ok(job.cleaned2())
+              case None => NotFound
+            }
+          case _ =>
+            Future.successful(NotFound)
+        }
       }
     }
   }
@@ -230,16 +259,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     ) (unlift(Toolitem.unapply))
 
 
-  // Server returns such an object when asked for a job
-  case class Jobitem(mainID: String,
-                     newMainID: String,  // Used for job resubmission
-                     jobID: String,
-                     state: JobState,
-                     ownerName : String,
-                     createdOn: String,
-                     toolitem: Toolitem,
-                     views: Seq[(String, Html)],
-                     paramValues: Map[String, String])
 
   implicit val jobitemWrites: Writes[Jobitem] = (
       (JsPath \ "mainID").write[String] and
