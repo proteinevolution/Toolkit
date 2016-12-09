@@ -121,7 +121,7 @@ GET           /api/tools/:toolname                    @controllers.Service.getTo
 # Submit new Job
 POST          /api/submit                             @controllers.Tool.submit(toolname : String, mainID : String, jobID : String)
 # Submit new FrontendJob
-POST          /api/frontendSubmit                     @controllers.Tool.frontendCount(toolname: String, mainID: String)
+POST          /api/frontendSubmit/:toolname          @controllers.Tool.frontendCount(toolname: String)
 # Submit job again after being found in the jobhashes collection
 POST          /api/submitagain                        @controllers.Tool.submitAgain(toolname : String, mainID : String, jobID : String)
 # Get JobInformation based on Toolname
