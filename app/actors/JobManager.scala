@@ -122,7 +122,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
       val ownerID         = None
       val newJob = FrontendJob(
         mainID     = mainID,
-        jobType     = "",
         parentID    = None,
         ownerID     = ownerID,
         tool        = toolName,
