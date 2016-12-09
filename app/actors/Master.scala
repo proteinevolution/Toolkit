@@ -4,6 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import actors.JobActor.JobData
 import actors.Master.{CreateJob, DeleteJob, JobOperation, WorkerDoneWithJob}
+import actors.UserManager.{UserConnect, UserDisconnect}
 import akka.actor.{Actor, ActorRef, Props}
 import akka.event.LoggingReceive
 import play.api.cache.{CacheApi, NamedCache}
@@ -27,11 +28,18 @@ class Master @Inject() (@NamedCache("jobActorCache") val jobActorCache: CacheApi
 
   private val deletedJobs = mutable.Set[String]()
 
+  private val userWebSockets = mutable.Map[String, ActorRef]()
+
+
 
   def receive = LoggingReceive {
 
+    // Master registers user
+    case UserConnect(userID) =>
+      userWebSockets.put(userID.stringify, sender())
+
     // Pending Jobs
-    case c@CreateJob(jobID,_) =>
+    case c@CreateJob(jobID, user, params) =>
 
       // Assign if a worker is available, otherwise remember work
       if(availJobActors.isEmpty) {
@@ -41,7 +49,15 @@ class Master @Inject() (@NamedCache("jobActorCache") val jobActorCache: CacheApi
         val nextWorker = availJobActors.dequeue()
         jobs.put(jobID, nextWorker )
         jobActorCache.set(jobID, nextWorker)
-        nextWorker ! c
+        nextWorker ! c.copy( user=
+          user match {
+            case Left(sessionID) =>
+
+              if(userWebSockets.contains(sessionID)) Right(userWebSockets(sessionID)) else Left(sessionID)
+
+            case Right(actorRef) => Right(actorRef)
+          }
+        )
       }
 
     case d@DeleteJob(jobID) =>
@@ -75,8 +91,8 @@ object Master {
    */
   abstract class JobOperation(val jobID : String)
 
-  case class CreateJob(override val jobID: String, jobData: JobData) extends JobOperation(jobID)
-
+  // The initiating user is eiter identified via the sessionID or directly via the WebSocket Actor
+  case class CreateJob(override val jobID: String, user: Either[String, ActorRef], jobData: JobData) extends JobOperation(jobID)
 
   case class DeleteJob(override val jobID: String) extends JobOperation(jobID)
 

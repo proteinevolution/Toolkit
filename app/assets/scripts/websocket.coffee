@@ -78,17 +78,18 @@ onMessage = (event) ->
       JobModel.messages().push(message.message)
       m.endComputation()
     when "UpdateJob"
-      state = message.job.state.toString()
-      mainID = message.job.mainID.toString()
-      jobID = message.job.job_id.toString()
       m.startComputation()
-      Job.updateState(mainID, jobID, state)
+      console.log(message.jobID)
+      console.log(message.state)
+      Job.updateState(message.jobID, message.state)
       m.endComputation()
-      if jobs.vm.getJobState(message.job) == 'running'
+
+      # Stuff with traffic bar
+      if message.state == 'running'
         $('#trafficbar').css
           'background': '#ffff00'
           'box-shadow': '0 0 10px #ffce27'
-      else if jobs.vm.getJobState(message.job) == 'error'
+      else if message.state == 'error'
         if window.Notification and Notification.permission != 'denied'
           Notification.requestPermission (status) ->
           n = new Notification('Bioinformatics Toolkit',
@@ -98,7 +99,7 @@ onMessage = (event) ->
         $('#trafficbar').css
           'background': '#ff0000'
           'box-shadow': '0 0 10px #d2071d'
-      else if jobs.vm.getJobState(message.job) == 'done'
+      else if message.state == 'done'
         if window.Notification and Notification.permission != 'denied'
           Notification.requestPermission (status) ->
           n = new Notification('Bioinformatics Toolkit',
@@ -108,13 +109,13 @@ onMessage = (event) ->
         $('#trafficbar').css
           'background': 'green'
           'box-shadow': '0 0 10px darkgreen'
-      else if jobs.vm.getJobState(message.job) == 'other'
+      else if message.state == 'other'
         $('#trafficbar').css
           'background': 'transparent'
           'box-shadow': '0 0 10px transparent'
 
       # Show user a popup with the submission
-      if state == '0'
+      if message.state == '0'
         $('.jobformclear').click()
 
     # User was looking for a job id which was not valid
