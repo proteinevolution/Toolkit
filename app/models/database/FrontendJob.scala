@@ -13,10 +13,8 @@ import reactivemongo.play.json._
 
 
 case class FrontendJob(mainID : BSONObjectID,                // ID of the Job in the System
-
                jobType     : String,                      // Type of job
                parentID    : Option[BSONObjectID] = None, // ID of the Parent Job
-               jobID       : String,                      // User visible ID of the Job
                ownerID     : Option[BSONObjectID] = None, // User to whom the Job belongs
                deletion    : Option[JobDeletion] = None,      // Deletion Flag showing the reason for the deletion
                tool        : String,                      // Tool used for this Job
@@ -29,7 +27,6 @@ object FrontendJob {
   val IDDB          = "_id"           //              ID in MongoDB
   val JOBTYPE       = "jobType"       //              Type of the Job
   val PARENTID      = "parentID"      //              ID of the parent job
-  val JOBID         = "jobID"         //              ID for the job
   val OWNERID       = "ownerID"       //              ID of the job owner
   val TOOL          = "tool"          //              name of the tool field
   val DATECREATED   = "dateCreated"   //              created on field
@@ -44,7 +41,6 @@ object FrontendJob {
         val mainID      = (obj \ ID).asOpt[String]
         val jobType     = (obj \ JOBTYPE).asOpt[String]
         val parentID    = (obj \ PARENTID).asOpt[String]
-        val jobID       = (obj \ JOBID).asOpt[String]
         val ownerID     = (obj \ OWNERID).asOpt[String]
         val tool        = (obj \ TOOL).asOpt[String]
         val dateCreated = (obj \ DATECREATED).asOpt[String]
@@ -53,7 +49,6 @@ object FrontendJob {
           mainID      = BSONObjectID.generate(),  // TODO need to find out how to get the main id as it is needed for the job
           jobType     = "",
           parentID    = None,
-          jobID       = "",
           ownerID     = Some(BSONObjectID.generate()),
           tool        = "",
           dateCreated = Some(new DateTime())))
@@ -70,7 +65,6 @@ object FrontendJob {
       IDDB        -> job.mainID,
       JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
-      JOBID       -> job.jobID,
       OWNERID     -> job.ownerID,
       TOOL        -> job.tool,
       DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis))
@@ -85,7 +79,6 @@ object FrontendJob {
       FrontendJob(mainID      = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         jobType     = bson.getAs[String](JOBTYPE).getOrElse("Error loading Job Type"),
         parentID    = bson.getAs[BSONObjectID](PARENTID),
-        jobID       = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         ownerID     = bson.getAs[BSONObjectID](OWNERID),
         tool        = bson.getAs[String](TOOL).getOrElse(""),
         dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value))
@@ -101,7 +94,6 @@ object FrontendJob {
       IDDB        -> job.mainID,
       JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
-      JOBID       -> job.jobID,
       OWNERID     -> job.ownerID,
       TOOL        -> job.tool,
       DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis))
