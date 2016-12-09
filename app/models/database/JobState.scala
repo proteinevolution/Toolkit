@@ -12,14 +12,19 @@ import reactivemongo.bson.{BSONInteger, BSONReader, BSONWriter}
 
 sealed trait JobState
 
+
+
+/*
+ A Pending Job has parameters which have not been supplied yet. This might happen for file download
+ and when a job depends on the successful execution of another job.
+ */
 case object Prepared          extends JobState
 case object Queued            extends JobState
 case object Running           extends JobState
 case object Error             extends JobState
 case object Done              extends JobState
 case object Submitted         extends JobState
-
-
+case object Pending           extends JobState
 
 
 object JobState {
@@ -36,6 +41,7 @@ object JobState {
           case 4 => Error
           case 5 => Done
           case 6 => Submitted
+          case 7 => Pending
           case _ => Error
         })
       } catch {
@@ -53,6 +59,7 @@ object JobState {
       case Error             => JsNumber(4)
       case Done              => JsNumber(5)
       case Submitted         => JsNumber(6)
+      case Pending           => JsNumber(7)
     }
   }
 
@@ -68,6 +75,7 @@ object JobState {
         case BSONInteger(4) => Error
         case BSONInteger(5) => Done
         case BSONInteger(6) => Submitted
+        case BSONInteger(7) => Pending
         case _              => Error
       }
     }
@@ -85,11 +93,8 @@ object JobState {
         case Error             => BSONInteger(4)
         case Done              => BSONInteger(5)
         case Submitted         => BSONInteger(6)
+        case Pending           => BSONInteger(7)
       }
     }
   }
 }
-
-
-
-
