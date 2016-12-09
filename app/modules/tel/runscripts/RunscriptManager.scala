@@ -14,6 +14,7 @@ import play.api.Logger
 /**
   * Class watches the directory of runscripts and monitors changes. Reloads information about runscripts once
   * the file changes and keeps a map of all Runscripts for quick access.
+  * Allows to provide a runscript to an interested instance, like a JobActor
   *
   * Created by lzimmermann on 10/19/16.
   */
@@ -22,12 +23,12 @@ class RunscriptManager @Inject() (@Named("runscriptPath") runscriptPath : String
 
   Logger.info(s"RunscriptManager started, surveilling: $runscriptPath")
 
-  val runscripts = runscriptPath.toFile.list.withFilter(_.extension.getOrElse("") == ".sh").map { file =>
+  val runscripts : Map[String, Runscript] = runscriptPath.toFile.list.withFilter(_.extension.getOrElse("") == ".sh").map { file =>
 
-    file.name -> Runscript(file)
+    file.nameWithoutExtension -> Runscript(file)
   }.toMap
 
-  def apply(runscriptName: String) = runscripts(runscriptName)
+  def apply(runscriptName: String): Runscript = runscripts(runscriptName)
 }
 
 
@@ -40,18 +41,20 @@ case class ValidArgument(representation: Representation) extends Argument
 
 
 
-class Runscript(val parameters: Map[String, Seq[Evaluation]])  {
+class Runscript(val parameters: Seq[(String, Evaluation)])  {
 
   // Implications with names for the parameters // TODO Currently also not supported
   type Condition = (String, RType => Boolean, String, RType => Boolean)
+
+  // Names of the parameters that need to be supplied to that runscript
+  final val parameterNames: Seq[String] = parameters.map(_._1).distinct
 }
 
 
 object Runscript extends TELRegex {
 
 
-  // An evaluation within a runscript maps a RType to a Argument(which indicates whether the evalaution was
-  // successful or not)
+  // An evaluation returns an argument given a value for a runscript type and an execution Context
   type Evaluation = (RType, ExecutionContext) => Argument
 
   // TODO Constraints are not yet supported, currently all arguments are valid
@@ -60,31 +63,34 @@ object Runscript extends TELRegex {
     *
     * @param file
     */
-
   def apply(file: File): Runscript = {
 
     new Runscript(
       parameterString.findAllIn(file.contentAsString)
-        .foldLeft(Map.empty[String, Seq[Evaluation]].withDefaultValue(Seq.empty)) { (a, m) =>
+        .matchData
+        .foldLeft(Seq.empty[(String, Evaluation)]) { (a, m) =>
 
-          val spt = m.split('.')
-          val paramName = spt(0)
+          val paramName = m.group("paramName")
 
-          a.updated(paramName, a(paramName) :+ { (value: RType, executionContext: ExecutionContext) =>
-
-            spt(1) match {
-
-              case "path" => ValidArgument(FileRepresentation(paramName, value, executionContext))
-              case "content" => ValidArgument(LiteralRepresentation(value, executionContext))
+          a :+ paramName -> { (value: RType, executionContext: ExecutionContext) =>
+            m.group("repr") match {
+              case "path" =>  ValidArgument(new FileRepresentation(executionContext.getFile(paramName, value.inner().toString)))
+              case "content" => ValidArgument(new LiteralRepresentation(value))
             }
           }
-          )
-        })
-  }
+          })
+        }
 }
 
-sealed trait RType
-case class StringType(x : String) extends RType
+
+sealed trait RType {
+
+  def inner(): String
+}
+case class RString(x : String) extends RType {
+
+  def inner(): String = x
+}
 
 
 
