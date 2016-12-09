@@ -48,26 +48,6 @@ typeAhead = (elem, isInit) ->
 
 
 
-###
-
-  $('#trafficbar').attr('data-tooltip');
-        $('#trafficbar').attr('title', 'Click to view last job: '+json.job_id+', status: '+status);
-        $('#trafficbar' ).css({'cursor': 'pointer'});
-
-        $('.trafficbar').on('click', function () {
-            //console.log(JSON.stringify(jobs.vm.getLastJob()));
-            window.location.href = "/#/jobs/"+json.mainID;
-
-        });
-###
-
-###
-  this.selected = m.prop -1
-  this.lastUpdated = m.prop -1
-  this.lastUpdatedState = m.prop -1
-###
-
-
 trafficbar = (elem, isInit) ->
   if not isInit
     elem.setAttribute "data-disable-hover", "false"
@@ -95,6 +75,7 @@ trafficbar = (elem, isInit) ->
       $(elem).css
         'background': '#ffff00',
         'box-shadow': '0 0 10px #ffce27'
+
 
 
 window.Index =
@@ -155,6 +136,34 @@ styleComponent =
 
   view: ->
     m "style", "#jobsearchform { display: none;}"
+###
+
+
+jobTickerComponent =
+  view: ->
+    m "div", {class: "jobTicker"},[
+      m "table",[
+        m "thead",[
+          m "tr",[
+            m "th","id"
+            m "th","timestamp"
+            ]
+        ]
+        m "tbody",[
+
+        ]
+      ]
+    ]
+
+###
+quickLinksComponent =
+  view: ->
+    m "div", {class: "quicklinks"}
+
+
+recentUpdatesComponent =
+  view: ->
+    m "div", {class: "recentUpdates"}
 
 
 tilescomponent =
@@ -190,53 +199,3 @@ tilescomponent =
 
 
 
-
-
-
-###
-
-  <div class="grid" style="margin-top: 355px;">
-
-  <div class="tool-finder show-for-medium row centered">
-        <div class="search-query large-12 medium-6">
-            <div class="columns large-12"><input type="text" id="searchInput" name="searchInput" value="" placeholder="Search Keywords"></div>
-
-        </div>
-      <div data-disable-hover="false" class="trafficbar" id="trafficbar"></div>
-
-  </div>
-
-</div>
-
-
-
-
-      <div data-disable-hover="false" class="trafficbar" id="trafficbar"></div>
-
-    $('#trafficbar').attr('data-tooltip');
-        $('#trafficbar').attr('title', 'Click to view last job: '+json.job_id+', status: '+status);
-        $('#trafficbar' ).css({'cursor': 'pointer'});
-
-        $('.trafficbar').on('click', function () {
-            //console.log(JSON.stringify(jobs.vm.getLastJob()));
-            window.location.href = "/#/jobs/"+json.mainID;
-
-        });
-
-
-        if (jobs.vm.getJobState(jobs.vm.getLastJob()) == 'done')
-            $('#trafficbar').css({
-            'background': 'green',
-            'box-shadow': '0 0 10px darkgreen'
-            });
-        else if (jobs.vm.getJobState(jobs.vm.getLastJob()) == 'error')
-            $('#trafficbar').css({
-            'background': '#ff0000',
-            'box-shadow': '0 0 10px #d2071d'
-            });
-        else if (jobs.vm.getJobState(jobs.vm.getLastJob()) == 'running')
-            $('#trafficbar').css({
-            'background': '#ffff00',
-            'box-shadow': '0 0 10px #ffce27'
-            });
-###
