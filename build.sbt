@@ -18,6 +18,7 @@ val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-persistence" % akkaVersion,
   "com.typesafe.play" %% "play-mailer" % playMailerVersion,  // Mailer Plugin: https://github.com/playframework/play-mailer
   "com.github.pathikrit" %% "better-files" % betterfilesVersion,
@@ -85,6 +86,7 @@ lazy val root = (project in file("."))
       "org.webjars.bower" % "datatables" % "1.10.12",
       "org.webjars" % "highcharts" % highchartsVersion)),
     pipelineStages := Seq(rjs, digest, gzip),
+    compile in Compile <<= (compile in Compile) dependsOn scalaJSPipeline,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
   )
