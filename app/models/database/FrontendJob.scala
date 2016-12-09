@@ -24,7 +24,6 @@ object FrontendJob {
   val ID            = "id"            // name for the ID in scala
   val IDDB          = "_id"           //              ID in MongoDB
   val PARENTID      = "parentID"      //              ID of the parent job
-  val OWNERID       = "ownerID"       //              ID of the job owner
   val TOOL          = "tool"          //              name of the tool field
   val DATECREATED   = "dateCreated"   //              created on field
 
@@ -37,7 +36,6 @@ object FrontendJob {
       case obj: JsObject => try {
         val mainID      = (obj \ ID).asOpt[String]
         val parentID    = (obj \ PARENTID).asOpt[String]
-        val ownerID     = (obj \ OWNERID).asOpt[String]
         val tool        = (obj \ TOOL).asOpt[String]
         val dateCreated = (obj \ DATECREATED).asOpt[String]
 
@@ -59,7 +57,6 @@ object FrontendJob {
     def writes (job : FrontendJob) : JsObject = Json.obj(
       IDDB        -> job.mainID,
       PARENTID    -> job.parentID,
-      OWNERID     -> job.ownerID,
       TOOL        -> job.tool,
       DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis))
     )
@@ -72,7 +69,6 @@ object FrontendJob {
     def read(bson : BSONDocument): FrontendJob = {
       FrontendJob(mainID      = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         parentID    = bson.getAs[BSONObjectID](PARENTID),
-        ownerID     = bson.getAs[BSONObjectID](OWNERID),
         tool        = bson.getAs[String](TOOL).getOrElse(""),
         dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value))
       )
@@ -86,7 +82,6 @@ object FrontendJob {
     def write(job: FrontendJob) : BSONDocument = BSONDocument(
       IDDB        -> job.mainID,
       PARENTID    -> job.parentID,
-      OWNERID     -> job.ownerID,
       TOOL        -> job.tool,
       DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis))
     )

@@ -24,7 +24,6 @@
             </ul>
 
 
-
             <div class="tabs-panel ui-tabs-panel ui-widget-content ui-corner-bottom" id="tabpanel-Alignment" aria-labelledby="ui-id-4" role="tabpanel" aria-hidden="false">
 
                 <div id="reformatcontainer" style="min-height: 800px; margin: 0 auto">
@@ -166,6 +165,7 @@
 <script src="@routes.Assets.versioned("scripts/validation.js")"></script>
 <script src="@routes.Assets.versioned("scripts/dropzone.js")"></script>
 <script>
+
         $("#tool-tabs").tabs();
 
            hideTools("");
@@ -237,6 +237,7 @@
 
 
         document.getElementById("outformat").onchange = function() {
+
             var currentVal = this.value;
              hideTools(currentVal);
                 myCodeMirror2.setValue(($('#inputMirror').val(myCodeMirror.getValue())).reformat(currentVal));
@@ -247,6 +248,7 @@
 
 
             document.getElementById('outputarea').value = myCodeMirror2.getValue();
+            toolCounter(); // write usage into the database for tool stats
         };
 
 
@@ -616,15 +618,32 @@
             }
 
 
-            /* Forwarding */
+        /* Forwarding */
 
-            function forward(tool) {
-                if(myCodeMirror2.lineCount()>1) {
-                var seqs = myCodeMirror2.getValue ( ) ;
-                localStorage.setItem ( "resultcookie", seqs ) ;
-                window.location.href = "/#/tools/" + tool ;
-                } else alert("No output to forward.");
-               }
+        function forward(tool) {
+            if(myCodeMirror2.lineCount()>1) {
+               var seqs = myCodeMirror2.getValue ( ) ;
+               localStorage.setItem ( "resultcookie", seqs ) ;
+               window.location.href = "/#/tools/" + tool ;
+               } else alert("No output to forward.");
+            }
 
+
+        /* Tool statistics */
+
+        function toolCounter() {
+
+            $.ajax({
+                url: "/api/frontendSubmit/Reformat",
+                type: "POST",
+                success: function(result){
+                    console.log("ok");
+                },
+                error: function(result){
+                    console.warn("error");
+                }
+            });
+
+        }
 
     </script>
