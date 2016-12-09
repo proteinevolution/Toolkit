@@ -44,13 +44,11 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
   // counts usage of frontend tools in order to keep track for our stats
 
-  def frontendCount(toolname: String, mainID: String) = Action.async { implicit ctx =>
+  def frontendCount(toolname: String) = Action.async { implicit request =>
 
-    getUser.flatMap { user =>
-      val newMainID = BSONObjectID.parse(mainID).get
-      jobManager ! AddFrontendJob(user.userID, newMainID, toolname)
+    val mainID = BSONObjectID.generate()
+      jobManager ! AddFrontendJob(mainID, toolname)
       Future.successful(Ok)
-    }
   }
 
 
@@ -59,7 +57,6 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
     val paramMap = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
 
     getUser.flatMap { user =>
-
 
       lazy val DB = paramMap.getOrElse("standarddb","").toFile  // get hold of the database in use
       lazy val hashParams = paramMap - "mainID" - "jobID" // don't hash the mainID or the jobID
@@ -123,7 +120,6 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
           }
           */
           val newMainID = BSONObjectID.parse(mainID).get
-
           jobsPartition._2.headOption match {
             //  Identical job has been found
             case Some(job) =>
