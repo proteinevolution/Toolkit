@@ -13,7 +13,6 @@ import reactivemongo.play.json._
 
 
 case class FrontendJob(mainID : BSONObjectID,                // ID of the Job in the System
-               jobType     : String,                      // Type of job
                parentID    : Option[BSONObjectID] = None, // ID of the Parent Job
                ownerID     : Option[BSONObjectID] = None, // User to whom the Job belongs
                tool        : String,                      // Tool used for this Job
@@ -24,7 +23,6 @@ object FrontendJob {
   // Constants for the JSON object identifiers
   val ID            = "id"            // name for the ID in scala
   val IDDB          = "_id"           //              ID in MongoDB
-  val JOBTYPE       = "jobType"       //              Type of the Job
   val PARENTID      = "parentID"      //              ID of the parent job
   val OWNERID       = "ownerID"       //              ID of the job owner
   val TOOL          = "tool"          //              name of the tool field
@@ -38,7 +36,6 @@ object FrontendJob {
     override def reads(json: JsValue): JsResult[FrontendJob] = json match {
       case obj: JsObject => try {
         val mainID      = (obj \ ID).asOpt[String]
-        val jobType     = (obj \ JOBTYPE).asOpt[String]
         val parentID    = (obj \ PARENTID).asOpt[String]
         val ownerID     = (obj \ OWNERID).asOpt[String]
         val tool        = (obj \ TOOL).asOpt[String]
@@ -46,7 +43,6 @@ object FrontendJob {
 
         JsSuccess(FrontendJob(
           mainID      = BSONObjectID.generate(),  // TODO need to find out how to get the main id as it is needed for the job
-          jobType     = "",
           parentID    = None,
           ownerID     = Some(BSONObjectID.generate()),
           tool        = "",
@@ -62,7 +58,6 @@ object FrontendJob {
   implicit object FrontendJobWrites extends Writes[FrontendJob] {
     def writes (job : FrontendJob) : JsObject = Json.obj(
       IDDB        -> job.mainID,
-      JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       OWNERID     -> job.ownerID,
       TOOL        -> job.tool,
@@ -76,7 +71,6 @@ object FrontendJob {
   implicit object Reader extends BSONDocumentReader[FrontendJob] {
     def read(bson : BSONDocument): FrontendJob = {
       FrontendJob(mainID      = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
-        jobType     = bson.getAs[String](JOBTYPE).getOrElse("Error loading Job Type"),
         parentID    = bson.getAs[BSONObjectID](PARENTID),
         ownerID     = bson.getAs[BSONObjectID](OWNERID),
         tool        = bson.getAs[String](TOOL).getOrElse(""),
@@ -91,7 +85,6 @@ object FrontendJob {
   implicit object Writer extends BSONDocumentWriter[FrontendJob] {
     def write(job: FrontendJob) : BSONDocument = BSONDocument(
       IDDB        -> job.mainID,
-      JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       OWNERID     -> job.ownerID,
       TOOL        -> job.tool,
