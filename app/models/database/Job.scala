@@ -60,13 +60,6 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
              "toolname" -> tool)
   }
 
-  def updateState(newStatus : JobState) = {
-
-    this.copy(status = newStatus)
-
-  }
-
-
 }
 
 

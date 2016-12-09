@@ -48,7 +48,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
     getUser.flatMap { user =>
       val newMainID = BSONObjectID.parse(mainID).get
-      jobManager ! AddFrontendJob(user, newMainID, toolname)
+      jobManager ! AddFrontendJob(user.userID, newMainID, toolname)
       Future.successful(Ok)
     }
   }
