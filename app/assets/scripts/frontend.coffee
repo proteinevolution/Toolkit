@@ -29,11 +29,31 @@ window.FrontendAlnvizComponent =
     pasteExample: () ->
       $('#alignment').val(exampleSequence)
 
+    submitted = false
+
+    frontendSubmit: () ->
+      if !submitted
+        $.ajax
+          url: '/api/frontendSubmit/Alnviz'
+          type: 'POST'
+          success: (result) ->
+            console.log 'ok'
+            submitted = true
+            return
+          error: (result) ->
+            console.warn 'error'
+            submitted = true
+            return
+      else
+        return
+
+
     initMSA: ->
       seqs = $('#alignment').reformat('Fasta')
       width = $('#tool-tabs').width() - 180
       if !seqs
         return
+
       opts =
         colorscheme: {"scheme": "mae"}
         el: document.getElementById('yourDiv')
@@ -65,6 +85,8 @@ window.FrontendAlnvizComponent =
       alignment.addView 'menu', defMenu
       alignment.render()
       $('#tool-tabs').tabs 'option', 'active', $('#tool-tabs').tabs('option', 'active') + 1
+
+
 
     forwardTab: () ->
       $('#tool-tabs').tabs 'option', 'active', $('#tool-tabs').tabs('option', 'active') + 1
@@ -151,7 +173,7 @@ tabsContents =
   "Alignment": (ctrl) ->
     m "div", {class: "parameter-panel"}, [
       m ParameterAlignmentComponent, {options: [["fas", "FASTA"]], value: ""}
-      m "div", {class: "submitbuttons"},
+      m "div", {class: "submitbuttons", onclick: ctrl.frontendSubmit},
         m "input", { type: "button", class: "success button small submitJob", value: "View Alignment", onclick: ctrl.initMSA, id: "viewAlignment"}
     ]
 
