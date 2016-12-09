@@ -16,7 +16,6 @@ case class FrontendJob(mainID : BSONObjectID,                // ID of the Job in
                jobType     : String,                      // Type of job
                parentID    : Option[BSONObjectID] = None, // ID of the Parent Job
                ownerID     : Option[BSONObjectID] = None, // User to whom the Job belongs
-               deletion    : Option[JobDeletion] = None,      // Deletion Flag showing the reason for the deletion
                tool        : String,                      // Tool used for this Job
                dateCreated : Option[DateTime])            // Creation time of the Job
 
