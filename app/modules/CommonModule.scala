@@ -1,11 +1,10 @@
 package modules
 
 import models.database.{FrontendJob, Job, User}
-import play.api.http.ContentTypes
-import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -16,11 +15,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
 trait CommonModule extends ReactiveMongoComponents {
 
 
+  /* Collections */
   protected def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
 
-  // Job DB access
-  protected def jobCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
+  // Provide index for JobID
+  protected def jobCollection = {
 
+    val x = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
+    // Establish a text index of the jobID, ensure uniqueness
+    x.map(_.indexesManager.ensure(Index(Seq("jobID" -> IndexType.Text), background = true, unique = true)))
+    x
+  }
+
+
+
+  /* Accessors */
   protected def frontendJobCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("frontendjobs"))
 
   protected def addJob(job: Job) = jobCollection.flatMap(_.insert(job))
