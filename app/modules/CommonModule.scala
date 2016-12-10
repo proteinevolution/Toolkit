@@ -5,7 +5,7 @@ import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONArray, BSONDocument, BSONValue}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -19,16 +19,14 @@ trait CommonModule extends ReactiveMongoComponents {
   /* Collections */
   protected def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
 
-  // Provide index for JobID
-  protected def jobCollection = {
+  // jobCollection is now a value with the Index structure ensured
+  protected val jobCollection:Future[BSONCollection] = {
 
-    val x = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
-    // Establish a text index of the jobID, ensure uniqueness
-    x.map(_.indexesManager.ensure(Index(Seq("jobID" -> IndexType.Text), background = true, unique = true)))
-    x
+      reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs")).map { collection =>
+        collection.indexesManager.ensure(Index(Seq("jobID" -> IndexType.Text), background = true, unique = true))
+        collection
+      }
   }
-
-
 
   /* Accessors */
   protected def frontendJobCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("frontendjobs"))
@@ -50,6 +48,11 @@ trait CommonModule extends ReactiveMongoComponents {
     jobCollection
       .map(_.find(BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))).cursor[Job]())
       .flatMap(_.headOption)
+  }
+  protected def selectJobs(jobIDs: Traversable[String]): Future[Set[Job]] = {
+    jobCollection
+        .map(_.find(BSONDocument("jobID" -> BSONDocument("$in" -> BSONArray(jobIDs)))).cursor[Job]())
+        .flatMap(_.collect[Set](-1, Cursor.FailOnError[Set[Job]]()))
   }
 
   protected def modifyJob(selector : BSONDocument, modifier : BSONDocument) = {
