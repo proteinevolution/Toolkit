@@ -270,18 +270,33 @@ JobSubmissionComponent =
     this.submitting = false
     submit: (startJob) ->
 
+      toolname = args.job().tool.toolname
       # Either use custom jobID or declare not using an own
-      jobid = args.job().jobID()
-      if not jobid
-        jobid = null
-      submitRoute = jsRoutes.controllers.JobController.create(args.job().tool.toolname, jobid)
+      jobID = args.job().jobID()
+      if not jobID
+        jobID = null
+      checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID)
+      formData = new FormData(document.getElementById("jobform"))
+
       m.request
-        method: submitRoute.method
-        url: submitRoute.url
-        data: new FormData(document.getElementById("jobform"))
+        method: checkRoute.method
+        url: checkRoute.url
+        data: formData
         serialize: (data) -> data
-      .then (data) ->
-        m.route("/jobs/#{data.jobID}")
+      .then(
+        (data) ->
+          jobID = data.jobID
+          # Add a new Job to the Model
+          Job.add(new Job({mainID: jobID, jobID: jobID, state: 0, createdOn: 'now', toolname: toolname}))
+          submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID)
+          m.request
+            method: submitRoute.method
+            url: submitRoute.url
+            data: formData
+            serialize: (data) -> data
+
+        (error) -> alert "Bad Request"
+      )
 
 
   view: (ctrl, args) ->
