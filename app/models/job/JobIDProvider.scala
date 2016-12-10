@@ -1,8 +1,14 @@
 package models.job
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
+
 import com.google.inject.ImplementedBy
+import modules.CommonModule
+import play.modules.reactivemongo.ReactiveMongoApi
+
+import scala.concurrent.Future
 import scala.util.Random
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -10,25 +16,23 @@ import scala.util.Random
 @ImplementedBy(classOf[JobIDProviderImpl])
 sealed trait JobIDProvider {
 
-  def provide: String
-  def isAvailable(jobID: String): Boolean
+  def provide: Future[String]
 }
 
 @Singleton
-class JobIDProviderImpl extends JobIDProvider {
+class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends JobIDProvider with CommonModule {
 
-  // TODO Ensure uniqueness of JobID, needs Database access (and a withFilter)
-  private val jobIDStream = Stream.continually(Random.nextInt(9999999)).distinct.map(_.toString.padTo(7,'0')).iterator
+  private val candIt = Iterator.continually[Set[String]](Stream.continually(Random.nextInt(9999999).toString.padTo(7, '0')).take(100).toSet)
 
-  // TODO Prefill with database values
-  private var usedJobIDs = Set.empty[String]
+  // Gives the first jobID which does not already exist in the database
+  // TODO This can fail in some cases
+  def provide: Future[String] = {
 
-  def provide: String = {
+    val set = candIt.next()
 
-    val res = jobIDStream.next()
-    usedJobIDs = usedJobIDs + res
-    res
+    selectJobs(set).map(ret =>
+
+      set.diff(ret.map(_.jobID)).head
+    )
   }
-
-  def isAvailable(jobID : String): Boolean = ! usedJobIDs.contains(jobID)
 }
