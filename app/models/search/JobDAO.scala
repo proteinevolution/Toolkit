@@ -1,20 +1,38 @@
 package models.search
 
-import javax.inject.{Named, Inject}
-import com.sksamuel.elastic4s.{SuggestMode, IndexAndType, ElasticDsl}
+import java.io.{ByteArrayOutputStream, ObjectOutputStream}
+import javax.inject.{Inject, Named}
+
+import com.sksamuel.elastic4s.{ElasticDsl, IndexAndType, SuggestMode}
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
 import jdk.internal.org.objectweb.asm.tree.analysis.Analyzer
+import modules.tools.FNV
 import org.elasticsearch.common.unit.Fuzziness
 
 class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Named("jobs") indexAndType: IndexAndType)
   extends ElasticDsl with PlayElasticJsonSupport {
   
   private[this] lazy val client = elasticFactory(cs)
+  private val noHash = Set("mainID", "jobID")
 
+
+
+  def generateHash(toolname: String, params: Map[String, String]): BigInt =  {
+
+    FNV.hash64((scala.collection.immutable.TreeMap((params -- noHash).toArray:_*)
+      .values ++ Iterable[String](toolname))
+      .map(_.toByte).toArray)
+  }
+
+  def generateHash2(toolname: String, params: Map[String, String]): Int = {
+
+    (scala.collection.immutable.TreeMap((params -- noHash).toArray:_*)
+      .values ++ Iterable[String](toolname)).hashCode()
+  }
 
   // Searches for a matching hash in the Hash DB
-  def matchHash(hash : String, dbName : Option[String], dbMtime : Option[String]) = {
+  def matchHash(hash : Any, dbName : Option[String], dbMtime : Option[String]) = {
     client.execute(
       search in "tkplay_dev"->"jobhashes" query {
           bool(
