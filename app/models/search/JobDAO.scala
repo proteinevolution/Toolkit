@@ -1,22 +1,24 @@
 package models.search
 
-import java.io.{ByteArrayOutputStream, ObjectOutputStream}
-import javax.inject.{Inject, Named}
+import javax.inject.{Inject, Named, Singleton}
 
-import com.sksamuel.elastic4s.{ElasticDsl, IndexAndType, SuggestMode}
+import com.sksamuel.elastic4s._
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
-import jdk.internal.org.objectweb.asm.tree.analysis.Analyzer
 import modules.tools.FNV
 import org.elasticsearch.common.unit.Fuzziness
 
-class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Named("jobs") indexAndType: IndexAndType)
+import scala.concurrent.Future
+
+
+@Singleton
+class JobDAO @Inject()(cs: ClusterSetup,
+                       elasticFactory: PlayElasticFactory,
+                       @Named("jobs") indexAndType: IndexAndType)
   extends ElasticDsl with PlayElasticJsonSupport {
   
   private[this] lazy val client = elasticFactory(cs)
   private val noHash = Set("mainID", "jobID")
-
-
 
   def generateHash(toolname: String, params: Map[String, String]): BigInt =  {
 
@@ -32,14 +34,14 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   }
 
   // Searches for a matching hash in the Hash DB
-  def matchHash(hash : Any, dbName : Option[String], dbMtime : Option[String]) = {
+  def matchHash(hash : Any, dbName : Option[String], dbMtime : Option[String]): Future[RichSearchResponse] = {
     client.execute(
       search in "tkplay_dev"->"jobhashes" query {
           bool(
             must(
               termQuery("hash", hash),
-              termQuery("dbname", dbName.get),
-              termQuery("dbmtime", dbMtime.get)
+              termQuery("dbname", dbName.getOrElse("none")),
+              termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z"))
             )
           )
       }
@@ -47,7 +49,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   }
 
   // Removes a Hash from ES
-  def deleteJob(mainID : String) = {
+  def deleteJob(mainID : String): Future[BulkResult] = {
     client.execute {
       bulk(
         delete id mainID from "tkplay_dev" / "jobs",
@@ -57,7 +59,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   }
 
   // Checks if a jobID already exists
-  def existsJobID(jobID : String) = {
+  def existsJobID(jobID : String): Future[RichSearchResponse] = {
     client.execute{
       search in "tkplay_dev"->"jobs" query {
         bool(
@@ -70,7 +72,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   }
 
   // Simple multiple jobID search
-  def getJobIDs(jobIDs : List[String]) = {
+  def getJobIDs(jobIDs : List[String]): Future[RichSearchResponse] = {
     client.execute{
       search in "tkplay_dev" -> "jobs" query {
         termsQuery("jobID", jobIDs : _*) // - termsQuery does not seem to work
@@ -80,7 +82,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
     }
   }
 
-  def jobIDtermSuggester(queryString : String) = { // this is a spelling correction mechanism
+  def jobIDtermSuggester(queryString : String): Future[RichSearchResponse] = { // this is a spelling correction mechanism
    client.execute {
       search in "tkplay_dev"->"jobs" suggestions {
         termSuggestion("jobID") field "jobID" text queryString mode SuggestMode.Always
@@ -89,7 +91,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   }
 
 
-  def jobIDcompletionSuggester(queryString : String) = { // this is an auto-completion mechanism
+  def jobIDcompletionSuggester(queryString : String): Future[RichSearchResponse] = { // this is an auto-completion mechanism
     client.execute {
       search in "tkplay_dev"->"jobs" types "jobs" suggestions (
         //completionSuggestion("jobs-completer") field "jobID" text queryString size 10
@@ -99,7 +101,7 @@ class JobDAO @Inject()(cs: ClusterSetup, elasticFactory: PlayElasticFactory, @Na
   }
 
 
-  def fuzzySearchJobID(queryString : String) = { // similarity search with Levensthein edit distance
+  def fuzzySearchJobID(queryString : String): Future[RichSearchResponse] = { // similarity search with Levensthein edit distance
     client.execute {
       search in "tkplay_dev"->"jobs" query {
         fuzzyQuery("jobID", queryString).fuzziness(Fuzziness.AUTO).prefixLength(4).maxExpansions(10)
