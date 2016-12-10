@@ -8,6 +8,7 @@ import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
   * Created by zin on 03.08.16.
@@ -42,6 +43,13 @@ trait CommonModule extends ReactiveMongoComponents {
 
   protected def findJobs(selector : BSONDocument) = {
     jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
+  }
+
+  protected def selectJob(jobID: String): Future[Option[Job]] = {
+
+    jobCollection
+      .map(_.find(BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))).cursor[Job]())
+      .flatMap(_.headOption)
   }
 
   protected def modifyJob(selector : BSONDocument, modifier : BSONDocument) = {
