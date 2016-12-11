@@ -78,6 +78,7 @@ onMessage = (event) ->
       JobModel.messages().push(message.message)
       m.endComputation()
     when "UpdateJob"
+
       m.startComputation()
       console.log(message.jobID)
       console.log(message.state)
