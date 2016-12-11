@@ -46,13 +46,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
  *
     * @return
     */
-  def cleaned () = {
-    Json.obj("mainID"   -> mainID.stringify,
-             "job_id"   -> jobID,
-             "state"    -> status,
-             "toolname" -> tool)
-  }
-  def cleaned2() = {
+  def cleaned() = {
 
     Json.obj("mainID"   -> mainID.stringify,
              "jobID"   -> jobID,
