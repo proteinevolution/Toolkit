@@ -2,10 +2,18 @@ package modules.tel.runscripts
 
 import better.files.File
 
-
+/**
+  * An Execution Context represent the environment in which a runscript can be executed. Only TEL
+  * can produce ExecutionContexts, as TEL knows about the current set context of the Execution
+  *
+  * @param root
+  */
 class ExecutionContext(val root: File) {
 
   private val repFileBase = root./("params").createDirectories()
+
+
+
 
   /*
    Creates a new file in this ExecutionContext with a certain name and content.
@@ -19,19 +27,8 @@ class ExecutionContext(val root: File) {
     x
   }
 }
-object ExecutionContext {
-
-  def apply(root: File): ExecutionContext ={
-
-    if(root.exists) {
-
-      throw FileAlreadyExists("Directory for Execution context already exists.")
-    }
-    else {
-      new ExecutionContext(root)
-    }
-  }
-}
-
 case class NotADirectoryException(msg : String) extends IllegalArgumentException(msg)
 case class FileAlreadyExists(msg: String) extends IllegalArgumentException(msg)
+
+
+

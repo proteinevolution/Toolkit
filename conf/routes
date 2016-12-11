@@ -125,7 +125,7 @@ POST          /api/frontendSubmit/:toolname          @controllers.Tool.frontendC
 # Submit job again after being found in the jobhashes collection
 POST          /api/submitagain                        @controllers.Tool.submitAgain(toolname : String, mainID : String, jobID : String)
 # Get JobInformation based on Toolname
-GET           /api/jobs/:mainid                       @controllers.Service.getJob(mainid)
+
 
 # Get list of userjobs
 GET           /api/jobs                               @controllers.Service.listJobs
@@ -134,6 +134,8 @@ GET           /api/jobs                               @controllers.Service.listJ
 # New routes defined for the JobActor per job stuff
 POST          /api/job                                @controllers.JobController.create(toolname: String, jobID: String)
 GET           /api/job                                @controllers.JobController.check(toolname: String, jobID: Option[String])
+
+GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
 DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
 
 
