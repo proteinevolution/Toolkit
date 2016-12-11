@@ -67,7 +67,7 @@ trait CommonModule extends ReactiveMongoComponents {
   protected def upsertJob(job: Job): Unit =  {
 
     jobCollection
-      .flatMap(_.findAndUpdate(selectjobID(job.jobID), update = job, upsert = true))
+      .flatMap(_.findAndUpdate(selectjobID(job.jobID), update = job, upsert = true).map(_.result[Job]))
   }
 
 
