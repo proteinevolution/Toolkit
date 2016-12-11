@@ -8,6 +8,10 @@ import better.files._
   */
 trait TELConstants extends Constants {
   // TODO Get this from the configuration of the toolkit
+
+  // How the file of the final execution is called
+  final val executableName = "tool.sh"
+
   val TELPath = "tel"
   // Character used to have comments in the Shell files interpreted by TEL
   // Do NOT change this !

@@ -61,19 +61,6 @@ SearchformComponent =
     m "div", {id: "jobsearchform"},
       m "input", {type: "text", placeholder: "Search by JobID, e.g. 6881313", id: "jobsearch"}
 
-###
-m HelpModalComponent, {toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong}
-###
-###
-<div class="reveal" id="exampleModal1" data-reveal>
-  <h1>Awesome. I Have It.</h1>
-  <p class="lead">Your couch. It is mine.</p>
-  <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
-  <button class="close-button" data-close aria-label="Close modal" type="button">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-###
 
 ## Component that is displayed once the Job is running
 
@@ -82,50 +69,12 @@ foundationTable = (elem, isInit) ->
   if not isInit
     $(elem).foundation()
 
-# Timer for the Job execution time
-
-###
-  var myVar = setInterval(function(){ myTimer() }, 1000);
-
-function myTimer() {
-    var d = new Date();
-    var t = d.toLocaleTimeString();
-    document.getElementById("demo").innerHTML = t;
-}
-
-function myStopFunction() {
-    clearInterval(myVar);
-}
-###
-
-###
-console.log "JobRunningComponent Loaded"
-
-    pad = (val) -> if val > 9 then val else '0' + val
-    @timer = setInterval (->
-      document.getElementById('runningSeconds').innerHTML = pad(++JobModel.executionTime % 60)
-      document.getElementById('runningMinutes').innerHTML = pad(parseInt(JobModel.executionTime / 60, 10))
-    ), 1000
-    onunload: ->
-      clearInterval(@timer)
-
-   m "tr", [
-            m "td", "Execution Time"
-            m "td", [
-              m "span", {id: "runningMinutes"}, "00"
-              m "span", ":"
-              m "span", {id: "runningSeconds"}, "00"
-            ]
-          ]
-###
 JobErrorComponent =
   controller: ->
 
   view: ->
     m "div", {class: "error-panel"},
       m "p", "Job has reached Error state"
-
-
 
 JobRunningComponent =
   controller: ->

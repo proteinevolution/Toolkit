@@ -7,6 +7,7 @@ import actors.JobActor.RunscriptData
 import actors.Master.CreateJob
 import akka.actor.{ActorRef, ActorSystem}
 import models.Values
+import models.database.Job
 import models.job.JobIDProvider
 import models.search.JobDAO
 import play.api.Logger
@@ -14,6 +15,7 @@ import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -40,6 +42,22 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
     * Action requests a new Job instance at the Master.
     *
     */
+
+
+  def listJobs = Action.async { implicit request =>
+
+    getUser.flatMap { user =>
+
+      findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
+
+        Logger.info("Jobs Found " + jobs.map(_.cleaned).mkString)
+
+        Ok(Json.toJson( jobs.map(_.cleaned)))
+      }
+    }
+  }
+
+
   def check(toolname: String, jobID: Option[String]) = Action.async {
 
     Logger.info("Reached JobController.check")

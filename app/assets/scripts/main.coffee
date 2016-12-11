@@ -28,16 +28,6 @@ m.route document.getElementById('main-content'), '/',
 
 
 
-1
-# Mount the JobViewComponent into the Client-side application via associated routed
-#m.route document.getElementById('content'), '/',
-#  '/:static' : StaticRoute,
-#  '/tools/:toolname': m.component JobViewComponent, {isJob: false}
-#  '/jobs/:mainid': m.component JobViewComponent, {isJob : true}
-
-
-
-
 
 # Miscellaneous code that is present across the whole web application
 window.onfocus = ->
