@@ -9,10 +9,11 @@ import models.Constants
 import models.database._
 import modules.tel.runscripts._
 import better.files._
+import modules.CommonModule
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
+import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 
 import scala.collection.mutable
@@ -34,12 +35,13 @@ object JobActor {
 
   // Data that can be send to the JobActor via a message
   sealed trait JobData
-  case object Empty extends JobData
+
   case class RunscriptData(toolname: String, params: Map[String, String]) extends JobData
 
   // Data that the JobActor operates on
   sealed trait JobActorData
-  case class ParameterSupply(params: Map[String, Boolean], toolname: String) extends JobActorData
+  case class Parameters(params: Map[String, String]) extends JobActorData
+  case object Nothing extends JobActorData
 
   trait Factory {
 
@@ -51,9 +53,12 @@ object JobActor {
 }
 
 class JobActor @Inject() (runscriptManager : RunscriptManager,
-                         @NamedCache("jobitem") jobitemCache : CacheApi,
-                         @Named("master") master: ActorRef)
-  extends Actor with FSM[JobActorState, JobData] with Constants {
+                          val reactiveMongoApi: ReactiveMongoApi,
+                          @Named("master") master: ActorRef)
+  extends Actor
+    with FSM[JobActorState, JobActorData]
+    with Constants
+    with CommonModule {
 
   var currentJob : Option[Job] = None
   var executionContext: Option[ExecutionContext] = None
@@ -94,22 +99,21 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
   }
 
 
-
   // Set of sessionIDs of all users that are subscribed to this Job
-  startWith(Unemployed, Empty)
+  startWith(Unemployed, Nothing)
 
 
   // ------   Unemployed   ---------------------------------------------------
   when(Unemployed) {
 
-    case Event(CreateJob(jobID, userWithWS,  RunscriptData(toolname, params)), Empty) =>
+    case Event(CreateJob(jobID, userWithWS,  RunscriptData(toolname, params)), Nothing) =>
 
       // Job Initialization
       val jobCreationTime = DateTime.now()
       val userID = userWithWS._1.userID
 
       // Make a new JobObject
-      this.currentJob = Some(Job(mainID      = BSONObjectID.generate(),
+      this.currentJob = Some(Job(mainID = BSONObjectID.generate(),
                             sgeID       = "",
                             jobType     = "",
                             parentID    = None,
@@ -125,8 +129,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
                             dateCreated = Some(jobCreationTime),
                             dateUpdated = Some(jobCreationTime),
                             dateViewed  = Some(jobCreationTime)))
-
-      this.executionContext = Some(ExecutionContext(jobPath/jobID))
+      upsertJob(this.currentJob.get)
+      //this.executionContext = Some(ExecutionContext(jobPath/jobID))
 
       this.watchers.clear()
       userWithWS match {
@@ -141,14 +145,25 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
 
         parameters  = supply(paramName, value, parameters)
       }
-      // Decide if we go to pending (parameters missing) or Running
+
+
       if(isComplete(parameters)) {
 
-        goto(Employed(Running))
+        // TODO We currently have the assumption that all Arguments are valid
+        val arguments = parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))
+
+        // Write runscript file
+
+
+
+
+
+        goto(Employed(Running)) using Parameters(params)
 
       } else {
 
-        stay using Empty
+        // TODO Implement Me
+        stay using Nothing
       }
   }
   // -----------------------------------------------------------------
@@ -159,16 +174,19 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
     case Event(_,_) =>
 
         Logger.info("Now working")
-        stay using Empty
+        stay using Nothing
   }
 
 
   onTransition {
 
     // If we change to a new Employed state, notify all watchers
-    case _ -> Employed(state) =>
+    case _ -> Employed(Running) =>
 
-      watchers.foreach(_ ! JobStateChanged(currentJob.get.jobID, state))
+
+
+
+
   }
 
 

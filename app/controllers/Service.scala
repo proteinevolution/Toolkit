@@ -292,18 +292,9 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   def getJob(jobID: String) = Action.async { implicit request =>
 
 
+    Logger.info("getJobReached")
 
-
-
-
-
-
-
-    BSONObjectID.parse(jobID) match {
-
-      case Success(mainID) =>
-
-        jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).flatMap {
+    selectJob(jobID).flatMap {
 
           case Some(job) =>
             Logger.info("Requested job has been found in MongoDB")
@@ -315,7 +306,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               toolitemCache.set(job.tool, x)
               x
             }
-
             val ownerName =
               if (job.isPrivate) {
                 findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map{
@@ -332,7 +322,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               } else {
                 Future.successful("Public Job")
               }
-
             // The jobState decides which views will be appended to the job
             val jobViews: Seq[(String, Html)] = job.status match {
 
@@ -353,10 +342,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
                 Seq.empty // TODO add more elements for different states to show the status
             }
-            val paramValues = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map{ file =>
 
-              file.name -> file.contentAsString
-            }.toMap
+            val paramValues = Map.empty[String, String]
 
             ownerName.map{ ownerN =>
               Ok(Json.toJson(
@@ -375,8 +362,5 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             Logger.info("Job could not be found")
             Future.successful(NotFound)
         }
-      case _ =>
-        Future.successful(NotFound)
-    }
   }
 }

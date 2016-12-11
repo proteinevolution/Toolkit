@@ -7,6 +7,8 @@ import modules.tel.TELRegex
 import modules.tel.runscripts.Runscript.Evaluation
 import play.api.Logger
 
+import scala.util.matching.Regex
+
 
 //TODO
 // * Support Constraints and Conditions
@@ -40,14 +42,30 @@ case class ValidArgument(representation: Representation) extends Argument
 
 
 
+class Runscript(val parameters: Seq[(String, Evaluation)], val file: File) extends TELRegex  {
 
-class Runscript(val parameters: Seq[(String, Evaluation)])  {
-
-  // Implications with names for the parameters // TODO Currently also not supported
+  // Implications with names for the parameters // TODO Currently not supported
   type Condition = (String, RType => Boolean, String, RType => Boolean)
 
-  // Names of the parameters that need to be supplied to that runscript
-  final val parameterNames: Seq[String] = parameters.map(_._1).distinct
+  final val name: String = file.nameWithoutExtension // Name of the Runscript
+  final val parameterNames: Seq[String] = parameters.map(_._1).distinct   // Names of the parameters that need to be supplied
+
+  private case class Replacer(arguments : Seq[(String, ValidArgument)]) {
+
+    private var counter = -1
+
+    def apply(m : Regex.Match) : String = {
+      counter += 1
+      arguments(counter)._2.representation.represent
+    }
+  }
+
+  // Translates A sequence of Arguments with the parameter names into a runnable runscript instance
+   def apply(arguments: Seq[(String, ValidArgument)]): String = {
+
+    val replacer = Replacer(arguments)
+    parameterString.replaceAllIn(file.contentAsString, replacer.apply _)
+  }
 }
 
 
@@ -78,7 +96,7 @@ object Runscript extends TELRegex {
               case "content" => ValidArgument(new LiteralRepresentation(value))
             }
           }
-          })
+          }, file)
         }
 }
 
