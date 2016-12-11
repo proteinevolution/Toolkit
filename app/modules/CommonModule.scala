@@ -16,6 +16,8 @@ import scala.concurrent.Future
 trait CommonModule extends ReactiveMongoComponents {
 
 
+  private final def selectjobID(jobID: String) = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
+
   /* Collections */
   protected def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
 
@@ -55,6 +57,22 @@ trait CommonModule extends ReactiveMongoComponents {
         .flatMap(_.collect[Set](-1, Cursor.FailOnError[Set[Job]]()))
   }
 
+
+  /**
+    * Updates Job in the database with, if a job with the same jobID is already present, otherwise creates the Job
+    *
+    * @param job
+    * @return
+    */
+  protected def upsertJob(job: Job): Unit =  {
+
+    jobCollection
+      .flatMap(_.findAndUpdate(selectjobID(job.jobID), update = job, upsert = true))
+  }
+
+
+
+  // Modifies Job in the database
   protected def modifyJob(selector : BSONDocument, modifier : BSONDocument) = {
     jobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
   }
