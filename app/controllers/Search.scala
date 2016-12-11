@@ -70,7 +70,7 @@ final class Search @Inject() (
       // Grab Job Objects from the Database
       futureMainIDs.map(mainIDs => findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)))).flatMap{ jobs =>
         //jobs.map(joblist => Logger.info("Final Result: " + joblist.toString()))
-        jobs.map(_.map(_.cleaned2())).map(jobJs => Ok(Json.toJson(jobJs)))
+        jobs.map(_.map(_.cleaned())).map(jobJs => Ok(Json.toJson(jobJs)))
       }
     }
   }
