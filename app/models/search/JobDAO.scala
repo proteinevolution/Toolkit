@@ -7,6 +7,7 @@ import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
 import modules.tools.FNV
 import org.elasticsearch.common.unit.Fuzziness
+import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.Future
 
@@ -76,8 +77,6 @@ class JobDAO @Inject()(cs: ClusterSetup,
     client.execute{
       search in "tkplay_dev" -> "jobs" query {
         termsQuery("jobID", jobIDs : _*) // - termsQuery does not seem to work
-
-        //termQuery("jobID", jobIDs.headOption.getOrElse("")) // Currently just looking for the first jobID
       }
     }
   }
@@ -105,6 +104,20 @@ class JobDAO @Inject()(cs: ClusterSetup,
     client.execute {
       search in "tkplay_dev"->"jobs" query {
         fuzzyQuery("jobID", queryString).fuzziness(Fuzziness.AUTO).prefixLength(4).maxExpansions(10)
+      }
+    }
+  }
+
+
+  def jobsWithTool(toolName : String, userID : BSONObjectID) : Future[RichSearchResponse] = {
+    client.execute {
+      search in "tkplay_dev"->"jobs" query {
+        bool(
+          should(
+            termQuery("tool", toolName),
+            termQuery("ownerID", userID)
+          )
+        )
       }
     }
   }
