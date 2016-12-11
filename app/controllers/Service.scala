@@ -289,9 +289,17 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
 
 
-  def getJob(mainIDString: String) = Action.async { implicit request =>
+  def getJob(jobID: String) = Action.async { implicit request =>
 
-    BSONObjectID.parse(mainIDString) match {
+
+
+
+
+
+
+
+
+    BSONObjectID.parse(jobID) match {
 
       case Success(mainID) =>
 

@@ -10,8 +10,10 @@ import models.database._
 import modules.tel.runscripts._
 import better.files._
 import modules.tel.runscripts.Runscript.Evaluation
+import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
+import reactivemongo.bson.BSONObjectID
 
 import scala.collection.mutable
 
@@ -53,7 +55,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
                          @Named("master") master: ActorRef)
   extends Actor with FSM[JobActorState, JobData] with Constants {
 
-  var currentJobID : Option[String] = None
+  var currentJob : Option[Job] = None
   var executionContext: Option[ExecutionContext] = None
 
   // All actors that are currently monitoring this job
@@ -91,6 +93,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
     params.forall( item  => item._2._2.isDefined)
   }
 
+
+
   // Set of sessionIDs of all users that are subscribed to this Job
   startWith(Unemployed, Empty)
 
@@ -98,14 +102,35 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
   // ------   Unemployed   ---------------------------------------------------
   when(Unemployed) {
 
-    case Event(CreateJob(jobID, user,  RunscriptData(toolname, params)), Empty) =>
+    case Event(CreateJob(jobID, userWithWS,  RunscriptData(toolname, params)), Empty) =>
 
       // Job Initialization
-      this.currentJobID = Some(jobID)
+      val jobCreationTime = DateTime.now()
+      val userID = userWithWS._1.userID
+
+      // Make a new JobObject
+      this.currentJob = Some(Job(mainID      = BSONObjectID.generate(),
+                            sgeID       = "",
+                            jobType     = "",
+                            parentID    = None,
+                            jobID       = jobID,
+                            ownerID     = if (params.getOrElse("private","") == "true") Some(userID) else None,
+                            status      = Submitted,
+                            tool        = toolname,
+                            statID      = "",
+                            watchList   = List(userID),
+                            runtime     = Some(""),
+                            memory      = Some(0),
+                            threads     = Some(0),
+                            dateCreated = Some(jobCreationTime),
+                            dateUpdated = Some(jobCreationTime),
+                            dateViewed  = Some(jobCreationTime)))
+
       this.executionContext = Some(ExecutionContext(jobPath/jobID))
+
       this.watchers.clear()
-      user match {
-        case Right(actorRef) => this.watchers.add(actorRef)
+      userWithWS match {
+        case (_, Some(actorRef)) => this.watchers.add(actorRef)
       }
 
       // Representation of the current State of the job submission
@@ -143,11 +168,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
     // If we change to a new Employed state, notify all watchers
     case _ -> Employed(state) =>
 
-
-
-
-      Logger.info("Notify watchlist")
-      watchers.foreach(_ ! JobStateChanged(currentJobID.get, state))
+      watchers.foreach(_ ! JobStateChanged(currentJob.get.jobID, state))
   }
 
 
