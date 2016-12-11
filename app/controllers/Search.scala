@@ -1,5 +1,6 @@
 package controllers
 
+import models.tools.ToolModel
 import play.Logger
 import models.Constants
 import models.database.Job
@@ -43,23 +44,34 @@ final class Search @Inject() (
   }
 
   def autoComplete(queryString : String) = Action.async{ implicit request =>
-    // Grab Job ID auto completions
-    val jobIDSuggestions = jobDao.jobIDtermSuggester(queryString).map(_.suggestion("jobID").entry(queryString).optionsText.toList)
-    //jobIDSuggestions.map(ids => Logger.info("Found Strings: " + ids.toString()))
+    getUser.flatMap { user =>
+      val mainIDStrings : Future[List[String]] =
+        // Find out if the user looks for a certain tool or for a jobID
+        if (ToolModel.toolMap.get(queryString).isDefined) {
+          // Find the Jobs with the matching tool
+          Logger.info("user is looking for tool: " + queryString)
+          jobDao.jobsWithTool(queryString, user.userID).map(_.getHits.hits().toList.map(_.id()))
+        } else {
+          // Grab Job ID auto completions
+          val jobIDSuggestions = jobDao.jobIDtermSuggester(queryString).map(_.suggestion("jobID").entry(queryString).optionsText.toList)
+          jobIDSuggestions.map(ids => Logger.info("Found Strings: " + ids.toString()))
 
-    // Search for jobIDs in ES
-    val searchHits = jobIDSuggestions.flatMap(jobIDSuggestions => jobDao.getJobIDs(jobIDSuggestions)).map(_.getHits)
-    //searchHits.map(ids => Logger.info("Found Hits: " + ids.totalHits()))
-    // Grab main IDs from the hits
-    val mainIDStrings = searchHits.map(_.hits().toList.map(_.id()))
-    // Convert to BSON mainIDs
-    val futureMainIDs = mainIDStrings.map(_.map(mainIDString => BSONObjectID.parse(mainIDString).get))
-    //futureMainIDs.map(ids => Logger.info("mainID: " + ids.toString()))
+          // Search for jobIDs in ES
+          val searchHits = jobIDSuggestions.flatMap(jobIDSuggestions => jobDao.getJobIDs(jobIDSuggestions)).map(_.getHits)
+          //searchHits.map(ids => Logger.info("Found Hits: " + ids.totalHits()))
+          // Grab main IDs from the hits
+          searchHits.map(_.hits().toList.map(_.id()))
+        }
 
-    // Grab Job Objects from the Database
-    futureMainIDs.map(mainIDs => findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)))).flatMap{ jobs =>
-      //jobs.map(joblist => Logger.info("Final Result: " + joblist.toString()))
-      jobs.map(_.map(_.cleaned())).map(jobJs => Ok(Json.toJson(jobJs)))
+      // Convert to BSON mainIDs
+      val futureMainIDs = mainIDStrings.map(_.map(mainIDString => BSONObjectID.parse(mainIDString).get))
+      //futureMainIDs.map(ids => Logger.info("mainID: " + ids.toString()))
+
+      // Grab Job Objects from the Database
+      futureMainIDs.map(mainIDs => findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)))).flatMap{ jobs =>
+        //jobs.map(joblist => Logger.info("Final Result: " + joblist.toString()))
+        jobs.map(_.map(_.cleaned2())).map(jobJs => Ok(Json.toJson(jobJs)))
+      }
     }
   }
 

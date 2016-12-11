@@ -34,7 +34,7 @@ typeAhead = (elem, isInit) ->
     $(elem).typeahead {
         hint: true
         highlight: true
-        minLength: 6
+        minLength: 4
       },
       source: engine.ttAdapter()
       name: 'jobList'
