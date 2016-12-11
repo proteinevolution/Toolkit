@@ -80,9 +80,9 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       Logger.info("Requested user list is " + user.jobs.mkString)
 
       findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Logger.info(jobs.map(_.cleaned2).length + " jobs for userID " + user.userID + " found")
+        Logger.info(jobs.map(_.cleaned).length + " jobs for userID " + user.userID + " found")
 
-        Ok(Json.toJson( jobs.map(_.cleaned2)))
+        Ok(Json.toJson( jobs.map(_.cleaned)))
       }
     }
   }
@@ -138,7 +138,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
           findJob(BSONDocument(Job.IDDB -> mainID)).map {
             case Some(job) =>
               userManager ! AddJobWatchList(user.userID, job.mainID)
-              Ok(job.cleaned2())
+              Ok(job.cleaned())
             case None => NotFound
           }
         case _ =>

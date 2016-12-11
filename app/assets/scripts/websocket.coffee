@@ -80,7 +80,7 @@ onMessage = (event) ->
     when "UpdateJob"
       state = message.job.state.toString()
       mainID = message.job.mainID.toString()
-      jobID = message.job.job_id.toString()
+      jobID = message.job.jobID.toString()
       m.startComputation()
       Job.updateState(mainID, jobID, state)
       m.endComputation()
