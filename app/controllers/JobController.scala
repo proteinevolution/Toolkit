@@ -72,9 +72,10 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
 
   def create(toolname: String, jobID: String) =  Action.async { implicit request =>
 
+    // Just grab the formData and send to Master
     getUser.map { user =>
       val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
-      master ! CreateJob(jobID, Left(user.userID.stringify), RunscriptData(toolname, formData))
+      master ! CreateJob(jobID, (user, None), RunscriptData(toolname, formData))
       Ok
     }
   }
