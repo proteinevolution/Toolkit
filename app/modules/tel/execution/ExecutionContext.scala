@@ -1,8 +1,12 @@
 package modules.tel.execution
 
+import java.nio.file.attribute.{PosixFilePermission}
+
 import better.files.File
 
 import scala.collection.mutable
+import scala.sys.process._
+
 
 /**
   * An Execution Context represent the environment in which a runscript can be executed. Only TEL
@@ -17,7 +21,6 @@ class ExecutionContext(val root: File) {
   // a Queue of executable files for this execution Context
   private val executionQueue = mutable.Queue[File]()
   private val execNumbers = Iterator.from(0, 1)
-
 
   /*
    Creates a new file in this ExecutionContext with a certain name and content.
@@ -35,6 +38,18 @@ class ExecutionContext(val root: File) {
 
     executionQueue.enqueue(execution.register(root./(execNumbers.next().toString).createDirectories()))
   }
+
+  def executeNext: ProcessBuilder = {
+
+    val x = executionQueue.dequeue()
+    // Ensure that the target file is executable
+    x.setPermissions(Set(PosixFilePermission.OWNER_EXECUTE,
+      PosixFilePermission.OWNER_READ,
+      PosixFilePermission.OTHERS_WRITE))
+    Process(x.pathAsString, x.parent.toJava)
+  }
+  def hasMoreExecutions: Boolean = executionQueue.nonEmpty
+
 }
 object ExecutionContext {
 
@@ -50,5 +65,7 @@ object ExecutionContext {
     }
   }
 }
+
+
 
 
