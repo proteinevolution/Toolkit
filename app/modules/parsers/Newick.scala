@@ -1,3 +1,4 @@
+package modules.parsers
 import scala.util.parsing.combinator._
 
 sealed abstract class Tree

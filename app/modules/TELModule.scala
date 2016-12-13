@@ -11,7 +11,7 @@ import com.google.inject.name.Names
 /**
   * Created by lukas on 8/28/16.
   */
-class  TELModule  extends AbstractModule {
+class TELModule extends AbstractModule {
 
 
   override def configure(): Unit = {
