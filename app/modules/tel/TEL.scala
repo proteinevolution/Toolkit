@@ -8,8 +8,8 @@ import better.files.Cmds._
 import better.files._
 import models.Implicits._
 import modules.tel.env.Env
+import modules.tel.execution.Execution
 import modules.tel.param.Params
-import modules.tel.runscripts.{ExecutionContext, FileAlreadyExists, Runscript}
 
 
 /**
@@ -22,27 +22,6 @@ class TEL @Inject() (env : Env,
                      params: Params) extends TELRegex with TELConstants   {
 
 
-
-  def getExecutionContext(root: File, runscript: Runscript) = {
-
-    if(root.exists) {
-      throw FileAlreadyExists("ExecutionContext could not be created as the root directory already exists")
-    }
-    else {
-
-      context match {
-
-        case "LOCAL" => new ExecutionContext(root, root./(executableName), runscript)
-
-        case _ =>
-
-          new ExecutionContext(root, {
-
-
-          })
-      }
-    }
-  }
 
 
 

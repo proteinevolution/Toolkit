@@ -10,6 +10,8 @@ import models.database._
 import modules.tel.runscripts._
 import better.files._
 import modules.CommonModule
+import modules.tel.env.Env
+import modules.tel.execution.{EngineExecution, ExecutionContext, LocalExecution}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
@@ -52,7 +54,8 @@ object JobActor {
   case class JobStateChanged(jobID: String, newState: JobState)
 }
 
-class JobActor @Inject() (runscriptManager : RunscriptManager,
+class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runscripts to be executed
+                          env: Env,                               // To supply the runscripts with an environment
                           val reactiveMongoApi: ReactiveMongoApi,
                           @Named("master") master: ActorRef)
   extends Actor
@@ -130,15 +133,21 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
                             dateUpdated = Some(jobCreationTime),
                             dateViewed  = Some(jobCreationTime)))
       upsertJob(this.currentJob.get)
-      //this.executionContext = Some(ExecutionContext(jobPath/jobID))
+      this.executionContext = Some(ExecutionContext(jobPath/jobID))
 
+      // Clear old watchers and insert job owner
       this.watchers.clear()
       userWithWS match {
         case (_, Some(actorRef)) => this.watchers.add(actorRef)
       }
 
+      // Fetch the runscript for the job Execution and provide injected environment
+      val runscript = runscriptManager(toolname).withEnvironment(env)
+
+
+
       // Representation of the current State of the job submission
-      var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscriptManager(toolname).parameters.map { t =>
+      var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map { t =>
         t._1 -> (t._2 -> None)
       }
       for((paramName, value) <- params) {
@@ -149,13 +158,30 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,
 
       if(isComplete(parameters)) {
 
-        // TODO We currently have the assumption that all Arguments are valid
-        val arguments = parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))
+        // Translate the Runscript into an executable version
+        val content = runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument])))
 
-        // Write runscript file
+        // Decide on the type of execution based on the context variable. It will
+        // either be a local execution or a engine execution
+
+
+        env.get("CONTEXT") match {
+
+          case "LOCAL" =>
+
+            Logger.info("Establish a local execution of Job " + this.currentJob.get.jobID)
+            executionContext.get.accept(LocalExecution(content))
+
+          case s: String =>
+
+            Logger.info("Establish an engine execution of Job " + this.currentJob.get.jobID)
+            //executionContext.get.accept(EngineExecution())
+
+        }
 
 
 
+        this.executionContext.get.accept(LocalExecution(content))
 
 
         goto(Employed(Running)) using Parameters(params)

@@ -17,11 +17,8 @@ trait TELConstants extends Constants {
   // Do NOT change this !
   val commentChar = '#'
 
-  // FILES
-  val typesFile = s"$TELPath${SEPARATOR}types".toFile
 
-  // PATHS
-  val typesPath = s"$TELPath${SEPARATOR}types"
+  // PATHS // TODO Remove me
   val runscriptPath = s"$TELPath${SEPARATOR}runscripts$SEPARATOR"
   val contextPath = s"$TELPath${SEPARATOR}context.d$SEPARATOR"
 }

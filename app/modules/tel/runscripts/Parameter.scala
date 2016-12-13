@@ -48,8 +48,7 @@ abstract class Representation{
   */
 class LiteralRepresentation(value : RType) extends Representation {
 
-  private val internalValue: Option[RType] = Some(value)
-  def represent : String = internalValue.get.toString
+  def represent : String = value.inner().toString
 }
 
 class FileRepresentation(file: File) extends Representation {
