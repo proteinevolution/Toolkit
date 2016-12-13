@@ -57,6 +57,7 @@ object JobActor {
 class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runscripts to be executed
                           env: Env,                               // To supply the runscripts with an environment
                           val reactiveMongoApi: ReactiveMongoApi,
+                          engineExecutionFactory: EngineExecution.Factory,
                           @Named("master") master: ActorRef)
   extends Actor
     with FSM[JobActorState, JobActorData]
@@ -115,6 +116,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
       val jobCreationTime = DateTime.now()
       val userID = userWithWS._1.userID
 
+      // the jobid needs to be added to the parameters
+      val extendedParams = params + ("jobid" -> jobID)
+
       // Make a new JobObject
       this.currentJob = Some(Job(mainID = BSONObjectID.generate(),
                             sgeID       = "",
@@ -145,12 +149,11 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
       val runscript = runscriptManager(toolname).withEnvironment(env)
 
 
-
       // Representation of the current State of the job submission
       var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map { t =>
         t._1 -> (t._2 -> None)
       }
-      for((paramName, value) <- params) {
+      for((paramName, value) <- extendedParams) {
 
         parameters  = supply(paramName, value, parameters)
       }
@@ -164,27 +167,25 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
         // Decide on the type of execution based on the context variable. It will
         // either be a local execution or a engine execution
 
+        executionContext.get.accept {
 
-        env.get("CONTEXT") match {
+          env.get("CONTEXT") match {
 
-          case "LOCAL" =>
+            case "LOCAL" =>
 
-            Logger.info("Establish a local execution of Job " + this.currentJob.get.jobID)
-            executionContext.get.accept(LocalExecution(content))
+              Logger.info("Establish a local execution of Job " + this.currentJob.get.jobID)
+              LocalExecution(content)
 
-          case s: String =>
+            case s: String =>
 
-            Logger.info("Establish an engine execution of Job " + this.currentJob.get.jobID)
-            //executionContext.get.accept(EngineExecution())
-
+              Logger.info("Establish an engine execution of Job " + this.currentJob.get.jobID)
+              engineExecutionFactory(content, s)
+          }
         }
 
+        goto(Employed(Running)) using Parameters(extendedParams)
 
 
-        this.executionContext.get.accept(LocalExecution(content))
-
-
-        goto(Employed(Running)) using Parameters(params)
 
       } else {
 

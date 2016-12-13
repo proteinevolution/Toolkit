@@ -9,6 +9,7 @@ import models.search.JobDAO
 import models.{Constants, Values}
 import modules.tel.TEL
 import modules.CommonModule
+import modules.tel.env.Env
 import play.api.{Configuration, Logger}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +34,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                             system           : ActorSystem,
                             mat              : Materializer,
                         val tel              : TEL,
+                        val env: Env,
                         val search           : Search,
                         val settings : Settings,
       @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
@@ -65,6 +67,11 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     * Currently the index controller will assign a session id to the user for identification purpose.
     */
   def index = Action.async { implicit request =>
+
+    val port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
+    val hostname = request.host.slice(0, request.host.indexOf(":"))
+    env.configure("PORT", port)
+    env.configure("HOSTNAME", hostname)
 
     tel.port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
     println("[CONFIG:] running on port "+tel.port)

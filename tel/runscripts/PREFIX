@@ -1,0 +1,12 @@
+#!/bin/bash
+
+trap catch_errors ERR;
+function catch_errors() {
+
+    curl -X POST http://%HOSTNAME:%PORT/jobs/error/%jobid.content
+    echo "script aborted, because of errors"
+    exit 0
+}
+curl -X POST http://%HOSTNAME:%PORT/jobs/running/%jobid.content
+
+
