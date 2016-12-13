@@ -3,10 +3,12 @@ package modules
 import javax.inject.{Inject, Provider}
 
 import com.google.inject.AbstractModule
+import com.google.inject.assistedinject.FactoryModuleBuilder
 import modules.tel.env.{Env, ExecFile, PropFile, TELEnv}
 import modules.tel.param.{GenerativeParamFileParser, ParamCollector, Params}
 import play.api.{Configuration, Logger}
 import com.google.inject.name.Names
+import modules.tel.execution.EngineExecution
 
 /**
   * Created by lukas on 8/28/16.
@@ -34,8 +36,20 @@ class TELModule extends AbstractModule {
           .annotatedWith(Names.named("enginePath"))
           .toProvider(classOf[EnginePathProvider])
           .asEagerSingleton()
+
+        // Install the Factory for EngineExecution
+        install(new FactoryModuleBuilder().build(classOf[EngineExecution.Factory]))
   }
 }
+
+
+
+/*
+install(new FactoryModuleBuilder()
+     .implement(Payment.class, RealPayment.class)
+     .build(PaymentFactory.class));
+
+ */
 
 import better.files._
 
