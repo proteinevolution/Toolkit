@@ -74,21 +74,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     }
   }
 
-
-  def listJobs = Action.async { implicit request =>
-
-    getUser.flatMap { user =>
-      Logger.info("Requested user list is " + user.jobs.mkString)
-
-      findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Logger.info(jobs.map(_.cleaned).length + " jobs for userID " + user.userID + " found")
-
-        Ok(Json.toJson( jobs.map(_.cleaned)))
-      }
-    }
-  }
-
-
   // TODO  Handle Acknowledgement
   /**
     * User asks to delete the Job with the provided mainID
@@ -297,7 +282,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     selectJob(jobID).flatMap {
 
           case Some(job) =>
-            Logger.info("Requested job has been found in MongoDB")
+            Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
 
             val toolModel = ToolModel.toolMap(job.tool)
 
@@ -333,6 +318,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               case Error => Seq.empty
 
               case Done =>
+                Logger.info("Try to assemble result views")
 
                 toolModel.results.map { resultName =>
                 resultName -> views.html.jobs.resultpanel(resultName, job.mainID.stringify, job.tool)
@@ -344,6 +330,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             }
 
             val paramValues = Map.empty[String, String]
+            Logger.info("After param values")
+
 
             ownerName.map{ ownerN =>
               Ok(Json.toJson(
