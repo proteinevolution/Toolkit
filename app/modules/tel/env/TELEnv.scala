@@ -2,7 +2,6 @@ package modules.tel.env
 
 import javax.inject.Singleton
 import modules.tel.Observer
-import play.api.Logger
 
 /**
   * Manages values of Keys from the TEL environment
@@ -14,7 +13,11 @@ class TELEnv extends Env with Observer[EnvFile]    {
 
   private var env : Map[String, String] = Map.empty
 
-  def get(key : String) = this.env(key)
+  override def get(key : String): String = this.env(key)
+
+  override def configure(key: String, value: String): Unit = {
+    this.env = this.env + (key -> value)
+  }
 
 
   override def receiveInitial(subject: EnvFile) = receiveUpdate(subject)

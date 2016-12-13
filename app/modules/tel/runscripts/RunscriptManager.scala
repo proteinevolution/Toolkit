@@ -20,14 +20,41 @@ import play.api.Logger
 @Singleton
 class RunscriptManager @Inject() (@Named("runscriptPath") runscriptPath : String)  {
 
+  // Constants for the RunscriptManager
+  final val SUFFIX = "SUFFIX"
+  final val PREFIX = "PREFIX"
+
+
   Logger.info(s"RunscriptManager started, surveilling: $runscriptPath")
 
-  val runscripts : Map[String, Runscript] = runscriptPath.toFile.list.withFilter(_.extension.getOrElse("") == ".sh").map { file =>
+  // Maps each runscript name to the corresponding file
+  private final val runscripts : Map[String, File] = runscriptPath.toFile.list.withFilter(_.extension.getOrElse("") == ".sh").map { file =>
 
-    file.nameWithoutExtension -> Runscript(file)
+    file.nameWithoutExtension -> file
   }.toMap
 
-  def apply(runscriptName: String): Runscript = runscripts(runscriptName)
+  // All files that will be prepended to a requested runscript
+  private final val prefix: Seq[File] = {
+    val x = runscriptPath.toFile / PREFIX
+    if(x.exists) {
+      Logger.info("RunscriptManager: PREFIX will be automatically prepended to each runscript")
+      Seq(x)
+    } else {
+      Seq.empty
+    }
+  }
+  // All files that will be appended to a requested runscript
+  private final val suffix: Seq[File] = {
+    val x = runscriptPath.toFile / SUFFIX
+    if(x.exists) {
+      Logger.info("RunscriptManager: SUFFIX will be automatically prepended to each runscript")
+      Seq(x)
+    } else {
+      Seq.empty
+    }
+  }
+
+  def apply(runscriptName: String): Runscript =  Runscript(prefix ++ Seq(runscripts(runscriptName)) ++ suffix)
 }
 
 
