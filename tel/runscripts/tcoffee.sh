@@ -10,5 +10,5 @@ export CACHE_4_TCOFFEE=./tmp
                    -cache=no \
                    -output clustalw_aln score_pdf score_html
 
-mv alignment.* results/
+mv alignment.* ../results/
 

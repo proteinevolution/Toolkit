@@ -3,7 +3,7 @@ package actors
 import javax.inject.{Inject, Named}
 
 import actors.JobActor._
-import actors.Master.CreateJob
+import actors.Master.{CreateJob, WorkerDoneWithJob}
 import akka.actor.{Actor, ActorRef, FSM}
 import models.Constants
 import models.database._
@@ -16,9 +16,12 @@ import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.BSONObjectID
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.collection.mutable
+import scala.concurrent.Future
+import scala.sys.process._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 /**
@@ -42,8 +45,8 @@ object JobActor {
 
   // Data that the JobActor operates on
   sealed trait JobActorData
-  case class Parameters(params: Map[String, String]) extends JobActorData
   case object Nothing extends JobActorData
+  case class ExecutionProcess(processbuilder: ProcessBuilder) extends JobActorData
 
   trait Factory {
 
@@ -89,6 +92,18 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
         case q => q
       }
   }
+
+
+  // Make the jobActor unemployed and available to the master again
+  private def unemploy() = {
+
+    master ! WorkerDoneWithJob(this.currentJob.get.jobID)
+    this.currentJob = None
+    this.executionContext = None
+    this.watchers.clear()
+    goto(Unemployed)
+  }
+
 
   /**
     * Determines whether the parameter list is completely supplied
@@ -137,6 +152,10 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
                             dateUpdated = Some(jobCreationTime),
                             dateViewed  = Some(jobCreationTime)))
       upsertJob(this.currentJob.get)
+      // Add Job to user
+      modifyUser(BSONDocument(User.IDDB -> userID),
+        BSONDocument("$push" -> BSONDocument(User.JOBS -> this.currentJob.get.mainID)))
+
       this.executionContext = Some(ExecutionContext(jobPath/jobID))
 
       // Clear old watchers and insert job owner
@@ -183,13 +202,15 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
           }
         }
 
-        goto(Employed(Running)) using Parameters(extendedParams)
-
+        // Everyhing is set, start the next execution
+        Logger.info("Change state to Employed(Running)")
+        goto(Employed(Running)) using ExecutionProcess(executionContext.get.executeNext)
 
 
       } else {
 
         // TODO Implement Me
+        Logger.info("STAY")
         stay using Nothing
       }
   }
@@ -198,22 +219,50 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
   when(Employed(Running)) {
 
 
-    case Event(_,_) =>
 
-        Logger.info("Now working")
+    // Job State Changed was Received
+    case Event(JobStateChanged(jobID,state),_) =>
+
+        // First inform Watchlist
+        watchers.foreach(_ ! JobStateChanged(jobID, state))
+
+        state match {
+
+          case Running => // Don't do anything, this is expected
+          case Done =>      // Runscript execution was successful
+
+            // We must do more executions if necessary
+            if(this.executionContext.get.hasMoreExecutions) {
+
+              // TODO Implement me
+
+            } else  {
+
+                // Job is done and JobActor can be made unemployed
+                this.unemploy()
+            }
+        }
+
+
         stay using Nothing
   }
 
-
   onTransition {
 
-    // If we change to a new Employed state, notify all watchers
+    // We now change to the Running State (wait for the job to give feedback)
     case _ -> Employed(Running) =>
 
+      nextStateData match {
 
+        case ExecutionProcess(processbuilder) =>
+          Future(processbuilder.!)
 
+        // This cannot happen, as we always have a process to run on
+        case Nothing =>
 
+          Logger.info("No process data")
 
+      }
   }
 
 

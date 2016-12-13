@@ -3,11 +3,12 @@ package actors
 import javax.inject.{Inject, Singleton}
 
 import actors.JobActor.JobData
-import actors.Master.{CreateJob, DeleteJob, JobOperation, WorkerDoneWithJob}
-import actors.UserManager.{UserConnect, UserDisconnect}
+import actors.Master._
+import actors.UserManager.UserConnect
 import akka.actor.{Actor, ActorRef, Props}
 import akka.event.LoggingReceive
 import models.database.User
+import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import reactivemongo.bson.BSONObjectID
 
@@ -35,6 +36,15 @@ class Master @Inject() (@NamedCache("jobActorCache") val jobActorCache: CacheApi
 
 
   def receive = LoggingReceive {
+
+    case JobMessage(jobID, message) =>
+
+      Logger.info("Master has received job Message")
+
+      if(jobs.contains(jobID)) {
+
+          jobs(jobID) ! message
+      }
 
     // Master registers user
     case UserConnect(userID) =>
@@ -69,17 +79,22 @@ class Master @Inject() (@NamedCache("jobActorCache") val jobActorCache: CacheApi
      // Worker notified that no more work has to be done for the current Job
     case WorkerDoneWithJob(jobID) =>
 
+      Logger.info("Worker is done with job")
+
       val assignee = sender()
       jobs.remove(jobID)
       // Dequeue until next undeltedJobHasBeen Found
       pendingWork.dequeueFirst(op => !deletedJobs.contains(op.jobID)) match {
 
         case Some(op) =>
+          Logger.info("Directly assign new task")
+
           jobs.put(op.jobID, assignee)
           assignee ! op
 
         // No More things to be processed
         case None =>
+          Logger.info("Nothing to do for the moment")
           availJobActors.enqueue(assignee)
       }
   }
@@ -99,6 +114,9 @@ object Master {
 
   case class DeleteJob(override val jobID: String) extends JobOperation(jobID)
 
+
+  // A Message which is supposed to reach a particlar job
+  case class JobMessage(jobID: String, message: AnyRef)
 
   /* Status Messages coming from the Workers */
   sealed trait WorkerMessage

@@ -128,7 +128,7 @@ POST          /api/submitagain                        @controllers.Tool.submitAg
 
 
 # Get list of userjobs
-GET           /api/jobs                               @controllers.Service.listJobs
+GET           /api/jobs                               @controllers.JobController.listJobs
 
 
 # New routes defined for the JobActor per job stuff

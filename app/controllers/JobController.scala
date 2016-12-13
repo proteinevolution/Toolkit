@@ -50,7 +50,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
 
       findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
 
-        Logger.info("Jobs Found " + jobs.map(_.cleaned).mkString)
+        Logger.info("Number of found jobs is " + jobs.size)
 
         Ok(Json.toJson( jobs.map(_.cleaned)))
       }
