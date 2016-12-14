@@ -1,7 +1,9 @@
 package controllers
 
+import javax.inject.Inject
+
 import models.database.{SessionData, User}
-import modules.{CommonModule, GeoIP}
+import modules.{CommonModule, LocationProvider}
 import modules.common.HTTPRequest
 import org.joda.time.DateTime
 import play.api.cache._
@@ -16,18 +18,22 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by astephens on 24.08.16.
   */
-trait UserSessions extends GeoIP with CommonModule {
+trait UserSessions extends CommonModule {
   private final val SID = "sid"
+
   implicit val userCache : CacheApi
+  implicit val locationProvider: LocationProvider
 
   /**
-    * puts a user in the cache
+    *
+    * Associates a user with the provided sessionID
+    *
     */
   def putUser(implicit request : RequestHeader, sessionID : BSONObjectID) = {
     val httpRequest    = HTTPRequest(request)
     val newSessionData = SessionData(ip        = request.remoteAddress,
                                      userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
-                                     location  = getLocation(request))
+                                     location  = locationProvider.getLocation(request))
 
 
     findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
@@ -52,8 +58,7 @@ trait UserSessions extends GeoIP with CommonModule {
                         dateCreated   = Some(new DateTime()),
                         dateLastLogin = Some(new DateTime()),
                         dateUpdated   = Some(new DateTime()))
-        addUser(user).map { a =>
-          userCache.set(user.sessionID.get.stringify, user, 10.minutes)
+        addUser(user).map { _ =>
           user
         }
     }
@@ -71,13 +76,7 @@ trait UserSessions extends GeoIP with CommonModule {
       case None =>
         BSONObjectID.generate()
     }
-    // Check the user cache
-    userCache.get[User](sessionID.stringify) match {
-      case Some(user) =>
-        Future.successful(user)
-      case None       =>
-        putUser(request, sessionID)
-    }
+      putUser(request, sessionID)
   }
 
   /**

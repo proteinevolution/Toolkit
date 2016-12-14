@@ -9,12 +9,14 @@ import models.Constants
 import models.database._
 import modules.tel.runscripts._
 import better.files._
-import modules.CommonModule
+import controllers.UserSessions
+import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
 import modules.tel.execution.{EngineExecution, ExecutionContext, LocalExecution}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
+import play.api.cache.{CacheApi, NamedCache}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
@@ -61,11 +63,13 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
                           env: Env,                               // To supply the runscripts with an environment
                           val reactiveMongoApi: ReactiveMongoApi,
                           engineExecutionFactory: EngineExecution.Factory,
+                          implicit val locationProvider: LocationProvider,
+                          @NamedCache("userCache") implicit val userCache : CacheApi,
                           @Named("master") master: ActorRef)
   extends Actor
     with FSM[JobActorState, JobActorData]
     with Constants
-    with CommonModule {
+    with UserSessions {
 
   var currentJob : Option[Job] = None
   var executionContext: Option[ExecutionContext] = None
@@ -151,10 +155,19 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
                             dateCreated = Some(jobCreationTime),
                             dateUpdated = Some(jobCreationTime),
                             dateViewed  = Some(jobCreationTime)))
+      // Add job to database
       upsertJob(this.currentJob.get)
+
       // Add Job to user
       modifyUser(BSONDocument(User.IDDB -> userID),
-        BSONDocument("$push" -> BSONDocument(User.JOBS -> this.currentJob.get.mainID)))
+        BSONDocument("$push" -> BSONDocument(User.JOBS -> this.currentJob.get.mainID))).map {
+        case Some(user) =>
+
+          updateUserCache(user)
+          Logger.info("User was updated in Cache with " + user.jobs.size + " jobs")
+
+        case None => //
+      }
 
       this.executionContext = Some(ExecutionContext(jobPath/jobID))
 
@@ -218,18 +231,23 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
 
   when(Employed(Running)) {
 
-
-
-    // Job State Changed was Received
+    // Job State changed has been received during execution
     case Event(JobStateChanged(jobID,state),_) =>
 
-        // First inform Watchlist
+        // Update job in the database
+        this.currentJob = Some(this.currentJob.get.copy(status = state))
+        upsertJob(this.currentJob.get)
+
+        // Inform watchlist
         watchers.foreach(_ ! JobStateChanged(jobID, state))
 
         state match {
 
-          case Running => // Don't do anything, this is expected
-          case Done =>      // Runscript execution was successful
+          case Running => // Nothing to do here
+
+
+          // Runscript execution was succesful of erroneous
+          case Done | Error =>
 
             // We must do more executions if necessary
             if(this.executionContext.get.hasMoreExecutions) {
@@ -242,8 +260,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
                 this.unemploy()
             }
         }
-
-
         stay using Nothing
   }
 
@@ -264,8 +280,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
 
       }
   }
-
-
 
 
 

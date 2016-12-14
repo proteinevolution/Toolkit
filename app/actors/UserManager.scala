@@ -1,17 +1,19 @@
 package actors
 
-import javax.inject.{Named, Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
+
 import actors.JobManager._
 import actors.UserManager._
-import akka.actor.{ActorLogging, Actor, ActorRef}
+import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.event.LoggingReceive
 import controllers.UserSessions
-import models.database.{JobState, Job, User}
-import modules.CommonModule
+import models.database.{Job, JobState, User}
+import modules.{CommonModule, LocationProvider}
 import play.api.Logger
 import play.api.cache._
-import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -22,6 +24,7 @@ final class UserManager @Inject() (
 @NamedCache("userCache") implicit val userCache        : CacheApi,
                                val reactiveMongoApi : ReactiveMongoApi,
               @Named("jobManager") jobManager       : ActorRef,
+                      implicit val locationProvider: LocationProvider,
                       implicit val materializer     : akka.stream.Materializer)
                            extends Actor
                               with ActorLogging

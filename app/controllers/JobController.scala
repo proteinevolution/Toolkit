@@ -7,9 +7,10 @@ import actors.JobActor.RunscriptData
 import actors.Master.CreateJob
 import akka.actor.{ActorRef, ActorSystem}
 import models.Values
-import models.database.Job
+import models.database.{Job, User}
 import models.job.JobIDProvider
 import models.search.JobDAO
+import modules.LocationProvider
 import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.json.Json
@@ -18,6 +19,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -28,6 +30,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
                                jobActorFactory : JobActor.Factory,
                                implicit val userCache : CacheApi,
                                final val values : Values,
+                               implicit  val locationProvider: LocationProvider,
                                @Named("master") master: ActorRef,
                                val jobDao           : JobDAO,
                                @NamedCache("jobitem") jobitemCache : CacheApi,
@@ -48,12 +51,14 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
 
     getUser.flatMap { user =>
 
-      findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
+        Logger.info("User is associated with " + user.jobs.size + " jobs")
 
-        Logger.info("Number of found jobs is " + jobs.size)
+        findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
 
-        Ok(Json.toJson( jobs.map(_.cleaned)))
-      }
+          Logger.info("We have found " + jobs.size + " jobs")
+
+          Ok(Json.toJson( jobs.map(_.cleaned)))
+        }
     }
   }
 
