@@ -29,8 +29,8 @@ class window.Job
   # Determines whether Job with the provided mainID is in the JobList
   this.contains = (jobID) ->
     Job.list.then (jobs) ->
-      for job in  jobs
-        if job.jobID == jobID
+      for job in jobs
+        if job.jobID() == jobID
           return true
       return false
 
@@ -111,7 +111,7 @@ window.Toolkit =
       Job.contains(jobID).then (jobIsPresent) ->
         if not jobIsPresent
           console.log("Loading Requested Job with JobID #{jobID}")
-          m.request({url: "/jobs/load/#{jobID}", method: "GET"}).then (data) -> Job.add(new Job(data))
+          m.request({url: "/api/job/load/#{jobID}", method: "GET"}).then (data) -> Job.add(new Job(data))
     else
       Job.selected(-1)
 

@@ -5,9 +5,10 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobActor
 import actors.JobActor.RunscriptData
 import actors.Master.CreateJob
+import actors.UserManager.AddJobWatchList
 import akka.actor.{ActorRef, ActorSystem}
 import models.Values
-import models.database.{Job, User}
+import models.database.{Job, Jobitem, User}
 import models.job.JobIDProvider
 import models.search.JobDAO
 import modules.LocationProvider
@@ -22,6 +23,8 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
+
+import scala.util.Success
 
 
 /**
@@ -41,13 +44,22 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
                                val reactiveMongoApi: ReactiveMongoApi)
   extends Controller with UserSessions {
 
-  // Job Controller can directly send message to the JobActor if Possible, otherwise
-  // the Master Actor needs to be used
-  // TODO We might introduce more Masters and split them up on jobID ranges
+
+
   /**
-    * Action requests a new Job instance at the Master.
+    *  Loads one minified version of a job to the view, given the jobID
     *
     */
+  def loadJob(jobID : String) = Action.async { implicit request =>
+
+      Logger.info("Trying to load job")
+
+        selectJob(jobID).map {
+          case Some(job) => Ok(job.cleaned())
+          case None => NotFound
+        }
+  }
+
 
 
   def listJobs = Action.async { implicit request =>
