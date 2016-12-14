@@ -117,50 +117,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   /**
 
    */
-  def loadJob(jobID : String) = Action.async { implicit request =>
 
-    Logger.info("Trying to Load Job")
-
-    /*
-      def cleaned2() = {
-
-    Json.obj("mainID"   -> mainID.stringify,
-             "jobID"   -> jobID,
-             "state"    -> status,
-             "createdOn" -> dateCreated.get,
-             "toolname" -> tool)
-  }
-     */
-
-    val x = jobitemCache.get[Jobitem](jobID)
-
-    if(x.isDefined) {
-
-      val y = x.get
-      Logger.info("Job has been found in Cache, returning")
-      Future.successful(Ok(Json.obj("mainID" -> y.mainID,
-        "jobID" -> y.jobID,
-        "state" -> y.state,
-        "createdOn" -> y.createdOn,
-        "toolname" -> y.toolitem.toolname )))
-    } else {
-
-      getUser.flatMap { user =>
-        BSONObjectID.parse(jobID) match {
-          case Success(mainID) =>
-
-            findJob(BSONDocument(Job.IDDB -> mainID)).map {
-              case Some(job) =>
-                userManager ! AddJobWatchList(user.userID, job.mainID)
-                Ok(job.cleaned())
-              case None => NotFound
-            }
-          case _ =>
-            Future.successful(NotFound)
-        }
-      }
-    }
-  }
 
 
   /**
