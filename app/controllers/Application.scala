@@ -10,7 +10,7 @@ import models.{Constants, Values}
 import modules.tel.TEL
 import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
-import play.api.{Configuration, Logger}
+import play.api.Configuration
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
@@ -38,7 +38,6 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                         val env: Env,
                         val search           : Search,
                         val settings : Settings,
-      @Named("userManager") userManager      : ActorRef,    // Connect to JobManager
                            @Named("master") master: ActorRef,
                             configuration    : Configuration) extends Controller with I18nSupport
                                                                                  with CommonModule
@@ -57,7 +56,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     */
   def ws = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
     getUser.map { user =>
-      Right(ActorFlow.actorRef(WebSocketActor.props(user.userID, userManager, master)))
+      Right(ActorFlow.actorRef(WebSocketActor.props(user.userID, master)))
     }
   }
 

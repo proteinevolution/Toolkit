@@ -1,8 +1,7 @@
 package actors
 
 import actors.JobActor.JobStateChanged
-import actors.JobManager.{AddJob, ForceDeleteJob, JobIDUnknown, StartJob}
-import actors.UserManager._
+import actors.Master.UserConnect
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
@@ -17,21 +16,20 @@ import reactivemongo.bson.BSONObjectID
   *
   */
 object WebSocketActor {
-  def props(userID : BSONObjectID, jobManager : ActorRef, master: ActorRef)(out: ActorRef) = {
-    Props(new WebSocketActor(userID, jobManager, master, out))
+  def props(userID : BSONObjectID, master: ActorRef)(out: ActorRef) = {
+    Props(new WebSocketActor(userID, master, out))
   }
 }
 
-private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef, master: ActorRef, out: ActorRef)  extends Actor with ActorLogging {
+private final class WebSocketActor(userID : BSONObjectID, master: ActorRef, out: ActorRef)  extends Actor with ActorLogging {
 
   override def preStart =
     // Connect to JobManager via Session ID
-    userManager ! UserConnect(userID)
     master ! UserConnect(userID)
 
-  override def postStop =
-    // User Disconnected
-    userManager ! UserDisconnect(userID)
+  override def postStop = {} // TODO Send UserDisconnect to Master
+
+
 
   def receive = LoggingReceive {
 
@@ -48,7 +46,7 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
               BSONObjectID.parse(mainIDString).toOption match {
                 case Some(mainID) =>
                   Logger.info(mainID.stringify)
-                  userManager ! ForceDeleteJob(userID, mainID)
+                  //userManager ! ForceDeleteJob(userID, mainID)
                 case None =>
                   Logger.info("BSON Parser Error" + js.toString())
               }
@@ -63,7 +61,7 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
               BSONObjectID.parse(mainIDString).toOption match {
                 case Some(mainID) =>
                   Logger.info(mainID.stringify)
-                  userManager ! AddJob(userID, mainID)
+                  //userManager ! AddJob(userID, mainID)
                 case None =>
                   Logger.info("BSON Parser Error" + js.toString())
               }
@@ -78,7 +76,7 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
               BSONObjectID.parse(mainIDString).toOption match {
                 case Some(mainID) =>
                   Logger.info(mainID.stringify)
-                  userManager ! ClearJob(userID, mainID)
+                  //userManager ! ClearJob(userID, mainID)
                 case None =>
                   Logger.info("BSON Parser Error" + js.toString())
               }
@@ -93,7 +91,7 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
               BSONObjectID.parse(mainIDString).toOption match {
                 case Some(mainID) =>
                   Logger.info(mainID.stringify)
-                  userManager ! StartJob(userID, mainID)
+                  //userManager ! StartJob(userID, mainID)
                 case None =>
                   Logger.info("BSON Parser Error" + js.toString())
               }
@@ -111,15 +109,16 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
           Logger.error("Undefined Message: " + js.toString())
       }
 
+    /*
     case RunningJobMessage(mainID, message) =>
       out ! Json.obj("type" -> "jobMessage",
                      "mainID" -> mainID.stringify,
                      "message" -> message)
-
+    */
 
     // Messages the user that there was a problem in handling the Job ID
-    case JobIDUnknown =>
-      out ! Json.obj("type" -> "JobIDUnknown")
+    //case JobIDUnknown =>
+    //  out ! Json.obj("type" -> "JobIDUnknown")
 
     case JobStateChanged(jobID, state) =>
 

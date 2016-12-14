@@ -3,8 +3,6 @@ package controllers
 import java.io.{FileInputStream, ObjectInputStream}
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager._
-import actors.UserManager.AddJobWatchList
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.tools.ToolModel
@@ -46,9 +44,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 @NamedCache("jobitem") jobitemCache : CacheApi,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
-                     final val values     : Values,
-    @Named("userManager") userManager : ActorRef,
-    @Named("jobManager") jobManager       : ActorRef)
+                     final val values     : Values)
 
                  extends Controller with I18nSupport
                                     with Constants
@@ -87,7 +83,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     getUser.map { user =>
       BSONObjectID.parse(mainIDString) match {
         case Success(mainID) =>
-          jobManager ! ForceDeleteJob(user.userID, mainID)
+         // jobManager ! ForceDeleteJob(user.userID, mainID)
           Ok.withSession(sessionCookie(request, user.sessionID.get))
         case _ =>
           NotFound
@@ -105,7 +101,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     getUser.map { user =>
       BSONObjectID.parse(mainIDString) match {
         case Success(mainID) =>
-          jobManager ! AddJob(user.userID, mainID)
+          //jobManager ! AddJob(user.userID, mainID)
           Logger.info("Adding job: " + mainID.stringify)
           //Redirect(s"/#/jobs/${mainID.stringify}").withSession(sessionCookie(request, user.sessionID.get))
           Ok.withSession(sessionCookie(request, user.sessionID.get))
@@ -152,7 +148,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
           // Tell the Jobmanager to remove the user from the jobs and mark the jobs which have no more watchers
           if (request.getQueryString("deleteCompletely").contains("true")) {
-            jobManager ! DeleteJobs(user.userID, mainIDs, JobDeletionFlag.PublicRequest)
+            //jobManager ! DeleteJobs(user.userID, mainIDs, JobDeletionFlag.PublicRequest)
           }
 
           // Remove the main IDs from the users view

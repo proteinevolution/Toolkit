@@ -5,26 +5,22 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.JobActor
 import actors.JobActor.RunscriptData
 import actors.Master.CreateJob
-import actors.UserManager.AddJobWatchList
 import akka.actor.{ActorRef, ActorSystem}
 import models.Values
-import models.database.{Job, Jobitem, User}
+import models.database.Job
 import models.job.JobIDProvider
 import models.search.JobDAO
 import modules.LocationProvider
-import modules.tools.FNV
 import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
 
-import scala.util.Success
 
 
 /**
