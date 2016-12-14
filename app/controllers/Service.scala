@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.{FileInputStream, ObjectInputStream}
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobManager._
@@ -285,9 +286,10 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                 Seq.empty // TODO add more elements for different states to show the status
             }
 
-            val paramValues = Map.empty[String, String]
-            Logger.info("After param values")
-
+            // Read parameters from serialized file
+            val ois = new ObjectInputStream(new FileInputStream((jobPath/jobID/"sparam").pathAsString))
+            val paramValues = ois.readObject().asInstanceOf[Map[String, String]]
+            ois.close()
 
             ownerName.map{ ownerN =>
               Ok(Json.toJson(
