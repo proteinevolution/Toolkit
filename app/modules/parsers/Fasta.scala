@@ -26,7 +26,7 @@ object FASTA {
 
     lazy val entries = rep1( entry )
 
-    def parse( input: String ): List[Entry]  = {
+    private[FASTA] def parse( input: String ): List[Entry]  = {
       parseAll( entries, input ) match {
         case Success( es , _ ) => es
         case x: NoSuccess =>  throw new Exception(x.toString)
