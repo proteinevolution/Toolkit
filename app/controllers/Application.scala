@@ -8,7 +8,7 @@ import akka.stream.Materializer
 import models.search.JobDAO
 import models.{Constants, Values}
 import modules.tel.TEL
-import modules.CommonModule
+import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
 import play.api.{Configuration, Logger}
 import play.api.cache._
@@ -28,6 +28,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
                         val messagesApi      : MessagesApi,
                             final val values : Values,
 @NamedCache("userCache") implicit val userCache : CacheApi,
+                         implicit val locationProvider : LocationProvider,
 @NamedCache("viewCache") val viewCache: CacheApi,
                          val jobDao : JobDAO,
                         val reactiveMongoApi : ReactiveMongoApi,

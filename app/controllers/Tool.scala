@@ -10,7 +10,7 @@ import better.files._
 import models.database._
 import models.search.JobDAO
 import models.tools.ToolModel
-import modules.CommonModule
+import modules.{CommonModule, LocationProvider}
 import modules.tools.FNV
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -36,6 +36,7 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
                            @NamedCache("userCache") implicit val userCache : CacheApi,
                            val reactiveMongoApi : ReactiveMongoApi,
                            implicit val mat     : Materializer,
+                           implicit val locationProvider: LocationProvider,
                            val jobDao           : JobDAO,
                            @Named("jobManager") jobManager : ActorRef) extends Controller with I18nSupport with UserSessions with CommonModule {
 

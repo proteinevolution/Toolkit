@@ -1,10 +1,11 @@
 package controllers
 
-import javax.inject.{Singleton, Inject}
+import javax.inject.{Inject, Singleton}
 
-import models.database.{UserToken, User}
+import models.database.{User, UserToken}
 import models.auth._
 import models.mailing.NewUserWelcomeMail
+import modules.LocationProvider
 import modules.common.RandomString
 import org.joda.time.DateTime
 import play.Logger
@@ -12,12 +13,10 @@ import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 import play.api.libs.mailer._
-
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import scala.concurrent.Future
 
 /**
@@ -29,6 +28,7 @@ import scala.concurrent.Future
 final class Auth @Inject() (    webJarAssets     : WebJarAssets,
                             val messagesApi      : MessagesApi,
                    implicit val mailerClient     : MailerClient,
+                                implicit val locationProvider: LocationProvider,
 @NamedCache("userCache") implicit val userCache  : CacheApi,
                             val reactiveMongoApi : ReactiveMongoApi) // Mailing Controller
         extends Controller with I18nSupport
