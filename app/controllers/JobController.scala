@@ -101,18 +101,10 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
         case Left(status) => Future.successful(status)
         case Right(jobIDnew) =>
 
-          Logger.info("New JobID will be " + jobIDnew)
 
-          Logger.info("Try to obtain formData")
           val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
-
-          Logger.info("Try to make database file")
           val DB = formData.getOrElse("standarddb","").toFile  // get hold of the database in use
-
-          Logger.info("Try to generate hash")
           val inputHash = jobDao.generateHash2(toolname, formData)
-
-          Logger.info("Input Hash generated")
 
           lazy val dbName = {
             formData.get("standarddb") match {
@@ -127,8 +119,11 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
             }
           }
 
+
+          Logger.info("Try to match Hash")
           jobDao.matchHash(inputHash, dbName, dbMtime).flatMap { richSearchResponse =>
 
+            Logger.info("Retrieved richSearchResponse")
             println("success: " + richSearchResponse)
             println("hits: " + richSearchResponse.totalHits)
 
