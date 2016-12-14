@@ -18,7 +18,7 @@ import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
 import models.database.JobState
 import models.tools.ToolModel._
-import modules.CommonModule
+import modules.{CommonModule, LocationProvider}
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
@@ -40,6 +40,7 @@ import scala.util.Success
 class Service @Inject() (webJarAssets     : WebJarAssets,
                      val messagesApi      : MessagesApi,
 @NamedCache("userCache") implicit val userCache : CacheApi,
+                         implicit val locationProvider: LocationProvider,
 @NamedCache("toolitemCache") val toolitemCache : CacheApi,
 @NamedCache("jobitem") jobitemCache : CacheApi,
                      val reactiveMongoApi : ReactiveMongoApi,
@@ -318,10 +319,8 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               case Error => Seq.empty
 
               case Done =>
-                Logger.info("Try to assemble result views")
-
                 toolModel.results.map { resultName =>
-                resultName -> views.html.jobs.resultpanel(resultName, job.mainID.stringify, job.tool)
+                  resultName -> views.html.jobs.resultpanel(resultName, job.jobID, job.tool)
               }
 
               case Prepared => Seq.empty

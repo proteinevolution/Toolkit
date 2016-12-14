@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -18,6 +19,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 final class Backend @Inject()(webJarAssets       : WebJarAssets,
                               settingsController : Settings,
 @NamedCache("userCache") implicit val userCache  : CacheApi,
+                              implicit  val locationProvider: LocationProvider,
                           val reactiveMongoApi   : ReactiveMongoApi,
                           val messagesApi        : MessagesApi)
                       extends Controller with I18nSupport with Common

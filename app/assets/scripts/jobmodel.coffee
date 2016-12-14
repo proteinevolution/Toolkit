@@ -31,7 +31,6 @@ window.JobModel =
   update: (args, value) ->
     if args.isJob
       m.request({method: 'GET', url: "/api/job/#{value}"}).then (data) ->
-        alert JSON.stringify data
         JobModel.paramValues = data.paramValues
         JobModel.mainID(data.newMainID)
         mainID: data.mainID
