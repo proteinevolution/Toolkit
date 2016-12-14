@@ -115,14 +115,6 @@ final class JobManager @Inject() (val messagesApi: MessagesApi,
           userManager ! JobIDUnknown(userID)
       }
 
-    case AddFrontendJob (mainID : BSONObjectID, toolName : String) =>
-      val jobCreationTime = DateTime.now()
-      val newJob = FrontendJob(
-        mainID     = mainID,
-        parentID    = None,
-        tool        = toolName,
-        dateCreated = Some(jobCreationTime))
-      addFrontendJob(newJob)
 
     //  User asks to delete Job
     case ForceDeleteJob(userID : BSONObjectID, mainID : BSONObjectID) =>
@@ -307,7 +299,6 @@ object JobManager {
   // Add a Job to a Users view
   case class AddJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID
 
-  case class AddFrontendJob(mainID: BSONObjectID, toolName: String)
 
   // Delete Job Entirely
   case class ForceDeleteJob(userID : BSONObjectID, mainID : BSONObjectID) extends MessageWithUserID

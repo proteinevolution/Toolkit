@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager.{AddFrontendJob, Prepare, StartJob}
+import actors.JobManager.{Prepare, StartJob}
 import akka.actor.ActorRef
 import akka.stream.Materializer
 import akka.util.Timeout
@@ -12,6 +12,7 @@ import models.search.JobDAO
 import models.tools.ToolModel
 import modules.{CommonModule, LocationProvider}
 import modules.tools.FNV
+import org.joda.time.DateTime
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -45,10 +46,15 @@ final class Tool @Inject()(val messagesApi      : MessagesApi,
 
   // counts usage of frontend tools in order to keep track for our stats
 
-  def frontendCount(toolname: String) = Action.async { implicit request =>
+  def frontendCount(toolname: String) = Action.async {
 
-    val mainID = BSONObjectID.generate()
-      jobManager ! AddFrontendJob(mainID, toolname)
+    // Add Frontend Job to Database
+    addFrontendJob(FrontendJob(
+      mainID     = BSONObjectID.generate(),
+      parentID    = None,
+      tool        = toolname,
+      dateCreated = Some(DateTime.now())))
+
       Future.successful(Ok)
   }
 

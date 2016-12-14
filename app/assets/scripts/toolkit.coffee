@@ -80,6 +80,11 @@ class window.Job
   this.updateState = (jobID, state) ->
     Job.lastUpdated(jobID)
     Job.lastUpdatedState(state)
+
+    # If the updated job is currently selected, make a new request to get latest job view
+    if jobID == Job.selected()
+      m.route("/jobs/#{jobID}")
+
     for job in Job.list()
       if job.jobID() == jobID
         job.state(state)
