@@ -27,7 +27,7 @@ final class Search @Inject() (
   
 
   def ac(queryString : String) = Action.async{ implicit request =>
-    jobDao.jobIDtermSuggester(queryString).map { richSearchResponse =>
+    jobDao.jobIDcompletionSuggester(queryString).map { richSearchResponse =>
       val jobIDEntries = richSearchResponse.suggestion("jobID")
       if (jobIDEntries.size > 0) {
 
@@ -53,7 +53,7 @@ final class Search @Inject() (
           jobDao.jobsWithTool(queryString, user.userID).map(_.getHits.hits().toList.map(_.id()))
         } else {
           // Grab Job ID auto completions
-          val jobIDSuggestions = jobDao.jobIDtermSuggester(queryString).map(_.suggestion("jobID").entry(queryString).optionsText.toList)
+          val jobIDSuggestions = jobDao.jobIDcompletionSuggester(queryString).map(_.suggestion("jobID").entry(queryString).optionsText.toList)
           jobIDSuggestions.map(ids => Logger.info("Found Strings: " + ids.toString()))
 
           // Search for jobIDs in ES
