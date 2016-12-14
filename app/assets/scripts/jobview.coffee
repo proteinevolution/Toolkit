@@ -227,6 +227,8 @@ JobSubmissionComponent =
       checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID)
       formData = new FormData(document.getElementById("jobform"))
 
+
+      console.log "Perform request"
       m.request
         method: checkRoute.method
         url: checkRoute.url
