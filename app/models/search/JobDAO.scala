@@ -6,6 +6,7 @@ import com.sksamuel.elastic4s._
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
 import modules.tools.FNV
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 import org.elasticsearch.common.unit.Fuzziness
 import reactivemongo.bson.BSONObjectID
 
@@ -20,6 +21,10 @@ class JobDAO @Inject()(cs: ClusterSetup,
   
   private[this] lazy val client = elasticFactory(cs)
   private val noHash = Set("mainID", "jobID")
+
+  private val Index = "tkplay_dev"
+  private val jobIndex = Index / "jobs"
+  private val jobHashIndex = Index / "jobhashes"
 
   def generateHash(toolname: String, params: Map[String, String]): BigInt =  {
 
@@ -37,7 +42,7 @@ class JobDAO @Inject()(cs: ClusterSetup,
   // Searches for a matching hash in the Hash DB
   def matchHash(hash : Any, dbName : Option[String], dbMtime : Option[String]): Future[RichSearchResponse] = {
     client.execute(
-      search in "tkplay_dev"->"jobhashes" query {
+      search in jobHashIndex query {
           bool(
             must(
               termQuery("hash", hash),
@@ -53,8 +58,8 @@ class JobDAO @Inject()(cs: ClusterSetup,
   def deleteJob(mainID : String): Future[BulkResult] = {
     client.execute {
       bulk(
-        delete id mainID from "tkplay_dev" / "jobs",
-        delete id mainID from "tkplay_dev" / "jobhashes"
+        delete id mainID from jobIndex,
+        delete id mainID from jobHashIndex
         )
     }
   }
@@ -62,7 +67,7 @@ class JobDAO @Inject()(cs: ClusterSetup,
   // Checks if a jobID already exists
   def existsJobID(jobID : String): Future[RichSearchResponse] = {
     client.execute{
-      search in "tkplay_dev"->"jobs" query {
+      search in jobIndex query {
         bool(
           must(
             termQuery("jobID", jobID)
@@ -75,34 +80,47 @@ class JobDAO @Inject()(cs: ClusterSetup,
   // Simple multiple jobID search
   def getJobIDs(jobIDs : List[String]): Future[RichSearchResponse] = {
     client.execute{
-      search in "tkplay_dev" -> "jobs" query {
+      search in jobIndex query {
         termsQuery("jobID", jobIDs : _*) // - termsQuery does not seem to work
       }
     }
   }
 
-  def jobIDtermSuggester(queryString : String): Future[RichSearchResponse] = { // this is a spelling correction mechanism
+  def jobIDtermSuggester(queryString : String): Future[RichSearchResponse] = { // this is a spelling correction mechanism, don't use this for autocompletion
    client.execute {
-      search in "tkplay_dev"->"jobs" suggestions {
+      search in jobIndex suggestions {
         termSuggestion("jobID") field "jobID" text queryString mode SuggestMode.Always
       }
     }
   }
 
 
-  def jobIDcompletionSuggester(queryString : String): Future[RichSearchResponse] = { // this is an auto-completion mechanism
+  // only use this for setting completion type for the jobID field
+
+  def preMap : CreateIndexResponse = {
+
     client.execute {
-      search in "tkplay_dev"->"jobs" types "jobs" suggestions (
-        //completionSuggestion("jobs-completer") field "jobID" text queryString size 10
-        completionSuggestion field "jobID" text queryString size 10
+      createIndex("tkplay_dev").mappings(
+        mapping("jobs").fields(
+          completionField("jobID")
+        )
       )
+    }.await
+  }
+
+
+  def jobIDcompletionSuggester(queryString : String): Future[RichSearchResponse] = {
+    client.execute {
+      search(jobIndex).suggestions {
+        completionSuggestion("a").field("jobID").text(queryString).size(10)
+      }
     }
   }
 
 
   def fuzzySearchJobID(queryString : String): Future[RichSearchResponse] = { // similarity search with Levensthein edit distance
     client.execute {
-      search in "tkplay_dev"->"jobs" query {
+      search in jobIndex query {
         fuzzyQuery("jobID", queryString).fuzziness(Fuzziness.AUTO).prefixLength(4).maxExpansions(10)
       }
     }
@@ -111,7 +129,7 @@ class JobDAO @Inject()(cs: ClusterSetup,
 
   def jobsWithTool(toolName : String, userID : BSONObjectID) : Future[RichSearchResponse] = {
     client.execute {
-      search in "tkplay_dev"->"jobs" query {
+      search in jobIndex query {
         bool(
           should(
             termQuery("tool", toolName),
