@@ -243,6 +243,7 @@ JobSubmissionComponent =
             url: submitRoute.url
             data: formData
             serialize: (data) -> data
+          m.route("/jobs/#{jobID}")
 
         (error) -> alert "Bad Request"
       )
