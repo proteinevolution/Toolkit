@@ -4,15 +4,16 @@ import akka.actor.ActorRef
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor.JobStateChanged
-import actors.JobManager.{AddSGEjobID, UpdateDateViewed}
+import actors.JobManager.AddSGEjobID
 import actors.Master.JobMessage
 import actors.UserManager.RunningJobMessage
 import models.database._
 import modules.CommonModule
+import org.joda.time.DateTime
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
 /*
 TODO
@@ -63,7 +64,9 @@ final class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef,
   }
 
   def updateDateViewed(jobID : String)  = Action {
-    jobManager ! UpdateDateViewed(reactivemongo.bson.BSONObjectID.parse(jobID).get)
+
+    modifyJob(BSONDocument(Job.JOBID -> jobID),
+      BSONDocument("$set"   -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis))))
     Ok
   }
 }

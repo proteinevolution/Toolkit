@@ -1,5 +1,6 @@
 package actors
 
+import java.io.{FileOutputStream, ObjectOutputStream}
 import javax.inject.{Inject, Named}
 
 import actors.JobActor._
@@ -138,6 +139,13 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
       // the jobid needs to be added to the parameters
       val extendedParams = params + ("jobid" -> jobID)
 
+      /*
+      FileInputStream fis = new FileInputStream("map.ser");
+      ObjectInputStream ois = new ObjectInputStream(fis);
+      Map anotherMap = (Map) ois.readObject();
+    ois.close();
+    */
+
       // Make a new JobObject
       this.currentJob = Some(Job(mainID = BSONObjectID.generate(),
                             sgeID       = "",
@@ -170,6 +178,13 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
       }
 
       this.executionContext = Some(ExecutionContext(jobPath/jobID))
+
+      // Store the extended Parameters in the working directory for faster reloading
+      (jobPath/jobID/"sparam").createIfNotExists(asDirectory = false)
+      val fos = new FileOutputStream((jobPath/jobID/"sparam").pathAsString)
+      val oos = new ObjectOutputStream(fos)
+      oos.writeObject(extendedParams)
+      oos.close()
 
       // Clear old watchers and insert job owner
       this.watchers.clear()
@@ -204,13 +219,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
           env.get("CONTEXT") match {
 
             case "LOCAL" =>
-
-              Logger.info("Establish a local execution of Job " + this.currentJob.get.jobID)
               LocalExecution(content)
 
             case s: String =>
-
-              Logger.info("Establish an engine execution of Job " + this.currentJob.get.jobID)
               engineExecutionFactory(content, s)
           }
         }
