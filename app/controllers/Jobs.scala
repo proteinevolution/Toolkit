@@ -4,9 +4,7 @@ import akka.actor.ActorRef
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor.JobStateChanged
-import actors.JobManager.AddSGEjobID
 import actors.Master.JobMessage
-import actors.UserManager.RunningJobMessage
 import models.database._
 import modules.CommonModule
 import org.joda.time.DateTime
@@ -25,9 +23,7 @@ We can introduce auto-coercion of the Job MainID to the BSONObject ID
   *
   */
 @Singleton
-final class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef,
-                           @Named("userManager") userManager : ActorRef,
-                           @Named("master") master: ActorRef,
+final class Jobs @Inject()(@Named("master") master: ActorRef,
                            val reactiveMongoApi: ReactiveMongoApi,
                            @NamedCache("jobActorCache") val jobActorCache: CacheApi) extends Controller with CommonModule {
 
@@ -53,13 +49,13 @@ final class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef,
   }
 
   def SGEID(jobID: String, sgeID: String) = Action {
-    jobManager ! AddSGEjobID(reactivemongo.bson.BSONObjectID.parse(jobID).get, sgeID)
+    //jobManager ! AddSGEjobID(reactivemongo.bson.BSONObjectID.parse(jobID).get, sgeID)
     Ok
 
   }
 
   def pushMessage(jobID : String, message : String)  = Action {
-    userManager ! RunningJobMessage(reactivemongo.bson.BSONObjectID.parse(jobID).get, message)
+    //userManager ! RunningJobMessage(reactivemongo.bson.BSONObjectID.parse(jobID).get, message)
     Ok
   }
 
