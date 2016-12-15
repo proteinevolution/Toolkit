@@ -56,8 +56,9 @@ object JobActor {
     def apply : Actor
   }
 
-  // Messages sent to the Watchers
+  // Messages the jobActor accepts from outside
   case class JobStateChanged(jobID: String, newState: JobState)
+  case class StopWatch(actorRef: ActorRef)
 }
 
 class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runscripts to be executed
@@ -168,14 +169,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
 
       // Add Job to user
       modifyUser(BSONDocument(User.IDDB -> userID),
-        BSONDocument("$push" -> BSONDocument(User.JOBS -> this.currentJob.get.mainID))).map {
-        case Some(user) =>
-
-          updateUserCache(user)
-          Logger.info("User was updated in Cache with " + user.jobs.size + " jobs")
-
-        case None => //
-      }
+        BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID)))
 
       this.executionContext = Some(ExecutionContext(jobPath/jobID))
 
@@ -241,6 +235,11 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
   // -----------------------------------------------------------------
 
   when(Employed(Running)) {
+
+    // No longer notify user when job state changes
+    case Event(StopWatch(actorRef),_) =>
+      this.watchers.remove(actorRef)
+      stay
 
     // Job State changed has been received during execution
     case Event(JobStateChanged(jobID,state),_) =>
