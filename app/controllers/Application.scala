@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.WebSocketActor
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
 import models.search.JobDAO
 import models.{Constants, Values}
@@ -26,7 +26,8 @@ import scala.concurrent.Future
 @Singleton
 class Application @Inject()(webJarAssets     : WebJarAssets,
                         val messagesApi      : MessagesApi,
-                            final val values : Values,
+                 final val values            : Values,
+                            webSocketActorFactory : WebSocketActor.Factory,
 @NamedCache("userCache") implicit val userCache : CacheApi,
                          implicit val locationProvider : LocationProvider,
 @NamedCache("viewCache") val viewCache: CacheApi,
@@ -49,14 +50,9 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   val SID = "sid"
 
 
-  /**
-    * Opens the websocket
-    *
-    * @return
-    */
   def ws = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
     getUser.map { user =>
-      Right(ActorFlow.actorRef(WebSocketActor.props(user.userID, master)))
+      Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.userID, out))))
     }
   }
 
