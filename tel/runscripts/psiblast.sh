@@ -19,7 +19,7 @@
 # create HTML and PNG for blastviz visualisation
 
 
-perl %BIOPROGS/helpers/blastviz.pl ../results/out.psiblastp %jobid.content ../results files/$ID >> ../logs/blastviz.log
+perl %BIOPROGS/helpers/blastviz.pl ../results/out.psiblastp %jobid.content ../results ../files/%jobid.content >> ../logs/blastviz.log
 
 # extract alignment from
 
