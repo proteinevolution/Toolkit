@@ -10,7 +10,6 @@ FrontendTools =
 
 class window.Job
   constructor: (args) ->
-    @mainID =  args.mainID
     @jobID = m.prop args.jobID
     @state = m.prop args.state
     @createdOn = args.createdOn
@@ -53,19 +52,19 @@ class window.Job
       jobs[idx] = null
       jobs.splice(idx, 1)
       sendMessage({ "type": "ClearJob",  "jobID": job.jobID()})
-      if job.mainID == Job.selected()
+      if job.jobID == Job.selected()
         m.route("/tools/#{job.toolname}")
 
 
-  this.delete = (mainID) ->
+  this.delete = (jobID) ->
     Job.list.then (jobs) ->
       jobs.map (job, idx) ->
-        if job.mainID == mainID
+        if job.jobID == jobID
           # TODO We have to guarantee that the Job has vanished from the users watch list once the Request has finished
-          m.request({url: "/jobs?mainIDs=#{job.mainID}&deleteCompletely=true", method: "DELETE"}).then () ->
+          m.request({url: "/jobs?jobIDs=#{job.jobID}&deleteCompletely=true", method: "DELETE"}).then () ->
             Job.list()[idx] = null
             Job.list().splice(idx, 1)
-            if job.mainID == Job.selected()
+            if job.jobID == Job.selected()
               m.route("/tools/#{job.toolname}")
 
 
