@@ -34,11 +34,11 @@ class WebSocketActor @Inject() (@Named("master") master: ActorRef,
                                 @Assisted("out") out: ActorRef)
   extends Actor with ActorLogging with CommonModule {
 
-  override def preStart: Unit = {
+  override def preStart(): Unit = {
     master ! UserConnect(userID)
   }
 
-  override def postStop: Unit = {} // TODO Send UserDisconnect to Master
+  override def postStop(): Unit = {} // TODO Send UserDisconnect to Master
 
 
   def receive = LoggingReceive {

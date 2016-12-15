@@ -31,16 +31,12 @@ class JobDAO @Inject()(cs: ClusterSetup,
     FNV.hash64((scala.collection.immutable.TreeMap((params -- noHash).toArray:_*)
       .values ++ Iterable[String](toolname))
       .toString().getBytes)
-  } 
 
-  def generateHash2(toolname: String, params: Map[String, String]): Int = {
-
-    (scala.collection.immutable.TreeMap((params -- noHash).toArray:_*)
-      .values ++ Iterable[String](toolname)).hashCode()
   }
+  
 
   // Searches for a matching hash in the Hash DB
-  def matchHash(hash : Any, dbName : Option[String], dbMtime : Option[String]): Future[RichSearchResponse] = {
+  def matchHash(hash : String, dbName : Option[String], dbMtime : Option[String]): Future[RichSearchResponse] = {
     client.execute(
       search in jobHashIndex query {
           bool(
