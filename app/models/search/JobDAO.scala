@@ -30,8 +30,8 @@ class JobDAO @Inject()(cs: ClusterSetup,
 
     FNV.hash64((scala.collection.immutable.TreeMap((params -- noHash).toArray:_*)
       .values ++ Iterable[String](toolname))
-      .map(_.toByte).toArray)
-  }
+      .toString().getBytes)
+  } 
 
   def generateHash2(toolname: String, params: Map[String, String]): Int = {
 
