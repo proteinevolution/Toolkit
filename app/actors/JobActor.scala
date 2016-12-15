@@ -8,6 +8,7 @@ import actors.Master.{CreateJob, WorkerDoneWithJob}
 import akka.actor.{Actor, ActorRef, FSM}
 import models.Constants
 import models.database._
+import models.search.JobDAO
 import modules.tel.runscripts._
 import better.files._
 import controllers.UserSessions
@@ -64,6 +65,7 @@ object JobActor {
 class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runscripts to be executed
                           env: Env,                               // To supply the runscripts with an environment
                           val reactiveMongoApi: ReactiveMongoApi,
+                          val jobDao : JobDAO,
                           engineExecutionFactory: EngineExecution.Factory,
                           implicit val locationProvider: LocationProvider,
                           @NamedCache("userCache") implicit val userCache : CacheApi,
@@ -167,7 +169,28 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
       // Add job to database
       upsertJob(this.currentJob.get)
 
-      //
+      // Write jobhash into jobhashes collection
+
+      lazy val paramsWithoutMainID = params - "mainID" - "jobID" // need to hash without mainID and without the jobID
+      lazy val DB = params.getOrElse("standarddb","").toFile  // get hold of the database in use
+
+      lazy val jobHash = {
+        paramsWithoutMainID.get("standarddb") match {
+          case None => JobHash( mainID = this.currentJob.get.mainID,
+            jobDao.generateHash(toolname, paramsWithoutMainID).toString(),
+            dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
+            dbMtime = Some("1970-01-01T00:00:00Z") ) // use unix epoch time
+
+
+          case _ => JobHash( mainID = this.currentJob.get.mainID,
+            jobDao.generateHash(toolname, paramsWithoutMainID).toString(),
+            dbName = Some(DB.name),
+            dbMtime = Some(DB.lastModifiedTime.toString)
+          )
+        }
+      }
+
+      hashCollection.flatMap(_.insert(jobHash))
 
       // Add Job to user
       modifyUser(BSONDocument(User.IDDB -> userID),

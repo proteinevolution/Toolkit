@@ -33,7 +33,7 @@ class JobDAO @Inject()(cs: ClusterSetup,
       .toString().getBytes)
 
   }
-  
+
 
   // Searches for a matching hash in the Hash DB
   def matchHash(hash : String, dbName : Option[String], dbMtime : Option[String]): Future[RichSearchResponse] = {
