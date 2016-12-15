@@ -4,7 +4,7 @@ import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor
 import actors.JobActor.RunscriptData
-import actors.Master.CreateJob
+import actors.Master.{CreateJob, JobMessage}
 import akka.actor.{ActorRef, ActorSystem}
 import models.Values
 import models.database.Job
@@ -17,6 +17,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
@@ -179,7 +180,6 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
       Ok
     }
   }
-
 
 
   def delete(jobID : String ) = Action {

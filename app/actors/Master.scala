@@ -110,6 +110,7 @@ object Master {
   // A Message which is supposed to reach a particlar job
   case class JobMessage(jobID: String, message: AnyRef)
 
+
   /* Status Messages coming from the Workers */
   sealed trait WorkerMessage
   case class WorkerDoneWithJob(jobID: String)  // Worker denotes itself as being available again, can be sent new work
