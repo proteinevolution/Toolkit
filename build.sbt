@@ -47,6 +47,8 @@ val commonDeps = Seq(ws, filters, cache,
 val commonSettings = Seq(
   version := "0.0.0",
   scalaVersion := "2.11.8",
+  scalaJSProjects := Seq(client),
+  pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
   dependencyOverrides ++= Set("org.webjars" % "jquery" % jqueryVersion,
                               "com.typesafe.akka" %% "akka-actor" % akkaVersion))
