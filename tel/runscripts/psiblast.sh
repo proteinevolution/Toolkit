@@ -22,6 +22,8 @@
 perl %BIOPROGS/helpers/blastviz.pl ../results/out.psiblastp %jobid.content ../results files/$ID >> ../logs/blastviz.log
 
 # extract alignment from
+
+PERL5LIB=%PERLLIB
 perl %BIOPROGS/helpers/alignhits_html.pl ../results/out.psiblastp ../results/out.align -e %evalue.content -fas -no_link -blastplus
 
 # reformat alignment to clustal
@@ -30,7 +32,7 @@ perl %BIOPROGS/helpers/reformat.pl -i=fas \
                                    -f=../results/out.align \
                                    -a=../results/out.align_clu
 
-scala %BIOPROGS/helpers/psiblastpPostProcess.scala results/out.psiblastp
+%SCALA %BIOPROGS/helpers/psiblastpPostProcess.scala ../results/out.psiblastp
 
 # Produce new PSIBLAST Overview
 python %BIOPROGS/helpers/parse_BLAST_HTML.py ../results/out.psiblastp > ../results/out.psiblastp_overview
