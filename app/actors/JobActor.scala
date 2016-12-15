@@ -167,6 +167,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
       // Add job to database
       upsertJob(this.currentJob.get)
 
+      //
+
       // Add Job to user
       modifyUser(BSONDocument(User.IDDB -> userID),
         BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID)))
@@ -239,7 +241,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
     // No longer notify user when job state changes
     case Event(StopWatch(actorRef),_) =>
       this.watchers.remove(actorRef)
-      stay
+      stay()
 
     // Job State changed has been received during execution
     case Event(JobStateChanged(jobID,state),_) =>
@@ -296,30 +298,3 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
   initialize()
 }
 
-
-
-/*
-    class Buncher extends FSM[State, Data] {
-
-      startWith(Idle, Uninitialized)
-
-      when(Idle) {
-        case Event(SetTarget(ref), Uninitialized) =>
-          stay using Todo(ref, Vector.empty)
-      }
-
-      // transition elided ...
-
-      when(Active, stateTimeout = 1 second) {
-        case Event(Flush | StateTimeout, t: Todo) =>
-          goto(Idle) using t.copy(queue = Vector.empty)
-      }
-
-      // unhandled elided ...
-
-      initialize()
-    }
-
-
-
- */
