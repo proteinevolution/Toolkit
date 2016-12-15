@@ -15,4 +15,7 @@ rm -rf ../logs
 mkdir ../results
 mkdir ../logs
 
+export JAVA_HOME=%JAVAHOME
+export JRE_HOME=%JREHOME
+
 
