@@ -69,7 +69,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
 
           Logger.info("We have found " + jobs.size + " jobs")
 
-          Ok(Json.toJson( jobs.map(_.cleaned)))
+          Ok(Json.toJson( jobs.map(_.cleaned())))
         }
     }
   }
@@ -101,8 +101,8 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
 
           val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
           val DB = formData.getOrElse("standarddb","").toFile  // get hold of the database in use
-          val inputHash = jobDao.generateHash2(toolname, formData)
-
+          val inputHash = jobDao.generateHash(toolname, formData).toString()
+          println("Job hash generated: " + inputHash)
           lazy val dbName = {
             formData.get("standarddb") match {
               case None => Some("none")
