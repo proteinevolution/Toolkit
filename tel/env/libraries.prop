@@ -1,0 +1,3 @@
+PERLLIB  = /ebio/abt1_share/toolkit_support1/code/bioprogs/lib
+JAVAHOME = /ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/jdk1.8.0_112
+JREHOME = /ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/jdk1.8.0_112/jre
