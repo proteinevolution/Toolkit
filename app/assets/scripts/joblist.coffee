@@ -23,8 +23,8 @@ window.JobListComponent =
       ]
 
       m "div",{id: "joblistbottom"}, args.jobs().map (job, idx) ->
-        m "div", {class: "job #{a[job.state()]}".concat(if job.mainID == args.selected() then " selected" else "")}, [
-          m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.mainID + '"]', job.jobID()
+        m "div", {class: "job #{a[job.state()]}".concat(if job.jobID() == args.selected() then " selected" else "")}, [
+          m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.jobID() + '"]', job.jobID()
           m "span", {class: "toolname"}, job.toolname.substr(0,4).toUpperCase()
           m "a", {class: "boxclose", onclick: args.clear.bind(ctrl, idx)}
         ]
