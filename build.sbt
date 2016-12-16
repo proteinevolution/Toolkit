@@ -64,6 +64,7 @@ lazy val metadata = List(
   )
 )
 
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtWeb)
   .settings(
@@ -106,7 +107,8 @@ lazy val client = (project in file("client")).settings(
   persistLauncher := true,
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.9.1"
+    "org.scala-js" %%% "scalajs-dom" % "0.9.1",
+    "co.technius" %%% "scalajs-mithril" % "0.1.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 
