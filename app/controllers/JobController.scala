@@ -150,7 +150,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
                   Ok(Json.obj("jobSubmitted"  -> true,
                     "jobStarted"    -> false,
                     "existingJobs"  -> true,
-                    "existingJob"   -> job.cleaned(),
+                    "existingJob"   ->job.cleaned(),
                     "jobID" -> jobIDnew)
                   ).withSession(sessionCookie(request, user.sessionID.get))
 

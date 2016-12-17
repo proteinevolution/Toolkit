@@ -27,6 +27,8 @@ selectBoxAccess = (elem, isInit) ->
   if not isInit
     $(elem).niceSelect()
 
+
+
 window.JobViewComponent =
 
   view: (ctrl, args) ->
@@ -214,6 +216,11 @@ JobTabsComponent =
 ##############################################################################
 # Job Submission input elements
 
+submitModal = (elem, isInit) ->
+  if not isInit
+    $(elem).foundation()
+
+
 JobSubmissionComponent =
   controller: (args) ->
     this.submitting = false
@@ -253,16 +260,30 @@ JobSubmissionComponent =
         serialize: (data) -> data
       .then(
         (data) ->
-          jobID = data.jobID
-          # Add a new Job to the Model
-          Job.add(new Job({mainID: jobID, jobID: jobID, state: 0, createdOn: 'now', toolname: toolname}))
-          submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID)
-          m.request
-            method: submitRoute.method
-            url: submitRoute.url
-            data: formData
+          if data.existingJobs
+            $('#submit_modal').foundation('open')
+            $('#reload_job').on 'click', ->
+              $('#submit_modal').foundation('close')
+              m.route("/jobs/#{data.existingJob.jobID}")
+            $('#submit_again').on 'click', ->
+              $('#submit_modal').foundation('close')
+              jobID = data.jobID
+              # Add a new Job to the Model
+              Job.add(new Job({mainID: jobID, jobID: jobID, state: 0, createdOn: 'now', toolname: toolname}))
+              submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID)
+
+              m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
+                m.route("/jobs/#{jobID}")
+          else
+            jobID = data.jobID
+            # Add a new Job to the Model
+            Job.add(new Job({mainID: jobID, jobID: jobID, state: 0, createdOn: 'now', toolname: toolname}))
+            submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID)
+            m.request
+              method: submitRoute.method
+              url: submitRoute.url
+              data: formData
             serialize: (data) -> data
-          m.route("/jobs/#{jobID}")
 
         (error) -> alert "Bad Request"
       )
@@ -270,12 +291,10 @@ JobSubmissionComponent =
 
   view: (ctrl, args) ->
     m "div", {class: "submitbuttons"}, [
-      m "p",
-        m "a", {'data-open': 'submit_modal', style: 'display: none;', id: 'open_modal', 'data-reveal': 'data-reveal'}
-      m "div" , {class: "reveal", 'data-reveal', id: 'submit_modal'},
+      m "div" , {class: "reveal", 'data-reveal': 'data-reveal', id: 'submit_modal', config: submitModal},
         m "p", "Already existing job found: Do you want to load the existing job and save some time?"
-        m "input", {id: 'reload_job', type: 'button', value: 'Yes'}
-        m "input", {id: 'submit_again', type: 'button', value: 'No, submit Job'}
+        m "input", {id: 'reload_job', type: 'button', value: 'Yes'} # data-close
+        m "input", {id: 'submit_again', type: 'button', value: 'No, submit Job'} # data-close
       if !this.submitting then m "input", {type: "button", id: "submitJobButton", class: "success button small submitJob", value: "#{if args.isJob then "Res" else "S"}ubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
       if !args.isJob
         m "label",{hidden: "hidden"}, [
