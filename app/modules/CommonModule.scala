@@ -5,7 +5,7 @@ import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.{BSONArray, BSONDocument, BSONValue}
+import reactivemongo.bson.{BSONArray, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -13,10 +13,11 @@ import scala.concurrent.Future
 /**
   * Created by zin on 03.08.16.
   */
-trait CommonModule extends ReactiveMongoComponents {
+trait CommonModule  extends ReactiveMongoComponents {
 
 
   private final def selectjobID(jobID: String) = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
+  private final def selectmainID(mainID: BSONObjectID) = BSONDocument("mainID" -> BSONDocument("$eq" -> mainID))
 
   /* Collections */
   protected def hashCollection = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))

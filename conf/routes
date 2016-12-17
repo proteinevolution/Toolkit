@@ -72,7 +72,6 @@ GET           /verification/:name_login/:token        @controllers.Auth.verifica
 # Interaction with Jobs
 # Loading a Job from the DB
 GET           /jobs/add/:mainID                       @controllers.Service.addJob(mainID: String)
-GET           /jobs/load/:mainID                      @controllers.Service.loadJob(mainID: String)
 # Get a Job the User Actor already has loaded
 # Delete a Job
 DELETE        /jobs/:mainID                           @controllers.Service.forceDeleteJob(mainID : String)
@@ -119,13 +118,21 @@ GET           /:static                                @controllers.Application.s
 # Get ToolInformation as JSON based on toolname
 GET           /api/tools/:toolname                    @controllers.Service.getTool(toolname)
 # Submit new Job
-POST          /api/submit                             @controllers.Tool.submit(toolname : String, mainID : String, jobID : String)
 # Submit new FrontendJob
 POST          /api/frontendSubmit/:toolname          @controllers.Tool.frontendCount(toolname: String)
 # Submit job again after being found in the jobhashes collection
-POST          /api/submitagain                        @controllers.Tool.submitAgain(toolname : String, mainID : String, jobID : String)
 # Get JobInformation based on Toolname
-GET           /api/jobs/:mainid                       @controllers.Service.getJob(mainid)
+
 
 # Get list of userjobs
-GET           /api/jobs                               @controllers.Service.listJobs
+GET           /api/jobs                               @controllers.JobController.listJobs
+
+
+# New routes defined for the JobActor per job stuff
+POST          /api/job                                @controllers.JobController.create(toolname: String, jobID: String)
+POST          /api/job/check                          @controllers.JobController.check(toolname: String, jobID: Option[String])
+GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
+DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
+GET           /api/job/load/:jobID                    @controllers.JobController.loadJob(jobID: String)
+
+

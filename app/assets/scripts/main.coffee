@@ -24,17 +24,7 @@ m.route.mode = 'hash'
 m.route document.getElementById('main-content'), '/',
   '/' : Index
   '/tools/:toolname': m Toolkit, {isJob: false}
-  '/jobs/:mainID': m Toolkit, {isJob: true}
-
-
-
-1
-# Mount the JobViewComponent into the Client-side application via associated routed
-#m.route document.getElementById('content'), '/',
-#  '/:static' : StaticRoute,
-#  '/tools/:toolname': m.component JobViewComponent, {isJob: false}
-#  '/jobs/:mainid': m.component JobViewComponent, {isJob : true}
-
+  '/jobs/:jobID': m Toolkit, {isJob: true}
 
 
 

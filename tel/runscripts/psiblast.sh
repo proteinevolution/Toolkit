@@ -1,5 +1,3 @@
-ID=$(<JOB.json jq '._id'| awk '{ print $2; }'| sed 's/"//g'| tr -d '\n')
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Starting+PSI-BLAST+run"
 %BIOPROGS/tools/ncbi-blast-2.5.0+/bin/psiblast -db %standarddb.content \
                                             -matrix %matrix.content \
                                             -num_iterations %num_iter.content \
@@ -11,47 +9,34 @@ ID=$(<JOB.json jq '._id'| awk '{ print $2; }'| sed 's/"//g'| tr -d '\n')
                                             -num_descriptions %desc.content \
                                             -num_alignments %desc.content \
                                             -in_msa %alignment.path \
-                                            -out results/out.psiblastp \
+                                            -out ../results/out.psiblastp \
                                             -outfmt 0 \
                                             -html\
-                                            -out_pssm results/out.ksf
+                                            -out_pssm ../results/out.ksf
 
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=PSI-BLAST+run+has+been+finished+successfully"
-
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Supplementing+Links+to+the+PSI-BLAST+result+page"
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Links+supplemented"
 
 
 # create HTML and PNG for blastviz visualisation
 
-ID=$(<JOB.json jq '._id'| awk '{ print $2; }'| sed 's/"//g'| tr -d '\n')
 
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Start+Computing+PSI-BLAST+visualization"
-perl %BIOPROGS/helpers/blastviz.pl results/out.psiblastp $ID results files/$ID >> logs/blastviz.log
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Visualization+computed"
-
-
+perl %BIOPROGS/helpers/blastviz.pl ../results/out.psiblastp %jobid.content ../results ../files/%jobid.content >> ../logs/blastviz.log
 
 # extract alignment from
 
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Extracting+alignment+from+BLAST+result+page"
-perl %BIOPROGS/helpers/alignhits_html.pl results/out.psiblastp results/out.align -e %evalue.content -fas -no_link -blastplus
+PERL5LIB=%PERLLIB
+perl %BIOPROGS/helpers/alignhits_html.pl ../results/out.psiblastp ../results/out.align -e %evalue.content -fas -no_link -blastplus
 
 # reformat alignment to clustal
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Reformating+to+CLUSTALW"
 perl %BIOPROGS/helpers/reformat.pl -i=fas \
                                    -o=clu \
-                                   -f=results/out.align \
-                                   -a=results/out.align_clu
+                                   -f=../results/out.align \
+                                   -a=../results/out.align_clu
 
-#curl -X POST  "localhost:6111/jobs/message/${ID}?message=Make+some+fancy+Scala+stuff"
-scala %BIOPROGS/helpers/psiblastpPostProcess.scala results/out.psiblastp
+%SCALA %BIOPROGS/helpers/psiblastpPostProcess.scala ../results/out.psiblastp
 
 # Produce new PSIBLAST Overview
-python %BIOPROGS/helpers/parse_BLAST_HTML.py results/out.psiblastp > results/out.psiblastp_overview
+python %BIOPROGS/helpers/parse_BLAST_HTML.py ../results/out.psiblastp > ../results/out.psiblastp_overview
 
 # Produce some extra files:
-< results/out.psiblastp grep Expect | awk '{ print $8; }' | sed 's/,$//' > results/evalues.dat
-
-
+< ../results/out.psiblastp grep Expect | awk '{ print $8; }' | sed 's/,$//' > ../results/evalues.dat
 

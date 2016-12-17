@@ -1,26 +1,29 @@
 package modules.tel
 
 import java.nio.file.attribute.PosixFilePermission
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{Inject, Singleton}
 
 import scala.sys.process._
 import better.files.Cmds._
 import better.files._
 import models.Implicits._
 import modules.tel.env.Env
+import modules.tel.execution.Execution
 import modules.tel.param.Params
-import modules.tel.runscripts.RunscriptManager
 
 
 /**
+  * TEL is the access point to get ExecutionContexts in which runscripts can be executed
   *
   * Created by lzimmermann on 26.05.16.
   */
 @Singleton
 class TEL @Inject() (env : Env,
-                     params: Params,
-                     runscriptManager: RunscriptManager)
-  extends TELRegex with TELConstants   {
+                     params: Params) extends TELRegex with TELConstants   {
+
+
+
+
 
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
@@ -32,6 +35,11 @@ class TEL @Inject() (env : Env,
   var port = "" // TODO (REMINDER) : REMOVE THIS FOR PRODUCTION !!!
 
   lazy val context = env.get("CONTEXT")
+
+
+
+
+
 
 
   //-----------------------------------------------------------------------------------------------------

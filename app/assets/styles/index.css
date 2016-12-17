@@ -173,14 +173,6 @@ select {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
 }
 
-
-.slider {
-
-    width: 100%;
-    margin-left: 25px;
-
-}
-
 .slick-slide {
     height:430px;
 }
@@ -270,11 +262,6 @@ select {
     color: black;
 }
 
-.slider {
-    cursor: default;
-    background-color:  rgb(238, 238, 238);
-}
-
 .slide-caption{
     min-height: 80px;
     position: absolute;
@@ -292,6 +279,12 @@ select {
     padding:40px 32px 35px;
 }
 
+.slider {
+
+    width: 100%;
+    cursor: default;
+    background-color:  rgb(238, 238, 238);
+}
 
 .slider img {
 

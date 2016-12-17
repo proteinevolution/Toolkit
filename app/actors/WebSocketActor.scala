@@ -1,35 +1,45 @@
 package actors
 
-import actors.JobManager._
-import actors.UserManager._
+import javax.inject.{Inject, Named}
+
+import actors.JobActor.{JobStateChanged, StopWatch}
+import actors.Master.{JobMessage, UserConnect}
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
-import akka.actor.Props
-import models.database.{User, Job}
-import play.api.libs.json.{JsValue, Json}
+import com.google.inject.assistedinject.Assisted
+import models.database.User
+import modules.CommonModule
 import play.api.Logger
-import reactivemongo.bson.BSONObjectID
+import play.api.libs.json.{JsValue, Json}
+import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 /**
   * Actor that listens to the WebSocket and accepts messages from and passes messages to it.
   *
   */
 object WebSocketActor {
-  def props(userID : BSONObjectID, jobManager : ActorRef)(out: ActorRef) = {
-    Props(new WebSocketActor(userID, jobManager, out))
+  trait Factory {
+
+    def apply(@Assisted("userID") userID: BSONObjectID, @Assisted("out") out: ActorRef): Actor
   }
 }
 
-private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef, out: ActorRef)  extends Actor with ActorLogging {
-  override def preStart =
-    // Connect to JobManager via Session ID
-    userManager ! UserConnect(userID)
 
-  override def postStop =
-    // User Disconnected
-    userManager ! UserDisconnect(userID)
+class WebSocketActor @Inject() (@Named("master") master: ActorRef,
+                                val reactiveMongoApi: ReactiveMongoApi,
+                                @Assisted("userID") userID : BSONObjectID,
+                                @Assisted("out") out: ActorRef)
+  extends Actor with ActorLogging with CommonModule {
+
+  override def preStart(): Unit = {
+    master ! UserConnect(userID)
+  }
+
+  override def postStop(): Unit = {} // TODO Send UserDisconnect to Master
+
 
   def receive = LoggingReceive {
 
@@ -39,90 +49,24 @@ private final class WebSocketActor(userID : BSONObjectID, userManager : ActorRef
         /**
           * Job interaction Requests
           */
-        // Request to delete a job completely
-        case "DeleteJob" =>
-          (js \ "mainID").validate[String].asOpt match {
-            case Some(mainIDString) =>
-              BSONObjectID.parse(mainIDString).toOption match {
-                case Some(mainID) =>
-                  Logger.info(mainID.stringify)
-                  userManager ! ForceDeleteJob(userID, mainID)
-                case None =>
-                  Logger.info("BSON Parser Error" + js.toString())
-              }
-            case None =>
-              Logger.info("JSON Parser Error " + js.toString())
-          }
-
-        // Request to add an existing job to the users view
-        case "AddJob" =>
-          (js \ "mainID").validate[String].asOpt match {
-            case Some(mainIDString) =>
-              BSONObjectID.parse(mainIDString).toOption match {
-                case Some(mainID) =>
-                  Logger.info(mainID.stringify)
-                  userManager ! AddJob(userID, mainID)
-                case None =>
-                  Logger.info("BSON Parser Error" + js.toString())
-              }
-            case None =>
-              Logger.info("JSON Parser Error " + js.toString())
-          }
 
         // Request to remove a Job from the user's view but it will remain stored
         case "ClearJob" =>
-          (js \ "mainID").validate[String].asOpt match {
-            case Some(mainIDString) =>
-              BSONObjectID.parse(mainIDString).toOption match {
-                case Some(mainID) =>
-                  Logger.info(mainID.stringify)
-                  userManager ! ClearJob(userID, mainID)
-                case None =>
-                  Logger.info("BSON Parser Error" + js.toString())
-              }
-            case None =>
-              Logger.info("JSON Parser Error " + js.toString())
-          }
 
-        // Request to start a Job which has been put on hold/ which has been Prepared
-        case "StartJob" =>
-          (js \ "mainID").validate[String].asOpt match {
-            case Some(mainIDString) =>
-              BSONObjectID.parse(mainIDString).toOption match {
-                case Some(mainID) =>
-                  Logger.info(mainID.stringify)
-                  userManager ! StartJob(userID, mainID)
-                case None =>
-                  Logger.info("BSON Parser Error" + js.toString())
-              }
-            case None =>
-              Logger.info("JSON Parser Error " + js.toString())
-          }
+          (js \ "jobID").validate[String].asOpt match {
 
-        /**
-          * Connection oriented requests
-          */
-        // connection test case
-        case "Ping"       =>
-          Logger.info("PING!")
-        case _            =>
-          Logger.error("Undefined Message: " + js.toString())
+            case Some(jobID) =>
+              Logger.info("Job: " + jobID + " is going to be cleared")
+              modifyUser(BSONDocument(User.IDDB -> userID),
+                BSONDocument("$pull" -> BSONDocument(User.JOBS -> jobID)))
+              master ! JobMessage(jobID, StopWatch(self))
+            case None => //
+          }
       }
 
-    case RunningJobMessage(mainID, message) =>
-      out ! Json.obj("type" -> "jobMessage",
-                     "mainID" -> mainID.stringify,
-                     "message" -> message)
 
+    case JobStateChanged(jobID, state) =>
 
-    // Messages the user that there was a problem in handling the Job ID
-    case JobIDUnknown =>
-      out ! Json.obj("type" -> "JobIDUnknown")
-
-    // Messages the user about a change in the Job status
-    case JobStateChanged(job, state) =>
-      out ! Json.obj("type" -> "UpdateJob",
-                     "job"  -> job.cleaned())
-
+      out ! Json.obj("type" -> "UpdateJob", "jobID" -> jobID, "state" -> state)
   }
 }

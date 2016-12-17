@@ -2,6 +2,13 @@ package modules.tel.runscripts
 
 
 import better.files._
+import modules.tel.TELRegex
+import modules.tel.env.Env
+import modules.tel.execution.ExecutionContext
+import modules.tel.runscripts.Runscript.Evaluation
+
+import scala.collection.mutable
+import scala.util.matching.Regex
 
 /**
   * Created by lzimmermann on 10/19/16.
@@ -12,54 +19,76 @@ import better.files._
   * Represents one particular runscript, specified by the path of the corresponding file.
   * Instances should be created via the companion object.
   *
-  * @param path The path to the runscript that belongs to the instance of this class
   */
-/*
-class Runscript(path : String) {
-
-  private val f = path.toFile
-
-  // Maps each output type to all files that represent this type
-  private var outputs : Map[String, Set[String]] = _
-  this.load()
-
-  /**
-    * Returns the Output types of the runscript as a set of Strings.
-    * @return
-    */
-  def outputTypes = this.outputs.keySet
+class Runscript(files: Seq[File]) extends TELRegex  {
 
 
+  val parameters: Seq[(String, Evaluation)] = parameterString.findAllIn(files.map(_.contentAsString).mkString("\n"))
+    .matchData
+    .foldLeft(Seq.empty[(String, Evaluation)]) { (a, m) =>
 
+      val paramName = m.group("paramName")
 
-  // TODO Also support inputs
-  /**
-    * Reloads the runscripts and specified information
-    */
-  def load() : Unit = {
-
-    this.outputs = this.f.lineIterator
-      .withFilter(_.startsWith("#%OUT"))  //
-      .foldLeft(Map.empty[String, Set[String]].withDefaultValue(Set.empty[String])) { (a,b) =>
-      val spt = b.split("\\s+")
-      a.updated(spt(1), a(spt(1)) + spt(2))
+      a :+ paramName -> { (value: RType, executionContext: ExecutionContext) =>
+        m.group("repr") match {
+          case "path" =>  ValidArgument(new FileRepresentation(executionContext.getFile(paramName, value.inner().toString)))
+          case "content" => ValidArgument(new LiteralRepresentation(value))
+        }
+      }
     }
+
+  // Implications with names for the parameters // TODO Currently not supported
+  type Condition = (String, RType => Boolean, String, RType => Boolean)
+
+  final val parameterNames: Seq[String] = parameters.map(_._1).distinct   // Names of the parameters that need to be supplied
+
+  // Special fields to put the runscript into a larger context
+
+
+  private case class Replacer(arguments : Seq[(String, ValidArgument)]) {
+    private var counter = -1
+
+    def apply(m : Regex.Match) : String = {
+      counter += 1
+      arguments(counter)._2.representation.represent
+    }
+  }
+
+  private val tranlationSteps = mutable.Queue[String => String]( _ => files.map(_.contentAsString).mkString("\n"))
+
+  // Translates A sequence of Arguments with the parameter names into a runnable runscript instance
+  def apply(arguments: Seq[(String, ValidArgument)]): String = {
+
+    // Dequeue all transformers
+    var init = tranlationSteps.dequeue()("")
+    while(tranlationSteps.nonEmpty) {
+
+      init = tranlationSteps.dequeue()(init)
+    }
+
+    val replacer = Replacer(arguments)
+    parameterString.replaceAllIn(init, replacer.apply _)
+  }
+
+  def withEnvironment(env: Env): Runscript = {
+
+    tranlationSteps.enqueue {   s =>
+      constantsString.replaceAllIn(s, m => env.get(m.group("constant")))
+    }
+    this
   }
 }
 
 
-this.typeClass = this.f.lineIterator
-        .map(_.split('#')(0)) // Trim comment lines
-        .withFilter(!_.trim().isEmpty) // Remove empty lines
-        .foldLeft(Map.empty[String, Set[String]].withDefaultValue(Set.empty[String])) { (a,b) =>
-        val spt = b.split(':')
-        var currentMap : Map[String, Set[String]] = a
+object Runscript extends TELRegex {
 
-        // Traverse words after the colon
-        spt(1).split("\\s+").withFilter(!_.trim().isEmpty).foreach { word =>
-          currentMap = currentMap.updated(word, currentMap(word) + spt(0))
-        }
-        currentMap
-      }
+  // An evaluation returns an argument given a value for a runscript type and an execution Context
+  type Evaluation = (RType, ExecutionContext) => Argument
 
- */
+  // TODO Constraints are not yet supported, currently all arguments are valid
+  /**
+    * Reads the lines of a runscript file and returns a new runscript instance
+    *
+    */
+  def apply(files: Seq[File]): Runscript = new Runscript(files)
+}

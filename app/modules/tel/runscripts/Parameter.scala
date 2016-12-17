@@ -2,6 +2,7 @@ package modules.tel.runscripts
 
 import better.files.File
 
+
 /**
   * Created by lzimmermann on 07.12.16.
   */
@@ -29,12 +30,11 @@ class Parameter(val name : String) {
 
 
 
-// TODO Does it make sense to make this class covariant?
 /**
  * Encompasses the value representation of a runscript parameter.
   *
  */
-abstract class Representation(value: RType, executionContext: ExecutionContext) extends Cleanable {
+abstract class Representation{
 
   def represent: String
 }
@@ -45,38 +45,17 @@ abstract class Representation(value: RType, executionContext: ExecutionContext) 
   * type 'A'.
   *
   * @param value
-  * @param executionContext
   */
-case class LiteralRepresentation(value : RType, executionContext: ExecutionContext)
-  extends Representation(value, executionContext) {
+class LiteralRepresentation(value : RType) extends Representation {
 
-  private var internalValue: Option[RType] = Some(value)
-
-  def represent : String = internalValue.get.toString
-
-  override def clean(): Unit = {
-
-    internalValue = None
-  }
+  def represent : String = value.inner().toString
 }
 
+class FileRepresentation(file: File) extends Representation {
 
-case class FileRepresentation(filename: String, value: RType, executionContext: ExecutionContext)
-  extends Representation(value, executionContext) {
-
-  private var file: Option[File] = Some((executionContext / "params").createChild(filename).write(value.toString))
-
-  def represent : String = file.get.pathAsString
-
-  def clean(): Unit = {
-
-    if(file.isDefined) {
-
-      file.get.delete(swallowIOExceptions = true)
-      file = None
-    }
-  }
+  def represent: String = file.pathAsString
 }
+
 
 
 

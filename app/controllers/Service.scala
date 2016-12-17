@@ -1,9 +1,8 @@
 package controllers
 
+import java.io.{FileInputStream, ObjectInputStream}
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager._
-import actors.UserManager.AddJobWatchList
 import akka.actor.ActorRef
 import akka.util.Timeout
 import models.tools.ToolModel
@@ -18,7 +17,7 @@ import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
 import models.database.JobState
 import models.tools.ToolModel._
-import modules.CommonModule
+import modules.{CommonModule, LocationProvider}
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
@@ -40,12 +39,12 @@ import scala.util.Success
 class Service @Inject() (webJarAssets     : WebJarAssets,
                      val messagesApi      : MessagesApi,
 @NamedCache("userCache") implicit val userCache : CacheApi,
+                         implicit val locationProvider: LocationProvider,
 @NamedCache("toolitemCache") val toolitemCache : CacheApi,
+@NamedCache("jobitem") jobitemCache : CacheApi,
                      val reactiveMongoApi : ReactiveMongoApi,
                      val tel              : TEL,
-                     final val values     : Values,
-    @Named("userManager") userManager : ActorRef,
-    @Named("jobManager") jobManager       : ActorRef)
+                     final val values     : Values)
 
                  extends Controller with I18nSupport
                                     with Constants
@@ -73,21 +72,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     }
   }
 
-
-  def listJobs = Action.async { implicit request =>
-
-    getUser.flatMap { user =>
-      Logger.info("Requested user list is " + user.jobs.mkString)
-
-      findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Logger.info(jobs.map(_.cleaned).length + " jobs for userID " + user.userID + " found")
-
-        Ok(Json.toJson( jobs.map(_.cleaned)))
-      }
-    }
-  }
-
-
   // TODO  Handle Acknowledgement
   /**
     * User asks to delete the Job with the provided mainID
@@ -99,7 +83,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     getUser.map { user =>
       BSONObjectID.parse(mainIDString) match {
         case Success(mainID) =>
-          jobManager ! ForceDeleteJob(user.userID, mainID)
+         // jobManager ! ForceDeleteJob(user.userID, mainID)
           Ok.withSession(sessionCookie(request, user.sessionID.get))
         case _ =>
           NotFound
@@ -117,7 +101,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     getUser.map { user =>
       BSONObjectID.parse(mainIDString) match {
         case Success(mainID) =>
-          jobManager ! AddJob(user.userID, mainID)
+          //jobManager ! AddJob(user.userID, mainID)
           Logger.info("Adding job: " + mainID.stringify)
           //Redirect(s"/#/jobs/${mainID.stringify}").withSession(sessionCookie(request, user.sessionID.get))
           Ok.withSession(sessionCookie(request, user.sessionID.get))
@@ -130,22 +114,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
   /**
 
    */
-  def loadJob(mainIDString : String) = Action.async { implicit request =>
-    getUser.flatMap { user =>
-      BSONObjectID.parse(mainIDString) match {
-        case Success(mainID) =>
 
-          findJob(BSONDocument(Job.IDDB -> mainID)).map {
-            case Some(job) =>
-              userManager ! AddJobWatchList(user.userID, job.mainID)
-              Ok(job.cleaned())
-            case None => NotFound
-          }
-        case _ =>
-          Future.successful(NotFound)
-      }
-    }
-  }
 
 
   /**
@@ -179,7 +148,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
           // Tell the Jobmanager to remove the user from the jobs and mark the jobs which have no more watchers
           if (request.getQueryString("deleteCompletely").contains("true")) {
-            jobManager ! DeleteJobs(user.userID, mainIDs, JobDeletionFlag.PublicRequest)
+            //jobManager ! DeleteJobs(user.userID, mainIDs, JobDeletionFlag.PublicRequest)
           }
 
           // Remove the main IDs from the users view
@@ -230,16 +199,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     ) (unlift(Toolitem.unapply))
 
 
-  // Server returns such an object when asked for a job
-  case class Jobitem(mainID: String,
-                     newMainID: String,  // Used for job resubmission
-                     jobID: String,
-                     state: JobState,
-                     ownerName : String,
-                     createdOn: String,
-                     toolitem: Toolitem,
-                     views: Seq[(String, Html)],
-                     paramValues: Map[String, String])
 
   implicit val jobitemWrites: Writes[Jobitem] = (
       (JsPath \ "mainID").write[String] and
@@ -270,16 +229,15 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
 
 
-  def getJob(mainIDString: String) = Action.async { implicit request =>
+  def getJob(jobID: String) = Action.async { implicit request =>
 
-    BSONObjectID.parse(mainIDString) match {
 
-      case Success(mainID) =>
+    Logger.info("getJobReached")
 
-        jobCollection.flatMap(_.find(BSONDocument(Job.IDDB -> mainID)).one[Job]).flatMap {
+    selectJob(jobID).flatMap {
 
           case Some(job) =>
-            Logger.info("Requested job has been found in MongoDB")
+            Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
 
             val toolModel = ToolModel.toolMap(job.tool)
 
@@ -288,7 +246,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               toolitemCache.set(job.tool, x)
               x
             }
-
             val ownerName =
               if (job.isPrivate) {
                 findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map{
@@ -305,7 +262,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               } else {
                 Future.successful("Public Job")
               }
-
             // The jobState decides which views will be appended to the job
             val jobViews: Seq[(String, Html)] = job.status match {
 
@@ -317,19 +273,19 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
               case Error => Seq.empty
 
               case Done =>
-
                 toolModel.results.map { resultName =>
-                resultName -> views.html.jobs.resultpanel(resultName, job.mainID.stringify, job.tool)
+                  resultName -> views.html.jobs.resultpanel(resultName, job.jobID, job.tool)
               }
 
               case Prepared => Seq.empty
 
                 Seq.empty // TODO add more elements for different states to show the status
             }
-            val paramValues = s"$jobPath$SEPARATOR${job.mainID.stringify}${SEPARATOR}params".toFile.list.map{ file =>
 
-              file.name -> file.contentAsString
-            }.toMap
+            // Read parameters from serialized file
+            val ois = new ObjectInputStream(new FileInputStream((jobPath/jobID/"sparam").pathAsString))
+            val paramValues = ois.readObject().asInstanceOf[Map[String, String]]
+            ois.close()
 
             ownerName.map{ ownerN =>
               Ok(Json.toJson(
@@ -348,8 +304,5 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
             Logger.info("Job could not be found")
             Future.successful(NotFound)
         }
-      case _ =>
-        Future.successful(NotFound)
-    }
   }
 }

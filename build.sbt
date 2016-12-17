@@ -47,6 +47,8 @@ val commonDeps = Seq(ws, filters, cache,
 val commonSettings = Seq(
   version := "0.0.0",
   scalaVersion := "2.11.8",
+  scalaJSProjects := Seq(client),
+  pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
   dependencyOverrides ++= Set("org.webjars" % "jquery" % jqueryVersion,
                               "com.typesafe.akka" %% "akka-actor" % akkaVersion))
@@ -61,6 +63,7 @@ lazy val metadata = List(
     Developer("lkszmn", "Lukas Zimmermann", "lukas.zimmermann@tuebingen.mpg.de", url("https://github.com/lkszmn"))
   )
 )
+
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtWeb)
@@ -104,7 +107,8 @@ lazy val client = (project in file("client")).settings(
   persistLauncher := true,
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.9.1"
+    "org.scala-js" %%% "scalajs-dom" % "0.9.1",
+    "co.technius" %%% "scalajs-mithril" % "0.1.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 
