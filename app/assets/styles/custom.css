@@ -441,21 +441,6 @@ textarea { resize:both; }
     font-family: Monaco, Consolas, "Lucida Console", monospace; font-weight: bold; font-size: 0.75em; padding-left: 15px;
 }
 
-
-#submitbuttons {
-    padding-left: 1.15em;
-}
-
-#submitbuttons .button {
-    background-color: #008979;
-    color: white;
-    border: 1px solid lightgrey;
-}
-
-#submitbuttons .button:hover {
-    background-color: #006F62;
-}
-
 #jobid {
     border-radius: 3px;
     font-size: 0.65em;
@@ -477,14 +462,6 @@ textarea { resize:both; }
     display: none;
     text-align: center;
 }
-
-
-.dropzone{
-    border: 0px;
-    box-shadow: 0px 1px 6px 0px lightgray;
-    color: gray;
-}
-
 
 .slick-arrow {
     display: none !important;
@@ -552,7 +529,8 @@ textarea { resize:both; }
     width: 40%;
     max-height: 20%;
     display: block;
-    margin: auto;
+    box-shadow: 0px 1px 6px 0px lightgray;
+    color: gray;
 
 }
 
