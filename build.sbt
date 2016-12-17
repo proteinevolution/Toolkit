@@ -13,7 +13,7 @@ val reactiveMongoVersion = "0.12.0"
 
 val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
-  "com.sanoma.cda" %% "maxmind-geoip2-scala" % "1.5.1",
+  "com.sanoma.cda" %% "maxmind-geoip2-scala" % "1.5.3",
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
