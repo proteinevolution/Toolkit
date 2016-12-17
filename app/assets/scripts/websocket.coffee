@@ -78,43 +78,45 @@ onMessage = (event) ->
       JobModel.messages().push(message.message)
       m.endComputation()
     when "UpdateJob"
-      state = message.job.state.toString()
-      mainID = message.job.mainID.toString()
-      jobID = message.job.jobID.toString()
+
       m.startComputation()
-      Job.updateState(mainID, jobID, state)
+      console.log(message.jobID)
+      console.log(message.state)
+      Job.updateState(message.jobID, message.state)
       m.endComputation()
-      if jobs.vm.getJobState(message.job) == 'running'
+
+      # Stuff with traffic bar
+      if message.state == 3
         $('#trafficbar').css
           'background': '#ffff00'
           'box-shadow': '0 0 10px #ffce27'
-      else if jobs.vm.getJobState(message.job) == 'error'
+      else if message.state == 4
         if window.Notification and Notification.permission != 'denied'
           Notification.requestPermission (status) ->
           n = new Notification('Bioinformatics Toolkit',
-            body: 'Job ' + message.job.mainID + " has failed!"
+            body: 'Job ' + message.jobID + " has failed!"
             icon: '')
           titlenotifier.add();
         $('#trafficbar').css
           'background': '#ff0000'
           'box-shadow': '0 0 10px #d2071d'
-      else if jobs.vm.getJobState(message.job) == 'done'
+      else if message.state == 5
         if window.Notification and Notification.permission != 'denied'
           Notification.requestPermission (status) ->
           n = new Notification('Bioinformatics Toolkit',
-            body: 'Job ' + message.job.mainID + " has finished!"
+            body: 'Job ' + message.jobID + " has finished!"
             icon: '')
           titlenotifier.add();
         $('#trafficbar').css
           'background': 'green'
           'box-shadow': '0 0 10px darkgreen'
-      else if jobs.vm.getJobState(message.job) == 'other'
+      else if message.state == 'other'
         $('#trafficbar').css
           'background': 'transparent'
           'box-shadow': '0 0 10px transparent'
 
       # Show user a popup with the submission
-      if state == '0'
+      if message.state == 0
         $('.jobformclear').click()
 
     # User was looking for a job id which was not valid
@@ -128,7 +130,7 @@ onMessage = (event) ->
     when "SearchReply"
       jobHTMLString = "<p>found jobs:</p>"
       for job in message.list
-        jobHTMLString += "<p>MainID: " + job.mainID + " JobID: " + job.job_id + "</p>"
+        jobHTMLString += "<p>Job ID: " + job.jobID + " JobID: " + job.jobID + "</p>"
       $("#modal").html(jobHTMLString).foundation('open')
 
     when "Ping"
@@ -137,8 +139,8 @@ onMessage = (event) ->
 @sendMessage = (object) ->
   ws.send(JSON.stringify(object))
 
-@addJob = (mainID) ->
-  sendMessage("type":"AddJob","mainID":mainID)
+@addJob = (jobID) ->
+  sendMessage("type":"AddJob","jobID":jobID)
 
 # everything is in the DOM, start the connection.
 connect()

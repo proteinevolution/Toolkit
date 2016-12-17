@@ -30,7 +30,7 @@ window.JobModel =
 
   update: (args, value) ->
     if args.isJob
-      m.request({method: 'GET', url: "/api/jobs/#{value}"}).then (data) ->
+      m.request({method: 'GET', url: "/api/job/#{value}"}).then (data) ->
         JobModel.paramValues = data.paramValues
         JobModel.mainID(data.newMainID)
         mainID: data.mainID

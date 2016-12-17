@@ -6,18 +6,23 @@ import models.Constants
 import models.database.Job
 import play.api.cache._
 import play.api.libs.json.Json
-import javax.inject.{Singleton, Inject}
-import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
+import javax.inject.{Inject, Singleton}
+
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.search.JobDAO
+import modules.LocationProvider
 import play.api.mvc.{Action, Controller}
+
 import scala.concurrent.Future
 
 
 @Singleton
 final class Search @Inject() (
           @NamedCache("userCache") implicit val userCache        : CacheApi,
+          implicit val locationProvider: LocationProvider,
                                val reactiveMongoApi : ReactiveMongoApi,
                                val jobDao           : JobDAO)
                            extends Controller with Constants
@@ -27,7 +32,7 @@ final class Search @Inject() (
   
 
   def ac(queryString : String) = Action.async{ implicit request =>
-    jobDao.jobIDtermSuggester(queryString).map { richSearchResponse =>
+    jobDao.jobIDcompletionSuggester(queryString).map { richSearchResponse =>
       val jobIDEntries = richSearchResponse.suggestion("jobID")
       if (jobIDEntries.size > 0) {
 
@@ -53,7 +58,7 @@ final class Search @Inject() (
           jobDao.jobsWithTool(queryString, user.userID).map(_.getHits.hits().toList.map(_.id()))
         } else {
           // Grab Job ID auto completions
-          val jobIDSuggestions = jobDao.jobIDtermSuggester(queryString).map(_.suggestion("jobID").entry(queryString).optionsText.toList)
+          val jobIDSuggestions = jobDao.jobIDcompletionSuggester(queryString).map(_.suggestion("jobID").entry(queryString).optionsText.toList)
           jobIDSuggestions.map(ids => Logger.info("Found Strings: " + ids.toString()))
 
           // Search for jobIDs in ES

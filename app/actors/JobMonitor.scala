@@ -1,9 +1,9 @@
 package actors
 
-import javax.inject.{Named, Inject}
+import javax.inject.Inject
 
 import actors.JobMonitor.UpdateJobStatus
-import akka.actor.{ActorLogging, ActorRef, Actor}
+import akka.actor.{ActorLogging, Actor}
 import controllers.Settings
 import models.{ExitCodes, Constants}
 import models.database._
@@ -32,7 +32,6 @@ object JobMonitor {
 @Singleton
 final class JobMonitor @Inject() (val messagesApi: MessagesApi,
                                   val reactiveMongoApi: ReactiveMongoApi,
-                                  @Named("userManager") userManager : ActorRef,
                                   val tel : TEL,
                                   val jobDao : JobDAO,
                                   val settings : Settings,

@@ -3,31 +3,58 @@ package modules.tel.runscripts
 import javax.inject.{Inject, Named, Singleton}
 
 import better.files._
-import modules.tel.TELRegex
-import modules.tel.runscripts.Runscript.Evaluation
 import play.api.Logger
 
 
 //TODO
 // * Support Constraints and Conditions
+// * Runscript Manager should watch the runscript Path for changes
 
 /**
   * Class watches the directory of runscripts and monitors changes. Reloads information about runscripts once
   * the file changes and keeps a map of all Runscripts for quick access.
+  * Allows to provide a runscript to an interested instance, like a JobActor
   *
   * Created by lzimmermann on 10/19/16.
   */
 @Singleton
 class RunscriptManager @Inject() (@Named("runscriptPath") runscriptPath : String)  {
 
+  // Constants for the RunscriptManager
+  final val SUFFIX = "SUFFIX"
+  final val PREFIX = "PREFIX"
+
+
   Logger.info(s"RunscriptManager started, surveilling: $runscriptPath")
 
-  val runscripts = runscriptPath.toFile.list.withFilter(_.extension.getOrElse("") == ".sh").map { file =>
+  // Maps each runscript name to the corresponding file
+  private final val runscripts : Map[String, File] = runscriptPath.toFile.list.withFilter(_.extension.getOrElse("") == ".sh").map { file =>
 
-    file.name -> Runscript(file)
+    file.nameWithoutExtension -> file
   }.toMap
 
-  def apply(runscriptName: String) = runscripts(runscriptName)
+  // All files that will be prepended to a requested runscript
+  private final val prefix: Seq[File] = {
+    val x = runscriptPath.toFile / PREFIX
+    if(x.exists) {
+      Logger.info("RunscriptManager: PREFIX will be automatically prepended to each runscript")
+      Seq(x)
+    } else {
+      Seq.empty
+    }
+  }
+  // All files that will be appended to a requested runscript
+  private final val suffix: Seq[File] = {
+    val x = runscriptPath.toFile / SUFFIX
+    if(x.exists) {
+      Logger.info("RunscriptManager: SUFFIX will be automatically prepended to each runscript")
+      Seq(x)
+    } else {
+      Seq.empty
+    }
+  }
+
+  def apply(runscriptName: String): Runscript =  Runscript(prefix ++ Seq(runscripts(runscriptName)) ++ suffix)
 }
 
 
@@ -39,52 +66,14 @@ case class ValidArgument(representation: Representation) extends Argument
 
 
 
+sealed trait RType {
 
-class Runscript(val parameters: Map[String, Seq[Evaluation]])  {
-
-  // Implications with names for the parameters // TODO Currently also not supported
-  type Condition = (String, RType => Boolean, String, RType => Boolean)
+  def inner(): String
 }
+case class RString(x : String) extends RType {
 
-
-object Runscript extends TELRegex {
-
-
-  // An evaluation within a runscript maps a RType to a Argument(which indicates whether the evalaution was
-  // successful or not)
-  type Evaluation = (RType, ExecutionContext) => Argument
-
-  // TODO Constraints are not yet supported, currently all arguments are valid
-  /**
-    * Reads the lines of a runscript file and returns a new runscript instance
-    *
-    * @param file
-    */
-
-  def apply(file: File): Runscript = {
-
-    new Runscript(
-      parameterString.findAllIn(file.contentAsString)
-        .foldLeft(Map.empty[String, Seq[Evaluation]].withDefaultValue(Seq.empty)) { (a, m) =>
-
-          val spt = m.split('.')
-          val paramName = spt(0)
-
-          a.updated(paramName, a(paramName) :+ { (value: RType, executionContext: ExecutionContext) =>
-
-            spt(1) match {
-
-              case "path" => ValidArgument(FileRepresentation(paramName, value, executionContext))
-              case "content" => ValidArgument(LiteralRepresentation(value, executionContext))
-            }
-          }
-          )
-        })
-  }
+  def inner(): String = x
 }
-
-sealed trait RType
-case class StringType(x : String) extends RType
 
 
 

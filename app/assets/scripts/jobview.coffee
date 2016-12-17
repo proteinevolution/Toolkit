@@ -61,19 +61,6 @@ SearchformComponent =
     m "div", {id: "jobsearchform"},
       m "input", {type: "text", placeholder: "Search by JobID, e.g. 6881313", id: "jobsearch"}
 
-###
-m HelpModalComponent, {toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong}
-###
-###
-<div class="reveal" id="exampleModal1" data-reveal>
-  <h1>Awesome. I Have It.</h1>
-  <p class="lead">Your couch. It is mine.</p>
-  <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
-  <button class="close-button" data-close aria-label="Close modal" type="button">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-###
 
 ## Component that is displayed once the Job is running
 
@@ -82,50 +69,12 @@ foundationTable = (elem, isInit) ->
   if not isInit
     $(elem).foundation()
 
-# Timer for the Job execution time
-
-###
-  var myVar = setInterval(function(){ myTimer() }, 1000);
-
-function myTimer() {
-    var d = new Date();
-    var t = d.toLocaleTimeString();
-    document.getElementById("demo").innerHTML = t;
-}
-
-function myStopFunction() {
-    clearInterval(myVar);
-}
-###
-
-###
-console.log "JobRunningComponent Loaded"
-
-    pad = (val) -> if val > 9 then val else '0' + val
-    @timer = setInterval (->
-      document.getElementById('runningSeconds').innerHTML = pad(++JobModel.executionTime % 60)
-      document.getElementById('runningMinutes').innerHTML = pad(parseInt(JobModel.executionTime / 60, 10))
-    ), 1000
-    onunload: ->
-      clearInterval(@timer)
-
-   m "tr", [
-            m "td", "Execution Time"
-            m "td", [
-              m "span", {id: "runningMinutes"}, "00"
-              m "span", ":"
-              m "span", {id: "runningSeconds"}, "00"
-            ]
-          ]
-###
 JobErrorComponent =
   controller: ->
 
   view: ->
     m "div", {class: "error-panel"},
       m "p", "Job has reached Error state"
-
-
 
 JobRunningComponent =
   controller: ->
@@ -269,57 +218,64 @@ JobSubmissionComponent =
   controller: (args) ->
     this.submitting = false
     submit: (startJob) ->
-      submitting:true
-      mainID = JobModel.mainID()
-      $('#submitJobButton').attr 'disabled', 'disabled'
-      jobid = args.job().jobID()    # TODO Maybe merge with jobID validation
-      if not jobid                # TODO Prevent submission if validation fails
-        jobid = window.Job.generateJobID()
-      args.add(new Job({mainID: mainID, jobID: jobid, state: 6, createdOn: "now", toolname: args.job().tool.toolname}))
 
-
-      JobModel.messages([])
-
-      submitRoute = jsRoutes.controllers.Tool.submit(args.job().tool.toolname, mainID, jobid)
-      submitRoute2 = jsRoutes.controllers.Tool.submitAgain(args.job().tool.toolname, mainID, jobid)
+      toolname = args.job().tool.toolname
+      # Either use custom jobID or declare not using an own
+      jobID = args.job().jobID()
+      if not jobID
+        jobID = null
+      checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID)
       formData = new FormData(document.getElementById("jobform"))
-      Job.requestTool(true)
 
       # Send submission request and see whether server accepts or job already exists
+      ###
       m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
         if json.existingJobs
-          if confirm " Already existing job found: " + JSON.stringify(json.existingJob.job_id) + ".\n\n You could save some time and just fetch it. Even the timestamp of the database is the same! \n Do you want to load the existing job? Click on cancel to run the job again."
-            #window.open('http://olt.eb.local:6500/#/jobs/' + json.existingJob.mainID, '_self')
+          $('#open_modal').click()
+          $('#reload_job').on 'click', ->
+            $('#submit_modal').foundation('close');
             m.route("/jobs/#{mainID}")
             Job.delete(mainID)
             m.route("/jobs/#{json.existingJob.mainID}")
             m.request
               method: 'POST'
               url: '/jobs/dateviewed/' + json.existingJob.mainID
-          else
-            console.log "job was found but will be submitted anew"
-            m.request({url: submitRoute2.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
-              m.route("/jobs/#{mainID}")
-        else
-          console.log "New Job Submission"
-          m.route("/jobs/#{mainID}")
+          $('#submit_again').on 'click', ->
+            $('#submit_modal').foundation('close');
+            console.log "New Job Submission"
+            m.route("/jobs/#{mainID}")
+      ###
+      console.log "Perform request"
+      m.request
+        method: checkRoute.method
+        url: checkRoute.url
+        data: formData
+        serialize: (data) -> data
+      .then(
+        (data) ->
+          jobID = data.jobID
+          # Add a new Job to the Model
+          Job.add(new Job({mainID: jobID, jobID: jobID, state: 0, createdOn: 'now', toolname: toolname}))
+          submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID)
+          m.request
+            method: submitRoute.method
+            url: submitRoute.url
+            data: formData
+            serialize: (data) -> data
+          m.route("/jobs/#{jobID}")
 
-    startJob: ->
-      sendMessage("type":"StartJob", "mainID":args.job.mainID)
+        (error) -> alert "Bad Request"
+      )
 
-    checkJobID: (jobID) ->
-      console.log("checking JobID \"" + args.job().jobID() + "\"")
-      m.request({url: "/search/checkJobID/"+ args.job().jobID(), method:"GET"}).then (json) ->
-        if(json.exists)
-          console.log("jobID already exists.")
-        else
-          console.log("jobID is free.")
-
-  revealJobAlert: (mainID) ->
-    m.route("/jobs/#{mainID}")
 
   view: (ctrl, args) ->
     m "div", {class: "submitbuttons"}, [
+      m "p",
+        m "a", {'data-open': 'submit_modal', style: 'display: none;', id: 'open_modal', 'data-reveal': 'data-reveal'}
+      m "div" , {class: "reveal", 'data-reveal', id: 'submit_modal'},
+        m "p", "Already existing job found: Do you want to load the existing job and save some time?"
+        m "input", {id: 'reload_job', type: 'button', value: 'Yes'}
+        m "input", {id: 'submit_again', type: 'button', value: 'No, submit Job'}
       if !this.submitting then m "input", {type: "button", id: "submitJobButton", class: "success button small submitJob", value: "#{if args.isJob then "Res" else "S"}ubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
       if !args.isJob
         m "label",{hidden: "hidden"}, [
@@ -331,7 +287,7 @@ JobSubmissionComponent =
       if  args.isJob && args.job().jobstate == 1 then m "input", {type: "button", class: "button small addJob", value: "Start Job", onclick: ctrl.startJob} else null  #TODO
       if  args.isJob then m "input", {type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob} else null  #TODO
       m "input", {type: "text", id: "jobID", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job().jobID), value: args.job().jobID()}
-      m "input", {type: "button", class: "button small checkJob", value: "Check JobID", onclick: ctrl.checkJobID.bind(this) } # TODO somehow get this together with the jobID onChange
+      #m "input", {type: "button", class: "button small checkJob", value: "Check JobID", onclick: ctrl.checkJobID.bind(this) } # TODO somehow get this together with the jobID onChange
       #m "input", {type: "button", class: "button hollow small upload", value: "Upload File", style: "margin-left: 15px;"}
       m "input", {type: "text", class: "jobid", placeholder: "E-Mail Notification", style: "width: 16em; float: right;"}
     ]
