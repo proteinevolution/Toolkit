@@ -77,10 +77,10 @@
 
         <!-- Javascript Router -->
         @helper.javascriptRouter("jsRoutes")(
-            routes.javascript.Tool.submit,
-            routes.javascript.Tool.submitAgain,
             routes.javascript.Jobs.updateDateViewed,
-            routes.javascript.Tool.frontendCount)
+            routes.javascript.Tool.frontendCount,
+            routes.javascript.JobController.create,
+            routes.javascript.JobController.check)
 
 
 
@@ -203,7 +203,7 @@
             </div>
 
             </div>
-                 <footer class="row">
+                 <footer class="row" id="app">
                             <div class="columns large-12">
                               <div id="sub-nav">
                                     <a href="#">Help</a>
@@ -257,7 +257,7 @@
 
         <!-- ScalaJS assets -->
         @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
-
+        <script>MyApp().main();</script>
             <!-- Public Javascript Assets -->
         <script src="@routes.Assets.versioned("javascripts/msa.min.js")" type="text/javascript"></script>
         <script src='@routes.Assets.versioned("javascripts/sampleseqs.js")'></script>

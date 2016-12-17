@@ -3,15 +3,19 @@ package controllers
 import akka.actor.ActorRef
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobManager._
-import actors.UserManager.RunningJobMessage
+import actors.JobActor.JobStateChanged
+import actors.Master.JobMessage
 import models.database._
+import modules.CommonModule
+import org.joda.time.DateTime
+import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
+import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
 /*
 TODO
 We can introduce auto-coercion of the Job MainID to the BSONObject ID
-
  */
 /**
   * This controller is supposed to handle request coming from the Backend, such as compute
@@ -19,42 +23,46 @@ We can introduce auto-coercion of the Job MainID to the BSONObject ID
   *
   */
 @Singleton
-final class Jobs @Inject()(@Named("jobManager") jobManager : ActorRef,
-                     @Named("userManager") userManager : ActorRef) extends Controller {
+final class Jobs @Inject()(@Named("master") master: ActorRef,
+                           val reactiveMongoApi: ReactiveMongoApi,
+                           @NamedCache("jobActorCache") val jobActorCache: CacheApi) extends Controller with CommonModule {
 
-  def jobStatusDone(mainID: String) = Action { request =>
-    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, Done)
+  def jobStatusDone(jobID: String) = Action {
+
+    master ! JobMessage(jobID, JobStateChanged(jobID, Done))
     Ok
   }
 
-  def jobStatusError(mainID: String) = Action { request =>
-    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, Error)
+  def jobStatusError(jobID: String) = Action {
+    master ! JobMessage(jobID, JobStateChanged(jobID, Error))
     Ok
   }
 
-  def jobStatusRunning(mainID: String) = Action { request =>
-    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, Running)
+  def jobStatusRunning(jobID: String) = Action {
+    master ! JobMessage(jobID, JobStateChanged(jobID, Running))
     Ok
   }
 
-  def jobStatusQueued(mainID: String) = Action { request =>
-    jobManager ! UpdateJobStatus(reactivemongo.bson.BSONObjectID.parse(mainID).get, Queued)
+  def jobStatusQueued(jobID: String) = Action {
+    master ! JobMessage(jobID, JobStateChanged(jobID, Queued))
     Ok
   }
 
-  def SGEID(mainID: String, sgeID: String) = Action { request =>
-    jobManager ! AddSGEjobID(reactivemongo.bson.BSONObjectID.parse(mainID).get, sgeID)
+  def SGEID(jobID: String, sgeID: String) = Action {
+    //jobManager ! AddSGEjobID(reactivemongo.bson.BSONObjectID.parse(jobID).get, sgeID)
     Ok
 
   }
 
-  def pushMessage(mainID : String, message : String)  = Action { request =>
-    userManager ! RunningJobMessage(reactivemongo.bson.BSONObjectID.parse(mainID).get, message)
+  def pushMessage(jobID : String, message : String)  = Action {
+    //userManager ! RunningJobMessage(reactivemongo.bson.BSONObjectID.parse(jobID).get, message)
     Ok
   }
 
-  def updateDateViewed(mainID : String)  = Action { request =>
-    jobManager ! UpdateDateViewed(reactivemongo.bson.BSONObjectID.parse(mainID).get)
+  def updateDateViewed(jobID : String)  = Action {
+
+    modifyJob(BSONDocument(Job.JOBID -> jobID),
+      BSONDocument("$set"   -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis))))
     Ok
   }
 }

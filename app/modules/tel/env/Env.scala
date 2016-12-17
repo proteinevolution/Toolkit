@@ -8,4 +8,7 @@ package modules.tel.env
 trait Env {
 
   def get(key : String) : String
+
+  // Adds a Key value pair to this environment
+  def configure(key: String, value: String): Unit
 }
