@@ -227,6 +227,26 @@ JobSubmissionComponent =
       checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID)
       formData = new FormData(document.getElementById("jobform"))
 
+      Job.requestTool(true)
+
+      # Send submission request and see whether server accepts or job already exists
+      m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
+        if json.existingJobs
+          $('#open_modal').click()
+          $('#reload_job').on 'click', ->
+            $('#submit_modal').foundation('close');
+            m.route("/jobs/#{mainID}")
+            Job.delete(mainID)
+            m.route("/jobs/#{json.existingJob.mainID}")
+            m.request
+              method: 'POST'
+              url: '/jobs/dateviewed/' + json.existingJob.mainID
+          $('#submit_again').on 'click', ->
+            $('#submit_modal').foundation('close');
+            console.log "New Job Submission"
+            m.route("/jobs/#{mainID}")
+
+
 
       console.log "Perform request"
       m.request
@@ -253,6 +273,12 @@ JobSubmissionComponent =
 
   view: (ctrl, args) ->
     m "div", {class: "submitbuttons"}, [
+      m "p",
+        m "a", {'data-open': 'submit_modal', style: 'display: none;', id: 'open_modal', 'data-reveal': 'data-reveal'}
+      m "div" , {class: "reveal", 'data-reveal', id: 'submit_modal'},
+        m "p", "Already existing job found: Do you want to load the existing job and save some time?"
+        m "input", {id: 'reload_job', type: 'button', value: 'Yes'}
+        m "input", {id: 'submit_again', type: 'button', value: 'No, submit Job'}
       if !this.submitting then m "input", {type: "button", id: "submitJobButton", class: "success button small submitJob", value: "#{if args.isJob then "Res" else "S"}ubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
       if !args.isJob
         m "label",{hidden: "hidden"}, [
