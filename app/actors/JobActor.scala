@@ -114,6 +114,20 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
 
 
   /**
+    * Updates Jobstate in Model, in database, and notifies user watchlist
+    */
+  private def updateJobState(state: JobState): Unit = {
+
+    // Update job in the database
+    this.currentJob = Some(this.currentJob.get.copy(status = state))
+    upsertJob(this.currentJob.get)
+
+    // Inform watchlist
+    watchers.foreach(_ ! JobStateChanged(this.currentJob.get.jobID, state))
+  }
+
+
+  /**
     * Determines whether the parameter list is completely supplied
     *
     * @param params
@@ -232,7 +246,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
 
         // Decide on the type of execution based on the context variable. It will
         // either be a local execution or a engine execution
-
         executionContext.get.accept {
 
           env.get("CONTEXT") match {
@@ -241,6 +254,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
               LocalExecution(content)
 
             case s: String =>
+              this.updateJobState(Queued)
               engineExecutionFactory(content, s)
           }
         }
@@ -269,12 +283,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
     // Job State changed has been received during execution
     case Event(JobStateChanged(jobID,state),_) =>
 
-        // Update job in the database
-        this.currentJob = Some(this.currentJob.get.copy(status = state))
-        upsertJob(this.currentJob.get)
-
-        // Inform watchlist
-        watchers.foreach(_ ! JobStateChanged(jobID, state))
+        this.updateJobState(state)
 
         state match {
 
