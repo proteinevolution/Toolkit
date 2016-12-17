@@ -227,9 +227,8 @@ JobSubmissionComponent =
       checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID)
       formData = new FormData(document.getElementById("jobform"))
 
-      Job.requestTool(true)
-
       # Send submission request and see whether server accepts or job already exists
+      ###
       m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
         if json.existingJobs
           $('#open_modal').click()
@@ -245,9 +244,7 @@ JobSubmissionComponent =
             $('#submit_modal').foundation('close');
             console.log "New Job Submission"
             m.route("/jobs/#{mainID}")
-
-
-
+      ###
       console.log "Perform request"
       m.request
         method: checkRoute.method
