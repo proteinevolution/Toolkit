@@ -47,12 +47,13 @@ class window.Job
 
   # Clears a job from the joblist by index  # TODO Abstract over clear and delete
   this.clear = (idx) ->
+    console.log("Job Cleared invoked")
     Job.list.then (jobs) ->
       job = jobs[idx]
       jobs[idx] = null
       jobs.splice(idx, 1)
       sendMessage({ "type": "ClearJob",  "jobID": job.jobID()})
-      if job.jobID == Job.selected()
+      if job.jobID() == Job.selected()
         m.route("/tools/#{job.toolname}")
 
 
