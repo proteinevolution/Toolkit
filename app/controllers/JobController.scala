@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor
-import actors.JobActor.RunscriptData
+import actors.JobActor.{Delete, RunscriptData}
 import actors.Master.{CreateJob, JobMessage}
 import akka.actor.{ActorRef, ActorSystem}
 import models.Values
@@ -174,19 +174,29 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
   def create(toolname: String, jobID: String) =  Action.async { implicit request =>
 
     // Just grab the formData and send to Master
-    getUser.map { user =>
-      val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
-      master ! CreateJob(jobID, (user, None), RunscriptData(toolname, formData))
-      Ok
+    getUser.flatMap { user =>
+
+      selectJob(jobID).map {
+
+        case Some(_) => BadRequest
+
+        case None =>
+          val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
+          master ! CreateJob(jobID, (user, None), RunscriptData(toolname, formData))
+          Ok
+      }
     }
   }
 
 
+  // TODO  Ensure that user is allowed to delete Job
+  // TODO introduce jobActor Cache
+
   def delete(jobID : String ) = Action {
 
+    Logger.info("Delete Action in JobController reached")
 
-
+    master ! JobMessage(jobID, Delete)
     Ok
   }
-
 }

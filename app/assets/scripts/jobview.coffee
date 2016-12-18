@@ -149,7 +149,11 @@ JobTabsComponent =
     getParamValue : JobModel.getParamValue
     job : args.job
     active : active
-    delete: (mainID) -> if confirm "Do you really want to delete this Job (ID: #{this.job().jobID()})" then Job.delete(mainID)
+    delete: ->
+      jobID = this.job().jobID()
+      if confirm "Do you really want to delete this Job (ID: #{jobID})"
+        console.log "Delete for job #{jobID} clicked"
+        Job.delete(jobID)
 
 
 
@@ -163,7 +167,7 @@ JobTabsComponent =
 
         if ctrl.isJob
           m "li", {style: "float: right;" },
-            m "input", {type: "button", class: "button small delete", value: "Delete Job", onclick: ctrl.delete.bind(ctrl, ctrl.job().mainID)}
+            m "input", {type: "button", class: "button small delete", value: "Delete Job", onclick: ctrl.delete.bind(ctrl)}
       ]
 
 
@@ -261,7 +265,11 @@ JobSubmissionComponent =
       .then(
         (data) ->
           if data.existingJobs
-            $('#submit_modal').foundation('open')
+            # Remove previous click handlers
+            $('#reload_job').unbind 'click'
+            $('#submit_again').unbind 'click'
+
+            # Bind new Click handlers
             $('#reload_job').on 'click', ->
               $('#submit_modal').foundation('close')
               m.route("/jobs/#{data.existingJob.jobID}")
@@ -274,6 +282,8 @@ JobSubmissionComponent =
 
               m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
                 m.route("/jobs/#{jobID}")
+            # Show the modal
+            $('#submit_modal').foundation('open')
           else
             jobID = data.jobID
             # Add a new Job to the Model

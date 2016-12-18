@@ -1,12 +1,13 @@
 package modules.tel.execution
 
-import java.nio.file.attribute.{PosixFilePermission}
 
 import better.files.File
 
 import scala.collection.mutable
 import scala.sys.process._
 
+
+case class RunnableExecution(processbuilder: ProcessBuilder, delete: Option[ProcessBuilder])
 
 /**
   * An Execution Context represent the environment in which a runscript can be executed. Only TEL
@@ -19,7 +20,7 @@ class ExecutionContext(val root: File) {
   private val repFileBase = root./("params").createDirectories()
 
   // a Queue of executable files for this execution Context
-  private val executionQueue = mutable.Queue[File]()
+  private val executionQueue = mutable.Queue[RegisteredExecution]()
   private val execNumbers = Iterator.from(0, 1)
 
   /*
@@ -39,18 +40,16 @@ class ExecutionContext(val root: File) {
     executionQueue.enqueue(execution.register(root./(execNumbers.next().toString).createDirectories()))
   }
 
-  def executeNext: ProcessBuilder = {
+  def executeNext: RunnableExecution = {
 
+    // Fetch next Registered Execution and Build runnable execution
     val x = executionQueue.dequeue()
-    // Ensure that the target file is executable
-    x.setPermissions(Set(PosixFilePermission.OWNER_EXECUTE,
-      PosixFilePermission.OWNER_READ,
-      PosixFilePermission.OTHERS_WRITE))
-    Process(x.pathAsString, x.parent.toJava)
+    RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),
+                      x.destroy.map(f => Process(f.pathAsString, f.parent.toJava)))
   }
   def hasMoreExecutions: Boolean = executionQueue.nonEmpty
-
 }
+
 object ExecutionContext {
 
   case class FileAlreadyExists(msg: String) extends IllegalArgumentException(msg)
@@ -65,6 +64,9 @@ object ExecutionContext {
     }
   }
 }
+
+
+
 
 
 
