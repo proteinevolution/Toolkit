@@ -14,7 +14,7 @@ import better.files._
 import controllers.UserSessions
 import modules.LocationProvider
 import modules.tel.env.Env
-import modules.tel.execution.{EngineExecution, ExecutionContext, LocalExecution}
+import modules.tel.execution.{EngineExecution, ExecutionContext, LocalExecution, RunnableExecution}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
@@ -23,8 +23,6 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.collection.mutable
-import scala.concurrent.Future
-import scala.sys.process._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -50,7 +48,8 @@ object JobActor {
   // Data that the JobActor operates on
   sealed trait JobActorData
   case object Nothing extends JobActorData
-  case class ExecutionProcess(processbuilder: ProcessBuilder) extends JobActorData
+  case class  DeletableExecution(process: scala.sys.process.Process, delete: Option[scala.sys.process.ProcessBuilder]) extends JobActorData
+  case object SomeData extends  JobActorData
 
   trait Factory {
 
@@ -60,6 +59,7 @@ object JobActor {
   // Messages the jobActor accepts from outside
   case class JobStateChanged(jobID: String, newState: JobState)
   case class StopWatch(actorRef: ActorRef)
+  case object Delete
 }
 
 class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runscripts to be executed
@@ -261,27 +261,41 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
 
         // Everyhing is set, start the next execution
         Logger.info("Change state to Employed(Running)")
-        goto(Employed(Running)) using ExecutionProcess(executionContext.get.executeNext)
-
+        val x = executionContext.get.executeNext
+        goto(Employed(Running)) using DeletableExecution(x.processbuilder.run(), x.delete)
 
       } else {
 
         // TODO Implement Me
         Logger.info("STAY")
-        stay using Nothing
+        stay using SomeData
       }
   }
   // -----------------------------------------------------------------
 
   when(Employed(Running)) {
 
+
+    // Deletion of running Job requested
+    case Event(Delete, DeletableExecution(process, deleteOption)) =>
+
+      Logger.info("JobActor deletes running Job instance")
+      process.destroy()
+      if(deleteOption.isDefined) {
+        deleteOption.get.!
+      }
+      this.unemploy()
+
+
+
     // No longer notify user when job state changes
-    case Event(StopWatch(actorRef),_) =>
+    case Event(StopWatch(actorRef), _) =>
       this.watchers.remove(actorRef)
+
       stay()
 
     // Job State changed has been received during execution
-    case Event(JobStateChanged(jobID,state),_) =>
+    case Event(JobStateChanged(jobID, state), jobActorData) =>
 
         this.updateJobState(state)
 
@@ -304,27 +318,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
                 this.unemploy()
             }
         }
-        stay using Nothing
+        stay using jobActorData
   }
-
-  onTransition {
-
-    // We now change to the Running State (wait for the job to give feedback)
-    case _ -> Employed(Running) =>
-
-      nextStateData match {
-
-        case ExecutionProcess(processbuilder) =>
-          Future(processbuilder.!)
-
-        // This cannot happen, as we always have a process to run on
-        case Nothing =>
-
-          Logger.info("No process data")
-
-      }
-  }
-
 
 
   initialize()

@@ -58,16 +58,13 @@ class window.Job
 
 
   this.delete = (jobID) ->
+    console.log("Deletion in JobModel for JOb " + jobID)
     Job.list.then (jobs) ->
       jobs.map (job, idx) ->
-        if job.jobID == jobID
-          # TODO We have to guarantee that the Job has vanished from the users watch list once the Request has finished
-          m.request({url: "/jobs?jobIDs=#{job.jobID}&deleteCompletely=true", method: "DELETE"}).then () ->
-            Job.list()[idx] = null
-            Job.list().splice(idx, 1)
-            if job.jobID == Job.selected()
-              m.route("/tools/#{job.toolname}")
-
+        if job.jobID() == jobID
+          deletionRoute = jsRoutes.controllers.JobController.delete(jobID)
+          m.request {url: deletionRoute.url, method: deletionRoute.method}
+          Job.clear(idx)
 
 
   this.sortToolname =  ->

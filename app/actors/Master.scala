@@ -7,6 +7,7 @@ import actors.Master._
 import akka.actor.{Actor, ActorRef, Props}
 import akka.event.LoggingReceive
 import models.database.User
+import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import reactivemongo.bson.BSONObjectID
 
@@ -77,6 +78,7 @@ class Master @Inject() (@NamedCache("jobActorCache") val jobActorCache: CacheApi
 
       val assignee = sender()
       jobs.remove(jobID)
+      Logger.info("Master has removed Job " + jobID)
       // Dequeue until next undeltedJobHasBeen Found
       pendingWork.dequeueFirst(op => !deletedJobs.contains(op.jobID)) match {
 
