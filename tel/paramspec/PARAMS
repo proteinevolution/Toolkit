@@ -1,2 +1,3 @@
 standarddb GEN standarddb.sh
 hhblitsdb  GEN hhblitsdb.sh
+hhsuitedb  GEN hhsuitedb.sh
