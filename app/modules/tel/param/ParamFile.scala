@@ -2,6 +2,7 @@ package modules.tel.param
 
 import better.files._
 import models.Implicits._
+import play.api.Logger
 
 
 /**
@@ -17,19 +18,21 @@ object GenerativeParamFileParser {
     f.lineIterator.noWSLines.map { line =>
 
       val spt = line.split("\\s+")
-      val fileending = spt(2).substring(spt(2).lastIndexOf('.'))
 
-      (spt(1), fileending) match {
+      // Decide for path of the parameter file
+      val paramPath = if(spt(2).startsWith("/")) {
+        spt(2)
+      } else {
+        s"${f.parent.pathAsString}/${spt(2)}"
+      }
 
-        case ("GEN", ".sh") =>
+      (spt(1), spt(2).substring(spt(2).lastIndexOf('.'))) match {
 
-          // Decide for path of the parameter file
-          val paramPath = if(spt(2).startsWith("/")) {
-            spt(2)
-          } else {
-            s"${f.parent.pathAsString}/${spt(2)}"
-          }
-          new ExecGenParamFile(spt(0), paramPath)
+        case ("GEN", ".sh") => new ExecGenParamFile(spt(0), paramPath)
+        case ("GEN", ".prop") =>
+          Logger.info("READ PROP FILE with PARAM PATH " + paramPath)
+          Logger.info("ParamName is " + spt(0))
+          new ListGenParamFile(spt(0), paramPath)
       }
     }
   }
@@ -61,7 +64,7 @@ class ExecGenParamFile(name : String,  path : String) extends GenerativeParamFil
     clearTextNames = Map.empty
 
     this.allowed = Process(path).!!.split('\n').map { param =>
-      val spt = param.split(' ')
+      val spt = param.split("\\s+")
       clearTextNames = clearTextNames + (spt(0) -> spt(1))
       spt(0)
     }.toSet
@@ -73,6 +76,8 @@ class ExecGenParamFile(name : String,  path : String) extends GenerativeParamFil
 
 class ListGenParamFile(name : String, path : String) extends GenerativeParamFile(name, path) {
 
+  private val f = path.toFile
+
   // Load file upon instantiation
   this.load()
 
@@ -80,14 +85,14 @@ class ListGenParamFile(name : String, path : String) extends GenerativeParamFile
   private var allowed : Set[String] = _
   private var clearTextNames : Map[String, String] = _
 
-  private val f = path.toFile
-
 
   def load() : Unit = {
     clearTextNames = Map.empty
 
     this.allowed = f.lineIterator.map { line =>
-      val spt = line.split(' ')
+
+      Logger.info("Reading line " + line)
+      val spt = line.split("\\s+")
       clearTextNames = clearTextNames + (spt(0) -> spt(1))
       spt(0)
     }.toSet

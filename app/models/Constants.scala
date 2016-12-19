@@ -26,6 +26,7 @@ object Param {
   final val ALIGNMENT = "alignment"
   final val ALIGNMENT_FORMAT = "alignment_format"
   final val STANDARD_DB = "standarddb"
+  final val HHSUITEDB = "hhsuitedb"
   final val MATRIX = "matrix"
   final val NUM_ITER = "num_iter"
   final val EVALUE = "evalue"
@@ -43,4 +44,5 @@ object Param {
   final val ETRESH = "inclusion_ethresh"
   final val HHBLITSDB  = "hhblitsdb"
   final val ALIGNMODE = "alignmode"
+  final val MSAGENERATION = "msageneration"
 }
