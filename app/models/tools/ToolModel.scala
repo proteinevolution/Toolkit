@@ -29,7 +29,7 @@ sealed trait ToolModel extends EnumEntry {
 
   val paramGroups = Map(
 
-    "Input" -> Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB)
+    "Input" -> Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB, Param.HHSUITEDB)
   )
 
   // Params which are not a part of any group
@@ -157,8 +157,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "search"
     val optional = ""
 
-    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
-      "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
+
+    val params = Seq(Param.ALIGNMENT, Param.HHSUITEDB, Param.MSAGENERATION)
 
     val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
   }
