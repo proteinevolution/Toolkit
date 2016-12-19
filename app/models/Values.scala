@@ -47,6 +47,8 @@ class Values @Inject() (tel : TEL) {
     }.toSeq,
     Param.STANDARD_DB -> tel.generateValues(Param.STANDARD_DB).toSeq,
     Param.HHBLITSDB -> tel.generateValues(Param.HHBLITSDB).toSeq,
+    Param.HHSUITEDB -> tel.generateValues(Param.HHSUITEDB).toSeq,
+    Param.MSAGENERATION -> tel.generateValues(Param.MSAGENERATION).toSeq,
     Param.MATRIX -> matrixParams.map { matrix =>
 
       matrix -> fullNames(matrix)

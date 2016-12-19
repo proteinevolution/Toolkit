@@ -1,19 +1,19 @@
 exampleSequence = """
->gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]
+>NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]
 PEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEE
->gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]
+>CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]
 PSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRD
->gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7
+>CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7
 PGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQD
->gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565
+>NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565
 PDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRA
->gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|
+>YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|
 PEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQE
->gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297
+>YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297
 PSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRA
->gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B
+>NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B
 PECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRA
->gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ
+>YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ
 PECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQT
 """
 
@@ -237,26 +237,6 @@ JobSubmissionComponent =
         jobID = null
       checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID)
       formData = new FormData(document.getElementById("jobform"))
-
-      # Send submission request and see whether server accepts or job already exists
-      ###
-      m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
-        if json.existingJobs
-          $('#open_modal').click()
-          $('#reload_job').on 'click', ->
-            $('#submit_modal').foundation('close');
-            m.route("/jobs/#{mainID}")
-            Job.delete(mainID)
-            m.route("/jobs/#{json.existingJob.mainID}")
-            m.request
-              method: 'POST'
-              url: '/jobs/dateviewed/' + json.existingJob.mainID
-          $('#submit_again').on 'click', ->
-            $('#submit_modal').foundation('close');
-            console.log "New Job Submission"
-            m.route("/jobs/#{mainID}")
-      ###
-      console.log "Perform request"
       m.request
         method: checkRoute.method
         url: checkRoute.url
@@ -280,8 +260,8 @@ JobSubmissionComponent =
               Job.add(new Job({mainID: jobID, jobID: jobID, state: 0, createdOn: 'now', toolname: toolname}))
               submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID)
 
-              m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data}).then (json) ->
-                m.route("/jobs/#{jobID}")
+              m.request({url: submitRoute.url, method: submitRoute.method, data: formData, serialize: (data) -> data})
+              m.route("/jobs/#{jobID}")
             # Show the modal
             $('#submit_modal').foundation('open')
           else
@@ -293,7 +273,8 @@ JobSubmissionComponent =
               method: submitRoute.method
               url: submitRoute.url
               data: formData
-            serialize: (data) -> data
+              serialize: (data) -> data
+            m.route("/jobs/#{jobID}")
 
         (error) -> alert "Bad Request"
       )
@@ -449,18 +430,13 @@ ParameterSelectComponent =
     value: m.prop args.value
 
   controller: (args) ->
-    options: args.options
-    name: args.name
-    id: args.id
-    label: args.label
     param: new ParameterSelectComponent.model args
-    value: args.value
 
-  view: (ctrl) ->
+  view: (ctrl, args) ->
     renderParameter [
-      m "label", {for: ctrl.id}, ctrl.label
-      m "select", {name: ctrl.name, id: ctrl.id, config: selectBoxAccess}, ctrl.options.map (entry) ->
-        if entry[0] == ctrl.value
+      m "label", {for: args.id}, args.label
+      m "select", {name: args.name, id: args.id, config: selectBoxAccess}, args.options.map (entry) ->
+        if entry[0] == args.value
           m "option", {value: entry[0], selected: "selected"}, entry[1]
         else
           m "option", {value: entry[0]}, entry[1]
@@ -632,6 +608,23 @@ formComponents =
     label: "Bonus Score"
     value: args.value
   ]
-
+  "msageneration": (args) -> [
+    ParameterSelectComponent
+  ,
+    name: "msageneration"
+    id: "msageneration"
+    label: "Select MSA generation method"
+    options: args.options
+    value: args.value
+  ]
+  "hhsuitedb": (args) -> [
+    ParameterSelectComponent
+  ,
+    name: "hhsuitedb"
+    id: "hhsuitedb"
+    label: "Select HHsuite Database"
+    value: args.value
+    options: args.options
+  ]
 
 
