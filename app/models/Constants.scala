@@ -45,4 +45,5 @@ object Param {
   final val HHBLITSDB  = "hhblitsdb"
   final val ALIGNMODE = "alignmode"
   final val MSAGENERATION = "msageneration"
+  final val MSA_GEN_MAX_ITER = "msa_gen_max_iter"
 }

@@ -2,3 +2,4 @@ standarddb GEN standarddb.sh
 hhblitsdb  GEN hhblitsdb.sh
 hhsuitedb  GEN hhsuitedb.sh
 msageneration GEN msageneration.prop
+msa_gen_max_iter GEN msa_gen_max_iter.prop

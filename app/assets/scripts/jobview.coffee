@@ -626,5 +626,12 @@ formComponents =
     value: args.value
     options: args.options
   ]
-
-
+  "msa_gen_max_iter": (args) -> [
+    ParameterSelectComponent
+  ,
+    name: "msa_gen_max_iter"
+    id: "msa_gen_max_iter"
+    label: "Max. number of MSA generation iterations"
+    value: args.value
+    options: args.options
+  ]
