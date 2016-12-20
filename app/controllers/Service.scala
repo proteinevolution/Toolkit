@@ -263,23 +263,16 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
                 Future.successful("Public Job")
               }
             // The jobState decides which views will be appended to the job
+
             val jobViews: Seq[(String, Html)] = job.status match {
-
-
-              // The view of the Running job is handled on client-side
-              case Running => Seq.empty
-
-              // Error view is handled client-side
-              case Error => Seq.empty
 
               case Done =>
                 toolModel.results.map { resultName =>
                   resultName -> views.html.jobs.resultpanel(resultName, job.jobID, job.tool)
-              }
+                }
 
-              case Prepared => Seq.empty
-
-                Seq.empty // TODO add more elements for different states to show the status
+              // All other views are currently computed on Clientside
+              case _ => Seq.empty
             }
 
             // Read parameters from serialized file

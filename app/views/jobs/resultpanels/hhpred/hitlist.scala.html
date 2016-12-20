@@ -1,0 +1,9 @@
+@import models.results.HHpred
+@(jobID: String)(implicit request: RequestHeader)
+
+@*  Load html Map used for the image representation *@
+@HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
+
+<p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
+
+
