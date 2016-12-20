@@ -1,3 +1,8 @@
+body.is-reveal-open {
+    overflow: visible;
+}
+
+
 #jobview {
 
     padding-left: 3px;
@@ -420,6 +425,46 @@ margin-top: 2em;
 
 }
 
+.reveal-overlay {
+    background-color: transparent;
+    overflow-y: hidden;
+}
+
+.reveal-overlay.fade-in {
+    transition-duration: 0.2s;
+}
+
+.reveal.fade-in {
+    transition-duration: 0.2s;
+}
+
+#submit_modal {
+    background-color: #F7E4E1;
+    width: 30%;
+    height: 8em;
+    border: 2px solid black;
+    font-size: 0.9em;
+    color: black;
+    margin-top: 5em;
+    text-align: center;
+}
+
+#submit_modal p {
+    width: 50%;
+    margin: auto;
+    font-weight: bold;
+}
+
+#submit_modal input {
+    margin: 2em 1em 0 1em;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    background-color: gray;
+}
+
+#submit_modal input:hover {
+    background-color: #27776e;
+}
 
 
 map[name="blastmap"] area { cursor: pointer; }
