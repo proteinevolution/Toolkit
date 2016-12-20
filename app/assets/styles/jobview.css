@@ -212,11 +212,6 @@ body.is-reveal-open {
 }
 
 .submitbuttons .submitJob {
-    background-color: gray;
-    border-radius: 3px;
-    float: left;
-    margin-right: 1em;
-    color: white;
     padding-right: 15px !important;
 
 }
@@ -227,7 +222,6 @@ body.is-reveal-open {
     float: left !important;
     margin-right: 1em !important;
     color: white !important;
-    padding-right: 15px !important;
 }
 
 .submitJob:hover {

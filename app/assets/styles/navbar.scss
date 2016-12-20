@@ -256,7 +256,6 @@ i {
   color: #888;
   margin-top:-1px;
   background: rgba(220,220,220,0.5);
-  #border-bottom: 3px solid green !important;
   text-shadow: 0 1px 1px white;
 }
 
@@ -278,7 +277,6 @@ i {
 }
 
 .tabs-title > a:focus, .tabs-title > a[aria-selected='true']::after {
-  -webkit-transform: translate3d(0,0,0);
   transform: translate3d(0,0,0);
   color: #888;
 
