@@ -5,8 +5,6 @@ import enumeratum.{PlayEnum, EnumEntry}
 import models.tools.ToolModel.Toolitem
 
 import models.{Param, Values}
-import play.api.data.Form
-import play.api.data.Forms._
 
 
 
@@ -160,7 +158,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val params = Seq(Param.ALIGNMENT, Param.HHSUITEDB, Param.MSAGENERATION, Param.MSA_GEN_MAX_ITER)
 
-    val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
+    val results = Seq("Hitlist")
   }
 
 
