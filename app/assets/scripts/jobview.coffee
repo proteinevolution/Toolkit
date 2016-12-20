@@ -282,11 +282,11 @@ JobSubmissionComponent =
 
   view: (ctrl, args) ->
     m "div", {class: "submitbuttons"}, [
-      m "div" , {class: "reveal", 'data-reveal': 'data-reveal', id: 'submit_modal', config: submitModal},
-        m "p", "Already existing job found: Do you want to load the existing job and save some time?"
-        m "input", {id: 'reload_job', type: 'button', value: 'Yes'} # data-close
-        m "input", {id: 'submit_again', type: 'button', value: 'No, submit Job'} # data-close
-      if !this.submitting then m "input", {type: "button", id: "submitJobButton", class: "success button small submitJob", value: "#{if args.isJob then "Res" else "S"}ubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
+      m "div" , {class: "reveal", 'data-reveal': 'data-reveal', 'data-animation-in': 'fade-in', 'transition-duration': 'fast', id: 'submit_modal', config: submitModal},
+        m "p", "Already existing job found!"
+        m "input", {class: 'button', id: 'reload_job', type: 'button', value: 'Reload'} # data-close
+        m "input", {class: 'button', id: 'submit_again', type: 'button', value: 'New Submission'} # data-close
+      if !this.submitting then m "input", {type: "button", class: "success button small submitJob", value: "#{if args.isJob then "Res" else "S"}ubmit Job", onclick: ctrl.submit.bind(ctrl, true)} else null #TODO
       if !args.isJob
         m "label",{hidden: "hidden"}, [
           m "input", {type: "checkbox", name:"private", value: "true", checked:"checked", hidden: "hidden"}  #TODO style me
