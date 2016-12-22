@@ -223,6 +223,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
       this.watchers.clear()
       userWithWS match {
         case (_, Some(actorRef)) => this.watchers.add(actorRef)
+        case (_, None) => 
       }
 
       // Fetch the runscript for the job Execution and provide injected environment
