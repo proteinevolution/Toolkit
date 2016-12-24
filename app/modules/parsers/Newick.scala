@@ -6,7 +6,7 @@ case class Node(edges: List[Edge], name: Option[String]) extends Tree
 case class Leaf(name: Option[String]) extends Tree
 case class Edge(to: Tree, weight: Option[Double]) extends Tree
 
-trait Newick {
+sealed trait Newick {
   val OPEN_PAREN = "("
   val CLOSE_PAREN = ")"
   val SEMICOLON = ";"
