@@ -8,7 +8,7 @@
 
 @include foundation-global-styles;
 @include foundation-grid;
-//@include foundation-typography;
+@include foundation-typography;
 @include foundation-button;
 @include foundation-forms;
 @include foundation-visibility-classes;
@@ -42,9 +42,9 @@
 
 @import 'auth';
 
-//Currently cause trouble, please do not comment in
-//@include foundation-accordion;
-//@include foundation-accordion-menu;
+
+@include foundation-accordion;
+@include foundation-accordion-menu;
 
 
 
