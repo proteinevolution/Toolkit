@@ -635,3 +635,12 @@ formComponents =
     value: args.value
     options: args.options
   ]
+  "genetic_code": (args) -> [
+    ParameterSelectComponent
+  ,
+    name: "genetic_code"
+    id: "genetic_code"
+    label: "Choose a genetic code"
+    options: args.options
+    value: args.value
+  ]
