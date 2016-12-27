@@ -50,6 +50,7 @@ class Values @Inject() (tel : TEL) {
     Param.HHSUITEDB -> tel.generateValues(Param.HHSUITEDB).toSeq,
     Param.MSAGENERATION -> tel.generateValues(Param.MSAGENERATION).toSeq,
     Param.MSA_GEN_MAX_ITER -> tel.generateValues(Param.MSA_GEN_MAX_ITER).toSeq.sortBy(_._1),
+    Param.GENETIC_CODE -> tel.generateValues(Param.GENETIC_CODE).toSeq,
     Param.MATRIX -> matrixParams.map { matrix =>
 
       matrix -> fullNames(matrix)

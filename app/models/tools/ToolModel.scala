@@ -94,7 +94,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     "hhblits" -> HHblits,
     "hhpred" -> HHpred,
     "patternsearch" -> PatternSearch,
-    "blastp" -> BlastP
+    "blastp" -> BlastP,
+    "backtrans" -> BackTranslate
   )
 
 
@@ -459,5 +460,16 @@ object ToolModel extends PlayEnum[ToolModel] {
     val params = Seq(Param.ALIGNMENT)
 
     val results = Seq.empty[String]
+  }
+  case object BackTranslate extends ToolModel {
+
+    val toolNameShort = "backtrans"
+    val toolNameLong = "Backtranslator"
+    val toolNameAbbrev = "anc"
+    val category = "utils"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT, Param.GENETIC_CODE)
+
+    val results = Seq("DNA")
   }
 }
