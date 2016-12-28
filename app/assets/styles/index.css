@@ -21,7 +21,7 @@
 .lazy-container {
 
     width: 100%;
-    margin-top: 32em;
+    margin-top: 35em;
 }
 
 .content-wrapper-half {
@@ -368,37 +368,100 @@ margin: auto;
     max-width: 60rem;
 }
 
-#tcoffee_quick, #search_quick, #frpred_quick {
-    height: 3.5em;
-    margin: 2em 1em 0em 1em;
+.quick_container {
+    margin-top: 1em;
+}
+
+.quick {
+    height: 2.5em;
+    width: 8em;
+    border: 1px solid grey;
+    text-align: center;
+    transition: height 0.5s;
+    -webkit-transition: height 0.5s;
+    overflow: hidden;
+    margin-left: -1px;
+}
+
+.quick:hover {
+    height: 4em;
+}
+
+.quick p {
+    margin-bottom: 0em !important;
+    font-size: 0.85em;
+    margin-top: 0.5em;
+}
+
+.quick a {
+    font-size: 0.75em;
+}
+
+#search_quick, #search_quick a {
+    background-color: #D0BA89;
+    color: #877654;
+}
+
+#align_quick, #align_quick a {
+    background-color: #ffdf94;
+    color: #9c7c3d;
+}
+
+#analy_quick, #analy_quick a {
+    background-color: #669933;
+    color: #2b4015;
+}
+
+/*
+.quicklinks {
+    height: 8em;
+}
+
+.quicklinks div:hover {
+    height: 4em;
+}
+
+.quicklinks div {
+    height: 2.5em;
+    margin: 2em 1em 0 1em;
     transition: height 0.5s;
     -webkit-transition: height 0.5s;
     overflow: hidden;
     border: 1px solid lightgray;
-}
-
-#tcoffee_quick:hover, #search_quick:hover, #frpred_quick:hover {
-    height: 6em;
-}
-
-#tcoffee_quick p, #tcoffee_quick h6 {
     text-align: center;
-    margin-top: 0.6em;
-    color: #9c7c3d;
+    width: 6em;
 }
 
-#search_quick p, #search_quick h6 {
-    text-align: center;
+.quicklinks p {
     margin-top: 0.6em;
+    margin-bottom: 0em !important;
+}
+
+.quicklinks a {
+    font-size: 0.75em;
+}
+
+.search_quick {
+    background-color: #D0BA89;
+}
+
+.search_quick p, .search_quick a {
     color: #877654;
 }
 
-#frpred_quick p, #frpred_quick h6 {
-    text-align: center;
-    margin-top: 0.6em;
-    color: #2b4015;
+.align_quick {
+    background-color: #ffdf94;
 }
 
-#quicklinks {
-    height: 8em;
+.align_quick p, .align_quick a {
+    color: #9c7c3d;
 }
+
+.analy_quick {
+    background-color: #669933
+}
+
+.analy_quick p, .analy_quick a {
+    color: #2b4015;
+}
+*/
