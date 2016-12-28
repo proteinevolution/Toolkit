@@ -24,6 +24,17 @@
     margin-top: 35em;
 }
 
+.lazy-container h5 {
+    font-family: 'Liberation Serif', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
+    text-align: justify;
+    font-weight: bold;
+}
+
+.lazy-container p {
+    font-size: 0.90em;
+}
+
+
 .content-wrapper-half {
     margin-top: 2em;
     border: 1px solid;
@@ -89,20 +100,10 @@
     transform: scale(1.1);
 }
 
-.lazy-container h5 {
-    font-family: 'Liberation Serif', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
-    text-align: justify;
-    font-weight: bold;
-}
-
 .elements {
     display: flex;
     margin-bottom: 2em;
 
-}
-
-.lazy-container p {
-    font-size: 0.90em;
 }
 
 .hr-index {
