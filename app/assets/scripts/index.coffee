@@ -172,11 +172,28 @@ tilescomponent =
 
 
     m "div", {class: "lazy-container"},[
-      m "div", {class: "row"}, [
-        m "div", {class: "large-8 columns"}, [
-
+      m "div", {class: "row", id: "quicklinks"}, [
+        m "div", {class: "large-2 columns", id: "search_quick", style: "background-color: #D0BA89; margin-left: 30px;"}, [
+          m "p",{style: "font-size: 1.25em;"}, "HHpred"
+          m "h6", "Search"
         ]
-        m "div", {class: "large-4 columns"}
+        m "div", {class: "large-2 columns", id: "search_quick", style: "background-color: #D0BA89"}, [
+          m "p",{style: "font-size: 1.25em;"}, "PSI-Blast"
+          m "h6", "Search"
+        ]
+        m "div", {class: "large-2 columns", id: "search_quick", style: "background-color: #D0BA89"}, [
+          m "p",{style: "font-size: 1.25em;"}, "Hmmer3"
+          m "h6", "Search"
+        ]
+        m "div", {class: "large-2 columns", id: "tcoffee_quick", style: "background-color: #ffdf94"}, [
+          m "p", {style: "font-size: 1.25em;"}, "T-Coffee"
+          m "h6", "Sequence Alignment"
+        ]
+        m "div", {class: "large-2 columns", id: "frpred_quick", style: "background-color: #669933"}, [
+          m "p",{style: "font-size: 1.25em;"}, "FRpred"
+          m "h6", "Sequence Analysis"
+        ]
+        m "div", []
       ]
       m "div", {class: "tile-row"}, [
           m "div", {class: "content-wrapper-half large-3 large-offset-2 columns"}, [

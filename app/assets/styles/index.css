@@ -367,3 +367,38 @@ margin: auto;
     margin: auto;
     max-width: 60rem;
 }
+
+#tcoffee_quick, #search_quick, #frpred_quick {
+    height: 3.5em;
+    margin: 2em 1em 0em 1em;
+    transition: height 0.5s;
+    -webkit-transition: height 0.5s;
+    overflow: hidden;
+    border: 1px solid lightgray;
+}
+
+#tcoffee_quick:hover, #search_quick:hover, #frpred_quick:hover {
+    height: 6em;
+}
+
+#tcoffee_quick p, #tcoffee_quick h6 {
+    text-align: center;
+    margin-top: 0.6em;
+    color: #9c7c3d;
+}
+
+#search_quick p, #search_quick h6 {
+    text-align: center;
+    margin-top: 0.6em;
+    color: #877654;
+}
+
+#frpred_quick p, #frpred_quick h6 {
+    text-align: center;
+    margin-top: 0.6em;
+    color: #2b4015;
+}
+
+#quicklinks {
+    height: 8em;
+}
