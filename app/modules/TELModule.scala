@@ -8,7 +8,7 @@ import modules.tel.env.{Env, ExecFile, PropFile, TELEnv}
 import modules.tel.param.{GenerativeParamFileParser, ParamCollector, Params}
 import play.api.{Configuration, Logger}
 import com.google.inject.name.Names
-import modules.tel.execution.EngineExecution
+import modules.tel.execution.WrapperExecution
 
 /**
   * Created by lukas on 8/28/16.
@@ -33,12 +33,12 @@ class TELModule extends AbstractModule {
           .asEagerSingleton()
 
         bind(classOf[String])
-          .annotatedWith(Names.named("enginePath"))
-          .toProvider(classOf[EnginePathProvider])
+          .annotatedWith(Names.named("wrapperPath"))
+          .toProvider(classOf[WrapperPathProvider])
           .asEagerSingleton()
 
         // Install the Factory for EngineExecution
-        install(new FactoryModuleBuilder().build(classOf[EngineExecution.Factory]))
+        install(new FactoryModuleBuilder().build(classOf[WrapperExecution.Factory]))
   }
 }
 
@@ -54,13 +54,14 @@ install(new FactoryModuleBuilder()
 import better.files._
 
 
-class EnginePathProvider @Inject() (configuration: Configuration) extends Provider[String] {
+class WrapperPathProvider @Inject() (configuration: Configuration) extends Provider[String] {
 
   override def get(): String = {
 
-    configuration.getString("tel.engine").getOrElse {
-      Logger.warn("Key 'tel.engine' was not found in configuration. Fall back to 'tel/engine'")
-      "tel/engine"
+    configuration.getString("tel.wrapper").getOrElse {
+      val fallBackFile = "tel/wrapper.sh"
+      Logger.warn(s"Key 'tel.wrapper' was not found in configuration. Fall back to '$fallBackFile'")
+      fallBackFile
     }
   }
 }
@@ -72,8 +73,10 @@ class RunscriptPathProvider @Inject() (configuration: Configuration) extends Pro
   override def get(): String = {
 
     configuration.getString("tel.runscripts").getOrElse{
-      Logger.warn("Key 'tel.runscripts' was not found in configuration. Fall back to 'tel/runscripts'")
-      "tel/runscripts"
+      val fallBackFile = "tel/runscripts"
+
+      Logger.warn(s"Key 'tel.runscripts' was not found in configuration. Fall back to '$fallBackFile'")
+     fallBackFile
     }
   }
 }
@@ -84,8 +87,10 @@ class ParamCollectorProvider @Inject() (pc : ParamCollector, configuration: Conf
   override def get(): ParamCollector = {
 
       val paramFilePath = configuration.getString("tel.params").getOrElse{
-        Logger.warn("Key 'tel.params' was not found in configuration. Fall back to 'tel/paramspec/PARAMS'")
-        "tel/paramspec/PARAMS"
+
+        val fallBackFile = "tel/paramspec/PARAMS"
+        Logger.warn(s"Key 'tel.params' was not found in configuration. Fall back to '$fallBackFile'")
+        fallBackFile
       }
       generativeParamFileParser.read(paramFilePath).foreach { param =>
 
@@ -106,8 +111,10 @@ class TELEnvProvider @Inject()(tv : TELEnv, configuration: Configuration) extend
     // Try loading the environment files from the configured directory
     configuration.getString("tel.env").getOrElse {
 
-      Logger.warn("Key 'tel.env' was not found in configuration. Fall back to 'tel/env'") ;
-      "tel/env"
+      val fallBackFile = "tel/env"
+
+      Logger.warn(s"Key 'tel.env' was not found in configuration. Fall back to '$fallBackFile'") ;
+      fallBackFile
     }.toFile.list.foreach { file =>
 
       file.extension match {
