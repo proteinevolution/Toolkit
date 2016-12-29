@@ -3,7 +3,7 @@ package modules.tel.runscripts
 
 import better.files._
 import modules.tel.TELRegex
-import modules.tel.env.Env
+import modules.tel.env.{Env, EnvAware}
 import modules.tel.execution.ExecutionContext
 import modules.tel.runscripts.Runscript.Evaluation
 
@@ -20,7 +20,7 @@ import scala.util.matching.Regex
   * Instances should be created via the companion object.
   *
   */
-class Runscript(files: Seq[File]) extends TELRegex  {
+class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript]  {
 
 
   val parameters: Seq[(String, Evaluation)] = parameterString.findAllIn(files.map(_.contentAsString).mkString("\n"))
@@ -70,10 +70,10 @@ class Runscript(files: Seq[File]) extends TELRegex  {
     parameterString.replaceAllIn(init, replacer.apply _)
   }
 
-  def withEnvironment(env: Env): Runscript = {
+  override def withEnvironment(env: Env): Runscript = {
 
     tranlationSteps.enqueue {   s =>
-      constantsString.replaceAllIn(s, m => env.get(m.group("constant")))
+      envString.replaceAllIn(s, m => env.get(m.group("constant")))
     }
     this
   }

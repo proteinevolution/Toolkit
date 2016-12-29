@@ -11,7 +11,7 @@ class ParamCollector extends Params {
     // Maps Parameter name to the underlying object
     private var generativeParams : Map[String, GenerativeParam] = Map.empty
 
-    def generateValues(name : String) : Map[String, String] = generativeParams(name).generateWithClearText
+    def generateValues(name : String) : Map[String, String] = generativeParams(name).generate
 
     def addParam(name : String, param : GenerativeParam) = {
 
