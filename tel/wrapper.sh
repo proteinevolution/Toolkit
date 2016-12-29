@@ -18,7 +18,8 @@ chmod u+x delete.sh
 
 else
     touch "delete.sh"
+    
     chmod +x "delete.sh" 
-    exec %r
+    exec ./%r
 fi
 
