@@ -79,7 +79,7 @@ class RunscriptPathProvider @Inject() (configuration: Configuration) extends Pro
 }
 
 
-class ParamCollectorProvider @Inject() (pc : ParamCollector, configuration: Configuration) extends Provider[ParamCollector] {
+class ParamCollectorProvider @Inject() (pc : ParamCollector, configuration: Configuration, generativeParamFileParser: GenerativeParamFileParser) extends Provider[ParamCollector] {
 
   override def get(): ParamCollector = {
 
@@ -87,7 +87,7 @@ class ParamCollectorProvider @Inject() (pc : ParamCollector, configuration: Conf
         Logger.warn("Key 'tel.params' was not found in configuration. Fall back to 'tel/paramspec/PARAMS'")
         "tel/paramspec/PARAMS"
       }
-      GenerativeParamFileParser.read(paramFilePath).foreach { param =>
+      generativeParamFileParser.read(paramFilePath).foreach { param =>
 
         pc.addParam(param.name, param)
       }

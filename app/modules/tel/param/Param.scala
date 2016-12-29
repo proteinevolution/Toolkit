@@ -1,9 +1,12 @@
 package modules.tel.param
 
+import modules.tel.TELRegex
+import modules.tel.env.EnvAware
+
 /**
   * Created by lzimmermann on 10/11/16.
   */
-abstract class Param(val name : String)
+abstract class Param(val name : String) extends EnvAware[Param] with TELRegex
 
 abstract class PredicativeParam(name : String) extends Param(name) {
 
@@ -15,22 +18,10 @@ abstract class PredicativeParam(name : String) extends Param(name) {
   def validate(value : String) : Boolean
 }
 
-abstract class GenerativeParam(name : String) extends PredicativeParam(name) with GenerateWithClearText  {
+abstract class GenerativeParam(name : String) extends PredicativeParam(name)  {
 
   // Sequence of allowed values with respective clear text name
-  def validate(value : String) = this.generate.contains(value)
-  def generate : Set[String]
+  def validate(value : String): Boolean = this.generate.contains(value)
+  def generate : Map[String, String]
 }
-
-
-
-trait GenerateWithClearText {
-
-  def generateWithClearText : Map[String, String]
-}
-
-
-
-
-
 
