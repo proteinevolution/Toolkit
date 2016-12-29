@@ -73,7 +73,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     "muscle" -> Muscle,
     "mafft" -> Mafft,
     "kalign" -> Kalign,
-    "hmmer3" -> Hmmer3,
+    "hmmer" -> Hmmer,
     "hhcluster" -> HHcluster,
     "ancescon" -> ANCESCON,
     "clans" -> CLANS,
@@ -248,13 +248,13 @@ object ToolModel extends PlayEnum[ToolModel] {
     val results = Seq.empty[String]
   }
 
-  case object Hmmer3 extends ToolModel {
+  case object Hmmer extends ToolModel {
 
 
     // --- Names for the Tool ---
-    val toolNameShort = "hmmer3"
-    val toolNameLong = "Hmmer3"
-    val toolNameAbbrev = "hm3"
+    val toolNameShort = "hmmer"
+    val toolNameLong = "Hmmer"
+    val toolNameAbbrev = "hmr"
     val category = "search"
     val optional = ""
 
