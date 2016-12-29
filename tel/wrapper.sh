@@ -1,3 +1,11 @@
+#!/bin/bash
+
+
+HOSTNAME=$(hostname)
+
+
+if [ "$HOSTNAME" = "olt" ]; then
+
 qsub -sync n \
      -l h_vmem=128G,h="node502|node503|node504|node505|node506|node507|node508|node509|node510|node511|node512|node513" \
      -cwd  \
@@ -7,3 +15,10 @@ qsub -sync n \
 echo "#!/bin/bash" > delete.sh
 echo "qdel $(cat jobIDCluster)" >> delete.sh
 chmod u+x delete.sh
+
+else
+    touch "delete.sh"
+    chmod +x "delete.sh" 
+    exec %r
+fi
+
