@@ -253,7 +253,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     // --- Names for the Tool ---
     val toolNameShort = "hmmer"
-    val toolNameLong = "Hmmer"
+    val toolNameLong = "HMMER"
     val toolNameAbbrev = "hmr"
     val category = "search"
     val optional = ""
