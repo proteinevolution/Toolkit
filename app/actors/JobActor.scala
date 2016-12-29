@@ -290,10 +290,10 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
   onTransition {
     case Employed(_) -> Unemployed =>
 
+      master ! WorkerDoneWithJob(this.currentJob.get.jobID)
       this.currentJob = None
       this.executionContext = None
       this.watchers.clear()
-      master ! WorkerDoneWithJob(this.currentJob.get.jobID)
   }
 
   initialize()
