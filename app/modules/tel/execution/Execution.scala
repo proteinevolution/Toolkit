@@ -42,7 +42,9 @@ case class WrapperExecution @Inject()(@Named("wrapperPath") wrapperPath : String
   override def register(file: File): RegisteredExecution = {
 
     // Create engine file and runscript file with appropriate content
-    (file / "runscript.sh").write(content)
+    val runscript = (file / "runscript.sh").write(content)
+    runscript.setPermissions(Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE))
+
     // Assumption that the runfile produces a delete.sh script in the same directory
     RegisteredExecution((file / "wrapper.sh").write(runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString,
       "runscript.sh")), Some(file / "delete.sh"))
