@@ -12,3 +12,13 @@ trait Env {
   // Adds a Key value pair to this environment
   def configure(key: String, value: String): Unit
 }
+
+
+/**
+  * Something being EnvAware changes its behavior depending on the attached environment
+  *
+  */
+trait EnvAware[A] {
+
+  def withEnvironment(env: Env): A
+}

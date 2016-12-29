@@ -4,16 +4,16 @@
 # if a corresponding f.pal file exists.
 
 
-if [ -d /ebio/abt1_share/toolkit_sync/databases/standard/NewToolkitDBs ] ; then
+if [ -d  %NR ] ; then
 
-for f in /ebio/abt1_share/toolkit_sync/databases/standard/NewToolkitDBs/*.pal ; do 
+for f in %NR/*.pin ; do 
  
-     DBNAME=`echo $f | sed 's/.pal//'`
+     DBNAME=$(echo $f | sed 's/.pin//')
     
      # Database must exist and be a regular file
      if [ -f $DBNAME ] ; then
 
-	echo $DBNAME `echo $DBNAME | sed "s/\/ebio\/abt1_share\/toolkit_sync\/databases\/standard\/NewToolkitDBs\///"` 	
+	    echo "$DBNAME $(basename $DBNAME)" 	
      fi
 done
 
