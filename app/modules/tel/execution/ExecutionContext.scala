@@ -44,8 +44,8 @@ class ExecutionContext(val root: File) {
 
     // Fetch next Registered Execution and Build runnable execution
     val x = executionQueue.dequeue()
-    RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),
-                      x.destroy.map(f => Process(f.pathAsString, f.parent.toJava)))
+
+    RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),x.delete.map(f => Process(f.pathAsString)))
   }
   def hasMoreExecutions: Boolean = executionQueue.nonEmpty
 }
