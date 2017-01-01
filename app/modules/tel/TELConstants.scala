@@ -1,7 +1,6 @@
 package modules.tel
 
 import models.Constants
-import better.files._
 
 /**
   * Created by lzimmermann on 6/30/16.
