@@ -150,6 +150,43 @@ trafficBarComponent =
             m "a", "Analysis"
           ]
         ]
+        m "div", {class: "newsfeed"}, [
+          m "div", {class: "news_header"}, "Recent News"
+          m "div", {class: "green"}
+          m "div", {class: "news_article"}, [
+            m "p", "17.11.2016"
+            m "div", {class: "green_article"}
+            m "div", {class: "article_text"}, [
+              m "img", { src: '/assets/images/EBGebaeude-04.tif'}
+              "Ruth E. Ley im Interview bei Gert Scobel (3sat):  Das rätselhafte Leben in uns - TV-Sendung vom 17.11.2016
+              This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while.
+              This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while
+              This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while"
+            ]
+          ]
+          m "div", {class: "fixer"}, [
+            m "div", {class: "arrow_bar"}
+          ]
+          m "div", {class: "news_article"}, [
+            m "p", "15.07.2016"
+            m "div", {class: "green_article"}
+            m "div", "Internationales Forscherteam entschlüsselt Pflanzengene:  1.001 Genome und Epigenome von Arabidopsis zeigen eine enorme..This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while
+                      This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while"
+          ]
+          m "div", {class: "fixer"}, [
+            m "div", {class: "arrow_bar"}
+          ]
+          m "div", {class: "news_article"}, [
+            m "p", "News Number 3"
+            m "div", {class: "green_article"}
+            m "div", "This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while"
+          ]
+          m "div", {class: "news_article"}, [
+            m "p", "News Number 4"
+            m "div", {class: "green_article"}
+            m "div", "This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while"
+          ]
+        ]
       ]
 
 
