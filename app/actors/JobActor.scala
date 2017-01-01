@@ -14,7 +14,7 @@ import better.files._
 import controllers.UserSessions
 import modules.LocationProvider
 import modules.tel.env.Env
-import modules.tel.execution.{EngineExecution, ExecutionContext, LocalExecution, RunnableExecution}
+import modules.tel.execution.{WrapperExecution, ExecutionContext}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
@@ -62,11 +62,11 @@ object JobActor {
   case object Delete
 }
 
-class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runscripts to be executed
-                          env: Env,                               // To supply the runscripts with an environment
+class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscripts to be executed
+                          env: Env, // To supply the runscripts with an environment
                           val reactiveMongoApi: ReactiveMongoApi,
                           val jobDao : JobDAO,
-                          engineExecutionFactory: EngineExecution.Factory,
+                          wrapperExecutionFactory: WrapperExecution.Factory,
                           implicit val locationProvider: LocationProvider,
                           @NamedCache("userCache") implicit val userCache : CacheApi,
                           @Named("master") master: ActorRef)
@@ -100,18 +100,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
         case q => q
       }
   }
-
-
-  // Make the jobActor unemployed and available to the master again
-  private def unemploy() = {
-
-    master ! WorkerDoneWithJob(this.currentJob.get.jobID)
-    this.currentJob = None
-    this.executionContext = None
-    this.watchers.clear()
-    goto(Unemployed)
-  }
-
 
   /**
     * Updates Jobstate in Model, in database, and notifies user watchlist
@@ -242,26 +230,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
 
       if(isComplete(parameters)) {
 
-        // Translate the Runscript into an executable version
-        val content = runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument])))
-
-        // Decide on the type of execution based on the context variable. It will
-        // either be a local execution or a engine execution
-        executionContext.get.accept {
-
-          env.get("CONTEXT") match {
-
-            case "LOCAL" =>
-              LocalExecution(content)
-
-            case s: String =>
-              this.updateJobState(Queued)
-              engineExecutionFactory(content, s)
-          }
-        }
-
-        // Everyhing is set, start the next execution
-        Logger.info("Change state to Employed(Running)")
+        executionContext.get.accept(wrapperExecutionFactory(runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument])))))
         val x = executionContext.get.executeNext
         goto(Employed(Running)) using DeletableExecution(x.processbuilder.run(), x.delete)
 
@@ -278,16 +247,13 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
 
 
     // Deletion of running Job requested
-    case Event(Delete, DeletableExecution(process, deleteOption)) =>
+    case Event(Delete, DeletableExecution(process, delete)) =>
 
-      Logger.info("JobActor deletes running Job instance")
       process.destroy()
-      if(deleteOption.isDefined) {
-        deleteOption.get.!
+      if(delete.isDefined) {
+        delete.get.!
       }
-      this.unemploy()
-
-
+      goto(Unemployed)
 
     // No longer notify user when job state changes
     case Event(StopWatch(actorRef), _) =>
@@ -316,13 +282,19 @@ class JobActor @Inject() (runscriptManager : RunscriptManager,    // To get runs
             } else  {
 
                 // Job is done and JobActor can be made unemployed
-                this.unemploy()
-            }
+              goto(Unemployed)            }
         }
         stay using jobActorData
   }
 
+  onTransition {
+    case Employed(_) -> Unemployed =>
+
+      master ! WorkerDoneWithJob(this.currentJob.get.jobID)
+      this.currentJob = None
+      this.executionContext = None
+      this.watchers.clear()
+  }
 
   initialize()
 }
-

@@ -367,7 +367,7 @@ window.ParameterAlignmentComponent =
           m "textarea",                   # Textarea field for alignment input
             name: ctrl.name
             placeholder: ctrl.placeholder
-            rows: 10
+            rows: 15
             cols: 70
             id: ctrl.id
             onchange: m.withAttr("value", ctrl.param.value)
