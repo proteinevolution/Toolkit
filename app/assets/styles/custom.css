@@ -565,10 +565,12 @@ textarea { resize:both; }
     color: #008979;
 }
 
+
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif !important;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
     font-size: 1em;
 }
+
 
 
 .jobid a {
