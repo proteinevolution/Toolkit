@@ -9,7 +9,7 @@ val bcryptVersion = "0.3m"
 val highchartsVersion = "4.2.4"
 val d3Version = "3.5.16"
 val playMailerVersion = "5.0.0"
-val reactiveMongoVersion = "0.12.0"
+val reactiveMongoVersion = "0.12.1"
 
 val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
