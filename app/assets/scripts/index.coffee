@@ -122,12 +122,34 @@ searchField = (elem, isInit) ->
 trafficBarComponent =
 
   view: ->
-    m "div", {class: "grid", style: "margin-top: 150px;"},
+    m "div", {class: "grid", style: "margin-top: 355px;"},
       m "div", {class: "tool-finder show-for-medium row centered"},[
         m "div", {class: "search-query large-12 medium-6"},
           m "div", {class: "columns large-12 form-group"},
             m "input", {type: "text", id: "searchInput", name: "q", placeholder: "Search Keywords", config: typeAhead}
         m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated()}"}
+        m "div", {class: "quick_container"}, [
+          m "div", {class: "quick", id: "search_quick"}, [
+            m "p", "HHpred"
+            m "a", "Search"
+          ]
+          m "div", {class: "quick", id: "search_quick"}, [
+            m "p", "PSI-Blast"
+            m "a", "Search"
+          ]
+          m "div", {class: "quick", id: "search_quick"}, [
+            m "p", "Hmmer3"
+            m "a", "Search"
+          ]
+          m "div", {class: "quick", id: "align_quick"}, [
+            m "p", "T-Coffee"
+            m "a", "Alignment"
+          ]
+          m "div", {class: "quick", id: "analy_quick"}, [
+            m "p", "FRpred"
+            m "a", "Analysis"
+          ]
+        ]
       ]
 
 
@@ -171,77 +193,7 @@ tilescomponent =
   view: ->
 
     m "div", {class: "lazy-container"},[
-      m "div", {class: "row news_quick_container"}, [
-        m "div", {class: "large-7 columns"}, [
-          m "div", {class: "newsfeed"}, [
-            m "div", {class: "index_header"}, "Recent News"
-            m "div", {class: "green"}
-            m "div", {class: "news_article"}, [
-              m "p", "17.11.2016"
-              m "div", {class: "green_article"}
-              m "div", {class: "article_text"}, [
-                m "img", { src: '/assets/images/EBGebaeude-04.tif'}
-                "Ruth E. Ley im Interview bei Gert Scobel (3sat):  Das rätselhafte Leben in uns - TV-Sendung vom 17.11.2016
-                This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while.
-                This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while
-                This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while"
-              ]
-            ]
-            m "div", {class: "fixer"}, [
-              m "div", {class: "arrow_bar"}
-            ]
-            m "div", {class: "news_article"}, [
-              m "p", "15.07.2016"
-              m "div", {class: "green_article"}
-              m "div", "Internationales Forscherteam entschlüsselt Pflanzengene:  1.001 Genome und Epigenome von Arabidopsis zeigen eine enorme..This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while
-                      This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while"
-            ]
-            m "div", {class: "fixer"}, [
-              m "div", {class: "arrow_bar"}
-            ]
-            m "div", {class: "news_article"}, [
-              m "p", "News Number 3"
-              m "div", {class: "green_article"}
-              m "div", "This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while"
-            ]
-            m "div", {class: "news_article"}, [
-              m "p", "News Number 4"
-              m "div", {class: "green_article"}
-              m "div", "This is some example text to show how news could be displayed in the future. For test purposes it has to be quiet some text so I just continue talking here for a while"
-            ]
-          ]
-        ]
-        m "div", {class: "large-5 columns"}, [
-          m "div", {class: "quick_container"}, [
-            m "div", {class: "index_header"}, "Quicklinks"
-            m "div", {class: "green"}
-            m "div", {class: "quick_boxes"}, [
-              m "div", {class: "quick", id: "search_quick"}, [
-                m "p", "HHpred"
-                  m "a", "Search"
-              ]
-              m "div", {class: "quick", id: "search_quick"}, [
-                m "p", "PSI-Blast"
-                  m "a", "Search"
-              ]
-              m "div", {class: "quick", id: "search_quick"}, [
-                m "p", "Hmmer3"
-                  m "a", "Search"
-              ]
-            ]
-            m "div", {class: "quick_boxes"}, [
-              m "div", {class: "quick", id: "align_quick"}, [
-                m "p", "T-Coffee"
-                  m "a", "Alignment"
-              ]
-              m "div", {class: "quick", id: "analy_quick"}, [
-                m "p", "FRpred"
-                  m "a", "Analysis"
-              ]
-            ]
-          ]
-        ]
-      ]
+
       m "div", {class: "tile-row"}, [
           m "div", {class: "content-wrapper-half large-3 large-offset-2 columns"}, [
             m "div", {class: "image-wrapper"},
