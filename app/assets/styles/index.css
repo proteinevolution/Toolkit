@@ -478,11 +478,18 @@ margin: auto;
 .quick {
     height: 4em;
     width: 8em;
-    border: 1px solid grey;
     text-align: center;
     float: left;
     margin-top: 1em;
     margin-left: 1em;
+    transition: all .2s ease-in-out;
+}
+
+.quick:hover {
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
+
 }
 
 .quick p {
