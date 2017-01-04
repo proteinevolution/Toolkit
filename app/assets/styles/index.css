@@ -21,7 +21,7 @@
 .lazy-container {
 
     width: 100%;
-    margin-top: 60em;
+    margin-top: 25em;
 }
 
 .lazy-container h5 {
@@ -36,19 +36,19 @@
 
 .newsfeed {
     margin-top: 2em;
-    border: 1px solid;
-    border-color:  #8a8a8a;
+    margin-right: 1em;
+    border: 1px solid #8a8a8a;
     font-family: 'Vollkorn', 'Palatino', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
     background-color: white;
     border-radius: 4px;
     height: 20em;
-    width: 100%;
+    width: 95%;
     overflow: hidden;
     overflow-y: scroll;
 
 }
 
-.news_header {
+.index_header {
     margin: 0.5em 0.5em 0em 0.5em;
     font-weight: bold;
     font-size: 1em;
@@ -75,7 +75,7 @@
 .news_article p {
     margin: 0;
     font-size: 0.9em;
-    color: #006F62;
+    font-weight: bold;
 }
 
 .news_article div {
@@ -459,7 +459,20 @@ margin: auto;
 }
 
 .quick_container {
-    margin-top: 1em;
+    font-family: 'Vollkorn', 'Palatino', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
+    width: 100%;
+    height: 20em;
+    background-color: white;
+    border: 1px solid #8a8a8a;
+    border-radius: 4px;
+    margin-top: 2em;
+}
+
+.quick_boxes {
+    height: 8em;
+    width: 100%;
+    padding-left: 1em;
+    padding-top: 1em;
 }
 
 .quick {
@@ -467,7 +480,9 @@ margin: auto;
     width: 8em;
     border: 1px solid grey;
     text-align: center;
-    margin-left: -1px;
+    float: left;
+    margin-top: 1em;
+    margin-left: 1em;
 }
 
 .quick p {
@@ -493,6 +508,11 @@ margin: auto;
 #analy_quick, #analy_quick a {
     background-color: #669933;
     color: #2b4015;
+}
+
+.news_quick_container {
+    width: 100%;
+    height: 30em;
 }
 
 /*
