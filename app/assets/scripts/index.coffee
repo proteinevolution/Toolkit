@@ -122,7 +122,7 @@ searchField = (elem, isInit) ->
 trafficBarComponent =
 
   view: ->
-    m "div", {class: "grid", style: "margin-top: 355px;"},
+    m "div", {class: "grid", style: "margin-top: 150px;"},
       m "div", {class: "tool-finder show-for-medium row centered"},[
         m "div", {class: "search-query large-12 medium-6"},
           m "div", {class: "columns large-12 form-group"},
