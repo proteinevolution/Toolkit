@@ -21,7 +21,7 @@
 .lazy-container {
 
     width: 100%;
-    margin-top: 25em;
+    margin-top: 15em;
 }
 
 .lazy-container h5 {
@@ -237,7 +237,7 @@
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
     z-index: 9;
     position: relative;
-    height: 8em !important;
+    height: 5em !important;
     width: 100% !important;
     -webkit-box-shadow: 3px 3px 5px 0px lightgray;
     -moz-box-shadow: 3px 3px 5px 0px lightgray;
@@ -259,11 +259,11 @@ select {
 }
 
 .slick-slide {
-    height:430px;
+    height: 200px;
 }
 
 .slick-slide img {
-    height: 430px;
+    height: 200px;
 }
 
 
@@ -275,7 +275,7 @@ select {
 .search-query {
 
     padding: 1em 1em 1em 1em;
-    margin-top: 1.8em;
+    margin-top: 0.3em;
 
 
 }
