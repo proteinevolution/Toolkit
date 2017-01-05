@@ -14,7 +14,7 @@ import better.files._
 import controllers.UserSessions
 import modules.LocationProvider
 import modules.tel.env.Env
-import modules.tel.execution.{WrapperExecution, ExecutionContext}
+import modules.tel.execution.{ExecutionContext, WrapperExecution}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
@@ -22,7 +22,7 @@ import play.api.cache.{CacheApi, NamedCache}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
-import scala.collection.mutable
+import scala.collection.immutable.HashSet
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -79,7 +79,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
   var executionContext: Option[ExecutionContext] = None
 
   // All actors that are currently monitoring this job
-  val watchers : mutable.Set[ActorRef] = mutable.Set[ActorRef]()
+  protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
 
 
   /** Supplies a value for a particular Parameter. Returns params again if the parameter
@@ -208,9 +208,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       oos.close()
 
       // Clear old watchers and insert job owner
-      this.watchers.clear()
+      watchers = HashSet.empty[ActorRef]
       userWithWS match {
-        case (_, Some(actorRef)) => this.watchers.add(actorRef)
+        case (_, Some(actorRef)) => watchers = watchers + actorRef
         case (_, None) => 
       }
 
@@ -257,7 +257,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
     // No longer notify user when job state changes
     case Event(StopWatch(actorRef), _) =>
-      this.watchers.remove(actorRef)
+      watchers = watchers - actorRef
 
       stay()
 
@@ -293,7 +293,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       master ! WorkerDoneWithJob(this.currentJob.get.jobID)
       this.currentJob = None
       this.executionContext = None
-      this.watchers.clear()
+      watchers = HashSet.empty[ActorRef]
   }
 
   initialize()
