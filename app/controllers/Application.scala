@@ -70,6 +70,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     env.configure("HOSTNAME", hostname)
 
     tel.port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
+    tel.hostname = hostname
     println("[CONFIG:] running on port "+tel.port)
     println("[CONFIG:] execution mode: "+settings.clusterMode)
     getUser.map { user =>

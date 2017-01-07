@@ -12,8 +12,8 @@ for f in %NR/*.pal ; do
     
      # Database must exist and be a regular file
      if [ -f $DBNAME ] ; then
-
-	    echo "$DBNAME $(basename $DBNAME)" 	
+        fbname=$(basename "$DBNAME")
+	    echo "$DBNAME $fbname"
      fi
 done
 
