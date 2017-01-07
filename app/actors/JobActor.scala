@@ -196,7 +196,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
       // Add Job to user
       modifyUser(BSONDocument(User.IDDB -> userID),
-        BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID)))
+        BSONDocument("$push" -> BSONDocument(User.JOBS -> this.currentJob.get.mainID)))
 
       this.executionContext = Some(ExecutionContext(jobPath/jobID))
 
@@ -267,6 +267,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
         this.updateJobState(state)
 
         state match {
+
+          case Queued => // sometimes jobs return from running to queued
 
           case Running => // Nothing to do here
 
