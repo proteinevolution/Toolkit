@@ -13,6 +13,7 @@ import modules.tel.env.Env
 import play.api.Configuration
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.Files
 import play.api.libs.json.JsValue
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
@@ -50,7 +51,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   val SID = "sid"
 
 
-  def ws = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
+  def ws : WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
     getUser.map { user =>
       Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.userID, out))))
     }
@@ -62,7 +63,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
     * not already present.
     * Currently the index controller will assign a session id to the user for identification purpose.
     */
-  def index = Action.async { implicit request =>
+  def index : Action[AnyContent] = Action.async { implicit request =>
 
     val port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
     val hostname = request.host.slice(0, request.host.indexOf(":"))
@@ -88,7 +89,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   }
 
 
-  def showJob(idString : String) = Action.async { implicit request =>
+  def showJob(idString : String) : Action[AnyContent] = Action.async { implicit request =>
     BSONObjectID.parse(idString).toOption match {
       case Some(mainID) =>
         Future.successful(Redirect(s"/#/jobs/${mainID.stringify}"))
@@ -115,7 +116,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
   /**
    * Allows to access resultpanel files by the filename and a given jobID
    */
-  def file(filename : String, mainID : String) = Action.async { implicit request =>
+  def file(filename : String, mainID : String) : Action[AnyContent] = Action.async { implicit request =>
     getUser.map { user =>
 
       // mainID exists, allow send File
@@ -128,7 +129,7 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
 
 
 
-  def upload = Action(parse.multipartFormData) { request =>
+  def upload : Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData) { request =>
     request.body.file("file").map { picture =>
       // TODO: Handle file storage, pass uploaded sequences to model, validate uploaded files
       import java.io.File
