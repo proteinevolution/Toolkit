@@ -59,7 +59,7 @@ object HHR {
     private val Date = Pattern.compile("""Date(.*?)\n""")
     private val Command = Pattern.compile("""Command(.*?)\n""")
 
-    def parseRecord(record: String): Option[Header] = {
+    def parseRecord(record: String) :  HHR.Header = {
 
       val matcher1 = Query.matcher(record)
       val matcher2 = Match_columns.matcher(record)
@@ -71,11 +71,11 @@ object HHR {
 
       if (matcher1.find && matcher2.find && matcher3.find && matcher4.find && matcher5.find && matcher6.find && matcher7.find) {
         println("HHR header found")
-        Some(buildHeaderRecord(matcher1, matcher2, matcher3, matcher4, matcher5, matcher6, matcher7)) }
+        buildHeaderRecord(matcher1, matcher2, matcher3, matcher4, matcher5, matcher6, matcher7) }
 
        else {
         println("no HHR header found")
-        None
+        HeaderParser.nullObjectHeaderRecord
       }
     }
 
@@ -108,16 +108,16 @@ object HHR {
 
 object HeaderParser {
 
-  val nullObjectAccessLogRecord = Header("", 0, "", "", 0, "", "")
+  private[HHR] val nullObjectHeaderRecord = Header("", 0, "", "", 0, "", "")
 
-  val parser = new HeaderParser
+  private val parser = new HeaderParser
 
-  def fromFile( fn: String ) : Option[HHR.Header] = {
+  def fromFile( fn: String ) : HHR.Header = {
     val lines = scala.io.Source.fromFile(fn).getLines().take(8).mkString("\n")
     fromString( lines )
   }
 
-  def fromString(lines: String) : Option[HHR.Header] = parser.parseRecord(lines)
+  def fromString(lines: String) : HHR.Header = parser.parseRecord(lines)
 
 
 }
