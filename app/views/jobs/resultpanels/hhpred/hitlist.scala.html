@@ -5,12 +5,16 @@
 @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
 
-
+@HHpred.hitlist(jobID)
 
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
 
 
 <table style="width:100%">
+    <tr>
+        <th>Job: @jobID</th>
+        <th>Result Overview</th>
+    </tr>
     <tr>
         <td>Query</td>
         <td>@HHpred.header(jobID).Query</td>

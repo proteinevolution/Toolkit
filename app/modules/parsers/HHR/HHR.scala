@@ -4,9 +4,7 @@ package modules.parsers.HHR
 import java.util.regex.Pattern
 import java.util.regex.Matcher
 
-import modules.parsers.HHR.HHR.{Header, HeaderParser}
-
-import scala.util.parsing.combinator.syntactical.StandardTokenParsers
+import modules.parsers.HHR.HHR.{Header, HeaderParser, HitListParser}
 import scala.util.parsing.combinator.RegexParsers
 
 /**
@@ -51,13 +49,13 @@ object HHR {
     // the regular expressions are not unique enough so that there can be collisions, e.g. reserved words in the Query.
     // need to refine this soon
 
-    private val Query = Pattern.compile("""(?s)Query(.*?)\n""")
-    private val Match_columns = Pattern.compile("""Match_columns(.*?)\n""")
-    private val No_of_Seqs = Pattern.compile("""No_of_seqs(.*?)\n""")
-    private val Neff = Pattern.compile("""Neff(.*?)\n""")
-    private val Searched_HMMs = Pattern.compile("""Searched_HMMs(.*?)\n""")
-    private val Date = Pattern.compile("""Date(.*?)\n""")
-    private val Command = Pattern.compile("""Command(.*?)\n""")
+    private val Query = Pattern.compile("""(?m)^Query(.*?)\n""")
+    private val Match_columns = Pattern.compile("""(?m)^Match_columns(.*?)\n""")
+    private val No_of_Seqs = Pattern.compile("""(?m)^No_of_seqs(.*?)\n""")
+    private val Neff = Pattern.compile("""(?m)^Neff(.*?)\n""")
+    private val Searched_HMMs = Pattern.compile("""(?m)^Searched_HMMs(.*?)\n""")
+    private val Date = Pattern.compile("""(?m)^Date(.*?)\n""")
+    private val Command = Pattern.compile("""(?m)^Command(.*?)\n""")
 
     def parseRecord(record: String) :  HHR.Header = {
 
@@ -94,11 +92,26 @@ object HHR {
     }
   }
 
-  class HitListParser extends StandardTokenParsers {
+  class HitListParser extends RegexParsers {
 
     // TODO
 
-    private val hitlist = """(?s)No Hit(.*?)No 1""".r
+    override def skipWhitespace = false
+
+    def CRLF = "\r\n" | "\n"
+    def EOF = "\\z".r
+
+
+    def parse(lines: String) = {
+
+      val hitlist = """(?s)No Hit(.*?)No 1""".r.findFirstIn(lines).get
+      val hitlist_trimmed = hitlist.substring(hitlist.indexOf("No Hit"),hitlist.indexOf("No 1")).trim
+      //val hitListNew = hitlist_trimmed.split("\n").drop(1).mkString("\n")
+      val hitListNew = hitlist_trimmed.split("\n").drop(1)
+
+
+
+    }
 
 
   }
@@ -130,6 +143,16 @@ object HeaderParser {
 object HitListParser {
 
   // TODO
+
+  private val parser = new HitListParser
+
+  def fromFile( fn: String ) = {
+    val lines = scala.io.Source.fromFile(fn).getLines().mkString("\n")
+    fromString( lines )
+  }
+
+  def fromString(lines: String) = parser.parse(lines)
+
 }
 
 object AlginmentsParser {
