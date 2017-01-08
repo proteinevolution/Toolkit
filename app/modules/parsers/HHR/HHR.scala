@@ -6,6 +6,9 @@ import java.util.regex.Matcher
 
 import modules.parsers.HHR.HHR.{Header, HeaderParser}
 
+import scala.util.parsing.combinator.syntactical.StandardTokenParsers
+import scala.util.parsing.combinator.RegexParsers
+
 /**
   * Created by zin on 20.12.16.
   */
@@ -20,6 +23,28 @@ object HHR {
                     Searched_HMMs: Int,
                     Date: String,
                     Command: String)
+
+
+  case class HitList(Hits: List[String],
+                     Probs : List[Double],
+                     Evals: List[Double],
+                     Pvals: List[BigDecimal],
+                     Scores: List[Double],
+                     SS: List[Double],
+                     Cols: List[Int],
+                     Query_HMMs: List[String],
+                     Template_HMMs: List[String])
+
+
+  case class Alignments(Headers: List[String],
+                        QuerySeqs : List[String],
+                        QueryCon: List[String],
+                        TemplateCon: List[String],
+                        TemplateSeqs : List[String],
+                        TemplateDSSP : List[String],
+                        TemplatePRED : List[String],
+                        Confidence: List[String])
+
 
   class HeaderParser extends Serializable {
 
@@ -68,6 +93,16 @@ object HHR {
         )
     }
   }
+
+  class HitListParser extends StandardTokenParsers {
+
+    // TODO
+  }
+
+  class AlignmentsParser extends RegexParsers {
+
+    // TODO
+  }
 }
 
 
@@ -87,6 +122,16 @@ object HeaderParser {
 
 }
 
+
+object HitListParser {
+
+  // TODO
+}
+
+object AlginmentsParser {
+
+  // TODO
+}
 
 /*
 
