@@ -19,7 +19,7 @@ object HHpred extends Constants {
     Html(s"$jobPath/$filepath".toFile.contentAsString)
   }
 
-  def header(jobID: String) : Option[HHR.Header] = {
+  def header(jobID: String) : HHR.Header = {
 
     val outfile = s"$jobPath$jobID/results/hhsearch.hhr"
 
