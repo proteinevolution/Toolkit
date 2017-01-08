@@ -1,20 +1,13 @@
 package actors
 
-import javax.inject.Inject
 
-import actors.JobMonitor.UpdateJobStatus
-import akka.actor.{ActorLogging, Actor}
-import controllers.Settings
-import models.{ExitCodes, Constants}
+import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable}
 import models.database._
-import models.search.JobDAO
-import modules.CommonModule
-import modules.tel.TEL
-import play.api.i18n.MessagesApi
-import play.modules.reactivemongo.{ReactiveMongoComponents, ReactiveMongoApi}
-import javax.inject.Singleton
 
-import reactivemongo.bson.BSONObjectID
+import scala.collection.immutable.HashSet
+import akka.event.LoggingReceive
+
+import scala.concurrent.duration._
 
 /**
  * Real time logging of jobstate transitions
@@ -22,31 +15,39 @@ import reactivemongo.bson.BSONObjectID
  */
 
 
-object JobMonitor {
-
-  case class UpdateJobStatus(job : BSONObjectID, status : JobState)
-
-}
+class JobMonitor(jobID: String, status: JobState) extends Actor with ActorLogging {
 
 
-@Singleton
-final class JobMonitor @Inject() (val messagesApi: MessagesApi,
-                                  val reactiveMongoApi: ReactiveMongoApi,
-                                  val tel : TEL,
-                                  val jobDao : JobDAO,
-                                  val settings : Settings,
-                                  implicit val materializer: akka.stream.Materializer)
-  extends Actor with ActorLogging with ReactiveMongoComponents with Constants with ExitCodes with CommonModule {
+  private val random = scala.util.Random
+
+  private val fetchLatestInterval = 75.millis
+
+  protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
 
 
 
-  def receive :Receive = {
+  // Fetch the latest job value every 75ms
+  val jobTick : Cancellable  = {
+    // scheduler should use the system dispatcher
+    context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, FetchLatest)(context.system.dispatcher)
+  }
 
-    case UpdateJobStatus(job: BSONObjectID, status: JobState) =>
 
+  def receive = LoggingReceive {
+
+    case FetchLatest =>
+
+    case WatchJob(_) =>
+
+    case UnWatchJob(_) =>
 
   }
 
 }
 
 
+case object FetchLatest
+
+case class WatchJob(job: String)
+
+case class UnWatchJob(job: Option[String])
