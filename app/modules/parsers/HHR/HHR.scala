@@ -46,9 +46,6 @@ object HHR {
 
   class HeaderParser extends Serializable {
 
-    // the regular expressions are not unique enough so that there can be collisions, e.g. reserved words in the Query.
-    // need to refine this soon
-
     private val Query = Pattern.compile("""(?m)^Query(.*?)\n""")
     private val Match_columns = Pattern.compile("""(?m)^Match_columns(.*?)\n""")
     private val No_of_Seqs = Pattern.compile("""(?m)^No_of_seqs(.*?)\n""")
@@ -76,6 +73,13 @@ object HHR {
         HeaderParser.nullObjectHeaderRecord
       }
     }
+
+
+    /** TODO refactor the builder. Actually one matcher should be enough and a combined regex should cover the whole header
+      * by grouping like in this example:
+      * https://github.com/alvinj/ScalaApacheAccessLogParser/blob/master/src/main/scala/AccessLogParser.scala
+      */
+
 
     private def buildHeaderRecord(matcher1: Matcher, matcher2: Matcher, matcher3: Matcher,
                                   matcher4: Matcher, matcher5: Matcher, matcher6: Matcher,
