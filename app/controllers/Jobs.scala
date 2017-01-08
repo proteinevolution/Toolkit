@@ -55,7 +55,6 @@ final class Jobs @Inject()(@Named("master") master: ActorRef,
 
   def SGEID(jobID: String, sgeID: String) = Action {
 
-    println("SGE ID: " + sgeID + " for job: " + jobID)
     findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
 
       case Some(job) =>
@@ -63,7 +62,6 @@ final class Jobs @Inject()(@Named("master") master: ActorRef,
           BSONDocument("$set" -> BSONDocument(Job.SGEID -> sgeID)))
         Logger.info(jobID + " gets job-ID " + sgeID + " on SGE")
       case None =>
-        //userManager ! JobIDUnknown(jobID)
         Logger.info("Unknown ID " + jobID.toString)
     }
 
