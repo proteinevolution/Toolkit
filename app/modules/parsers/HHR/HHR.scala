@@ -21,9 +21,10 @@ object HHR {
                     Date: String,
                     Command: String)
 
-
   class HeaderParser extends Serializable {
 
+    // the regular expressions are not unique enough so that there can be collisions, e.g. reserved words in the Query.
+    // need to refine this soon
 
     private val Query = Pattern.compile("""(?s)Query(.*?)\n""")
     private val Match_columns = Pattern.compile("""Match_columns(.*?)\n""")
@@ -54,7 +55,8 @@ object HHR {
     }
 
     private def buildHeaderRecord(matcher1: Matcher, matcher2: Matcher, matcher3: Matcher,
-                                  matcher4: Matcher, matcher5: Matcher, matcher6: Matcher, matcher7: Matcher) = {
+                                  matcher4: Matcher, matcher5: Matcher, matcher6: Matcher,
+                                  matcher7: Matcher) = {
       Header(
         matcher1.group(1).trim,
         Integer.parseInt(matcher2.group(1).trim),
@@ -65,9 +67,7 @@ object HHR {
         matcher7.group(1).trim
         )
     }
-
   }
-
 }
 
 
@@ -77,25 +77,12 @@ object HeaderParser {
 
   val parser = new HeaderParser
 
-  /*def fromFile( fn: String ) = {
-    val lines = scala.io.Source.fromFile(fn).getLines().mkString("\n")
+  def fromFile( fn: String ) : Option[HHR.Header] = {
+    val lines = scala.io.Source.fromFile(fn).getLines().take(8).mkString("\n")
     fromString( lines )
-  }*/
+  }
 
-  val test : String =
-    """Query         NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]
-      |Match_columns 46
-      |No_of_seqs    36 out of 36
-      |Neff          3.63477
-      |Searched_HMMs 52178
-      |Date          Sat Jan  7 15:40:43 2017
-      |Command       hhsearch -cpu 4 -i ../results/query.a3m -d /ebio/abt1_share/toolkit_support1/code/databases/hh-suite/mmcif70old -o ../results/hhsearch.hhr -z 1 -b 1 -dbstrlen 10000 -cs /ebio/abt1_share/toolki\
-      |t_support1/code/bioprogs/tools/hh-suite-build/data/context_data.lib
-    """.stripMargin
-
-
-
-  def fromString() = parser.parseRecord(test)
+  def fromString(lines: String) : Option[HHR.Header] = parser.parseRecord(lines)
 
 
 }
