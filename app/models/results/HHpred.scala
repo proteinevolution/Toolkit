@@ -15,6 +15,7 @@ object HHpred extends Constants {
     * @param filepath
     * @return
     */
+
   def html(filepath: String): Html = {
     Html(s"$jobPath/$filepath".toFile.contentAsString)
   }
@@ -29,7 +30,16 @@ object HHpred extends Constants {
 
   }
 
-  def hitlist = ???
+
+  def hitlist(jobID: String) = {
+
+    val outfile = s"$jobPath$jobID/results/hhsearch.hhr"
+
+    lazy val hitListObj = HitListParser.fromFile(outfile)
+
+    hitListObj
+
+  }
 
   def alignments = ???
 

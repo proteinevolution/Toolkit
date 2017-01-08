@@ -1,3 +1,5 @@
+/*package example
+
 import co.technius.scalajs.mithril._
 
 import org.scalajs.dom
@@ -16,7 +18,7 @@ object MithrilTest extends Component {
   )
 
   class Controller {
-    val name = m.prop("Name")
+    val name : MithrilProp[String] = m.prop("Name")
   }
 }
 
@@ -24,4 +26,4 @@ object MyApp extends js.JSApp {
   def main(): Unit = {
     m.mount(dom.document.getElementById("app"), MithrilTest)
   }
-}
+} */
