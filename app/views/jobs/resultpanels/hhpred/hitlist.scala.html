@@ -4,6 +4,10 @@
 @*  Load html Map used for the image representation *@
 @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
+@HHpred.hitlist(jobID)
+
+
+
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
 
 
