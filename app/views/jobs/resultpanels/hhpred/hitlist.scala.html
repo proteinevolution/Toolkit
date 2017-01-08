@@ -4,9 +4,39 @@
 @*  Load html Map used for the image representation *@
 @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
-@HHpred.header(jobID).No_of_Seqs
+
 
 
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
 
 
+<table style="width:100%">
+    <tr>
+        <td>Query</td>
+        <td>@HHpred.header(jobID).Query</td>
+    </tr>
+    <tr>
+        <td>Match_columns</td>
+        <td>@HHpred.header(jobID).Match_columns</td>
+    </tr>
+    <tr>
+        <td>No_of_Seqs</td>
+        <td>@HHpred.header(jobID).No_of_Seqs</td>
+    </tr>
+    <tr>
+        <td>Neff</td>
+        <td>@HHpred.header(jobID).Neff</td>
+    </tr>
+    <tr>
+        <td>Searched HMMs</td>
+        <td>@HHpred.header(jobID).Searched_HMMs</td>
+    </tr>
+    <tr>
+        <td>Date</td>
+        <td>@HHpred.header(jobID).Date</td>
+    </tr>
+    <tr>
+        <td>Command</td>
+        <td>@HHpred.header(jobID).Command</td>
+    </tr>
+</table>
