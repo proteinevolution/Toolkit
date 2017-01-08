@@ -61,13 +61,13 @@ object HHR {
 
     def parseRecord(record: String) :  HHR.Header = {
 
-      val matcher1 = Query.matcher(record)
-      val matcher2 = Match_columns.matcher(record)
-      val matcher3 = No_of_Seqs.matcher(record)
-      val matcher4 = Neff.matcher(record)
-      val matcher5 = Searched_HMMs.matcher(record)
-      val matcher6 = Date.matcher(record)
-      val matcher7 = Command.matcher(record)
+      lazy val matcher1 = Query.matcher(record)
+      lazy val matcher2 = Match_columns.matcher(record)
+      lazy val matcher3 = No_of_Seqs.matcher(record)
+      lazy val matcher4 = Neff.matcher(record)
+      lazy val matcher5 = Searched_HMMs.matcher(record)
+      lazy val matcher6 = Date.matcher(record)
+      lazy val matcher7 = Command.matcher(record)
 
       if (matcher1.find && matcher2.find && matcher3.find && matcher4.find && matcher5.find && matcher6.find && matcher7.find) {
         println("HHR header found")
@@ -97,6 +97,10 @@ object HHR {
   class HitListParser extends StandardTokenParsers {
 
     // TODO
+
+    private val hitlist = """(?s)No Hit(.*?)No 1""".r
+
+
   }
 
   class AlignmentsParser extends RegexParsers {
