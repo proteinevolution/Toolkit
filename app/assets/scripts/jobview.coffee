@@ -313,6 +313,11 @@ m.capture = (eventName, handler) ->
       bindCapturingHandler element
     return
 
+alignmentUpload = (elem, isInit) ->
+  if not isInit
+    elem.setAttribute("data-reveal", "data-reveal")
+    $(elem).foundation()
+
 
 dropzone_psi  = (element, isInit) ->
 
@@ -363,7 +368,7 @@ window.ParameterAlignmentComponent =
 
   view: (ctrl) ->
     renderParameter [
-        m "div", {class: "alignment_textarea"}, [
+        m "div", {class: "alignment_textarea"},
           m "textarea",                   # Textarea field for alignment input
             name: ctrl.name
             placeholder: ctrl.placeholder
@@ -372,7 +377,14 @@ window.ParameterAlignmentComponent =
             id: ctrl.id
             onchange: m.withAttr("value", ctrl.param.value)
             value: ctrl.param.value()
-        ]
+        m "div", {id: "upload_alignment_modal", class: "tiny reveal", config: alignmentUpload},
+          m "input",
+            type: "file"
+            id: "upload_alignment_input"
+            name: "upload_alignment_input"
+            onchange: ->
+              if this.value
+                $("##{ctrl.id}").prop("disabled", true)
         m "div", {class: "alignment_buttons"}, [
           m "input",                         # Place example alignment
             type: "button"
@@ -383,12 +395,25 @@ window.ParameterAlignmentComponent =
             type: "button"
             class: "button small alignmentExample"
             value: "Upload File"
-            onclick: () -> alert "implement me"
+            onclick: () -> $('#upload_alignment_modal').foundation('open')
         ]
 
     ], "alignmentParameter"  # TODO Should be a controller argument
 
 ###
+  <form action="demo_form.asp">
+  <input type="file" name="pic" accept="image/*">
+  <input type="submit">
+</form>
+
+<div class="reveal" id="exampleModal1" data-reveal>
+  <h1>Awesome. I Have It.</h1>
+  <p class="lead">Your couch. It is mine.</p>
+  <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
+  <button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
 
 
   <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
@@ -398,7 +423,8 @@ window.ParameterAlignmentComponent =
                     <output id="list"></output>
 
 
-                </div>###
+                </div>
+###
 
 ParameterRadioComponent =
   model: (args) ->
