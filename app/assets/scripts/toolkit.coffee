@@ -23,9 +23,6 @@ class window.Job
   this.lastUpdatedMainID  = m.prop -1
   this.lastUpdatedState = m.prop -1
 
-  # This is currently just a hack for the presentation
-  this.requestTool = m.prop false
-
   # Determines whether Job with the provided mainID is in the JobList
   this.contains = (jobID) ->
     Job.list.then (jobs) ->
@@ -93,11 +90,6 @@ class window.Job
 
 
 
-
-
-###
-  GET                                 @controllers.Service.loadJob(mainID: String)
-###
 window.Toolkit =
 
   controller: (args)  ->
@@ -118,11 +110,7 @@ window.Toolkit =
     if FrontendTools[toolname]
       viewComponent = () -> FrontendTools[toolname]
     else
-      if Job.requestTool()
-        job = JobModel.update({isJob: false}, m.route.param("toolname"))
-        Job.requestTool(false)
-      else
-        job = JobModel.update(args, if args.isJob then m.route.param("jobID") else m.route.param("toolname"))
+      job = JobModel.update(args, if args.isJob then m.route.param("jobID") else m.route.param("toolname"))
       viewComponent = () -> m JobViewComponent, {job : job, add: Job.add, messages: JobModel.messages, joblistItem: Job.getJobByID(jobID)}
     jobs : Job.list
     viewComponent : viewComponent
