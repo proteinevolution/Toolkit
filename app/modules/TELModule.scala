@@ -8,7 +8,7 @@ import modules.tel.env.{Env, ExecFile, PropFile, TELEnv}
 import modules.tel.param.{GenerativeParamFileParser, ParamCollector, Params}
 import play.api.{Configuration, Logger}
 import com.google.inject.name.Names
-import modules.tel.execution.WrapperExecution
+import modules.tel.execution.WrapperExecutionFactory
 
 /**
   * Created by lukas on 8/28/16.
@@ -36,9 +36,6 @@ class TELModule extends AbstractModule {
           .annotatedWith(Names.named("wrapperPath"))
           .toProvider(classOf[WrapperPathProvider])
           .asEagerSingleton()
-
-        // Install the Factory for EngineExecution
-        install(new FactoryModuleBuilder().build(classOf[WrapperExecution.Factory]))
   }
 }
 

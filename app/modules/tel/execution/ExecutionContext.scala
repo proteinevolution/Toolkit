@@ -4,10 +4,8 @@ package modules.tel.execution
 import better.files.File
 
 import scala.collection.mutable
-import scala.sys.process._
 
 
-case class RunnableExecution(processbuilder: ProcessBuilder, delete: Option[ProcessBuilder])
 
 /**
   * An Execution Context represent the environment in which a runscript can be executed. Only TEL
@@ -23,8 +21,8 @@ class ExecutionContext(val root: File) {
   private val executionQueue = mutable.Queue[RegisteredExecution]()
   private val execNumbers = Iterator.from(0, 1)
 
-  /*
-   Creates a new file in this ExecutionContext with a certain name and content.
+  /**
+   Registers a new file in this ExecutionContext with a certain name and content.
    A preexisting file with the same name will be overridden
    */
   def getFile(name: String, content: String) : File = {
@@ -35,17 +33,20 @@ class ExecutionContext(val root: File) {
     x
   }
 
-  def accept(execution: Execution): Unit = {
+  /** Accepts an execution which is subsequently registered in this Execution Context
+    * The working direcotry is created within the executionContext. Currently, the names
+    * of the working direcotries of subsequent executions are just incremented.
+    * @param execution
+    */
+  def accept(execution: PendingExecution): Unit = {
 
     executionQueue.enqueue(execution.register(root./(execNumbers.next().toString).createDirectories()))
   }
 
-  def executeNext: RunnableExecution = {
+  def executeNext: RegisteredExecution = {
 
-    // Fetch next Registered Execution and Build runnable execution
-    val x = executionQueue.dequeue()
-
-    RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),x.delete.map(f => Process(f.pathAsString)))
+    executionQueue.dequeue()
+    //RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),x.delete.map(f => Process(f.pathAsString)))
   }
   def hasMoreExecutions: Boolean = executionQueue.nonEmpty
 }
@@ -64,10 +65,3 @@ object ExecutionContext {
     }
   }
 }
-
-
-
-
-
-
-

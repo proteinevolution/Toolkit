@@ -1,65 +1,59 @@
 package modules.tel.execution
 
-import javax.inject.{Inject, Named}
+import javax.inject.{Inject, Named, Singleton}
 
 import better.files.File
-import com.google.inject.assistedinject.Assisted
 import better.files._
 import modules.tel.TELRegex
 import java.nio.file.attribute.PosixFilePermission
 
+import scala.sys.process.Process
 
-// A registered execution can declare a file to specify how the execution can be stopped once started
-case class RegisteredExecution(run: File, delete: Option[File]) {
+sealed trait Execution
+case class PendingExecution(register: File => RegisteredExecution) extends Execution
+case class RegisteredExecution(run: () => RunningExecution) extends Execution
+case class RunningExecution(terminate: () => Boolean) extends Execution
 
-  run.setPermissions(Set(PosixFilePermission.OWNER_EXECUTE,
-    PosixFilePermission.OWNER_READ,
-    PosixFilePermission.OTHERS_WRITE))
-}
 
-/**
-  *
-  * Created by lzimmermann on 11.12.16.
-  */
-abstract class Execution {
+@Singleton
+class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath : String) extends TELRegex {
 
-  /**
-    * Accepts a working directory and returns the executable file
-    * The input directory is required to exist
-    */
-  def register(file: File): RegisteredExecution
-}
+  private final val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE)
 
-/*
-  Implementations
- */
 
-// An execution which executes embeds the actual content in an engine File
-case class WrapperExecution @Inject()(@Named("wrapperPath") wrapperPath : String,
-                                      @Assisted("content") content: String)
-  extends Execution with TELRegex {
+  // Accept the content of a runscript and used the Wrapper script to produce the Registered Execution
+  // One might offer different Methods to create a Pending Execution to avoid the need to pass the content
+  // of the Runscript directly as String
+  def getInstance(content: String): PendingExecution = {
 
-  override def register(file: File): RegisteredExecution = {
+    val register = { file: File =>
 
-    // Create engine file and runscript file with appropriate content
-    val runscript = (file / "runscript.sh").write(content)
-    runscript.setPermissions(Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE))
+      val runscript = (file / "runscript.sh").write(content)
+      runscript.setPermissions(filePermissions)
 
-    // Assumption that the runfile produces a delete.sh script in the same directory
-    RegisteredExecution((file / "wrapper.sh").write(runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString,
-      "runscript.sh")), Some(file / "delete.sh"))
+      val run = {() =>
+        // Start the wrapper
+        val wrapper = file / "wrapper.sh"
+        wrapper.write(runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString,"runscript.sh"))
+        wrapper.setPermissions(filePermissions)
+        val proc = Process(wrapper.pathAsString, file.toJava).run()
+
+        val terminate = { () =>
+
+          val deletionFile = file / "delete.sh"
+          if (deletionFile.exists) {
+
+            deletionFile.setPermissions(filePermissions)
+            Process(deletionFile.pathAsString, file.toJava).run()
+          }
+          proc.destroy()
+          true
+        }
+        RunningExecution(terminate)
+      }
+      RegisteredExecution(run)
+    }
+    PendingExecution(register)
   }
 }
-
-object WrapperExecution {
-
-  trait Factory {
-    def apply(@Assisted("content") content: String): WrapperExecution
-  }
-}
-
-
-
-
-
 
