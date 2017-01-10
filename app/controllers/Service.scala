@@ -123,11 +123,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       toolitemCache.set(toolname, x)
       x
     })
-
-    Ok(Json.obj(
-      "toolitem" -> toolitemJson,
-      "newMainID" -> BSONObjectID.generate().stringify
-    ))
+    Ok(toolitemJson)
   }
 
 
