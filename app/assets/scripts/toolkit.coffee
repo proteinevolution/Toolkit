@@ -1,6 +1,7 @@
 FrontendTools =
   "alnviz": FrontendAlnvizComponent
   "reformat": FrontendReformatComponent
+  "retseq": FrontendRetrieveSeqComponent
 
 ####################################################
 
