@@ -14,7 +14,7 @@ import better.files._
 import controllers.UserSessions
 import modules.LocationProvider
 import modules.tel.env.Env
-import modules.tel.execution.{ExecutionContext, WrapperExecution}
+import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
@@ -48,7 +48,7 @@ object JobActor {
   // Data that the JobActor operates on
   sealed trait JobActorData
   case object Nothing extends JobActorData
-  case class  DeletableExecution(process: scala.sys.process.Process, delete: Option[scala.sys.process.ProcessBuilder]) extends JobActorData
+  case class  JobRunningData(runningExecution: RunningExecution) extends JobActorData
   case object SomeData extends  JobActorData
 
   trait Factory {
@@ -66,7 +66,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
                           env: Env, // To supply the runscripts with an environment
                           val reactiveMongoApi: ReactiveMongoApi,
                           val jobDao : JobDAO,
-                          wrapperExecutionFactory: WrapperExecution.Factory,
+                          wrapperExecutionFactory: WrapperExecutionFactory,
                           implicit val locationProvider: LocationProvider,
                           @NamedCache("userCache") implicit val userCache : CacheApi,
                           @Named("master") master: ActorRef)
@@ -228,15 +228,18 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       }
 
 
+      // If the provision of the parameters is Complete, we can generate a pending execution and submit it
+      // to the execution context
       if(isComplete(parameters)) {
 
-        executionContext.get.accept(wrapperExecutionFactory(runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument])))))
+        val pendingExecution = wrapperExecutionFactory.getInstance(runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
+        executionContext.get.accept(pendingExecution)
         val x = executionContext.get.executeNext
-        goto(Employed(Running)) using DeletableExecution(x.processbuilder.run(), x.delete)
+        goto(Employed(Running)) using JobRunningData(x.run())
 
       } else {
 
-        // TODO Implement Me
+        // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
         Logger.info("STAY")
         stay using SomeData
       }
@@ -247,12 +250,10 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
 
     // Deletion of running Job requested
-    case Event(Delete, DeletableExecution(process, delete)) =>
+    case Event(Delete, JobRunningData(runningExecution)) =>
 
-      process.destroy()
-      if(delete.isDefined) {
-        delete.get.!
-      }
+      // TODO Maybe report whether JobDeletion was successful
+      runningExecution.terminate()
       goto(Unemployed)
 
     // No longer notify user when job state changes
