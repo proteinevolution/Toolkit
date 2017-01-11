@@ -13,7 +13,7 @@ import scala.concurrent.Future
 /**
   * Created by zin on 03.08.16.
   */
-trait CommonModule  extends ReactiveMongoComponents {
+trait CommonModule extends ReactiveMongoComponents {
 
 
   private final def selectjobID(jobID: String) = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
@@ -52,6 +52,8 @@ trait CommonModule  extends ReactiveMongoComponents {
       .map(_.find(BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))).cursor[Job]())
       .flatMap(_.headOption)
   }
+
+  // this is not in use anymore and is being replaced by an elasticsearch query
   protected def selectJobs(jobIDs: Traversable[String]): Future[Set[Job]] = {
     jobCollection
         .map(_.find(BSONDocument("jobID" -> BSONDocument("$in" -> BSONArray(jobIDs)))).cursor[Job]())

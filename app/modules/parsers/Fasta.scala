@@ -15,16 +15,16 @@ object FASTA {
 
   private object Parser extends RegexParsers {
 
-    lazy val header = """>.*""".r ^^ { _.tail.trim }
-    lazy val seqLine = """[^>].*""".r ^^ { _.trim }
+    lazy val header : FASTA.Parser.Parser[String] = """>.*""".r ^^ { _.tail.trim }
+    lazy val seqLine : FASTA.Parser.Parser[String] = """[^>].*""".r ^^ { _.trim }
 
-    lazy val sequence = rep1( seqLine ) ^^ { _.mkString }
+    lazy val sequence : FASTA.Parser.Parser[String] = rep1( seqLine ) ^^ { _.mkString }
 
-    lazy val entry = header ~ sequence ^^ {
+    lazy val entry : FASTA.Parser.Parser[FASTA.Entry] = header ~ sequence ^^ {
       case h ~ s => Entry(h,s)
     }
 
-    lazy val entries = rep1( entry )
+    lazy val entries : FASTA.Parser.Parser[scala.List[FASTA.Entry]] = rep1( entry )
 
     private[FASTA] def parse( input: String ): List[Entry]  = {
       parseAll( entries, input ) match {

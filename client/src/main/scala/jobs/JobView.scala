@@ -1,13 +1,18 @@
-/*package example
+package jobs
 
-import co.technius.scalajs.mithril._
+/**
+  * Created by snam on 05.01.17.
+  */
+
+
+//import co.technius.scalajs.mithril._
 
 import org.scalajs.dom
 import scala.scalajs.js
 
-object MithrilTest extends Component {
+object JobView {
 
-  override val controller: js.Function = () => new Controller
+/*  override val controller: js.Function = () => new Controller
 
   val view: js.Function = (ctrl: Controller) => js.Array(
     m("span", s"Hi, ${ctrl.name()}!"),
@@ -19,11 +24,6 @@ object MithrilTest extends Component {
 
   class Controller {
     val name : MithrilProp[String] = m.prop("Name")
-  }
+  } */
 }
 
-object MyApp extends js.JSApp {
-  def main(): Unit = {
-    m.mount(dom.document.getElementById("app"), MithrilTest)
-  }
-} */

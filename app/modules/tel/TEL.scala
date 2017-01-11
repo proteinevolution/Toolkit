@@ -23,6 +23,8 @@ class TEL @Inject() (env : Env,
 
   var port = "" // TODO (REMINDER) : REMOVE THIS FOR PRODUCTION !!!
 
+  var hostname = ""
+
   val context: String = env.get("CONTEXT")
 
   /**

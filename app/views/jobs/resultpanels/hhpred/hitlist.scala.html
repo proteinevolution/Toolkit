@@ -4,6 +4,71 @@
 @*  Load html Map used for the image representation *@
 @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
+
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
 
 
+<table style="width:100%">
+    <tr>
+        <th>Job: @jobID</th>
+        <th>Result Overview</th>
+    </tr>
+    <tr>
+        <td>Query</td>
+        <td>@HHpred.header(jobID).Query</td>
+    </tr>
+    <tr>
+        <td>Match_columns</td>
+        <td>@HHpred.header(jobID).Match_columns</td>
+    </tr>
+    <tr>
+        <td>No_of_Seqs</td>
+        <td>@HHpred.header(jobID).No_of_Seqs</td>
+    </tr>
+    <tr>
+        <td>Neff</td>
+        <td>@HHpred.header(jobID).Neff</td>
+    </tr>
+    <tr>
+        <td>Searched HMMs</td>
+        <td>@HHpred.header(jobID).Searched_HMMs</td>
+    </tr>
+    <tr>
+        <td>Date</td>
+        <td>@HHpred.header(jobID).Date</td>
+    </tr>
+    <tr>
+        <td>Command</td>
+        <td>@HHpred.header(jobID).Command</td>
+    </tr>
+</table>
+
+
+<table>
+        <tr>
+            <th>No</th>
+            <th>Hits</th>
+            <th>Probs</th>
+            <th>Evals</th>
+            <th>Pvals</th>
+            <th>Scores</th>
+            <th>SS</th>
+            <th>Cols</th>
+            <th>Query HMMs</th>
+            <th>Template HMMs</th>
+        </tr>
+        @for((x,i) <- HHpred.hitlist(jobID).Hits.zipWithIndex) {
+            <tr>
+                <td>@i</td>
+                <td>@HHpred.hitlist(jobID).Hits(i)</td>
+                <td>@HHpred.hitlist(jobID).Probs(i)</td>
+                <td>@HHpred.hitlist(jobID).Evals(i)</td>
+                <td>@HHpred.hitlist(jobID).Pvals(i)</td>
+                <td>@HHpred.hitlist(jobID).Scores(i)</td>
+                <td>@HHpred.hitlist(jobID).SS(i)</td>
+                <td>@HHpred.hitlist(jobID).Cols(i)</td>
+                <td>@HHpred.hitlist(jobID).Query_HMMs(i)</td>
+                <td>@HHpred.hitlist(jobID).Template_HMMs(i)</td>
+            </tr>
+        }
+</table>

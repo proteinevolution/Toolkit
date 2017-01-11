@@ -7,6 +7,8 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 
+import scala.util.matching.Regex
+
 /**
   * Created by astephens on 03.04.16.
   */
@@ -15,7 +17,7 @@ object FormDefinitions {
   // Number of rounds for BCrypt to hash the Password (2^x) TODO Move to the config?
   val LOG_ROUNDS : Int = 10
   // Regex to ensure that any sent strings are not messing up the JSON / BSON
-  val textRegex = """[^\\"\\(\\)\\[\\]]*""".r
+  val textRegex : Regex = """[^\\"\\(\\)\\[\\]]*""".r
 
   /**
     * Form mapping for the Sign up form

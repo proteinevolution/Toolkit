@@ -69,14 +69,6 @@ POST          /profile/submit/password/               @controllers.Auth.profileS
 GET           /verification/:name_login/:token        @controllers.Auth.verification(name_login : String, token : String)
 
 
-# Interaction with Jobs
-# Loading a Job from the DB
-GET           /jobs/add/:mainID                       @controllers.Service.addJob(mainID: String)
-# Get a Job the User Actor already has loaded
-# Delete a Job
-DELETE        /jobs/:mainID                           @controllers.Service.forceDeleteJob(mainID : String)
-# Clear or delete multiple jobs
-DELETE        /jobs                                   @controllers.Service.removeJobs()
 # Find a Job
 GET           /jobs/find/:queryString                 @controllers.Search.getJob(queryString : String)
 # Update Job status
@@ -90,9 +82,6 @@ POST          /jobs/dateviewed/:mainID                @controllers.Jobs.updateDa
 # Static route
 GET           /static/get/:static                     @controllers.Service.static(static : String)
 
-
-
-
 # ElasticSearch
 
 #GET     /search/jobs/:id                                   @controllers.Search.getJob(id: String)
@@ -103,32 +92,17 @@ GET           /suggest/:jobID                         @controllers.Search.autoCo
 
 
 
-# Add a Child Job
-#POST        /jobs/addChild                  @controllers.Service.addChild
-
 # Sitemap
 # Routes for static assets
 GET           /:static                                @controllers.Application.static(static : String)
 
-#Forwarding
-#GET         /forward/:toolname                             @controllers.Forwarding.forward(toolname: String, output: String)
 
-
-# Some experimental things
-# Get ToolInformation as JSON based on toolname
+# GetTool
 GET           /api/tools/:toolname                    @controllers.Service.getTool(toolname)
-# Submit new Job
-# Submit new FrontendJob
-POST          /api/frontendSubmit/:toolname          @controllers.Tool.frontendCount(toolname: String)
-# Submit job again after being found in the jobhashes collection
-# Get JobInformation based on Toolname
 
 
 # Get list of userjobs
-GET           /api/jobs                               @controllers.JobController.listJobs
-
-
-# New routes defined for the JobActor per job stuff
+GET           /api/jobs                                @controllers.JobController.listJobs
 POST          /api/job                                @controllers.JobController.create(toolname: String, jobID: String)
 POST          /api/job/check                          @controllers.JobController.check(toolname: String, jobID: Option[String])
 GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
@@ -136,3 +110,5 @@ DELETE        /api/job/:jobID                         @controllers.JobController
 GET           /api/job/load/:jobID                    @controllers.JobController.loadJob(jobID: String)
 
 
+# Frontend Stuff
+POST          /api/frontendSubmit/:toolname          @controllers.Tool.frontendCount(toolname: String)
