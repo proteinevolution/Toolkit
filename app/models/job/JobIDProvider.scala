@@ -46,7 +46,7 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
         val foundIds = for {x <- richSearchResponse.getHits.hits()} yield x.getSource.get("jobID").toString
 
-        val usedSet = foundIds.toSet // exclude those jobIds from being reused again
+        val usedSet = foundIds.toSet // exclude these jobIds from being reused again
 
         okSet = set.diff(usedSet) // clean set
 
@@ -65,7 +65,7 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
   val provideTask: Task[Future[String]] = Task.delay(provideTry)
 
-  val retryTask: Task[Future[String]] = provideTask.retry(Seq(5.millis, 10.millis, 15.millis, 20.seconds)) // retries 4 times
+  val retryTask: Task[Future[String]] = provideTask.retry(Seq(5.millis, 10.millis, 15.millis, 20.millis)) // retries 4 times
 
   def provide: Future[String] = retryTask.unsafePerformSync
 
