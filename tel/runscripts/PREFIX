@@ -23,28 +23,5 @@ rm -rf ../logs
 mkdir ../results
 mkdir ../logs
 
-
-
-
-# Set environment variables
-##########################################################3
-export JAVA_HOME=%JAVAHOME
-export JRE_HOME=%JREHOME
-
-
-# HHLIB
-export HHLIB=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/hh-suite-build
-
-# PATH variable 
-export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/Python-3.5.2/bin:${PATH}" # Python binary
-export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/hh-suite_misc_scripts:$PATH" # helper scripts from the old Toolkit
-export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/hh-suite-build/scripts:${PATH}" # HHSCRIPTS
-export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/hh-suite-build/bin:${PATH}" # HHBINS
-export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/psipred:/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/psipred/bin:${PATH}" # PSIPRED
-export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/mmseqs2/build/bin:${PATH}" # MMSEQS
-export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/dssp:${PATH}" # DSSP
-
-
-# PYTHONPATH FOR PDBX
-export PYTHONPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/pdbx
-
+# Set environment
+source %ENVIRONMENT

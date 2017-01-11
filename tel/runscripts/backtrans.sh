@@ -3,7 +3,7 @@
                               #-o=#{@cutfile} \
 
 
-perl %BIOPROGS/tools/backtranslate/backtranslate.pl  -o=../results/backtrans_out \
-                                     -i=%alignment.path \
-                                     -oformat=fas \
-                                     -g=%genetic_code.content
+perl backtranslate.pl  -o=../results/backtrans_out \
+                       -i=%alignment.path \
+                       -oformat=fas \
+                       -g=%genetic_code.content
