@@ -1,9 +1,8 @@
 package controllers
 
 import java.io.{FileInputStream, ObjectInputStream}
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{Inject, Singleton}
 
-import akka.actor.ActorRef
 import akka.util.Timeout
 import models.tools.ToolModel
 import models.{Constants, Values}
@@ -28,7 +27,6 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.util.Success
 
 /**
   *
@@ -72,101 +70,6 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
     }
   }
 
-  // TODO  Handle Acknowledgement
-  /**
-    * User asks to delete the Job with the provided mainID
-    *
-    * @param mainIDString
-    * @return
-    */
-  def forceDeleteJob(mainIDString: String) = Action.async { implicit request =>
-    getUser.map { user =>
-      BSONObjectID.parse(mainIDString) match {
-        case Success(mainID) =>
-         // jobManager ! ForceDeleteJob(user.userID, mainID)
-          Ok.withSession(sessionCookie(request, user.sessionID.get))
-        case _ =>
-          NotFound
-      }
-    }
-  }
-
-  /**
-    * Add a job to the view
-    *
-    * @param mainIDString
-    * @return
-    */
-  def addJob(mainIDString : String) = Action.async { implicit request =>
-    getUser.map { user =>
-      BSONObjectID.parse(mainIDString) match {
-        case Success(mainID) =>
-          //jobManager ! AddJob(user.userID, mainID)
-          Logger.info("Adding job: " + mainID.stringify)
-          //Redirect(s"/#/jobs/${mainID.stringify}").withSession(sessionCookie(request, user.sessionID.get))
-          Ok.withSession(sessionCookie(request, user.sessionID.get))
-        case _ =>
-          NotFound
-      }
-    }
-  }
-
-  /**
-
-   */
-
-
-
-  /**
-    * Remove multiple Jobs at once
-    * get request needs to be of format: ?mainIDs=<mainID1>,<mainID2>,...,<mainIDx>[&deleteCompletely=true]
-    * mainIDs contains the list of mainIDs which should be cleared or deleted
-    * deleteCompletely boolean for a "deletion" of the job
-    *
-    * @return
-    */
-
-  def removeJobs() = Action.async { implicit request =>
-    getUser.flatMap { user =>
-      request.getQueryString("mainIDs") match {
-        case Some(mainIDsString) =>
-          // Parse the main ID string and put the mainIDs in a list.
-          val mainIDs = mainIDsString.split(",")
-                          .map(mainIDString => BSONObjectID.parse(mainIDString).toOption)
-                          .filter(_.isDefined)
-                          .flatten.toList
-
-          Logger.info(
-            if (request.getQueryString("deleteCompletely").contains("true")) {
-
-              "Deleting: " + mainIDs.map(_.stringify).toString
-            }
-            else {
-              "Clearing: "+ mainIDs.map(_.stringify).toString
-            }
-          )
-
-          // Tell the Jobmanager to remove the user from the jobs and mark the jobs which have no more watchers
-          if (request.getQueryString("deleteCompletely").contains("true")) {
-            //jobManager ! DeleteJobs(user.userID, mainIDs, JobDeletionFlag.PublicRequest)
-          }
-
-          // Remove the main IDs from the users view
-          modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$pull" -> BSONDocument(User.JOBS -> BSONDocument("$in" -> mainIDs)))).map {
-            case Some(updatedUser) =>
-              // Update the user cache
-              updateUserCache(updatedUser)
-              Ok.withSession(sessionCookie(request, updatedUser.sessionID.get))
-            case None =>
-              // User has not been found in the database
-              NotFound
-          }
-        case None =>
-          // No get request for the mainIDs
-          Future.successful(NotFound)
-      }
-    }
-  }
 
   // Allows serialization of tuples
   implicit def tuple2Reads[A, B](implicit aReads: Reads[A], bReads: Reads[B]): Reads[(A, B)] = Reads[(A, B)] {
@@ -220,11 +123,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
       toolitemCache.set(toolname, x)
       x
     })
-
-    Ok(Json.obj(
-      "toolitem" -> toolitemJson,
-      "newMainID" -> BSONObjectID.generate().stringify
-    ))
+    Ok(toolitemJson)
   }
 
 

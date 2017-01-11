@@ -8,7 +8,7 @@ import modules.tel.env.{Env, ExecFile, PropFile, TELEnv}
 import modules.tel.param.{GenerativeParamFileParser, ParamCollector, Params}
 import play.api.{Configuration, Logger}
 import com.google.inject.name.Names
-import modules.tel.execution.WrapperExecution
+import modules.tel.execution.WrapperExecutionFactory
 
 /**
   * Created by lukas on 8/28/16.
@@ -36,9 +36,6 @@ class TELModule extends AbstractModule {
           .annotatedWith(Names.named("wrapperPath"))
           .toProvider(classOf[WrapperPathProvider])
           .asEagerSingleton()
-
-        // Install the Factory for EngineExecution
-        install(new FactoryModuleBuilder().build(classOf[WrapperExecution.Factory]))
   }
 }
 
@@ -82,20 +79,27 @@ class RunscriptPathProvider @Inject() (configuration: Configuration) extends Pro
 }
 
 
-class ParamCollectorProvider @Inject() (pc : ParamCollector, configuration: Configuration, generativeParamFileParser: GenerativeParamFileParser) extends Provider[ParamCollector] {
+class ParamCollectorProvider @Inject()
+      (pc : ParamCollector,
+       configuration: Configuration,
+       generativeParamFileParser: GenerativeParamFileParser) extends Provider[ParamCollector] {
 
   override def get(): ParamCollector = {
 
-      val paramFilePath = configuration.getString("tel.params").getOrElse{
+
+     lazy val paramFilePath = configuration.getString("tel.params").getOrElse{
 
         val fallBackFile = "tel/paramspec/PARAMS"
         Logger.warn(s"Key 'tel.params' was not found in configuration. Fall back to '$fallBackFile'")
         fallBackFile
       }
+
       generativeParamFileParser.read(paramFilePath).foreach { param =>
 
         pc.addParam(param.name, param)
+
       }
+
     pc
   }
 }

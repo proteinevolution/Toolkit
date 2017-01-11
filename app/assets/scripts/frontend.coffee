@@ -122,6 +122,25 @@ window.FrontendReformatComponent =
         m.trust ctrl.html()
 
 
+######################################################################################################################
+# RetrieveSeq
+
+window.FrontendRetrieveSeqComponent =
+
+  model: (args) ->
+    tabs: ["Input"]
+    content: [
+      m "div", {class: "parameter-panel"}, [
+        m "textarea"
+      ]
+    ]
+  controller: (args) ->
+    this.model = new ParameterAlignmentComponent.model args
+
+
+  view: (ctrl) ->
+    renderTabs(ctrl.model.tabs, ctrl.model.content)
+
 
 ###
 
@@ -140,6 +159,21 @@ window.FrontendReformatComponent =
       m GeneralTabComponent, {tabs: ["Alignment", "Freqs"], ctrl: ctrl}
     ]
 ###
+
+
+
+renderTabs = (tabs, content) ->
+
+  m "div", {class: "tool-tabs", id: "tool-tabs", config: tabulated}, [
+
+    m "ul", tabs.map (tab) ->
+      m "li", {id: "tab-#{tab}"}, m "a", {href: "#tabpanel-#{tab}"}, tab
+
+    tabs.map (tab, idx) ->
+      m "div", {class: "tabs-panel", id: "tabpanel-#{tab}"},
+        content[idx]
+  ]
+
 
 # Used to abstract over the tabulated view as it is used for all views
 GeneralTabComponent =

@@ -54,7 +54,7 @@ class RunscriptManager @Inject() (@Named("runscriptPath") runscriptPath : String
     }
   }
 
-  def apply(runscriptName: String): Runscript =  Runscript(prefix ++ Seq(runscripts(runscriptName)) ++ suffix)
+  def apply(runscriptName: String): Runscript = Runscript(prefix ++ Seq(runscripts(runscriptName)) ++ suffix)
 }
 
 
