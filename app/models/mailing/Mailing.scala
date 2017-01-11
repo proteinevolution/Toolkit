@@ -3,7 +3,6 @@ package models.mailing
 import models.database.User
 import play.api.libs.mailer.{MailerClient, Email}
 import modules.tel.TEL
-import javax.inject.{Inject, Named, Singleton}
 
 /**
   * Created by astephens on 24.05.16.
@@ -51,9 +50,10 @@ sealed trait MailTemplate {
     """.stripMargin
 }
 
-case class NewUserWelcomeMail @Inject() (tel : TEL, user : User, token : String) extends MailTemplate {
+case class NewUserWelcomeMail (tel: TEL, userParam : User, token : String) extends MailTemplate {
   override def subject = "Bioinformatics Toolkit - Account Verification"
 
+  val user : User = userParam
 
   val bodyText : String = {
     s"""Welcome ${user.getUserData.nameLogin},
