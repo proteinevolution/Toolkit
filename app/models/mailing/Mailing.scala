@@ -2,6 +2,8 @@ package models.mailing
 
 import models.database.User
 import play.api.libs.mailer.{MailerClient, Email}
+import modules.tel.TEL
+import javax.inject.{Inject, Named, Singleton}
 
 /**
   * Created by astephens on 24.05.16.
@@ -38,7 +40,7 @@ sealed trait MailTemplate {
     mailerClient.send(email)
   }
 
-  def bodyHtmlTemplate(subject : String, content : String) =
+  def bodyHtmlTemplate(subject : String, content : String) : String =
       s"""
          |<html>
          |  <body>
@@ -49,25 +51,26 @@ sealed trait MailTemplate {
     """.stripMargin
 }
 
-case class NewUserWelcomeMail(user : User, token : String) extends MailTemplate {
+case class NewUserWelcomeMail @Inject() (tel : TEL, user : User, token : String) extends MailTemplate {
   override def subject = "Bioinformatics Toolkit - Account Verification"
 
-  val bodyText = {
+
+  val bodyText : String = {
     s"""Welcome ${user.getUserData.nameLogin},
        |Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
        |To do this, visit
-       |http://olt:7550/verification/${user.getUserData.nameLogin}/$token
+       |http://${tel.hostname}:${tel.port}/verification/${user.getUserData.nameLogin}/$token
        |Your Toolkit Team
      """.stripMargin
   }
 
-  val bodyHtml = {
+  val bodyHtml : String = {
     super.bodyHtmlTemplate(
       s"""Welcome ${user.getUserData.nameLogin},""".stripMargin,
       s"""Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
        |To do this, click <a href=\"http://olt:7550/verification/${user.getUserData.nameLogin}/$token\">here</a>
        |or copy this URL and visit this page in your browser:
-       |http://olt:7550/verification/${user.getUserData.nameLogin}/$token
+       |http://${tel.hostname}:${tel.port}/verification/${user.getUserData.nameLogin}/$token
        |Your Toolkit Team
      """.stripMargin
     )
