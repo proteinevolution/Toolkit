@@ -424,7 +424,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "anc"
     val category = "classification"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT, Param.LONG_SEQ_NAME)
 
     val results = Seq.empty[String]
   }
