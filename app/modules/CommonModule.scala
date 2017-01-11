@@ -13,7 +13,7 @@ import scala.concurrent.Future
 /**
   * Created by zin on 03.08.16.
   */
-trait CommonModule  extends ReactiveMongoComponents {
+trait CommonModule extends ReactiveMongoComponents {
 
 
   private final def selectjobID(jobID: String) = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
