@@ -38,17 +38,15 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
   def provideTry: Future[String] = {
 
-    var okSet = Set.empty[String]
-
     val set = candIt.next()
 
       jobDao.multiExistsJobID(set).map { richSearchResponse =>
 
-        val foundIds = for {x <- richSearchResponse.getHits.hits()} yield x.getSource.get("jobID").toString
+        lazy val foundIds = for {x <- richSearchResponse.getHits.hits()} yield x.getSource.get("jobID").toString
 
         val usedSet = foundIds.toSet // exclude these jobIds from being reused again
 
-        okSet = set.diff(usedSet) // clean set
+        lazy val okSet = set.diff(usedSet) // clean set
 
         if(okSet.isEmpty)
 
