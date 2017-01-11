@@ -5,8 +5,6 @@
 @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
 
-@HHpred.hitlist(jobID)
-
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
 
 
@@ -43,4 +41,34 @@
         <td>Command</td>
         <td>@HHpred.header(jobID).Command</td>
     </tr>
+</table>
+
+
+<table>
+        <tr>
+            <th>No</th>
+            <th>Hits</th>
+            <th>Probs</th>
+            <th>Evals</th>
+            <th>Pvals</th>
+            <th>Scores</th>
+            <th>SS</th>
+            <th>Cols</th>
+            <th>Query HMMs</th>
+            <th>Template HMMs</th>
+        </tr>
+        @for((x,i) <- HHpred.hitlist(jobID).Hits.zipWithIndex) {
+            <tr>
+                <td>@i</td>
+                <td>@HHpred.hitlist(jobID).Hits(i)</td>
+                <td>@HHpred.hitlist(jobID).Probs(i)</td>
+                <td>@HHpred.hitlist(jobID).Evals(i)</td>
+                <td>@HHpred.hitlist(jobID).Pvals(i)</td>
+                <td>@HHpred.hitlist(jobID).Scores(i)</td>
+                <td>@HHpred.hitlist(jobID).SS(i)</td>
+                <td>@HHpred.hitlist(jobID).Cols(i)</td>
+                <td>@HHpred.hitlist(jobID).Query_HMMs(i)</td>
+                <td>@HHpred.hitlist(jobID).Template_HMMs(i)</td>
+            </tr>
+        }
 </table>

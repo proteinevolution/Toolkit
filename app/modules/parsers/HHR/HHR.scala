@@ -5,6 +5,8 @@ import java.util.regex.Pattern
 import java.util.regex.Matcher
 
 import modules.parsers.HHR.HHR.{Header, HeaderParser, HitListParser}
+
+import scala.util.matching.Regex
 import scala.util.parsing.combinator.RegexParsers
 
 /**
@@ -24,11 +26,11 @@ object HHR {
 
 
   case class HitList(Hits: List[String],
-                     Probs : List[Double],
-                     Evals: List[Double],
-                     Pvals: List[BigDecimal],
-                     Scores: List[Double],
-                     SS: List[Double],
+                     Probs : List[String],
+                     Evals: List[String],
+                     Pvals: List[String],
+                     Scores: List[String],
+                     SS: List[String],
                      Cols: List[Int],
                      Query_HMMs: List[String],
                      Template_HMMs: List[String])
@@ -96,28 +98,37 @@ object HHR {
     }
   }
 
-  class HitListParser extends RegexParsers {
+  class HitListParser extends Serializable {
 
-    // TODO
+    private val evalPattern = """(?s)[ ][ ][ ]+(.*?)[ ]""".r
+    private val pvalPattern = """(?s)[ ]{1}.+?[ ]{3,}""".r
+    private val scorePattern = """(?s)\d{2,3}\.\d{1}""".r
+    private val ssPattern = """\d{1,3}\.\d{1}""".r
+    private val colPattern = """\d{1,}""".r
+    private val queryPattern = """\d{1,}[-]{1}\d{1,}""".r
+    private val templatePattern = """\d{1,}[-]\d{1,}[ ][(]\d{1,}[)]""".r
 
-    override def skipWhitespace = false
-
-    def CRLF = "\r\n" | "\n"
-    def EOF = "\\z".r
-
-
-    def parse(lines: String) = {
+    def parse(lines: String) : HHR.HitList = {
 
       val hitlist = """(?s)No Hit(.*?)No 1""".r.findFirstIn(lines).get
       val hitlist_trimmed = hitlist.substring(hitlist.indexOf("No Hit"),hitlist.indexOf("No 1")).trim
       //val hitListNew = hitlist_trimmed.split("\n").drop(1).mkString("\n")
       val hitListNew = hitlist_trimmed.split("\n").drop(1)
 
+      val hits = for {x <- hitListNew} yield x.substring(4,34).trim
+      val probs = for {x <- hitListNew} yield x.substring(36,41).trim
+      val evals = for {x <- hitListNew } yield (evalPattern findFirstIn x).getOrElse("").trim
+      val pvals = for {x <- hitListNew} yield (pvalPattern findFirstIn x.substring(46,x.length)).getOrElse("").trim
+      val score = for {x <- hitListNew} yield (scorePattern findFirstIn x.substring(57,x.length)).getOrElse("").trim
+      val ss = for {x <- hitListNew} yield (ssPattern findFirstIn x.substring(61, x.length)).getOrElse("").trim
+      val cols = for {x <- hitListNew} yield Integer.parseInt((colPattern findFirstIn x.substring(70,x.length)).getOrElse("").trim)
+      val query =  for {x <- hitListNew} yield (queryPattern findFirstIn x.substring(72,x.length)).getOrElse("").trim
+      val template = for{x <- hitListNew} yield (templatePattern findFirstIn x.substring(80,x.length)).getOrElse("").trim
 
+      HitList(hits.toList, probs.toList, evals.toList, pvals.toList, score.toList, ss.toList, cols.toList, query.toList, template.toList)
 
     }
-
-
+    
   }
 
   class AlignmentsParser extends RegexParsers {
@@ -134,7 +145,7 @@ object HeaderParser {
   private val parser = new HeaderParser
 
   def fromFile( fn: String ) : HHR.Header = {
-    val lines = scala.io.Source.fromFile(fn).getLines().take(8).mkString("\n")
+    val lines = scala.io.Source.fromFile(fn).getLines().take(8).mkString("\n") // ensures to have selected only reserved words on top of the file
     fromString( lines )
   }
 
