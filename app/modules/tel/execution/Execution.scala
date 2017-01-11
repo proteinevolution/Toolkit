@@ -7,6 +7,9 @@ import better.files._
 import modules.tel.TELRegex
 import java.nio.file.attribute.PosixFilePermission
 
+import modules.tel.env.Env
+import play.api.Logger
+
 import scala.sys.process.Process
 
 sealed trait Execution
@@ -16,7 +19,7 @@ case class RunningExecution(terminate: () => Boolean) extends Execution
 
 
 @Singleton
-class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath : String) extends TELRegex {
+class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath : String, env: Env) extends TELRegex {
 
   private final val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE)
 
@@ -34,7 +37,10 @@ class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath : Stri
       val run = {() =>
         // Start the wrapper
         val wrapper = file / "wrapper.sh"
-        wrapper.write(runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString,"runscript.sh"))
+
+        wrapper.write(envString.replaceAllIn(runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString, runscript.pathAsString), m =>
+          env.get(m.group("constant"))
+        ))
         wrapper.setPermissions(filePermissions)
         val proc = Process(wrapper.pathAsString, file.toJava).run()
 

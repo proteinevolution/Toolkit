@@ -144,13 +144,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       // the jobid needs to be added to the parameters
       val extendedParams = params + ("jobid" -> jobID)
 
-      /*
-      FileInputStream fis = new FileInputStream("map.ser");
-      ObjectInputStream ois = new ObjectInputStream(fis);
-      Map anotherMap = (Map) ois.readObject();
-    ois.close();
-    */
-
       // Make a new JobObject
       this.currentJob = Some(Job(mainID = BSONObjectID.generate(),
                             sgeID       = "",
@@ -207,6 +200,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       oos.writeObject(extendedParams)
       oos.close()
 
+
+
       // Clear old watchers and insert job owner
       watchers = HashSet.empty[ActorRef]
       userWithWS match {
@@ -217,7 +212,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       // Fetch the runscript for the job Execution and provide injected environment
       val runscript = runscriptManager(toolname).withEnvironment(env)
 
-
       // Representation of the current State of the job submission
       var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map { t =>
         t._1 -> (t._2 -> None)
@@ -227,11 +221,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
         parameters  = supply(paramName, value, parameters)
       }
 
-
       // If the provision of the parameters is Complete, we can generate a pending execution and submit it
       // to the execution context
       if(isComplete(parameters)) {
-
         val pendingExecution = wrapperExecutionFactory.getInstance(runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
         executionContext.get.accept(pendingExecution)
         val x = executionContext.get.executeNext

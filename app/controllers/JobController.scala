@@ -186,7 +186,6 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
         case None =>
           val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
           master ! CreateJob(jobID, (user, None), RunscriptData(toolname, formData))
-          val queuedState = s"curl -X POST http://${tel.hostname}:${tel.port}/jobs/queued/$jobID".!!
           Ok
       }
     }
