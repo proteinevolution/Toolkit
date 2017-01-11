@@ -26,11 +26,12 @@ sealed trait JobIDProvider {
 class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
                                   val jobDao : JobDAO) extends JobIDProvider with CommonModule {
 
-  case class CustomException(message: String = "", cause: Throwable = null)
-    extends Exception(message, cause)
+  case class JobIdException(message: String = "", cause: Throwable = null) extends Exception(message, cause)
+
 
   private[this] def candIt : Iterator[Set[String]] =
     Iterator.continually[Set[String]](Stream.continually(Random.nextInt(9999999).toString.padTo(7, '0')).take(100).toSet)
+
 
   // Gives the first jobID which does not already exist in the database
 
@@ -50,8 +51,11 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
         okSet = set.diff(usedSet) // clean set
 
         if(okSet.isEmpty)
-          throw CustomException("generated Ids already taken, retry...")
+
+          throw JobIdException("generated jobIds already taken, retry...") // this exception is thrown to start the retry
+
         else
+
           okSet.head
 
       }
