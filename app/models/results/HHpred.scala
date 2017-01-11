@@ -31,7 +31,7 @@ object HHpred extends Constants {
   }
 
 
-  def hitlist(jobID: String) = {
+  def hitlist(jobID: String) : HHR.HitList = {
 
     val outfile = s"$jobPath$jobID/results/hhsearch.hhr"
 
@@ -41,6 +41,6 @@ object HHpred extends Constants {
 
   }
 
-  def alignments = ???
+  def alignments(jobId: String) = ???
 
 }
