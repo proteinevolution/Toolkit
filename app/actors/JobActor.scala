@@ -14,7 +14,7 @@ import better.files._
 import controllers.UserSessions
 import modules.LocationProvider
 import modules.tel.env.Env
-import modules.tel.execution.{WrapperExecution, ExecutionContext}
+import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
@@ -22,7 +22,7 @@ import play.api.cache.{CacheApi, NamedCache}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
-import scala.collection.mutable
+import scala.collection.immutable.HashSet
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -48,7 +48,7 @@ object JobActor {
   // Data that the JobActor operates on
   sealed trait JobActorData
   case object Nothing extends JobActorData
-  case class  DeletableExecution(process: scala.sys.process.Process, delete: Option[scala.sys.process.ProcessBuilder]) extends JobActorData
+  case class  JobRunningData(runningExecution: RunningExecution) extends JobActorData
   case object SomeData extends  JobActorData
 
   trait Factory {
@@ -66,7 +66,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
                           env: Env, // To supply the runscripts with an environment
                           val reactiveMongoApi: ReactiveMongoApi,
                           val jobDao : JobDAO,
-                          wrapperExecutionFactory: WrapperExecution.Factory,
+                          wrapperExecutionFactory: WrapperExecutionFactory,
                           implicit val locationProvider: LocationProvider,
                           @NamedCache("userCache") implicit val userCache : CacheApi,
                           @Named("master") master: ActorRef)
@@ -79,7 +79,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
   var executionContext: Option[ExecutionContext] = None
 
   // All actors that are currently monitoring this job
-  val watchers : mutable.Set[ActorRef] = mutable.Set[ActorRef]()
+  protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
 
 
   /** Supplies a value for a particular Parameter. Returns params again if the parameter
@@ -196,7 +196,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
       // Add Job to user
       modifyUser(BSONDocument(User.IDDB -> userID),
-        BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID)))
+        BSONDocument("$push" -> BSONDocument(User.JOBS -> this.currentJob.get.mainID)))
 
       this.executionContext = Some(ExecutionContext(jobPath/jobID))
 
@@ -208,9 +208,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       oos.close()
 
       // Clear old watchers and insert job owner
-      this.watchers.clear()
+      watchers = HashSet.empty[ActorRef]
       userWithWS match {
-        case (_, Some(actorRef)) => this.watchers.add(actorRef)
+        case (_, Some(actorRef)) => watchers = watchers + actorRef
         case (_, None) => 
       }
 
@@ -228,15 +228,18 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       }
 
 
+      // If the provision of the parameters is Complete, we can generate a pending execution and submit it
+      // to the execution context
       if(isComplete(parameters)) {
 
-        executionContext.get.accept(wrapperExecutionFactory(runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument])))))
+        val pendingExecution = wrapperExecutionFactory.getInstance(runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
+        executionContext.get.accept(pendingExecution)
         val x = executionContext.get.executeNext
-        goto(Employed(Running)) using DeletableExecution(x.processbuilder.run(), x.delete)
+        goto(Employed(Running)) using JobRunningData(x.run())
 
       } else {
 
-        // TODO Implement Me
+        // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
         Logger.info("STAY")
         stay using SomeData
       }
@@ -247,17 +250,15 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
 
     // Deletion of running Job requested
-    case Event(Delete, DeletableExecution(process, delete)) =>
+    case Event(Delete, JobRunningData(runningExecution)) =>
 
-      process.destroy()
-      if(delete.isDefined) {
-        delete.get.!
-      }
+      // TODO Maybe report whether JobDeletion was successful
+      runningExecution.terminate()
       goto(Unemployed)
 
     // No longer notify user when job state changes
     case Event(StopWatch(actorRef), _) =>
-      this.watchers.remove(actorRef)
+      watchers = watchers - actorRef
 
       stay()
 
@@ -267,6 +268,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
         this.updateJobState(state)
 
         state match {
+
+          case Queued => // sometimes jobs return from running to queued
 
           case Running => // Nothing to do here
 
@@ -293,7 +296,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       master ! WorkerDoneWithJob(this.currentJob.get.jobID)
       this.currentJob = None
       this.executionContext = None
-      this.watchers.clear()
+      watchers = HashSet.empty[ActorRef]
   }
 
   initialize()

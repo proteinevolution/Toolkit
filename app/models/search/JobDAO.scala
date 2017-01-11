@@ -73,6 +73,13 @@ class JobDAO @Inject()(cs: ClusterSetup,
     }
   }
 
+
+  def multiExistsJobID(set : Traversable[String]) : Future[RichSearchResponse] = {
+    client.execute {
+        search in jobIndex query termsQuery("jobID", set.toSeq: _* ) // opt: "limit 100"
+    }
+  }
+
   // Simple multiple jobID search
   def getJobIDs(jobIDs : List[String]): Future[RichSearchResponse] = {
     client.execute{

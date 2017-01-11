@@ -6,14 +6,14 @@
 
 if [ -d  %NR ] ; then
 
-for f in %NR/*.pin ; do 
+for f in %NR/*.pal ; do
  
-     DBNAME=$(echo $f | sed 's/.pin//')
+     DBNAME=$(echo $f | sed 's/.pal//')
     
      # Database must exist and be a regular file
      if [ -f $DBNAME ] ; then
-
-	    echo "$DBNAME $(basename $DBNAME)" 	
+        fbname=$(basename "$DBNAME")
+	    echo "$DBNAME $fbname"
      fi
 done
 

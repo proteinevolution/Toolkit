@@ -14,14 +14,16 @@ import modules.LocationProvider
 import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
+import modules.tel.TEL
 
+import sys.process._
 
 
 /**
@@ -36,6 +38,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
                                implicit  val locationProvider: LocationProvider,
                                @Named("master") master: ActorRef,
                                val jobDao           : JobDAO,
+                               val tel : TEL,
                                @NamedCache("jobitem") jobitemCache : CacheApi,
                                @NamedCache("jobActorCache") val jobActorCache: CacheApi,
                                val reactiveMongoApi: ReactiveMongoApi)
@@ -47,7 +50,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
     *  Loads one minified version of a job to the view, given the jobID
     *
     */
-  def loadJob(jobID : String) = Action.async { implicit request =>
+  def loadJob(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
 
       Logger.info("Trying to load job")
 
@@ -59,7 +62,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
 
 
 
-  def listJobs = Action.async { implicit request =>
+  def listJobs : Action[AnyContent] = Action.async { implicit request =>
 
     getUser.flatMap { user =>
 
@@ -75,7 +78,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
   }
 
 
-  def check(toolname: String, jobID: Option[String]) = Action.async { implicit request =>
+  def check(toolname: String, jobID: Option[String]) : Action[AnyContent] = Action.async { implicit request =>
 
     Logger.info("Check controller reached")
 
@@ -171,7 +174,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
   }
 
 
-  def create(toolname: String, jobID: String) =  Action.async { implicit request =>
+  def create(toolname: String, jobID: String) : Action[AnyContent] =  Action.async { implicit request =>
 
     // Just grab the formData and send to Master
     getUser.flatMap { user =>
@@ -183,6 +186,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
         case None =>
           val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
           master ! CreateJob(jobID, (user, None), RunscriptData(toolname, formData))
+          val queuedState = s"curl -X POST http://${tel.hostname}:${tel.port}/jobs/queued/$jobID".!!
           Ok
       }
     }

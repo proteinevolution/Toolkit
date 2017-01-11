@@ -8,10 +8,14 @@ import actors.Master.JobMessage
 import models.database._
 import modules.CommonModule
 import org.joda.time.DateTime
+import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import scala.concurrent.ExecutionContext.Implicits.global
+
+
 
 /*
 TODO
@@ -48,8 +52,19 @@ final class Jobs @Inject()(@Named("master") master: ActorRef,
     Ok
   }
 
+
   def SGEID(jobID: String, sgeID: String) = Action {
-    //jobManager ! AddSGEjobID(reactivemongo.bson.BSONObjectID.parse(jobID).get, sgeID)
+
+    findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
+
+      case Some(job) =>
+        modifyJob(BSONDocument(Job.JOBID -> job.jobID),
+          BSONDocument("$set" -> BSONDocument(Job.SGEID -> sgeID)))
+        Logger.info(jobID + " gets job-ID " + sgeID + " on SGE")
+      case None =>
+        Logger.info("Unknown ID " + jobID.toString)
+    }
+
     Ok
 
   }

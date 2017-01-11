@@ -7,11 +7,12 @@ import models.auth._
 import models.mailing.NewUserWelcomeMail
 import modules.LocationProvider
 import modules.common.RandomString
+import modules.tel.TEL
 import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.libs.mailer._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson._
@@ -30,6 +31,7 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
                    implicit val mailerClient     : MailerClient,
                                 implicit val locationProvider: LocationProvider,
 @NamedCache("userCache") implicit val userCache  : CacheApi,
+                                val tel : TEL,
                             val reactiveMongoApi : ReactiveMongoApi) // Mailing Controller
         extends Controller with I18nSupport
                            with JSONTemplate
@@ -62,7 +64,7 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
     *
     * @return
     */
-  def miniProfile() = Action.async { implicit request =>
+  def miniProfile() : Action[AnyContent] = Action.async { implicit request =>
     getUser.map { user =>
       user.userData match {
         case Some(userData) =>
@@ -79,7 +81,7 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
     *
     * @return
     */
-  def signOut() = Action.async { implicit request =>
+  def signOut() : Action[AnyContent] = Action.async { implicit request =>
     getUser.map { user =>
       removeUser(user)
 
@@ -94,7 +96,7 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
     *
     * @return
     */
-  def profile() = Action.async { implicit request =>
+  def profile() : Action[AnyContent] = Action.async { implicit request =>
     getUser.map { user =>
       user.userData match {
         case Some(userData) =>
@@ -114,7 +116,7 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
     *
     * @return
     */
-  def signInSubmit() = Action.async { implicit request =>
+  def signInSubmit() : Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { unregisteredUser =>
     // Evaluate the Form
     FormDefinitions.SignIn.bindFromRequest.fold(
@@ -176,7 +178,7 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
     *
     * @return
     */
-  def signUpSubmit() = Action.async { implicit request =>
+  def signUpSubmit() : Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
       FormDefinitions.SignUp(user).bindFromRequest.fold(
         errors =>
@@ -209,7 +211,7 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
                 modifyUser(selector,modifier).map {
                   case Some(registeredUser) =>
                     // All done. User is registered, now send the welcome eMail
-                    val eMail = NewUserWelcomeMail(registeredUser, registeredUser.userTokens.head.token)
+                    val eMail = NewUserWelcomeMail(tel, registeredUser, registeredUser.userTokens.head.token)
                     eMail.send
                     // Make sure the Cache is updated
                     updateUserCache(registeredUser)
@@ -229,7 +231,7 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
  *
     * @return
     */
-  def profileSubmit() = Action.async { implicit request =>
+  def profileSubmit() : Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
       user.userData match {
         case Some(userData) =>
@@ -293,7 +295,7 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
   }
 
   // Mock up function to let a user access to a page only when they are logged in as a user with certain rights
-  def backendAccess() = Action.async { implicit request =>
+  def backendAccess() : Action[AnyContent] = Action.async { implicit request =>
     getUser.map { user =>
       if (user.isSuperuser) {
         NoCache(Redirect(routes.Backend.access))

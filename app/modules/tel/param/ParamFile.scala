@@ -57,7 +57,7 @@ class ExecGenParamFile(name : String,  path : String) extends GenerativeParamFil
 
   private var env: Option[Env] = None
   import scala.sys.process.Process
-  // Load file upon instantiationo
+  // Load file upon instantiation
   this.load()
 
   override def withEnvironment(env: Env):ExecGenParamFile = {
@@ -98,7 +98,7 @@ class ListGenParamFile(name : String, path : String) extends GenerativeParamFile
 
   private val f = path.toFile
 
-  override def withEnvironment(env: Env) = this
+  override def withEnvironment(env: Env) : ListGenParamFile = this
 
   // Load file upon instantiation
   this.load()
@@ -120,6 +120,6 @@ class ListGenParamFile(name : String, path : String) extends GenerativeParamFile
     }.toSet
   }
 
-  def generate = this.clearTextNames
+  def generate : Map[String, String] = this.clearTextNames
 }
 
