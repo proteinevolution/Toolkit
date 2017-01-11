@@ -65,7 +65,7 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
   val provideTask: Task[Future[String]] = Task.delay(provideTry)
 
-  val retryTask: Task[Future[String]] = provideTask.retry(Seq(5.millis, 10.millis, 15.millis, 20.millis)) // retries 4 times
+  val retryTask: Task[Future[String]] = provideTask.retry(Seq(1.millis, 1.millis, 1.millis, 1.millis)) // retries 4 times
 
   def provide: Future[String] = retryTask.unsafePerformSync
 
