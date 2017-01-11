@@ -18,24 +18,24 @@ psiblast -db %standarddb.content \
 
 # create HTML and PNG for blastviz visualisation
 
-
-perl blastviz.pl ../results/out.psiblastp %jobid.content ../results ../files/%jobid.content >> ../logs/blastviz.log
+blastviz.pl ../results/out.psiblastp %jobid.content ../results ../files/%jobid.content >> ../logs/blastviz.log
 
 # extract alignment from
 
 PERL5LIB=%PERLLIB
-perl alignhits_html.pl ../results/out.psiblastp ../results/out.align -e %evalue.content -fas -no_link -blastplus
+alignhits_html.pl ../results/out.psiblastp ../results/out.align -e %evalue.content -fas -no_link -blastplus
 
 # reformat alignment to clustal
-perl reformat.pl -i=fas \
+reformat.pl -i=fas \
                  -o=clu \
                  -f=../results/out.align \
                  -a=../results/out.align_clu
 
-%SCALA psiblastpPostProcess.scala ../results/out.psiblastp
+%SCALA %HELPER/psiblastpPostProcess.scala ../results/out.psiblastp
 
 # Produce new PSIBLAST Overview
-python parse_BLAST_HTML.py ../results/out.psiblastp > ../results/out.psiblastp_overview
+
+parse_BLAST_HTML.py ../results/out.psiblastp > ../results/out.psiblastp_overview
 
 # Produce some extra files:
 < ../results/out.psiblastp grep Expect | awk '{ print $8; }' | sed 's/,$//' > ../results/evalues.dat
