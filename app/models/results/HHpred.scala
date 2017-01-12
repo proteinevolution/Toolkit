@@ -41,6 +41,14 @@ object HHpred extends Constants {
 
   }
 
-  def alignments(jobId: String) = ???
+  def alignments(jobID: String) : HHR.Alignments = {
+
+    val outfile = s"$jobPath$jobID/results/hhsearch.hhr"
+
+    lazy val alignmentsObj = AlignmentsParser.fromFile(outfile)
+
+    alignmentsObj
+
+  }
 
 }
