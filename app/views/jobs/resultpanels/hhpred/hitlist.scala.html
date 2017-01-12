@@ -7,7 +7,6 @@
 
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
 
-
 <table style="width:100%">
     <tr>
         <th>Job: @jobID</th>
@@ -43,11 +42,10 @@
     </tr>
 </table>
 
-
 <table>
         <tr>
             <th>No</th>
-            <th>Hits</th>
+            <th>S</th>
             <th>Probs</th>
             <th>Evals</th>
             <th>Pvals</th>
@@ -59,7 +57,7 @@
         </tr>
         @for((x,i) <- HHpred.hitlist(jobID).Hits.zipWithIndex) {
             <tr>
-                <td>@i</td>
+                <td>@(i+1)</td>
                 <td>@HHpred.hitlist(jobID).Hits(i)</td>
                 <td>@HHpred.hitlist(jobID).Probs(i)</td>
                 <td>@HHpred.hitlist(jobID).Evals(i)</td>
@@ -71,4 +69,40 @@
                 <td>@HHpred.hitlist(jobID).Template_HMMs(i)</td>
             </tr>
         }
+</table>
+
+
+<table style="font-weight: bold">
+    @for((x,i) <- HHpred.alignments(jobID).Headers.zipWithIndex) {
+        <tr>
+            <td>No @(i+1)</td>
+        </tr>
+        <tr>
+            <td>@HHpred.alignments(jobID).Headers(i)</td>
+        </tr>
+        <tr>
+            <td>@HHpred.alignments(jobID).QuerySeqs(i)</td>
+        </tr>
+        <tr>
+            <td>@HHpred.alignments(jobID).QueryCon(i)</td>
+        </tr>
+        <tr>
+            <td>@HHpred.alignments(jobID).QueryCon2(i)</td>
+        </tr>
+        <tr>
+            <td>@HHpred.alignments(jobID).TemplateCon(i)</td>
+        </tr>
+        <tr>
+            <td>@HHpred.alignments(jobID).TemplateSeqs(i)</td>
+        </tr>
+        <tr>
+            <td>@HHpred.alignments(jobID).TemplateDSSP(i)</td>
+        </tr>
+        <tr>
+            <td>@HHpred.alignments(jobID).TemplatePRED(i)</td>
+        </tr>
+        <tr>
+            <td>@HHpred.alignments(jobID).Confidence(i)</td>
+        </tr>
+    }
 </table>

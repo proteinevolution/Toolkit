@@ -1,13 +1,8 @@
 package modules.parsers.HHR
 
-
 import java.util.regex.Pattern
 import java.util.regex.Matcher
-
-import modules.parsers.HHR.HHR.{Header, HeaderParser, HitListParser}
-
-import scala.util.matching.Regex
-import scala.util.parsing.combinator.RegexParsers
+import modules.parsers.HHR.HHR.{AlignmentsParser, Header, HeaderParser, HitListParser}
 
 /**
   * Created by zin on 20.12.16.
@@ -39,11 +34,13 @@ object HHR {
   case class Alignments(Headers: List[String],
                         QuerySeqs : List[String],
                         QueryCon: List[String],
+                        QueryCon2: List[String],
                         TemplateCon: List[String],
                         TemplateSeqs : List[String],
                         TemplateDSSP : List[String],
                         TemplatePRED : List[String],
                         Confidence: List[String])
+
 
 
   class HeaderParser extends Serializable {
@@ -56,7 +53,7 @@ object HHR {
     private val Date = Pattern.compile("""(?m)^Date(.*?)\n""")
     private val Command = Pattern.compile("""(?m)^Command(.*?)\n""")
 
-    def parseRecord(record: String) :  HHR.Header = {
+    def parseRecord(record: String) : HHR.Header = {
 
       lazy val matcher1 = Query.matcher(record)
       lazy val matcher2 = Match_columns.matcher(record)
@@ -75,12 +72,6 @@ object HHR {
         HeaderParser.nullObjectHeaderRecord
       }
     }
-
-
-    /** TODO refactor the builder. Actually one matcher should be enough and a combined regex should cover the whole header
-      * by grouping like in this example:
-      * https://github.com/alvinj/ScalaApacheAccessLogParser/blob/master/src/main/scala/AccessLogParser.scala
-      */
 
 
     private def buildHeaderRecord(matcher1: Matcher, matcher2: Matcher, matcher3: Matcher,
@@ -115,25 +106,45 @@ object HHR {
       //val hitListNew = hitlist_trimmed.split("\n").drop(1).mkString("\n")
       val hitListNew = hitlist_trimmed.split("\n").drop(1)
 
-      val hits = for {x <- hitListNew} yield x.substring(4,34).trim
-      val probs = for {x <- hitListNew} yield x.substring(36,41).trim
-      val evals = for {x <- hitListNew } yield (evalPattern findFirstIn x).getOrElse("").trim
-      val pvals = for {x <- hitListNew} yield (pvalPattern findFirstIn x.substring(46,x.length)).getOrElse("").trim
-      val score = for {x <- hitListNew} yield (scorePattern findFirstIn x.substring(57,x.length)).getOrElse("").trim
-      val ss = for {x <- hitListNew} yield (ssPattern findFirstIn x.substring(61, x.length)).getOrElse("").trim
-      val cols = for {x <- hitListNew} yield Integer.parseInt((colPattern findFirstIn x.substring(70,x.length)).getOrElse("").trim)
-      val query =  for {x <- hitListNew} yield (queryPattern findFirstIn x.substring(72,x.length)).getOrElse("").trim
-      val template = for{x <- hitListNew} yield (templatePattern findFirstIn x.substring(80,x.length)).getOrElse("").trim
+
+      lazy val hits = for {x <- hitListNew} yield x.substring(4,34).trim
+      lazy val probs = for {x <- hitListNew} yield x.substring(36,41).trim
+      lazy val evals = for {x <- hitListNew } yield (evalPattern findFirstIn x).getOrElse("").trim
+      lazy val pvals = for {x <- hitListNew} yield (pvalPattern findFirstIn x.substring(46,x.length)).getOrElse("").trim
+      lazy val score = for {x <- hitListNew} yield (scorePattern findFirstIn x.substring(57,x.length)).getOrElse("").trim
+      lazy val ss = for {x <- hitListNew} yield (ssPattern findFirstIn x.substring(61, x.length)).getOrElse("").trim
+      lazy val cols = for {x <- hitListNew} yield Integer.parseInt((colPattern findFirstIn x.substring(70,x.length)).getOrElse("").trim)
+      lazy val query =  for {x <- hitListNew} yield (queryPattern findFirstIn x.substring(72,x.length)).getOrElse("").trim
+      lazy val template = for{x <- hitListNew} yield (templatePattern findFirstIn x.substring(80,x.length)).getOrElse("").trim
 
       HitList(hits.toList, probs.toList, evals.toList, pvals.toList, score.toList, ss.toList, cols.toList, query.toList, template.toList)
 
     }
-    
+
   }
 
-  class AlignmentsParser extends RegexParsers {
+  class AlignmentsParser extends Serializable {
 
-    // TODO
+
+    def splitStringEvery(s : String, interval : Int) : Array[Array[String]] = {
+
+      val eachLineSep = s.split("\n")
+
+      val groupedByInt = eachLineSep.grouped(interval).toArray
+
+      groupedByInt
+    }
+
+    def parse(lines: String) : HHR.Alignments = {
+
+      val alignmentslist = """(?s)No 1(.*?)\z""".r.findFirstIn(lines).get
+      lazy val blocks = splitStringEvery(alignmentslist, 14)
+      lazy val alignments = for {block <- blocks}
+        yield List((block(1)+block(2)+block(3)).trim, block(4).trim, block(5).trim, block(6).trim, block(7).trim, block(8), block(9), block(10), block(11) )
+      lazy val result = alignments.toList.transpose
+      Alignments(result.head, result(1), result(2), result(3), result(4), result(5), result(6), result(7), result(8))
+
+    }
   }
 }
 
@@ -142,7 +153,7 @@ object HeaderParser {
 
   private[HHR] val nullObjectHeaderRecord = Header("", 0, "", "", 0, "", "")
 
-  private val parser = new HeaderParser
+  private[this] val parser = new HeaderParser
 
   def fromFile( fn: String ) : HHR.Header = {
     val lines = scala.io.Source.fromFile(fn).getLines().take(8).mkString("\n") // ensures to have selected only reserved words on top of the file
@@ -157,22 +168,28 @@ object HeaderParser {
 
 object HitListParser {
 
-  // TODO
+  private[this] val parser = new HitListParser
 
-  private val parser = new HitListParser
-
-  def fromFile( fn: String ) = {
+  def fromFile( fn: String ) : HHR.HitList = {
     val lines = scala.io.Source.fromFile(fn).getLines().mkString("\n")
     fromString( lines )
   }
 
-  def fromString(lines: String) = parser.parse(lines)
+  def fromString(lines: String) : HHR.HitList = parser.parse(lines)
 
 }
 
-object AlginmentsParser {
+object AlignmentsParser {
 
-  // TODO
+  private[this] val parser = new AlignmentsParser
+
+  def fromFile( fn: String ) : HHR.Alignments = {
+    val lines = scala.io.Source.fromFile(fn).getLines().mkString("\n")
+    fromString( lines )
+  }
+
+  def fromString(lines: String) : HHR.Alignments = parser.parse(lines)
+
 }
 
 /*
