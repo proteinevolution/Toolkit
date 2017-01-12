@@ -1,5 +1,7 @@
 package modules.analysis.distances
 
+import play.api.Logger
+
 /**
   * Jensen Shannon Divergence
   *
@@ -12,10 +14,16 @@ object JensenShannon {
     var sumP : Double = 0.0
     var sumQ : Double = 0.0
 
-    for (i <- p.indices) {
-      sumP += p(i) * Math.log( (2*p(i))/(p(i)+q(i)))
-      sumQ += q(i) * Math.log (2*q(i)/(p(i)+q(i)))
+    if (p.length == q.length) {
+      for (i <- p.indices) {
+        sumP += p(i) * Math.log((2 * p(i)) / (p(i) + q(i)))
+        sumQ += q(i) * Math.log(2 * q(i) / (p(i) + q(i)))
+      }
     }
+
+    else
+      Logger.warn("inputs don't have same lengths")
+
     sumP + sumQ
   }
 
