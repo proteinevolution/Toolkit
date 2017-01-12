@@ -487,6 +487,15 @@ ParameterNumberComponent =
 
     ]
 
+ParameterBoolComponent =
+
+  view: (ctrl, args) ->
+    renderParameter [
+      m "label", {for: args.id}, args.label
+      m "input", {type: "checkbox", id: args.id, name: args.name, value: args.value}
+    ]
+
+
 
 
 ##############################################################################
@@ -669,4 +678,12 @@ formComponents =
     label: "Choose a genetic code"
     options: args.options
     value: args.value
+  ]
+  "long_seq_name": (args) -> [
+    ParameterBoolComponent
+  ,
+    name: "long_seq_name"
+    id: "long_seq_name"
+    label: "Use long names?"
+    value: "long_seq_name"
   ]

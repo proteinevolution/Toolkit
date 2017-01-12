@@ -426,7 +426,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT, Param.LONG_SEQ_NAME)
 
-    val results = Seq.empty[String]
+    val results = Seq("Tree")
   }
   case object CLANS extends ToolModel {
 
