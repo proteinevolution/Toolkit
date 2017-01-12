@@ -26,6 +26,8 @@ export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/tcoffee/bin:$
 export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/backtranslate:${PATH}" # Backtranslate
 export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/helpers:${PATH}" # Helpers
 export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/ncbi-blast-2.5.0+/bin:${PATH}" # NCBI-BLAST
+export PATH="/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/ancescon:${PATH}" # ANCESCON
+
 
 # PYTHONPATH FOR PDBX
 export PYTHONPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/pdbx
