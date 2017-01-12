@@ -1,0 +1,31 @@
+@import models.results.Ancescon
+@(jobID: String)(implicit request: RequestHeader)
+
+
+<div id="ancescon_tree">
+</div>
+
+<script>
+
+
+   var parser = require("biojs-io-newick");
+   var treelib =  biojs.vis.tree;
+
+  // Define the Layout
+  var vertical_layout = treelib.tree.layout.vertical();
+  vertical_layout.width(500);
+  vertical_layout.scale(false);
+
+
+
+  var tree = treelib.tree();
+  tree.data(parser.parse_newick('@Ancescon.readTree(jobID)'));
+  tree.on_click(function(node) {
+      node.toggle();
+      tree.update();
+  });
+
+
+  tree(document.getElementById("ancescon_tree"));
+</script>
+
