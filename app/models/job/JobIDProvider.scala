@@ -7,6 +7,7 @@ import models.search.JobDAO
 import modules.CommonModule
 import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.Future
+import scala.concurrent._
 import scala.util.Random
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -33,20 +34,25 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     Iterator.continually[Set[String]](Stream.continually(Random.nextInt(9999999).toString.padTo(7, '0')).take(100).toSet)
 
 
+
+
   // Gives the first jobID which does not already exist in the database
 
 
   def provideTry: Future[String] = {
 
+
     val set = candIt.next()
 
-      jobDao.multiExistsJobID(set).map { richSearchResponse =>
+    jobDao.multiExistsJobID(set).map { richSearchResponse =>
 
         lazy val foundIds = for {x <- richSearchResponse.getHits.hits()} yield x.getSource.get("jobID").toString
 
         val usedSet = foundIds.toSet // exclude these jobIds from being reused again
 
         lazy val okSet = set.diff(usedSet) // clean set
+
+
 
         if(okSet.isEmpty)
 
@@ -67,4 +73,55 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
   def provide: Future[String] = retryTask.unsafePerformSync
 
+
+
+
+
+
+
+
+  // -- alternative solution:
+
+
+  // checks elasticsearch whether the string exists in the collection
+
+  def checkES(id : String) : Boolean = {
+
+    val result = jobDao.existsJobID(id).map { richSearchResponse =>
+      if(richSearchResponse.hits.length != 0)
+        true
+      else
+        false
+    }
+
+    Await.result(result, scala.concurrent.duration.Duration(1, "millis"))
+
+  }
+
+  def provide2 : Future[String] = {
+
+    Future {
+
+      val jobIdStream = Iterator.continually[Set[String]](Stream.continually(Random.nextInt(9999999).toString.padTo(7, '0'))
+        .takeWhile(!checkES(_)).toSet)
+
+      jobIdStream.next().head
+    }
+
+  }
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
