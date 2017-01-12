@@ -100,16 +100,17 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
   def provide2 : Future[String] = {
 
-    Future {
+
 
       val jobIdStream = Iterator.continually[Set[String]](Stream.continually(Random.nextInt(9999999).toString.padTo(7, '0'))
-        .takeWhile(checkES(_)).toSet)
+        .takeWhile(x => checkES(x)).toSet)
+
+    Future {
 
       jobIdStream.next().head
+
     }
 
   }
-
-
 
 }
