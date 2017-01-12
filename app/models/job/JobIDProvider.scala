@@ -103,7 +103,7 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     Future {
 
       val jobIdStream = Iterator.continually[Set[String]](Stream.continually(Random.nextInt(9999999).toString.padTo(7, '0'))
-        .takeWhile(!checkES(_)).toSet)
+        .takeWhile(checkES(_)).toSet)
 
       jobIdStream.next().head
     }
@@ -113,15 +113,3 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
