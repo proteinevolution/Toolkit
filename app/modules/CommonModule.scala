@@ -46,6 +46,7 @@ trait CommonModule extends ReactiveMongoComponents {
     jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
+
   protected def selectJob(jobID: String): Future[Option[Job]] = {
 
     jobCollection
