@@ -1,6 +1,5 @@
 package controllers
 
-import javax.inject.Inject
 
 import models.database.{SessionData, User}
 import modules.{CommonModule, LocationProvider}
@@ -38,6 +37,7 @@ trait UserSessions extends CommonModule {
 
     findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user)   =>
+        Logger.info("User found by SessionID")
         val selector = BSONDocument(User.IDDB          -> user.userID)
         val modifier = BSONDocument("$set"             ->
                        BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
@@ -45,12 +45,13 @@ trait UserSessions extends CommonModule {
                        BSONDocument(User.SESSIONDATA   -> newSessionData))
         modifyUser(selector,modifier).map {
           case Some(updatedUser) =>
-            userCache.set(updatedUser.sessionID.get.stringify, updatedUser, 10.minutes)
+            //userCache.set(updatedUser.sessionID.get.stringify, updatedUser, 10.minutes) // TODO I think we should for for now remove the UserCache
             updatedUser
           case None =>
             user
         }
       case None =>
+        Logger.info("User is new")
         val user = User(userID        = BSONObjectID.generate(),
                         sessionID     = Some(sessionID),
                         connected     = true,

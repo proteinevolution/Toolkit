@@ -23,9 +23,6 @@ import scala.concurrent.Future
 import better.files._
 import modules.tel.TEL
 
-import sys.process._
-
-
 /**
   * Created by lzimmermann on 02.12.16.
   */
@@ -52,8 +49,8 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
     */
   def loadJob(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
 
-      Logger.info("Trying to load job")
-
+        // TODO Load job has to notify master, that user again belongs to the watchlist
+        // TODO Ensure that deleted Jobs cannot be loaded
         selectJob(jobID).map {
           case Some(job) => Ok(job.cleaned())
           case None => NotFound
@@ -61,17 +58,10 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
   }
 
 
-
   def listJobs : Action[AnyContent] = Action.async { implicit request =>
 
     getUser.flatMap { user =>
-
-        Logger.info("User is associated with " + user.jobs.size + " jobs")
-
-        findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-
-          Logger.info("We have found " + jobs.size + " jobs")
-
+        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
           Ok(Json.toJson( jobs.map(_.cleaned())))
         }
     }
@@ -194,7 +184,7 @@ class JobController @Inject() (jobIDProvider: JobIDProvider,
 
   // TODO  Ensure that user is allowed to delete Job
   // TODO introduce jobActor Cache
-
+  // TODO Set the correct delete flag in the database
   def delete(jobID : String ) = Action {
 
     Logger.info("Delete Action in JobController reached")
