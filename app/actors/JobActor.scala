@@ -189,8 +189,11 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
       // Add Job to user
       modifyUser(BSONDocument(User.IDDB -> userID),
-        BSONDocument("$push" -> BSONDocument(User.JOBS -> this.currentJob.get.mainID)))
+        BSONDocument("$push" -> BSONDocument(User.JOBS -> this.currentJob.get.jobID))).map {user =>
 
+        Logger.info("User has the following Jobs: " + user.get.jobs.mkString(";"))
+      }
+      Logger.info("After modify user")
       this.executionContext = Some(ExecutionContext(jobPath/jobID))
 
       // Store the extended Parameters in the working directory for faster reloading
