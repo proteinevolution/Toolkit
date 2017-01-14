@@ -114,9 +114,13 @@ renderParameter = (content, moreClasses) ->
 
 # Encompasses the individual sections of a Job, usually rendered as tabs
 JobTabsComponent =
-  controller: (args) ->
+  model:  ->
+    isFullscreen: m.prop false
+    label: m.prop "Expand"
 
-    # Show parameter tabs in all cases
+  controller: (args) ->
+    mo = new JobTabsComponent.model()
+    # Show parameter tabs in all case
     params = args.job().tool.params
     listitems = (params.filter (param) -> param[1].length != 0).map (param) -> param[0]
 
@@ -149,6 +153,19 @@ JobTabsComponent =
     getParamValue : JobModel.getParamValue
     job : args.job
     active : active
+    getLabel: (-> this.label()).bind(mo)
+    fullscreen: (->
+      job_tab_component = $("#tool-tabs")
+      if(this.isFullscreen())
+        job_tab_component.removeClass("fullscreen")
+        this.isFullscreen(false)
+        this.label("Expand")
+      else
+        job_tab_component.addClass("fullscreen")
+        this.isFullscreen(true)
+        this.label("Collapse")).bind(mo)
+
+
     delete: ->
       jobID = this.job().jobID()
       if confirm "Do you really want to delete this Job (ID: #{jobID})"
@@ -156,22 +173,19 @@ JobTabsComponent =
         Job.delete(jobID)
 
 
-
   view: (ctrl, args) ->
     m "div", {class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl)}, [
 
-# Generate the list of jobsections
       m "ul", [
         ctrl.listitems.map (item) ->
           m "li",  {id: "tab-#{item}"},  m "a", {href: "#tabpanel-#{item}"}, item
 
+        m "li", {style: "float: right;"},
+          m "input", {type: "button", class: "button small button_fullscreen", value: ctrl.getLabel(), onclick: ctrl.fullscreen},
         if ctrl.isJob
           m "li", {style: "float: right;" },
             m "input", {type: "button", class: "button small delete", value: "Delete Job", onclick: ctrl.delete.bind(ctrl)}
       ]
-
-
-
 
 # Generate views for all Parameter groups
       m "form", {id: "jobform"},
@@ -400,31 +414,7 @@ window.ParameterAlignmentComponent =
 
     ], "alignmentParameter"  # TODO Should be a controller argument
 
-###
-  <form action="demo_form.asp">
-  <input type="file" name="pic" accept="image/*">
-  <input type="submit">
-</form>
 
-<div class="reveal" id="exampleModal1" data-reveal>
-  <h1>Awesome. I Have It.</h1>
-  <p class="lead">Your couch. It is mine.</p>
-  <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
-  <button class="close-button" data-close aria-label="Close modal" type="button">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-
-
-  <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
-                    <div id="progress_bar"><div class="percent">0%</div></div>
-                    <input type="file" id="files" name="file" />
-                        <!--<div id="drop_zone" type="file" class="dropzone" name="file" style="margin-top: 10px; text-align: center; line-height: 150px; vertical-align: middle;">Drop files here</div>-->
-                    <output id="list"></output>
-
-
-                </div>
-###
 
 ParameterRadioComponent =
   model: (args) ->
@@ -445,11 +435,6 @@ ParameterRadioComponent =
         m "input", {type: "radio", name: ctrl.name, value: entry[0]}, entry[1]
     ]
 
-###
-<input type="radio" name="gender" value="male" checked> Male<br>
-<input type="radio" name="gender" value="female"> Female<br>
-<input type="radio" name="gender" value="other"> Other
-###
 
 ParameterSelectComponent =
   model: (args) ->
