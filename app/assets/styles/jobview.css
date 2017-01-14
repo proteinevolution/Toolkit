@@ -279,23 +279,6 @@ font-size: 0.65em !important;
     height: 50px;
 }
 
-input.delete {
-    color: #e66f72 !important;
-    background-color: inherit;
-    margin-top: 0.5em;
-}
-input.delete:hover {
-    background-color: inherit;
-    margin-top: 0.5em;
-}
-input.delete:active {
-    background-color: inherit;
-    margin-top: 0.5em;
-}
-input.delete:focus {
-    background-color: inherit;
-    margin-top: 0.5em;
-}
 
 .jobline .toolname {
 
@@ -469,4 +452,44 @@ map[name="blastmap"] area { cursor: pointer; }
         padding-left: 0.5em;
     }
 
+}
+
+/* Side buttons */
+
+input.delete {
+    color: #e66f72 !important;
+    background-color: inherit;
+    margin-top: 0.5em;
+}
+input.delete:hover {
+    background-color: inherit;
+    margin-top: 0.5em;
+}
+input.delete:active {
+    background-color: inherit;
+    margin-top: 0.5em;
+}
+input.delete:focus {
+    background-color: inherit;
+    margin-top: 0.5em;
+}
+
+
+
+input.button_fullscreen{
+    color: darkolivegreen !important;
+    background-color: inherit;
+    margin-top: 0.5em;
+}
+input.button_fullscreen:hover {
+    background-color: inherit;
+    margin-top: 0.5em;
+}
+input.button_fullscreen:active {
+    background-color: inherit;
+    margin-top: 0.5em;
+}
+input.button_fullscreen:focus {
+    background-color: inherit;
+    margin-top: 0.5em;
 }
