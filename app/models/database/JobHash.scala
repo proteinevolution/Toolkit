@@ -15,15 +15,17 @@ import reactivemongo.bson.{BSONDocumentWriter, BSONDocument, BSONDocumentReader,
 case class JobHash(mainID : BSONObjectID,
                    inputHash : String,
                    dbName : Option[String],
-                   dbMtime : Option[String])
+                   dbMtime : Option[String],
+                   toolname: String)
 
 
 object JobHash {
 
-  lazy val ID = "_id"
-  lazy val INPUTHASH = "hash"
-  lazy val DBNAME = "dbname"
-  lazy val DBMTIME = "dbmtime"
+  val ID = "_id"
+  val INPUTHASH = "hash"
+  val DBNAME = "dbname"
+  val DBMTIME = "dbmtime"
+  val TOOLNAME = "toolname"
 
 
   implicit object Reader extends BSONDocumentReader[JobHash] {
@@ -31,7 +33,8 @@ object JobHash {
       mainID = bson.getAs[BSONObjectID](ID).get,
       bson.getAs[String](INPUTHASH).getOrElse("No matching hash value found"),
       bson.getAs[String](DBNAME),
-      bson.getAs[String](DBMTIME)
+      bson.getAs[String](DBMTIME),
+      bson.getAs[String](TOOLNAME).getOrElse("")
     )
   }
 
@@ -40,7 +43,8 @@ object JobHash {
       ID  ->  jobHash.mainID,
       INPUTHASH -> jobHash.inputHash,
       DBNAME -> jobHash.dbName,
-      DBMTIME -> jobHash.dbMtime
+      DBMTIME -> jobHash.dbMtime,
+      TOOLNAME -> jobHash.toolname
     )
   }
 }
