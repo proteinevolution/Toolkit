@@ -237,6 +237,10 @@ JobTabsComponent =
 submitModal = (elem, isInit) ->
   if not isInit
     $(elem).foundation()
+    $(elem).bind('closed.zf.reveal	', (-> $(".submitJob").prop("disabled", false)))
+
+
+
 
 
 JobSubmissionComponent =
@@ -251,6 +255,7 @@ JobSubmissionComponent =
         jobID = null
       checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID)
       formData = new FormData(document.getElementById("jobform"))
+      $(".submitJob").prop("disabled", true)
       m.request
         method: checkRoute.method
         url: checkRoute.url
@@ -290,7 +295,9 @@ JobSubmissionComponent =
               serialize: (data) -> data
             m.route("/jobs/#{jobID}")
 
-        (error) -> alert "Bad Request"
+        (error) ->
+          alert "Bad Request"
+          $(".submitJob").prop("disabled", false)
       )
 
 
