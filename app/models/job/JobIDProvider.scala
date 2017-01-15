@@ -2,10 +2,12 @@ package models.job
 
 import javax.inject.{Inject, Singleton}
 
+import akka.util.Timeout
 import com.google.inject.ImplementedBy
 import models.search.JobDAO
 import modules.CommonModule
 import play.modules.reactivemongo.ReactiveMongoApi
+
 import scala.concurrent.Future
 import scala.concurrent._
 import scala.util.Random
@@ -82,33 +84,36 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
   // -- alternative solution:
 
+  implicit val timeout = Timeout(1.millis)
 
   // checks elasticsearch whether the string exists in the collection
 
   def checkES(id : String) : Boolean = {
 
+
     val result = jobDao.existsJobID(id).map { richSearchResponse =>
-      if(richSearchResponse.hits.length != 0)
-        true
-      else
+
+      println("TEST" + richSearchResponse.totalHits + "for " + id)
+      if(richSearchResponse.totalHits == 0) {
         false
+      }
+
+      else
+        true
+
     }
 
-    Await.result(result, scala.concurrent.duration.Duration(1, "millis"))
+    Await.result(result,timeout.duration)
 
   }
 
+  val x : Iterator[String] = Iterator.continually(Random.nextInt(9999999).toString.padTo(7, '0')).filterNot(x => checkES(x))
+
+
   def provide2 : Future[String] = {
 
-
-
-      val jobIdStream = Iterator.continually[Set[String]](Stream.continually(Random.nextInt(9999999).toString.padTo(7, '0'))
-        .takeWhile(x => checkES(x)).toSet)
-
     Future {
-
-      jobIdStream.next().head
-
+      x.next()
     }
 
   }

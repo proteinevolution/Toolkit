@@ -650,6 +650,15 @@ formComponents =
     value: args.value
     options: args.options
   ]
+  "min_cov": (args) -> [
+    ParameterSelectComponent
+  ,
+    name: "min_cov"
+    id: "min_cov"
+    label: "Min. coverage of hits"
+    value: args.value
+    options: args.options
+  ]
   "hhsuitedb": (args) -> [
     ParameterSelectComponent
   ,

@@ -49,4 +49,5 @@ object Param {
   final val GENETIC_CODE = "genetic_code"
   final val LONG_SEQ_NAME = "long_seq_name"
   final val EVAL_INC_THRESHOLD = "inclusion_ethresh"
+  final val MIN_COV = "min_cov"
 }
