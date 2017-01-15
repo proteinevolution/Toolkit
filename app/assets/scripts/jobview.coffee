@@ -459,7 +459,7 @@ ParameterSelectComponent =
   view: (ctrl, args) ->
     renderParameter [
       m "label", {for: args.id}, args.label
-      m "select", {name: args.name, id: args.id, config: selectBoxAccess}, args.options.map (entry) ->
+      m "select", {name: args.name, class: "wide", id: args.id, config: selectBoxAccess}, args.options.map (entry) ->
         if entry[0] == args.value
           m "option", {value: entry[0], selected: "selected"}, entry[1]
         else
@@ -541,15 +541,6 @@ formComponents =
     name: "evalue"
     id: "evalue"
     label: "E-Value"
-    value: args.value
-  ]
-
-  "inclusion_ethresh": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "inclusion_ethresh"
-    id: "inclusion_ethresh"
-    label: "E-value inclusion threshold"
     value: args.value
   ]
 
@@ -649,6 +640,15 @@ formComponents =
     label: "Select MSA generation method"
     options: args.options
     value: args.value
+  ]
+  "inclusion_ethresh": (args) -> [
+    ParameterSelectComponent
+  ,
+    name: "inclusion_ethresh"
+    id: "inclusion_ethresh"
+    label: "E-value inclusion threshold"
+    value: args.value
+    options: args.options
   ]
   "hhsuitedb": (args) -> [
     ParameterSelectComponent
