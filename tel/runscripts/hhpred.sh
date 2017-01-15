@@ -14,19 +14,67 @@ if [ %msageneration.content == "hhblits" ] ; then
 else
     if [ %msageneration.content == "psiblast" ] ; then
 
+#dependencies in buildali.pl are still wrong atm
+
         buildali.pl -nodssp \
                     -cpu 4 \
                     -v 1 \
                     -n %msa_gen_max_iter.content  \
-                    -diff 1000 %inclusion_ethresh %min_cov \
-                    -a2m #{a2mFile}
+                    -diff 1000 %inclusion_ethresh.content %min_cov.content \
+                    -a2m ../results/query.a2m
+        mv ../results/query.a3m ../results/query.a3m
 
     fi
 fi
 
 
-
 # Here assume that the query alignment exists
+
+###
+
+
+# prepare histograms
+# Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
+hhfilter -i ../results/query.a3m \
+         -o ../results/query.reduced.a3m \
+         -diff 100
+
+# max. 160 chars in description
+reformat_hhsuite.pl a3m fas ../results/query.reduced.a3m query.fas -d 160 -uc
+mv query.fas ../results/query.fas
+
+# Reformat query into fasta format (reduced alignment)  (Careful: would need 32-bit version to execute on web server!!)
+hhfilter -i ../results/query.a3m \
+         -o ../results/query.reduced.a3m \
+         -diff 50
+
+reformat_hhsuite.pl -r a3m fas ../results/query.reduced.a3m query.reduced.fas -uc
+mv query.reduced.fas ../results/query.reduced.fas
+
+rm ../results/query.reduced.a3m
+
+
+
+# build histogram
+
+reformat.pl -i=a3m \
+            -o=fas \
+            -f=../results/query.a3m \
+            -a=../results/query.full.fas
+
+
+hhfilter -i ../results/query.reduced.fas \
+         -o ../results/query.top.a3m \
+         -id 90 \
+         -qid 0 \
+         -qsc 0 \
+         -cov 0 \
+         -diff 10
+
+
+reformat_hhsuite.pl a3m fas ../results/query.top.a3m query.repseq.fas -uc
+mv query.repseq.fas ../results/query.repseq.fas
+
 
 # Perform HHsearch # TODO Include more parameters
 hhsearch -cpu 4 \
@@ -41,20 +89,18 @@ hhsearch -cpu 4 \
 JOBID=%jobid.content
 
 
-# Prepare FASTA files for 'Show Query Alignemt', HHviz bar graph, and HMM histograms
-# Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
-#hhfilter -i ../results/query.a3m -o ../results/query.reduced.a3m -diff 100
-#reformat.pl a3m fas ../results/query.reduced.a3m  ../results/query.fas -d 160 -uc   # max. 160 chars in description
-
-#hhfilter -i ../results/query.a3m -o ../results/query.reduced.a3m -diff 50
-#reformat.pl a3m fas ../results/query.reduced.a3m  ../results/query.reduced.fas -d 160 -uc   # max. 160 chars in description
-
 
 # Generate input files for hhviz
 cp ../results/hhsearch.hhr ../results/${JOBID}.hhr
 
 # Generate graphical display of hits
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
+
+profile_logos.pl ${JOBID} ../results/ ../results/  &> /dev/null
+
+tenrep.rb -i ../results/query.repseq.fas -h ../results/${JOBID}.hhr -p 40 -o ../results/query.tenrep_file
+
+parse_jalview.rb -i ../results/query.tenrep_file -o ../results/query.tenrep_file
 
 cp ../results/${JOBID}.png ../results/hitlist.png
 cp ../results/${JOBID}.html ../results/hitlist.html
