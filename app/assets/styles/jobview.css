@@ -11,8 +11,9 @@ body.is-reveal-open {
 
 #tool-tabs {
 
-    background: white;
+    background: #fefefe;
     min-height: 600px;
+    border: 1px solid #ccc;
 }
 .parameter-panel {
     display: flex;
