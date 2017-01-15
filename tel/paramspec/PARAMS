@@ -4,3 +4,4 @@ hhsuitedb  GEN hhsuitedb.sh
 msageneration GEN msageneration.prop
 msa_gen_max_iter GEN msa_gen_max_iter.prop
 genetic_code GEN genetic_code.prop
+inclusion_ethresh GEN inclusion_ethresh.prop

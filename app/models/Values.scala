@@ -54,7 +54,8 @@ class Values @Inject() (tel : TEL) {
     Param.MATRIX -> matrixParams.map { matrix =>
 
       matrix -> fullNames(matrix)
-    }.toSeq
+    }.toSeq,
+    Param.EVAL_INC_THRESHOLD -> tel.generateValues(Param.EVAL_INC_THRESHOLD).toSeq.sortBy(_._1.toFloat)
   )
 }
 
