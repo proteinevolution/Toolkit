@@ -160,10 +160,16 @@ JobTabsComponent =
         job_tab_component.removeClass("fullscreen")
         this.isFullscreen(false)
         this.label("Expand")
+        if typeof onCollapse == "function" then onCollapse()
+
       else
         job_tab_component.addClass("fullscreen")
         this.isFullscreen(true)
-        this.label("Collapse")).bind(mo)
+        this.label("Collapse")
+        if typeof onExpand == "function" then onExpand()
+      if typeof onFullscreenToggle == "function" then onFullscreenToggle()).bind(mo)
+
+
 
 
     delete: ->
