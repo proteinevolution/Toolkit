@@ -18,7 +18,7 @@ else
                     -cpu 4 \
                     -v 1 \
                     -n %msa_gen_max_iter.content  \
-                    -diff 1000 %inclusion_ethresh #{@cov_min} \
+                    -diff 1000 %inclusion_ethresh %min_cov \
                     -a2m #{a2mFile}
 
     fi
