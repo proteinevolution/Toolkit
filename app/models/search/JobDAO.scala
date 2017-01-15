@@ -26,24 +26,27 @@ class JobDAO @Inject()(cs: ClusterSetup,
   private val jobIndex = Index / "jobs"
   private val jobHashIndex = Index / "jobhashes"
 
-  def generateHash(toolname: String, params: Map[String, String]): BigInt =  {
+  def generateHash(params: Map[String, String]): BigInt =  {
 
-    FNV.hash64((scala.collection.immutable.TreeMap((params -- noHash).toArray:_*)
-      .values ++ Iterable[String](toolname))
-      .toString().getBytes)
+  //  FNV.hash64((scala.collection.immutable.Map((params -- noHash).toArray:_*)
+  //    .values ++ Iterable[String](toolname))
+  //    .toString().getBytes)
+
+    FNV.hash64(params.toString.getBytes())
 
   }
 
 
   // Searches for a matching hash in the Hash DB
-  def matchHash(hash : String, dbName : Option[String], dbMtime : Option[String]): Future[RichSearchResponse] = {
+  def matchHash(hash : String, dbName : Option[String], dbMtime : Option[String], toolname : String): Future[RichSearchResponse] = {
     client.execute(
       search in jobHashIndex query {
           bool(
             must(
               termQuery("hash", hash),
               termQuery("dbname", dbName.getOrElse("none")),
-              termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z"))
+              termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z")),
+              termQuery("toolname", toolname)
             )
           )
       }
@@ -72,6 +75,7 @@ class JobDAO @Inject()(cs: ClusterSetup,
       }
     }
   }
+
 
 
   def multiExistsJobID(set : Traversable[String]) : Future[RichSearchResponse] = {

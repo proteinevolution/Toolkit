@@ -42,7 +42,7 @@ final class Search @Inject() (
 
       } else {
 
-        Ok
+        NotFound
 
       }
     }
