@@ -28,24 +28,29 @@
 
    var parser = require("biojs-io-newick");
    var treelib =  biojs.vis.tree;
+   var tree = treelib.tree();
 
   // Define the Layout
+  var width = $("#tool-tabs").width() - 200;
   var vertical_layout = treelib.tree.layout.vertical();
   var radial_layout = treelib.tree.layout.radial();
-  vertical_layout.width(800);
+  vertical_layout.width(width);
   vertical_layout.scale(false);
-  radial_layout.width(800);
+  radial_layout.width(width);
   radial_layout.scale(false);
 
-  var tree = treelib.tree();
   tree.layout(radial_layout );
   tree.data(parser.parse_newick('@Ancescon.readTree(jobID)'));
   tree.on_click(function(node) {
       node.toggle();
       tree.update();
   });
-
-
   tree(document.getElementById("ancescon_tree"));
-</script>
 
+  function onFullscreenToggle() {
+
+   var layout = tree.layout();
+   layout.width($("#tool-tabs").width() - 200);
+   tree.update();--
+  }
+</script>
