@@ -18,6 +18,7 @@ window.JobModel =
   defaultValues:
     "num_iter": 1
     "evalue": 10
+    "inclusion_ethresh" : "1E-3"
     "gap_open": 11
     "gap_ext": 1
     "desc": 500
