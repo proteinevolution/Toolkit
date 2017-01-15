@@ -48,4 +48,5 @@ object Param {
   final val MSA_GEN_MAX_ITER = "msa_gen_max_iter"
   final val GENETIC_CODE = "genetic_code"
   final val LONG_SEQ_NAME = "long_seq_name"
+  final val EVAL_INC_THRESHOLD = "inclusion_ethresh"
 }

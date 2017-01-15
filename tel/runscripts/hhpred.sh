@@ -10,7 +10,20 @@ if [ %msageneration.content == "hhblits" ] ; then
             -oa3m ../results/query.a3m \
             -n %msa_gen_max_iter.content \
             -mact 0.35
+
+else
+    if [ %msageneration.content == "psiblast" ] ; then
+
+        buildali.pl -nodssp \
+                    -cpu 4 \
+                    -v 1 \
+                    -n %msa_gen_max_iter.content  \
+                    -diff 1000 %inclusion_ethresh #{@cov_min} \
+                    -a2m #{a2mFile}
+
+    fi
 fi
+
 
 
 # Here assume that the query alignment exists

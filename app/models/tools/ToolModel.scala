@@ -64,7 +64,7 @@ object ToolModel extends PlayEnum[ToolModel] {
                       optional : String,
                       params : Seq[(String, Seq[(String, Seq[(String, String)])])])
 
-  val values = findValues
+  val values : Seq[ToolModel] = findValues
 
   val toolMap : Map[String, ToolModel] = Map(
     "psiblast" -> PsiBlast,
@@ -157,9 +157,9 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
 
 
-    val params = Seq(Param.ALIGNMENT, Param.HHSUITEDB, Param.MSAGENERATION, Param.MSA_GEN_MAX_ITER)
+    val params = Seq(Param.ALIGNMENT, Param.HHSUITEDB, Param.MSAGENERATION, Param.MSA_GEN_MAX_ITER, Param.EVAL_INC_THRESHOLD)
 
-    val results = Seq("Hitlist")
+    val results = Seq("Hitlist", "Histogram")
   }
 
 
@@ -174,7 +174,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
 
     val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
-      "num_iter", "evalue", "inclusion_ethresh", "gap_open", "gap_ext", "desc")
+      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD, "gap_open", "gap_ext", "desc")
 
     val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
   }
