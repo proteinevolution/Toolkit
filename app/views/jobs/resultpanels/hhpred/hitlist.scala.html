@@ -1,60 +1,20 @@
 @import models.results.HHpred
 @(jobID: String)(implicit request: RequestHeader)
-
+<link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
 @*  Load html Map used for the image representation *@
 @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
-<style>
-.slider {
-    width: 84%;
-    cursor: default;
-    background-color: rgb(238, 238, 238);
-    display: block;
-    margin: auto;
-    position: absolute;
-    margin-top: -250px !important;
-    margin-left: 26px;
-}
 
-.slider-handle {
-    width: 1.1rem;
-    height: 1.1rem;
-    background-color: black;
-    font-color: white;
-
-}
-
-.slider-handle:hover {
-    background-color: black;
-}
-
-.slider-fill {
-background-color: black;
-}
-
-#righthandle {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-#lefthandle {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-</style>
 
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
 
 
 
     <div class="slider" data-slider data-initial-start="25" data-initial-end="75">
-        <span id="lefthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1" aria-controls="sliderHandle1"></span>
+        <span id="lefthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
         <span class="slider-fill" data-slider-fill></span>
-        <span id="righthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1" aria-controls="handle2"></span>
+        <span id="righthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
         <input id="hidden1" type="hidden">
         <input id="hidden2" type="hidden">
     </div>
