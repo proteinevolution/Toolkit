@@ -86,9 +86,12 @@ hhsearch -cpu 4 \
          -i ../results/query.a3m \
          -d '%hhsuitedb.content'  \
          -o ../results/hhsearch.hhr \
+         -p %pmin.content \
+         -P %pmin.content \
          -Z %max_lines.content \
           -z 1 \
           -b 1 \
+          -B %max_lines.content \
           -dbstrlen 10000 \
           -cs ${HHLIB}/data/context_data.lib 
 

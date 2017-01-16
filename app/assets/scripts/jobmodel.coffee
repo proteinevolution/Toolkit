@@ -26,6 +26,7 @@ window.JobModel =
     "desc": 500
     "matrix": "BLOSUM62"
     "max_lines" : 100 # TODO default values can be tool specific
+    "pmin" : 20
 
 
   pushMessage: (msg) ->

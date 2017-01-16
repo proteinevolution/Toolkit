@@ -600,6 +600,14 @@ formComponents =
     label: "Max. number of hits in hitlist"
     value: args.value
   ]
+  "pmin": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "pmin"
+    id: "pmin"
+    label: "Min. probability in hitlist"
+    value: args.value
+  ]
   "maxrounds": (args) -> [
     ParameterNumberComponent
   ,
