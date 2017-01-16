@@ -29,6 +29,8 @@ trait ExitCodes {
   val SUCCESS = 0
   val TERMINATED = 143
 }
+
+
 /*
 Param.ALIGNMENT -> alignmentFormats.map { format =>
 

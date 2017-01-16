@@ -14,6 +14,7 @@ import reactivemongo.bson.{BSONDocumentWriter, BSONDocument, BSONDocumentReader,
 
 case class JobHash(mainID : BSONObjectID,
                    inputHash : String,
+                   runscriptHash: String,
                    dbName : Option[String],
                    dbMtime : Option[String],
                    toolname: String)
@@ -23,6 +24,7 @@ object JobHash {
 
   val ID = "_id"
   val INPUTHASH = "hash"
+  val RUNSCRIPTHASH = "rshash"
   val DBNAME = "dbname"
   val DBMTIME = "dbmtime"
   val TOOLNAME = "toolname"
@@ -32,6 +34,7 @@ object JobHash {
     override def read(bson: BSONDocument): JobHash = JobHash(
       mainID = bson.getAs[BSONObjectID](ID).get,
       bson.getAs[String](INPUTHASH).getOrElse("No matching hash value found"),
+      bson.getAs[String](RUNSCRIPTHASH).getOrElse("No matching hash value found"),
       bson.getAs[String](DBNAME),
       bson.getAs[String](DBMTIME),
       bson.getAs[String](TOOLNAME).getOrElse("")
@@ -42,6 +45,7 @@ object JobHash {
     override def write(jobHash: JobHash): BSONDocument = BSONDocument(
       ID  ->  jobHash.mainID,
       INPUTHASH -> jobHash.inputHash,
+      RUNSCRIPTHASH -> jobHash.runscriptHash,
       DBNAME -> jobHash.dbName,
       DBMTIME -> jobHash.dbMtime,
       TOOLNAME -> jobHash.toolname
