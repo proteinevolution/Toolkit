@@ -1,11 +1,20 @@
 @import models.results.HHpred
 @(jobID: String)(implicit request: RequestHeader)
-
+<link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
 @*  Load html Map used for the image representation *@
 @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
+
+
+<div class="slider" data-slider data-initial-start="25" data-initial-end="75">
+    <span id="lefthandlehis" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
+    <span class="slider-fill" data-slider-fill></span>
+    <span id="righthandlehis" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
+    <input id="hidden1his" type="hidden">
+    <input id="hidden2his" type="hidden">
+</div>
 
 
 <table>
@@ -36,3 +45,21 @@
         </tr>
     }
 </table>
+
+    <script>
+
+            $('.slider').on('moved.zf.slider', function() {
+        $('#lefthandlehis').html($('#hidden1his').val());
+        $('#lefthandlehis').css({
+            'color' : 'white',
+            'font-weight': 'bold',
+            'padding-left' : '2px'
+        });
+        $('#righthandlehis').html($('#hidden2his').val());
+        $('#righthandlehis').css({
+            'color' : 'white',
+            'font-weight': 'bold',
+            'padding-left' : '2px'
+        });
+    });
+    </script>
