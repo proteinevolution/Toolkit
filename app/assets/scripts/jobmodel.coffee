@@ -27,8 +27,6 @@ window.JobModel =
     "matrix": "BLOSUM62"
     "max_lines" : 100 # TODO default values can be tool specific
     "pmin" : 20
-    "max_seqs" : 10000
-
 
   pushMessage: (msg) ->
     messages().push(msg)
