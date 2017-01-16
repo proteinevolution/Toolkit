@@ -14,43 +14,70 @@ trait Constants {
   val jobJSONFileName = "JOB.json"
 }
 
+/** @author snam
+  * case class handles ordering of param tabs
+  * @param name: value for cli usage of parameters in the runscripts
+  * @param inputType: 0 is NumberCompnent and 1 is SelectComponent
+  * @param internalOrdering: allows to order the items within the params tab
+  */
+
+case class Param(name: String, inputType: Int, internalOrdering: Int)
+
 
 trait ExitCodes {
 
   val SUCCESS = 0
   val TERMINATED = 143
 }
+/*
+Param.ALIGNMENT -> alignmentFormats.map { format =>
+
+format -> fullNames(format)
+}.toSeq,
+Param.STANDARD_DB -> tel.generateValues(Param.STANDARD_DB).toSeq,
+Param.HHBLITSDB -> tel.generateValues(Param.HHBLITSDB).toSeq,
+Param.HHSUITEDB -> tel.generateValues(Param.HHSUITEDB).toSeq,
+Param.MSAGENERATION -> tel.generateValues(Param.MSAGENERATION).toSeq,
+Param.MSA_GEN_MAX_ITER -> tel.generateValues(Param.MSA_GEN_MAX_ITER).toSeq.sortBy(_._1),
+Param.GENETIC_CODE -> tel.generateValues(Param.GENETIC_CODE).toSeq,
+Param.MATRIX -> matrixParams.map { matrix =>
+
+matrix -> fullNames(matrix)
+}.toSeq,
+Param.EVAL_INC_THRESHOLD -> tel.generateValues(Param.EVAL_INC_THRESHOLD).toSeq.sortBy(_._1.toFloat),
+Param.MIN_COV -> tel.generateValues(Param.MIN_COV).toSeq.sorted */
 
 object Param {
 
-  final val ALIGNMENT = "alignment"
-  final val ALIGNMENT_FORMAT = "alignment_format"
-  final val STANDARD_DB = "standarddb"
-  final val HHSUITEDB = "hhsuitedb"
-  final val MATRIX = "matrix"
-  final val NUM_ITER = "num_iter"
-  final val EVALUE = "evalue"
-  final val GAP_OPEN = "gap_open"
-  final val GAP_EXT = "gap_ext"
-  final val GAP_TERM = "gap_term"
-  final val DESC = "desc"
-  final val CONSISTENCY = "consistency"
-  final val ITREFINE = "itrefine"
-  final val PRETRAIN = "pretrain"
-  final val MAXROUNDS = "maxrounds"
-  final val OFFSET = "offset"
-  final val BONUSSCORE = "bonusscore"
-  final val OUTORDER = "outorder"
-  final val ETRESH = "inclusion_ethresh"
-  final val HHBLITSDB  = "hhblitsdb"
-  final val ALIGNMODE = "alignmode"
-  final val MSAGENERATION = "msageneration"
-  final val MSA_GEN_MAX_ITER = "msa_gen_max_iter"
-  final val GENETIC_CODE = "genetic_code"
-  final val LONG_SEQ_NAME = "long_seq_name"
-  final val EVAL_INC_THRESHOLD = "inclusion_ethresh"
-  final val MIN_COV = "min_cov"
-  final val MAX_LINES = "max_lines"
-  final val PMIN = "pmin"
-  final val MAX_SEQS = "max_seqs"
+  final val ALIGNMENT = Param("alignment",1,1)
+  final val ALIGNMENT_FORMAT = Param("alignment_format",1,1)
+  final val STANDARD_DB = Param("standarddb",1,1)
+  final val HHSUITEDB = Param("hhsuitedb",1,1)
+  final val MATRIX = Param("matrix",1,1)
+  final val NUM_ITER = Param("num_iter",1,1)
+  final val EVALUE = Param("evalue",1,1)
+  final val GAP_OPEN = Param("gap_open",1,1)
+  final val GAP_EXT = Param("gap_ext",1,1)
+  final val GAP_TERM = Param("gap_term",1,1)
+  final val DESC = Param("desc",1,1)
+  final val CONSISTENCY = Param("consistency",1,1)
+  final val ITREFINE = Param("itrefine",1,1)
+  final val PRETRAIN = Param("pretrain",1,1)
+  final val MAXROUNDS = Param("maxrounds",1,1)
+  final val OFFSET = Param("offset",1,1)
+  final val BONUSSCORE = Param("bonusscore",1,1)
+  final val OUTORDER = Param("outorder",1,1)
+  final val ETRESH = Param("inclusion_ethresh",1,1)
+  final val HHBLITSDB  = Param("hhblitsdb",1,1)
+  final val ALIGNMODE = Param("alignmode",1,1)
+  final val MSAGENERATION = Param("msageneration",1,1)
+  final val MSA_GEN_MAX_ITER = Param("msa_gen_max_iter",1,1)
+  final val GENETIC_CODE = Param("genetic_code",1,1)
+  final val LONG_SEQ_NAME = Param("long_seq_name",1,1)
+  final val EVAL_INC_THRESHOLD = Param("inclusion_ethresh",1,1)
+  final val MIN_COV = Param("min_cov",1,1)
+  final val MAX_LINES = Param("max_lines",1,1)
+  final val PMIN = Param("pmin",1,1)
+  final val MAX_SEQS = Param("max_seqs",1,1)
+  final val ALIWIDTH = Param("aliwidth",1,1)
 }

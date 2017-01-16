@@ -41,22 +41,22 @@ class Values @Inject() (tel : TEL) {
   // encompasses for certain parameters the allowed values with a clear text name
   // TODO Needs to be reloaded if TEL refreshed the parameter lists
   final val allowed: Map[String, Seq[(String, String)]] = Map(
-    Param.ALIGNMENT -> alignmentFormats.map { format =>
+    Param.ALIGNMENT.name -> alignmentFormats.map { format =>
 
       format -> fullNames(format)
     }.toSeq,
-    Param.STANDARD_DB -> tel.generateValues(Param.STANDARD_DB).toSeq,
-    Param.HHBLITSDB -> tel.generateValues(Param.HHBLITSDB).toSeq,
-    Param.HHSUITEDB -> tel.generateValues(Param.HHSUITEDB).toSeq,
-    Param.MSAGENERATION -> tel.generateValues(Param.MSAGENERATION).toSeq,
-    Param.MSA_GEN_MAX_ITER -> tel.generateValues(Param.MSA_GEN_MAX_ITER).toSeq.sortBy(_._1),
-    Param.GENETIC_CODE -> tel.generateValues(Param.GENETIC_CODE).toSeq,
-    Param.MATRIX -> matrixParams.map { matrix =>
+    Param.STANDARD_DB.name -> tel.generateValues(Param.STANDARD_DB.name).toSeq,
+    Param.HHBLITSDB.name -> tel.generateValues(Param.HHBLITSDB.name).toSeq,
+    Param.HHSUITEDB.name -> tel.generateValues(Param.HHSUITEDB.name).toSeq,
+    Param.MSAGENERATION.name -> tel.generateValues(Param.MSAGENERATION.name).toSeq,
+    Param.MSA_GEN_MAX_ITER.name -> tel.generateValues(Param.MSA_GEN_MAX_ITER.name).toSeq.sortBy(_._1),
+    Param.GENETIC_CODE.name -> tel.generateValues(Param.GENETIC_CODE.name).toSeq,
+    Param.MATRIX.name -> matrixParams.map { matrix =>
 
       matrix -> fullNames(matrix)
     }.toSeq,
-    Param.EVAL_INC_THRESHOLD -> tel.generateValues(Param.EVAL_INC_THRESHOLD).toSeq.sortBy(_._1.toFloat),
-    Param.MIN_COV -> tel.generateValues(Param.MIN_COV).toSeq.sorted
+    Param.EVAL_INC_THRESHOLD.name -> tel.generateValues(Param.EVAL_INC_THRESHOLD.name).toSeq.sortBy(_._1.toFloat),
+    Param.MIN_COV.name -> tel.generateValues(Param.MIN_COV.name).toSeq.sorted
   )
 }
 
