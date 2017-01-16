@@ -8,28 +8,31 @@
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
 
 
-<div class="slider" data-slider data-initial-start="25" data-initial-end="75">
-    <span id="lefthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
-    <span class="slider-fill" data-slider-fill></span>
-    <span id="righthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
-    <input id="hidden1" type="hidden">
-    <input id="hidden2" type="hidden">
+<div class="slider" id="slider-histo" data-slider data-initial-start="25" data-initial-end="75">
+    <span id="lefthandle_his" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
+    <span class="slider-fill" id="slider-fill-histo" data-slider-fill></span>
+    <span id="righthandle_his" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
+    <input id="hidden1_his" type="hidden">
+    <input id="hidden2_his" type="hidden">
 </div>
 
 
-<table>
-    <tr>
-        <th>No</th>
-        <th>Hits</th>
-        <th>Probs</th>
-        <th>Evals</th>
-        <th>Pvals</th>
-        <th>Scores</th>
-        <th>SS</th>
-        <th>Cols</th>
-        <th>Query HMMs</th>
-        <th>Template HMMs</th>
-    </tr>
+<table id="htb_his">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Hits</th>
+            <th>Probs</th>
+            <th>Evals</th>
+            <th>Pvals</th>
+            <th>Scores</th>
+            <th>SS</th>
+            <th>Cols</th>
+            <th>Query HMMs</th>
+            <th>Template HMMs</th>
+        </tr>
+    </thead>
+    <tbody>
     @for((x,i) <- HHpred.hitlist(jobID).Hits.zipWithIndex) {
         <tr>
             <td>@(i+1)</td>
@@ -44,22 +47,41 @@
             <td>@HHpred.hitlist(jobID).Template_HMMs(i)</td>
         </tr>
     }
+    </tbody>
 </table>
 
     <script>
-
             $('.slider').on('moved.zf.slider', function() {
-        $('#lefthandle').html($('#hidden1').val());
-        $('#lefthandlehis').css({
-            'color' : 'white',
-            'font-weight': 'bold',
-            'padding-left' : '2px'
-        });
-        $('#righthandle').html($('#hidden2').val());
-        $('#righthandle').css({
-            'color' : 'white',
-            'font-weight': 'bold',
-            'padding-left' : '2px'
-        });
-    });
+                $('#lefthandle_his').html($('#hidden1_his').val());
+                $('#lefthandle_his').css({
+                    'color' : 'white',
+                    'font-weight': 'bold',
+                    'padding-left' : '2px'
+                });
+                $('#righthandle_his').html($('#hidden2_his').val());
+                $('#righthandle_his').css({
+                    'color' : 'white',
+                    'font-weight': 'bold',
+                    'padding-left' : '2px'
+                });
+            });
+
+            //var pos = 5;
+            //mySlider = new Foundation.Slider( $("#slider-histo"), {initialStart: pos});
+
+            var table;
+
+            $(document).ready( function () {
+                $(document).foundation();
+
+                table = $('#htb_his').DataTable({
+                    "bPaginate": false,
+                    "bLengthChange": false,
+                    "bFilter": true,
+                    "bInfo": false,
+                    "bAutoWidth": false,
+                    retrieve: true,
+                    paging: true
+                });
+            });
     </script>

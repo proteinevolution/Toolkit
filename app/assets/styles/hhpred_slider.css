@@ -25,6 +25,10 @@
     background-color: black;
 }
 
+#slider-fill-histo {
+    background-color: black;
+}
+
 #righthandle {
     -webkit-user-select: none;
     -moz-user-select: none;
