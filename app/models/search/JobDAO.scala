@@ -27,13 +27,7 @@ class JobDAO @Inject()(cs: ClusterSetup,
   private val jobHashIndex = Index / "jobhashes"
 
   def generateHash(params: Map[String, String]): BigInt =  {
-
-  //  FNV.hash64((scala.collection.immutable.Map((params -- noHash).toArray:_*)
-  //    .values ++ Iterable[String](toolname))
-  //    .toString().getBytes)
-
     FNV.hash64(params.toString.getBytes())
-
   }
 
 
