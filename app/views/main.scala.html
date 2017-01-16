@@ -75,6 +75,11 @@
 
         <link href="@routes.Assets.versioned("styles/custom.css")" rel="stylesheet">
 
+
+        <!-- Datatables -->
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("jquery.dataTables.min.js"))"></script>
+        <link rel="stylesheet" href="@routes.WebJarAssets.at(webJarAssets.locate("jquery.dataTables.min.css"))">
+
         <!-- Javascript Router -->
         @helper.javascriptRouter("jsRoutes")(
             routes.javascript.Jobs.updateDateViewed,
@@ -283,6 +288,7 @@
                     $(document).ready(function() {
                         $(document).foundation();
 		                $('select').niceSelect();
+
                     })
             </script>
 

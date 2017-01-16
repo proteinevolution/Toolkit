@@ -1,6 +1,7 @@
 @import models.results.HHpred
 @(jobID: String)(implicit request: RequestHeader)
 
+
 @*  Load html Map used for the image representation *@
 @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
@@ -42,7 +43,10 @@
     </tr>
 </table>
 
-<table>
+
+<table id="htb" class="display">
+
+    <thead>
         <tr>
             <th>No</th>
             <th>Hits</th>
@@ -55,6 +59,8 @@
             <th>Query HMMs</th>
             <th>Template HMMs</th>
         </tr>
+    </thead>
+    <tbody>
         @for((x,i) <- HHpred.hitlist(jobID).Hits.zipWithIndex) {
             <tr>
                 <td>@(i+1)</td>
@@ -69,6 +75,7 @@
                 <td>@HHpred.hitlist(jobID).Template_HMMs(i)</td>
             </tr>
         }
+    </tbody>
 </table>
 
 
@@ -106,3 +113,21 @@
         </tr>
     }
 </table>
+
+<script>
+         var table;
+
+         $(document).ready( function () {
+
+             table = $('#htb').DataTable({
+                 "bPaginate": false,
+                 "bLengthChange": false,
+                 "bFilter": true,
+                 "bInfo": false,
+                 "bAutoWidth": false,
+                 retrieve: true,
+                 paging: true
+             });
+         });
+
+</script>
