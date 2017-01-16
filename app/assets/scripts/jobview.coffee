@@ -608,6 +608,14 @@ formComponents =
     label: "Min. probability in hitlist"
     value: args.value
   ]
+  "aliwidth": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "aliwidth"
+    id: "aliwidth"
+    label: "With of alignments (columns)"
+    value: args.value
+  ]
   "max_seqs": (args) -> [
     ParameterNumberComponent
   ,

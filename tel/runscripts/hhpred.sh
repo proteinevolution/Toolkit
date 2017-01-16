@@ -93,6 +93,7 @@ hhsearch -cpu 4 \
           -b 1 \
           -B %max_lines.content \
           -seq 1 \
+          -aliw %aliwidth.content \
           -dbstrlen 10000 \
           -cs ${HHLIB}/data/context_data.lib 
 

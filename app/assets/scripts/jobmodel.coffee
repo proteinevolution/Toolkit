@@ -25,8 +25,9 @@ window.JobModel =
     "gap_ext": 1
     "desc": 500
     "matrix": "BLOSUM62"
-    "max_lines" : 100 # TODO default values can be tool specific
+    "max_lines" : 100 # TODO default values can be tool specific (solution for now: name the params tool specific like gap_open_psiblast)
     "pmin" : 20
+    "aliwidth" : 80
 
   pushMessage: (msg) ->
     messages().push(msg)

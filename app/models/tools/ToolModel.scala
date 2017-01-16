@@ -27,7 +27,7 @@ sealed trait ToolModel extends EnumEntry {
 
   val paramGroups = Map(
 
-    "Input" -> Seq(Param.ALIGNMENT, Param.ALIGNMENT_FORMAT, Param.STANDARD_DB, Param.HHSUITEDB)
+    "Input" -> Seq(Param.ALIGNMENT.name, Param.ALIGNMENT_FORMAT.name, Param.STANDARD_DB.name, Param.HHSUITEDB.name)
   )
 
   // Params which are not a part of any group
@@ -109,8 +109,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
 
 
-    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
-      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD, "gap_open", "gap_ext", "desc")
+    val params = Seq(Param.ALIGNMENT.name, "standarddb", "matrix",
+      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc")
 
     val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
 
@@ -126,8 +126,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
 
 
-    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
-      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD, "gap_open", "gap_ext", "desc")
+    val params = Seq(Param.ALIGNMENT.name, "standarddb", "matrix",
+      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc")
 
     val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
   }
@@ -142,7 +142,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
 
 
-    val params = Seq(Param.ALIGNMENT, "hhblitsdb", "maxrounds")
+    val params = Seq(Param.ALIGNMENT.name, "hhblitsdb", "maxrounds")
 
     val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
   }
@@ -157,9 +157,9 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
 
 
-    val params : Seq[String] = Seq(Param.ALIGNMENT, Param.HHSUITEDB, Param.MSAGENERATION,
-      Param.MSA_GEN_MAX_ITER, Param.MIN_COV, Param.EVAL_INC_THRESHOLD,
-      Param.MAX_LINES, Param.PMIN).sortBy(_.charAt(0))
+    val params : Seq[String] = Seq(Param.ALIGNMENT.name, Param.HHSUITEDB.name, Param.MSAGENERATION.name,
+      Param.MSA_GEN_MAX_ITER.name, Param.MIN_COV.name, Param.EVAL_INC_THRESHOLD.name,
+      Param.MAX_LINES.name, Param.PMIN.name, Param.ALIWIDTH.name)
 
     val results = Seq("Hitlist", "Histogram")
   }
@@ -175,8 +175,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
 
 
-    val params = Seq(Param.ALIGNMENT, "standarddb", "matrix",
-      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD, "gap_open", "gap_ext", "desc")
+    val params = Seq(Param.ALIGNMENT.name, "standarddb", "matrix",
+      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc")
 
     val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
   }
@@ -191,7 +191,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "alignment"
     val optional = ""
 
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
     val results = Seq("Alignment", "AlignmentViewer", "Conservation", "Text")
   }
 
@@ -204,7 +204,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "alignment"
     val optional = ""
 
-    val params = Seq(Param.ALIGNMENT, Param.CONSISTENCY, Param.ITREFINE, Param.PRETRAIN)
+    val params = Seq(Param.ALIGNMENT.name, Param.CONSISTENCY.name, Param.ITREFINE.name, Param.PRETRAIN.name)
 
     val results = Seq.empty[String]
   }
@@ -230,7 +230,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "mft"
     val category = "alignment"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT, Param.GAP_OPEN, Param.OFFSET)
+    val params = Seq(Param.ALIGNMENT.name, Param.GAP_OPEN.name, Param.OFFSET.name)
 
     val results = Seq.empty[String]
 
@@ -245,7 +245,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "alignment"
     val optional = ""
 
-    val params = Seq(Param.ALIGNMENT, Param.OUTORDER, Param.GAP_OPEN, Param.GAP_EXT, Param.GAP_TERM, Param.BONUSSCORE)
+    val params = Seq(Param.ALIGNMENT.name, Param.OUTORDER.name, Param.GAP_OPEN.name, Param.GAP_EXT.name, Param.GAP_TERM.name, Param.BONUSSCORE.name)
 
     val results = Seq.empty[String]
   }
@@ -260,7 +260,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "search"
     val optional = ""
 
-    val params = Seq(Param.ALIGNMENT, Param.STANDARD_DB)
+    val params = Seq(Param.ALIGNMENT.name, Param.STANDARD_DB.name)
 
     val results = Seq("fileview")
   }
@@ -272,7 +272,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "pco"
     val category = "seqanal"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
 
@@ -285,7 +285,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "frp"
     val category = "seqanal"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
 
@@ -298,7 +298,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "hhr"
     val category = "seqanal"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -310,7 +310,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "mar"
     val category = "seqanal"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -322,7 +322,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "rep"
     val category = "seqanal"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -334,7 +334,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "tpr"
     val category = "seqanal"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -346,7 +346,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "hho"
     val category = "2ary"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -358,7 +358,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "q2d"
     val category = "2ary"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -370,7 +370,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "a2d"
     val category = "2ary"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -382,7 +382,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "mod"
     val category = "3ary"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -393,7 +393,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "bft"
     val category = "3ary"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -404,7 +404,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "hhf"
     val category = "3ary"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -415,7 +415,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "scc"
     val category = "3ary"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -426,7 +426,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "anc"
     val category = "classification"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT, Param.LONG_SEQ_NAME)
+    val params = Seq(Param.ALIGNMENT.name, Param.LONG_SEQ_NAME.name)
 
     val results = Seq("Tree")
   }
@@ -437,7 +437,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "anc"
     val category = "classification"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -448,7 +448,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "hhc"
     val category = "classification"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -459,7 +459,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "bcl"
     val category = "classification"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT)
+    val params = Seq(Param.ALIGNMENT.name)
 
     val results = Seq.empty[String]
   }
@@ -470,7 +470,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "anc"
     val category = "utils"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT, Param.GENETIC_CODE)
+    val params = Seq(Param.ALIGNMENT.name, Param.GENETIC_CODE.name)
 
     val results = Seq("DNA")
   }
