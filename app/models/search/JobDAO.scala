@@ -5,11 +5,13 @@ import javax.inject.{Inject, Named, Singleton}
 import com.sksamuel.elastic4s._
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
+import modules.tel.TELConstants
 import modules.tools.FNV
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 import org.elasticsearch.common.unit.Fuzziness
 import reactivemongo.bson.BSONObjectID
 
+import scala.util.hashing.MurmurHash3
 import scala.concurrent.Future
 
 
@@ -17,7 +19,7 @@ import scala.concurrent.Future
 class JobDAO @Inject()(cs: ClusterSetup,
                        elasticFactory: PlayElasticFactory,
                        @Named("jobs") indexAndType: IndexAndType)
-  extends ElasticDsl with PlayElasticJsonSupport {
+  extends ElasticDsl with PlayElasticJsonSupport with TELConstants {
   
   private[this] lazy val client = elasticFactory(cs)
   private val noHash = Set("mainID", "jobID")
@@ -27,12 +29,24 @@ class JobDAO @Inject()(cs: ClusterSetup,
   private val jobHashIndex = Index / "jobhashes"
 
   def generateHash(params: Map[String, String]): BigInt =  {
+
     FNV.hash64(params.toString.getBytes())
+
+  }
+
+
+  def generateRSHash(toolname: String) : String = {
+
+    val runscript = s"$runscriptPath$toolname.sh"
+    val content = scala.io.Source.fromFile(runscript).getLines().mkString
+
+    Math.abs(MurmurHash3.stringHash(content,0)).toString
+
   }
 
 
   // Searches for a matching hash in the Hash DB
-  def matchHash(hash : String, dbName : Option[String], dbMtime : Option[String], toolname : String): Future[RichSearchResponse] = {
+  def matchHash(hash : String, rsHash: String, dbName : Option[String], dbMtime : Option[String], toolname : String): Future[RichSearchResponse] = {
     client.execute(
       search in jobHashIndex query {
           bool(
@@ -40,7 +54,8 @@ class JobDAO @Inject()(cs: ClusterSetup,
               termQuery("hash", hash),
               termQuery("dbname", dbName.getOrElse("none")),
               termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z")),
-              termQuery("toolname", toolname)
+              termQuery("toolname", toolname),
+              termQuery("rshash", rsHash)
             )
           )
       }
