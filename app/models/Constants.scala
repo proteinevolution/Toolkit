@@ -52,4 +52,5 @@ object Param {
   final val MIN_COV = "min_cov"
   final val MAX_LINES = "max_lines"
   final val PMIN = "pmin"
+  final val MAX_SEQS = "max_seqs"
 }

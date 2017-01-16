@@ -608,6 +608,14 @@ formComponents =
     label: "Min. probability in hitlist"
     value: args.value
   ]
+  "max_seqs": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "max_seqs"
+    id: "max_seqs"
+    label: "Max. number of sequences"
+    value: args.value
+  ]
   "maxrounds": (args) -> [
     ParameterNumberComponent
   ,
