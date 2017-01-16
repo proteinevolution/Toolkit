@@ -157,7 +157,9 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
 
 
-    val params = Seq(Param.ALIGNMENT, Param.HHSUITEDB, Param.MSAGENERATION, Param.MSA_GEN_MAX_ITER, Param.MIN_COV, Param.EVAL_INC_THRESHOLD, Param.MAX_LINES)
+    val params : Seq[String] = Seq(Param.ALIGNMENT, Param.HHSUITEDB, Param.MSAGENERATION,
+      Param.MSA_GEN_MAX_ITER, Param.MIN_COV, Param.EVAL_INC_THRESHOLD,
+      Param.MAX_LINES, Param.PMIN).sortBy(_.charAt(0))
 
     val results = Seq("Hitlist", "Histogram")
   }

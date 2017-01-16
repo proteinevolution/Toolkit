@@ -51,4 +51,5 @@ object Param {
   final val EVAL_INC_THRESHOLD = "inclusion_ethresh"
   final val MIN_COV = "min_cov"
   final val MAX_LINES = "max_lines"
+  final val PMIN = "pmin"
 }
