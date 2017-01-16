@@ -25,6 +25,7 @@ window.JobModel =
     "gap_ext": 1
     "desc": 500
     "matrix": "BLOSUM62"
+    "max_lines" : 100 # TODO default values can be tool specific
 
 
   pushMessage: (msg) ->

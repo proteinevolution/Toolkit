@@ -592,6 +592,14 @@ formComponents =
     label: "Rounds of pretraining"
     value: args.value
   ]
+  "max_lines": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "max_lines"
+    id: "max_lines"
+    label: "Max. number of hits in hitlist"
+    value: args.value
+  ]
   "maxrounds": (args) -> [
     ParameterNumberComponent
   ,
