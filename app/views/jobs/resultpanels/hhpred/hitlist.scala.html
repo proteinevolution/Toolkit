@@ -5,8 +5,43 @@
 @*  Load html Map used for the image representation *@
 @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
+<style>
+.slider {
+    width: 84%;
+    cursor: default;
+    background-color: rgb(238, 238, 238);
+    display: block;
+    margin: auto;
+    position: absolute;
+    margin-top: -250px !important;
+    margin-left: 26px;
+}
+
+.slider-handle {
+    width: 1rem;
+    height: 1rem;
+    background-color: grey;
+
+}
+
+.slider-fill {
+background-color: black;
+}
+</style>
 
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
+
+
+
+    <div class="slider" data-slider data-initial-start="25" data-initial-end="75">
+        <span class="slider-handle" data-slider-handle role="slider" tabindex="1" aria-controls="sliderHandle1"></span>
+        <span class="slider-fill" data-slider-fill></span>
+        <span class="slider-handle" data-slider-handle role="slider" tabindex="1" aria-controls="handle2"></span>
+        <input type="hidden">
+        <input type="hidden">
+    </div>
+
+
 
 <table style="width:100%">
     <tr>
@@ -115,9 +150,12 @@
 </table>
 
 <script>
+
+
          var table;
 
          $(document).ready( function () {
+             $(document).foundation();
 
              table = $('#htb').DataTable({
                  "bPaginate": false,
