@@ -75,12 +75,18 @@ hhfilter -i ../results/query.reduced.fas \
 reformat_hhsuite.pl a3m fas ../results/query.top.a3m query.repseq.fas -uc
 mv query.repseq.fas ../results/query.repseq.fas
 
+# @commands << "#{HHSUITE}/hhsearch -cpu 4 -v #{@v} -i #{@basename}.hhm -d '#{@dbs}' -o #{@basename}.hhr -p #{@Pmin} -P #{@Pmin}
+# -Z #{@max_lines} -z 1 -b 1 -B #{@max_lines} -seq #{@max_seqs} -aliw #{@aliwidth}
+# -#{@ali_mode} #{@ss_scoring} #{@realign} #{@mact} #{@compbiascorr}
+# -dbstrlen 10000 -cs ${HHLIB}/data/context_data.lib 1>> #{job.statuslog_path} 2>> #{job.statuslog_path}; echo 'Finished search'";
+
 
 # Perform HHsearch # TODO Include more parameters
 hhsearch -cpu 4 \
          -i ../results/query.a3m \
          -d '%hhsuitedb.content'  \
          -o ../results/hhsearch.hhr \
+         -Z %max_lines.content \
           -z 1 \
           -b 1 \
           -dbstrlen 10000 \
@@ -97,6 +103,8 @@ cp ../results/hhsearch.hhr ../results/${JOBID}.hhr
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 profile_logos.pl ${JOBID} ../results/ ../results/  &> /dev/null
+
+tar xfvz ../results/${JOBID}.tar.gz -C ../results/
 
 tenrep.rb -i ../results/query.repseq.fas -h ../results/${JOBID}.hhr -p 40 -o ../results/query.tenrep_file
 

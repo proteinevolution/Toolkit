@@ -50,4 +50,5 @@ object Param {
   final val LONG_SEQ_NAME = "long_seq_name"
   final val EVAL_INC_THRESHOLD = "inclusion_ethresh"
   final val MIN_COV = "min_cov"
+  final val MAX_LINES = "max_lines"
 }
