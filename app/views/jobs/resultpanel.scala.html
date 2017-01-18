@@ -14,6 +14,9 @@
       case ("hhpred", "Hitlist") => views.html.jobs.resultpanels.hhpred.hitlist(jobID)
       case ("ancescon", "Tree" ) => views.html.jobs.resultpanels.ancescon.tree(jobID)
       case ("hhpred", "Histogram") => views.html.jobs.resultpanels.hhpred.histogram(jobID)
+
+      // clustalo
+      case ("clustalo", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("clustalo", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       }
 }
-
