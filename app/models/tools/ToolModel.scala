@@ -96,7 +96,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     "patternsearch" -> PatternSearch,
     "blastp" -> BlastP,
     "backtrans" -> BackTranslate,
-    "clustalo" -> ClustalOmega
+    "clustalo" -> ClustalOmega,
+    "glprobs" -> GLProbs
   )
 
 
@@ -208,6 +209,21 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val results = Seq("Alignment", "AlignmentViewer")
   }
+
+  case object GLProbs extends ToolModel {
+
+    val toolNameShort = "glprobs"
+    val toolNameLong = "GLProbs"
+    val toolNameAbbrev = "glpr"
+    val category = "alignment"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT.name)
+
+    val results = Seq("Alignment", "AlignmentViewer")
+  }
+
+
+
   case object Probcons extends ToolModel {
 
     // --- Names for the Tool ---
