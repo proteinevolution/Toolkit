@@ -13,7 +13,7 @@ case class User(userID        : BSONObjectID,                        // ID of th
                 userData      : Option[UserData]     = None,         // Personal Data of the User //TODO possibly encrypt?
                 userConfig    : UserConfig           = UserConfig(), // Configurable parts for the user
                 userTokens    : List[UserToken]      = List.empty,
-                jobs          : List[String]   = List.empty,   // List of Jobs the User has
+                jobs          : List[String]         = List.empty,   // List of Jobs the User has
                 dateLastLogin : Option[DateTime],                    // Last seen on
                 dateCreated   : Option[DateTime],                    // Account creation date
                 dateUpdated   : Option[DateTime]) {                  // Account updated on

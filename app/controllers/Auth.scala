@@ -135,11 +135,12 @@ final class Auth @Inject() (    webJarAssets     : WebJarAssets,
             if (databaseUser.checkPassword(signInFormUser.password)) {
               // create a modifier document to change the last login date in the Database
               val selector = BSONDocument(User.IDDB          -> databaseUser.userID)
-              // TODO $addToSet and $each do not seem to work - anybody having any ideas why?
+              // Change the login time and give the new Session ID to the user.
+              // Additionally add the watched jobs to the users watchlist.
               val modifier = BSONDocument("$set"             ->
                              BSONDocument(User.SESSIONID     -> unregisteredUser.sessionID,
                                           User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
-                                          "$addToSet"        ->
+                                          "$push"            ->
                              BSONDocument(User.JOBS          ->
                              BSONDocument("$each"            -> unregisteredUser.jobs)))
               // Finally add the edits to the collection
