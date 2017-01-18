@@ -254,13 +254,11 @@ object ToolModel extends PlayEnum[ToolModel] {
     // --- Names for the Tool ---
     val toolNameShort = "muscle"
     val toolNameLong = "MUSCLE"
-    val toolNameAbbrev = "msc"
+    val toolNameAbbrev = "musc"
     val category = "alignment"
     val optional = ""
-
-    val params = Seq("alignment", "maxrounds")
-
-    val results = Seq.empty[String]
+    val params = Seq("alignment", Param.MAXROUNDS.name)
+    val results = Seq("Alignment", "AlignmentViewer")
   }
 
   case object Mafft extends ToolModel {
