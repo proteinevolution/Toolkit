@@ -87,4 +87,5 @@ object Param {
   final val MIN_COLSCORE = Param("min_colscore", 0, 1)
   final val MIN_QUERY_COV = Param("min_query_cov", 0, 1)
   final val MIN_ANCHOR_WITH = Param("min_anchor_width", 0, 1)
+  final val WEIGHTING = Param("weighting", 0, 1)
 }

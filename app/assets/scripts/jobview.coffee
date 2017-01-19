@@ -110,7 +110,9 @@ tabulated = (element, isInit) ->
 
 # View template helper for generating parameter input fields
 renderParameter = (content, moreClasses) ->
-  m "div", {class: "parameter #{moreClasses}"}, content
+  m "div", {class: if moreClasses then "parameter #{moreClasses}" else "parameter"}, content
+
+
 
 # Encompasses the individual sections of a Job, usually rendered as tabs
 JobTabsComponent =
@@ -246,9 +248,6 @@ submitModal = (elem, isInit) ->
     $(elem).bind('closed.zf.reveal	', (-> $(".submitJob").prop("disabled", false)))
 
 
-
-
-
 JobSubmissionComponent =
   controller: (args) ->
     this.submitting = false
@@ -377,8 +376,8 @@ dropzone_psi  = (element, isInit) ->
 
 
 
-
 # Components for generating form input fields. Also allows to encapsulate value validation
+# TODO Has to be generalized for one or multiple sequences
 window.ParameterAlignmentComponent =
   model: (args) ->
     value: m.prop args.value    # Alignment Text
@@ -391,8 +390,6 @@ window.ParameterAlignmentComponent =
     placeholder: "Enter multiple sequence alignment"
     formatOptions : args.options
     param : this.param
-
-
   view: (ctrl) ->
     renderParameter [
         m "div", {class: "alignment_textarea"},
@@ -450,20 +447,12 @@ ParameterRadioComponent =
 
 
 ParameterSelectComponent =
-  model: (args) ->
-    value: m.prop args.value
-
-  controller: (args) ->
-    param: new ParameterSelectComponent.model args
-
   view: (ctrl, args) ->
     renderParameter [
       m "label", {for: args.id}, args.label
       m "select", {name: args.name, class: "wide", id: args.id, config: selectBoxAccess}, args.options.map (entry) ->
-        if entry[0] == args.value
-          m "option", {value: entry[0], selected: "selected"}, entry[1]
-        else
-          m "option", {value: entry[0]}, entry[1]
+        m "option", (if entry[0] == args.value then {value: entry[0], selected: "selected"} else {value: entry[0]}),
+          entry[1]
     ]
 
 ParameterNumberComponent =
@@ -621,7 +610,7 @@ formComponents =
   ,
     name: "max_seqs"
     id: "max_seqs"
-    label: "Ma1x. number of sequences"
+    label: "Max. number of sequences"
     value: 100
   ]
   "maxrounds": (args) -> [
@@ -765,4 +754,12 @@ formComponents =
     id: "max_seqid"
     label: "Maximal Sequence Identity"
     value: 0.99
+  ]
+  "weighting": (args) -> [
+    ParameterBoolComponent
+  ,
+    name: "weighting"
+    id: "weighting"
+    label: "Should weighting be performed?"
+    value: "weighting"
   ]
