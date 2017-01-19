@@ -26,10 +26,10 @@ PERL5LIB=%PERLLIB
 alignhits_html.pl ../results/out.psiblastp ../results/out.align -e %evalue.content -fas -no_link -blastplus
 
 # reformat alignment to clustal
-reformat.pl -i=fas \
-                 -o=clu \
-                 -f=../results/out.align \
-                 -a=../results/out.align_clu
+reformat.pl fas \
+            clu \
+            "$(readlink -f ../results/out.align)" \
+            "$(readlink -f ../results/out.align_clu)"
 
 %SCALA %HELPER/psiblastpPostProcess.scala ../results/out.psiblastp
 

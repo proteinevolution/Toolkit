@@ -40,7 +40,7 @@ hhfilter -i ../results/query.a3m \
          -diff 100
 
 # max. 160 chars in description
-reformat_hhsuite.pl a3m fas ../results/query.reduced.a3m query.fas -d 160 -uc
+reformat_hhsuite.pl a3m fas "$(readlink -f ../results/query.reduced.a3m)" query.fas -d 160 -uc
 mv query.fas ../results/query.fas
 
 # Reformat query into fasta format (reduced alignment)  (Careful: would need 32-bit version to execute on web server!!)
@@ -48,7 +48,7 @@ hhfilter -i ../results/query.a3m \
          -o ../results/query.reduced.a3m \
          -diff 50
 
-reformat_hhsuite.pl -r a3m fas ../results/query.reduced.a3m query.reduced.fas -uc
+reformat_hhsuite.pl -r a3m fas "$(readlink -f ../results/query.reduced.a3m)" query.reduced.fas -uc
 mv query.reduced.fas ../results/query.reduced.fas
 
 rm ../results/query.reduced.a3m
@@ -57,10 +57,10 @@ rm ../results/query.reduced.a3m
 
 # build histogram
 
-reformat.pl -i=a3m \
-            -o=fas \
-            -f=../results/query.a3m \
-            -a=../results/query.full.fas
+reformat.pl a3m \
+            fas \
+            "$(readlink -f  ../results/query.a3m)" \
+            "$(readlink -f  ../results/query.full.fas)"
 
 
 hhfilter -i ../results/query.reduced.fas \
@@ -72,7 +72,7 @@ hhfilter -i ../results/query.reduced.fas \
          -diff 10
 
 
-reformat_hhsuite.pl a3m fas ../results/query.top.a3m query.repseq.fas -uc
+reformat_hhsuite.pl a3m fas  "$(readlink -f ../results/query.top.a3m)" query.repseq.fas -uc
 mv query.repseq.fas ../results/query.repseq.fas
 
 # @commands << "#{HHSUITE}/hhsearch -cpu 4 -v #{@v} -i #{@basename}.hhm -d '#{@dbs}' -o #{@basename}.hhr -p #{@Pmin} -P #{@Pmin}
