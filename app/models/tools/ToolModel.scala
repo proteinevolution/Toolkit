@@ -69,7 +69,6 @@ object ToolModel extends PlayEnum[ToolModel] {
   val toolMap : Map[String, ToolModel] = Map(
     "psiblast" -> PsiBlast,
     "tcoffee" -> Tcoffee,
-    "probcons" -> Probcons,
     "muscle" -> Muscle,
     "mafft" -> Mafft,
     "kalign" -> Kalign,
@@ -97,7 +96,6 @@ object ToolModel extends PlayEnum[ToolModel] {
     "blastp" -> BlastP,
     "backtrans" -> BackTranslate,
     "clustalo" -> ClustalOmega,
-    "glprobs" -> GLProbs,
     "msaprobs" -> MSAProbs,
     "blammer" -> Blammer
   )
@@ -227,6 +225,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val results = Seq("Alignment", "AlignmentViewer")
   }
 
+  /*
   case object GLProbs extends ToolModel {
 
     val toolNameShort = "glprobs"
@@ -238,6 +237,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val results = Seq("Alignment", "AlignmentViewer")
   }
+  */
 
   case object MSAProbs extends ToolModel {
 
@@ -251,6 +251,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val results = Seq("Alignment", "AlignmentViewer")
   }
 
+  /*
   case object Probcons extends ToolModel {
 
     // --- Names for the Tool ---
@@ -264,6 +265,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val results = Seq.empty[String]
   }
+  */
 
   case object Muscle extends ToolModel {
 
