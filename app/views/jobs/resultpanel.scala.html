@@ -19,10 +19,6 @@
       case ("clustalo", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
       case ("clustalo", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
 
-      // glprobs
-      case ("glprobs", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
-      case ("glprobs", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
-
       // msaprobs
       case ("msaprobs", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
       case ("msaprobs", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
