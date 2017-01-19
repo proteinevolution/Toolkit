@@ -97,7 +97,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     "backtrans" -> BackTranslate,
     "clustalo" -> ClustalOmega,
     "msaprobs" -> MSAProbs,
-    "blammer" -> Blammer
+    "blammer" -> Blammer,
+    "aln2plot" -> Aln2Plot
   )
 
 
@@ -320,6 +321,19 @@ object ToolModel extends PlayEnum[ToolModel] {
     val results = Seq("fileview")
   }
 
+
+  case object Aln2Plot extends ToolModel {
+
+    val toolNameShort = "aln2plot"
+    val toolNameLong = "Aln2Plot"
+    val toolNameAbbrev = "a2pl"
+    val category = "seqanal"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT.name)
+
+    val results = Seq("Hydrophobicity", "SideChainVolume")
+  }
+
   case object PCoils extends ToolModel {
 
     val toolNameShort = "pcoils"
@@ -327,10 +341,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "pco"
     val category = "seqanal"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
+    val params = Seq(Param.ALIGNMENT.name, Param.WEIGHTING.name)
     val results = Seq.empty[String]
-
   }
 
   case object FRpred extends ToolModel {
