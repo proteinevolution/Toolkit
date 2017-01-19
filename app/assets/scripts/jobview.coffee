@@ -638,7 +638,7 @@ formComponents =
     name: "offset"
     id: "offset"
     label: "Offset"
-    value: args.value
+    value: 0
   ]
   "outorder": (args) -> [
     ParameterNumberComponent
