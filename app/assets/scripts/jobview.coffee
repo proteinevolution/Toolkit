@@ -621,8 +621,8 @@ formComponents =
   ,
     name: "max_seqs"
     id: "max_seqs"
-    label: "Max. number of sequences"
-    value: args.value
+    label: "Ma1x. number of sequences"
+    value: 100
   ]
   "maxrounds": (args) -> [
     ParameterNumberComponent
@@ -725,4 +725,44 @@ formComponents =
     id: "long_seq_name"
     label: "Use long names?"
     value: "long_seq_name"
+  ]
+  "min_query_cov": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "min_query_cov"
+    id: "min_query_cov"
+    label: "Minimal coverage"
+    value: 0.5
+  ]
+  "max_eval": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "max_eval"
+    id: "max_eval"
+    label: "Maximal E-Value"
+    value: 1e-5
+  ]
+  "min_anchor_width": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "min_anchor_width"
+    id: "min_anchor_width"
+    label: "Minimal Anchor width"
+    value: 5
+  ]
+  "min_colscore": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "min_colscore"
+    id: "min_colscore"
+    label: "Minimal Column Score"
+    value: 0
+  ]
+  "max_seqid": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "max_seqid"
+    id: "max_seqid"
+    label: "Maximal Sequence Identity"
+    value: 0.99
   ]
