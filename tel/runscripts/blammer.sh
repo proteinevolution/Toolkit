@@ -1,30 +1,24 @@
-#!/bin/bash
+java -Xmx3G -jar ${BLAMMERJAR} \
+            -conf ${BLAMMERCONF} \
+            -infile %alignment.path \
+            -coverage %min_query_cov.content \
+            -blastmax %max_eval.content \
+            -cluwidth %min_anchor_width.content \
+            -s/c %min_colscore.content \
+            -seqs %max_seqs.content \
+            -maxsim %max_seqid.content \
+            -html T \
+            -oformat clustal \
+            -dohmmb f \
+            -dohmms f \
+            -dohmma f \
+            -doext f \
+            -dotax f \
+            -verbose 2 \
+            -hmmer ${HMMERBINARIES} \
+            -blastdb ${STANDARDNEW} \
+            -taxdir ${TAXONOMY}
 
-trap 'kill $(jobs -p)' EXIT
+# Move the result file to the output directory
+mv ../params/alignment.cln ../results/alignment.clustalw_aln
 
-export HMMER_BINARIES='%BIOPROGS/tools/hmmer3/binaries/'
-export CLUSTALW=''
-export BLASTDB=''
-export TAXDIR=''
-
-java -Xmx3G -jar %BIOPROGS/tools/blammer.jar \
-                           -conf %BIOPROGS/tools/blammer.conf \
-                           -infile %infile.content \
-                           -coverage %minimalcoverage.content \
-                           -blastmax %maxevalue.content \
-                           -cluwidth %minimalanchor.content \
-                           -s/c %minimalscore.content \
-                           -seqs %maxseqalignment.content \
-                           -maxsim %maxseqidentity.content \
-                           -html %html.content \
-                           -oformat %outformat.content \
-                           -dohmmb f \
-                           -dohmms f \
-                           -dohmma f \
-                           -doext f \
-                           -dotax f \
-                           -verbose 2 \
-                           -hmmer $HMMER_BINARIES \
-                           -clustalw $CLUSTALW \
-                           -blastdb $BLASTDB \
-                           -taxdir $TAXDIR \
