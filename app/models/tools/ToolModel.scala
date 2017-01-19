@@ -98,7 +98,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     "clustalo" -> ClustalOmega,
     "msaprobs" -> MSAProbs,
     "blammer" -> Blammer,
-    "aln2plot" -> Aln2Plot
+    "aln2plot" -> Aln2Plot,
+    "phylip" -> PHYLIP
   )
 
 
@@ -497,6 +498,19 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val results = Seq("Tree")
   }
+  case object PHYLIP extends ToolModel {
+
+    val toolNameShort = "phylip"
+    val toolNameLong = "PHYLIP-NEIGHBOR"
+    val toolNameAbbrev = "phyn"
+    val category = "classification"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT.name, Param.MATRIX_PHYLIP.name)
+    val results = Seq("NeighborJoining", "UPGMA")
+  }
+
+
+
   case object CLANS extends ToolModel {
 
     val toolNameShort = "clans"
