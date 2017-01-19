@@ -654,7 +654,7 @@ formComponents =
     name: "gap_term"
     id: "gap_term"
     label: "Gap Termination penalty"
-    value: args.value
+    value: 0.45
   ]
   "bonusscore": (args) -> [
     ParameterNumberComponent
@@ -662,7 +662,7 @@ formComponents =
     name: "bonusscore"
     id: "bonusscore"
     label: "Bonus Score"
-    value: args.value
+    value: 0
   ]
   "msageneration": (args) -> [
     ParameterSelectComponent
