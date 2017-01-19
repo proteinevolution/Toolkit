@@ -764,3 +764,13 @@ formComponents =
     label: "Matrix"
     value: args.value
   ]
+  "matrix_phylip": (args) -> [
+    ParameterSelectComponent
+  ,
+    options: args.options
+    name: "matrix_phylip"
+    id: "matrix_phylip"
+    label: "Model of amino acid replacement"
+    value: args.value
+  ]
+
