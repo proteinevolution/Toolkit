@@ -755,11 +755,12 @@ formComponents =
     label: "Maximal Sequence Identity"
     value: 0.99
   ]
-  "weighting": (args) -> [
-    ParameterBoolComponent
+  "matrix_coils": (args) -> [
+    ParameterSelectComponent
   ,
-    name: "weighting"
-    id: "weighting"
-    label: "Should weighting be performed?"
-    value: "weighting"
+    options: args.options
+    name: "matrix_coils"
+    id: "matrix_coils"
+    label: "Matrix"
+    value: args.value
   ]

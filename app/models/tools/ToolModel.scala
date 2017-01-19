@@ -360,8 +360,8 @@ object ToolModel extends PlayEnum[ToolModel] {
 
   case object HHrep extends ToolModel {
 
-    val toolNameShort = "hhrep"
-    val toolNameLong = "HHrep"
+    val toolNameShort = "hhrepid"
+    val toolNameLong = "HHrepid"
     val toolNameAbbrev = "hhr"
     val category = "seqanal"
     val optional = ""
@@ -398,7 +398,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val toolNameShort = "tprpred"
     val toolNameLong = "TPRpred"
-    val toolNameAbbrev = "tpr"
+    val toolNameAbbrev = "tprp"
     val category = "seqanal"
     val optional = ""
     val params = Seq(Param.ALIGNMENT.name)
