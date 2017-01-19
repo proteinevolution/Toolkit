@@ -34,5 +34,9 @@
       // blammer
       case ("blammer", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
       case ("blammer", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
-      }
-}
+
+
+      // KAlign
+      case ("kalign", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("kalign", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
+}}

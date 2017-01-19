@@ -299,9 +299,9 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "alignment"
     val optional = ""
 
-    val params = Seq(Param.ALIGNMENT.name, Param.OUTORDER.name, Param.GAP_OPEN.name, Param.GAP_EXT.name, Param.GAP_TERM.name, Param.BONUSSCORE.name)
+    val params = Seq(Param.ALIGNMENT.name, Param.GAP_OPEN.name, Param.GAP_EXT.name, Param.GAP_TERM.name, Param.BONUSSCORE.name)
 
-    val results = Seq.empty[String]
+    val results = Seq("Alignment", "AlignmentViewer")
   }
 
   case object Hmmer extends ToolModel {
