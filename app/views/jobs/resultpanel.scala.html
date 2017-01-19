@@ -30,5 +30,9 @@
       // muscle
       case ("muscle", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
       case ("muscle", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
+
+      // blammer
+      case ("blammer", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("blammer", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       }
 }

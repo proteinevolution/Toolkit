@@ -11,7 +11,7 @@ import models.{Param, Values}
 
 sealed trait ToolModel extends EnumEntry {
 
-
+  case class ToolParam(name: String, defvalue: Option[String], paramtype: Int)
 
   val toolNameShort : String
   val toolNameLong : String
@@ -98,7 +98,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     "backtrans" -> BackTranslate,
     "clustalo" -> ClustalOmega,
     "glprobs" -> GLProbs,
-    "msaprobs" -> MSAProbs
+    "msaprobs" -> MSAProbs,
+    "blammer" -> Blammer
   )
 
 
@@ -196,6 +197,21 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val params = Seq(Param.ALIGNMENT.name)
     val results = Seq("Alignment", "AlignmentViewer", "Conservation", "Text")
+  }
+
+
+  case object Blammer extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "blammer"
+    val toolNameLong = "Blammer"
+    val toolNameAbbrev = "blam"
+    val category = "alignment"
+    val optional = ""
+
+    val params = Seq(Param.ALIGNMENT.name, Param.MIN_QUERY_COV.name, Param.MAX_EVAL.name, Param.MIN_ANCHOR_WITH.name,
+      Param.MAX_SEQID.name, Param.MAX_SEQS.name, Param.MIN_COLSCORE.name)
+    val results = Seq("Alignment", "AlignmentViewer")
   }
 
 
