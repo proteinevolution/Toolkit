@@ -9,5 +9,5 @@ import models.Constants
 object Ancescon extends Constants {
 
   /* Just returns the filecontent as string */
-  def readTree(jobID: String): String = s"$jobPath$jobID/results/alignment2.clu.tre".toFile.contentAsString
+  def readTree(pathToTree: String): String = pathToTree.toFile.lines.mkString("")
 }
