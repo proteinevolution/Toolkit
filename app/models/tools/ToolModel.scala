@@ -288,8 +288,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT.name, Param.GAP_OPEN.name, Param.OFFSET.name)
 
-    val results = Seq.empty[String]
-
+    val results = Seq("Alignment", "AlignmentViewer")
   }
 
   case object Kalign extends ToolModel {
