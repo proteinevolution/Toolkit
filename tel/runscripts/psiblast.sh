@@ -31,12 +31,9 @@ reformat.pl fas \
             "$(readlink -f ../results/out.align)" \
             "$(readlink -f ../results/out.align_clu)"
 
+# Produces the alignment fasta output
 %SCALA %HELPER/psiblastpPostProcess.scala ../results/out.psiblastp
 
-# Produce new PSIBLAST Overview
-
+# Produce new PSIBLAST Overview and also the Evalues list
 parse_BLAST_HTML.py ../results/out.psiblastp > ../results/out.psiblastp_overview
-
-# Produce some extra files:
-< ../results/out.psiblastp grep Expect | awk '{ print $8; }' | sed 's/,$//' > ../results/evalues.dat
 
