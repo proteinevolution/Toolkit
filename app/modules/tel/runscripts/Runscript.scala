@@ -31,6 +31,7 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript]  {
 
       a :+ paramName -> { (value: RType, executionContext: ExecutionContext) =>
         m.group("repr") match {
+          // TODO Constraints are not yet supported, currently all arguments are valid
           case "path" =>  ValidArgument(new FileRepresentation(executionContext.getFile(paramName, value.inner().toString)))
           case "content" => ValidArgument(new LiteralRepresentation(value))
         }
@@ -85,7 +86,6 @@ object Runscript extends TELRegex {
   // An evaluation returns an argument given a value for a runscript type and an execution Context
   type Evaluation = (RType, ExecutionContext) => Argument
 
-  // TODO Constraints are not yet supported, currently all arguments are valid
   /**
     * Reads the lines of a runscript file and returns a new runscript instance
     *

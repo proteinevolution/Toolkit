@@ -1,45 +1,35 @@
 val akkaVersion = "2.4.16"
-val jqueryVersion = "3.1.1"
-val jqueryLazyloadVersion = "1.9.7"
-val jqueryUIVersion = "1.12.1"
-val foundationVersion = "6.3.0"
-val mithrilVersion = "0.2.5"
-val betterfilesVersion = "2.16.0"
-val bcryptVersion = "0.3m"
-val highchartsVersion = "5.0.6"
-val d3Version = "4.4.1"
-val playMailerVersion = "5.0.0"
-val reactiveMongoVersion = "0.12.1"
 
 val commonDeps = Seq(ws, filters, cache,
-  "com.typesafe.akka" %% "akka-actor" % akkaVersion,
-  "com.sanoma.cda" %% "maxmind-geoip2-scala" % "1.5.3",
-  "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
-  "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
-  "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
-  "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-  "com.typesafe.akka" %% "akka-persistence" % akkaVersion,
-  "com.typesafe.play" %% "play-mailer" % playMailerVersion,  // Mailer Plugin: https://github.com/playframework/play-mailer
-  "com.github.pathikrit" %% "better-files" % betterfilesVersion,
-  "org.mindrot" % "jbcrypt" % bcryptVersion,
-  "com.evojam" %% "play-elastic4s" % "0.3.1",
-  "org.reactivemongo" %% "play2-reactivemongo" % reactiveMongoVersion,
-  "org.reactivemongo" %% "reactivemongo-play-json" % reactiveMongoVersion,
-  "co.fs2" %% "fs2-core" % "0.9.2",
-  "org.scalaz" %% "scalaz-core" % "7.2.8",
-  "org.scalaz" %% "scalaz-concurrent" % "7.2.8",
-  "com.chuusai" %% "shapeless" % "2.3.2",
-  "org.clapper" %% "classutil" % "1.0.11",
-  "com.beachape" %% "enumeratum" % "1.4.13",
-  "com.beachape" %% "enumeratum-play" % "1.4.13",
-  "com.beachape" %% "enumeratum-play-json" % "1.4.13",
-  "org.tpolecat" %% "atto-core"  % "0.5.0-M3",
-  "org.tpolecat" %% "atto-compat-scalaz72" % "0.5.0-M3",
-  "net.ruippeixotog" %% "scala-scraper" % "1.1.0",
-  "com.lihaoyi" %% "fastparse" % "0.4.1",
-  "com.vmunier" %% "scalajs-scripts" % "1.0.0",
-  "org.typelevel" %% "cats" % "0.8.1"
+  "com.typesafe.akka"     %% "akka-actor"               % akkaVersion,
+  "com.sanoma.cda"        %% "maxmind-geoip2-scala"     % "1.5.3",
+  "com.typesafe.akka"     %% "akka-cluster"             % akkaVersion,
+  "com.typesafe.akka"     %% "akka-cluster-tools"       % akkaVersion,
+  "com.typesafe.akka"     %% "akka-cluster-metrics"     % akkaVersion,
+  "com.typesafe.akka"     %% "akka-slf4j"               % akkaVersion,
+  "com.typesafe.akka"     %% "akka-stream"              % akkaVersion,
+  "com.typesafe.akka"     %% "akka-persistence"         % akkaVersion,
+  "com.typesafe.play"     %% "play-mailer"              % "5.0.0",
+  "com.github.pathikrit"  %% "better-files"             % "2.16.0",
+  "org.mindrot"            % "jbcrypt"                  % "0.3m",
+  "com.evojam"            %% "play-elastic4s"           % "0.3.1",
+  "org.reactivemongo"     %% "play2-reactivemongo"      % "0.12.1",
+  "org.reactivemongo"     %% "reactivemongo-play-json"  % "0.12.1",
+  "co.fs2"                %% "fs2-core"                 % "0.9.2",
+  "org.scalaz"            %% "scalaz-core"              % "7.2.8",
+  "org.scalaz"            %% "scalaz-concurrent"        % "7.2.8",
+  "com.chuusai"           %% "shapeless"                % "2.3.2",
+  "org.clapper"           %% "classutil"                % "1.0.11",
+  "com.beachape"          %% "enumeratum"               % "1.4.13",
+  "com.beachape"          %% "enumeratum-play"          % "1.4.13",
+  "com.beachape"          %% "enumeratum-play-json"     % "1.4.13",
+  "org.tpolecat"          %% "atto-core"                % "0.5.0-M3",
+  "org.tpolecat"          %% "atto-compat-scalaz72"     % "0.5.0-M3",
+  "net.ruippeixotog"      %% "scala-scraper"            % "1.1.0",
+  "com.lihaoyi"           %% "fastparse"                % "0.4.1",
+  "com.vmunier"           %% "scalajs-scripts"          % "1.0.0",
+  "org.typelevel"         %% "cats"                     % "0.8.1",
+  "com.h2database"         % "h2"                       % "1.4.192"
 )
 
 /*
@@ -51,7 +41,7 @@ val commonSettings = Seq(
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
-  dependencyOverrides ++= Set("org.webjars" % "jquery" % jqueryVersion,
+  dependencyOverrides ++= Set("org.webjars" % "jquery" % "3.1.1",
                               "com.typesafe.akka" %% "akka-actor" % akkaVersion))
 
 lazy val metadata = List(
@@ -72,23 +62,23 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "mpi-toolkit",
     libraryDependencies ++= (commonDeps ++ Seq(
-      "org.webjars" %% "webjars-play" % "2.5.0-3",
-      "org.webjars" % "jquery" % jqueryVersion,
-      "org.webjars.bower" % "jquery.lazyload" % jqueryLazyloadVersion,
-      "org.webjars" % "jquery-ui" % jqueryUIVersion,
-      "org.webjars.npm" % "foundation-sites" % foundationVersion,
-      "org.webjars.bower" % "fastclick" % "1.0.6",
-      "org.webjars.npm" % "mithril" % mithrilVersion,
-      "org.webjars.bower" % "d3" % d3Version,
-      "org.webjars.bower" % "slick-carousel" % "1.6.0",
-      "org.webjars.npm" % "codemirror-minified" % "5.22.0",
-      "org.webjars.npm" % "reformat.js" % "0.0.9",
-      "org.webjars" % "dropzone" % "4.3.0",
-      "org.webjars.bower" % "clipboard" % "1.5.10",
-      "org.webjars" % "linkurious.js" % "1.5.1",
-      "org.webjars.bower" % "tinymce" % "4.4.1",
-      "org.webjars.bower" % "datatables" % "1.10.12",
-      "org.webjars" % "highcharts" % highchartsVersion)),
+      "org.webjars"        %% "webjars-play"          % "2.5.0-3",
+      "org.webjars"         % "jquery"                % "3.1.1",
+      "org.webjars.bower"   % "jquery.lazyload"       % "1.9.7",
+      "org.webjars"         % "jquery-ui"             % "1.12.1",
+      "org.webjars.npm"     % "foundation-sites"      % "6.3.0",
+      "org.webjars.bower"   % "fastclick"             % "1.0.6",
+      "org.webjars.npm"     % "mithril"               % "0.2.5",
+      "org.webjars.bower"   % "d3"                    % "4.4.1",
+      "org.webjars.bower"   % "slick-carousel"        % "1.6.0",
+      "org.webjars.npm"     % "codemirror-minified"   % "5.22.0",
+      "org.webjars.npm"     % "reformat.js"           % "0.0.9",
+      "org.webjars"         % "dropzone"              % "4.3.0",
+      "org.webjars.bower"   % "clipboard"             % "1.5.10",
+      "org.webjars"         % "linkurious.js"         % "1.5.1",
+      "org.webjars.bower"   % "tinymce"               % "4.4.1",
+      "org.webjars.bower"   % "datatables"            % "1.10.12",
+      "org.webjars"         % "highcharts"            % "5.0.6")),
     pipelineStages := Seq(rjs, digest, gzip),
     compile in Compile <<= (compile in Compile) dependsOn scalaJSPipeline,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),

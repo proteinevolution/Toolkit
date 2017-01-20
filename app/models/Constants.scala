@@ -82,4 +82,11 @@ object Param {
   final val PMIN = Param("pmin",1,1)
   final val MAX_SEQS = Param("max_seqs",1,1)
   final val ALIWIDTH = Param("aliwidth",1,1)
+  final val MAX_EVAL = Param("max_eval",0, 1)
+  final val MAX_SEQID = Param("max_seqid", 0, 1)
+  final val MIN_COLSCORE = Param("min_colscore", 0, 1)
+  final val MIN_QUERY_COV = Param("min_query_cov", 0, 1)
+  final val MIN_ANCHOR_WITH = Param("min_anchor_width", 0, 1)
+  final val WEIGHTING = Param("weighting", 0, 1)
+  final val MATRIX_PHYLIP = Param("matrix_phylip",0,1)
 }

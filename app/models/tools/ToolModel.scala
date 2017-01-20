@@ -11,7 +11,7 @@ import models.{Param, Values}
 
 sealed trait ToolModel extends EnumEntry {
 
-
+  case class ToolParam(name: String, defvalue: Option[String], paramtype: Int)
 
   val toolNameShort : String
   val toolNameLong : String
@@ -69,7 +69,6 @@ object ToolModel extends PlayEnum[ToolModel] {
   val toolMap : Map[String, ToolModel] = Map(
     "psiblast" -> PsiBlast,
     "tcoffee" -> Tcoffee,
-    "probcons" -> Probcons,
     "muscle" -> Muscle,
     "mafft" -> Mafft,
     "kalign" -> Kalign,
@@ -95,7 +94,12 @@ object ToolModel extends PlayEnum[ToolModel] {
     "hhpred" -> HHpred,
     "patternsearch" -> PatternSearch,
     "blastp" -> BlastP,
-    "backtrans" -> BackTranslate
+    "backtrans" -> BackTranslate,
+    "clustalo" -> ClustalOmega,
+    "msaprobs" -> MSAProbs,
+    "blammer" -> Blammer,
+    "aln2plot" -> Aln2Plot,
+    "phylip" -> PHYLIP
   )
 
 
@@ -195,6 +199,61 @@ object ToolModel extends PlayEnum[ToolModel] {
     val results = Seq("Alignment", "AlignmentViewer", "Conservation", "Text")
   }
 
+
+  case object Blammer extends ToolModel {
+
+    // --- Names for the Tool ---
+    val toolNameShort = "blammer"
+    val toolNameLong = "Blammer"
+    val toolNameAbbrev = "blam"
+    val category = "alignment"
+    val optional = ""
+
+    val params = Seq(Param.ALIGNMENT.name, Param.MIN_QUERY_COV.name, Param.MAX_EVAL.name, Param.MIN_ANCHOR_WITH.name,
+      Param.MAX_SEQID.name, Param.MAX_SEQS.name, Param.MIN_COLSCORE.name)
+    val results = Seq("Alignment", "AlignmentViewer")
+  }
+
+
+  case object ClustalOmega extends ToolModel {
+
+    val toolNameShort = "clustalo"
+    val toolNameLong = "Clustal Omega"
+    val toolNameAbbrev = "cluo"
+    val category = "alignment"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT.name)
+
+    val results = Seq("Alignment", "AlignmentViewer")
+  }
+
+  /*
+  case object GLProbs extends ToolModel {
+
+    val toolNameShort = "glprobs"
+    val toolNameLong = "GLProbs"
+    val toolNameAbbrev = "glpr"
+    val category = "alignment"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT.name)
+
+    val results = Seq("Alignment", "AlignmentViewer")
+  }
+  */
+
+  case object MSAProbs extends ToolModel {
+
+    val toolNameShort = "msaprobs"
+    val toolNameLong = "MSAProbs"
+    val toolNameAbbrev = "msap"
+    val category = "alignment"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT.name)
+
+    val results = Seq("Alignment", "AlignmentViewer")
+  }
+
+  /*
   case object Probcons extends ToolModel {
 
     // --- Names for the Tool ---
@@ -208,19 +267,18 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val results = Seq.empty[String]
   }
+  */
 
   case object Muscle extends ToolModel {
 
     // --- Names for the Tool ---
     val toolNameShort = "muscle"
     val toolNameLong = "MUSCLE"
-    val toolNameAbbrev = "msc"
+    val toolNameAbbrev = "musc"
     val category = "alignment"
     val optional = ""
-
-    val params = Seq("alignment", "maxrounds")
-
-    val results = Seq.empty[String]
+    val params = Seq("alignment", Param.MAXROUNDS.name)
+    val results = Seq("Alignment", "AlignmentViewer")
   }
 
   case object Mafft extends ToolModel {
@@ -232,8 +290,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val optional = ""
     val params = Seq(Param.ALIGNMENT.name, Param.GAP_OPEN.name, Param.OFFSET.name)
 
-    val results = Seq.empty[String]
-
+    val results = Seq("Alignment", "AlignmentViewer")
   }
 
   case object Kalign extends ToolModel {
@@ -245,9 +302,9 @@ object ToolModel extends PlayEnum[ToolModel] {
     val category = "alignment"
     val optional = ""
 
-    val params = Seq(Param.ALIGNMENT.name, Param.OUTORDER.name, Param.GAP_OPEN.name, Param.GAP_EXT.name, Param.GAP_TERM.name, Param.BONUSSCORE.name)
+    val params = Seq(Param.ALIGNMENT.name, Param.GAP_OPEN.name, Param.GAP_EXT.name, Param.GAP_TERM.name, Param.BONUSSCORE.name)
 
-    val results = Seq.empty[String]
+    val results = Seq("Alignment", "AlignmentViewer")
   }
 
   case object Hmmer extends ToolModel {
@@ -265,6 +322,19 @@ object ToolModel extends PlayEnum[ToolModel] {
     val results = Seq("fileview")
   }
 
+
+  case object Aln2Plot extends ToolModel {
+
+    val toolNameShort = "aln2plot"
+    val toolNameLong = "Aln2Plot"
+    val toolNameAbbrev = "a2pl"
+    val category = "seqanal"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT.name)
+
+    val results = Seq("Hydrophobicity", "SideChainVolume")
+  }
+
   case object PCoils extends ToolModel {
 
     val toolNameShort = "pcoils"
@@ -272,10 +342,8 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "pco"
     val category = "seqanal"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
+    val params = Seq(Param.ALIGNMENT.name, Param.WEIGHTING.name)
     val results = Seq.empty[String]
-
   }
 
   case object FRpred extends ToolModel {
@@ -293,8 +361,8 @@ object ToolModel extends PlayEnum[ToolModel] {
 
   case object HHrep extends ToolModel {
 
-    val toolNameShort = "hhrep"
-    val toolNameLong = "HHrep"
+    val toolNameShort = "hhrepid"
+    val toolNameLong = "HHrepid"
     val toolNameAbbrev = "hhr"
     val category = "seqanal"
     val optional = ""
@@ -331,7 +399,7 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val toolNameShort = "tprpred"
     val toolNameLong = "TPRpred"
-    val toolNameAbbrev = "tpr"
+    val toolNameAbbrev = "tprp"
     val category = "seqanal"
     val optional = ""
     val params = Seq(Param.ALIGNMENT.name)
@@ -430,6 +498,19 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val results = Seq("Tree")
   }
+  case object PHYLIP extends ToolModel {
+
+    val toolNameShort = "phylip"
+    val toolNameLong = "PHYLIP-NEIGHBOR"
+    val toolNameAbbrev = "phyn"
+    val category = "classification"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT.name, Param.MATRIX_PHYLIP.name)
+    val results = Seq("NeighborJoining", "UPGMA")
+  }
+
+
+
   case object CLANS extends ToolModel {
 
     val toolNameShort = "clans"
