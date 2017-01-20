@@ -797,3 +797,11 @@ formComponents =
     label: "Program for performing Protein BLAST search"
     value: args.value
   ]
+  "filter_low_complexity": (args) -> [
+    ParameterBoolComponent
+  ,
+    name: "filter_low_complexity"
+    id: "filter_low_complexity"
+    label: "Filter for low complexity regions"
+    value: "filter_low_complexity"
+  ]

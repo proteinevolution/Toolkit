@@ -1,13 +1,19 @@
 package modules.parsers
 import scala.util.parsing.combinator._
+import better.files._
+
 
 object FASTA {
 
   case class Entry( description: String, sequence: String )
 
   def fromFile( fn: String ): List[Entry] = {
-    val lines = scala.io.Source.fromFile(fn).getLines().mkString("\n")
-    fromString( lines )
+    val x = fn.toFile
+    if(x.isEmpty) {
+      List.empty
+    } else{
+      fromString( x.contentAsString )
+    }
   }
 
   def fromString( input: String ): List[Entry] =

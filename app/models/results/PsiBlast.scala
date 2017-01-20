@@ -9,6 +9,7 @@ package models.results
  */
 import models.Constants
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
+
 import scala.io.Source
 import modules.parsers.FASTA
 import net.ruippeixotog.scalascraper.dsl.DSL._
@@ -16,6 +17,7 @@ import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL.Parse._
 import net.ruippeixotog.scalascraper.model.Element
 import better.files._
+import play.api.Logger
 
 object PsiBlast extends Constants {
 
@@ -130,17 +132,8 @@ object PsiBlast extends Constants {
   /* returns fasta blast output */
 
   def fastaAlignment(mainID: String) : List[FASTA.Entry] = {
-
-    val outfile = s"$jobPath$mainID/results/out.align"
-
-    lazy val fastaList = FASTA.fromFile(outfile)
-
-    fastaList
-
+    FASTA.fromFile(s"$jobPath$mainID/results/out.align")
   }
-
-
-
 
 
   /* returns the clustal output to be embedded in biojs msa via twirl */
@@ -150,8 +143,6 @@ object PsiBlast extends Constants {
     val outfile = s"$jobPath$mainID/results/out.align_clu"
 
     Source.fromFile(outfile).getLines()
-
   }
-
 }
 
