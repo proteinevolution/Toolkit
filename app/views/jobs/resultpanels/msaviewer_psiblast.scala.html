@@ -48,20 +48,33 @@
         // init msa
         var ms = new msa.msa(opts);
 
-        function renderMSA() {
-
-            // the menu is independent to the MSA container
-            var menuOpts = {};
-            menuOpts.el = document.getElementById('div');
-            menuOpts.msa = ms;
-            var defMenu = new msa.menu.defaultmenu(menuOpts);
-            ms.addView("menu", defMenu);
+        // the menu is independent to the MSA container
+        var menuOpts = {};
+        menuOpts.el = document.getElementById('div');
+        menuOpts.msa = ms;
+        var defMenu = new msa.menu.defaultmenu(menuOpts);
+        ms.addView("menu", defMenu);
 
 
             // call render at the end to display the whole MSA
+        ms.render();
+        function onFullscreenToggle() {
+            width = $("#tool-tabs").width() - 200;
+            opts.zoomer = {
+                alignmentHeight: 600,
+                alignmentWidth: width,
+                labelNameLength: 165,
+                labelWidth: 85,
+                labelFontsize: "13px",
+                labelIdLength: 75,
+                menuFontsize: "12px",
+                menuMarginLeft: "2px",
+                menuPadding: "0px 10px 0px 0px",
+                menuItemFontsize: "14px",
+                menuItemLineHeight: "14px",
+                autoResize: true
+            };
+            ms = new msa.msa(opts);
             ms.render();
         }
-
-    renderMSA();
-
 </script>

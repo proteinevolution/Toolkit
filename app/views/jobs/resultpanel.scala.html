@@ -3,17 +3,21 @@
 
 
 @{ (toolname, resultpanel) match {
+
+      // PSI-BLAST
       case ("psiblast", "Hits") => views.html.jobs.resultpanels.blastviz_extra(jobID)
       case ("psiblast", "E-Values") => views.html.jobs.resultpanels.evalues(jobID)
       case ("psiblast", "Fasta") => views.html.jobs.resultpanels.fasta(jobID)
       case ("psiblast", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_psiblast(jobID)
       case ("psiblast", "Extra") => views.html.jobs.resultpanels.blast_exp(jobID)
+
+
       case ("tcoffee", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
       case ("tcoffee", "Conservation") => views.html.jobs.resultpanels.tcoffee_colored(jobID)
       case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       case ("tcoffee", "Text") => views.html.jobs.resultpanels.tcoffee_text(jobID)
       case ("hhpred", "Hitlist") => views.html.jobs.resultpanels.hhpred.hitlist(jobID)
-      case ("ancescon", "Tree" ) => views.html.jobs.resultpanels.ancescon.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div")
+      case ("ancescon", "Tree" ) => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div")
       case ("hhpred", "Histogram") => views.html.jobs.resultpanels.hhpred.histogram(jobID)
 
       // clustalo
@@ -46,6 +50,6 @@
       case ("aln2plot", "SideChainVolume") => views.html.jobs.resultpanels.image(s"/files/$jobID/side_chain_volume.png")
 
       // Phylip
-      case ("phylip", "NeighborJoining") => views.html.jobs.resultpanels.ancescon.tree(s"$jobPath$jobID/results/alignment_nj.tree", "nj_div")
-      case ("phylip", "UPGMA") => views.html.jobs.resultpanels.ancescon.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")
+      case ("phylip", "NeighborJoining") => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_nj.tree", "nj_div")
+      case ("phylip", "UPGMA") => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")
 }}
