@@ -8,3 +8,4 @@ inclusion_ethresh GEN inclusion_ethresh.prop
 min_cov GEN min_cov.prop
 matrix_phylip GEN matrix_phylip.prop
 matrix_pcoils GEN matrix_pcoils.prop
+protblastprogram GEN protblastprogram.prop

@@ -30,9 +30,6 @@ body.is-reveal-open {
 /* Configuration of individual parameters */
 .parameter {
     width: 100% !important;
-    height: 6em;
-
-
 }
 
 .parameter label {
