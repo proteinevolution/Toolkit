@@ -6,3 +6,4 @@ msa_gen_max_iter GEN msa_gen_max_iter.prop
 genetic_code GEN genetic_code.prop
 inclusion_ethresh GEN inclusion_ethresh.prop
 min_cov GEN min_cov.prop
+matrix_phylip GEN matrix_phylip.prop
