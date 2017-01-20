@@ -92,4 +92,5 @@ object Param {
   final val MATRIX_PHYLIP = Param("matrix_phylip",0,1)
   final val MATRIX_PCOILS = Param("matrix_pcoils", 1, 1)
   final val PROTBLASTPROGRAM = Param("protblastprogram", 1, 1)
+  final val FILTER_LOW_COMPLEXITY = Param("filter_low_complexity", 0, 1)
 }

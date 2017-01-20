@@ -2,6 +2,8 @@
 @import play.api.mvc.RequestHeader
 @(mainID : String)(implicit request: RequestHeader)
 
+@fasta = @{PsiBlast.fastaAlignment(mainID)}
+
 <style>
 #fasta tr {
     background-color: white;
@@ -32,12 +34,17 @@
         <option  id="tcoffee" onclick="forward2('tcoffee')" value="psi">T-Coffee</option>
     </select>
 </div>
+
+
+
 <div style="height: 50em; overflow:auto; width: 100%;">
 <table id="fasta" class="hover_alignment">
-    @for((pair, index) <- PsiBlast.fastaAlignment(mainID).zipWithIndex){
 
-        <tr><td><input style='margin: 0; padding: 0;'  type='checkbox' name='hits' class='hits' value='@index'></td><td><pre> >@pair.description <br> @pair.sequence </pre></td></tr>
 
+    @if(fasta.nonEmpty) {
+        @for((pair, index) <- fasta.zipWithIndex){
+            <tr><td><input style='margin: 0; padding: 0;'  type='checkbox' name='hits' class='hits' value='@index'></td><td><pre> >@pair.description <br> @pair.sequence </pre></td></tr>
+        }
     }
 </table>
 </div>
@@ -47,8 +54,6 @@
 </table>
 
 <script>
-
-
     function selectAll() {
         $('input:checkbox.hits').each(function () {
                     var checked = !$(this).data('checked');
@@ -61,22 +66,14 @@
     function forward2(tool) {
 
         var arr = [ ], submit = '';
-        @for((pair, index) <- PsiBlast.fastaAlignment(mainID).zipWithIndex){
-
+        @for((pair, index) <- fasta.zipWithIndex){
             arr['@index'] = ">" + '@pair.description' + "\n" + '@pair.sequence';
-
         }
 
         $('input[name="hits"]:checked').each(function() {
-
             submit += arr[this.value] + "\n";
-
         });
-
         localStorage.setItem ( "resultcookie", submit ) ;
         window.location.href = "/#/tools/" + tool ;
-
     }
-
-
 </script>
