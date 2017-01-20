@@ -204,13 +204,12 @@ JobTabsComponent =
             m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"},
               m "div", {class: "parameter-panel"}, [
 
+                # One column Layout for the input tab
                 if paramGroup[0] is "Input"
                     paramGroup[1].map (paramElem) ->
                       ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
                       comp = formComponents[paramElem[0]](ctrlArgs)
                       m.component comp[0], comp[1]
-
-    # Show everything except for the alignment in the parameters div
                 else
                   m "div", {class: "parameters"},
                     [
@@ -788,4 +787,13 @@ formComponents =
     id: "run_psipred"
     label: "Run PSIPRED"
     value: "run_psipred"
+  ]
+  "protblastprogram": (args) -> [
+    ParameterSelectComponent
+  ,
+    options: args.options
+    name: "protblastprogram"
+    id: "protblastprogram"
+    label: "Program for performing Protein BLAST search"
+    value: args.value
   ]

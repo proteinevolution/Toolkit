@@ -58,6 +58,7 @@ class Values @Inject() (tel : TEL) {
     Param.EVAL_INC_THRESHOLD.name -> tel.generateValues(Param.EVAL_INC_THRESHOLD.name).toSeq.sortBy(_._1.toFloat),
     Param.MIN_COV.name -> tel.generateValues(Param.MIN_COV.name).toSeq.sorted,
     Param.MATRIX_PHYLIP.name -> tel.generateValues(Param.MATRIX_PHYLIP.name).toSeq.sorted,
-    Param.MATRIX_PCOILS.name -> tel.generateValues(Param.MATRIX_PCOILS.name).toSeq.sorted
+    Param.MATRIX_PCOILS.name -> tel.generateValues(Param.MATRIX_PCOILS.name).toSeq.sorted,
+    Param.PROTBLASTPROGRAM.name -> tel.generateValues(Param.PROTBLASTPROGRAM.name).toSeq.sorted
   )
 }

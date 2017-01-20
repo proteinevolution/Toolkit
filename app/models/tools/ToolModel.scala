@@ -27,7 +27,8 @@ sealed trait ToolModel extends EnumEntry {
 
   val paramGroups = Map(
 
-    "Input" -> Seq(Param.ALIGNMENT.name, Param.ALIGNMENT_FORMAT.name, Param.STANDARD_DB.name, Param.HHSUITEDB.name)
+    "Input" -> Seq(Param.ALIGNMENT.name, Param.ALIGNMENT_FORMAT.name, Param.STANDARD_DB.name, Param.HHSUITEDB.name,
+      Param.PROTBLASTPROGRAM.name)
   )
 
   // Params which are not a part of any group
@@ -93,7 +94,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     "hhblits" -> HHblits,
     "hhpred" -> HHpred,
     "patternsearch" -> PatternSearch,
-    "blastp" -> BlastP,
+    "protblast" -> ProtBlast,
     "backtrans" -> BackTranslate,
     "clustalo" -> ClustalOmega,
     "msaprobs" -> MSAProbs,
@@ -103,21 +104,21 @@ object ToolModel extends PlayEnum[ToolModel] {
   )
 
 
-  case object BlastP extends ToolModel {
+  case object ProtBlast extends ToolModel {
 
     // --- Names for the Tool ---
-    val toolNameShort = "blastp"
-    val toolNameLong = "BLASTP"
-    val toolNameAbbrev = "blp"
+    val toolNameShort = "protblast"
+    val toolNameLong = "ProtBlast"
+    val toolNameAbbrev = "prob"
     val category = "search"
     val optional = ""
 
 
     val params = Seq(Param.ALIGNMENT.name, "standarddb", "matrix",
-      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc")
+      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc",
+      Param.PROTBLASTPROGRAM.name)
 
     val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
-
   }
 
   case object PatternSearch extends ToolModel {
