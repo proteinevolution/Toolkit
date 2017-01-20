@@ -1,4 +1,5 @@
-@(resultpanel : String, jobID : String, toolname: String)(implicit request: RequestHeader)
+@(resultpanel : String, jobID : String, toolname: String, jobPath: String)(implicit request: RequestHeader)
+
 
 
 @{ (toolname, resultpanel) match {
@@ -12,8 +13,39 @@
       case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       case ("tcoffee", "Text") => views.html.jobs.resultpanels.tcoffee_text(jobID)
       case ("hhpred", "Hitlist") => views.html.jobs.resultpanels.hhpred.hitlist(jobID)
-      case ("ancescon", "Tree" ) => views.html.jobs.resultpanels.ancescon.tree(jobID)
+      case ("ancescon", "Tree" ) => views.html.jobs.resultpanels.ancescon.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div")
       case ("hhpred", "Histogram") => views.html.jobs.resultpanels.hhpred.histogram(jobID)
-      }
-}
 
+      // clustalo
+      case ("clustalo", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("clustalo", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
+
+      // msaprobs
+      case ("msaprobs", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("msaprobs", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
+
+      // muscle
+      case ("muscle", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("muscle", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
+
+      // blammer
+      case ("blammer", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("blammer", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
+
+
+      // KAlign
+      case ("kalign", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("kalign", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
+
+      // Mafft
+      case ("mafft", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("mafft", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
+
+      // Aln2Plot
+      case ("aln2plot", "Hydrophobicity") => views.html.jobs.resultpanels.image(s"/files/$jobID/hydrophobicity.png")
+      case ("aln2plot", "SideChainVolume") => views.html.jobs.resultpanels.image(s"/files/$jobID/side_chain_volume.png")
+
+      // Phylip
+      case ("phylip", "NeighborJoining") => views.html.jobs.resultpanels.ancescon.tree(s"$jobPath$jobID/results/alignment_nj.tree", "nj_div")
+      case ("phylip", "UPGMA") => views.html.jobs.resultpanels.ancescon.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")
+}}

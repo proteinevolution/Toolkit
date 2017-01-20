@@ -167,7 +167,7 @@ class Service @Inject() (webJarAssets     : WebJarAssets,
 
               case Done =>
                 toolModel.results.map { resultName =>
-                  resultName -> views.html.jobs.resultpanel(resultName, job.jobID, job.tool)
+                  resultName -> views.html.jobs.resultpanel(resultName, job.jobID, job.tool, jobPath)
                 }
 
               // All other views are currently computed on Clientside

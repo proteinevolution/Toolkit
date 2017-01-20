@@ -1,7 +1,6 @@
-#!/bin/bash
+muscle -in %alignment.path \
+       -clwstrict \
+       -out ../results/alignment.clustalw_aln \
+       -maxiters %maxrounds.content
 
-trap 'kill $(jobs -p)' EXIT
-%BIOPROGS/tools/muscle/muscle -in %alignment.path \
-                             -out results/muscle_aln \
-                             -maxiters %maxrounds.content \
-                               > logs/status.log
+

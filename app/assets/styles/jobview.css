@@ -41,12 +41,6 @@ body.is-reveal-open {
     font-size: 0.9em;
 }
 
-.parameter .nice-select {
-    border-radius: 3px;
-    height: 2.5em;
-    width: 5em;
-}
-
 .parameter input {
     float: right;
     font-size: 0.9em;
@@ -81,10 +75,6 @@ body.is-reveal-open {
     width: 14em;
     border-radius: 3px;
     font-size: 0.75em;
-}
-.alignmentParameter {
-
-    height: 10em;
 }
 
 .alignment_buttons {
@@ -150,31 +140,10 @@ body.is-reveal-open {
     width: 50%;
 }
 
-.parameters .nice-select .list {
-    width: 100%;
-    margin-left: 0;
-    border: 1px solid grey;
-    border-radius: 0px;
-    margin-top: 3px;
-}
-
-.nice-select.wide {
-    width: 30%;
-    line-height: 30px;
-}
-
-.nice-select:active, .nice-select.open, .nice-select:focus {
-    border-color: #88bfff;
-}
-
-.parameters .nice-select .list li:hover {
-    background-color: #eeeeee;
-
-}
 
 .parameters input {
     text-shadow: 0 0 0 #878787;
-    width: 15em;
+    /*width: 15em;*/
     height: 2.3em;
     border: solid lightgray;
     border-width: 0 0 1px 0;
@@ -184,7 +153,7 @@ body.is-reveal-open {
 
 .parameters input:focus {
     text-shadow: 0 0 0 #000;
-    width: 15em;
+    /*width: 15em; */
     border: solid rgb(113, 113, 113);
     border-width: 0 0 2px 0;
     box-shadow: none;
@@ -319,8 +288,6 @@ font-size: 0.65em !important;
 }
 
 
-
-
 .job .jobid {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -350,7 +317,6 @@ margin-top: 2em;
 
 .addJob { display: none; }
 
-
 .checkJob {
     background-color: gray;
     border-radius: 3px;
@@ -360,36 +326,6 @@ margin-top: 2em;
     margin-left: 1em;
 }
 
-#tabpanel-Input .nice-select {
-    width: 15em;
-    font-size: 0.9em;
-    color: #000;
-    color: rgba(0, 0, 0, 0);
-    text-shadow: 0 0 0 #000;
-    text-shadow: 0 0 0 #000;
-    border: 1px solid grey;
-    position: absolute;
-    left: 62.6em;
-    height: 2.5em;
-    line-height: 2.3em;
-
-}
-
-#tabpanel-Input .nice-select .list {
-    width: 15em;
-    margin-left: 0;
-    border: 1px solid grey;
-    height: 15em;
-    overflow-y: scroll;
-    margin-top: 3px;
-    border-radius: 0px;
-}
-
-#tabpanel-Input .nice-select .list li {
-    line-height: 2.3em;
-    min-height: 0;
-
-}
 
 .reveal-overlay {
     background-color: transparent;
@@ -464,7 +400,6 @@ input.delete:focus {
 }
 
 
-
 input.button_fullscreen{
     color: darkolivegreen !important;
     background-color: inherit;
@@ -481,4 +416,37 @@ input.button_fullscreen:active {
 input.button_fullscreen:focus {
     background-color: inherit;
     margin-top: 0.5em;
+}
+
+/* Nice select */
+.nice-select {
+    font-size: 0.9em;
+    text-shadow: 0 0 0 #000;
+    line-height: 2.3em;
+    height: 2.5em;
+    border: 1px solid grey;
+    color: #000;
+}
+
+.nice-select .list {
+    /*width: 15em; */
+    margin-left: 0;
+    border: 1px solid grey;
+    height: 15em;
+    overflow-y: scroll;
+    margin-top: 3px;
+    border-radius: 0px;
+}
+
+.nice-select .list li {
+    line-height: 2.3em;
+    min-height: 0;
+}
+.nice-select.wide {
+    width: 100%;
+    line-height: 30px;
+}
+
+.nice-select:active, .nice-select.open, .nice-select:focus {
+    border-color: #88bfff;
 }

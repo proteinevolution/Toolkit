@@ -1,17 +1,16 @@
 @import models.results.Ancescon
-@(jobID: String)(implicit request: RequestHeader)
+@(treePath: String, iddiv: String)(implicit request: RequestHeader)
 
 
-
-<select id="ancescon_select" onchange="setLayout()">
+<select id="@{iddiv}_select" onchange="setLayout()">
     <option value="radial">Radial</option>
     <option value="vertical">Vertical</option>
 </select> <br />
-<div id="ancescon_tree"></div>
+<div id="@iddiv"></div>
 
 
 <script>
-    var s = $("#ancescon_select");
+    var s = $("#@{iddiv}_select");
     s.niceSelect();
     function setLayout() {
 
@@ -40,17 +39,17 @@
   radial_layout.scale(false);
 
   tree.layout(radial_layout );
-  tree.data(parser.parse_newick('@Ancescon.readTree(jobID)'));
+  tree.data(parser.parse_newick('@Ancescon.readTree(treePath)'));
   tree.on_click(function(node) {
       node.toggle();
       tree.update();
   });
-  tree(document.getElementById("ancescon_tree"));
+  tree(document.getElementById("@iddiv"));
 
   function onFullscreenToggle() {
 
    var layout = tree.layout();
    layout.width($("#tool-tabs").width() - 200);
-   tree.update();--
+   tree.update();
   }
 </script>
