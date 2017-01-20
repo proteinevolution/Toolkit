@@ -755,12 +755,12 @@ formComponents =
     label: "Maximal Sequence Identity"
     value: 0.99
   ]
-  "matrix_coils": (args) -> [
+  "matrix_pcoils": (args) -> [
     ParameterSelectComponent
   ,
     options: args.options
-    name: "matrix_coils"
-    id: "matrix_coils"
+    name: "matrix_pcoils"
+    id: "matrix_pcoils"
     label: "Matrix"
     value: args.value
   ]
@@ -773,4 +773,19 @@ formComponents =
     label: "Model of amino acid replacement"
     value: args.value
   ]
-
+  "weighting": (args) -> [
+    ParameterBoolComponent
+  ,
+    name: "weighting"
+    id: "weighting"
+    label: "Weighting"
+    value: "weighting"
+  ]
+  "run_psipred": (args) -> [
+    ParameterBoolComponent
+  ,
+    name: "run_psipred"
+    id: "run_psipred"
+    label: "Run PSIPRED"
+    value: "run_psipred"
+  ]
