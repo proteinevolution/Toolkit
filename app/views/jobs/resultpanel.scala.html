@@ -11,6 +11,11 @@
       case ("psiblast", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_psiblast(jobID)
       case ("psiblast", "Extra") => views.html.jobs.resultpanels.blast_exp(jobID)
 
+      // ProtBLAST
+      case ("protblast", "Hits") => views.html.jobs.resultpanels.blastviz_extra(jobID)
+      case ("protblast", "E-Values") => views.html.jobs.resultpanels.evalues(jobID)
+      case ("protblast", "Fasta") => views.html.jobs.resultpanels.fasta(jobID)
+      case ("protblast", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_psiblast(jobID)
 
       case ("tcoffee", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
       case ("tcoffee", "Conservation") => views.html.jobs.resultpanels.tcoffee_colored(jobID)

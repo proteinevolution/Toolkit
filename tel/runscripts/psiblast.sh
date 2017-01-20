@@ -15,7 +15,6 @@ psiblast -db %standarddb.content \
          -out_pssm ../results/out.ksf
 
 
-
 # create HTML and PNG for blastviz visualisation
 
 blastviz.pl ../results/out.psiblastp %jobid.content ../results ../files/%jobid.content >> ../logs/blastviz.log
