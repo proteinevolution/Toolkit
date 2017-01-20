@@ -24,6 +24,8 @@
         <option  id="tcoffee" onclick="forward2('tcoffee')" value="psi">T-Coffee</option>
     </select>
 </div>
+<input type="button" onclick=" $('#blastviz').toggle();" value="Toggle Visualization"  class="button tiny" />
+
 <!--
 <span class="result-title-big" style="color: grey">Choose range of input query:</span>
 -->
@@ -38,12 +40,13 @@
 -->
 
 
-
+<!-- The Blast result visualization -->
 <div id="blastviz">
     <div style='width: 774px ;position: absolute; margin-top: 0.560em;' class='flat-slider' id='flat-slider'></div>
          @Html(PsiBlast.blastviz(mainID))
 
 </div>
+
 
 
 <div id="alignment_overview">
@@ -65,6 +68,8 @@
 </div>
 
 <script>
+
+
     function getSliderWidth() {
 
         return document.getElementById('slider_length').value
