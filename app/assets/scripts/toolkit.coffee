@@ -37,6 +37,7 @@ class window.Job
   this.reloadList =  ->
     m.request({url: "/api/jobs", method: "GET", type: Job}).then(Job.list)
 
+
   this.getJobByID = (jobID) ->
     Job.list.then (jobs) ->
       for job in jobs
