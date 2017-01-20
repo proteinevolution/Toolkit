@@ -42,16 +42,15 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
   }
 
   /**
-    * Returns a minified version of the job which can be sent over the web socket
- *
+    * Returns a clean JSON Object representation of the Job
     * @return
     */
   def cleaned() = {
 
-    Json.obj("jobID"   -> jobID,
-             "state"    -> status,
+    Json.obj("jobID"     -> jobID,
+             "state"     -> status,
              "createdOn" -> dateCreated.get,
-             "toolname" -> tool)
+             "toolname"  -> tool)
   }
 
 }
