@@ -342,7 +342,7 @@ object ToolModel extends PlayEnum[ToolModel] {
     val toolNameAbbrev = "pco"
     val category = "seqanal"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT.name, Param.WEIGHTING.name)
+    val params = Seq(Param.ALIGNMENT.name, Param.WEIGHTING.name, Param.MATRIX_PCOILS.name, Param.RUN_PSIPRED.name)
     val results = Seq.empty[String]
   }
 
