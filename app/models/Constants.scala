@@ -91,4 +91,5 @@ object Param {
   final val RUN_PSIPRED = Param("run_psipred",0,1)
   final val MATRIX_PHYLIP = Param("matrix_phylip",0,1)
   final val MATRIX_PCOILS = Param("matrix_pcoils", 1, 1)
+  final val PROTBLASTPROGRAM = Param("protblastprogram", 1, 1)
 }
