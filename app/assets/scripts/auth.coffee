@@ -60,7 +60,11 @@ $ ->
       #change the "sign in" to the user login name
       $("#auth-link-text").html(json.user.nameLogin)
       $("#overlay-content").html(json.message)
-      Job.reloadList() #ask for the complete job list again
+
+      m.startComputation()
+      Job.reloadList()
+      m.endComputation()
+
       setTimeout(loadMiniProfile,1000)
     else
       # add the error message to the view
@@ -68,6 +72,7 @@ $ ->
       $("#auth-alert").fadeIn()
 
   loadMiniProfile = () ->
+    closeNav()
     $.ajax(
       url: "/miniprofile"
       method: 'GET').done (data) ->
