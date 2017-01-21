@@ -1,6 +1,7 @@
 package models.tools
 
 
+import com.typesafe.config.{Config, ConfigFactory}
 import enumeratum.{PlayEnum, EnumEntry}
 import models.tools.ToolModel.Toolitem
 
@@ -65,43 +66,19 @@ object ToolModel extends PlayEnum[ToolModel] {
                       optional : String,
                       params : Seq[(String, Seq[(String, Seq[(String, String)])])])
 
-  val values : Seq[ToolModel] = findValues
 
-  val toolMap : Map[String, ToolModel] = Map(
-    "psiblast" -> PsiBlast,
-    "tcoffee" -> Tcoffee,
-    "muscle" -> Muscle,
-    "mafft" -> Mafft,
-    "kalign" -> Kalign,
-    "hmmer" -> Hmmer,
-    "hhcluster" -> HHcluster,
-    "ancescon" -> ANCESCON,
-    "clans" -> CLANS,
-    "bfit" -> Bfit,
-    "modeller" -> Modeller,
-    "ali2d" -> Ali2D,
-    "hhfrag" -> HHfrag,
-    "pcoils" -> PCoils,
-    "frpred" -> FRpred,
-    "hhrep" -> HHrep,
-    "marcoil" -> Marcoil,
-    "repper" -> Repper,
-    "tprpred" -> TPRpred,
-    "hhomp" -> HHomp,
-    "quick2d" -> Quick2D,
-    "samcc" -> SamCC,
-    "blastclust" -> BlastClust,
-    "hhblits" -> HHblits,
-    "hhpred" -> HHpred,
-    "patternsearch" -> PatternSearch,
-    "protblast" -> ProtBlast,
-    "backtrans" -> BackTranslate,
-    "clustalo" -> ClustalOmega,
-    "msaprobs" -> MSAProbs,
-    "blammer" -> Blammer,
-    "aln2plot" -> Aln2Plot,
-    "phylip" -> PHYLIP
-  )
+
+  class ToolObject(name: String) {
+
+    lazy val config = ConfigFactory.load()
+    lazy val Toolsconf : Config  = config.getConfig("Tools")
+
+    lazy val toolnameShort = Toolsconf.getString(s"$name.name")
+
+  }
+
+
+  val values : Seq[ToolModel] = findValues // this replaces the toolMap completely
 
 
   case object ProtBlast extends ToolModel {
