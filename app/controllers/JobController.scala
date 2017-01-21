@@ -27,21 +27,19 @@ import modules.tel.TEL
   * Created by lzimmermann on 02.12.16.
   */
 @Singleton
-class JobController @Inject() (jobIDProvider: JobIDProvider,
-                               actorSystem : ActorSystem,
-                               jobActorFactory : JobActor.Factory,
-                               implicit val userCache : CacheApi,
-                               final val values : Values,
-                               implicit  val locationProvider: LocationProvider,
-                               @Named("master") master: ActorRef,
-                               val jobDao           : JobDAO,
-                               val tel : TEL,
-                               @NamedCache("jobitem") jobitemCache : CacheApi,
-                               @NamedCache("jobActorCache") val jobActorCache: CacheApi,
-                               val reactiveMongoApi: ReactiveMongoApi)
-  extends Controller with UserSessions {
-
-
+final class JobController @Inject() (jobIDProvider                                    : JobIDProvider,
+                                     actorSystem                                      : ActorSystem,
+                                     jobActorFactory                                  : JobActor.Factory,
+                                     implicit val userCache                           : CacheApi,
+                                     val values                                       : Values,
+                                     implicit  val locationProvider                   : LocationProvider,
+                                     @Named("master") master                          : ActorRef,
+                                     val jobDao                                       : JobDAO,
+                                     val tel                                          : TEL,
+                                     @NamedCache("jobitem") jobitemCache              : CacheApi,
+                                     @NamedCache("jobActorCache") val jobActorCache   : CacheApi,
+                                     val reactiveMongoApi                             : ReactiveMongoApi)
+                                     extends Controller with UserSessions {
 
   /**
     *  Loads one minified version of a job to the view, given the jobID

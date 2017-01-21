@@ -25,26 +25,26 @@ import scala.concurrent.Future
 
 
 @Singleton
-class Application @Inject()(webJarAssets     : WebJarAssets,
-                        val messagesApi      : MessagesApi,
-                 final val values            : Values,
-                            webSocketActorFactory : WebSocketActor.Factory,
-@NamedCache("userCache") implicit val userCache : CacheApi,
-                         implicit val locationProvider : LocationProvider,
-@NamedCache("viewCache") val viewCache: CacheApi,
-                         val jobDao : JobDAO,
-                        val reactiveMongoApi : ReactiveMongoApi,
-                            system           : ActorSystem,
-                            mat              : Materializer,
-                        val tel              : TEL,
-                        val env: Env,
-                        val search           : Search,
-                        val settings : Settings,
-                           @Named("master") master: ActorRef,
-                            configuration    : Configuration) extends Controller with I18nSupport
-                                                                                 with CommonModule
-                                                                                 with Constants
-                                                                                 with UserSessions {
+final class Application @Inject()(webJarAssets                                    : WebJarAssets,
+                                  val messagesApi                                 : MessagesApi,
+                                  val values                                      : Values,
+                                  webSocketActorFactory                           : WebSocketActor.Factory,
+                                  @NamedCache("userCache") implicit val userCache : CacheApi,
+                                  implicit val locationProvider                   : LocationProvider,
+                                  @NamedCache("viewCache") val viewCache          : CacheApi,
+                                  val jobDao                                      : JobDAO,
+                                  val reactiveMongoApi                            : ReactiveMongoApi,
+                                  system                                          : ActorSystem,
+                                  mat                                             : Materializer,
+                                  val tel                                         : TEL,
+                                  val env                                         : Env,
+                                  val search                                      : Search,
+                                  val settings                                    : Settings,
+                                  @Named("master") master                         : ActorRef,
+                                  configuration                                   : Configuration)
+                                  extends Controller with I18nSupport with CommonModule
+                                                                      with Constants
+                                                                      with UserSessions {
 
   implicit val implicitMaterializer: Materializer = mat
   implicit val implicitActorSystem: ActorSystem = system
@@ -107,8 +107,6 @@ class Application @Inject()(webJarAssets     : WebJarAssets,
 
 
   def static(static : String) = Action { implicit request =>
-
-
     Redirect(s"/#/$static")
   }
 

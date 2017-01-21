@@ -27,12 +27,13 @@ object Tool {
 
 
 @Singleton
-final class Tool @Inject()(val messagesApi      : MessagesApi,
+final class Tool @Inject()(val messagesApi                                 : MessagesApi,
                            @NamedCache("userCache") implicit val userCache : CacheApi,
-                           val reactiveMongoApi : ReactiveMongoApi,
-                           implicit val mat     : Materializer,
-                           implicit val locationProvider: LocationProvider,
-                           val jobDao           : JobDAO) extends Controller with I18nSupport with UserSessions with CommonModule {
+                           val reactiveMongoApi                            : ReactiveMongoApi,
+                           implicit val mat                                : Materializer,
+                           implicit val locationProvider                   : LocationProvider,
+                           val jobDao                                      : JobDAO)
+                           extends Controller with I18nSupport with UserSessions with CommonModule {
 
   implicit val timeout = Timeout(5.seconds)
 
