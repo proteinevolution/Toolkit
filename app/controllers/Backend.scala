@@ -16,14 +16,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by zin on 28.07.16.
   */
 @Singleton
-final class Backend @Inject()(webJarAssets       : WebJarAssets,
-                              settingsController : Settings,
-@NamedCache("userCache") implicit val userCache  : CacheApi,
-                              implicit  val locationProvider: LocationProvider,
-                          val reactiveMongoApi   : ReactiveMongoApi,
-                          val messagesApi        : MessagesApi)
-                      extends Controller with I18nSupport with Common
-                                         with UserSessions {
+final class Backend @Inject()(webJarAssets                                      : WebJarAssets,
+                              settingsController                                : Settings,
+                              @NamedCache("userCache") implicit val userCache   : CacheApi,
+                              implicit  val locationProvider                    : LocationProvider,
+                              val reactiveMongoApi                              : ReactiveMongoApi,
+                              val messagesApi                                   : MessagesApi)
+                              extends Controller with I18nSupport with Common with UserSessions {
 
 
   // Maps Session ID to Actor Ref of corresponding WebSocket
@@ -49,7 +48,7 @@ final class Backend @Inject()(webJarAssets       : WebJarAssets,
     getUser.map { user =>
       if (user.isSuperuser) {
         connectedUsers.put(user.userID, DateTime.now().plusMinutes(10))
-        NoCache(Redirect(routes.Backend.index))
+        NoCache(Redirect(routes.Backend.index()))
       }
       else {
         Status(404)(views.html.errors.pagenotfound())
@@ -60,7 +59,7 @@ final class Backend @Inject()(webJarAssets       : WebJarAssets,
   def logOut = Action.async { implicit request =>
     getUser.map { user =>
       val timeOpt = connectedUsers.remove(user.userID)
-      NoCache(Redirect(routes.Application.index))
+      NoCache(Redirect(routes.Application.index()))
     }
   }
 
@@ -87,7 +86,4 @@ final class Backend @Inject()(webJarAssets       : WebJarAssets,
     }
   }
 
-  def log() = {
-
-  }
 }

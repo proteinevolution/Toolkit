@@ -22,8 +22,9 @@ import scala.sys.process._
 
 
 
-final class Settings @Inject() (val messagesApi: MessagesApi,
-                           val reactiveMongoApi: ReactiveMongoApi) extends Controller with MongoController with ReactiveMongoComponents {
+final class Settings @Inject() (val messagesApi       : MessagesApi,
+                                val reactiveMongoApi  : ReactiveMongoApi)
+                                extends Controller with MongoController with ReactiveMongoComponents {
 
 
 

@@ -34,21 +34,20 @@ import scala.concurrent.duration._
   * Created by lukas on 2/27/16.
   */
 @Singleton
-class Service @Inject() (webJarAssets     : WebJarAssets,
-                     val messagesApi      : MessagesApi,
-@NamedCache("userCache") implicit val userCache : CacheApi,
-                         implicit val locationProvider: LocationProvider,
-@NamedCache("toolitemCache") val toolitemCache : CacheApi,
-@NamedCache("jobitem") jobitemCache : CacheApi,
-                     val reactiveMongoApi : ReactiveMongoApi,
-                     val tel              : TEL,
-                     final val values     : Values)
-
-                 extends Controller with I18nSupport
-                                    with Constants
-                                    with ReactiveMongoComponents
-                                    with UserSessions
-                                    with CommonModule {
+final class Service @Inject() (webJarAssets                                     : WebJarAssets,
+                               val messagesApi                                  : MessagesApi,
+                               @NamedCache("userCache") implicit val userCache  : CacheApi,
+                               implicit val locationProvider                    : LocationProvider,
+                               @NamedCache("toolitemCache") val toolitemCache   : CacheApi,
+                               @NamedCache("jobitem") jobitemCache              : CacheApi,
+                               val reactiveMongoApi                             : ReactiveMongoApi,
+                               val tel                                          : TEL,
+                               val values                                       : Values)
+                               extends Controller with I18nSupport
+                                                  with Constants
+                                                  with ReactiveMongoComponents
+                                                  with UserSessions
+                                                  with CommonModule {
 
   implicit val timeout = Timeout(1.seconds)
 

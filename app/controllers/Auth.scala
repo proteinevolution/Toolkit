@@ -26,17 +26,17 @@ import scala.concurrent.Future
   */
 
 @Singleton
-final class Auth @Inject() (    webJarAssets     : WebJarAssets,
-                            val messagesApi      : MessagesApi,
-                   implicit val mailerClient     : MailerClient,
-                                implicit val locationProvider: LocationProvider,
-@NamedCache("userCache") implicit val userCache  : CacheApi,
-                                val tel : TEL,
+final class Auth @Inject() (webJarAssets                                      : WebJarAssets,
+                            val messagesApi                                   : MessagesApi,
+                            implicit val mailerClient                         : MailerClient,
+                            implicit val locationProvider                     : LocationProvider,
+                            @NamedCache("userCache") implicit val userCache   : CacheApi,
+                            val tel : TEL,
                             val reactiveMongoApi : ReactiveMongoApi) // Mailing Controller
-        extends Controller with I18nSupport
-                           with JSONTemplate
-                           with UserSessions
-                           with Common {
+                            extends Controller with I18nSupport
+                                               with JSONTemplate
+                                               with UserSessions
+                                               with Common {
 
 
   /**

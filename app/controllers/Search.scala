@@ -20,14 +20,13 @@ import scala.concurrent.Future
 
 
 @Singleton
-final class Search @Inject() (
-          @NamedCache("userCache") implicit val userCache        : CacheApi,
-          implicit val locationProvider: LocationProvider,
-                               val reactiveMongoApi : ReactiveMongoApi,
-                               val jobDao           : JobDAO)
-                           extends Controller with Constants
-                                              with ReactiveMongoComponents
-                                              with UserSessions {
+final class Search @Inject() (@NamedCache("userCache") implicit val userCache : CacheApi,
+                              implicit val locationProvider                   : LocationProvider,
+                              val reactiveMongoApi                            : ReactiveMongoApi,
+                              val jobDao                                      : JobDAO)
+                              extends Controller with Constants
+                                                 with ReactiveMongoComponents
+                                                 with UserSessions {
 
   
 
