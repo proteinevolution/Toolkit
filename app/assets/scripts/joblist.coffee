@@ -29,25 +29,3 @@ window.JobListComponent =
           m "a", {class: "boxclose", onclick: args.clear.bind(ctrl, idx)}
         ]
     ]
-
-
-
-
-###
-
-      delete: (deleteCompletely, mainID) ->
-      jobs.vm.remove(mainID)
-      if(deleteCompletely) then mainID += "&deleteCompletely=true"
-      m.request({url: "/jobs?mainIDs="+mainID.toString(), method: "DELETE"})
-
-  <div class="button job-handle" style="display: flex;">
-            <div style=" border-right: 1px solid lightgray;" onclick="deleteIDs();" data-tooltip title="Delete selected jobs from database">Delete</div>
-            <div onclick="clearIDs();" data-tooltip title="Clear selected jobs from joblist">Clear</div>
-
-        </div>
-
-  a[href="/#/jobs/' + job.mainID + '"]
-###
-
-
-

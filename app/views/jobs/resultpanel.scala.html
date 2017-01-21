@@ -11,6 +11,14 @@
       case ("psiblast", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_psiblast(jobID)
       case ("psiblast", "Extra") => views.html.jobs.resultpanels.blast_exp(jobID)
 
+      // MARCOIL
+      case ("marcoil", "CC-Prob") => views.html.jobs.resultpanels.image(s"/files/$jobID/alignment_ncoils.png")
+      case ("marcoil", "ProbState") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbPerState")
+      case ("marcoil", "Domains") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.Domains")
+      case ("marcoil", "ProbList/PSSM") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbList")
+
+
+
       // ProtBLAST
       case ("protblast", "Hits") => views.html.jobs.resultpanels.blastviz_extra(jobID)
       case ("protblast", "E-Values") => views.html.jobs.resultpanels.evalues(jobID)
