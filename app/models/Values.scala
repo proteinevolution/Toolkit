@@ -59,6 +59,8 @@ class Values @Inject() (tel : TEL) {
     Param.MIN_COV.name -> tel.generateValues(Param.MIN_COV.name).toSeq.sorted,
     Param.MATRIX_PHYLIP.name -> tel.generateValues(Param.MATRIX_PHYLIP.name).toSeq.sorted,
     Param.MATRIX_PCOILS.name -> tel.generateValues(Param.MATRIX_PCOILS.name).toSeq.sorted,
-    Param.PROTBLASTPROGRAM.name -> tel.generateValues(Param.PROTBLASTPROGRAM.name).toSeq.sorted
+    Param.PROTBLASTPROGRAM.name -> tel.generateValues(Param.PROTBLASTPROGRAM.name).toSeq.sorted,
+    Param.MATRIX_MARCOIL.name -> tel.generateValues(Param.MATRIX_MARCOIL.name).toSeq.sorted,
+    Param.TRANSITION_PROBABILITY.name -> tel.generateValues(Param.TRANSITION_PROBABILITY.name).toSeq.sorted
   )
 }
