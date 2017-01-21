@@ -1,1 +1,1 @@
-addSbtPlugin("com.typesafe.play" % "sbt-fork-run-plugin" % "2.5.10")
+addSbtPlugin("com.typesafe.play" % "sbt-fork-run-plugin" % "2.5.11")
