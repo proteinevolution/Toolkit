@@ -118,9 +118,12 @@ final class Service @Inject() (webJarAssets                                     
   def getTool(toolname: String) = Action {
 
     val toolitemJson = Json.toJson(toolitemCache.getOrElse(toolname) {
-      val x = ToolModel.toolMap(toolname).toolitem(values) // Reset toolitem in cache
-      toolitemCache.set(toolname, x)
-      x
+
+      val x = for (tool <- ToolModel.values; if tool.toolNameShort == toolname) yield tool.toolitem(values)
+
+      //val x = ToolModel.toolMap(toolname).toolitem(values) // Reset toolitem in cache
+      toolitemCache.set(toolname, x.head) // assumes that the toolname is unique in the whole model
+      x.head
     })
     Ok(toolitemJson)
   }
@@ -137,10 +140,11 @@ final class Service @Inject() (webJarAssets                                     
           case Some(job) =>
             Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
 
-            val toolModel = ToolModel.toolMap(job.tool)
+            val toolModel = for (tool <- ToolModel.values; if tool.toolNameShort == job.tool) yield tool
+            //val toolModel = ToolModel.toolMap(job.tool)
 
             val toolitem = toolitemCache.getOrElse(job.tool) {
-              val x = toolModel.toolitem(values) // Reset toolitem in cache
+              val x = toolModel.head.toolitem(values) // Reset toolitem in cache
               toolitemCache.set(job.tool, x)
               x
             }
@@ -165,7 +169,7 @@ final class Service @Inject() (webJarAssets                                     
             val jobViews: Seq[(String, Html)] = job.status match {
 
               case Done =>
-                toolModel.results.map { resultName =>
+                toolModel.head.results.map { resultName =>
                   resultName -> views.html.jobs.resultpanel(resultName, job.jobID, job.tool, jobPath)
                 }
 
