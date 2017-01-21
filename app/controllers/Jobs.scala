@@ -27,9 +27,9 @@ We can introduce auto-coercion of the Job MainID to the BSONObject ID
   *
   */
 @Singleton
-final class Jobs @Inject()(@Named("master") master: ActorRef,
-                           val reactiveMongoApi: ReactiveMongoApi,
-                           @NamedCache("jobActorCache") val jobActorCache: CacheApi) extends Controller with CommonModule {
+final class Jobs @Inject()(@Named("master") master                        : ActorRef,
+                           val reactiveMongoApi                           : ReactiveMongoApi,
+                           @NamedCache("jobActorCache") val jobActorCache : CacheApi) extends Controller with CommonModule {
 
   def jobStatusDone(jobID: String) = Action {
 
