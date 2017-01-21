@@ -424,24 +424,15 @@ window.ParameterAlignmentComponent =
     ], "alignmentParameter"  # TODO Should be a controller argument
 
 
-
 ParameterRadioComponent =
-  model: (args) ->
-    value: m.prop args.value
-
-  controller: (args) ->
-    options: args.options
-    name: args.name
-    id: args.id
-    label: args.label
-    param: new ParameterRadioComponent.model args
-    value: args.value
-
-  view: (ctrl) ->
+  view: (ctrl, args) ->
     renderParameter [
-      m "label", {for: ctrl.id}, ctrl.label
-      ctrl.options.map (entry) ->
-        m "input", {type: "radio", name: ctrl.name, value: entry[0]}, entry[1]
+      m "label", {for: args.id}, args.label
+      args.options.map (entry) ->
+        m "span", [
+          m "input", {type: "radio", name: args.name, value: entry[0]}
+          entry[1]
+        ]
     ]
 
 
@@ -804,4 +795,21 @@ formComponents =
     id: "filter_low_complexity"
     label: "Filter for low complexity regions"
     value: "filter_low_complexity"
+  ]
+  "matrix_marcoil": (args) -> [
+    ParameterSelectComponent
+  ,
+    options: args.options
+    name: "matrix_marcoil"
+    id: "matrix_marcoil"
+    label: "Matrix"
+    value: "matrix_marcoil"
+  ]
+  "transition_probability": (args) -> [
+    ParameterSelectComponent
+  ,
+    options: args.options
+    name: "transition_probability"
+    id: "transition_probability"
+    label: "Transition Probability"
   ]
