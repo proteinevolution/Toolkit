@@ -375,13 +375,13 @@ object ToolModel extends PlayEnum[ToolModel] {
   case object Marcoil extends ToolModel {
 
     val toolNameShort = "marcoil"
-    val toolNameLong = "Marcoil"
+    val toolNameLong = "MARCOIL"
     val toolNameAbbrev = "mar"
     val category = "seqanal"
     val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
+    val params = Seq(Param.ALIGNMENT.name, Param.MATRIX_MARCOIL.name, Param.TRANSITION_PROBABILITY.name)
 
-    val results = Seq.empty[String]
+    val results = Seq("CC-Prob", "ProbList/PSSM", "ProbState", "Domains")
   }
 
   case object Repper extends ToolModel {

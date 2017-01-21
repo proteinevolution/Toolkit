@@ -1,19 +1,9 @@
 @import play.api.mvc.RequestHeader
+@import models.results.FileLoader
+
 @(filepath : String)(implicit request: RequestHeader)
-
-
-
-@filepath
 
 <pre style="font-size: 12px;width: 800px; height: 30pc; overflow-y: scroll;">
 
-
+@FileLoader.loadFile(filepath)
 </pre>
-
-
-<script>
-        $( "#@filepath.split('/').last pre" ).load("@filepath");
-</script>
-
-
-
