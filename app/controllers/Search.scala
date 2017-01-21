@@ -21,9 +21,9 @@ import scala.concurrent.Future
 
 @Singleton
 final class Search @Inject() (@NamedCache("userCache") implicit val userCache : CacheApi,
-                              implicit val locationProvider                   : LocationProvider,
-                              val reactiveMongoApi                            : ReactiveMongoApi,
-                              val jobDao                                      : JobDAO)
+                              implicit val locationProvider: LocationProvider,
+                              val reactiveMongoApi : ReactiveMongoApi,
+                              val jobDao           : JobDAO)
                               extends Controller with Constants
                                                  with ReactiveMongoComponents
                                                  with UserSessions {
@@ -49,9 +49,12 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
 
   def autoComplete(queryString : String) = Action.async{ implicit request =>
     getUser.flatMap { user =>
+      val mappedTools = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
       val mainIDStrings : Future[List[String]] =
         // Find out if the user looks for a certain tool or for a jobID
-        if (ToolModel.toolMap.get(queryString).isDefined) {
+
+        if(mappedTools.get(queryString).isDefined) {
+        //if (ToolModel.toolMap.get(queryString).isDefined) {
           // Find the Jobs with the matching tool
           Logger.info("user is looking for tool: " + queryString)
           jobDao.jobsWithTool(queryString, user.userID).map(_.getHits.hits().toList.map(_.id()))
