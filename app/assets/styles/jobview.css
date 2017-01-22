@@ -27,11 +27,6 @@ body.is-reveal-open {
 }
 
 
-/* Configuration of individual parameters */
-.parameter {
-    width: 100% !important;
-}
-
 .parameter label {
     float: left;
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
@@ -118,24 +113,11 @@ body.is-reveal-open {
     background-color: white;
     color: black;
 }
-/*
- Parameter panels
-*/
-.parameters {
-    display: flex;
-}
-
-.parameters .left {
-    padding-right: 1em;
-}
 
 .parameter {
     font-size: small;
 }
 
-.parameters div {
-    width: 50%;
-}
 
 
 .parameters input {
@@ -145,7 +127,7 @@ body.is-reveal-open {
     border: solid lightgray;
     border-width: 0 0 1px 0;
     box-shadow: none;
-    background-color: #eeeeee;
+    background-color: white;
 }
 
 .parameters input:focus {
@@ -157,7 +139,7 @@ body.is-reveal-open {
     -webkit-transition : border 100ms ease-out;
     -moz-transition : border 100ms ease-out;
     -o-transition : border 100ms ease-out;
-    background-color: #eeeeee;
+    background-color: white;
 
 }
 
