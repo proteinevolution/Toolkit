@@ -17,7 +17,6 @@ PECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRA
 PECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQT
 """
 
-
 # Config for displaying the help modals:
 helpModalAccess = (elem, isInit) ->
   if not isInit
@@ -27,10 +26,8 @@ selectBoxAccess = (elem, isInit) ->
   if not isInit
     $(elem).niceSelect()
 
-
-
+# The Job View consists of the JobTabs Component and the JobLineComponent
 window.JobViewComponent =
-
   view: (ctrl, args) ->
     if not args.job()
       m "div", "Waiting for Job" # TODO Show at least JobLine here
@@ -43,8 +40,8 @@ window.JobViewComponent =
 #############################################################################
 # Component for the Jobline
 JobLineComponent =
-
   view: (ctrl, args) ->
+    isJob = args.job().isJob
     m "div", {class: "jobline"}, [
       m HelpModalComponent, {toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong}
       m "span", {class: "toolname"}, [
@@ -52,8 +49,8 @@ JobLineComponent =
         m "a", {config: helpModalAccess.bind(args)},
           m "i", {class: "icon-information_white helpicon"}
       ]
-      m "span", {class: "jobdate"}, if args.job().isJob then "Created: #{args.job().createdOn()}" else ""
-      m "span", {class: "jobinfo"}, if args.job().isJob then "JobID: #{args.job().jobID()}" else "Submit a new Job"
+      m "span", {class: "jobdate"}, if isJob then "Created: #{args.job().createdOn()}" else ""
+      m "span", {class: "jobinfo"}, if isJob then "JobID: #{args.job().jobID()}" else "Submit a new Job"
       m "span", {class: "ownername"}, if args.job().ownerName then args.job().ownerName() else ""
     ]
 ##############################################################################
@@ -67,23 +64,17 @@ SearchformComponent =
 ## Component that is displayed once the Job is running
 
 foundationTable = (elem, isInit) ->
-
   if not isInit
     $(elem).foundation()
 
 JobErrorComponent =
-  controller: ->
-
   view: ->
     m "div", {class: "error-panel"},
       m "p", "Job has reached Error state"
 
 JobRunningComponent =
-  controller: ->
-
   view: (ctrl, args) ->
     m "div", {class: "running-panel"}, [
-
       m "table", {config: foundationTable},
         m "tbody", [
           m "tr", [
@@ -111,6 +102,13 @@ tabulated = (element, isInit) ->
 # View template helper for generating parameter input fields
 renderParameter = (content, moreClasses) ->
   m "div", {class: if moreClasses then "parameter #{moreClasses}" else "parameter"}, content
+
+
+# Maps parameter received from the server to the correct component
+mapParam = (paramElem, ctrl) ->
+  ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
+  comp = formComponents[paramElem[0]](ctrlArgs)
+  m.component comp[0], comp[1]
 
 
 
@@ -171,9 +169,6 @@ JobTabsComponent =
         if typeof onExpand == "function" then onExpand()
       if typeof onFullscreenToggle == "function" then onFullscreenToggle()).bind(mo)
 
-
-
-
     delete: ->
       jobID = this.job().jobID()
       if confirm "Do you really want to delete this Job (ID: #{jobID})"
@@ -194,37 +189,20 @@ JobTabsComponent =
           m "li", {style: "float: right;" },
             m "input", {type: "button", class: "button small delete", value: "Delete Job", onclick: ctrl.delete.bind(ctrl)}
       ]
-
-# Generate views for all Parameter groups
       m "form", {id: "jobform"},
         ctrl.params.map (paramGroup) ->
           if paramGroup[1].length != 0
             elements = paramGroup[1]
-            split = (elements.length / 2) + 1
-            m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"},
-              m "div", {class: "parameter-panel"}, [
-
+            m "div", {class: "tabs-panel parameter-panel", id: "tabpanel-#{paramGroup[0]}"}, [
+              m "div", {class: "parameters"},
                 # One column Layout for the input tab
                 if paramGroup[0] is "Input"
-                    paramGroup[1].map (paramElem) ->
-                      ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                      comp = formComponents[paramElem[0]](ctrlArgs)
-                      m.component comp[0], comp[1]
+                  paramGroup[1].map (paramElem) -> mapParam(paramElem, ctrl)
                 else
-                  m "div", {class: "parameters"},
-                    [
-                      m "div", {class: "left"}, elements.slice(0,split).map (paramElem) ->
-                        ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                        comp = formComponents[paramElem[0]](ctrlArgs)
-                        m.component comp[0], comp[1]
-
-                      m "div", {class: "right"}, elements.slice(split,elements.length).map (paramElem) ->
-                        ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-                        comp = formComponents[paramElem[0]](ctrlArgs)
-                        m.component comp[0], comp[1]
-                    ]
-                m JobSubmissionComponent, {job: ctrl.job, isJob: ctrl.isJob, add: args.add}
-            ]
+                  m "div", {class: "row small-up-1 medium-up-2 large-up-3"}, elements.map (paramElem) ->
+                    m "div", {class: "column column-block"}, mapParam(paramElem, ctrl)
+              m JobSubmissionComponent, {job: ctrl.job, isJob: ctrl.isJob, add: args.add}
+          ]
         if ctrl.isJob and ctrl.state == 3
           m "div", {class: "tabs-panel", id: "tabpanel-Running"},
             m JobRunningComponent, {messages: args.messages, job: ctrl.job}
@@ -240,6 +218,34 @@ JobTabsComponent =
     ]
 ##############################################################################
 # Job Submission input elements
+
+
+###
+<div class="row small-up-2 medium-up-3 large-up-4">
+<div class="column column-block">
+<img src="//placehold.it/600x600" class="thumbnail" alt="">
+</div>
+  <div class="column column-block">
+    <img src="//placehold.it/600x600" class="thumbnail" alt="">
+</div>
+  <div class="column column-block">
+    <img src="//placehold.it/600x600" class="thumbnail" alt="">
+</div>
+  <div class="column column-block">
+    <img src="//placehold.it/600x600" class="thumbnail" alt="">
+</div>
+  <div class="column column-block">
+    <img src="//placehold.it/600x600" class="thumbnail" alt="">
+</div>
+  <div class="column column-block">
+    <img src="//placehold.it/600x600" class="thumbnail" alt="">
+</div>
+</div>
+
+###
+
+
+
 
 submitModal = (elem, isInit) ->
   if not isInit
