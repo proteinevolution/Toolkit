@@ -29,7 +29,7 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
                                                  with UserSessions {
 
 
-  val mappedTools : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
+  lazy val mappedTools : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
 
   def ac(queryString : String) : Action[AnyContent] = Action.async{ implicit request =>
     jobDao.jobIDcompletionSuggester(queryString).map { richSearchResponse =>
