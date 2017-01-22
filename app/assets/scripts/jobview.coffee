@@ -197,7 +197,17 @@ JobTabsComponent =
               m "div", {class: "parameters"},
                 # One column Layout for the input tab
                 if paramGroup[0] is "Input"
-                  paramGroup[1].map (paramElem) -> mapParam(paramElem, ctrl)
+                    # If the alignment parameter exists, render it first
+                    if elements[0][0] == "alignment"
+                      [
+                        m "div", {class: "row"}, m "div", {class: "small-12 large-12 medium-12 columns"},
+                          mapParam(elements[0], ctrl)
+                        m "div", {class: "row small-up-1 medium-up-2 large-up-3"}, elements.slice(1).map (paramElem) ->
+                          m "div", {class: "column column-block"}, mapParam(paramElem, ctrl)
+                      ]
+                    else
+                      m "div", {class: "row small-up-1 medium-up-2 large-up-3"}, elements.map (paramElem) ->
+                        m "div", {class: "column column-block"}, mapParam(paramElem, ctrl)
                 else
                   m "div", {class: "row small-up-1 medium-up-2 large-up-3"}, elements.map (paramElem) ->
                     m "div", {class: "column column-block"}, mapParam(paramElem, ctrl)
@@ -218,35 +228,6 @@ JobTabsComponent =
     ]
 ##############################################################################
 # Job Submission input elements
-
-
-###
-<div class="row small-up-2 medium-up-3 large-up-4">
-<div class="column column-block">
-<img src="//placehold.it/600x600" class="thumbnail" alt="">
-</div>
-  <div class="column column-block">
-    <img src="//placehold.it/600x600" class="thumbnail" alt="">
-</div>
-  <div class="column column-block">
-    <img src="//placehold.it/600x600" class="thumbnail" alt="">
-</div>
-  <div class="column column-block">
-    <img src="//placehold.it/600x600" class="thumbnail" alt="">
-</div>
-  <div class="column column-block">
-    <img src="//placehold.it/600x600" class="thumbnail" alt="">
-</div>
-  <div class="column column-block">
-    <img src="//placehold.it/600x600" class="thumbnail" alt="">
-</div>
-</div>
-
-###
-
-
-
-
 submitModal = (elem, isInit) ->
   if not isInit
     $(elem).foundation()
