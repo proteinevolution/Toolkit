@@ -1,16 +1,17 @@
 package controllers
 
-import java.util.Date
-import javax.inject.Inject
 
+import java.util.Date
 import play.api.mvc.{Action, Controller}
 import play.api.i18n.MessagesApi
-import play.modules.reactivemongo.{ReactiveMongoComponents, MongoController, ReactiveMongoApi}
+import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.BSONDocument
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Success, Failure}
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 import scala.sys.process._
 
 /**
@@ -21,7 +22,7 @@ import scala.sys.process._
   */
 
 
-
+@Singleton
 final class Settings @Inject() (val messagesApi       : MessagesApi,
                                 val reactiveMongoApi  : ReactiveMongoApi)
                                 extends Controller with MongoController with ReactiveMongoComponents {
@@ -30,8 +31,8 @@ final class Settings @Inject() (val messagesApi       : MessagesApi,
 
 
 
-  val clusterSettings = reactiveMongoApi.database.map(_.collection("settings").as[BSONCollection](FailoverStrategy()))
-  val toolSettings = reactiveMongoApi.database.map(_.collection("toolSettings").as[BSONCollection](FailoverStrategy()))
+  val clusterSettings : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection("settings").as[BSONCollection](FailoverStrategy()))
+  val toolSettings : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection("toolSettings").as[BSONCollection](FailoverStrategy()))
   private[this] var cm = ""
 
   /**
@@ -51,12 +52,9 @@ final class Settings @Inject() (val messagesApi       : MessagesApi,
 
     val future = clusterSettings.flatMap(_.insert(document))
 
-
     future.onComplete {
       case Failure(e) => throw e
-      case Success(lastError) => {
-        println("successfully inserted document with lastError = " + lastError)
-      }
+      case Success(lastError) => println("successfully inserted document with lastError = " + lastError)
     }
 
     Ok("Got request")
