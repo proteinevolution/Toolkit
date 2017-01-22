@@ -35,7 +35,8 @@ class window.Job
 
   # loads the complete job list
   this.reloadList =  ->
-    m.request({url: "/api/jobs", method: "GET", type: Job}).then(Job.list)
+    Job.list = m.request({url: "/api/jobs", method: "GET", type: Job})
+    Job.list.then(Job.list)
 
 
   this.getJobByID = (jobID) ->
