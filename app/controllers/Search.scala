@@ -14,10 +14,10 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.search.JobDAO
 import modules.LocationProvider
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, Controller}
 
 import scala.concurrent.Future
-
+import scala.language.postfixOps
 
 @Singleton
 final class Search @Inject() (@NamedCache("userCache") implicit val userCache : CacheApi,
@@ -28,9 +28,10 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
                                                  with ReactiveMongoComponents
                                                  with UserSessions {
 
-  
 
-  def ac(queryString : String) = Action.async{ implicit request =>
+  val mappedTools : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
+
+  def ac(queryString : String) : Action[AnyContent] = Action.async{ implicit request =>
     jobDao.jobIDcompletionSuggester(queryString).map { richSearchResponse =>
       val jobIDEntries = richSearchResponse.suggestion("jobID")
       if (jobIDEntries.size > 0) {
@@ -47,9 +48,8 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
     }
   }
 
-  def autoComplete(queryString : String) = Action.async{ implicit request =>
+  def autoComplete(queryString : String) : Action[AnyContent] = Action.async{ implicit request =>
     getUser.flatMap { user =>
-      val mappedTools = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
       val mainIDStrings : Future[List[String]] =
         // Find out if the user looks for a certain tool or for a jobID
 
@@ -83,7 +83,7 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
   }
 
 
-  def elasticSearch(userID : BSONObjectID, queryString : String) = {
+  def elasticSearch(userID : BSONObjectID, queryString : String) : Future[List[Job]] = {
     jobDao.fuzzySearchJobID(queryString).flatMap { richSearchResponse =>
       if (richSearchResponse.totalHits > 0) {
         val jobIDEntries = richSearchResponse.getHits.getHits
@@ -98,7 +98,7 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
   }
 
 
-  def getJob(queryString : String) = Action.async { implicit request =>
+  def getJob(queryString : String) : Action[AnyContent] = Action.async { implicit request =>
     // Retrieve the user from the cache or the DB
     getUser.flatMap { user =>
       elasticSearch(user.userID, queryString).map{ jobList =>
@@ -108,7 +108,7 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
   }
 
 
-  def checkJobID(jobID : String) = Action.async{
+  def checkJobID(jobID : String) : Action[AnyContent] = Action.async{
     jobDao.existsJobID(jobID).map{ richSearchResponse =>
       Ok(Json.obj("exists" -> {richSearchResponse.getHits.getTotalHits > 0}))
     }
