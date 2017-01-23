@@ -1,11 +1,14 @@
 package modules
 
+import com.typesafe.config.ConfigFactory
 import models.database.{FrontendJob, Job, User}
+import models.tools.ToolModel
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.{BSONArray, BSONDocument, BSONObjectID}
+import scala.language.postfixOps
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -107,4 +110,14 @@ trait CommonModule extends ReactiveMongoComponents {
     userCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[User]))
   }
   protected def removeUser(selector : BSONDocument) = userCollection.flatMap(_.remove(selector))
+
+  // tool version lookup from the config
+
+  protected def toolVersion(name: String) : String = {
+
+    ConfigFactory.load().getConfig("Tools").getString(s"$name.version")
+
+  }
+
+  protected def toolMap : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
 }
