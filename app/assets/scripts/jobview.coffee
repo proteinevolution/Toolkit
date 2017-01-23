@@ -800,3 +800,19 @@ formComponents =
     id: "transition_probability"
     label: "Transition Probability"
   ]
+  "min_seqid_query": (args) -> [
+    ParameterNumberComponent
+  ,
+    name: "min_seqid_query"
+    id: "min_seqid_query"
+    label: "Minimum sequence ID with Query (%)"
+    value: 0
+  ]
+  "num_seqs_extract": (args) -> [
+    ParameterNumberComponent
+  ,
+    value: 100
+    name: "num_seqs_extract"
+    id: "num_seqs_extract"
+    label: "Minimum sequence ID with Query"
+  ]
