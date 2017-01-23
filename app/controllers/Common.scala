@@ -1,10 +1,10 @@
 package controllers
 
+
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoComponents
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.Controller
 import play.api.http.ContentTypes
-
 
 /**
  *
@@ -16,9 +16,6 @@ private[controllers] trait Common extends Controller with ContentTypes with Reac
 
   var loggedOut = true
 
-  protected implicit final class PimpedResult(result: Result) {
-    def fuccess = scala.concurrent.Future successful result
-  }
 
   protected def CheckBackendPath(implicit request: RequestHeader) : Boolean = {
     request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")
@@ -27,5 +24,6 @@ private[controllers] trait Common extends Controller with ContentTypes with Reac
   protected def NoCache(res: Result): Result = res.withHeaders(
     CACHE_CONTROL -> "no-cache, no-store, must-revalidate", EXPIRES -> "0"
   )
+
 
 }

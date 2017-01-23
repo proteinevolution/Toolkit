@@ -12,7 +12,7 @@ import models.search.JobDAO
 import modules.tel.runscripts._
 import better.files._
 import controllers.UserSessions
-import modules.LocationProvider
+import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
 import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
@@ -73,7 +73,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
   extends Actor
     with FSM[JobActorState, JobActorData]
     with Constants
-    with UserSessions {
+    with UserSessions
+    with CommonModule {
 
   var currentJob : Option[Job] = None
   var executionContext: Option[ExecutionContext] = None
@@ -176,13 +177,15 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
             jobDao.generateRSHash(toolname),
             dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
             dbMtime = Some("1970-01-01T00:00:00Z"), // use unix epoch time
-            toolname = toolname)
+            toolname = toolname,
+            toolVersion = toolVersion(toolMap(toolname).toolNameLong))
           case _ => JobHash( mainID = this.currentJob.get.mainID,
             jobDao.generateHash(paramsWithoutMainID).toString(),
             jobDao.generateRSHash(toolname),
             dbName = Some(DB.name),
             dbMtime = Some(DB.lastModifiedTime.toString),
-            toolname = toolname
+            toolname = toolname,
+            toolVersion = toolVersion(toolMap(toolname).toolNameLong)
 
           )
         }
