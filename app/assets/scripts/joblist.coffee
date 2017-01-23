@@ -31,8 +31,7 @@ window.JobListComponent =
       m "div", {class: "notesheader"}, [
         "Notes"
       ]
-      m "div", {class: "jobnotes", id: "currentJobID"}, [
+      m "div", {class: "jobnotes", id: args.selected()}, [
         m "textarea", {placeholder: "Type private notes here", spellcheck: false}
       ]
-
     ]
