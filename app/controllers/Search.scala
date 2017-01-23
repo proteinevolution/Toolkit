@@ -13,7 +13,7 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.search.JobDAO
-import modules.LocationProvider
+import modules.{CommonModule, LocationProvider}
 import play.api.mvc.{Action, AnyContent, Controller}
 
 import scala.concurrent.Future
@@ -26,10 +26,10 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
                               val jobDao           : JobDAO)
                               extends Controller with Constants
                                                  with ReactiveMongoComponents
-                                                 with UserSessions {
+                                                 with UserSessions
+                                                 with CommonModule {
 
 
-  lazy val mappedTools : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
 
   def ac(queryString : String) : Action[AnyContent] = Action.async{ implicit request =>
     jobDao.jobIDcompletionSuggester(queryString).map { richSearchResponse =>
@@ -53,7 +53,7 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
       val mainIDStrings : Future[List[String]] =
         // Find out if the user looks for a certain tool or for a jobID
 
-        if(mappedTools.get(queryString).isDefined) {
+        if(toolMap.get(queryString).isDefined) {
         //if (ToolModel.toolMap.get(queryString).isDefined) {
           // Find the Jobs with the matching tool
           Logger.info("user is looking for tool: " + queryString)

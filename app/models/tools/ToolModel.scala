@@ -1,7 +1,5 @@
 package models.tools
 
-
-import com.typesafe.config.{Config, ConfigFactory}
 import enumeratum.{PlayEnum, EnumEntry}
 import models.tools.ToolModel.Toolitem
 
@@ -46,12 +44,12 @@ sealed trait ToolModel extends EnumEntry {
 
       group ->  this.paramGroups(group).filter(this.params.contains(_)).map { param =>
 
-        param -> values.allowed.getOrElse(param, Seq.empty)
+        param -> values.allowed.getOrElse(param, Nil)
       }
     }.toSeq :+
       this.remainParamName -> this.remainParams.map { param =>
 
-        param -> values.allowed.getOrElse(param, Seq.empty)
+        param -> values.allowed.getOrElse(param, Nil)
 
       }
   )
@@ -65,17 +63,6 @@ object ToolModel extends PlayEnum[ToolModel] {
                       category : String,
                       optional : String,
                       params : Seq[(String, Seq[(String, Seq[(String, String)])])])
-
-
-
-  class ToolObject(name: String) {
-
-    lazy val config = ConfigFactory.load()
-    lazy val Toolsconf : Config  = config.getConfig("Tools")
-
-    lazy val toolnameShort = Toolsconf.getString(s"$name.name")
-
-  }
 
 
   val values : Seq[ToolModel] = findValues // this replaces the toolMap completely

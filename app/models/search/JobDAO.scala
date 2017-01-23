@@ -46,7 +46,7 @@ class JobDAO @Inject()(cs: ClusterSetup,
 
 
   // Searches for a matching hash in the Hash DB
-  def matchHash(hash : String, rsHash: String, dbName : Option[String], dbMtime : Option[String], toolname : String): Future[RichSearchResponse] = {
+  def matchHash(hash : String, rsHash: String, dbName : Option[String], dbMtime : Option[String], toolname : String, toolVersion: String): Future[RichSearchResponse] = {
     client.execute(
       search in jobHashIndex query {
           bool(
@@ -55,7 +55,8 @@ class JobDAO @Inject()(cs: ClusterSetup,
               termQuery("dbname", dbName.getOrElse("none")),
               termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z")),
               termQuery("toolname", toolname),
-              termQuery("rshash", rsHash)
+              termQuery("rshash", rsHash),
+              termQuery("toolversion", toolVersion)
             )
           )
       }

@@ -11,7 +11,7 @@ import modules.{CommonModule, LocationProvider}
 import org.joda.time.DateTime
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 
@@ -40,7 +40,7 @@ final class Tool @Inject()(val messagesApi                                 : Mes
 
   // counts usage of frontend tools in order to keep track for our stats
 
-  def frontendCount(toolname: String) = Action.async {
+  def frontendCount(toolname: String) : Action[AnyContent] = Action.async {
 
     // Add Frontend Job to Database
     addFrontendJob(FrontendJob(
@@ -51,4 +51,6 @@ final class Tool @Inject()(val messagesApi                                 : Mes
 
       Future.successful(Ok)
   }
+
+
 }

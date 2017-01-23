@@ -10,7 +10,7 @@ import models.Values
 import models.database.Job
 import models.job.JobIDProvider
 import models.search.JobDAO
-import modules.LocationProvider
+import modules.{CommonModule, LocationProvider}
 import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.json.Json
@@ -39,7 +39,7 @@ final class JobController @Inject() (jobIDProvider                              
                                      @NamedCache("jobitem") jobitemCache              : CacheApi,
                                      @NamedCache("jobActorCache") val jobActorCache   : CacheApi,
                                      val reactiveMongoApi                             : ReactiveMongoApi)
-                                     extends Controller with UserSessions {
+                                     extends Controller with UserSessions with CommonModule {
 
   /**
     *  Loads one minified version of a job to the view, given the jobID
@@ -94,6 +94,8 @@ final class JobController @Inject() (jobIDProvider                              
           val DB = formData.getOrElse("standarddb","").toFile  // get hold of the database in use
           val inputHash = jobDao.generateHash(formData).toString()
           val rsHash = jobDao.generateRSHash(toolname)
+          val tv = toolVersion(toolMap(toolname).toolNameLong)
+          println("tool version from config: " + tv)
           println("Job hash generated: " + inputHash)
           lazy val dbName = {
             formData.get("standarddb") match {
@@ -110,7 +112,7 @@ final class JobController @Inject() (jobIDProvider                              
 
 
           Logger.info("Try to match Hash")
-          jobDao.matchHash(inputHash, rsHash, dbName, dbMtime, toolname).flatMap { richSearchResponse =>
+          jobDao.matchHash(inputHash, rsHash, dbName, dbMtime, toolname, tv).flatMap { richSearchResponse =>
 
             Logger.info("Retrieved richSearchResponse")
             println("success: " + richSearchResponse)

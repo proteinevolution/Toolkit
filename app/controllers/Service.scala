@@ -11,7 +11,7 @@ import modules.tel.TEL
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
 import models.database.JobState
@@ -130,7 +130,7 @@ final class Service @Inject() (webJarAssets                                     
 
 
 
-  def getJob(jobID: String) = Action.async { implicit request =>
+  def getJob(jobID: String) : Action[AnyContent] = Action.async { implicit request =>
 
 
     Logger.info("getJobReached")
@@ -174,7 +174,7 @@ final class Service @Inject() (webJarAssets                                     
                 }
 
               // All other views are currently computed on Clientside
-              case _ => Seq.empty
+              case _ => Nil
             }
 
             // Read parameters from serialized file
