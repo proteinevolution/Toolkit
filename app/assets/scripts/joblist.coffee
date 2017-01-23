@@ -28,4 +28,11 @@ window.JobListComponent =
           m "span", {class: "toolname"}, job.toolname.substr(0,4).toUpperCase()
           m "a", {class: "boxclose", onclick: args.clear.bind(ctrl, idx)}
         ]
+      m "div", {class: "notesheader"}, [
+        "Notes"
+      ]
+      m "div", {class: "jobnotes", id: "currentJobID"}, [
+        m "textarea", {placeholder: "Type private notes here", spellcheck: false}
+      ]
+
     ]
