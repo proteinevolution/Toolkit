@@ -137,3 +137,31 @@ a.boxclose{
 .toolsort {
     cursor: pointer;
 }
+
+.jobnotes textarea {
+    border: 1px solid #ccc;
+    font-size: 0.75em;
+    flex-grow: 1;
+    padding: 8px;
+    box-sizing: border-box;
+    background-color: transparent;
+    color: #343434;
+    line-height: 1.7em;
+    outline: none;
+    resize: none;
+    height: 200px;
+}
+
+.notesheader {
+    margin-top: 30px;
+    flex: 1 1 auto;
+    border: 1px solid #ccc;
+    border-width: 0 1px 1px 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 4px 8px 5px 8px;
+    background: #e0e0e0;
+    opacity: 0.7;
+    cursor: pointer;
+}
