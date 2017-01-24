@@ -95,4 +95,6 @@ object Param {
   final val FILTER_LOW_COMPLEXITY = Param("filter_low_complexity", 0, 1)
   final val MATRIX_MARCOIL = Param("matrix_marcoil", 1, 1)
   final val TRANSITION_PROBABILITY = Param("transition_probability", 1, 1)
+  final val MIN_SEQID_QUERY = Param("min_seqid_query", 0, 1)
+  final val NUM_SEQS_EXTRACT = Param("num_seqs_extract", 0, 1)
 }
