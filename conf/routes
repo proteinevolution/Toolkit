@@ -112,3 +112,7 @@ GET           /api/job/load/:jobID                    @controllers.JobController
 
 # Frontend Stuff
 POST          /api/frontendSubmit/:toolname          @controllers.Tool.frontendCount(toolname: String)
+
+# Job Annotations
+
+POST          /api/job/addnotes/:jobID/:content      @controllers.Jobs.annotation(jobID: String, content : String)
