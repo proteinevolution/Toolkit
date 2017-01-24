@@ -1,7 +1,7 @@
 package modules
 
-import com.typesafe.config.ConfigFactory
 import models.database.{FrontendJob, Job, JobAnnotation, User}
+import com.typesafe.config.{ConfigException, ConfigFactory}
 import models.tools.ToolModel
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
@@ -135,10 +135,14 @@ trait CommonModule extends ReactiveMongoComponents {
 
   // tool version lookup from the config
 
-  protected def toolVersion(name: String) : String = {
+  protected def toolVersion(name: String) : Option[String] = {
 
-    ConfigFactory.load().getConfig("Tools").getString(s"$name.version")
-
+    try {
+      Some(ConfigFactory.load().getConfig("Tools").getString(s"$name.version"))
+    }
+    catch {
+      case _ => None
+    }
   }
 
   protected def toolMap : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
