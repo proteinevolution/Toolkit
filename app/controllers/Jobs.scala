@@ -12,7 +12,8 @@ import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -80,4 +81,22 @@ final class Jobs @Inject()(@Named("master") master                        : Acto
       BSONDocument("$set"   -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis))))
     Ok
   }
+
+  def annotation(jobID : String, content : String) = Action {
+
+    val entry = JobAnnotation(mainID = BSONObjectID.generate(),
+                              jobID = jobID,
+                              content = content,
+                              dateCreated = Some(DateTime.now()))
+
+    upsertAnnotation(entry)
+
+    Ok
+  }
+
+
+
+
+
+
 }
