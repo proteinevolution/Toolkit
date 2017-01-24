@@ -119,3 +119,9 @@ cp ../results/${JOBID}.png ../results/hitlist.png
 cp ../results/${JOBID}.html ../results/hitlist.html
 
 
+# Generate Hitlist in JSON for hhrfile
+hhrhits2json.py "$(readlink -f ../results/hhsearch.hhr)" > ../results/hhrhits.json
+
+
+
+

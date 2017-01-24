@@ -21,10 +21,12 @@ import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
-
+import models.database.Results._
 import scala.collection.immutable.HashSet
 import scala.concurrent.ExecutionContext.Implicits.global
-
+import play.api.libs.json._
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -83,6 +85,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
   protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
 
 
+
+
   /** Supplies a value for a particular Parameter. Returns params again if the parameter
     * is not present
     * @param name
@@ -109,10 +113,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
     // Update job in the database
     this.currentJob = Some(this.currentJob.get.copy(status = state))
-    upsertJob(this.currentJob.get)
-
-    // Inform watchlist
-    watchers.foreach(_ ! JobStateChanged(this.currentJob.get.jobID, state))
+    upsertJob(this.currentJob.get).map { job =>
+      watchers.foreach(_ ! JobStateChanged(job.get.jobID, state))
+    }
   }
 
 
@@ -265,7 +268,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
     // No longer notify user when job state changes
     case Event(StopWatch(actorRef), _) =>
       watchers = watchers - actorRef
-
       stay()
 
     // Job State changed has been received during execution
@@ -276,22 +278,46 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
         state match {
 
           case Queued => // sometimes jobs return from running to queued
-
           case Running => // Nothing to do here
-
-
           // Runscript execution was succesful of erroneous
           case Done | Error =>
+
+            // Put the result files into the database //TODO Map Json filename to type
+            (jobPath/jobID/"results").list.withFilter(_.hasExtension).withFilter(_.extension.get == ".json").foreach(file =>
+
+              file.nameWithoutExtension match {
+
+                 // TODO Turn into a function and write into database
+                case "hhrhits" => Json.parse(file.contentAsString).validate[Seq[Hit]] match {
+
+                  case s: JsSuccess[Seq[Hit]] =>
+                    val hits: Seq[Hit] = s.get
+                    hits.foreach { hit =>
+                      Logger.info(hit.toString)
+                    }
+
+                  case e: JsError => // TODO Handle parsing error of result files
+                    Logger.info("Parsing error occurred! Have: ")
+                    e.errors.map  { foo =>
+                      Logger.info(foo._1.toString())
+                      Logger.info(foo._2.mkString(","))
+                    }
+                }
+              }
+            )
 
             // We must do more executions if necessary
             if(this.executionContext.get.hasMoreExecutions) {
 
-              // TODO Implement me
+              // TODO Implement me (Currently not really necessary, just if we want to have premature forwarding in the
+              // future
 
             } else  {
 
                 // Job is done and JobActor can be made unemployed
-              goto(Unemployed)            }
+
+              goto(Unemployed)
+            }
         }
         stay using jobActorData
   }
