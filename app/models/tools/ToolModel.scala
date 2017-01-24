@@ -520,4 +520,16 @@ object ToolModel extends PlayEnum[ToolModel] {
 
     val results = Seq("DNA")
   }
+  case object HHFilter extends ToolModel {
+
+    val toolNameShort = "hhfilter"
+    val toolNameLong = "HHFilter"
+    val toolNameAbbrev = "hhfi"
+    val category = "utils"
+    val optional = ""
+    val params = Seq(Param.ALIGNMENT.name, Param.MAX_SEQID.name, Param.MIN_SEQID_QUERY.name, Param.MIN_QUERY_COV.name,
+      Param.NUM_SEQS_EXTRACT.name)
+
+    val results = Seq.empty
+  }
 }
