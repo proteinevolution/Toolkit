@@ -3,6 +3,8 @@ package modules
 import models.database.{FrontendJob, Job, JobAnnotation, User}
 import com.typesafe.config.{ConfigException, ConfigFactory}
 import models.tools.ToolModel
+import play.api.Logger
+import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
@@ -35,16 +37,25 @@ trait CommonModule extends ReactiveMongoComponents {
       }
   }
 
-  /* Accessors */
+
   protected def frontendJobCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("frontendjobs"))
-
   protected def jobAnnotationCollection :Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobannotations"))
+  // ResultfilesCollection
+  protected def resultCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("results"))
 
+  /* Accesssors */
   protected def addJob(job: Job) : Future[WriteResult] = jobCollection.flatMap(_.insert(job))
 
   protected def addFrontendJob(frontendJob: FrontendJob) : Future[WriteResult] = frontendJobCollection.flatMap(_.insert(frontendJob))
 
   //protected def addJobAnnotation(notes : JobAnnotation) : Future[WriteResult] = jobAnnotationCollection.flatMap(_.insert(JobAnnotation))
+
+  protected def result2Job(jobID: String, key: String, result: JsValue): Unit = {
+    val bson = reactivemongo.play.json.BSONFormats.toBSON(result).get
+    modifyResult(BSONDocument("jobID" -> jobID), BSONDocument("$set" -> BSONDocument(key -> bson)))
+  }
+
+
 
   protected def findJob(selector : BSONDocument) : Future[Option[Job]] = jobCollection.flatMap(_.find(selector).one[Job])
 
@@ -90,6 +101,10 @@ trait CommonModule extends ReactiveMongoComponents {
       .flatMap(_.findAndUpdate(selectjobID(notes.jobID), update = notes, upsert = true).map(_.result[JobAnnotation]))
   }
 
+  // Modifies result in database
+  protected def modifyResult(selector: BSONDocument, modifier: BSONDocument) = {
+    resultCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true, upsert = true).map(_.result))
+  }
 
 
   // Modifies Job in the database
