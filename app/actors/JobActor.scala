@@ -21,12 +21,10 @@ import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
-import models.database.Results._
 import scala.collection.immutable.HashSet
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
+
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -283,28 +281,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
           case Done | Error =>
 
             // Put the result files into the database //TODO Map Json filename to type
-            (jobPath/jobID/"results").list.withFilter(_.hasExtension).withFilter(_.extension.get == ".json").foreach(file =>
-
-              file.nameWithoutExtension match {
-
-                 // TODO Turn into a function and write into database
-                case "hhrhits" => Json.parse(file.contentAsString).validate[Seq[Hit]] match {
-
-                  case s: JsSuccess[Seq[Hit]] =>
-                    val hits: Seq[Hit] = s.get
-                    hits.foreach { hit =>
-                      Logger.info(hit.toString)
-                    }
-
-                  case e: JsError => // TODO Handle parsing error of result files
-                    Logger.info("Parsing error occurred! Have: ")
-                    e.errors.map  { foo =>
-                      Logger.info(foo._1.toString())
-                      Logger.info(foo._2.mkString(","))
-                    }
-                }
-              }
-            )
+            (jobPath/jobID/"results").list.withFilter(_.hasExtension).withFilter(_.extension.get == ".json").foreach { file =>
+              result2Job(jobID, file.nameWithoutExtension, Json.parse(file.contentAsString))
+            }
 
             // We must do more executions if necessary
             if(this.executionContext.get.hasMoreExecutions) {
