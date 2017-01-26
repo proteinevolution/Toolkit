@@ -5,6 +5,7 @@ import javax.inject.{Inject, Named, Singleton}
 import com.sksamuel.elastic4s._
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
+import com.typesafe.config.ConfigFactory
 import modules.tel.TELConstants
 import modules.tools.FNV
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
@@ -44,9 +45,20 @@ class JobDAO @Inject()(cs: ClusterSetup,
 
   }
 
+  def generateToolHash(name: String) : String = {
+
+    try {
+      Math.abs(MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString,0)).toString
+    }
+    catch {
+      case _ : Throwable => "No matching hash value found"
+    }
+
+  }
+
 
   // Searches for a matching hash in the Hash DB
-  def matchHash(hash : String, rsHash: String, dbName : Option[String], dbMtime : Option[String], toolname : String, toolVersion: String): Future[RichSearchResponse] = {
+  def matchHash(hash : String, rsHash: String, dbName : Option[String], dbMtime : Option[String], toolname : String, toolHash: String): Future[RichSearchResponse] = {
     client.execute(
       search in jobHashIndex query {
           bool(
@@ -56,7 +68,7 @@ class JobDAO @Inject()(cs: ClusterSetup,
               termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z")),
               termQuery("toolname", toolname),
               termQuery("rshash", rsHash),
-              termQuery("toolversion", toolVersion)
+              termQuery("toolhash", toolHash)
             )
           )
       }
