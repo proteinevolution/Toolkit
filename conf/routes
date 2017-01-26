@@ -116,3 +116,6 @@ POST          /api/frontendSubmit/:toolname          @controllers.Tool.frontendC
 # Job Annotations
 
 POST          /api/job/addnotes/:jobID/:content      @controllers.Jobs.annotation(jobID: String, content : String)
+
+# Results
+GET           /api/job/results/:jobID/:key           @controllers.DataController.get(jobID: String, key: String)

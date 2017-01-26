@@ -10,7 +10,7 @@ import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.{BSONArray, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONArray, BSONDocument, BSONObjectID, BSONValue}
 
 import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -55,6 +55,15 @@ trait CommonModule extends ReactiveMongoComponents {
     modifyResult(BSONDocument("jobID" -> jobID), BSONDocument("$set" -> BSONDocument(key -> bson)))
   }
 
+  // Able to fetch one field for the respective result
+  protected def getResult(jobID: String, key: String): Future[Option[JsValue]] = {
+    val projection = BSONDocument(key -> 1)
+    val selector = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
+    resultCollection.map(_.find(selector, projection).cursor[BSONDocument]()).flatMap(_.headOption).map {
+      case Some(bsonDoc) => Some(reactivemongo.play.json.BSONFormats.toJSON(bsonDoc))
+      case None => None
+    }
+  }
 
 
   protected def findJob(selector : BSONDocument) : Future[Option[Job]] = jobCollection.flatMap(_.find(selector).one[Job])

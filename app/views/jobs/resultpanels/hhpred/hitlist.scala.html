@@ -6,128 +6,106 @@
 @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
 
+<ul id="hhpred_accordion" class="accordion" data-accordion>
 
-<p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
-
-
-
-    <div class="slider" data-slider data-initial-start="25" data-initial-end="75">
-        <span id="lefthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
-        <span class="slider-fill" data-slider-fill></span>
-        <span id="righthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
-        <input id="hidden1" type="hidden">
-        <input id="hidden2" type="hidden">
+    <li class="accordion-item" data-accordion-item>
+    <a href="#" class="accordion-title">Visualization</a>
+    <div class="accordion-content" data-tab-content>
+        <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
+        <div class="slider" data-slider data-initial-start="25" data-initial-end="75">
+            <span id="lefthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
+            <span class="slider-fill" data-slider-fill></span>
+            <span id="righthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
+            <input id="hidden1" type="hidden">
+            <input id="hidden2" type="hidden">
+        </div>
     </div>
+    </li>
 
+    <li class="accordion-item is-active" data-accordion-item>
+        <a href="#" class="accordion-title">Information</a>
+        <div class="accordion-content" data-tab-content>
+            <table  class="display" cellspacing="0" width="100%">
+                <tr>
+                    <td>Query</td>
+                    <td id="hhpred_query"></td>
+                </tr>
+                <tr>
+                    <td>Match_columns</td>
+                    <td id="hhpred_match_columns"></td>
+                </tr>
+                <tr>
+                    <td>No_of_Seqs</td>
+                    <td id="hhpred_noseqs"></td>
+                </tr>
+                <tr>
+                    <td>Neff</td>
+                    <td id="hhpred_neff"></td>
+                </tr>
+                <tr>
+                    <td>Searched HMMs</td>
+                    <td id="hhpred_searchedhmms"></td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td id ="hhpred_date"></td>
+                </tr>
+            </table>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Hitlist</a>
+        <div class="accordion-content" data-tab-content>
+            <table id="htb">
+                <thead>
+                    <tr>
+                        <th colspan="9"></th>
+                        <th colspan="2">Query</th>
+                        <th colspan="2">Template</th>
+                    </tr>
+                    <tr>
+                        <th>No</th>
+                        <th>Hit</th>
+                        <th>Name</th>
+                        <th>Prob</th>
+                        <th>E-value</th>
+                        <th>P-value</th>
+                        <th>Score</th>
+                        <th>SS</th>
+                        <th>Cols</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Ref</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Alignments</a>
+        <div id="hhpred_alignments" class="accordion-content table-scroll" data-tab-content>
+        </div>
+    </li>
+</ul>
 
-
-<table style="width:100%">
-    <tr>
-        <th>Job: @jobID</th>
-        <th>Result Overview</th>
-    </tr>
-    <tr>
-        <td>Query</td>
-        <td>@HHpred.header(jobID).Query</td>
-    </tr>
-    <tr>
-        <td>Match_columns</td>
-        <td>@HHpred.header(jobID).Match_columns</td>
-    </tr>
-    <tr>
-        <td>No_of_Seqs</td>
-        <td>@HHpred.header(jobID).No_of_Seqs</td>
-    </tr>
-    <tr>
-        <td>Neff</td>
-        <td>@HHpred.header(jobID).Neff</td>
-    </tr>
-    <tr>
-        <td>Searched HMMs</td>
-        <td>@HHpred.header(jobID).Searched_HMMs</td>
-    </tr>
-    <tr>
-        <td>Date</td>
-        <td>@HHpred.header(jobID).Date</td>
-    </tr>
-    <tr>
-        <td>Command</td>
-        <td>@HHpred.header(jobID).Command</td>
-    </tr>
-</table>
-
-
-<table id="htb" class="display">
-
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>Hits</th>
-            <th>Probs</th>
-            <th>Evals</th>
-            <th>Pvals</th>
-            <th>Scores</th>
-            <th>SS</th>
-            <th>Cols</th>
-            <th>Query HMMs</th>
-            <th>Template HMMs</th>
-        </tr>
-    </thead>
-    <tbody>
-        @for((x,i) <- HHpred.hitlist(jobID).Hits.zipWithIndex) {
-            <tr>
-                <td>@(i+1)</td>
-                <td>@HHpred.hitlist(jobID).Hits(i)</td>
-                <td>@HHpred.hitlist(jobID).Probs(i)</td>
-                <td>@HHpred.hitlist(jobID).Evals(i)</td>
-                <td>@HHpred.hitlist(jobID).Pvals(i)</td>
-                <td>@HHpred.hitlist(jobID).Scores(i)</td>
-                <td>@HHpred.hitlist(jobID).SS(i)</td>
-                <td>@HHpred.hitlist(jobID).Cols(i)</td>
-                <td>@HHpred.hitlist(jobID).Query_HMMs(i)</td>
-                <td>@HHpred.hitlist(jobID).Template_HMMs(i)</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-
-<table style="font-weight: bold">
-    @for((x,i) <- HHpred.alignments(jobID).Headers.zipWithIndex) {
-        <tr>
-            <td>No @(i+1)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).Headers(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).QuerySeqs(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).QueryCon(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).QueryCon2(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).TemplateCon(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).TemplateSeqs(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).TemplateDSSP(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).TemplatePRED(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).Confidence(i)</td>
-        </tr>
-    }
-</table>
 
 <script>
+
+    // Makes a table row with the specified content
+    function makeRow(entries) {
+
+        var row = document.createElement("tr");
+        for(var i = 0; i < entries.length; i++ ) {
+            var entry = document.createElement("td");
+            entry.appendChild(document.createTextNode(entries[i]));
+            row.appendChild(entry);
+        }
+        return row;
+    }
+
+        (function()  {
          $('.slider').on('moved.zf.slider', function() {
              $('#lefthandle').html($('#hidden1').val());
              $('#lefthandle').css({
@@ -142,21 +120,85 @@
                  'padding-left' : '2px'
              });
          });
+         var dataRoute = jsRoutes.controllers.DataController.get("@jobID", 'hhr');
+         $.ajax({
 
-         var table;
+             url: dataRoute.url
+         }).done(function(data) {
 
-         $(document).ready( function () {
-             $(document).foundation();
-
-             table = $('#htb').DataTable({
-                 "bPaginate": false,
-                 "bLengthChange": false,
-                 "bFilter": true,
+             console.log("done");
+             // For the hitlist
+             var hits = data.hhr.hits;
+             var info = data.hhr.info;
+             var alignments = data.hhr.alignments;
+             $("#hhpred_query").append(info.Query);
+             $("#hhpred_match_columns").append(info.Match_columns);
+             $("#hhpred_noseqs").append(info.No_of_seqs);
+             $("#hhpred_neff").append(info.Neff);
+             $("#hhpred_searchedhmms").append(info.Searched_HMMs);
+             $("#hhpred_date").append(info.Date);
+             $('#htb').dataTable({
                  "bInfo": false,
-                 "bAutoWidth": false,
-                 retrieve: true,
-                 paging: true
+                 "bFilter": true,
+                 "bLengthChange": false,
+                 "aaData": hits,
+                 "aoColumns": [
+                     { "mDataProp": "no" },
+                     { "mDataProp": "struc" },
+                     { "mDataProp": "hit" },
+                     { "mDataProp": "prob" },
+                     { "mDataProp": "eval" },
+                     { "mDataProp": "pval" },
+                     { "mDataProp": "score" },
+                     { "mDataProp": "ss" },
+                     { "mDataProp": "cols" },
+                     { "mDataProp": "query_begin" },
+                     { "mDataProp": "query_end" },
+                     { "mDataProp": "template_begin" },
+                     { "mDataProp": "template_end" },
+                     { "mDataProp": "ref" }
+                 ]
              });
-         });
 
+             var alignments_container = document.getElementById("hhpred_alignments");
+             for(var i = 0; i < alignments.length; i++) {
+
+                 var ali = alignments[i];
+
+                 var tab = document.createElement("table");
+                 tab.className += " unstriped ";
+
+                 var tabbody = document.createElement("tbody");
+
+                 // Query Sequence
+                 tabbody.appendChild(makeRow(["Q", ali.query.name, ali.query.start, ali.query.seq]));
+                 // Consensus, if present
+                 if(typeof ali.query.consensus !== 'undefined') {
+                     tabbody.appendChild(makeRow(["Q", "Consensus", ali.query.start, ali.query.consensus]));
+                 }
+                 if(typeof ali.agree !== 'undefined') {
+                     tabbody.appendChild(makeRow(["", "", "", ali.agree]));
+                 }
+                 if(typeof ali.template.consensus !== 'undefined') {
+                     tabbody.appendChild(makeRow(["T", "Consensus", ali.template.start, ali.template.consensus]));
+                 }
+                 tabbody.appendChild(makeRow(["T", ali.template.name, ali.template.start, ali.template.seq]));
+
+                 if(typeof ali.template.ss_dssp !== 'undefined') {
+                     tabbody.appendChild(makeRow(["T", "ss_dssp", "", ali.template.ss_dssp]));
+                 }
+                 if(typeof ali.template.ss_pred !== 'undefined') {
+                     tabbody.appendChild(makeRow(["T", "ss_pred", "", ali.template.ss_pred]));
+                 }
+                 if(typeof ali.confidence !== 'undefined') {
+                     tabbody.appendChild(makeRow(["", "Confidence", "", ali.confidence]));
+                 }
+
+                 tab.appendChild(tabbody);
+                 alignments_container.appendChild(tab);
+                 $("#hhpred_accordion").foundation();
+             }
+         });
+        })();
 </script>
+
