@@ -179,14 +179,14 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
             dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
             dbMtime = Some("1970-01-01T00:00:00Z"), // use unix epoch time
             toolname = toolname,
-            toolVersion = toolVersion(toolMap(toolname).toolNameLong).getOrElse(""))
+            jobDao.generateToolHash(toolMap(toolname).toolNameLong))
           case _ => JobHash( mainID = this.currentJob.get.mainID,
             jobDao.generateHash(paramsWithoutMainID).toString(),
             jobDao.generateRSHash(toolname),
             dbName = Some(DB.name),
             dbMtime = Some(DB.lastModifiedTime.toString),
             toolname = toolname,
-            toolVersion = toolVersion(toolMap(toolname).toolNameLong).getOrElse("")
+            jobDao.generateToolHash(toolMap(toolname).toolNameLong)
           )
         }
       }

@@ -159,15 +159,19 @@ trait CommonModule extends ReactiveMongoComponents {
 
   // tool version lookup from the config
 
+
+
+  // this is currently not in use
+  /*
   protected def toolVersion(name: String) : Option[String] = {
 
     try {
       Some(ConfigFactory.load().getConfig("Tools").getString(s"$name.version"))
     }
     catch {
-      case _ => None
+      case _ : Throwable => None
     }
-  }
+  } */
 
   protected def toolMap : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
 }

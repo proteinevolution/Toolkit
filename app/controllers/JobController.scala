@@ -94,8 +94,9 @@ final class JobController @Inject() (jobIDProvider                              
           val DB = formData.getOrElse("standarddb","").toFile  // get hold of the database in use
           val inputHash = jobDao.generateHash(formData).toString()
           val rsHash = jobDao.generateRSHash(toolname)
-          val tv: String = toolVersion(toolMap(toolname).toolNameLong).getOrElse("") // Toolversion might not be available
-          println("tool version from config: " + tv)
+          val toolHash = jobDao.generateToolHash(toolMap(toolname).toolNameLong)
+          println("Runscript hash generated: " + rsHash)
+          println("Tool hash generated: " + toolHash)
           println("Job hash generated: " + inputHash)
           lazy val dbName = {
             formData.get("standarddb") match {
@@ -110,7 +111,7 @@ final class JobController @Inject() (jobIDProvider                              
             }
           }
           Logger.info("Try to match Hash")
-          jobDao.matchHash(inputHash, rsHash, dbName, dbMtime, toolname, tv).flatMap { richSearchResponse =>
+          jobDao.matchHash(inputHash, rsHash, dbName, dbMtime, toolname, toolHash).flatMap { richSearchResponse =>
 
             Logger.info("Retrieved richSearchResponse")
             println("success: " + richSearchResponse)
