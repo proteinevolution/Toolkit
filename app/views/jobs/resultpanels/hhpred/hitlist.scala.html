@@ -8,6 +8,7 @@
 
 <ul id="hhpred_accordion" class="accordion" data-accordion>
 
+    <!--
     <li class="accordion-item" data-accordion-item>
     <a href="#" class="accordion-title">Visualization</a>
     <div class="accordion-content" data-tab-content>
@@ -21,7 +22,7 @@
         </div>
     </div>
     </li>
-
+    -->
     <li class="accordion-item is-active" data-accordion-item>
         <a href="#" class="accordion-title">Information</a>
         <div class="accordion-content" data-tab-content>
@@ -92,6 +93,7 @@
 
 
 <script>
+
 
     // Makes a table row with the specified content
     function makeRow(entries) {
@@ -188,16 +190,18 @@
                      tabbody.appendChild(makeRow(["T", "ss_dssp", "", ali.template.ss_dssp]));
                  }
                  if(typeof ali.template.ss_pred !== 'undefined') {
-                     tabbody.appendChild(makeRow(["T", "ss_pred", "", ali.template.ss_pred]));
+
+                     var ss = ali.template.ss_pred.replace('/[Ee]+/g', function(m){
+                         return '<span class="ss_e">$&</span>'});
+                     tabbody.appendChild(makeRow(["T", "ss_pred", "", ss]));
                  }
                  if(typeof ali.confidence !== 'undefined') {
                      tabbody.appendChild(makeRow(["", "Confidence", "", ali.confidence]));
                  }
-
                  tab.appendChild(tabbody);
                  alignments_container.appendChild(tab);
-                 $("#hhpred_accordion").foundation();
              }
+             $("#hhpred_accordion").foundation();
          });
         })();
 </script>
