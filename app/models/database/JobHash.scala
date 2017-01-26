@@ -18,7 +18,7 @@ case class JobHash(mainID : BSONObjectID,
                    dbName : Option[String],
                    dbMtime : Option[String],
                    toolname: String,
-                   toolVersion: String)
+                   toolHash: String)
 
 
 object JobHash {
@@ -29,7 +29,7 @@ object JobHash {
   val DBNAME = "dbname"
   val DBMTIME = "dbmtime"
   val TOOLNAME = "toolname"
-  val TOOLVERSION = "toolversion"
+  val TOOLHASH = "toolhash"
 
 
   implicit object Reader extends BSONDocumentReader[JobHash] {
@@ -40,7 +40,7 @@ object JobHash {
       bson.getAs[String](DBNAME),
       bson.getAs[String](DBMTIME),
       bson.getAs[String](TOOLNAME).getOrElse(""),
-      bson.getAs[String](TOOLVERSION).getOrElse("")
+      bson.getAs[String](TOOLHASH).getOrElse("No matching hash value found")
     )
   }
 
@@ -52,7 +52,7 @@ object JobHash {
       DBNAME -> jobHash.dbName,
       DBMTIME -> jobHash.dbMtime,
       TOOLNAME -> jobHash.toolname,
-      TOOLVERSION -> jobHash.toolVersion
+      TOOLHASH -> jobHash.toolHash
     )
   }
 }

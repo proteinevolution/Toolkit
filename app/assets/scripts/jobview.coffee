@@ -388,6 +388,7 @@ window.ParameterAlignmentComponent =
             id: ctrl.id
             onchange: m.withAttr("value", ctrl.param.value)
             value: ctrl.param.value()
+            spellcheck: false
         m "div", {id: "upload_alignment_modal", class: "tiny reveal", config: alignmentUpload},
           m "input",
             type: "file"
