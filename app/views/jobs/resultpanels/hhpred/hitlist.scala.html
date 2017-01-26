@@ -87,21 +87,43 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Alignments</a>
         <div id="hhpred_alignments" class="accordion-content table-scroll" data-tab-content>
+            <input type="checkbox" name="ss" onchange="toggleSS(this)">  Color SS
         </div>
     </li>
 </ul>
 
 
+
+
 <script>
+    var ss_helices = document.getElementsByClassName("ss_h");
+    var ss_extended = document.getElementsByClassName("ss_e");
 
+        function toggleSS(element) {
 
+            if(element.checked) {
+                for (var i = 0; i < ss_helices.length; i++) {
+                    ss_helices[i].style.color="#D00000";
+                }
+                for (var i = 0; i < ss_extended.length; i++) {
+                    ss_extended[i].style.color="#0000D0";
+                }
+            } else {
+                for (var i = 0; i < ss_helices.length; i++) {
+                    ss_helices[i].style.color="black";
+                }
+                for (var i = 0; i < ss_extended.length; i++) {
+                    ss_extended[i].style.color="black";
+                }
+            }
+        }
     // Makes a table row with the specified content
     function makeRow(entries) {
 
         var row = document.createElement("tr");
         for(var i = 0; i < entries.length; i++ ) {
             var entry = document.createElement("td");
-            entry.appendChild(document.createTextNode(entries[i]));
+            entry.innerHTML = entries[i];
             row.appendChild(entry);
         }
         return row;
@@ -127,8 +149,6 @@
 
              url: dataRoute.url
          }).done(function(data) {
-
-             console.log("done");
              // For the hitlist
              var hits = data.hhr.hits;
              var info = data.hhr.info;
@@ -187,17 +207,19 @@
                  tabbody.appendChild(makeRow(["T", ali.template.name, ali.template.start, ali.template.seq]));
 
                  if(typeof ali.template.ss_dssp !== 'undefined') {
-                     tabbody.appendChild(makeRow(["T", "ss_dssp", "", ali.template.ss_dssp]));
+
+                     var ss = ali.template.ss_dssp.replace(/[Ee]+/g, "<span class='ss_e'>$&</span>");
+                     ss = ss.replace(/[Hh]+/g, "<span class='ss_h'>$&</span>");
+                     tabbody.appendChild(makeRow(["T", "ss_dssp", "", ss]));
+
                  }
                  if(typeof ali.template.ss_pred !== 'undefined') {
 
-                     var ss = ali.template.ss_pred.replace('/[Ee]+/g', function(m){
-                         return '<span class="ss_e">$&</span>'});
+                     var ss = ali.template.ss_pred.replace(/[Ee]+/g, "<span class='ss_e'>$&</span>");
+                     ss = ss.replace(/[Hh]+/g, "<span class='ss_h'>$&</span>");
                      tabbody.appendChild(makeRow(["T", "ss_pred", "", ss]));
                  }
-                 if(typeof ali.confidence !== 'undefined') {
-                     tabbody.appendChild(makeRow(["", "Confidence", "", ali.confidence]));
-                 }
+
                  tab.appendChild(tabbody);
                  alignments_container.appendChild(tab);
              }
