@@ -7,6 +7,7 @@ import better.files._
 import models.Constants
 import play.twirl.api.Html
 import modules.parsers.HHR._
+import play.api.Logger
 
 object HHpred extends Constants {
 
@@ -17,6 +18,7 @@ object HHpred extends Constants {
     */
 
   def html(filepath: String): Html = {
+    Logger.info("Getting file: " + s"$jobPath/$filepath")
     Html(s"$jobPath/$filepath".toFile.contentAsString)
   }
 

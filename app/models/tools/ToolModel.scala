@@ -130,7 +130,7 @@ object ToolModel extends PlayEnum[ToolModel] {
       Param.MSA_GEN_MAX_ITER.name, Param.MIN_COV.name, Param.EVAL_INC_THRESHOLD.name,
       Param.MAX_LINES.name, Param.PMIN.name, Param.ALIWIDTH.name)
 
-    val results = Seq("Hitlist")
+    val results = Seq("Hitlist", "FullAlignment")
   }
 
 
