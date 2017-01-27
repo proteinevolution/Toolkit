@@ -46,7 +46,6 @@ trait CommonModule extends ReactiveMongoComponents {
 
   protected def addFrontendJob(frontendJob: FrontendJob) : Future[WriteResult] = frontendJobCollection.flatMap(_.insert(frontendJob))
 
-  //protected def addJobAnnotation(notes : JobAnnotation) : Future[WriteResult] = jobAnnotationCollection.flatMap(_.insert(JobAnnotation))
 
   protected def result2Job(jobID: String, key: String, result: JsValue): Unit = {
     val bson = reactivemongo.play.json.BSONFormats.toBSON(result).get
@@ -61,19 +60,6 @@ trait CommonModule extends ReactiveMongoComponents {
       case Some(bsonDoc) => Some(reactivemongo.play.json.BSONFormats.toJSON(bsonDoc))
       case None => None
     }
-  }
-
-
-
-  // get the content of the annotation collection
-  protected def findAnnotationContent(jobid: String) = {
-    val query = BSONDocument("jobid" -> BSONDocument("$gt" -> jobid))
-
-
-    val projection = BSONDocument("content" -> 1)
-
-    jobAnnotationCollection.map(_.find(query, projection).cursor[BSONDocument]().
-      collect[List](1))
   }
 
 
@@ -173,19 +159,6 @@ trait CommonModule extends ReactiveMongoComponents {
 
   // tool version lookup from the config
 
-
-
-  // this is currently not in use
-  /*
-  protected def toolVersion(name: String) : Option[String] = {
-
-    try {
-      Some(ConfigFactory.load().getConfig("Tools").getString(s"$name.version"))
-    }
-    catch {
-      case _ : Throwable => None
-    }
-  } */
 
   protected def toolMap : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
 }
