@@ -10,6 +10,7 @@ tooltipSearch = (elem, isInit) ->
 jobNoteArea = (elem, isInit) ->
   if not isInit
 
+
     $.ajax
       url: '/api/jobs/getnotes/' + $(elem).attr('id').substring(7)
       type: 'get'
@@ -18,10 +19,14 @@ jobNoteArea = (elem, isInit) ->
         return
 
 
-
     $(elem).keyup (e) ->
-      console.log($(this).val())
+      #console.log($(this).val())
       #console.log($(this).attr('id').substring(7))
+      $.post '/api/job/addnotes/' + $(this).attr('id').substring(7) + '/' + $(this).val(), (response) ->
+      # Log the response to the console
+        console.log 'Response: ' + response
+        return
+
       return
 
 

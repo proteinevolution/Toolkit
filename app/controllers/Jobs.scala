@@ -15,8 +15,6 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
 
 
 /*
@@ -83,7 +81,16 @@ final class Jobs @Inject()(@Named("master") master                        : Acto
     Ok
   }
 
-  def annotation(jobID : String, content : String) = Action {
+  /**
+    *
+    * Creates new annotation document and modifies this if it already exists in one method
+    * TODO: make this secure against CSRF
+    * @param jobID
+    * @param content
+    * @return
+    */
+
+  def annotation(jobID : String, content : String) : Action[AnyContent] = Action {
 
     val entry = JobAnnotation(mainID = BSONObjectID.generate(),
                               jobID = jobID,
@@ -92,20 +99,25 @@ final class Jobs @Inject()(@Named("master") master                        : Acto
 
     upsertAnnotation(entry)
 
-    Ok
+    modifyAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID),
+      BSONDocument("$set"   -> BSONDocument(JobAnnotation.CONTENT -> content)))
+
+
+    Ok("annotation upserted")
 
   }
 
 
-  def getAnnotation(jobID: String) = Action {
+  def getAnnotation(jobID: String) : Action[AnyContent] = Action {
 
-    if (jobID == "8594070")
+    var result = ""
 
-      Ok("TEST2")
+    findJobAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID)).foreach {
+      case Some(jobAnnotation) => result = jobAnnotation.content
+      case None => result = ""
+    }
 
-    else
-
-      Ok("")
+    Ok(result)
 
   }
 
