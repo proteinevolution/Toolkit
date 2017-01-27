@@ -38,8 +38,8 @@ window.JobListComponent =
 
   controller: ->
 
-    user: m.request {method: "GET", url: "/getCurrentUser", success: (data) -> data.user}
-
+    #user: m.request {method: "GET", url: "/getCurrentUser", success: (data) -> data.user}
+    user: m.prop ""
 
   view: (ctrl, args) ->
 
