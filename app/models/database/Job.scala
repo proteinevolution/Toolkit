@@ -12,20 +12,16 @@ import reactivemongo.play.json._
 
 
 case class Job(mainID      : BSONObjectID,                // ID of the Job in the System
-               sgeID       : String,
-               jobType     : String,                      // Type of job
                parentID    : Option[BSONObjectID] = None, // ID of the Parent Job
                jobID       : String,                      // User visible ID of the Job
                ownerID     : Option[BSONObjectID] = None, // User to whom the Job belongs
                status      : JobState,                    // Status of the Job
                deletion    : Option[JobDeletion] = None,      // Deletion Flag showing the reason for the deletion
                tool        : String,                      // Tool used for this Job
-               statID      : String,                      //
+               statID      : String = "",                 //
                watchList   : List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
                commentList : List[BSONObjectID] = List.empty, // List of comments for the Job
-               runtime     : Option[String],
-               memory      : Option[Int],
-               threads     : Option[Int],
+               clusterData : Option[JobClusterData] = None,  // Cluster Data
                dateCreated : Option[DateTime],            // Creation time of the Job
                dateUpdated : Option[DateTime],            // Last Updated on
                dateViewed  : Option[DateTime])            // Last Viewed on
@@ -73,8 +69,6 @@ object Job {
   // Constants for the JSON object identifiers
   val ID            = "id"            // name for the ID in scala
   val IDDB          = "_id"           //              ID in MongoDB
-  val SGEID         = "sgeid"         // sun grid engine job id
-  val JOBTYPE       = "jobType"       //              Type of the Job
   val PARENTID      = "parentID"      //              ID of the parent job
   val JOBID         = "jobID"         //              ID for the job
   val OWNERID       = "ownerID"       //              ID of the job owner
@@ -84,9 +78,7 @@ object Job {
   val STATID        = "statID"        //              ID of the stats for this Job
   val WATCHLIST     = "watchList"     //              optional list of watching users references
   val COMMENTLIST   = "commentList"   //              comment list references
-  val RUNTIME       = "runtime"
-  val MEMORY        = "memory"
-  val THREADS       = "threads"
+  val CLUSTERDATA   = "clusterData"   //              detailed data on the cluster usage
   val DATECREATED   = "dateCreated"   //              created on field
   val DATEUPDATED   = "dateUpdated"   //              changed on field
   val DATEVIEWED    = "dateViewed"    //              last view on field
@@ -98,8 +90,6 @@ object Job {
     override def reads(json: JsValue): JsResult[Job] = json match {
       case obj: JsObject => try {
         val mainID      = (obj \ ID).asOpt[String]
-        val sgeID       = (obj \ SGEID).asOpt[String]
-        val jobType     = (obj \ JOBTYPE).asOpt[String]
         val parentID    = (obj \ PARENTID).asOpt[String]
         val jobID       = (obj \ JOBID).asOpt[String]
         val ownerID     = (obj \ OWNERID).asOpt[String]
@@ -109,26 +99,17 @@ object Job {
         val statID      = (obj \ STATID).asOpt[String]
         val watchList   = (obj \ WATCHLIST).asOpt[List[String]]
         val commentList = (obj \ COMMENTLIST).asOpt[List[String]]
-        val runtime     = (obj \ RUNTIME).asOpt[String]
-        val memory      = (obj \ MEMORY).asOpt[Int]
-        val threads     = (obj \ THREADS).asOpt[Int]
         val dateCreated = (obj \ DATECREATED).asOpt[String]
         val dateUpdated = (obj \ DATEUPDATED).asOpt[String]
         val dateViewed  = (obj \ DATEVIEWED).asOpt[String]
         JsSuccess(Job(
           mainID      = BSONObjectID.generate(),  // TODO need to find out how to get the main id as it is needed for the job
-          sgeID       = "",
-          jobType     = "",
           parentID    = None,
           jobID       = "",
           ownerID     = Some(BSONObjectID.generate()),
           status      = status.get,
           deletion    = deletion,
           tool        = "",
-          statID      = "",
-          runtime     = Some(""),
-          memory      = Some(0),
-          threads     = Some(0),
           dateCreated = Some(new DateTime()),
           dateUpdated = Some(new DateTime()),
           dateViewed  = Some(new DateTime())))
@@ -143,8 +124,6 @@ object Job {
   implicit object JobWrites extends Writes[Job] {
     def writes (job : Job) : JsObject = Json.obj(
       IDDB        -> job.mainID,
-      SGEID       -> job.sgeID,
-      JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
       OWNERID     -> job.ownerID,
@@ -154,9 +133,7 @@ object Job {
       STATID      -> job.statID,
       WATCHLIST   -> job.watchList,
       COMMENTLIST -> job.commentList,
-      RUNTIME     -> job.runtime,
-      MEMORY      -> job.memory,
-      THREADS     -> job.threads,
+      CLUSTERDATA -> job.clusterData,
       DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
       DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
       DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis))
@@ -169,8 +146,6 @@ object Job {
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson : BSONDocument): Job = {
       Job(mainID      = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
-          sgeID       = bson.getAs[String](SGEID).getOrElse(""),
-          jobType     = bson.getAs[String](JOBTYPE).getOrElse("Error loading Job Type"),
           parentID    = bson.getAs[BSONObjectID](PARENTID),
           jobID       = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
           ownerID     = bson.getAs[BSONObjectID](OWNERID),
@@ -180,9 +155,7 @@ object Job {
           statID      = bson.getAs[String](STATID).getOrElse(""),
           watchList   = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
           commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
-          runtime     = bson.getAs[String](RUNTIME),
-          memory      = bson.getAs[Int](MEMORY),
-          threads     = bson.getAs[Int](THREADS),
+          clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
           dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
           dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)),
           dateViewed  = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => new DateTime(dt.value))
@@ -196,8 +169,6 @@ object Job {
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job) : BSONDocument = BSONDocument(
       IDDB        -> job.mainID,
-      SGEID       -> job.sgeID,
-      JOBTYPE     -> job.jobType,
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
       OWNERID     -> job.ownerID,
@@ -207,9 +178,7 @@ object Job {
       STATID      -> job.statID,
       WATCHLIST   -> job.watchList,
       COMMENTLIST -> job.commentList,
-      RUNTIME     -> job.runtime,
-      MEMORY      -> job.memory,
-      THREADS     -> job.threads,
+      CLUSTERDATA -> job.clusterData,
       DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
       DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
       DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis))

@@ -59,7 +59,7 @@ final class Jobs @Inject()(@Named("master") master                        : Acto
 
       case Some(job) =>
         modifyJob(BSONDocument(Job.JOBID -> job.jobID),
-          BSONDocument("$set" -> BSONDocument(Job.SGEID -> sgeID)))
+          BSONDocument("$set" -> BSONDocument(Job.CLUSTERDATA -> JobClusterData(sgeID,Some(1),Some(1)))))
         Logger.info(jobID + " gets job-ID " + sgeID + " on SGE")
       case None =>
         Logger.info("Unknown ID " + jobID.toString)
