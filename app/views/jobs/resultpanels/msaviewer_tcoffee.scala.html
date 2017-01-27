@@ -53,6 +53,7 @@
         ms.render();
 
         function onFullscreenToggle() {
+            console.log("Redrawing");
             width= $("#tool-tabs").width() - 200;
             opts.zoomer = {
                 alignmentHeight: 600, alignmentWidth: width, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
