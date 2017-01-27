@@ -15,6 +15,7 @@ jobNoteArea = (elem, isInit) ->
       url: '/api/jobs/getnotes/' + $(elem).attr('id').substring(7)
       type: 'get'
       success: (data) ->
+        #console.log(data)
         $(elem).html(data)
         return
 

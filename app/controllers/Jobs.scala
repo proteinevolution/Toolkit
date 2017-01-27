@@ -10,6 +10,7 @@ import modules.CommonModule
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
+import play.api.libs.json.{Json, Reads, Writes}
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
@@ -108,18 +109,15 @@ final class Jobs @Inject()(@Named("master") master                        : Acto
   }
 
 
-  def getAnnotation(jobID: String) : Action[AnyContent] = Action {
+  def getAnnotation(jobID: String): Action[AnyContent] = Action.async { implicit request =>
 
-    var result = ""
+    findJobAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID)).map { annotationList =>
+      val foundAnnotations = annotationList.map(_.content)
 
-    findJobAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID)).foreach {
-      case Some(jobAnnotation) => result = jobAnnotation.content
-      case None => result = ""
+      Ok(foundAnnotations.getOrElse(""))
+
     }
 
-    Ok(result)
-
   }
-
 
 }
