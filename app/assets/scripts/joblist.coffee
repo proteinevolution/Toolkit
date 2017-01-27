@@ -22,8 +22,9 @@ jobNoteArea = (elem, isInit) ->
 
     $(elem).keyup (e) ->
       #console.log($(this).val())
+      contentString = $(this).val()
       #console.log($(this).attr('id').substring(7))
-      $.post '/api/job/addnotes/' + $(this).attr('id').substring(7) + '/' + $(this).val(), (response) ->
+      $.post jsRoutes.controllers.Jobs.annotation($(this).attr('id').substring(7), contentString), (response) ->
       # Log the response to the console
         console.log 'Response: ' + response
         return
