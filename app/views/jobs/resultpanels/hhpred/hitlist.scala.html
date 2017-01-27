@@ -5,13 +5,6 @@
 @*  Load html Map used for the image representation *@
 
 
-<style>
-div.container {
-    width: 80%;
-}
-</style>
-
-
 <ul id="hhpred_accordion" class="accordion" data-accordion data-allow-all-closed="true">
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
@@ -54,7 +47,6 @@ div.container {
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Hitlist</a>
         <div class="accordion-content" data-tab-content>
-            <div style="width: 80%;">
             <table id="htb" class="display" cellspacing="0" width="80%">
                 <thead>
                     <tr>
@@ -80,7 +72,7 @@ div.container {
                     </tr>
                 </thead>
             </table>
-        </div>
+
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
@@ -94,12 +86,23 @@ div.container {
             <input type="checkbox" onchange="toggleSS(this)"> Color SS
         </div>
     </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Create Model</a>
+        <div class="accordion-content" data-tab-content>
+            <p>
+                I contain the stuff for creating models
+            </p>
+        </div>
+    </li>
 </ul>
+
+
 
 <script>
     var ss_helices = document.getElementsByClassName("ss_h");
     var ss_extended = document.getElementsByClassName("ss_e");
     var aas;
+    var hitlist;
 
 
     function toggleAliColor(element) {
@@ -183,11 +186,13 @@ div.container {
              $("#hhpred_neff").append(info.Neff);
              $("#hhpred_searchedhmms").append(info.Searched_HMMs);
              $("#hhpred_date").append(info.Date);
-             $('#htb').dataTable({
+             hitlist = $('#htb').dataTable({
                  "bInfo": false,
                  "bFilter": true,
                  "bLengthChange": true,
                  "aaData": hits,
+                 "scrollY": 600,
+                 "scrollX": true,
                  "aoColumns": [
                      { "mDataProp": "no" },
                      { "mDataProp": "struc" },
@@ -258,8 +263,11 @@ div.container {
              $('#hhpred_color_select').niceSelect();
          });
         })();
-</script>
 
+    function onFullscreenToggle() {
+        hitlist.draw();
+    }
+</script>
 
  <!--
 
