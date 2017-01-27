@@ -1,9 +1,7 @@
 package modules
 
 import models.database.{FrontendJob, Job, JobAnnotation, User}
-import com.typesafe.config.{ConfigException, ConfigFactory}
 import models.tools.ToolModel
-import play.api.Logger
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
@@ -39,7 +37,7 @@ trait CommonModule extends ReactiveMongoComponents {
 
 
   protected def frontendJobCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("frontendjobs"))
-  protected def jobAnnotationCollection :Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobannotations"))
+  protected val jobAnnotationCollection :Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobannotations"))
   // ResultfilesCollection
   protected def resultCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("results"))
 
@@ -63,6 +61,19 @@ trait CommonModule extends ReactiveMongoComponents {
       case Some(bsonDoc) => Some(reactivemongo.play.json.BSONFormats.toJSON(bsonDoc))
       case None => None
     }
+  }
+
+
+
+  // get the content of the annotation collection
+  protected def findAnnotationContent(jobid: String) = {
+    val query = BSONDocument("jobid" -> BSONDocument("$gt" -> jobid))
+
+
+    val projection = BSONDocument("content" -> 1)
+
+    jobAnnotationCollection.map(_.find(query, projection).cursor[BSONDocument]().
+      collect[List](1))
   }
 
 
@@ -106,8 +117,11 @@ trait CommonModule extends ReactiveMongoComponents {
 
   protected def upsertAnnotation(notes: JobAnnotation) : Future[Option[JobAnnotation]] =  {
 
-    jobAnnotationCollection
-      .flatMap(_.findAndUpdate(selectjobID(notes.jobID), update = notes, upsert = true).map(_.result[JobAnnotation]))
+    jobAnnotationCollection.flatMap(_.findAndUpdate(selectjobID(notes.jobID), update = notes, upsert = true).map(_.result[JobAnnotation]))
+  }
+
+  protected def modifyAnnotation(selector : BSONDocument, modifier : BSONDocument) = {
+    jobAnnotationCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
   }
 
   // Modifies result in database
