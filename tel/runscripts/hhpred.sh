@@ -119,6 +119,14 @@ cp ../results/${JOBID}.png ../results/hitlist.png
 cp ../results/${JOBID}.html ../results/hitlist.html
 
 
+# Reformat tenrep file such that we can display it in the full alignment section
+reformat.pl fas \
+            clu \
+            "$(readlink -f ../results/query.tenrep_file)" \
+            "$(readlink -f ../results/alignment.clustalw_aln)"
+
+
+
 # Generate Hitlist in JSON for hhrfile
  
 hhr2json.py "$(readlink -f ../results/hhsearch.hhr)" > ../results/hhr.json
