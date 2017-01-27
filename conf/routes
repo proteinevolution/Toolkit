@@ -108,6 +108,7 @@ POST          /api/job                                @controllers.JobController
 POST          /api/job/check                          @controllers.JobController.check(toolname: String, jobID: Option[String])
 GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
 DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
+DELETE        /api/job                                @controllers.JobController.deleteMulti()
 GET           /api/job/load/:jobID                    @controllers.JobController.loadJob(jobID: String)
 
 
