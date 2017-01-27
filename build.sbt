@@ -28,8 +28,7 @@ val commonDeps = Seq(ws, filters, cache,
   "net.ruippeixotog"      %% "scala-scraper"            % "1.1.0",
   "com.lihaoyi"           %% "fastparse"                % "0.4.1",
   "com.vmunier"           %% "scalajs-scripts"          % "1.0.0",
-  "org.typelevel"         %% "cats"                     % "0.8.1",
-  "com.h2database"         % "h2"                       % "1.4.192"
+  "org.typelevel"         %% "cats"                     % "0.8.1"
 )
 
 /*
