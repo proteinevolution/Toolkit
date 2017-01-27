@@ -67,6 +67,7 @@ GET           /profile                                @controllers.Auth.profile(
 POST          /profile/submit/userData/               @controllers.Auth.profileSubmit()
 POST          /profile/submit/password/               @controllers.Auth.profileSubmit()
 GET           /verification/:name_login/:token        @controllers.Auth.verification(name_login : String, token : String)
+GET           /getCurrentUser                         @controllers.Auth.profile2json()
 
 
 # Find a Job
@@ -102,7 +103,7 @@ GET           /api/tools/:toolname                    @controllers.Service.getTo
 
 
 # Get list of userjobs
-GET           /api/jobs                                @controllers.JobController.listJobs
+GET           /api/jobs                               @controllers.JobController.listJobs
 POST          /api/job                                @controllers.JobController.create(toolname: String, jobID: String)
 POST          /api/job/check                          @controllers.JobController.check(toolname: String, jobID: Option[String])
 GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
@@ -111,11 +112,12 @@ GET           /api/job/load/:jobID                    @controllers.JobController
 
 
 # Frontend Stuff
-POST          /api/frontendSubmit/:toolname          @controllers.Tool.frontendCount(toolname: String)
+POST          /api/frontendSubmit/:toolname           @controllers.Tool.frontendCount(toolname: String)
 
 # Job Annotations
 
-POST          /api/job/addnotes/:jobID/:content      @controllers.Jobs.annotation(jobID: String, content : String)
+POST          /api/job/addnotes/:jobID/:content       @controllers.Jobs.annotation(jobID: String, content : String)
+GET           /api/jobs/getnotes/:jobID               @controllers.Jobs.getAnnotation(jobID: String)
 
 # Results
-GET           /api/job/results/:jobID/:key           @controllers.DataController.get(jobID: String, key: String)
+GET           /api/job/results/:jobID/:key            @controllers.DataController.get(jobID: String, key: String)
