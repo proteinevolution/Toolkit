@@ -106,9 +106,13 @@ trait CommonModule extends ReactiveMongoComponents {
   }
 
 
-  // Modifies Job in the database
+  // Modifies a single Job in the database and returns it
   protected def modifyJob(selector : BSONDocument, modifier : BSONDocument) = {
     jobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
+  }
+  // Updates multiple Jobs in the database but does not return them
+  protected def updateJobs(selector : BSONDocument, modifier : BSONDocument) = {
+    jobCollection.flatMap(_.update(selector, modifier, multi = true))
   }
 
   protected def modifyFrontendJob(selector : BSONDocument, modifier : BSONDocument) = {
