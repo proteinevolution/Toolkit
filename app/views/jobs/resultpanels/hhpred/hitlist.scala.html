@@ -5,6 +5,12 @@
 @*  Load html Map used for the image representation *@
 
 
+<style>
+div.container {
+    width: 80%;
+}
+</style>
+
 
 <ul id="hhpred_accordion" class="accordion" data-accordion data-allow-all-closed="true">
     <li class="accordion-item" data-accordion-item>
@@ -17,7 +23,7 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Information</a>
         <div class="accordion-content" data-tab-content>
-            <table  class="display" cellspacing="0" width="100%">
+            <table  class="display" cellspacing="0" width="80%">
                 <tr>
                     <td>Query</td>
                     <td id="hhpred_query"></td>
@@ -48,7 +54,8 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Hitlist</a>
         <div class="accordion-content" data-tab-content>
-            <table id="htb">
+            <div style="width: 80%;">
+            <table id="htb" class="display" cellspacing="0" width="80%">
                 <thead>
                     <tr>
                         <th colspan="9"></th>
@@ -74,11 +81,12 @@
                 </thead>
             </table>
         </div>
+        </div>
     </li>
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Alignments</a>
         <div id="hhpred_alignments" class="accordion-content table-scroll" data-tab-content>
-            <select onchange="toggleAliColor(this)">
+            <select id="hhpred_color_select" onchange="toggleAliColor(this)">
                 <option value="none">No color</option>
                 <option value="letters">Letters</option>
                 <option value="background">Background</option>
@@ -178,7 +186,7 @@
              $('#htb').dataTable({
                  "bInfo": false,
                  "bFilter": true,
-                 "bLengthChange": false,
+                 "bLengthChange": true,
                  "aaData": hits,
                  "aoColumns": [
                      { "mDataProp": "no" },
@@ -186,7 +194,7 @@
                      { "mDataProp": "hit" },
                      { "mDataProp": "prob" },
                      { "mDataProp": "eval" },
-                     { "mDataProp": "pval" },
+                     { "mDataProp": "pval", render: function(data){return data.toExponential();}},
                      { "mDataProp": "score" },
                      { "mDataProp": "ss" },
                      { "mDataProp": "cols" },
@@ -247,6 +255,7 @@
              }
              aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
              $("#hhpred_accordion").foundation();
+             $('#hhpred_color_select').niceSelect();
          });
         })();
 </script>
