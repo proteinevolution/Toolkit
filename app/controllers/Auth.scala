@@ -12,6 +12,7 @@ import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.libs.mailer._
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -107,6 +108,23 @@ final class Auth @Inject() (webJarAssets                                      : 
           Redirect(routes.Application.index())
       }
     }
+  }
+
+  /**
+    * Sending user name as JSON to the mithril model in joblist
+    * @return
+    */
+
+
+  def profile2json() : Action[AnyContent] = Action.async {implicit request =>
+
+    getUser.map { user =>
+      user.userData match {
+        case Some(userData) => Ok(Json.obj("user"  -> userData.nameLogin))
+        case _ => NotFound
+      }
+    }
+
   }
 
 

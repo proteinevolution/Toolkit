@@ -15,6 +15,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 
 
@@ -92,11 +93,21 @@ final class Jobs @Inject()(@Named("master") master                        : Acto
     upsertAnnotation(entry)
 
     Ok
+
   }
 
 
+  def getAnnotation(jobID: String) = Action {
 
+    if (jobID == "8594070")
 
+      Ok("TEST2")
+
+    else
+
+      Ok("")
+
+  }
 
 
 }

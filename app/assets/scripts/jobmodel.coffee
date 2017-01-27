@@ -32,6 +32,7 @@ window.JobModel =
   pushMessage: (msg) ->
     messages().push(msg)
 
+
   update: (args, value) ->
     if args.isJob
       m.request({method: 'GET', url: "/api/job/#{value}"}).then (data) ->
