@@ -30,6 +30,9 @@
       case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       case ("tcoffee", "Text") => views.html.jobs.resultpanels.tcoffee_text(jobID)
       case ("hhpred", "Hitlist") => views.html.jobs.resultpanels.hhpred.hitlist(jobID)
+      case ("hhpred", "FullAlignment") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+
+
       case ("ancescon", "Tree" ) => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div")
 
       // clustalo

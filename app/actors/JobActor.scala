@@ -21,9 +21,13 @@ import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
+
+import scala.concurrent.duration._
 import scala.collection.immutable.HashSet
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
+
+import scala.concurrent.{Await, Future}
 
 
 /**
@@ -271,32 +275,29 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
     // Job State changed has been received during execution
     case Event(JobStateChanged(jobID, state), jobActorData) =>
 
-        this.updateJobState(state)
-
         state match {
+          case Queued => this.updateJobState(state)
+          case Running => this.updateJobState(state)
+          case Done =>
 
-          case Queued => // sometimes jobs return from running to queued
-          case Running => // Nothing to do here
-          // Runscript execution was succesful of erroneous
-          case Done | Error =>
-
-            // Put the result files into the database //TODO Map Json filename to type
-            (jobPath/jobID/"results").list.withFilter(_.hasExtension).withFilter(_.extension.get == ".json").foreach { file =>
+            // Put the result files into the database, JobActor has to wait until this process has finished
+            val f = (jobPath/jobID/"results").list.withFilter(_.hasExtension).withFilter(_.extension.get == ".json").map { file =>
               result2Job(jobID, file.nameWithoutExtension, Json.parse(file.contentAsString))
             }
-
+            Await.result(Future.sequence(f), Duration.Inf)
+            this.updateJobState(state)
             // We must do more executions if necessary
             if(this.executionContext.get.hasMoreExecutions) {
 
-              // TODO Implement me (Currently not really necessary, just if we want to have premature forwarding in the
-              // future
-
+              // TODO Implement me (Currently not really necessary, just if we want to have premature forwarding in the future
             } else  {
 
                 // Job is done and JobActor can be made unemployed
-
               goto(Unemployed)
             }
+          case Error => // Currently no further error handling
+            this.updateJobState(state)
+            goto(Unemployed)
         }
         stay using jobActorData
   }
