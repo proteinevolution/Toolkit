@@ -152,8 +152,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
       // Make a new JobObject
       this.currentJob = Some(Job(mainID = BSONObjectID.generate(),
-                            sgeID       = "",
-                            jobType     = "",
                             parentID    = None,
                             jobID       = jobID,
                             ownerID     = if (params.getOrElse("private","") == "true") Some(userID) else None,
@@ -161,9 +159,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
                             tool        = toolname,
                             statID      = "",
                             watchList   = List(userID),
-                            runtime     = Some(""),
-                            memory      = Some(0),
-                            threads     = Some(0),
                             dateCreated = Some(jobCreationTime),
                             dateUpdated = Some(jobCreationTime),
                             dateViewed  = Some(jobCreationTime)))
