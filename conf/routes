@@ -56,8 +56,8 @@ POST          /upload                                 @controllers.Application.u
 # Contact
 
 # Routes for Auth Service
-GET           /signin                                 @controllers.Auth.signIn(name_login : String = "")
-GET           /signin/:name_login                     @controllers.Auth.signIn(name_login : String)
+GET           /signin                                 @controllers.Auth.signIn(userName : String = "")
+GET           /signin/:userName                       @controllers.Auth.signIn(userName : String)
 POST          /signin/submit/                         @controllers.Auth.signInSubmit()
 GET           /signup                                 @controllers.Auth.signUp()
 POST          /signup/submit/                         @controllers.Auth.signUpSubmit()
@@ -66,7 +66,7 @@ GET           /miniprofile                            @controllers.Auth.miniProf
 GET           /profile                                @controllers.Auth.profile()
 POST          /profile/submit/userData/               @controllers.Auth.profileSubmit()
 POST          /profile/submit/password/               @controllers.Auth.profileSubmit()
-GET           /verification/:name_login/:token        @controllers.Auth.verification(name_login : String, token : String)
+GET           /verification/:userName/:token          @controllers.Auth.verification(userName : String, token : String)
 GET           /getCurrentUser                         @controllers.Auth.profile2json()
 
 

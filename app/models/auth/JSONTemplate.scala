@@ -68,8 +68,14 @@ trait JSONTemplate {
 
   def MustAcceptToS() = {
     authMessage("Please accept the terms for our service to register.",
-                false,
-                None)
+      false,
+      None)
+  }
+
+  def AlreadyLoggedIn() = {
+    authMessage("You are already logged in.",
+      false,
+      None)
   }
 
   def PasswordMismatch() = {
