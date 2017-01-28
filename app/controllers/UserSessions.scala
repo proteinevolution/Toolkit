@@ -84,7 +84,7 @@ trait UserSessions extends CommonModule {
     * updates a user in the cache
     */
   def updateUserCache(user : User) = {
-    Logger.info("User WatchList is now: " + user.jobs.mkString)
+    Logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     userCache.set(user.sessionID.get.stringify, user)
   }
 
