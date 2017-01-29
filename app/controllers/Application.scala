@@ -14,7 +14,7 @@ import play.api.Configuration
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.Files
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -47,14 +47,75 @@ final class Application @Inject()(webJarAssets                                  
 
   implicit val implicitMaterializer: Materializer = mat
   implicit val implicitActorSystem: ActorSystem = system
+  // Use a direct reference to SLF4J
+  private val logger = org.slf4j.LoggerFactory.getLogger("controllers.Application")
   val SID = "sid"
 
-
+/*
   def ws : WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
     getUser.map { user =>
       Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.userID, out))))
     }
+  } */
+
+  /**
+    * Creates a websocket.  `acceptOrResult` is preferable here because it returns a
+    * Future[Flow], which is required internally.
+    *
+    * @return a fully realized websocket.
+    */
+  def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
+
+      case rh if sameOriginCheck(rh) =>
+        getUser(rh).map { user =>
+          Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.userID, out))))
+        }.recover {
+          case e: Exception =>
+            logger.error("Cannot create websocket", e)
+            val jsError = Json.obj("error" -> "Cannot create websocket")
+            val result = InternalServerError(jsError)
+            Left(result)
+        }
+
+      case rejected =>
+        logger.error(s"Request $rejected failed same origin check")
+        Future.successful {
+          Left(Forbidden("forbidden"))
+        }
+    }
+
+
+
+  /**
+    * Checks that the WebSocket comes from the same origin.  This is necessary to protect
+    * against Cross-Site WebSocket Hijacking as WebSocket does not implement Same Origin Policy.
+    *
+    * See https://tools.ietf.org/html/rfc6455#section-1.3 and
+    * http://blog.dewhurstsecurity.com/2013/08/30/security-testing-html5-websockets.html
+    */
+  def sameOriginCheck(rh: RequestHeader): Boolean = {
+    rh.headers.get("Origin") match {
+      case Some(originValue) if originMatches(originValue) =>
+        logger.debug(s"originCheck: originValue = $originValue")
+        true
+
+      case Some(badOrigin) =>
+        logger.error(s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin")
+        false
+
+      case None =>
+        logger.error("originCheck: rejecting request because no Origin header found")
+        false
+    }
   }
+
+  /**
+    * Returns true if the value of the Origin header contains an acceptable value.
+    */
+  def originMatches(origin: String): Boolean = {
+    origin.contains(tel.hostname+":"+tel.port)
+  }
+
 
 
   /**

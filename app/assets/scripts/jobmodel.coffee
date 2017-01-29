@@ -36,7 +36,6 @@ window.JobModel =
   update: (args, value) ->
     if args.isJob
       m.request({method: 'GET', url: "/api/job/#{value}"}).then (data) ->
-        console.log(data.ownerName)
         JobModel.paramValues = data.paramValues
         Job.owner(data.ownerName)
         mainID: data.mainID
