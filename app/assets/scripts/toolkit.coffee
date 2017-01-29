@@ -19,6 +19,7 @@ class window.Job
 
   # MainID of the currently selected job
   this.selected = m.prop -1
+  this.owner = m.prop ""
   this.lastUpdated = m.prop -1
   this.lastUpdatedMainID  = m.prop -1
   this.lastUpdatedState = m.prop -1
@@ -120,10 +121,11 @@ window.Toolkit =
     viewComponent : viewComponent
     selected: Job.selected
     clear: Job.clear
+    ownerName: Job.owner
 
   view: (ctrl) -> [
     m "div", {class: "large-2 padded-column columns show-for-large", id: "sidebar"},
-      m.component JobListComponent, {jobs: ctrl.jobs, selected: ctrl.selected, clear: ctrl.clear}
+      m.component JobListComponent, {owner: ctrl.ownerName, jobs: ctrl.jobs, selected: ctrl.selected, clear: ctrl.clear}
     m "div", {id: "content", class: "large-10 small-12 columns padded-column"},
       ctrl.viewComponent()
   ]

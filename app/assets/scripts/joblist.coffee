@@ -41,7 +41,7 @@ window.JobListComponent =
 
 
   controller: ->
-    console.log("username from session: " + document.cookie.split("&username=")[1])
+    #console.log("username from session: " + document.cookie.split("&username=")[1])
     #userObj : new JobListComponent.model
 
 
@@ -67,10 +67,10 @@ window.JobListComponent =
             m "a", {class: "boxclose", onclick: args.clear.bind(ctrl, idx)}
           ]
 
-        if (document.cookie.split("&username=")[1] != "invalid") then [ m "div", {class: "notesheader"}, "Notes" ] else []
+        if (document.cookie.split("&username=")[1] == args.owner()) then [ m "div", {class: "notesheader"}, "Notes" ] else []
 
 
-        if (document.cookie.split("&username=")[1] != "invalid") then [ m "div", {class: "jobnotes"}, [
+        if (document.cookie.split("&username=")[1] == args.owner()) then [ m "div", {class: "jobnotes"}, [
           m "textarea", {id: "notepad"+args.selected(), placeholder: "Type private notes here", spellcheck: false, config: jobNoteArea}
         ] ] else []
       ]
