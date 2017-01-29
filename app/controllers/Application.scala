@@ -40,7 +40,6 @@ final class Application @Inject()(webJarAssets                                  
                                   val env                                         : Env,
                                   val search                                      : Search,
                                   val settings                                    : Settings,
-                                  @Named("master") master                         : ActorRef,
                                   configuration                                   : Configuration)
                                   extends Controller with I18nSupport with CommonModule
                                                                       with Constants
