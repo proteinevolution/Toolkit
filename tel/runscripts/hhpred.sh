@@ -107,7 +107,7 @@ cp ../results/hhsearch.hhr ../results/${JOBID}.hhr
 # Generate graphical display of hits
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
-profile_logos.pl ${JOBID} ../results/ ../results/  &> /dev/null
+profile_logos.pl ${JOBID} ../results/ ../results/ 
 
 tar xfvz ../results/${JOBID}.tar.gz -C ../results/
 

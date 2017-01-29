@@ -32,12 +32,20 @@ class window.Job
           return true
       return false
 
-  this.list = m.request({url: "/api/jobs", method: "GET", type: Job})
+  this.list = do ->
+    x = m.request({url: "/api/jobs", method: "GET", type: Job})
+    x.then (jobs) -> Job.register(jobs.map (job) -> job.jobID)
+    x
 
-  # loads the complete job list
+  this.register = (jobIDs) ->
+    sendMessage({type: "RegisterJobs", "jobIDs": jobIDs})
+
+  # Refreshes the JobList
   this.reloadList =  ->
     Job.list = m.request({url: "/api/jobs", method: "GET", type: Job})
     Job.list.then(Job.list)
+    Job.list.then (data) ->
+      Job.register(data.map (job) -> job.jobID)
 
 
   this.getJobByID = (jobID) ->
@@ -49,7 +57,6 @@ class window.Job
 
   # Clears a job from the joblist by index  # TODO Abstract over clear and delete
   this.clear = (idx) ->
-    console.log("Job Cleared invoked")
     Job.list.then (jobs) ->
       job = jobs[idx]
       jobs[idx] = null
@@ -60,7 +67,6 @@ class window.Job
 
 
   this.delete = (jobID) ->
-    console.log("Deletion in JobModel for JOb " + jobID)
     Job.list.then (jobs) ->
       jobs.map (job, idx) ->
         if job.jobID() == jobID
@@ -103,7 +109,7 @@ window.Toolkit =
       # Load the Job into the Joblist if it is not there
       Job.contains(jobID).then (jobIsPresent) ->
         if not jobIsPresent
-          console.log("Loading Requested Job with JobID #{jobID}")
+          sendMessage({type: "RegisterJobs", "jobIDs": [jobID]})
           m.request({url: "/api/job/load/#{jobID}", method: "GET"}).then (data) -> Job.add(new Job(data))
     else
       Job.selected(-1)
