@@ -146,7 +146,7 @@ final class JobController @Inject() (jobIDProvider                              
                     "existingJobs"  -> true,
                     "existingJob"   ->job.cleaned(),
                     "jobID" -> jobIDnew)
-                  ).withSession(sessionCookie(request, user.sessionID.get))
+                  ).withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
 
                 case None =>
 
@@ -156,7 +156,7 @@ final class JobController @Inject() (jobIDProvider                              
                     "identicalJobs" -> false,
                     "existingJobs"  -> false,
                     "jobID" -> jobIDnew)
-                  ).withSession(sessionCookie(request, user.sessionID.get))
+                  ).withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
               }
             }
           }

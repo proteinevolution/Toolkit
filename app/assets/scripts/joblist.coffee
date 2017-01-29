@@ -35,11 +35,16 @@ jobNoteArea = (elem, isInit) ->
 
 window.JobListComponent =
 
+  model: ->
+
+    #user : m.request { method: "GET", url: "/getCurrentUser", background: true,  success: (data) -> data.user }
+
 
   controller: ->
+    console.log("username from session: " + document.cookie.split("&username=")[1])
+    #userObj : new JobListComponent.model
 
-    #user: m.request {method: "GET", url: "/getCurrentUser", success: (data) -> data.user}
-    user: m.prop ""
+
 
   view: (ctrl, args) ->
 
@@ -61,10 +66,12 @@ window.JobListComponent =
             m "span", {class: "toolname"}, job.toolname.substr(0,4).toUpperCase()
             m "a", {class: "boxclose", onclick: args.clear.bind(ctrl, idx)}
           ]
-        if ctrl.user() then [ m "div", {class: "notesheader"}, "Notes" ] else []
+
+        if (document.cookie.split("&username=")[1] != "invalid") then [ m "div", {class: "notesheader"}, "Notes" ] else []
 
 
-        if ctrl.user() then [ m "div", {class: "jobnotes"}, [
+        if (document.cookie.split("&username=")[1] != "invalid") then [ m "div", {class: "jobnotes"}, [
           m "textarea", {id: "notepad"+args.selected(), placeholder: "Type private notes here", spellcheck: false, config: jobNoteArea}
         ] ] else []
       ]
+
