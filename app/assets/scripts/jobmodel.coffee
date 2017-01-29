@@ -7,7 +7,7 @@ window.JobModel =
   isJob: m.prop false
   jobID: m.prop null
   jobstate: m.prop null
-  ownerName: m.prop null
+  ownerName: m.prop ""
   messages : m.prop []             # All messages that were received with the WebSocket
   executionTime : 0         # Seconds
   createdOn: m.prop null
@@ -36,7 +36,9 @@ window.JobModel =
   update: (args, value) ->
     if args.isJob
       m.request({method: 'GET', url: "/api/job/#{value}"}).then (data) ->
+        console.log(data.ownerName)
         JobModel.paramValues = data.paramValues
+        Job.owner(data.ownerName)
         mainID: data.mainID
         tool : data.toolitem
         isJob: true
