@@ -1,15 +1,13 @@
 package controllers
 
-import akka.actor.ActorRef
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{Inject,Singleton}
 
 import actors.JobActor.JobStateChanged
-import actors.Master.JobMessage
 import models.database._
+import models.job.JobActorAccess
 import modules.CommonModule
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
@@ -27,28 +25,27 @@ We can introduce auto-coercion of the Job MainID to the BSONObject ID
   *
   */
 @Singleton
-final class Jobs @Inject()(@Named("master") master                        : ActorRef,
-                           val reactiveMongoApi                           : ReactiveMongoApi,
-                           @NamedCache("jobActorCache") val jobActorCache : CacheApi) extends Controller with CommonModule {
+final class Jobs @Inject()(jobActorAccess: JobActorAccess,
+                           val reactiveMongoApi: ReactiveMongoApi) extends Controller with CommonModule {
 
   def jobStatusDone(jobID: String) = Action {
 
-    master ! JobMessage(jobID, JobStateChanged(jobID, Done))
+    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
     Ok
   }
 
   def jobStatusError(jobID: String) = Action {
-    master ! JobMessage(jobID, JobStateChanged(jobID, Error))
+    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Error))
     Ok
   }
 
   def jobStatusRunning(jobID: String) = Action {
-    master ! JobMessage(jobID, JobStateChanged(jobID, Running))
+    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Running))
     Ok
   }
 
   def jobStatusQueued(jobID: String) = Action {
-    master ! JobMessage(jobID, JobStateChanged(jobID, Queued))
+    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Queued))
     Ok
   }
 

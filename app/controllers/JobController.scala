@@ -1,19 +1,16 @@
 package controllers
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{Inject, Singleton}
 
-import actors.JobActor
-import actors.JobActor.{Delete, RunscriptData}
-import actors.Master.{CreateJob, JobMessage}
-import akka.actor.{ActorRef, ActorSystem}
-import models.Values
-import models.database.{User, JobDeletionFlag, JobDeletion, Job}
-import models.job.JobIDProvider
+import actors.JobActor.{CreateJob, Delete}
+import models.{Constants, Values}
+import models.database.{Job, JobDeletion, JobDeletionFlag}
+import models.job.{JobActorAccess, JobIDProvider}
 import models.search.JobDAO
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
+import play.api.cache.CacheApi
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -22,43 +19,33 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
-import modules.tel.TEL
 
 /**
   * Created by lzimmermann on 02.12.16.
   */
 @Singleton
 final class JobController @Inject() (jobIDProvider                                    : JobIDProvider,
-                                     actorSystem                                      : ActorSystem,
-                                     jobActorFactory                                  : JobActor.Factory,
+                                     jobActorAccess                                   : JobActorAccess,
                                      implicit val userCache                           : CacheApi,
                                      val values                                       : Values,
                                      implicit  val locationProvider                   : LocationProvider,
-                                     @Named("master") master                          : ActorRef,
                                      val jobDao                                       : JobDAO,
-                                     val tel                                          : TEL,
-                                     @NamedCache("jobitem") jobitemCache              : CacheApi,
-                                     @NamedCache("jobActorCache") val jobActorCache   : CacheApi,
                                      val reactiveMongoApi                             : ReactiveMongoApi)
-                                     extends Controller with UserSessions with CommonModule {
+                                     extends Controller with UserSessions with CommonModule with Constants{
 
-  /**
+  /**1
     *  Loads one minified version of a job to the view, given the jobID
     *
     */
   def loadJob(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
 
-        // TODO Load job has to notify master, that user again belongs to the watchlist
-        // TODO Ensure that deleted Jobs cannot be loaded
+        // TODO Ensure that deleted Jobs cannot be loaded and that the user is allowed to load the Job
         selectJob(jobID).map {
           case Some(job) => Ok(job.cleaned())
           case None => NotFound
         }
   }
-
-
   def listJobs : Action[AnyContent] = Action.async { implicit request =>
-
     getUser.flatMap { user =>
         findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
           Ok(Json.toJson( jobs.map(_.cleaned())))
@@ -66,10 +53,7 @@ final class JobController @Inject() (jobIDProvider                              
     }
   }
 
-
   def check(toolname: String, jobID: Option[String]) : Action[AnyContent] = Action.async { implicit request =>
-
-    Logger.info("Check controller reached")
 
     getUser.flatMap { user =>
 
@@ -164,19 +148,18 @@ final class JobController @Inject() (jobIDProvider                              
     }
   }
 
-
+ //
   def create(toolname: String, jobID: String) : Action[AnyContent] =  Action.async { implicit request =>
 
     // Just grab the formData and send to Master
     getUser.flatMap { user =>
-
       selectJob(jobID).map {
-
         case Some(_) => BadRequest
-
         case None =>
+          // Stuff to get the inital tool arguments from the request
+          val actorIndex = jobID.trim().hashCode() % nJobActors
           val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
-          master ! CreateJob(jobID, (user, None), RunscriptData(toolname, formData))
+          jobActorAccess.sendToJobActor(jobID, CreateJob(jobID, (user, None),toolname, formData))
           Ok
       }
     }
@@ -185,9 +168,7 @@ final class JobController @Inject() (jobIDProvider                              
 
 
   /**
-    * Marks a Job for deletion
-    * TODO introduce jobActor Cache
-    *
+    * Marks a Job for deletion*
     * @return
     */
   def delete(jobID : String) =  Action.async { implicit request =>
@@ -199,7 +180,8 @@ final class JobController @Inject() (jobIDProvider                              
           // Check if the User owns the job
           if (job.ownerID.contains(user.userID)) {
             // Tell the master to delete the job
-            master ! JobMessage(jobID, Delete)
+
+            jobActorAccess.sendToJobActor(jobID, Delete(jobID))
             // Mark the job in mongoDB
             updateJobs(BSONDocument(Job.IDDB      -> job.mainID),
                        BSONDocument("$set"        ->
@@ -239,7 +221,7 @@ final class JobController @Inject() (jobIDProvider                              
       request.getQueryString("ids").map { str =>
         val jobIDs = str.split(",").toList
         jobIDs.foreach{ jobID =>
-          master ! JobMessage(jobID, Delete)
+          jobActorAccess.sendToJobActor(jobID, Delete(jobID))
         }
         findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> jobIDs))).map { jobs =>
           Logger.info("Found Jobs: " + jobs)

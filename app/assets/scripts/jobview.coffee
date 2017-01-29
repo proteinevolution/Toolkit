@@ -255,6 +255,7 @@ JobSubmissionComponent =
         serialize: (data) -> data
       .then(
         (data) ->
+          jobID = data.jobID
           if data.existingJobs
             # Remove previous click handlers
             $('#reload_job').unbind 'click'
@@ -266,7 +267,7 @@ JobSubmissionComponent =
               m.route("/jobs/#{data.existingJob.jobID}")
             $('#submit_again').on 'click', ->
               $('#submit_modal').foundation('close')
-              jobID = data.jobID
+              sendMessage({type: "RegisterJobs", "jobIDs": [jobID]})
               # Add a new Job to the Model
               Job.add(new Job({mainID: jobID, jobID: jobID, state: 0, createdOn: 'now', toolname: toolname}))
               submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID)
@@ -276,7 +277,7 @@ JobSubmissionComponent =
             # Show the modal
             $('#submit_modal').foundation('open')
           else
-            jobID = data.jobID
+            sendMessage({type: "RegisterJobs", "jobIDs": [jobID]})
             # Add a new Job to the Model
             Job.add(new Job({mainID: jobID, jobID: jobID, state: 0, createdOn: 'now', toolname: toolname}))
             submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID)
