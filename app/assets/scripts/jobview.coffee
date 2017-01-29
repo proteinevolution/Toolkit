@@ -111,6 +111,13 @@ mapParam = (paramElem, ctrl) ->
   m.component comp[0], comp[1]
 
 
+closeShortcut = (element, isInit) ->
+  if not isInit then
+  $(document).keydown (e) ->
+    if e.keyCode == 27 && $("#tool-tabs").hasClass("fullscreen")
+      $("#collapseMe").click()
+    return
+
 
 
 # Encompasses the individual sections of a Job, usually rendered as tabs
@@ -177,6 +184,7 @@ JobTabsComponent =
         Job.delete(jobID)
 
 
+
   view: (ctrl, args) ->
     m "div", {class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl)}, [
 
@@ -185,7 +193,7 @@ JobTabsComponent =
           m "li",  {id: "tab-#{item}"},  m "a", {href: "#tabpanel-#{item}"}, item
 
         m "li", {style: "float: right;"},
-          m "input", {type: "button", class: "button small button_fullscreen", value: ctrl.getLabel(), onclick: ctrl.fullscreen},
+          m "input", {type: "button", id:"collapseMe", class: "button small button_fullscreen", value: ctrl.getLabel(), onclick: ctrl.fullscreen, config: closeShortcut},
         if ctrl.isJob
           m "li", {style: "float: right;" },
             m "input", {type: "button", class: "button small delete", value: "Delete Job", onclick: ctrl.delete.bind(ctrl)}

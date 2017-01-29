@@ -51,12 +51,6 @@ final class Application @Inject()(webJarAssets                                  
   private val logger = org.slf4j.LoggerFactory.getLogger("controllers.Application")
   val SID = "sid"
 
-/*
-  def ws : WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] { implicit request =>
-    getUser.map { user =>
-      Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.userID, out))))
-    }
-  } */
 
   /**
     * Creates a websocket.  `acceptOrResult` is preferable here because it returns a
