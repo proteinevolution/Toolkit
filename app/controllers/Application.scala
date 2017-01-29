@@ -76,7 +76,7 @@ final class Application @Inject()(webJarAssets                                  
     println("[CONFIG:] execution mode: "+settings.clusterMode)
     getUser.map { user =>
       Ok(views.html.main(webJarAssets, user))
-        .withSession(sessionCookie(request, user.sessionID.get))
+        .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
     }
   }
 
@@ -120,7 +120,7 @@ final class Application @Inject()(webJarAssets                                  
       // mainID exists, allow send File
 
       Ok.sendFile(new java.io.File(s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename"))
-        .withSession(sessionCookie(request, user.sessionID.get))
+        .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
         .as("text/plain") //TODO Only text/plain for files currently supported
     }
   }

@@ -102,7 +102,7 @@ final class Auth @Inject() (webJarAssets                                      : 
       user.userData match {
         case Some(userData) =>
           Ok(views.html.auth.profile(user))
-            .withSession(sessionCookie(request, user.sessionID.get))
+            .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
         case None =>
           // User was not logged in
           Redirect(routes.Application.index())
@@ -172,7 +172,7 @@ final class Auth @Inject() (webJarAssets                                      : 
                       updateUserCache(loggedInUser)
 
                       // Everything is ok, let the user know that they are logged in now
-                      Ok(LoggedIn(loggedInUser)).withSession(sessionCookie(request, loggedInUser.sessionID.get))
+                      Ok(LoggedIn(loggedInUser)).withSession(sessionCookie(request, loggedInUser.sessionID.get, Some(loggedInUser.getUserData.nameLogin)))
                     case None =>
                       Ok(LoginIncorrect())
                   }
@@ -239,7 +239,7 @@ final class Auth @Inject() (webJarAssets                                      : 
                     eMail.send
                     // Make sure the Cache is updated
                     updateUserCache(registeredUser)
-                    Ok(LoggedIn(registeredUser)).withSession(sessionCookie(request, registeredUser.sessionID.get))
+                    Ok(LoggedIn(registeredUser)).withSession(sessionCookie(request, registeredUser.sessionID.get, Some(registeredUser.getUserData.nameLogin)))
                   case None =>
                     Ok(FormError())
                 }
