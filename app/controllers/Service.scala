@@ -154,12 +154,12 @@ final class Service @Inject() (webJarAssets                                     
                   case Some(owner) =>
                     owner.userData match {
                       case Some(ownerData) => // Owner is registered
-                        s"Owner: ${ownerData.nameLogin}"
+                        s"${ownerData.nameLogin}"
                       case None => // Owner is not registered
-                        "Owner: Guest"
+                        "Guest"
                     }
                   case None => // User does no longer exist in the Database.
-                    "Deleted User"
+                    "Unknown User"
                 }
               } else {
                 Future.successful("Public Job")
