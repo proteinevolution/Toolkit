@@ -21,13 +21,8 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
     * stored given a particular key
    */
   def get(jobID: String, key: String) = Action.async {
-    Logger.info("STARTING GET")
-
     getResult(jobID, key).map {
-      case Some(jsValue) =>
-
-        Logger.info("FINISHING GET")
-        Ok(jsValue)
+      case Some(jsValue) => Ok(jsValue)
       case None => NotFound
     }
   }
