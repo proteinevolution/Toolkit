@@ -122,35 +122,10 @@ searchField = (elem, isInit) ->
 trafficBarComponent =
 
   view: ->
-    m "div", {class: "grid", style: "margin-top: 355px;"},
-      m "div", {class: "tool-finder show-for-medium row centered"},[
-        m "div", {class: "search-query large-12 medium-6"},
-          m "div", {class: "columns large-12 form-group"},
-            m "input", {type: "text", id: "searchInput", name: "q", placeholder: "Search Keywords", config: typeAhead}
-        m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated()}"}
-        m "div", {class: "quick_container"}, [
-          m "div", {class: "quick", id: "search_quick"}, [
-            m "p", "HHpred"
-            m "a", "Search"
-          ]
-          m "div", {class: "quick", id: "search_quick"}, [
-            m "p", "PSI-Blast"
-            m "a", "Search"
-          ]
-          m "div", {class: "quick", id: "search_quick"}, [
-            m "p", "Hmmer3"
-            m "a", "Search"
-          ]
-          m "div", {class: "quick", id: "align_quick"}, [
-            m "p", "T-Coffee"
-            m "a", "Alignment"
-          ]
-          m "div", {class: "quick", id: "analy_quick"}, [
-            m "p", "FRpred"
-            m "a", "Analysis"
-          ]
-        ]
-      ]
+    m "div", {class: "grid", style: "margin-top: 260px;"},
+      m "div", {class: "columns large-12"},
+        m "input", {type: "text", id: "searchInput", name: "q", placeholder: "Search Keywords", config: typeAhead}
+      m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated()}"}
 
 
 
