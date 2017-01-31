@@ -6,6 +6,27 @@ import javax.inject.{Inject, Singleton}
 import modules.tel.TEL
 
 
+object Validators {
+
+  // Validators
+  def acceptAll(x: String) = true
+}
+
+
+
+/** @author snam
+  * case class handles ordering of param tabs
+  * @param name: value for cli usage of parameters in the runscripts
+  * @param inputType: 0 is NumberCompnent and 1 is SelectComponent
+  * @param internalOrdering: allows to order the items within the params tab
+  */
+case class Param(name: String, inputType: Int, internalOrdering: Int, validate: String => Boolean) {
+
+  // Constructor for Parameter which accepts all arguments
+  def this(name: String, inputType: Int, internalOrdering: Int) =
+    this(name, inputType, internalOrdering, Validators.acceptAll)
+}
+
 /**
   * Provides the specification of the Parameters as they appear in the individual tools
   *
@@ -14,60 +35,53 @@ import modules.tel.TEL
 @Singleton
 class ParamAccess @Inject() (tel: TEL) {
 
-  /** @author snam
-    * case class handles ordering of param tabs
-    * @param name: value for cli usage of parameters in the runscripts
-    * @param inputType: 0 is NumberCompnent and 1 is SelectComponent
-    * @param internalOrdering: allows to order the items within the params tab
-    */
-  case class Param(name: String, inputType: Int, internalOrdering: Int)
-
-  final val ALIGNMENT = Param("alignment",1,1)
-  final val ALIGNMENT_FORMAT = Param("alignment_format",1,1)
-  final val STANDARD_DB = Param("standarddb",1,1)
-  final val HHSUITEDB = Param("hhsuitedb",1,1)
-  final val MATRIX = Param("matrix",1,1)
-  final val NUM_ITER = Param("num_iter",1,1)
-  final val EVALUE = Param("evalue",1,1)
-  final val GAP_OPEN = Param("gap_open",1,1)
-  final val GAP_EXT = Param("gap_ext",1,1)
-  final val GAP_TERM = Param("gap_term",1,1)
-  final val DESC = Param("desc",1,1)
-  final val CONSISTENCY = Param("consistency",1,1)
-  final val ITREFINE = Param("itrefine",1,1)
-  final val PRETRAIN = Param("pretrain",1,1)
-  final val MAXROUNDS = Param("maxrounds",1,1)
-  final val OFFSET = Param("offset",1,1)
-  final val BONUSSCORE = Param("bonusscore",1,1)
-  final val OUTORDER = Param("outorder",1,1)
-  final val ETRESH = Param("inclusion_ethresh",1,1)
-  final val HHBLITSDB  = Param("hhblitsdb",1,1)
-  final val ALIGNMODE = Param("alignmode",1,1)
-  final val MSAGENERATION = Param("msageneration",1,1)
-  final val MSA_GEN_MAX_ITER = Param("msa_gen_max_iter",1,1)
-  final val GENETIC_CODE = Param("genetic_code",1,1)
-  final val LONG_SEQ_NAME = Param("long_seq_name",1,1)
-  final val EVAL_INC_THRESHOLD = Param("inclusion_ethresh",1,1)
-  final val MIN_COV = Param("min_cov",1,1)
-  final val MAX_LINES = Param("max_lines",1,1)
-  final val PMIN = Param("pmin",1,1)
-  final val MAX_SEQS = Param("max_seqs",1,1)
-  final val ALIWIDTH = Param("aliwidth",1,1)
-  final val MAX_EVAL = Param("max_eval",0, 1)
-  final val MAX_SEQID = Param("max_seqid", 0, 1)
-  final val MIN_COLSCORE = Param("min_colscore", 0, 1)
-  final val MIN_QUERY_COV = Param("min_query_cov", 0, 1)
-  final val MIN_ANCHOR_WITH = Param("min_anchor_width", 0, 1)
-  final val WEIGHTING = Param("weighting", 0, 1)
-  final val RUN_PSIPRED = Param("run_psipred",0,1)
-  final val MATRIX_PHYLIP = Param("matrix_phylip",0,1)
-  final val MATRIX_PCOILS = Param("matrix_pcoils", 1, 1)
-  final val PROTBLASTPROGRAM = Param("protblastprogram", 1, 1)
-  final val FILTER_LOW_COMPLEXITY = Param("filter_low_complexity", 0, 1)
-  final val MATRIX_MARCOIL = Param("matrix_marcoil", 1, 1)
-  final val TRANSITION_PROBABILITY = Param("transition_probability", 1, 1)
-  final val MIN_SEQID_QUERY = Param("min_seqid_query", 0, 1)
-  final val NUM_SEQS_EXTRACT = Param("num_seqs_extract", 0, 1)
+  // Shared parameters by all tools
+  final val ALIGNMENT = new Param("alignment",1,1)
+  final val ALIGNMENT_FORMAT =  new Param("alignment_format",1,1)
+  final val STANDARD_DB = new Param("standarddb",1,1)
+  final val HHSUITEDB = new Param("hhsuitedb",1,1)
+  final val MATRIX = new Param("matrix",1,1)
+  final val NUM_ITER = new Param("num_iter",1,1)
+  final val EVALUE = new Param("evalue",1,1)
+  final val GAP_OPEN = new Param("gap_open",1,1)
+  final val GAP_EXT = new Param("gap_ext",1,1)
+  final val GAP_TERM = new Param("gap_term",1,1)
+  final val DESC = new Param("desc",1,1)
+  final val CONSISTENCY =  new Param("consistency",1,1)
+  final val ITREFINE = new Param("itrefine",1,1)
+  final val PRETRAIN =  new Param("pretrain",1,1)
+  final val MAXROUNDS = new Param("maxrounds",1,1)
+  final val OFFSET = new Param("offset",1,1)
+  final val BONUSSCORE = new Param("bonusscore",1,1)
+  final val OUTORDER = new Param("outorder",1,1)
+  final val ETRESH = new Param("inclusion_ethresh",1,1)
+  final val HHBLITSDB  =  new Param("hhblitsdb",1,1)
+  final val ALIGNMODE = new Param("alignmode",1,1)
+  final val MSAGENERATION = new Param("msageneration",1,1)
+  final val MSA_GEN_MAX_ITER = new Param("msa_gen_max_iter",1,1)
+  final val GENETIC_CODE = new Param("genetic_code",1,1)
+  final val LONG_SEQ_NAME = new Param("long_seq_name",1,1)
+  final val EVAL_INC_THRESHOLD = new Param("inclusion_ethresh",1,1)
+  final val MIN_COV = new Param("min_cov",1,1)
+  final val MAX_LINES = new Param("max_lines",1,1)
+  final val PMIN = new Param("pmin",1,1)
+  final val MAX_SEQS = new Param("max_seqs",1,1)
+  final val ALIWIDTH = new Param("aliwidth",1,1)
+  final val MAX_EVAL = new Param("max_eval",0, 1)
+  final val MAX_SEQID = new Param("max_seqid", 0, 1)
+  final val MIN_COLSCORE = new Param("min_colscore", 0, 1)
+  final val MIN_QUERY_COV = new Param("min_query_cov", 0, 1)
+  final val MIN_ANCHOR_WITH = new Param("min_anchor_width", 0, 1)
+  final val WEIGHTING = new Param("weighting", 0, 1)
+  final val RUN_PSIPRED = new Param("run_psipred",0,1)
+  final val MATRIX_PHYLIP = new Param("matrix_phylip",0,1)
+  final val MATRIX_PCOILS = new Param("matrix_pcoils", 1, 1)
+  final val PROTBLASTPROGRAM = new Param("protblastprogram", 1, 1)
+  final val FILTER_LOW_COMPLEXITY =  new Param("filter_low_complexity", 0, 1)
+  final val MATRIX_MARCOIL = new Param("matrix_marcoil", 1, 1)
+  final val TRANSITION_PROBABILITY = new Param("transition_probability", 1, 1)
+  final val MIN_SEQID_QUERY = new Param("min_seqid_query", 0, 1)
+  final val NUM_SEQS_EXTRACT =  new Param("num_seqs_extract", 0, 1)
 
   // Maps parameter values onto their full names descriptions, as they should appear in the view
   final val fullNames = Map(
