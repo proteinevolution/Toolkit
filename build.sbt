@@ -23,8 +23,6 @@ lazy val commonDeps = Seq(ws, filters, cache,
   "com.beachape"          %% "enumeratum"               % "1.4.13",
   "com.beachape"          %% "enumeratum-play"          % "1.4.13",
   "com.beachape"          %% "enumeratum-play-json"     % "1.4.13",
-  "org.tpolecat"          %% "atto-core"                % "0.5.0-M3",
-  "org.tpolecat"          %% "atto-compat-scalaz72"     % "0.5.0-M3",
   "net.ruippeixotog"      %% "scala-scraper"            % "1.1.0",
   "com.lihaoyi"           %% "fastparse"                % "0.4.1",
   "com.vmunier"           %% "scalajs-scripts"          % "1.0.0",
@@ -100,8 +98,8 @@ lazy val client = (project in file("client")).settings(
   persistLauncher := true,
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.9.1",
-    "co.technius" %%% "scalajs-mithril" % "0.1.0"
+    "org.scala-js"  %%% "scalajs-dom"       % "0.9.1",
+    "co.technius"   %%% "scalajs-mithril"   % "0.1.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 
