@@ -2,7 +2,7 @@ val akkaVersion = "2.4.16"
 
 val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka"     %% "akka-actor"               % akkaVersion,
-  "com.sanoma.cda"        %% "maxmind-geoip2-scala"     % "1.5.3",
+  "com.sanoma.cda"        %% "maxmind-geoip2-scala"     % "1.5.4",
   "com.typesafe.akka"     %% "akka-cluster"             % akkaVersion,
   "com.typesafe.akka"     %% "akka-cluster-tools"       % akkaVersion,
   "com.typesafe.akka"     %% "akka-cluster-metrics"     % akkaVersion,
@@ -31,6 +31,8 @@ val commonDeps = Seq(ws, filters, cache,
   "org.typelevel"         %% "cats"                     % "0.8.1"
 )
 
+
+
 /*
  * Settings which apply to all modules of this application
  */
@@ -50,7 +52,8 @@ lazy val metadata = List(
     Developer("zy4", "Seung-Zin Nam", "seungzin.nam@tuebingen.mpg.de", url("https://github.com/zy4")),
     Developer("davidrau", "David Rau", "drau@tuebingen.mpg.de", url("https://github.com/davidmrau")),
     Developer("anjestephens", "Andrew Jesse Stephens", "astephens@tuebingen.mpg.de", url("https://github.com/anjestephens")),
-    Developer("lkszmn", "Lukas Zimmermann", "lukas.zimmermann@tuebingen.mpg.de", url("https://github.com/lkszmn"))
+    Developer("lkszmn", "Lukas Zimmermann", "lukas.zimmermann@tuebingen.mpg.de", url("https://github.com/lkszmn")),
+    Developer("markolozajic", "Marko Lozajic", "marko.lozajic@tuebingen.mpg.de", url("https://github.com/markolozajic"))
   )
 )
 
