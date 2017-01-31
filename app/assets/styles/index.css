@@ -21,7 +21,7 @@
 .lazy-container {
 
     width: 100%;
-    margin-top: 35em;
+    margin-top: 17em;
 }
 
 .content-wrapper-half {
@@ -124,9 +124,11 @@
 
 .grid div {
     float: left;
-
 }
 
+.grid input {
+    border: 1px solid darkgray;
+}
 .tool-finder {
 
     background: #f2f2f2; /* Old browsers */
@@ -147,7 +149,7 @@
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
     z-index: 9;
     position: relative;
-    height: 8em !important;
+    height: 4.5em !important;
     width: 100% !important;
     -webkit-box-shadow: 3px 3px 5px 0px lightgray;
     -moz-box-shadow: 3px 3px 5px 0px lightgray;
@@ -169,11 +171,11 @@ select {
 }
 
 .slick-slide {
-    height:430px;
+    height:250px;
 }
 
 .slick-slide img {
-    height: 430px;
+    height: 250px;
 }
 
 
@@ -184,9 +186,10 @@ select {
 
 .search-query {
 
-    padding: 1em 1em 1em 1em;
-    margin-top: 1.8em;
-
+    float: none !important;
+    -webkit-box-shadow: 1px 3px 7px 4px rgba(200,200,200, 0.75);
+    -moz-box-shadow: 1px 3px 7px 4px rgba(200,200,200, 0.75);
+    box-shadow: 1px 3px 7px 4px rgba(200,200,200, 0.75);
 
 }
 .search-query input {
@@ -210,6 +213,10 @@ select {
     -moz-box-shadow: 0 0 4px #f1e6f9;;
     box-shadow: 0 0 5px #f1e6f9;;
 
+}
+
+.twitter-typeahead input {
+    margin: 0;
 }
 
 .quicklink-box {
