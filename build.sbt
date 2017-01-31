@@ -1,6 +1,6 @@
-val akkaVersion = "2.4.16"
+lazy val akkaVersion = "2.4.16"
 
-val commonDeps = Seq(ws, filters, cache,
+lazy val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka"     %% "akka-actor"               % akkaVersion,
   "com.sanoma.cda"        %% "maxmind-geoip2-scala"     % "1.5.4",
   "com.typesafe.akka"     %% "akka-cluster"             % akkaVersion,
@@ -36,7 +36,7 @@ val commonDeps = Seq(ws, filters, cache,
 /*
  * Settings which apply to all modules of this application
  */
-val commonSettings = Seq(
+lazy val commonSettings = Seq(
   version := "0.0.0",
   scalaVersion := "2.11.8",
   scalaJSProjects := Seq(client),

@@ -6,6 +6,7 @@ import com.sksamuel.elastic4s._
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
 import com.typesafe.config.ConfigFactory
+import models.tools.{ToolFactory, Tool}
 import modules.tel.TELConstants
 import modules.tools.FNV
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
@@ -19,6 +20,7 @@ import scala.concurrent.Future
 @Singleton
 class JobDAO @Inject()(cs: ClusterSetup,
                        elasticFactory: PlayElasticFactory,
+                       toolFactory: ToolFactory,
                        @Named("jobs") indexAndType: IndexAndType)
   extends ElasticDsl with PlayElasticJsonSupport with TELConstants {
   
@@ -28,6 +30,10 @@ class JobDAO @Inject()(cs: ClusterSetup,
   private val Index = "tkplay_dev"
   private val jobIndex = Index / "jobs"
   private val jobHashIndex = Index / "jobhashes"
+
+
+  private def toolNameLong(name : String) : String = toolFactory.values.get(name).get.toolNameLong
+
 
   def generateHash(params: Map[String, String]): BigInt =  {
 
@@ -48,7 +54,7 @@ class JobDAO @Inject()(cs: ClusterSetup,
   def generateToolHash(name: String) : String = {
 
     try {
-      Math.abs(MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString,0)).toString
+      Math.abs(MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.${toolNameLong(name)}").toString,0)).toString
     }
     catch {
       case _ : Throwable => "No matching hash value found"
