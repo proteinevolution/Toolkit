@@ -2,7 +2,7 @@ package models.database
 
 
 import models.Constants
-import models.tools.ToolModel.Toolitem
+import models.tools.Toolitem
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.twirl.api.Html
