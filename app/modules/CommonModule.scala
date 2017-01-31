@@ -1,16 +1,14 @@
 package modules
 
 import models.database.{FrontendJob, Job, JobAnnotation, User}
-import com.typesafe.config.{ConfigException, ConfigFactory}
 import models.tools.ToolModel
-import play.api.Logger
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.{BSONArray, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONArray, BSONDocument, BSONObjectID, BSONValue}
 
 import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,13 +21,12 @@ trait CommonModule extends ReactiveMongoComponents {
 
 
   private final def selectjobID(jobID: String) = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
-  private final def selectmainID(mainID: BSONObjectID) = BSONDocument("mainID" -> BSONDocument("$eq" -> mainID))
 
   /* Collections */
-  protected def hashCollection :Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
+  protected lazy val hashCollection :Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
 
   // jobCollection is now a value with the Index structure ensured
-  protected val jobCollection : Future[BSONCollection] = {
+  protected lazy val jobCollection : Future[BSONCollection] = {
 
       reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs")).map { collection =>
         collection.indexesManager.ensure(Index(Seq("jobID" -> IndexType.Text), background = true, unique = true))
@@ -38,28 +35,33 @@ trait CommonModule extends ReactiveMongoComponents {
   }
 
 
-  protected def frontendJobCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("frontendjobs"))
-  protected def jobAnnotationCollection :Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobannotations"))
+  protected lazy val frontendJobCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("frontendjobs"))
+  protected lazy val jobAnnotationCollection :Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobannotations"))
   // ResultfilesCollection
-  protected def resultCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("results"))
+  protected lazy val resultCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("results"))
 
   /* Accesssors */
-  protected def addJob(job: Job) : Future[WriteResult] = jobCollection.flatMap(_.insert(job))
 
   protected def addFrontendJob(frontendJob: FrontendJob) : Future[WriteResult] = frontendJobCollection.flatMap(_.insert(frontendJob))
 
-  //protected def addJobAnnotation(notes : JobAnnotation) : Future[WriteResult] = jobAnnotationCollection.flatMap(_.insert(JobAnnotation))
 
-  protected def result2Job(jobID: String, key: String, result: JsValue): Unit = {
+  protected def result2Job(jobID: String, key: String, result: JsValue): Future[Option[BSONDocument]] = {
     val bson = reactivemongo.play.json.BSONFormats.toBSON(result).get
     modifyResult(BSONDocument("jobID" -> jobID), BSONDocument("$set" -> BSONDocument(key -> bson)))
   }
 
+  // Able to fetch one field for the respective result
+  protected def getResult(jobID: String, key: String): Future[Option[JsValue]] = {
+    val projection = BSONDocument(key -> 1)
+    val selector = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
+    resultCollection.map(_.find(selector, projection).cursor[BSONDocument]()).flatMap(_.headOption).map {
+      case Some(bsonDoc) => Some(reactivemongo.play.json.BSONFormats.toJSON(bsonDoc))
+      case None => None
+    }
+  }
 
 
   protected def findJob(selector : BSONDocument) : Future[Option[Job]] = jobCollection.flatMap(_.find(selector).one[Job])
-
-  protected def findFrontendJob(selector : BSONDocument) : Future[Option[FrontendJob]] = frontendJobCollection.flatMap(_.find(selector).one[FrontendJob])
 
   protected def findJobAnnotation(selector : BSONDocument) : Future[Option[JobAnnotation]] = jobAnnotationCollection.flatMap(_.find(selector).one[JobAnnotation])
 
@@ -75,12 +77,6 @@ trait CommonModule extends ReactiveMongoComponents {
       .flatMap(_.headOption)
   }
 
-  // this is not in use anymore and is being replaced by an elasticsearch query
-  protected def selectJobs(jobIDs: Traversable[String]): Future[Set[Job]] = {
-    jobCollection
-        .map(_.find(BSONDocument("jobID" -> BSONDocument("$in" -> BSONArray(jobIDs)))).cursor[Job]())
-        .flatMap(_.collect[Set](-1, Cursor.FailOnError[Set[Job]]()))
-  }
 
 
   /**
@@ -97,8 +93,11 @@ trait CommonModule extends ReactiveMongoComponents {
 
   protected def upsertAnnotation(notes: JobAnnotation) : Future[Option[JobAnnotation]] =  {
 
-    jobAnnotationCollection
-      .flatMap(_.findAndUpdate(selectjobID(notes.jobID), update = notes, upsert = true).map(_.result[JobAnnotation]))
+    jobAnnotationCollection.flatMap(_.findAndUpdate(selectjobID(notes.jobID), update = notes, upsert = true).map(_.result[JobAnnotation]))
+  }
+
+  protected def modifyAnnotation(selector : BSONDocument, modifier : BSONDocument) = {
+    jobAnnotationCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
   }
 
   // Modifies result in database
@@ -107,33 +106,20 @@ trait CommonModule extends ReactiveMongoComponents {
   }
 
 
-  // Modifies Job in the database
+  // Modifies a single Job in the database and returns it
   protected def modifyJob(selector : BSONDocument, modifier : BSONDocument) = {
     jobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
+  }
+  // Updates multiple Jobs in the database but does not return them
+  protected def updateJobs(selector : BSONDocument, modifier : BSONDocument) = {
+    jobCollection.flatMap(_.update(selector, modifier, multi = true))
   }
 
   protected def modifyFrontendJob(selector : BSONDocument, modifier : BSONDocument) = {
     frontendJobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
   }
 
-  protected def modifyJobAnnotation(selector : BSONDocument, modifier : BSONDocument) : Future[Option[Job]] = {
-    jobAnnotationCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
-  }
 
-  protected def updateJob(selector : BSONDocument, modifier : BSONDocument) = {
-    jobCollection.flatMap(_.update(selector, modifier, multi = true))
-  }
-
-  protected def updateFrontendJob(selector : BSONDocument, modifier : BSONDocument) = {
-    frontendJobCollection.flatMap(_.update(selector, modifier, multi = true))
-  }
-
-  protected def updateJobAnnotation(selector : BSONDocument, modifier : BSONDocument) : Future[UpdateWriteResult] = {
-    jobAnnotationCollection.flatMap(_.update(selector, modifier, multi = true))
-  }
-
-
-  protected def removeJob(selector : BSONDocument) = jobCollection.flatMap(_.remove(selector))
 
 
   // User DB access
@@ -150,15 +136,6 @@ trait CommonModule extends ReactiveMongoComponents {
 
   // tool version lookup from the config
 
-  protected def toolVersion(name: String) : Option[String] = {
 
-    try {
-      Some(ConfigFactory.load().getConfig("Tools").getString(s"$name.version"))
-    }
-    catch {
-      case _ => None
-    }
-  }
-
-  protected def toolMap : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
+  protected lazy val toolMap : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
 }

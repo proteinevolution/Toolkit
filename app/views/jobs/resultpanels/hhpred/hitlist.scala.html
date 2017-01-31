@@ -3,131 +3,160 @@
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
 @*  Load html Map used for the image representation *@
-@HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
 
 
+<ul id="hhpred_accordion" class="accordion" data-accordion data-allow-all-closed="true">
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Visualization</a>
+        <div class="accordion-content" data-tab-content>
+            @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
+            <img src="/files/@{jobID}/@{jobID}.png" />
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Information</a>
+        <div class="accordion-content" data-tab-content>
+            <table  class="display" cellspacing="0" width="80%">
+                <tr>
+                    <td>Query</td>
+                    <td id="hhpred_query"></td>
+                </tr>
+                <tr>
+                    <td>Match_columns</td>
+                    <td id="hhpred_match_columns"></td>
+                </tr>
+                <tr>
+                    <td>No_of_Seqs</td>
+                    <td id="hhpred_noseqs"></td>
+                </tr>
+                <tr>
+                    <td>Neff</td>
+                    <td id="hhpred_neff"></td>
+                </tr>
+                <tr>
+                    <td>Searched HMMs</td>
+                    <td id="hhpred_searchedhmms"></td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td id ="hhpred_date"></td>
+                </tr>
+            </table>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Hitlist</a>
+        <div class="accordion-content" data-tab-content>
+            <table id="htb" class="display" cellspacing="0" width="80%">
+                <thead>
+                    <tr>
+                        <th colspan="9"></th>
+                        <th colspan="2">Query</th>
+                        <th colspan="2">Template</th>
+                    </tr>
+                    <tr>
+                        <th>No</th>
+                        <th>Hit</th>
+                        <th>Name</th>
+                        <th>Prob</th>
+                        <th>E-value</th>
+                        <th>P-value</th>
+                        <th>Score</th>
+                        <th>SS</th>
+                        <th>Cols</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Ref</th>
+                    </tr>
+                </thead>
+            </table>
 
-<p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Alignments</a>
+        <div id="hhpred_alignments" class="accordion-content table-scroll" data-tab-content>
+            <select id="hhpred_color_select" onchange="toggleAliColor(this)">
+                <option value="none">No color</option>
+                <option value="letters">Letters</option>
+                <option value="background">Background</option>
+            </select>
+            <input type="checkbox" onchange="toggleSS(this)"> Color SS
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Create Model</a>
+        <div class="accordion-content" data-tab-content>
+            <p>
+                I contain the stuff for creating models
+            </p>
+        </div>
+    </li>
+</ul>
 
 
-
-    <div class="slider" data-slider data-initial-start="25" data-initial-end="75">
-        <span id="lefthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
-        <span class="slider-fill" data-slider-fill></span>
-        <span id="righthandle" class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
-        <input id="hidden1" type="hidden">
-        <input id="hidden2" type="hidden">
-    </div>
-
-
-
-<table style="width:100%">
-    <tr>
-        <th>Job: @jobID</th>
-        <th>Result Overview</th>
-    </tr>
-    <tr>
-        <td>Query</td>
-        <td>@HHpred.header(jobID).Query</td>
-    </tr>
-    <tr>
-        <td>Match_columns</td>
-        <td>@HHpred.header(jobID).Match_columns</td>
-    </tr>
-    <tr>
-        <td>No_of_Seqs</td>
-        <td>@HHpred.header(jobID).No_of_Seqs</td>
-    </tr>
-    <tr>
-        <td>Neff</td>
-        <td>@HHpred.header(jobID).Neff</td>
-    </tr>
-    <tr>
-        <td>Searched HMMs</td>
-        <td>@HHpred.header(jobID).Searched_HMMs</td>
-    </tr>
-    <tr>
-        <td>Date</td>
-        <td>@HHpred.header(jobID).Date</td>
-    </tr>
-    <tr>
-        <td>Command</td>
-        <td>@HHpred.header(jobID).Command</td>
-    </tr>
-</table>
-
-
-<table id="htb" class="display">
-
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>Hits</th>
-            <th>Probs</th>
-            <th>Evals</th>
-            <th>Pvals</th>
-            <th>Scores</th>
-            <th>SS</th>
-            <th>Cols</th>
-            <th>Query HMMs</th>
-            <th>Template HMMs</th>
-        </tr>
-    </thead>
-    <tbody>
-        @for((x,i) <- HHpred.hitlist(jobID).Hits.zipWithIndex) {
-            <tr>
-                <td>@(i+1)</td>
-                <td>@HHpred.hitlist(jobID).Hits(i)</td>
-                <td>@HHpred.hitlist(jobID).Probs(i)</td>
-                <td>@HHpred.hitlist(jobID).Evals(i)</td>
-                <td>@HHpred.hitlist(jobID).Pvals(i)</td>
-                <td>@HHpred.hitlist(jobID).Scores(i)</td>
-                <td>@HHpred.hitlist(jobID).SS(i)</td>
-                <td>@HHpred.hitlist(jobID).Cols(i)</td>
-                <td>@HHpred.hitlist(jobID).Query_HMMs(i)</td>
-                <td>@HHpred.hitlist(jobID).Template_HMMs(i)</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-
-<table style="font-weight: bold">
-    @for((x,i) <- HHpred.alignments(jobID).Headers.zipWithIndex) {
-        <tr>
-            <td>No @(i+1)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).Headers(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).QuerySeqs(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).QueryCon(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).QueryCon2(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).TemplateCon(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).TemplateSeqs(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).TemplateDSSP(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).TemplatePRED(i)</td>
-        </tr>
-        <tr>
-            <td>@HHpred.alignments(jobID).Confidence(i)</td>
-        </tr>
-    }
-</table>
 
 <script>
+    var ss_helices = document.getElementsByClassName("ss_h");
+    var ss_extended = document.getElementsByClassName("ss_e");
+    var aas;
+    var hitlist;
+
+
+    function toggleAliColor(element) {
+        if(element.value == "letters") {
+            for(var i = 0; i < aas.length; i++) {
+                var aa = aas[i];
+                aa.style.color = aa_color_font.get(aa.className);
+                aa.style.backgroundColor = "white"
+            }
+        } else if(element.value == "background") {
+            for(var i = 0; i < aas.length; i++) {
+                var aa = aas[i];
+                aa.style.backgroundColor = aa_color_background.get(aa.className);
+                aa.style.color = "black"
+            }
+        } else {
+            for(var i = 0; i < aas.length; i++) {
+                aas[i].style.color = "black";
+                aas[i].style.backgroundColor = "white";
+            }
+        }
+    }
+
+        function toggleSS(element) {
+
+            if(element.checked) {
+                for (var i = 0; i < ss_helices.length; i++) {
+                    ss_helices[i].style.color="#D00000";
+                }
+                for (var i = 0; i < ss_extended.length; i++) {
+                    ss_extended[i].style.color="#0000D0";
+                }
+            } else {
+                for (var i = 0; i < ss_helices.length; i++) {
+                    ss_helices[i].style.color="black";
+                }
+                for (var i = 0; i < ss_extended.length; i++) {
+                    ss_extended[i].style.color="black";
+                }
+            }
+        }
+    // Makes a table row with the specified content
+    function makeRow(entries) {
+
+        var row = document.createElement("tr");
+        for(var i = 0; i < entries.length; i++ ) {
+            var entry = document.createElement("td");
+            entry.innerHTML = entries[i];
+            row.appendChild(entry);
+        }
+        return row;
+    }
+
+        (function()  {
          $('.slider').on('moved.zf.slider', function() {
              $('#lefthandle').html($('#hidden1').val());
              $('#lefthandle').css({
@@ -142,21 +171,134 @@
                  'padding-left' : '2px'
              });
          });
-
-         var table;
-
-         $(document).ready( function () {
-             $(document).foundation();
-
-             table = $('#htb').DataTable({
-                 "bPaginate": false,
-                 "bLengthChange": false,
-                 "bFilter": true,
+         var dataRoute = jsRoutes.controllers.DataController.get("@jobID", 'hhr');
+         $.ajax({
+             method: dataRoute.method,
+             url: dataRoute.url
+         }).done(function(data) {
+             // For the hitlist
+             var hits = data.hhr.hits;
+             var info = data.hhr.info;
+             var alignments = data.hhr.alignments;
+             $("#hhpred_query").append(info.Query);
+             $("#hhpred_match_columns").append(info.Match_columns);
+             $("#hhpred_noseqs").append(info.No_of_seqs);
+             $("#hhpred_neff").append(info.Neff);
+             $("#hhpred_searchedhmms").append(info.Searched_HMMs);
+             $("#hhpred_date").append(info.Date);
+             hitlist = $('#htb').dataTable({
                  "bInfo": false,
-                 "bAutoWidth": false,
-                 retrieve: true,
-                 paging: true
+                 "bFilter": true,
+                 "bLengthChange": true,
+                 "aaData": hits,
+                 "scrollY": 600,
+                 "scrollX": true,
+                 "aoColumns": [
+                     { "mDataProp": "no" },
+                     { "mDataProp": "struc" },
+                     { "mDataProp": "hit" },
+                     { "mDataProp": "prob" },
+                     { "mDataProp": "eval" },
+                     { "mDataProp": "pval", render: function(data){return data.toExponential();}},
+                     { "mDataProp": "score" },
+                     { "mDataProp": "ss" },
+                     { "mDataProp": "cols" },
+                     { "mDataProp": "query_begin" },
+                     { "mDataProp": "query_end" },
+                     { "mDataProp": "template_begin" },
+                     { "mDataProp": "template_end" },
+                     { "mDataProp": "ref" }
+                 ]
              });
-         });
 
+             var alignments_container = document.getElementById("hhpred_alignments");
+             for(var i = 0; i < alignments.length; i++) {
+
+                 var ali = alignments[i];
+                 var current_seq;
+
+                 var tab = document.createElement("table");
+                 tab.className += " unstriped ";
+
+                 var tabbody = document.createElement("tbody");
+
+                 // Query Sequence
+                 tabbody.appendChild(makeRow([ali.no, "", "", ""]));
+                 current_seq = ali.query.seq.replace(color_regex, color_regex_replacer);
+                 tabbody.appendChild(makeRow(["Q", ali.query.name, ali.query.start, current_seq]));
+                 // Consensus, if present
+                 if(typeof ali.query.consensus !== 'undefined') {
+                     tabbody.appendChild(makeRow(["Q", "Consensus", ali.query.start, ali.query.consensus]));
+                 }
+                 if(typeof ali.agree !== 'undefined') {
+                     tabbody.appendChild(makeRow(["", "", "", ali.agree]));
+                 }
+                 if(typeof ali.template.consensus !== 'undefined') {
+                     tabbody.appendChild(makeRow(["T", "Consensus", ali.template.start, ali.template.consensus]));
+                 }
+
+                 // replace contiguous sequences of AA with the respective colors
+                 current_seq = ali.template.seq.replace(color_regex, color_regex_replacer);
+                 tabbody.appendChild(makeRow(["T", ali.template.name, ali.template.start, current_seq]));
+
+                 // Handle secondary structure annotation
+                 if(typeof ali.template.ss_dssp !== 'undefined') {
+
+                     current_seq = ali.template.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
+                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
+                     tabbody.appendChild(makeRow(["T", "ss_dssp", "", current_seq]));
+                 }
+                 if(typeof ali.template.ss_pred !== 'undefined') {
+
+                     current_seq = ali.template.ss_pred.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
+                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
+                     tabbody.appendChild(makeRow(["T", "ss_pred", "", current_seq]));
+                 }
+
+                 tab.appendChild(tabbody);
+                 alignments_container.appendChild(tab);
+             }
+             aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+             $("#hhpred_accordion").foundation();
+             $('#hhpred_color_select').niceSelect();
+         });
+        })();
+
+    function onFullscreenToggle() {
+        hitlist.draw();
+    }
 </script>
+
+ <!--
+
+   elsif line[b] =~ /^\s*(Q|T) (\S+)\s+\d+\s+(\S+)/
+        seq     = $3
+        old_seq = $3
+        if coloring.eql?( "letters")
+          seq.gsub!(/([a-z\.-]+)/) {|match| match = "<span style=\"color: #808080;\">#{$1}<\/span>"}
+          seq.gsub!(/([WYF]+)/){|match| match ="<span style=\"color: #00a000;\">#{$1}<\/span>"}
+          seq.gsub!(/([LIVM]+)/){|match| match ="<span style=\"color: #00ff00;\">#{$1}<\/span>"}
+          seq .gsub!(/([AST]+)/){|match| match ="<span style=\"color: #404040;\">#{$1}<\/span>"}
+          seq.gsub!(/([KR]+)/){|match| match ="<span style=\"color: red;\">#{$1}<\/span>"}
+          seq.gsub!(/([DE]+)/){|match| match ="<span style=\"color: blue;\">#{$1}<\/span>"}
+          seq.gsub!(/([QN]+)/){|match| match ="<span style=\"color: #d000a0;\">#{$1}<\/span>"}
+          seq.gsub!(/(H+)/){|match| match ="<span style=\"color: #E06000;\">#{$1}<\/span>"}
+          seq.gsub!(/(C+)/){|match| match ="<span style=\"color: #A08000;\">#{$1}<\/span>"}
+          seq.gsub!(/(P+)/){|match| match ="<span style=\"color: #000000;\">#{$1}<\/span>"}
+          seq.gsub!(/(G+)/){|match| match ="<span style=\"color: #404040;\">#{$1}<\/span>"}
+          line[b].sub!(/#{old_seq}/,seq)
+
+        elsif   coloring.eql?( "background")
+          seq.gsub!(/([WYF]+)/) {|match|  match ="<span style=\"background-color: #00c000;\">#{$1}<\/span>"}
+          seq.gsub!(/(C+)/) {|match|  match ="<span style=\"background-color: #ffff00;\">#{$1}<\/span>"}
+          seq.gsub!(/([DE]+)/) {|match|  match ="<span style=\"background-color: #6080ff;\">#{$1}<\/span>"}
+          seq.gsub!(/([LIVM]+)/) {|match|  match ="<span style=\"background-color: #02ff02;\">#{$1}<\/span>"}
+          seq.gsub!(/([KR]+)/) {|match|  match ="<span style=\"background-color: #ff0000;\">#{$1}<\/span>"}
+          seq.gsub!(/([QN]+)/) {|match|  match ="<span style=\"background-color: #e080ff;\">#{$1}<\/span>"}
+          seq.gsub!(/(H+)/) {|match|  match ="<span style=\"background-color: #ff8000;\">#{$1}<\/span>"}
+          seq.gsub!(/(P+)/) {|match|  match ="<span style=\"background-color: #a0a0a0;\">#{$1}<\/span>"}
+          line[b].sub!(/#{old_seq}/,seq)
+        end
+
+ -->
+

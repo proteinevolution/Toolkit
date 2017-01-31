@@ -44,8 +44,9 @@ export PATH="${BIOPROGS}/tools/tprpred:${PATH}" # TPRPRED
 export PATH="${BIOPROGS}/tools/kalign:${PATH}" # KAlign
 export PATH="${BIOPROGS}/tools/mafft2/scripts:${PATH}"
 export PATH="${BIOPROGS}/tools/aln2plot:${PATH}"
-
-
+export PATH="${BIOPROGS}/tools/phylip:${PATH}" # PHYLIP
+export PATH="${BIOPROGS}/tools/pcoils:${PATH}" # PCOILS
+export PATH="${BIOPROGS}/tools/marcoil:${PATH}" # MARCOIL
 
 # Setup Blammer
 export BLAMMERJAR="${BIOPROGS}/tools/blammer/blammer.jar"
@@ -56,6 +57,10 @@ export HMMERBINARIES="${BIOPROGS}/tools/hmmer3/binaries"
 # Setup Mafft
 export MAFFT_BINARIES="${BIOPROGS}/tools/mafft2/binaries"
 
+# Setup MARCOIL
+MARCOILMTIDK="${BIOPROGS}/tools/marcoil/R5.MTIDK"
+MARCOILMTK="${BIOPROGS}/tools/marcoil/R5.MTK"
+MARCOILINPUT="${BIOPROGS}/tools/marcoil/Inputs"
 
 # PYTHONPATH FOR PDBX
 export PYTHONPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/pdbx

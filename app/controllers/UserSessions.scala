@@ -18,7 +18,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by astephens on 24.08.16.
   */
 trait UserSessions extends CommonModule {
-  private final val SID = "sid"
+  private val SID = "sid"
+  private val USERNAME = "username"
 
   implicit val userCache : CacheApi
   implicit val locationProvider: LocationProvider
@@ -84,7 +85,7 @@ trait UserSessions extends CommonModule {
     * updates a user in the cache
     */
   def updateUserCache(user : User) = {
-    Logger.info("User WatchList is now: " + user.jobs.mkString)
+    Logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     userCache.set(user.sessionID.get.stringify, user)
   }
 
@@ -101,7 +102,7 @@ trait UserSessions extends CommonModule {
   /**
     * Handles cookie creation
     */
-  def sessionCookie(implicit request : RequestHeader, sessionID : BSONObjectID): mvc.Session = {
-    request.session + (SID -> sessionID.stringify)
+  def sessionCookie(implicit request : RequestHeader, sessionID : BSONObjectID, userName: Option[String]): mvc.Session = {
+    request.session + (SID -> sessionID.stringify) + (USERNAME -> userName.getOrElse(""))
   }
 }

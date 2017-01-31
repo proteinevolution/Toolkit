@@ -107,7 +107,7 @@ cp ../results/hhsearch.hhr ../results/${JOBID}.hhr
 # Generate graphical display of hits
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
-profile_logos.pl ${JOBID} ../results/ ../results/  &> /dev/null
+profile_logos.pl ${JOBID} ../results/ ../results/ 
 
 tar xfvz ../results/${JOBID}.tar.gz -C ../results/
 
@@ -117,6 +117,14 @@ parse_jalview.rb -i ../results/query.tenrep_file -o ../results/query.tenrep_file
 
 cp ../results/${JOBID}.png ../results/hitlist.png
 cp ../results/${JOBID}.html ../results/hitlist.html
+
+
+# Reformat tenrep file such that we can display it in the full alignment section
+reformat.pl fas \
+            clu \
+            "$(readlink -f ../results/query.tenrep_file)" \
+            "$(readlink -f ../results/alignment.clustalw_aln)"
+
 
 
 # Generate Hitlist in JSON for hhrfile

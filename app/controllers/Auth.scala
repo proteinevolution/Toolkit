@@ -12,6 +12,7 @@ import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.libs.mailer._
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -101,12 +102,29 @@ final class Auth @Inject() (webJarAssets                                      : 
       user.userData match {
         case Some(userData) =>
           Ok(views.html.auth.profile(user))
-            .withSession(sessionCookie(request, user.sessionID.get))
+            .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
         case None =>
           // User was not logged in
           Redirect(routes.Application.index())
       }
     }
+  }
+
+  /**
+    * Sending user name as JSON to the mithril model in joblist
+    * @return
+    */
+
+
+  def profile2json() : Action[AnyContent] = Action.async {implicit request =>
+
+    getUser.map { user =>
+      user.userData match {
+        case Some(userData) => Ok(Json.obj("user"  -> userData.nameLogin))
+        case _ => NotFound
+      }
+    }
+
   }
 
 
@@ -118,57 +136,61 @@ final class Auth @Inject() (webJarAssets                                      : 
     */
   def signInSubmit() : Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { unregisteredUser =>
-    // Evaluate the Form
-    FormDefinitions.SignIn.bindFromRequest.fold(
-      errors =>
-        Future.successful{
-          Logger.info(" but there was an error in the submit form: " + errors.toString)
-          Ok(LoginError())
-        },
-
-      // if no error, then insert the user to the collection
-      signInFormUser => {
-        val futureUser = findUser(BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
-        futureUser.flatMap {
-          case Some(databaseUser) =>
-            // Check the password
-            if (databaseUser.checkPassword(signInFormUser.password)) {
-              // create a modifier document to change the last login date in the Database
-              val selector = BSONDocument(User.IDDB          -> databaseUser.userID)
-              // Change the login time and give the new Session ID to the user.
-              // Additionally add the watched jobs to the users watchlist.
-              val modifier = BSONDocument("$set"             ->
-                             BSONDocument(User.SESSIONID     -> unregisteredUser.sessionID,
-                                          User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
-                                          "$push"            ->
-                             BSONDocument(User.JOBS          ->
-                             BSONDocument("$each"            -> unregisteredUser.jobs)))
-              // Finally add the edits to the collection
-              modifyUser(selector, modifier).map {
-                case Some(loggedInUser) =>
-                  // Remove the old, not logged in user
-                  removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
-
-                  // Make sure the Cache is updated
-                  updateUserCache(loggedInUser)
-
-                  // Everything is ok, let the user know that they are logged in now
-                  Ok(LoggedIn(loggedInUser)).withSession(sessionCookie(request, loggedInUser.sessionID.get))
-                case None =>
-                  Ok(LoginIncorrect())
-              }
-            } else {
-              Future.successful {
-                // Wrong Password, show the error message
-                Ok(LoginIncorrect())
-              }
-            }
-          case None =>
+      if (unregisteredUser.accountType < 0) {
+        // Evaluate the Form
+        FormDefinitions.SignIn.bindFromRequest.fold(
+          errors =>
             Future.successful {
-              Ok(LoginIncorrect())
+              Logger.info(" but there was an error in the submit form: " + errors.toString)
+              Ok(LoginError())
+            },
+
+          // if no error, then insert the user to the collection
+          signInFormUser => {
+            val futureUser = findUser(BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
+            futureUser.flatMap {
+              case Some(databaseUser) =>
+                // Check the password
+                if (databaseUser.checkPassword(signInFormUser.password)) {
+                  // create a modifier document to change the last login date in the Database
+                  val selector = BSONDocument(User.IDDB -> databaseUser.userID)
+                  // Change the login time and give the new Session ID to the user.
+                  // Additionally add the watched jobs to the users watchlist.
+                  val modifier = BSONDocument("$set"             ->
+                                 BSONDocument(User.SESSIONID     -> unregisteredUser.sessionID,
+                                              User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
+                                              "$push"            ->
+                                 BSONDocument(User.JOBS          ->
+                                 BSONDocument("$each"            -> unregisteredUser.jobs)))
+                  // Finally add the edits to the collection
+                  modifyUser(selector, modifier).map {
+                    case Some(loggedInUser) =>
+                      // Remove the old, not logged in user
+                      removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
+
+                      // Make sure the Cache is updated
+                      updateUserCache(loggedInUser)
+
+                      // Everything is ok, let the user know that they are logged in now
+                      Ok(LoggedIn(loggedInUser)).withSession(sessionCookie(request, loggedInUser.sessionID.get, Some(loggedInUser.getUserData.nameLogin)))
+                    case None =>
+                      Ok(LoginIncorrect())
+                  }
+                } else {
+                  Future.successful {
+                    // Wrong Password, show the error message
+                    Ok(LoginIncorrect())
+                  }
+                }
+              case None =>
+                Future.successful {
+                  Ok(LoginIncorrect())
+                }
             }
-        }
-      })
+          })
+      } else {
+        Future.successful(Ok(AlreadyLoggedIn()))
+      }
     }
   }
 
@@ -181,6 +203,7 @@ final class Auth @Inject() (webJarAssets                                      : 
     */
   def signUpSubmit() : Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
+      if (user.accountType < 0) {
       FormDefinitions.SignUp(user).bindFromRequest.fold(
         errors =>
           // Something went wrong with the Form.
@@ -216,7 +239,7 @@ final class Auth @Inject() (webJarAssets                                      : 
                     eMail.send
                     // Make sure the Cache is updated
                     updateUserCache(registeredUser)
-                    Ok(LoggedIn(registeredUser)).withSession(sessionCookie(request, registeredUser.sessionID.get))
+                    Ok(LoggedIn(registeredUser)).withSession(sessionCookie(request, registeredUser.sessionID.get, Some(registeredUser.getUserData.nameLogin)))
                   case None =>
                     Ok(FormError())
                 }
@@ -224,12 +247,14 @@ final class Auth @Inject() (webJarAssets                                      : 
           }
         }
       )
+      } else {
+        Future.successful(Ok(AccountNameUsed()))
+      }
     }
   }
 
   /**
     * Function handles the profile edit form submission
- *
     * @return
     */
   def profileSubmit() : Action[AnyContent] = Action.async { implicit request =>
@@ -286,13 +311,27 @@ final class Auth @Inject() (webJarAssets                                      : 
   /**
     * Verifies a Users Email // TODO need to reimplement this.
     *
-    * @param name_login
+    * @param userName
     * @param token
     * @return
     */
-  def verification(name_login : String, token : String) = Action { implicit request =>
-    //val authAction = userManager.VerifyEmail(name_login, token)
-    Ok(views.html.auth.message("Verification"))
+  def verification(userName : String, token : String) = Action.async { implicit request =>
+    getUser.map { user =>
+      findUser(BSONDocument(User.NAMELOGIN -> userName)).map {
+        case Some(userToVerify) =>
+          val matchingTokenList = userToVerify.userTokens.filter(_.token == token)
+          modifyUser(BSONDocument(User.IDDB -> userToVerify.userID),
+                     BSONDocument("$set"    ->
+                     BSONDocument(User.ACCOUNTTYPE -> 1,
+                                  User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
+                                  "$pull"   ->
+                     BSONDocument(User.USERTOKENS  ->
+                     BSONDocument("$in"            -> matchingTokenList))))
+        case None =>
+
+      }
+      Ok(views.html.auth.message("Verification"))
+    }
   }
 
   // Mock up function to let a user access to a page only when they are logged in as a user with certain rights
