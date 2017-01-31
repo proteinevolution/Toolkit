@@ -25,10 +25,10 @@ case class Tool(toolNameShort: String,
 
 // Class which provides access to all Tools
 @Singleton
-class ToolFactory @Inject() (paramAccess: ParamAccess) {
+final class ToolFactory @Inject() (paramAccess: ParamAccess) {
 
   // Contains the tool specifications and generates tool objects accordingly
-  val values : Map[String, Tool] = Set(
+  lazy val values : Map[String, Tool] = Set(
     // Protblast
     ("protblast", "ProtBlast", "prob", "search", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.MATRIX, paramAccess.NUM_ITER, paramAccess.EVALUE,
@@ -170,14 +170,14 @@ class ToolFactory @Inject() (paramAccess: ParamAccess) {
              category: String,
              optional: String,
              params: Seq[Param],
-             results: Seq[String]): Tool = {
+             results: Seq[String]) : Tool = {
 
-            val paramGroups = Map(
+            lazy val paramGroups = Map(
               "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.ALIGNMENT_FORMAT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
                 paramAccess.PROTBLASTPROGRAM.name)
             )
             // Params which are not a part of any group (given by the name)
-            val remainParamName : String = "Parameters"
+            lazy val remainParamName : String = "Parameters"
             val remainParams : Seq[String] = params.map(_.name).diff(paramGroups.values.flatten.toSeq)
 
             val toolitem = Toolitem(
