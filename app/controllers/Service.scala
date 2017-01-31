@@ -4,8 +4,7 @@ import java.io.{FileInputStream, ObjectInputStream}
 import javax.inject.{Inject, Singleton}
 
 import akka.util.Timeout
-import models.tools.ToolModel
-import models.{Constants, Values}
+import models.Constants
 import models.database._
 import modules.tel.TEL
 import play.api.Logger
@@ -15,7 +14,7 @@ import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
 import models.database.JobState
-import models.tools.ToolModel._
+import models.tools.{ToolFactory, Toolitem}
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
@@ -38,9 +37,8 @@ final class Service @Inject() (webJarAssets                                     
                                val messagesApi                                  : MessagesApi,
                                @NamedCache("userCache") implicit val userCache  : CacheApi,
                                implicit val locationProvider                    : LocationProvider,
-                               @NamedCache("toolitemCache") val toolitemCache   : CacheApi,
-                               val reactiveMongoApi                             : ReactiveMongoApi,
-                               val values                                       : Values)
+                               toolFactory                                      : ToolFactory,
+                               val reactiveMongoApi                             : ReactiveMongoApi)
                                extends Controller with I18nSupport
                                                   with Constants
                                                   with ReactiveMongoComponents
@@ -87,8 +85,6 @@ final class Service @Inject() (webJarAssets                                     
     def writes(html: Html) = JsString(html.body)
   }
 
-
-  // TODO Add validation
   implicit val toolitemWrites: Writes[Toolitem] = (
     (JsPath \ "toolname").write[String] and
       (JsPath \ "toolnameLong").write[String] and
@@ -114,38 +110,21 @@ final class Service @Inject() (webJarAssets                                     
 
 
   def getTool(toolname: String) = Action {
-
-    val toolitemJson = Json.toJson(toolitemCache.getOrElse(toolname) {
-
-      val x = for (tool <- ToolModel.values; if tool.toolNameShort == toolname) yield tool.toolitem(values)
-
-      //val x = ToolModel.toolMap(toolname).toolitem(values) // Reset toolitem in cache
-      toolitemCache.set(toolname, x.head) // assumes that the toolname is unique in the whole model
-      x.head
-    })
-    Ok(toolitemJson)
+    toolFactory.values.get(toolname) match {
+      case Some(tool) => Ok(Json.toJson(tool.toolitem))
+      case None => NotFound
+    }
   }
 
 
 
   def getJob(jobID: String) : Action[AnyContent] = Action.async { implicit request =>
 
-
-    Logger.info("getJobReached")
-
     selectJob(jobID).flatMap {
-
           case Some(job) =>
             Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
-
-            val toolModel = for (tool <- ToolModel.values; if tool.toolNameShort == job.tool) yield tool
-            //val toolModel = ToolModel.toolMap(job.tool)
-
-            val toolitem = toolitemCache.getOrElse(job.tool) {
-              val x = toolModel.head.toolitem(values) // Reset toolitem in cache
-              toolitemCache.set(job.tool, x)
-              x
-            }
+            val toolModel = toolFactory.values(job.tool)
+            val toolitem = toolFactory.values(job.tool).toolitem
             val ownerName =
               if (job.isPrivate) {
                 findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map{
@@ -167,7 +146,7 @@ final class Service @Inject() (webJarAssets                                     
             val jobViews: Seq[(String, Html)] = job.status match {
 
               case Done =>
-                toolModel.head.results.map { resultName =>
+                toolModel.results.map { resultName =>
                   resultName -> views.html.jobs.resultpanel(resultName, job.jobID, job.tool, jobPath)
                 }
 

@@ -1,6 +1,5 @@
 package controllers
 
-import models.tools.ToolModel
 import play.Logger
 import models.Constants
 import models.database.Job
@@ -13,6 +12,7 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.search.JobDAO
+import models.tools.ToolFactory
 import modules.{CommonModule, LocationProvider}
 import play.api.mvc.{Action, AnyContent, Controller}
 
@@ -23,6 +23,7 @@ import scala.language.postfixOps
 final class Search @Inject() (@NamedCache("userCache") implicit val userCache : CacheApi,
                               implicit val locationProvider: LocationProvider,
                               val reactiveMongoApi : ReactiveMongoApi,
+                              toolFactory: ToolFactory,
                               val jobDao           : JobDAO)
                               extends Controller with Constants
                                                  with ReactiveMongoComponents
@@ -53,7 +54,7 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
       val mainIDStrings : Future[List[String]] =
         // Find out if the user looks for a certain tool or for a jobID
 
-        if(toolMap.get(queryString).isDefined) {
+        if(toolFactory.values.get(queryString).isDefined) {
         //if (ToolModel.toolMap.get(queryString).isDefined) {
           // Find the Jobs with the matching tool
           Logger.info("user is looking for tool: " + queryString)

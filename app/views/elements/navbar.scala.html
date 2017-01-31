@@ -1,3 +1,6 @@
+@import models.tools.Tool
+@(tools: Iterable[Tool])(implicit messages: Messages, request: RequestHeader)
+
 <div class="off-canvas position-left" id="offCanvasLeft" data-off-canvas>
 
 </div>
@@ -18,7 +21,7 @@
 <div class="tabs-content" data-tabs-content="navbar-tabs" style="padding-bottom:15px;">
     <div class="tabs-panel" id="panel1">
         <ul id="toolsec">
-        @for(tool <- Tool.tools){
+        @for(tool <- tools){
             @if(tool.category == "search") {
                 <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
@@ -28,7 +31,7 @@
     <div class="tabs-panel" id="panel2">
         <ul id="toolsec">
             <li><a id="alnviz" href="/#/tools/alnviz">AlignmentViewer</a></li>
-        @for(tool <- Tool.tools){
+        @for(tool <- tools){
             @if(tool.category == "alignment") {
                 <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
@@ -37,7 +40,7 @@
     </div>
     <div class="tabs-panel" id="panel3">
         <ul id="toolsec">
-        @for(tool <- Tool.tools){
+        @for(tool <- tools){
             @if(tool.category == "seqanal") {
                 <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
@@ -46,7 +49,7 @@
     </div>
     <div class="tabs-panel" id="panel4">
         <ul id="toolsec">
-        @for(tool <- Tool.tools){
+        @for(tool <- tools){
             @if(tool.category == "2ary") {
                 <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
@@ -55,7 +58,7 @@
     </div>
     <div class="tabs-panel" id="panel5">
         <ul id="toolsec">
-        @for(tool <- Tool.tools){
+        @for(tool <- tools){
             @if(tool.category == "3ary" || tool.optional == "3ary") {
                 <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
@@ -64,7 +67,7 @@
     </div>
     <div class="tabs-panel" id="panel6">
         <ul id="toolsec">
-        @for(tool <- Tool.tools){
+        @for(tool <- tools){
             @if(tool.category == "classification") {
                 <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
@@ -73,7 +76,7 @@
     </div>
     <div class="tabs-panel" id="panel7">
         <ul id="toolsec">
-            @for(tool <- Tool.tools){
+            @for(tool <- tools){
                 @if(tool.category == "utils") {
                     <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
                 }

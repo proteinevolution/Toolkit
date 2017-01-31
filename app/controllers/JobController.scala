@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import actors.JobActor.{CreateJob, Delete}
-import models.{Constants, Values}
+import models.{Constants}
 import models.database.{Job, JobDeletion, JobDeletionFlag}
 import models.job.{JobActorAccess, JobIDProvider}
 import models.search.JobDAO
@@ -27,7 +27,6 @@ import better.files._
 final class JobController @Inject() (jobIDProvider                                    : JobIDProvider,
                                      jobActorAccess                                   : JobActorAccess,
                                      implicit val userCache                           : CacheApi,
-                                     val values                                       : Values,
                                      implicit  val locationProvider                   : LocationProvider,
                                      val jobDao                                       : JobDAO,
                                      val reactiveMongoApi                             : ReactiveMongoApi)
@@ -79,7 +78,7 @@ final class JobController @Inject() (jobIDProvider                              
           val DB = formData.getOrElse("standarddb","").toFile  // get hold of the database in use
           val inputHash = jobDao.generateHash(formData).toString()
           val rsHash = jobDao.generateRSHash(toolname)
-          val toolHash = jobDao.generateToolHash(toolMap(toolname).toolNameLong)
+          val toolHash = jobDao.generateToolHash(toolname)
           println("Runscript hash generated: " + rsHash)
           println("Tool hash generated: " + toolHash)
           println("Job hash generated: " + inputHash)
