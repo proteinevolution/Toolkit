@@ -1,14 +1,13 @@
 package modules
 
 import models.database.{FrontendJob, Job, JobAnnotation, User}
-import models.tools.ToolModel
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
+import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.{BSONArray, BSONDocument, BSONObjectID, BSONValue}
+import reactivemongo.bson.BSONDocument
 
 import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -136,6 +135,4 @@ trait CommonModule extends ReactiveMongoComponents {
 
   // tool version lookup from the config
 
-
-  protected lazy val toolMap : Map[String, ToolModel] = ToolModel.values map (_.toolNameShort) zip ToolModel.values toMap
 }

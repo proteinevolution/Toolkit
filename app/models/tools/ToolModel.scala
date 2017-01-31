@@ -1,535 +1,206 @@
 package models.tools
 
-import enumeratum.{PlayEnum, EnumEntry}
-import models.tools.ToolModel.Toolitem
-
-import models.{Param, Values}
-
-
-
-
-sealed trait ToolModel extends EnumEntry {
-
-  case class ToolParam(name: String, defvalue: Option[String], paramtype: Int)
-
-  val toolNameShort : String
-  val toolNameLong : String
-  val toolNameAbbrev : String
-  val category : String
-  val optional : String
-
-  // Set of parameter values that are used in the tool
-  val params : Seq[String]
-
-  // The results the tool is associated with
-  val results : Seq[String]
-
-  val paramGroups = Map(
-
-    "Input" -> Seq(Param.ALIGNMENT.name, Param.ALIGNMENT_FORMAT.name, Param.STANDARD_DB.name, Param.HHSUITEDB.name,
-      Param.PROTBLASTPROGRAM.name)
-  )
-
-  // Params which are not a part of any group
-  val remainParamName : String = "Parameters"
-  lazy val remainParams : Seq[String] = params.diff(paramGroups.values.flatten.toSeq)
-
-  def toolitem(values : Values) : Toolitem = Toolitem(
-
-    this.toolNameShort,
-    this.toolNameLong,
-    this.toolNameAbbrev,
-    this.optional,
-    this.category, this.paramGroups.keysIterator.map { group =>
-
-      group ->  this.paramGroups(group).filter(this.params.contains(_)).map { param =>
-
-        param -> values.allowed.getOrElse(param, Nil)
-      }
-    }.toSeq :+
-      this.remainParamName -> this.remainParams.map { param =>
-
-        param -> values.allowed.getOrElse(param, Nil)
-
-      }
-  )
-}
-
-object ToolModel extends PlayEnum[ToolModel] {
-
-  case class Toolitem(toolname : String,
-                      toolnameLong : String,
-                      toolnameAbbrev : String,
-                      category : String,
-                      optional : String,
-                      params : Seq[(String, Seq[(String, Seq[(String, String)])])])
-
-
-  val values : Seq[ToolModel] = findValues // this replaces the toolMap completely
-
-
-  case object ProtBlast extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "protblast"
-    val toolNameLong = "ProtBlast"
-    val toolNameAbbrev = "prob"
-    val category = "search"
-    val optional = ""
-
-
-    val params = Seq(Param.ALIGNMENT.name, "standarddb", "matrix",
-      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc",
-      Param.PROTBLASTPROGRAM.name)
-
-    val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
-  }
-
-  case object PatternSearch extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "patternsearch"
-    val toolNameLong = "PatternSearch"
-    val toolNameAbbrev = "pas"
-    val category = "search"
-    val optional = ""
-
-
-    val params = Seq(Param.ALIGNMENT.name, "standarddb", "matrix",
-      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc")
-
-    val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
-  }
-
-  case object HHblits extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "hhblits"
-    val toolNameLong = "HHblits"
-    val toolNameAbbrev = "hhb"
-    val category = "search"
-    val optional = ""
-
-
-    val params = Seq(Param.ALIGNMENT.name, "hhblitsdb", "maxrounds")
-
-    val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
-  }
-
-  case object HHpred extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "hhpred"
-    val toolNameLong = "HHpred"
-    val toolNameAbbrev = "hhp"
-    val category = "search"
-    val optional = ""
-
-
-    val params : Seq[String] = Seq(Param.ALIGNMENT.name, Param.HHSUITEDB.name, Param.MSAGENERATION.name,
-      Param.MSA_GEN_MAX_ITER.name, Param.MIN_COV.name, Param.EVAL_INC_THRESHOLD.name,
-      Param.MAX_LINES.name, Param.PMIN.name, Param.ALIWIDTH.name)
-
-    val results = Seq("Hitlist", "FullAlignment")
-  }
-
-
-  case object PsiBlast extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "psiblast"
-    val toolNameLong = "PSI-BLAST"
-    val toolNameAbbrev = "pbl"
-    val category = "search"
-    val optional = ""
-
-
-    val params = Seq(Param.ALIGNMENT.name, "standarddb", "matrix",
-      "num_iter", "evalue", Param.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc")
-
-    val results = Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")
-  }
-
-
-  case object Tcoffee extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "tcoffee"
-    val toolNameLong = "T-Coffee"
-    val toolNameAbbrev = "tcf"
-    val category = "alignment"
-    val optional = ""
-
-    val params = Seq(Param.ALIGNMENT.name)
-    val results = Seq("Alignment", "AlignmentViewer", "Conservation", "Text")
-  }
-
-
-  case object Blammer extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "blammer"
-    val toolNameLong = "Blammer"
-    val toolNameAbbrev = "blam"
-    val category = "alignment"
-    val optional = ""
-
-    val params = Seq(Param.ALIGNMENT.name, Param.MIN_QUERY_COV.name, Param.MAX_EVAL.name, Param.MIN_ANCHOR_WITH.name,
-      Param.MAX_SEQID.name, Param.MAX_SEQS.name, Param.MIN_COLSCORE.name)
-    val results = Seq("Alignment", "AlignmentViewer")
-  }
-
-
-  case object ClustalOmega extends ToolModel {
-
-    val toolNameShort = "clustalo"
-    val toolNameLong = "Clustal Omega"
-    val toolNameAbbrev = "cluo"
-    val category = "alignment"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq("Alignment", "AlignmentViewer")
-  }
-
-  /*
-  case object GLProbs extends ToolModel {
-
-    val toolNameShort = "glprobs"
-    val toolNameLong = "GLProbs"
-    val toolNameAbbrev = "glpr"
-    val category = "alignment"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq("Alignment", "AlignmentViewer")
-  }
-  */
-
-  case object MSAProbs extends ToolModel {
-
-    val toolNameShort = "msaprobs"
-    val toolNameLong = "MSAProbs"
-    val toolNameAbbrev = "msap"
-    val category = "alignment"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq("Alignment", "AlignmentViewer")
-  }
-
-  /*
-  case object Probcons extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "probcons"
-    val toolNameLong = "ProbCons"
-    val toolNameAbbrev = "pcns"
-    val category = "alignment"
-    val optional = ""
-
-    val params = Seq(Param.ALIGNMENT.name, Param.CONSISTENCY.name, Param.ITREFINE.name, Param.PRETRAIN.name)
-
-    val results = Seq.empty[String]
-  }
-  */
-
-  case object Muscle extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "muscle"
-    val toolNameLong = "MUSCLE"
-    val toolNameAbbrev = "musc"
-    val category = "alignment"
-    val optional = ""
-    val params = Seq("alignment", Param.MAXROUNDS.name)
-    val results = Seq("Alignment", "AlignmentViewer")
-  }
-
-  case object Mafft extends ToolModel {
-
-    val toolNameShort = "mafft"
-    val toolNameLong = "Mafft"
-    val toolNameAbbrev = "mft"
-    val category = "alignment"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name, Param.GAP_OPEN.name, Param.OFFSET.name)
-
-    val results = Seq("Alignment", "AlignmentViewer")
-  }
-
-  case object Kalign extends ToolModel {
-
-    // --- Names for the Tool ---
-    val toolNameShort = "kalign"
-    val toolNameLong = "Kalign"
-    val toolNameAbbrev = "kal"
-    val category = "alignment"
-    val optional = ""
-
-    val params = Seq(Param.ALIGNMENT.name, Param.GAP_OPEN.name, Param.GAP_EXT.name, Param.GAP_TERM.name, Param.BONUSSCORE.name)
-
-    val results = Seq("Alignment", "AlignmentViewer")
-  }
-
-  case object Hmmer extends ToolModel {
-
-
-    // --- Names for the Tool ---
-    val toolNameShort = "hmmer"
-    val toolNameLong = "HMMER"
-    val toolNameAbbrev = "hmr"
-    val category = "search"
-    val optional = ""
-
-    val params = Seq(Param.ALIGNMENT.name, Param.STANDARD_DB.name)
-
-    val results = Seq("fileview")
-  }
-
-
-  case object Aln2Plot extends ToolModel {
-
-    val toolNameShort = "aln2plot"
-    val toolNameLong = "Aln2Plot"
-    val toolNameAbbrev = "a2pl"
-    val category = "seqanal"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq("Hydrophobicity", "SideChainVolume")
-  }
-
-  case object PCoils extends ToolModel {
-
-    val toolNameShort = "pcoils"
-    val toolNameLong = "PCOILS"
-    val toolNameAbbrev = "pco"
-    val category = "seqanal"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name, Param.WEIGHTING.name, Param.MATRIX_PCOILS.name, Param.RUN_PSIPRED.name)
-    val results = Seq.empty[String]
-  }
-
-  case object FRpred extends ToolModel {
-
-    val toolNameShort = "frpred"
-    val toolNameLong = "FRpred"
-    val toolNameAbbrev = "frp"
-    val category = "seqanal"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-
-  }
-
-  case object HHrep extends ToolModel {
-
-    val toolNameShort = "hhrepid"
-    val toolNameLong = "HHrepid"
-    val toolNameAbbrev = "hhr"
-    val category = "seqanal"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-
-  case object Marcoil extends ToolModel {
-
-    val toolNameShort = "marcoil"
-    val toolNameLong = "MARCOIL"
-    val toolNameAbbrev = "mar"
-    val category = "seqanal"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name, Param.MATRIX_MARCOIL.name, Param.TRANSITION_PROBABILITY.name)
-
-    val results = Seq("CC-Prob", "ProbList/PSSM", "ProbState", "Domains")
-  }
-
-  case object Repper extends ToolModel {
-
-    val toolNameShort = "repper"
-    val toolNameLong = "Repper"
-    val toolNameAbbrev = "rep"
-    val category = "seqanal"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-
-  case object TPRpred extends ToolModel {
-
-    val toolNameShort = "tprpred"
-    val toolNameLong = "TPRpred"
-    val toolNameAbbrev = "tprp"
-    val category = "seqanal"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-
-  case object HHomp extends ToolModel {
-
-    val toolNameShort = "hhomp"
-    val toolNameLong = "HHomp"
-    val toolNameAbbrev = "hho"
-    val category = "2ary"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-
-  case object Quick2D extends ToolModel {
-
-    val toolNameShort = "quick2d"
-    val toolNameLong = "Quick2D"
-    val toolNameAbbrev = "q2d"
-    val category = "2ary"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-
-  case object Ali2D extends ToolModel {
-
-    val toolNameShort = "ali2d"
-    val toolNameLong = "Ali2D"
-    val toolNameAbbrev = "a2d"
-    val category = "2ary"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-
-  case object Modeller extends ToolModel {
-
-    val toolNameShort = "modeller"
-    val toolNameLong = "Modeller"
-    val toolNameAbbrev = "mod"
-    val category = "3ary"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-  case object Bfit extends ToolModel {
-
-    val toolNameShort = "bfit"
-    val toolNameLong = "Bfit"
-    val toolNameAbbrev = "bft"
-    val category = "3ary"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-  case object HHfrag extends ToolModel {
-
-    val toolNameShort = "hhfrag"
-    val toolNameLong = "HHfrag"
-    val toolNameAbbrev = "hhf"
-    val category = "3ary"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-  case object SamCC extends ToolModel {
-
-    val toolNameShort = "samcc"
-    val toolNameLong = "SamCC"
-    val toolNameAbbrev = "scc"
-    val category = "3ary"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-  case object ANCESCON extends ToolModel {
-
-    val toolNameShort = "ancescon"
-    val toolNameLong = "ANCESCON"
-    val toolNameAbbrev = "anc"
-    val category = "classification"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name, Param.LONG_SEQ_NAME.name)
-
-    val results = Seq("Tree")
-  }
-  case object PHYLIP extends ToolModel {
-
-    val toolNameShort = "phylip"
-    val toolNameLong = "PHYLIP-NEIGHBOR"
-    val toolNameAbbrev = "phyn"
-    val category = "classification"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name, Param.MATRIX_PHYLIP.name)
-    val results = Seq("NeighborJoining", "UPGMA")
-  }
-
-
-
-  case object CLANS extends ToolModel {
-
-    val toolNameShort = "clans"
-    val toolNameLong = "CLANS"
-    val toolNameAbbrev = "anc"
-    val category = "classification"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-  case object HHcluster extends ToolModel {
-
-    val toolNameShort = "hhcluster"
-    val toolNameLong = "HHcluster"
-    val toolNameAbbrev = "hhc"
-    val category = "classification"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-  case object BlastClust extends ToolModel {
-
-    val toolNameShort = "blastclust"
-    val toolNameLong = "BLASTClust"
-    val toolNameAbbrev = "bcl"
-    val category = "classification"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name)
-
-    val results = Seq.empty[String]
-  }
-  case object BackTranslate extends ToolModel {
-
-    val toolNameShort = "backtrans"
-    val toolNameLong = "Backtranslator"
-    val toolNameAbbrev = "anc"
-    val category = "utils"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name, Param.GENETIC_CODE.name)
-
-    val results = Seq("DNA")
-  }
-  case object HHFilter extends ToolModel {
-
-    val toolNameShort = "hhfilter"
-    val toolNameLong = "HHFilter"
-    val toolNameAbbrev = "hhfi"
-    val category = "utils"
-    val optional = ""
-    val params = Seq(Param.ALIGNMENT.name, Param.MAX_SEQID.name, Param.MIN_SEQID_QUERY.name, Param.MIN_QUERY_COV.name,
-      Param.NUM_SEQS_EXTRACT.name)
-
-    val results = Seq.empty
-  }
+import javax.inject.{Inject, Singleton}
+
+
+// Returned to the View if a tool is requested with the getTool route
+case class Toolitem(toolname : String,
+                    toolnameLong : String,
+                    toolnameAbbrev : String,
+                    category : String,
+                    optional : String,
+                    params : Seq[(String, Seq[(String, Seq[(String, String)])])])
+
+// Specification of the internal representation of a Tool
+case class Tool(toolNameShort: String,
+                toolNameLong: String,
+                toolNameAbbrev: String,
+                category: String,
+                optional: String,
+                params: Seq[String],
+                results: Seq[String],
+                toolitem: Toolitem,
+                paramGroups: Map[String, Seq[String]])
+
+
+// Class which provides access to all Tools
+@Singleton
+class ToolFactory @Inject() (paramAccess: ParamAccess) {
+
+  // Contains the tool specifications and generates tool objects accordingly
+  val values : Map[String, Tool] = Set(
+    // Protblast
+    ("protblast", "ProtBlast", "prob", "search", "",
+      Seq(paramAccess.ALIGNMENT.name, "standarddb", "matrix", "num_iter", "evalue", paramAccess.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc",
+      paramAccess.PROTBLASTPROGRAM.name),
+      Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")),
+
+    // PatternSearch
+    ("patternsearch", "PatternSearch", "pas", "search", "",
+      Seq(paramAccess.ALIGNMENT.name, "standarddb", "matrix",
+      "num_iter", "evalue", paramAccess.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc"),
+      Seq("Hits", "E-Values", "Fasta", "AlignmentViewer") ),
+
+    // HHblits
+  ("hhblits", "HHblits", "hhb", "search", "",
+    Seq(paramAccess.ALIGNMENT.name, "hhblitsdb", "maxrounds"),
+    Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")),
+
+    // HHpred
+    ("hhpred", "HHpred", "hhp", "search", "",
+    Seq(paramAccess.ALIGNMENT.name, paramAccess.HHSUITEDB.name, paramAccess.MSAGENERATION.name,
+        paramAccess.MSA_GEN_MAX_ITER.name, paramAccess.MIN_COV.name, paramAccess.EVAL_INC_THRESHOLD.name,
+        paramAccess.MAX_LINES.name, paramAccess.PMIN.name, paramAccess.ALIWIDTH.name),
+      Seq("Hitlist", "FullAlignment")),
+
+    // PSI-BLAST
+    ("psiblast", "PSI-BLAST", "pbl", "search", "", Seq(paramAccess.ALIGNMENT.name, "standarddb", "matrix",
+      "num_iter", "evalue", paramAccess.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc"),
+      Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")),
+
+   // T-Coffee
+    ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.ALIGNMENT.name),
+      Seq("Alignment", "AlignmentViewer", "Conservation", "Text")),
+
+    // Blammer
+    ("blammer", "Blammer", "blam", "alignment", "", Seq(paramAccess.ALIGNMENT.name,
+      paramAccess.MIN_QUERY_COV.name, paramAccess.MAX_EVAL.name, paramAccess.MIN_ANCHOR_WITH.name,
+      paramAccess.MAX_SEQID.name, paramAccess.MAX_SEQS.name, paramAccess.MIN_COLSCORE.name),
+      Seq("Alignment", "AlignmentViewer")),
+
+    // CLustalOmega
+    ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT.name),
+      Seq("Alignment", "AlignmentViewer")),
+
+    // MSA Probs
+    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.ALIGNMENT.name),Seq("Alignment", "AlignmentViewer")),
+
+    // MUSCLE
+    ("muscle", "MUSCLE", "musc", "alignment", "", Seq("alignment", paramAccess.MAXROUNDS.name), Seq("Alignment", "AlignmentViewer")),
+
+  // MAFFT
+    ("mafft", "Mafft", "mft", "alignment", "", Seq(paramAccess.ALIGNMENT.name, paramAccess.GAP_OPEN.name, paramAccess.OFFSET.name),
+      Seq("Alignment", "AlignmentViewer")),
+
+   // Kalign
+      ("kalign", "Kalign", "kal", "alignment", "",
+        Seq(paramAccess.ALIGNMENT.name, paramAccess.GAP_OPEN.name, paramAccess.GAP_EXT.name, paramAccess.GAP_TERM.name, paramAccess.BONUSSCORE.name),
+        Seq("Alignment", "AlignmentViewer")),
+
+    // Hmmer
+    ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.ALIGNMENT.name, paramAccess.STANDARD_DB.name),
+      Seq("fileview")),
+
+
+    // Aln2Plot
+    ("aln2plot", "Aln2Plot", "a2pl", "seqanal", "", Seq(paramAccess.ALIGNMENT.name),
+      Seq("Hydrophobicity", "SideChainVolume")),
+
+    // PCOILS
+    ("pcoils", "PCOILS", "pco", "seqanal", "",
+      Seq(paramAccess.ALIGNMENT.name, paramAccess.WEIGHTING.name, paramAccess.MATRIX_PCOILS.name, paramAccess.RUN_PSIPRED.name),
+      Seq.empty[String]),
+
+    // FRrped
+    ("frpred", "FRpred", "frp", "seqanal", "",Seq(paramAccess.ALIGNMENT.name), Seq.empty[String]),
+
+
+    // HHrepID
+    ("hhrepid", "HHrepid", "hhr", "seqanal", "",Seq(paramAccess.ALIGNMENT.name), Seq.empty[String]),
+
+
+    // MARCOIL
+    ("marcoil", "MARCOIL", "mar", "seqanal", "",
+      Seq(paramAccess.ALIGNMENT.name, paramAccess.MATRIX_MARCOIL.name, paramAccess.TRANSITION_PROBABILITY.name),
+      Seq("CC-Prob", "ProbList/PSSM", "ProbState", "Domains")),
+
+    // REPPER
+    ("repper", "Repper", "rep", "seqanal", "",
+      Seq(paramAccess.ALIGNMENT.name),
+      Seq.empty[String]),
+
+    // TPRpred
+    ("tprpred", "TPRpred", "tprp", "seqanal", "",
+      Seq(paramAccess.ALIGNMENT.name),
+      Seq.empty[String]),
+
+    // HHomp
+    ("hhomp", "HHomp", "hho", "2ary", "",
+      Seq(paramAccess.ALIGNMENT.name),
+      Seq.empty[String]),
+
+    // Quick 2D
+    ("quick2d", "Quick2D", "q2d", "2ary", "",
+      Seq(paramAccess.ALIGNMENT.name),
+      Seq.empty[String]),
+
+    // Ali2D
+    ("ali2d", "Ali2D", "a2d", "2ary", "",
+      Seq(paramAccess.ALIGNMENT.name),
+      Seq.empty[String]),
+
+    // Modeller
+    ("modeller", "Modeller", "mod", "3ary", "",
+      Seq(paramAccess.ALIGNMENT.name),
+      Seq.empty[String]),
+
+    // ANCESCON
+    ("ancescon", "ANCESCON", "anc", "classification", "",
+      Seq(paramAccess.ALIGNMENT.name, paramAccess.LONG_SEQ_NAME.name),
+      Seq("Tree")),
+
+    // PHYLIP
+    ("phylip", "PHYLIP-NEIGHBOR", "phyn", "classification", "",
+      Seq(paramAccess.ALIGNMENT.name, paramAccess.MATRIX_PHYLIP.name),
+      Seq("NeighborJoining", "UPGMA")),
+
+    // Backtranslate
+    ("backtrans", "Backtranslator", "bac", "utils", "",
+      Seq(paramAccess.ALIGNMENT.name, paramAccess.GENETIC_CODE.name),
+      Seq("DNA")),
+
+    // HHfilter
+    ("hhfilter", "HHFilter", "hhfi", "utils", "",
+      Seq(paramAccess.ALIGNMENT.name, paramAccess.MAX_SEQID.name, paramAccess.MIN_SEQID_QUERY.name, paramAccess.MIN_QUERY_COV.name,
+        paramAccess.NUM_SEQS_EXTRACT.name),
+      Seq.empty)).map { t =>
+    t._1  -> tool(t._1, t._2, t._3, t._4, t._5, t._6, t._7)
+  }.toMap
+
+   // Generates a new Tool object from the Tool specification
+    def tool(toolNameShort: String,
+             toolNameLong: String,
+             toolNameAbbrev: String,
+             category: String,
+             optional: String,
+             params: Seq[String],
+             results: Seq[String]): Tool = {
+
+            val paramGroups = Map(
+              "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.ALIGNMENT_FORMAT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
+                paramAccess.PROTBLASTPROGRAM.name)
+            )
+            // Params which are not a part of any group
+            val remainParamName : String = "Parameters"
+            val remainParams : Seq[String] = params.diff(paramGroups.values.flatten.toSeq)
+
+            val toolitem = Toolitem(
+              toolNameShort,
+              toolNameLong,
+              toolNameAbbrev,
+              optional,
+              category,
+              // Constructs the Parameter specification such that the View can render the input fields
+              paramGroups.keysIterator.map { group =>
+                group ->  paramGroups(group).filter(params.contains(_)).map { param =>
+                  param -> paramAccess.allowed.getOrElse(param, Nil)
+                }
+              }.toSeq :+
+                remainParamName -> remainParams.map { param =>
+
+                  param -> paramAccess.allowed.getOrElse(param, Nil)
+                }
+            )
+            Tool(toolNameShort, toolNameLong, toolNameAbbrev, category,optional,params, results, toolitem, paramGroups)
+          }
 }

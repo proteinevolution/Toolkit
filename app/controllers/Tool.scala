@@ -6,7 +6,6 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import models.database._
 import models.search.JobDAO
-import models.tools.ToolModel
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.DateTime
 import play.api.cache._
@@ -17,13 +16,6 @@ import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
-
-
-object Tool {
-
-  lazy val tools:Seq[ToolModel] = ToolModel.values // this list is completely dynamic and depends only on the case objects in the tool model. frontend tools are excluded at the moment.
-
-}
 
 
 @Singleton

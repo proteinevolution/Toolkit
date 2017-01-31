@@ -1,7 +1,8 @@
 @import play.api.mvc.RequestHeader
 @import models.database.User
 @import java.util.Date
-@(webJarAssets: WebJarAssets, user: User)(implicit messages: Messages, request: RequestHeader)
+@import models.tools.Tool
+@(webJarAssets: WebJarAssets, user: User, tools: Iterable[Tool])(implicit messages: Messages, request: RequestHeader)
 
 <!DOCTYPE html>
 
@@ -155,7 +156,7 @@
                 <div class="large-10 columns show-for-large">
                     <div class="row">
                         <div class="columns large-10" style="padding-left: 4em; padding-right: 3.5em;">
-                            @elements.navbar()
+                            @elements.navbar(tools)
                         </div>
                         <div class="columns large-1">
                             <!--offline callout-->

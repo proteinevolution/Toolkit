@@ -1,12 +1,13 @@
 package controllers
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{Inject, Singleton}
 
 import actors.WebSocketActor
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ActorSystem, Props}
 import akka.stream.Materializer
 import models.search.JobDAO
-import models.{Constants, Values}
+import models.Constants
+import models.tools.ToolFactory
 import modules.tel.TEL
 import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
@@ -27,11 +28,11 @@ import scala.concurrent.Future
 @Singleton
 final class Application @Inject()(webJarAssets                                    : WebJarAssets,
                                   val messagesApi                                 : MessagesApi,
-                                  val values                                      : Values,
                                   webSocketActorFactory                           : WebSocketActor.Factory,
                                   @NamedCache("userCache") implicit val userCache : CacheApi,
                                   implicit val locationProvider                   : LocationProvider,
                                   @NamedCache("viewCache") val viewCache          : CacheApi,
+                                  toolFactory                                     : ToolFactory,
                                   val jobDao                                      : JobDAO,
                                   val reactiveMongoApi                            : ReactiveMongoApi,
                                   system                                          : ActorSystem,
@@ -129,7 +130,7 @@ final class Application @Inject()(webJarAssets                                  
     println("[CONFIG:] running on port "+tel.port)
     println("[CONFIG:] execution mode: "+settings.clusterMode)
     getUser.map { user =>
-      Ok(views.html.main(webJarAssets, user))
+      Ok(views.html.main(webJarAssets, user, toolFactory.values.values))
         .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
     }
   }
