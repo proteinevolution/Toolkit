@@ -2,7 +2,7 @@ val akkaVersion = "2.4.16"
 
 val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka"     %% "akka-actor"               % akkaVersion,
-  "com.sanoma.cda"        %% "maxmind-geoip2-scala"     % "1.5.3",
+  "com.sanoma.cda"        %% "maxmind-geoip2-scala"     % "1.5.4",
   "com.typesafe.akka"     %% "akka-cluster"             % akkaVersion,
   "com.typesafe.akka"     %% "akka-cluster-tools"       % akkaVersion,
   "com.typesafe.akka"     %% "akka-cluster-metrics"     % akkaVersion,
