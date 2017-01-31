@@ -17,7 +17,7 @@ case class Tool(toolNameShort: String,
                 toolNameAbbrev: String,
                 category: String,
                 optional: String,
-                params: Seq[String],
+                params: Map[String, Param],
                 results: Seq[String],
                 toolitem: Toolitem,
                 paramGroups: Map[String, Seq[String]])
@@ -31,138 +31,134 @@ class ToolFactory @Inject() (paramAccess: ParamAccess) {
   val values : Map[String, Tool] = Set(
     // Protblast
     ("protblast", "ProtBlast", "prob", "search", "",
-      Seq(paramAccess.ALIGNMENT.name, "standarddb", "matrix", "num_iter", "evalue", paramAccess.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc",
-      paramAccess.PROTBLASTPROGRAM.name),
+      Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.MATRIX, paramAccess.NUM_ITER, paramAccess.EVALUE,
+        paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN, paramAccess.GAP_EXT, paramAccess.DESC, paramAccess.PROTBLASTPROGRAM),
       Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")),
-
-    // PatternSearch
-    ("patternsearch", "PatternSearch", "pas", "search", "",
-      Seq(paramAccess.ALIGNMENT.name, "standarddb", "matrix",
-      "num_iter", "evalue", paramAccess.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc"),
-      Seq("Hits", "E-Values", "Fasta", "AlignmentViewer") ),
 
     // HHblits
   ("hhblits", "HHblits", "hhb", "search", "",
-    Seq(paramAccess.ALIGNMENT.name, "hhblitsdb", "maxrounds"),
+    Seq(paramAccess.ALIGNMENT,paramAccess.HHBLITSDB, paramAccess.MAXROUNDS),
     Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
-    Seq(paramAccess.ALIGNMENT.name, paramAccess.HHSUITEDB.name, paramAccess.MSAGENERATION.name,
-        paramAccess.MSA_GEN_MAX_ITER.name, paramAccess.MIN_COV.name, paramAccess.EVAL_INC_THRESHOLD.name,
-        paramAccess.MAX_LINES.name, paramAccess.PMIN.name, paramAccess.ALIWIDTH.name),
+    Seq(paramAccess.ALIGNMENT, paramAccess.HHSUITEDB, paramAccess.MSAGENERATION,
+        paramAccess.MSA_GEN_MAX_ITER, paramAccess.MIN_COV, paramAccess.EVAL_INC_THRESHOLD,
+        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH),
       Seq("Hitlist", "FullAlignment")),
 
     // PSI-BLAST
-    ("psiblast", "PSI-BLAST", "pbl", "search", "", Seq(paramAccess.ALIGNMENT.name, "standarddb", "matrix",
-      "num_iter", "evalue", paramAccess.EVAL_INC_THRESHOLD.name, "gap_open", "gap_ext", "desc"),
+    ("psiblast", "PSI-BLAST", "pbl", "search", "", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB,
+      paramAccess.MATRIX,
+      paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN,
+      paramAccess.GAP_EXT, paramAccess.DESC),
       Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")),
 
    // T-Coffee
-    ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.ALIGNMENT.name),
+    ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.ALIGNMENT),
       Seq("Alignment", "AlignmentViewer", "Conservation", "Text")),
 
     // Blammer
-    ("blammer", "Blammer", "blam", "alignment", "", Seq(paramAccess.ALIGNMENT.name,
-      paramAccess.MIN_QUERY_COV.name, paramAccess.MAX_EVAL.name, paramAccess.MIN_ANCHOR_WITH.name,
-      paramAccess.MAX_SEQID.name, paramAccess.MAX_SEQS.name, paramAccess.MIN_COLSCORE.name),
+    ("blammer", "Blammer", "blam", "alignment", "", Seq(paramAccess.ALIGNMENT,
+      paramAccess.MIN_QUERY_COV, paramAccess.MAX_EVAL, paramAccess.MIN_ANCHOR_WITH,
+      paramAccess.MAX_SEQID, paramAccess.MAX_SEQS, paramAccess.MIN_COLSCORE),
       Seq("Alignment", "AlignmentViewer")),
 
     // CLustalOmega
-    ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT.name),
+    ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT),
       Seq("Alignment", "AlignmentViewer")),
 
     // MSA Probs
-    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.ALIGNMENT.name),Seq("Alignment", "AlignmentViewer")),
+    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.ALIGNMENT),Seq("Alignment", "AlignmentViewer")),
 
     // MUSCLE
-    ("muscle", "MUSCLE", "musc", "alignment", "", Seq("alignment", paramAccess.MAXROUNDS.name), Seq("Alignment", "AlignmentViewer")),
+    ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.ALIGNMENT, paramAccess.MAXROUNDS), Seq("Alignment", "AlignmentViewer")),
 
   // MAFFT
-    ("mafft", "Mafft", "mft", "alignment", "", Seq(paramAccess.ALIGNMENT.name, paramAccess.GAP_OPEN.name, paramAccess.OFFSET.name),
+    ("mafft", "Mafft", "mft", "alignment", "", Seq(paramAccess.ALIGNMENT, paramAccess.GAP_OPEN, paramAccess.OFFSET),
       Seq("Alignment", "AlignmentViewer")),
 
    // Kalign
       ("kalign", "Kalign", "kal", "alignment", "",
-        Seq(paramAccess.ALIGNMENT.name, paramAccess.GAP_OPEN.name, paramAccess.GAP_EXT.name, paramAccess.GAP_TERM.name, paramAccess.BONUSSCORE.name),
+        Seq(paramAccess.ALIGNMENT, paramAccess.GAP_OPEN, paramAccess.GAP_EXT, paramAccess.GAP_TERM, paramAccess.BONUSSCORE),
         Seq("Alignment", "AlignmentViewer")),
 
     // Hmmer
-    ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.ALIGNMENT.name, paramAccess.STANDARD_DB.name),
+    ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB),
       Seq("fileview")),
 
 
     // Aln2Plot
-    ("aln2plot", "Aln2Plot", "a2pl", "seqanal", "", Seq(paramAccess.ALIGNMENT.name),
+    ("aln2plot", "Aln2Plot", "a2pl", "seqanal", "", Seq(paramAccess.ALIGNMENT),
       Seq("Hydrophobicity", "SideChainVolume")),
 
     // PCOILS
     ("pcoils", "PCOILS", "pco", "seqanal", "",
-      Seq(paramAccess.ALIGNMENT.name, paramAccess.WEIGHTING.name, paramAccess.MATRIX_PCOILS.name, paramAccess.RUN_PSIPRED.name),
+      Seq(paramAccess.ALIGNMENT, paramAccess.WEIGHTING, paramAccess.MATRIX_PCOILS, paramAccess.RUN_PSIPRED),
       Seq.empty[String]),
 
     // FRrped
-    ("frpred", "FRpred", "frp", "seqanal", "",Seq(paramAccess.ALIGNMENT.name), Seq.empty[String]),
+    ("frpred", "FRpred", "frp", "seqanal", "",Seq(paramAccess.ALIGNMENT), Seq.empty[String]),
 
 
     // HHrepID
-    ("hhrepid", "HHrepid", "hhr", "seqanal", "",Seq(paramAccess.ALIGNMENT.name), Seq.empty[String]),
+    ("hhrepid", "HHrepid", "hhr", "seqanal", "",Seq(paramAccess.ALIGNMENT), Seq.empty[String]),
 
 
     // MARCOIL
     ("marcoil", "MARCOIL", "mar", "seqanal", "",
-      Seq(paramAccess.ALIGNMENT.name, paramAccess.MATRIX_MARCOIL.name, paramAccess.TRANSITION_PROBABILITY.name),
+      Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_MARCOIL, paramAccess.TRANSITION_PROBABILITY),
       Seq("CC-Prob", "ProbList/PSSM", "ProbState", "Domains")),
 
     // REPPER
     ("repper", "Repper", "rep", "seqanal", "",
-      Seq(paramAccess.ALIGNMENT.name),
+      Seq(paramAccess.ALIGNMENT),
       Seq.empty[String]),
 
     // TPRpred
     ("tprpred", "TPRpred", "tprp", "seqanal", "",
-      Seq(paramAccess.ALIGNMENT.name),
+      Seq(paramAccess.ALIGNMENT),
       Seq.empty[String]),
 
     // HHomp
     ("hhomp", "HHomp", "hho", "2ary", "",
-      Seq(paramAccess.ALIGNMENT.name),
+      Seq(paramAccess.ALIGNMENT),
       Seq.empty[String]),
 
     // Quick 2D
     ("quick2d", "Quick2D", "q2d", "2ary", "",
-      Seq(paramAccess.ALIGNMENT.name),
+      Seq(paramAccess.ALIGNMENT),
       Seq.empty[String]),
 
     // Ali2D
     ("ali2d", "Ali2D", "a2d", "2ary", "",
-      Seq(paramAccess.ALIGNMENT.name),
+      Seq(paramAccess.ALIGNMENT),
       Seq.empty[String]),
 
     // Modeller
     ("modeller", "Modeller", "mod", "3ary", "",
-      Seq(paramAccess.ALIGNMENT.name),
+      Seq(paramAccess.ALIGNMENT),
       Seq.empty[String]),
 
     // ANCESCON
     ("ancescon", "ANCESCON", "anc", "classification", "",
-      Seq(paramAccess.ALIGNMENT.name, paramAccess.LONG_SEQ_NAME.name),
+      Seq(paramAccess.ALIGNMENT, paramAccess.LONG_SEQ_NAME),
       Seq("Tree")),
 
     // PHYLIP
     ("phylip", "PHYLIP-NEIGHBOR", "phyn", "classification", "",
-      Seq(paramAccess.ALIGNMENT.name, paramAccess.MATRIX_PHYLIP.name),
+      Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYLIP),
       Seq("NeighborJoining", "UPGMA")),
 
     // Backtranslate
     ("backtrans", "Backtranslator", "bac", "utils", "",
-      Seq(paramAccess.ALIGNMENT.name, paramAccess.GENETIC_CODE.name),
+      Seq(paramAccess.ALIGNMENT, paramAccess.GENETIC_CODE),
       Seq("DNA")),
 
     // HHfilter
     ("hhfilter", "HHFilter", "hhfi", "utils", "",
-      Seq(paramAccess.ALIGNMENT.name, paramAccess.MAX_SEQID.name, paramAccess.MIN_SEQID_QUERY.name, paramAccess.MIN_QUERY_COV.name,
-        paramAccess.NUM_SEQS_EXTRACT.name),
+      Seq(paramAccess.ALIGNMENT, paramAccess.MAX_SEQID, paramAccess.MIN_SEQID_QUERY, paramAccess.MIN_QUERY_COV,
+        paramAccess.NUM_SEQS_EXTRACT),
       Seq.empty)).map { t =>
     t._1  -> tool(t._1, t._2, t._3, t._4, t._5, t._6, t._7)
   }.toMap
@@ -173,16 +169,16 @@ class ToolFactory @Inject() (paramAccess: ParamAccess) {
              toolNameAbbrev: String,
              category: String,
              optional: String,
-             params: Seq[String],
+             params: Seq[Param],
              results: Seq[String]): Tool = {
 
             val paramGroups = Map(
               "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.ALIGNMENT_FORMAT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
                 paramAccess.PROTBLASTPROGRAM.name)
             )
-            // Params which are not a part of any group
+            // Params which are not a part of any group (given by the name)
             val remainParamName : String = "Parameters"
-            val remainParams : Seq[String] = params.diff(paramGroups.values.flatten.toSeq)
+            val remainParams : Seq[String] = params.map(_.name).diff(paramGroups.values.flatten.toSeq)
 
             val toolitem = Toolitem(
               toolNameShort,
@@ -192,7 +188,7 @@ class ToolFactory @Inject() (paramAccess: ParamAccess) {
               category,
               // Constructs the Parameter specification such that the View can render the input fields
               paramGroups.keysIterator.map { group =>
-                group ->  paramGroups(group).filter(params.contains(_)).map { param =>
+                group ->  paramGroups(group).filter(params.map(_.name).contains(_)).map { param =>
                   param -> paramAccess.allowed.getOrElse(param, Nil)
                 }
               }.toSeq :+
@@ -201,6 +197,7 @@ class ToolFactory @Inject() (paramAccess: ParamAccess) {
                   param -> paramAccess.allowed.getOrElse(param, Nil)
                 }
             )
-            Tool(toolNameShort, toolNameLong, toolNameAbbrev, category,optional,params, results, toolitem, paramGroups)
+            Tool(toolNameShort, toolNameLong, toolNameAbbrev, category,optional,params.map(p => p.name -> p).toMap,
+              results, toolitem, paramGroups)
           }
 }
