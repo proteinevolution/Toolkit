@@ -111,6 +111,14 @@ mapParam = (paramElem, ctrl) ->
   m.component comp[0], comp[1]
 
 
+closeShortcut = (element, isInit) ->
+  if not isInit then
+  $(document).keydown (e) ->
+    if e.keyCode == 27 && $("#tool-tabs").hasClass("fullscreen")
+      $("#collapseMe").click()
+    return
+
+
 
 # Encompasses the individual sections of a Job, usually rendered as tabs
 JobTabsComponent =
@@ -176,6 +184,7 @@ JobTabsComponent =
         Job.delete(jobID)
 
 
+
   view: (ctrl, args) ->
     m "div", {class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl)}, [
 
@@ -184,7 +193,7 @@ JobTabsComponent =
           m "li",  {id: "tab-#{item}"},  m "a", {href: "#tabpanel-#{item}"}, item
 
         m "li", {style: "float: right;"},
-          m "input", {type: "button", class: "button small button_fullscreen", value: ctrl.getLabel(), onclick: ctrl.fullscreen},
+          m "input", {type: "button", id:"collapseMe", class: "button small button_fullscreen", value: ctrl.getLabel(), onclick: ctrl.fullscreen, config: closeShortcut},
         if ctrl.isJob
           m "li", {style: "float: right;" },
             m "input", {type: "button", class: "button small delete", value: "Delete Job", onclick: ctrl.delete.bind(ctrl)}
@@ -254,6 +263,7 @@ JobSubmissionComponent =
         serialize: (data) -> data
       .then(
         (data) ->
+          jobID = data.jobID
           if data.existingJobs
             # Remove previous click handlers
             $('#reload_job').unbind 'click'
@@ -265,7 +275,7 @@ JobSubmissionComponent =
               m.route("/jobs/#{data.existingJob.jobID}")
             $('#submit_again').on 'click', ->
               $('#submit_modal').foundation('close')
-              jobID = data.jobID
+              sendMessage({type: "RegisterJobs", "jobIDs": [jobID]})
               # Add a new Job to the Model
               Job.add(new Job({mainID: jobID, jobID: jobID, state: 0, createdOn: 'now', toolname: toolname}))
               submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID)
@@ -275,7 +285,7 @@ JobSubmissionComponent =
             # Show the modal
             $('#submit_modal').foundation('open')
           else
-            jobID = data.jobID
+            sendMessage({type: "RegisterJobs", "jobIDs": [jobID]})
             # Add a new Job to the Model
             Job.add(new Job({mainID: jobID, jobID: jobID, state: 0, createdOn: 'now', toolname: toolname}))
             submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID)
@@ -387,6 +397,7 @@ window.ParameterAlignmentComponent =
             id: ctrl.id
             onchange: m.withAttr("value", ctrl.param.value)
             value: ctrl.param.value()
+            spellcheck: false
         m "div", {id: "upload_alignment_modal", class: "tiny reveal", config: alignmentUpload},
           m "input",
             type: "file"

@@ -1,3 +1,9 @@
+.ui-widget {
+    font-family: inherit;
+    font-size: 1.0em !important;
+}
+
+
 body.is-reveal-open {
     overflow: visible;
 }
@@ -26,6 +32,16 @@ body.is-reveal-open {
     background: inherit;
 }
 
+#hhpred_alignments {
+
+    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    white-space: pre;
+}
+
+/* To display the alignments more nicely */
+#hhpred_alignments td {
+    padding: 0rem 1rem 0rem 0rem !important;
+}
 
 .parameter label {
     float: left;

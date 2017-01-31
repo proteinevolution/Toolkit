@@ -87,8 +87,8 @@
             routes.javascript.JobController.create,
             routes.javascript.JobController.check,
             routes.javascript.JobController.delete,
-            routes.javascript.Jobs.annotation)
-
+            routes.javascript.Jobs.annotation,
+            routes.javascript.DataController.get)
 
         <!-- Google Fonts -->
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
@@ -271,8 +271,6 @@
         <script src='@routes.Assets.versioned("javascripts/biojs-vis-tree.min.js")'></script>
 
         <script type="text/javascript">
-
-
                     function openNav() {
                         document.getElementById("myNav").style.height = "100%";
                     }
@@ -285,13 +283,57 @@
                         x.classList.toggle("change");
                     }
 
-
                     $(document).ready(function() {
                         $(document).foundation();
 		                $('select').niceSelect();
+                    });
+                    var color_regex = /(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)/g;
+                    function color_regex_replacer(match) {
+                        return ["<span class=\"aa_", match.charAt(0), "\">", match, "</span>"].join('');
+                    }
+                    var aa_color_font = new Map();
+                    aa_color_font.set("aa_W", "#808080");
+                    aa_color_font.set("aa_Y", "#808080");
+                    aa_color_font.set("aa_F", "#808080");
+                    aa_color_font.set("aa_L", "#00ff00");
+                    aa_color_font.set("aa_I", "#00ff00");
+                    aa_color_font.set("aa_V", "#00ff00");
+                    aa_color_font.set("aa_M", "#00ff00");
+                    aa_color_font.set("aa_A", "#404040");
+                    aa_color_font.set("aa_S", "#404040");
+                    aa_color_font.set("aa_T", "#404040");
+                    aa_color_font.set("aa_K", "red");
+                    aa_color_font.set("aa_R", "red");
+                    aa_color_font.set("aa_D", "blue");
+                    aa_color_font.set("aa_E", "blue");
+                    aa_color_font.set("aa_Q", "#d000a0");
+                    aa_color_font.set("aa_N", "#d000a0");
+                    aa_color_font.set("aa_H", "#E06000");
+                    aa_color_font.set("aa_C", "#A08000");
+                    aa_color_font.set("aa_P", "#000000");
+                    aa_color_font.set("aa_G", "#404040");
 
-                    })
+                    var aa_color_background = new Map();
+                    aa_color_background.set("aa_W", "#00c000");
+                    aa_color_background.set("aa_Y", "#00c000");
+                    aa_color_background.set("aa_F", "#00c000");
+                    aa_color_background.set("aa_L", "#02ff02");
+                    aa_color_background.set("aa_I", "#02ff02");
+                    aa_color_background.set("aa_V", "#02ff02");
+                    aa_color_background.set("aa_M", "#02ff02");
+                    aa_color_background.set("aa_A", "#404040");
+                    aa_color_background.set("aa_S", "#404040");
+                    aa_color_background.set("aa_T", "#404040");
+                    aa_color_background.set("aa_K", "#ff0000");
+                    aa_color_background.set("aa_R", "#ff0000");
+                    aa_color_background.set("aa_D", "#6080ff");
+                    aa_color_background.set("aa_E", "#6080ff");
+                    aa_color_background.set("aa_Q", "#e080ff");
+                    aa_color_background.set("aa_N", "#e080ff");
+                    aa_color_background.set("aa_H", "#ff8000");
+                    aa_color_background.set("aa_C", "#ffff00;");
+                    aa_color_background.set("aa_P", "#a0a0a0");
+                    aa_color_background.set("aa_G", "#404040");
             </script>
-
     </body>
 </html>

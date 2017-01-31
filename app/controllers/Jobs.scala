@@ -1,21 +1,18 @@
 package controllers
 
-import akka.actor.ActorRef
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{Inject,Singleton}
 
 import actors.JobActor.JobStateChanged
-import actors.Master.JobMessage
 import models.database._
+import models.job.JobActorAccess
 import modules.CommonModule
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
 
 
 /*
@@ -28,28 +25,27 @@ We can introduce auto-coercion of the Job MainID to the BSONObject ID
   *
   */
 @Singleton
-final class Jobs @Inject()(@Named("master") master                        : ActorRef,
-                           val reactiveMongoApi                           : ReactiveMongoApi,
-                           @NamedCache("jobActorCache") val jobActorCache : CacheApi) extends Controller with CommonModule {
+final class Jobs @Inject()(jobActorAccess: JobActorAccess,
+                           val reactiveMongoApi: ReactiveMongoApi) extends Controller with CommonModule {
 
   def jobStatusDone(jobID: String) = Action {
 
-    master ! JobMessage(jobID, JobStateChanged(jobID, Done))
+    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
     Ok
   }
 
   def jobStatusError(jobID: String) = Action {
-    master ! JobMessage(jobID, JobStateChanged(jobID, Error))
+    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Error))
     Ok
   }
 
   def jobStatusRunning(jobID: String) = Action {
-    master ! JobMessage(jobID, JobStateChanged(jobID, Running))
+    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Running))
     Ok
   }
 
   def jobStatusQueued(jobID: String) = Action {
-    master ! JobMessage(jobID, JobStateChanged(jobID, Queued))
+    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Queued))
     Ok
   }
 
@@ -60,7 +56,7 @@ final class Jobs @Inject()(@Named("master") master                        : Acto
 
       case Some(job) =>
         modifyJob(BSONDocument(Job.JOBID -> job.jobID),
-          BSONDocument("$set" -> BSONDocument(Job.SGEID -> sgeID)))
+          BSONDocument("$set" -> BSONDocument(Job.CLUSTERDATA -> JobClusterData(sgeID,Some(1),Some(1)))))
         Logger.info(jobID + " gets job-ID " + sgeID + " on SGE")
       case None =>
         Logger.info("Unknown ID " + jobID.toString)
@@ -82,7 +78,16 @@ final class Jobs @Inject()(@Named("master") master                        : Acto
     Ok
   }
 
-  def annotation(jobID : String, content : String) = Action {
+  /**
+    *
+    * Creates new annotation document and modifies this if it already exists in one method
+    * TODO: make this secure against CSRF
+    * @param jobID
+    * @param content
+    * @return
+    */
+
+  def annotation(jobID : String, content : String) : Action[AnyContent] = Action {
 
     val entry = JobAnnotation(mainID = BSONObjectID.generate(),
                               jobID = jobID,
@@ -91,12 +96,24 @@ final class Jobs @Inject()(@Named("master") master                        : Acto
 
     upsertAnnotation(entry)
 
-    Ok
+    modifyAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID),
+      BSONDocument("$set"   -> BSONDocument(JobAnnotation.CONTENT -> content)))
+
+
+    Ok("annotation upserted")
+
   }
 
 
+  def getAnnotation(jobID: String): Action[AnyContent] = Action.async { implicit request =>
 
+    findJobAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID)).map { annotationList =>
+      val foundAnnotations = annotationList.map(_.content)
 
+      Ok(foundAnnotations.getOrElse(""))
 
+    }
+
+  }
 
 }
