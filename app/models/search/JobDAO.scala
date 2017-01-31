@@ -6,7 +6,7 @@ import com.sksamuel.elastic4s._
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
 import com.typesafe.config.ConfigFactory
-import models.tools.{ToolFactory, Tool}
+import models.tools.ToolFactory
 import modules.tel.TELConstants
 import modules.tools.FNV
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
@@ -18,7 +18,7 @@ import scala.concurrent.Future
 
 
 @Singleton
-class JobDAO @Inject()(cs: ClusterSetup,
+final class JobDAO @Inject()(cs: ClusterSetup,
                        elasticFactory: PlayElasticFactory,
                        toolFactory: ToolFactory,
                        @Named("jobs") indexAndType: IndexAndType)
@@ -34,6 +34,11 @@ class JobDAO @Inject()(cs: ClusterSetup,
 
   private def toolNameLong(name : String) : String = toolFactory.values.get(name).get.toolNameLong
 
+  /**
+    * generates Param hash for matching already existing jobs
+    * @param params
+    * @return
+    */
 
   def generateHash(params: Map[String, String]): BigInt =  {
 
@@ -41,6 +46,12 @@ class JobDAO @Inject()(cs: ClusterSetup,
 
   }
 
+
+  /**
+    * hashes the runscripts which is used for a job
+    * @param toolname
+    * @return
+    */
 
   def generateRSHash(toolname: String) : String = {
 
@@ -51,6 +62,11 @@ class JobDAO @Inject()(cs: ClusterSetup,
 
   }
 
+  /**
+    * hashes the tool version and version of helper scripts specified in the tools.conf config
+    * @param name
+    * @return
+    */
   def generateToolHash(name: String) : String = {
 
     try {
