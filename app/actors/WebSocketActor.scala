@@ -1,15 +1,15 @@
 package actors
 
-import javax.inject.{Inject, Named}
+import javax.inject.Inject
 
-import actors.JobActor.{JobStateChanged, StopWatch}
-import actors.Master.{JobMessage, UserConnect}
+import actors.JobActor.{JobStateChanged, StartWatch, StopWatch}
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import com.google.inject.assistedinject.Assisted
 import models.database.User
+import models.job.JobActorAccess
 import modules.CommonModule
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
@@ -27,16 +27,11 @@ object WebSocketActor {
   }
 }
 
-
-class WebSocketActor @Inject() (@Named("master") master: ActorRef,
-                                val reactiveMongoApi: ReactiveMongoApi,
+class WebSocketActor @Inject() (val reactiveMongoApi: ReactiveMongoApi,
+                                jobActorAccess: JobActorAccess,
                                 @Assisted("userID") userID : BSONObjectID,
                                 @Assisted("out") out: ActorRef)
   extends Actor with ActorLogging with CommonModule {
-
-  override def preStart(): Unit = {
-    master ! UserConnect(userID)
-  }
 
   override def postStop(): Unit = {} // TODO Send UserDisconnect to Master
 
@@ -46,24 +41,29 @@ class WebSocketActor @Inject() (@Named("master") master: ActorRef,
     case js: JsValue =>
       (js \ "type").validate[String].foreach {
 
-        /**
-          * Job interaction Requests
-          */
+        // Message containing a List of Jobs the WebSocket wants to register to
+        case "RegisterJobs" =>
+
+          (js \ "jobIDs").validate[Seq[String]].asOpt match {
+
+            case Some(jobIDs) => jobIDs.foreach { jobID =>
+              jobActorAccess.sendToJobActor(jobID, StartWatch(jobID, self))
+            }
+            case None => // Client has send strange message over the Websocket
+          }
+
 
         // Request to remove a Job from the user's view but it will remain stored
         case "ClearJob" =>
 
           (js \ "jobID").validate[String].asOpt match {
-
             case Some(jobID) =>
-              Logger.info("Job: " + jobID + " is going to be cleared")
               modifyUser(BSONDocument(User.IDDB -> userID),
                 BSONDocument("$pull" -> BSONDocument(User.JOBS -> jobID)))
-              master ! JobMessage(jobID, StopWatch(self))
+              jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, self))
             case None => //
           }
       }
-
 
     case JobStateChanged(jobID, state) =>
 

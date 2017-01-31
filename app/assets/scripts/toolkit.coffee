@@ -19,6 +19,7 @@ class window.Job
 
   # MainID of the currently selected job
   this.selected = m.prop -1
+  this.owner = m.prop ""
   this.lastUpdated = m.prop -1
   this.lastUpdatedMainID  = m.prop -1
   this.lastUpdatedState = m.prop -1
@@ -31,12 +32,20 @@ class window.Job
           return true
       return false
 
-  this.list = m.request({url: "/api/jobs", method: "GET", type: Job})
+  this.list = do ->
+    x = m.request({url: "/api/jobs", method: "GET", type: Job})
+    x.then (jobs) -> Job.register(jobs.map (job) -> job.jobID)
+    x
 
-  # loads the complete job list
+  this.register = (jobIDs) ->
+    sendMessage({type: "RegisterJobs", "jobIDs": jobIDs})
+
+  # Refreshes the JobList
   this.reloadList =  ->
     Job.list = m.request({url: "/api/jobs", method: "GET", type: Job})
     Job.list.then(Job.list)
+    Job.list.then (data) ->
+      Job.register(data.map (job) -> job.jobID)
 
 
   this.getJobByID = (jobID) ->
@@ -48,7 +57,6 @@ class window.Job
 
   # Clears a job from the joblist by index  # TODO Abstract over clear and delete
   this.clear = (idx) ->
-    console.log("Job Cleared invoked")
     Job.list.then (jobs) ->
       job = jobs[idx]
       jobs[idx] = null
@@ -59,7 +67,6 @@ class window.Job
 
 
   this.delete = (jobID) ->
-    console.log("Deletion in JobModel for JOb " + jobID)
     Job.list.then (jobs) ->
       jobs.map (job, idx) ->
         if job.jobID() == jobID
@@ -102,10 +109,11 @@ window.Toolkit =
       # Load the Job into the Joblist if it is not there
       Job.contains(jobID).then (jobIsPresent) ->
         if not jobIsPresent
-          console.log("Loading Requested Job with JobID #{jobID}")
+          sendMessage({type: "RegisterJobs", "jobIDs": [jobID]})
           m.request({url: "/api/job/load/#{jobID}", method: "GET"}).then (data) -> Job.add(new Job(data))
     else
       Job.selected(-1)
+
 
 
     toolname = m.route.param("toolname")
@@ -119,10 +127,11 @@ window.Toolkit =
     viewComponent : viewComponent
     selected: Job.selected
     clear: Job.clear
+    ownerName: Job.owner
 
   view: (ctrl) -> [
     m "div", {class: "large-2 padded-column columns show-for-large", id: "sidebar"},
-      m.component JobListComponent, {jobs: ctrl.jobs, selected: ctrl.selected, clear: ctrl.clear}
+      m.component JobListComponent, {owner: ctrl.ownerName, jobs: ctrl.jobs, selected: ctrl.selected, clear: ctrl.clear}
     m "div", {id: "content", class: "large-10 small-12 columns padded-column"},
       ctrl.viewComponent()
   ]

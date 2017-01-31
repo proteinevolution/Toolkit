@@ -48,11 +48,11 @@ object JobAnnotation {
 
 
   implicit object JobAnnotationWrites extends Writes[JobAnnotation] {
-    def writes (job : JobAnnotation) : JsObject = Json.obj(
-      IDDB        -> job.mainID,
-      JOBID       -> job.jobID,
-      CONTENT     -> job.content,
-      DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis))
+    def writes (jobAnnotation : JobAnnotation) : JsObject = Json.obj(
+      IDDB        -> jobAnnotation.mainID,
+      JOBID       -> jobAnnotation.jobID,
+      CONTENT     -> jobAnnotation.content,
+      DATECREATED -> BSONDateTime(jobAnnotation.dateCreated.fold(-1L)(_.getMillis))
     )
   }
 
@@ -74,11 +74,11 @@ object JobAnnotation {
     * Object containing the writer for the Class
     */
   implicit object Writer extends BSONDocumentWriter[JobAnnotation] {
-    def write(job: JobAnnotation) : BSONDocument = BSONDocument(
-      IDDB        -> job.mainID,
-      JOBID       -> job.jobID,
-      CONTENT     -> job.content,
-      DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis))
+    def write(jobAnnotation: JobAnnotation) : BSONDocument = BSONDocument(
+      IDDB        -> jobAnnotation.mainID,
+      JOBID       -> jobAnnotation.jobID,
+      CONTENT     -> jobAnnotation.content,
+      DATECREATED -> BSONDateTime(jobAnnotation.dateCreated.fold(-1L)(_.getMillis))
     )
   }
 }

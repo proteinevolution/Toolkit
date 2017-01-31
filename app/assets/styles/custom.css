@@ -31,9 +31,9 @@ div#main {
     margin-bottom: 55px;
     background-color: #cecece;
     background-color: rgb(238, 238, 238);
-    -webkit-box-shadow: 1px 3px 7px 4px rgba(0,0,0,0.75);
-    -moz-box-shadow: 1px 3px 7px 4px rgba(0,0,0,0.75);
-    box-shadow: 1px 3px 7px 4px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 1px 3px 7px 4px rgba(200,200,200,0.75);
+    -moz-box-shadow: 1px 3px 7px 4px rgba(200,200,200,0.75);
+    box-shadow: 1px 3px 7px 4px rgba(200,200,200,0.75);
 }
 
 

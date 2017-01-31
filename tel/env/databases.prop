@@ -1,2 +1,3 @@
+DBROOT   = /ebio/abt1_share/toolkit_sync/databases
 UNIPROT  = /ebio/abt1_share/toolkit_sync/databases/hhblits/uniprot20
 NR       = /ebio/abt1_share/toolkit_sync/databases/standard/NewToolkitDBs  
