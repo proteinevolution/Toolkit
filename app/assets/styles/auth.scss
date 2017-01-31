@@ -96,7 +96,7 @@
 
 /*Login Widget*/
 #auth-link {
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
   font-size: 0.75em;
   color: #707070;
   overflow-x: hidden;
@@ -115,6 +115,7 @@ span#auth-link-text {
   text-overflow: ellipsis;
   overflow: hidden;
   max-width: 68px;
+  font-weight: bolder;
   display: inline-block;
 }
 
@@ -127,4 +128,13 @@ span#auth-link-text {
 #hamburgerInside {
   position: absolute;
   margin: 20px 0 0 90%;
+}
+
+.icon-user {
+  font-size: 1.5em;
+  float: left;
+  display: inline-block;
+  margin: auto;
+  left: 15%;
+  position: relative;
 }
