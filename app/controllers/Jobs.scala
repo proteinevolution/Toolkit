@@ -11,6 +11,7 @@ import play.api.Logger
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import play.filters.csrf._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

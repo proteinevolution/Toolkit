@@ -170,7 +170,7 @@ final class JobController @Inject() (jobIDProvider                              
     * Marks a Job for deletion*
     * @return
     */
-  def delete(jobID : String) =  Action.async { implicit request =>
+  def delete(jobID : String) : Action[AnyContent] =  Action.async { implicit request =>
     Logger.info("Delete Action in JobController reached")
     getUser.flatMap { user =>
       findJob(BSONDocument(Job.JOBID -> jobID)).map {
@@ -213,7 +213,7 @@ final class JobController @Inject() (jobIDProvider                              
     *
     * @return
     */
-  def deleteMulti() =  Action.async { implicit request =>
+  def deleteMulti() : Action[AnyContent] =  Action.async { implicit request =>
     Logger.info("DeleteMulti Action in JobController reached")
     getUser.map { user =>
       // evaluate all jobIDs from the ids list
