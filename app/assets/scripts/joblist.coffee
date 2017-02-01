@@ -61,17 +61,17 @@ window.JobListComponent =
         ]
 
         m "div",{id: "joblistbottom"}, args.jobs().map (job, idx) ->
-          m "div", {class: "job #{a[job.state()]}".concat(if job.jobID() == args.selected() then " selected" else "")}, [
-            m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.jobID() + '"]', job.jobID()
+          m "div", {class: "job #{a[job.state]}".concat(if job.jobID == args.selected then " selected" else "")}, [
+            m "div", {class: "jobid"},  m 'a[href="/#/jobs/' + job.jobID + '"]', job.jobID
             m "span", {class: "toolname"}, job.toolname.substr(0,4).toUpperCase()
             m "a", {class: "boxclose", onclick: args.clear.bind(ctrl, idx)}
           ]
 
-        if (document.cookie.split("&username=")[1] == args.owner()) then [ m "div", {class: "notesheader"}, "Notes" ] else []
+        if (document.cookie.split("&username=")[1] == args.owner) then [ m "div", {class: "notesheader"}, "Notes" ] else []
 
 
-        if (document.cookie.split("&username=")[1] == args.owner()) then [ m "div", {class: "jobnotes"}, [
-          m "textarea", {id: "notepad"+args.selected(), placeholder: "Type private notes here", spellcheck: false, config: jobNoteArea}
+        if (document.cookie.split("&username=")[1] == args.owner) then [ m "div", {class: "jobnotes"}, [
+          m "textarea", {id: "notepad"+args.selected , placeholder: "Type private notes here", spellcheck: false, config: jobNoteArea}
         ] ] else []
       ]
 
