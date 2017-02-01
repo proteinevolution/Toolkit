@@ -2,13 +2,13 @@ package actors
 
 import javax.inject.Inject
 
-import actors.JobActor.{JobStateChanged, StartWatch, StopWatch}
+import actors.JobActor._
 import akka.actor.Actor
 import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import com.google.inject.assistedinject.Assisted
-import models.database.User
+import models.database.{Job, User}
 import models.job.JobActorAccess
 import modules.CommonModule
 import play.api.Logger
@@ -33,7 +33,12 @@ class WebSocketActor @Inject() (val reactiveMongoApi: ReactiveMongoApi,
                                 @Assisted("out") out: ActorRef)
   extends Actor with ActorLogging with CommonModule {
 
-  override def postStop(): Unit = {} // TODO Send UserDisconnect to Master
+  override def preStart(): Unit = {
+    jobActorAccess.identifyUser(RegisterUser(userID, self))
+  } // Can not send any messages at this point of init
+  override def postStop(): Unit = {
+    jobActorAccess.identifyUser(UnregisterUser(userID, self))
+  } // TODO Send UserDisconnect to Master
 
 
   def receive = LoggingReceive {
@@ -47,7 +52,7 @@ class WebSocketActor @Inject() (val reactiveMongoApi: ReactiveMongoApi,
           (js \ "jobIDs").validate[Seq[String]].asOpt match {
 
             case Some(jobIDs) => jobIDs.foreach { jobID =>
-              jobActorAccess.sendToJobActor(jobID, StartWatch(jobID, self))
+              jobActorAccess.sendToJobActor(jobID, StartWatch(jobID, userID))
             }
             case None => // Client has send strange message over the Websocket
           }
@@ -60,13 +65,17 @@ class WebSocketActor @Inject() (val reactiveMongoApi: ReactiveMongoApi,
             case Some(jobID) =>
               modifyUser(BSONDocument(User.IDDB -> userID),
                 BSONDocument("$pull" -> BSONDocument(User.JOBS -> jobID)))
-              jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, self))
+              jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, userID))
             case None => //
           }
       }
 
-    case JobStateChanged(jobID, state) =>
+    //case JobStateChanged(jobID, state) =>
 
-      out ! Json.obj("type" -> "UpdateJob", "jobID" -> jobID, "state" -> state)
+      //out ! Json.obj("type" -> "UpdateJob", "jobID" -> jobID, "state" -> state)
+
+    case PushJob(job : Job) =>
+      Logger.info("WS Log: " + job.jobID + " is now " + job.status.toString)
+      out ! Json.obj("type" -> "UpdateJob", "job" -> job.cleaned())
   }
 }
