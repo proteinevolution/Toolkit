@@ -89,7 +89,9 @@
             routes.javascript.JobController.check,
             routes.javascript.JobController.delete,
             routes.javascript.Jobs.annotation,
-            routes.javascript.DataController.get)
+            routes.javascript.DataController.get,
+            routes.javascript.DataController.writeArticle,
+            routes.javascript.DataController.getRecentArticles)
 
         <!-- Google Fonts -->
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
@@ -278,6 +280,32 @@
         <script src='@routes.Assets.versioned("javascripts/biojs-vis-tree.min.js")'></script>
 
         <script type="text/javascript">
+
+
+                  var getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(5);
+
+                  $.ajax({
+                      'url': getRecentArticlesRoute.url,
+                      'method': getRecentArticlesRoute.method,
+                      'contentType': 'application/json',
+                      'dataType': 'json'
+                  }).done(function (article) {
+                      console.log(JSON.stringify(article));
+
+                  })
+
+
+
+                    // ajax call to push article into the database
+//                  var articlePushRoute = jsRoutes.controllers.DataController.writeArticle("The MPI bioinformatics Toolkit",
+//                          "is an open, interactive web service for protein bioinformatic analysis. It offers a wide array of interconnected, state-of-the-art bioinformatics tools to experts and non-experts alike, developed both externally (e.g. BLAST+, HMMER3, MUSCLE) and internally (e.g. HHpred, HHblits, PCOILS). ",
+//                          "http://olt:8555/assets/images/bioj.jpg");
+//                  $.ajax({
+//                      'url': articlePushRoute.url,
+//                      'method': articlePushRoute.method
+//                  });
+
+
                     function openNav() {
                         document.getElementById("myNav").style.height = "100%";
                     }
