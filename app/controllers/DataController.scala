@@ -2,12 +2,13 @@ package controllers
 
 import javax.inject.Inject
 
+import models.database.CMS.FeaturedArticle
 import modules.CommonModule
-import play.api.Logger
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
-
-import scala.concurrent.Future
+import reactivemongo.bson.BSONObjectID
+import org.joda.time.DateTime
+import play.api.libs.json.Json
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -26,4 +27,42 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
       case None => NotFound
     }
   }
+
+  /**
+    * Action to fetch article with articleID from database
+    */
+
+  def fetchArticle(articleID: String) = Action.async{
+    getArticle(articleID).map {
+        case Some(realArticle) => Ok
+        case None => NotFound
+      }
+    }
+  /**
+    * Action to fetch the last N recent articles database
+    */
+  def getRecentArticles(numArticles: Int) = Action.async{
+    getArticles(numArticles).map { seq =>
+      val  x = Json.toJson(seq)
+      Ok(x)
+    }
+  }
+  /**
+    * Action to write an article into the database
+    */
+  def writeArticle(title: String, text: String, imagePath: String) = Action.async{
+    val article = FeaturedArticle(BSONObjectID.generate(),title, text,imagePath,Some(DateTime.now()),None)
+    writeArticleDatabase(article).map { wr =>
+      if(wr.ok){
+        Ok
+      } else{
+        BadRequest
+      }
+    }
+  }
 }
+
+
+
+
+

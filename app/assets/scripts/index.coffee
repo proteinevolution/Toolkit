@@ -79,9 +79,9 @@ trafficbar = (elem, isInit) ->
 
 
 window.Index =
+
   controller: ->
     Job.selected(-1)
-
 
   view: ->
     m "div", {class: "small-12 large-12 columns"}, [
@@ -220,6 +220,9 @@ tilescomponent =
         ]
       ]
     ]
+
+
+
 
 
 ###m "div", {class: "row quicklinks"}, [
