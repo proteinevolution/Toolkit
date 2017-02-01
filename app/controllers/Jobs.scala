@@ -29,7 +29,6 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            val reactiveMongoApi: ReactiveMongoApi) extends Controller with CommonModule {
 
   def jobStatusDone(jobID: String) = Action {
-
     jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
     Ok
   }

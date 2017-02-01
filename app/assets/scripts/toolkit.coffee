@@ -92,7 +92,13 @@ class window.Job
     for job in Job.list()
       if job.jobID == jobID
         job.state = state
-        break
+        return true # job found, updated
+    return false    # job not found
+
+  # Updates or Adds a job to the Joblist
+  this.pushJob = (job) ->
+    foundJob = Job.updateState(job.jobID, job.state)
+    if (!foundJob) then Job.add(new Job(job))
 
   # Adds a new Job to the JobList.
   this.add = (job) -> Job.list.then (list) -> list.push(job)
