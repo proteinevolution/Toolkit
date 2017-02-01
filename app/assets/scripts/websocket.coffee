@@ -80,9 +80,8 @@ onMessage = (event) ->
     when "UpdateJob"
 
       m.startComputation()
-      console.log(message.jobID)
-      console.log(message.state)
-      Job.updateState(message.jobID, message.state)
+      console.log(message.job)
+      Job.pushJob(message.job)
       m.endComputation()
 
       # Stuff with traffic bar
