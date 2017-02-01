@@ -66,6 +66,7 @@ $ ->
       m.endComputation()
 
       setTimeout(loadMiniProfile,1000)
+      location.reload()
     else
       # add the error message to the view
       $("#auth-alert").html(json.message)
