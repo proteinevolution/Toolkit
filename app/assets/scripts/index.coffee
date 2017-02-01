@@ -52,8 +52,8 @@ trafficbar = (elem, isInit) ->
   if not isInit
     elem.setAttribute "data-disable-hover", "false"
     elem.setAttribute "data-tooltip", "data-tooltip"
-    elem.setAttribute "title", "Click to view last job: " + Job.lastUpdated()
-    status = Job.lastUpdatedState()
+    elem.setAttribute "title", "Click to view last job: " + Job.lastUpdated
+    status = Job.lastUpdatedState
     console.log "Traffic bar sees status " + status
     if status == -1
       console.log "Hide Trafficbar"
@@ -81,7 +81,8 @@ trafficbar = (elem, isInit) ->
 window.Index =
 
   controller: ->
-    Job.selected(-1)
+    # Deselect Job when going to the index page
+    Job.selected = -1
 
   view: ->
     m "div", {class: "small-12 large-12 columns"}, [
@@ -127,7 +128,7 @@ trafficBarComponent =
         m "div", {class: "search-query large-12 medium-6"},
           m "div", {class: "columns large-12 form-group"},
             m "input", {type: "text", id: "searchInput", name: "q", placeholder: "Search Keywords", config: typeAhead}
-        m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated()}"}
+        m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated}"}
         m "div", {class: "quick_container"}, [
           m "div", {class: "quick", id: "search_quick"}, [
             m "p", "HHpred"

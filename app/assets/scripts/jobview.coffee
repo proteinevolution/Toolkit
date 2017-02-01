@@ -34,7 +34,7 @@ window.JobViewComponent =
     else
       m "div", {id: "jobview"}, [
         m JobLineComponent, {job: args.job}
-        m JobTabsComponent, {job: args.job, add: args.add, messages: args.messages}
+        m JobTabsComponent, {job: args.job, add: args.add}
       ]
 
 #############################################################################
@@ -49,9 +49,9 @@ JobLineComponent =
         m "a", {config: helpModalAccess.bind(args)},
           m "i", {class: "icon-information_white helpicon"}
       ]
-      m "span", {class: "jobdate"}, if isJob then "Created: #{args.job().createdOn()}" else ""
-      m "span", {class: "jobinfo"}, if isJob then "JobID: #{args.job().jobID()}" else "Submit a new Job"
-      m "span", {class: "ownername"}, if args.job().ownerName then args.job().ownerName() else ""
+      m "span", {class: "jobdate"}, if isJob then "Created: #{args.job().createdOn}" else ""
+      m "span", {class: "jobinfo"}, if isJob then "JobID: #{args.job().jobID}" else "Submit a new Job"
+      m "span", {class: "ownername"}, if args.job().ownerName then args.job().ownerName else ""
     ]
 ##############################################################################
 
@@ -83,15 +83,13 @@ JobRunningComponent =
           ]
           m "tr", [
             m "td", "JobID"
-            m "td", args.job().jobID()
+            m "td", args.job().jobID
           ]
           m "tr", [
               m "td", "Created On"
-              m "td", args.job().createdOn()
+              m "td", args.job().createdOn
           ]
         ]
-        m "ul", args.messages().map (msg) ->
-          m "li", msg
         ]
 
 # Mithril Configs for JobViewComponent
@@ -123,8 +121,8 @@ closeShortcut = (element, isInit) ->
 # Encompasses the individual sections of a Job, usually rendered as tabs
 JobTabsComponent =
   model:  ->
-    isFullscreen: m.prop false
-    label: m.prop "Expand"
+    isFullscreen: false
+    label:  "Expand"
 
   controller: (args) ->
     mo = new JobTabsComponent.model()
@@ -161,24 +159,24 @@ JobTabsComponent =
     getParamValue : JobModel.getParamValue
     job : args.job
     active : active
-    getLabel: (-> this.label()).bind(mo)
+    getLabel: (-> this.label).bind(mo)
     fullscreen: (->
       job_tab_component = $("#tool-tabs")
-      if(this.isFullscreen())
+      if(this.isFullscreen)
         job_tab_component.removeClass("fullscreen")
-        this.isFullscreen(false)
-        this.label("Expand")
+        this.isFullscreen = false
+        this.label = "Expand"
         if typeof onCollapse == "function" then onCollapse()
 
       else
         job_tab_component.addClass("fullscreen")
-        this.isFullscreen(true)
-        this.label("Collapse")
+        this.isFullscreen = true
+        this.label = "Collapse"
         if typeof onExpand == "function" then onExpand()
       if typeof onFullscreenToggle == "function" then onFullscreenToggle()).bind(mo)
 
     delete: ->
-      jobID = this.job().jobID()
+      jobID = this.job().jobID
       if confirm "Do you really want to delete this Job (ID: #{jobID})"
         console.log "Delete for job #{jobID} clicked"
         Job.delete(jobID)
@@ -224,7 +222,7 @@ JobTabsComponent =
           ]
         if ctrl.isJob and ctrl.state == 3
           m "div", {class: "tabs-panel", id: "tabpanel-Running"},
-            m JobRunningComponent, {messages: args.messages, job: ctrl.job}
+            m JobRunningComponent, {job: ctrl.job}
 
         if ctrl.isJob and ctrl.state == 4
           m "div", {class: "tabs-panel", id: "tabpanel-Error"},
@@ -244,13 +242,16 @@ submitModal = (elem, isInit) ->
 
 
 JobSubmissionComponent =
+
   controller: (args) ->
     this.submitting = false
+    setJobID: ((jobID) ->
+      this.jobID = jobID).bind(args.job())
+    # Bind function to submit Job
     submit: (startJob) ->
-
       toolname = args.job().tool.toolname
       # Either use custom jobID or declare not using an own
-      jobID = args.job().jobID()
+      jobID = args.job().jobID
       if not jobID
         jobID = null
       checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID)
@@ -318,7 +319,7 @@ JobSubmissionComponent =
       #if !args.isJob then m "input", {type: "button", class: "success button small submitJob", value: "Prepare Job", onclick: ctrl.submit.bind(ctrl, false)} else null #TODO
       if  args.isJob && args.job().jobstate == 1 then m "input", {type: "button", class: "button small addJob", value: "Start Job", onclick: ctrl.startJob} else null  #TODO
       if  args.isJob then m "input", {type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob} else null  #TODO
-      m "input", {type: "text", id: "jobID", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", args.job().jobID), value: args.job().jobID()}
+      m "input", {type: "text", id: "jobID", class: "jobid", placeholder: "Custom JobID", onchange: m.withAttr("value", ctrl.setJobID), value: args.job().jobID}
       #m "input", {type: "button", class: "button small checkJob", value: "Check JobID", onclick: ctrl.checkJobID.bind(this) } # TODO somehow get this together with the jobID onChange
       #m "input", {type: "button", class: "button hollow small upload", value: "Upload File", style: "margin-left: 15px;"}
       m "input", {type: "text", class: "jobid", placeholder: "E-Mail Notification", style: "width: 16em; float: right;"}
@@ -376,8 +377,8 @@ dropzone_psi  = (element, isInit) ->
 # TODO Has to be generalized for one or multiple sequences
 window.ParameterAlignmentComponent =
   model: (args) ->
-    value: m.prop args.value    # Alignment Text
-    format: m.prop null         # Alignment Format
+    value:  args.value    # Alignment Text
+    format: null         # Alignment Format
 
   controller: (args) ->     # TODO Introduce function for automatic alignment format detection
     this.param = new ParameterAlignmentComponent.model args
@@ -396,7 +397,7 @@ window.ParameterAlignmentComponent =
             cols: 70
             id: ctrl.id
             onchange: m.withAttr("value", ctrl.param.value)
-            value: ctrl.param.value()
+            value: ctrl.param.value
             spellcheck: false
         m "div", {id: "upload_alignment_modal", class: "tiny reveal", config: alignmentUpload},
           m "input",
@@ -411,7 +412,7 @@ window.ParameterAlignmentComponent =
             type: "button"
             class: "button small alignmentExample"
             value: "Paste Example"
-            onclick: () -> ctrl.param.value(exampleSequence)
+            onclick: () -> ctrl.param.value = exampleSequence
           m "input",                         # Place example alignment
             type: "button"
             class: "button small alignmentExample"
@@ -445,20 +446,15 @@ ParameterSelectComponent =
 
 ParameterNumberComponent =
 
-  model: (args) ->
-    value: m.prop args.value
-
   controller: (args ) ->
-    this.param = new ParameterNumberComponent.model args
     name: args.name
     id: args.id
     label: args.label
-    param : this.param
 
-  view: (ctrl) ->
+  view: (ctrl, args) ->
     renderParameter [
       m "label", {for: ctrl.id}, ctrl.label
-      m "input", {type: "text", id: ctrl.id, name: ctrl.name, value: ctrl.param.value(), onchange: m.withAttr("value", ctrl.param.value) }
+      m "input", {type: "text", id: ctrl.id, name: ctrl.name, value: args.value}
 
     ]
 

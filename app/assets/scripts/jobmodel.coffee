@@ -4,16 +4,6 @@
 # TODO Refactor this model
 # Information about the current Job
 window.JobModel =
-  isJob: m.prop false
-  jobID: m.prop null
-  jobstate: m.prop null
-  ownerName: m.prop ""
-  messages : m.prop []             # All messages that were received with the WebSocket
-  executionTime : 0         # Seconds
-  createdOn: m.prop null
-  tool: m.prop null
-  alignmentPresent: false
-  views:  m.prop false
   paramValues : {}
   defaultValues:
     "num_iter": 1
@@ -37,13 +27,13 @@ window.JobModel =
     if args.isJob
       m.request({method: 'GET', url: "/api/job/#{value}"}).then (data) ->
         JobModel.paramValues = data.paramValues
-        Job.owner(data.ownerName)
+        Job.owner = data.ownerName
         mainID: data.mainID
         tool : data.toolitem
         isJob: true
-        jobID : m.prop data.jobID
-        ownerName : m.prop data.ownerName
-        createdOn : m.prop data.createdOn
+        jobID : data.jobID
+        ownerName : data.ownerName
+        createdOn : data.createdOn
         jobstate :  data.state
         views : data.views
     else
@@ -51,7 +41,7 @@ window.JobModel =
         JobModel.paramValues = {}
         tool : toolitem
         isJob: false
-        jobID: m.prop ""
+        jobID:  ""
 
   getParamValue: (param) ->
 
