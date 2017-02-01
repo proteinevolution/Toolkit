@@ -136,7 +136,7 @@ window.Toolkit =
 
   view: (ctrl) -> [
     m "div", {class: "large-2 padded-column columns show-for-large", id: "sidebar"},
-      m.component JobListComponent, {owner: ctrl.ownerName, jobs: ctrl.jobs, selected: ctrl.selected, clear: ctrl.clear}
+      m(JobListComponent, {owner: ctrl.ownerName, jobs: ctrl.jobs, selected: ctrl.selected, clear: ctrl.clear})
     m "div", {id: "content", class: "large-10 small-12 columns padded-column"},
       ctrl.viewComponent()
   ]
