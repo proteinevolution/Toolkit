@@ -31,7 +31,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
   lazy val values : Map[String, Tool] = Set(
     // Protblast
     ("protblast", "ProtBlast", "prob", "search", "",
-      Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.MATRIX, paramAccess.NUM_ITER, paramAccess.EVALUE,
+      Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.MATRIX, paramAccess.EVALUE,
         paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN, paramAccess.GAP_EXT, paramAccess.DESC, paramAccess.PROTBLASTPROGRAM),
       Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")),
 

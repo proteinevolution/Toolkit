@@ -8,9 +8,28 @@ import modules.tel.TEL
 
 object Validators {
 
-  // Validators
-  def acceptAll(x: String) = true
+  abstract class Validator {
+
+    def apply(x : String): Option[String]
+  }
+
+  object AcceptAll extends Validator {
+
+    override def apply(x: String) = None
+  }
+  object IsInteger extends Validator {
+
+    override def apply(x: String): Option[String] = {
+      try {
+        val y = x.toInt
+        None
+      } catch  {
+        case _: NumberFormatException => Some(s"$x is not an integer")
+      }
+    }
+  }
 }
+
 
 
 
@@ -20,11 +39,11 @@ object Validators {
   * @param inputType: 0 is NumberCompnent and 1 is SelectComponent
   * @param internalOrdering: allows to order the items within the params tab
   */
-case class Param(name: String, inputType: Int, internalOrdering: Int, validate: String => Boolean) {
+case class Param(name: String, inputType: Int, internalOrdering: Int, validators: Seq[Validators.Validator]) {
 
   // Constructor for Parameter which accepts all arguments
   def this(name: String, inputType: Int, internalOrdering: Int) =
-    this(name, inputType, internalOrdering, Validators.acceptAll)
+    this(name, inputType, internalOrdering, Seq(Validators.AcceptAll))
 }
 
 /**
@@ -58,7 +77,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val HHBLITSDB  =  new Param("hhblitsdb",1,1)
   final val ALIGNMODE = new Param("alignmode",1,1)
   final val MSAGENERATION = new Param("msageneration",1,1)
-  final val MSA_GEN_MAX_ITER = new Param("msa_gen_max_iter",1,1)
+  final val MSA_GEN_MAX_ITER = Param("msa_gen_max_iter",1,1, Seq(Validators.IsInteger))
   final val GENETIC_CODE = new Param("genetic_code",1,1)
   final val LONG_SEQ_NAME = new Param("long_seq_name",1,1)
   final val EVAL_INC_THRESHOLD = new Param("inclusion_ethresh",1,1)
