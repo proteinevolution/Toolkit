@@ -1,9 +1,10 @@
 package modules
 
+import models.database.CMS.FeaturedArticle
 import models.database.{FrontendJob, Job, JobAnnotation, User}
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
-import reactivemongo.api.Cursor
+import reactivemongo.api.{Cursor, QueryOpts}
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import reactivemongo.api.indexes.{Index, IndexType}
@@ -32,6 +33,24 @@ trait CommonModule extends ReactiveMongoComponents {
         collection
       }
   }
+  // articleCollection is now a value with the Index structure ensured
+  protected lazy val articleCollection : Future[BSONCollection] = {
+    reactiveMongoApi.database.map( _.collection[BSONCollection]("articles")).map { collection =>
+      collection.indexesManager.ensure(Index(Seq("dateCreated" -> IndexType.Descending), background = true, unique = true))
+      collection
+    }
+  }
+
+  protected def getArticle(articleID: String): Future[Option[FeaturedArticle]] = articleCollection.flatMap {
+    val selector = BSONDocument("articleID" -> BSONDocument("$eq" -> articleID))
+    _.find(selector).one[FeaturedArticle]
+  }
+  protected def getArticles(numArticles: Int): Future[List[FeaturedArticle]] = articleCollection.flatMap {
+    val selector = BSONDocument("dateCreated" -> -1)
+    _.find(BSONDocument()).sort(selector).cursor[FeaturedArticle]().collect[List](numArticles)
+  }
+  protected def writeArticleDatabase(featuredArticle: FeaturedArticle) = articleCollection.flatMap(_.insert(featuredArticle))
+
 
 
   protected lazy val frontendJobCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("frontendjobs"))
