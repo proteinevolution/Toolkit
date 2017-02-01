@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import actors.JobActor.{CreateJob, Delete}
-import models.{Constants}
+import models.Constants
 import models.database.{Job, JobDeletion, JobDeletionFlag}
 import models.job.{JobActorAccess, JobIDProvider}
 import models.search.JobDAO
@@ -158,7 +158,7 @@ final class JobController @Inject() (jobIDProvider                              
           // Stuff to get the inital tool arguments from the request
           val actorIndex = jobID.trim().hashCode() % nJobActors
           val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
-          jobActorAccess.sendToJobActor(jobID, CreateJob(jobID, (user, None),toolname, formData))
+          jobActorAccess.sendToJobActor(jobID, CreateJob(jobID, user,toolname, formData))
           Ok
       }
     }
