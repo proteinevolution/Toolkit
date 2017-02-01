@@ -32,7 +32,7 @@ final class JobDAO @Inject()(cs: ClusterSetup,
   private val jobHashIndex = Index / "jobhashes"
 
 
-  private def toolNameLong(name : String) : String = toolFactory.values.get(name).get.toolNameLong
+  //private def toolNameLong(name : String) : String = toolFactory.values.get(name).get.toolNameLong
 
   /**
     * generates Param hash for matching already existing jobs
@@ -70,7 +70,7 @@ final class JobDAO @Inject()(cs: ClusterSetup,
   def generateToolHash(name: String) : String = {
 
     try {
-      Math.abs(MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.${toolNameLong(name)}").toString,0)).toString
+      Math.abs(MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString,0)).toString
     }
     catch {
       case _ : Throwable => "No matching hash value found"
