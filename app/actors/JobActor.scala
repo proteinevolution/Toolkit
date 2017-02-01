@@ -27,26 +27,35 @@ import scala.concurrent.Future
 
 object JobActor {
 
-  case class CreateJob(jobID: String,
-                       userWithWS: (User, Option[ActorRef]), // TODO Second tuple component is probably not optional
-                       toolname: String,
-                       params: Map[String, String])
+  case class CreateJob(jobID     : String,
+                       user      : User,
+                       toolname  : String,
+                       params    : Map[String, String])
   trait Factory {
 
     def apply : Actor
   }
 
   // Messages the jobActor accepts from outside
-  case class JobStateChanged(jobID: String, newState: JobState)
+  case class PushJob(job : Job)
 
   // User Actor starts watching
-  case class StartWatch(jobID: String, actorRef: ActorRef)
+  case class StartWatch(jobID: String, userID: BSONObjectID)
 
   // UserActor Stops Watching this Job
-  case class StopWatch(jobID: String, actorRef: ActorRef)
+  case class StopWatch(jobID: String, userID: BSONObjectID)
+
+  // UserActor Registers Websocket
+  case class RegisterUser(userID : BSONObjectID, userActor : ActorRef)
+
+  // UserActor Unregisters Websocket
+  case class UnregisterUser(userID : BSONObjectID, userActor : ActorRef)
 
   // JobActor is requested to Delete the job
   case class Delete(jobID: String)
+
+  // Job Controller receives a job state change from the SGE
+  case class JobStateChanged(jobID : String, jobState : JobState)
 }
 
 class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscripts to be executed
@@ -66,7 +75,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
   private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty
 
   // WebSocketActors which are interested in the state of the Job
-  private var watchers: Map[String, Set[ActorRef]] = Map.empty.withDefaultValue(Set.empty)
+  private var watchers: Map[String, Set[BSONObjectID]] = Map.empty.withDefaultValue(Set.empty)
+
+  private var users: Map[BSONObjectID, Set[ActorRef]] = Map.empty.withDefaultValue(Set.empty)
 
   // Running executions
   private var runningExecutions: Map[String, RunningExecution] = Map.empty
@@ -74,6 +85,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
   /** Supplies a value for a particular Parameter. Returns params again if the parameter
     * is not present
+    *
     * @param name
     * @param value
     * @param params
@@ -100,23 +112,25 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
     this.currentExecutionContexts = this.currentExecutionContexts.-(jobID)
 
     // TODO Maybe send message to all watchers about JobDeletion
-    this.watchers = this.watchers.-(jobID).withDefaultValue(Set.empty)
+    this.watchers = this.watchers.-(jobID)
   }
 
 
   /**
     * Updates Jobstate in Model, in database, and notifies user watchlist
     */
-  private def updateJobState(jobID: String, state: JobState): Future[Job] = {
-
-    // Update Job in Map
-    val job = this.currentJobs(jobID).copy(status = state)
-    this.currentJobs = this.currentJobs.updated(jobID, job)
+  private def updateJobState(job : Job): Future[Job] = {
+    // Push the updated job into the current jobs
+    this.currentJobs = this.currentJobs.updated(job.jobID, job)
 
     // Update job in the database and notify watcher upon completion
     upsertJob(job).map { upsertedJob =>
-      watchers(jobID).foreach(_ ! JobStateChanged(upsertedJob.get.jobID, state))
-      upsertedJob.get
+      val foundWatchers = users.filter(a => watchers(job.jobID).contains(a._1))
+      Logger.info("\n----\nFound Watchers for Job \'" + job.jobID + "\': " + foundWatchers.keys.map(_.stringify).mkString(", "))
+      Logger.info("Job State for \'" + job.jobID + "\' changed to: " + job.status + "\n----\n")
+      foundWatchers.values.flatten.foreach(_ ! PushJob(job))
+      //watchers(jobID)
+      job
     }
   }
 
@@ -135,25 +149,23 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
   override def receive = LoggingReceive {
 
-    case CreateJob(jobID, userWithWS, toolname, params) =>
+    case CreateJob(jobID, user, toolname, params) =>
 
       val jobCreationTime = DateTime.now()
-      val userID = userWithWS._1.userID
 
       // jobid will also be available as parameter
       val extendedParams = params + ("jobid" -> jobID)
 
       // Make a new JobObject and set the initial values
-      val job = Job(mainID = BSONObjectID.generate(),
-        parentID    = None,
-        jobID       = jobID,
-        ownerID     = if (params.getOrElse("private","") == "true") Some(userID) else None,
-        status      = Submitted,
-        tool        = toolname,
-        watchList   = List(userID),
-        dateCreated = Some(jobCreationTime),
-        dateUpdated = Some(jobCreationTime),
-        dateViewed  = Some(jobCreationTime))
+      val job = Job(mainID      = BSONObjectID.generate(),
+                    jobID       = jobID,
+                    ownerID     = if (params.getOrElse("private","") == "true") Some(user.userID) else None,
+                    status      = Submitted,
+                    tool        = toolname,
+                    watchList   = List(user.userID),
+                    dateCreated = Some(jobCreationTime),
+                    dateUpdated = Some(jobCreationTime),
+                    dateViewed  = Some(jobCreationTime))
       this.currentJobs = this.currentJobs.updated(jobID, job)
 
       // Add job to database
@@ -184,7 +196,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
     }
     hashCollection.flatMap(_.insert(jobHash))
     // Add Job to user in database
-    modifyUser(BSONDocument(User.IDDB -> userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID)))
+    modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID)))
 
     // Establish exection context for the newJob
     val executionContext = ExecutionContext(jobPath/jobID)
@@ -199,10 +211,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
     oos.close()
 
     // Add user as watcher
-    userWithWS match {
-      case (_, Some(actorRef)) =>  this.watchers = this.watchers.updated(jobID, Set(actorRef))
-      case (_, None) => // TODO Can this happen?
-    }
+    this.watchers = this.watchers.updated(jobID, Set(user.userID))
 
     // Get new runscript instance from the runscript manager
     val runscript = runscriptManager(toolname).withEnvironment(env)
@@ -230,49 +239,63 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
 
     // User does no longer watch this Job
-    case StopWatch(jobID, actorRef) =>
-        val w: Set[ActorRef] = this.watchers(jobID)
-        this.watchers = this.watchers.updated(jobID, w.-(actorRef)).withDefaultValue(Set.empty)
+    case StopWatch(jobID, userID) =>
+        val w: Set[BSONObjectID] = this.watchers(jobID)
+        this.watchers = this.watchers.updated(jobID, w.-(userID)).withDefaultValue(Set.empty)
 
-    case StartWatch(jobID, actorRef) =>
+    case StartWatch(jobID, userID) =>
       Logger.info("User starts watching JobState with JobID " + jobID)
-      val w: Set[ActorRef] = this.watchers(jobID)
-      this.watchers = this.watchers.updated(jobID, w.+(actorRef)).withDefaultValue(Set.empty)
+      val w: Set[BSONObjectID] = this.watchers(jobID)
+      this.watchers = this.watchers.updated(jobID, w.+(userID)).withDefaultValue(Set.empty)
+
+    case RegisterUser(userID, userActor) =>
+      val u: Set[ActorRef]     = this.users(userID)
+      this.users    = this.users.updated(userID, u.+(userActor))
+
+    case UnregisterUser(userID, userActor) =>
 
 
     // Message from outside that the jobState has changed
-    case JobStateChanged(jobID, state) =>
+    case JobStateChanged(jobID : String, jobState : JobState) =>
+      currentJobs.get(jobID) match {
+        case Some(oldJob) =>
+          // Update the job object
+          val job = oldJob.copy(status = jobState)
+          // Give a update message to all
+          Logger.info("Jobstate has changed to " + job.status.toString + " of Job with ID " + job.jobID)
 
-      Logger.info("Jobstate has changed to " + state.toString + " of Job with ID " + jobID)
+          // Dependent on the state, we have to do different things
+          job.status match {
 
-      // Dependent on the state, we have to do different things
-      state match {
+            case Queued => this.updateJobState(job)
+            case Running => this.updateJobState(job)
 
-        case Queued => this.updateJobState(jobID, state)
-        case Running => this.updateJobState(jobID, state)
+            case Done =>
+              // Job is no longer running
+              Logger.info("Removing exection context")
+              this.runningExecutions = this.runningExecutions.-(job.jobID)
+              Logger.info("DONE Removing exection context")
 
-        case Done =>
-
-          // Job is no longer running
-          Logger.info("Removing exection context")
-          this.runningExecutions = this.runningExecutions.-(jobID)
-          Logger.info("DONE Removing exection context")
-
-          // Put the result files into the database, JobActor has to wait until this process has finished
-          Future.sequence((jobPath/jobID/"results").list.withFilter(_.hasExtension).withFilter(_.extension.get == ".json").map { file =>
-            result2Job(jobID, file.nameWithoutExtension, Json.parse(file.contentAsString))
-          }).map { _ =>
-            Logger.info("We can now set the job State")
-            // Now we can update the JobState and remove it, once the update has completed
-            this.updateJobState(jobID, state).map { job =>
-              this.removeJob(job.jobID)
-            }
+              // Put the result files into the database, JobActor has to wait until this process has finished
+              Future.sequence((jobPath / job.jobID / "results").list.withFilter(_.hasExtension).withFilter(_.extension.get == ".json").map { file =>
+                result2Job(job.jobID, file.nameWithoutExtension, Json.parse(file.contentAsString))
+              }).map { _ =>
+                // Now we can update the JobState and remove it, once the update has completed
+                this.updateJobState(job).map { job =>
+                  this.removeJob(job.jobID)
+                  Logger.info("Job has been removed from JobActor")
+                }
+              }
+            // Currently no further error handling
+            case Error =>
+              this.updateJobState(job).map { job =>
+                this.removeJob(job.jobID)
+              }
+            case _ =>
+              Logger.info("Job State for \'" + jobID + "\' changed to invalid JobStateChanged State: " + jobState)
           }
-        // Currently no further error handling
-        case Error =>
-          this.updateJobState(jobID, state).map { job =>
-            this.removeJob(job.jobID)
-          }
+        case None =>
+          Logger.info("Job not found: " + jobID)
       }
   }
 }
