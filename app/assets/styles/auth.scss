@@ -97,8 +97,7 @@
 /*Login Widget*/
 #auth-link {
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
-  font-size: 0.75em;
-  color: #707070;
+  font-size: 12px;
   overflow-x: hidden;
   background-repeat: repeat;
   background-attachment: scroll;
@@ -107,16 +106,21 @@
   background-origin: padding-box;
   background-size: auto auto;
   margin: 3px 0.5em 0 0;
-  border-color: #d85000;
   padding: 1px 5px;
+  border: 1px #d85000 solid;
+  background: linear-gradient(to bottom,rgba(245,245,245,1) 0%,rgba(240,240,240,1) 100%);
+  text-shadow: 0 1px 0 #FFF;
+  color: #848484;
 }
 
 span#auth-link-text {
+  font-size: 12px;
   text-overflow: ellipsis;
   overflow: hidden;
   max-width: 68px;
   font-weight: bolder;
-  display: inline-block;
+  text-align: center;
+  float: none;
 }
 
 #authoverlay {
@@ -130,11 +134,23 @@ span#auth-link-text {
   margin: 20px 0 0 90%;
 }
 
-.icon-user {
+#userLogin {
   font-size: 1.5em;
-  float: left;
+  text-align: center;
+  float: none;
   display: inline-block;
   margin: auto;
-  left: 15%;
-  position: relative;
+}
+
+a.loggedIn {
+
+  font-size: 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 156px;
+  font-weight: bolder;
+  text-align: center;
+  float: none;
+  color: #848484;
+
 }

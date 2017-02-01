@@ -166,15 +166,23 @@
                                 <!--signin -->
                             <div id="site-notifications" class="align-self-middle">
                                 <div id="user-control">
-                                    <a id="auth-link" onclick="openNav()" style="float: right; padding-right: 15px;">
-                                        <i class="icon-user" style="font-size:1.5em; padding-right: 0.5em;"></i>
+
                                         <span id="auth-link-text">
-                                        @{user.userData match {
-                                            case Some(userData) => userData.nameLogin
-                                            case None           => "Sign in"
-                                        }}
+                                            <ul class="dropdown menu" data-dropdown-menu data-alignment="right" data-disable-hover=true data-click-open=true>
+                                            @{user.userData match {
+                                                case Some(userData) =>  <li>
+                                                                        <a class="loggedIn" href="#">{userData.nameLogin}</a>
+                                                                        <ul class="menu">
+                                                                        <li><a href="#">Profile</a></li>
+                                                                        <li><a onclick="openNav()">Log Out</a></li>
+                                                                        </ul>
+                                                                        </li>
+
+                                                case None           =>  <a id="auth-link" onclick="openNav()">Sign in</a>
+                                            }}
+                                            </ul>
                                         </span>
-                                    </a>
+
                                 </div>
 
                             </div>
