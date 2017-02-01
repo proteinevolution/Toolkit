@@ -55,9 +55,7 @@ onOpen = (event) ->
   connecting = false
   retryCount = 1
   $("#offline-alert").fadeOut()
-  m.startComputation()
   Job.reloadList()
-  m.endComputation()
 
 onError = (event) ->
   setTimeout(reconnect(true), 3000)
@@ -72,17 +70,11 @@ onMessage = (event) ->
 
   message = JSON.parse event.data
   switch message.type
-  # Jobstate has changed
-    when "jobMessage"
-      m.startComputation()
-      JobModel.messages().push(message.message)
-      m.endComputation()
     when "UpdateJob"
 
-      m.startComputation()
       console.log(message.job)
       Job.pushJob(message.job)
-      m.endComputation()
+      m.redraw()
 
       # Stuff with traffic bar
       if message.state == 3

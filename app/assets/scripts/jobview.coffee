@@ -106,7 +106,7 @@ renderParameter = (content, moreClasses) ->
 mapParam = (paramElem, ctrl) ->
   ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
   comp = formComponents[paramElem[0]](ctrlArgs)
-  m.component comp[0], comp[1]
+  m(comp[0], comp[1])
 
 
 closeShortcut = (element, isInit) ->

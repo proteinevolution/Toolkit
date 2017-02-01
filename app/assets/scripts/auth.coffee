@@ -60,11 +60,8 @@ $ ->
       #change the "sign in" to the user login name
       $("#auth-link-text").html(json.user.nameLogin)
       $("#overlay-content").html(json.message)
-
-      m.startComputation()
       Job.reloadList()
-      m.endComputation()
-
+      m.redraw()
       setTimeout(loadMiniProfile,1000)
       location.reload()
     else
