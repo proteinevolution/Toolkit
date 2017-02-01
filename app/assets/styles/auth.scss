@@ -136,7 +136,7 @@ span#auth-link-text {
   margin: auto;
 }
 
-a.loggedIn {
+button.loggedIn {
 
   font-size: 12px;
   text-overflow: ellipsis;
@@ -146,5 +146,16 @@ a.loggedIn {
   text-align: center;
   float: none;
   color: #848484;
+  cursor: pointer;
 
+}
+
+.is-dropdown-submenu {
+  width: 100px !important;
+  box-shadow: 2px 5px 6px rgba(0,0,0,0.3);
+
+}
+
+.menu.vertical > li a:not(.button):hover {
+  background: rgba(211,211,211, 0.5);
 }
