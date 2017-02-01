@@ -332,8 +332,7 @@ tr.job a:visited {
 
 .vertical a {
     color: black;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-    font-size: 0.8em;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
 }
 
 .vertical a:hover {
