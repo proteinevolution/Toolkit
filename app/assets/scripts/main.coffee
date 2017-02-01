@@ -25,6 +25,7 @@ m.route document.getElementById('main-content'), '/',
   '/' : Index
   '/tools/:toolname': m Toolkit, {isJob: false}
   '/jobs/:jobID': m Toolkit, {isJob: true}
+  #'/profile/:username': m UserDashboard
 
 
 
