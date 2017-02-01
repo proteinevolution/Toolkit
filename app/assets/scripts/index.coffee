@@ -128,28 +128,6 @@ trafficBarComponent =
           m "div", {class: "columns large-12 form-group"},
             m "input", {type: "text", id: "searchInput", name: "q", placeholder: "Search Keywords", config: typeAhead}
         m "div", {class: "trafficbar", id: "trafficbar", config: trafficbar, onclick: () -> m.route "/jobs/#{Job.lastUpdated()}"}
-        m "div", {class: "quick_container"}, [
-          m "div", {class: "quick", id: "search_quick"}, [
-            m "p", "HHpred"
-            m "a", "Search"
-          ]
-          m "div", {class: "quick", id: "search_quick"}, [
-            m "p", "PSI-Blast"
-            m "a", "Search"
-          ]
-          m "div", {class: "quick", id: "search_quick"}, [
-            m "p", "Hmmer3"
-            m "a", "Search"
-          ]
-          m "div", {class: "quick", id: "align_quick"}, [
-            m "p", "T-Coffee"
-            m "a", "Alignment"
-          ]
-          m "div", {class: "quick", id: "analy_quick"}, [
-            m "p", "FRpred"
-            m "a", "Analysis"
-          ]
-        ]
       ]
 
 
@@ -191,12 +169,8 @@ recentUpdatesComponent =
 tilescomponent =
 
   model: ->
-    getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(5);
-    this.articles = m.request
-      url: getRecentArticlesRoute.url,
-      method: getRecentArticlesRoute.method
-    this.articles.then (data) ->
-      console.log(data)
+    getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(5)
+    articles: m.request {url: getRecentArticlesRoute.url, method: getRecentArticlesRoute.method }
 
 
   controller: ->
@@ -204,64 +178,6 @@ tilescomponent =
     articles: mod.articles
 
 
-
-  ###view: (ctrl, args) ->
-    ctrl.articles()###
-
-  view: ->
-
-    m "div", {class: "lazy-container"},[
-
-      m "div", {class: "tile-row"}, [
-          m "div", {class: "content-wrapper-half large-3 large-offset-2 columns"}, [
-            m "div", {class: "image-wrapper"},
-              m "img", { src: '/assets/images/EBGebaeude-04.tif'}
-            m "div", {class: "text-wrapper-half"}, [
-              m "hr", {class: "hr-index"}
-              m "div", {class: "header-font"}, "Department of Protein Evolution, MPI for Developmental Biology"
-              m "p", "The seemingly limitless diversity of proteins arose from only a few thousand domain prototypes."
-              m "a", {href: "http://www.eb.tuebingen.mpg.de/research/departments/protein-evolution.html"},
-                m "i", {class: "icon-index icon-chevron_right"}
-
-            ]
-          ]
-          m "div", {class: "content-wrapper-half margin-tile large-5 columns"}, [
-            m "div", {class: "image-wrapper"},
-              m "img", { src: '/assets/images/bioj.jpg'}
-            m "div", {class: "text-wrapper-half"}, [
-              m "hr", {class: "hr-index"}
-              m "div", {class: "header-font"}, "The MPI bioinformatics Toolkit"
-              m "p", "is an open, interactive web service for protein bioinformatic analysis. It offers a wide array of interconnected, state-of-the-art bioinformatics tools to experts and non-experts alike, developed both externally (e.g. BLAST+, HMMER3, MUSCLE) and internally (e.g. HHpred, HHblits, PCOILS). "
-              m "a", {href: "https://www.ncbi.nlm.nih.gov/pubmed/27131380"},
-                m "i", {class: "icon-index icon-chevron_right"}
-         ]
-        ]
-      ]
-    ]
+  view: (ctrl) ->
 
 
-
-
-
-###m "div", {class: "row quicklinks"}, [
-  m "div", {class: "columns search_quick"}, [
-    m "p", "HHpred"
-    m "a", "Search"
-  ]
-  m "div", {class: "columns search_quick"}, [
-    m "p", "PSI-Blast"
-    m "a", "Search"
-  ]
-  m "div", {class: "columns search_quick"}, [
-    m "p", "Hmmer3"
-    m "a", "Search"
-  ]
-  m "div", {class: "columns align_quick"}, [
-    m "p", "T-Coffee"
-    m "a", "Alignment"
-  ]
-  m "div", {class: "columns analy_quick"}, [
-    m "p", "FRpred"
-    m "a", "Analysis"
-  ]
-]###
