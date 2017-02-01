@@ -28,12 +28,12 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
                extends Constants {
 
   // Returns if the job is private or not
-  def isPrivate = {
-    ownerID.isDefined
+  def isPrivate : Boolean = {
+    ownerID.isDefined // TODO why is this the only measure for being a private job?
   }
 
   // Returns the runscript file path
-  def scriptPath = {
+  def scriptPath : String = {
     s"$jobPath$SEPARATOR${mainID.stringify}${SEPARATOR}tool.sh"
   }
 
@@ -41,7 +41,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
     * Returns a clean JSON Object representation of the Job
     * @return
     */
-  def cleaned() = {
+  def cleaned() : JsObject = {
 
     Json.obj("jobID"     -> jobID,
              "state"     -> status,
