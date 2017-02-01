@@ -122,3 +122,7 @@ GET           /api/jobs/getnotes/:jobID               @controllers.Jobs.getAnnot
 
 # Results
 GET           /api/job/results/:jobID/:key            @controllers.DataController.get(jobID: String, key: String)
+
+# Article
+GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)
+POST          /api/writeArticle                       @controllers.DataController.writeArticle(title: String, text: String, imagePath: String)
