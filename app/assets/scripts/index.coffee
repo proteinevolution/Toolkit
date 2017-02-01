@@ -190,6 +190,24 @@ recentUpdatesComponent =
 
 tilescomponent =
 
+  model: ->
+    getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(5);
+    this.articles = m.request
+      url: getRecentArticlesRoute.url,
+      method: getRecentArticlesRoute.method
+    this.articles.then (data) ->
+      console.log(data)
+
+
+  controller: ->
+    mod = new tilescomponent.model
+    articles: mod.articles
+
+
+
+  ###view: (ctrl, args) ->
+    ctrl.articles()###
+
   view: ->
 
     m "div", {class: "lazy-container"},[
