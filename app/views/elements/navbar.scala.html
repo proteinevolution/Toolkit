@@ -28,16 +28,23 @@
         }
         </ul>
     </div>
+
+
+
     <div class="tabs-panel" id="panel2">
-        <ul id="toolsec">
-            <li><a id="alnviz" href="/#/tools/alnviz">AlignmentViewer</a></li>
+
+        <div id="toolsec" class="toolsec-2">
+            <a id="alnviz" href="/#/tools/alnviz">AlignmentViewer</a>
         @for(tool <- tools){
             @if(tool.category == "alignment") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
+                <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
             }
         }
-        </ul>
+        </div>
     </div>
+
+
+
     <div class="tabs-panel" id="panel3">
         <ul id="toolsec">
         @for(tool <- tools){
@@ -85,3 +92,18 @@
         </ul>
     </div>
 </div>
+
+
+    <script>
+
+            $(document).ready(function(){
+                $('.toolsec-2').slick({
+                    infinite: true,
+                    centerMode: true,
+                    slidesToShow: 4,
+                    slidesToScroll: 1,
+                    variableWidth: true,
+                    arrows: true
+                });
+            });
+    </script>

@@ -458,8 +458,21 @@ textarea { resize:both; }
     text-align: center;
 }
 
-.slick-arrow {
-    display: none !important;
+.slick-prev:before {
+
+    color: grey;
+
+}
+
+.slick-prev:after {
+
+    color: grey;
+
+}
+
+.slick-next:before {
+
+    color: grey;
 }
 
 .reformat-small {
