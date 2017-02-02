@@ -9,7 +9,7 @@ case class Toolitem(toolname : String,
                     toolnameAbbrev : String,
                     category : String,
                     optional : String,
-                    params : Seq[(String, Seq[(String, Seq[(String, String)])])])
+                    params : Seq[(String, Seq[(String, Seq[(String, String)], ParamType, String)])])
 
 // Specification of the internal representation of a Tool
 case class Tool(toolNameShort: String,
@@ -179,6 +179,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
             // Params which are not a part of any group (given by the name)
             lazy val remainParamName : String = "Parameters"
             val remainParams : Seq[String] = params.map(_.name).diff(paramGroups.values.flatten.toSeq)
+            val paramMap = params.map(p => p.name -> p).toMap
+
 
             val toolitem = Toolitem(
               toolNameShort,
@@ -189,15 +191,15 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
               // Constructs the Parameter specification such that the View can render the input fields
               paramGroups.keysIterator.map { group =>
                 group ->  paramGroups(group).filter(params.map(_.name).contains(_)).map { param =>
-                  param -> paramAccess.allowed.getOrElse(param, Nil)
+                  (param, paramAccess.allowed.getOrElse(param, Nil), paramMap(param).paramType, paramMap(param).label)
                 }
               }.toSeq :+
                 remainParamName -> remainParams.map { param =>
 
-                  param -> paramAccess.allowed.getOrElse(param, Nil)
+                  (param, paramAccess.allowed.getOrElse(param, Nil), paramMap(param).paramType, paramMap(param).label)
                 }
             )
-            Tool(toolNameShort, toolNameLong, toolNameAbbrev, category,optional,params.map(p => p.name -> p).toMap,
+            Tool(toolNameShort, toolNameLong, toolNameAbbrev, category,optional,paramMap,
               results, toolitem, paramGroups)
           }
 }
