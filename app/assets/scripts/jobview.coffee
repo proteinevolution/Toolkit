@@ -16,7 +16,6 @@ PECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRA
 >YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ
 PECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQT
 """
-
 # Config for displaying the help modals:
 helpModalAccess = (elem, isInit) ->
   if not isInit
@@ -104,8 +103,8 @@ renderParameter = (content, moreClasses) ->
 
 # Maps parameter received from the server to the correct component
 mapParam = (paramElem, ctrl) ->
-  ctrlArgs = {options: paramElem[1],  value: ctrl.getParamValue(paramElem[0])}
-  comp = formComponents[paramElem[0]](ctrlArgs)
+  ctrlArgs = {paramName: paramElem[0], options: paramElem[1], type: paramElem[2], label: paramElem[3], value: ctrl.getParamValue(paramElem[0]), toolname: ctrl.job().tool.toolname}
+  comp = formComponents[paramElem[2]](ctrlArgs)
   m(comp[0], comp[1])
 
 
@@ -445,17 +444,18 @@ ParameterSelectComponent =
     ]
 
 ParameterNumberComponent =
+  controller: (args) ->
+    this.value = args.value
+    getValue : (() ->
+      this.value).bind(this)
+    validate: ((val) ->
 
-  controller: (args ) ->
-    name: args.name
-    id: args.id
-    label: args.label
+      this.value = val).bind(this)
 
   view: (ctrl, args) ->
     renderParameter [
-      m "label", {for: ctrl.id}, ctrl.label
-      m "input", {type: "text", id: ctrl.id, name: ctrl.name, value: args.value}
-
+      m "label", {for: args.id}, args.label
+      m "input", {type: "text", id: args.id, name: args.name, value: ctrl.getValue(), onchange: m.withAttr("value", ctrl.validate)}
     ]
 
 ParameterBoolComponent =
@@ -493,354 +493,39 @@ ParameterRangeSliderComponent =
 ##############################################################################
 # Associates each parameter name with the respective component
 formComponents =
-  "alignment" : (args) -> [ ParameterAlignmentComponent, {options: args.options, value: args.value}]
-  "standarddb": (args) -> [
+  1 : (args) -> [ ParameterAlignmentComponent, {options: args.options, value: args.value}]
+  2: (args) -> [
+    ParameterNumberComponent
+  ,
+    options: args.options
+    name: args.paramName
+    id: args.paramName
+    label: args.label
+    value: args.value
+  ]
+  3: (args) -> [
     ParameterSelectComponent
   ,
     options: args.options
-    name: "standarddb"
-    id: "standarddb"
-    label: "Select Standard Database"
+    name: args.paramName
+    id: args.paramName
+    label: args.label
     value: args.value
   ]
-  "hhblitsdb": (args) -> [
-    ParameterSelectComponent
-  ,
-    options: args.options
-    name: "hhblitsdb"
-    id: "hhblitsdb"
-    label: "Select Target Database"
-    value: args.value
-  ]
-  "matrix": (args) -> [
-    ParameterSelectComponent
-  ,
-    options: args.options
-    name: "matrix"
-    id: "matrix"
-    label: "Scoring Matrix"
-    value: args.value
-  ]
-  "num_iter": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "num_iter"
-    id: "num_iter"
-    label: "Number of Iterations"
-    value: args.value
-  ]
-  "evalue": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "evalue"
-    id: "evalue"
-    label: "E-Value"
-    value: args.value
-  ]
-
-  "gap_open": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "gap_open"
-    id: "gap_open"
-    label: "Gap Open penalty"
-    value: args.value
-  ]
-  "gap_ext":  (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "gap_ext"
-    id: "gap_ext"
-    label: "Gap Extension penalty"
-    value: args.value
-  ]
-  "desc": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "desc"
-    id: "desc"
-    label: "Number of alignments and descriptions"
-    value: args.value
-  ]
-  "consistency": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "consistency"
-    id: "consistency"
-    label: "Passes of consistency transformation"
-    value: args.value
-  ]
-  "itrefine": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "itrefine"
-    id: "itrefine"
-    label: "Passes of iterative refinements"
-    value: args.value
-  ]
-  "pretrain": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "pretrain"
-    id: "pretrain"
-    label: "Rounds of pretraining"
-    value: args.value
-  ]
-  "max_lines": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "max_lines"
-    id: "max_lines"
-    label: "Max. number of hits in hitlist"
-    value: args.value
-  ]
-  "pmin": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "pmin"
-    id: "pmin"
-    label: "Min. probability in hitlist"
-    value: args.value
-  ]
-  "aliwidth": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "aliwidth"
-    id: "aliwidth"
-    label: "With of alignments (columns)"
-    value: args.value
-  ]
-  "max_seqs": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "max_seqs"
-    id: "max_seqs"
-    label: "Max. number of sequences"
-    value: 100
-  ]
-  "maxrounds": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "maxrounds"
-    id: "maxrounds"
-    label: "Maximum number of iterations"
-    value: args.value
-  ]
-  "offset": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "offset"
-    id: "offset"
-    label: "Offset"
-    value: 0
-  ]
-  "outorder": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "outorder"
-    id: "outorder"
-    label: "Outorder"
-    value: args.value
-  ]
-  "gap_term": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "gap_term"
-    id: "gap_term"
-    label: "Gap Termination penalty"
-    value: 0.45
-  ]
-  "bonusscore": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "bonusscore"
-    id: "bonusscore"
-    label: "Bonus Score"
-    value: 0
-  ]
-  "msageneration": (args) -> [
-    ParameterSelectComponent
-  ,
-    name: "msageneration"
-    id: "msageneration"
-    label: "Select MSA generation method"
-    options: args.options
-    value: args.value
-  ]
-  "inclusion_ethresh": (args) -> [
-    ParameterSelectComponent
-  ,
-    name: "inclusion_ethresh"
-    id: "inclusion_ethresh"
-    label: "E-value inclusion threshold"
-    value: args.value
-    options: args.options
-  ]
-  "min_cov": (args) -> [
-    ParameterSelectComponent
-  ,
-    name: "min_cov"
-    id: "min_cov"
-    label: "Min. coverage of hits"
-    value: args.value
-    options: args.options
-  ]
-  "hhsuitedb": (args) -> [
-    ParameterSelectComponent
-  ,
-    name: "hhsuitedb"
-    id: "hhsuitedb"
-    label: "Select HHsuite Database"
-    value: args.value
-    options: args.options
-  ]
-  "msa_gen_max_iter": (args) -> [
-    ParameterSelectComponent
-  ,
-    name: "msa_gen_max_iter"
-    id: "msa_gen_max_iter"
-    label: "Max. number of MSA generation iterations"
-    value: args.value
-    options: args.options
-  ]
-  "genetic_code": (args) -> [
-    ParameterSelectComponent
-  ,
-    name: "genetic_code"
-    id: "genetic_code"
-    label: "Choose a genetic code"
-    options: args.options
-    value: args.value
-  ]
-  "long_seq_name": (args) -> [
+  4: (args) -> [
     ParameterBoolComponent
   ,
-    name: "long_seq_name"
-    id: "long_seq_name"
-    label: "Use long names?"
-    value: "long_seq_name"
-  ]
-  "min_query_cov": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "min_query_cov"
-    id: "min_query_cov"
-    label: "Minimal coverage"
-    value: 0.5
-  ]
-  "max_eval": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "max_eval"
-    id: "max_eval"
-    label: "Maximal E-Value"
-    value: 1e-5
-  ]
-  "min_anchor_width": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "min_anchor_width"
-    id: "min_anchor_width"
-    label: "Minimal Anchor width"
-    value: 5
-  ]
-  "min_colscore": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "min_colscore"
-    id: "min_colscore"
-    label: "Minimal Column Score"
-    value: 0
-  ]
-  "max_seqid": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "max_seqid"
-    id: "max_seqid"
-    label: "Maximal Sequence Identity"
-    value: 0.99
-  ]
-  "matrix_pcoils": (args) -> [
-    ParameterSelectComponent
-  ,
     options: args.options
-    name: "matrix_pcoils"
-    id: "matrix_pcoils"
-    label: "Matrix"
+    name: args.paramName
+    id: args.paramName
+    label: args.label
     value: args.value
   ]
-  "matrix_phylip": (args) -> [
-    ParameterSelectComponent
+  5: (args) -> [
+    ParameterRadioComponent
   ,
-    options: args.options
-    name: "matrix_phylip"
-    id: "matrix_phylip"
-    label: "Model of amino acid replacement"
+    name: args.paramName
+    id: args.paramName
+    label: args.label
     value: args.value
-  ]
-  "weighting": (args) -> [
-    ParameterBoolComponent
-  ,
-    name: "weighting"
-    id: "weighting"
-    label: "Weighting"
-    value: "weighting"
-  ]
-  "run_psipred": (args) -> [
-    ParameterBoolComponent
-  ,
-    name: "run_psipred"
-    id: "run_psipred"
-    label: "Run PSIPRED"
-    value: "run_psipred"
-  ]
-  "protblastprogram": (args) -> [
-    ParameterSelectComponent
-  ,
-    options: args.options
-    name: "protblastprogram"
-    id: "protblastprogram"
-    label: "Program for performing Protein BLAST search"
-    value: args.value
-  ]
-  "filter_low_complexity": (args) -> [
-    ParameterBoolComponent
-  ,
-    name: "filter_low_complexity"
-    id: "filter_low_complexity"
-    label: "Filter for low complexity regions"
-    value: "filter_low_complexity"
-  ]
-  "matrix_marcoil": (args) -> [
-    ParameterSelectComponent
-  ,
-    options: args.options
-    name: "matrix_marcoil"
-    id: "matrix_marcoil"
-    label: "Matrix"
-    value: "matrix_marcoil"
-  ]
-  "transition_probability": (args) -> [
-    ParameterSelectComponent
-  ,
-    options: args.options
-    name: "transition_probability"
-    id: "transition_probability"
-    label: "Transition Probability"
-  ]
-  "min_seqid_query": (args) -> [
-    ParameterNumberComponent
-  ,
-    name: "min_seqid_query"
-    id: "min_seqid_query"
-    label: "Minimum sequence ID with Query (%)"
-    value: 0
-  ]
-  "num_seqs_extract": (args) -> [
-    ParameterNumberComponent
-  ,
-    value: 100
-    name: "num_seqs_extract"
-    id: "num_seqs_extract"
-    label: "Minimum sequence ID with Query"
   ]

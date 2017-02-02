@@ -126,3 +126,6 @@ GET           /api/job/results/:jobID/:key            @controllers.DataControlle
 # Article
 GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)
 POST          /api/writeArticle                       @controllers.DataController.writeArticle(title: String, text: String, imagePath: String)
+
+# Validation
+GET           /api/validate                           @controllers.ValidationController.validate(toolname: String, param: String, value: String)

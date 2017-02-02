@@ -14,7 +14,7 @@ import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
 import models.database.JobState
-import models.tools.{ToolFactory, Toolitem}
+import models.tools.{ParamType, ToolFactory, Toolitem}
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
@@ -64,8 +64,6 @@ final class Service @Inject() (webJarAssets                                     
 
     }
   }
-
-
   // Allows serialization of tuples
   implicit def tuple2Reads[A, B](implicit aReads: Reads[A], bReads: Reads[B]): Reads[(A, B)] = Reads[(A, B)] {
     case JsArray(arr) if arr.size == 2 => for {
@@ -79,11 +77,27 @@ final class Service @Inject() (webJarAssets                                     
     def writes(tuple: (A, B)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2)))
   }
 
-
   implicit def htmlWrites : Writes[Html] = new Writes[Html] {
 
     def writes(html: Html) = JsString(html.body)
   }
+
+  // Allows serialization of tuples
+  implicit def tuple4Reads[A, B, C, D](implicit aReads: Reads[A], bReads: Reads[B], cReads: Reads[C], dReads: Reads[D]): Reads[(A, B, C, D)] = Reads[(A, B, C, D)] {
+    case JsArray(arr) if arr.size == 4 => for {
+      a <- aReads.reads(arr.head)
+      b <- bReads.reads(arr(1))
+      c <- cReads.reads(arr(2))
+      d <- dReads.reads(arr(3))
+    } yield (a, b, c, d)
+    case _ => JsError(Seq(JsPath() -> Seq(ValidationError("Expected array of three elements"))))
+  }
+
+  implicit def tuple4Writes[A, B, C, D](implicit a: Writes[A], b: Writes[B], c: Writes[C], d: Writes[D]): Writes[(A, B, C, D)] = new Writes[(A, B, C, D)] {
+    def writes(tuple: (A, B, C, D)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2), c.writes(tuple._3), d.writes(tuple._4)))
+  }
+
+
 
   implicit val toolitemWrites: Writes[Toolitem] = (
     (JsPath \ "toolname").write[String] and
@@ -91,7 +105,7 @@ final class Service @Inject() (webJarAssets                                     
       (JsPath \ "toolnameAbbrev").write[String] and
       (JsPath \ "category").write[String] and
       (JsPath \ "optional").write[String] and
-      (JsPath \ "params").write[Seq[(String, Seq[(String, Seq[(String, String)])])]]
+      (JsPath \ "params").write[Seq[(String, Seq[(String, Seq[(String, String)], ParamType, String)])]]
     ) (unlift(Toolitem.unapply))
 
 
