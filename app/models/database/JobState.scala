@@ -52,7 +52,7 @@ object JobState {
   }
 
   implicit object JobStateWrites extends Writes[JobState] {
-    def writes(jobState: JobState) = jobState match {
+    def writes(jobState: JobState) : JsNumber = jobState match {
       case Prepared          => JsNumber(1)
       case Queued            => JsNumber(2)
       case Running           => JsNumber(3)
@@ -67,7 +67,7 @@ object JobState {
     * Object containing the reader for the job state
     */
   implicit object JobStateReader extends BSONReader[BSONInteger, JobState] {
-    def read(state: BSONInteger) = {
+    def read(state: BSONInteger) : JobState with Product with Serializable = {
       state match {
         case BSONInteger(1) => Prepared
         case BSONInteger(2) => Queued
@@ -85,7 +85,7 @@ object JobState {
     * Object containing the writer for the job state
     */
   implicit object JobStateWriter extends BSONWriter[JobState, BSONInteger] {
-    def write(state : JobState)  = {
+    def write(state : JobState) : BSONInteger = {
       state match {
         case Prepared          => BSONInteger(1)
         case Queued            => BSONInteger(2)

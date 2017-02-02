@@ -7,7 +7,7 @@ import play.filters.csrf.CSRFFilter
 import play.api.http.DefaultHttpFilters
 import play.filters.gzip.GzipFilter
 
-class Filters @Inject() (
+final class Filters @Inject() (
                           gzip: GzipFilter,
                           cSRFFilter: CSRFFilter
                         ) extends DefaultHttpFilters(gzip)
