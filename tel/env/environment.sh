@@ -47,6 +47,7 @@ export PATH="${BIOPROGS}/tools/aln2plot:${PATH}"
 export PATH="${BIOPROGS}/tools/phylip:${PATH}" # PHYLIP
 export PATH="${BIOPROGS}/tools/pcoils:${PATH}" # PCOILS
 export PATH="${BIOPROGS}/tools/marcoil:${PATH}" # MARCOIL
+export PATH="${BIOPROGS}/tools/modeller_9.15/bin:${PATH}" # MODELLER
 
 # Setup Blammer
 export BLAMMERJAR="${BIOPROGS}/tools/blammer/blammer.jar"
@@ -63,5 +64,5 @@ MARCOILMTK="${BIOPROGS}/tools/marcoil/R5.MTK"
 MARCOILINPUT="${BIOPROGS}/tools/marcoil/Inputs"
 
 # PYTHONPATH FOR PDBX
-export PYTHONPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/pdbx
+export PYTHONPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/modeller_9.15/modlib/:/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/pdbx
 
