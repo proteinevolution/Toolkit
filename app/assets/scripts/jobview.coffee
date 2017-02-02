@@ -467,8 +467,29 @@ ParameterBoolComponent =
     ]
 
 
+ParameterRangeSliderComponent =
+  view: (ctrl, args) ->
+    renderParameter [
+      m "div", {class: "small-10 columns"}, [
+        m "div", {class: "slider"}, [
+          m "span", {class: "slider-handle", tabindex: "1"}
+          m "span", {class: "slider-fill"}
+        ]
+      ]
 
+    ]
 
+    ###
+  <div class="small-10 columns">
+  <div class="slider" data-slider data-initial-start="50" data-step="5">
+    <span class="slider-handle"  data-slider-handle role="slider" tabindex="1" aria-controls="sliderOutput2"></span>
+    <span class="slider-fill" data-slider-fill></span>
+  </div>
+</div>
+<div class="small-2 columns">
+  <input type="number" id="sliderOutput2">
+</div>
+  ###
 ##############################################################################
 # Associates each parameter name with the respective component
 formComponents =

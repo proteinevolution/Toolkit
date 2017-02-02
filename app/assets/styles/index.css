@@ -5,7 +5,7 @@
 .header-font {
     font-size: 0.9em;
     font-weight: bold;
-    font-family: 'Liberation Serif', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville Serif;
+    font-family: 'Liberation Serif', 'Georgia', 'Hoefler Text', Times New Roman, Baskerville, serif;
     margin-bottom: 1em;
 }
 
@@ -78,9 +78,6 @@ select {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
 }
 
-.slick-slide {
-    height:430px;
-}
 
 .slick-slide img {
     height: 430px;
