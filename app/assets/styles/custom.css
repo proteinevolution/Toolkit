@@ -460,19 +460,14 @@ textarea { resize:both; }
 
 .slick-prev:before {
 
-    color: grey;
+    color: #d6d6d6;
 
 }
 
-.slick-prev:after {
-
-    color: grey;
-
-}
 
 .slick-next:before {
 
-    color: grey;
+    color: #d6d6d6;
 }
 
 .reformat-small {
