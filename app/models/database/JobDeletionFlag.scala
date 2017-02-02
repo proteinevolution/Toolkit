@@ -39,7 +39,7 @@ object JobDeletionFlag {
   }
 
   implicit object JobStateWrites extends Writes[JobDeletionFlag] {
-    def writes(jobState: JobDeletionFlag) = jobState match {
+    def writes(jobState: JobDeletionFlag) : JsNumber = jobState match {
       case Error         => JsNumber(0)
       case OwnerRequest  => JsNumber(1)
       case PublicRequest => JsNumber(2)
@@ -68,7 +68,7 @@ object JobDeletionFlag {
     * Object containing the writer for the job state
     */
   implicit object JobStateWriter extends BSONWriter[JobDeletionFlag, BSONInteger] {
-    def write(state : JobDeletionFlag)  = {
+    def write(state : JobDeletionFlag) : BSONInteger  = {
       state match {
         case Error         => BSONInteger(0)
         case OwnerRequest  => BSONInteger(1)
