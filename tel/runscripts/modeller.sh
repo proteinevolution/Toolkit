@@ -38,14 +38,13 @@ mv $FILENAME* ../results/
 
 #quality check
 cd ../results
+mv `echo *[0-9].pdb` $FILENAME.pdb
 
-PDBFILE=`echo *[0-9].pdb`
-BASEFILE=`echo ${PDBFILE%.pdb}`
 #VERIFY3D
-mkdir VERIFY3D
-cd VERIFY3D
+mkdir verify3d
+cd verify3d
 $BIOPROGS/helpers/verify3d/environments > $FILENAME.log_verify3d << EOIN
-../$PDBFILE
+../$FILENAME.pdb
 
 $FILENAME.env
 A
@@ -60,22 +59,26 @@ $FILENAME.plotdat
 0
 EOIN
 perl $BIOPROGS/helpers/verify3d/verify3d_graphics.pl $FILENAME . > $FILENAME.log_verify3d_graphic
+mv $FILENAME.verify3d.png ../
 cd ../
 
 #ANOLEA
-mkdir annolea
-cd annolea
-anolea $BIOPROGS/helpers/anolea_bin/surf.de $BIOPROGS/helpers/anolea_bin/pair.de ../$PDBFILE
-perl $BIOPROGS/helpers/anolea_bin/anolea_graphics.pl $BASEFILE ../ > $FILENAME.log_anolea
+mkdir anolea
+cd anolea
+anolea $BIOPROGS/helpers/anolea_bin/surf.de $BIOPROGS/helpers/anolea_bin/pair.de ../$FILENAME.pdb
+perl $BIOPROGS/helpers/anolea_bin/anolea_graphics.pl $FILENAME ../ > $FILENAME.log_anolea
 cd ../
-mv *.gnuplot* annolea/
-mv *.anolea* annolea/
+mv *.gnuplot* anolea/
+mv *.anolea* anolea/
+mv anolea/$FILENAME.anolea.png .
+
 
 #Solvx
 mkdir solvx
 cd solvx
 ln -sf solvx solvx
 ln -sf $BIOPROGS/helpers/Solvx/torso.reslib torso.reslib
-echo "../$PDBFILE" | solvx
+echo "../$FILENAME.pdb" | solvx
 mv fort.29 $FILENAME.solvx
 perl $BIOPROGS/helpers/Solvx/solvx_graphics.pl "$FILENAME" . > $FILENAME.log_solvx
+mv $FILENAME.solvx.png ../
