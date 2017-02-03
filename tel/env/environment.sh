@@ -48,6 +48,9 @@ export PATH="${BIOPROGS}/tools/phylip:${PATH}" # PHYLIP
 export PATH="${BIOPROGS}/tools/pcoils:${PATH}" # PCOILS
 export PATH="${BIOPROGS}/tools/marcoil:${PATH}" # MARCOIL
 export PATH="${BIOPROGS}/tools/modeller_9.15/bin:${PATH}" # MODELLER
+export PATH="${BIOPROGS}/helpers/anolea_bin:${PATH}" # Helpers MODELLER QUALITY CHECK
+export PATH="${BIOPROGS}/helpers/Solvx:${PATH}" # Helpers MODELLER QUALITY CHECK
+export PATH="${BIOPROGS}/helpers/verify3d:${PATH}" # Helpers MODELLER QUALITY CHECK
 
 # Setup Blammer
 export BLAMMERJAR="${BIOPROGS}/tools/blammer/blammer.jar"
