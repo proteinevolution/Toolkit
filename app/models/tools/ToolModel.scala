@@ -138,7 +138,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
     // Modeller
     ("modeller", "Modeller", "mod", "3ary", "",
       Seq(paramAccess.ALIGNMENT),
-      Seq.empty[String]),
+      Seq("VERIFY3D", "SOLVX", "ANOLEA")),
 
     // ANCESCON
     ("ancescon", "ANCESCON", "anc", "classification", "",
