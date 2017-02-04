@@ -78,20 +78,23 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Alignments</a>
         <div id="hhpred_alignments" class="accordion-content table-scroll" data-tab-content>
+
+            <div id="hhpred_alignment_control">
             <select id="hhpred_color_select" onchange="toggleAliColor(this)">
                 <option value="none">No color</option>
                 <option value="letters">Letters</option>
                 <option value="background">Background</option>
             </select>
             <input type="checkbox" onchange="toggleSS(this)"> Color SS
+            <button type="button" style="float: right;" class="button" onclick="submitManuallySelected()">Create Model from manually selected templates</button>
+            </div>
+            <form id="hhpred_templates">
+            </form>
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Create Model</a>
         <div class="accordion-content" data-tab-content>
-            <p>
-                I contain the stuff for creating models
-            </p>
         </div>
     </li>
 </ul>
@@ -211,13 +214,21 @@
                  ]
              });
 
-             var alignments_container = document.getElementById("hhpred_alignments");
+             var alignments_container = document.getElementById("hhpred_templates");
              for(var i = 0; i < alignments.length; i++) {
 
                  var ali = alignments[i];
                  var current_seq;
+                 var divAlignment = document.createElement("div");
+                 divAlignment.setAttribute("class", "alignment_box");
+                 var checkbox = document.createElement("input");
+                 checkbox.setAttribute("type", "checkbox");
+                 checkbox.setAttribute("value", ali.no.toString());
+                 checkbox.setAttribute("name", "templates");
+                 divAlignment.appendChild(checkbox);
 
                  var tab = document.createElement("table");
+
                  tab.className += " unstriped ";
 
                  var tabbody = document.createElement("tbody");
@@ -256,7 +267,8 @@
                  }
 
                  tab.appendChild(tabbody);
-                 alignments_container.appendChild(tab);
+                 divAlignment.appendChild(tab);
+                 alignments_container.appendChild(divAlignment);
              }
              aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
              $("#hhpred_accordion").foundation();
@@ -264,41 +276,14 @@
          });
         })();
 
+    function submitManuallySelected() {
+        var formData = new FormData(document.getElementById("hhpred_templates"));
+
+
+
+
+    }
     function onFullscreenToggle() {
         hitlist.draw();
     }
 </script>
-
- <!--
-
-   elsif line[b] =~ /^\s*(Q|T) (\S+)\s+\d+\s+(\S+)/
-        seq     = $3
-        old_seq = $3
-        if coloring.eql?( "letters")
-          seq.gsub!(/([a-z\.-]+)/) {|match| match = "<span style=\"color: #808080;\">#{$1}<\/span>"}
-          seq.gsub!(/([WYF]+)/){|match| match ="<span style=\"color: #00a000;\">#{$1}<\/span>"}
-          seq.gsub!(/([LIVM]+)/){|match| match ="<span style=\"color: #00ff00;\">#{$1}<\/span>"}
-          seq .gsub!(/([AST]+)/){|match| match ="<span style=\"color: #404040;\">#{$1}<\/span>"}
-          seq.gsub!(/([KR]+)/){|match| match ="<span style=\"color: red;\">#{$1}<\/span>"}
-          seq.gsub!(/([DE]+)/){|match| match ="<span style=\"color: blue;\">#{$1}<\/span>"}
-          seq.gsub!(/([QN]+)/){|match| match ="<span style=\"color: #d000a0;\">#{$1}<\/span>"}
-          seq.gsub!(/(H+)/){|match| match ="<span style=\"color: #E06000;\">#{$1}<\/span>"}
-          seq.gsub!(/(C+)/){|match| match ="<span style=\"color: #A08000;\">#{$1}<\/span>"}
-          seq.gsub!(/(P+)/){|match| match ="<span style=\"color: #000000;\">#{$1}<\/span>"}
-          seq.gsub!(/(G+)/){|match| match ="<span style=\"color: #404040;\">#{$1}<\/span>"}
-          line[b].sub!(/#{old_seq}/,seq)
-
-        elsif   coloring.eql?( "background")
-          seq.gsub!(/([WYF]+)/) {|match|  match ="<span style=\"background-color: #00c000;\">#{$1}<\/span>"}
-          seq.gsub!(/(C+)/) {|match|  match ="<span style=\"background-color: #ffff00;\">#{$1}<\/span>"}
-          seq.gsub!(/([DE]+)/) {|match|  match ="<span style=\"background-color: #6080ff;\">#{$1}<\/span>"}
-          seq.gsub!(/([LIVM]+)/) {|match|  match ="<span style=\"background-color: #02ff02;\">#{$1}<\/span>"}
-          seq.gsub!(/([KR]+)/) {|match|  match ="<span style=\"background-color: #ff0000;\">#{$1}<\/span>"}
-          seq.gsub!(/([QN]+)/) {|match|  match ="<span style=\"background-color: #e080ff;\">#{$1}<\/span>"}
-          seq.gsub!(/(H+)/) {|match|  match ="<span style=\"background-color: #ff8000;\">#{$1}<\/span>"}
-          seq.gsub!(/(P+)/) {|match|  match ="<span style=\"background-color: #a0a0a0;\">#{$1}<\/span>"}
-          line[b].sub!(/#{old_seq}/,seq)
-        end
-
- -->
-
