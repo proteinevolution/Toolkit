@@ -102,9 +102,9 @@ class ParamAccess @Inject() (tel: TEL) {
   final val OUTORDER = new Param("outorder",Number,1, "Outorder")
   final val ETRESH = new Param("inclusion_ethresh",Number,1, "E-value inclusion threshold")
   final val HHBLITSDB  =  new Param("hhblitsdb",Select,1, "Select HHblts database")
-  final val ALIGNMODE = new Param("alignmode",Number,1, "Alignment Mode")
+  final val ALIGNMODE = new Param("alignmode",Select,1, "Alignment Mode")
   final val MSAGENERATION = new Param("msageneration",Select,1, "Method of MSA generation")
-  final val MSA_GEN_MAX_ITER = Param("msa_gen_max_iter",Number,1, "Max. number of MSA generation iterations",
+  final val MSA_GEN_MAX_ITER = Param("msa_gen_max_iter",Select,1, "Max. number of MSA generation iterations",
     Seq(Validators.IsInteger))
   final val GENETIC_CODE = new Param("genetic_code",Select,1, "Choose a genetic code")
   final val LONG_SEQ_NAME = new Param("long_seq_name",Bool,1, "Use long sequence name")
@@ -179,6 +179,7 @@ class ParamAccess @Inject() (tel: TEL) {
     MATRIX_PCOILS.name -> tel.generateValues(MATRIX_PCOILS.name).toSeq.sorted,
     PROTBLASTPROGRAM.name -> tel.generateValues(PROTBLASTPROGRAM.name).toSeq.sorted,
     MATRIX_MARCOIL.name -> tel.generateValues(MATRIX_MARCOIL.name).toSeq.sorted,
-    TRANSITION_PROBABILITY.name -> tel.generateValues(TRANSITION_PROBABILITY.name).toSeq.sorted
+    TRANSITION_PROBABILITY.name -> tel.generateValues(TRANSITION_PROBABILITY.name).toSeq.sorted,
+    ALIGNMODE.name -> tel.generateValues(ALIGNMODE.name).toSeq.sorted
   )
 }
