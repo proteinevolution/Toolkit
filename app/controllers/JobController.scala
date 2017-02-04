@@ -156,7 +156,6 @@ final class JobController @Inject() (jobIDProvider                              
         case Some(_) => BadRequest
         case None =>
           // Stuff to get the inital tool arguments from the request
-          val actorIndex = jobID.trim().hashCode() % nJobActors
           val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
           jobActorAccess.sendToJobActor(jobID, CreateJob(jobID, user,toolname, formData))
           Ok

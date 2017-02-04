@@ -32,11 +32,30 @@ body.is-reveal-open {
     background: inherit;
 }
 
+#hhpred_alignment_control {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: stretch;
+}
+
 #hhpred_alignments {
 
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
     white-space: pre;
 }
+
+.alignment_box {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: stretch;
+}
+
 
 /* To display the alignments more nicely */
 #hhpred_alignments td {
