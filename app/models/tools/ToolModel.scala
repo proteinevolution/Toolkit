@@ -47,6 +47,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
         paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE),
       Seq("Hitlist", "FullAlignment")),
 
+    // HHpred - Manual Template Selection
+    ("hhpred_manual", "HHpred - Manual Template Selection", "hhp", "forward", "",  Seq.empty, Seq("Results", "PIR")),
+
     // PSI-BLAST
     ("psiblast", "PSI-BLAST", "pbl", "search", "", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB,
       paramAccess.MATRIX,

@@ -32,10 +32,16 @@
       case ("tcoffee", "Conservation") => views.html.jobs.resultpanels.tcoffee_colored(jobID)
       case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       case ("tcoffee", "Text") => views.html.jobs.resultpanels.tcoffee_text(jobID)
+
+      // HHpred
       case ("hhpred", "Hitlist") => views.html.jobs.resultpanels.hhpred.hitlist(jobID)
       case ("hhpred", "FullAlignment") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
 
+      // HHpred Manual Template Selection
+      case("hhpred_manual", "Results") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out")
+      case("hhpred_manual", "PIR") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/tomodel.pir")
 
+      // ANCESCON
       case ("ancescon", "Tree" ) => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div")
 
       // clustalo

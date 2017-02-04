@@ -92,11 +92,6 @@
             </form>
         </div>
     </li>
-    <li class="accordion-item" data-accordion-item>
-        <a href="#" class="accordion-title">Create Model</a>
-        <div class="accordion-content" data-tab-content>
-        </div>
-    </li>
 </ul>
 
 
@@ -277,10 +272,50 @@
         })();
 
     function submitManuallySelected() {
+
+        // Get selected templates and append parentID
         var formData = new FormData(document.getElementById("hhpred_templates"));
+        if(!formData.has("templates")) {
+            alert("Please select at least one template for modeling");
+            return;
+        }
+        formData.append("parentid", '@{jobID}' );
+
+        var checkRoute = jsRoutes.controllers.JobController.check("hhpred_manual", null, false);
+        m.request({
+            method: checkRoute.method,
+            url: checkRoute.url,
+            data: formData,
+            serialize: function(data) {
+                return data;
+            }
+        }).then(function(data) {
+
+            var submitRoute = jsRoutes.controllers.JobController.create("hhpred_manual", data.jobID);
+            m.request({
+                method: submitRoute.method,
+                url: submitRoute.url,
+                data: formData,
+                serialize: function(data) {
+                    return data;
+                }
+            });
+        });
+
+        // generate a new JobID
 
 
-
+        /*
+        submitRoute = jsRoutes.controllers.JobController.create("hhpred_check_templates", null);
+        m.request({
+            url: submitRoute.url,
+            method: submitRoute.method,
+            data: formData,
+            serialize: function(data) {
+                return data;
+            }
+        });
+        */
 
     }
     function onFullscreenToggle() {
