@@ -89,13 +89,14 @@ hhsearch -cpu 4 \
          -p %pmin.content \
          -P %pmin.content \
          -Z %max_lines.content \
-          -z 1 \
-          -b 1 \
-          -B %max_lines.content \
-          -seq 1 \
-          -aliw %aliwidth.content \
-          -dbstrlen 10000 \
-          -cs ${HHLIB}/data/context_data.lib 
+         -%alignmode.content \
+         -z 1 \
+         -b 1 \
+         -B %max_lines.content \
+         -seq 1 \
+         -aliw %aliwidth.content \
+         -dbstrlen 10000 \
+         -cs ${HHLIB}/data/context_data.lib 
 
 JOBID=%jobid.content
 
@@ -109,11 +110,15 @@ hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 #profile_logos.pl ${JOBID} ../results/ ../results/ 
 
-tar xfvz ../results/${JOBID}.tar.gz -C ../results/
+#tar xfvz ../results/${JOBID}.tar.gz -C ../results/
 
 tenrep.rb -i ../results/query.repseq.fas -h ../results/${JOBID}.hhr -p 40 -o ../results/query.tenrep_file
 
+cp ../results/query.tenrep_file ../results/query.tenrep_file_backup
+
 parse_jalview.rb -i ../results/query.tenrep_file -o ../results/query.tenrep_file
+
+
 
 cp ../results/${JOBID}.png ../results/hitlist.png
 cp ../results/${JOBID}.html ../results/hitlist.html
