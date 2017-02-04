@@ -181,7 +181,6 @@ JobTabsComponent = {
         }
         return {
             params: params,
-            alignmentPresent: params[0][1][0][0] === "alignment",
             isJob: args.job().isJob,
             state: args.job().jobstate,
             listitems: listitems,
@@ -340,7 +339,8 @@ JobSubmissionComponent = {
                 if (!jobID) {
                     jobID = null;
                 }
-                checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID);
+                // Use check route and specify that the hashing function should be used
+                checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID, true);
                 formData = new FormData(document.getElementById("jobform"));
                 $(".submitJob").prop("disabled", true);
                 return m.request({
