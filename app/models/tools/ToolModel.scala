@@ -44,7 +44,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
     ("hhpred", "HHpred", "hhp", "search", "",
     Seq(paramAccess.ALIGNMENT, paramAccess.HHSUITEDB, paramAccess.MSAGENERATION,
         paramAccess.MSA_GEN_MAX_ITER, paramAccess.MIN_COV, paramAccess.EVAL_INC_THRESHOLD,
-        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH),
+        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE),
       Seq("Hitlist", "FullAlignment")),
 
     // PSI-BLAST
@@ -174,7 +174,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
 
             lazy val paramGroups = Map(
               "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.ALIGNMENT_FORMAT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
-                paramAccess.PROTBLASTPROGRAM.name)
+                paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name)
             )
             // Params which are not a part of any group (given by the name)
             lazy val remainParamName : String = "Parameters"

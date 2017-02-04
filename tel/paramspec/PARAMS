@@ -11,3 +11,4 @@ matrix_pcoils GEN matrix_pcoils.prop
 matrix_marcoil GEN matrix_marcoil.prop
 protblastprogram GEN protblastprogram.prop
 transition_probability GEN transition_probability.prop
+alignmode GEN alignmode.prop
