@@ -167,11 +167,17 @@ final class Service @Inject() (webJarAssets                                     
               // All other views are currently computed on Clientside
               case _ => Nil
             }
-
             // Read parameters from serialized file
-            val ois = new ObjectInputStream(new FileInputStream((jobPath/jobID/"sparam").pathAsString))
-            val paramValues = ois.readObject().asInstanceOf[Map[String, String]]
-            ois.close()
+            val paramValues: Map[String, String] = {
+              if((jobPath/jobID/"sparam").exists) {
+                val ois = new ObjectInputStream(new FileInputStream((jobPath/jobID/"sparam").pathAsString))
+                val x = ois.readObject().asInstanceOf[Map[String, String]]
+                ois.close()
+                x
+              } else {
+                Map.empty[String, String]
+              }
+            }
 
             ownerName.map{ ownerN =>
               Ok(Json.toJson(

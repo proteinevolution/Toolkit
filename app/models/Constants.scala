@@ -17,6 +17,7 @@ trait Constants {
   val jobPath = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
   val serializedParam = "sparam"
   val nJobActors = 100
+  val formMultiValueSeparator: String = " "
 }
 
 

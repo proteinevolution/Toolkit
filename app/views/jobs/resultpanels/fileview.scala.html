@@ -3,7 +3,19 @@
 
 @(filepath : String)(implicit request: RequestHeader)
 
-<pre style="font-size: 12px;width: 800px; height: 30pc; overflow-y: scroll;">
+<pre  class="fileview" style="font-size: 12px;width: 800px; height: 30pc; overflow-y: scroll;">
 
 @FileLoader.loadFile(filepath)
 </pre>
+
+
+
+<script>
+function onExpand() {
+    $(".fileview").css("overflow-y", "visible");
+}
+function onCollapse() {
+
+    $(".fileview").css("overflow-y", "scroll");
+}
+</script>
