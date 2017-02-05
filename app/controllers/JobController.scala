@@ -184,9 +184,11 @@ final class JobController @Inject() (jobIDProvider                              
         case Some(job) =>
           Logger.info("Found Jobs for deletion: " + job.jobID)
           // Check if the User owns the job
-          if (job.ownerID.contains(user.userID)) {
-            // Tell the master to delete the job
 
+          Logger.info("JobOwnerID " + job.ownerID.toString)
+          Logger.info("User UserID " + user.userID.stringify )
+          if (job.ownerID.contains(user.userID)) {
+            Logger.info("Sending delete request to jobActor")
             jobActorAccess.sendToJobActor(jobID, Delete(jobID))
             // Mark the job in mongoDB
             updateJobs(BSONDocument(Job.IDDB      -> job.mainID),

@@ -50,6 +50,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
     // HHpred - Manual Template Selection
     ("hhpred_manual", "HHpred - Manual Template Selection", "hhp", "forward", "",  Seq.empty, Seq("Results", "PIR")),
 
+    // HHpred - Manual Template Selection
+    ("hhpred_automatic", "HHpred - Automatic Template Selection", "hhp", "forward", "",  Seq.empty, Seq.empty),
+
     // PSI-BLAST
     ("psiblast", "PSI-BLAST", "pbl", "search", "", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB,
       paramAccess.MATRIX,
@@ -151,9 +154,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
     // PHYLIP
     ("phylip", "PHYLIP-NEIGHBOR", "phyn", "classification", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYLIP),
-      Seq("NeighborJoining", "UPGMA")),
+      Seq("NeighborJoiningTree", "NeighborJoiningResults", "UPGMATree", "UPGMAResults")),
 
-    // Backtranslate
+    // Backtranslate1
     ("backtrans", "Backtranslator", "bac", "utils", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.GENETIC_CODE),
       Seq("DNA")),

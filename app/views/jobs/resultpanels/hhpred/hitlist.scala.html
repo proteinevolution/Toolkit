@@ -87,7 +87,7 @@
             </select>
             <input type="checkbox" onchange="toggleSS(this)"> Color SS
             <button type="button" style="float: right;" class="button" onclick="submitManuallySelected()">Create Model from manually selected templates</button>
-            <button type="button" style="float: right;" class="button">Select Templates Automatically</button>
+            <button type="button" style="float: right;" class="button" onclick="submitAutomaticallySelected()">Select Templates Automatically</button>
             </div>
             <form id="hhpred_templates">
             </form>
@@ -313,22 +313,34 @@
                 }
             });
         });
+    }
 
-        // generate a new JobID
+        function submitAutomaticallySelected() {
 
+            // Get selected templates and append parentID
+            var formData = new FormData(document.getElementById("hhpred_templates"));
+            formData.append("parentid", '@{jobID}' );
 
-        /*
-        submitRoute = jsRoutes.controllers.JobController.create("hhpred_check_templates", null);
-        m.request({
-            url: submitRoute.url,
-            method: submitRoute.method,
-            data: formData,
-            serialize: function(data) {
-                return data;
-            }
-        });
-        */
+            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_automatic", null, false);
+            m.request({
+                method: checkRoute.method,
+                url: checkRoute.url,
+                data: formData,
+                serialize: function(data) {
+                    return data;
+                }
+            }).then(function(data) {
 
+                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_automatic", data.jobID);
+                m.request({
+                    method: submitRoute.method,
+                    url: submitRoute.url,
+                    data: formData,
+                    serialize: function(data) {
+                        return data;
+                    }
+                });
+            });
     }
     function onFullscreenToggle() {
         hitlist.draw();

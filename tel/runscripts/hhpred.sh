@@ -97,7 +97,9 @@ hhsearch -cpu 4 \
          -seq 1 \
          -aliw %aliwidth.content \
          -dbstrlen 10000 \
-         -cs ${HHLIB}/data/context_data.lib 
+         -cs ${HHLIB}/data/context_data.lib \
+         -atab $(readlink -f ../results/hhsearch.start.tab) \
+
 
 JOBID=%jobid.content
 

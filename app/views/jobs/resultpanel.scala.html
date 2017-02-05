@@ -74,6 +74,8 @@
       case ("aln2plot", "SideChainVolume") => views.html.jobs.resultpanels.image(s"/files/$jobID/side_chain_volume.png")
 
       // Phylip
-      case ("phylip", "NeighborJoining") => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_nj.tree", "nj_div")
-      case ("phylip", "UPGMA") => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")
+      case ("phylip", "NeighborJoiningTree") => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_nj.tree", "nj_div")
+      case ("phylip", "NeighborJoiningResults") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.nj")
+      case ("phylip", "UPGMATree") => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")
+      case ("phylip", "UPGMAResults") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.upgma")
 }}
