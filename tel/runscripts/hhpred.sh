@@ -93,6 +93,7 @@ hhsearch -cpu 4 \
          -z 1 \
          -b 1 \
          -B %max_lines.content \
+         -ssm %ss_scoring.content \
          -seq 1 \
          -aliw %aliwidth.content \
          -dbstrlen 10000 \
