@@ -119,12 +119,12 @@ mapParam = function(paramElem, ctrl) {
     ctrlArgs = {
         paramName: paramElem[0],
         options: paramElem[1],
-        type: paramElem[2],
+        paramType: paramElem[2],
         label: paramElem[3],
         value: ctrl.getParamValue(paramElem[0]),
         toolname: ctrl.job().tool.toolname
     };
-    comp = formComponents[paramElem[2]](ctrlArgs);
+    comp = formComponents[paramElem[2].type](ctrlArgs);
     return m(comp[0], comp[1]);
 };
 
@@ -333,6 +333,13 @@ JobSubmissionComponent = {
                 return this.jobID = jobID;
             }).bind(args.job()),
             submit: function(startJob) {
+
+                var form = document.getElementById("jobform");
+                if(!form.checkValidity()) {
+                    alert("Parameters are invalid");
+                    return
+                }
+
                 var checkRoute, formData, jobID, toolname;
                 toolname = args.job().tool.toolname;
                 jobID = args.job().jobID;
@@ -341,7 +348,7 @@ JobSubmissionComponent = {
                 }
                 // Use check route and specify that the hashing function should be used
                 checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID, true);
-                formData = new FormData(document.getElementById("jobform"));
+                formData = new FormData(form);
                 $(".submitJob").prop("disabled", true);
                 return m.request({
                     method: checkRoute.method,
@@ -644,16 +651,24 @@ ParameterNumberComponent = {
         };
     },
     view: function(ctrl, args) {
+        var paramAttrs = {
+            type: "number",
+            id: args.id,
+            name: args.name,
+            value: ctrl.getValue(),
+            onchange: m.withAttr("value", ctrl.validate)
+        };
+        // Add minimum and maximum if present
+        if(args.paramType["max"]) {
+            paramAttrs["max"] = args.paramType["max"];
+        }
+        if(args.paramType["min"]) {
+            paramAttrs["min"] = args.paramType["min"];
+        }
         return renderParameter([
             m("label", {
                 "for": args.id
-            }, args.label), m("input", {
-                type: "text",
-                id: args.id,
-                name: args.name,
-                value: ctrl.getValue(),
-                onchange: m.withAttr("value", ctrl.validate)
-            })
+            }, args.label), m("input", paramAttrs)
         ]);
     }
 };
@@ -711,7 +726,8 @@ formComponents = {
         return [
             ParameterAlignmentComponent, {
                 options: args.options,
-                value: args.value
+                value: args.value,
+                paramType: args.paramType
             }
         ];
     },
@@ -722,7 +738,8 @@ formComponents = {
                 name: args.paramName,
                 id: args.paramName,
                 label: args.label,
-                value: args.value
+                value: args.value,
+                paramType: args.paramType
             }
         ];
     },
@@ -733,7 +750,8 @@ formComponents = {
                 name: args.paramName,
                 id: args.paramName,
                 label: args.label,
-                value: args.value
+                value: args.value,
+                paramType: args.paramType
             }
         ];
     },
@@ -744,7 +762,8 @@ formComponents = {
                 name: args.paramName,
                 id: args.paramName,
                 label: args.label,
-                value: args.value
+                value: args.value,
+                paramType: args.paramType
             }
         ];
     },
@@ -754,7 +773,8 @@ formComponents = {
                 name: args.paramName,
                 id: args.paramName,
                 label: args.label,
-                value: args.value
+                value: args.value,
+                paramType: args.paramType
             }
         ];
     }
