@@ -222,15 +222,26 @@
                  checkbox.setAttribute("value", ali.no.toString());
                  checkbox.setAttribute("name", "templates");
                  divAlignment.appendChild(checkbox);
-
                  var tab = document.createElement("table");
-
                  tab.className += " unstriped ";
-
                  var tabbody = document.createElement("tbody");
 
                  // Query Sequence
                  tabbody.appendChild(makeRow([ali.no, "", "", ""]));
+                 // Handle secondary structure annotation for query, if present
+                 if(typeof ali.query.ss_dssp !== 'undefined') {
+
+                     current_seq = ali.query.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
+                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
+                     tabbody.appendChild(makeRow(["Q", "ss_dssp", "", current_seq]));
+                 }
+                 if(typeof ali.query.ss_pred !== 'undefined') {
+
+                     current_seq = ali.query.ss_pred.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
+                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
+                     tabbody.appendChild(makeRow(["Q", "ss_pred", "", current_seq]));
+                 }
+
                  current_seq = ali.query.seq.replace(color_regex, color_regex_replacer);
                  tabbody.appendChild(makeRow(["Q", ali.query.name, ali.query.start, current_seq]));
                  // Consensus, if present
@@ -248,7 +259,7 @@
                  current_seq = ali.template.seq.replace(color_regex, color_regex_replacer);
                  tabbody.appendChild(makeRow(["T", ali.template.name, ali.template.start, current_seq]));
 
-                 // Handle secondary structure annotation
+                 // Handle secondary structure annotation for template
                  if(typeof ali.template.ss_dssp !== 'undefined') {
 
                      current_seq = ali.template.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");

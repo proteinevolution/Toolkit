@@ -44,7 +44,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
     ("hhpred", "HHpred", "hhp", "search", "",
     Seq(paramAccess.ALIGNMENT, paramAccess.HHSUITEDB, paramAccess.MSAGENERATION,
         paramAccess.MSA_GEN_MAX_ITER, paramAccess.MIN_COV, paramAccess.EVAL_INC_THRESHOLD,
-        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE),
+        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE, paramAccess.SS_SCORING),
       Seq("Hitlist", "FullAlignment")),
 
     // HHpred - Manual Template Selection

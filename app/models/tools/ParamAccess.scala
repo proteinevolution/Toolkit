@@ -129,6 +129,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val TRANSITION_PROBABILITY = new Param("transition_probability", Select, 1, "Transition Probability'")
   final val MIN_SEQID_QUERY = new Param("min_seqid_query", Number, 1, "Minimum sequence ID with Query (%)")
   final val NUM_SEQS_EXTRACT =  new Param("num_seqs_extract", Number, 1, "No. of sequences to extract")
+  final val SS_SCORING = new Param("ss_scoring", Select, 1, "SS Scoring")
 
   // Maps parameter values onto their full names descriptions, as they should appear in the view
   final val fullNames = Map(
@@ -180,6 +181,7 @@ class ParamAccess @Inject() (tel: TEL) {
     PROTBLASTPROGRAM.name -> tel.generateValues(PROTBLASTPROGRAM.name).toSeq.sorted,
     MATRIX_MARCOIL.name -> tel.generateValues(MATRIX_MARCOIL.name).toSeq.sorted,
     TRANSITION_PROBABILITY.name -> tel.generateValues(TRANSITION_PROBABILITY.name).toSeq.sorted,
-    ALIGNMODE.name -> tel.generateValues(ALIGNMODE.name).toSeq.sorted
+    ALIGNMODE.name -> tel.generateValues(ALIGNMODE.name).toSeq.sorted,
+    SS_SCORING.name -> tel.generateValues(SS_SCORING.name).toSeq.sorted
   )
 }
