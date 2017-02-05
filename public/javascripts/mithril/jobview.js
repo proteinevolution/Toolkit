@@ -561,6 +561,7 @@ window.ParameterAlignmentComponent = {
                 id: ctrl.id,
                 onchange: m.withAttr("value", ctrl.param.value),
                 value: ctrl.param.value,
+                required: "required",
                 spellcheck: false
             })), m("div", {
                 id: "upload_alignment_modal",

@@ -1,2 +1,2 @@
-curl -X POST http://%HOSTNAME:%PORT/jobs/done/%jobid.content
+curl -X POST http://%HOSTNAME:%PORT/jobs/done/%jobid.content > /dev/null 2>&1
 
