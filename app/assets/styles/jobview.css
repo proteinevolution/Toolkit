@@ -175,18 +175,11 @@ body.is-reveal-open {
     -moz-transition : border 100ms ease-out;
     -o-transition : border 100ms ease-out;
     background-color: white;
-
+}
+.parameters input:invalid {
+    background-color: #ff9b49;
 }
 
-.submitbuttons {
-    clear: both;
-    width: 100%;
-}
-
-.submitbuttons .submitJob {
-    padding-right: 15px !important;
-
-}
 
 .submitJob {
     background-color: gray !important;
@@ -200,17 +193,6 @@ body.is-reveal-open {
     background-color: rgba(0, 110, 98, 166) !important;
 }
 
-.submitbuttons .submitJob:hover {
-    background-color: rgba(0, 110, 98, 166);
-
-
-}
-
-.submitbuttons .addJob {
-    float: left;
-    margin-right: 0.5em;
-}
-
 .submitbuttons .jobid {
 
     color: #000;
@@ -221,15 +203,6 @@ body.is-reveal-open {
     float: left;
     border-radius: 3px;
     font-size: 0.88em
-
-}
-
-
-
-#arrowimage{
-    width: 35%;
-    margin-top: 0.1em;
-    display: none;
 }
 
 
