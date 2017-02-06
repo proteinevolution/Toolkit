@@ -18,6 +18,7 @@
       case ("marcoil", "ProbList/PSSM") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbList")
 
       // MODELLER
+      case ("modeller", "3D-Structure") => views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb")
       case ("modeller", "VERIFY3D") => views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.verify3d.png",s"$jobPath$jobID/results/verify3d/$jobID.plotdat")
       case ("modeller", "SOLVX") => views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png",s"$jobPath$jobID/results/solvx/$jobID.solvx")
       case ("modeller", "ANOLEA") => views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png",s"$jobPath$jobID/results/$jobID.pdb.profile")
