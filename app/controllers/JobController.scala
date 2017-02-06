@@ -52,94 +52,105 @@ final class JobController @Inject() (jobIDProvider                              
     }
   }
 
-  def check(toolname: String, jobID: Option[String]) : Action[AnyContent] = Action.async { implicit request =>
+  def check(toolname: String, jobID: Option[String], hash: Boolean) : Action[AnyContent] = Action.async { implicit request =>
 
     getUser.flatMap { user =>
 
       // Determine the jobID
       (jobID match {
 
+        // Bad Request iif the jobID can be matched to one from the database
         case Some(id) =>
           selectJob(id).map { job => if (job.isDefined) Left(BadRequest) else Right(id) }
         case None =>
 
+          // Ask JobID provider to return a newly generated jobID
           jobIDProvider.provide.map { s =>
-
             Right(s)
           }
-
       }).flatMap {
 
         case Left(status) => Future.successful(status)
         case Right(jobIDnew) =>
 
+          // Grab the formData from the request data
+          val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString(","))
 
-          val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
-          val DB = formData.getOrElse("standarddb","").toFile  // get hold of the database in use
-          val inputHash = jobDao.generateHash(formData).toString()
-          val rsHash = jobDao.generateRSHash(toolname)
-          val toolHash = jobDao.generateToolHash(toolname)
-          println("Runscript hash generated: " + rsHash)
-          println("Tool hash generated: " + toolHash)
-          println("Job hash generated: " + inputHash)
-          lazy val dbName = {
-            formData.get("standarddb") match {
-              case None => Some("none")
-              case _ => Some(DB.name)
+          // If we do not hash (usually forwarding) just provide the new JobID
+          if (!hash) {
+            Future.successful(Ok(Json.obj("jobSubmitted" -> true,
+              "jobID" -> jobIDnew)
+            ).withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin))))
+
+          } else {
+
+            val DB = formData.getOrElse("standarddb", "").toFile
+            // get hold of the database in use
+            val inputHash = jobDao.generateHash(formData).toString()
+            val rsHash = jobDao.generateRSHash(toolname)
+            val toolHash = jobDao.generateToolHash(toolname)
+            println("Runscript hash generated: " + rsHash)
+            println("Tool hash generated: " + toolHash)
+            println("Job hash generated: " + inputHash)
+            lazy val dbName = {
+              formData.get("standarddb") match {
+                case None => Some("none")
+                case _ => Some(DB.name)
+              }
             }
-          }
-          lazy val dbMtime = {
-            formData.get("standarddb") match {
-              case None => Some("1970-01-01T00:00:00Z")
-              case _ => Some(DB.lastModifiedTime.toString)
+            lazy val dbMtime = {
+              formData.get("standarddb") match {
+                case None => Some("1970-01-01T00:00:00Z")
+                case _ => Some(DB.lastModifiedTime.toString)
+              }
             }
-          }
-          Logger.info("Try to match Hash")
-          jobDao.matchHash(inputHash, rsHash, dbName, dbMtime, toolname, toolHash).flatMap { richSearchResponse =>
+            Logger.info("Try to match Hash")
+            jobDao.matchHash(inputHash, rsHash, dbName, dbMtime, toolname, toolHash).flatMap { richSearchResponse =>
 
-            Logger.info("Retrieved richSearchResponse")
-            println("success: " + richSearchResponse)
-            println("hits: " + richSearchResponse.totalHits)
+              Logger.info("Retrieved richSearchResponse")
+              println("success: " + richSearchResponse)
+              println("hits: " + richSearchResponse.totalHits)
 
-            // Generate a list of hits and convert them into a list of future option jobs
-            val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
-              BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate()) // Not optimal, as a fake Object ID is generated, but apply(id : String) was deprecated
-            }
-
-            // Find the Jobs in the Database
-            findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
-
-              val foundMainIDs   = jobList.map(_.mainID)
-              val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-              val jobsPartition   = jobList.partition(_.status == models.database.Error)
-
-              // Delete index-zombie jobs
-              unFoundMainIDs.foreach { mainID =>
-                println("[WARNING]: job in index but not in database: " + mainID.stringify)
-                jobDao.deleteJob(mainID.stringify)
+              // Generate a list of hits and convert them into a list of future option jobs
+              val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
+                BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate()) // Not optimal, as a fake Object ID is generated, but apply(id : String) was deprecated
               }
 
-              jobsPartition._2.headOption match {
-                case Some(job) =>
+              // Find the Jobs in the Database
+              findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
 
-                  Logger.info("Returning response")
+                val foundMainIDs = jobList.map(_.mainID)
+                val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
+                val jobsPartition = jobList.partition(_.status == models.database.Error)
 
-                  Ok(Json.obj("jobSubmitted"  -> true,
-                    "jobStarted"    -> false,
-                    "existingJobs"  -> true,
-                    "existingJob"   ->job.cleaned(),
-                    "jobID" -> jobIDnew)
-                  ).withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+                // Delete index-zombie jobs
+                unFoundMainIDs.foreach { mainID =>
+                  println("[WARNING]: job in index but not in database: " + mainID.stringify)
+                  jobDao.deleteJob(mainID.stringify)
+                }
 
-                case None =>
+                jobsPartition._2.headOption match {
+                  case Some(job) =>
 
-                  Logger.info("Returning response")
+                    Logger.info("Returning response")
 
-                  Ok(Json.obj("jobSubmitted"  -> true,
-                    "identicalJobs" -> false,
-                    "existingJobs"  -> false,
-                    "jobID" -> jobIDnew)
-                  ).withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+                    Ok(Json.obj("jobSubmitted" -> true,
+                      "jobStarted" -> false,
+                      "existingJobs" -> true,
+                      "existingJob" -> job.cleaned(),
+                      "jobID" -> jobIDnew)
+                    ).withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+
+                  case None =>
+
+                    Logger.info("Returning response")
+
+                    Ok(Json.obj("jobSubmitted" -> true,
+                      "identicalJobs" -> false,
+                      "existingJobs" -> false,
+                      "jobID" -> jobIDnew)
+                    ).withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+                }
               }
             }
           }
@@ -147,17 +158,13 @@ final class JobController @Inject() (jobIDProvider                              
     }
   }
 
- //
   def create(toolname: String, jobID: String) : Action[AnyContent] =  Action.async { implicit request =>
 
-    // Just grab the formData and send to Master
     getUser.flatMap { user =>
       selectJob(jobID).map {
-        case Some(_) => BadRequest
+        case Some(_) => BadRequest //If the jobID has become unavailable between checking and submitting
         case None =>
-          // Stuff to get the inital tool arguments from the request
-          val actorIndex = jobID.trim().hashCode() % nJobActors
-          val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString)
+          val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString(formMultiValueSeparator))
           jobActorAccess.sendToJobActor(jobID, CreateJob(jobID, user,toolname, formData))
           Ok
       }
@@ -177,9 +184,11 @@ final class JobController @Inject() (jobIDProvider                              
         case Some(job) =>
           Logger.info("Found Jobs for deletion: " + job.jobID)
           // Check if the User owns the job
-          if (job.ownerID.contains(user.userID)) {
-            // Tell the master to delete the job
 
+          Logger.info("JobOwnerID " + job.ownerID.toString)
+          Logger.info("User UserID " + user.userID.stringify )
+          if (job.ownerID.contains(user.userID)) {
+            Logger.info("Sending delete request to jobActor")
             jobActorAccess.sendToJobActor(jobID, Delete(jobID))
             // Mark the job in mongoDB
             updateJobs(BSONDocument(Job.IDDB      -> job.mainID),
