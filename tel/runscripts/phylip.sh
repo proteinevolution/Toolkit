@@ -2,6 +2,7 @@ cp ../params/alignment ../params/alignment.in
 
 execNeighbor.pl -i %alignment.path \
                 -s $RANDOM \
+                -e ${PHYLIPBIN} \
                 -L 200 \
                 -t a \
                 -M %matrix_phylip.content \
