@@ -10,19 +10,28 @@ import play.api.libs.json._
 
 sealed trait ParamType
 case object Sequence extends ParamType
-case object Number   extends ParamType
+case class Number(min: Option[Int], max: Option[Int]) extends ParamType
 case object Select   extends ParamType
 case object Bool     extends ParamType
 case object Radio    extends ParamType
 
 object ParamType {
+
+  final val UnconstrainedNumber = Number(None, None)
+  final val Percentage = Number(Some(0), Some(100))
+
+  // JSON conversion
+  final val FIELD_TYPE = "type"
   implicit object ParamTypeWrites extends Writes[ParamType] {
-    def writes(paramType: ParamType): JsNumber = paramType match {
-      case Sequence => JsNumber(1)
-      case Number => JsNumber(2)
-      case Select => JsNumber(3)
-      case Bool => JsNumber(4)
-      case Radio => JsNumber(5)
+
+    def writes(paramType: ParamType): JsObject = paramType match {
+      case Sequence => Json.obj(FIELD_TYPE -> 1)
+
+      case Number(minOpt, maxOpt) => Json.obj(FIELD_TYPE -> 2, "min" -> minOpt, "max" -> maxOpt)
+      case Select => Json.obj(FIELD_TYPE -> 3)
+      case Bool => Json.obj(FIELD_TYPE -> 4)
+
+      case Radio => Json.obj(FIELD_TYPE -> 5)
     }
   }
 }
@@ -87,38 +96,38 @@ class ParamAccess @Inject() (tel: TEL) {
   final val STANDARD_DB = new Param("standarddb",Select,1, "Select standard database")
   final val HHSUITEDB = new Param("hhsuitedb",Select,1, "Select HH-Suite database")
   final val MATRIX = new Param("matrix",Select,1, "Scoring matrix")
-  final val NUM_ITER = new Param("num_iter",Number,1, "No. of iterations")
-  final val EVALUE = new Param("evalue",Number,1, "Evalue")
-  final val GAP_OPEN = new Param("gap_open",Number,1, "Gap open penalty")
-  final val GAP_EXT = new Param("gap_ext",Number,1, "Gap extension penalty")
-  final val GAP_TERM = new Param("gap_term",Number,1, "Gap termination penalty")
-  final val DESC = new Param("desc",Number,1, "No. of descriptions")
-  final val CONSISTENCY =  new Param("consistency",Number,1, "Passes of consistency transformation")
-  final val ITREFINE = new Param("itrefine",Number,1, "Passes of iterative refinements")
-  final val PRETRAIN =  new Param("pretrain",Number,1, "Rounds of pretraining")
-  final val MAXROUNDS = new Param("maxrounds",Number,1, "Maximum number of iterations")
-  final val OFFSET = new Param("offset",Number,1, "Offset")
-  final val BONUSSCORE = new Param("bonusscore",Number,1, "Bonus Score")
-  final val OUTORDER = new Param("outorder",Number,1, "Outorder")
-  final val ETRESH = new Param("inclusion_ethresh",Number,1, "E-value inclusion threshold")
+  final val NUM_ITER = new Param("num_iter",ParamType.UnconstrainedNumber,1, "No. of iterations")
+  final val EVALUE = new Param("evalue",ParamType.UnconstrainedNumber,1, "Evalue")
+  final val GAP_OPEN = new Param("gap_open",ParamType.UnconstrainedNumber,1, "Gap open penalty")
+  final val GAP_EXT = new Param("gap_ext",ParamType.UnconstrainedNumber,1, "Gap extension penalty")
+  final val GAP_TERM = new Param("gap_term",ParamType.UnconstrainedNumber,1, "Gap termination penalty")
+  final val DESC = new Param("desc",ParamType.UnconstrainedNumber,1, "No. of descriptions")
+  final val CONSISTENCY =  new Param("consistency",ParamType.UnconstrainedNumber,1, "Passes of consistency transformation")
+  final val ITREFINE = new Param("itrefine",ParamType.UnconstrainedNumber,1, "Passes of iterative refinements")
+  final val PRETRAIN =  new Param("pretrain",ParamType.UnconstrainedNumber,1, "Rounds of pretraining")
+  final val MAXROUNDS = new Param("maxrounds",ParamType.UnconstrainedNumber,1, "Maximum number of iterations")
+  final val OFFSET = new Param("offset",ParamType.UnconstrainedNumber,1, "Offset")
+  final val BONUSSCORE = new Param("bonusscore",ParamType.UnconstrainedNumber,1, "Bonus Score")
+  final val OUTORDER = new Param("outorder",ParamType.UnconstrainedNumber,1, "Outorder")
+  final val ETRESH = new Param("inclusion_ethresh",ParamType.UnconstrainedNumber,1, "E-value inclusion threshold")
   final val HHBLITSDB  =  new Param("hhblitsdb",Select,1, "Select HHblts database")
-  final val ALIGNMODE = new Param("alignmode",Number,1, "Alignment Mode")
+  final val ALIGNMODE = new Param("alignmode",Select,1, "Alignment Mode")
   final val MSAGENERATION = new Param("msageneration",Select,1, "Method of MSA generation")
-  final val MSA_GEN_MAX_ITER = Param("msa_gen_max_iter",Number,1, "Max. number of MSA generation iterations",
+  final val MSA_GEN_MAX_ITER = Param("msa_gen_max_iter",Select,1, "Max. number of MSA generation iterations",
     Seq(Validators.IsInteger))
   final val GENETIC_CODE = new Param("genetic_code",Select,1, "Choose a genetic code")
   final val LONG_SEQ_NAME = new Param("long_seq_name",Bool,1, "Use long sequence name")
   final val EVAL_INC_THRESHOLD = new Param("inclusion_ethresh",Select,1, "E-value inclusion threshold")
-  final val MIN_COV = new Param("min_cov",Number,1, "Min. coverage of hits")
-  final val MAX_LINES = new Param("max_lines",Number,1, "Max. number of hits in hitlist")
-  final val PMIN = new Param("pmin",Number,1, "Min. probability in hitlist")
-  final val MAX_SEQS = new Param("max_seqs",Number,1, "Max. number of sequences")
-  final val ALIWIDTH = new Param("aliwidth",Number,1, "With of alignments (columns)")
-  final val MAX_EVAL = new Param("max_eval",Number, 1, "Maximal E-Value")
-  final val MAX_SEQID = new Param("max_seqid", Number, 1, "Maximal Sequence Identity")
-  final val MIN_COLSCORE = new Param("min_colscore", Number, 1, "Minimal Column Score")
-  final val MIN_QUERY_COV = new Param("min_query_cov", Number, 1, "Minimal coverage of query")
-  final val MIN_ANCHOR_WITH = new Param("min_anchor_width", Number, 1, "Minimal Anchor width")
+  final val MIN_COV = new Param("min_cov",ParamType.Percentage, 1, "Min. coverage of hits (%)")
+  final val MAX_LINES = new Param("max_lines",ParamType.UnconstrainedNumber,1, "Max. number of hits in hitlist")
+  final val PMIN = new Param("pmin",ParamType.Percentage,1, "Min. probability in hitlist (%)")
+  final val MAX_SEQS = new Param("max_seqs",ParamType.UnconstrainedNumber,1, "Max. number of sequences")
+  final val ALIWIDTH = new Param("aliwidth", Number(Some(0),Some(100)),1, "With of alignments (columns)")
+  final val MAX_EVAL = new Param("max_eval",ParamType.UnconstrainedNumber, 1, "Maximal E-Value")
+  final val MAX_SEQID = new Param("max_seqid", ParamType.UnconstrainedNumber, 1, "Maximal Sequence Identity")
+  final val MIN_COLSCORE = new Param("min_colscore", ParamType.UnconstrainedNumber, 1, "Minimal Column Score")
+  final val MIN_QUERY_COV = new Param("min_query_cov", ParamType.UnconstrainedNumber, 1, "Minimal coverage of query")
+  final val MIN_ANCHOR_WITH = new Param("min_anchor_width", ParamType.UnconstrainedNumber, 1, "Minimal Anchor width")
   final val WEIGHTING = new Param("weighting", Bool, 1, "Weighting")
   final val RUN_PSIPRED = new Param("run_psipred", Bool,1, "Run PSIPRED")
   final val MATRIX_PHYLIP = new Param("matrix_phylip",Select,1, "Model of amino acid replacement")
@@ -127,8 +136,9 @@ class ParamAccess @Inject() (tel: TEL) {
   final val FILTER_LOW_COMPLEXITY =  new Param("filter_low_complexity", Bool, 1, "Filter for low complexity regions")
   final val MATRIX_MARCOIL = new Param("matrix_marcoil", Select, 1, "Matrix")
   final val TRANSITION_PROBABILITY = new Param("transition_probability", Select, 1, "Transition Probability'")
-  final val MIN_SEQID_QUERY = new Param("min_seqid_query", Number, 1, "Minimum sequence ID with Query (%)")
-  final val NUM_SEQS_EXTRACT =  new Param("num_seqs_extract", Number, 1, "No. of sequences to extract")
+  final val MIN_SEQID_QUERY = new Param("min_seqid_query", ParamType.UnconstrainedNumber, 1, "Minimum sequence ID with Query (%)")
+  final val NUM_SEQS_EXTRACT =  new Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of sequences to extract")
+  final val SS_SCORING = new Param("ss_scoring", Select, 1, "SS Scoring")
 
   // Maps parameter values onto their full names descriptions, as they should appear in the view
   final val fullNames = Map(
@@ -179,6 +189,8 @@ class ParamAccess @Inject() (tel: TEL) {
     MATRIX_PCOILS.name -> tel.generateValues(MATRIX_PCOILS.name).toSeq.sorted,
     PROTBLASTPROGRAM.name -> tel.generateValues(PROTBLASTPROGRAM.name).toSeq.sorted,
     MATRIX_MARCOIL.name -> tel.generateValues(MATRIX_MARCOIL.name).toSeq.sorted,
-    TRANSITION_PROBABILITY.name -> tel.generateValues(TRANSITION_PROBABILITY.name).toSeq.sorted
+    TRANSITION_PROBABILITY.name -> tel.generateValues(TRANSITION_PROBABILITY.name).toSeq.sorted,
+    ALIGNMODE.name -> tel.generateValues(ALIGNMODE.name).toSeq.sorted,
+    SS_SCORING.name -> tel.generateValues(SS_SCORING.name).toSeq.sorted
   )
 }

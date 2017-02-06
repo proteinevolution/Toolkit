@@ -157,9 +157,10 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       val extendedParams = params + ("jobid" -> jobID)
 
       // Make a new JobObject and set the initial values
+      // TODO Currently the job always belongs to the submitting user. Change the OwnerID to None for Public Jobs
       val job = Job(mainID      = BSONObjectID.generate(),
                     jobID       = jobID,
-                    ownerID     = if (params.getOrElse("private","") == "true") Some(user.userID) else None,
+                    ownerID     = Some(user.userID),
                     status      = Submitted,
                     tool        = toolname,
                     watchList   = List(user.userID),
