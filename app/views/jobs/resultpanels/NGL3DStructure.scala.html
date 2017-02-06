@@ -1,0 +1,17 @@
+@import play.api.mvc.RequestHeader
+
+@(filepath : String)(implicit request: RequestHeader)
+
+<script>
+
+        $(document).ready(function(){
+            stage = new NGL.Stage( "viewport" );
+            stage.loadFile( "@filepath", { defaultRepresentation: true } );
+
+            stage.set
+        });
+</script>
+
+
+
+<div id="viewport" style="width:50pc; height: 30pc; margin: 0 auto;"></div>
