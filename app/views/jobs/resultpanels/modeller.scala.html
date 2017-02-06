@@ -1,0 +1,12 @@
+@import models.results.FileLoader
+@import play.api.mvc.RequestHeader
+@(filepathImage : String,filepathText : String)(implicit request: RequestHeader)
+
+@views.html.jobs.resultpanels.image(filepathImage)
+
+<pre style="font-size: 12px;width: 800px; height: 30pc; overflow-y: scroll;">
+
+  @FileLoader.loadFile(filepathText)
+</pre>
+
+
