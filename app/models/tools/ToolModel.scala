@@ -44,8 +44,14 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
     ("hhpred", "HHpred", "hhp", "search", "",
     Seq(paramAccess.ALIGNMENT, paramAccess.HHSUITEDB, paramAccess.MSAGENERATION,
         paramAccess.MSA_GEN_MAX_ITER, paramAccess.MIN_COV, paramAccess.EVAL_INC_THRESHOLD,
-        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH),
+        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE, paramAccess.SS_SCORING),
       Seq("Hitlist", "FullAlignment")),
+
+    // HHpred - Manual Template Selection
+    ("hhpred_manual", "HHpred - Manual Template Selection", "hhp", "forward", "",  Seq.empty, Seq("Results", "PIR")),
+
+    // HHpred - Manual Template Selection
+    ("hhpred_automatic", "HHpred - Automatic Template Selection", "hhp", "forward", "",  Seq.empty, Seq.empty),
 
     // PSI-BLAST
     ("psiblast", "PSI-BLAST", "pbl", "search", "", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB,
@@ -148,9 +154,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
     // PHYLIP
     ("phylip", "PHYLIP-NEIGHBOR", "phyn", "classification", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYLIP),
-      Seq("NeighborJoining", "UPGMA")),
+      Seq("NeighborJoiningTree", "NeighborJoiningResults", "UPGMATree", "UPGMAResults")),
 
-    // Backtranslate
+    // Backtranslate1
     ("backtrans", "Backtranslator", "bac", "utils", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.GENETIC_CODE),
       Seq("DNA")),
@@ -174,7 +180,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
 
             lazy val paramGroups = Map(
               "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.ALIGNMENT_FORMAT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
-                paramAccess.PROTBLASTPROGRAM.name)
+                paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name)
             )
             // Params which are not a part of any group (given by the name)
             lazy val remainParamName : String = "Parameters"

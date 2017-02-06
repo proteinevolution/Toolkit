@@ -9,11 +9,11 @@ function catch_errors() {
     echo "script aborted, because of errors"
     exit 0
 }
-curl -X POST http://%HOSTNAME:%PORT/jobs/running/%jobid.content
+curl -X POST http://%HOSTNAME:%PORT/jobs/running/%jobid.content > /dev/null 2>&1
 
 # retrieve sge id
 
-curl -X POST http://%HOSTNAME:%PORT/jobs/sge/%jobid.content/${JOB_ID}
+curl -X POST http://%HOSTNAME:%PORT/jobs/sge/%jobid.content/${JOB_ID} > /dev/null 2>&1 
 
 
 # Recreate results and log directories

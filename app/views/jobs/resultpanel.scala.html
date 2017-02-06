@@ -18,9 +18,9 @@
       case ("marcoil", "ProbList/PSSM") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbList")
 
       // MODELLER
-      case ("modeller", "VERIFY3D") => views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.verify3d.png",s"$jobPath$jobID/results/verify3d/$jobID.plotdat")
-      case ("modeller", "SOLVX") => views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png",s"$jobPath$jobID/results/solvx/$jobID.solvx")
-      case ("modeller", "ANOLEA") => views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png",s"$jobPath$jobID/results/$jobID.pdb.profile")
+      //case ("modeller", "VERIFY3D") => views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.verify3d.png",s"$jobPath$jobID/results/verify3d/$jobID.plotdat")
+      //case ("modeller", "SOLVX") => views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png",s"$jobPath$jobID/results/solvx/$jobID.solvx")
+      //case ("modeller", "ANOLEA") => views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png",s"$jobPath$jobID/results/$jobID.pdb.profile")
 
       // ProtBLAST
       case ("protblast", "Hits") => views.html.jobs.resultpanels.blastviz_extra(jobID)
@@ -32,10 +32,16 @@
       case ("tcoffee", "Conservation") => views.html.jobs.resultpanels.tcoffee_colored(jobID)
       case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       case ("tcoffee", "Text") => views.html.jobs.resultpanels.tcoffee_text(jobID)
+
+      // HHpred
       case ("hhpred", "Hitlist") => views.html.jobs.resultpanels.hhpred.hitlist(jobID)
       case ("hhpred", "FullAlignment") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
 
+      // HHpred Manual Template Selection
+      case("hhpred_manual", "Results") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out")
+      case("hhpred_manual", "PIR") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/tomodel.pir")
 
+      // ANCESCON
       case ("ancescon", "Tree" ) => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div")
 
       // clustalo
@@ -68,6 +74,8 @@
       case ("aln2plot", "SideChainVolume") => views.html.jobs.resultpanels.image(s"/files/$jobID/side_chain_volume.png")
 
       // Phylip
-      case ("phylip", "NeighborJoining") => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_nj.tree", "nj_div")
-      case ("phylip", "UPGMA") => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")
+      case ("phylip", "NeighborJoiningTree") => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_nj.tree", "nj_div")
+      case ("phylip", "NeighborJoiningResults") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.nj")
+      case ("phylip", "UPGMATree") => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")
+      case ("phylip", "UPGMAResults") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.upgma")
 }}

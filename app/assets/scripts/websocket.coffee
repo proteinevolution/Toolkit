@@ -71,11 +71,9 @@ onMessage = (event) ->
   message = JSON.parse event.data
   switch message.type
     when "UpdateJob"
-
-      console.log(message.job)
+      m.startComputation()
       Job.pushJob(message.job)
-      m.redraw()
-
+      m.endComputation()
       # Stuff with traffic bar
       if message.state == 3
         $('#trafficbar').css
