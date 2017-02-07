@@ -21,8 +21,8 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
   /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with
     * stored given a particular key
    */
-  def get(jobID: String, key: String) = Action.async {
-    getResult(jobID, key).map {
+  def get(jobID: String) = Action.async {
+    getResult(jobID).map {
       case Some(jsValue) => Ok(jsValue)
       case None => NotFound
     }
