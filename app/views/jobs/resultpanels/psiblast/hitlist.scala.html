@@ -68,7 +68,6 @@
                 <button type="button" style="float: right;" class="button" onclick="submitManuallySelected()">Create Model from manually selected templates</button>
                 <button type="button" style="float: right;" class="button" onclick="submitAutomaticallySelected()">Select Templates Automatically</button>
             </div>
-            <br>
             <form id="psiblast_templates">
             </form>
         </div>
@@ -180,21 +179,28 @@
                     names.setAttribute("class","name")
                     tabbody.appendChild(names)
                 }
+
+                // break
+                tabbody.appendChild(makeRow(["<br></br>"]))
+
                 // Query sequence
-                if(typeof ali.qseq !== 'undefined') {
-                    var  qseqColored = ali.qseq.replace(color_regex, color_regex_replacer)
-                    tabbody.appendChild(makeRow(["Query" , ali.query_from, qseqColored, ali.query_to]));
-                }
-                // Middle Line
-                if(typeof ali.midline !== 'undefined') {
-                    tabbody.appendChild(makeRow(["", "", ali.midline, ""]));
-                }
+                var  qseqColored = ali.qseq.replace(color_regex, color_regex_replacer);
+                var qseqRow = makeRow(["Query" , ali.query_from, qseqColored, ali.query_to]);
+                qseqRow.setAttribute("class", "sequence");
+                tabbody.appendChild(qseqRow);
+
+                //Middle sequence
+                var midlineRow = makeRow(["", "", ali.midline, ""]);
+                midlineRow.setAttribute("class", "sequence");
+                tabbody.appendChild(midlineRow);
 
                 // Hit sequence
-                if(typeof ali.hseq !== 'undefined') {
-                    var  hseqColored = ali.qseq.replace(color_regex, color_regex_replacer)
-                    tabbody.appendChild(makeRow(["Sbjct", ali.hit_from, hseqColored, ali.hit_to]));
-                }
+                var  hseqColored = ali.qseq.replace(color_regex, color_regex_replacer)
+                var hseqRow = makeRow(["Sbjct", ali.hit_from, hseqColored, ali.hit_to]);
+                hseqRow.setAttribute("class", "sequence");
+                tabbody.appendChild(hseqRow);
+
+                // Line
                 var line = makeRowColspan(["<hr style=\"margin-top: 1rem !important;margin-bottom: 1rem !important;\"></hr>"],4,"td");
                 line.setAttribute("class","horizontal-line")
                 tabbody.appendChild(line)
