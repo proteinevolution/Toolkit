@@ -1,6 +1,6 @@
 
 @(jobID: String)(implicit request: RequestHeader)
-
+<link href="@routes.Assets.versioned("styles/psiblast-resultview.css")" rel="stylesheet">
 
 
 <ul id="psiblast_accordion" class="accordion" data-accordion data-allow-all-closed="true">
@@ -173,13 +173,13 @@
                 tabbody.appendChild(makeRow(["Number: " + alignmentNum, "", "", ""]));
 
                 // Names and Accession Numbers
-                var span = document.createElement("span")
                 for(var j =0; j < hits[i].description.length ; j++) {
                     var accession = hits[i].description[j].accession;
                     var linkTemplate = ["<a href=\"https://www.ncbi.nlm.nih.gov/protein/", accession, "\">", accession, "</a>"].join('')
-                    tabbody.appendChild(makeRowColspan([linkTemplate, hits[i].description[j].title]))
+                    var names = makeRowColspan([linkTemplate, hits[i].description[j].title],2,"td")
+                    names.setAttribute("class","name")
+                    tabbody.appendChild(names)
                 }
-                tab.appendChild(span)
                 // Query sequence
                 if(typeof ali.qseq !== 'undefined') {
                     var  qseqColored = ali.qseq.replace(color_regex, color_regex_replacer)
@@ -195,8 +195,12 @@
                     var  hseqColored = ali.qseq.replace(color_regex, color_regex_replacer)
                     tabbody.appendChild(makeRow(["Sbjct", ali.hit_from, hseqColored, ali.hit_to]));
                 }
+                var line = makeRowColspan(["<hr style=\"margin-top: 1rem !important;margin-bottom: 1rem !important;\"></hr>"],4,"td");
+                line.setAttribute("class","horizontal-line")
+                tabbody.appendChild(line)
 
                 tab.appendChild(tabbody);
+
                 divAlignment.appendChild(tab);
                 alignments_container.appendChild(divAlignment);
             }
@@ -219,13 +223,14 @@
         }
         return row;
     }
-        // Makes a table row with colspan=2
-        function makeRowColspan(entries) {
+        // Makes a table row with colspan=num
+        function makeRowColspan(entries, num, HTMLelement) {
 
             var row = document.createElement("tr");
             for(var i = 0; i < entries.length; i++ ) {
-                var entry = document.createElement("th");
-                entry.setAttribute("colspan","2");
+                var entry = document.createElement(HTMLelement);
+                entry.setAttribute("padding", "0")
+                entry.setAttribute("colspan",num);
                 entry.innerHTML = entries[i];
                 row.appendChild(entry);
             }

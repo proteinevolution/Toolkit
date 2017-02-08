@@ -1,6 +1,8 @@
 @import models.results.HHpred
 @(jobID: String)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/psiblast-resultview.css")" rel="stylesheet">
+
 
 @*  Load html Map used for the image representation *@
 
@@ -155,6 +157,19 @@
         return row;
     }
 
+    // Makes a table row with colspan=num
+    function makeRowColspan(entries, num, HTMLelement) {
+
+        var row = document.createElement("tr");
+        for(var i = 0; i < entries.length; i++ ) {
+            var entry = document.createElement(HTMLelement);
+            entry.setAttribute("padding", "0")
+            entry.setAttribute("colspan",num);
+            entry.innerHTML = entries[i];
+            row.appendChild(entry);
+        }
+        return row;
+    }
         (function()  {
          $('.slider').on('moved.zf.slider', function() {
              $('#lefthandle').html($('#hidden1').val());
@@ -227,7 +242,16 @@
                  var tabbody = document.createElement("tbody");
 
                  // Query Sequence
-                 tabbody.appendChild(makeRow([ali.no, "", "", ""]));
+                 tabbody.appendChild(makeRow(["Number: "+ali.no, "", "", ""]));
+
+                 // Names and Accession Numbers
+                     var accession = hits[i].struc;
+                     var linkTemplate = ["<a href=\"https://www.ncbi.nlm.nih.gov/protein/", accession, "\">", accession, "</a>"].join('')
+                     var names = makeRowColspan(["",linkTemplate,"", hits[i].hit],1,"td")
+                     names.setAttribute("class","name")
+                     tabbody.appendChild(names)
+
+
                  // Handle secondary structure annotation for query, if present
                  if(typeof ali.query.ss_dssp !== 'undefined') {
 
@@ -272,6 +296,12 @@
                      current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
                      tabbody.appendChild(makeRow(["T", "ss_pred", "", current_seq]));
                  }
+
+                    // line
+                 var line = makeRowColspan(["<hr style=\"margin-top: 1rem !important;margin-bottom: 1rem !important;\"></hr>"],4,"td");
+                 line.setAttribute("class","horizontal-line")
+                 tabbody.appendChild(line)
+
 
                  tab.appendChild(tabbody);
                  divAlignment.appendChild(tab);
