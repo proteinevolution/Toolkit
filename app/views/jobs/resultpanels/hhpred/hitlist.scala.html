@@ -246,7 +246,10 @@
 
                  // Names and Accession Numbers
                      var accession = hits[i].struc;
-                     var linkTemplate = ["<a href=\"https://www.ncbi.nlm.nih.gov/protein/", accession, "\">", accession, "</a>"].join('')
+
+                     // remove after char "_" example: 1f2r_I to 1f2r
+                    accession = accession.replace(/\_.*$/ , "")
+                     var linkTemplate = ["<a href=\"http://www.rcsb.org/pdb/explore.do?structureId=", accession, "\">", accession, "</a>"].join('')
                      var names = makeRowColspan(["",linkTemplate,"", hits[i].hit],1,"td")
                      names.setAttribute("class","name")
                      tabbody.appendChild(names)
