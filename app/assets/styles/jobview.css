@@ -81,7 +81,10 @@ hr {
     margin: 0 ;
 }
 
-.unstriped tr:hover :not(.horizontal-line){
+.sequence :hover{
+    background-color: #eee;
+}
+.name :hover{
     background-color: #eee;
 }
 

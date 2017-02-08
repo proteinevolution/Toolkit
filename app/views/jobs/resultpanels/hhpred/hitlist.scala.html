@@ -248,8 +248,8 @@
                      var accession = hits[i].struc;
 
                      // remove after char "_" example: 1f2r_I to 1f2r
-                    accession = accession.replace(/\_.*$/ , "")
-                     var linkTemplate = ["<a href=\"http://www.rcsb.org/pdb/explore.do?structureId=", accession, "\">", accession, "</a>"].join('')
+
+                     var linkTemplate = ["<a href=\"http://www.rcsb.org/pdb/explore.do?structureId=", accession.replace(/\_.*$/ , ""), "\">", accession, "</a>"].join('')
                      var names = makeRowColspan(["",linkTemplate,"", hits[i].hit],1,"td")
                      names.setAttribute("class","name")
                      tabbody.appendChild(names)
@@ -269,17 +269,24 @@
                      tabbody.appendChild(makeRow(["Q", "ss_pred", "", current_seq]));
                  }
 
+
                  current_seq = ali.query.seq.replace(color_regex, color_regex_replacer);
                  tabbody.appendChild(makeRow(["Q", ali.query.name, ali.query.start, current_seq]));
                  // Consensus, if present
                  if(typeof ali.query.consensus !== 'undefined') {
-                     tabbody.appendChild(makeRow(["Q", "Consensus", ali.query.start, ali.query.consensus]));
+                     var queryRow = makeRow(["Q", "Consensus", ali.query.start, ali.query.consensus]);
+                     queryRow.setAttribute("class", "sequence");
+                     tabbody.appendChild(queryRow);
                  }
                  if(typeof ali.agree !== 'undefined') {
-                     tabbody.appendChild(makeRow(["", "", "", ali.agree]));
+                     var midlineRow = makeRow(["", "", "", ali.agree]);
+                     midlineRow.setAttribute("class", "sequence");
+                     tabbody.appendChild(midlineRow);
                  }
                  if(typeof ali.template.consensus !== 'undefined') {
-                     tabbody.appendChild(makeRow(["T", "Consensus", ali.template.start, ali.template.consensus]));
+                     var templateRow = makeRow(["T", "Consensus", ali.template.start, ali.template.consensus]);
+                     templateRow.setAttribute("class", "sequence");
+                     tabbody.appendChild(templateRow);
                  }
 
                  // replace contiguous sequences of AA with the respective colors
