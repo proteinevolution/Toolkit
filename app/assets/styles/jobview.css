@@ -44,8 +44,16 @@ body.is-reveal-open {
 #hhpred_alignments {
 
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-    white-space: pre;
+    white-space: pre ;
+    font-size: 0.7rem !important;
 }
+
+#psiblast_alignments{
+    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    white-space: pre ;
+    font-size: 0.7rem !important;
+}
+
 
 .alignment_box {
     display: flex;
@@ -57,10 +65,50 @@ body.is-reveal-open {
 }
 
 
+hr {
+    padding-top: 0em;
+    width: 100%;
+    margin: 0 auto !important;
+    padding: 0;
+    border-bottom: 1px solid rgba(180, 180, 180, 0.3) !important;
+}
+
+.name{
+    font-weight: bold;
+}
+
+.unstriped{
+    margin: 0 ;
+}
+
+.sequence :hover{
+    background-color: #eee;
+}
+.name :hover{
+    background-color: #eee;
+}
+
+.accordion a {
+    color:#000 ;
+}
+
+.unstriped a{
+    color:#27776e !important;
+}
+
+
+
+
 /* To display the alignments more nicely */
 #hhpred_alignments td {
     padding: 0rem 1rem 0rem 0rem !important;
 }
+
+/* To display the alignments more nicely */
+#psiblast_alignments td {
+    padding: 0rem 1rem 0rem 0rem !important;
+}
+
 
 .parameter label {
     float: left;
