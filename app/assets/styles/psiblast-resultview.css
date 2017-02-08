@@ -62,10 +62,3 @@
 .revealReference{
     color: grey;
 }
-hr {
-    padding-top: 0em;
-    width: 100%;
-    margin: 0 auto;
-    margin-bottom: 0.5em;
-    border-bottom: 1px solid rgba(180, 180, 180, 0.3) !important;
-}

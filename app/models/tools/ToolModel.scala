@@ -58,7 +58,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
       paramAccess.MATRIX,
       paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN,
       paramAccess.GAP_EXT, paramAccess.DESC),
-      Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")),
+      Seq("Hitlist")),
 
    // T-Coffee
     ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.ALIGNMENT),
