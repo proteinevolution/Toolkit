@@ -53,6 +53,7 @@ object FeaturedArticle{
       IDDB        -> featuredArticle.articleID,
       TITLE       -> featuredArticle.title,
       TEXT        -> featuredArticle.text,
+      IMAGEPATH   -> featuredArticle.imagePath,
       DATECREATED -> featuredArticle.dateCreated,
       DATEUPDATED -> featuredArticle.dateUpdated
     )
