@@ -5,11 +5,8 @@
 @{ (toolname, resultpanel) match {
 
       // PSI-BLAST
-      case ("psiblast", "Hits") => views.html.jobs.resultpanels.blastviz_extra(jobID)
-      case ("psiblast", "E-Values") => views.html.jobs.resultpanels.evalues(jobID)
-      case ("psiblast", "Fasta") => views.html.jobs.resultpanels.fasta(jobID)
-      case ("psiblast", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_psiblast(jobID)
-      case ("psiblast", "Extra") => views.html.jobs.resultpanels.blast_exp(jobID)
+      case ("psiblast", "Hitlist") => views.html.jobs.resultpanels.psiblast.hitlist(jobID)
+
 
       // MARCOIL
       case ("marcoil", "CC-Prob") => views.html.jobs.resultpanels.image(s"/files/$jobID/alignment_ncoils.png")

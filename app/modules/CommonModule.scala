@@ -69,10 +69,9 @@ trait CommonModule extends ReactiveMongoComponents {
   }
 
   // Able to fetch one field for the respective result
-  protected def getResult(jobID: String, key: String): Future[Option[JsValue]] = {
-    val projection = BSONDocument(key -> 1)
+  protected def getResult(jobID: String): Future[Option[JsValue]] = {
     val selector = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
-    resultCollection.map(_.find(selector, projection).cursor[BSONDocument]()).flatMap(_.headOption).map {
+    resultCollection.map(_.find(selector).cursor[BSONDocument]()).flatMap(_.headOption).map {
       case Some(bsonDoc) => Some(reactivemongo.play.json.BSONFormats.toJSON(bsonDoc))
       case None => None
     }

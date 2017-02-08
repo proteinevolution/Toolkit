@@ -121,7 +121,7 @@ POST          /api/job/addnotes                       @controllers.Jobs.annotati
 GET           /api/jobs/getnotes/:jobID               @controllers.Jobs.getAnnotation(jobID: String)
 
 # Results
-GET           /api/job/results/:jobID/:key            @controllers.DataController.get(jobID: String, key: String)
+GET           /api/job/results/:jobID          @controllers.DataController.get(jobID: String)
 
 # Article
 GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)

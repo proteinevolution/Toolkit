@@ -298,10 +298,6 @@ tr.job a:visited {
     font-size: 0.85em !important;
 }
 
-.accordion a {
-    color: #000 !important;
-}
-
 .accordion-title {
     font-weight: bold;
 }
