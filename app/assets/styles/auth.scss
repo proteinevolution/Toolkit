@@ -10,10 +10,9 @@
 
 }
 #auth-tabs .ui-widget-header {
-  font-size: 1.1em;
   background: #eeeeee;
   border: none;
-  width: 24.7em;
+  width: 100%;
 
 }
 #auth-tabs .ui-tabs-nav .ui-state-default {
@@ -35,13 +34,18 @@
   background: white;
 }
 
-#signin-form {
-  margin-top: 4em;
+#signup-form, #signin-form, #forgot-form {
+  margin-top: 2em;
+  margin-bottom: 2em;
 }
 
-#forgot-form {
-  font-size: 0.85em;
-  margin-top: 4em;
+#signup-form div, #signin-form div, #forgot-form div {
+  width: 13em;
+  margin: 0 auto;
+}
+
+#checklabel, #acceptToSText {
+  font-size: 0.75em;
 }
 
 .auth-form input {
@@ -58,8 +62,8 @@
   width: 40%;
   background-color: #2E8C81;
   font-size-adjust: none;
-  font-size: 0.8em !important;
   margin: auto;
+  margin-top: 3em;
 
 }
 
@@ -69,19 +73,9 @@
   height: 3em !important;
 }
 
-#checklabel {
-  position: absolute;
-  left: 140px;
-  top: 360px;
-}
-
 #signin-link {
   color: #888;
   font-size: 0.85em;
-}
-
-#toS {
-  margin-bottom: 1em;
 }
 
 #profile-edit-form input, #profile-edit-form select {
@@ -158,4 +152,15 @@ button.loggedIn {
 
 .menu.vertical > li a:not(.button):hover {
   background: rgba(211,211,211, 0.5);
+}
+
+.country_drop div {
+  width: 100%;
+  margin-bottom: 1em;
+  font-size: 0.8em;
+}
+
+.country_drop ul {
+  overflow: hidden;
+  width: 100%;
 }

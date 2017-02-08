@@ -3,38 +3,36 @@
 
 <div class="auth-form">
     <form id="signup-form" data-abide="ajax" novalidate>
-        <div class="row">
-            <div class="small-offset-3 small-6 padded-column columns">
+            <div>
                 <label>
                     <input type="text" id="nameLogin" name="nameLogin" placeholder="Username" required pattern="[a-zA-Z0-9_]{6,40}">
                     <span class="form-error">Username must be at least 6 characters long!</span>
                 </label>
             </div>
-            <div class="small-offset-3 small-6 padded-column columns">
+            <div>
                 <label>
                     <input type="password" id="passwordCheck" placeholder="Password" required pattern=".{8,128}">
                     <span class="form-error">Passwords must be at least 8 characters long!</span>
                 </label>
             </div>
-            <div class="small-offset-3 small-6 padded-column columns">
+            <div>
                 <label>
                     <input type="password" id="password" name="password" placeholder="Confirm password" data-equalTo="passwordCheck" required pattern=".{8,128}">
                     <span class="form-error">Passwords must match!</span>
                 </label>
             </div>
-            <div class="small-offset-3 small-6 padded-column columns">
+            <div>
                 <label>
                     <input type="text" id="eMail" name="eMail" placeholder="E-Mail" pattern="email">
                     <span class="form-error">Please enter a valid e-Mail address!</span>
                 </label>
             </div>
-            <div id="toS" class="small-offset-3 small-6 padded-column columns">
-                <label id="checklabel">
-                    <input type="checkbox" id="acceptToS" name="acceptToS" value="false" required>
-                    I Accept the Terms of Sevice
-                    <span id="acceptToSText" class="form-error">You must accept the ToS!</span>
-                </label>
-            </div>
+        <div>
+            <label id="checklabel">
+                <input type="checkbox" id="acceptToS" name="acceptToS" value="false" required>
+                I Accept the Terms of Sevice
+                <span id="acceptToSText" class="form-error">You must accept the ToS!</span>
+            </label>
         </div>
         <input id="signup-submit" type="submit" class="small expanded secondary button disabled" value="Register">
     </form>

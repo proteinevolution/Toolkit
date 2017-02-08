@@ -22,7 +22,7 @@
     <div class="small-6 small-offset-3 columns">
         <input type="text" id="city" name="city" pattern="text" placeholder="City" value="@{user.getUserData.city.getOrElse("")}">
     </div>
-    <div class="small-6 small-offset-3 columns">
+    <div class="small-6 small-offset-3 columns country_drop">
         <select id="country" name="country">
           <option value="">Country</option>
             @for(region <- RegionCodes.regions){

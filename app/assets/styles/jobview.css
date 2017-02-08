@@ -416,7 +416,6 @@ input.button_fullscreen:focus {
 }
 
 .nice-select .list {
-    /*width: 15em; */
     margin-left: 0;
     border: 1px solid grey;
     height: 15em;
