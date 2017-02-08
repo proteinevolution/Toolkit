@@ -575,7 +575,7 @@ textarea { resize:both; }
 
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-    font-size: 1em;
+    font-size: 0.8em;
 }
 
 
