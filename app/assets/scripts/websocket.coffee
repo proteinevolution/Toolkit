@@ -70,6 +70,12 @@ onMessage = (event) ->
 
   message = JSON.parse event.data
   switch message.type
+    when "ClearJob"
+      # clear a job which has been removed server side
+      m.startComputation()
+      Job.removeJob(message.jobID)
+      m.endComputation()
+
     when "UpdateJob"
       m.startComputation()
       Job.pushJob(message.job)
