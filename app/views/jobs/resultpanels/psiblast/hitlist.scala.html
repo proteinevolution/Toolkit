@@ -1,15 +1,20 @@
 @import models.results.HHpred
 @(jobID: String)(implicit request: RequestHeader)
-<link href="@routes.Assets.versioned("styles/psiblast-resultview.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 
 <ul id="psiblast_accordion" class="accordion" data-accordion data-allow-all-closed="true">
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
-            @HHpred.html(s"$jobID/results/blastviz.html")
-            <div style=' width: 774px ;position: absolute; margin-top: 1.0em; margin-left: 2em !important;' class='flat-slider' id='flat-slider'></div>
-            <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
+            <div>
+
+                <div style=' width: 89% ;margin-left: 2em !important;' class='flat-slider' id='flat-slider'></div>
+                <div>
+                @HHpred.html(s"$jobID/results/blastviz.html")
+                <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
+                </div>
+            </div>
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
@@ -81,6 +86,7 @@
 
         var aas;
         var hitlist;
+        var queryLength;
 
 
         (function()  {
@@ -97,10 +103,9 @@
                 var numHits = hits.length -1
                 var info = basenameResults.stat
 
-
+                queryLength = basenameResults.query_len;
                 $("#psiblast_query").append(basenameResults.query_title);
-                $("#psiblast_queryLength").append(basenameResults.query_length);
-
+                $("#psiblast_queryLength").append(queryLength);
 
                 // generate JSON file that is easier to use with dataTable
 
@@ -194,14 +199,15 @@
                 aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
                 $('#psiblast_color_select').niceSelect();
                 $("#psiblast_accordion").foundation();
+
+
+
             });
         })();
 
+        /* without timeout SLIDER is not loaded */
+        setTimeout(function() {slider_show(queryLength, 1, queryLength)}, 1000);
 
 
-
-
-/* BLASTVIZ */
-setTimeout(function() {slider_show(44, 1, 44)}, 1000);
 
 </script>
