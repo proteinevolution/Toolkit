@@ -1,5 +1,3 @@
-
-
 # fetch parameters from the parent here
 cp ../../%parentid.content/results/hhsearch.hhr ../params
 cp ../../%parentid.content/results/query.a3m ../params
@@ -14,5 +12,9 @@ checkTemplates.pl -i   ../params/hhsearch.hhr \
 
 # Remove line which reveals a path from the result
 sed -i '/create/d' $(readlink -f ../results/results.out)
+
+# Remove whitespace lines and whitespace at line start
+sed -i 's/^\s+//' $(readlink -f ../results/tomodel.pir)
+sed -i '/^\s+$/d' $(readlink -f ../results/tomodel.pir)
 
 

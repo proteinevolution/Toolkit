@@ -37,7 +37,7 @@
 
       // HHpred Manual Template Selection
       case("hhpred_manual", "Results") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out")
-      case("hhpred_manual", "PIR") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/tomodel.pir")
+      case("hhpred_manual", "PIR") => views.html.jobs.resultpanels.hhpred.forward(s"$jobPath$jobID/results/tomodel.pir", jobID)
 
       // ANCESCON
       case ("ancescon", "Tree" ) => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div")
