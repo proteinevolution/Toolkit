@@ -39,6 +39,9 @@ object JobActor {
   // Messages the jobActor accepts from outside
   case class PushJob(job : Job)
 
+  // Message for the Websocket Actor to send a ClearJob Message
+  case class ClearJob(jobID : String)
+
   // User Actor starts watching
   case class StartWatch(jobID: String, userID: BSONObjectID)
 
@@ -241,8 +244,12 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
     // User does no longer watch this Job
     case StopWatch(jobID, userID) =>
-        val w: Set[BSONObjectID] = this.watchers(jobID)
-        this.watchers = this.watchers.updated(jobID, w.-(userID)).withDefaultValue(Set.empty)
+      val w: Set[BSONObjectID] = this.watchers(jobID)
+      this.watchers = this.watchers.updated(jobID, w.-(userID)).withDefaultValue(Set.empty)
+      this.users(userID).foreach(_ ! ClearJob(jobID))
+
+      modifyUser(BSONDocument(User.IDDB -> userID),
+                 BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
 
     case StartWatch(jobID, userID) =>
       Logger.info("User starts watching JobState with JobID " + jobID)

@@ -106,6 +106,39 @@ window.Job = (function() {
         });
     };
 
+    Job.removeJob = function(jobID, sendMessage, deleteJob) {
+        if (sendMessage == null) {
+            sendMessage = false;
+        }
+        if (deleteJob == null) {
+            deleteJob = false;
+        }
+        return Job.list.then(function(jobs) {
+            return jobs.map(function(job, idx) {
+                if (job.jobID === jobID) {
+                    jobs[idx] = null;
+                    jobs.splice(idx, 1);
+                    if (sendMessage) {
+                        if (deleteJob) {
+                            sendMessage({
+                                "type": "DeleteJob",
+                                "jobID": job.jobID
+                            });
+                        } else {
+                            sendMessage({
+                                "type": "ClearJob",
+                                "jobID": job.jobID
+                            });
+                        }
+                    }
+                    if (job.jobID === Job.selected) {
+                        return m.route("/tools/" + job.toolname);
+                    }
+                }
+            });
+        });
+    };
+
     Job["delete"] = function(jobID) {
         return Job.list.then(function(jobs) {
             return jobs.map(function(job, idx) {
