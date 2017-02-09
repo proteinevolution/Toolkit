@@ -18,7 +18,7 @@ echo "from modeller.automodel import *     # Load the automodel class" >> modell
 echo "log.verbose()" >> modeller.py
 echo "env = environ()                      # create a new MODELLER environment to build this model" >> modeller.py
 echo "# directories for input atom files" >> modeller.py
-echo "env.io.atom_files_directory = '%PDB:%PDBALL:%HHOMP'" >> modeller.py
+echo "env.io.atom_files_directory = '%PDBALL:%HHOMP'" >> modeller.py
 echo "a = automodel(env," >> modeller.py
 echo "             alnfile  = 'alignment.pir',    # alignment filename" >> modeller.py
 echo "             knowns   = ($KNOWNS),     #codes of the templates" >> modeller.py

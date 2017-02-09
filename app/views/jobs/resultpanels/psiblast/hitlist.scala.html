@@ -1,4 +1,4 @@
-
+@import models.results.HHpred
 @(jobID: String)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/psiblast-resultview.css")" rel="stylesheet">
 
@@ -7,7 +7,9 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
-
+            @HHpred.html(s"$jobID/results/blastviz.html")
+            <div style=' width: 774px ;position: absolute; margin-top: 1.0em; margin-left: 2em !important;' class='flat-slider' id='flat-slider'></div>
+            <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
@@ -81,229 +83,125 @@
         var hitlist;
 
 
-        function toggleAliColor(element) {
-            if(element.value == "letters") {
-                for(var i = 0; i < aas.length; i++) {
-                    var aa = aas[i];
-                    aa.style.color = aa_color_font.get(aa.className);
-                    aa.style.backgroundColor = "white"
-                }
-            } else if(element.value == "background") {
-                for(var i = 0; i < aas.length; i++) {
-                    var aa = aas[i];
-                    aa.style.backgroundColor = aa_color_background.get(aa.className);
-                    aa.style.color = "black"
-                }
-            } else {
-                for(var i = 0; i < aas.length; i++) {
-                    aas[i].style.color = "black";
-                    aas[i].style.backgroundColor = "white";
-                }
-            }
-        }
-
-
         (function()  {
-        var dataRoute = jsRoutes.controllers.DataController.get(@jobID);
-        $.ajax({
-            method: dataRoute.method,
-            url: dataRoute.url
-        }).done(function(data) {
-            // For the hitlist
+            var dataRoute = jsRoutes.controllers.DataController.get(@jobID);
+            $.ajax({
+                method: dataRoute.method,
+                url: dataRoute.url
+            }).done(function(data) {
+                // For the hitlist
 
-            var numIterations = data.output_psiblastp.BlastOutput2[0].report.results.iterations.length - 1;
-            var basenameResults = data.output_psiblastp.BlastOutput2[0].report.results.iterations[numIterations].search
-            var hits = basenameResults.hits
-            var numHits = hits.length -1
-            var info = basenameResults.stat
-
-
-            $("#psiblast_query").append(basenameResults.query_title);
-            $("#psiblast_queryLength").append(basenameResults.query_length);
+                var numIterations = data.output_psiblastp.BlastOutput2[0].report.results.iterations.length - 1;
+                var basenameResults = data.output_psiblastp.BlastOutput2[0].report.results.iterations[numIterations].search
+                var hits = basenameResults.hits
+                var numHits = hits.length -1
+                var info = basenameResults.stat
 
 
-            // generate JSON file that is easier to use with dataTable
+                $("#psiblast_query").append(basenameResults.query_title);
+                $("#psiblast_queryLength").append(basenameResults.query_length);
+
+
+                // generate JSON file that is easier to use with dataTable
 
 
 
-            hitlist = $('#htp').dataTable({
-                "bInfo": false,
-                "bFilter": true,
-                "bLengthChange": true,
-                "aaData": hits,
-                "scrollY": 600,
-                "scrollX": true,
-                "aoColumns": [
-                    { "mDataProp": "num" },
-                    { "mDataProp": "description.0.accession" },
-                    { "mDataProp": "hsps.0.evalue", render: function(data){return data.toExponential();}},
-                    { "mDataProp": "hsps.0.score" },
-                    { "mDataProp": "hsps.0.bit_score" },
-                    { "mDataProp": "hsps.0.identity" },
-                    { "mDataProp": "hsps.0.positive" },
-                    { "mDataProp": "hsps.0.gaps" },
-                    { "mDataProp": "hsps.0.query_from" },
-                    { "mDataProp": "hsps.0.query_to" },
-                    { "mDataProp": "hsps.0.hit_from" },
-                    { "mDataProp": "hsps.0.hit_to" },
-                    { "mDataProp": "hsps.0.align_len" }
-                ]
-            });
+                hitlist = $('#htp').dataTable({
+                    "bInfo": false,
+                    "bFilter": true,
+                    "bLengthChange": true,
+                    "aaData": hits,
+                    "scrollY": 600,
+                    "scrollX": true,
+                    "aoColumns": [
+                        { "mDataProp": "num" },
+                        { "mDataProp": "description.0.accession" },
+                        { "mDataProp": "hsps.0.evalue", render: function(data){return data.toExponential();}},
+                        { "mDataProp": "hsps.0.score" },
+                        { "mDataProp": "hsps.0.bit_score" },
+                        { "mDataProp": "hsps.0.identity" },
+                        { "mDataProp": "hsps.0.positive" },
+                        { "mDataProp": "hsps.0.gaps" },
+                        { "mDataProp": "hsps.0.query_from" },
+                        { "mDataProp": "hsps.0.query_to" },
+                        { "mDataProp": "hsps.0.hit_from" },
+                        { "mDataProp": "hsps.0.hit_to" },
+                        { "mDataProp": "hsps.0.align_len" }
+                    ]
+                });
 
 
-            var alignments_container = document.getElementById("psiblast_templates");
-            for(var i = 0; i < numHits; i++) {
+                var alignments_container = document.getElementById("psiblast_templates");
+                for(var i = 0; i < numHits; i++) {
 
-                var ali = hits[i].hsps[0]
-                var alignmentNum = hits[i].num
+                    var ali = hits[i].hsps[0]
+                    var alignmentNum = hits[i].num
 
-                var divAlignment = document.createElement("div");
-                divAlignment.setAttribute("class", "alignment_box");
-                var checkbox = document.createElement("input");
-                checkbox.setAttribute("type", "checkbox");
-                checkbox.setAttribute("value", alignmentNum.toString());
-                checkbox.setAttribute("name", "templates");
-                divAlignment.appendChild(checkbox);
-                var tab = document.createElement("table");
-                tab.className += " unstriped ";
-                var tabbody = document.createElement("tbody");
+                    var divAlignment = document.createElement("div");
+                    divAlignment.setAttribute("class", "alignment_box");
+                    var checkbox = document.createElement("input");
+                    checkbox.setAttribute("type", "checkbox");
+                    checkbox.setAttribute("value", alignmentNum.toString());
+                    checkbox.setAttribute("name", "templates");
+                    divAlignment.appendChild(checkbox);
+                    var tab = document.createElement("table");
+                    tab.className += " unstriped ";
+                    var tabbody = document.createElement("tbody");
 
-                // Number of sequence
-                tabbody.appendChild(makeRow(["Number: " + alignmentNum, "", "", ""]));
+                    // Number of sequence
+                    tabbody.appendChild(makeRow(["Number: " + alignmentNum, "", "", ""]));
 
-                // Names and Accession Numbers
-                for(var j =0; j < hits[i].description.length ; j++) {
-                    var accession = hits[i].description[j].accession;
-                    var linkTemplate = ["<a href=\"https://www.ncbi.nlm.nih.gov/protein/", accession, "\">", accession, "</a>"].join('')
-                    var names = makeRowColspan([linkTemplate, hits[i].description[j].title],2,"td")
-                    names.setAttribute("class","name")
-                    tabbody.appendChild(names)
+                    // Names and Accession Numbers
+                    for(var j =0; j < hits[i].description.length ; j++) {
+                        var accession = hits[i].description[j].accession;
+                        var linkTemplate = ["<a href=\"https://www.ncbi.nlm.nih.gov/protein/", accession, "\">", accession, "</a>"].join('')
+                        var names = makeRowColspan([linkTemplate, hits[i].description[j].title],2,"td")
+                        names.setAttribute("class","name")
+                        tabbody.appendChild(names)
+                    }
+
+                    // break
+                    tabbody.appendChild(makeRow(["<br></br>"]))
+
+                    // Query sequence
+                    var  qseqColored = ali.qseq.replace(color_regex, color_regex_replacer);
+                    var qseqRow = makeRow(["Query" , ali.query_from, qseqColored, ali.query_to]);
+                    qseqRow.setAttribute("class", "sequence");
+                    tabbody.appendChild(qseqRow);
+
+                    //Middle sequence
+                    var midlineRow = makeRow(["", "", ali.midline, ""]);
+                    midlineRow.setAttribute("class", "sequence");
+                    tabbody.appendChild(midlineRow);
+
+                    // Hit sequence
+                    var  hseqColored = ali.qseq.replace(color_regex, color_regex_replacer)
+                    var hseqRow = makeRow(["Sbjct", ali.hit_from, hseqColored, ali.hit_to]);
+                    hseqRow.setAttribute("class", "sequence");
+                    tabbody.appendChild(hseqRow);
+
+                    // Line
+                    var line = makeRowColspan(["<hr style=\"margin-top: 1rem !important;margin-bottom: 1rem !important;\"></hr>"],4,"td");
+                    line.setAttribute("class","horizontal-line")
+                    tabbody.appendChild(line)
+
+                    tab.appendChild(tabbody);
+
+                    divAlignment.appendChild(tab);
+                    alignments_container.appendChild(divAlignment);
                 }
 
-                // break
-                tabbody.appendChild(makeRow(["<br></br>"]))
-
-                // Query sequence
-                var  qseqColored = ali.qseq.replace(color_regex, color_regex_replacer);
-                var qseqRow = makeRow(["Query" , ali.query_from, qseqColored, ali.query_to]);
-                qseqRow.setAttribute("class", "sequence");
-                tabbody.appendChild(qseqRow);
-
-                //Middle sequence
-                var midlineRow = makeRow(["", "", ali.midline, ""]);
-                midlineRow.setAttribute("class", "sequence");
-                tabbody.appendChild(midlineRow);
-
-                // Hit sequence
-                var  hseqColored = ali.qseq.replace(color_regex, color_regex_replacer)
-                var hseqRow = makeRow(["Sbjct", ali.hit_from, hseqColored, ali.hit_to]);
-                hseqRow.setAttribute("class", "sequence");
-                tabbody.appendChild(hseqRow);
-
-                // Line
-                var line = makeRowColspan(["<hr style=\"margin-top: 1rem !important;margin-bottom: 1rem !important;\"></hr>"],4,"td");
-                line.setAttribute("class","horizontal-line")
-                tabbody.appendChild(line)
-
-                tab.appendChild(tabbody);
-
-                divAlignment.appendChild(tab);
-                alignments_container.appendChild(divAlignment);
-            }
-
-            aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
-            $('#psiblast_color_select').niceSelect();
-            $("#psiblast_accordion").foundation();
-    });
-})();
-
-
-    // Makes a table row with the specified content
-    function makeRow(entries) {
-
-        var row = document.createElement("tr");
-        for(var i = 0; i < entries.length; i++ ) {
-            var entry = document.createElement("td");
-            entry.innerHTML = entries[i];
-            row.appendChild(entry);
-        }
-        return row;
-    }
-        // Makes a table row with colspan=num
-        function makeRowColspan(entries, num, HTMLelement) {
-
-            var row = document.createElement("tr");
-            for(var i = 0; i < entries.length; i++ ) {
-                var entry = document.createElement(HTMLelement);
-                entry.setAttribute("padding", "0")
-                entry.setAttribute("colspan",num);
-                entry.innerHTML = entries[i];
-                row.appendChild(entry);
-            }
-            return row;
-        }
-
-        function submitManuallySelected() {
-
-        // Get selected templates and append parentID
-        var formData = new FormData(document.getElementById("psiblast_templates"));
-        if(!formData.has("templates")) {
-            alert("Please select at least one template for modeling");
-            return;
-        }
-        formData.append("parentid", '@{jobID}' );
-
-        var checkRoute = jsRoutes.controllers.JobController.check("psiblast_manual", null, false);
-        m.request({
-            method: checkRoute.method,
-            url: checkRoute.url,
-            data: formData,
-            serialize: function(data) {
-                return data;
-            }
-        }).then(function(data) {
-
-            var submitRoute = jsRoutes.controllers.JobController.create("psiblast_manual", data.jobID);
-            m.request({
-                method: submitRoute.method,
-                url: submitRoute.url,
-                data: formData,
-                serialize: function(data) {
-                    return data;
-                }
+                aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+                $('#psiblast_color_select').niceSelect();
+                $("#psiblast_accordion").foundation();
             });
-        });
-    }
+        })();
 
-    function submitAutomaticallySelected() {
 
-        // Get selected templates and append parentID
-        var formData = new FormData(document.getElementById("psiblast_templates"));
-        formData.append("parentid", '@{jobID}' );
 
-        var checkRoute = jsRoutes.controllers.JobController.check("psiblast_automatic", null, false);
-        m.request({
-            method: checkRoute.method,
-            url: checkRoute.url,
-            data: formData,
-            serialize: function(data) {
-                return data;
-            }
-        }).then(function(data) {
 
-            var submitRoute = jsRoutes.controllers.JobController.create("psiblast_automatic", data.jobID);
-            m.request({
-                method: submitRoute.method,
-                url: submitRoute.url,
-                data: formData,
-                serialize: function(data) {
-                    return data;
-                }
-            });
-        });
-    }
-    function onFullscreenToggle() {
-        hitlist.draw();
-    }
+
+/* BLASTVIZ */
+setTimeout(function() {slider_show(44, 1, 44)}, 1000);
 
 </script>
