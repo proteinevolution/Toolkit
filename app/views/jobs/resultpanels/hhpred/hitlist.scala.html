@@ -13,7 +13,7 @@
         <div class="accordion-content" data-tab-content>
             <div>
                     <div style=' width: 89% ;margin-left: 2em !important;' class='flat-slider' id='flat-slider'></div>
-                    <div>
+                    <div style="margin-top: 1em">
                     @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
                     <img src="/files/@{jobID}/@{jobID}.png" />
                 </div>
@@ -93,8 +93,8 @@
                 <option value="background">Background</option>
             </select>
             <input type="checkbox" onchange="toggleSS(this)"> Color SS
-            <button type="button" style="float: right;" class="button" onclick="submitManuallySelected()">Create Model from manually selected templates</button>
-            <button type="button" style="float: right;" class="button" onclick="submitAutomaticallySelected()">Select Templates Automatically</button>
+            <button type="button" style="float: right;" class="button" onclick="hhpred_manual()">Create Model from manually selected templates</button>
+            <button type="button" style="float: right;" class="button" onclick="hhpred_automatic()">Select Templates Automatically</button>
             </div>
             <form id="hhpred_templates">
             </form>
@@ -105,6 +105,67 @@
 
 
 <script>
+        function hhpred_manual() {
+            // Get selected templates and append parentID
+            var formData = new FormData(document.getElementById("hhpred_templates"));
+            if(!formData.has("templates")) {
+                alert("Please select at least one template for modeling");
+                return;
+            }
+            formData.append("parentid", '@{jobID}' );
+
+            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_manual", null, false);
+            m.request({
+                method: checkRoute.method,
+                url: checkRoute.url,
+                data: formData,
+                serialize: function(data) {
+                    return data;
+                }
+            }).then(function(data) {
+                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_manual", data.jobID);
+                m.request({
+                    method: submitRoute.method,
+                    url: submitRoute.url,
+                    data: formData,
+                    serialize: function(data) {
+                        return data;
+                    }
+                });
+            });
+        }
+
+        function hhpred_automatic() {
+            // Get selected templates and append parentID
+            var formData = new FormData(document.getElementById("hhpred_templates"));
+            formData.append("parentid", '@{jobID}' );
+
+            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_automatic", null, false);
+            m.request({
+                method: checkRoute.method,
+                url: checkRoute.url,
+                data: formData,
+                serialize: function(data) {
+                    return data;
+                }
+            }).then(function(data) {
+
+                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_automatic", data.jobID);
+                m.request({
+                    method: submitRoute.method,
+                    url: submitRoute.url,
+                    data: formData,
+                    serialize: function(data) {
+                        return data;
+                    }
+                });
+            });
+        }
+
+    function onFullscreenToggle() {
+            hitlist.draw();
+    }
+
     var ss_helices = document.getElementsByClassName("ss_h");
     var ss_extended = document.getElementsByClassName("ss_e");
     var aas;

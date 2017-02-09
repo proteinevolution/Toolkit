@@ -10,7 +10,7 @@
             <div>
 
                 <div style=' width: 89% ;margin-left: 2em !important;' class='flat-slider' id='flat-slider'></div>
-                <div>
+                <div style="margin-top: 1em">
                 @HHpred.html(s"$jobID/results/blastviz.html")
                 <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
                 </div>
@@ -72,8 +72,6 @@
                     <option value="letters">Letters</option>
                     <option value="background">Background</option>
                 </select>
-                <button type="button" style="float: right;" class="button" onclick="submitManuallySelected()">Create Model from manually selected templates</button>
-                <button type="button" style="float: right;" class="button" onclick="submitAutomaticallySelected()">Select Templates Automatically</button>
             </div>
             <form id="psiblast_templates">
             </form>
