@@ -77,9 +77,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
   private var currentJobs: Map[String, Job] = Map.empty
   private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty
 
-  // WebSocketActors which are interested in the state of the Job
-  private var watchers: Map[String, Set[BSONObjectID]] = Map.empty.withDefaultValue(Set.empty)
-
+  // Map of all connected users and their Websocket Actors
   private var users: Map[BSONObjectID, Set[ActorRef]] = Map.empty.withDefaultValue(Set.empty)
 
   // Running executions
@@ -105,7 +103,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
   // JobActor removes the Job from its maps
   private def removeJob(jobID: String) = {
-
+    val job = this.currentJobs(jobID)
     // If the job Appears in the running Execution, terminate it
     this.currentJobs = this.currentJobs.-(jobID)
     if(this.runningExecutions.contains(jobID)) {
@@ -113,9 +111,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       this.runningExecutions = this.runningExecutions.-(jobID)
     }
     this.currentExecutionContexts = this.currentExecutionContexts.-(jobID)
-
-    // TODO Maybe send message to all watchers about JobDeletion
-    this.watchers = this.watchers.-(jobID)
   }
 
 
@@ -128,7 +123,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
     // Update job in the database and notify watcher upon completion
     upsertJob(job).map { upsertedJob =>
-      val foundWatchers = users.filter(a => watchers(job.jobID).contains(a._1))
+      val foundWatchers = users.filter(a => job.watchList.contains(a._1))
       Logger.info("\n----\nFound Watchers for Job \'" + job.jobID + "\': " + foundWatchers.keys.map(_.stringify).mkString(", "))
       Logger.info("Job State for \'" + job.jobID + "\' changed to: " + job.status + "\n----\n")
       foundWatchers.values.flatten.foreach(_ ! PushJob(job))
@@ -214,9 +209,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
     oos.writeObject(extendedParams)
     oos.close()
 
-    // Add user as watcher
-    this.watchers = this.watchers.updated(jobID, Set(user.userID))
-
     // Get new runscript instance from the runscript manager
     val runscript = runscriptManager(toolname).withEnvironment(env)
     // Representation of the current State of the job submission
@@ -239,28 +231,51 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       }
 
 
-    case Delete(jobID) => this.removeJob(jobID)
-
+    case Delete(jobID) =>
+      this.currentJobs.get(jobID) match {
+        case Some(job) =>
+          this.removeJob(jobID)
+          // Message user clients to remove the job from their watchlist
+          this.users.filter (uw => job.watchList.contains (uw._1) ).values.flatten.foreach (_! ClearJob (job.jobID) )
+        case None =>
+      }
 
     // User does no longer watch this Job
     case StopWatch(jobID, userID) =>
-      val w: Set[BSONObjectID] = this.watchers(jobID)
-      this.watchers = this.watchers.updated(jobID, w.-(userID)).withDefaultValue(Set.empty)
+      Logger.info("User stops watching JobID " + jobID)
+      modifyJob(BSONDocument(Job.JOBID -> jobID),
+                BSONDocument("$pull"   -> BSONDocument(Job.WATCHLIST -> userID))).map {
+        case Some(updatedJob) =>
+          this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
+        case None =>
+      }
       this.users(userID).foreach(_ ! ClearJob(jobID))
 
       modifyUser(BSONDocument(User.IDDB -> userID),
                  BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
 
+    // User Starts watching job
     case StartWatch(jobID, userID) =>
-      Logger.info("User starts watching JobState with JobID " + jobID)
-      val w: Set[BSONObjectID] = this.watchers(jobID)
-      this.watchers = this.watchers.updated(jobID, w.+(userID)).withDefaultValue(Set.empty)
+      Logger.info("User stops watching JobID " + jobID)
+      modifyJob(BSONDocument(Job.JOBID -> jobID),
+                BSONDocument("$push"   -> BSONDocument(Job.WATCHLIST -> userID))).map {
+        case Some(updatedJob) =>
+          this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
+        case None =>
+      }
 
+      modifyUser(BSONDocument(User.IDDB -> userID),
+                 BSONDocument("$push"   -> BSONDocument(User.JOBS -> jobID)))
+
+    // User registers to the job actor
     case RegisterUser(userID, userActor) =>
       val u: Set[ActorRef]     = this.users(userID)
-      this.users    = this.users.updated(userID, u.+(userActor))
+      this.users               = this.users.updated(userID, u.+(userActor))
 
+    // Useractor unregisters to this actor
     case UnregisterUser(userID, userActor) =>
+      val u: Set[ActorRef]     = this.users(userID)
+      this.users               = this.users.updated(userID, u.-(userActor))
 
 
     // Message from outside that the jobState has changed
