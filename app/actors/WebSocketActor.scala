@@ -77,6 +77,7 @@ class WebSocketActor @Inject() (val reactiveMongoApi: ReactiveMongoApi,
       out ! Json.obj("type" -> "UpdateJob", "job" -> job.cleaned())
 
     case ClearJob(jobID : String) =>
+      Logger.info("WS Log: " + jobID + " clear message sent")
       out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID)
   }
 }
