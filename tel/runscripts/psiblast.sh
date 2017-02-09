@@ -9,7 +9,6 @@ psiblast -db %standarddb.content \
          -num_descriptions %desc.content \
          -num_alignments %desc.content \
          -in_msa %alignment.path \
-         -html \
          -out ../results/output_psiblastp.json \
          -outfmt 15 \
          -out_pssm ../results/out.ksf
@@ -19,7 +18,8 @@ psiblast -db %standarddb.content \
 
 # create HTML and PNG for blastviz visualisation
 
-#blastviz.pl ../results/out.psiblastp %jobid.content ../results ../files/%jobid.content >> ../logs/blastviz.log
+blastJson2tab.py ../results/output_psiblastp.json ../results/output_psiblastp.tab
+blastviz_json.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
 
 # extract alignment from
 
