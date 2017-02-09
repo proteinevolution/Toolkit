@@ -1,7 +1,7 @@
 @import models.results.HHpred
 @(jobID: String)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
-<link href="@routes.Assets.versioned("styles/psiblast-resultview.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 
 @*  Load html Map used for the image representation *@
@@ -11,8 +11,13 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
-            @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
-            <img src="/files/@{jobID}/@{jobID}.png" />
+            <div>
+                    <div style=' width: 89% ;margin-left: 2em !important;' class='flat-slider' id='flat-slider'></div>
+                    <div>
+                    @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
+                    <img src="/files/@{jobID}/@{jobID}.png" />
+                </div>
+            </div>
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
@@ -104,9 +109,10 @@
     var ss_extended = document.getElementsByClassName("ss_e");
     var aas;
     var hitlist;
+    var queryLength;
 
 
-        (function()  {
+    (function()  {
          $('.slider').on('moved.zf.slider', function() {
              $('#lefthandle').html($('#hidden1').val());
              $('#lefthandle').css({
@@ -130,6 +136,7 @@
              var hits = data.hhr.hits;
              var info = data.hhr.info;
              var alignments = data.hhr.alignments;
+             queryLength = info.Match_columns;
              $("#hhpred_query").append(info.Query);
              $("#hhpred_match_columns").append(info.Match_columns);
              $("#hhpred_noseqs").append(info.No_of_seqs);
@@ -258,5 +265,8 @@
              $('#hhpred_color_select').niceSelect();
          });
         })();
+
+    /* without timeout SLIDER is not loaded */
+    setTimeout(function() {slider_show(queryLength, 1, queryLength)}, 1000);
 
 </script>
