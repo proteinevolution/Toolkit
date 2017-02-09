@@ -67,69 +67,6 @@ function makeRowColspan(entries, num, HTMLelement) {
     return row;
 }
 
-function submitManuallySelected() {
-
-    // Get selected templates and append parentID
-    var formData = new FormData(document.getElementById("psiblast_templates"));
-    if(!formData.has("templates")) {
-        alert("Please select at least one template for modeling");
-        return;
-    }
-    formData.append("parentid", '@{jobID}' );
-
-    var checkRoute = jsRoutes.controllers.JobController.check("psiblast_manual", null, false);
-    m.request({
-        method: checkRoute.method,
-        url: checkRoute.url,
-        data: formData,
-        serialize: function(data) {
-            return data;
-        }
-    }).then(function(data) {
-
-        var submitRoute = jsRoutes.controllers.JobController.create("psiblast_manual", data.jobID);
-        m.request({
-            method: submitRoute.method,
-            url: submitRoute.url,
-            data: formData,
-            serialize: function(data) {
-                return data;
-            }
-        });
-    });
-}
-
-function submitAutomaticallySelected() {
-
-    // Get selected templates and append parentID
-    var formData = new FormData(document.getElementById("psiblast_templates"));
-    formData.append("parentid", '@{jobID}' );
-
-    var checkRoute = jsRoutes.controllers.JobController.check("psiblast_automatic", null, false);
-    m.request({
-        method: checkRoute.method,
-        url: checkRoute.url,
-        data: formData,
-        serialize: function(data) {
-            return data;
-        }
-    }).then(function(data) {
-
-        var submitRoute = jsRoutes.controllers.JobController.create("psiblast_automatic", data.jobID);
-        m.request({
-            method: submitRoute.method,
-            url: submitRoute.url,
-            data: formData,
-            serialize: function(data) {
-                return data;
-            }
-        });
-    });
-}
-
-function onFullscreenToggle() {
-    hitlist.draw();
-}
 
 /* Slider */
 function slider_show(sequence_length, start, end) {
