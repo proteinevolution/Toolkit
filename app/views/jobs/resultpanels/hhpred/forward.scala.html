@@ -1,0 +1,20 @@
+@import play.api.mvc.RequestHeader
+@import models.results.FileLoader
+
+@(filepath : String, jobID: String)(implicit request: RequestHeader)
+
+
+<pre  id="pir" class="fileview" style="font-size: 12px;width: 800px; height: 30pc; overflow-y: scroll;">@FileLoader.loadFile(filepath)</pre>
+
+
+
+<button class="button tiny" type="button" onclick="tomodeller()">Modeller</button>
+
+
+<script>
+    function tomodeller() {
+        localStorage.setItem('resultcookie', $("#pir").text());
+        localStorage.setItem('parentid', '@jobID');
+        m.route("/tools/modeller");
+    }
+</script>

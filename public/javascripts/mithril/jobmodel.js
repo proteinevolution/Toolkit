@@ -51,14 +51,14 @@ window.JobModel = {
         }
     },
     getParamValue: function(param) {
-        var defVal, resultcookie, val;
-        resultcookie = localStorage.getItem("resultcookie");
+        // Update the value with the one from the local storage
+        var resultcookie = localStorage.getItem("resultcookie");
         if (resultcookie) {
             JobModel.paramValues["alignment"] = resultcookie;
             localStorage.removeItem("resultcookie");
         }
-        val = JobModel.paramValues[param];
-        defVal = JobModel.defaultValues[param];
+        var val = JobModel.paramValues[param];
+        var defVal = JobModel.defaultValues[param];
         if (val) {
             return val;
         } else if (defVal) {

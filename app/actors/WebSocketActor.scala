@@ -63,8 +63,6 @@ class WebSocketActor @Inject() (val reactiveMongoApi: ReactiveMongoApi,
 
           (js \ "jobID").validate[String].asOpt match {
             case Some(jobID) =>
-              modifyUser(BSONDocument(User.IDDB -> userID),
-                BSONDocument("$pull" -> BSONDocument(User.JOBS -> jobID)))
               jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, userID))
             case None => //
           }
@@ -77,5 +75,9 @@ class WebSocketActor @Inject() (val reactiveMongoApi: ReactiveMongoApi,
     case PushJob(job : Job) =>
       Logger.info("WS Log: " + job.jobID + " is now " + job.status.toString)
       out ! Json.obj("type" -> "UpdateJob", "job" -> job.cleaned())
+
+    case ClearJob(jobID : String) =>
+      Logger.info("WS Log: " + jobID + " clear message sent")
+      out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID)
   }
 }
