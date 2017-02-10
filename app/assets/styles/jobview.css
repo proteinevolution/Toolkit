@@ -150,18 +150,10 @@ hr {
 }
 
 
-
-
 /* To display the alignments more nicely */
-#hhpred_alignments td {
+#alignments td {
     padding: 0rem 1rem 0rem 0rem !important;
 }
-
-/* To display the alignments more nicely */
-#psiblast_alignments td {
-    padding: 0rem 1rem 0rem 0rem !important;
-}
-
 
 .parameter label {
     float: left;
