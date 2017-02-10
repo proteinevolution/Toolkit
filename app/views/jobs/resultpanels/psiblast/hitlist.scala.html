@@ -4,18 +4,16 @@
 
 
 <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-    <li class="accordion-item" data-accordion-item>
+    <li class="accordion-item is-active"  data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
-            <div>
-
-                <div class='flat-slider' id='flat-slider'></div>
-                <div id='blastviz'>
+            <div class='flat-slider' id='flat-slider'></div>
+            <a class="success button tiny resubmitSection" type="button" id="resubmitSection">Resubmit section</a>
+            <div id='blastviz'>
                 @HHpred.html(s"$jobID/results/blastviz.html")
                 <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
-                </div>
             </div>
-        </div>
+            </div>
     </li>
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Information</a>
@@ -87,6 +85,7 @@
         var queryLength;
         var firstHitBegin;
         var firstHitEnd;
+        var numHitsShown = 1;
 
 
         (function()  {
@@ -163,17 +162,32 @@
                     tab.className += " unstriped ";
                     var tabbody = document.createElement("tbody");
 
-                    // Number of sequence
-                    tabbody.appendChild(makeRow(["Number: " + alignmentNum, "", "", ""]));
 
                     // Names and Accession Numbers
-                    for(var j =0; j < hits[i].description.length ; j++) {
+                    for(var j =0; j < numHitsShown ; j++) {
                         var accession = hits[i].description[j].accession;
                         var linkTemplate = ["<a name=\"",accession,"\"href=\"https://www.ncbi.nlm.nih.gov/protein/", accession, "\">", accession, "</a>"].join('')
-                        var names = makeRowColspan([linkTemplate, hits[i].description[j].title],2,"td")
+                        var names = makeRowColspan([alignmentNum, linkTemplate + "\t"+hits[i].description[j].title],2,"td")
                         names.setAttribute("class","name")
                         tabbody.appendChild(names)
                     }
+
+                    // hit details
+                    var score = ali.score
+                    var bit_score = ali.bit_score
+                    var evalue = ali.evalue;
+                    var identities = ali.identity;
+                    var positives = ali.positive;
+                    var gaps = ali.gaps;
+                    var align_len = ali.align_len
+                    var identityPercentage  = Math.floor((identities / align_len) * 100);
+                    var positivesPercentage  = Math.floor((positives / align_len) * 100);
+                    var gapsPercentage  = Math.floor((gaps / align_len) * 100);
+
+                    tabbody.appendChild(makeRow(["","","Score: "+ bit_score+ " bits (" +score +"), Expect: " +evalue+ ",",""]));
+                    tabbody.appendChild(makeRowColspan(["","Identities: " + identities + "/" + align_len + "(" + identityPercentage +"%), Positives: "+
+                        positives+ "/"+ align_len+" ("+ positivesPercentage+ "%), Gaps: "+ gaps+ "/"+ align_len+ " ("+ gapsPercentage+ "%)"],2,"td"));
+
 
                     // break
                     tabbody.appendChild(makeRow(["<br></br>"]))
@@ -190,7 +204,7 @@
                     tabbody.appendChild(midlineRow);
 
                     // Hit sequence
-                    var  hseqColored = ali.qseq.replace(color_regex, color_regex_replacer)
+                    var  hseqColored = ali.hseq.replace(color_regex, color_regex_replacer)
                     var hseqRow = makeRow(["Sbjct", ali.hit_from, hseqColored, ali.hit_to]);
                     hseqRow.setAttribute("class", "sequence");
                     tabbody.appendChild(hseqRow);

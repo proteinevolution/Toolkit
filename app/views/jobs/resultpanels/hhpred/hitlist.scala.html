@@ -7,8 +7,8 @@
 @*  Load html Map used for the image representation *@
 
 
-<ul id="accordion" class="accordion" data-accordion data-allow-all-closed="true">
-    <li class="accordion-item" data-accordion-item>
+<ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+    <li class="accordion-item is-active"  data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
             <div>
@@ -258,18 +258,35 @@
                  tab.className += " unstriped ";
                  var tabbody = document.createElement("tbody");
 
-                 // Query Sequence
-                 tabbody.appendChild(makeRow(["Number: "+ali.no, "", "", ""]));
 
                  // Names and Accession Numbers
                      var accession = hits[i].struc;
 
                      // remove after char "_" example: 1f2r_I to 1f2r
 
-                     var linkTemplate = ["<a href=\"http://www.rcsb.org/pdb/explore.do?structureId=", accession.replace(/\_.*$/ , ""), "\">", accession, "</a>"].join('')
-                     var names = makeRowColspan(["",linkTemplate,"", hits[i].hit],1,"td")
-                     names.setAttribute("class","name")
-                     tabbody.appendChild(names)
+                     var linkTemplate = ["<a href=\"http://www.rcsb.org/pdb/explore.do?structureId=", accession.replace(/\_.*$/ , ""), "\">", accession, "</a>"].join('');
+                     var names = makeRowColspan([ali.no,linkTemplate,"", hits[i].hit],1,"td");
+                     names.setAttribute("class","name");
+                     tabbody.appendChild(names);
+
+
+                 // hit details
+                 var aligned_cols = ali.info.aligned_cols;
+                 var evalue = ali.info.eval;
+                 var identities = ali.info.identities;
+                 var probabab= ali.info.probab;
+                 var score = ali.info.score;
+                 var similarity = ali.info.similarity;
+                 var sum_probs = ali.info.sum_probs;
+                 var template_neff = ali.info.template_neff;
+
+                 tabbody.appendChild(makeRowColspan(["","Probability: "+probabab+", Expect: "+ evalue],3,"td"));
+                 tabbody.appendChild(makeRowColspan(["","Score: " + score + ", Aligned Cols: " + aligned_cols + ", Identities: " + identities ],3,"td"));
+                 tabbody.appendChild(makeRowColspan(["","Similarity: " + similarity + ", Sum Probs: " + sum_probs + ", Template Neff: " + template_neff],3,"td"));
+
+
+                 // break
+                 tabbody.appendChild(makeRow(["<br></br>"]))
 
 
                  // Handle secondary structure annotation for query, if present
