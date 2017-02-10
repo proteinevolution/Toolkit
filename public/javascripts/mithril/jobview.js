@@ -372,6 +372,13 @@ JobSubmissionComponent = {
                 // Use check route and specify that the hashing function should be used
                 checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID, true);
                 formData = new FormData(form);
+
+                // appendParentID if in storage
+                var parentid = localStorage.getItem("parentid");
+                if(!parentid) {
+                    parentid = '';
+                }
+                formData.append('parentid', parentid);
                 $(".submitJob").prop("disabled", true);
                 return m.request({
                     method: checkRoute.method,
@@ -579,7 +586,7 @@ window.ParameterAlignmentComponent = {
             }, m("textarea", {
                 name: ctrl.name,
                 placeholder: ctrl.placeholder,
-                rows: 15,
+                rows: 25,
                 cols: 70,
                 id: ctrl.id,
                 onchange: m.withAttr("value", ctrl.param.value),
