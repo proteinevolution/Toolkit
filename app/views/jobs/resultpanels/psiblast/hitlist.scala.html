@@ -3,14 +3,14 @@
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 
-<ul id="psiblast_accordion" class="accordion" data-accordion data-allow-all-closed="true">
+<ul id="psiblast_accordion" class="accordion" data-accordion data-multi-expand="true">
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
             <div>
 
-                <div style=' width: 89% ;margin-left: 2em !important;' class='flat-slider' id='flat-slider'></div>
-                <div style="margin-top: 1em">
+                <div class='flat-slider' id='flat-slider'></div>
+                <div id='blastviz'>
                 @HHpred.html(s"$jobID/results/blastviz.html")
                 <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
                 </div>
@@ -159,7 +159,7 @@
                     // Names and Accession Numbers
                     for(var j =0; j < hits[i].description.length ; j++) {
                         var accession = hits[i].description[j].accession;
-                        var linkTemplate = ["<a href=\"https://www.ncbi.nlm.nih.gov/protein/", accession, "\">", accession, "</a>"].join('')
+                        var linkTemplate = ["<a name=\"",accession,"\"href=\"https://www.ncbi.nlm.nih.gov/protein/", accession, "\">", accession, "</a>"].join('')
                         var names = makeRowColspan([linkTemplate, hits[i].description[j].title],2,"td")
                         names.setAttribute("class","name")
                         tabbody.appendChild(names)
