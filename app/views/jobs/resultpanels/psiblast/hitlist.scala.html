@@ -3,7 +3,7 @@
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 
-<ul id="psiblast_accordion" class="accordion" data-accordion data-multi-expand="true">
+<ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
@@ -64,7 +64,7 @@
     </li>
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Alignments</a>
-        <div id="psiblast_alignments" class="accordion-content table-scroll" data-tab-content>
+        <div id="alignments" class="accordion-content table-scroll" data-tab-content>
 
             <div id="psiblast_alignment_control" style="display: flex;">
                 <select id="psiblast_color_select" onchange="toggleAliColor(this)">
@@ -196,7 +196,7 @@
 
                 aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
                 $('#psiblast_color_select').niceSelect();
-                $("#psiblast_accordion").foundation();
+                $("#accordion").foundation();
 
 
 
