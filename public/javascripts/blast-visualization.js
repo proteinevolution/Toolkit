@@ -73,13 +73,14 @@ function slider_show(sequence_length, start, end) {
 
     var tooltip = $('<div id="tooltip" />').css({
         position: 'absolute',
-        top: +30
-    }).hide();
+        top: -20
+    }).show();
 
     var tooltip2 = $('<div id="tooltip2" />').css({
         position: 'absolute',
-        top: +30
-    }).hide();
+        top: -20
+
+    }).show();
 
 
 
@@ -97,17 +98,15 @@ function slider_show(sequence_length, start, end) {
         change: function(event, ui) {
             var sliderCoords =  $('#flat-slider').slider("option", "values");
         }
-    }).find(".ui-slider-handle:first").append(tooltip).hover(function() {
-        tooltip.show()
-    }, function() {
-        tooltip.hide()
     })
 
-    $("#flat-slider").find(".ui-slider-handle:last").append(tooltip2).hover(function() {
-        tooltip2.show()
-    }, function() {
-        tooltip2.hide()
-    })
+    tooltip.text(start);
+    tooltip2.text(end);
+
+    $("#flat-slider").slider({}).find(".ui-slider-handle:first").append(tooltip)
+
+    $("#flat-slider").slider({}).find(".ui-slider-handle:last").append(tooltip2)
+
 }
 
 /* from maplink overlay go to alignment ref */
@@ -123,4 +122,11 @@ function slider_show(sequence_length, start, end) {
     };
 
 
+
+
 })(jQuery);
+
+
+function resubmit_section(hits) {
+
+}
