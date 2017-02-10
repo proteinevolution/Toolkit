@@ -8,7 +8,7 @@
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
             <div class='flat-slider' id='flat-slider'></div>
-            <a class="success button tiny resubmitSection" type="button" id="resubmitSection">Resubmit section</a>
+            <a class="success button tiny resubmitSection" onclick="resubmit()" type="button" id="resubmitSection">Resubmit section</a>
             <div id='blastviz'>
                 @HHpred.html(s"$jobID/results/blastviz.html")
                 <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
@@ -81,6 +81,8 @@
         var firstHitBegin;
         var firstHitEnd;
         var numHitsShown = 1;
+        var hitSequences= new Array();
+        var hitNames = new Array();
 
 
         (function()  {
@@ -136,7 +138,7 @@
                 }
                 else {
                     firstHitBegin = 0;
-                    firstHitBegin = 0;
+                    firstHitEnd = 0;
                 }
 
 
@@ -157,7 +159,7 @@
                     tab.className += " unstriped ";
                     var tabbody = document.createElement("tbody");
 
-
+                    hitNames.push(">" + hits[i].description[0].accession + " | " + hits[i].description[0].title)
                     // Names and Accession Numbers
                     for(var j =0; j < numHitsShown ; j++) {
                         var accession = hits[i].description[j].accession;
@@ -204,6 +206,9 @@
                     hseqRow.setAttribute("class", "sequence");
                     tabbody.appendChild(hseqRow);
 
+                    // filling array for resubmit Section
+                    hitSequences.push(ali.hseq);
+
                     // Line
                     var line = makeRowColspan(["<hr id=\"line-element\"></hr>"],4,"td");
                     line.setAttribute("class","horizontal-line")
@@ -224,6 +229,10 @@
             });
         })();
 
+
+        function resubmit(){
+            resubmit_section(this.hitSequences, this.hitNames);
+        }
         /* without timeout SLIDER is not loaded */
         setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 1000);
 
