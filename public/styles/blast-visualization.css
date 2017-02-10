@@ -8,16 +8,16 @@
     border-radius: 7px;
 }
 .flat-slider.ui-slider-horizontal {
-    height: 6px;
+    height: 4px;
 }
 .flat-slider.ui-slider-vertical {
     height: 15em;
-    width: 6px;
+    width: 4px;
 }
 .flat-slider .ui-slider-handle {
     width: 20px;
     height: 20px;
-    background: #2e93ed;
+    background: #d1d1d1 !important;
     border-radius: 50%;
     border: none;
     cursor: pointer;
@@ -40,24 +40,37 @@
 }
 .flat-slider.ui-slider-horizontal .ui-slider-range {
     top: 0;
-    height: 6px;
+    height: 4px;
 }
 .flat-slider.ui-slider-vertical .ui-slider-range {
     left: 0;
-    width: 6px;
+    width: 4px;
 }
 
 .flat-slider{
    width: 89%;
     margin-left: 2em !important;
+    margin-top: 2em;
 }
 
 #blastviz{
     margin-top: 1em;
+    width: 100%;
 }
 
 #line-element{
     margin-top: 1rem
     !important;
     margin-bottom: 1rem !important;
+}
+
+#resubmitSection{
+    float: right;
+    margin-right: 7em;
+    margin-top: 1.5em;
+    margin-bottom: 0;
+    background-color: #eee;
+}
+#resubmitSection:hover{
+    background-color: #d1d1d1
 }
