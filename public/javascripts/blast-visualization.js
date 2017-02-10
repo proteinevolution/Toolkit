@@ -113,8 +113,11 @@ function slider_show(sequence_length, start, end) {
 /* from maplink overlay go to alignment ref */
 (function($) {
     $.fn.goTo = function() {
+        if (!$("#alignments").parent(".is-active").length) {
+            $("#accordion").foundation('down',$("#alignments"));
+        }
         $('html, body').animate({
-            scrollTop: $(this).offset().top + 'px'
+            scrollTop: $(this).offset() + 'px'
         }, 'fast');
         return this;
     };
