@@ -46,3 +46,12 @@
     left: 0;
     width: 6px;
 }
+
+.flat-slider{
+   width: 89%;
+    margin-left: 2em !important;
+}
+
+#blastviz{
+    margin-top: 1em;
+}
