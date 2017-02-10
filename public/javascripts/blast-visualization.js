@@ -127,6 +127,22 @@ function slider_show(sequence_length, start, end) {
 })(jQuery);
 
 
-function resubmit_section(hits) {
 
+function getSliderRange() {
+
+    return $('#flat-slider').slider("option", "values");
+}
+function resubmit_section(hits, names) {
+    if(hits.length < 1) {
+        alert("No sequences in selected slider range!");
+        return
+    }
+    var sliderRange = getSliderRange();
+    var fasta = new Array();
+    for (var i =0 ; i < hits.length; i ++){
+        fasta.push(names[i] + '\n')
+        fasta.push(hits[i].substr(sliderRange[0] - 1, sliderRange[1] - 1) + '\n')
+    }
+    $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
+    $('#alignment').val(fasta.join(''));
 }
