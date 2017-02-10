@@ -85,6 +85,8 @@
         var aas;
         var hitlist;
         var queryLength;
+        var firstHitBegin;
+        var firstHitEnd;
 
 
         (function()  {
@@ -132,6 +134,16 @@
                         { "mDataProp": "hsps.0.align_len" }
                     ]
                 });
+
+                // get beg and end of first hit to set slider handles
+                if(hits[0].hsps.length > 0 ) {
+                    firstHitBegin = hits[0].hsps[0].query_from;
+                    firstHitEnd = hits[0].hsps[0].query_to;
+                }
+                else {
+                    firstHitBegin = 0;
+                    firstHitBegin = 0;
+                }
 
 
                 var alignments_container = document.getElementById("psiblast_templates");
@@ -184,7 +196,7 @@
                     tabbody.appendChild(hseqRow);
 
                     // Line
-                    var line = makeRowColspan(["<hr style=\"margin-top: 1rem !important;margin-bottom: 1rem !important;\"></hr>"],4,"td");
+                    var line = makeRowColspan(["<hr id=\"line-element\"></hr>"],4,"td");
                     line.setAttribute("class","horizontal-line")
                     tabbody.appendChild(line)
 
@@ -204,7 +216,7 @@
         })();
 
         /* without timeout SLIDER is not loaded */
-        setTimeout(function() {slider_show(queryLength, 1, queryLength)}, 1000);
+        setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 1000);
 
 
 

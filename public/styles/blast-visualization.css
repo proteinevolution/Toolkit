@@ -55,3 +55,9 @@
 #blastviz{
     margin-top: 1em;
 }
+
+#line-element{
+    margin-top: 1rem
+    !important;
+    margin-bottom: 1rem !important;
+}
