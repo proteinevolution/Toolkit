@@ -171,9 +171,12 @@
     var aas;
     var hitlist;
     var queryLength;
+    var firstHitBegin;
+    var firstHitEnd;
 
 
-    (function()  {
+
+        (function()  {
          $('.slider').on('moved.zf.slider', function() {
              $('#lefthandle').html($('#hidden1').val());
              $('#lefthandle').css({
@@ -228,6 +231,16 @@
                      { "mDataProp": "ref" }
                  ]
              });
+
+             // get beg and end of first hit to set slider handles
+             if(hits.length > 0 ) {
+                 firstHitBegin = hits[0].query_begin;
+                 firstHitEnd = hits[0].query_end;
+             }
+             else {
+                 firstHitBegin = 0;
+                 firstHitBegin = 0;
+             }
 
              var alignments_container = document.getElementById("hhpred_templates");
              for(var i = 0; i < alignments.length; i++) {
@@ -312,7 +325,7 @@
                  }
 
                     // line
-                 var line = makeRowColspan(["<hr style=\"margin-top: 1rem !important;margin-bottom: 1rem !important;\"></hr>"],4,"td");
+                 var line = makeRowColspan(["<hr id=\"line-element\"></hr>"],4,"td");
                  line.setAttribute("class","horizontal-line")
                  tabbody.appendChild(line)
 
@@ -328,6 +341,6 @@
         })();
 
     /* without timeout SLIDER is not loaded */
-    setTimeout(function() {slider_show(queryLength, 1, queryLength)}, 1000);
+        setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 1000);
 
 </script>
