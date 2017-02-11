@@ -13,6 +13,8 @@ helpModalAccess = function(elem, isInit) {
 selectBoxAccess = function(elem, isInit) {
     if (!isInit) {
         return $(elem).niceSelect();
+    } else {
+        return $(elem).niceSelect('update');
     }
 };
 
@@ -553,12 +555,47 @@ dropzone_psi = function(element, isInit) {
     }
 };
 
+
 window.ParameterAlignmentComponent = {
+    model: function(args) {
+        this.modes = args.param.paramType.modes;
+        this.label = "";
+        this.formats = [];
+        if(this.modes.length > 0) {
+            this.label = this.modes[0].label;
+            if(this.modes[0].mode == 1) {
+             this.formats = this.modes[0].formats
+            }
+        }
+    },
     controller: function(args) {
+        this.mo = new window.ParameterAlignmentComponent.model(args);
         return {
             name: "alignment",
             id: "alignment",
-            placeholder: "Enter multiple sequence alignment",
+            // Function to List all supported modes of the component
+            getModes: (function() {
+                return this.modes;
+            }).bind(this.mo),
+            getLabel: (function() {
+                return this.label;
+            }).bind(this.mo),
+            setMode: (function(mode) {
+                for(var i = 0; i < this.modes.length; i++) {
+                    var current_mode = this.modes[i];
+                    if(current_mode.mode == mode) {
+                        this.label = current_mode.label;
+                        if(mode == 1) {
+                            this.formats = current_mode.formats;
+                        } else {
+                            this.formats = [];
+                        }
+                    }
+                }
+            }).bind(this.mo),
+            getFormats: (function() {
+                return this.formats;
+            }).bind(this.mo)
         };
     },
     view: function(ctrl, args) {
@@ -567,7 +604,7 @@ window.ParameterAlignmentComponent = {
                 "class": "alignment_textarea"
             }, m("textarea", {
                 name: ctrl.name,
-                placeholder: ctrl.placeholder,
+                placeholder: ctrl.getLabel(),
                 rows: 25,
                 cols: 70,
                 id: ctrl.id,
@@ -604,11 +641,40 @@ window.ParameterAlignmentComponent = {
                     onclick: function() {
                         return $('#upload_alignment_modal').foundation('open');
                     }
-                })
+                }), m("select", {"class": "alignment_mode", onchange: m.withAttr("value", ctrl.setMode), config: selectBoxAccess}, ctrl.getModes().map(function(mode){
+                    return m("option", {value: mode.mode}, mode.name)}
+
+                )), m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format){
+                    return m("option", {value: format[0]}, format[1])}
+                ))
             ])
         ], "alignmentParameter");
     }
 };
+
+var alignment_format = function(elem, isInit) {
+
+    if (!isInit) {
+         $(elem).niceSelect();
+    } else {
+         $(elem).niceSelect('update');
+    }
+    if(this.length == 0) {
+        $(".alignment_format").hide();
+    }
+};
+
+
+
+
+/*
+<select>
+<option value="volvo">Volvo</option>
+    <option value="saab">Saab</option>
+    <option value="mercedes">Mercedes</option>
+    <option value="audi">Audi</option>
+</select>
+*/
 
 ParameterRadioComponent = {
     view: function(ctrl, args) {
