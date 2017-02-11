@@ -5,19 +5,60 @@
 
 
 @*  Load html Map used for the image representation *@
-
-
 <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
     <li class="accordion-item is-active"  data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
             <div>
-                    <div class='flat-slider' id='flat-slider'></div>
+                <div class='flat-slider' id='flat-slider'></div>
                     <div id='blastviz'>
-                    @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
-                    <img src="/files/@{jobID}/@{jobID}.png" />
+                     <!-- Create visual overview with Snap -->
+                     <svg id="hhpred_viz"  width="100%"></svg>
                 </div>
             </div>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Hitlist</a>
+        <div class="accordion-content" data-tab-content>
+            <table id="htb" class="display" cellspacing="0" width="80%">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Hit</th>
+                        <th>Name</th>
+                        <th>Prob</th>
+                        <th>E-value</th>
+                        <th>P-value</th>
+                        <th>Score</th>
+                        <th>SS</th>
+                        <th>Cols</th>
+                        <th>qStart</th>
+                        <th>qEnd</th>
+                        <th>tStart</th>
+                        <th>tEnd</th>
+                        <th>Ref</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Alignments</a>
+        <div id="alignments" class="accordion-content table-scroll" data-tab-content>
+
+            <div id="hhpred_alignment_control">
+            <select id="hhpred_color_select" onchange="toggleAliColor(this)">
+                <option value="none">No color</option>
+                <option value="letters">Letters</option>
+                <option value="background">Background</option>
+            </select>
+            <input type="checkbox" onchange="toggleSS(this)"> Color SS
+            <button type="button" style="float: right;" class="button" onclick="hhpred_manual()">Create Model from manually selected templates</button>
+            <button type="button" style="float: right;" class="button" onclick="hhpred_automatic()">Select Templates Automatically</button>
+            </div>
+            <form id="hhpred_templates">
+            </form>
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
@@ -49,50 +90,6 @@
                     <td id ="hhpred_date"></td>
                 </tr>
             </table>
-        </div>
-    </li>
-    <li class="accordion-item" data-accordion-item>
-        <a href="#" class="accordion-title">Hitlist</a>
-        <div class="accordion-content" data-tab-content>
-            <table id="htb" class="display" cellspacing="0" width="80%">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Hit</th>
-                        <th>Name</th>
-                        <th>Prob</th>
-                        <th>E-value</th>
-                        <th>P-value</th>
-                        <th>Score</th>
-                        <th>SS</th>
-                        <th>Cols</th>
-                        <th>qStart</th>
-                        <th>qEnd</th>
-                        <th>tStart</th>
-                        <th>tEnd</th>
-                        <th>Ref</th>
-                    </tr>
-                </thead>
-            </table>
-
-        </div>
-    </li>
-    <li class="accordion-item" data-accordion-item>
-        <a href="#" class="accordion-title">Alignments</a>
-        <div id="alignments" class="accordion-content table-scroll" data-tab-content>
-
-            <div id="hhpred_alignment_control">
-            <select id="hhpred_color_select" onchange="toggleAliColor(this)">
-                <option value="none">No color</option>
-                <option value="letters">Letters</option>
-                <option value="background">Background</option>
-            </select>
-            <input type="checkbox" onchange="toggleSS(this)"> Color SS
-            <button type="button" style="float: right;" class="button" onclick="hhpred_manual()">Create Model from manually selected templates</button>
-            <button type="button" style="float: right;" class="button" onclick="hhpred_automatic()">Select Templates Automatically</button>
-            </div>
-            <form id="hhpred_templates">
-            </form>
         </div>
     </li>
 </ul>
@@ -191,8 +188,11 @@
              method: dataRoute.method,
              url: dataRoute.url
          }).done(function(data) {
-             // For the hitlist
+             // For the hitlist and the vizualization
              var hits = data.hhr.hits;
+
+             draw_hits("hhpred_viz", hits);
+
              var info = data.hhr.info;
              var alignments = data.hhr.alignments;
              queryLength = info.Match_columns;
@@ -354,5 +354,60 @@
 
     /* without timeout SLIDER is not loaded */
         setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 1000);
+        
+    function draw_hits(id, hits) {
+        var s = Snap("#" +id);
+        // Get maximum of query_end with map and reduce
+        document.getElementById(id).setAttribute("viewBox", "0 0 " + hits.map(function(hit){return hit.query_end;})
+                        .reduce(function(a,b){return Math.max(a,b);}) + " " + hits.length);
+        for(var i = 0; i < hits.length; ++i) {
+            var hit = hits[i];
+            var diff = hit.query_end - hit.query_begin;
+            var r = s.rect(hit.query_begin,i, diff, 0.5, 0.5,0.5);
+            var text = s.text(diff/2, i + 0.4, hit.struc);
+            text.attr({
+                'font-size': 0.5,
+                'fill': 'white',
+                'font-weight': 'bold'
+            });
+            var colors = calcColor(hit.prob).map(function(val){return val*255});
+            r.attr({
+                fill: Snap.rgb(colors[0], colors[1], colors[2])
+            });
+        }
+    }
 
+    function calcColor(prob) {
+        var red, grn, blu;
+        if(prob > 40) {
+            var signif = ((prob - 40) / 60);
+            var col = 4 * signif;
+            if(col > 3) {
+                col -= 3.0;
+                red = 1;
+                grn = 0.7*(1-col);
+                blu = 0;
+            } else if(col > 2) {
+                col -= 2.0;
+                red = col;
+                grn = 0.7+0.3*(1-col);
+                blu = 0;
+            } else if(col > 1) {
+                col -= 1.0;
+                red = 0;
+                grn = 1-0.3*(1-col);
+                blu = 1-col;
+            } else {
+                red = 0;
+                grn = 0.7 * col;
+                blu = 1;
+            }
+        } else {
+            signif = Math.pow((prob / 40), 3);
+            red = 0.2*(1-signif);
+            grn = 0.2*(1-signif);
+            blu = 0.2 + 0.8*signif;
+        }
+       return [red, grn, blu];
+    }
 </script>
