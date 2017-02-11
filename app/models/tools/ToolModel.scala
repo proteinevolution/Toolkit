@@ -9,7 +9,7 @@ case class Toolitem(toolname : String,
                     toolnameAbbrev : String,
                     category : String,
                     optional : String,
-                    params : Seq[(String, Seq[(String, Seq[(String, String)], ParamType, String)])])
+                    params : Seq[(String, Seq[(Param, Seq[(String, String)])])])
 
 // Specification of the internal representation of a Tool
 case class Tool(toolNameShort: String,
@@ -179,7 +179,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
              results: Seq[String]) : Tool = {
 
             lazy val paramGroups = Map(
-              "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.ALIGNMENT_FORMAT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
+              "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
                 paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name)
             )
             // Params which are not a part of any group (given by the name)
@@ -197,12 +197,12 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
               // Constructs the Parameter specification such that the View can render the input fields
               paramGroups.keysIterator.map { group =>
                 group ->  paramGroups(group).filter(params.map(_.name).contains(_)).map { param =>
-                  (param, paramAccess.allowed.getOrElse(param, Nil), paramMap(param).paramType, paramMap(param).label)
+                  (paramMap(param), paramAccess.allowed.getOrElse(param, Nil))
                 }
               }.toSeq :+
                 remainParamName -> remainParams.map { param =>
 
-                  (param, paramAccess.allowed.getOrElse(param, Nil), paramMap(param).paramType, paramMap(param).label)
+                  (paramMap(param), paramAccess.allowed.getOrElse(param, Nil))
                 }
             )
             Tool(toolNameShort, toolNameLong, toolNameAbbrev, category,optional,paramMap,

@@ -6,7 +6,6 @@ import javax.inject.{Inject, Singleton}
 import akka.util.Timeout
 import models.Constants
 import models.database._
-import modules.tel.TEL
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -14,7 +13,7 @@ import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
 import models.database.JobState
-import models.tools.{ParamType, ToolFactory, Toolitem}
+import models.tools.{Param, ToolFactory, Toolitem}
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
@@ -83,21 +82,18 @@ final class Service @Inject() (webJarAssets                                     
   }
 
   // Allows serialization of tuples
-  implicit def tuple4Reads[A, B, C, D](implicit aReads: Reads[A], bReads: Reads[B], cReads: Reads[C], dReads: Reads[D]): Reads[(A, B, C, D)] = Reads[(A, B, C, D)] {
+  implicit def tuple3Reads[A, B, C](implicit aReads: Reads[A], bReads: Reads[B], cReads: Reads[C]): Reads[(A, B, C)] = Reads[(A, B, C)] {
     case JsArray(arr) if arr.size == 4 => for {
       a <- aReads.reads(arr.head)
       b <- bReads.reads(arr(1))
       c <- cReads.reads(arr(2))
-      d <- dReads.reads(arr(3))
-    } yield (a, b, c, d)
+    } yield (a, b, c)
     case _ => JsError(Seq(JsPath() -> Seq(ValidationError("Expected array of three elements"))))
   }
 
-  implicit def tuple4Writes[A, B, C, D](implicit a: Writes[A], b: Writes[B], c: Writes[C], d: Writes[D]): Writes[(A, B, C, D)] = new Writes[(A, B, C, D)] {
-    def writes(tuple: (A, B, C, D)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2), c.writes(tuple._3), d.writes(tuple._4)))
+  implicit def tuple3Writes[A, B, C](implicit a: Writes[A], b: Writes[B], c: Writes[C]): Writes[(A, B, C)] = new Writes[(A, B, C)] {
+    def writes(tuple: (A, B, C)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2), c.writes(tuple._3)))
   }
-
-
 
   implicit val toolitemWrites: Writes[Toolitem] = (
     (JsPath \ "toolname").write[String] and
@@ -105,10 +101,8 @@ final class Service @Inject() (webJarAssets                                     
       (JsPath \ "toolnameAbbrev").write[String] and
       (JsPath \ "category").write[String] and
       (JsPath \ "optional").write[String] and
-      (JsPath \ "params").write[Seq[(String, Seq[(String, Seq[(String, String)], ParamType, String)])]]
+      (JsPath \ "params").write[Seq[(String, Seq[(Param, Seq[(String, String)])])]]
     ) (unlift(Toolitem.unapply))
-
-
 
   implicit val jobitemWrites: Writes[Jobitem] = (
       (JsPath \ "mainID").write[String] and

@@ -57,7 +57,7 @@ export PATH="${BIOPROGS}/helpers/anolea_bin:${PATH}" # Helpers MODELLER QUALITY 
 export PATH="${BIOPROGS}/helpers/Solvx:${PATH}" # Helpers MODELLER QUALITY CHECK
 export PATH="${BIOPROGS}/helpers/verify3d:${PATH}" # Helpers MODELLER QUALITY CHECK
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" 
-export PATH="${BIOPROGS}/tools/hmmer/binaries" # HMMER
+export PATH="${BIOPROGS}/tools/hmmer/binaries:${PATH}" # HMMER
 
 # Setup Blammer
 export BLAMMERJAR="${BIOPROGS}/tools/blammer/blammer.jar"
