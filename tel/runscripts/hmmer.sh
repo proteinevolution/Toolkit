@@ -1,28 +1,15 @@
-#!/bin/bash
-
-trap 'kill $(jobs -p)' EXIT
-
-#% alignment : STO
+reformat.pl fas sto alignment.path $(readlink -f ../params/infile_sto)
 
 
-perl %BIOPROGS/helpers/reformat.pl -i=%alignment_format.content \
-                                   -o=sto \
-                                   -f=%alignment.path \
-                                   -a=temp/infile_sto
+hmmbuild --cpu 4 \
+         $(readlink -f ../params/infile_hmm) \
+         $(readlink -f ../params/infile_sto)
 
-%BIOPROGS/tools/hmmer3/binaries/hmmbuild --cpu 4 \
-                                         temp/infile_hmm \
-                                         temp/infile_sto 
+hmmsearch --cpu 4 \
+          -E 1e-1 \
+          --tblout    $(readlink -f ../results/tbl) \
+          --domtblout $(readlink -f ../results/domtbl) \
+          -o $(readlink -f ../results/outfile) \
+          -A $(readlink -f ../results/outfile_multi_sto) \
+           $(readlink -f ../params/infile_hmm)  %standarddb.content
 
-%BIOPROGS/tools/hmmer3/binaries/hmmsearch --cpu 4 \
-                                          -E 1e-1 \
-                                         --tblout results/tbl \
-                                         --domtblout results/domtbl \
-                                          -o results/outfile \
-                                          -A results/outfile_multi_sto \
-                                           temp/infile_hmm \
-                                           %standarddb.content
-
-
-
-#perl !{BIO}/helpers/reformat.pl -i=${alignment_format} -o=clu -f=#{alignment} -a=@{result}
