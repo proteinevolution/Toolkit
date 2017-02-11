@@ -55,19 +55,3 @@ class FileRepresentation(file: File) extends Representation {
 
   def represent: String = file.pathAsString
 }
-
-
-
-
-
-/**
-  * Represents resources that can be cleaned, such that all occupied resources or created files in the filesystem
-  * are cleared. The behavior of the implementing class after cleanup is undefined
-  *
-  */
-trait Cleanable {
-
-  def clean(): Unit
-}
-
-

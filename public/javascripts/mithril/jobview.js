@@ -129,23 +129,15 @@ renderParameter = function(content, moreClasses) {
 };
 
 mapParam = function(paramElem, ctrl) {
-    var comp, ctrlArgs;
-    ctrlArgs = {
-        paramName: paramElem[0],
+    var comp = formComponents[paramElem[0].paramType.type];
+    return m(comp, {
+        param: paramElem[0],
         options: paramElem[1],
-        paramType: paramElem[2],
-        label: paramElem[3],
-        value: ctrl.getParamValue(paramElem[0]),
-        toolname: ctrl.job().tool.toolname
-    };
-    comp = formComponents[paramElem[2].type](ctrlArgs);
-    return m(comp[0], comp[1]);
+        value: ctrl.getParamValue(paramElem[0].name)
+    });
 };
 
-closeShortcut = function(element, isInit) {
-    if (!isInit) {
-
-    }
+closeShortcut = function() {
     return $(document).keydown(function(e) {
         if (e.keyCode === 27 && $("#tool-tabs").hasClass("fullscreen")) {
             $("#collapseMe").click();
@@ -283,7 +275,7 @@ JobTabsComponent = {
                     }, [
                         m("div", {
                             "class": "parameters"
-                        }, paramGroup[0] === "Input" ? elements[0][0] === "alignment" ? [
+                        }, paramGroup[0] === "Input" ? elements[0][0].name === "alignment" ? [
                                     m("div", {
                                         "class": "row"
                                     }, m("div", {
@@ -563,23 +555,14 @@ dropzone_psi = function(element, isInit) {
 };
 
 window.ParameterAlignmentComponent = {
-    model: function(args) {
-        return {
-            value: args.value,
-            format: null
-        };
-    },
     controller: function(args) {
-        this.param = new ParameterAlignmentComponent.model(args);
         return {
             name: "alignment",
             id: "alignment",
             placeholder: "Enter multiple sequence alignment",
-            formatOptions: args.options,
-            param: this.param
         };
     },
-    view: function(ctrl) {
+    view: function(ctrl, args) {
         return renderParameter([
             m("div", {
                 "class": "alignment_textarea"
@@ -589,8 +572,7 @@ window.ParameterAlignmentComponent = {
                 rows: 25,
                 cols: 70,
                 id: ctrl.id,
-                onchange: m.withAttr("value", ctrl.param.value),
-                value: ctrl.param.value,
+                value: args.value,
                 required: "required",
                 spellcheck: false
             })), m("div", {
@@ -614,7 +596,7 @@ window.ParameterAlignmentComponent = {
                     "class": "button small alignmentExample",
                     value: "Paste Example",
                     onclick: function() {
-                        return ctrl.param.value = exampleSequence;
+                        $("#" + ctrl.id).val(exampleSequence);
                     }
                 }), m("input", {
                     type: "button",
@@ -651,11 +633,11 @@ ParameterSelectComponent = {
     view: function(ctrl, args) {
         return renderParameter([
             m("label", {
-                "for": args.id
-            }, args.label), m("select", {
-                name: args.name,
+                "for": args.param.name
+            }, args.param.label), m("select", {
+                name: args.param.name,
                 "class": "wide",
-                id: args.id,
+                id: args.param.name,
                 config: selectBoxAccess
             }, args.options.map(function(entry) {
                 return m("option", (entry[0] === args.value ? {
@@ -670,36 +652,24 @@ ParameterSelectComponent = {
 };
 
 ParameterNumberComponent = {
-    controller: function(args) {
-        this.value = args.value;
-        return {
-            getValue: (function() {
-                return this.value;
-            }).bind(this),
-            validate: (function(val) {
-                return this.value = val;
-            }).bind(this)
-        };
-    },
     view: function(ctrl, args) {
         var paramAttrs = {
             type: "number",
-            id: args.id,
-            name: args.name,
-            value: ctrl.getValue(),
-            onchange: m.withAttr("value", ctrl.validate)
+            id: args.param.name,
+            name: args.param.name,
+            value: args.value
         };
         // Add minimum and maximum if present
-        if(args.paramType["max"]) {
-            paramAttrs["max"] = args.paramType["max"];
+        if(args.param.paramType["max"]) {
+            paramAttrs["max"] = args.param.paramType["max"];
         }
-        if(args.paramType["min"]) {
-            paramAttrs["min"] = args.paramType["min"];
+        if(args.param.paramType["min"]) {
+            paramAttrs["min"] = args.param.paramType["min"];
         }
         return renderParameter([
             m("label", {
-                "for": args.id
-            }, args.label), m("input", paramAttrs)
+                "for": args.param.name
+            }, args.param.label), m("input", paramAttrs)
         ]);
     }
 };
@@ -708,11 +678,11 @@ ParameterBoolComponent = {
     view: function(ctrl, args) {
         return renderParameter([
             m("label", {
-                "for": args.id
+                "for": args.param.name
             }, args.label), m("input", {
                 type: "checkbox",
-                id: args.id,
-                name: args.name,
+                id: args.param.name,
+                name: args.param.name,
                 value: args.value
             })
         ]);
@@ -753,60 +723,9 @@ ParameterRangeSliderComponent = {
 };
 
 formComponents = {
-    1: function(args) {
-        return [
-            ParameterAlignmentComponent, {
-                options: args.options,
-                value: args.value,
-                paramType: args.paramType
-            }
-        ];
-    },
-    2: function(args) {
-        return [
-            ParameterNumberComponent, {
-                options: args.options,
-                name: args.paramName,
-                id: args.paramName,
-                label: args.label,
-                value: args.value,
-                paramType: args.paramType
-            }
-        ];
-    },
-    3: function(args) {
-        return [
-            ParameterSelectComponent, {
-                options: args.options,
-                name: args.paramName,
-                id: args.paramName,
-                label: args.label,
-                value: args.value,
-                paramType: args.paramType
-            }
-        ];
-    },
-    4: function(args) {
-        return [
-            ParameterBoolComponent, {
-                options: args.options,
-                name: args.paramName,
-                id: args.paramName,
-                label: args.label,
-                value: args.value,
-                paramType: args.paramType
-            }
-        ];
-    },
-    5: function(args) {
-        return [
-            ParameterRadioComponent, {
-                name: args.paramName,
-                id: args.paramName,
-                label: args.label,
-                value: args.value,
-                paramType: args.paramType
-            }
-        ];
-    }
+    1: ParameterAlignmentComponent,
+    2: ParameterNumberComponent,
+    3: ParameterSelectComponent,
+    4: ParameterBoolComponent,
+    5: ParameterRadioComponent
 };

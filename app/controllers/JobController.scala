@@ -217,9 +217,7 @@ final class JobController @Inject() (jobIDProvider                              
   }
 
   /**
-    * Marks multiple Jobs for deletion
-    * TODO introduce jobActor Cache
-    *
+    * Marks multiple Jobs for deletion*
     * @return
     */
   def deleteMulti() : Action[AnyContent] =  Action.async { implicit request =>
