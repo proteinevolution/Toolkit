@@ -9,7 +9,7 @@ case class Toolitem(toolname : String,
                     toolnameAbbrev : String,
                     category : String,
                     optional : String,
-                    params : Seq[(String, Seq[(Param, Seq[(String, String)])])])
+                    params : Seq[(String, Seq[Param])])
 
 // Specification of the internal representation of a Tool
 case class Tool(toolNameShort: String,
@@ -196,14 +196,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
               category,
               // Constructs the Parameter specification such that the View can render the input fields
               paramGroups.keysIterator.map { group =>
-                group ->  paramGroups(group).filter(params.map(_.name).contains(_)).map { param =>
-                  (paramMap(param), paramAccess.allowed.getOrElse(param, Nil))
-                }
+                group ->  paramGroups(group).filter(params.map(_.name).contains(_)).map(paramMap(_))
               }.toSeq :+
-                remainParamName -> remainParams.map { param =>
-
-                  (paramMap(param), paramAccess.allowed.getOrElse(param, Nil))
-                }
+                remainParamName -> remainParams.map(paramMap(_))
             )
             Tool(toolNameShort, toolNameLong, toolNameAbbrev, category,optional,paramMap,
               results, toolitem, paramGroups)
