@@ -81,27 +81,13 @@ final class Service @Inject() (webJarAssets                                     
     def writes(html: Html) = JsString(html.body)
   }
 
-  // Allows serialization of tuples
-  implicit def tuple3Reads[A, B, C](implicit aReads: Reads[A], bReads: Reads[B], cReads: Reads[C]): Reads[(A, B, C)] = Reads[(A, B, C)] {
-    case JsArray(arr) if arr.size == 4 => for {
-      a <- aReads.reads(arr.head)
-      b <- bReads.reads(arr(1))
-      c <- cReads.reads(arr(2))
-    } yield (a, b, c)
-    case _ => JsError(Seq(JsPath() -> Seq(ValidationError("Expected array of three elements"))))
-  }
-
-  implicit def tuple3Writes[A, B, C](implicit a: Writes[A], b: Writes[B], c: Writes[C]): Writes[(A, B, C)] = new Writes[(A, B, C)] {
-    def writes(tuple: (A, B, C)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2), c.writes(tuple._3)))
-  }
-
   implicit val toolitemWrites: Writes[Toolitem] = (
     (JsPath \ "toolname").write[String] and
       (JsPath \ "toolnameLong").write[String] and
       (JsPath \ "toolnameAbbrev").write[String] and
       (JsPath \ "category").write[String] and
       (JsPath \ "optional").write[String] and
-      (JsPath \ "params").write[Seq[(String, Seq[(Param, Seq[(String, String)])])]]
+      (JsPath \ "params").write[Seq[(String, Seq[Param])]]
     ) (unlift(Toolitem.unapply))
 
   implicit val jobitemWrites: Writes[Jobitem] = (

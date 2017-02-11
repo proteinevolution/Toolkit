@@ -128,12 +128,11 @@ renderParameter = function(content, moreClasses) {
     }, content);
 };
 
-mapParam = function(paramElem, ctrl) {
-    var comp = formComponents[paramElem[0].paramType.type];
+mapParam = function(param, ctrl) {
+    var comp = formComponents[param.paramType.type];
     return m(comp, {
-        param: paramElem[0],
-        options: paramElem[1],
-        value: ctrl.getParamValue(paramElem[0].name)
+        param: param,
+        value: ctrl.getParamValue(param.name)
     });
 };
 
@@ -275,30 +274,30 @@ JobTabsComponent = {
                     }, [
                         m("div", {
                             "class": "parameters"
-                        }, paramGroup[0] === "Input" ? elements[0][0].name === "alignment" ? [
+                        }, paramGroup[0] === "Input" ? elements[0].name === "alignment" ? [
                                     m("div", {
                                         "class": "row"
                                     }, m("div", {
                                         "class": "small-12 large-12 medium-12 columns"
                                     }, mapParam(elements[0], ctrl))), m("div", {
                                         "class": "row small-up-1 medium-up-2 large-up-3"
-                                    }, elements.slice(1).map(function(paramElem) {
+                                    }, elements.slice(1).map(function(param) {
                                         return m("div", {
                                             "class": "column column-block"
-                                        }, mapParam(paramElem, ctrl));
+                                        }, mapParam(param, ctrl));
                                     }))
                                 ] : m("div", {
                                     "class": "row small-up-1 medium-up-2 large-up-3"
-                                }, elements.map(function(paramElem) {
+                                }, elements.map(function(param) {
                                     return m("div", {
                                         "class": "column column-block"
-                                    }, mapParam(paramElem, ctrl));
+                                    }, mapParam(param, ctrl));
                                 })) : m("div", {
                                 "class": "row small-up-1 medium-up-2 large-up-3"
-                            }, elements.map(function(paramElem) {
+                            }, elements.map(function(param) {
                                 return m("div", {
                                     "class": "column column-block"
-                                }, mapParam(paramElem, ctrl));
+                                }, mapParam(param, ctrl));
                             }))), m(JobSubmissionComponent, {
                             job: ctrl.job,
                             isJob: ctrl.isJob,
@@ -615,12 +614,12 @@ ParameterRadioComponent = {
     view: function(ctrl, args) {
         return renderParameter([
             m("label", {
-                "for": args.id
-            }, args.label), args.options.map(function(entry) {
+                "for": args.param.name
+            }, args.param.label), args.param.paramType.options.map(function(entry) {
                 return m("span", [
                     m("input", {
                         type: "radio",
-                        name: args.name,
+                        name: args.param.name,
                         value: entry[0]
                     }), entry[1]
                 ]);
@@ -639,7 +638,7 @@ ParameterSelectComponent = {
                 "class": "wide",
                 id: args.param.name,
                 config: selectBoxAccess
-            }, args.options.map(function(entry) {
+            }, args.param.paramType.options.map(function(entry) {
                 return m("option", (entry[0] === args.value ? {
                         value: entry[0],
                         selected: "selected"
