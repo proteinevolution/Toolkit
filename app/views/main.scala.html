@@ -244,6 +244,7 @@
             <!-- Script Inclusions -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
 
+
         <!-- Foundation 6 -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
 
@@ -273,30 +274,14 @@
         <script src="@routes.Assets.versioned("scripts/alignment.js")"></script>
         <script src="@routes.Assets.versioned("scripts/search.js")"></script>
         <script src="@routes.Assets.versioned("scripts/auth.js")"></script>
-        <script src="@routes.Assets.versioned("scripts/dropzone.js")"></script>
         <script src="@routes.Assets.versioned("scripts/notification.js")"></script>
-
-
-        <!-- ScalaJS assets -->
-        @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
-        <script>MyApp().main();</script>
-            <!-- Public Javascript Assets -->
         <script src="@routes.Assets.versioned("javascripts/msa.min.js")" type="text/javascript"></script>
         <script src='@routes.Assets.versioned("javascripts/sampleseqs.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/biojs-io-newick.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/biojs-vis-tree.min.js")'></script>
+        <script src='@routes.Assets.versioned("javascripts/snap.svg-min.js")'></script>
 
         <script type="text/javascript">
-
-                    // ajax call to push article into the database
-//                  var articlePushRoute = jsRoutes.controllers.DataController.writeArticle("The MPI bioinformatics Toolkit",
-//                          "is an open, interactive web service for protein bioinformatic analysis. It offers a wide array of interconnected, state-of-the-art bioinformatics tools to experts and non-experts alike, developed both externally (e.g. BLAST+, HMMER3, MUSCLE) and internally (e.g. HHpred, HHblits, PCOILS). ",
-//                          "http://olt:8555/assets/images/bioj.jpg");
-//                  $.ajax({
-//                      'url': articlePushRoute.url,
-//                      'method': articlePushRoute.method
-//                  });
-
 
                     function openNav() {
                         document.getElementById("myNav").style.height = "100%";
