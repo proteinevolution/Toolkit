@@ -227,8 +227,12 @@ tabsContents = {
         return m("div", {
             "class": "parameter-panel"
         }, [
-            m(ParameterAlignmentComponent, {
+            m("textarea", {
+                name: "alignment",
+                placeholder: "multiple sequence alignment",
                 options: [["fas", "FASTA"]],
+                id: "alignment",
+                rows: 25,
                 value: ""
             }), m("div", {
                 "class": "submitbuttons",
@@ -255,3 +259,4 @@ tabsContents = {
         return "Test";
     }
 };
+
