@@ -2,5 +2,6 @@ DBROOT   = /ebio/abt1_share/toolkit_sync/databases
 UNIPROT  = /ebio/abt1_share/toolkit_sync/databases/hhblits/uniprot20
 NR       = /ebio/abt1_share/toolkit_sync/databases/standard/NewToolkitDBs
 CIF      = /ebio/abt1_share/toolkit_sync/databases/pdb/mmcif/all 
+PDB      = /ebio/abt1_share/toolkit_sync/databases/hhpred/pdb70
 PDBALL   = /ebio/abt1_share/toolkit_sync/databases/pdb/all
 HHOMP    = /ebio/abt1_share/toolkit_sync/databases/hhomp/pdb                                                                    
