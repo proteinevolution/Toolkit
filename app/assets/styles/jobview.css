@@ -174,31 +174,13 @@ hr {
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
     margin: 0 0 0;
 }
-.parameter .alignmentFormat {
 
-    width: 15em;
-    margin-left: 1em;
-}
-.parameter .alignmentFormatBlock {
-    margin-top: 2em;
-
-}
-
-.parameter .alignmentFormatBlock label {
-    margin-left: 36em;
-}
-
-.parameter .alignmentFormatBlock select {
-    color: #000;
-    color: rgba(0,0,0,0);
-    text-shadow: 0 0 0 #000;
-    width: 14em;
-    border-radius: 3px;
-    font-size: 0.75em;
-}
 
 .alignment_buttons {
     height: 5em;
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: row;
 }
 
 .parameter select {

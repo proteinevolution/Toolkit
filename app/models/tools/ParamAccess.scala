@@ -29,13 +29,14 @@ object SequenceMode {
     final val FIELD_MODE = "mode"
     final val FIELD_LABEL = "label"
     final val FIELD_FORMATS = "formats"
+    final val FIELD_NAME = "name"
 
     def writes(sequenceMode: SequenceMode): JsObject = sequenceMode match {
-      case a@Alignment(formats) =>       Json.obj(FIELD_MODE -> 1, FIELD_LABEL -> a.label, FIELD_FORMATS -> formats)
-      case SingleSequence =>  Json.obj(FIELD_MODE -> 2, FIELD_LABEL -> SingleSequence.label)
-      case MultiSequence =>   Json.obj(FIELD_MODE -> 3, FIELD_LABEL -> MultiSequence.label)
-      case BLASTHTML =>       Json.obj(FIELD_MODE -> 4 , FIELD_LABEL -> BLASTHTML.label)
-      case PIR =>             Json.obj(FIELD_MODE -> 5 , FIELD_LABEL -> PIR.label)
+      case a@Alignment(formats) =>       Json.obj(FIELD_MODE -> 1, FIELD_LABEL -> a.label, FIELD_FORMATS -> formats, FIELD_NAME -> "Alignment")
+      case SingleSequence =>  Json.obj(FIELD_MODE -> 2, FIELD_LABEL -> SingleSequence.label, FIELD_NAME -> "Single Sequence")
+      case MultiSequence =>   Json.obj(FIELD_MODE -> 3, FIELD_LABEL -> MultiSequence.label, FIELD_NAME -> "MultiSequence")
+      case BLASTHTML =>       Json.obj(FIELD_MODE -> 4 , FIELD_LABEL -> BLASTHTML.label, FIELD_NAME -> "BLASTHTML")
+      case PIR =>             Json.obj(FIELD_MODE -> 5 , FIELD_LABEL -> PIR.label, FIELD_NAME -> "PIR")
     }
   }
 }
@@ -99,19 +100,17 @@ class ParamAccess @Inject() (tel: TEL) {
   def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq.sortBy(_._2)),1,label)
 
   final val alignmentFormats = Seq(
-    "fas" -> "FASTA",
-    "clu" -> "CLUSTALW",
-    "sto" -> "Stockholm",
-    "a2m" -> "A2M",
-    "a3m" -> "A3M",
-    "emb" -> "EMBL",
-    "meg" -> "MEGA",
-    "msf" -> "GCG/MSF",
-    "pir" -> "PIR/NBRF",
-    "tre" -> "TREECON"
+    "fas" -> "fas",
+    "a2m" -> "a2m",
+    "a3m" -> "a3m",
+    "sto" -> "sto",
+    "psi" -> "psi",
+    "clu" -> "clu"
   )
 
-  final val ALIGNMENT = Param("alignment", Sequence(Seq(Alignment(alignmentFormats))),1, "Enter multiple sequence alignment")
+  final val ALIGNMENT = Param("alignment", Sequence(Seq(Alignment(alignmentFormats))),1, "")
+  final val SEQORALI = Param("alignment", Sequence(Seq(SingleSequence, Alignment(alignmentFormats))),1, "")
+  final val MULTISEQ = Param("alignment", Sequence(Seq(MultiSequence)),1, "") // for Alignment Tools
   final val STANDARD_DB = select("standarddb", "Select Standard Database")
   final val HHSUITEDB = select("hhsuitedb", "Select HH-Suite Database")
   final val MATRIX = select("matrix", "Scoring Matrix")

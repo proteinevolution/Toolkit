@@ -42,7 +42,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
-    Seq(paramAccess.ALIGNMENT, paramAccess.HHSUITEDB, paramAccess.MSAGENERATION,
+    Seq(paramAccess.SEQORALI, paramAccess.HHSUITEDB, paramAccess.MSAGENERATION,
         paramAccess.MSA_GEN_MAX_ITER, paramAccess.MIN_COV, paramAccess.EVAL_INC_THRESHOLD,
         paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE, paramAccess.SS_SCORING),
       Seq("Hitlist", "FullAlignment")),
@@ -61,7 +61,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
       Seq("Hitlist")),
 
    // T-Coffee
-    ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.ALIGNMENT),
+    ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.MULTISEQ),
       Seq("Alignment", "AlignmentViewer", "Conservation", "Text")),
 
     // Blammer
@@ -75,18 +75,18 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
       Seq("Alignment", "AlignmentViewer")),
 
     // MSA Probs
-    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.ALIGNMENT),Seq("Alignment", "AlignmentViewer")),
+    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.MULTISEQ),Seq("Alignment", "AlignmentViewer")),
 
     // MUSCLE
-    ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.ALIGNMENT, paramAccess.MAXROUNDS), Seq("Alignment", "AlignmentViewer")),
+    ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.MAXROUNDS), Seq("Alignment", "AlignmentViewer")),
 
   // MAFFT
-    ("mafft", "Mafft", "mft", "alignment", "", Seq(paramAccess.ALIGNMENT, paramAccess.GAP_OPEN, paramAccess.OFFSET),
+    ("mafft", "Mafft", "mft", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.GAP_OPEN, paramAccess.OFFSET),
       Seq("Alignment", "AlignmentViewer")),
 
    // Kalign
       ("kalign", "Kalign", "kal", "alignment", "",
-        Seq(paramAccess.ALIGNMENT, paramAccess.GAP_OPEN, paramAccess.GAP_EXT, paramAccess.GAP_TERM, paramAccess.BONUSSCORE),
+        Seq(paramAccess.MULTISEQ, paramAccess.GAP_OPEN, paramAccess.GAP_EXT, paramAccess.GAP_TERM, paramAccess.BONUSSCORE),
         Seq("Alignment", "AlignmentViewer")),
 
     // Hmmer
