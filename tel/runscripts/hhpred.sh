@@ -108,8 +108,8 @@ JOBID=%jobid.content
 # Generate input files for hhviz
 cp ../results/hhsearch.hhr ../results/${JOBID}.hhr
 
-# Generate graphical display of hits
-hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
+# DEPRECATED. Replaced by a Javascript solution with SVG
+#hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 #profile_logos.pl ${JOBID} ../results/ ../results/ 
 
