@@ -37,7 +37,7 @@
         <input type="text" id="roles" name="roles" pattern="text" placeholder="Role" value="@{user.getUserData.roles.getOrElse("")}">
     </div>
     <div class="small-6 small-offset-3 columns" style="float: left;">
-        <input type="text" id="eMail" name="eMail" placeholder="E-Mail" value="@{user.getUserData.eMail}" required pattern="email">
+        <input type="text" id="eMail" name="eMail" placeholder="E-Mail" value="@{user.getUserData.eMail.head}" required pattern="email">
     </div>
     <div class="small-6 small-offset-3 columns">
         <input type="password" id="password" name="password" placeholder="Password" pattern=".{8,128}">

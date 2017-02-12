@@ -11,7 +11,7 @@
         </ul>
 
         <div class="tabs-panel" id="auth-tab-user">
-            <p style="margin-top: 4em; font-size: 0.85em;">@{user.getUserData.eMail}</p>
+            <p style="margin-top: 4em; font-size: 0.85em;">@{user.getUserData.eMail.head}</p>
             <input id="signout-submit" type="submit" class="small expanded secondary button" value="Sign Out" onClick="window.location.href='@routes.Auth.signOut()'">
         </div>
         <div class="tabs-panel" id="auth-tab-edit">

@@ -31,7 +31,7 @@ sealed trait MailTemplate {
     val email = Email(
       subject,
       "Toolkit Team <toolkitmpg@gmail.com>",
-      Seq(user.getUserData.nameLogin + " <" + user.getUserData.eMail + ">"),
+      Seq(user.getUserData.nameLogin + " <" + user.getUserData.eMail.head + ">"),
       attachments = Seq(),
       bodyText = Some(this.bodyText), // Text version of the E-Mail in case the User has no HTML E-Mail client
       bodyHtml = Some(this.bodyHtml)  // HTML formatted E-Mail content
