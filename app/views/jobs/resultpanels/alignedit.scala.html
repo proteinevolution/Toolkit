@@ -1,0 +1,19 @@
+@(id: String, url: String)
+
+
+
+<textarea  rows="50" id="@id"></textarea>
+
+
+
+<script>
+        $(document).ready(function() {
+                $.ajax({
+                    url : "@url",
+                    dataType: "text",
+                    success : function (data) {
+                        $("#@id").text(data);
+                    }
+                });
+   });
+</script>
