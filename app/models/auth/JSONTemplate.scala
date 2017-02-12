@@ -23,7 +23,9 @@ trait JSONTemplate {
     * @param userOption
     * @return
     */
-  def authMessage(message : String, success : Boolean, userOption : Option[User]) : JsValue = {
+  def authMessage(message    : String,
+                  success    : Boolean      = false,
+                  userOption : Option[User] = None) : JsValue = {
     Json.toJson(userOption match {
       case Some(user) =>
         Json.obj("message"    -> message,
@@ -37,87 +39,71 @@ trait JSONTemplate {
 
   def LoggedIn(user : User) : JsValue = {
 
-    authMessage("Welcome, " + user.getUserData.nameLogin + ". \n You are now logged in.",
-                true,
-                Some(user))
+    authMessage(s"Welcome, ${user.getUserData.nameLogin}. \n You are now logged in.",
+                success    = true,
+                userOption = Some(user))
   }
 
   def LoggedOut() : JsValue = {
     authMessage("You have been logged out successfully. See you soon!",
-                true,
-                None)
+                success = true)
   }
 
 
   def LoginError() : JsValue = {
     authMessage("There was an error while trying to sign you in. Try again!",
-                false,
-                None)
+                success = false)
   }
 
   def AccountNameUsed() : JsValue = {
-    authMessage("There already is an Account using this username, please use a different one.",
-                false,
-                None)
+    authMessage("There already is an Account using this username, please use a different one.")
+  }
+
+  def AccountEmailUsed() : JsValue = {
+    authMessage("This eMail is already used, please try a different one.")
   }
 
   def LoginIncorrect() : JsValue = {
-    authMessage("There was an error logging you in. Please check your account name and password.",
-                false,
-                None)
+    authMessage("There was an error logging you in. Please check your account name and password.")
   }
 
   def MustAcceptToS() : JsValue = {
-    authMessage("Please accept the terms for our service to register.",
-      false,
-      None)
+    authMessage("Please accept the terms for our service to register.")
   }
 
   def AlreadyLoggedIn() : JsValue = {
-    authMessage("You are already logged in.",
-      false,
-      None)
+    authMessage("You are already logged in.")
   }
 
   def PasswordMismatch() : JsValue = {
-    authMessage("Your passwords did not match.",
-                false,
-                None)
+    authMessage("Your passwords did not match.")
   }
 
   def PasswordWrong() : JsValue = {
-    authMessage("The Password was incorrect. Please try again.",
-                false,
-                None)
+    authMessage("The Password was incorrect. Please try again.")
   }
 
   def TokenMismatch() : JsValue = {
-    authMessage("The given token does not match.",
-                false,
-                None)
+    authMessage("The given token does not match.")
   }
 
   def VerificationSuccessful(user : User) : JsValue = {
-    authMessage("Your E-Mail Account has been Verified, "+user.getUserData.nameLogin+".",
-                true,
-                Some(user))
+    authMessage(s"Your E-Mail Account has been Verified, ${user.getUserData.nameLogin}.",
+                success    = true,
+                userOption = Some(user))
   }
 
   def NotLoggedIn() : JsValue = {
-    authMessage("You are not logged in.",
-                false,
-                None)
+    authMessage("You are not logged in.")
   }
 
   def FormError() : JsValue = {
-    authMessage("There was a Form error.",
-                false,
-                None)
+    authMessage("There was a Form error.")
   }
 
   def EditSuccessful(user : User) : JsValue = {
     authMessage("Changes have been saved.",
-                true,
-                Some(user))
+                success    = true,
+                userOption = Some(user))
   }
 }

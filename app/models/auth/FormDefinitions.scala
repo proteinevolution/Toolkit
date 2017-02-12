@@ -40,7 +40,7 @@ object FormDefinitions {
           accountType   = if (acceptToS) 1 else 0,
           userData      = Some(UserData(nameLogin = nameLogin,
                                         password  = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
-                                        eMail     = eMail)),
+                                        eMail     = List(eMail))),
           jobs          = user.jobs,
           dateLastLogin = Some(new DateTime()),
           dateCreated   = Some(new DateTime()),
@@ -50,7 +50,7 @@ object FormDefinitions {
       Some((
         user.getUserData.nameLogin,
         "",
-        user.getUserData.eMail,
+        user.getUserData.eMail.head,
         true,
         user.dateLastLogin.map(_.getMillis),
         user.dateCreated.map(_.getMillis),
