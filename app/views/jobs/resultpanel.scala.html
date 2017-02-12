@@ -7,6 +7,10 @@
       // PSI-BLAST
       case ("psiblast", "Hitlist") => views.html.jobs.resultpanels.psiblast.hitlist(jobID)
 
+      // HHblits
+      case ("hhblits", "Hitlist") => views.html.jobs.resultpanels.hhblits.hitlist(jobID)
+      case ("hhblits", "Full_Alignment") => views.html.jobs.resultpanels.alignedit("full_alignment", s"/files/$jobID/out.full.fas")
+      case ("hhblits", "Reduced_Alignment") => views.html.jobs.resultpanels.alignedit("reduced_alignment", s"/files/$jobID/out.reduced.fas")
 
       // MARCOIL
       case ("marcoil", "CC-Prob") => views.html.jobs.resultpanels.image(s"/files/$jobID/alignment_ncoils.png")

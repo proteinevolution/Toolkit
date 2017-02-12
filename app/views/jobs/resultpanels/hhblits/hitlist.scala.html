@@ -25,7 +25,6 @@
                     <tr>
                         <th>No</th>
                         <th>Hit</th>
-                        <th>Name</th>
                         <th>Prob</th>
                         <th>E-value</th>
                         <th>P-value</th>
@@ -53,8 +52,6 @@
                 <option value="background">Background</option>
             </select>
             <input type="checkbox" onchange="toggleSS(this)"> Color SS
-            <button type="button" style="float: right;" class="button" onclick="hhpred_manual()">Create Model from manually selected templates</button>
-            <button type="button" style="float: right;" class="button" onclick="hhpred_automatic()">Select Templates Automatically</button>
             </div>
             <form id="hhpred_templates">
             </form>
@@ -96,62 +93,6 @@
 
 
 <script>
-        function hhpred_manual() {
-            // Get selected templates and append parentID
-            var formData = new FormData(document.getElementById("hhpred_templates"));
-            if(!formData.has("templates")) {
-                alert("Please select at least one template for modeling");
-                return;
-            }
-            formData.append("parentid", '@{jobID}' );
-
-            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_manual", null, false);
-            m.request({
-                method: checkRoute.method,
-                url: checkRoute.url,
-                data: formData,
-                serialize: function(data) {
-                    return data;
-                }
-            }).then(function(data) {
-                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_manual", data.jobID);
-                m.request({
-                    method: submitRoute.method,
-                    url: submitRoute.url,
-                    data: formData,
-                    serialize: function(data) {
-                        return data;
-                    }
-                });
-            });
-        }
-
-        function hhpred_automatic() {
-            // Get selected templates and append parentID
-            var formData = new FormData(document.getElementById("hhpred_templates"));
-            formData.append("parentid", '@{jobID}' );
-
-            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_automatic", null, false);
-            m.request({
-                method: checkRoute.method,
-                url: checkRoute.url,
-                data: formData,
-                serialize: function(data) {
-                    return data;
-                }
-            }).then(function(data) {
-
-                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_automatic", data.jobID);
-                m.request({
-                    method: submitRoute.method,
-                    url: submitRoute.url,
-                    data: formData,
-                    serialize: function(data) {
-                        return data;
-                    }
-                });
-            });
-        }
 
     function onFullscreenToggle() {
             hitlist.draw();
@@ -210,7 +151,6 @@
                  "scrollX": true,
                  "aoColumns": [
                      { "mDataProp": "no" },
-                     { "mDataProp": "struc" },
                      { "mDataProp": "hit" },
                      { "mDataProp": "prob" },
                      { "mDataProp": "eval" },
@@ -251,18 +191,6 @@
                  var tab = document.createElement("table");
                  tab.className += " unstriped ";
                  var tabbody = document.createElement("tbody");
-
-
-                 // Names and Accession Numbers
-                     var accession = hits[i].struc;
-
-                     // remove after char "_" example: 1f2r_I to 1f2r
-
-                     var linkTemplate = ["<a href=\"http://www.rcsb.org/pdb/explore.do?structureId=", accession.replace(/\_.*$/ , ""), "\">", accession, "</a>"].join('');
-                     var names = makeRowColspan([ali.no,linkTemplate,"", hits[i].hit],1,"td");
-                     names.setAttribute("class","name");
-                     tabbody.appendChild(names);
-
 
                  // hit details
                  var aligned_cols = ali.info.aligned_cols;
@@ -363,7 +291,7 @@
             var hit = hits[i];
             var diff = hit.query_end - hit.query_begin;
             var r = s.rect(hit.query_begin,i, diff, 0.5, 0.5,0.5);
-            var text = s.text(diff/2, i + 0.4, hit.struc);
+            var text = s.text((diff/2), i + 0.4, hit.hit);
             text.attr({
                 'font-size': 0.5,
                 'fill': 'white',

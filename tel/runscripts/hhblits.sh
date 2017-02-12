@@ -1,45 +1,41 @@
-#!/bin/bash
+reformat.pl fas a2m %alignment.path  $(readlink -f ../params/infile_a2m)
 
 
-#% alignment : A2M
+hhblits -cpu 8 \
+        -i $(readlink -f ../params/infile_a2m) \
+        -d  %hhblitsdb.content     \
+        -o $(readlink -f ../results/out.hhr) \
+        -oa3m $(readlink -f ../results/out.a3m)  \
+        -e %inclusion_ethresh.content  \
+        -n %maxrounds.content  \
+        -p %pmin.content \
+        -Z %max_lines.content \
+        -z 1 \
+        -b 1 \
+        -B %max_lines.content  \
+        -seq %max_seqs.content \
+        -aliw %aliwidth.content \
+        -%alignmode.content
+
+hhr2json.py "$(readlink -f ../results/out.hhr)" > $(readlink -f ../results/hhr.json)
 
 
-trap 'kill $(jobs -p)' EXIT
-
-perl ../../scripts/reformat.pl -i=%alignment_format.content \
-                                   -o=a2m \
-                                   -f=%alignment.path \
-                                   -a=temp/infile_a2m
-
-# Run HHblits
-
-exit
+# Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
+hhfilter -i $(readlink -f ../results/out.a3m) \
+         -o $(readlink -f ../results/out.full.a3m) \
+         -diff 100
+reformat.pl a3m fas \
+            $(readlink -f ../results/out.full.a3m) \
+            $(readlink -f ../results/out.full.fas) \
+            -d 160
 
 
-%BIOPROGS/tools/hhsuite/bin/hhblits -cpu 2 \
-                                    -i temp/infile_a2m \
-                                    -d %hhblitsdb.content \
-                                    -psipred #{PSIPRED}/bin \
-                                    -psipred_data #{PSIPRED}/data \
-                                    -o #{@outfile}  \
-                                    -oa3m #{@a3m_outfile} \
-                                    -qhhm #{@qhhmfile    }
-                                    #{msa_factor}
-                                    -e #{@E_hhblits} \
-                                    -n #{@maxit} \
-                                    -p #{@Pmin} \
-                                    -Z #{@max_lines} \
-                                    -z 1  \
-                                    -b 1  \
-                                    -B #{@max_lines} \
-                                    -seq #{@max_seqs} \
-                                    -aliw #{@aliwidth} \
-                                    -#{@ali_mode} \
-                                    #{@realign} \
-                                    #{@mact}  \
-                                    #{@filter} \
-                                    #{@cov_min} 
+# Reformat query into fasta format (reduced alignment)  
+hhfilter -i $(readlink -f ../results/out.a3m) \
+         -o $(readlink -f ../results/out.reduced.a3m)  \
+         -diff 50
 
-
-
+reformat.pl -r a3m fas \
+    $(readlink -f ../results/out.reduced.a3m) \
+    $(readlink -f ../results/out.reduced.fas)
 
