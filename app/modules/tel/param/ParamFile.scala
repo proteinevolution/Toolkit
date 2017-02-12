@@ -16,6 +16,9 @@ import play.api.Logger
 @Singleton
 class GenerativeParamFileParser @Inject() (env: Env) {
 
+  private final val genKeyword = "GEN" // Denotes the parameter in the descriptor file as generative
+
+
   def read(filePath : String) : Iterator[GenerativeParam] = {
 
     val f = filePath.toFile
@@ -30,14 +33,10 @@ class GenerativeParamFileParser @Inject() (env: Env) {
       } else {
         s"${f.parent.pathAsString}/${spt(2)}"
       }
-
       (spt(1), spt(2).substring(spt(2).lastIndexOf('.'))) match {
-
-        case ("GEN", ".sh") => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
-        case ("GEN", ".prop") =>
-          Logger.info("READ PROP FILE with PARAM PATH " + paramPath)
-          Logger.info("ParamName is " + spt(0))
-          new ListGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case (this.genKeyword, ".sh") => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case (this.genKeyword, ".py") => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case (this.genKeyword, ".prop") => new ListGenParamFile(spt(0), paramPath).withEnvironment(env)
       }
     }
   }
@@ -53,19 +52,18 @@ abstract class GenerativeParamFile(name: String, path : String) extends Generati
 }
 
 
+
+
 class ExecGenParamFile(name : String,  path : String) extends GenerativeParamFile(name, path) {
 
   private var env: Option[Env] = None
   import scala.sys.process.Process
-  // Load file upon instantiation
-  this.load()
 
   override def withEnvironment(env: Env):ExecGenParamFile = {
     this.env = Some(env)
     this.load()
     this
   }
-
 
   // Remembers parameter values that are allowed to be used
   private var allowed : Set[String] = _
@@ -78,7 +76,6 @@ class ExecGenParamFile(name : String,  path : String) extends GenerativeParamFil
         val tempFile = File.newTemporaryFile()
         tempFile.setPermissions(Set(PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ))
         tempFile.write(envString.replaceAllIn(path.toFile.contentAsString, m => e.get(m.group("constant"))))
-        Logger.info("RUNNING file " + tempFile.pathAsString)
         val x = Process(tempFile.pathAsString).!!.split('\n')
         tempFile.delete(swallowIOExceptions = true)
         x
