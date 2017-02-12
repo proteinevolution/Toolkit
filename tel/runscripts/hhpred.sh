@@ -120,11 +120,6 @@ cp ../results/query.tenrep_file ../results/query.tenrep_file_backup
 parse_jalview.rb -i ../results/query.tenrep_file -o ../results/query.tenrep_file
 
 
-
-cp ../results/${JOBID}.png ../results/hitlist.png
-cp ../results/${JOBID}.html ../results/hitlist.html
-
-
 # Reformat tenrep file such that we can display it in the full alignment section
 reformat.pl fas \
             clu \
