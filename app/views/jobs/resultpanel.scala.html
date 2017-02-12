@@ -31,6 +31,10 @@
       case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       case ("tcoffee", "Text") => views.html.jobs.resultpanels.tcoffee_text(jobID)
 
+      case ("hmmer", "Results") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/outfile")
+      case ("hmmer", "Stockholm") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/outfile_multi_sto")
+      case ("hmmer", "Domain_Table") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/domtbl")
+
       // HHpred
       case ("hhpred", "Hitlist") => views.html.jobs.resultpanels.hhpred.hitlist(jobID)
       case ("hhpred", "FullAlignment") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
