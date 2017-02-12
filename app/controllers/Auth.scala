@@ -1,5 +1,6 @@
 package controllers
 
+import java.lang.Throwable
 import javax.inject.{Inject, Singleton}
 
 import models.database.{User, UserToken}
@@ -112,6 +113,7 @@ final class Auth @Inject() (webJarAssets                                      : 
 
   /**
     * Sending user name as JSON to the mithril model in joblist
+    *
     * @return
     */
 
@@ -165,6 +167,9 @@ final class Auth @Inject() (webJarAssets                                      : 
                   // Finally add the edits to the collection
                   modifyUser(selector, modifier).map {
                     case Some(loggedInUser) =>
+                      Logger.info("User Login: " + loggedInUser.getUserData.nameLogin
+                               + " User ID: "    + loggedInUser.userID.stringify
+                               + " Session ID: " + loggedInUser.sessionID.get.stringify)
                       // Remove the old, not logged in user
                       removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
 
@@ -205,49 +210,60 @@ final class Auth @Inject() (webJarAssets                                      : 
   def signUpSubmit() : Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
       if (user.accountType < 0) {
-      FormDefinitions.SignUp(user).bindFromRequest.fold(
-        errors =>
-          // Something went wrong with the Form.
-          Future.successful {
-            Ok(FormError())
-          },
-
-        // if no error, then insert the user to the collection
-        signUpFormUser => {
-          if (signUpFormUser.accountType < 1) {
-            // User did not accept the Terms of Service but managed to get around the JS form validation
+        // Create a new user from the information given in the form
+        FormDefinitions.SignUp(user).bindFromRequest.fold(
+          errors =>
+            // Something went wrong with the Form.
             Future.successful {
-              Ok(MustAcceptToS())
-            }
-          } else {
-            // Check database for existing users with the same login name
-            val futureUser = findUser(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
-            futureUser.flatMap {
-              case Some(otherUser) =>
-                // Other user with the same username exists. Show error message.
-                Future.successful(Ok(AccountNameUsed()))
-              case None =>
-                // Create the database entry.
-                val selector = BSONDocument(User.IDDB       -> user.userID)
-                val modifier = BSONDocument("$set"          ->
-                               BSONDocument(User.USERDATA   -> signUpFormUser.getUserData),
-                                            "$push"         ->
-                               BSONDocument(User.USERTOKENS -> UserToken(tokenType = 1)))
-                modifyUser(selector,modifier).map {
-                  case Some(registeredUser) =>
-                    // All done. User is registered, now send the welcome eMail
-                    val eMail = NewUserWelcomeMail(tel, registeredUser, registeredUser.userTokens.head.token)
-                    eMail.send
-                    // Make sure the Cache is updated
-                    updateUserCache(registeredUser)
-                    Ok(LoggedIn(registeredUser)).withSession(sessionCookie(request, registeredUser.sessionID.get, Some(registeredUser.getUserData.nameLogin)))
-                  case None =>
-                    Ok(FormError())
-                }
+              Ok(FormError())
+            },
+
+          // if no error, then insert the user to the collection
+          signUpFormUser => {
+            if (signUpFormUser.accountType < 1) {
+              // User did not accept the Terms of Service but managed to get around the JS form validation
+              Future.successful {
+                Ok(MustAcceptToS())
+              }
+            } else {
+              Logger.info("Before Lockup: " + signUpFormUser.getUserData.nameLogin + ", " + signUpFormUser.getUserData.eMail.head)
+              // Check database for existing users with the same login name
+              val selector = BSONDocument("$or"          ->
+                                     List(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin),
+                                          BSONDocument(User.EMAIL     -> signUpFormUser.getUserData.eMail.head)))
+              findUser(selector).flatMap {
+                case Some(otherUser) =>
+                  Logger.info("Found a user: " + otherUser.getUserData)
+                  if (otherUser.getUserData.nameLogin == signUpFormUser.getUserData.nameLogin) {
+                    // Other user with the same username exists. Show error message.
+                    Future.successful(Ok(AccountNameUsed()))
+                  } else {
+                    // Other user with the same eMail exists. Show error message.
+                    Future.successful(Ok(AccountEmailUsed()))
+                  }
+                case None =>
+                  Logger.info("Screwup!")
+                  // Create the database entry.
+                  val selector = BSONDocument(User.IDDB       -> user.userID)
+                  val modifier = BSONDocument("$set"          ->
+                                 BSONDocument(User.USERDATA   -> signUpFormUser.getUserData),
+                                              "$push"         ->
+                                 BSONDocument(User.USERTOKENS -> UserToken(tokenType = 1, newEmail = Some(signUpFormUser.getUserData.eMail.head))))
+                  modifyUser(selector,modifier).map {
+                    case Some(registeredUser) =>
+                      // All done. User is registered, now send the welcome eMail
+                      val eMail = NewUserWelcomeMail(tel, registeredUser, registeredUser.userTokens.head.token)
+                      eMail.send
+                      // Make sure the Cache is updated
+                      updateUserCache(registeredUser)
+                      Ok(LoggedIn(registeredUser)).withSession(sessionCookie(request, registeredUser.sessionID.get, Some(registeredUser.getUserData.nameLogin)))
+                    case None =>
+                      Ok(FormError())
+                  }
+              }
             }
           }
-        }
-      )
+        )
       } else {
         Future.successful(Ok(AccountNameUsed()))
       }
@@ -256,6 +272,7 @@ final class Auth @Inject() (webJarAssets                                      : 
 
   /**
     * Function handles the profile edit form submission
+    *
     * @return
     */
   def profileSubmit() : Action[AnyContent] = Action.async { implicit request =>

@@ -24,7 +24,7 @@ case class User(userID        : BSONObjectID,                        // ID of th
 
   def getUserData = {
     // This should only return user data when the user is logged in.
-    userData.getOrElse(UserData("invalid", "invalid", "invalid"))
+    userData.getOrElse(UserData("invalid", "invalid", List("invalid")))
   }
 
   // Mock up function to show how a possible function to check user levels could look like.
@@ -50,6 +50,7 @@ object User {
   final val ACCOUNTTYPE   = "accountType"                       //              account type field
   final val USERDATA      = "userData"                          //              user data object field
   final val NAMELOGIN     = s"$USERDATA.${UserData.NAMELOGIN}"  //              login name field
+  final val EMAIL         = s"$USERDATA.${UserData.EMAIL}"      //              email field
   final val USERCONFIG    = "userConfig"
   final val USERTOKENS    = "userTokens"                        //              tokens list
   final val JOBS          = "jobs"                              //              job reference pointers field
