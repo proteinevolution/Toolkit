@@ -11,6 +11,7 @@ window.JobModel = {
         "gap_ext": 1,
         "desc": 500,
         "alignmode": "local",
+        "maxrounds": "1",
         "matrix": "BLOSUM62",
         "max_lines": 100,
         "pmin": 20,
