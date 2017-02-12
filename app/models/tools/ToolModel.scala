@@ -37,8 +37,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
 
     // HHblits
   ("hhblits", "HHblits", "hhb", "search", "",
-    Seq(paramAccess.ALIGNMENT,paramAccess.HHBLITSDB, paramAccess.MAXROUNDS),
-    Seq("Hits", "E-Values", "Fasta", "AlignmentViewer")),
+    Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.EVAL_INC_THRESHOLD, paramAccess.MAXROUNDS,
+      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE),
+    Seq("Hitlist", "Full_Alignment", "Reduced_Alignment")),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
