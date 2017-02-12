@@ -128,7 +128,8 @@ window.Index = {
                         "class": "slide-caption"
                     }, "Folded proteins from peptides."))
                 ])
-            ]), trafficBarComponent, styleComponent, tilescomponent
+            ]),
+            m(trafficBarComponent), m(styleComponent), m(tilescomponent)
         ]);
     }
 };
@@ -168,26 +169,7 @@ trafficBarComponent = {
                 onclick: function() {
                     return m.route("/jobs/" + Job.lastUpdated);
                 }
-            }), m("div", {
-                "class": "quick_container"
-            }, [
-                m("div", {
-                    "class": "quick",
-                    id: "search_quick"
-                }, [m("p", "HHpred"), m("a", "Search")]), m("div", {
-                    "class": "quick",
-                    id: "search_quick"
-                }, [m("p", "PSI-Blast"), m("a", "Search")]), m("div", {
-                    "class": "quick",
-                    id: "search_quick"
-                }, [m("p", "Hmmer3"), m("a", "Search")]), m("div", {
-                    "class": "quick",
-                    id: "align_quick"
-                }, [m("p", "T-Coffee"), m("a", "Alignment")]), m("div", {
-                    "class": "quick",
-                    id: "analy_quick"
-                }, [m("p", "FRpred"), m("a", "Analysis")])
-            ])
+            })
         ]));
     }
 };
@@ -198,47 +180,10 @@ styleComponent = {
     }
 };
 
-
-/*
-
-
- jobTickerComponent =
- view: ->
- m "div", {class: "jobTicker"},[
- m "table",[
- m "thead",[
- m "tr",[
- m "th","id"
- m "th","timestamp"
- ]
- ]
- m "tbody",[
-
- ]
- ]
- ]
- */
-
-quickLinksComponent = {
-    view: function() {
-        return m("div", {
-            "class": "quicklinks"
-        });
-    }
-};
-
-recentUpdatesComponent = {
-    view: function() {
-        return m("div", {
-            "class": "recentUpdates"
-        });
-    }
-};
-
+// TODO add different type of tile (bigger one?)
 tilescomponent = {
-    model: function() {
-        var getRecentArticlesRoute;
-        getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(5);
+    model: function () {
+        var getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(5);
         return {
             articles: m.request({
                 url: getRecentArticlesRoute.url,
@@ -246,12 +191,39 @@ tilescomponent = {
             })
         };
     },
-    controller: function() {
-        var mod;
-        mod = new tilescomponent.model;
+    controller: function () {
+        var mod = new tilescomponent.model;
         return {
             articles: mod.articles
         };
     },
-    view: function(ctrl) {}
+    view: function (ctrl) {
+        return m("div", {
+                "class": "row article_container small-up-1 medium-up-2 large-up-3"
+            },
+            ctrl.articles().map(function (article) {
+                return m("div", {
+                        "class": "column column-block article_tile"
+                    },
+                    m("div", {"class": "tile_content"},
+                        m("div", {"class": "tile_img"
+                        },
+                            m("img", {"src": article.imagePath})
+                        ),
+                        m("div", {"class": "tile_title"
+                            },
+                            m("p", article.title)
+                        ),
+                        m("div", {"class": "tile_text"
+                        }, article.text
+                        ),
+                        m("div", {"class": "read_tile"},
+                            m("i", {"class": "icon-chevron_right"})
+                        )
+                    )
+                )
+            })
+        )
+    }
 };
+
