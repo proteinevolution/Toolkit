@@ -91,7 +91,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
 
     // Hmmer
     ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB),
-      Seq.empty),
+      Seq("Results", "Stockholm", "Domain_Table")),
 
 
       // Aln2Plot
