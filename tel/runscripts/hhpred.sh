@@ -84,7 +84,7 @@ mv query.repseq.fas ../results/query.repseq.fas
 # Perform HHsearch # TODO Include more parameters
 hhsearch -cpu 4 \
          -i ../results/query.a3m \
-         -d '%hhsuitedb.content'  \
+         -d '%HHSUITE/%hhsuitedb.content'  \
          -o ../results/hhsearch.hhr \
          -p %pmin.content \
          -P %pmin.content \
@@ -102,8 +102,6 @@ hhsearch -cpu 4 \
 
 
 JOBID=%jobid.content
-
-
 
 # Generate input files for hhviz
 cp ../results/hhsearch.hhr ../results/${JOBID}.hhr

@@ -1,4 +1,4 @@
-reformat.pl fas sto alignment.path $(readlink -f ../params/infile_sto)
+reformat.pl fas sto %alignment.path $(readlink -f ../params/infile_sto)
 
 
 hmmbuild --cpu 4 \

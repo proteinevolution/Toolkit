@@ -1,7 +1,9 @@
 package modules.tel.env
 
 import javax.inject.Singleton
+
 import modules.tel.Observer
+import play.api.Logger
 
 /**
   * Manages values of Keys from the TEL environment
