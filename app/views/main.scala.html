@@ -20,6 +20,7 @@
         <link href="@routes.Assets.versioned("styles/nice-select.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/mfglabs_iconset.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/rangeslider.css")" rel="stylesheet">
 
         <link href="@routes.Assets.versioned("styles/motion-ui.css")" rel="stylesheet">
 
@@ -33,6 +34,7 @@
 
         <script src="@routes.Assets.versioned("javascripts/newick.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/jquery.nice-select.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("javascripts/rangeslider.min.js")" type="text/javascript"></script>
         
         <!-- Mithril -->
         <link href="@routes.Assets.versioned("styles/index.css")" rel="stylesheet">
@@ -283,6 +285,16 @@
 
         <script type="text/javascript">
 
+                  //TODO connect this to backend somehow to be able to write and store articles for landing page
+                  //ajax call to push article into the database
+                  var articlePushRoute = jsRoutes.controllers.DataController.writeArticle("Test",
+                          "Example Text",
+                          "http://biologydecoded.com/wp-content/uploads/2015/03/DNA_Sequence.jpg");
+                  $.ajax({
+                      'url': articlePushRoute.url,
+                      'method': articlePushRoute.method
+                  });
+
                     function openNav() {
                         document.getElementById("myNav").style.height = "100%";
                     }
@@ -298,6 +310,15 @@
                     $(document).ready(function() {
                         $(document).foundation();
 		                $('select').niceSelect();
+                        $('input[type="range"]').rangeslider({
+                            polyfill : false,
+                            onInit : function() {
+                                this.output = $( '<div class="range-output" />' ).insertAfter( this.$range ).html( this.$element.val() );
+                            },
+                            onSlide : function( position, value ) {
+                                this.output.html( value );
+                            }
+                        });
                     });
                     var color_regex = /(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)/g;
                     function color_regex_replacer(match) {
