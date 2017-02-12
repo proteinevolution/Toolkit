@@ -153,7 +153,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val FILTER_LOW_COMPLEXITY = Param("filter_low_complexity", Bool, 1, "Filter for low complexity regions")
   final val MATRIX_MARCOIL =  select("matrix_marcoil", "Matrix")
   final val TRANSITION_PROBABILITY = select("transition_probability", "Transition Probability")
-  final val MIN_SEQID_QUERY = Param("min_seqid_query", ParamType.UnconstrainedNumber, 1, "Minimum sequence ID with Query (%)")
+  final val MIN_SEQID_QUERY = Param("min_seqid_query", ParamType.Percentage, 1, "Minimum sequence ID with Query (%)")
   final val NUM_SEQS_EXTRACT =  Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of sequences to extract")
   final val SS_SCORING = select("ss_scoring", "SS Scoring")
 }
