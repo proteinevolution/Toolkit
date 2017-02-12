@@ -246,3 +246,61 @@ select {
     margin: auto;
     max-width: 60rem;
 }
+
+.article_container {
+    margin-top: 35em;
+    padding-left: 5em;
+    padding-right: 5em;
+}
+
+.article_tile {
+    background-clip: content-box;
+    background-color: white;
+    height: 25em;
+    overflow: hidden;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+}
+
+.tile_content {
+    height: 100%;
+    border: 2px solid lightgray;
+}
+
+.tile_img {
+    height: 40%;
+}
+
+.tile_img img {
+    height: 100%;
+    width: 100%;
+}
+
+
+.tile_text {
+    height: 40%;
+    padding: 0.75em 1.5em 1.5em 1.5em;
+    font-size: 0.8em;
+    overflow: hidden;
+}
+
+.tile_title {
+    height: 10%;
+    padding: 0.75em 1.5em 0em 1.5em;
+    font-size: 0.85em;
+    font-weight: bold;
+    overflow: hidden;
+}
+
+.tile_title p {
+    margin-bottom: 0 !important;
+}
+
+.read_tile {
+    height: 10%;
+}
+
+.read_tile i {
+    float: right;
+    padding: 0em 2em 2em 0em
+}
