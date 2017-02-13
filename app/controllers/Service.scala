@@ -111,13 +111,11 @@ final class Service @Inject() (webJarAssets                                     
   }
 
 
-
   def getJob(jobID: String) : Action[AnyContent] = Action.async { implicit request =>
 
     selectJob(jobID).flatMap {
           case Some(job) =>
             Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
-            val toolModel = toolFactory.values(job.tool)
             val toolitem = toolFactory.values(job.tool).toolitem
             val ownerName =
               if (job.isPrivate) {
@@ -139,10 +137,7 @@ final class Service @Inject() (webJarAssets                                     
 
             val jobViews: Seq[(String, Html)] = job.status match {
 
-              case Done =>
-                toolModel.results.map { resultName =>
-                  resultName -> views.html.jobs.resultpanel(resultName, job.jobID, job.tool, jobPath)
-                }
+              case Done => toolFactory.getResults(job.jobID, job.tool, jobPath)
 
               // All other views are currently computed on Clientside
               case _ => Nil
@@ -158,7 +153,6 @@ final class Service @Inject() (webJarAssets                                     
                 Map.empty[String, String]
               }
             }
-
             ownerName.map{ ownerN =>
               Ok(Json.toJson(
                 Jobitem(job.mainID.stringify,
