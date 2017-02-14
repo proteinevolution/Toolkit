@@ -49,6 +49,7 @@ case class Number(min: Option[Int], max: Option[Int]) extends ParamType
 case class Select(options: Seq[(String, String)])   extends ParamType
 case object Bool     extends ParamType
 case object Radio    extends ParamType
+case class Slide(min: Option[Double], max: Option[Double]) extends ParamType
 
 object ParamType {
 
@@ -70,6 +71,7 @@ object ParamType {
       case Select(options) => Json.obj(FIELD_TYPE -> 3, "options" -> options)
       case Bool => Json.obj(FIELD_TYPE -> 4)
       case Radio => Json.obj(FIELD_TYPE -> 5)
+      case Slide(minVal, maxVal) => Json.obj(FIELD_TYPE -> 6, "min" -> minVal, "max" -> maxVal)
     }
   }
 }
@@ -134,7 +136,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val MSA_GEN_MAX_ITER = select("msa_gen_max_iter", "Maximal no. of MSA generation steps")
   final val GENETIC_CODE = select("genetic_code", "Genetic Code")
   final val LONG_SEQ_NAME =  Param("long_seq_name",Bool,1, "Use long sequence name")
-  final val EVAL_INC_THRESHOLD = select("inclusion_ethresh", "E-Value inclusion threshold")
+  final val EVAL_INC_THRESHOLD = Param("inclusion_ethresh",Slide(Some(0),Some(100)),1, "E-Value inclusion threshold")
   final val MIN_COV = Param("min_cov",ParamType.Percentage, 1, "Min. coverage of hits (%)")
   final val MAX_LINES = Param("max_lines",ParamType.UnconstrainedNumber,1, "Max. number of hits in hitlist")
   final val PMIN = Param("pmin",ParamType.Percentage,1, "Min. probability in hitlist (%)")
