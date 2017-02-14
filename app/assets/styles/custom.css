@@ -486,9 +486,18 @@ textarea { resize:both; }
     margin-left: 1.5em;
 }
 
+#site-notifications {
+    margin-top: 0.75em;
+    margin-left: 1em;
+}
+
 
 #site-notifications i::before {
      padding-left: 10px;
+}
+
+#signinButtonContainer {
+    height: 100%;
 }
 
 
