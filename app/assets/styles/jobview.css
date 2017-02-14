@@ -516,3 +516,17 @@ input.button_fullscreen:focus {
 .nice-select:active, .nice-select.open, .nice-select:focus {
     border-color: #88bfff;
 }
+
+.irs {
+    width: 100%;
+}
+
+.irs-line {
+    overflow: visible;
+    float: none !important;
+}
+
+.irs-slider, .irs-slider:hover {
+    background-color: #da4453;
+    cursor: pointer;
+}

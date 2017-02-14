@@ -1,4 +1,4 @@
-var JobErrorComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterRangeSliderComponent, ParameterSelectComponent, SearchformComponent, alignmentUpload, closeShortcut, dropzone_psi, exampleSequence, formComponents, foundationTable, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
+var JobErrorComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterRangeSliderComponent, ParameterSelectComponent, ParameterSlideComponent, SearchformComponent, alignmentUpload, closeShortcut, dropzone_psi, exampleSequence, formComponents, foundationTable, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
 
 exampleSequence = ">NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEE\n>CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRD\n>CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQD\n>NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRA\n>YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQE\n>YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRA\n>NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRA\n>YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQT";
 
@@ -10,6 +10,15 @@ helpModalAccess = function(elem, isInit) {
     }
 };
 
+sliderAccess = function(elem, isInit) {
+    if (!isInit) {
+        return $(elem).ionRangeSlider({
+            grid: true,
+            values: [0.000000000000000000000000000000000000000000000000001,0.00000000000000000000000000000000000000001,0.000000000000000000000000000001,0.00000000000000000001,0.000000000000001,0.0000000001,0.00000001,0.000001, 0.0001, 0.001, 0.01, 0.02, 0.05, 0.1]
+        })
+    }
+};
+
 selectBoxAccess = function(elem, isInit) {
     if (!isInit) {
         return $(elem).niceSelect();
@@ -17,6 +26,10 @@ selectBoxAccess = function(elem, isInit) {
         return $(elem).niceSelect('update');
     }
 };
+
+
+
+
 
 window.JobViewComponent = {
     view: function(ctrl, args) {
@@ -754,43 +767,37 @@ ParameterBoolComponent = {
     }
 };
 
-ParameterRangeSliderComponent = {
-    view: function(ctrl, args) {
+ParameterSlideComponent = {
+    view: function (ctrl, args) {
+        var paramAttrs = {
+            type: "range",
+            id: args.param.name,
+            name: args.param.name,
+            value: args.value,
+            config: sliderAccess
+        };
+        // Add minimum and maximum if present
+        if(args.param.paramType["max"]) {
+            paramAttrs["max"] = args.param.paramType["max"];
+        }
+        if(args.param.paramType["min"]) {
+            paramAttrs["min"] = args.param.paramType["min"];
+        }
         return renderParameter([
-            m("div", {
-                "class": "small-10 columns"
-            }, [
-                m("div", {
-                    "class": "slider"
-                }, [
-                    m("span", {
-                        "class": "slider-handle",
-                        tabindex: "1"
-                    }), m("span", {
-                        "class": "slider-fill"
-                    })
-                ])
-            ])
-        ]);
+            m("label", args.param.label),
+            m("input", paramAttrs)
+        ])
 
-        /*
-         <div class="small-10 columns">
-         <div class="slider" data-slider data-initial-start="50" data-step="5">
-         <span class="slider-handle"  data-slider-handle role="slider" tabindex="1" aria-controls="sliderOutput2"></span>
-         <span class="slider-fill" data-slider-fill></span>
-         </div>
-         </div>
-         <div class="small-2 columns">
-         <input type="number" id="sliderOutput2">
-         </div>
-         */
     }
+
 };
+
 
 formComponents = {
     1: ParameterAlignmentComponent,
     2: ParameterNumberComponent,
     3: ParameterSelectComponent,
     4: ParameterBoolComponent,
-    5: ParameterRadioComponent
+    5: ParameterRadioComponent,
+    6: ParameterSlideComponent
 };
