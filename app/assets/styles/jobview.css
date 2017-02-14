@@ -283,7 +283,14 @@ hr {
 
 .result-panel{
 font-size: 0.65em !important;
+}
 
+.result-panel pre {
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    height: 30pc;
+    overflow-y: scroll;
 }
 
 .result-title-big{
