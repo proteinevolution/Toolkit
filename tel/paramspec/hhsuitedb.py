@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-
+import os
 
 def print_args(args):
     print(args[-1] + ' '+  '_'.join(args[:-1]))
@@ -8,6 +8,10 @@ def print_args(args):
 
 def main(argv):
     path = "%HHSUITE/DB"
+    # If directory does not exist, print random stuff
+    if not os.path.exists(path):
+        print("foo bar")
+        return
     args = []
     with open(path, 'r') as infile:
         for line in infile:
