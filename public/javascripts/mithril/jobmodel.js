@@ -15,7 +15,8 @@ window.JobModel = {
         "matrix": "BLOSUM62",
         "max_lines": 100,
         "pmin": 20,
-        "aliwidth": 80
+        "aliwidth": 80,
+        "protblastprogram": "psiblast"
     },
     pushMessage: function(msg) {
         return messages().push(msg);

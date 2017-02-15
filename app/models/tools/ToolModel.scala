@@ -99,7 +99,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
   lazy val values : Map[String, Tool] = Set(
     // Protblast
     ("protblast", "ProtBlast", "prob", "search", "",
-      Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.MATRIX, paramAccess.EVALUE,
+      Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.MATRIX, paramAccess.EVALUE,
         paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN, paramAccess.GAP_EXT, paramAccess.DESC, paramAccess.PROTBLASTPROGRAM)),
 
     // HHblits
@@ -120,7 +120,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
     ("hhpred_automatic", "HHpred - Automatic Template Selection", "hhp", "forward", "",  Seq.empty),
 
     // PSI-BLAST
-    ("psiblast", "PSI-BLAST", "pbl", "search", "", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB,
+    ("psiblast", "PSI-BLAST", "pbl", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
       paramAccess.MATRIX,
       paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN,
       paramAccess.GAP_EXT, paramAccess.DESC)),
