@@ -52,12 +52,14 @@
                 <option value="letters">Letters</option>
                 <option value="background">Background</option>
             </select>
+                <a class="success button tiny select-all-button" onclick="selectAll_()" type="button" id="selectAllButton">Select all</a>
             <input type="checkbox" onchange="toggleSS(this)"> Color SS
             <button type="button" style="float: right;" class="button" onclick="hhpred_manual()">Create Model from manually selected templates</button>
             <button type="button" style="float: right;" class="button" onclick="hhpred_automatic()">Select Templates Automatically</button>
             </div>
             <form id="hhpred_templates">
             </form>
+
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
@@ -167,6 +169,7 @@
 
 
 
+
         (function()  {
          $('.slider').on('moved.zf.slider', function() {
              $('#lefthandle').html($('#hidden1').val());
@@ -223,7 +226,15 @@
                      { "mDataProp": "template_begin" },
                      { "mDataProp": "template_end" },
                      { "mDataProp": "ref" }
-                 ]
+                 ],
+                 'columnDefs': [{
+                     'targets': 0,
+                     'searchable': false,
+                     'orderable': false,
+                     'render': function (data, type, full, meta){
+                         return '<input type="checkbox" name="hitCheckbox" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '">';
+                     }
+                 }],
              });
 
              // get beg and end of first hit to set slider handles
@@ -246,7 +257,8 @@
                  var checkbox = document.createElement("input");
                  checkbox.setAttribute("type", "checkbox");
                  checkbox.setAttribute("value", ali.no.toString());
-                 checkbox.setAttribute("name", "templates");
+                 checkbox.setAttribute("name", "hitCheckbox");
+                 checkbox.setAttribute("class", "hitCheckbox");
                  divAlignment.appendChild(checkbox);
                  var tab = document.createElement("table");
                  tab.className += " unstriped ";
@@ -351,9 +363,6 @@
          });
         })();
 
-    /* without timeout SLIDER is not loaded */
-        setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 1000);
-        
     function draw_hits(id, hits) {
         var s = Snap("#" +id);
         // Get maximum of query_end with map and reduce
@@ -409,4 +418,17 @@
         }
        return [red, grn, blu];
     }
+
+
+        /* without timeout SLIDER is not loaded */
+        setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 1000);
+
+
+
+        function selectAll_(){
+            selectAll(this.hitlist.fnGetNodes());
+        }
+
+
+
 </script>
