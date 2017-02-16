@@ -8,7 +8,7 @@
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
             <div class='flat-slider' id='flat-slider'></div>
-            <a class="success button tiny resubmitSection" onclick="resubmit()" type="button" id="resubmitSection">Resubmit section</a>
+            <a class="success button tiny resubmitSection" onclick="resubmitSection_()" type="button" id="resubmitSection">Resubmit section</a>
             <div id='blastviz'>
                 @HHpred.html(s"$jobID/results/blastviz.html")
                 <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
@@ -66,6 +66,8 @@
                     <option value="background">Background</option>
                 </select>
             </div>
+            <a class="success button tiny select-all-button" onclick="selectAll_()" type="button" id="selectAllButton">Select all</a>
+            
             <form id="psiblast_templates">
             </form>
         </div>
@@ -128,19 +130,29 @@
                         { "mDataProp": "hsps.0.hit_from" },
                         { "mDataProp": "hsps.0.hit_to" },
                         { "mDataProp": "hsps.0.align_len" }
-                    ]
+                    ],
+                     'columnDefs': [{
+                    'targets': 0,
+                    'searchable': false,
+                    'orderable': false,
+                    'render': function (data, type, full, meta){
+                        return '<input type="checkbox" name="hitCheckbox" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '">';
+                    }
+                }],
                 });
 
                 // get beg and end of first hit to set slider handles
-                if(hits[0].hsps.length > 0 ) {
-                    firstHitBegin = hits[0].hsps[0].query_from;
-                    firstHitEnd = hits[0].hsps[0].query_to;
-                }
-                else {
-                    firstHitBegin = 0;
-                    firstHitEnd = 0;
-                }
+                if (numHits > 0) {
 
+                    if (hits[0].hsps.length > 0) {
+                        firstHitBegin = hits[0].hsps[0].query_from;
+                        firstHitEnd = hits[0].hsps[0].query_to;
+                    }
+                    else {
+                        firstHitBegin = 0;
+                        firstHitEnd = 0;
+                    }
+                }
 
                 var alignments_container = document.getElementById("psiblast_templates");
                 for(var i = 0; i <= numHits; i++) {
@@ -153,7 +165,8 @@
                     var checkbox = document.createElement("input");
                     checkbox.setAttribute("type", "checkbox");
                     checkbox.setAttribute("value", alignmentNum.toString());
-                    checkbox.setAttribute("name", "templates");
+                    checkbox.setAttribute("name", "hitCheckbox");
+                    checkbox.setAttribute("class", "hitCheckbox");
                     divAlignment.appendChild(checkbox);
                     var tab = document.createElement("table");
                     tab.className += " unstriped ";
@@ -230,11 +243,22 @@
         })();
 
 
-        function resubmit(){
-            resubmit_section(this.hitSequences, this.hitNames);
+
+
+
+        function resubmitSection_(){
+            resubmitSection(this.hitSequences, this.hitNames);
         }
+
+        function selectAll_(){
+            selectAll(this.hitlist.fnGetNodes());
+        }
+
+
         /* without timeout SLIDER is not loaded */
-        setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 1000);
+        setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 500);
+
+
 
 
 

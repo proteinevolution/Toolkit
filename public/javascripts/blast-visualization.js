@@ -128,21 +128,89 @@ function slider_show(sequence_length, start, end) {
 
 
 
+
+
 function getSliderRange() {
 
     return $('#flat-slider').slider("option", "values");
 }
-function resubmit_section(hits, names) {
+
+
+
+function resubmitSection(hits, names) {
     if(hits.length < 1) {
         alert("No sequences in selected slider range!");
         return
     }
     var sliderRange = getSliderRange();
-    var fasta = new Array();
-    for (var i =0 ; i < hits.length; i ++){
-        fasta.push(names[i] + '\n')
-        fasta.push(hits[i].substr(sliderRange[0] - 1, sliderRange[1] - 1) + '\n')
+    var resubmitSeqs = new Array();
+
+    //for (var i =0 ; i < hits.length; i ++){
+
+    // to resubmit only the first sequence
+    for (var i =0 ; i < 1; i ++){
+        resubmitSeqs.push(names[i] + '\n')
+        resubmitSeqs.push(hits[i].substr(sliderRange[0] - 1, sliderRange[1] - 1) + '\n')
     }
     $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
-    $('#alignment').val(fasta.join(''));
+    $('#alignment').val(resubmitSeqs.join(''));
 }
+
+
+//TODO: works only with timeout. needs to be replaced?
+// parameter: all pages from dataTable  example: allPages = hitlist.fnGetNodes()
+
+
+// links two checkboxes with id 'hits'
+setTimeout(function() {
+
+    var allPages = hitlist.fnGetNodes()
+
+    // listens to alignment
+    $('input:checkbox.hitCheckbox').click(function (e) {
+        var currentVal = $(this).val();
+        var currentState = $(this).prop('checked');
+        // alignment
+        $('input[value=' + currentVal + ']').each(function () {
+            $(this).prop('checked', currentState);
+        })
+
+        $(allPages).find('input[value='+currentVal+']').prop('checked', currentState);
+
+    });
+
+    // listens to dataTable
+    $(allPages).find('input[type="checkbox"]').click(function (e) {
+        var currentVal = $(this).val();
+        var currentState = $(this).prop('checked');
+        // alignment
+        $('input[value=' + currentVal + ']').each(function () {
+            $(this).prop('checked', currentState);
+        })
+    });
+
+
+},1000);
+
+
+
+// parameter: all pages from dataTable example: allPages = hitlist.fnGetNodes()
+// select all checkboxes
+    function selectAll(allPages) {
+
+        // alignment
+        $('input:checkbox.hitCheckbox').each(function () {
+            var checked = !$(this).data('checked');
+            $('input:checkbox.hitCheckbox').prop('checked', checked);
+            $(this).data('checked', checked);
+
+        });
+        // dataTable
+        if($('input:checkbox.hitCheckbox').prop('checked')) {
+            $(allPages).find('input[type="checkbox"]').prop('checked', true);
+        }else {
+            $(allPages).find('input[type="checkbox"]').prop('checked', false);
+        }
+    }
+
+
