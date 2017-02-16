@@ -126,7 +126,7 @@
                     "aoColumns": [
                         { "mDataProp": "num" },
                         { "mDataProp": "description.0.accession" },
-                        { "mDataProp": "hsps.0.evalue", render: function(data){return data.toExponential();}},
+                        { "mDataProp": "hsps.0.evalue", "decimalPlaces":2, render: function(data){return data.toExponential();}},
                         { "mDataProp": "hsps.0.score" },
                         { "mDataProp": "hsps.0.bit_score" },
                         { "mDataProp": "hsps.0.identity" },
@@ -136,7 +136,7 @@
                         { "mDataProp": "hsps.0.query_to" },
                         { "mDataProp": "hsps.0.hit_from" },
                         { "mDataProp": "hsps.0.hit_to" },
-                        { "mDataProp": "hsps.0.align_len" }
+                        { "mDataProp": "len" }
                     ],
                      'columnDefs': [{
                     'targets': 0,
@@ -190,6 +190,7 @@
                     }
 
                     // hit details
+                    var length = hits[i].len
                     var score = ali.score
                     var bit_score = ali.bit_score
                     var evalue = ali.evalue;
@@ -201,9 +202,9 @@
                     var positivesPercentage  = Math.floor((positives / align_len) * 100);
                     var gapsPercentage  = Math.floor((gaps / align_len) * 100);
 
-                    tabbody.appendChild(makeRow(["","","Score: "+ bit_score+ " bits (" +score +"), Expect: " +evalue+ ",",""]));
-                    tabbody.appendChild(makeRowColspan(["","Identities: " + identities + "/" + align_len + "(" + identityPercentage +"%), Positives: "+
-                        positives+ "/"+ align_len+" ("+ positivesPercentage+ "%), Gaps: "+ gaps+ "/"+ align_len+ " ("+ gapsPercentage+ "%)"],2,"td"));
+                    tabbody.appendChild(makeRow(["","","Score: "+ bit_score+ " bits (" +score +"), Expect: " +evalue+ ", Identities: " + identities + "/" + align_len + "(" + identityPercentage +"%),",""]));
+                    tabbody.appendChild(makeRowColspan(["","Positives: "+
+                        positives+ "/"+ align_len+" ("+ positivesPercentage+ "%), Gaps: "+ gaps+ "/"+ align_len+ " ("+ gapsPercentage+ "%), Length: " + length],2,"td"));
 
 
                     // break
