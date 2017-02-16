@@ -158,16 +158,15 @@ function resubmitSection(hits, names) {
 
 
 //TODO: works only with timeout. needs to be replaced?
-// parameter: all pages from dataTable  example: allPages = hitlist.fnGetNodes()
-
-
 // links two checkboxes with id 'hits'
 setTimeout(function() {
 
-    var allPages = hitlist.fnGetNodes()
+    var allPages;
+
 
     // listens to alignment
     $('input:checkbox.hitCheckbox').click(function (e) {
+        allPages = hitlist.fnGetNodes();
         var currentVal = $(this).val();
         var currentState = $(this).prop('checked');
         // alignment
@@ -181,6 +180,7 @@ setTimeout(function() {
 
     // listens to dataTable
     $(allPages).find('input[type="checkbox"]').click(function (e) {
+        allPages = hitlist.fnGetNodes();
         var currentVal = $(this).val();
         var currentState = $(this).prop('checked');
         // alignment
@@ -206,11 +206,26 @@ setTimeout(function() {
 
         });
         // dataTable
-        if($('input:checkbox.hitCheckbox').prop('checked')) {
+        if ($('input:checkbox.hitCheckbox').prop('checked')) {
             $(allPages).find('input[type="checkbox"]').prop('checked', true);
-        }else {
+        } else {
             $(allPages).find('input[type="checkbox"]').prop('checked', false);
         }
     }
 
+
+// parameter: tool (String)
+// forwards all checked identifier and sequences to tool
+function forward(tool, forwardData){
+    localStorage.setItem ( "resultcookie", forwardData ) ;
+    window.location.href = "/#/tools/" + tool ;
+
+}
+
+// load forwarded data into alignment field
+$(document).ready(function() {
+    var resultcookie = localStorage.getItem("resultcookie");
+    $('#alignment').val(resultcookie);
+    localStorage.removeItem("resultcookie");
+});
 

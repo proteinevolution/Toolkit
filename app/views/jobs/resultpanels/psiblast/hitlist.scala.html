@@ -67,7 +67,14 @@
                 </select>
             </div>
             <a class="success button tiny select-all-button" onclick="selectAll_()" type="button" id="selectAllButton">Select all</a>
-            
+
+            <div id="psiblast_alignment_control" style="display: flex;">
+                <select id="forward" onchange="forward_(value);">
+                    <option value="" >Forward</option>
+                    <option value="hhpred">HHpred</option>
+                </select>
+            </div>
+
             <form id="psiblast_templates">
             </form>
         </div>
@@ -244,19 +251,37 @@
 
 
 
+function resubmitSection_(){
+    resubmitSection(this.hitSequences, this.hitNames);
+}
 
+function selectAll_(){
+    selectAll(this.hitlist.fnGetNodes());
+}
 
-        function resubmitSection_(){
-            resubmitSection(this.hitSequences, this.hitNames);
+function forward_(tool){
+
+    if(tool == "")
+        return;
+
+    var forwardData = new Array();
+    var count;
+    for (var i =0 ; i < hitSequences.length; i ++){
+        count = i+1;
+        if($("input[value="+count+"]").prop('checked')) {
+            forwardData.push(this.hitNames[i] + '\n')
+            forwardData.push(this.hitSequences[i] + '\n')
         }
+    }
+    if(forwardData.length < 1 ){
+        alert("Please select at least one sequence.")
+        return;
+    }
+    forward(tool, forwardData.join(''));
+}
 
-        function selectAll_(){
-            selectAll(this.hitlist.fnGetNodes());
-        }
-
-
-        /* without timeout SLIDER is not loaded */
-        setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 500);
+/* without timeout SLIDER is not loaded */
+setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 500);
 
 
 
