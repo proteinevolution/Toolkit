@@ -16,21 +16,6 @@
             </div>
     </li>
     <li class="accordion-item" data-accordion-item>
-        <a href="#" class="accordion-title">Information</a>
-        <div class="accordion-content" data-tab-content>
-            <table  class="display" cellspacing="0" width="80%">
-                <tr>
-                    <td>Query</td>
-                    <td id="psiblast_query"></td>
-                </tr>
-                <tr>
-                    <td>Match_columns</td>
-                    <td id="psiblast_queryLength"></td>
-                </tr>
-            </table>
-        </div>
-    </li>
-    <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Hitlist</a>
         <div class="accordion-content" data-tab-content>
             <table id="htp" class="display" cellspacing="0" width="80%">
@@ -79,6 +64,21 @@
             </form>
         </div>
     </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Information</a>
+        <div class="accordion-content" data-tab-content>
+            <table  class="display" cellspacing="0" width="80%">
+                <tr>
+                    <td>Query</td>
+                    <td id="psiblast_query"></td>
+                </tr>
+                <tr>
+                    <td>Match_columns</td>
+                    <td id="psiblast_queryLength"></td>
+                </tr>
+            </table>
+        </div>
+    </li>
 </ul>
 
 
@@ -124,7 +124,8 @@
                     "scrollX": true,
                     "aoColumns": [
                         { "mDataProp": "num" },
-                        { "mDataProp": "description.0.accession" },
+                        { "mDataProp": "description.0.accession" , render: function (data) {
+                        return ["<a href=\"https://www.ncbi.nlm.nih.gov/protein/", data, "\">", data, "</a>"].join('')}},
                         { "mDataProp": "hsps.0.evalue", render: function(data){ return data.toExponential(2);}},
                         { "mDataProp": "hsps.0.score" },
                         { "mDataProp": "hsps.0.bit_score" },
