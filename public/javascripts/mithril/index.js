@@ -107,26 +107,32 @@ window.Index = {
                     m("img", {
                         src: "/assets/images/institute.jpg"
                     }), m("a", {
-                        href: "https://elifesciences.org/content/4/e09410"
+                        href: "http://www.eb.tuebingen.mpg.de/"
                     }, m("div", {
-                        "class": "slide-caption"
-                    }, "Max Planck Institute for Developmental Biology"))
+                        "class": "slide-caption"},
+                       m("div", {"class": "slide-header"}, "Max Planck Institute for Developmental Biology"),
+                       m("div", {"class": "slide-text"}, "Welcome to the Bioinformatics Toolkit hosted at the Max Planck Institute for Developmental Biology in Tuebingen, Germany.")
+                    ))
                 ]), m("div", [
                     m("img", {
                         src: "/assets/images/lambda0.5_crop2.png"
                     }), m("a", {
-                        href: "https://elifesciences.org/content/4/e09410"
+                        href: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2817847/"
                     }, m("div", {
-                        "class": "slide-caption"
-                    }, "A galaxy of protein folds."))
+                            "class": "slide-caption"},
+                        m("div", {"class": "slide-header"}, "A galaxy of protein folds"),
+                        m("div", {"class": "slide-text"}, "Although the diversity of proteins in nature may seem endless, it is in fact narrowly bounded. Proteins are far less polyphyletic than hitherto assumed and may have evolved from a rather small set of ancestral forms.")
+                    ))
                 ]), m("div", [
                     m("img", {
                         src: "/assets/images/protfromfragments3.png"
                     }), m("a", {
                         href: "https://elifesciences.org/content/4/e09410"
                     }, m("div", {
-                        "class": "slide-caption"
-                    }, "Folded proteins from peptides."))
+                            "class": "slide-caption"},
+                        m("div", {"class": "slide-header"}, "Folded proteins from peptides."),
+                        m("div", {"class": "slide-text"}, "The first folded proteins may have arisen by repetition, recombination, and accretion from an ancestral set of peptides active as co-factors of an RNA world.")
+                    ))
                 ])
             ]),
             m(trafficBarComponent), m(styleComponent), m(tilescomponent)
