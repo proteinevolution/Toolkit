@@ -203,10 +203,10 @@
                     var positivesPercentage  = Math.floor((positives / align_len) * 100);
                     var gapsPercentage  = Math.floor((gaps / align_len) * 100);
 
-                    tabbody.appendChild(makeRowColspan(["  Score: "+ bit_score+ " bits (" +score +"), Expect: " +evalue+ ", Identities: "
-                    + identities + "/" + align_len + "(" + identityPercentage +"%),",""],4,"td"));
-                    tabbody.appendChild(makeRowColspan(["  Positives: "+
-                        positives+ "/"+ align_len+" ("+ positivesPercentage+ "%), Gaps: "+ gaps+ "/"+ align_len+ " ("+ gapsPercentage+ "%), Length: " + length],4,"td"));
+                    tabbody.appendChild(makeRowColspan(["","Score: "+ bit_score+ " bits (" +score +"), Expect: " +evalue+ ", Identities: "
+                    + identities + "/" + align_len + "(" + identityPercentage +"%),",""],2,"td"));
+                    tabbody.appendChild(makeRowColspan(["","Positives: "+
+                        positives+ "/"+ align_len+" ("+ positivesPercentage+ "%), Gaps: "+ gaps+ "/"+ align_len+ " ("+ gapsPercentage+ "%), Length: " + length],2,"td"));
 
 
                     // break
