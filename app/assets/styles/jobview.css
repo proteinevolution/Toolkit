@@ -44,14 +44,8 @@ body.is-reveal-open {
 #alignments {
 
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-    white-space: pre ;
     font-size: 0.7rem !important;
-}
-
-#alignments{
-    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-    white-space: pre ;
-    font-size: 0.7rem !important;
+    white-space: nowrap;
 }
 
 
