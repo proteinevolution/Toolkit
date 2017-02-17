@@ -224,6 +224,8 @@ function forward(tool, forwardData){
 
 // load forwarded data into alignment field
 $(document).ready(function() {
+    // for getting full alignment
+    //curl -X GET 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&id=NP_877456,NP_877456&rettype=fasta'
     var resultcookie = localStorage.getItem("resultcookie");
     $('#alignment').val(resultcookie);
     localStorage.removeItem("resultcookie");
