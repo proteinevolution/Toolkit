@@ -128,6 +128,7 @@
    display: flex;
    margin-top: 1em;
    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
+    overflow: hidden;
 
 }
 
@@ -148,4 +149,10 @@
 
 .two_input {
     display: flex;
+}
+
+@media only screen and (max-width: 720px) {
+    .forward_form {
+        display: block;
+    }
 }
