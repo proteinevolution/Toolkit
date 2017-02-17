@@ -121,12 +121,11 @@
                     "bFilter": true,
                     "bLengthChange": true,
                     "aaData": hits,
-                    "scrollY": 600,
                     "scrollX": true,
                     "aoColumns": [
                         { "mDataProp": "num" },
                         { "mDataProp": "description.0.accession" },
-                        { "mDataProp": "hsps.0.evalue", "decimalPlaces":2, render: function(data){return data.toExponential();}},
+                        { "mDataProp": "hsps.0.evalue", render: function(data){ return data.toExponential(2);}},
                         { "mDataProp": "hsps.0.score" },
                         { "mDataProp": "hsps.0.bit_score" },
                         { "mDataProp": "hsps.0.identity" },
@@ -158,6 +157,7 @@
                     else {
                         firstHitBegin = 0;
                         firstHitEnd = 0;
+                        alert("No hits found!");
                     }
                 }
 
@@ -184,7 +184,7 @@
                     for(var j =0; j < numHitsShown ; j++) {
                         var accession = hits[i].description[j].accession;
                         var linkTemplate = ["<a name=\"",accession,"\"href=\"https://www.ncbi.nlm.nih.gov/protein/", accession, "\">", accession, "</a>"].join('')
-                        var names = makeRowColspan([alignmentNum, linkTemplate + "\t"+hits[i].description[j].title],2,"td")
+                        var names = makeRowColspan([alignmentNum + " "+linkTemplate, hits[i].description[j].title],2,"td")
                         names.setAttribute("class","name")
                         tabbody.appendChild(names)
                     }
@@ -193,7 +193,7 @@
                     var length = hits[i].len
                     var score = ali.score
                     var bit_score = ali.bit_score
-                    var evalue = ali.evalue;
+                    var evalue = ali.evalue.toExponential(2);
                     var identities = ali.identity;
                     var positives = ali.positive;
                     var gaps = ali.gaps;
@@ -202,9 +202,10 @@
                     var positivesPercentage  = Math.floor((positives / align_len) * 100);
                     var gapsPercentage  = Math.floor((gaps / align_len) * 100);
 
-                    tabbody.appendChild(makeRow(["","","Score: "+ bit_score+ " bits (" +score +"), Expect: " +evalue+ ", Identities: " + identities + "/" + align_len + "(" + identityPercentage +"%),",""]));
-                    tabbody.appendChild(makeRowColspan(["","Positives: "+
-                        positives+ "/"+ align_len+" ("+ positivesPercentage+ "%), Gaps: "+ gaps+ "/"+ align_len+ " ("+ gapsPercentage+ "%), Length: " + length],2,"td"));
+                    tabbody.appendChild(makeRowColspan(["  Score: "+ bit_score+ " bits (" +score +"), Expect: " +evalue+ ", Identities: "
+                    + identities + "/" + align_len + "(" + identityPercentage +"%),",""],4,"td"));
+                    tabbody.appendChild(makeRowColspan(["  Positives: "+
+                        positives+ "/"+ align_len+" ("+ positivesPercentage+ "%), Gaps: "+ gaps+ "/"+ align_len+ " ("+ gapsPercentage+ "%), Length: " + length],4,"td"));
 
 
                     // break
