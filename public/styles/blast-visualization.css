@@ -65,17 +65,27 @@
     margin-bottom: 1rem !important;
 }
 
-#resubmitSection{
+#resubmitSection {
     float: right;
     margin-right: 7em;
     margin-top: 1.5em;
     margin-bottom: 0;
     background-color: #eee;
 }
-#resubmitSection:hover{
+#resubmitSection:hover, #forward:hover, #selectAllSeq:hover {
     background-color: #d1d1d1
 }
 
+#forward {
+    float: right;
+    background-color: #eee;
+}
+
+#selectAllSeq {
+    float: left;
+    background-color: #eee;
+
+}
 
 .dataTable{
     width: 80% !important;
@@ -84,4 +94,58 @@
 
 .dataTables_scrollHeadInner{
   width: unset !important;
+}
+
+#psiblast_templates {
+    margin-top: 3em;
+}
+
+#psiblast_alignment_control {
+    margin-top: 2em;
+    display: block;
+    min-height: 5em;
+}
+
+#psiblast_alignment_control div, #psiblast_alignment_control ul {
+    width: 17em;
+}
+
+
+.forward_panel a {
+    padding: 1em 1em 1em 1em;
+    border: none;
+}
+
+.forward_panel_content {
+    border: none !important;
+}
+
+.select_forward div, .select_forward ul {
+    width: 15em;
+}
+
+.forward_form {
+   display: flex;
+   margin-top: 1em;
+   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
+
+}
+
+.forward_form label {
+    width: 50%;
+    font-size: 1em;
+}
+
+.forward_form div {
+    width: 50%;
+}
+
+.result_inputs {
+    width: 5em;
+    height: 2em;
+    margin-left: 0.25em;
+}
+
+.two_input {
+    display: flex;
 }
