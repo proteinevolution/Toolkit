@@ -54,13 +54,27 @@ function makeRow(entries) {
     return row;
 }
 // Makes a table row with colspan=num
-function makeRowColspan(entries, num, HTMLelement) {
+function makeRowColspan(entries, num, HTMLElement) {
 
     var row = document.createElement("tr");
     for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement(HTMLelement);
+        var entry = document.createElement(HTMLElement);
         entry.setAttribute("padding", "0")
         entry.setAttribute("colspan",num);
+        entry.innerHTML = entries[i];
+        row.appendChild(entry);
+    }
+    return row;
+}
+
+// Makes a table row with colspan=num
+function makeRowDiffColspan(entries, num, HTMLElement) {
+
+    var row = document.createElement("tr");
+    for(var i = 0; i < entries.length; i++ ) {
+        var entry = document.createElement(HTMLElement);
+        entry.setAttribute("padding", "0")
+        entry.setAttribute("colspan",num[i]);
         entry.innerHTML = entries[i];
         row.appendChild(entry);
     }
@@ -235,9 +249,8 @@ $(document).ready(function() {
 /* GENERATING LINKS FOR HHPRED */
 
 
-function getLink(id){
+function getSingleLink(id){
   var db = identifyDatabase(id);
-  var links = new Object();
     var pdb = 'http://pdb.rcsb.org/pdb/explore.do?structureId=';
     var ncbi = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term=';
     var ebi = 'http://www.ebi.ac.uk/pdbe-srv/view/entry/';
@@ -251,27 +264,49 @@ function getLink(id){
     switch(db){
       case 'scop':
           var idTrimmed = id.substr(1,4);
-          var idScopLineage = id + "_";
-          links.ncbi = generateLink(pdb, idTrimmed,id);
-          links.scop =  generateLink(scop, id,id);
-          links.scopLineage = generateLink(scopLineage, idScopLineage,id);
+          return generateLink(pdb, idTrimmed,id);
           break;
       case 'mmcif':
           var idPdb = id.replace(/\_.*$/ , "");
-          links.pdb = generateLink(pdb, idPdb,id);
+          return generateLink(pdb, idPdb,id);
           break;
       case 'pfam':
           var idPfam = id.replace(/am.*$/ , "");
-          links.pfam = generateLink(pfam, idPfam+"#tabview=tab1",id);
-          links.cdd =  generateLink(cdd, id,id);
-          links.pubmed = generateLink(pubmed, id,id);
+          return generateLink(pfam, idPfam+"#tabview=tab1",id);
           break;
       default:
           return null;
   }
-  return links;
 }
 
+
+function getLinks(id){
+    var db = identifyDatabase(id);
+    var links = [];
+    var pdb = 'http://pdb.rcsb.org/pdb/explore.do?structureId=';
+    var ncbi = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term=';
+    var ebi = 'http://www.ebi.ac.uk/pdbe-srv/view/entry/';
+    var pubmed = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?CMD=search&db=pubmed&term=';
+    var scop = 'http://scop.berkeley.edu/sid=';
+    var pfam = 'http://pfam.xfam.org/family?acc=';
+    var cdd = 'http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=';
+
+
+    switch(db){
+        case 'scop':
+            var idNCBI = id.substr(1,4);
+            links.push(generateLink(scop, id, "SCOP"));
+            links.push(generateLink(ncbi, idNCBI,"NCBI"));
+            break;
+        case 'pfam':
+            links.push(generateLink(cdd, id, "CDD"));
+            links.push(generateLink(pubmed, id,"PubMed"));
+            break;
+    }
+    if(links.length > 0)
+        links.unshift("<a>Histogram</a> | <a>Template alignment</a>");
+    return links;
+}
 
 function generateLink(baseLink, id, name){
 

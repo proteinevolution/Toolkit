@@ -137,6 +137,9 @@
 
 }
 
+.hitCheckbox{
+    margin: 0 auto;
+}
 .forward_form label {
     width: 50%;
     font-size: 1em;
@@ -161,3 +164,4 @@
         display: block;
     }
 }
+
