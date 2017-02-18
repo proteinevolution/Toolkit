@@ -115,6 +115,7 @@ function slider_show(sequence_length, start, end) {
         if (!$("#alignments").parent(".is-active").length) {
             $("#accordion").foundation('down',$("#alignments"));
         }
+        console.log(this)
         $('html, body').animate({
             scrollTop: $(this).offset() + 'px'
         }, 'fast');
@@ -209,6 +210,7 @@ setTimeout(function() {
         }
     }
 
+/* FORWARDING */
 
 // parameter: tool (String)
 // forwards all checked identifier and sequences to tool
@@ -228,3 +230,65 @@ $(document).ready(function() {
     localStorage.removeItem("resultcookie");
 });
 
+
+
+/* GENERATING LINKS FOR HHPRED */
+
+
+function getLink(id){
+  var db = identifyDatabase(id);
+  var links = new Object();
+    var pdb = 'http://pdb.rcsb.org/pdb/explore.do?structureId=';
+    var ncbi = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term=';
+    var ebi = 'http://www.ebi.ac.uk/pdbe-srv/view/entry/';
+    var pubmed = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?CMD=search&db=pubmed&term=';
+    var scop = 'http://scop.berkeley.edu/sid=';
+    var scopLineage = 'http://scop.berkeley.edu/sccs=';
+    var pfam = 'http://pfam.xfam.org/family?acc=';
+    var cdd = 'http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=';
+
+
+    switch(db){
+      case 'scop':
+          var idTrimmed = id.substr(1,4);
+          var idScopLineage = id + "_";
+          links.ncbi = generateLink(pdb, idTrimmed,id);
+          links.scop =  generateLink(scop, id,id);
+          links.scopLineage = generateLink(scopLineage, idScopLineage,id);
+          break;
+      case 'mmcif':
+          var idPdb = id.replace(/\_.*$/ , "");
+          links.pdb = generateLink(pdb, idPdb,id);
+          break;
+      case 'pfam':
+          var idPfam = id.replace(/am.*$/ , "");
+          links.pfam = generateLink(pfam, idPfam+"#tabview=tab1",id);
+          links.cdd =  generateLink(cdd, id,id);
+          links.pubmed = generateLink(pubmed, id,id);
+          break;
+      default:
+          return null;
+  }
+  return links;
+}
+
+
+function generateLink(baseLink, id, name){
+
+    return ["<a href=\"",baseLink, id, "\" target=\"\_blank\">", name, "</a>"].join('');
+}
+function identifyDatabase(id){
+
+    var scop = new RegExp('(d[0-9]*)');
+    var mmcif = new RegExp('(...._[a-zA-Z])');
+    var pfam = new RegExp('(pfam*)');
+
+    if(id.match(scop))
+        return "scop";
+    else if(id.match(mmcif))
+        return "mmcif";
+    else if(id.match(pfam))
+        return "pfam";
+    else
+        return null;
+}

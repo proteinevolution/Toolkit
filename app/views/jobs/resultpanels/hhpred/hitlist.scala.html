@@ -60,6 +60,13 @@
             </div>
             <form id="hhpred_templates">
             </form>
+
+            <div id="psiblast_alignment_control" style="display: flex;">
+                <select id="forward" onchange="forward(value);">
+                    <option value="Forward">Forward</option>
+                    <option value="PHYLIP-NEIGHBOR">PHYLIP-NEIGHBOR</option>
+                </select>
+            </div>
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
@@ -157,6 +164,7 @@
 
         function onFullscreenToggle() {
             hitlist.draw();
+
         }
 
         var ss_helices = document.getElementsByClassName("ss_h");
@@ -349,6 +357,7 @@
                         tabbody.appendChild(makeRow(["T", "ss_pred", "", current_seq]));
                     }
 
+
                     // line
                     var line = makeRowColspan(["<hr id=\"line-element\"></hr>"], 4, "td");
                     line.setAttribute("class", "horizontal-line")
@@ -433,6 +442,9 @@
             slider_show(queryLength, firstHitBegin, firstHitEnd)
         }, 1000);
 
+        function resubmitSection_(){
+            resubmitSection(this.hitSequences, this.hitNames);
+        }
 
         function selectAll_() {
             selectAll(this.hitlist.fnGetNodes());
