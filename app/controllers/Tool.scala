@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import akka.stream.Materializer
 import akka.util.Timeout
-import models.database._
+import models.database.jobs.FrontendJob
 import models.search.JobDAO
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.DateTime

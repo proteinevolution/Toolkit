@@ -1,5 +1,4 @@
-package models.database
-
+package models.database.jobs
 
 import models.Constants
 import models.tools.Toolitem
@@ -39,6 +38,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
 
   /**
     * Returns a clean JSON Object representation of the Job
+    *
     * @return
     */
   def cleaned() : JsObject = {

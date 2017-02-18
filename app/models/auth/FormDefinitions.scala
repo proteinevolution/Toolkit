@@ -1,6 +1,6 @@
 package models.auth
 
-import models.database.{User, UserData}
+import models.database.users.{UserData, User}
 import org.joda.time.DateTime
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form

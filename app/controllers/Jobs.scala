@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Inject,Singleton}
 
 import actors.JobActor.JobStateChanged
-import models.database._
+import models.database.jobs._
 import models.job.JobActorAccess
 import modules.CommonModule
 import org.joda.time.DateTime
@@ -82,6 +82,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     *
     * Creates new annotation document and modifies this if it already exists in one method
     * TODO: make this secure against CSRF
+ *
     * @param jobID
     * @param content
     * @return

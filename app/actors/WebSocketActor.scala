@@ -8,7 +8,8 @@ import akka.actor.ActorLogging
 import akka.event.LoggingReceive
 import akka.actor.ActorRef
 import com.google.inject.assistedinject.Assisted
-import models.database.{Job, User}
+import models.database.jobs.Job
+import models.database.users.User
 import models.job.JobActorAccess
 import modules.CommonModule
 import play.api.Logger

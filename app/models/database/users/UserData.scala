@@ -1,5 +1,6 @@
-package models.database
-import reactivemongo.bson.{BSONDocumentReader, BSONDocumentWriter, BSONDocument}
+package models.database.users
+
+import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter}
 
 case class UserData(nameLogin : String,                // User Login Name
                     password  : String,                // Password of the User (Hashed)
@@ -77,6 +78,7 @@ object UserData {
 
   /**
     * Helpoer class for a profile edit form
+    *
     * @param eMail
     * @param nameFirst
     * @param nameLast
@@ -100,6 +102,7 @@ object UserData {
                              password  : String) {
     /**
       * Changes the form object into a user data object
+      *
       * @param userData
       * @return
       */

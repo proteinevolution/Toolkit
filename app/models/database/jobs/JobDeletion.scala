@@ -1,9 +1,9 @@
-package models.database
+package models.database.jobs
 
-import models.database.JobDeletionFlag.JobDeletionFlag
+import models.database.jobs.JobDeletionFlag.JobDeletionFlag
 import org.joda.time.DateTime
 import play.api.libs.json._
-import reactivemongo.bson.{BSONDocumentWriter, BSONDateTime, BSONDocument, BSONDocumentReader}
+import reactivemongo.bson._
 
 /**
   * Created by astephens on 23.10.16.
