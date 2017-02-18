@@ -164,7 +164,6 @@
 
         function onFullscreenToggle() {
             hitlist.draw();
-
         }
 
         var ss_helices = document.getElementsByClassName("ss_h");
@@ -176,26 +175,27 @@
         var firstHitEnd;
 
 
-        (function () {
-            $('.slider').on('moved.zf.slider', function () {
+
+        (function()  {
+            $('.slider').on('moved.zf.slider', function() {
                 $('#lefthandle').html($('#hidden1').val());
                 $('#lefthandle').css({
-                    'color': 'white',
+                    'color' : 'white',
                     'font-weight': 'bold',
-                    'padding-left': '2px'
+                    'padding-left' : '2px'
                 });
                 $('#righthandle').html($('#hidden2').val());
                 $('#righthandle').css({
-                    'color': 'white',
+                    'color' : 'white',
                     'font-weight': 'bold',
-                    'padding-left': '2px'
+                    'padding-left' : '2px'
                 });
             });
             var dataRoute = jsRoutes.controllers.DataController.get("@jobID", 'hhr');
             $.ajax({
                 method: dataRoute.method,
                 url: dataRoute.url
-            }).done(function (data) {
+            }).done(function(data) {
                 // For the hitlist and the vizualization
                 var hits = data.hhr.hits;
 
@@ -218,37 +218,33 @@
                     "scrollY": 600,
                     "scrollX": true,
                     "aoColumns": [
-                        {"mDataProp": "no"},
-                        {"mDataProp": "struc"},
-                        {"mDataProp": "hit"},
-                        {"mDataProp": "prob"},
-                        {"mDataProp": "eval"},
-                        {
-                            "mDataProp": "pval", render: function (data) {
-                            return data.toExponential();
-                        }
-                        },
-                        {"mDataProp": "score"},
-                        {"mDataProp": "ss"},
-                        {"mDataProp": "cols"},
-                        {"mDataProp": "query_begin"},
-                        {"mDataProp": "query_end"},
-                        {"mDataProp": "template_begin"},
-                        {"mDataProp": "template_end"},
-                        {"mDataProp": "ref"}
+                        { "mDataProp": "no" },
+                        { "mDataProp": "struc" , render: function (data){return getSingleLink(data)}},
+                        { "mDataProp": "hit" },
+                        { "mDataProp": "prob" },
+                        { "mDataProp": "eval" },
+                        { "mDataProp": "pval", render: function(data){return data.toExponential();}},
+                        { "mDataProp": "score" },
+                        { "mDataProp": "ss" },
+                        { "mDataProp": "cols" },
+                        { "mDataProp": "query_begin" },
+                        { "mDataProp": "query_end" },
+                        { "mDataProp": "template_begin" },
+                        { "mDataProp": "template_end" },
+                        { "mDataProp": "ref" }
                     ],
                     'columnDefs': [{
                         'targets': 0,
                         'searchable': false,
                         'orderable': false,
-                        'render': function (data, type, full, meta) {
+                        'render': function (data, type, full, meta){
                             return '<input type="checkbox" name="hitCheckbox" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '">';
                         }
                     }],
                 });
 
                 // get beg and end of first hit to set slider handles
-                if (hits.length > 0) {
+                if(hits.length > 0 ) {
                     firstHitBegin = hits[0].query_begin;
                     firstHitEnd = hits[0].query_end;
                 }
@@ -258,47 +254,45 @@
                 }
 
                 var alignments_container = document.getElementById("hhpred_templates");
-                for (var i = 0; i < alignments.length; i++) {
+                for(var i = 0; i < alignments.length; i++) {
 
                     var ali = alignments[i];
                     var current_seq;
                     var divAlignment = document.createElement("div");
                     divAlignment.setAttribute("class", "alignment_box");
-                    var checkbox = document.createElement("input");
-                    checkbox.setAttribute("type", "checkbox");
-                    checkbox.setAttribute("value", ali.no.toString());
-                    checkbox.setAttribute("name", "hitCheckbox");
-                    checkbox.setAttribute("class", "hitCheckbox");
-                    divAlignment.appendChild(checkbox);
                     var tab = document.createElement("table");
                     tab.className += " unstriped ";
                     var tabbody = document.createElement("tbody");
 
 
+
+
                     // Names and Accession Numbers
                     var accession = hits[i].struc;
 
-                    // remove after char "_" example: 1f2r_I to 1f2r
+                    //add links
+                    var links = makeRowDiffColspan(["","No " + ali.no,"",getLinks(accession).join(" | ")],[1,1,1,1],"td")
+                    tabbody.appendChild(links);
 
-                    var linkTemplate = ["<a href=\"http://www.rcsb.org/pdb/explore.do?structureId=", accession.replace(/\_.*$/, ""), "\">", accession, "</a>"].join('');
-                    var names = makeRowColspan([ali.no, linkTemplate, "", hits[i].hit], 1, "td");
-                    names.setAttribute("class", "name");
+                    var checkbox = "<input type='checkbox' name='hitCheckbox' class='hitCheckbox' value='"+ali.no.toString()+"'>"
+                    // add name
+                    var names = makeRowColspan([checkbox, getSingleLink(accession) ,"",hits[i].hit],[1,1,1,1],"td");
+                    names.setAttribute("class","name");
                     tabbody.appendChild(names);
-
 
                     // hit details
                     var aligned_cols = ali.info.aligned_cols;
-                    var evalue = ali.info.eval;
+                    var evalue = ali.info.eval.toExponential(2);
                     var identities = ali.info.identities;
-                    var probabab = ali.info.probab;
+                    var probabab= ali.info.probab;
                     var score = ali.info.score;
                     var similarity = ali.info.similarity;
                     var sum_probs = ali.info.sum_probs;
                     var template_neff = ali.info.template_neff;
 
-                    tabbody.appendChild(makeRowColspan(["", "Probability: " + probabab + ", Expect: " + evalue], 3, "td"));
-                    tabbody.appendChild(makeRowColspan(["", "Score: " + score + ", Aligned Cols: " + aligned_cols + ", Identities: " + identities], 3, "td"));
-                    tabbody.appendChild(makeRowColspan(["", "Similarity: " + similarity + ", Sum Probs: " + sum_probs + ", Template Neff: " + template_neff], 3, "td"));
+                    tabbody.appendChild(makeRowDiffColspan(["","Probability: "+probabab+", Expect: "+ evalue],[3,1],"td"));
+                    tabbody.appendChild(makeRowDiffColspan(["","Score: " + score + ", Aligned Cols: " + aligned_cols + ", Identities: " + identities ],[3,1],"td"));
+                    tabbody.appendChild(makeRowDiffColspan(["","Similarity: " + similarity + ", Sum Probs: " + sum_probs + ", Template Neff: " + template_neff],[3,1],"td"));
 
 
                     // break
@@ -306,13 +300,13 @@
 
 
                     // Handle secondary structure annotation for query, if present
-                    if (typeof ali.query.ss_dssp !== 'undefined') {
+                    if(typeof ali.query.ss_dssp !== 'undefined') {
 
                         current_seq = ali.query.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
                         current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
                         tabbody.appendChild(makeRow(["Q", "ss_dssp", "", current_seq]));
                     }
-                    if (typeof ali.query.ss_pred !== 'undefined') {
+                    if(typeof ali.query.ss_pred !== 'undefined') {
 
                         current_seq = ali.query.ss_pred.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
                         current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
@@ -323,17 +317,17 @@
                     current_seq = ali.query.seq.replace(color_regex, color_regex_replacer);
                     tabbody.appendChild(makeRow(["Q", ali.query.name, ali.query.start, current_seq]));
                     // Consensus, if present
-                    if (typeof ali.query.consensus !== 'undefined') {
+                    if(typeof ali.query.consensus !== 'undefined') {
                         var queryRow = makeRow(["Q", "Consensus", ali.query.start, ali.query.consensus]);
                         queryRow.setAttribute("class", "sequence");
                         tabbody.appendChild(queryRow);
                     }
-                    if (typeof ali.agree !== 'undefined') {
+                    if(typeof ali.agree !== 'undefined') {
                         var midlineRow = makeRow(["", "", "", ali.agree]);
                         midlineRow.setAttribute("class", "sequence");
                         tabbody.appendChild(midlineRow);
                     }
-                    if (typeof ali.template.consensus !== 'undefined') {
+                    if(typeof ali.template.consensus !== 'undefined') {
                         var templateRow = makeRow(["T", "Consensus", ali.template.start, ali.template.consensus]);
                         templateRow.setAttribute("class", "sequence");
                         tabbody.appendChild(templateRow);
@@ -344,13 +338,13 @@
                     tabbody.appendChild(makeRow(["T", ali.template.name, ali.template.start, current_seq]));
 
                     // Handle secondary structure annotation for template
-                    if (typeof ali.template.ss_dssp !== 'undefined') {
+                    if(typeof ali.template.ss_dssp !== 'undefined') {
 
                         current_seq = ali.template.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
                         current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
                         tabbody.appendChild(makeRow(["T", "ss_dssp", "", current_seq]));
                     }
-                    if (typeof ali.template.ss_pred !== 'undefined') {
+                    if(typeof ali.template.ss_pred !== 'undefined') {
 
                         current_seq = ali.template.ss_pred.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
                         current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
