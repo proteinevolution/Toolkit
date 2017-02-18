@@ -114,7 +114,7 @@ JobQueuedComponent = {
         }, [
             m("table", {
                 config: foundationTable
-            }, m("tbody", [m("tr", [m("td", "MainID"), m("td", args.job().mainID)]), m("tr", [m("td", "JobID"), m("td", args.job().jobID)]), m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])]))
+            }, m("tbody", [m("tr", [m("td", "JobID"), m("td", args.job().jobID)]), m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])]))
         ]);
     }
 };
@@ -126,7 +126,7 @@ JobRunningComponent = {
         }, [
             m("table", {
                 config: foundationTable
-            }, m("tbody", [m("tr", [m("td", "MainID"), m("td", args.job().mainID)]), m("tr", [m("td", "JobID"), m("td", args.job().jobID)]), m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])]))
+            }, m("tbody", [m("tr", [m("td", "JobID"), m("td", args.job().jobID)]), m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])]))
         ]);
     }
 };
@@ -413,7 +413,6 @@ JobSubmissionComponent = {
                                 "jobIDs": [jobID]
                             });
                             Job.add(new Job({
-                                mainID: jobID,
                                 jobID: jobID,
                                 state: 0,
                                 createdOn: 'now',
@@ -437,7 +436,6 @@ JobSubmissionComponent = {
                             "jobIDs": [jobID]
                         });
                         Job.add(new Job({
-                            mainID: jobID,
                             jobID: jobID,
                             state: 0,
                             createdOn: 'now',

@@ -59,11 +59,12 @@ $ ->
     if (json.successful)
       #change the "sign in" to the user login name
       $("#auth-link-text").html(json.user.nameLogin)
+      $("#auth-dropdown-link").show()
+      $("#auth-link").remove()
       $("#overlay-content").html(json.message)
       Job.reloadList()
-      m.redraw()
+      m.redraw(true) #something is wrong here again - redrawing the joblist does not work on login while showing joblist
       setTimeout(loadMiniProfile,1000)
-      location.reload()
     else
       # add the error message to the view
       $("#auth-alert").html(json.message)

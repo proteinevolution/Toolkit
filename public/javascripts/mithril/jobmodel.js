@@ -30,7 +30,6 @@ window.JobModel = {
                 JobModel.paramValues = data.paramValues;
                 Job.owner = data.ownerName;
                 return {
-                    mainID: data.mainID,
                     tool: data.toolitem,
                     isJob: true,
                     jobID: data.jobID,
