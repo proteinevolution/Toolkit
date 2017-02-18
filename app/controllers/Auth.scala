@@ -3,8 +3,8 @@ package controllers
 import java.lang.Throwable
 import javax.inject.{Inject, Singleton}
 
-import models.database.{User, UserToken}
 import models.auth._
+import models.database.users.{UserToken, User}
 import models.mailing.NewUserWelcomeMail
 import modules.LocationProvider
 import modules.common.RandomString

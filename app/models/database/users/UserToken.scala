@@ -1,4 +1,4 @@
-package models.database
+package models.database.users
 
 import modules.common.RandomString
 import org.joda.time.DateTime

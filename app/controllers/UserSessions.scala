@@ -1,7 +1,6 @@
 package controllers
 
-
-import models.database.{SessionData, User}
+import models.database.users.{SessionData, User}
 import modules.{CommonModule, LocationProvider}
 import modules.common.HTTPRequest
 import org.joda.time.DateTime

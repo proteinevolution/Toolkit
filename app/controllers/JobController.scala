@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import actors.JobActor.{CreateJob, Delete}
 import models.Constants
-import models.database.{Job, JobDeletion, JobDeletionFlag}
+import models.database.jobs.{JobDeletionFlag, JobDeletion, Job, Error}
 import models.job.{JobActorAccess, JobIDProvider}
 import models.search.JobDAO
 import modules.{CommonModule, LocationProvider}
@@ -121,7 +121,7 @@ final class JobController @Inject() (jobIDProvider                              
 
                 val foundMainIDs = jobList.map(_.mainID)
                 val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-                val jobsPartition = jobList.partition(_.status == models.database.Error)
+                val jobsPartition = jobList.partition(_.status == Error)
 
                 // Delete index-zombie jobs
                 unFoundMainIDs.foreach { mainID =>
@@ -174,7 +174,7 @@ final class JobController @Inject() (jobIDProvider                              
 
 
   /**
-    * Marks a Job for deletion*
+    * Marks a Job for deletion
     * @return
     */
   def delete(jobID : String) : Action[AnyContent] =  Action.async { implicit request =>
@@ -217,7 +217,7 @@ final class JobController @Inject() (jobIDProvider                              
   }
 
   /**
-    * Marks multiple Jobs for deletion*
+    * Marks multiple Jobs for deletion
     * @return
     */
   def deleteMulti() : Action[AnyContent] =  Action.async { implicit request =>

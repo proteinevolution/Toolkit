@@ -1,8 +1,8 @@
 package controllers
 
+import models.database.jobs.Job
 import play.Logger
 import models.Constants
-import models.database.Job
 import play.api.cache._
 import play.api.libs.json.Json
 import javax.inject.{Inject, Singleton}

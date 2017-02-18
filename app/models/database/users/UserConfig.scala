@@ -1,4 +1,4 @@
-package models.database
+package models.database.users
 
 import reactivemongo.bson._
 

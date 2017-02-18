@@ -1,8 +1,8 @@
-package models.database
+package models.database.users
 
+import models.database._
 import org.joda.time.DateTime
 import org.mindrot.jbcrypt.BCrypt
-
 import reactivemongo.bson._
 
 case class User(userID        : BSONObjectID,                        // ID of the User

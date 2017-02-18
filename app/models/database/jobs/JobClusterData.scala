@@ -1,6 +1,5 @@
-package models.database
+package models.database.jobs
 
-import models.Constants
 import org.joda.time.DateTime
 import play.api.libs.json._
 import reactivemongo.bson._
