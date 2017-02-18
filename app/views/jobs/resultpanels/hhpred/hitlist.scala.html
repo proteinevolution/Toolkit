@@ -60,6 +60,12 @@
             <form id="hhpred_templates">
             </form>
 
+            <div id="psiblast_alignment_control" style="display: flex;">
+                <select id="forward" onchange="forward(value);">
+                    <option value="Forward">Forward</option>
+                    <option value="PHYLIP-NEIGHBOR">PHYLIP-NEIGHBOR</option>
+                </select>
+            </div>
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
@@ -169,7 +175,6 @@
 
 
 
-
         (function()  {
          $('.slider').on('moved.zf.slider', function() {
              $('#lefthandle').html($('#hidden1').val());
@@ -266,15 +271,13 @@
 
 
                  // Names and Accession Numbers
-                     var accession = hits[i].struc;
+                 var accession = hits[i].struc;
 
-                     // remove after char "_" example: 1f2r_I to 1f2r
-
-                     var linkTemplate = ["<a href=\"http://www.rcsb.org/pdb/explore.do?structureId=", accession.replace(/\_.*$/ , ""), "\">", accession, "</a>"].join('');
-                     var names = makeRowColspan([ali.no,linkTemplate,"", hits[i].hit],1,"td");
-                     names.setAttribute("class","name");
-                     tabbody.appendChild(names);
-
+                 // remove after char "_" example: 1f2r_I to 1f2r
+                 var linkTemplate = Object.values(getLink(accession))[0];
+                 var names = makeRowColspan([ali.no,linkTemplate,"", hits[i].hit],1,"td");
+                 names.setAttribute("class","name");
+                 tabbody.appendChild(names);
 
                  // hit details
                  var aligned_cols = ali.info.aligned_cols;
@@ -424,6 +427,9 @@
         setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 1000);
 
 
+        function resubmitSection_(){
+            resubmitSection(this.hitSequences, this.hitNames);
+        }
 
         function selectAll_(){
             selectAll(this.hitlist.fnGetNodes());
