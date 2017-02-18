@@ -5,20 +5,21 @@
 <div align="center">
     <div id="auth-tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
         <ul id="auth-tab">
-            <li><a href="#auth-tab-user">@{user.getUserData.nameLogin}</a></li>
             <li><a href="#auth-tab-edit">Edit Profile</a></li>
             <li><a href="#auth-tab-password">Change Password</a></li>
+            <li><a href="#auth-tab-user">@{user.getUserData.nameLogin}</a></li>
         </ul>
 
-        <div class="tabs-panel" id="auth-tab-user">
-            <p style="margin-top: 4em; font-size: 0.85em;">@{user.getUserData.eMail.head}</p>
-            <input id="signout-submit" type="submit" class="small expanded secondary button" value="Sign Out" onClick="window.location.href='@routes.Auth.signOut()'">
-        </div>
         <div class="tabs-panel" id="auth-tab-edit">
             @views.html.auth.profile(user)
         </div>
         <div class="tabs-panel" id="auth-tab-password">
             @views.html.auth.password(user)
+        </div>
+
+        <div class="tabs-panel" id="auth-tab-user">
+            <p style="margin-top: 4em; font-size: 0.85em;">@{user.getUserData.eMail.head}</p>
+            <input id="signout-submit" type="submit" class="small expanded secondary button" value="Sign Out" onClick="window.location.href='@routes.Auth.signOut()'">
         </div>
     </div>
 </div>

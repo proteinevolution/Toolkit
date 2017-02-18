@@ -1,13 +1,11 @@
 package controllers
 
-import java.lang.Throwable
 import javax.inject.{Inject, Singleton}
 
 import models.auth._
 import models.database.users.{UserToken, User}
 import models.mailing.NewUserWelcomeMail
 import modules.LocationProvider
-import modules.common.RandomString
 import modules.tel.TEL
 import org.joda.time.DateTime
 import play.Logger
@@ -103,7 +101,7 @@ final class Auth @Inject() (webJarAssets                                      : 
       user.userData match {
         case Some(userData) =>
           Ok(views.html.auth.profile(user))
-            .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+            .withSession(sessionCookie(request, user.sessionID.get, Some(userData.nameLogin)))
         case None =>
           // User was not logged in
           Redirect(routes.Application.index())
@@ -177,8 +175,8 @@ final class Auth @Inject() (webJarAssets                                      : 
                       updateUserCache(loggedInUser)
 
                       // Everything is ok, let the user know that they are logged in now
-
-                      Ok(LoggedIn(loggedInUser)).withSession(sessionCookie(request, loggedInUser.sessionID.get, Some(loggedInUser.getUserData.nameLogin)))
+                      Ok(LoggedIn(loggedInUser))
+                        .withSession(sessionCookie(request, loggedInUser.sessionID.get, Some(loggedInUser.getUserData.nameLogin)))
                     case None =>
                       Ok(LoginIncorrect())
                   }

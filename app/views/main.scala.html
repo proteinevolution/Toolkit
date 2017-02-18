@@ -168,32 +168,9 @@
                             <!--offline callout-->
                             <div class="alert callout" id="offline-alert">Reconnecting...</div>
                         </div>
-                        <div class="columns large-1" id="signinButtonContainer">
-                                <!--signin -->
-                            <div id="site-notifications" class="align-self-middle">
-                                <div id="user-control">
-
-                                        <span id="auth-link-text">
-                                            <ul class="dropdown menu" data-dropdown-menu data-alignment="right" data-disable-hover=true data-click-open=true>
-                                            @{user.userData match {
-                                                case Some(userData) =>  <li>
-                                                                            <button class="loggedIn" href="#">{userData.nameLogin}</button>
-                                                                            <ul class="menu">
-                                                                                <li><a href="#">Profile</a></li>
-                                                                                <li><a href="#">Inbox</a></li>
-                                                                                <li><a href="#">Preferences</a></li>
-                                                                                <li><a onclick="openNav()">Log Out</a></li>
-                                                                            </ul>
-                                                                        </li>
-
-                                                case None           =>  <a id="auth-link" onclick="openNav()">Sign in</a>
-                                            }}
-                                            </ul>
-                                        </span>
-
-                                </div>
-
-                            </div>
+                        <div class="columns large-1">
+                            <!--signin -->
+                            @views.html.auth.dropdown(user.userData)
                         </div>
                     </div>
                 </div>
