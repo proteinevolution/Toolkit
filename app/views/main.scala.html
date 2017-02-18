@@ -143,11 +143,12 @@
 
             <!---Navigation Bar --->
              <div class="row" id="metanav">
-
                  <div id="social">
                      <a href="https://github.com/zy4/Toolkit"><i class="icon-octopus"></i></a>
                      <a href="https://www.facebook.com/mpitoolkit"><i class="icon-facebook"></i></a>
                      <a href="https://twitter.com/mpitoolkit"><i class="icon-twitter"></i></a>
+                     <br>
+                     @views.html.auth.dropdown(user.userData)
                  </div>
              </div>
 
@@ -164,13 +165,9 @@
                         <div class="columns large-10" style="padding-left: 4em; padding-right: 3.5em;">
                             @elements.navbar(tools)
                         </div>
-                        <div class="columns large-1">
+                        <div class="columns large-2">
                             <!--offline callout-->
                             <div class="alert callout" id="offline-alert">Reconnecting...</div>
-                        </div>
-                        <div class="columns large-1">
-                            <!--signin -->
-                            @views.html.auth.dropdown(user.userData)
                         </div>
                     </div>
                 </div>

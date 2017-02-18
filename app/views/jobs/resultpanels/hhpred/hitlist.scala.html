@@ -1,18 +1,16 @@
 @(jobID: String)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
-
-
-@*  Load html Map used for the image representation *@
+@* Load html Map used for the image representation *@
 <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-    <li class="accordion-item is-active"  data-accordion-item>
+    <li class="accordion-item is-active" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
             <div>
                 <div class='flat-slider' id='flat-slider'></div>
-                    <div id='blastviz'>
-                     <!-- Create visual overview with Snap -->
-                     <svg id="hhpred_viz"  width="100%"></svg>
+                <div id='blastviz'>
+                        <!-- Create visual overview with Snap -->
+                    <svg id="hhpred_viz" width="100%"></svg>
                 </div>
             </div>
         </div>
@@ -45,27 +43,29 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Alignments</a>
         <div id="alignments" class="accordion-content table-scroll" data-tab-content>
-
+            <div style="display: flex">
             <div id="hhpred_alignment_control">
-            <select id="hhpred_color_select" onchange="toggleAliColor(this)">
-                <option value="none">No color</option>
-                <option value="letters">Letters</option>
-                <option value="background">Background</option>
-            </select>
-                <a class="success button tiny select-all-button" onclick="selectAll_()" type="button" id="selectAllButton">Select all</a>
+                <a class="success button tiny" onclick="selectAll_()" type="button" id="selectAllSeq">Select all</a>
+                <select id="hhpred_color_select" onchange="toggleAliColor(this)">
+                    <option value="none">No color</option>
+                    <option value="letters">Letters</option>
+                    <option value="background">Background</option>
+                </select>
+            </div>
+            <div id="hhpred_alignment_control_extra">
             <input type="checkbox" onchange="toggleSS(this)"> Color SS
-            <button type="button" style="float: right;" class="button" onclick="hhpred_manual()">Create Model from manually selected templates</button>
-            <button type="button" style="float: right;" class="button" onclick="hhpred_automatic()">Select Templates Automatically</button>
+            <a type="button" class="button success tiny" onclick="hhpred_manual()">Create Model from manually selected templates</a>
+            <a type="button" class="button success tiny" onclick="hhpred_automatic()">Select Templates Automatically</a>
+            </div>
             </div>
             <form id="hhpred_templates">
             </form>
-
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Information</a>
         <div class="accordion-content" data-tab-content>
-            <table  class="display" cellspacing="0" width="80%">
+            <table class="display" cellspacing="0" width="80%">
                 <tr>
                     <td>Query</td>
                     <td id="hhpred_query"></td>
@@ -101,27 +101,27 @@
         function hhpred_manual() {
             // Get selected templates and append parentID
             var formData = new FormData(document.getElementById("hhpred_templates"));
-            if(!formData.has("templates")) {
+            if (!formData.has("templates")) {
                 alert("Please select at least one template for modeling");
                 return;
             }
-            formData.append("parentid", '@{jobID}' );
+            formData.append("parentid", '@{jobID}');
 
             var checkRoute = jsRoutes.controllers.JobController.check("hhpred_manual", null, false);
             m.request({
                 method: checkRoute.method,
                 url: checkRoute.url,
                 data: formData,
-                serialize: function(data) {
+                serialize: function (data) {
                     return data;
                 }
-            }).then(function(data) {
+            }).then(function (data) {
                 var submitRoute = jsRoutes.controllers.JobController.create("hhpred_manual", data.jobID);
                 m.request({
                     method: submitRoute.method,
                     url: submitRoute.url,
                     data: formData,
-                    serialize: function(data) {
+                    serialize: function (data) {
                         return data;
                     }
                 });
@@ -131,301 +131,310 @@
         function hhpred_automatic() {
             // Get selected templates and append parentID
             var formData = new FormData(document.getElementById("hhpred_templates"));
-            formData.append("parentid", '@{jobID}' );
+            formData.append("parentid", '@{jobID}');
 
             var checkRoute = jsRoutes.controllers.JobController.check("hhpred_automatic", null, false);
             m.request({
                 method: checkRoute.method,
                 url: checkRoute.url,
                 data: formData,
-                serialize: function(data) {
+                serialize: function (data) {
                     return data;
                 }
-            }).then(function(data) {
+            }).then(function (data) {
 
                 var submitRoute = jsRoutes.controllers.JobController.create("hhpred_automatic", data.jobID);
                 m.request({
                     method: submitRoute.method,
                     url: submitRoute.url,
                     data: formData,
-                    serialize: function(data) {
+                    serialize: function (data) {
                         return data;
                     }
                 });
             });
         }
 
-    function onFullscreenToggle() {
+        function onFullscreenToggle() {
             hitlist.draw();
-    }
+        }
 
-    var ss_helices = document.getElementsByClassName("ss_h");
-    var ss_extended = document.getElementsByClassName("ss_e");
-    var aas;
-    var hitlist;
-    var queryLength;
-    var firstHitBegin;
-    var firstHitEnd;
-
-
+        var ss_helices = document.getElementsByClassName("ss_h");
+        var ss_extended = document.getElementsByClassName("ss_e");
+        var aas;
+        var hitlist;
+        var queryLength;
+        var firstHitBegin;
+        var firstHitEnd;
 
 
-        (function()  {
-         $('.slider').on('moved.zf.slider', function() {
-             $('#lefthandle').html($('#hidden1').val());
-             $('#lefthandle').css({
-                 'color' : 'white',
-                 'font-weight': 'bold',
-                 'padding-left' : '2px'
-             });
-             $('#righthandle').html($('#hidden2').val());
-             $('#righthandle').css({
-                 'color' : 'white',
-                 'font-weight': 'bold',
-                 'padding-left' : '2px'
-             });
-         });
-         var dataRoute = jsRoutes.controllers.DataController.get("@jobID", 'hhr');
-         $.ajax({
-             method: dataRoute.method,
-             url: dataRoute.url
-         }).done(function(data) {
-             // For the hitlist and the vizualization
-             var hits = data.hhr.hits;
+        (function () {
+            $('.slider').on('moved.zf.slider', function () {
+                $('#lefthandle').html($('#hidden1').val());
+                $('#lefthandle').css({
+                    'color': 'white',
+                    'font-weight': 'bold',
+                    'padding-left': '2px'
+                });
+                $('#righthandle').html($('#hidden2').val());
+                $('#righthandle').css({
+                    'color': 'white',
+                    'font-weight': 'bold',
+                    'padding-left': '2px'
+                });
+            });
+            var dataRoute = jsRoutes.controllers.DataController.get("@jobID", 'hhr');
+            $.ajax({
+                method: dataRoute.method,
+                url: dataRoute.url
+            }).done(function (data) {
+                // For the hitlist and the vizualization
+                var hits = data.hhr.hits;
 
-             draw_hits("hhpred_viz", hits);
+                draw_hits("hhpred_viz", hits);
 
-             var info = data.hhr.info;
-             var alignments = data.hhr.alignments;
-             queryLength = info.Match_columns;
-             $("#hhpred_query").append(info.Query);
-             $("#hhpred_match_columns").append(info.Match_columns);
-             $("#hhpred_noseqs").append(info.No_of_seqs);
-             $("#hhpred_neff").append(info.Neff);
-             $("#hhpred_searchedhmms").append(info.Searched_HMMs);
-             $("#hhpred_date").append(info.Date);
-             hitlist = $('#htb').dataTable({
-                 "bInfo": false,
-                 "bFilter": true,
-                 "bLengthChange": true,
-                 "aaData": hits,
-                 "scrollY": 600,
-                 "scrollX": true,
-                 "aoColumns": [
-                     { "mDataProp": "no" },
-                     { "mDataProp": "struc" },
-                     { "mDataProp": "hit" },
-                     { "mDataProp": "prob" },
-                     { "mDataProp": "eval" },
-                     { "mDataProp": "pval", render: function(data){return data.toExponential();}},
-                     { "mDataProp": "score" },
-                     { "mDataProp": "ss" },
-                     { "mDataProp": "cols" },
-                     { "mDataProp": "query_begin" },
-                     { "mDataProp": "query_end" },
-                     { "mDataProp": "template_begin" },
-                     { "mDataProp": "template_end" },
-                     { "mDataProp": "ref" }
-                 ],
-                 'columnDefs': [{
-                     'targets': 0,
-                     'searchable': false,
-                     'orderable': false,
-                     'render': function (data, type, full, meta){
-                         return '<input type="checkbox" name="hitCheckbox" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '">';
-                     }
-                 }],
-             });
+                var info = data.hhr.info;
+                var alignments = data.hhr.alignments;
+                queryLength = info.Match_columns;
+                $("#hhpred_query").append(info.Query);
+                $("#hhpred_match_columns").append(info.Match_columns);
+                $("#hhpred_noseqs").append(info.No_of_seqs);
+                $("#hhpred_neff").append(info.Neff);
+                $("#hhpred_searchedhmms").append(info.Searched_HMMs);
+                $("#hhpred_date").append(info.Date);
+                hitlist = $('#htb').dataTable({
+                    "bInfo": false,
+                    "bFilter": true,
+                    "bLengthChange": true,
+                    "aaData": hits,
+                    "scrollY": 600,
+                    "scrollX": true,
+                    "aoColumns": [
+                        {"mDataProp": "no"},
+                        {"mDataProp": "struc"},
+                        {"mDataProp": "hit"},
+                        {"mDataProp": "prob"},
+                        {"mDataProp": "eval"},
+                        {
+                            "mDataProp": "pval", render: function (data) {
+                            return data.toExponential();
+                        }
+                        },
+                        {"mDataProp": "score"},
+                        {"mDataProp": "ss"},
+                        {"mDataProp": "cols"},
+                        {"mDataProp": "query_begin"},
+                        {"mDataProp": "query_end"},
+                        {"mDataProp": "template_begin"},
+                        {"mDataProp": "template_end"},
+                        {"mDataProp": "ref"}
+                    ],
+                    'columnDefs': [{
+                        'targets': 0,
+                        'searchable': false,
+                        'orderable': false,
+                        'render': function (data, type, full, meta) {
+                            return '<input type="checkbox" name="hitCheckbox" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '">';
+                        }
+                    }],
+                });
 
-             // get beg and end of first hit to set slider handles
-             if(hits.length > 0 ) {
-                 firstHitBegin = hits[0].query_begin;
-                 firstHitEnd = hits[0].query_end;
-             }
-             else {
-                 firstHitBegin = 0;
-                 firstHitEnd = 0;
-             }
+                // get beg and end of first hit to set slider handles
+                if (hits.length > 0) {
+                    firstHitBegin = hits[0].query_begin;
+                    firstHitEnd = hits[0].query_end;
+                }
+                else {
+                    firstHitBegin = 0;
+                    firstHitEnd = 0;
+                }
 
-             var alignments_container = document.getElementById("hhpred_templates");
-             for(var i = 0; i < alignments.length; i++) {
+                var alignments_container = document.getElementById("hhpred_templates");
+                for (var i = 0; i < alignments.length; i++) {
 
-                 var ali = alignments[i];
-                 var current_seq;
-                 var divAlignment = document.createElement("div");
-                 divAlignment.setAttribute("class", "alignment_box");
-                 var checkbox = document.createElement("input");
-                 checkbox.setAttribute("type", "checkbox");
-                 checkbox.setAttribute("value", ali.no.toString());
-                 checkbox.setAttribute("name", "hitCheckbox");
-                 checkbox.setAttribute("class", "hitCheckbox");
-                 divAlignment.appendChild(checkbox);
-                 var tab = document.createElement("table");
-                 tab.className += " unstriped ";
-                 var tabbody = document.createElement("tbody");
-
-
-                 // Names and Accession Numbers
-                     var accession = hits[i].struc;
-
-                     // remove after char "_" example: 1f2r_I to 1f2r
-
-                     var linkTemplate = ["<a href=\"http://www.rcsb.org/pdb/explore.do?structureId=", accession.replace(/\_.*$/ , ""), "\">", accession, "</a>"].join('');
-                     var names = makeRowColspan([ali.no,linkTemplate,"", hits[i].hit],1,"td");
-                     names.setAttribute("class","name");
-                     tabbody.appendChild(names);
+                    var ali = alignments[i];
+                    var current_seq;
+                    var divAlignment = document.createElement("div");
+                    divAlignment.setAttribute("class", "alignment_box");
+                    var checkbox = document.createElement("input");
+                    checkbox.setAttribute("type", "checkbox");
+                    checkbox.setAttribute("value", ali.no.toString());
+                    checkbox.setAttribute("name", "hitCheckbox");
+                    checkbox.setAttribute("class", "hitCheckbox");
+                    divAlignment.appendChild(checkbox);
+                    var tab = document.createElement("table");
+                    tab.className += " unstriped ";
+                    var tabbody = document.createElement("tbody");
 
 
-                 // hit details
-                 var aligned_cols = ali.info.aligned_cols;
-                 var evalue = ali.info.eval;
-                 var identities = ali.info.identities;
-                 var probabab= ali.info.probab;
-                 var score = ali.info.score;
-                 var similarity = ali.info.similarity;
-                 var sum_probs = ali.info.sum_probs;
-                 var template_neff = ali.info.template_neff;
+                    // Names and Accession Numbers
+                    var accession = hits[i].struc;
 
-                 tabbody.appendChild(makeRowColspan(["","Probability: "+probabab+", Expect: "+ evalue],3,"td"));
-                 tabbody.appendChild(makeRowColspan(["","Score: " + score + ", Aligned Cols: " + aligned_cols + ", Identities: " + identities ],3,"td"));
-                 tabbody.appendChild(makeRowColspan(["","Similarity: " + similarity + ", Sum Probs: " + sum_probs + ", Template Neff: " + template_neff],3,"td"));
+                    // remove after char "_" example: 1f2r_I to 1f2r
+
+                    var linkTemplate = ["<a href=\"http://www.rcsb.org/pdb/explore.do?structureId=", accession.replace(/\_.*$/, ""), "\">", accession, "</a>"].join('');
+                    var names = makeRowColspan([ali.no, linkTemplate, "", hits[i].hit], 1, "td");
+                    names.setAttribute("class", "name");
+                    tabbody.appendChild(names);
 
 
-                 // break
-                 tabbody.appendChild(makeRow(["<br></br>"]))
+                    // hit details
+                    var aligned_cols = ali.info.aligned_cols;
+                    var evalue = ali.info.eval;
+                    var identities = ali.info.identities;
+                    var probabab = ali.info.probab;
+                    var score = ali.info.score;
+                    var similarity = ali.info.similarity;
+                    var sum_probs = ali.info.sum_probs;
+                    var template_neff = ali.info.template_neff;
+
+                    tabbody.appendChild(makeRowColspan(["", "Probability: " + probabab + ", Expect: " + evalue], 3, "td"));
+                    tabbody.appendChild(makeRowColspan(["", "Score: " + score + ", Aligned Cols: " + aligned_cols + ", Identities: " + identities], 3, "td"));
+                    tabbody.appendChild(makeRowColspan(["", "Similarity: " + similarity + ", Sum Probs: " + sum_probs + ", Template Neff: " + template_neff], 3, "td"));
 
 
-                 // Handle secondary structure annotation for query, if present
-                 if(typeof ali.query.ss_dssp !== 'undefined') {
-
-                     current_seq = ali.query.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
-                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
-                     tabbody.appendChild(makeRow(["Q", "ss_dssp", "", current_seq]));
-                 }
-                 if(typeof ali.query.ss_pred !== 'undefined') {
-
-                     current_seq = ali.query.ss_pred.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
-                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
-                     tabbody.appendChild(makeRow(["Q", "ss_pred", "", current_seq]));
-                 }
+                    // break
+                    tabbody.appendChild(makeRow(["<br></br>"]))
 
 
-                 current_seq = ali.query.seq.replace(color_regex, color_regex_replacer);
-                 tabbody.appendChild(makeRow(["Q", ali.query.name, ali.query.start, current_seq]));
-                 // Consensus, if present
-                 if(typeof ali.query.consensus !== 'undefined') {
-                     var queryRow = makeRow(["Q", "Consensus", ali.query.start, ali.query.consensus]);
-                     queryRow.setAttribute("class", "sequence");
-                     tabbody.appendChild(queryRow);
-                 }
-                 if(typeof ali.agree !== 'undefined') {
-                     var midlineRow = makeRow(["", "", "", ali.agree]);
-                     midlineRow.setAttribute("class", "sequence");
-                     tabbody.appendChild(midlineRow);
-                 }
-                 if(typeof ali.template.consensus !== 'undefined') {
-                     var templateRow = makeRow(["T", "Consensus", ali.template.start, ali.template.consensus]);
-                     templateRow.setAttribute("class", "sequence");
-                     tabbody.appendChild(templateRow);
-                 }
+                    // Handle secondary structure annotation for query, if present
+                    if (typeof ali.query.ss_dssp !== 'undefined') {
 
-                 // replace contiguous sequences of AA with the respective colors
-                 current_seq = ali.template.seq.replace(color_regex, color_regex_replacer);
-                 tabbody.appendChild(makeRow(["T", ali.template.name, ali.template.start, current_seq]));
+                        current_seq = ali.query.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
+                        current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
+                        tabbody.appendChild(makeRow(["Q", "ss_dssp", "", current_seq]));
+                    }
+                    if (typeof ali.query.ss_pred !== 'undefined') {
 
-                 // Handle secondary structure annotation for template
-                 if(typeof ali.template.ss_dssp !== 'undefined') {
+                        current_seq = ali.query.ss_pred.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
+                        current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
+                        tabbody.appendChild(makeRow(["Q", "ss_pred", "", current_seq]));
+                    }
 
-                     current_seq = ali.template.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
-                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
-                     tabbody.appendChild(makeRow(["T", "ss_dssp", "", current_seq]));
-                 }
-                 if(typeof ali.template.ss_pred !== 'undefined') {
 
-                     current_seq = ali.template.ss_pred.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
-                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
-                     tabbody.appendChild(makeRow(["T", "ss_pred", "", current_seq]));
-                 }
+                    current_seq = ali.query.seq.replace(color_regex, color_regex_replacer);
+                    tabbody.appendChild(makeRow(["Q", ali.query.name, ali.query.start, current_seq]));
+                    // Consensus, if present
+                    if (typeof ali.query.consensus !== 'undefined') {
+                        var queryRow = makeRow(["Q", "Consensus", ali.query.start, ali.query.consensus]);
+                        queryRow.setAttribute("class", "sequence");
+                        tabbody.appendChild(queryRow);
+                    }
+                    if (typeof ali.agree !== 'undefined') {
+                        var midlineRow = makeRow(["", "", "", ali.agree]);
+                        midlineRow.setAttribute("class", "sequence");
+                        tabbody.appendChild(midlineRow);
+                    }
+                    if (typeof ali.template.consensus !== 'undefined') {
+                        var templateRow = makeRow(["T", "Consensus", ali.template.start, ali.template.consensus]);
+                        templateRow.setAttribute("class", "sequence");
+                        tabbody.appendChild(templateRow);
+                    }
+
+                    // replace contiguous sequences of AA with the respective colors
+                    current_seq = ali.template.seq.replace(color_regex, color_regex_replacer);
+                    tabbody.appendChild(makeRow(["T", ali.template.name, ali.template.start, current_seq]));
+
+                    // Handle secondary structure annotation for template
+                    if (typeof ali.template.ss_dssp !== 'undefined') {
+
+                        current_seq = ali.template.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
+                        current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
+                        tabbody.appendChild(makeRow(["T", "ss_dssp", "", current_seq]));
+                    }
+                    if (typeof ali.template.ss_pred !== 'undefined') {
+
+                        current_seq = ali.template.ss_pred.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
+                        current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
+                        tabbody.appendChild(makeRow(["T", "ss_pred", "", current_seq]));
+                    }
 
                     // line
-                 var line = makeRowColspan(["<hr id=\"line-element\"></hr>"],4,"td");
-                 line.setAttribute("class","horizontal-line")
-                 tabbody.appendChild(line)
+                    var line = makeRowColspan(["<hr id=\"line-element\"></hr>"], 4, "td");
+                    line.setAttribute("class", "horizontal-line")
+                    tabbody.appendChild(line)
 
 
-                 tab.appendChild(tabbody);
-                 divAlignment.appendChild(tab);
-                 alignments_container.appendChild(divAlignment);
-             }
-             aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
-             $("#accordion").foundation();
-             $('#hhpred_color_select').niceSelect();
-         });
+                    tab.appendChild(tabbody);
+                    divAlignment.appendChild(tab);
+                    alignments_container.appendChild(divAlignment);
+                }
+                aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+                $("#accordion").foundation();
+                $('#hhpred_color_select').niceSelect();
+            });
         })();
 
-    function draw_hits(id, hits) {
-        var s = Snap("#" +id);
-        // Get maximum of query_end with map and reduce
-        document.getElementById(id).setAttribute("viewBox", "0 0 " + hits.map(function(hit){return hit.query_end;})
-                        .reduce(function(a,b){return Math.max(a,b);}) + " " + hits.length);
-        for(var i = 0; i < hits.length; ++i) {
-            var hit = hits[i];
-            var diff = hit.query_end - hit.query_begin;
-            var r = s.rect(hit.query_begin,i, diff, 0.5, 0.5,0.5);
-            var text = s.text(diff/2, i + 0.4, hit.struc);
-            text.attr({
-                'font-size': 0.5,
-                'fill': 'white',
-                'font-weight': 'bold'
-            });
-            var colors = calcColor(hit.prob).map(function(val){return val*255});
-            r.attr({
-                fill: Snap.rgb(colors[0], colors[1], colors[2])
-            });
-        }
-    }
-
-    function calcColor(prob) {
-        var red, grn, blu;
-        if(prob > 40) {
-            var signif = ((prob - 40) / 60);
-            var col = 4 * signif;
-            if(col > 3) {
-                col -= 3.0;
-                red = 1;
-                grn = 0.7*(1-col);
-                blu = 0;
-            } else if(col > 2) {
-                col -= 2.0;
-                red = col;
-                grn = 0.7+0.3*(1-col);
-                blu = 0;
-            } else if(col > 1) {
-                col -= 1.0;
-                red = 0;
-                grn = 1-0.3*(1-col);
-                blu = 1-col;
-            } else {
-                red = 0;
-                grn = 0.7 * col;
-                blu = 1;
+        function draw_hits(id, hits) {
+            var s = Snap("#" + id);
+            // Get maximum of query_end with map and reduce
+            document.getElementById(id).setAttribute("viewBox", "0 0 " + hits.map(function (hit) {
+                        return hit.query_end;
+                    })
+                            .reduce(function (a, b) {
+                                return Math.max(a, b);
+                            }) + " " + hits.length);
+            for (var i = 0; i < hits.length; ++i) {
+                var hit = hits[i];
+                var diff = hit.query_end - hit.query_begin;
+                var r = s.rect(hit.query_begin, i, diff, 0.5, 0.5, 0.5);
+                var text = s.text(diff / 2, i + 0.4, hit.struc);
+                text.attr({
+                    'font-size': 0.5,
+                    'fill': 'white',
+                    'font-weight': 'bold'
+                });
+                var colors = calcColor(hit.prob).map(function (val) {
+                    return val * 255
+                });
+                r.attr({
+                    fill: Snap.rgb(colors[0], colors[1], colors[2])
+                });
             }
-        } else {
-            signif = Math.pow((prob / 40), 3);
-            red = 0.2*(1-signif);
-            grn = 0.2*(1-signif);
-            blu = 0.2 + 0.8*signif;
         }
-       return [red, grn, blu];
-    }
+
+        function calcColor(prob) {
+            var red, grn, blu;
+            if (prob > 40) {
+                var signif = ((prob - 40) / 60);
+                var col = 4 * signif;
+                if (col > 3) {
+                    col -= 3.0;
+                    red = 1;
+                    grn = 0.7 * (1 - col);
+                    blu = 0;
+                } else if (col > 2) {
+                    col -= 2.0;
+                    red = col;
+                    grn = 0.7 + 0.3 * (1 - col);
+                    blu = 0;
+                } else if (col > 1) {
+                    col -= 1.0;
+                    red = 0;
+                    grn = 1 - 0.3 * (1 - col);
+                    blu = 1 - col;
+                } else {
+                    red = 0;
+                    grn = 0.7 * col;
+                    blu = 1;
+                }
+            } else {
+                signif = Math.pow((prob / 40), 3);
+                red = 0.2 * (1 - signif);
+                grn = 0.2 * (1 - signif);
+                blu = 0.2 + 0.8 * signif;
+            }
+            return [red, grn, blu];
+        }
 
 
         /* without timeout SLIDER is not loaded */
-        setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 1000);
+        setTimeout(function () {
+            slider_show(queryLength, firstHitBegin, firstHitEnd)
+        }, 1000);
 
 
-
-        function selectAll_(){
+        function selectAll_() {
             selectAll(this.hitlist.fnGetNodes());
         }
 

@@ -91,14 +91,18 @@
 /*Login Widget*/
 #auth-link {
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   overflow-x: hidden;
-  margin: 3px 2em 0 0;
-  padding: 2px 5px;
-  border: 1px #d85000 solid;
-  background: linear-gradient(to bottom,rgba(245,245,245,1) 0%,rgba(240,240,240,1) 100%);
   text-shadow: 0 1px 0 #FFF;
-  color: #848484;
+  width: 5em;
+  padding: 0.5em;
+  color: #2E8C81;
+  cursor: pointer;
+  margin-left: 0.25em;
+}
+
+#auth-link:hover {
+  background-color: #d1d1d1;
 }
 
 span#auth-link-text {
