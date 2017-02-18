@@ -96,18 +96,23 @@
   width: unset !important;
 }
 
-#psiblast_templates {
+#psiblast_templates, #hhpred_templates {
     margin-top: 3em;
 }
 
-#psiblast_alignment_control {
+#psiblast_alignment_control, #hhpred_alignment_control {
     margin-top: 2em;
     display: block;
-    min-height: 5em;
+    min-height: 7em;
+    width: 20em;
 }
 
-#psiblast_alignment_control div, #psiblast_alignment_control ul {
+#psiblast_alignment_control div, #psiblast_alignment_control ul, #hhpred_alignment_control div, #hhpred_alignment_control ul {
     width: 17em;
+}
+
+#hhpred_alignment_control_extra {
+    width: 37em;
 }
 
 
