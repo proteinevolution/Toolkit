@@ -1,6 +1,6 @@
 package models.mailing
 
-import models.database.User
+import models.database.users.User
 import play.api.libs.mailer.{MailerClient, Email}
 import modules.tel.TEL
 

@@ -1,7 +1,8 @@
 package modules
 
 import models.database.CMS.FeaturedArticle
-import models.database.{FrontendJob, Job, JobAnnotation, User}
+import models.database.jobs.{FrontendJob, JobAnnotation, Job}
+import models.database.users.User
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.{Cursor, QueryOpts}

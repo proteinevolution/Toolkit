@@ -8,6 +8,8 @@ import akka.actor.{Actor, ActorRef}
 import akka.event.LoggingReceive
 import models.Constants
 import models.database._
+import models.database.jobs._
+import models.database.users.User
 import models.search.JobDAO
 import modules.tel.runscripts._
 import better.files._

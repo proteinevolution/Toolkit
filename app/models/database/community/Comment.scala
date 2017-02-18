@@ -1,4 +1,4 @@
-package models.database
+package models.database.community
 
 import org.joda.time.DateTime
 import play.api.libs.json._

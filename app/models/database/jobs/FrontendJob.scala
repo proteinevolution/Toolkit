@@ -1,5 +1,4 @@
-package models.database
-
+package models.database.jobs
 
 import org.joda.time.DateTime
 import play.api.libs.json._

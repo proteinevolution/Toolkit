@@ -5,14 +5,14 @@ import javax.inject.{Inject, Singleton}
 
 import akka.util.Timeout
 import models.Constants
-import models.database._
+import models.database.jobs.{Done, Jobitem, JobState}
+import models.database.users.User
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
-import models.database.JobState
 import models.tools.{Param, ToolFactory, Toolitem}
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.format.DateTimeFormat
