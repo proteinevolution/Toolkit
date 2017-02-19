@@ -74,7 +74,7 @@ final class JobController @Inject() (jobIDProvider                              
         case Right(jobIDnew) =>
 
           // Grab the formData from the request data
-          val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString(","))
+          val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString(formMultiValueSeparator))
 
           // If we do not hash (usually forwarding) just provide the new JobID
           if (!hash) {
