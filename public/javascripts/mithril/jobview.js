@@ -74,9 +74,7 @@ JobLineComponent = {
                 "class": "jobdate"
             }, isJob ? "Created: " + (args.job().createdOn) : ""), m("span", {
                 "class": "jobinfo"
-            }, isJob ? "JobID: " + (args.job().jobID) : "Submit a new Job"), m("span", {
-                "class": "ownername"
-            }, args.job().ownerName ? args.job().ownerName : "")
+            }, isJob ? "JobID: " + (args.job().jobID) : "Submit a new Job")
         ]);
     }
 };
@@ -618,7 +616,7 @@ window.ParameterAlignmentComponent = {
             }, m("textarea", {
                 name: ctrl.name,
                 placeholder: ctrl.getLabel(),
-                rows: 25,
+                rows: 18,
                 cols: 70,
                 id: ctrl.id,
                 value: args.value,
