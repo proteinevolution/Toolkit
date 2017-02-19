@@ -7,7 +7,6 @@ import actors.JobActor._
 import akka.actor.{Actor, ActorRef}
 import akka.event.LoggingReceive
 import models.Constants
-import models.database._
 import models.database.jobs._
 import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
