@@ -9,6 +9,7 @@ import akka.event.LoggingReceive
 import models.Constants
 import models.database._
 import models.database.jobs._
+import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
 import models.search.JobDAO
 import modules.tel.runscripts._
@@ -77,6 +78,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
   // Attributes asssocidated with a Job
   private var currentJobs: Map[String, Job] = Map.empty
+  private var currentJobLogs: Map[String, JobEventLog] = Map.empty
   private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty
 
   // Map of all connected users and their Websocket Actors
@@ -108,6 +110,11 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
     val job = this.currentJobs(jobID)
     // If the job Appears in the running Execution, terminate it
     this.currentJobs = this.currentJobs.-(jobID)
+
+    // Save Job Event Log to the collection and remove it from the map afterwards
+    addJobLog(this.currentJobLogs(job.jobID))
+    this.currentJobLogs = this.currentJobLogs.-(job.jobID)
+
     if(this.runningExecutions.contains(jobID)) {
       this.runningExecutions(jobID).terminate()
       this.runningExecutions = this.runningExecutions.-(jobID)
@@ -125,9 +132,14 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
     // Update job in the database and notify watcher upon completion
     upsertJob(job).map { upsertedJob =>
+      val jobLog = this.currentJobLogs.get(job.jobID) match {
+        case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
+        case None              => JobEventLog(job.mainID, List(JobEvent(job.status, Some(DateTime.now))))
+      }
+      this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
       val foundWatchers = users.filter(a => job.watchList.contains(a._1))
-      Logger.info("\n----\nFound Watchers for Job \'" + job.jobID + "\': " + foundWatchers.keys.map(_.stringify).mkString(", "))
-      Logger.info("Job State for \'" + job.jobID + "\' changed to: " + job.status + "\n----\n")
+      //Logger.info("\n----\nFound Watchers for Job \'" + job.jobID + "\': " + foundWatchers.keys.map(_.stringify).mkString(", "))
+      //Logger.info("Job State for \'" + job.jobID + "\' changed to: " + job.status + "\n----\n")
       foundWatchers.values.flatten.foreach(_ ! PushJob(job))
       //watchers(jobID)
       job
@@ -210,6 +222,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
     val oos = new ObjectOutputStream(new FileOutputStream((jobPath/jobID/serializedParam).pathAsString))
     oos.writeObject(extendedParams)
     oos.close()
+
+    // Create a log for this job
+    this.currentJobLogs = this.currentJobLogs.updated(job.jobID, JobEventLog(job.mainID, List(JobEvent(job.status, Some(DateTime.now)))))
 
     // Get new runscript instance from the runscript manager
     val runscript = runscriptManager(toolname).withEnvironment(env)

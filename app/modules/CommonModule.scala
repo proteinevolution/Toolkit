@@ -2,6 +2,7 @@ package modules
 
 import models.database.CMS.FeaturedArticle
 import models.database.jobs.{FrontendJob, JobAnnotation, Job}
+import models.database.statistics.JobEventLog
 import models.database.users.User
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
@@ -87,6 +88,10 @@ trait CommonModule extends ReactiveMongoComponents {
     jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
+  protected def countJobs(selector : BSONDocument) : Future[Int] = {
+    jobCollection.flatMap(_.count(Some(selector)))
+  }
+
 
   protected def selectJob(jobID: String): Future[Option[Job]] = {
 
@@ -137,6 +142,15 @@ trait CommonModule extends ReactiveMongoComponents {
     frontendJobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
   }
 
+
+  // Statistics DB access
+  protected def statisticsCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobevents"))
+
+  protected def addJobLog(jobEventLog : JobEventLog) : Future[WriteResult] = statisticsCollection.flatMap(_.insert(jobEventLog))
+
+  protected def findJobEventLogs(selector : BSONDocument) : Future[scala.List[JobEventLog]] = {
+    statisticsCollection.map(_.find(selector).cursor[JobEventLog]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))
+  }
 
   // User DB access
   protected def userCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
