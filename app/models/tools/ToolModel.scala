@@ -91,6 +91,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
         ("NeighborJoiningResults", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.nj")),
         ("UPGMATree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")),
         ("UPGMAResults", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.upgma")))
+
+      case "retseq" => Seq.empty
     }
   }
 
@@ -194,6 +196,10 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
 
     // Modeller
     ("modeller", "Modeller", "mod", "3ary", "",
+      Seq(paramAccess.ALIGNMENT)),
+
+    // ANCESCON
+    ("retseq", "RetrieveSeq", "ret", "utils", "",
       Seq(paramAccess.ALIGNMENT)),
 
     // ANCESCON
