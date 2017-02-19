@@ -2,8 +2,7 @@ var FrontendTools;
 
 FrontendTools = {
     "alnviz": FrontendAlnvizComponent,
-    "reformat": FrontendReformatComponent,
-    "retseq": FrontendRetrieveSeqComponent
+    "reformat": FrontendReformatComponent
 };
 
 a = ['0', 'p', 'q', 'r', 'e', 'd', 'i'];
