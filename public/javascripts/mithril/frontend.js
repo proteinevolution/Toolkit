@@ -134,6 +134,7 @@ window.FrontendReformatComponent = {
     }
 };
 
+/*
 window.FrontendRetrieveSeqComponent = {
     model: function(args) {
         return {
@@ -151,7 +152,7 @@ window.FrontendRetrieveSeqComponent = {
     view: function(ctrl) {
         return renderTabs(ctrl.model.tabs, ctrl.model.content);
     }
-};
+}; */
 
 
 /*
