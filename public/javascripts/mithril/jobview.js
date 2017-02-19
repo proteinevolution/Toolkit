@@ -618,7 +618,7 @@ window.ParameterAlignmentComponent = {
             }, m("textarea", {
                 name: ctrl.name,
                 placeholder: ctrl.getLabel(),
-                rows: 25,
+                rows: 18,
                 cols: 70,
                 id: ctrl.id,
                 value: args.value,
