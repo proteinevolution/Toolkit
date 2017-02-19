@@ -74,9 +74,7 @@ JobLineComponent = {
                 "class": "jobdate"
             }, isJob ? "Created: " + (args.job().createdOn) : ""), m("span", {
                 "class": "jobinfo"
-            }, isJob ? "JobID: " + (args.job().jobID) : "Submit a new Job"), m("span", {
-                "class": "ownername"
-            }, args.job().ownerName ? args.job().ownerName : "")
+            }, isJob ? "JobID: " + (args.job().jobID) : "Submit a new Job")
         ]);
     }
 };
