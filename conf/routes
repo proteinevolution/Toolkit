@@ -69,6 +69,8 @@ POST          /profile/submit/password/               @controllers.Auth.profileS
 GET           /verification/:userName/:token          @controllers.Auth.verification(userName : String, token : String)
 GET           /getCurrentUser                         @controllers.Auth.profile2json()
 
+#
+GET           /statistics/:toolName                   @controllers.Backend.statistics2(toolName)
 
 # Find a Job
 GET           /jobs/find/:queryString                 @controllers.Search.getJob(queryString : String)
