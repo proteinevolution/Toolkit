@@ -313,7 +313,8 @@ function generateLink(baseLink, id, name){
     return ["<a href=\"",baseLink, id, "\" target=\"\_blank\">", name, "</a>"].join('');
 }
 function identifyDatabase(id){
-
+    if (id == null)
+        return null;
     var scop = new RegExp('(d[0-9]*)');
     var mmcif = new RegExp('(...._[a-zA-Z])');
     var pfam = new RegExp('(pfam*)');
