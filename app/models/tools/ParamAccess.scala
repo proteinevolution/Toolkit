@@ -158,4 +158,5 @@ class ParamAccess @Inject() (tel: TEL) {
   final val MIN_SEQID_QUERY = Param("min_seqid_query", ParamType.Percentage, 1, "Minimum sequence ID with Query (%)")
   final val NUM_SEQS_EXTRACT =  Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of sequences to extract")
   final val SS_SCORING = select("ss_scoring", "SS Scoring")
+  final val UNIQUE_SEQUENCE = select("unique_sequence", "Retrieve only unique sequences")
 }
