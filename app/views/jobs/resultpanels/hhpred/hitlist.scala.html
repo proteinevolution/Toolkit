@@ -198,7 +198,6 @@
             }).done(function(data) {
                 // For the hitlist and the vizualization
                 var hits = data.hhr.hits;
-
                 draw_hits("hhpred_viz", hits);
 
                 var info = data.hhr.info;
@@ -313,9 +312,10 @@
                         tabbody.appendChild(makeRow(["Q", "ss_pred", "", current_seq]));
                     }
 
-
-                    current_seq = ali.query.seq.replace(color_regex, color_regex_replacer);
-                    tabbody.appendChild(makeRow(["Q", ali.query.name, ali.query.start, current_seq]));
+                    if(typeof ali.query.seq !== 'undefined') {
+                        current_seq = ali.query.seq.replace(color_regex, color_regex_replacer);
+                        tabbody.appendChild(makeRow(["Q", ali.query.name, ali.query.start, current_seq]));
+                    }
                     // Consensus, if present
                     if(typeof ali.query.consensus !== 'undefined') {
                         var queryRow = makeRow(["Q", "Consensus", ali.query.start, ali.query.consensus]);
@@ -332,11 +332,11 @@
                         templateRow.setAttribute("class", "sequence");
                         tabbody.appendChild(templateRow);
                     }
-
-                    // replace contiguous sequences of AA with the respective colors
-                    current_seq = ali.template.seq.replace(color_regex, color_regex_replacer);
-                    tabbody.appendChild(makeRow(["T", ali.template.name, ali.template.start, current_seq]));
-
+                    if(typeof ali.template.consensus !== 'undefined') {
+                        // replace contiguous sequences of AA with the respective colors
+                        current_seq = ali.template.seq.replace(color_regex, color_regex_replacer);
+                        tabbody.appendChild(makeRow(["T", ali.template.name, ali.template.start, current_seq]));
+                    }
                     // Handle secondary structure annotation for template
                     if(typeof ali.template.ss_dssp !== 'undefined') {
 
