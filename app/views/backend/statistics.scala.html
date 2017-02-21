@@ -1,0 +1,22 @@
+@import models.database.statistics.ToolStatistic
+@(toolStatisticList : List[ToolStatistic])(implicit messages: Messages, request: RequestHeader)
+<table style="width:100%">
+  <tr>
+    <th>Tool name</th>
+    <th>Current month</th>
+    <th>Current month failed</th>
+    <th>Total</th>
+    <th>Total failed</th>
+    <th>Last push</th>
+  </tr>
+@for(toolStatistic : ToolStatistic <- toolStatisticList){
+  <tr>
+    <th>@{toolStatistic.toolName}</th>
+    <th>@{toolStatistic.current}</th>
+    <th>@{toolStatistic.currentFailed}</th>
+    <th>@{toolStatistic.total}</th>
+    <th>@{toolStatistic.totalFailed}</th>
+    <th>@{toolStatistic.datePushed.headOption.map(_.formatted("dd/MM/yyyy HH:mm:ss")).getOrElse("-")}</th>
+  </tr>
+}
+</table>
