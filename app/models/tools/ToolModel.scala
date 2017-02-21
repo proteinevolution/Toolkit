@@ -97,6 +97,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
 
       case "seq2id" => Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/ids.out")))
 
+      case "hhfilter" => Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output.fas")))
+
+
     }
   }
 
@@ -225,7 +228,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
       Seq(paramAccess.ALIGNMENT, paramAccess.GENETIC_CODE)),
 
     // HHfilter
-    ("hhfilter", "HHFilter", "hhfi", "utils", "",
+    ("hhfilter", "HHfilter", "hhfi", "utils", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.MAX_SEQID, paramAccess.MIN_SEQID_QUERY, paramAccess.MIN_QUERY_COV,
         paramAccess.NUM_SEQS_EXTRACT))).map { t =>
     t._1  -> tool(t._1, t._2, t._3, t._4, t._5, t._6)
