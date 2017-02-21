@@ -94,6 +94,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
 
       case "retseq" => Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/sequences.fa")),
         ("Summary", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/unretrievable")))
+
+      case "seq2id" => Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/ids.out")))
+
     }
   }
 
@@ -202,6 +205,12 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess) {
     // RetrieveSeq
     ("retseq", "RetrieveSeq", "ret", "utils", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE)),
+
+
+    // Seq2ID
+    ("seq2id", "Seq2ID", "s2id", "utils", "",
+      Seq(paramAccess.ALIGNMENT)),
+
 
     // ANCESCON
     ("ancescon", "ANCESCON", "anc", "classification", "",
