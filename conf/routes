@@ -16,17 +16,21 @@ GET           /                                       @controllers.Application.i
 # Dashboard for Admin
 #GET         /login                                         @controllers.Auth.login
 #GET         /logout                                        @controllers.Auth.logout()
-#GET         /@/backend                                  `   @controllers.Auth.backend
+#GET         /@/backend                                  `  @controllers.Auth.backend
 #POST        /login                                         @controllers.Auth.backendLogin()
 POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)
 POST          /settings/memset                        @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
 
-GET           /@/backend                              @controllers.Backend.index
 GET           /@/backend/settings                     @controllers.Backend.settings
 GET           /@/backend/edit                         @controllers.Backend.edit
 GET           /@/backend/access                       @controllers.Backend.access
 GET           /@/backend/logout                       @controllers.Backend.logOut
 
+# integrated mithril route backend routes
+GET           /backend/index                          @controllers.Backend.index
+GET           /backend/statistics                     @controllers.Backend.statistics
+GET           /backend/cms                            @controllers.Backend.cms
+POST          /backend/cms                            @controllers.Backend.cms
 
 # Websocket
 GET           /ws                                     @controllers.Application.ws
@@ -68,9 +72,6 @@ POST          /profile/submit/userData/               @controllers.Auth.profileS
 POST          /profile/submit/password/               @controllers.Auth.profileSubmit()
 GET           /verification/:userName/:token          @controllers.Auth.verification(userName : String, token : String)
 GET           /getCurrentUser                         @controllers.Auth.profile2json()
-
-#
-GET           /statistics                             @controllers.Backend.statistics()
 
 # Find a Job
 GET           /jobs/find/:queryString                 @controllers.Search.getJob(queryString : String)

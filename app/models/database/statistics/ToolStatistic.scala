@@ -54,7 +54,7 @@ object ToolStatistic {
       CURRENTFAILED -> toolStatistic.currentFailed,
       MONTHLY       -> toolStatistic.monthly,
       MONTHLYFAILED -> toolStatistic.monthlyFailed,
-      DATEPUSHED    -> toolStatistic.datePushed
+      DATEPUSHED    -> toolStatistic.datePushed.headOption.map(_.formatted("dd/MM/yyyy HH:mm:ss"))
     )
   }
 

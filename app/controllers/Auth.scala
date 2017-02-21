@@ -349,15 +349,4 @@ final class Auth @Inject() (webJarAssets                                      : 
       Ok(views.html.auth.message("Verification"))
     }
   }
-
-  // Mock up function to let a user access to a page only when they are logged in as a user with certain rights
-  def backendAccess() : Action[AnyContent] = Action.async { implicit request =>
-    getUser.map { user =>
-      if (user.isSuperuser) {
-        NoCache(Redirect(routes.Backend.access))
-      } else {
-        NotFound
-      }
-    }
-  }
 }
