@@ -450,7 +450,7 @@ JobSubmissionComponent = {
                         return m.route("/jobs/" + jobID);
                     }
                 }, function(error) {
-                    alert("Bad Request");
+                    console.warn("Bad Request");
                     return $(".submitJob").prop("disabled", false);
                 });
             }
