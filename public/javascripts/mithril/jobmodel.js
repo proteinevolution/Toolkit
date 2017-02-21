@@ -16,6 +16,9 @@ window.JobModel = {
         "max_lines": 100,
         "pmin": 20,
         "aliwidth": 80,
+        "max_seqid": 90,
+        "min_query_cov": "0",
+        "num_seqs_extract": 100,
         "protblastprogram": "psiblast"
     },
     pushMessage: function(msg) {

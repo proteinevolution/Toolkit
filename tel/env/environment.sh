@@ -59,6 +59,8 @@ export PATH="${BIOPROGS}/helpers/verify3d:${PATH}" # Helpers MODELLER QUALITY CH
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" 
 export PATH="${BIOPROGS}/tools/hmmer/binaries:${PATH}" # HMMER
 export PATH="${BIOPROGS}/tools/retrieveseq:${PATH}" # RetrieveSeq
+export PATH="${BIOPROGS}/tools/seq2id:${PATH}" # Seq2ID
+
 
 # Setup Blammer
 export BLAMMERJAR="${BIOPROGS}/tools/blammer/blammer.jar"
