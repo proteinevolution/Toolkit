@@ -5,6 +5,7 @@ import javax.inject.{Inject, Named, Singleton}
 import com.sksamuel.elastic4s._
 import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
+import com.sksamuel.elastic4s.analyzers.{StandardAnalyzer, WhitespaceAnalyzer}
 import com.typesafe.config.ConfigFactory
 import models.tools.ToolFactory
 import modules.tel.TELConstants
@@ -58,7 +59,7 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     val runscript = s"$runscriptPath$toolname.sh"
     val content = scala.io.Source.fromFile(runscript).getLines().mkString
 
-    Math.abs(MurmurHash3.stringHash(content,0)).toString
+    MurmurHash3.stringHash(content,0).toString
 
   }
 
@@ -70,7 +71,7 @@ final class JobDAO @Inject()(cs: ClusterSetup,
   def generateToolHash(name: String) : String = {
 
     try {
-      Math.abs(MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString,0)).toString
+      MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString,0).toString
     }
     catch {
       case _ : Throwable => "No matching hash value found"
@@ -85,12 +86,12 @@ final class JobDAO @Inject()(cs: ClusterSetup,
       search in jobHashIndex query {
           bool(
             must(
-              termQuery("hash", hash),
-              termQuery("dbname", dbName.getOrElse("none")),
+              matchQuery("hash", hash).analyzer(StandardAnalyzer),
+              matchQuery("dbname", dbName.getOrElse("none")).analyzer(StandardAnalyzer),
               termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z")),
-              termQuery("toolname", toolname),
-              termQuery("rshash", rsHash),
-              termQuery("toolhash", toolHash)
+              matchQuery("toolname", toolname).analyzer(StandardAnalyzer),
+              matchQuery("rshash", rsHash).analyzer(StandardAnalyzer),
+              matchQuery("toolhash", toolHash).analyzer(StandardAnalyzer)
             )
           )
       }
