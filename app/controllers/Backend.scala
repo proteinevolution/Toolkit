@@ -14,6 +14,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
   * Created by zin on 28.07.16.
@@ -30,17 +31,6 @@ final class Backend @Inject()(webJarAssets                                      
 
   // Maps Session ID to Actor Ref of corresponding WebSocket
   val connectedUsers = new scala.collection.mutable.HashMap[BSONObjectID, DateTime]
-
-  def index = Action.async { implicit request =>
-    getUser.map { user =>
-      if (user.isSuperuser) {
-        //CheckBackendPath && user.isSuperuser && connectedUsers.get(user.userID).get.isBeforeNow) {
-        NoCache(Ok(views.html.backend.backend(webJarAssets, views.html.backend.backend_maincontent(), "Backend")))
-      } else {
-        Status(404)(views.html.errors.pagenotfound())
-      }
-    }
-  }
 
   /**
     * Redirect the user to the
@@ -89,10 +79,39 @@ final class Backend @Inject()(webJarAssets                                      
     }
   }
 
+  //TODO currently working mithril routes for the backend
+  def index = Action.async { implicit request =>
+    getUser.map { user =>
+      if (user.isSuperuser) {
+        //CheckBackendPath && user.isSuperuser && connectedUsers.get(user.userID).get.isBeforeNow) {
+        //NoCache(Ok(views.html.backend.backend(webJarAssets, views.html.backend.backend_maincontent(), "Backend")))
+        NoCache(Ok(views.html.backend.index()))
+      } else {
+        NotFound
+      }
+    }
+  }
+
   def statistics = Action.async { implicit request =>
     getUser.flatMap { user =>
-      getStatistics.map{ toolStatisticList : List[ToolStatistic] =>
-        Ok(views.html.backend.statistics(toolStatisticList))
+      if (user.isSuperuser) {
+        getStatistics.map { toolStatisticList: List[ToolStatistic] =>
+          NoCache(Ok(views.html.backend.statistics(toolStatisticList)))
+        }
+      } else {
+        Future.successful(NotFound)
+      }
+    }
+  }
+
+  def cms = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      if (user.isSuperuser) {
+        getArticles(-1).map { articles =>
+          NoCache(Ok(views.html.backend.cms(articles)))
+        }
+      } else {
+        Future.successful(NotFound)
       }
     }
   }

@@ -49,7 +49,7 @@ trait CommonModule extends ReactiveMongoComponents {
   }
   protected def getArticles(numArticles: Int): Future[List[FeaturedArticle]] = articleCollection.flatMap {
     val selector = BSONDocument("dateCreated" -> -1)
-    _.find(BSONDocument()).sort(selector).cursor[FeaturedArticle]().collect[List](numArticles)
+    _.find(BSONDocument()).sort(selector).cursor[FeaturedArticle]().collect[List](numArticles, Cursor.FailOnError[List[FeaturedArticle]]())
   }
   protected def writeArticleDatabase(featuredArticle: FeaturedArticle) = articleCollection.flatMap(_.insert(featuredArticle))
 

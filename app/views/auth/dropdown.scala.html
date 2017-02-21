@@ -1,18 +1,21 @@
 @import play.api.mvc.RequestHeader
-@import models.database.users.UserData
-@(userData : Option[UserData] = None)(implicit messages: Messages, request: RequestHeader)
+@import models.database.users.User
+@(user : User)(implicit messages: Messages, request: RequestHeader)
 
-@if(userData.isEmpty) {
+@if(user.userData.isEmpty) {
 <button id="auth-link" onclick="openNav()">Sign in</button>
 }
-<ul id="auth-dropdown-link" class="dropdown menu" data-dropdown-menu data-alignment="right" data-disable-hover=true data-click-open=true @if(userData.isEmpty){hidden}>
+<ul id="auth-dropdown-link" class="dropdown menu" data-dropdown-menu data-alignment="right" data-disable-hover=true data-click-open=true @if(user.userData.isEmpty){hidden}>
     <li>
-        <button class="loggedIn" id="auth-link-text" href="#">@{userData.map(_.nameLogin).getOrElse("")}</button>
+        <button class="loggedIn" id="auth-link-text" href="#">@{user.userData.map(_.nameLogin).getOrElse("")}</button>
         <ul class="menu">
             <li><a href="#">Profile</a></li>
             <li><a href="#">Inbox</a></li>
             <li><a onclick="openNav()">User</a></li>
             <li><a onClick="window.location.href='@routes.Auth.signOut()'">Log Out</a></li>
+            @if(user.isSuperuser){
+            <li><a href="/#/backend/index">Backend</a></li>
+            }
         </ul>
     </li>
 </ul>
