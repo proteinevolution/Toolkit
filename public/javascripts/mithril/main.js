@@ -33,7 +33,8 @@ m.route(document.getElementById('main-content'), '/', {
     }),
     '/jobs/:jobID': m(Toolkit, {
         isJob: true
-    })
+    }),
+    '/backend/:section': m(Backend)
 });
 
 window.onfocus = function() {
