@@ -2,7 +2,7 @@ package modules
 
 import models.database.CMS.FeaturedArticle
 import models.database.jobs.{FrontendJob, JobAnnotation, Job}
-import models.database.statistics.JobEventLog
+import models.database.statistics.{ToolStatistic, JobEventLog}
 import models.database.users.User
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
@@ -143,13 +143,30 @@ trait CommonModule extends ReactiveMongoComponents {
   }
 
 
-  // Statistics DB access
-  protected def statisticsCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobevents"))
+  // Job event Log DB Access
+  protected def eventLogCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("jobevents"))
 
-  protected def addJobLog(jobEventLog : JobEventLog) : Future[WriteResult] = statisticsCollection.flatMap(_.insert(jobEventLog))
+  protected def addJobLog(jobEventLog : JobEventLog) : Future[WriteResult] = eventLogCollection.flatMap(_.insert(jobEventLog))
 
   protected def findJobEventLogs(selector : BSONDocument) : Future[scala.List[JobEventLog]] = {
-    statisticsCollection.map(_.find(selector).cursor[JobEventLog]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))
+    eventLogCollection.map(_.find(selector).cursor[JobEventLog]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))
+  }
+
+  // Statistics DB access
+  protected def statisticsCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("statistics"))
+
+  protected def getStatistics : Future[scala.List[ToolStatistic]] = {
+    statisticsCollection.map(_.find(BSONDocument.empty).cursor[ToolStatistic]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[ToolStatistic]]()))
+  }
+
+  protected def addStatistic(toolStatistic : ToolStatistic) : Future[WriteResult] = statisticsCollection.flatMap(_.insert(toolStatistic))
+
+  protected def increaseJobCount(toolName : String, failed : Boolean = false) : Future[WriteResult] = {
+    statisticsCollection.flatMap(_.update(BSONDocument(ToolStatistic.TOOLNAME -> toolName),
+                                          BSONDocument("$inc"                 ->
+                                          BSONDocument({if (failed) {ToolStatistic.CURRENTFAILED}
+                                                        else        {ToolStatistic.CURRENT}}
+                                                                              -> 1))))
   }
 
   // User DB access
@@ -163,6 +180,4 @@ trait CommonModule extends ReactiveMongoComponents {
     userCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[User]))
   }
   protected def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))
-
-
 }

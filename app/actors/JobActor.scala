@@ -8,7 +8,7 @@ import akka.actor.{Actor, ActorRef}
 import akka.event.LoggingReceive
 import models.Constants
 import models.database.jobs._
-import models.database.statistics.{JobEvent, JobEventLog}
+import models.database.statistics.{ToolStatistic, JobEvent, JobEventLog}
 import models.database.users.User
 import models.search.JobDAO
 import modules.tel.runscripts._
@@ -204,38 +204,39 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
           toolname = toolname,
           jobDao.generateToolHash(toolname)
         )
+        }
       }
-    }
-    hashCollection.flatMap(_.insert(jobHash))
-    // Add Job to user in database
-    modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID)))
+      hashCollection.flatMap(_.insert(jobHash))
 
-    // Establish exection context for the newJob
-    val executionContext = ExecutionContext(jobPath/jobID)
-    this.currentExecutionContexts = this.currentExecutionContexts.updated(jobID, executionContext)
+      // Add Job to user in database
+      modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID)))
 
-    // Serialize the JobParameters to the JobDirectory
-    // Store the extended Parameters in the working directory for faster reloading
-    // TODO Use ExecutionContext for file access
-    (jobPath/jobID/serializedParam).createIfNotExists(asDirectory = false)
-    val oos = new ObjectOutputStream(new FileOutputStream((jobPath/jobID/serializedParam).pathAsString))
-    oos.writeObject(extendedParams)
-    oos.close()
+      // Establish exection context for the newJob
+      val executionContext = ExecutionContext(jobPath/jobID)
+      this.currentExecutionContexts = this.currentExecutionContexts.updated(jobID, executionContext)
 
-    // Create a log for this job
-    this.currentJobLogs = this.currentJobLogs.updated(job.jobID, JobEventLog(job.mainID, List(JobEvent(job.status, Some(DateTime.now)))))
+      // Serialize the JobParameters to the JobDirectory
+      // Store the extended Parameters in the working directory for faster reloading
+      // TODO Use ExecutionContext for file access
+      (jobPath/jobID/serializedParam).createIfNotExists(asDirectory = false)
+      val oos = new ObjectOutputStream(new FileOutputStream((jobPath/jobID/serializedParam).pathAsString))
+      oos.writeObject(extendedParams)
+      oos.close()
 
-    // Get new runscript instance from the runscript manager
-    val runscript = runscriptManager(toolname).withEnvironment(env)
-    // Representation of the current State of the job submission
-    var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map { t =>
-       t._1 -> (t._2 -> None)
-    }
-    for((paramName, value) <- extendedParams) {
+      // Create a log for this job
+      this.currentJobLogs = this.currentJobLogs.updated(job.jobID, JobEventLog(job.mainID, List(JobEvent(job.status, Some(DateTime.now)))))
 
+      // Update the statistics
+      increaseJobCount(job.tool)
+
+      // Get new runscript instance from the runscript manager
+      val runscript = runscriptManager(toolname).withEnvironment(env)
+      // Representation of the current State of the job submission
+      var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map(t => t._1 -> (t._2 -> None))
+      for((paramName, value) <- extendedParams) {
         parameters  = supply(jobID, paramName, value, parameters)
-    }
-    if(isComplete(parameters)) {
+      }
+      if(isComplete(parameters)) {
         val pendingExecution = wrapperExecutionFactory.getInstance(runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
         executionContext.accept(pendingExecution)
 
