@@ -5,6 +5,7 @@ import javax.inject.{Inject, Singleton}
 import actors.WebSocketActor
 import akka.actor.{ActorSystem, Props}
 import akka.stream.Materializer
+import models.database.statistics.ToolStatistic
 import models.search.JobDAO
 import models.Constants
 import models.tools.ToolFactory
@@ -52,6 +53,12 @@ final class Application @Inject()(webJarAssets                                  
   private val logger = org.slf4j.LoggerFactory.getLogger("controllers.Application")
   val SID = "sid"
 
+  // Run this once to generate database objects for the statistics
+  def generateStatisticsDB() = {
+    for (toolName : String <- toolFactory.values.keys) {
+      addStatistic(ToolStatistic(BSONObjectID.generate(), toolName, 0, 0, List.empty, List.empty, List.empty))
+    }
+  }
 
   /**
     * Creates a websocket.  `acceptOrResult` is preferable here because it returns a
@@ -119,7 +126,7 @@ final class Application @Inject()(webJarAssets                                  
     * Currently the index controller will assign a session id to the user for identification purpose.
     */
   def index : Action[AnyContent] = Action.async { implicit request =>
-
+    //generateStatisticsDB
     val port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
     val hostname = request.host.slice(0, request.host.indexOf(":"))
     env.configure("PORT", port)

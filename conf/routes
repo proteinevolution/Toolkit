@@ -70,7 +70,7 @@ GET           /verification/:userName/:token          @controllers.Auth.verifica
 GET           /getCurrentUser                         @controllers.Auth.profile2json()
 
 #
-GET           /statistics/:toolName                   @controllers.Backend.statistics2(toolName)
+GET           /statistics                             @controllers.Backend.statistics()
 
 # Find a Job
 GET           /jobs/find/:queryString                 @controllers.Search.getJob(queryString : String)
