@@ -304,7 +304,7 @@ function getLinks(id){
             break;
     }
     if(links.length > 0)
-        links.unshift("<a>Histogram</a> | <a>Template alignment</a>");
+        links.unshift("<a onclick='toggleHistogram()' >Histogram</a> | <a>Template alignment</a>");
     return links;
 }
 
@@ -328,3 +328,20 @@ function identifyDatabase(id){
     else
         return null;
 }
+
+
+
+/* Histograms */
+
+function imgOn(imgName, imgSrc) {
+    if (document.images) {
+        document[imgName].src = imgSrc;
+    }
+}
+
+function imgOff(imgName, imgSrc) {
+    if (document.images) {
+        document[imgName].src = imgSrc;
+    }
+}
+

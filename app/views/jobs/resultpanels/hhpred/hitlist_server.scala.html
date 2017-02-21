@@ -1,0 +1,491 @@
+@import play.api.libs.json.JsObject
+@import play.api.libs.json.JsValue
+@import play.api.Logger
+@import models.results.FileLoader
+@import play.api.libs.json.JsUndefined
+@import play.api.libs.json.JsDefined
+@import models.results.HHpred
+@(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
+: Unit = <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+@* Load html Map used for the image representation *@
+<ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Visualization</a>
+        <div class="accordion-content" data-tab-content>
+            <div>
+                <div class='flat-slider' id='flat-slider'></div>
+                <div id='blastviz'>
+                        <!-- Create visual overview with Snap -->
+                    <svg id="hhpred_viz" width="100%"></svg>
+                </div>
+            </div>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Hitlist</a>
+        <div class="accordion-content" data-tab-content>
+            <table id="htb" class="display" cellspacing="0" width="80%">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Hit</th>
+                        <th>Name</th>
+                        <th>Prob</th>
+                        <th>E-value</th>
+                        <th>P-value</th>
+                        <th>Score</th>
+                        <th>SS</th>
+                        <th>Cols</th>
+                        <th>qStart</th>
+                        <th>qEnd</th>
+                        <th>tStart</th>
+                        <th>tEnd</th>
+                        <th>Ref</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </li>
+    <li class="accordion-item is-active" data-accordion-item>
+        <a href="#" class="accordion-title">Alignments</a>
+        <div id="alignments" class="accordion-content table-scroll" data-tab-content>
+            <div style="display: flex">
+            <div id="hhpred_alignment_control">
+                <a class="success button tiny" onclick="selectAll_()" type="button" id="selectAllSeq">Select all</a>
+                <select id="hhpred_color_select" onchange="toggleAliColor(this)">
+                    <option value="none">No color</option>
+                    <option value="letters">Letters</option>
+                    <option value="background">Background</option>
+                </select>
+            </div>
+            <div id="hhpred_alignment_control_extra">
+            <input type="checkbox" onchange="toggleSS(this)"> Color SS
+                <a type="button" class="button success tiny" onclick="toggleHistogram()">Histogram</a>
+            <a type="button" class="button success tiny" onclick="hhpred_manual()">Create Model from manually selected templates</a>
+            <a type="button" class="button success tiny" onclick="hhpred_automatic()">Select Templates Automatically</a>
+            </div>
+            </div>
+            <form id="hhpred_templates">
+
+
+
+                @for((alignment, hit) <- ((jsValue \ "hhr" \ "alignments").as[List[JsObject]], (jsValue \ "hhr" \ "hits").as[List[JsObject]]).zipped.toList){
+                  <table class="unstriped">
+                    <tbody>
+                        @* hit number, links *@
+                        <tr>
+                            <td></td>
+                            <td>No  @{(hit \ "no").get}</td>
+                            <td></td>
+                            <td>Links</td>
+                            <td></td>
+                        </tr>
+                        @* checkboxes, accession, name of hit*@
+                        <tr class="name">
+                            <td><input type="checkbox" name="hitCheckbox" class="hitCheckbox" value='@{(hit \ "no").get}'></td>
+                            @{hit \ "struc" match {
+                                case JsDefined(jsValue) =>
+                                    <td colspan="2">{(hit \ "struc").get.as[String]}</td>
+                                case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
+                            }
+                            }
+                            <td colspan="2">@{(hit \ "hit").get.as[String]}</td>
+                        </tr>
+                        @* Alignment Details*@
+                        <tr>
+                            <td colspan="3"></td>
+                            <td colspan="2">Probability: @{(alignment \ "info" \ "probab").get}, Expect: @{(alignment \ "info" \ "eval").get}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"></td>
+                            <td colspan="2">Score: @{(alignment \ "info" \ "score").get}, Aligned Cols: @{(alignment \ "info" \ "aligned_cols").get},
+                                Identities: @{(alignment \ "info" \ "identities").get}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"></td>
+                            <td colspan="2">Similarity: @{(alignment \ "info" \ "similarity").get}, Sum Probs: @{(alignment \ "info" \ "sum_probs").get},
+                                Template Neff: @{(alignment \ "info" \ "template_neff").get}</td>
+                        </tr>
+
+                        <tr>
+                            <td><br /></td>
+                        </tr>
+
+                        @* TODO: restore functionality of color highliting *@
+
+
+                        @* Handle secondary structure annotation for query, if present *@
+                        @{alignment \ "query" \ "ss_dssp" match {
+                            case JsDefined(jsValue) =>
+                            {HHpred.makeRow("sequence", Array("Q", "ss_dssp", "" , HHpred.SSColorReplace({(alignment \ "query" \ "ss_dssp").get.as[String]}), ""))}
+                            case undefined: JsUndefined => Logger.info("query.ss_dssp undefined in results!")
+                            }
+                        }
+                        @{alignment \ "query" \ "ss_pred" match {
+                            case JsDefined(jsValue) =>
+                            {HHpred.makeRow("sequence", Array("Q", "ss_pred", "" , HHpred.SSColorReplace({(alignment \ "query" \ "ss_pred").get.as[String]}), ""))}
+                            case undefined: JsUndefined => Logger.info("query.ss_pred undefined in results!")
+                            }
+                        }
+                        @* seq of query, if present *@
+                        @{alignment \ "query" \ "seq" match {
+                            case JsDefined(jsValue) =>
+                            {HHpred.makeRow("sequence", Array("Q",(alignment \ "query" \ "name").get.as[String],(alignment \ "query" \ "start").get.toString(), (alignment \ "query" \ "seq").get.as[String],(alignment \ "query" \ "end").get.toString()))}
+                            case undefined: JsUndefined => Logger.info("query.seq undefined in results!")
+                            }
+                        }
+                        @*Consensus of query, if present*@
+                        @{alignment \ "query" \ "consensus" match {
+                            case JsDefined(jsValue) =>
+                                {HHpred.makeRow("sequence", Array("Q", "Consensus",(alignment \ "query" \ "start").get.toString(), (alignment \ "query" \ "consensus").get.as[String],(alignment \ "query" \ "end").get.toString()))}
+                            case undefined: JsUndefined => Logger.info("query.consensus undefined in results!")
+                            }
+                        }
+                        @* agree of query, if present *@
+                        @{alignment \ "agree" match {
+                            case JsDefined(jsValue) =>
+                            {HHpred.makeRow("sequence", Array("","","",(alignment \ "agree").get.as[String], ""))}
+                            case undefined: JsUndefined => Logger.info("agree undefined in results!")
+                            }
+                        }
+                        @*  consensus template, if present *@
+                        @{alignment \ "template" \ "consensus" match {
+                            case JsDefined(jsValue) =>
+                            {HHpred.makeRow("sequence", Array("T", "Consensus", (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "consensus").get.as[String],(alignment \ "template" \ "end").get.toString()))}
+                            case undefined: JsUndefined => Logger.info("template.consensus undefined in results!")
+                            }
+                        }
+                        @*  seq template, if present *@
+                        @{alignment \ "template" \ "seq" match {
+                            case JsDefined(jsValue) =>
+                            {HHpred.makeRow("sequence", Array("T", (alignment \ "template" \ "name").get.as[String], (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "seq").get.as[String],(alignment \ "template" \ "end").get.toString()))}
+                            case undefined: JsUndefined => Logger.info("template.seq undefined in results!")
+                            }
+                        }
+                        @* Handle secondary structure annotation for template, if present *@
+                        @{alignment \ "template" \ "ss_dssp" match {
+                            case JsDefined(jsValue) =>
+                            {HHpred.makeRow("sequence", Array("T", "ss_dssp", "" , HHpred.SSColorReplace({(alignment \ "template" \ "ss_dssp").get.as[String]}), ""))}
+                            case undefined: JsUndefined => Logger.info("template.ss_dssp undefined in results!")
+                         }
+                        }
+
+                        @{alignment \ "template" \ "ss_pred" match {
+                            case JsDefined(jsValue) =>
+                            {HHpred.makeRow("sequence", Array("T", "ss_pred", "" , HHpred.SSColorReplace({(alignment \ "template" \ "ss_pred").get.as[String]}), ""))}
+                            case undefined: JsUndefined => Logger.info("template.ss_pred undefined in results!")
+                         }
+                        }
+
+                        <tr>
+                            <td class="histogram" colspan="4">@FileLoader.loadHTML(s"$jobID/results/${jobID}_${(hit \ "no").get}.map")</td>
+                        </tr>
+                        <tr>
+                        <hr id="line-element" colspan="4" class="horizontal-line"></hr>
+                        </tr>
+                    </tbody>
+                  </table>
+
+                }
+
+            </form>
+
+
+
+            <div id="psiblast_alignment_control" style="display: flex;">
+                <select id="forward" onchange="forward(value);">
+                    <option value="Forward">Forward</option>
+                    <option value="PHYLIP-NEIGHBOR">PHYLIP-NEIGHBOR</option>
+                </select>
+            </div>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Information</a>
+        <div class="accordion-content" data-tab-content>
+            <table class="display" cellspacing="0" width="80%">
+                <tr>
+                    <td>Query</td>
+                    <td id="hhpred_query"></td>
+                </tr>
+                <tr>
+                    <td>Match_columns</td>
+                    <td id="hhpred_match_columns"></td>
+                </tr>
+                <tr>
+                    <td>No_of_Seqs</td>
+                    <td id="hhpred_noseqs"></td>
+                </tr>
+                <tr>
+                    <td>Neff</td>
+                    <td id="hhpred_neff"></td>
+                </tr>
+                <tr>
+                    <td>Searched HMMs</td>
+                    <td id="hhpred_searchedhmms"></td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td id ="hhpred_date"></td>
+                </tr>
+            </table>
+        </div>
+    </li>
+</ul>
+
+
+
+
+
+
+<script>
+        var ss_helices = document.getElementsByClassName("ss_h");
+        var ss_extended = document.getElementsByClassName("ss_e");
+        var aas;
+        var hitlist;
+        var queryLength;
+        var firstHitBegin;
+        var firstHitEnd;
+        var info;
+        var hits;
+
+(function()  {
+    $('.slider').on('moved.zf.slider', function() {
+        $('#lefthandle').html($('#hidden1').val());
+        $('#lefthandle').css({
+            'color' : 'white',
+            'font-weight': 'bold',
+            'padding-left' : '2px'
+        });
+        $('#righthandle').html($('#hidden2').val());
+        $('#righthandle').css({
+            'color' : 'white',
+            'font-weight': 'bold',
+            'padding-left' : '2px'
+        });
+    });
+    var dataRoute = jsRoutes.controllers.DataController.get("@jobID", 'hhr');
+    $.ajax({
+        method: dataRoute.method,
+        url: dataRoute.url
+    }).done(function(data_) {
+        hits = data_.hhr.hits;
+        info = data_.hhr.info;
+        queryLength = info.Match_columns;
+        // get beg and end of first hit to set slider handles
+        if(hits.length > 0 ) {
+            firstHitBegin = hits[0].query_begin;
+            firstHitEnd = hits[0].query_end;
+        }
+        else {
+            firstHitBegin = 0;
+            firstHitEnd = 0;
+        }
+        drawHits("hhpred_viz", hits);
+        drawDataTable();
+        drawInformation();
+        $("#accordion").foundation();
+        $('#hhpred_color_select').niceSelect();
+
+    })
+    aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+    $('.histogram').hide();
+})();
+
+
+function drawInformation(){
+    /*  INFO TAB*/
+    $("#hhpred_query").append(info.Query);
+    $("#hhpred_match_columns").append(info.Match_columns);
+    $("#hhpred_noseqs").append(info.No_of_seqs);
+    $("#hhpred_neff").append(info.Neff);
+    $("#hhpred_searchedhmms").append(info.Searched_HMMs);
+    $("#hhpred_date").append(info.Date);
+}
+
+function drawDataTable(){
+
+    hitlist = $('#htb').dataTable({
+        "bInfo": false,
+        "bFilter": true,
+        "bLengthChange": true,
+        "aaData": hits,
+        "scrollY": 600,
+        "scrollX": true,
+        "aoColumns": [
+            { "mDataProp": "no" },
+            { "mDataProp": "struc" , render: function (data){return getSingleLink(data)}},
+            { "mDataProp": "hit" },
+            { "mDataProp": "prob" },
+            { "mDataProp": "eval" },
+            { "mDataProp": "pval", render: function(data){return data.toExponential();}},
+            { "mDataProp": "score" },
+            { "mDataProp": "ss" },
+            { "mDataProp": "cols" },
+            { "mDataProp": "query_begin" },
+            { "mDataProp": "query_end" },
+            { "mDataProp": "template_begin" },
+            { "mDataProp": "template_end" },
+            { "mDataProp": "ref" }
+        ],
+        'columnDefs': [{
+            'targets': 0,
+            'searchable': false,
+            'orderable': false,
+            'render': function (data, type, full, meta){
+                return '<input type="checkbox" name="hitCheckbox" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '">';
+            }
+        }],
+    });
+
+}
+
+
+function drawHits(id, hits) {
+    var s = Snap("#" + id);
+    // Get maximum of query_end with map and reduce
+    document.getElementById(id).setAttribute("viewBox", "0 0 " + hits.map(function (hit) {
+                return hit.query_end;
+            })
+                    .reduce(function (a, b) {
+                        return Math.max(a, b);
+                    }) + " " + hits.length);
+    for (var i = 0; i < hits.length; ++i) {
+        var hit = hits[i];
+        var diff = hit.query_end - hit.query_begin;
+        var r = s.rect(hit.query_begin, i, diff, 0.5, 0.5, 0.5);
+        var text = s.text(diff / 2, i + 0.4, hit.struc);
+        text.attr({
+            'font-size': 0.5,
+            'fill': 'white',
+            'font-weight': 'bold'
+        });
+        var colors = calcColor(hit.prob).map(function (val) {
+            return val * 255
+        });
+        r.attr({
+            fill: Snap.rgb(colors[0], colors[1], colors[2])
+        });
+    }
+}
+
+
+function calcColor(prob) {
+    var red, grn, blu;
+    if (prob > 40) {
+        var signif = ((prob - 40) / 60);
+        var col = 4 * signif;
+        if (col > 3) {
+            col -= 3.0;
+            red = 1;
+            grn = 0.7 * (1 - col);
+            blu = 0;
+        } else if (col > 2) {
+            col -= 2.0;
+            red = col;
+            grn = 0.7 + 0.3 * (1 - col);
+            blu = 0;
+        } else if (col > 1) {
+            col -= 1.0;
+            red = 0;
+            grn = 1 - 0.3 * (1 - col);
+            blu = 1 - col;
+        } else {
+            red = 0;
+            grn = 0.7 * col;
+            blu = 1;
+        }
+    } else {
+        signif = Math.pow((prob / 40), 3);
+        red = 0.2 * (1 - signif);
+        grn = 0.2 * (1 - signif);
+        blu = 0.2 + 0.8 * signif;
+    }
+    return [red, grn, blu];
+}
+function hhpred_manual() {
+    // Get selected templates and append parentID
+    var formData = new FormData(document.getElementById("hhpred_templates"));
+    if (!formData.has("templates")) {
+        alert("Please select at least one template for modeling");
+        return;
+    }
+    formData.append("parentid", '@{jobID}');
+
+    var checkRoute = jsRoutes.controllers.JobController.check("hhpred_manual", null, false);
+    m.request({
+        method: checkRoute.method,
+        url: checkRoute.url,
+        data: formData,
+        serialize: function (data) {
+            return data;
+        }
+    }).then(function (data) {
+        var submitRoute = jsRoutes.controllers.JobController.create("hhpred_manual", data.jobID);
+        m.request({
+            method: submitRoute.method,
+            url: submitRoute.url,
+            data: formData,
+            serialize: function (data) {
+                return data;
+            }
+        });
+    });
+}
+
+function hhpred_automatic() {
+    // Get selected templates and append parentID
+    var formData = new FormData(document.getElementById("hhpred_templates"));
+    formData.append("parentid", '@{jobID}');
+
+    var checkRoute = jsRoutes.controllers.JobController.check("hhpred_automatic", null, false);
+    m.request({
+        method: checkRoute.method,
+        url: checkRoute.url,
+        data: formData,
+        serialize: function (data) {
+            return data;
+        }
+    }).then(function (data) {
+
+        var submitRoute = jsRoutes.controllers.JobController.create("hhpred_automatic", data.jobID);
+        m.request({
+            method: submitRoute.method,
+            url: submitRoute.url,
+            data: formData,
+            serialize: function (data) {
+                return data;
+            }
+        });
+    });
+}
+
+/* without timeout SLIDER is not loaded */
+setTimeout(function () {
+    slider_show(queryLength, firstHitBegin, firstHitEnd)
+}, 1000);
+
+function resubmitSection_(){
+    resubmitSection(this.hitSequences, this.hitNames);
+}
+
+function selectAll_() {
+    selectAll(this.hitlist.fnGetNodes());
+}
+
+function onFullscreenToggle() {
+    hitlist.draw();
+}
+
+function toggleHistogram(){
+    if($('.sequence').is(':hidden')){
+        $('.sequence').show();
+        $('.histogram').hide();
+    }else{
+        $('.sequence').hide();
+        $('.histogram').show();
+    }
+}
+
+</script>
