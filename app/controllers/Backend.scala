@@ -3,6 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import models.database.jobs.Job
+import models.database.statistics.ToolStatistic
 import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.cache._
@@ -90,20 +91,9 @@ final class Backend @Inject()(webJarAssets                                      
 
   def statistics = Action.async { implicit request =>
     getUser.flatMap { user =>
-      findJobEventLogs(BSONDocument("events.runtime" -> BSONDocument("$gt" -> 5000))).flatMap { jobEventLogs =>
-        findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> jobEventLogs.map(_.mainID)))).map { jobs =>
-          Ok(Json.obj("mainIDs" -> jobEventLogs.map(_.mainID.stringify),
-                      "jobIDs"  -> jobs.map(_.jobID)))
-        }
+      getStatistics.map{ toolStatisticList : List[ToolStatistic] =>
+        Ok(views.html.backend.statistics(toolStatisticList))
       }
-    }
-  }
-
-  def statistics2(toolName : String) = Action.async { implicit request =>
-    getUser.flatMap { user =>
-      countJobs(BSONDocument(Job.TOOL -> toolName)).map { jobs =>
-          Ok(Json.obj("jobIDs" -> jobs))
-        }
     }
   }
 }
