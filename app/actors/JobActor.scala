@@ -174,6 +174,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
                     ownerID     = Some(user.userID),
                     status      = Submitted,
                     tool        = toolname,
+                    label       = params.get("label"),
                     watchList   = List(user.userID),
                     dateCreated = Some(jobCreationTime),
                     dateUpdated = Some(jobCreationTime),
