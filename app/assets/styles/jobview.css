@@ -400,12 +400,13 @@ margin-top: 2em;
 }
 
 #submit_modal {
-    background-color: #F7E4E1;
-    width: 30%;
-    height: 8em;
-    border: 2px solid black;
+    background-color: #eee;
+    width: 40%;
+    height: 10em;
+    border: 1px solid darkgray;
+    border-radius: 5px;
     font-size: 0.9em;
-    color: black;
+    color: grey;
     margin-top: 5em;
     text-align: center;
 }
@@ -417,14 +418,15 @@ margin-top: 2em;
 }
 
 #submit_modal input {
-    margin: 2em 1em 0 1em;
+    margin: 4em 1em 0 1em;
     border-radius: 3px;
     font-size: 0.75rem;
-    background-color: gray;
+    background-color: #b1b1b1;
 }
 
+
 #submit_modal input:hover {
-    background-color: #27776e;
+    background-color: #a1a1a1 ;
 }
 
 
