@@ -464,6 +464,7 @@ JobSubmissionComponent = {
                 "class": "reveal",
                 'data-reveal': 'data-reveal',
                 'data-animation-in': 'fade-in',
+                'data-overlay': 'true',
                 'transition-duration': 'fast',
                 id: 'submit_modal',
                 config: submitModal
