@@ -32,17 +32,8 @@ body.is-reveal-open {
     background: inherit;
 }
 
-#hhpred_alignment_control {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-items: stretch;
-    align-content: stretch;
-}
 
-#alignments {
-
+.sequence {
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
     font-size: 0.7rem !important;
     white-space: nowrap;
