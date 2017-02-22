@@ -450,7 +450,7 @@ JobSubmissionComponent = {
                         return m.route("/jobs/" + jobID);
                     }
                 }, function(error) {
-                    alert("Bad Request");
+                    console.warn("Bad Request");
                     return $(".submitJob").prop("disabled", false);
                 });
             }
@@ -464,6 +464,7 @@ JobSubmissionComponent = {
                 "class": "reveal",
                 'data-reveal': 'data-reveal',
                 'data-animation-in': 'fade-in',
+                'data-overlay': 'true',
                 'transition-duration': 'fast',
                 id: 'submit_modal',
                 config: submitModal

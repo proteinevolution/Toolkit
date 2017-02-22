@@ -17,3 +17,5 @@ ss_scoring GEN ss_scoring.prop
 max_seqs GEN max_seqs.prop
 maxrounds GEN maxrounds.prop
 unique_sequence GEN unique_sequence.prop
+min_seqid GEN min_seqid.prop
+min_aln_cov GEN min_aln_cov.prop
