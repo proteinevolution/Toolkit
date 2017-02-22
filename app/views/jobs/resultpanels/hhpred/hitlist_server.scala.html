@@ -88,7 +88,7 @@
                     <a type="button" class="button success tiny hhpred_extra_button" onclick="toggleHistogram()">Histogram</a>
                 </div>
                 <div id="hhpred_advanced" >
-                    <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_manual()">Model of man. selected templates</a>
+                    <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_manual()">Manual template selection</a>
                     <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_automatic()">Select Templates Automatically</a>
                 </div>
 
@@ -321,7 +321,6 @@
         drawDataTable();
         drawInformation();
         $("#accordion").foundation();
-        $('#hhpred_color_select').niceSelect();
 
     })
     aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
