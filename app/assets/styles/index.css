@@ -261,6 +261,13 @@ select {
     padding-right: 5em;
 }
 
+@media only screen and (max-width: 520px) {
+    .article_container {
+        margin-top: 5em;
+    }
+}
+
+
 .article_tile {
     background-clip: content-box;
     background-color: white;

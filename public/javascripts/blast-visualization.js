@@ -3,19 +3,22 @@
 
 
 function toggleAliColor(element) {
-    if(element.value == "letters") {
+    if(element.textContent == "Letters") {
         for(var i = 0; i < aas.length; i++) {
             var aa = aas[i];
             aa.style.color = aa_color_font.get(aa.className);
             aa.style.backgroundColor = "white"
         }
-    } else if(element.value == "background") {
+    } else if(element.textContent == "Background") {
         for(var i = 0; i < aas.length; i++) {
             var aa = aas[i];
             aa.style.backgroundColor = aa_color_background.get(aa.className);
             aa.style.color = "black"
         }
-    } else {
+    } else if(element.textContent == "Color only SS") {
+            toggleSS()
+    }
+    else {
         for(var i = 0; i < aas.length; i++) {
             aas[i].style.color = "black";
             aas[i].style.backgroundColor = "white";
@@ -23,23 +26,15 @@ function toggleAliColor(element) {
     }
 }
 
-function toggleSS(element) {
+function toggleSS() {
 
-    if(element.checked) {
         for (var i = 0; i < ss_helices.length; i++) {
             ss_helices[i].style.color="#D00000";
         }
         for (var i = 0; i < ss_extended.length; i++) {
-            ss_extended[i].style.color="#0000D0";
+            ss_extended[i].style.color = "#0000D0";
         }
-    } else {
-        for (var i = 0; i < ss_helices.length; i++) {
-            ss_helices[i].style.color="black";
-        }
-        for (var i = 0; i < ss_extended.length; i++) {
-            ss_extended[i].style.color="black";
-        }
-    }
+
 }
 
 // Makes a table row with the specified content
@@ -129,7 +124,6 @@ function slider_show(sequence_length, start, end) {
         if (!$("#alignments").parent(".is-active").length) {
             $("#accordion").foundation('down',$("#alignments"));
         }
-        console.log(this)
         $('html, body').animate({
             scrollTop: $(this).offset() + 'px'
         }, 'fast');
@@ -304,7 +298,7 @@ function getLinks(id){
             break;
     }
     if(links.length > 0)
-        links.unshift("<a>Histogram</a> | <a>Template alignment</a>");
+        links.unshift("<a onclick='toggleHistogram()' >Histogram</a> | <a>Template alignment</a>");
     return links;
 }
 
@@ -328,3 +322,20 @@ function identifyDatabase(id){
     else
         return null;
 }
+
+
+
+/* Histograms */
+
+function imgOn(imgName, imgSrc) {
+    if (document.images) {
+        document[imgName].src = imgSrc;
+    }
+}
+
+function imgOff(imgName, imgSrc) {
+    if (document.images) {
+        document[imgName].src = imgSrc;
+    }
+}
+

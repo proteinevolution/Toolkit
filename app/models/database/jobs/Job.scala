@@ -17,6 +17,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
                status      : JobState,                    // Status of the Job
                deletion    : Option[JobDeletion] = None,      // Deletion Flag showing the reason for the deletion
                tool        : String,                      // Tool used for this Job
+               label       : Option[String],
                statID      : String = "",                 //
                watchList   : List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
                commentList : List[BSONObjectID] = List.empty, // List of comments for the Job
@@ -75,6 +76,7 @@ object Job {
   val STATUS        = "status"        //              Status of the job field
   val DELETION      = "deletion"      //              Deletion status flag
   val TOOL          = "tool"          //              name of the tool field
+  val LABEL         = "label"
   val STATID        = "statID"        //              ID of the stats for this Job
   val WATCHLIST     = "watchList"     //              optional list of watching users references
   val COMMENTLIST   = "commentList"   //              comment list references
@@ -96,6 +98,7 @@ object Job {
         val status      = (obj \ STATUS).asOpt[JobState]
         val deletion    = (obj \ DELETION).asOpt[JobDeletion]
         val tool        = (obj \ TOOL).asOpt[String]
+        val label       = (obj \ LABEL).asOpt[String]
         val statID      = (obj \ STATID).asOpt[String]
         val watchList   = (obj \ WATCHLIST).asOpt[List[String]]
         val commentList = (obj \ COMMENTLIST).asOpt[List[String]]
@@ -110,6 +113,7 @@ object Job {
           status      = status.get,
           deletion    = deletion,
           tool        = "",
+          label       = Some(""),
           dateCreated = Some(new DateTime()),
           dateUpdated = Some(new DateTime()),
           dateViewed  = Some(new DateTime())))
@@ -152,6 +156,7 @@ object Job {
           status      = bson.getAs[JobState](STATUS).getOrElse(Error),
           deletion    = bson.getAs[JobDeletion](DELETION),
           tool        = bson.getAs[String](TOOL).getOrElse(""),
+          label       = bson.getAs[String](LABEL),
           statID      = bson.getAs[String](STATID).getOrElse(""),
           watchList   = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
           commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
@@ -175,6 +180,7 @@ object Job {
       STATUS      -> job.status,
       DELETION    -> job.deletion,
       TOOL        -> job.tool,
+      LABEL       -> job.label,
       STATID      -> job.statID,
       WATCHLIST   -> job.watchList,
       COMMENTLIST -> job.commentList,
