@@ -10,7 +10,7 @@ if [ %msageneration.content == "hhblits" ] ; then
             -oa3m ../results/query.a3m \
             -n %msa_gen_max_iter.content \
             -mact 0.35
-
+    addss.pl ../results/query.a3m
 else
     if [ %msageneration.content == "psiblast" ] ; then
 
