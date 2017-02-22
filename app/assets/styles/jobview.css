@@ -491,9 +491,9 @@ input.button_fullscreen:focus {
     margin-left: 0;
     border: 1px solid grey;
     height: 15em;
-    overflow-y: scroll;
+    overflow-y: auto;
     margin-top: 3px;
-    border-radius: 0px;
+    border-radius: 5px;
 }
 
 .nice-select .list li {
