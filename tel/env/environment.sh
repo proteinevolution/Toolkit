@@ -60,6 +60,7 @@ export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}"
 export PATH="${BIOPROGS}/tools/hmmer/binaries:${PATH}" # HMMER
 export PATH="${BIOPROGS}/tools/retrieveseq:${PATH}" # RetrieveSeq
 export PATH="${BIOPROGS}/tools/seq2id:${PATH}" # Seq2ID
+export PATH="${BIOPROGS}/tools/mmseqs2-build/bin:${PATH}" # MMseqs2
 
 
 # Setup Blammer
