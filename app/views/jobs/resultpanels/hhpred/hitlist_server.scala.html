@@ -6,7 +6,7 @@
 @import play.api.libs.json.JsDefined
 @import models.results.HHpred
 @(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
-: Unit = <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 @* Load html Map used for the image representation *@
 <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
@@ -78,18 +78,25 @@
                             <td></td>
                             <td>No  @{(hit \ "no").get}</td>
                             <td></td>
-                            <td>Links</td>
+                            <td>
+                            @{hit \ "struc" match {
+                                    case JsDefined(jsValue) => {HHpred.getLinks((hit \ "struc").get.as[String])}
+                                    case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
+                                }
+                            }
+                            </td>
                             <td></td>
                         </tr>
                         @* checkboxes, accession, name of hit*@
                         <tr class="name">
                             <td><input type="checkbox" name="hitCheckbox" class="hitCheckbox" value='@{(hit \ "no").get}'></td>
+                            <td colspan="2">
                             @{hit \ "struc" match {
-                                case JsDefined(jsValue) =>
-                                    <td colspan="2">{(hit \ "struc").get.as[String]}</td>
+                                case JsDefined(jsValue) => {HHpred.getSingleLink((hit \ "struc").get.as[String])}
                                 case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
                             }
                             }
+                            </td>
                             <td colspan="2">@{(hit \ "hit").get.as[String]}</td>
                         </tr>
                         @* Alignment Details*@
