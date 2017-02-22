@@ -105,9 +105,6 @@
                 @for((alignment, hit) <- ((jsValue \ "hhr" \ "alignments").as[List[JsObject]], (jsValue \ "hhr" \ "hits").as[List[JsObject]]).zipped.toList){
                   <table class="unstriped">
                     <tbody>
-                        <tr>
-                            <hr id="line-element" colspan="4" class="horizontal-line">
-                        </tr>
                         @* hit number, links *@
                         <tr>
                             <td></td>
