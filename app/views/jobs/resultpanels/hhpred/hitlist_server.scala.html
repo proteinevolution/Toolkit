@@ -10,7 +10,7 @@
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 @* Load html Map used for the image representation *@
 <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-    <li class="accordion-item" data-accordion-item>
+    <li class="accordion-item is-active" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
             <div>
@@ -47,32 +47,67 @@
             </table>
         </div>
     </li>
-    <li class="accordion-item is-active" data-accordion-item>
+    <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Alignments</a>
         <div id="alignments" class="accordion-content table-scroll" data-tab-content>
-            <div style="display: flex">
+            <ul id="accordion" class="accordion forward_panel" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+                <li class="accordion-item" data-accordion-item>
+                    <a href="#" class="accordion-title" style="background-color: #eee;">Forward</a>
+                    <div id="alignments" class="alignments accordion-content forward_panel_content" data-tab-content>
+                        <div class="select_forward">
+                            <select id="forward">
+                                <option value="hhpred">HHpred</option>
+                            </select>
+                        </div>
+                        <br>
+                        <div class="forward_form">
+                            <div class="forwardFormDiv">
+                                <label style="font-weight: bold">Select hits to forward</label>
+                                <input type="radio" name="radio1"><label>Selected Hits</label>
+                                <div class="two_input">
+                                    <input type="radio" name="radio1"><label>E-Value better than</label>
+                                    <input class="result_inputs" type="text" value="0.001">
+                                </div>
+                            </div>
+
+                            <div class="forwardFormDiv">
+                                <label style="font-weight: bold">Select sequence length</label>
+                                <input type="radio" name="radio2"><label>Forward slider region</label>
+                                <br>
+                                <input type="radio" name="radio2"><label>Forward full length sequence</label>
+                            </div>
+                            <div class="forwardFormLast"><a class="success button tiny" onclick="forward_($('#forward').val());" type="button" id="forward">
+                            Forward Job</a></div>
+                        </div>
+
+                    </div>
+                </li>
+            </ul>
             <div id="hhpred_alignment_control">
-                <a class="success button tiny" onclick="selectAll_()" type="button" id="selectAllSeq">Select all</a>
-                <select id="hhpred_color_select" onchange="toggleAliColor(this)">
-                    <option value="none">No color</option>
-                    <option value="letters">Letters</option>
-                    <option value="background">Background</option>
-                </select>
+                <div id="hhpred_histo">
+                    <a type="button" class="button success tiny hhpred_extra_button" onclick="toggleHistogram()">Histogram</a>
+                </div>
+                <div id="hhpred_advanced" >
+                    <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_manual()">Manual template selection</a>
+                    <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_automatic()">Select Templates Automatically</a>
+                </div>
+
             </div>
-            <div id="hhpred_alignment_control_extra">
-            <input type="checkbox" onchange="toggleSS(this)"> Color SS
-                <a type="button" class="button success tiny" onclick="toggleHistogram()">Histogram</a>
-            <a type="button" class="button success tiny" onclick="hhpred_manual()">Create Model from manually selected templates</a>
-            <a type="button" class="button success tiny" onclick="hhpred_automatic()">Select Templates Automatically</a>
+            <!-- TODO FIX Coloring David -->
+            <div class="colorOpts">
+                <a onclick="selectAll_()" type="button" id="selectAllSeq">Select all</a>
+                <a onclick="toggleAliColor(this)" type="button">Color alignments</a>
+                <a onclick="toggleAliColor(this)" type="button">Color background</a>
+                <a onclick="toggleSS()" type="button">Color only SS</a>
             </div>
-            </div>
+
             <form id="hhpred_templates">
-
-
-
                 @for((alignment, hit) <- ((jsValue \ "hhr" \ "alignments").as[List[JsObject]], (jsValue \ "hhr" \ "hits").as[List[JsObject]]).zipped.toList){
                   <table class="unstriped">
                     <tbody>
+                        <tr>
+                            <hr id="line-element" colspan="4" class="horizontal-line">
+                        </tr>
                         @* hit number, links *@
                         <tr>
                             <td></td>
@@ -189,23 +224,13 @@
                             <td class="histogram" colspan="4">@FileLoader.loadHTML(s"$jobID/results/${jobID}_${(hit \ "no").get}.map")</td>
                         </tr>
                         <tr>
-                        <hr id="line-element" colspan="4" class="horizontal-line"></hr>
+                        <hr id="line-element" colspan="4" class="horizontal-line">
                         </tr>
                     </tbody>
                   </table>
 
                 }
-
             </form>
-
-
-
-            <div id="psiblast_alignment_control" style="display: flex;">
-                <select id="forward" onchange="forward(value);">
-                    <option value="Forward">Forward</option>
-                    <option value="PHYLIP-NEIGHBOR">PHYLIP-NEIGHBOR</option>
-                </select>
-            </div>
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
@@ -272,6 +297,9 @@
             'padding-left' : '2px'
         });
     });
+
+    $('#forward').niceSelect();
+
     var dataRoute = jsRoutes.controllers.DataController.get("@jobID", 'hhr');
     $.ajax({
         method: dataRoute.method,
@@ -293,7 +321,6 @@
         drawDataTable();
         drawInformation();
         $("#accordion").foundation();
-        $('#hhpred_color_select').niceSelect();
 
     })
     aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
