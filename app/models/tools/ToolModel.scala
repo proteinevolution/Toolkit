@@ -102,6 +102,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         ("UPGMATree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")),
         ("UPGMAResults", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.upgma"))))
 
+      case "mmseqs2" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output.rep")),
+        ("Summary", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output.clu"))))
+
       case "retseq" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/sequences.fa")),
         ("Summary", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/unretrievable"))))
 
@@ -217,11 +220,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("retseq", "RetrieveSeq", "ret", "utils", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE)),
 
-
     // Seq2ID
     ("seq2id", "Seq2ID", "s2id", "utils", "",
       Seq(paramAccess.ALIGNMENT)),
-
 
     // ANCESCON
     ("ancescon", "ANCESCON", "anc", "classification", "",
@@ -231,7 +232,11 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("phylip", "PHYLIP-NEIGHBOR", "phyn", "classification", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYLIP)),
 
-    // Backtranslate1
+    // MMseqs2
+    ("mmseqs2", "MMseqs2", "mseq", "classification", "",
+      Seq(paramAccess.ALIGNMENT, paramAccess.MIN_SEQID, paramAccess.MIN_ALN_COV)),
+
+    // Backtranslate
     ("backtrans", "Backtranslator", "bac", "utils", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.GENETIC_CODE)),
 
