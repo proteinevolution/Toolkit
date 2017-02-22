@@ -1,4 +1,4 @@
-var quickLinksComponent, recentUpdatesComponent, searchField, slickSlider, styleComponent, tilescomponent, trafficBarComponent, trafficbar, typeAhead;
+var slickSlider, styleComponent, tilescomponent, trafficBarComponent, trafficbar, typeAhead;
 
 slickSlider = function(elem, isInit) {
     if (!isInit) {
@@ -140,15 +140,6 @@ window.Index = {
     }
 };
 
-searchField = function(elem, isInit) {
-    if (!isInit) {
-        return $("#searchInput").keyup(function(event) {
-            if (event.keyCode === 13) {
-                return m.route("/tools/" + ($("#searchInput").val()));
-            }
-        });
-    }
-};
 
 trafficBarComponent = {
     view: function() {
