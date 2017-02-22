@@ -17,6 +17,8 @@ window.JobModel = {
         "pmin": 20,
         "aliwidth": 80,
         "max_seqid": 90,
+        "min_seqid": "0.8",
+        "min_aln_cov": "0.8",
         "min_query_cov": "0",
         "num_seqs_extract": 100,
         "protblastprogram": "psiblast"

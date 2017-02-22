@@ -10,7 +10,7 @@ if [ %msageneration.content == "hhblits" ] ; then
             -oa3m ../results/query.a3m \
             -n %msa_gen_max_iter.content \
             -mact 0.35
-
+    addss.pl ../results/query.a3m
 else
     if [ %msageneration.content == "psiblast" ] ; then
 
@@ -109,9 +109,9 @@ cp ../results/hhsearch.hhr ../results/${JOBID}.hhr
 # DEPRECATED. Replaced by a Javascript solution with SVG
 #hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
-#profile_logos.pl ${JOBID} ../results/ ../results/ 
+profile_logos.pl ${JOBID} ../results/ ../results/
 
-#tar xfvz ../results/${JOBID}.tar.gz -C ../results/
+tar xfvz ../results/${JOBID}.tar.gz -C ../results/
 
 tenrep.rb -i ../results/query.repseq.fas -h ../results/${JOBID}.hhr -p 40 -o ../results/query.tenrep_file
 
@@ -131,4 +131,6 @@ reformat.pl fas \
 # Generate Hitlist in JSON for hhrfile
  
 hhr2json.py "$(readlink -f ../results/hhsearch.hhr)" > ../results/hhr.json
+
+
 

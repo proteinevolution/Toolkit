@@ -61,9 +61,8 @@
         <div id="alignments" class="alignments accordion-content" data-tab-content>
             <ul id="accordion" class="accordion forward_panel" data-accordion data-multi-expand="true" data-allow-all-closed="true">
                 <li class="accordion-item" data-accordion-item>
-                    <a href="#" class="accordion-title">Forward</a>
+                    <a href="#" class="accordion-title" style="background-color: #eee;">Forward</a>
                     <div id="alignments" class="alignments accordion-content forward_panel_content" data-tab-content>
-                            <!-- TODO DAVID: Functionality of radio buttons and evalue input -->
                         <div class="select_forward">
                             <select id="forward">
                                 <option value="hhpred">HHpred</option>
@@ -71,37 +70,35 @@
                         </div>
                         <br>
                         <div class="forward_form">
-                            <label>Select hits to forward</label>
-                            <div>
-                                <input type="radio" name="radio1">Selected Hits
-                                <br>
+                            <div class="forwardFormDiv">
+                                <label style="font-weight: bold">Select hits to forward</label>
+                                <input type="radio" name="radio1"><label>Selected Hits</label>
                                 <div class="two_input">
-                                    <input type="radio" name="radio1">E-Value better than
-                                    <input class="result_inputs" type="text">
+                                    <input type="radio" name="radio1"><label>E-Value better than</label>
+                                    <input class="result_inputs" type="text" value="0.001">
                                 </div>
                             </div>
-                            <br>
-                            <label>Select sequence length</label>
-                            <div>
-                                <input type="radio" name="radio2">Forward slider region
+
+                            <div class="forwardFormDiv">
+                                <label style="font-weight: bold">Select sequence length</label>
+                                <input type="radio" name="radio2"><label>Forward slider region</label>
                                 <br>
-                                <input type="radio" name="radio2">Forward full length sequence
+                                <input type="radio" name="radio2"><label>Forward full length sequence</label>
                             </div>
+                            <div class="forwardFormLast"><a class="success button tiny" onclick="forward_($('#forward').val());" type="button" id="forward">
+                                Forward Job</a></div>
                         </div>
-                        <a class="success button tiny" onclick="forward_($('#forward').val());" type="button" id="forward">
-                            Forward Job</a>
                     </div>
                 </li>
             </ul>
-            <div id="psiblast_alignment_control">
-                <a class="success button tiny" onclick="selectAll_()" type="button" id="selectAllSeq">Select all</a>
-                <select id="psiblast_color_select" onchange="toggleAliColor(this)">
-                    <option value="none">No color</option>
-                    <option value="letters">Letters</option>
-                    <option value="background">Background</option>
-                </select>
+            <div class="colorOpts">
+                <a onclick="selectAll_()" type="button" id="selectAllSeq">Select all</a>
+                <a onclick="toggleAliColor(this)" type="button">Color alignments</a>
+                <a onclick="toggleAliColor(this)" type="button">Color background</a>
+                <a onclick="toggleSS()" type="button">Color only SS</a>
             </div>
             <form id="psiblast_templates">
+                <hr id="line-element" colspan="4" class="horizontal-line">
             </form>
         </div>
     </li>
@@ -215,6 +212,7 @@
 
                     var divAlignment = document.createElement("div");
                     divAlignment.setAttribute("class", "alignment_box");
+
                     var checkbox = document.createElement("input");
                     checkbox.setAttribute("type", "checkbox");
                     checkbox.setAttribute("value", alignmentNum.toString());
@@ -224,7 +222,6 @@
                     var tab = document.createElement("table");
                     tab.className += " unstriped ";
                     var tabbody = document.createElement("tbody");
-
                     hitNames.push(">" + hits[i].description[0].accession + " | " + hits[i].description[0].title)
                     // Names and Accession Numbers
                     for (var j = 0; j < numHitsShown ; j++) {

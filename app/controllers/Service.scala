@@ -135,12 +135,12 @@ final class Service @Inject() (webJarAssets                                     
               }
             // The jobState decides which views will be appended to the job
 
-            val jobViews: Seq[(String, Html)] = job.status match {
+            val jobViews: Future[Seq[(String, Html)]] = job.status match {
 
               case Done => toolFactory.getResults(job.jobID, job.tool, jobPath)
 
               // All other views are currently computed on Clientside
-              case _ => Nil
+              case _ => Future.successful(Nil)
             }
             // Read parameters from serialized file
             val paramValues: Map[String, String] = {
@@ -153,17 +153,19 @@ final class Service @Inject() (webJarAssets                                     
                 Map.empty[String, String]
               }
             }
-            ownerName.map{ ownerN =>
-              Ok(Json.toJson(
-                Jobitem(job.mainID.stringify,
-                        BSONObjectID.generate().stringify, // Used for resubmitting
-                        job.jobID,
-                        job.status,
-                        ownerN,
-                        DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get),
-                        toolitem,
-                        jobViews,
-                        paramValues)))
+            ownerName.flatMap { ownerN =>
+              jobViews.map { jobViewsN =>
+                Ok(Json.toJson(
+                  Jobitem(job.mainID.stringify,
+                    BSONObjectID.generate().stringify, // Used for resubmitting
+                    job.jobID,
+                    job.status,
+                    ownerN,
+                    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get),
+                    toolitem,
+                    jobViewsN,
+                    paramValues)))
+              }
             }
 
           case _ =>
