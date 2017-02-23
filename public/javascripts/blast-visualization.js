@@ -2,23 +2,20 @@
 
 
 
-function toggleAliColor(element) {
-    if(element.textContent == "Letters") {
+function toggleAliColor(str) {
+    if(str == "letters") {
         for(var i = 0; i < aas.length; i++) {
             var aa = aas[i];
             aa.style.color = aa_color_font.get(aa.className);
             aa.style.backgroundColor = "white"
         }
-    } else if(element.textContent == "Background") {
+    } else if(str == "background") {
         for(var i = 0; i < aas.length; i++) {
             var aa = aas[i];
             aa.style.backgroundColor = aa_color_background.get(aa.className);
             aa.style.color = "black"
         }
-    } else if(element.textContent == "Color only SS") {
-            toggleSS()
-    }
-    else {
+    } else {
         for(var i = 0; i < aas.length; i++) {
             aas[i].style.color = "black";
             aas[i].style.backgroundColor = "white";
@@ -26,14 +23,25 @@ function toggleAliColor(element) {
     }
 }
 
-function toggleSS() {
 
+function toggleSS(bool) {
+    if(bool == false) {
         for (var i = 0; i < ss_helices.length; i++) {
-            ss_helices[i].style.color="#D00000";
+            ss_helices[i].style.color = "black";
+        }
+        for (var i = 0; i < ss_extended.length; i++) {
+            ss_extended[i].style.color = "black";
+        }
+    }
+    if(bool == true){
+        for (var i = 0; i < ss_helices.length; i++) {
+            ss_helices[i].style.color = "#D00000";
         }
         for (var i = 0; i < ss_extended.length; i++) {
             ss_extended[i].style.color = "#0000D0";
         }
+    }
+
 
 }
 
