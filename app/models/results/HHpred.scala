@@ -7,12 +7,14 @@ import better.files._
 import models.Constants
 import play.twirl.api.Html
 import modules.parsers.HHR._
+import play.api
 import play.api.Logger
+
 import scala.collection.mutable.ArrayBuffer
 
 object HHpred extends Constants {
 
-
+  private val color_regex = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
   private val helix_pattern = """([Hh]+)""".r
   private val sheet_pattern = """([Ee]+)""".r
   private val helix_sheets = """([Hh]+|[Ee]+)""".r("ss")
@@ -74,12 +76,17 @@ object HHpred extends Constants {
 
   }
 
+
+
   def SSColorReplace(sequence: String): String = this.helix_sheets.replaceAllIn(sequence, { m =>
     m.group("ss") match {
-      case this.helix_pattern(substr) => "<span class=\"ss_h\">" + substr + "</span>"
+      case this.helix_pattern(substr) => "<span class=\"aa_h\">" + substr + "</span>"
       case this.sheet_pattern(substr) => "<span class=\"ss_h\">" + substr + "</span>"
     }
   })
+  
+  def colorRegexReplacer(sequence: String): String= this.color_regex.replaceAllIn(sequence, { m =>
+ "<span class=\"aa_"+m.toString().charAt(0)+"\">"+m.toString()+"</span>"})
 
   def makeRow(rowClass: String, entries: Array[String]): Html = {
     var html = "";
