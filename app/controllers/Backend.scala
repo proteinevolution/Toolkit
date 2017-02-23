@@ -8,6 +8,7 @@ import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -85,7 +86,7 @@ final class Backend @Inject()(webJarAssets                                      
       if (user.isSuperuser) {
         //CheckBackendPath && user.isSuperuser && connectedUsers.get(user.userID).get.isBeforeNow) {
         //NoCache(Ok(views.html.backend.backend(webJarAssets, views.html.backend.backend_maincontent(), "Backend")))
-        NoCache(Ok(views.html.backend.index()))
+        NoCache(Ok(Json.toJson("Index Page")))
       } else {
         NotFound
       }
@@ -96,8 +97,24 @@ final class Backend @Inject()(webJarAssets                                      
     getUser.flatMap { user =>
       if (user.isSuperuser) {
         getStatistics.map { toolStatisticList: List[ToolStatistic] =>
-          NoCache(Ok(views.html.backend.statistics(toolStatisticList)))
+          NoCache(Ok(Json.toJson(toolStatisticList)))
         }
+      } else {
+        Future.successful(NotFound)
+      }
+    }
+  }
+
+  def pushMonthlyStatistics = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      if (user.isSuperuser) {
+        getStatistics.map { toolStatisticList: List[ToolStatistic] =>
+          toolStatisticList.map { toolStatistic =>
+            val updatedToolStatistic = toolStatistic.pushMonth()
+            upsertStatistics(updatedToolStatistic)
+            toolStatistic
+          }
+        }.map(toolStatistic => NoCache(Ok(Json.toJson(toolStatistic))))
       } else {
         Future.successful(NotFound)
       }
@@ -108,7 +125,7 @@ final class Backend @Inject()(webJarAssets                                      
     getUser.flatMap { user =>
       if (user.isSuperuser) {
         getArticles(-1).map { articles =>
-          NoCache(Ok(views.html.backend.cms(articles)))
+          NoCache(Ok(Json.toJson(articles)))
         }
       } else {
         Future.successful(NotFound)

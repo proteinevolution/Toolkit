@@ -29,6 +29,7 @@ GET           /@/backend/logout                       @controllers.Backend.logOu
 # integrated mithril route backend routes
 GET           /backend/index                          @controllers.Backend.index
 GET           /backend/statistics                     @controllers.Backend.statistics
+GET           /backend/pushMonthlyStatistics          @controllers.Backend.pushMonthlyStatistics
 GET           /backend/cms                            @controllers.Backend.cms
 POST          /backend/cms                            @controllers.Backend.cms
 

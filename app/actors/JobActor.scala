@@ -331,6 +331,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
             case Error =>
               this.updateJobState(job).map { job =>
                 this.removeJob(job.jobID)
+
+                // Update the statistics for the failed job
+                increaseJobCount(job.tool, failed = true)
               }
             case _ =>
               Logger.info("Job State for \'" + jobID + "\' changed to invalid JobStateChanged State: " + jobState)
