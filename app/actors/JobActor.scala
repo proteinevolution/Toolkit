@@ -185,12 +185,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       upsertJob(job)
       val paramsWithoutMainID = params - "mainID" - "jobID" // need to hash without mainID and without the jobID
 
-      /* HACK: prepend path to the standarddb so that the full path can be hidden from the user. This can later be stored
-         in the application.conf and loaded via ConfigFactory. No need for a descriptor file which had to be maintained otherwise.
-       */
 
       val DBNAME = params.getOrElse("standarddb","")
-      val DB = ("/ebio/abt1_share/toolkit_sync/databases/standard/NewToolkitDBs/" + DBNAME).toFile
+      val DB = (env.get("STANDARD") + "/" + DBNAME).toFile
 
       val jobHash = {
       paramsWithoutMainID.get("standarddb") match {
