@@ -16,13 +16,15 @@ mmseqs cluster  ../results/seqDB \
                 ../results/tmp \
                 --min-seq-id %min_seqid.content \
                 -c %min_aln_cov.content \
-                --remove-tmp-files > ../results/output
+                --remove-tmp-files \
+                --threads 4
 
 
 #Generate FASTA-style output
 mmseqs createseqfiledb ../results/seqDB \
                        ../results/clu \
                        ../results/clu_seq \
+                       --threads 4
 
 mmseqs result2flat     ../results/seqDB \
                        ../results/seqDB \
