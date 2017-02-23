@@ -161,6 +161,11 @@ trait CommonModule extends ReactiveMongoComponents {
 
   protected def addStatistic(toolStatistic : ToolStatistic) : Future[WriteResult] = statisticsCollection.flatMap(_.insert(toolStatistic))
 
+  protected def upsertStatistics(toolStatistic : ToolStatistic) : Future[Option[ToolStatistic]] = {
+    statisticsCollection.flatMap(_.findAndUpdate(selector = BSONDocument(ToolStatistic.IDDB -> toolStatistic.toolID),
+                                                 update   = toolStatistic, upsert = true).map(_.result[ToolStatistic]))
+  }
+
   protected def increaseJobCount(toolName : String, failed : Boolean = false) : Future[WriteResult] = {
     statisticsCollection.flatMap(_.update(BSONDocument(ToolStatistic.TOOLNAME -> toolName),
                                           BSONDocument("$inc"                 ->

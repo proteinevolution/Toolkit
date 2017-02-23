@@ -1,6 +1,7 @@
 package models.database.statistics
 
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import play.api.libs.json._
 import reactivemongo.bson._
 
@@ -16,6 +17,16 @@ case class ToolStatistic(toolID        : BSONObjectID,
                          datePushed    : List[DateTime]) {
   def total       : Long = monthly.map(_.toLong).sum[Long]
   def totalFailed : Long = monthlyFailed.map(_.toLong).sum[Long]
+
+  def pushMonth(): ToolStatistic = {
+    this.copy(
+      current       = 0,
+      currentFailed = 0,
+      monthly       = this.monthly.::(this.current),
+      monthlyFailed = this.monthlyFailed.::(this.currentFailed),
+      datePushed    = this.datePushed.::(DateTime.now)
+    )
+  }
 }
 
 object ToolStatistic {
@@ -47,6 +58,7 @@ object ToolStatistic {
   }
 
   implicit object JsonWriter extends Writes[ToolStatistic] {
+    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     override def writes(toolStatistic : ToolStatistic) : JsObject = Json.obj(
       IDDB          -> toolStatistic.toolID.stringify,
       TOOLNAME      -> toolStatistic.toolName,
@@ -54,7 +66,9 @@ object ToolStatistic {
       CURRENTFAILED -> toolStatistic.currentFailed,
       MONTHLY       -> toolStatistic.monthly,
       MONTHLYFAILED -> toolStatistic.monthlyFailed,
-      DATEPUSHED    -> toolStatistic.datePushed.headOption.map(_.formatted("dd/MM/yyyy HH:mm:ss"))
+      DATEPUSHED    -> toolStatistic.datePushed.map(dt => Json.obj("string" -> dtf.print(dt),
+                                                                   "month"  -> dt.monthOfYear().getAsShortText,
+                                                                   "year"   -> dt.year().get))
     )
   }
 
