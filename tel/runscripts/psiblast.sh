@@ -1,4 +1,4 @@
-psiblast -db %NR/%standarddb.content \
+psiblast -db %STANDARD/%standarddb.content \
          -matrix %matrix.content \
          -num_iterations %num_iter.content \
          -evalue %evalue.content \

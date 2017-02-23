@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import actors.JobActor.{CreateJob, Delete}
 import models.Constants
-import models.database.jobs.{JobDeletionFlag, JobDeletion, Job, Error}
+import models.database.jobs.{Error, Job, JobDeletion, JobDeletionFlag}
 import models.job.{JobActorAccess, JobIDProvider}
 import models.search.JobDAO
 import modules.{CommonModule, LocationProvider}
@@ -19,6 +19,7 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
+import modules.tel.env.Env
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -26,6 +27,7 @@ import better.files._
 @Singleton
 final class JobController @Inject() (jobIDProvider                                    : JobIDProvider,
                                      jobActorAccess                                   : JobActorAccess,
+                                     env                                              : Env,
                                      implicit val userCache                           : CacheApi,
                                      implicit  val locationProvider                   : LocationProvider,
                                      val jobDao                                       : JobDAO,
@@ -85,7 +87,8 @@ final class JobController @Inject() (jobIDProvider                              
           } else {
 
             val DBNAME = formData.getOrElse("standarddb", "")
-            val DB = ("/ebio/abt1_share/toolkit_sync/databases/standard/NewToolkitDBs/" + DBNAME).toFile
+            val DB = (env.get("STANDARD") + "/" + DBNAME).toFile
+
 
             // get hold of the database in use
             val inputHash = jobDao.generateHash(formData).toString()

@@ -4,9 +4,9 @@
 # if a corresponding f.pal file exists.
 
 
-if [ -d  %NR ] ; then
+if [ -d  %STANDARD ] ; then
 
-for f in %NR/*.pal ; do
+for f in %STANDARD/*.pal ; do
  
      DBNAME=$(echo $f | sed 's/.pal//')
     
