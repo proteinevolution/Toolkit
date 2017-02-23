@@ -400,13 +400,13 @@ margin-top: 2em;
 }
 
 #submit_modal {
-    background-color: #eee;
-    width: 40%;
+    background-color: #F7E4E1;
+    width: 500px;
     height: 10em;
     border: 1px solid darkgray;
     border-radius: 5px;
     font-size: 0.9em;
-    color: grey;
+    color: black;
     margin-top: 5em;
     text-align: center;
 }
@@ -421,7 +421,7 @@ margin-top: 2em;
     margin: 4em 1em 0 1em;
     border-radius: 3px;
     font-size: 0.75rem;
-    background-color: #b1b1b1;
+    background-color: #a6a6a6;
 }
 
 
