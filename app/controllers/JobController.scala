@@ -84,7 +84,9 @@ final class JobController @Inject() (jobIDProvider                              
 
           } else {
 
-            val DB = formData.getOrElse("standarddb", "").toFile
+            val DBNAME = formData.getOrElse("standarddb", "")
+            val DB = ("/ebio/abt1_share/toolkit_sync/databases/standard/NewToolkitDBs/" + DBNAME).toFile
+
             // get hold of the database in use
             val inputHash = jobDao.generateHash(formData).toString()
             val rsHash = jobDao.generateRSHash(toolname)
