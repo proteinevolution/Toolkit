@@ -7,16 +7,15 @@ window.Backend = {
     plotter : function (ctrl) {
         return function (elem, isin, context) {
             if (!isin) {
-                var chartElements = ctrl.data().map(function (item) {
-                    console.log(item);
-                    return item
-                });
+                var chartElements = ctrl.data()//.map(function (item) {
+                    //console.log(item);
+                    //return item
+                //});
                 var xAxisElements = chartElements[0].datePushed.map(function(date){
-                    var newDate = date.month + " " + date.year;
-                    console.log(newDate);
+                    var newDate = date.string;
                     return newDate;
                 });
-                xAxisElements.push("Today");
+                xAxisElements.splice(0,0,"Today");
 
                 context.chart = new Highcharts.chart("statchart",
                     {
@@ -24,7 +23,8 @@ window.Backend = {
                         title: { text: 'Monthly useage by Tool' },
                         yAxis: { title: { text: 'Jobs per month' } },
                         xAxis: { title: { text: 'Month'},
-                                 categories: xAxisElements
+                                 categories: xAxisElements,
+                                 reversed: true
                         },
                         plotOptions: {
                             area: {
@@ -38,10 +38,9 @@ window.Backend = {
                             }
                         },
                         series: chartElements.map(function (item) {
-                            var monthlyElements = [];
+                            var monthlyElements = [item.current];
                             item.monthly.forEach(function(element){monthlyElements.push(element)});
-                            monthlyElements.push(item.current);
-                            console.log(monthlyElements);
+                            //console.log(monthlyElements);
                             return {
                                 name : item.toolName,
                                 data : monthlyElements
