@@ -4,7 +4,7 @@ reformat_protblast.pl -f=%alignment.path \
                       -o=fas \
 
 
-%protblastprogram.content -db %standarddb.content \
+%protblastprogram.content -db %NR/%standarddb.content \
                           -query %alignment.path \
                           -evalue %evalue.content \
                           -matrix %matrix.content \
