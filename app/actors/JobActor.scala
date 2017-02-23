@@ -185,8 +185,12 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       upsertJob(job)
       val paramsWithoutMainID = params - "mainID" - "jobID" // need to hash without mainID and without the jobID
 
-      // TODO There are more databases than the standarddb
-      val DB = params.getOrElse("standarddb","").toFile  // get hold of the database in use
+      /* HACK: prepend path to the standarddb so that the full path can be hidden from the user. This can later be stored
+         in the application.conf and loaded via ConfigFactory. No need for a descriptor file which had to be maintained otherwise.
+       */
+
+      val DBNAME = params.getOrElse("standarddb","")
+      val DB = ("/ebio/abt1_share/toolkit_sync/databases/standard/NewToolkitDBs/" + DBNAME).toFile
 
       val jobHash = {
       paramsWithoutMainID.get("standarddb") match {
@@ -313,9 +317,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
             case Done =>
               // Job is no longer running
-              Logger.info("Removing exection context")
+              Logger.info("Removing execution context")
               this.runningExecutions = this.runningExecutions.-(job.jobID)
-              Logger.info("DONE Removing exection context")
+              Logger.info("DONE Removing execution context")
 
               // Put the result files into the database, JobActor has to wait until this process has finished
               Future.sequence((jobPath / job.jobID / "results").list.withFilter(_.hasExtension).withFilter(_.extension.get == ".json").map { file =>

@@ -11,5 +11,5 @@ hmmsearch --cpu 4 \
           --domtblout $(readlink -f ../results/domtbl) \
           -o $(readlink -f ../results/outfile) \
           -A $(readlink -f ../results/outfile_multi_sto) \
-           $(readlink -f ../params/infile_hmm)  %standarddb.content
+           $(readlink -f ../params/infile_hmm)  %NR/%standarddb.content
 

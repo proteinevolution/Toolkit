@@ -13,7 +13,7 @@ for f in %NR/*.pal ; do
      # Database must exist and be a regular file
      if [ -f $DBNAME ] ; then
         fbname=$(basename "$DBNAME")
-	    echo "$DBNAME $fbname"
+	    echo "$fbname $fbname"
      fi
 done
 

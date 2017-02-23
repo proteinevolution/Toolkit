@@ -677,16 +677,6 @@ var alignment_format = function(elem, isInit) {
 
 
 
-
-/*
-<select>
-<option value="volvo">Volvo</option>
-    <option value="saab">Saab</option>
-    <option value="mercedes">Mercedes</option>
-    <option value="audi">Audi</option>
-</select>
-*/
-
 ParameterRadioComponent = {
     view: function(ctrl, args) {
         return renderParameter([
