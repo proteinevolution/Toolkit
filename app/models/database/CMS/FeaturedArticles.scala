@@ -5,6 +5,7 @@ package models.database.CMS
   */
 
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
@@ -49,13 +50,14 @@ object FeaturedArticle{
 
 
   implicit object ArticleWrites extends Writes[FeaturedArticle] {
+    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     def writes (featuredArticle : FeaturedArticle) : JsObject = Json.obj(
       IDDB        -> featuredArticle.articleID,
       TITLE       -> featuredArticle.title,
       TEXT        -> featuredArticle.text,
       IMAGEPATH   -> featuredArticle.imagePath,
-      DATECREATED -> featuredArticle.dateCreated,
-      DATEUPDATED -> featuredArticle.dateUpdated
+      DATECREATED -> featuredArticle.dateCreated.map(dt => dtf.print(dt)),
+      DATEUPDATED -> featuredArticle.dateUpdated.map(dt => dtf.print(dt))
     )
   }
 
