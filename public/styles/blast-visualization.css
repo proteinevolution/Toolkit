@@ -86,14 +86,6 @@
     background-color: #eee;
 }
 
-.dataTable{
-    width: 80% !important;
-    margin-left: unset !important;
-}
-
-.dataTables_scrollHeadInner{
-  width: unset !important;
-}
 
 #hhpred_alignment_control{
     width: 100%;
@@ -255,4 +247,6 @@
     }
 }
 
-
+#hitListAccordion {
+    padding: 0 !important;
+}
