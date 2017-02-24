@@ -128,8 +128,8 @@
         var firstHitBegin;
         var firstHitEnd;
         var numHitsShown = 1;
-        var hitSequences = new Array();
-        var hitNames = new Array();
+        var hitSequences = [];
+        var hitNames = [];
 
 
         (function () {
@@ -141,10 +141,10 @@
                 // For the hitlist
 
                 var numIterations = data.output_psiblastp.BlastOutput2[0].report.results.iterations.length - 1;
-                var basenameResults = data.output_psiblastp.BlastOutput2[0].report.results.iterations[numIterations].search
-                var hits = basenameResults.hits
-                var numHits = hits.length - 1
-                var info = basenameResults.stat
+                var basenameResults = data.output_psiblastp.BlastOutput2[0].report.results.iterations[numIterations].search;
+                var hits = basenameResults.hits;
+                var numHits = hits.length - 1;
+                var info = basenameResults.stat;
 
                 queryLength = basenameResults.query_len;
                 $("#psiblast_query").append(basenameResults.query_title);
@@ -187,7 +187,7 @@
                         'render': function (data, type, full, meta) {
                             return '<input type="checkbox" name="hitCheckbox" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '">';
                         }
-                    }],
+                    }]
                 });
 
                 // get beg and end of first hit to set slider handles
@@ -207,8 +207,8 @@
                 var alignments_container = document.getElementById("psiblast_templates");
                 for (var i = 0; i <= numHits; i++) {
 
-                    var ali = hits[i].hsps[0]
-                    var alignmentNum = hits[i].num
+                    var ali = hits[i].hsps[0];
+                    var alignmentNum = hits[i].num;
 
                     var divAlignment = document.createElement("div");
                     divAlignment.setAttribute("class", "alignment_box");
@@ -228,19 +228,19 @@
                         var accession = hits[i].description[j].accession;
                         var linkTemplate = ["<a name=\"", accession, "\"href=\"https://www.ncbi.nlm.nih.gov/protein/", accession, "\">", accession, "</a>"].join('')
                         var names = makeRowColspan([alignmentNum + " " + linkTemplate, hits[i].description[j].title], 2, "td")
-                        names.setAttribute("class", "name")
+                        names.setAttribute("class", "name");
                         tabbody.appendChild(names)
                     }
 
                     // hit details
-                    var length = hits[i].len
-                    var score = ali.score
-                    var bit_score = ali.bit_score
+                    var length = hits[i].len;
+                    var score = ali.score;
+                    var bit_score = ali.bit_score;
                     var evalue = ali.evalue.toExponential(2);
                     var identities = ali.identity;
                     var positives = ali.positive;
                     var gaps = ali.gaps;
-                    var align_len = ali.align_len
+                    var align_len = ali.align_len;
                     var identityPercentage = Math.floor((identities / align_len) * 100);
                     var positivesPercentage = Math.floor((positives / align_len) * 100);
                     var gapsPercentage = Math.floor((gaps / align_len) * 100);
@@ -251,7 +251,7 @@
                     positives + "/" + align_len + " (" + positivesPercentage + "%), Gaps: " + gaps + "/" + align_len + " (" + gapsPercentage + "%), Length: " + length], 4, "td"));
 
                     // break
-                    tabbody.appendChild(makeRow(["<br></br>"]))
+                    tabbody.appendChild(makeRow(["<br></br>"]));
 
                     // Query sequence
                     var qseqColored = ali.qseq.replace(color_regex, color_regex_replacer);
@@ -275,8 +275,8 @@
 
                     // Line
                     var line = makeRowColspan(["<hr id=\"line-element\"></hr>"], 4, "td");
-                    line.setAttribute("class", "horizontal-line")
-                    tabbody.appendChild(line)
+                    line.setAttribute("class", "horizontal-line");
+                    tabbody.appendChild(line);
 
                     tab.appendChild(tabbody);
 
@@ -307,17 +307,17 @@
             if (tool == "")
                 return;
 
-            var forwardData = new Array();
+            var forwardData = [];
             var count;
             for (var i = 0 ; i < hitSequences.length; i++) {
                 count = i + 1;
                 if ($("input[value=" + count + "]").prop('checked')) {
-                    forwardData.push(this.hitNames[i] + '\n')
-                    forwardData.push(this.hitSequences[i] + '\n')
+                    forwardData.push(this.hitNames[i] + '\n');
+                    forwardData.push(this.hitSequences[i] + '\n');
                 }
             }
             if (forwardData.length < 1) {
-                alert("Please select at least one sequence.")
+                alert("Please select at least one sequence.");
                 return;
             }
             forward(tool, forwardData.join(''));
