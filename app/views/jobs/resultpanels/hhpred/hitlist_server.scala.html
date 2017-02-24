@@ -112,7 +112,7 @@
                             <td></td>
                             <td>
                             @{hit \ "struc" match {
-                                    case JsDefined(jsValue) => {HHpred.getLinks((hit \ "struc").get.as[String])}
+                                    case JsDefined(jsValue) => HHpred.getLinks((hit \ "struc").get.as[String])
                                     case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
                                 }
                             }
@@ -368,7 +368,7 @@ function drawDataTable(){
             'render': function (data, type, full, meta){
                 return '<input type="checkbox" name="templates" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '">';
             }
-        }],
+        }]
     });
 
 }
@@ -521,12 +521,8 @@ function toggleHistogram(){
 }
 
 function toggleSS_(){
-    if(this.colorSS == true)
-        this.colorSS = false;
-    else
-        this.colorSS = true;
+    this.colorSS = !this.colorSS;
     toggleSS(this.colorSS);
-
 }
 
 </script>

@@ -239,7 +239,7 @@
                         'render': function (data, type, full, meta){
                             return '<input type="checkbox" name="hitCheckbox" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '">';
                         }
-                    }],
+                    }]
                 });
 
                 // get beg and end of first hit to set slider handles
@@ -295,7 +295,7 @@
 
 
                     // break
-                    tabbody.appendChild(makeRow(["<br></br>"]))
+                    tabbody.appendChild(makeRow(["<br></br>"]));
 
 
                     // Handle secondary structure annotation for query, if present
@@ -354,8 +354,8 @@
 
                     // line
                     var line = makeRowColspan(["<hr id=\"line-element\"></hr>"], 4, "td");
-                    line.setAttribute("class", "horizontal-line")
-                    tabbody.appendChild(line)
+                    line.setAttribute("class", "horizontal-line");
+                    tabbody.appendChild(line);
 
 
                     tab.appendChild(tabbody);
