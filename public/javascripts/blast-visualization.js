@@ -1,22 +1,22 @@
 /* Data table helpers */
 
 
-
 function toggleAliColor(str) {
+    var i;
     if(str == "letters") {
-        for(var i = 0; i < aas.length; i++) {
+        for(i = 0; i < aas.length; i++) {
             var aa = aas[i];
             aa.style.color = aa_color_font.get(aa.className);
             aa.style.backgroundColor = "white"
         }
     } else if(str == "background") {
-        for(var i = 0; i < aas.length; i++) {
-            var aa = aas[i];
+        for(i = 0; i < aas.length; i++) {
+            aa = aas[i];
             aa.style.backgroundColor = aa_color_background.get(aa.className);
             aa.style.color = "black"
         }
     } else {
-        for(var i = 0; i < aas.length; i++) {
+        for(i = 0; i < aas.length; i++) {
             aas[i].style.color = "black";
             aas[i].style.backgroundColor = "white";
         }
@@ -25,19 +25,23 @@ function toggleAliColor(str) {
 
 
 function toggleSS(bool) {
-    if(bool == false) {
-        for (var i = 0; i < ss_helices.length; i++) {
+    var i;
+
+    if(!bool) {
+
+        for (i = 0; i < ss_helices.length; i++) {
             ss_helices[i].style.color = "black";
         }
-        for (var i = 0; i < ss_extended.length; i++) {
+        for (i = 0; i < ss_extended.length; i++) {
             ss_extended[i].style.color = "black";
         }
     }
-    if(bool == true){
-        for (var i = 0; i < ss_helices.length; i++) {
+    if(bool){
+
+        for (i = 0; i < ss_helices.length; i++) {
             ss_helices[i].style.color = "#D00000";
         }
-        for (var i = 0; i < ss_extended.length; i++) {
+        for (i = 0; i < ss_extended.length; i++) {
             ss_extended[i].style.color = "#0000D0";
         }
     }
@@ -62,7 +66,7 @@ function makeRowColspan(entries, num, HTMLElement) {
     var row = document.createElement("tr");
     for(var i = 0; i < entries.length; i++ ) {
         var entry = document.createElement(HTMLElement);
-        entry.setAttribute("padding", "0")
+        entry.setAttribute("padding", "0");
         entry.setAttribute("colspan",num);
         entry.innerHTML = entries[i];
         row.appendChild(entry);
@@ -76,7 +80,7 @@ function makeRowDiffColspan(entries, num, HTMLElement) {
     var row = document.createElement("tr");
     for(var i = 0; i < entries.length; i++ ) {
         var entry = document.createElement(HTMLElement);
-        entry.setAttribute("padding", "0")
+        entry.setAttribute("padding", "0");
         entry.setAttribute("colspan",num[i]);
         entry.innerHTML = entries[i];
         row.appendChild(entry);
@@ -120,7 +124,7 @@ function slider_show(sequence_length, start, end) {
     tooltip.text(start);
     tooltip2.text(end);
 
-    $("#flat-slider").slider({}).find(".ui-slider-handle:first").append(tooltip)
+    $("#flat-slider").slider({}).find(".ui-slider-handle:first").append(tooltip);
 
     $("#flat-slider").slider({}).find(".ui-slider-handle:last").append(tooltip2)
 
@@ -156,13 +160,13 @@ function resubmitSection(hits, names) {
         return
     }
     var sliderRange = getSliderRange();
-    var resubmitSeqs = new Array();
+    var resubmitSeqs = [];
 
     //for (var i =0 ; i < hits.length; i ++){
 
     // to resubmit only the first sequence
     for (var i =0 ; i < 1; i ++){
-        resubmitSeqs.push(names[i] + '\n')
+        resubmitSeqs.push(names[i] + '\n');
         resubmitSeqs.push(hits[i].substr(sliderRange[0] - 1, sliderRange[1] - 1) + '\n')
     }
     $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
