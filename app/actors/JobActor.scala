@@ -190,23 +190,49 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
       val DBNAME = params match {
 
-        case x if x isDefinedAt "standarddb" => env.get("STANDARD") + "/" + params.getOrElse("standarddb","")
-        case x if x isDefinedAt "hhblitsdb"  => env.get("UNIPROT")
-        case x if x isDefinedAt "hhsuitedb"  => env.get("HHSUITE")
+        case x if x isDefinedAt "standarddb" => params.getOrElse("standarddb", "")
+        case x if x isDefinedAt "hhblitsdb"  => params.getOrElse("hhblitsdb", "")
+        case x if x isDefinedAt "hhsuitedb"  => params.getOrElse("hhsuitedb", "")
         case _ => ""
 
       }
 
-      val DB = DBNAME.toFile
 
-      /** TODO: HHSUITE and UNIPROT directories don't get dbnames in ES atm. Changes in the UNIPROT or HHSUITE db directories lead to new jobhashes.
-         Need to get the dbmtime and the dbname of specific files if we want to keep things as separate as possible
-         but for now this is ok since every change in those directories has an effect on the jobhashing routine **/
-
+      val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb","")).toFile
 
       val jobHash = {
-      paramsWithoutMainID.get("standarddb") match {
-        case None => JobHash( mainID = job.mainID,
+      params match {
+        case x if x isDefinedAt "standarddb" => JobHash( mainID = job.mainID,
+          jobDao.generateHash(paramsWithoutMainID).toString(),
+          jobDao.generateRSHash(toolname),
+          dbName = Some(DBNAME),
+          dbMtime = Some(STANDARDDB.lastModifiedTime.toString),
+          toolname = toolname,
+          jobDao.generateToolHash(toolname),
+          dateCreated = Some(jobCreationTime),
+          jobID = jobID
+        )
+        case x if x isDefinedAt "hhsuitedb" => JobHash( mainID = job.mainID,
+          jobDao.generateHash(paramsWithoutMainID).toString(),
+          jobDao.generateRSHash(toolname),
+          dbName = Some(DBNAME),
+          dbMtime = Some("1970-01-01T00:00:00Z"),
+          toolname = toolname,
+          jobDao.generateToolHash(toolname),
+          dateCreated = Some(jobCreationTime),
+          jobID = jobID
+        )
+        case x if x isDefinedAt "hhblitsdb" => JobHash( mainID = job.mainID,
+          jobDao.generateHash(paramsWithoutMainID).toString(),
+          jobDao.generateRSHash(toolname),
+          dbName = Some(DBNAME),
+          dbMtime = Some("1970-01-01T00:00:00Z"),
+          toolname = toolname,
+          jobDao.generateToolHash(toolname),
+          dateCreated = Some(jobCreationTime),
+          jobID = jobID
+        )
+        case _ => JobHash( mainID = job.mainID,
           jobDao.generateHash(paramsWithoutMainID).toString(),
           jobDao.generateRSHash(toolname),
           dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
@@ -215,16 +241,6 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
           jobDao.generateToolHash(toolname),
           dateCreated = Some(jobCreationTime),
           jobID = jobID)
-        case _ => JobHash( mainID = job.mainID,
-          jobDao.generateHash(paramsWithoutMainID).toString(),
-          jobDao.generateRSHash(toolname),
-          dbName = Some(DB.name),
-          dbMtime = Some(DB.lastModifiedTime.toString),
-          toolname = toolname,
-          jobDao.generateToolHash(toolname),
-          dateCreated = Some(jobCreationTime),
-          jobID = jobID
-        )
         }
       }
       hashCollection.flatMap(_.insert(jobHash))
