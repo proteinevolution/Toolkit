@@ -40,6 +40,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     toolname match {
       case "psiblast" => Future.successful(Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID))))
 
+      case "clans" => Future.successful(Seq.empty)
+
       case "hhblits" => Future.successful(Seq(("Hitlist", views.html.jobs.resultpanels.hhblits.hitlist(jobID)),
         ("Full_Alignment", views.html.jobs.resultpanels.alignedit("full_alignment", s"/files/$jobID/out.full.fas")),
         ("Reduced_Alignment", views.html.jobs.resultpanels.alignedit("reduced_alignment", s"/files/$jobID/out.reduced.fas"))))
@@ -227,6 +229,11 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     // ANCESCON
     ("ancescon", "ANCESCON", "anc", "classification", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.LONG_SEQ_NAME)),
+
+    // CLANS
+      ("clans", "CLANS", "clan", "classification", "",
+        Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.EVALUE, paramAccess.MATRIX,
+          paramAccess.NUM_ITER)),
 
     // PHYLIP
     ("phylip", "PHYLIP-NEIGHBOR", "phyn", "classification", "",
