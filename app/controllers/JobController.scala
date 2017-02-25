@@ -88,12 +88,20 @@ final class JobController @Inject() (jobIDProvider                              
 
             // get hold of the database in use
 
-            val DBNAME = formData match {
+            case class DB(name : Option[String], mTime: Option[String])
 
-              case x if x isDefinedAt "standarddb" => Some(formData.getOrElse("standarddb", ""))
-              case x if x isDefinedAt "hhblitsdb"  => Some(formData.getOrElse("hhblitsdb", ""))
-              case x if x isDefinedAt "hhsuitedb"  => Some(formData.getOrElse("hhsuitedb", ""))
-              case _ => None
+            val HHBLITSDBMTIME = env.get("HHBLITS").toFile.lastModifiedTime.toString
+            val HHSUITEDBMTIME = env.get("HHSUITE").toFile.lastModifiedTime.toString
+            val STANDARDDB = env.get("STANDARD") + "/" + formData.getOrElse("standarddb", "")
+            val STANDARDDBMTIME = STANDARDDB.toFile.lastModifiedTime.toString
+
+
+            val jobDB = formData match {
+
+              case x if x isDefinedAt "standarddb" => DB(Some(STANDARDDB), Some(STANDARDDBMTIME))
+              case x if x isDefinedAt "hhblitsdb"  => DB(Some(formData.getOrElse("hhblitsdb", "")), Some(HHBLITSDBMTIME))
+              case x if x isDefinedAt "hhsuitedb"  => DB(Some(formData.getOrElse("hhsuitedb", "")), Some(HHSUITEDBMTIME))
+              case _ => DB(None, Some("1970-01-01T00:00:00Z"))
 
             }
 
@@ -107,17 +115,8 @@ final class JobController @Inject() (jobIDProvider                              
             println("Job hash generated: " + inputHash)
 
 
-
-            lazy val dbMtime = {
-              formData.get("standarddb") match {
-                case None => Some("1970-01-01T00:00:00Z")
-                case _ => Some((env.get("STANDARD") + "/" + DBNAME.get).toFile.lastModifiedTime.toString)
-              }
-            }
-
-
             Logger.info("Try to match Hash")
-            jobDao.matchHash(inputHash, rsHash, DBNAME, dbMtime, toolname, toolHash).flatMap { richSearchResponse =>
+            jobDao.matchHash(inputHash, rsHash, jobDB.name, jobDB.mTime, toolname, toolHash).flatMap { richSearchResponse =>
 
               Logger.info("Retrieved richSearchResponse")
               println("success: " + richSearchResponse)

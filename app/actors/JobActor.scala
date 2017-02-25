@@ -26,6 +26,7 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
 import scala.concurrent.Future
+import java.io.File
 
 object JobActor {
 
@@ -199,6 +200,9 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
 
       val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb","")).toFile
+      val HHBLITSDBMTIME = env.get("HHBLITS").toFile.lastModifiedTime.toString
+      val HHSUITEDBMTIME = env.get("HHSUITE").toFile.lastModifiedTime.toString
+
 
       val jobHash = {
       params match {
@@ -216,7 +220,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
           jobDao.generateHash(paramsWithoutMainID).toString(),
           jobDao.generateRSHash(toolname),
           dbName = Some(DBNAME),
-          dbMtime = Some("1970-01-01T00:00:00Z"),
+          dbMtime = Some(HHSUITEDBMTIME),
           toolname = toolname,
           jobDao.generateToolHash(toolname),
           dateCreated = Some(jobCreationTime),
@@ -226,7 +230,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
           jobDao.generateHash(paramsWithoutMainID).toString(),
           jobDao.generateRSHash(toolname),
           dbName = Some(DBNAME),
-          dbMtime = Some("1970-01-01T00:00:00Z"),
+          dbMtime = Some(HHBLITSDBMTIME),
           toolname = toolname,
           jobDao.generateToolHash(toolname),
           dateCreated = Some(jobCreationTime),
