@@ -1,6 +1,7 @@
 package models.database.jobs
 
-import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
+import org.joda.time.DateTime
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
 
 /**
  *
@@ -18,7 +19,9 @@ case class JobHash(mainID : BSONObjectID,
                    dbName : Option[String],
                    dbMtime : Option[String],
                    toolname: String,
-                   toolHash: String)
+                   toolHash: String,
+                   dateCreated : Option[DateTime],
+                   jobID: String)
 
 
 object JobHash {
@@ -30,6 +33,8 @@ object JobHash {
   val DBMTIME = "dbmtime"
   val TOOLNAME = "toolname"
   val TOOLHASH = "toolhash"
+  val DATECREATED = "dateCreated"
+  val JOBID = "jobID"
 
 
   implicit object Reader extends BSONDocumentReader[JobHash] {
@@ -40,7 +45,9 @@ object JobHash {
       bson.getAs[String](DBNAME),
       bson.getAs[String](DBMTIME),
       bson.getAs[String](TOOLNAME).getOrElse(""),
-      bson.getAs[String](TOOLHASH).getOrElse("No matching hash value found")
+      bson.getAs[String](TOOLHASH).getOrElse("No matching hash value found"),
+      bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
+      bson.getAs[String](JOBID).getOrElse("")
     )
   }
 
@@ -52,7 +59,9 @@ object JobHash {
       DBNAME -> jobHash.dbName,
       DBMTIME -> jobHash.dbMtime,
       TOOLNAME -> jobHash.toolname,
-      TOOLHASH -> jobHash.toolHash
+      TOOLHASH -> jobHash.toolHash,
+      DATECREATED -> BSONDateTime(jobHash.dateCreated.fold(-1L)(_.getMillis)),
+      JOBID -> jobHash.jobID
     )
   }
 }

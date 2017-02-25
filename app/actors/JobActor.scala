@@ -185,7 +185,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       upsertJob(job)
       val paramsWithoutMainID = params - "mainID" - "jobID" // need to hash without mainID and without the jobID
 
-
+      // get hold of the database in use, at the moment only standarddb, TODO: add hhsuite-db
       val DBNAME = params.getOrElse("standarddb","")
       val DB = (env.get("STANDARD") + "/" + DBNAME).toFile
 
@@ -197,14 +197,18 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
           dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
           dbMtime = Some("1970-01-01T00:00:00Z"), // use unix epoch time
           toolname = toolname,
-          jobDao.generateToolHash(toolname))
+          jobDao.generateToolHash(toolname),
+          dateCreated = Some(jobCreationTime),
+          jobID = jobID)
         case _ => JobHash( mainID = job.mainID,
           jobDao.generateHash(paramsWithoutMainID).toString(),
           jobDao.generateRSHash(toolname),
           dbName = Some(DB.name),
           dbMtime = Some(DB.lastModifiedTime.toString),
           toolname = toolname,
-          jobDao.generateToolHash(toolname)
+          jobDao.generateToolHash(toolname),
+          dateCreated = Some(jobCreationTime),
+          jobID = jobID
         )
         }
       }

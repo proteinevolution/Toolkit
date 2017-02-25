@@ -61,7 +61,7 @@ final class JobController @Inject() (jobIDProvider                              
       // Determine the jobID
       (jobID match {
 
-        // Bad Request iif the jobID can be matched to one from the database
+        // Bad Request if the jobID can be matched to one from the database
         case Some(id) =>
           selectJob(id).map { job => if (job.isDefined) Left(BadRequest) else Right(id) }
         case None =>
@@ -86,11 +86,10 @@ final class JobController @Inject() (jobIDProvider                              
 
           } else {
 
+            // get hold of the database in use
             val DBNAME = formData.getOrElse("standarddb", "")
             val DB = (env.get("STANDARD") + "/" + DBNAME).toFile
 
-
-            // get hold of the database in use
             val inputHash = jobDao.generateHash(formData).toString()
             val rsHash = jobDao.generateRSHash(toolname)
             val toolHash = jobDao.generateToolHash(toolname)
