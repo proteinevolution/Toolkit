@@ -34,7 +34,7 @@ final class JobController @Inject() (jobIDProvider                              
                                      val reactiveMongoApi                             : ReactiveMongoApi)
                                      extends Controller with UserSessions with CommonModule with Constants{
 
-  /**1
+  /**
     *  Loads one minified version of a job to the view, given the jobID
     *
     */

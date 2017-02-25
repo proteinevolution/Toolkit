@@ -12,7 +12,7 @@ case class JobClusterData (sgeID        : String,           // sun grid engine j
                            threads      : Option[Int],
                            dateStarted  : Option[DateTime] = Some(DateTime.now),
                            dateFinished : Option[DateTime] = None) {
-  def runtime = {
+  def runtime : Long = {
     val now = DateTime.now
     dateFinished.getOrElse(now).getMillis - dateStarted.getOrElse(now).getMillis
   }
