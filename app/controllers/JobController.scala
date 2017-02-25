@@ -87,29 +87,37 @@ final class JobController @Inject() (jobIDProvider                              
           } else {
 
             // get hold of the database in use
-            val DBNAME = formData.getOrElse("standarddb", "")
-            val DB = (env.get("STANDARD") + "/" + DBNAME).toFile
+
+            val DBNAME = formData match {
+
+              case x if x isDefinedAt "standarddb" => Some(formData.getOrElse("standarddb", ""))
+              case x if x isDefinedAt "hhblitsdb"  => Some(formData.getOrElse("hhblitsdb", ""))
+              case x if x isDefinedAt "hhsuitedb"  => Some(formData.getOrElse("hhsuitedb", ""))
+              case _ => None
+
+            }
+
 
             val inputHash = jobDao.generateHash(formData).toString()
             val rsHash = jobDao.generateRSHash(toolname)
             val toolHash = jobDao.generateToolHash(toolname)
+
             println("Runscript hash generated: " + rsHash)
             println("Tool hash generated: " + toolHash)
             println("Job hash generated: " + inputHash)
-            lazy val dbName = {
-              formData.get("standarddb") match {
-                case None => Some("none")
-                case _ => Some(DB.name)
-              }
-            }
+
+
+
             lazy val dbMtime = {
               formData.get("standarddb") match {
                 case None => Some("1970-01-01T00:00:00Z")
-                case _ => Some(DB.lastModifiedTime.toString)
+                case _ => Some((env.get("STANDARD") + "/" + DBNAME.get).toFile.lastModifiedTime.toString)
               }
             }
+
+
             Logger.info("Try to match Hash")
-            jobDao.matchHash(inputHash, rsHash, dbName, dbMtime, toolname, toolHash).flatMap { richSearchResponse =>
+            jobDao.matchHash(inputHash, rsHash, DBNAME, dbMtime, toolname, toolHash).flatMap { richSearchResponse =>
 
               Logger.info("Retrieved richSearchResponse")
               println("success: " + richSearchResponse)
