@@ -120,6 +120,7 @@ final class JobController @Inject() (jobIDProvider                              
                 BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate()) // Not optimal, as a fake Object ID is generated, but apply(id : String) was deprecated
               }
 
+
               // Find the Jobs in the Database
               findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
 
@@ -133,7 +134,8 @@ final class JobController @Inject() (jobIDProvider                              
                   jobDao.deleteJob(mainID.stringify)
                 }
 
-                jobsPartition._2.headOption match {
+
+                jobsPartition._2.lastOption match {
                   case Some(job) =>
 
                     Logger.info("Returning response")
