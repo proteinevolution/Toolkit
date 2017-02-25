@@ -119,14 +119,14 @@ function slider_show(sequence_length, start, end) {
         change: function(event, ui) {
             var sliderCoords =  $('#flat-slider').slider("option", "values");
         }
-    })
+    });
 
     tooltip.text(start);
     tooltip2.text(end);
 
     $("#flat-slider").slider({}).find(".ui-slider-handle:first").append(tooltip);
 
-    $("#flat-slider").slider({}).find(".ui-slider-handle:last").append(tooltip2)
+    $("#flat-slider").slider({}).find(".ui-slider-handle:last").append(tooltip2);
 
 }
 
@@ -189,7 +189,7 @@ setTimeout(function() {
         // alignment
         $('input[value=' + currentVal + ']').each(function () {
             $(this).prop('checked', currentState);
-        })
+        });
 
         $(allPages).find('input[value='+currentVal+']').prop('checked', currentState);
 
