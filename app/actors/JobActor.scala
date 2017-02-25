@@ -131,7 +131,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
     this.currentJobs = this.currentJobs.updated(job.jobID, job)
 
     // Update job in the database and notify watcher upon completion
-    upsertJob(job).map { upsertedJob =>
+    modifyJob(BSONDocument(Job.JOBID -> job.jobID),
+      BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status))).map { modifiedJob =>
       val jobLog = this.currentJobLogs.get(job.jobID) match {
         case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
         case None              => JobEventLog(job.mainID, List(JobEvent(job.status, Some(DateTime.now))))
