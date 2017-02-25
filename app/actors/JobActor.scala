@@ -185,9 +185,24 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       upsertJob(job)
       val paramsWithoutMainID = params - "mainID" - "jobID" // need to hash without mainID and without the jobID
 
-      // get hold of the database in use, at the moment only standarddb, TODO: add hhsuite-db
-      val DBNAME = params.getOrElse("standarddb","")
-      val DB = (env.get("STANDARD") + "/" + DBNAME).toFile
+      // get hold of the database in use
+
+
+      val DBNAME = params match {
+
+        case x if x isDefinedAt "standarddb" => env.get("STANDARD") + "/" + params.getOrElse("standarddb","")
+        case x if x isDefinedAt "hhblitsdb"  => env.get("UNIPROT")
+        case x if x isDefinedAt "hhsuitedb"  => env.get("HHSUITE")
+        case _ => ""
+
+      }
+
+      val DB = DBNAME.toFile
+
+      /** TODO: HHSUITE and UNIPROT directories don't get dbnames in ES atm. Changes in the UNIPROT or HHSUITE db directories lead to new jobhashes.
+         Need to get the dbmtime and the dbname of specific files if we want to keep things as separate as possible
+         but for now this is ok since every change in those directories has an effect on the jobhashing routine **/
+
 
       val jobHash = {
       paramsWithoutMainID.get("standarddb") match {
