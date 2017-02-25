@@ -3,7 +3,7 @@ reformat.pl fas a2m %alignment.path  $(readlink -f ../params/infile_a2m)
 
 hhblits -cpu 8 \
         -i $(readlink -f ../params/infile_a2m) \
-        -d  %hhblitsdb.content     \
+        -d  %HHBLITS/%hhblitsdb.content     \
         -o $(readlink -f ../results/out.hhr) \
         -oa3m $(readlink -f ../results/out.a3m)  \
         -e %inclusion_ethresh.content  \

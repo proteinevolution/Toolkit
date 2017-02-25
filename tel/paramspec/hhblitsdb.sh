@@ -10,7 +10,7 @@ for f in /ebio/abt1_share/toolkit_sync/databases/hhblits/*.cs219 ; do
 
      DBNAME=`echo $f | sed 's/.cs219//'`
    
-      	echo $DBNAME `echo $DBNAME | sed "s/\/ebio\/abt1_share\/toolkit_sync\/databases\/hhblits\///"` 	
+      	echo $(basename $DBNAME) `echo $DBNAME | sed "s/\/ebio\/abt1_share\/toolkit_sync\/databases\/hhblits\///"`
 done
 
 else 
