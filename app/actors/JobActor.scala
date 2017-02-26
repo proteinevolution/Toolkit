@@ -171,8 +171,11 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
       // set memory allocation on the cluster
       val h_vmem = ConfigFactory.load().getString(s"Tools.$toolname.memory")
+      val threads = ConfigFactory.load().getInt(s"Tools.$toolname.threads")
       env.configure(s"MEMORY", h_vmem)
+      env.configure("THREADS", threads.toString)
       Logger.info(s"$jobID is running with $h_vmem h_vmem")
+      Logger.info(s"$jobID is running with $threads threads")
 
 
       val jobCreationTime = DateTime.now()
@@ -180,7 +183,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       // jobid will also be available as parameter
       val extendedParams = params + ("jobid" -> jobID)
 
-      val clusterData = JobClusterData("", Some(h_vmem), Some(1))
+      val clusterData = JobClusterData("", Some(h_vmem), Some(threads))
 
       // Make a new JobObject and set the initial values
       // TODO Currently the job always belongs to the submitting user. Change the OwnerID to None for Public Jobs
@@ -298,6 +301,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
         this.runningExecutions = this.runningExecutions.updated(jobID, executionContext.executeNext.run())
         env.remove(s"MEMORY")
+        env.remove(s"THREADS")
 
       } else {
         // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified

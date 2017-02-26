@@ -10,7 +10,7 @@ reformat_protblast.pl -f=%alignment.path \
                           -matrix %matrix.content \
                           -gapopen %gap_open.content \
                           -gapextend %gap_ext.content \
-                          -num_threads 4 \
+                          -num_threads %THREADS \
                           -num_descriptions %desc.content \
                           -num_alignments %desc.content \
                           -out ../results/out.psiblastp \
