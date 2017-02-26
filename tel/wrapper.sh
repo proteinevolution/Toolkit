@@ -9,7 +9,7 @@ if [ "$HOSTNAME" = "olt" ]; then
 
 
 JOBID=$(basename $(dirname $(pwd))) 
-MEM="MEMORY_"$JOBID
+
 
 curl -X POST http://%HOSTNAME:%PORT/jobs/queued/$JOBID
 qsub -sync n \

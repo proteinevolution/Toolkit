@@ -180,6 +180,8 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       // jobid will also be available as parameter
       val extendedParams = params + ("jobid" -> jobID)
 
+      val clusterData = JobClusterData("", Some(h_vmem), Some(1))
+
       // Make a new JobObject and set the initial values
       // TODO Currently the job always belongs to the submitting user. Change the OwnerID to None for Public Jobs
       val job = Job(mainID      = BSONObjectID.generate(),
@@ -187,6 +189,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
                     ownerID     = Some(user.userID),
                     status      = Submitted,
                     tool        = toolname,
+                    clusterData = Some(clusterData),
                     label       = params.get("label"),
                     watchList   = List(user.userID),
                     dateCreated = Some(jobCreationTime),
