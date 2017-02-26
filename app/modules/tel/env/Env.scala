@@ -11,6 +11,8 @@ trait Env {
 
   // Adds a Key value pair to this environment
   def configure(key: String, value: String): Unit
+
+  def remove(key : String) : Unit
 }
 
 
