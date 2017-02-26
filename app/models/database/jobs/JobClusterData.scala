@@ -8,7 +8,7 @@ import reactivemongo.bson._
   * Created by astephens on 27.01.17.
   */
 case class JobClusterData (sgeID        : String,           // sun grid engine job id
-                           memory       : Option[Int],
+                           memory       : Option[String],
                            threads      : Option[Int],
                            dateStarted  : Option[DateTime] = Some(DateTime.now),
                            dateFinished : Option[DateTime] = None) {
@@ -34,7 +34,7 @@ object JobClusterData {
         val threads     = (obj \ THREADS).asOpt[Int]
         JsSuccess(JobClusterData(
           sgeID        = "",
-          memory       = Some(0),
+          memory       = Some(""),
           threads      = Some(0),
           dateStarted  = Some(new DateTime()),
           dateFinished = Some(new DateTime())))
@@ -61,7 +61,7 @@ object JobClusterData {
   implicit object Reader extends BSONDocumentReader[JobClusterData] {
     def read(bson : BSONDocument): JobClusterData = {
       JobClusterData(sgeID        = bson.getAs[String](SGEID).getOrElse(""),
-                     memory       = bson.getAs[Int](MEMORY),
+                     memory       = bson.getAs[String](MEMORY),
                      threads      = bson.getAs[Int](THREADS),
                      dateStarted  = bson.getAs[BSONDateTime](DATESTARTED).map(dt => new DateTime(dt.value)),
                      dateFinished = bson.getAs[BSONDateTime](DATESTARTED).map(dt => new DateTime(dt.value))
