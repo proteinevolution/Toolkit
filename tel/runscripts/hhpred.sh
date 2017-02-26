@@ -17,7 +17,7 @@ else
 #dependencies in buildali.pl are still wrong atm
 
         buildali.pl -nodssp \
-                    -cpu 4 \
+                    -cpu %THREADS \
                     -v 1 \
                     -n %msa_gen_max_iter.content  \
                     -diff 1000 %inclusion_ethresh.content %min_cov.content \
@@ -82,7 +82,7 @@ mv query.repseq.fas ../results/query.repseq.fas
 
 
 # Perform HHsearch # TODO Include more parameters
-hhsearch -cpu 4 \
+hhsearch -cpu %THREADS \
          -i ../results/query.a3m \
          -d '%HHSUITE/%hhsuitedb.content'  \
          -o ../results/hhsearch.hhr \
