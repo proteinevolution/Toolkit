@@ -1,2 +1,6 @@
+# retrieve sge id
+
+curl -X POST http://%HOSTNAME:%PORT/jobs/sge/%jobid.content/${JOB_ID} > /dev/null 2>&1
+
 curl -X POST http://%HOSTNAME:%PORT/jobs/done/%jobid.content > /dev/null 2>&1
 

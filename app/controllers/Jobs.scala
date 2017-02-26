@@ -56,7 +56,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
       case Some(job) =>
         modifyJob(BSONDocument(Job.JOBID -> job.jobID),
-          BSONDocument("$set" -> BSONDocument(Job.CLUSTERDATA -> JobClusterData(sgeID,Some(1),Some(1)))))
+          BSONDocument("$set" -> BSONDocument("clusterData.sgeid" -> sgeID)))
         Logger.info(jobID + " gets job-ID " + sgeID + " on SGE")
       case None =>
         Logger.info("Unknown ID " + jobID.toString)
