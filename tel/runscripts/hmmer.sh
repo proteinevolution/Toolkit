@@ -1,11 +1,11 @@
 reformat.pl fas sto %alignment.path $(readlink -f ../params/infile_sto)
 
 
-hmmbuild --cpu 4 \
+hmmbuild --cpu %THREADS \
          $(readlink -f ../params/infile_hmm) \
          $(readlink -f ../params/infile_sto)
 
-hmmsearch --cpu 4 \
+hmmsearch --cpu %THREADS \
           -E 1e-1 \
           --tblout    $(readlink -f ../results/tbl) \
           --domtblout $(readlink -f ../results/domtbl) \

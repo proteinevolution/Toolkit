@@ -5,7 +5,7 @@ psiblast -db %STANDARD/%standarddb.content \
          -inclusion_ethresh %inclusion_ethresh.content \
          -gapopen %gap_open.content \
          -gapextend %gap_ext.content \
-         -num_threads 4 \
+         -num_threads %THREADS \
          -num_descriptions %desc.content \
          -num_alignments %desc.content \
          -in_msa %alignment.path \
