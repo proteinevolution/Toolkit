@@ -8,11 +8,12 @@ import akka.actor.{Actor, ActorRef}
 import akka.event.LoggingReceive
 import models.Constants
 import models.database.jobs._
-import models.database.statistics.{ToolStatistic, JobEvent, JobEventLog}
+import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
 import models.search.JobDAO
 import modules.tel.runscripts._
 import better.files._
+import com.typesafe.config.ConfigFactory
 import controllers.UserSessions
 import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
@@ -23,10 +24,12 @@ import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
+
 import scala.concurrent.Future
-import java.io.File
+
 
 object JobActor {
 
@@ -164,6 +167,14 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
 
     case CreateJob(jobID, user, toolname, params) =>
 
+
+
+      // set memory allocation on the cluster
+      val h_vmem = ConfigFactory.load().getString(s"Tools.$toolname.memory")
+      env.configure(s"MEMORY", h_vmem)
+      Logger.info(s"$jobID is running with $h_vmem h_vmem")
+
+
       val jobCreationTime = DateTime.now()
 
       // jobid will also be available as parameter
@@ -283,6 +294,7 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
         executionContext.accept(pendingExecution)
 
         this.runningExecutions = this.runningExecutions.updated(jobID, executionContext.executeNext.run())
+        env.remove(s"MEMORY")
 
       } else {
         // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
@@ -349,10 +361,12 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
           // Dependent on the state, we have to do different things
           job.status match {
 
-            case Queued => this.updateJobState(job)
+            case Queued =>
+              this.updateJobState(job)
             case Running => this.updateJobState(job)
 
             case Done =>
+
               // Job is no longer running
               Logger.info("Removing execution context")
               this.runningExecutions = this.runningExecutions.-(job.jobID)

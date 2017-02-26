@@ -9,11 +9,11 @@ if [ "$HOSTNAME" = "olt" ]; then
 
 
 JOBID=$(basename $(dirname $(pwd))) 
-
+MEM="MEMORY_"$JOBID
 
 curl -X POST http://%HOSTNAME:%PORT/jobs/queued/$JOBID
 qsub -sync n \
-     -l h_vmem=128G,h="node502|node503|node504|node505|node506|node507|node508|node509|node510|node511|node512|node513" \
+     -l h_vmem=%MEMORY,h="node502|node503|node504|node505|node506|node507|node508|node509|node510|node511|node512|node513" \
      -cwd  \
      %r | grep -oE "[0-9]+" > jobIDCluster
 
