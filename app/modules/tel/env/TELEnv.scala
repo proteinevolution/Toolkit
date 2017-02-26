@@ -14,15 +14,19 @@ import play.api.Logger
 class TELEnv extends Env with Observer[EnvFile]    {
 
   private var env : Map[String, String] = Map.empty
+  private var lock : Boolean = false
 
   override def get(key : String): String = this.env(key)
 
   override def configure(key: String, value: String) : Unit = {
-    this.env = this.env + (key -> value)
+    if (!this.lock)
+      this.env = this.env + (key -> value)
+    this.lock = true
   }
 
   override def remove(key: String) : Unit = {
     this.env -= key
+    this.lock = false
   }
 
 
