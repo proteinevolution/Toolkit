@@ -21,9 +21,7 @@ class TELEnv extends Env with Observer[EnvFile]    {
   override def configure(key: String, value: String) : Unit = {
     if (!this.lock)
       this.env = this.env + (key -> value)
-
-    if(key == "MEMORY")
-      this.lock = true
+    this.lock = true
   }
 
   override def remove(key: String) : Unit = {
