@@ -110,7 +110,11 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       case "retseq" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/sequences.fa")),
         ("Summary", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/unretrievable"))))
 
-      case "seq2id" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/ids.out"))))
+      case "seq2id" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Results", views.html.jobs.resultpanels.checkbox_list(jobID, jsvalue)))
+        case None => Seq.empty
+      }
 
       case "hhfilter" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output.fas"))))
 
