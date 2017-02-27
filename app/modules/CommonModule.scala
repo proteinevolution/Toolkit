@@ -11,7 +11,7 @@ import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONDocument
-
+import play.api.Logger
 import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -75,7 +75,7 @@ trait CommonModule extends ReactiveMongoComponents {
     val selector = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
     resultCollection.map(_.find(selector).cursor[BSONDocument]()).flatMap(_.headOption).map {
       case Some(bsonDoc) => Some(reactivemongo.play.json.BSONFormats.toJSON(bsonDoc))
-      case None => None
+      case None => Logger.info("Could not find JSON file.")  ; None
     }
   }
 

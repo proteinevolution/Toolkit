@@ -1,0 +1,10 @@
+@import play.api.libs.json.JsObject
+@import play.api.libs.json.JsValue
+@import play.api.Logger
+@(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
+
+
+@for(id <- ((jsValue \ "ids").as[List[JsObject]])){
+
+    <div>{(id).get}</div>
+}
