@@ -75,6 +75,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "hhpred_manual" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out")),
         ("PIR", views.html.jobs.resultpanels.hhpred.forward(s"$jobPath$jobID/results/tomodel.pir", jobID))))
+      case "hhpred_automatic" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/out.hhr"))))
 
       case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div"))))
 
@@ -140,7 +141,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE, paramAccess.SS_SCORING)),
 
     // HHpred - Manual Template Selection
-    ("hhpred_manual", "HHpred - Manual Template Selection", "hhp", "forward", "",  Seq.empty),
+    ("hhpred_manual", "HHpred - ManualTemplate Selection", "hhp", "forward", "",  Seq.empty),
 
     // HHpred - Manual Template Selection
     ("hhpred_automatic", "HHpred - Automatic Template Selection", "hhp", "forward", "",  Seq.empty),
