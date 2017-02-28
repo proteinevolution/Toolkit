@@ -58,7 +58,7 @@ object UserData {
       PASSWORD   -> userData.password,
       EMAIL      -> userData.eMail,
       NAMEFIRST  -> userData.nameFirst,
-      NAMELAST   -> userData.nameFirst,
+      NAMELAST   -> userData.nameLast,
       INSTITUTE  -> userData.institute,
       STREET     -> userData.street,
       CITY       -> userData.city,
@@ -66,48 +66,5 @@ object UserData {
       GROUPS     -> userData.groups,
       ROLES      -> userData.roles
     )
-  }
-
-  /**
-    * Helper class for a password change Form Object
-    *
-    * @param password
-    * @param passwordNew
-    */
-  case class UpdatePasswordForm(password : String, passwordNew : String)
-
-  /**
-    * Helpoer class for a profile edit form
-    *
-    * @param eMail
-    * @param nameFirst
-    * @param nameLast
-    * @param institute
-    * @param street
-    * @param city
-    * @param country
-    * @param groups
-    * @param roles
-    * @param password
-    */
-  case class EditProfileForm(eMail     : String,
-                             nameFirst : Option[String],
-                             nameLast  : Option[String],
-                             institute : Option[String],
-                             street    : Option[String],
-                             city      : Option[String],
-                             country   : Option[String],
-                             groups    : Option[String],
-                             roles     : Option[String],
-                             password  : String) {
-    /**
-      * Changes the form object into a user data object
-      *
-      * @param userData
-      * @return
-      */
-    def toUserData(userData : UserData) = {
-      UserData(userData.nameLogin, userData.password, List(eMail), nameFirst, nameLast, institute, street, city, country, groups, roles)
-    }
   }
 }

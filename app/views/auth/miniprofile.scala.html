@@ -9,7 +9,9 @@
             <li><a href="#auth-tab-password">Change Password</a></li>
             <li><a href="#auth-tab-user">@{user.getUserData.nameLogin}</a></li>
         </ul>
+        <div class="callout alert" id="auth-alert" hidden>
 
+        </div>
         <div class="tabs-panel" id="auth-tab-edit">
             @views.html.auth.profile(user)
         </div>
@@ -25,6 +27,7 @@
 </div>
 
 
+<script src="@routes.Assets.versioned("scripts/profile.js")"></script>
 
 <script>
         $(function() {
