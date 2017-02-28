@@ -36,7 +36,7 @@
     <div class="small-6 small-offset-3 columns">
         <input type="text" id="roles" name="roles" pattern="text" placeholder="Role" value="@{user.getUserData.roles.getOrElse("")}">
     </div>
-    <div class="small-6 small-offset-3 columns" style="float: left;">
+    <div class="small-6 small-offset-3 columns" disabled style="float: left;">
         <input type="text" id="eMail" name="eMail" placeholder="E-Mail" value="@{user.getUserData.eMail.head}" required pattern="email">
     </div>
     <div class="small-6 small-offset-3 columns">
@@ -45,6 +45,3 @@
           <input id="edit-submit" type="submit" class="small expanded secondary button" value="Save Changes">
   </div>
 </form>
-
-
-<script src="@routes.Assets.versioned("scripts/profile.js")"></script>

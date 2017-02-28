@@ -70,7 +70,7 @@ GET           /signout                                @controllers.Auth.signOut(
 GET           /miniprofile                            @controllers.Auth.miniProfile()
 GET           /profile                                @controllers.Auth.profile()
 POST          /profile/submit/userData/               @controllers.Auth.profileSubmit()
-POST          /profile/submit/password/               @controllers.Auth.profileSubmit()
+POST          /profile/submit/password/               @controllers.Auth.passwordChangeSubmit()
 GET           /verification/:userName/:token          @controllers.Auth.verification(userName : String, token : String)
 GET           /getCurrentUser                         @controllers.Auth.profile2json()
 
