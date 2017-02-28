@@ -493,6 +493,8 @@ function hhpred_automatic() {
     });
 }
 
+
+
 /* without timeout SLIDER is not loaded */
 setTimeout(function () {
     slider_show(queryLength, firstHitBegin, firstHitEnd)
@@ -524,5 +526,26 @@ function toggleSS_(){
     this.colorSS = !this.colorSS;
     toggleSS(this.colorSS);
 }
+        function forward_(tool, hitNames, hitSequences) {
+
+            if (tool == "")
+                return;
+
+            var forwardData = new Array();
+            var count;
+            for (var i = 0 ; i < hitSequences.length; i++) {
+                count = i + 1;
+                if ($("input[value=" + count + "]").prop('checked')) {
+                    forwardData.push(hitNames[i] + '\n')
+                    forwardData.push(hitSequences[i] + '\n')
+                }
+            }
+            if (forwardData.length < 1) {
+                alert("Please select at least one sequence.")
+                return;
+            }
+            forward(tool, forwardData.join(''));
+        }
+
 
 </script>
