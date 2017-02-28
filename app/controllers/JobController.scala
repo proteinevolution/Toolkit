@@ -198,8 +198,8 @@ final class JobController @Inject() (jobIDProvider                              
           Logger.info("Found Jobs for deletion: " + job.jobID)
           // Check if the User owns the job
 
-          Logger.info("JobOwnerID " + job.ownerID.toString)
-          Logger.info("User UserID " + user.userID.stringify )
+          //Logger.info("JobOwnerID " + job.ownerID.toString)
+          //Logger.info("User UserID " + user.userID.stringify )
           if (job.ownerID.contains(user.userID)) {
             Logger.info("Sending delete request to jobActor")
             jobActorAccess.sendToJobActor(jobID, Delete(jobID))
