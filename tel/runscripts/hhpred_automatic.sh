@@ -17,6 +17,6 @@ hhmake -i $(readlink -f ../params/${JOBID}.a3m) \
        -diff 100 \
        -o $(readlink -f ../params/${JOBID}.hhm)
 
-selectTemplates.pl -m 100 -i ../params/${JOBID} -o ../results/test -mode 'm'
+selectTemplates.pl -m 100 -i ../params/${JOBID} -o ../results/out.hhr -mode 'm'
 
 
