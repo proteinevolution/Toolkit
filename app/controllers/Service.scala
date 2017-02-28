@@ -5,12 +5,12 @@ import javax.inject.{Inject, Singleton}
 
 import akka.util.Timeout
 import models.Constants
-import models.database.jobs.{Done, Jobitem, JobState}
+import models.database.jobs.{Done, JobState, Jobitem}
 import models.database.users.User
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{Action, AnyContent, Controller, Request}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
 import models.tools.{Param, ToolFactory, Toolitem}
@@ -110,6 +110,10 @@ final class Service @Inject() (webJarAssets                                     
     }
   }
 
+
+  def show3DStructure(accession: String) = Action { implicit request =>
+    Ok(views.html.jobs.resultpanels.structure(accession))
+  }
 
   def getJob(jobID: String) : Action[AnyContent] = Action.async { implicit request =>
 

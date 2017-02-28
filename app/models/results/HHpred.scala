@@ -126,14 +126,25 @@ object HHpred extends Constants {
   def getLinks(id : String) : Html = {
     val db = identifyDatabase(id)
     var links = new ArrayBuffer[String]()
-    links +=  "<a>Template alignment</a>"
+
+
     if(db == "scop") {
       var idTrimmed = id.substring(1, 5)
+      links += "<a onclick=\"window.open(\'/structure3D/"+idTrimmed+"\', '_blank', " +
+        "'location=yes,height=550,width=750,scrollbars=yes,status=yes');\">Show template 3D structure</a>"
+      links +=  "<a>Template alignment</a>"
       links += generateLink(scopBaseLink, id, "SCOP")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
     }
+    if(db == "mmcif") {
+      var idPdb = id.replaceAll("_.*$", "")
+      links += "<a onclick=\"window.open(\'/structure3D/"+idPdb+"\', '_blank'," +
+        " 'location=yes,height=550,width=750');\">Show template 3D structure</a>"
+      links +=  "<a>Template alignment</a>"
+    }
     if (db == "pfam"){
       var idCDD = id.replaceAll("PF", "pfam")
+      links +=  "<a>Template alignment</a>"
       idCDD = idCDD.replaceAll("\\..*","")
       links += generateLink(cddBaseLink, idCDD, "CDD")
       links += generateLink(pubmedBaseLink, id, "PubMed")
