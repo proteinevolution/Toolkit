@@ -82,7 +82,7 @@ object FormDefinitions {
   /**
     * Edit form for the profile
     */
-  val ProfileEdit = Form(
+  def ProfileEdit(user : User) = Form(
     mapping(
       UserData.EMAIL     -> email,
       UserData.NAMEFIRST -> optional(text(1,100) verifying pattern(textRegex, error = "error.NameFirst")),
@@ -95,41 +95,52 @@ object FormDefinitions {
       UserData.ROLES     -> optional(text(1,100) verifying pattern(textRegex, error = "error.Roles")),
       UserData.PASSWORD  -> (text(8,128) verifying pattern(textRegex, error = "error.Password"))) {
       (eMail, nameFirst, nameLast, institute, street, city, country, groups, roles, password) =>
-        UserData.EditProfileForm(eMail,
-                                 nameFirst,
-                                 nameLast,
-                                 institute,
-                                 street,
-                                 city,
-                                 country,
-                                 groups,
-                                 roles,
-                                 password)
-    } { userData =>
-      Some((
-        userData.eMail,
-        userData.nameFirst,
-        userData.nameLast,
-        userData.institute,
-        userData.street,
-        userData.city,
-        userData.country,
-        userData.groups,
-        userData.roles,
-        "******"))
+        if (user.checkPassword(password)) {
+          Some(user.getUserData.copy(nameFirst = nameFirst,
+                                     nameLast  = nameLast,
+                                     institute = institute,
+                                     street    = street,
+                                     city      = city,
+                                     country   = country,
+                                     groups    = groups,
+                                     roles     = roles))
+        } else {
+          None
+        }
+    } {
+      case Some(userData) =>
+      Some((userData.eMail.head,
+            userData.nameFirst,
+            userData.nameLast,
+            userData.institute,
+            userData.street,
+            userData.city,
+            userData.country,
+            userData.groups,
+            userData.roles,
+            "******"))
+      case None =>
+        None
     })
 
   /**
     * Edit form for the password change in the Profile
     */
-  val ProfilePasswordEdit = Form(
+  def ProfilePasswordEdit(user : User) = Form(
     mapping(
       UserData.PASSWORDOLD -> (text(8,128) verifying pattern(textRegex, error = "error.OldPassword")),
       UserData.PASSWORDNEW -> (text(8,128) verifying pattern(textRegex, error = "error.NewPassword"))) {
       (passwordOld, passwordNew) =>
-        UserData.UpdatePasswordForm(passwordOld, passwordNew)
-    } { password =>
-      Some(("******","******"))
+        if (user.checkPassword(passwordOld)) {
+          Some(BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS)))
+        } else {
+          None
+        }
+    } {
+      case Some(password) =>
+        Some(("******","******"))
+      case None =>
+        None
     }
   )
 }

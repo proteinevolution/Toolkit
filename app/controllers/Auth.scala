@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import models.auth._
 import models.database.users.{UserToken, User}
-import models.mailing.NewUserWelcomeMail
+import models.mailing.{ChangePasswordMail, NewUserWelcomeMail}
 import modules.LocationProvider
 import modules.tel.TEL
 import org.joda.time.DateTime
@@ -224,14 +224,13 @@ final class Auth @Inject() (webJarAssets                                      : 
                 Ok(MustAcceptToS())
               }
             } else {
-              Logger.info("Before Lockup: " + signUpFormUser.getUserData.nameLogin + ", " + signUpFormUser.getUserData.eMail.head)
               // Check database for existing users with the same login name
               val selector = BSONDocument("$or"          ->
                                      List(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin),
                                           BSONDocument(User.EMAIL     -> signUpFormUser.getUserData.eMail.head)))
               findUser(selector).flatMap {
                 case Some(otherUser) =>
-                  Logger.info("Found a user: " + otherUser.getUserData)
+                  //Logger.info("Found a user: " + otherUser.getUserData)
                   if (otherUser.getUserData.nameLogin == signUpFormUser.getUserData.nameLogin) {
                     // Other user with the same username exists. Show error message.
                     Future.successful(Ok(AccountNameUsed()))
@@ -240,7 +239,6 @@ final class Auth @Inject() (webJarAssets                                      : 
                     Future.successful(Ok(AccountEmailUsed()))
                   }
                 case None =>
-                  Logger.info("Screwup!")
                   // Create the database entry.
                   val selector = BSONDocument(User.IDDB       -> user.userID)
                   val modifier = BSONDocument("$set"          ->
@@ -274,47 +272,83 @@ final class Auth @Inject() (webJarAssets                                      : 
     * @return
     */
   def profileSubmit() : Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
+    getUser.flatMap { user : User =>
       user.userData match {
         case Some(userData) =>
-          FormDefinitions.ProfileEdit.bindFromRequest.fold(
+          FormDefinitions.ProfileEdit(user).bindFromRequest.fold(
             errors =>
               Future.successful{
                 Ok(FormError())
               },
             // when there are no errors, then insert the user to the collection
-            profileEditFormUser => {
-              def futureUser = findUser(BSONDocument(User.IDDB -> user.userID))
-              // Get the user option into the present
-              futureUser.flatMap {
-                case Some(userFromDB) =>
-                    // Create a modified user object
-                    if (userFromDB.checkPassword(profileEditFormUser.password)) {
-                      // create a modifier document to change the last login date in the Database
-                      val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
-                      val selector = BSONDocument(User.IDDB -> user.userID)
-                      val modifier = BSONDocument("$set"    ->
-                                     BSONDocument(User.USERDATA      -> profileEditFormUser.toUserData(userFromDB.getUserData),
-                                                  User.DATELASTLOGIN -> bsonCurrentTime,
-                                                  User.DATEUPDATED   -> bsonCurrentTime))
-                      modifyUser(selector, modifier).map{
-                        case Some(updatedUser) =>
-                          // Update the user cache
-                          updateUserCache(updatedUser)
-                          // Everything is ok, let the user know that they are logged in now
-                          Ok(EditSuccessful(updatedUser))
-                        case None =>
-                          // User has been found in the DB at first but now it cant be retrieved
-                          Ok(LoginError())
-                      }
-                    } else {
-                      // Password did not match.
-                      Future.successful(Ok(PasswordWrong()))
-                    }
-                case None =>
-                  // User got logged out while editing the form.
-                  Future.successful(Ok(LoginError()))
-              }
+            {
+              case Some(editedProfileUserData) =>
+                // create a modifier document to change the last login date in the Database
+                val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                val selector = BSONDocument(User.IDDB          -> user.userID)
+                val modifier = BSONDocument("$set"             ->
+                               BSONDocument(User.USERDATA      -> editedProfileUserData,
+                                            User.DATELASTLOGIN -> bsonCurrentTime,
+                                            User.DATEUPDATED   -> bsonCurrentTime))
+                modifyUser(selector, modifier).map {
+                  case Some(updatedUser) =>
+                    // Update the user cache
+                    updateUserCache(updatedUser)
+                    // Everything is ok, let the user know that they are logged in now
+                    Ok(EditSuccessful(updatedUser))
+                  case None =>
+                    // User has been found in the DB at first but now it cant be retrieved
+                    Ok(LoginError())
+                }
+              case None =>
+                // Password was incorrect
+                Future.successful(Ok(PasswordWrong()))
+            }
+          )
+        case None =>
+          // User was not logged in
+          Future.successful(Ok(NotLoggedIn()))
+      }
+    }
+  }
+
+  def passwordChangeSubmit() : Action[AnyContent] = Action.async { implicit request =>
+    getUser.flatMap { user : User =>
+      user.userData match {
+        case Some(userData) =>
+          FormDefinitions.ProfilePasswordEdit(user).bindFromRequest.fold(
+            errors =>
+              Future.successful{
+                Ok(FormError())
+              },
+            // when there are no errors, then insert the user to the collection
+            {
+              case Some(newPasswordHash) =>
+                val token = UserToken(tokenType = 2, passwordHash = Some(newPasswordHash))
+                // create a modifier document to change the last login date in the Database
+                val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                val selector = BSONDocument(User.IDDB          -> user.userID)
+                val modifier = BSONDocument("$set"             ->
+                               BSONDocument(User.DATELASTLOGIN -> bsonCurrentTime,
+                                            User.DATEUPDATED   -> bsonCurrentTime),
+                                            "$push"            ->
+                               BSONDocument(User.USERTOKENS    -> token))
+                modifyUser(selector, modifier).map {
+                  case Some(updatedUser) =>
+                    // Update the user cache
+                    updateUserCache(updatedUser)
+                    // All done. Now send the eMail
+                    val eMail = ChangePasswordMail(tel, updatedUser, token.token)
+                    eMail.send
+                    // Everything is ok, let the user know that they are logged in now
+                    Ok(PasswordChanged(updatedUser))
+                  case None =>
+                    // User has been found in the DB at first but now it cant be retrieved
+                    Ok(LoginError())
+                }
+              case None =>
+                // Password was incorrect
+                Future.successful(Ok(PasswordWrong()))
             }
           )
         case None =>
@@ -332,21 +366,52 @@ final class Auth @Inject() (webJarAssets                                      : 
     * @return
     */
   def verification(userName : String, token : String) = Action.async { implicit request =>
-    getUser.map { user =>
-      findUser(BSONDocument(User.NAMELOGIN -> userName)).map {
+    getUser.flatMap { user : User =>
+      findUser(BSONDocument(User.NAMELOGIN -> userName)).flatMap {
         case Some(userToVerify) =>
           val matchingTokenList = userToVerify.userTokens.filter(_.token == token)
-          modifyUser(BSONDocument(User.IDDB -> userToVerify.userID),
-                     BSONDocument("$set"    ->
-                     BSONDocument(User.ACCOUNTTYPE -> 1,
-                                  User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
-                                  "$pull"   ->
-                     BSONDocument(User.USERTOKENS  ->
-                     BSONDocument("$in"            -> matchingTokenList))))
+          matchingTokenList.headOption match {
+            case Some(tokenObject) =>
+              tokenObject.tokenType match {
+                case 1 =>
+                modifyUser(BSONDocument(User.IDDB -> userToVerify.userID),
+                           BSONDocument("$set"           ->
+                           BSONDocument(User.ACCOUNTTYPE -> 1,
+                                        User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
+                                        "$pull"          ->
+                           BSONDocument(User.USERTOKENS  ->
+                           BSONDocument("$in"            -> matchingTokenList)))).map {
+                  case Some(modifiedUser) =>
+                    updateUserCache(modifiedUser)
+                    Ok(views.html.auth.message("Account verification was successful."))
+                  case None =>
+                    Ok(views.html.auth.message("Verification was not successful. Please try again."))
+                }
+                case 2 =>
+                  modifyUser(BSONDocument(User.IDDB -> userToVerify.userID),
+                             BSONDocument("$set"           ->
+                             BSONDocument(User.PASSWORD    -> tokenObject.passwordHash.get,
+                                          User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
+                                          "$unset"         ->
+                             BSONDocument(User.SESSIONID   -> "",
+                                          User.CONNECTED   -> ""),
+                                          "$pull"          ->
+                             BSONDocument(User.USERTOKENS  ->
+                             BSONDocument("$in"            -> matchingTokenList)))).map {
+                    case Some(modifiedUser) =>
+                      removeUser(modifiedUser)
+                      // TODO maybe add a forced logout here to ensure all open windows are getting logged out.
+                      Ok(views.html.auth.message("Password change verification was successful. Please log in with Your new password."))
+                    case None =>
+                      Ok(views.html.auth.message("Verification was not successful. Please try again."))
+                  }
+            }
+            case None =>
+              Future.successful(Ok(views.html.auth.message("Verification was not successful. Please try again.")))
+          }
         case None =>
-
+          Future.successful(Ok(views.html.auth.message("Verification was not successful. Please try again.")))
       }
-      Ok(views.html.auth.message("Verification"))
     }
   }
 }

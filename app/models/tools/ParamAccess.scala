@@ -161,6 +161,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val UNIQUE_SEQUENCE = select("unique_sequence", "Retrieve only unique sequences")
   final val MIN_SEQID = select("min_seqid", "Minimum sequence identity")
   final val MIN_ALN_COV = select("min_aln_cov", "Minimum alignment coverage")
-
+  final val GRAMMAR = select("grammar", "Select grammar")
+  final val SEQ_COUNT = select("seq_count", "Maximum number of sequences to display")
 
 }

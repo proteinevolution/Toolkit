@@ -51,6 +51,7 @@ object User {
   final val USERDATA      = "userData"                          //              user data object field
   final val NAMELOGIN     = s"$USERDATA.${UserData.NAMELOGIN}"  //              login name field
   final val EMAIL         = s"$USERDATA.${UserData.EMAIL}"      //              email field
+  final val PASSWORD      = s"$USERDATA.${UserData.PASSWORD}"      //              password field
   final val USERCONFIG    = "userConfig"
   final val USERTOKENS    = "userTokens"                        //              tokens list
   final val JOBS          = "jobs"                              //              job reference pointers field

@@ -268,7 +268,12 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       hashCollection.flatMap(_.insert(jobHash))
 
       // Add Job to user in database
-      modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID)))
+      modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID))).foreach {
+        case Some(updatedUser) =>
+          updateUserCache(updatedUser)
+        case None =>
+          Logger.error("Could not update user cache in Job Actor")
+      }
 
       // Establish exection context for the newJob
       val executionContext = ExecutionContext(jobPath/jobID)
@@ -330,20 +335,30 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       this.users(userID).foreach(_ ! ClearJob(jobID))
 
       modifyUser(BSONDocument(User.IDDB -> userID),
-                 BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
+                 BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID))).foreach {
+        case Some(updatedUser) =>
+          updateUserCache(updatedUser)
+        case None =>
+          Logger.error("Could not update user cache in Job Actor")
+      }
 
     // User Starts watching job
     case StartWatch(jobID, userID) =>
       Logger.info("User stops watching JobID " + jobID)
       modifyJob(BSONDocument(Job.JOBID -> jobID),
-                BSONDocument("$push"   -> BSONDocument(Job.WATCHLIST -> userID))).map {
+                BSONDocument("$addToSet"   -> BSONDocument(Job.WATCHLIST -> userID))).map {
         case Some(updatedJob) =>
           this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
         case None =>
       }
 
       modifyUser(BSONDocument(User.IDDB -> userID),
-                 BSONDocument("$push"   -> BSONDocument(User.JOBS -> jobID)))
+                 BSONDocument("$push"   -> BSONDocument(User.JOBS -> jobID))).foreach {
+        case Some(updatedUser) =>
+          updateUserCache(updatedUser)
+        case None =>
+          Logger.error("Could not update user cache in Job Actor")
+      }
 
     // User registers to the job actor
     case RegisterUser(userID, userActor) =>
