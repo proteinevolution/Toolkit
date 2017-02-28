@@ -1,0 +1,17 @@
+@import play.api.mvc.RequestHeader
+
+@(accession : String)(implicit request: RequestHeader)
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script src="@routes.Assets.versioned("javascripts/vendor/ngl.js")"></script>
+<script>
+        $(document).ready(function(){
+    stage = new NGL.Stage( "viewport" );
+    stage.loadFile( 'http://files.rcsb.org/view/@{accession}.pdb', { defaultRepresentation: true } );
+    stage.set
+        });
+
+</script>
+
+
+
+<div id="viewport" style="width:700px; height: 500px;"></div>
