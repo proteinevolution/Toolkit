@@ -56,32 +56,8 @@
                 <li class="accordion-item" data-accordion-item>
                     <a href="#" class="accordion-title" style="background-color: #eee;">Forward</a>
                     <div id="alignments" class="alignments accordion-content forward_panel_content" data-tab-content>
-                        <div class="select_forward">
-                            <select id="forward">
-                                <option value="hhpred">HHpred</option>
-                            </select>
-                        </div>
-                        <br>
-                        <div class="forward_form">
-                            <div class="forwardFormDiv">
-                                <label style="font-weight: bold">Select hits to forward</label>
-                                <input type="radio" name="radio1"><label>Selected Hits</label>
-                                <div class="two_input">
-                                    <input type="radio" name="radio1"><label>E-Value better than</label>
-                                    <input class="result_inputs" type="text" value="0.001">
-                                </div>
-                            </div>
-
-                            <div class="forwardFormDiv">
-                                <label style="font-weight: bold">Select sequence length</label>
-                                <input type="radio" name="radio2"><label>Forward slider region</label>
-                                <br>
-                                <input type="radio" name="radio2"><label>Forward full length sequence</label>
-                            </div>
-                            <div class="forwardFormLast"><a class="success button tiny" onclick="forward_($('#forward').val());" type="button" id="forward">
-                            Forward Job</a></div>
-                        </div>
-
+                            <a class="success button tiny hhpred_extra_button" onclick="forwardHmm();" type="button">
+                            Forward Hmm</a>
                     </div>
                 </li>
             </ul>
@@ -465,27 +441,15 @@ function toggleSS_(){
 }
 
 
-function forward_(tool) {
+function forwardHmm(tool) {
+    $.ajax({
+        type: 'GET',
+        url: 'files/@jobID/query.a3m'
+    }).done(function (data) {
+        $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
+        $('#alignment').val(data.toString());
+    });
 
-    if(tool == "")
-        return;
-
-    var names = getNames();
-    var sequences = getSequences();
-    var forwardData = [];
-    var count;
-    for (var i = 0 ; i < sequences.length; i++) {
-        count = i + 1;
-        if ($("input[value=" + count + "]").prop('checked')) {
-            forwardData.push(names[i] + '\n');
-            forwardData.push(sequences[i] + '\n');
-        }
-    }
-    if (forwardData.length < 1) {
-        alert("Please select at least one sequence.");
-        return;
-    }
-    forward(tool, forwardData.join(''));
 }
 
 
