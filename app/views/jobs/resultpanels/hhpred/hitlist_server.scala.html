@@ -10,15 +10,17 @@
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 @* Load html Map used for the image representation *@
 <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-    <li class="accordion-item is-active" data-accordion-item>
+    <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
-            <div>
-                <div class='flat-slider' id='flat-slider'></div>
-                <div id='blastviz'>
-                        <!-- Create visual overview with Snap -->
-                    <svg id="hhpred_viz" width="100%"></svg>
-                </div>
+            <div class='flat-slider' id='flat-slider'></div>
+            <div id='blastviz'>
+            <a class="success button tiny resubmitSection" onclick="resubmitSection_()" type="button" id="resubmitSection">
+                Resubmit section</a>
+            <div id='blastviz'>
+                @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
+                <p><img src="files/@jobID/@{jobID}.png" border="0" alt="blasthits" usemap="#blastmap"></p>
+            </div>
             </div>
         </div>
     </li>
@@ -54,32 +56,8 @@
                 <li class="accordion-item" data-accordion-item>
                     <a href="#" class="accordion-title" style="background-color: #eee;">Forward</a>
                     <div id="alignments" class="alignments accordion-content forward_panel_content" data-tab-content>
-                        <div class="select_forward">
-                            <select id="forward">
-                                <option value="hhpred">HHpred</option>
-                            </select>
-                        </div>
-                        <br>
-                        <div class="forward_form">
-                            <div class="forwardFormDiv">
-                                <label style="font-weight: bold">Select hits to forward</label>
-                                <input type="radio" name="radio1"><label>Selected Hits</label>
-                                <div class="two_input">
-                                    <input type="radio" name="radio1"><label>E-Value better than</label>
-                                    <input class="result_inputs" type="text" value="0.001">
-                                </div>
-                            </div>
-
-                            <div class="forwardFormDiv">
-                                <label style="font-weight: bold">Select sequence length</label>
-                                <input type="radio" name="radio2"><label>Forward slider region</label>
-                                <br>
-                                <input type="radio" name="radio2"><label>Forward full length sequence</label>
-                            </div>
-                            <div class="forwardFormLast"><a class="success button tiny" onclick="forward_($('#forward').val());" type="button" id="forward">
-                            Forward Job</a></div>
-                        </div>
-
+                            <a class="success button tiny hhpred_extra_button" onclick="forwardHmm();" type="button">
+                            Forward Hmm</a>
                     </div>
                 </li>
             </ul>
@@ -151,9 +129,6 @@
                             <td><br /></td>
                         </tr>
 
-                        @* TODO: restore functionality of color highliting *@
-
-
                         @* Handle secondary structure annotation for query, if present *@
                         @{alignment \ "query" \ "ss_dssp" match {
                             case JsDefined(jsValue) =>
@@ -191,14 +166,14 @@
                         @*  consensus template, if present *@
                         @{alignment \ "template" \ "consensus" match {
                             case JsDefined(jsValue) =>
-                            {HHpred.makeRow("sequence", Array("T", "Consensus", (alignment \ "template" \ "start").get.toString(), HHpred.colorRegexReplacer((alignment \ "template" \ "consensus").get.as[String]),(alignment \ "template" \ "end").get.toString()))}
+                            {HHpred.makeRow("sequence", Array("T", "Consensus", (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "consensus").get.as[String],(alignment \ "template" \ "end").get.toString()))}
                             case undefined: JsUndefined => Logger.info("template.consensus undefined in results!")
                             }
                         }
                         @*  seq template, if present *@
                         @{alignment \ "template" \ "seq" match {
                             case JsDefined(jsValue) =>
-                            {HHpred.makeRow("sequence", Array("T", (alignment \ "template" \ "name").get.as[String], (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "seq").get.as[String],(alignment \ "template" \ "end").get.toString()))}
+                            {HHpred.makeRow("sequence", Array("T", (alignment \ "template" \ "name").get.as[String], (alignment \ "template" \ "start").get.toString(), HHpred.colorRegexReplacer((alignment \ "template" \ "seq").get.as[String]),(alignment \ "template" \ "end").get.toString()))}
                             case undefined: JsUndefined => Logger.info("template.seq undefined in results!")
                             }
                         }
@@ -264,21 +239,15 @@
 </ul>
 
 
-
-
-
-
 <script>
-        var ss_helices = document.getElementsByClassName("ss_h");
-        var ss_extended = document.getElementsByClassName("ss_e");
-        var aas;
-        var hitlist;
-        var queryLength;
-        var firstHitBegin;
-        var firstHitEnd;
-        var info;
-        var hits;
-        var colorSS = false;
+var hitlist;
+var colorSS = false;
+var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
+var hitNames;
+var hitSequences;
+var ss_helices = document.getElementsByClassName("ss_h");
+var ss_extended = document.getElementsByClassName("ss_e");
+var aas;
 
 (function()  {
     $('.slider').on('moved.zf.slider', function() {
@@ -303,30 +272,43 @@
         method: dataRoute.method,
         url: dataRoute.url
     }).done(function(data_) {
-        hits = data_.hhr.hits;
-        info = data_.hhr.info;
-        queryLength = info.Match_columns;
-        // get beg and end of first hit to set slider handles
-        if(hits.length > 0 ) {
-            firstHitBegin = hits[0].query_begin;
-            firstHitEnd = hits[0].query_end;
-        }
-        else {
-            firstHitBegin = 0;
-            firstHitEnd = 0;
-        }
-        drawHits("hhpred_viz", hits);
-        drawDataTable();
-        drawInformation();
-        $("#accordion").foundation();
+        var hits = data_.hhr.hits;
+        var info = data_.hhr.info;
+        var alignments = data_.hhr.alignments;
 
+        firstQueryName = data_.query[0][0];
+        firstQuerySequence = data_.query[0][1];
+
+
+        drawDataTable(hits);
+        drawInformation(info);
+
+        //fill first query name and sequence for slider resubmit
+        if(alignments.length > 0){
+            firstQueryName =  ">" + alignments[0].query.name;
+            firstQuerySequence = alignments[0].query.seq;
+            firstQueryStart = alignments[0].query.start;
+            firstQueryEnd = alignments[0].query.end;
+        }else{
+            alert("No hits found!");
+            firstQueryEnd = 0;
+            firstQueryStart = 0;
+        }
+        /* without timeout SLIDER is displayed */
+        setTimeout(function () {
+            slider_show(info.Match_columns, firstQueryStart, firstQueryEnd)
+        }, 1000);
+
+        aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
     })
-    aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+    $("#accordion").foundation();
     $('.histogram').hide();
+
+
 })();
 
 
-function drawInformation(){
+function drawInformation(info ){
     /*  INFO TAB*/
     $("#hhpred_query").append(info.Query);
     $("#hhpred_match_columns").append(info.Match_columns);
@@ -336,7 +318,7 @@ function drawInformation(){
     $("#hhpred_date").append(info.Date);
 }
 
-function drawDataTable(){
+function drawDataTable(hits){
 
     hitlist = $('#htb').dataTable({
         "bInfo": false,
@@ -374,68 +356,7 @@ function drawDataTable(){
 }
 
 
-function drawHits(id, hits) {
-    var s = Snap("#" + id);
-    // Get maximum of query_end with map and reduce
-    document.getElementById(id).setAttribute("viewBox", "0 0 " + hits.map(function (hit) {
-                return hit.query_end;
-            })
-                    .reduce(function (a, b) {
-                        return Math.max(a, b);
-                    }) + " " + hits.length);
-    for (var i = 0; i < hits.length; ++i) {
-        var hit = hits[i];
-        var diff = hit.query_end - hit.query_begin;
-        var r = s.rect(hit.query_begin, i, diff, 0.5, 0.5, 0.5);
-        var text = s.text(diff / 2, i + 0.4, hit.struc);
-        text.attr({
-            'font-size': 0.5,
-            'fill': 'white',
-            'font-weight': 'bold'
-        });
-        var colors = calcColor(hit.prob).map(function (val) {
-            return val * 255
-        });
-        r.attr({
-            fill: Snap.rgb(colors[0], colors[1], colors[2])
-        });
-    }
-}
 
-
-function calcColor(prob) {
-    var red, grn, blu;
-    if (prob > 40) {
-        var signif = ((prob - 40) / 60);
-        var col = 4 * signif;
-        if (col > 3) {
-            col -= 3.0;
-            red = 1;
-            grn = 0.7 * (1 - col);
-            blu = 0;
-        } else if (col > 2) {
-            col -= 2.0;
-            red = col;
-            grn = 0.7 + 0.3 * (1 - col);
-            blu = 0;
-        } else if (col > 1) {
-            col -= 1.0;
-            red = 0;
-            grn = 1 - 0.3 * (1 - col);
-            blu = 1 - col;
-        } else {
-            red = 0;
-            grn = 0.7 * col;
-            blu = 1;
-        }
-    } else {
-        signif = Math.pow((prob / 40), 3);
-        red = 0.2 * (1 - signif);
-        grn = 0.2 * (1 - signif);
-        blu = 0.2 + 0.8 * signif;
-    }
-    return [red, grn, blu];
-}
 function hhpred_manual() {
     // Get selected templates and append parentID
     var formData = new FormData(document.getElementById("hhpred_templates"));
@@ -495,14 +416,6 @@ function hhpred_automatic() {
 
 
 
-/* without timeout SLIDER is not loaded */
-setTimeout(function () {
-    slider_show(queryLength, firstHitBegin, firstHitEnd)
-}, 1000);
-
-function resubmitSection_(){
-    resubmitSection(this.hitSequences, this.hitNames);
-}
 
 function selectAll_() {
     selectAll(this.hitlist.fnGetNodes());
@@ -526,26 +439,25 @@ function toggleSS_(){
     this.colorSS = !this.colorSS;
     toggleSS(this.colorSS);
 }
-        function forward_(tool, hitNames, hitSequences) {
 
-            if (tool == "")
-                return;
 
-            var forwardData = new Array();
-            var count;
-            for (var i = 0 ; i < hitSequences.length; i++) {
-                count = i + 1;
-                if ($("input[value=" + count + "]").prop('checked')) {
-                    forwardData.push(hitNames[i] + '\n')
-                    forwardData.push(hitSequences[i] + '\n')
-                }
-            }
-            if (forwardData.length < 1) {
-                alert("Please select at least one sequence.")
-                return;
-            }
-            forward(tool, forwardData.join(''));
-        }
+function forwardHmm(tool) {
+    $.ajax({
+        type: 'GET',
+        url: 'files/@jobID/query.a3m'
+    }).done(function (data) {
+        $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
+        $('#alignment').val(data.toString());
+    });
+
+}
+
+
+function resubmitSection_(){
+    resubmitSection(firstQuerySequence, firstQueryName);
+}
+
+
 
 
 </script>

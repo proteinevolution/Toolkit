@@ -20,7 +20,8 @@ psiblast -db %STANDARD/%standarddb.content \
 
 blastJson2tab.py ../results/output_psiblastp.json ../results/output_psiblastp.tab
 blastviz_json.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
-
+# Generate Query in JSON
+fasta2json.py %alignment.path ../results/query.json
 # extract alignment from
 
 #PERL5LIB=%PERLLIB
