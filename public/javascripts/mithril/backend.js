@@ -7,7 +7,7 @@ window.Backend = {
     plotter : function (ctrl) {
         return function (elem, isin, context) {
             if (!isin) {
-                var chartElements = ctrl.data()//.map(function (item) {
+                var chartElements = ctrl.data();//.map(function (item) {
                     //console.log(item);
                     //return item
                 //});
