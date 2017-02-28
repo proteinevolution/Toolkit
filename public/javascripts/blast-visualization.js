@@ -154,21 +154,13 @@ function getSliderRange() {
 
 
 
-function resubmitSection(hits, names) {
-    if(hits.length < 1) {
-        alert("No sequences in selected slider range!");
-        return
-    }
+function resubmitSection(sequence, name) {
     var sliderRange = getSliderRange();
     var resubmitSeqs = [];
 
-    //for (var i =0 ; i < hits.length; i ++){
+    resubmitSeqs.push(name + '\n');
+    resubmitSeqs.push(sequence.substr(sliderRange[0] - 1, sliderRange[1]) + '\n')
 
-    // to resubmit only the first sequence
-    for (var i =0 ; i < 1; i ++){
-        resubmitSeqs.push(names[i] + '\n');
-        resubmitSeqs.push(hits[i].substr(sliderRange[0] - 1, sliderRange[1] - 1) + '\n')
-    }
     $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
     $('#alignment').val(resubmitSeqs.join(''));
 }
@@ -249,7 +241,6 @@ $(document).ready(function() {
     $('#alignment').val(resultcookie);
     localStorage.removeItem("resultcookie");
 });
-
 
 
 /* GENERATING LINKS FOR HHPRED */
@@ -351,3 +342,69 @@ function imgOff(imgName, imgSrc) {
     }
 }
 
+
+
+
+/* draw hits */
+function drawHits(id, hits) {
+    var s = Snap("#" + id);
+    // Get maximum of query_end with map and reduce
+    document.getElementById(id).setAttribute("viewBox", "0 0 " + hits.map(function (hit) {
+            return hit.query_end;
+        })
+            .reduce(function (a, b) {
+                return Math.max(a, b);
+            }) + " " + hits.length);
+    for (var i = 0; i < hits.length; ++i) {
+        var hit = hits[i];
+        var diff = hit.query_end - hit.query_begin;
+        var r = s.rect(hit.query_begin, i, diff, 0.5, 0.5, 0.5);
+        var text = s.text(diff / 2, i + 0.4, hit.struc);
+        text.attr({
+            'font-size': 0.5,
+            'fill': 'white',
+            'font-weight': 'bold'
+        });
+        var colors = calcColor(hit.prob).map(function (val) {
+            return val * 255
+        });
+        r.attr({
+            fill: Snap.rgb(colors[0], colors[1], colors[2])
+        });
+    }
+}
+
+
+function calcColor(prob) {
+    var red, grn, blu;
+    if (prob > 40) {
+        var signif = ((prob - 40) / 60);
+        var col = 4 * signif;
+        if (col > 3) {
+            col -= 3.0;
+            red = 1;
+            grn = 0.7 * (1 - col);
+            blu = 0;
+        } else if (col > 2) {
+            col -= 2.0;
+            red = col;
+            grn = 0.7 + 0.3 * (1 - col);
+            blu = 0;
+        } else if (col > 1) {
+            col -= 1.0;
+            red = 0;
+            grn = 1 - 0.3 * (1 - col);
+            blu = 1 - col;
+        } else {
+            red = 0;
+            grn = 0.7 * col;
+            blu = 1;
+        }
+    } else {
+        signif = Math.pow((prob / 40), 3);
+        red = 0.2 * (1 - signif);
+        grn = 0.2 * (1 - signif);
+        blu = 0.2 + 0.8 * signif;
+    }
+    return [red, grn, blu];
+}
