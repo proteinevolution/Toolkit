@@ -17,21 +17,6 @@
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
-        <a href="#" class="accordion-title">Information</a>
-        <div class="accordion-content" data-tab-content>
-            <table class="display" cellspacing="0" width="80%">
-                <tr>
-                    <td>Query</td>
-                    <td id="psiblast_query"></td>
-                </tr>
-                <tr>
-                    <td>Match_columns</td>
-                    <td id="psiblast_queryLength"></td>
-                </tr>
-            </table>
-        </div>
-    </li>
-    <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Hitlist</a>
         <div class="accordion-content" id="hitListAccordion" data-tab-content>
             <table id="htp" class="display" cellspacing="0" width="80%">
@@ -125,12 +110,10 @@
         var aas;
         var hitlist;
         var queryLength;
-        var firstHitBegin;
-        var firstHitEnd;
         var numHitsShown = 1;
         var hitSequences = [];
         var hitNames = [];
-
+        var queryName, querySequence = null;
 
         (function () {
             var dataRoute = jsRoutes.controllers.DataController.get(@jobID);
@@ -146,8 +129,11 @@
                 var numHits = hits.length - 1;
                 var info = basenameResults.stat;
 
-                queryLength = basenameResults.query_len;
-                $("#psiblast_query").append(basenameResults.query_title);
+
+                queryName = data.query[0][0];
+                querySequence = data.query[0][1];
+                queryLength = querySequence.length;
+                $("#psiblast_query").append(queryName);
                 $("#psiblast_queryLength").append(queryLength);
 
                 // generate JSON file that is easier to use with dataTable
@@ -191,17 +177,14 @@
                 });
 
                 // get beg and end of first hit to set slider handles
-                if (numHits > 0) {
-
-                    if (hits[0].hsps.length > 0) {
-                        firstHitBegin = hits[0].hsps[0].query_from;
-                        firstHitEnd = hits[0].hsps[0].query_to;
-                    }
-                    else {
-                        firstHitBegin = 0;
-                        firstHitEnd = 0;
-                        alert("No hits found!");
-                    }
+                //fill first query name and sequence for slider resubmit
+                if(hits.length < 1){
+                    alert("No hits found!");
+                    queryStart = 0;
+                    queryEnd = 0;
+                }else{
+                    queryStart = hits[0].hsps[0].query_from;
+                    queryEnd = hits[0].hsps[0].query_to;
                 }
 
                 var alignments_container = document.getElementById("psiblast_templates");
@@ -290,13 +273,20 @@
                 $("#accordion").foundation();
 
 
+
+                setTimeout(function () {
+                    slider_show(queryLength, queryStart, queryEnd)
+                }, 1000);
+
             });
         })();
 
 
-        function resubmitSection_() {
-            resubmitSection(this.hitSequences, this.hitNames);
+
+        function resubmitSection_(){
+            resubmitSection(querySequence, ">" + queryName);
         }
+
 
         function selectAll_() {
             selectAll(this.hitlist.fnGetNodes());
@@ -323,10 +313,6 @@
             forward(tool, forwardData.join(''));
         }
 
-        /* without timeout SLIDER is not loaded */
-        setTimeout(function () {
-            slider_show(queryLength, firstHitBegin, firstHitEnd)
-        }, 500);
 
 
 
