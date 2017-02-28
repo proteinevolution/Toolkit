@@ -19,3 +19,5 @@ maxrounds GEN maxrounds.prop
 unique_sequence GEN unique_sequence.prop
 min_seqid GEN min_seqid.prop
 min_aln_cov GEN min_aln_cov.prop
+grammar GEN grammar.prop
+seq_count GEN seq_count.prop
