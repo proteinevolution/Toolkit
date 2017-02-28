@@ -106,8 +106,7 @@ JOBID=%jobid.content
 # Generate input files for hhviz
 cp ../results/hhsearch.hhr ../results/${JOBID}.hhr
 
-# DEPRECATED. Replaced by a Javascript solution with SVG
-#hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
+hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 profile_logos.pl ${JOBID} ../results/ ../results/
 
@@ -132,5 +131,5 @@ reformat.pl fas \
  
 hhr2json.py "$(readlink -f ../results/hhsearch.hhr)" > ../results/hhr.json
 
-
-
+# Generate Query in JSON
+fasta2json.py %alignment.path ../results/query.json
