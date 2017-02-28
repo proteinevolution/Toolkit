@@ -125,8 +125,11 @@ POST          /api/job/addnotes                       @controllers.Jobs.annotati
 GET           /api/jobs/getnotes/:jobID               @controllers.Jobs.getAnnotation(jobID: String)
 
 # Results
-GET           /api/job/results/:jobID          @controllers.DataController.get(jobID: String)
+GET           /api/job/results/:jobID                 @controllers.DataController.get(jobID: String)
 
 # Article
 GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)
 POST          /api/writeArticle                       @controllers.DataController.writeArticle(title: String, text: String, imagePath: String)
+
+# 3D structure
+GET          /structure3D/:accession                   @controllers.Service.show3DStructure(accession : String)
