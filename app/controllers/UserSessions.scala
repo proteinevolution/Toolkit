@@ -45,7 +45,7 @@ trait UserSessions extends CommonModule {
                        BSONDocument(User.SESSIONDATA   -> newSessionData))
         modifyUser(selector,modifier).map {
           case Some(updatedUser) =>
-            //userCache.set(updatedUser.sessionID.get.stringify, updatedUser, 10.minutes) // TODO I think we should for for now remove the UserCache
+            userCache.set(updatedUser.sessionID.get.stringify, updatedUser, 10.minutes) // TODO I think we should for for now remove the UserCache
             updatedUser
           case None =>
             user

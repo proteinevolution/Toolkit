@@ -7,14 +7,16 @@ $ ->
       data: form_data
       url: "profile/submit/userData/"
       method: 'POST').done (json) ->
-        alert json.message
+        $("#auth-alert").html(json.message)
+        $("#auth-alert").fadeIn()
 
   # AJAX submission of the Profile form
-  $("#profile-passwort-edit-form").on 'submit', (event) ->
+  $("#profile-password-edit-form").on 'submit', (event) ->
     event.preventDefault()
-    form_data = $("#profile-edit-form").serialize()
+    form_data = $("#profile-password-edit-form").serialize()
     $.ajax(
       data: form_data
       url: "profile/submit/password/"
       method: 'POST').done (json) ->
-        alert json.message
+        $("#auth-alert").html(json.message)
+        $("#auth-alert").fadeIn()

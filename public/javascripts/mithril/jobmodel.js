@@ -21,7 +21,9 @@ window.JobModel = {
         "min_aln_cov": "0.8",
         "min_query_cov": "0",
         "num_seqs_extract": 100,
-        "protblastprogram": "psiblast"
+        "protblastprogram": "psiblast",
+        "seq_count": 1000,
+        "grammar": "Prosite_grammar"
     },
     pushMessage: function(msg) {
         return messages().push(msg);

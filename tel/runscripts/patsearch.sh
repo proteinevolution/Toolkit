@@ -1,10 +1,5 @@
-#!/bin/bash
-
-trap 'kill $(jobs -p)' EXIT
-
-perl ../../scripts/search.pl \
-                    -i  '%inputpattern.content' \
+patsearch.pl        -i  %alignment.path \
                     -d %STANDARD/%standarddb.content \
-                    -o results/patsearch_result \
-                    -%type.content \
-                     > report_patsearch
+                    -o ../results/output.fas \
+                    -sc %seq_count.content \
+                    -%grammar.content > report_patsearch

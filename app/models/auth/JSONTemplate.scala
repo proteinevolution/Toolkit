@@ -106,4 +106,10 @@ trait JSONTemplate {
                 success    = true,
                 userOption = Some(user))
   }
+
+  def PasswordChanged(user : User) : JsValue = {
+    authMessage("Password has been accepted.\nPlease check your eMails.",
+      success    = true,
+      userOption = Some(user))
+  }
 }
