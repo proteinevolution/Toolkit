@@ -56,9 +56,6 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         ("SOLVX", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png", s"$jobPath$jobID/results/solvx/$jobID.solvx")),
         ("ANOLEA", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png", s"$jobPath$jobID/results/$jobID.pdb.profile"))))
 
-      case "protblast" => Future.successful(Seq(("Hits", views.html.jobs.resultpanels.blastviz_extra(jobID)), ("E-Values", views.html.jobs.resultpanels.evalues(jobID)),
-        ("Fasta", views.html.jobs.resultpanels.fasta(jobID)), ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_psiblast(jobID))))
-
       case "tcoffee" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)), ("Conservation", views.html.jobs.resultpanels.tcoffee_colored(jobID)),
         ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")), ("Text", views.html.jobs.resultpanels.tcoffee_text(jobID))))
 
@@ -126,13 +123,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
   // Contains the tool specifications and generates tool objects accordingly
   lazy val values : Map[String, Tool] = Set(
-    // Protblast
-    ("protblast", "ProtBlast", "prob", "search", "",
-      Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.MATRIX, paramAccess.EVALUE,
-        paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN, paramAccess.GAP_EXT, paramAccess.DESC, paramAccess.PROTBLASTPROGRAM)),
-
     // HHblits
-  ("hhblits", "HHblits", "hhb", "search", "",
+    ("hhblits", "HHblits", "hhb", "search", "",
     Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.EVAL_INC_THRESHOLD, paramAccess.MAXROUNDS,
       paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE)),
 
@@ -149,7 +141,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("hhpred_automatic", "HHpred - Automatic Template Selection", "hhp", "forward", "",  Seq.empty),
 
     // PSI-BLAST
-    ("psiblast", "PSI-BLAST", "pbl", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
+    ("psiblast", "ProtBLAST/PSI-BLAST", "pbl", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
       paramAccess.MATRIX,
       paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN,
       paramAccess.GAP_EXT, paramAccess.DESC)),
