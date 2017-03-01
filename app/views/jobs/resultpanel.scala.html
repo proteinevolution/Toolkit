@@ -17,14 +17,6 @@
       case ("marcoil", "Domains") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.Domains")
       case ("marcoil", "ProbList/PSSM") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbList")
 
-
-
-      // ProtBLAST
-      case ("protblast", "Hits") => views.html.jobs.resultpanels.blastviz_extra(jobID)
-      case ("protblast", "E-Values") => views.html.jobs.resultpanels.evalues(jobID)
-      case ("protblast", "Fasta") => views.html.jobs.resultpanels.fasta(jobID)
-      case ("protblast", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_psiblast(jobID)
-
       case ("tcoffee", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
       case ("tcoffee", "Conservation") => views.html.jobs.resultpanels.tcoffee_colored(jobID)
       case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
