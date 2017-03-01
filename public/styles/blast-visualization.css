@@ -250,3 +250,12 @@
 #hitListAccordion {
     padding: 0 !important;
 }
+
+
+
+#alignmentTemplate{
+    margin: 0 auto;
+    white-space: unset !important;
+    width: 900px;
+    height: 700px;
+}

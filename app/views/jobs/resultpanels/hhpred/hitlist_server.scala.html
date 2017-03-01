@@ -238,6 +238,14 @@
 </ul>
 
 
+<div class="reveal" id="templateAlignment" data-reveal>
+    <h1>Template Alignment</h1>
+    <textarea class="sequence" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
 <script>
 var hitlist;
 var colorSS = false;
@@ -451,12 +459,29 @@ function forwardHmm(tool) {
 }
 
 
+function templateAlignment(accession){
+
+    $.ajax({
+        type: 'GET',
+        url: '/templateAlignment/@jobID/' + accession,
+        async: false
+    }).done(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: 'files/@jobID/' + @jobID + '.template.fas',
+            async: false
+        }).done(function (data) {
+
+            document.getElementById("alignmentTemplate").value = data.toString();
+        });
+
+    });
+}
+
 
 function resubmitSection_(){
     resubmitSection(firstQuerySequence, firstQueryName);
 }
-
-
-
 
 </script>
