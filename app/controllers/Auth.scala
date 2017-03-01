@@ -2,8 +2,10 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import actors.JobActor.SwapUserID
 import models.auth._
 import models.database.users.{UserToken, User}
+import models.job.JobActorAccess
 import models.mailing.{ChangePasswordMail, NewUserWelcomeMail}
 import modules.LocationProvider
 import modules.tel.TEL
@@ -26,17 +28,18 @@ import scala.concurrent.Future
   */
 
 @Singleton
-final class Auth @Inject() (webJarAssets                                      : WebJarAssets,
-                            val messagesApi                                   : MessagesApi,
-                            implicit val mailerClient                         : MailerClient,
-                            implicit val locationProvider                     : LocationProvider,
-                            @NamedCache("userCache") implicit val userCache   : CacheApi,
-                            val tel : TEL,
-                            val reactiveMongoApi : ReactiveMongoApi) // Mailing Controller
-                            extends Controller with I18nSupport
-                                               with JSONTemplate
-                                               with UserSessions
-                                               with Common {
+final class Auth @Inject() (          webJarAssets     : WebJarAssets,
+                                  val messagesApi      : MessagesApi,
+                                      jobActorAccess   : JobActorAccess,
+                         implicit val mailerClient     : MailerClient,
+                         implicit val locationProvider : LocationProvider,
+@NamedCache("userCache") implicit val userCache        : CacheApi,
+                                  val tel              : TEL,
+                                  val reactiveMongoApi : ReactiveMongoApi) // Mailing Controller
+                              extends Controller with I18nSupport
+                                                 with JSONTemplate
+                                                 with UserSessions
+                                                 with Common {
 
 
   /**
@@ -165,11 +168,15 @@ final class Auth @Inject() (webJarAssets                                      : 
                   // Finally add the edits to the collection
                   modifyUser(selector, modifier).map {
                     case Some(loggedInUser) =>
-                      Logger.info("User Login: " + loggedInUser.getUserData.nameLogin
-                               + " User ID: "    + loggedInUser.userID.stringify
-                               + " Session ID: " + loggedInUser.sessionID.get.stringify)
+                      Logger.info("\n-[old user]-\n"
+                              + unregisteredUser.toString
+                              + "\n-[new user]-\n"
+                              + loggedInUser.toString)
                       // Remove the old, not logged in user
-                      removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
+                      //removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
+                      removeUser(unregisteredUser)
+
+                      jobActorAccess.identifyUser(SwapUserID(unregisteredUser.userID, loggedInUser.userID))
 
                       // Make sure the Cache is updated
                       updateUserCache(loggedInUser)
