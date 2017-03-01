@@ -45,7 +45,7 @@ trait UserSessions extends CommonModule {
                        BSONDocument(User.SESSIONDATA   -> newSessionData))
         modifyUser(selector,modifier).map {
           case Some(updatedUser) =>
-            userCache.set(updatedUser.sessionID.get.stringify, updatedUser, 10.minutes) // TODO I think we should for for now remove the UserCache
+            userCache.set(updatedUser.sessionID.get.stringify, updatedUser, 10.minutes)
             updatedUser
           case None =>
             user
@@ -77,22 +77,52 @@ trait UserSessions extends CommonModule {
       case None =>
         BSONObjectID.generate()
     }
-      putUser(request, sessionID)
+    userCache.get(sessionID.stringify) match {
+      case Some(user) =>
+        Future.successful(user)
+      case None =>
+        putUser(request, sessionID)
+    }
+  }
+
+  def getUser(sessionID : BSONObjectID) : Future[Option[User]] = {
+    userCache.get(sessionID.stringify) match {
+      case Some(user) =>
+        Future.successful(Some(user))
+      case None =>
+        findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
+          case Some(user)   =>
+            Logger.info("User found by SessionID")
+            val selector = BSONDocument(User.IDDB          -> user.userID)
+            val modifier = BSONDocument("$set"             ->
+                           BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
+            modifyUser(selector,modifier).map {
+              case Some(updatedUser) =>
+                userCache.set(updatedUser.sessionID.get.stringify, updatedUser, 10.minutes)
+                Some(updatedUser)
+              case None =>
+                Some(user)
+            }
+          case None =>
+            Future.successful(None)
+        }
+    }
   }
 
   /**
     * updates a user in the cache
     */
   def updateUserCache(user : User) = {
-    Logger.info("User WatchList is now: " + user.jobs.mkString(", "))
-    userCache.set(user.sessionID.get.stringify, user)
+    //Logger.info("User WatchList is now: " + user.jobs.mkString(", "))
+    userCache.set(user.sessionID.get.stringify, user, 10.minutes)
   }
 
   /**
     * removes a user from the sessions
     */
   def removeUser(user : User) = {
-    userCache.remove(user.userID.stringify)
+    Logger.info("Removing User: \n" + user.toString)
+    userCache.remove(user.sessionID.get.stringify)
     userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
                                     BSONDocument("$set"   -> BSONDocument(User.CONNECTED -> false),
                                                  "$unset" -> BSONDocument(User.SESSIONID -> ""))))

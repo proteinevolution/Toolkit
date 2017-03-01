@@ -60,6 +60,9 @@ object JobActor {
   // UserActor Unregisters Websocket
   case class UnregisterUser(userID : BSONObjectID, userActor : ActorRef)
 
+  // UserActor Logged in and needs to change the user IDs
+  case class SwapUserID(oldUserID : BSONObjectID, newUserID : BSONObjectID)
+
   // JobActor is requested to Delete the job
   case class Delete(jobID: String)
 
@@ -67,13 +70,13 @@ object JobActor {
   case class JobStateChanged(jobID : String, jobState : JobState)
 }
 
-class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscripts to be executed
-                          env: Env, // To supply the runscripts with an environment
-                          val reactiveMongoApi: ReactiveMongoApi,
-                          val jobDao : JobDAO,
-                          wrapperExecutionFactory: WrapperExecutionFactory,
-                          implicit val locationProvider: LocationProvider,
-                          @NamedCache("userCache") implicit val userCache : CacheApi)
+class JobActor @Inject() (             runscriptManager        : RunscriptManager, // To get runscripts to be executed
+                                       env                     : Env, // To supply the runscripts with an environment
+                                   val reactiveMongoApi        : ReactiveMongoApi,
+                                   val jobDao                  : JobDAO,
+                                       wrapperExecutionFactory : WrapperExecutionFactory,
+                          implicit val locationProvider        : LocationProvider,
+ @NamedCache("userCache") implicit val userCache               : CacheApi)
   extends Actor
     with Constants
     with UserSessions
@@ -268,11 +271,13 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       hashCollection.flatMap(_.insert(jobHash))
 
       // Add Job to user in database
+      //upsertUser(user.copy(jobs = user.jobs.::(job.jobID)))
       modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID))).foreach {
         case Some(updatedUser) =>
           updateUserCache(updatedUser)
         case None =>
-          Logger.error("Could not update user cache in Job Actor")
+          Logger.error("New Job Submission: Could not update user cache in Job Actor")
+          Logger.error(user.toString)
       }
 
       // Establish exection context for the newJob
@@ -339,25 +344,25 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
         case Some(updatedUser) =>
           updateUserCache(updatedUser)
         case None =>
-          Logger.error("Could not update user cache in Job Actor")
+          Logger.error("Stop Watching: Could not update user cache in Job Actor")
       }
 
     // User Starts watching job
     case StartWatch(jobID, userID) =>
       Logger.info("User stops watching JobID " + jobID)
-      modifyJob(BSONDocument(Job.JOBID -> jobID),
-                BSONDocument("$addToSet"   -> BSONDocument(Job.WATCHLIST -> userID))).map {
+      modifyJob(BSONDocument(Job.JOBID   -> jobID),
+                BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID))).map {
         case Some(updatedJob) =>
           this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
         case None =>
       }
 
-      modifyUser(BSONDocument(User.IDDB -> userID),
-                 BSONDocument("$push"   -> BSONDocument(User.JOBS -> jobID))).foreach {
+      modifyUser(BSONDocument(User.IDDB   -> userID),
+                 BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID))).foreach {
         case Some(updatedUser) =>
           updateUserCache(updatedUser)
         case None =>
-          Logger.error("Could not update user cache in Job Actor")
+          Logger.error("Start Watching: Could not update user cache in Job Actor")
       }
 
     // User registers to the job actor
@@ -370,6 +375,10 @@ class JobActor @Inject() (runscriptManager : RunscriptManager, // To get runscri
       val u: Set[ActorRef]     = this.users(userID)
       this.users               = this.users.updated(userID, u.-(userActor))
 
+    // User actor logged in and needs to copy the websocket actors
+    case SwapUserID(oldUserID : BSONObjectID, newUserID : BSONObjectID) =>
+      val u: Set[ActorRef]     = this.users(oldUserID)
+      this.users               = this.users.updated(newUserID, u)
 
     // Message from outside that the jobState has changed
     case JobStateChanged(jobID : String, jobState : JobState) =>
