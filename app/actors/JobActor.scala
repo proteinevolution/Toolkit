@@ -141,7 +141,10 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
       BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status))).map { modifiedJob =>
       val jobLog = this.currentJobLogs.get(job.jobID) match {
         case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
-        case None              => JobEventLog(job.mainID, List(JobEvent(job.status, Some(DateTime.now))))
+        case None              => JobEventLog(mainID      = job.mainID,
+                                              toolName    = job.tool,
+                                              internalJob = false,
+                                              events      = List(JobEvent(job.status, Some(DateTime.now))))
       }
       this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
       val foundWatchers = users.filter(a => job.watchList.contains(a._1))
@@ -293,7 +296,13 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
       oos.close()
 
       // Create a log for this job
-      this.currentJobLogs = this.currentJobLogs.updated(job.jobID, JobEventLog(job.mainID, List(JobEvent(job.status, Some(DateTime.now)))))
+      // TODO may want to use a different way to identify our users
+      val isFromInstitute = user.getUserData.eMail.exists(_.matches(".+@tuebingen.mpg.de"))
+      this.currentJobLogs = this.currentJobLogs.updated(job.jobID,
+                                                        JobEventLog(mainID      = job.mainID,
+                                                                    toolName    = job.tool,
+                                                                    internalJob = isFromInstitute,
+                                                                    events      = List(JobEvent(job.status, Some(DateTime.now)))))
 
       // Update the statistics
       increaseJobCount(job.tool)
