@@ -109,12 +109,6 @@ final class Service @Inject() (webJarAssets                                     
       case None => NotFound
     }
   }
-
-
-  def show3DStructure(accession: String) = Action { implicit request =>
-    Ok(views.html.jobs.resultpanels.structure(accession))
-  }
-
   def getJob(jobID: String) : Action[AnyContent] = Action.async { implicit request =>
 
     selectJob(jobID).flatMap {

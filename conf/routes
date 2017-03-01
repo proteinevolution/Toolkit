@@ -132,4 +132,7 @@ GET           /api/getRecentArticles/:numArticles     @controllers.DataControlle
 POST          /api/writeArticle                       @controllers.DataController.writeArticle(title: String, text: String, imagePath: String)
 
 # 3D structure
-GET          /structure3D/:accession                   @controllers.Service.show3DStructure(accession : String)
+GET          /structure3D/:accession                   @controllers.HHPredController.show3DStructure(accession : String)
+
+# template alignment
+GET         /templateAlignment/:jobID/:accession  @controllers.HHPredController.runScript(jobID : String, accession : String)
