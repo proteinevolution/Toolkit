@@ -247,15 +247,16 @@
     }
 }
 
-#hitListAccordion {
-    padding: 0 !important;
+
+#viewport{
+    width: 50em;
+    height: 30em;
+    margin: 0 auto;
 }
 
 
-
 #alignmentTemplate{
+    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    font-size: 0.7rem !important;
     margin: 0 auto;
-    white-space: unset !important;
-    width: 900px;
-    height: 700px;
 }

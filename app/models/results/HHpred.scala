@@ -127,24 +127,20 @@ object HHpred extends Constants {
     val db = identifyDatabase(id)
     var links = new ArrayBuffer[String]()
 
-
+    var idPdb = id.replaceAll("_.*$", "")
+    var idTrimmed = id.substring(1, 5)
+    var idCDD = id.replaceAll("PF", "pfam")
+    links +=  "<a data-open=\"templateAlignment\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
     if(db == "scop") {
-      var idTrimmed = id.substring(1, 5)
-      links +=  "<a data-open=\"templateAlignment\" onclick=\"templateAlignment(\'"+id+"\')\">Template alignment</a>"
-      links += "<a onclick=\"window.open(\'/structure3D/"+idTrimmed+"\', '_blank', " +
-        "'location=yes,height=550,width=750,scrollbars=yes,status=yes');\">Template 3D structure</a>"
+      links += "<a data-open=\"structure\" onclick=\"showStructure(\'" + idTrimmed + "\')\";\">Template 3D structure</a>"
       links += generateLink(scopBaseLink, id, "SCOP")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
     }
     if(db == "mmcif") {
-      var idPdb = id.replaceAll("_.*$", "")
-      links +=  "<a data-open=\"templateAlignment\" onclick=\"templateAlignment(\'"+id+"\')\">Template alignment</a>"
       links += "<a onclick=\"window.open(\'/structure3D/"+idPdb+"\', '_blank'," +
         " 'location=yes,height=550,width=750');\">Show template 3D structure</a>"
     }
     if (db == "pfam"){
-      var idCDD = id.replaceAll("PF", "pfam")
-      links +=  "<a data-open=\"templateAlignment\" onclick=\"templateAlignment(\'"+id+"\')\">Template alignment</a>"
       idCDD = idCDD.replaceAll("\\..*","")
       links += generateLink(cddBaseLink, idCDD, "CDD")
       links += generateLink(pubmedBaseLink, id, "PubMed")
