@@ -73,8 +73,8 @@
             <!-- TODO FIX Coloring David -->
             <div class="colorOpts">
                 <a onclick="selectAll_()" type="button" id="selectAllSeq">Select all</a>
-                <a onclick='toggleAliColor("letters")' type="button">Color letters</a>
-                <a onclick='toggleAliColor("background")' type="button">Color background</a>
+                <a onclick='toggleAliColor_("letters")' type="button">Color letters</a>
+                <a onclick='toggleAliColor_("background")' type="button">Color background</a>
                 <a onclick="toggleSS_()" type="button">Color only SS</a>
             </div>
 
@@ -240,15 +240,28 @@
 
 <div class="reveal" id="templateAlignment" data-reveal>
     <h1>Template Alignment</h1>
-    <textarea class="sequence" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
+    <textarea rows="50" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="reveal" id="structure" data-reveal>
+    <h1>3D Structure</h1>
+    <div id="viewport"></div>
     <button class="close-button" data-close aria-label="Close modal" type="button">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
 <script>
+$("#templateAlignment").foundation();
+$("#structure").foundation();
+
+
 var hitlist;
 var colorSS = false;
+var colorLetters = false;
+var colorBackground = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 var hitNames;
 var hitSequences;
@@ -310,8 +323,6 @@ var aas;
     })
     $("#accordion").foundation();
     $('.histogram').hide();
-
-
 })();
 
 
@@ -466,13 +477,11 @@ function templateAlignment(accession){
         url: '/templateAlignment/@jobID/' + accession,
         async: false
     }).done(function () {
-
         $.ajax({
             type: 'GET',
-            url: 'files/@jobID/' + @jobID + '.template.fas',
+            url: 'files/@jobID/@{jobID}.template.fas',
             async: false
         }).done(function (data) {
-
             document.getElementById("alignmentTemplate").value = data.toString();
         });
 
@@ -480,6 +489,33 @@ function templateAlignment(accession){
 }
 
 
+function showStructure(accession) {
+
+        $(document).ready(function(){
+            stage = new NGL.Stage( "viewport" );
+            stage.loadFile( ('http://files.rcsb.org/view/' + accession + '.pdb'), { defaultRepresentation: true } );
+            stage.set
+        });
+}
+
+
+
+function toggleAliColor_(str){
+    if(str == "letters" ){
+        if(colorLetters)
+            toggleAliColor("");
+        else
+            toggleAliColor("letters")
+        this.colorLetters = !this.colorLetters;
+    }
+    if(str == "background"){
+        if(colorBackround)
+            toggleAliColor("");
+        else
+            toggleAliColor("background")
+        this.colorBackground = !this.colorBackground;
+    }
+}
 function resubmitSection_(){
     resubmitSection(firstQuerySequence, firstQueryName);
 }

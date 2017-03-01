@@ -386,11 +386,6 @@ margin-top: 2em;
 }
 
 
-.reveal-overlay {
-    background-color: transparent;
-    overflow-y: hidden;
-}
-
 .reveal-overlay.fade-in {
     transition-duration: 0.2s;
 }
