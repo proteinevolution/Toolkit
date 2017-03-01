@@ -163,5 +163,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val MIN_ALN_COV = select("min_aln_cov", "Minimum alignment coverage")
   final val GRAMMAR = select("grammar", "Select grammar")
   final val SEQ_COUNT = select("seq_count", "Maximum number of sequences to display")
-
+  final val INC_NUCL = select("inc_nucl", "Include nucleic acid sequence")
+  final val AMINO_NUCL_REL = select("amino_nucl_rel", "Amino acids in relation to nucleotide sequence")
+  final val CODON_TABLE = select("codon_table", "Select codon usage table")
 }
