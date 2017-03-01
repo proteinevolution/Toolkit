@@ -10,7 +10,7 @@ import models.search.JobDAO
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.CacheApi
+import play.api.cache._
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -25,14 +25,14 @@ import modules.tel.env.Env
   * Created by lzimmermann on 02.12.16.
   */
 @Singleton
-final class JobController @Inject() (jobIDProvider                                    : JobIDProvider,
-                                     jobActorAccess                                   : JobActorAccess,
-                                     env                                              : Env,
-                                     implicit val userCache                           : CacheApi,
-                                     implicit  val locationProvider                   : LocationProvider,
-                                     val jobDao                                       : JobDAO,
-                                     val reactiveMongoApi                             : ReactiveMongoApi)
-                                     extends Controller with UserSessions with CommonModule with Constants{
+final class JobController @Inject() ( jobIDProvider    : JobIDProvider,
+                                      jobActorAccess   : JobActorAccess,
+                                      env              : Env,
+@NamedCache("userCache") implicit val userCache        : CacheApi,
+                         implicit val locationProvider : LocationProvider,
+                                  val jobDao           : JobDAO,
+                                  val reactiveMongoApi : ReactiveMongoApi)
+                              extends Controller with UserSessions with CommonModule with Constants{
 
   /**
     *  Loads one minified version of a job to the view, given the jobID
@@ -174,11 +174,12 @@ final class JobController @Inject() (jobIDProvider                              
   def create(toolname: String, jobID: String) : Action[AnyContent] =  Action.async { implicit request =>
 
     getUser.flatMap { user =>
+      Logger.info("Creating a new Job. User:\n" + user.toString)
       selectJob(jobID).map {
         case Some(_) => BadRequest //If the jobID has become unavailable between checking and submitting
         case None =>
           val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString(formMultiValueSeparator))
-          jobActorAccess.sendToJobActor(jobID, CreateJob(jobID, user,toolname, formData))
+          jobActorAccess.sendToJobActor(jobID, CreateJob(jobID, user, toolname, formData))
           Ok
       }
     }
