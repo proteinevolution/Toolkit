@@ -1,9 +1,7 @@
-
 #perl ../../scripts/makeCUT.pl -i=#{@cutorganism} \
                               #-o=#{@cutfile} \
 
-
-perl backtranslate.pl  -o=../results/backtrans_out \
+backtranslate.pl  -o=../results/output \
                        -i=%alignment.path \
-                       -oformat=fas \
+                       -oformat=%inc_amino.content \
                        -g=%genetic_code.content
