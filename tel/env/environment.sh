@@ -61,7 +61,8 @@ export PATH="${BIOPROGS}/tools/hmmer/binaries:${PATH}" # HMMER
 export PATH="${BIOPROGS}/tools/retrieveseq:${PATH}" # RetrieveSeq
 export PATH="${BIOPROGS}/tools/seq2id:${PATH}" # Seq2ID
 export PATH="${BIOPROGS}/tools/mmseqs2-build/bin:${PATH}" # MMseqs2
-export PATH="${BIOPROGS}/tools/patternsearch:${PATH}" # patternsearch
+export PATH="${BIOPROGS}/tools/patternsearch:${PATH}" # PatternSearch
+export PATH="${BIOPROGS}/tools/sixframe:${PATH}" # 6FrameTranslation
 
 # Setup Blammer
 export BLAMMERJAR="${BIOPROGS}/tools/blammer/blammer.jar"
