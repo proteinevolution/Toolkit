@@ -21,10 +21,10 @@ then
     DB=$pdbdir
 fi
 
-if [ ! -e "results/$jobID.template.reduced.a3m" ]
+if [ ! -e "results/$accession.template.reduced.a3m" ]
 then
-    hhfilter -i $DB/$accession.a3m -o results/$jobID.template.reduced.a3m -diff 100
-    reformat.pl a3m fas results/$jobID.template.reduced.a3m results/$jobID.template.fas
+    hhfilter -i $DB/$accession.a3m -o results/$accession.template.reduced.a3m -diff 100
+    reformat.pl a3m fas results/$accession.template.reduced.a3m results/$accession.template.fas
 fi
 
 
