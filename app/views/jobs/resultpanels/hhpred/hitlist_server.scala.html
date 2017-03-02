@@ -27,6 +27,7 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Hitlist</a>
         <div class="accordion-content" data-tab-content>
+            <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
             <table id="htb" class="display" cellspacing="0" width="80%">
                 <thead>
                     <tr>
@@ -52,15 +53,16 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Alignments</a>
         <div id="alignments" class="accordion-content table-scroll" data-tab-content>
-            <a class="success button tiny hhpred_extra_button" onclick="forwardHmm();" type="button">
-            Forward Hmm</a>
             <div id="hhpred_alignment_control">
                 <div id="hhpred_histo">
                     <a type="button" class="button success tiny hhpred_extra_button" onclick="toggleHistogram()">Histogram</a>
                 </div>
                 <div id="hhpred_advanced" >
+                    <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
                     <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_manual()">Manual template selection</a>
                     <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_automatic()">Select Templates Automatically</a>
+                    <a type="button" class="button success tiny hhpred_extra_button" onclick="resubmitHmm();">
+                        Resubmit HMM</a>
                 </div>
             </div>
             <!-- TODO FIX Coloring David -->
@@ -230,13 +232,15 @@
     </li>
 </ul>
 
+@*MODALS*@
 
-<div class="reveal" id="templateAlignment" data-reveal>
-    <h1>Template Alignment</h1>
+
+<div class="reveal" id="templateAlignmentModal" data-reveal>
+    <h3>Template Alignment</h3>
     <div>
         <select>
             <option selected>Forward To</option>
-            <option onclick="forward_('modeller', $('#alignmentTemplate').val())";>Modeller</option>
+            <option onclick="forwardTemplateAlignment_('modeller', $('#alignmentTemplate').val())";>Modeller</option>
         </select>
     </div>
     <textarea rows="50" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
@@ -244,19 +248,52 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<div class="reveal" id="structure" data-reveal>
-    <h1>3D Structure</h1>
+<div class="reveal" id="structureModal" data-reveal>
+    <h3>3D Structure</h3>
     <div id="viewport"></div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="reveal" id="forwardModal" data-reveal>
+    <h3>Forward</h3>
+        <div class="select_forward">
+            <select id="forward">
+                <option value="hhpred">HHpred</option>
+            </select>
+        </div>
+        <br>
+        <div class="forward_form">
+            <div class="forwardFormDiv">
+                <label style="font-weight: bold">Select hits to forward</label>
+                <input type="radio" name="radio1"><label>Selected Hits</label>
+                <div class="two_input">
+                    <input type="radio" name="radio1"><label>E-Value better than</label>
+                    <input class="result_inputs" type="text" value="0.001">
+                </div>
+            </div>
+            <div class="forwardFormDiv">
+                <label style="font-weight: bold">Select sequence length</label>
+                <input type="radio" name="radio2"><label>Forward slider region</label>
+                <br>
+                <input type="radio" name="radio2"><label>Forward full length sequence</label>
+            </div>
+            <div class="forwardFormLast"><a class="success button tiny" onclick="forward_($('#forward').val());" type="button" id="forward">
+                Forward Job</a></div>
+        </div>
+
+
     <button class="close-button" data-close aria-label="Close modal" type="button">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
 <script>
-$("#templateAlignment").foundation();
-$("#structure").foundation();
+$("#templateAlignmentModal").foundation();
+$("#structureModal").foundation();
+$("#forwardModal").foundation();
 
-$("#structure").bind('closed.zf.reveal', (function() {
+$("#structureModal").bind('closed.zf.reveal', (function() {
     $('#viewport canvas').remove();
 }))
 
@@ -462,7 +499,7 @@ function toggleSS_(){
 }
 
 
-function forwardHmm(tool) {
+function resubmitHmm(tool) {
     $.ajax({
         type: 'GET',
         url: 'files/@jobID/query.a3m'
@@ -502,10 +539,33 @@ function showStructure(accession) {
 }
 
 
-function forward_(tool, forwardData){
-    $('#templateAlignment').foundation('close');
+function forwardTemplateAlignment_(tool, forwardData){
+    $('#templateAlignmentModal').foundation('close');
     forward(tool, forwardData);
 }
+
+
+function forward_(tool) {
+
+    if (tool == "")
+        return;
+
+    var forwardData = [];
+    var count;
+    for (var i = 0 ; i < hitSequences.length; i++) {
+        count = i + 1;
+        if ($("input[value=" + count + "]").prop('checked')) {
+            forwardData.push(this.hitNames[i] + '\n');
+            forwardData.push(this.hitSequences[i] + '\n');
+        }
+    }
+    if (forwardData.length < 1) {
+        alert("Please select at least one sequence.");
+        return;
+    }
+    forward(tool, forwardData.join(''));
+}
+
 
 function toggleAliColor_(str){
     if(str == "letters" ){
