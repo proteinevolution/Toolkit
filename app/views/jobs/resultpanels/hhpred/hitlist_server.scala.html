@@ -5,6 +5,7 @@
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
 @import models.results.HHpred
+@import modules.tel.env.Env
 @(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
@@ -496,11 +497,22 @@ function templateAlignment(accession){
 
 function showStructure(accession) {
 
-        $(document).ready(function(){
+    $(document).ready(function(){
+        var db = identifyDatabase(accession);
+        var fileEnding = "";
+        switch(db){
+            case "scop":
+                fileEnding = ".pdb";
+                break;
+            case "mmcif":
+                fileEnding = ".cif";
+                break;
+        }
+        var url = 'http://olt:8555/getStructure/' + accession + fileEnding;
             stage = new NGL.Stage( "viewport" );
-            stage.loadFile( ('http://files.rcsb.org/view/' + accession + '.pdb'), { defaultRepresentation: true } );
+            stage.loadFile((url), { defaultRepresentation: true });
             stage.set
-        });
+    });
 }
 
 
