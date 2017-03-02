@@ -52,15 +52,8 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Alignments</a>
         <div id="alignments" class="accordion-content table-scroll" data-tab-content>
-            <ul id="accordion" class="accordion forward_panel" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-                <li class="accordion-item" data-accordion-item>
-                    <a href="#" class="accordion-title" style="background-color: #eee;">Forward</a>
-                    <div id="alignments" class="alignments accordion-content forward_panel_content" data-tab-content>
-                            <a class="success button tiny hhpred_extra_button" onclick="forwardHmm();" type="button">
-                            Forward Hmm</a>
-                    </div>
-                </li>
-            </ul>
+            <a class="success button tiny hhpred_extra_button" onclick="forwardHmm();" type="button">
+            Forward Hmm</a>
             <div id="hhpred_alignment_control">
                 <div id="hhpred_histo">
                     <a type="button" class="button success tiny hhpred_extra_button" onclick="toggleHistogram()">Histogram</a>
@@ -375,8 +368,8 @@ function drawDataTable(hits){
             'targets': 0,
             'searchable': false,
             'orderable': false,
-            'render': function (data, type, full, meta){
-                return '<input type="checkbox" name="templates" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '">';
+            'render': function (data){
+                return '<input type="checkbox" name="templates" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '"> ' + data;
             }
         }]
     });
