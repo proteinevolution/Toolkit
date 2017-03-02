@@ -240,6 +240,12 @@
 
 <div class="reveal" id="templateAlignment" data-reveal>
     <h1>Template Alignment</h1>
+    <div>
+        <select>
+            <option selected>Forward To</option>
+            <option onclick="forward_('modeller', $('#alignmentTemplate').val())";>Modeller</option>
+        </select>
+    </div>
     <textarea rows="50" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
     <button class="close-button" data-close aria-label="Close modal" type="button">
         <span aria-hidden="true">&times;</span>
@@ -483,7 +489,7 @@ function templateAlignment(accession){
     }).done(function () {
         $.ajax({
             type: 'GET',
-            url: 'files/@jobID/@{jobID}.template.fas',
+            url: 'files/@jobID/' + accession + '.template.fas',
             async: false
         }).done(function (data) {
             document.getElementById("alignmentTemplate").value = data.toString();
@@ -503,6 +509,10 @@ function showStructure(accession) {
 }
 
 
+function forward_(tool, forwardData){
+    $('#templateAlignment').foundation('close');
+    forward(tool, forwardData);
+}
 
 function toggleAliColor_(str){
     if(str == "letters" ){
