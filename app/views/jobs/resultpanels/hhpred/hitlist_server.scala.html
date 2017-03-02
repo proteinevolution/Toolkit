@@ -255,43 +255,10 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<div class="reveal" id="forwardModal" data-reveal>
-    <h3>Forward</h3>
-        <div class="select_forward">
-            <select id="forward">
-                <option value="hhpred">HHpred</option>
-            </select>
-        </div>
-        <br>
-        <div class="forward_form">
-            <div class="forwardFormDiv">
-                <label style="font-weight: bold">Select hits to forward</label>
-                <input type="radio" name="radio1"><label>Selected Hits</label>
-                <div class="two_input">
-                    <input type="radio" name="radio1"><label>E-Value better than</label>
-                    <input class="result_inputs" type="text" value="0.001">
-                </div>
-            </div>
-            <div class="forwardFormDiv">
-                <label style="font-weight: bold">Select sequence length</label>
-                <input type="radio" name="radio2"><label>Forward slider region</label>
-                <br>
-                <input type="radio" name="radio2"><label>Forward full length sequence</label>
-            </div>
-            <div class="forwardFormLast"><a class="success button tiny" onclick="forward_($('#forward').val());" type="button" id="forward">
-                Forward Job</a></div>
-        </div>
-
-
-    <button class="close-button" data-close aria-label="Close modal" type="button">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
 
 <script>
 $("#templateAlignmentModal").foundation();
 $("#structureModal").foundation();
-$("#forwardModal").foundation();
 
 $("#structureModal").bind('closed.zf.reveal', (function() {
     $('#viewport canvas').remove();
@@ -324,8 +291,6 @@ var aas;
             'padding-left' : '2px'
         });
     });
-
-    $('#forward').niceSelect();
 
     var dataRoute = jsRoutes.controllers.DataController.get("@jobID", 'hhr');
     $.ajax({
@@ -546,24 +511,10 @@ function forwardTemplateAlignment_(tool, forwardData){
 
 
 function forward_(tool) {
-
     if (tool == "")
         return;
 
-    var forwardData = [];
-    var count;
-    for (var i = 0 ; i < hitSequences.length; i++) {
-        count = i + 1;
-        if ($("input[value=" + count + "]").prop('checked')) {
-            forwardData.push(this.hitNames[i] + '\n');
-            forwardData.push(this.hitSequences[i] + '\n');
-        }
-    }
-    if (forwardData.length < 1) {
-        alert("Please select at least one sequence.");
-        return;
-    }
-    forward(tool, forwardData.join(''));
+    forward(tool, "");
 }
 
 

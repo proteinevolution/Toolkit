@@ -1,0 +1,66 @@
+@import models.tools.Tool
+@import play.twirl.api.Html
+@(tool : Tool, view: Html)
+
+
+<div class="reveal" id="forwardModal" data-reveal>
+    <h3>Forward</h3>
+    <div class="select_forward">
+        <select id="forwardSelect">
+            <option value="">Select Tool</option>
+            <div>
+                @for(forwardTool <- {tool.forward}) {
+                    <option value="@forwardTool">@forwardTool</option>
+                }
+            </div>
+        </select>
+    </div>
+    <br>
+    <div class="forward_form">
+
+
+        @* HHpred *@
+        @if({tool.toolNameShort == "hhpred"}){
+        <div class="forwardFormDiv">
+            <label style="font-weight: bold">Select hits to forward</label>
+            <input type="radio" name="radio1"><label>Selected Hits</label>
+            <div class="two_input">
+                <input type="radio" name="radio1"><label>E-Value better than</label>
+                <input class="result_inputs" type="text" value="0.001">
+            </div>
+        </div>
+        <div class="forwardFormDiv">
+            <label style="font-weight: bold">Select sequence length</label>
+            <input type="radio" name="radio2"><label>Forward slider region</label>
+            <br>
+            <input type="radio" name="radio2"><label>Forward full length sequence</label>
+        </div>
+        }
+
+        
+    </div>
+
+
+    <div class="forwardFormLast"><a class="success button tiny" onclick="closeModalAndForward();" type="button" id="forward">
+        Forward Job</a>
+    </div>
+</div>
+
+<script>
+
+$('#forwardSelect').niceSelect();
+$("#forwardModal").foundation();
+
+function closeModalAndForward(){
+    var select = $('#forwardSelect').val();
+    if(select != "") {
+        $('#forwardModal').foundation('close');
+
+        // IMPORTANT: Every result view must implement forward_() in order to handle forwarding
+        forward_(select)
+    }
+}
+</script>
+
+
+@view
