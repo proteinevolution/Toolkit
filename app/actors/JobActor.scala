@@ -275,13 +275,7 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
 
       // Add Job to user in database
       //upsertUser(user.copy(jobs = user.jobs.::(job.jobID)))
-      modifyUser(BSONDocument(User.IDDB -> user.userID), BSONDocument("$push" -> BSONDocument(User.JOBS -> jobID))).foreach {
-        case Some(updatedUser) =>
-          updateUserCache(updatedUser)
-        case None =>
-          Logger.error("New Job Submission: Could not update user cache in Job Actor")
-          Logger.error(user.toString)
-      }
+      modifyUserWithCache(BSONDocument(User.IDDB -> user.userID), BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
 
       // Establish exection context for the newJob
       val executionContext = ExecutionContext(jobPath/jobID)
@@ -348,13 +342,8 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
       }
       this.users(userID).foreach(_ ! ClearJob(jobID))
 
-      modifyUser(BSONDocument(User.IDDB -> userID),
-                 BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID))).foreach {
-        case Some(updatedUser) =>
-          updateUserCache(updatedUser)
-        case None =>
-          Logger.error("Stop Watching: Could not update user cache in Job Actor")
-      }
+      modifyUserWithCache(BSONDocument(User.IDDB -> userID),
+                          BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
 
     // User Starts watching job
     case StartWatch(jobID, userID) =>
@@ -366,13 +355,8 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
         case None =>
       }
 
-      modifyUser(BSONDocument(User.IDDB   -> userID),
-                 BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID))).foreach {
-        case Some(updatedUser) =>
-          updateUserCache(updatedUser)
-        case None =>
-          Logger.error("Start Watching: Could not update user cache in Job Actor")
-      }
+      modifyUserWithCache(BSONDocument(User.IDDB   -> userID),
+                          BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
 
     // User registers to the job actor
     case RegisterUser(userID, userActor) =>
