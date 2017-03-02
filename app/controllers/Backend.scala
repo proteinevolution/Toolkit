@@ -3,16 +3,17 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import models.database.jobs.Job
-import models.database.statistics.ToolStatistic
+import models.database.statistics.{JobEvent, JobEventLog, ToolStatistic}
 import modules.LocationProvider
 import org.joda.time.DateTime
+import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -96,6 +97,15 @@ final class Backend @Inject()(webJarAssets                                      
   def statistics = Action.async { implicit request =>
     getUser.flatMap { user =>
       if (user.isSuperuser) {
+        val dateTimeFirstOfMonth : DateTime = DateTime.now().dayOfMonth().withMinimumValue().withTimeAtStartOfDay()
+        findJobEventLogs(BSONDocument(JobEventLog.EVENTS ->
+                         BSONDocument("$elemMatch"       ->
+                         BSONDocument(JobEvent.TIMESTAMP ->
+                         BSONDocument("$gte"             -> BSONDateTime(dateTimeFirstOfMonth.minusMonths(1).getMillis),
+                                      "$lt"              -> BSONDateTime(dateTimeFirstOfMonth.getMillis)))))).foreach{ jobEventList =>
+          Logger.info("Found " + jobEventList.length + " Jobs for the last Month (From " + dateTimeFirstOfMonth.minusMonths(1) + " to " + dateTimeFirstOfMonth + ")")
+        }
+
         getStatistics.map { toolStatisticList: List[ToolStatistic] =>
           NoCache(Ok(Json.toJson(toolStatisticList)))
         }

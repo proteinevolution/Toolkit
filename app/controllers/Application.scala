@@ -12,7 +12,7 @@ import models.tools.ToolFactory
 import modules.tel.TEL
 import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
-import play.api.Configuration
+import play.api.{Logger, Configuration}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.Files
@@ -70,7 +70,7 @@ final class Application @Inject()(webJarAssets                                  
 
       case rh if sameOriginCheck(rh) =>
         getUser(rh).map { user =>
-          Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.userID, out))))
+          Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
         }.recover {
           case e: Exception =>
             logger.error("Cannot create websocket", e)
@@ -137,6 +137,7 @@ final class Application @Inject()(webJarAssets                                  
     println("[CONFIG:] running on port "+tel.port)
     println("[CONFIG:] execution mode: "+settings.clusterMode)
     getUser.map { user =>
+      Logger.info(user.toString)
       Ok(views.html.main(webJarAssets, user, toolFactory.values.values.toSeq.sortBy(_.toolNameLong)))
         .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
     }

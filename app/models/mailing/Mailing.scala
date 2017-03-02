@@ -68,7 +68,7 @@ case class NewUserWelcomeMail (tel: TEL, userParam : User, token : String) exten
     super.bodyHtmlTemplate(
       s"""Welcome ${user.getUserData.nameLogin},""".stripMargin,
       s"""Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
-       |To do this, click <a href=\"http://olt:7550/verification/${user.getUserData.nameLogin}/$token\">here</a>
+       |To do this, click <a href=\"http://${tel.hostname}:${tel.port}/verification/${user.getUserData.nameLogin}/$token\">here</a>
        |or copy this URL and visit this page in your browser:
        |http://${tel.hostname}:${tel.port}/verification/${user.getUserData.nameLogin}/$token
        |Your Toolkit Team
@@ -97,7 +97,7 @@ case class ChangePasswordMail (tel: TEL, userParam : User, token : String) exten
     super.bodyHtmlTemplate(
       s"""Hello ${user.getUserData.nameLogin},""".stripMargin,
       s"""You requested a password change.
-          |To complete the process, click <a href=\"http://olt:7550/verification/${user.getUserData.nameLogin}/$token\">here</a>
+          |To complete the process, click <a href=\"http://${tel.hostname}:${tel.port}/verification/${user.getUserData.nameLogin}/$token\">here</a>
           |or copy this URL and visit this page in your browser:
           |http://${tel.hostname}:${tel.port}/verification/${user.getUserData.nameLogin}/$token
           |If You did not request this, then your account has been used by someone else.

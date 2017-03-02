@@ -3,6 +3,7 @@ hhblitsdb  GEN hhblitsdb.sh
 hhsuitedb  GEN hhsuitedb.py
 msageneration GEN msageneration.prop
 msa_gen_max_iter GEN msa_gen_max_iter.prop
+inc_amino GEN inc_amino.prop
 genetic_code GEN genetic_code.prop
 inclusion_ethresh GEN inclusion_ethresh.prop
 min_cov GEN min_cov.prop
@@ -21,3 +22,6 @@ min_seqid GEN min_seqid.prop
 min_aln_cov GEN min_aln_cov.prop
 grammar GEN grammar.prop
 seq_count GEN seq_count.prop
+inc_nucl GEN inc_nucl.prop
+amino_nucl_rel GEN amino_nucl_rel.prop
+codon_table GEN codon_table.prop
