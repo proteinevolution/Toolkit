@@ -7,8 +7,9 @@ import better.files._
 import models.Constants
 import play.twirl.api.Html
 import modules.parsers.HHR._
-import play.api
+import modules.tel.env.Env
 import play.api.Logger
+
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -21,6 +22,8 @@ object HHpred extends Constants {
 
   private val scopReg = """(d[0-9].*)""".r
   private val mmcifReg = """(...._[a-zA-Z])""".r
+  private val mmcifShortReg = """([0-9]...)""".r
+
   private val pfamReg = """(pfam.*)|(PF.*)""".r
 
   private val pdbBaseLink = "http://pdb.rcsb.org/pdb/explore.do?structureId="
@@ -127,18 +130,17 @@ object HHpred extends Constants {
     val db = identifyDatabase(id)
     var links = new ArrayBuffer[String]()
 
-    var idPdb = id.replaceAll("_.*$", "")
+    var idPdb = id.replaceAll("_.*$", "").toLowerCase
     var idTrimmed = id.substring(1, 5)
     var idCDD = id.replaceAll("PF", "pfam")
     links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
     if(db == "scop") {
-      links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + idTrimmed + "\')\";\">Template 3D structure</a>"
+      links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
       links += generateLink(scopBaseLink, id, "SCOP")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
     }
     if(db == "mmcif") {
-      links += "<a onclick=\"window.open(\'/structure3D/"+idPdb+"\', '_blank'," +
-        " 'location=yes,height=550,width=750');\">Show template 3D structure</a>"
+      links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + idPdb + "\')\";\">Template 3D structure</a>"
     }
     if (db == "pfam"){
       idCDD = idCDD.replaceAll("\\..*","")
@@ -154,7 +156,9 @@ object HHpred extends Constants {
     case scopReg(_) => "scop"
     case mmcifReg(_) => "mmcif"
     case pfamReg(_,_) => "pfam"
-    case e : String => Logger.info("Struc: "+e+ "could not be matched against any database!");""
+    case mmcifShortReg(_) => "mmcif"
+    case e : String => Logger.info("Struc: ("+e+") could not be matched against any database!");""
   }
+
 }
 
