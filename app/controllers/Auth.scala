@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import actors.JobActor.SwapUserID
 import models.auth._
-import models.database.users.{UserToken, User}
+import models.database.users.{User, UserToken}
 import models.job.JobActorAccess
 import models.mailing.{ChangePasswordMail, NewUserWelcomeMail}
 import modules.LocationProvider
@@ -86,7 +86,7 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
     */
   def signOut() : Action[AnyContent] = Action.async { implicit request =>
     getUser.map { user =>
-      removeUser(user)
+      removeUserFromCache(user)
 
       Redirect(routes.Application.index()).withNewSession.flashing(
         "success" -> "You've been logged out"
@@ -162,11 +162,11 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
                   val modifier = BSONDocument("$set"             ->
                                  BSONDocument(User.SESSIONID     -> unregisteredUser.sessionID,
                                               User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
-                                              "$push"            ->
+                                              "$addToSet"        ->
                                  BSONDocument(User.JOBS          ->
                                  BSONDocument("$each"            -> unregisteredUser.jobs)))
                   // Finally add the edits to the collection
-                  modifyUser(selector, modifier).map {
+                  modifyUserWithCache(selector, modifier).map {
                     case Some(loggedInUser) =>
                       Logger.info("\n-[old user]-\n"
                               + unregisteredUser.toString
@@ -174,12 +174,10 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
                               + loggedInUser.toString)
                       // Remove the old, not logged in user
                       //removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
-                      removeUser(unregisteredUser)
+                      removeUserFromCache(unregisteredUser)
 
+                      // Tell the job actors to copy all jobs connected to the old user to the new user
                       jobActorAccess.identifyUser(SwapUserID(unregisteredUser.userID, loggedInUser.userID))
-
-                      // Make sure the Cache is updated
-                      updateUserCache(loggedInUser)
 
                       // Everything is ok, let the user know that they are logged in now
                       Ok(LoggedIn(loggedInUser))
@@ -252,13 +250,11 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
                                  BSONDocument(User.USERDATA   -> signUpFormUser.getUserData),
                                               "$push"         ->
                                  BSONDocument(User.USERTOKENS -> UserToken(tokenType = 1, newEmail = Some(signUpFormUser.getUserData.eMail.head))))
-                  modifyUser(selector,modifier).map {
+                  modifyUserWithCache(selector,modifier).map {
                     case Some(registeredUser) =>
                       // All done. User is registered, now send the welcome eMail
                       val eMail = NewUserWelcomeMail(tel, registeredUser, registeredUser.userTokens.head.token)
                       eMail.send
-                      // Make sure the Cache is updated
-                      updateUserCache(registeredUser)
                       Ok(LoggedIn(registeredUser)).withSession(sessionCookie(request, registeredUser.sessionID.get, Some(registeredUser.getUserData.nameLogin)))
                     case None =>
                       Ok(FormError())
@@ -274,7 +270,7 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
   }
 
   /**
-    * Function handles the profile edit form submission
+    * Function handles the profile edit form submission.
     *
     * @return
     */
@@ -282,6 +278,7 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
     getUser.flatMap { user : User =>
       user.userData match {
         case Some(userData) =>
+          // change the userData with the help of the form input
           FormDefinitions.ProfileEdit(user).bindFromRequest.fold(
             errors =>
               Future.successful{
@@ -297,10 +294,8 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
                                BSONDocument(User.USERDATA      -> editedProfileUserData,
                                             User.DATELASTLOGIN -> bsonCurrentTime,
                                             User.DATEUPDATED   -> bsonCurrentTime))
-                modifyUser(selector, modifier).map {
+                modifyUserWithCache(selector, modifier).map {
                   case Some(updatedUser) =>
-                    // Update the user cache
-                    updateUserCache(updatedUser)
                     // Everything is ok, let the user know that they are logged in now
                     Ok(EditSuccessful(updatedUser))
                   case None =>
@@ -319,10 +314,17 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
     }
   }
 
+  /**
+    * Allows a User to change their password. A confirmation eMail is sent for them to
+    * ensure a secure change
+    *
+    * @return
+    */
   def passwordChangeSubmit() : Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user : User =>
       user.userData match {
         case Some(userData) =>
+          // Validate the password and return the new password Hash
           FormDefinitions.ProfilePasswordEdit(user).bindFromRequest.fold(
             errors =>
               Future.successful{
@@ -331,19 +333,19 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
             // when there are no errors, then insert the user to the collection
             {
               case Some(newPasswordHash) =>
+                // Generate a new Token to wait for the confirmation eMail
                 val token = UserToken(tokenType = 2, passwordHash = Some(newPasswordHash))
                 // create a modifier document to change the last login date in the Database
                 val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                // Push to the database using selector and modifier
                 val selector = BSONDocument(User.IDDB          -> user.userID)
                 val modifier = BSONDocument("$set"             ->
                                BSONDocument(User.DATELASTLOGIN -> bsonCurrentTime,
                                             User.DATEUPDATED   -> bsonCurrentTime),
                                             "$push"            ->
                                BSONDocument(User.USERTOKENS    -> token))
-                modifyUser(selector, modifier).map {
+                modifyUserWithCache(selector, modifier).map {
                   case Some(updatedUser) =>
-                    // Update the user cache
-                    updateUserCache(updatedUser)
                     // All done. Now send the eMail
                     val eMail = ChangePasswordMail(tel, updatedUser, token.token)
                     eMail.send
@@ -366,7 +368,9 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
   }
 
   /**
-    * Verifies a Users Email // TODO need to reimplement this.
+    * Verifies a Token which was sent to the Users eMail address.
+    * Token Types: 1 - eMail verification
+    *              2 - password change verification
     *
     * @param userName
     * @param token
@@ -374,45 +378,49 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
     */
   def verification(userName : String, token : String) = Action.async { implicit request =>
     getUser.flatMap { user : User =>
+      // Grab the user from the database in case that the logged in user is not the user to verify
       findUser(BSONDocument(User.NAMELOGIN -> userName)).flatMap {
         case Some(userToVerify) =>
-          val matchingTokenList = userToVerify.userTokens.filter(_.token == token)
-          matchingTokenList.headOption match {
-            case Some(tokenObject) =>
-              tokenObject.tokenType match {
+          // Filter the correct token
+          val matchingToken = userToVerify.userTokens.find(_.token == token)
+          matchingToken match {
+            case Some(usedToken) =>
+              // generate new list of tokens minus the type of token used for this token
+              val newTokens : List[UserToken] = userToVerify.userTokens.filterNot(_.tokenType == usedToken.tokenType)
+              usedToken.tokenType match {
                 case 1 =>
-                modifyUser(BSONDocument(User.IDDB -> userToVerify.userID),
-                           BSONDocument("$set"           ->
-                           BSONDocument(User.ACCOUNTTYPE -> 1,
-                                        User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
-                                        "$pull"          ->
-                           BSONDocument(User.USERTOKENS  ->
-                           BSONDocument("$in"            -> matchingTokenList)))).map {
+                  // Token for eMail verification
+                  modifyUserWithCache(
+                             BSONDocument(User.IDDB        -> userToVerify.userID),
+                             BSONDocument("$set"           ->
+                             BSONDocument(User.ACCOUNTTYPE -> 1,
+                                          User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis),
+                                          User.USERTOKENS  -> newTokens))).map {
                   case Some(modifiedUser) =>
-                    updateUserCache(modifiedUser)
                     Ok(views.html.auth.message("Account verification was successful."))
                   case None =>
                     Ok(views.html.auth.message("Verification was not successful. Please try again."))
                 }
                 case 2 =>
-                  modifyUser(BSONDocument(User.IDDB -> userToVerify.userID),
+                  // Token for password change validation
+                  modifyUser(BSONDocument(User.IDDB        -> userToVerify.userID),
                              BSONDocument("$set"           ->
-                             BSONDocument(User.PASSWORD    -> tokenObject.passwordHash.get,
-                                          User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
+                             BSONDocument(User.PASSWORD    -> usedToken.passwordHash.getOrElse(""),
+                                          User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis),
+                                          User.USERTOKENS  -> newTokens),
                                           "$unset"         ->
                              BSONDocument(User.SESSIONID   -> "",
-                                          User.CONNECTED   -> ""),
-                                          "$pull"          ->
-                             BSONDocument(User.USERTOKENS  ->
-                             BSONDocument("$in"            -> matchingTokenList)))).map {
+                                          User.CONNECTED   -> ""))).map {
                     case Some(modifiedUser) =>
-                      removeUser(modifiedUser)
-                      // TODO maybe add a forced logout here to ensure all open windows are getting logged out.
+                      removeUserFromCache(user = userToVerify, withDB = false)
+                      if(userToVerify.connected) {
+                        // TODO maybe add a forced logout here to ensure all open windows are getting logged out.
+                      }
                       Ok(views.html.auth.message("Password change verification was successful. Please log in with Your new password."))
                     case None =>
                       Ok(views.html.auth.message("Verification was not successful. Please try again."))
                   }
-            }
+              }
             case None =>
               Future.successful(Ok(views.html.auth.message("Verification was not successful. Please try again.")))
           }

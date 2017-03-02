@@ -43,9 +43,8 @@ trait UserSessions extends CommonModule {
                        BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
                                     "$addToSet"        ->
                        BSONDocument(User.SESSIONDATA   -> newSessionData))
-        modifyUser(selector,modifier).map {
+        modifyUserWithCache(selector,modifier).map {
           case Some(updatedUser) =>
-            userCache.set(updatedUser.sessionID.get.stringify, updatedUser, 10.minutes)
             updatedUser
           case None =>
             user
@@ -85,22 +84,33 @@ trait UserSessions extends CommonModule {
     }
   }
 
+  /**
+    * Grabs the user with the matching sessionID from the cache, or if there is
+    * none, it will try to find it in the database and put it in the cache.
+    * @param sessionID
+    * @return
+    */
   def getUser(sessionID : BSONObjectID) : Future[Option[User]] = {
+    // Try the cache
     userCache.get(sessionID.stringify) match {
       case Some(user) =>
+        // User successfully pulled from the cache
         Future.successful(Some(user))
       case None =>
+        // Pull it from the DB, as it is not in the cache
         findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
           case Some(user)   =>
-            Logger.info("User found by SessionID")
+            // There is a user in the DB
+            //Logger.info("User found in collection by sessionID")
+            // Update the last login time
             val selector = BSONDocument(User.IDDB          -> user.userID)
             val modifier = BSONDocument("$set"             ->
                            BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
-            modifyUser(selector,modifier).map {
+            modifyUserWithCache(selector,modifier).map {
               case Some(updatedUser) =>
-                userCache.set(updatedUser.sessionID.get.stringify, updatedUser, 10.minutes)
                 Some(updatedUser)
               case None =>
+                // update was not possible, return the original user
                 Some(user)
             }
           case None =>
@@ -118,14 +128,32 @@ trait UserSessions extends CommonModule {
   }
 
   /**
-    * removes a user from the sessions
+    * saves the user directly to the cache after modification in the DB
+    * @param selector
+    * @param modifier
+    * @return
     */
-  def removeUser(user : User) = {
+  def modifyUserWithCache(selector : BSONDocument, modifier : BSONDocument) : Future[Option[User]] = {
+    modifyUser(selector, modifier).map(_.map { user =>
+      updateUserCache(user)
+      user
+    })
+  }
+
+  /**
+    * removes a user from the sessions and the database
+    */
+  def removeUserFromCache(user : User, withDB : Boolean = true) = {
     Logger.info("Removing User: \n" + user.toString)
-    userCache.remove(user.sessionID.get.stringify)
-    userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
-                                    BSONDocument("$set"   -> BSONDocument(User.CONNECTED -> false),
-                                                 "$unset" -> BSONDocument(User.SESSIONID -> ""))))
+    if(user.sessionID.nonEmpty) {
+      userCache.remove(user.sessionID.getOrElse(BSONObjectID.generate()).stringify)
+    }
+
+    if (withDB) {
+      userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
+                                      BSONDocument("$unset"  -> BSONDocument(User.SESSIONID -> "",
+                                                                             User.CONNECTED -> ""))))
+    }
   }
 
   /**
