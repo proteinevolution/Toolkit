@@ -257,6 +257,10 @@
 $("#templateAlignment").foundation();
 $("#structure").foundation();
 
+$("#structure").bind('closed.zf.reveal', (function() {
+    $('#viewport canvas').remove();
+}))
+
 
 var hitlist;
 var colorSS = false;
