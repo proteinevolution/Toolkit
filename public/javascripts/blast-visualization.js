@@ -9,17 +9,23 @@ function toggleAliColor(str) {
             aa.style.color = aa_color_font.get(aa.className);
             aa.style.backgroundColor = "white"
         }
+            $("#letterColor").addClass( "colorSpan" );
+            $("#backgroundColor").removeClass("colorSpan")
+
     } else if(str == "background") {
         for(i = 0; i < aas.length; i++) {
             aa = aas[i];
             aa.style.backgroundColor = aa_color_background.get(aa.className);
             aa.style.color = "black"
         }
+            $("#backgroundColor").addClass( "colorSpan" );
+            $("#letterColor").removeClass("colorSpan")
     } else {
         for(i = 0; i < aas.length; i++) {
             aas[i].style.color = "black";
             aas[i].style.backgroundColor = "white";
         }
+            $("span").removeClass("colorSpan")
     }
 }
 
@@ -35,6 +41,7 @@ function toggleSS(bool) {
         for (i = 0; i < ss_extended.length; i++) {
             ss_extended[i].style.color = "black";
         }
+            $("#onlySS").removeClass( "colorSpan" );
     }
     if(bool){
 
@@ -44,6 +51,7 @@ function toggleSS(bool) {
         for (i = 0; i < ss_extended.length; i++) {
             ss_extended[i].style.color = "#0000D0";
         }
+        $("#onlySS").addClass("colorSpan")
     }
 
 
@@ -408,3 +416,4 @@ function calcColor(prob) {
     }
     return [red, grn, blu];
 }
+
