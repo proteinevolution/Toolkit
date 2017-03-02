@@ -130,9 +130,9 @@ object HHpred extends Constants {
     var idPdb = id.replaceAll("_.*$", "")
     var idTrimmed = id.substring(1, 5)
     var idCDD = id.replaceAll("PF", "pfam")
-    links +=  "<a data-open=\"templateAlignment\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
+    links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
     if(db == "scop") {
-      links += "<a data-open=\"structure\" onclick=\"showStructure(\'" + idTrimmed + "\')\";\">Template 3D structure</a>"
+      links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + idTrimmed + "\')\";\">Template 3D structure</a>"
       links += generateLink(scopBaseLink, id, "SCOP")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
     }
