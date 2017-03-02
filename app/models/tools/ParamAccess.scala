@@ -134,7 +134,8 @@ class ParamAccess @Inject() (tel: TEL) {
   final val ALIGNMODE = select("alignmode", "Alignment Mode")
   final val MSAGENERATION = select("msageneration", "Method of MSA generation")
   final val MSA_GEN_MAX_ITER = select("msa_gen_max_iter", "Maximal no. of MSA generation steps")
-  final val GENETIC_CODE = select("genetic_code", "Genetic Code")
+  final val INC_AMINO = select("inc_amino", "Include amino acid sequence in output" )
+  final val GENETIC_CODE = select("genetic_code", "Choose a genetic Code")
   final val LONG_SEQ_NAME =  Param("long_seq_name",Bool,1, "Use long sequence name")
   final val EVAL_INC_THRESHOLD = Param("inclusion_ethresh",Slide(Some(0),Some(100)),1, "E-Value inclusion threshold")
   final val MIN_COV = Param("min_cov",ParamType.Percentage, 1, "Min. coverage of hits (%)")
@@ -163,5 +164,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val MIN_ALN_COV = select("min_aln_cov", "Minimum alignment coverage")
   final val GRAMMAR = select("grammar", "Select grammar")
   final val SEQ_COUNT = select("seq_count", "Maximum number of sequences to display")
-
+  final val INC_NUCL = select("inc_nucl", "Include nucleic acid sequence")
+  final val AMINO_NUCL_REL = select("amino_nucl_rel", "Amino acids in relation to nucleotide sequence")
+  final val CODON_TABLE = select("codon_table", "Select codon usage table")
 }

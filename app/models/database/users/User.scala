@@ -35,6 +35,14 @@ case class User(userID        : BSONObjectID,                        // ID of th
       case _  => false
     }
   }
+  override def toString : String = {
+    s"""userID: ${userID.stringify}
+       |sessionID: ${sessionID.get.stringify}
+       |connected: ${if(connected) "Yes" else "No"}
+       |nameLogin: ${getUserData.nameLogin}
+       |watched jobIDs: ${jobs.mkString(",")}"""
+    .stripMargin
+  }
 }
 
 object User {
