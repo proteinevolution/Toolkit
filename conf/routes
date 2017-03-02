@@ -133,6 +133,7 @@ POST          /api/writeArticle                       @controllers.DataControlle
 
 # 3D structure
 GET          /structure3D/:accession                   @controllers.HHPredController.show3DStructure(accession : String)
-
+# get pdb structure
+GET          /getStructure/:filename                    @controllers.Application.getStructureFile(filename : String)
 # template alignment
 GET         /templateAlignment/:jobID/:accession  @controllers.HHPredController.runScript(jobID : String, accession : String)

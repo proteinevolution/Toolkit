@@ -8,11 +8,12 @@ import akka.stream.Materializer
 import models.database.statistics.ToolStatistic
 import models.search.JobDAO
 import models.Constants
+import models.results.HHpred
 import models.tools.ToolFactory
 import modules.tel.TEL
 import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
-import play.api.{Logger, Configuration}
+import play.api.{Configuration, Logger}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.Files
@@ -189,6 +190,20 @@ final class Application @Inject()(webJarAssets                                  
   }
 
 
+
+  def getStructureFile(filename : String ) : Action[AnyContent] = Action.async { implicit request => {
+    var filepath  = ""
+    var fileEnding = ""
+    val db = HHpred.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
+    db match{
+      case "scop" =>
+        filepath = env.get("SCOPE")
+      case "mmcif" =>
+        filepath = env.get("CIF")
+    }
+    Future.successful(Ok.sendFile(new java.io.File(s"$filepath$SEPARATOR$filename")).as("text/plain"))
+  }
+  }
 
   def upload : Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData) { request =>
     request.body.file("file").map { picture =>
