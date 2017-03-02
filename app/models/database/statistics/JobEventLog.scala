@@ -9,6 +9,8 @@ import reactivemongo.bson._
   * Created by astephens on 19.02.17.
   */
 case class JobEventLog(mainID      : BSONObjectID,                // ID of the Job in the System
+                       toolName    : String,
+                       internalJob : Boolean        = false,
                        events      : List[JobEvent],
                        runtime     : Long           = 0L) {
   def addJobStateEvent(jobState : JobState) : JobEventLog = {
@@ -22,6 +24,8 @@ case class JobEventLog(mainID      : BSONObjectID,                // ID of the J
 object JobEventLog {
   val ID          = "mainID"
   val IDDB        = "_id"
+  val TOOLNAME    = "tool"
+  val INTERNALJOB = "internalJob"
   val EVENTS      = "events"
   val RUNTIME     = "runtime"
 
@@ -31,7 +35,9 @@ object JobEventLog {
         val mainID  = BSONObjectID.parse((obj \ ID).as[String]).getOrElse(BSONObjectID.generate())
         val events  = (obj \ EVENTS).asOpt[List[JobEvent]].getOrElse(List.empty)
         val runtime = (obj \ RUNTIME).as[Long]
-        JsSuccess(JobEventLog(mainID, events, runtime))
+        val toolName = (obj \ TOOLNAME).as[String]
+        val internalJob = (obj \ INTERNALJOB).as[Boolean]
+        JsSuccess(JobEventLog(mainID, toolName, internalJob, events, runtime))
       } catch {
         case cause: Throwable => JsError(cause.getMessage)
       }
@@ -41,9 +47,11 @@ object JobEventLog {
 
   implicit object JsonWriter extends Writes[JobEventLog] {
     override def writes(jobEventLog : JobEventLog) : JsObject = Json.obj(
-      ID      -> jobEventLog.mainID.stringify,
-      EVENTS  -> jobEventLog.events,
-      RUNTIME -> jobEventLog.runtime
+      ID          -> jobEventLog.mainID.stringify,
+      TOOLNAME    -> jobEventLog.toolName,
+      INTERNALJOB -> jobEventLog.internalJob,
+      EVENTS      -> jobEventLog.events,
+      RUNTIME     -> jobEventLog.runtime
     )
   }
 
@@ -51,6 +59,8 @@ object JobEventLog {
     def read(bson : BSONDocument) : JobEventLog = {
       JobEventLog(
         mainID      = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
+        toolName    = bson.getAs[String](TOOLNAME).getOrElse(""),
+        internalJob = bson.getAs[Boolean](INTERNALJOB).getOrElse(false),
         events      = bson.getAs[List[JobEvent]](EVENTS).getOrElse(List.empty),
         runtime     = bson.getAs[Long](RUNTIME).getOrElse(0L)
       )
@@ -59,9 +69,11 @@ object JobEventLog {
 
   implicit object Writer extends BSONDocumentWriter[JobEventLog] {
     def write(jobEventLog : JobEventLog) : BSONDocument = BSONDocument(
-      IDDB    -> jobEventLog.mainID,
-      EVENTS  -> jobEventLog.events,
-      RUNTIME -> jobEventLog.runtime
+      IDDB        -> jobEventLog.mainID,
+      TOOLNAME    -> jobEventLog.toolName,
+      INTERNALJOB -> jobEventLog.internalJob,
+      EVENTS      -> jobEventLog.events,
+      RUNTIME     -> jobEventLog.runtime
     )
   }
 }

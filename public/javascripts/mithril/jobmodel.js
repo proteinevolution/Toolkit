@@ -23,6 +23,8 @@ window.JobModel = {
         "num_seqs_extract": 100,
         "protblastprogram": "psiblast",
         "seq_count": 1000,
+        "codon_table": "1",
+        "genetic_code": "1",
         "grammar": "Prosite_grammar"
     },
     pushMessage: function(msg) {

@@ -184,5 +184,13 @@ trait CommonModule extends ReactiveMongoComponents {
   protected def modifyUser(selector : BSONDocument, modifier : BSONDocument) : Future[Option[User]] = {
     userCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[User]))
   }
-  protected def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))
+
+  protected def upsertUser(user : User) : Future[Option[User]] = {
+    userCollection.flatMap(_.findAndUpdate(selector = BSONDocument(User.IDDB -> user.userID),
+                                           update   = user,
+                                           upsert   = true,
+                                           fetchNewObject = true).map(_.result[User]))
+  }
+
+  //protected def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))
 }
