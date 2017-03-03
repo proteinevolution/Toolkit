@@ -100,12 +100,14 @@ window.Index = {
             "class": "small-12 large-12 columns"
         }, [
             m("section", {
-                "class": "slider show-for-medium",
+                "class": "slider",
                 config: slickSlider
             }, [
                 m("div", [
                     m("img", {
-                        src: "/assets/images/institute.jpg"
+                        'data-interchange': '[/assets/images/institute_small.jpg , small], ' +
+                        '[/assets/images/institute_small.jpg, medium], [/assets/images/institute.jpg, large]',
+                        config: foundationConfig
                     }), m("a", {
                         href: "http://www.eb.tuebingen.mpg.de/"
                     }, m("div", {
@@ -116,7 +118,9 @@ window.Index = {
                     ))
                 ]), m("div", [
                     m("img", {
-                        src: "/assets/images/lambda0.5_crop2.png"
+                        'data-interchange': '[/assets/images/lambda0.5_crop2_small.png , small],' +
+                        ' [/assets/images/lambda0.5_crop2_small.png, medium], [/assets/images/lambda0.5_crop2.png, large]',
+                        config: foundationConfig
                     }), m("a", {
                         href: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2817847/"
                     }, m("div", {
@@ -127,7 +131,9 @@ window.Index = {
                     ))
                 ]), m("div", [
                     m("img", {
-                        src: "/assets/images/protfromfragments3.png"
+                        'data-interchange': '[/assets/images/protfromfragments3_small.png , small],' +
+                        ' [/assets/images/protfromfragments3_small.png, medium], [/assets/images/protfromfragments3.png, large]',
+                        config: foundationConfig
                     }), m("a", {
                         href: "https://elifesciences.org/content/4/e09410"
                     }, m("div", {
@@ -147,13 +153,12 @@ window.Index = {
 trafficBarComponent = {
     view: function () {
         return m("div", {
-            "class": "grid",
-            style: "margin-top: 355px;"
+            "class": "grid"
         }, m("div", {
-            "class": "tool-finder show-for-medium row centered"
+            "class": "tool-finder row centered"
         }, [
             m("div", {
-                "class": "search-query large-12 medium-6"
+                "class": "search-query large-12 medium-12 small-12"
             }, m("div", {
                 "class": "columns large-12 form-group"
             }, m("input", {
@@ -206,8 +211,7 @@ tilescomponent = {
                         "class": "column column-block tile_main_container"
                     },
                     m("div", {"class": "tile_container"},
-                        m("div", {"class": "tile_left", 'style': { 'background-image' : 'url(' + article.imagePath + ')'}}
-
+                        m("div", {"class": "tile_left", 'style': {'background-image': 'url(' + article.imagePath + ')'}}
                         ),
                         m("div", {"class": "tile_right"},
                             m("a", article.title),
@@ -218,6 +222,7 @@ tilescomponent = {
 
             })
         )
+
     }
 };
 
