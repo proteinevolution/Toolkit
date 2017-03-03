@@ -83,7 +83,11 @@
 }
 
 .hhpred_extra_button {
-    background-color: #eee;
+    background-color: #eee !important;
+}
+
+.hhpred_extra_button:hover {
+    background-color: #d1d1d1 !important;
 }
 
 
