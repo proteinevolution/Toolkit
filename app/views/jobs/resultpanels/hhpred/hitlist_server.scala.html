@@ -508,7 +508,7 @@ function showStructure(accession) {
                 fileEnding = ".cif";
                 break;
         }
-        var url = 'http://' + @TEL.hostname + ':' + @TEL.port + '/getStructure/' + accession + fileEnding;
+        var url = 'http://@TEL.hostname:@TEL.port/getStructure/' + accession + fileEnding;
             stage = new NGL.Stage( "viewport" );
             stage.loadFile((url), { defaultRepresentation: true });
             stage.set
