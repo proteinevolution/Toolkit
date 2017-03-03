@@ -132,7 +132,6 @@ class ParamAccess @Inject() (tel: TEL) {
   final val ETRESH = Param("inclusion_ethresh",ParamType.UnconstrainedNumber,1, "E-value inclusion threshold")
   final val HHBLITSDB  =  Param("hhblitsdb",Select(tel.generateValues("hhblitsdb").toSeq),1, "Select HHblts database")
   final val ALIGNMODE = select("alignmode", "Alignment Mode")
-  final val MSAGENERATION = select("msageneration", "Method of MSA generation")
   final val MSA_GEN_MAX_ITER = select("msa_gen_max_iter", "Maximal no. of MSA generation steps")
   final val INC_AMINO = select("inc_amino", "Include amino acid sequence in output" )
   final val GENETIC_CODE = select("genetic_code", "Choose a genetic Code")

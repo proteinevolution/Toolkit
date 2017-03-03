@@ -141,7 +141,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
-    Seq(paramAccess.SEQORALI, paramAccess.HHSUITEDB, paramAccess.MSAGENERATION,
+    Seq(paramAccess.SEQORALI, paramAccess.HHSUITEDB,
         paramAccess.MSA_GEN_MAX_ITER, paramAccess.MIN_COV, paramAccess.MIN_SEQID_QUERY, paramAccess.EVAL_INC_THRESHOLD,
         paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE, paramAccess.SS_SCORING), Seq("modeller", "hhpred")),
 
