@@ -102,7 +102,7 @@
                             }
                             }
                             </td>
-                            <td colspan="2">@{(hit \ "hit").get.as[String]}</td>
+                            <td colspan="2">@{(alignment \ "header").get.as[String].replaceFirst("\\>.......\\s", "")}</td>
                         </tr>
                         @* Alignment Details*@
                         <tr>
@@ -250,6 +250,7 @@
     </button>
 </div>
 <div class="reveal" id="structureModal" data-reveal>
+
     <h3>3D Structure</h3>
     <div id="viewport"></div>
     <button class="close-button" data-close aria-label="Close modal" type="button">
