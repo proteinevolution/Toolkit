@@ -1,14 +1,28 @@
 @import play.api.mvc.RequestHeader
-
-@(accession : String)(implicit request: RequestHeader)
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+@(accession : String, webJarAssets: WebJarAssets)(implicit request: RequestHeader)
+    <!-- Blast Visualizaton JS -->
+<script src="@routes.Assets.versioned("javascripts/blast-visualization.js")"></script>
+    <!-- NGL 3D Viewer -->
 <script src="@routes.Assets.versioned("javascripts/vendor/ngl.js")"></script>
+    <!-- JQuery -->
+<script src="@routes.WebJarAssets.at(webJarAssets.locate("3.1.1/jquery.min.js"))" type="text/javascript" ></script>
 <script>
-        $(document).ready(function(){
-    stage = new NGL.Stage( "viewport" );
-    stage.loadFile( 'http://files.rcsb.org/view/@{accession}.pdb', { defaultRepresentation: true } );
-    stage.set
-        });
+var db = identifyDatabase('@accession');
+var fileEnding = "";
+switch(db){
+    case "scop":
+        fileEnding = ".pdb";
+        break;
+    case "mmcif":
+        fileEnding = ".cif";
+        break;
+}
+var url = '/getStructure/@accession' + fileEnding;
+$(document).ready(function(){
+stage = new NGL.Stage( "viewport" );
+stage.loadFile( url, { defaultRepresentation: true } );
+stage.set
+});
 
 </script>
 

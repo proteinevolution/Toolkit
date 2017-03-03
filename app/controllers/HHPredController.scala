@@ -1,5 +1,7 @@
 package controllers
 
+import javax.inject.{Inject, Singleton}
+
 import java.nio.file.attribute.PosixFilePermission
 
 import com.typesafe.config.ConfigFactory
@@ -15,7 +17,7 @@ import models.Constants
 /**
   * Created by drau on 01.03.17.
   */
-class HHPredController extends Controller with Constants {
+class HHPredController @Inject()(webJarAssets : WebJarAssets) extends Controller with Constants {
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
   private final val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE)
@@ -24,7 +26,7 @@ class HHPredController extends Controller with Constants {
 
 
   def show3DStructure(accession: String) = Action { implicit request =>
-    Ok(views.html.jobs.resultpanels.structure(accession))
+    Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
   }
 
   def runScript(jobID: String, accession: String) = Action.async {
