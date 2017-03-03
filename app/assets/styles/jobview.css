@@ -270,6 +270,14 @@ hr {
 font-size: 0.65em !important;
 }
 
+.result-panel a {
+    -webkit-appearance: none;
+}
+
+.result-panel button {
+    background-color: #eee;
+}
+
 .result-panel pre {
     width: 100%;
     height: 100%;
