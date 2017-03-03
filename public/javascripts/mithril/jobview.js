@@ -618,7 +618,8 @@ window.ParameterAlignmentComponent = {
                 id: ctrl.id,
                 value: args.value,
                 required: "required",
-                spellcheck: false
+                spellcheck: false,
+                config: validation
             })), m("div", {
                 id: "upload_alignment_modal",
                 "class": "tiny reveal",
