@@ -21,10 +21,6 @@ class TEL @Inject() (env : Env,
   // Each tool exection consists of the following subdirectories
   val subdirs : Seq[String] = Array("params", "results", "temp", "logs")
 
-  var port = "" // TODO (REMINDER) : REMOVE THIS FOR PRODUCTION !!!
-
-  var hostname = ""
-
   val context: String = env.get("CONTEXT")
 
   /**
@@ -33,5 +29,14 @@ class TEL @Inject() (env : Env,
     * @param param
     */
   def generateValues(param : String) : Map[String, String] = params.generateValues(param)
+}
+
+
+object TEL {
+
+  var port = ""
+
+  var hostname = ""
+
 }
 

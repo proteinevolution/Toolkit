@@ -116,7 +116,7 @@ final class Application @Inject()(webJarAssets                                  
     * Returns true if the value of the Origin header contains an acceptable value.
     */
   def originMatches(origin: String): Boolean = {
-    origin.contains(tel.hostname+":"+tel.port)
+    origin.contains(TEL.hostname+":"+TEL.port)
   }
 
 
@@ -133,9 +133,9 @@ final class Application @Inject()(webJarAssets                                  
     env.configure("PORT", port)
     env.configure("HOSTNAME", hostname)
 
-    tel.port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
-    tel.hostname = hostname
-    println("[CONFIG:] running on port "+tel.port)
+    TEL.port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
+    TEL.hostname = hostname
+    println("[CONFIG:] running on port "+TEL.port)
     println("[CONFIG:] execution mode: "+settings.clusterMode)
     getUser.map { user =>
       Logger.info(user.toString)
