@@ -1,7 +1,4 @@
-
-
-if [ %msageneration.content == "hhblits" ] ; then 
-
+#MSA generation by HHblits
     hhblits -cpu 8 \
             -v 2 \
             -i %alignment.path \
@@ -11,27 +8,8 @@ if [ %msageneration.content == "hhblits" ] ; then
             -n %msa_gen_max_iter.content \
             -mact 0.35
     addss.pl ../results/query.a3m
-else
-    if [ %msageneration.content == "psiblast" ] ; then
-
-#dependencies in buildali.pl are still wrong atm
-
-        buildali.pl -nodssp \
-                    -cpu %THREADS \
-                    -v 1 \
-                    -n %msa_gen_max_iter.content  \
-                    -diff 1000 %inclusion_ethresh.content %min_cov.content \
-                    -a2m ../results/query.a2m
-        mv ../results/query.a3m ../results/query.a3m
-
-    fi
-fi
-
 
 # Here assume that the query alignment exists
-
-###
-
 
 # prepare histograms
 # Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)

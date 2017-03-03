@@ -1,7 +1,6 @@
 standarddb GEN standarddb.sh
 hhblitsdb  GEN hhblitsdb.sh
 hhsuitedb  GEN hhsuitedb.py
-msageneration GEN msageneration.prop
 msa_gen_max_iter GEN msa_gen_max_iter.prop
 inc_amino GEN inc_amino.prop
 genetic_code GEN genetic_code.prop
