@@ -92,7 +92,7 @@ object HHpred extends Constants {
  "<span class=\"aa_"+m.toString().charAt(0)+"\">"+m.toString()+"</span>"})
 
   def makeRow(rowClass: String, entries: Array[String]): Html = {
-    var html = "";
+    var html = ""
     if (rowClass == null)
       html += "<tr>"
     else
