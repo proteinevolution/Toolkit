@@ -43,8 +43,6 @@
         <link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/reformat-common.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
         <link href="@routes.Assets.versioned("styles/jobview.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/joblist.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/jobview.css")" rel="stylesheet">
@@ -202,7 +200,7 @@
             </div>
 
             </div>
-                 <footer class="row" id="test">
+                 <footer class="row" id="app">
                             <div class="columns large-12">
                               <div id="sub-nav">
                                     <a href="#">Help</a>
@@ -249,6 +247,7 @@
         <script src="@routes.Assets.versioned("javascripts/mithril/joblist.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/mithril/jobview.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/mithril/main.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/mithril/validation.js")"></script>
         <script src="@routes.Assets.versioned("scripts/websocket.js")"></script>
         <script src="@routes.Assets.versioned("scripts/validation.js")"></script>
         <script src="@routes.Assets.versioned("scripts/alignment.js")"></script>
@@ -260,6 +259,7 @@
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-io-newick.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-vis-tree.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/snap.svg-min.js")'></script>
+        
 
         <script type="text/javascript">
 
@@ -272,6 +272,7 @@
 //                      'url': articlePushRoute.url,
 //                      'method': articlePushRoute.method
 //                  });
+
 
                     function openNav() {
                         document.getElementById("myNav").style.height = "100%";
