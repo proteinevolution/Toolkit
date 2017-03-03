@@ -250,7 +250,7 @@
     </button>
 </div>
 <div class="reveal" id="structureModal" data-reveal>
-
+    <a type="button" class="button success tiny hhpred_extra_button data-close" onclick="detachStructure()">Open in new window</a>
     <h3>3D Structure</h3>
     <div id="viewport"></div>
     <button class="close-button" data-close aria-label="Close modal" type="button">
@@ -261,12 +261,11 @@
 <script>
 $("#templateAlignmentModal").foundation();
 $("#structureModal").foundation();
-
 $("#structureModal").bind('closed.zf.reveal', (function() {
     $('#viewport canvas').remove();
-}))
+}));
 
-
+var currentStructureAccession = "";
 var hitlist;
 var colorSS = false;
 var colorLetters = false;
@@ -489,7 +488,7 @@ function templateAlignment(accession){
             url: 'files/@jobID/' + accession + '.template.fas',
             async: false
         }).done(function (data) {
-            document.getElementById("alignmentTemplate").value = data.toString();
+            $("#alignmentTemplate").val(data.toString());
         });
 
     });
@@ -497,22 +496,22 @@ function templateAlignment(accession){
 
 
 function showStructure(accession) {
-
+    currentStructureAccession = accession;
+    var db = identifyDatabase(accession);
+    var fileEnding = "";
+    switch(db){
+        case "scop":
+            fileEnding = ".pdb";
+            break;
+        case "mmcif":
+            fileEnding = ".cif";
+            break;
+    }
+    var url = '/getStructure/' +accession + fileEnding;
     $(document).ready(function(){
-        var db = identifyDatabase(accession);
-        var fileEnding = "";
-        switch(db){
-            case "scop":
-                fileEnding = ".pdb";
-                break;
-            case "mmcif":
-                fileEnding = ".cif";
-                break;
-        }
-        var url = 'http://@TEL.hostname:@TEL.port/getStructure/' + accession + fileEnding;
-            stage = new NGL.Stage( "viewport" );
-            stage.loadFile((url), { defaultRepresentation: true });
-            stage.set
+        stage = new NGL.Stage( "viewport" );
+        stage.loadFile( url, { defaultRepresentation: true } );
+        stage.set
     });
 }
 
@@ -551,4 +550,8 @@ function resubmitSection_(){
     resubmitSection(firstQuerySequence, firstQueryName);
 }
 
+function detachStructure(){
+    $('#structureModal').foundation('close');
+    window.open('/structure3D/' + currentStructureAccession, '_blank','location=yes,height=550,width=850,scrollbars=yes,status=yes');
+}
 </script>

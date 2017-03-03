@@ -41,7 +41,7 @@
     </div>
 
 
-    <div class="forwardFormLast"><a class="success button tiny" onclick="closeModalAndForward();" type="button" id="forward">
+    <div class="forwardFormLast"><a class="success button tiny" onclick="forwardModal();" type="button" id="forward">
         Forward Job</a>
     </div>
 </div>
@@ -51,11 +51,11 @@
 $('#forwardSelect').niceSelect();
 $("#forwardModal").foundation();
 
-function closeModalAndForward(){
+
+function forwardModal(){
     var select = $('#forwardSelect').val();
     if(select != "") {
-        $('#forwardModal').foundation('close');
-
+        closeModal($('#forwardModal'))
         // IMPORTANT: Every result view must implement forward_() in order to handle forwarding
         forward_(select)
     }
