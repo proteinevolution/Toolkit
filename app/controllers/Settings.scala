@@ -67,7 +67,7 @@ final class Settings @Inject() (val messagesApi       : MessagesApi,
     val hostname_cmd = "hostname"
     val hostname = hostname_cmd.!!.dropRight(1)
 
-    if (hostname.equals("olt"))
+    if (hostname.equals("olt") || hostname.equals("rye"))
 
       cm = "sge"
 
