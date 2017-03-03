@@ -5,7 +5,7 @@ HOSTNAME=$(hostname)
 
 
 
-if [ "$HOSTNAME" = "olt" ]; then
+if [ "$HOSTNAME" = "olt" ] || [ "$HOSTNAME" = "rye" ]; then
 
 
 JOBID=$(basename $(dirname $(pwd))) 
