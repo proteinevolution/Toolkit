@@ -30,8 +30,6 @@ selectBoxAccess = function(elem, isInit) {
 
 
 
-
-
 window.JobViewComponent = {
     view: function(ctrl, args) {
         if (!args.job()) {
@@ -566,7 +564,6 @@ dropzone_psi = function(element, isInit) {
     }
 };
 
-
 window.ParameterAlignmentComponent = {
     model: function(args) {
         this.modes = args.param.paramType.modes;
@@ -630,11 +627,27 @@ window.ParameterAlignmentComponent = {
                 type: "file",
                 id: "upload_alignment_input",
                 name: "upload_alignment_input",
-                onchange: function() {
-                    if (this.value) {
-                        return $("#" + ctrl.id).prop("disabled", true);
+            }), m("input", {
+                    type: "button",
+                    value: "Upload",
+                    onclick: function () {
+                        var formData = new FormData();
+                        formData.append('file', $('input[type=file]')[0].files[0]);
+                        $("#upload_alignment_modal").foundation('close');
+                        if (this.value) {
+                            $("#" + ctrl.id).prop("disabled", true);
+                        }
+                        return m.request({
+                            method: "POST",
+                            url: "/upload",
+                            data: formData,
+                            //simply pass the FormData object intact to the underlying XMLHttpRequest, instead of JSON.stringify'ing it
+                            serialize: function(value) {return value}
+                        }).then(
+                            alert("File uploaded.")
+
+                        )
                     }
-                }
             })), m("div", {
                 "class": "alignment_buttons"
             }, [
@@ -662,6 +675,8 @@ window.ParameterAlignmentComponent = {
         ], "alignmentParameter");
     }
 };
+
+
 
 var alignment_format = function(elem, isInit) {
 

@@ -206,13 +206,14 @@ final class Application @Inject()(webJarAssets                                  
   }
 
   def upload : Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData) { request =>
-    request.body.file("file").map { picture =>
+    request.body.file("file").map { file =>
       // TODO: Handle file storage, pass uploaded sequences to model, validate uploaded files
+      Logger.info("Uploading file.")
       import java.io.File
-      val filename = picture.filename
-      val contentType = picture.contentType
-      println(picture)
-      picture.ref.moveTo(new File(s"/tmp/$filename"))
+      val filename = file.filename
+      val contentType = file.contentType
+      println(file)
+      file.ref.moveTo(new File(s"/tmp/$filename"))
       Ok("File uploaded")
     }.getOrElse {
       Redirect(s"/upload").flashing(
