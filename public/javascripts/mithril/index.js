@@ -147,13 +147,12 @@ window.Index = {
 trafficBarComponent = {
     view: function () {
         return m("div", {
-            "class": "grid",
-            style: "margin-top: 355px;"
+            "class": "grid"
         }, m("div", {
-            "class": "tool-finder show-for-medium row centered"
+            "class": "tool-finder row centered"
         }, [
             m("div", {
-                "class": "search-query large-12 medium-6"
+                "class": "search-query large-12 medium-12 small-12"
             }, m("div", {
                 "class": "columns large-12 form-group"
             }, m("input", {
@@ -206,8 +205,7 @@ tilescomponent = {
                         "class": "column column-block tile_main_container"
                     },
                     m("div", {"class": "tile_container"},
-                        m("div", {"class": "tile_left", 'style': { 'background-image' : 'url(' + article.imagePath + ')'}}
-
+                        m("div", {"class": "tile_left", 'style': {'background-image': 'url(' + article.imagePath + ')'}}
                         ),
                         m("div", {"class": "tile_right"},
                             m("a", article.title),
@@ -218,6 +216,7 @@ tilescomponent = {
 
             })
         )
+
     }
 };
 
