@@ -108,7 +108,7 @@ JobQueuedComponent = {
             "class": "queued-panel"
         }, [
             m("table", {
-                config: foundationTable
+                config: foundationConfig
             }, m("tbody", [m("tr", [m("td", "JobID"), m("td", args.job().jobID)]), m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])]))
         ]);
     }
@@ -120,7 +120,7 @@ JobRunningComponent = {
             "class": "running-panel"
         }, [
             m("table", {
-                config: foundationTable
+                config: foundationConfig
             }, m("tbody", [m("tr", [m("td", "JobID"), m("td", args.job().jobID)]), m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])]))
         ]);
     }
