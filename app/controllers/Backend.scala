@@ -4,6 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import models.database.jobs.Job
 import models.database.statistics.{JobEvent, JobEventLog, ToolStatistic}
+import models.database.users.User
 import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.Logger
@@ -136,6 +137,18 @@ final class Backend @Inject()(webJarAssets                                      
       if (user.isSuperuser) {
         getArticles(-1).map { articles =>
           NoCache(Ok(Json.toJson(articles)))
+        }
+      } else {
+        Future.successful(NotFound)
+      }
+    }
+  }
+
+  def users = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      if (user.isSuperuser) {
+        findUsers(BSONDocument(User.USERDATA -> BSONDocument("$exists" -> true))).map { users =>
+          NoCache(Ok(Json.toJson(users)))
         }
       } else {
         Future.successful(NotFound)
