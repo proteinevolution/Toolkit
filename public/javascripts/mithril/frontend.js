@@ -278,7 +278,8 @@ tabsContents = {
                 options: [["fas", "FASTA"]],
                 id: "alignment",
                 rows: 25,
-                value: ""
+                value: "",
+                spellcheck: false
             }), m("div", {
                 "class": "submitbuttons",
                 onclick: ctrl.frontendSubmit
