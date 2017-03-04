@@ -24,6 +24,7 @@ window.JobModel = {
         "seq_count": 1000,
         "codon_table": "1",
         "genetic_code": "1",
+        "msa_gen_max_iter": "1",
         "grammar": "Prosite_grammar"
     },
     pushMessage: function(msg) {
