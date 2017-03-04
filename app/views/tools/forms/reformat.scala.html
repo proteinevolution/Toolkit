@@ -3,23 +3,38 @@
 <link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
 <link href="@routes.Assets.versioned("styles/reformat-common.css")" rel="stylesheet">
 <link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
-<script src="@routes.WebJarAssets.at(webJarAssets.locate("reformat.js"))"></script>
+
 <div class="jobline">
     <span class="toolname">Reformat</span>
 </div>
 <div style="display: block; margin: auto;">
 
 
+    <!--
+    m("li", {
+                style: "float: right;"
+            }, m("input", {
+                type: "button",
+                id: "collapseMe",
+                "class": "button small button_fullscreen",
+                value: ctrl.getLabel(),
+                onclick: ctrl.fullscreen,
+                config: closeShortcut
+            } -->
+
     <div class="tool-tabs ui-tabs ui-widget ui-widget-content ui-corner-all" id="tool-tabs" style="">
 
             <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
 
-
-                <li id="tab-Alignment" class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="tabpanel-Alignment" aria-labelledby="ui-id-4" aria-selected="true" aria-expanded="true"><a href="#tabpanel-Alignment" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-4">Reformat View</a></li>
-
-
-                <li id="tab-Freqs" class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tabpanel-Freqs" aria-labelledby="ui-id-5" aria-selected="false" aria-expanded="false"><a href="#tabpanel-Freqs" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-5">Relative Frequencies</a></li>
-
+                <li id="tab-Alignment" class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="tabpanel-Alignment" aria-labelledby="ui-id-4" aria-selected="true" aria-expanded="true">
+                    <a href="#tabpanel-Alignment" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-4">Reformat View</a>
+                </li>
+                <li id="tab-Freqs" class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tabpanel-Freqs" aria-labelledby="ui-id-5" aria-selected="false" aria-expanded="false">
+                    <a href="#tabpanel-Freqs" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-5">Relative Frequencies</a>
+                </li>
+                <li style="float: right;">
+                    <input type="button" id="expandTabReformat" class="button small button_fullscreen" onclick="javascript:fullscreenReformat();">
+                </li>
 
             </ul>
 
@@ -155,7 +170,7 @@
 
 
     </div>
-
+</div>
 
 <textarea id="outputarea" style="height: 1px; position: relative; top: -10000px; left: -10000px;"></textarea>
 
@@ -258,7 +273,7 @@
         var resultdict = $('#inputMirror').val(myCodeMirror.getValue()).reformat("alphabet");
 
         var resultArr = resultdict.split ( "" ) ;
-        var bins = new Array () ;
+        var bins = [];
         if(resultdict.indexOf('-') > -1){
             for ( var a = 1 ; a <= resultdict.length - 1 ; a ++ ) {
 
@@ -281,7 +296,7 @@
 
         var freqs = $('#inputMirror').val(myCodeMirror.getValue()).reformat("freq");
         
-        var freqVals = new Array();
+        var freqVals = [];
 
             for (var index in freqs) {
                 //console.log(freqs[index]);
@@ -489,7 +504,7 @@
 
         // hides tools for forwarding that are not able to process the current format
         function hideTools(currentVal) {
-                console.log(currentVal)
+                console.log(currentVal);
                 var ddl = $('#forwardTool');
                 for (var m = 0; m < ddl.length; m++) {
                     for (var i = 0; i < ddl[m].length; i++) {
@@ -645,5 +660,41 @@
             });
 
         }
+
+
+        var $expand = $("#expandTabReformat");
+        $expand.val("Expand");
+        var $tab = $("#tool-tabs");
+
+        function fullscreenReformat(){
+
+            if ($expand.val() != "Expand"){
+                $tab.removeClass("fullscreen");
+                $expand.val("Expand");
+                if (typeof onCollapse === "function") {
+                    onCollapse();
+                }
+            } else {
+
+                $tab.addClass("fullscreen");
+                $expand.val("Collapse");
+                if (typeof onExpand === "function") {
+                    onExpand();
+                }
+
+            }
+
+            if (typeof onFullscreenToggle === "function") {
+                return onFullscreenToggle();
+            }
+
+        }
+
+
+       $(document).keydown(function(e) {
+           if (e.keyCode === 27 && $tab.hasClass("fullscreen")) {
+                $expand.click();
+             }
+       });
 
     </script>
