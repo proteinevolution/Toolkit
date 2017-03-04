@@ -137,6 +137,8 @@ class ParamAccess @Inject() (tel: TEL) {
   final val GENETIC_CODE = select("genetic_code", "Choose a genetic Code")
   final val LONG_SEQ_NAME =  Param("long_seq_name",Bool,1, "Use long sequence name")
   final val EVAL_INC_THRESHOLD = Param("inclusion_ethresh",Slide(Some(0),Some(100)),1, "E-Value inclusion threshold")
+  final val MACMODE = select("macmode", "Realign with MAC")
+  final val MACTHRESHOLD = select("macthreshold", "MAC realignment threshold")
   final val MIN_COV = Param("min_cov",ParamType.Percentage, 1, "Min. coverage of hits (%)")
   final val MAX_LINES = Param("max_lines",ParamType.UnconstrainedNumber,1, "Max. number of hits in hitlist")
   final val PMIN = Param("pmin",ParamType.Percentage,1, "Min. probability in hitlist (%)")
