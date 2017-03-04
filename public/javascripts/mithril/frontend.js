@@ -195,7 +195,42 @@ renderTabs = function(tabs, content) {
 };
 
 GeneralTabComponent = {
-    controller: function() {},
+    model: function() {
+        return {
+            isFullscreen: false,
+            label: "Expand"
+        };
+    },
+    controller: function() {
+        var mo = new GeneralTabComponent.model();
+        return {
+            getLabel: (function() {
+                return this.label;
+            }).bind(mo),
+            fullscreen: (function() {
+                var job_tab_component;
+                job_tab_component = $("#tool-tabs");
+                if (this.isFullscreen) {
+                    job_tab_component.removeClass("fullscreen");
+                    this.isFullscreen = false;
+                    this.label = "Expand";
+                    if (typeof onCollapse === "function") {
+                        onCollapse();
+                    }
+                } else {
+                    job_tab_component.addClass("fullscreen");
+                    this.isFullscreen = true;
+                    this.label = "Collapse";
+                    if (typeof onExpand === "function") {
+                        onExpand();
+                    }
+                }
+                if (typeof onFullscreenToggle === "function") {
+                    return onFullscreenToggle();
+                }
+            }).bind(mo)
+        };
+    },
     view: function(ctrl, args) {
         return m("div", {
             "class": "tool-tabs",
@@ -208,7 +243,16 @@ GeneralTabComponent = {
                 }, m("a", {
                     href: "#tabpanel-" + tab
                 }, tab));
-            })), args.tabs.map(function(tab) {
+            }), m("li", {
+                style: "float: right;"
+            }, m("input", {
+                type: "button",
+                id: "collapseMe",
+                "class": "button small button_fullscreen",
+                value: ctrl.getLabel(),
+                onclick: ctrl.fullscreen,
+                config: closeShortcut
+            }))), args.tabs.map(function(tab) {
                 return m("div", {
                     "class": "tabs-panel",
                     id: "tabpanel-" + tab
