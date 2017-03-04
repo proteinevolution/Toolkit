@@ -24,3 +24,5 @@ seq_count GEN seq_count.prop
 inc_nucl GEN inc_nucl.prop
 amino_nucl_rel GEN amino_nucl_rel.prop
 codon_table GEN codon_table.prop
+macmode GEN macmode.prop
+macthreshold GEN macthreshold.prop
