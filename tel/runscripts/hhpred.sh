@@ -87,6 +87,8 @@ hhsearch -cpu %THREADS \
          -dbstrlen 10000 \
          -cs ${HHLIB}/data/context_data.lib \
          -atab $(readlink -f ../results/hhsearch.start.tab) \
+         %macmode.content \
+         -mact %macthreshold.content
 
 
 JOBID=%jobid.content
