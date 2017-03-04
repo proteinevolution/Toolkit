@@ -102,11 +102,6 @@ window.FrontendAlnvizComponent = {
     }
 };
 
-tabulated = function(element, isInit) {
-    if (!isInit) {
-        return $(element).tabs();
-    }
-};
 
 fndt = function(elem, isInit) {
     if (!isInit) {
