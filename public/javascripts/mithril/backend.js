@@ -1,7 +1,7 @@
 /**
  * Created by astephens on 21.02.17.
  */
-
+var editUserArray = [];
 window.Backend = {
 
     plotter : function (ctrl) {
@@ -54,6 +54,31 @@ window.Backend = {
 
     content : function (ctrl) {
         switch(ctrl.section) {
+            case "users" :
+                editUserArray = [];
+                return m("table", [
+                    m("tr", {class:"header"},[
+                        m("th", "Edit"),
+                        m("th", "User Name"),
+                        m("th", "Account Type"),
+                        m("th", "eMail Address"),
+                        m("th", "Date created")
+                    ]),
+                    ctrl.data().map(function (user) {
+                        editUserArray.push(false);
+                        var arrayIndex = editUserArray.length -1;
+                        console.log(arrayIndex + " " + editUserArray[arrayIndex]);
+                        return m("tr", [
+                            m("th", m("button", {class:"button small"}, {onClick : console.log("button Pressed: " + arrayIndex)}, ">")),
+                            //editUserArray[arrayIndex] = !editUserArray[arrayIndex] TODO onclick does not seem to work - it triggers onload.
+                            m("th", editUserArray[arrayIndex] ? m("input", {value: user.nameLogin})   : m("p",user.nameLogin)),
+                            m("th", editUserArray[arrayIndex] ? m("input", {value: user.accountType}) : m("p",user.accountType)),
+                            m("th", editUserArray[arrayIndex] ? m("input", {value: user.eMail})       : m("p",user.eMail)),
+                            m("th", m("p",user.dateCreated))
+                        ])
+                    })
+                ]);
+
             case "cms" :
                 return m("table", [
                     m("tr", {class:"header"},[
@@ -110,6 +135,7 @@ window.Backend = {
             data    : model.data
         };
     },
+
     view: function(ctrl) {
         return [
             m("div", {
@@ -120,7 +146,7 @@ window.Backend = {
                     m("li", m("a", {href:"#/backend/index"}, "Index")),
                     m("li", m("a", {href:"#/backend/statistics"}, "Statistics")),
                     m("li", m("a", {href:"#/backend/cms"}, "CMS")),
-                    m("li", m("a", {href:"#/backend/test"}, "Test"))
+                    m("li", m("a", {href:"#/backend/users"}, "Users"))
                     ])
                 ]
             ),
