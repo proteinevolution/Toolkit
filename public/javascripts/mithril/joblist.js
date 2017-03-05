@@ -1,4 +1,4 @@
-var jobNoteArea, tooltipSearch;
+var tooltipSearch;
 
 tooltipSearch = function(elem, isInit) {
     if (!isInit) {
@@ -9,24 +9,6 @@ tooltipSearch = function(elem, isInit) {
     }
 };
 
-jobNoteArea = function(elem, isInit) {
-    if (!isInit) {
-        $.ajax({
-            url: '/api/jobs/getnotes/' + $(elem).attr('id').substring(7),
-            type: 'get',
-            success: function(data) {
-                $(elem).html(data);
-            }
-        });
-        return $(elem).keyup(function(e) {
-            var contentString;
-            contentString = $(this).val();
-            $.post(jsRoutes.controllers.Jobs.annotation($(this).attr('id').substring(7), contentString), function(response) {
-                console.log('Response: ' + response);
-            });
-        });
-    }
-};
 
 window.JobListComponent = {
     model: function() {},
@@ -70,22 +52,7 @@ window.JobListComponent = {
                         onclick: args.clear.bind(ctrl, idx)
                     })
                 ]);
-            })), document.cookie.split("&username=")[1] === args.owner ? [
-                    m("div", {
-                        "class": "notesheader"
-                    }, "Notes")
-                ] : [], document.cookie.split("&username=")[1] === args.owner ? [
-                    m("div", {
-                        "class": "jobnotes"
-                    }, [
-                        m("textarea", {
-                            id: "notepad" + args.selected,
-                            placeholder: "Type private notes here",
-                            spellcheck: false,
-                            config: jobNoteArea
-                        })
-                    ])
-                ] : []
+            }))
         ]);
     }
 };
