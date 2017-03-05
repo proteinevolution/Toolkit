@@ -181,6 +181,10 @@ trait CommonModule extends ReactiveMongoComponents {
 
   protected def findUser(selector : BSONDocument) : Future[Option[User]] = userCollection.flatMap(_.find(selector).one[User])
 
+  protected def findUsers(selector : BSONDocument) : Future[scala.List[User]] = {
+    userCollection.map(_.find(selector).cursor[User]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))
+  }
+
   protected def modifyUser(selector : BSONDocument, modifier : BSONDocument) : Future[Option[User]] = {
     userCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[User]))
   }

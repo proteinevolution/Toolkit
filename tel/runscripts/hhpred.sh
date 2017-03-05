@@ -1,4 +1,13 @@
-#MSA generation by HHblits
+#Check is MSA generation is required
+
+#CHECK IF MSA generation is required or not
+if [ %msa_gen_max_iter.content == "0" ] ; then
+        reformat_hhsuite.pl fas a3m %alignment.path query.a3m -M first
+        mv query.a3m ../results/query.a3m
+        addss.pl ../results/query.a3m
+else
+    #MSA generation required
+    #MSA generation by HHblits
     hhblits -cpu 8 \
             -v 2 \
             -i %alignment.path \
@@ -8,6 +17,7 @@
             -n %msa_gen_max_iter.content \
             -mact 0.35
     addss.pl ../results/query.a3m
+fi
 
 # Here assume that the query alignment exists
 
@@ -77,6 +87,8 @@ hhsearch -cpu %THREADS \
          -dbstrlen 10000 \
          -cs ${HHLIB}/data/context_data.lib \
          -atab $(readlink -f ../results/hhsearch.start.tab) \
+         %macmode.content \
+         -mact %macthreshold.content
 
 
 JOBID=%jobid.content
