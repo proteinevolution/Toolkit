@@ -41,6 +41,7 @@ window.JobViewComponent = {
                 m(JobLineComponent, {
                     job: args.job
                 }), m(JobTabsComponent, {
+                    owner: args.owner,
                     job: args.job,
                     add: args.add
                 })
@@ -93,6 +94,27 @@ foundationConfig = function(elem, isInit) {
         return $(elem).foundation();
     }
 };
+
+
+jobNoteArea = function(elem, isInit) {
+    if (!isInit) {
+        $.ajax({
+            url: '/api/jobs/getnotes/' + $(elem).attr('id').substring(7),
+            type: 'get',
+            success: function(data) {
+                $(elem).html(data);
+            }
+        });
+        return $(elem).keyup(function(e) {
+            var contentString;
+            contentString = $(this).val();
+            $.post(jsRoutes.controllers.Jobs.annotation($(this).attr('id').substring(7), contentString), function(response) {
+                console.log('Response: ' + response);
+            });
+        });
+    }
+};
+
 
 JobErrorComponent = {
     view: function() {
@@ -201,6 +223,7 @@ JobTabsComponent = {
             }));
         }
         return {
+            owner: args.owner,
             params: params,
             isJob: args.job().isJob,
             state: args.job().jobstate,
@@ -257,7 +280,13 @@ JobTabsComponent = {
                     }, m("a", {
                         href: "#tabpanel-" + item
                     }, item));
-                }), m("li", {
+                }), document.cookie.split("&username=")[1] === ctrl.owner ? [ m("li", {
+                        "class" : "notesheader"
+                        //"style" : "display: none;"
+                }, m("a", {
+                        href: "#tabpanel-notes"
+                    }, "Notes")) ] : [] ,
+                m("li", {
                     style: "float: right;"
                 }, m("input", {
                     type: "button",
@@ -274,7 +303,18 @@ JobTabsComponent = {
                         value: "Delete Job",
                         onclick: ctrl["delete"].bind(ctrl)
                     })) : void 0
-            ]), m("form", {
+            ]), document.cookie.split("&username=")[1] === ctrl.owner ? [ m("div", {"class" : "tab-panel parameter-panel",
+                          id: "tabpanel-notes"}, [
+                              m("textarea", {
+                                  placeholder: "Type private notes here",
+                                  rows: 18,
+                                  cols: 70,
+                                  id: "notepad" + ctrl.job().jobID,
+                                  spellcheck: true,
+                                  config: jobNoteArea
+                              })
+            ]) ] : [],
+                m("form", {
                 id: "jobform"
             }, ctrl.params.map(function(paramGroup) {
                 var elements;
@@ -537,6 +577,7 @@ alignmentUpload = function(elem, isInit) {
     }
 };
 
+/*
 dropzone_psi = function(element, isInit) {
     var handleDragOver, handleFileSelect;
     handleFileSelect = function(evt) {
@@ -562,7 +603,7 @@ dropzone_psi = function(element, isInit) {
         $(element).addEventListener('dragover', handleDragOver, false);
         return $(element).addEventListener('drop', handleFileSelect, false);
     }
-};
+}; */
 
 window.ParameterAlignmentComponent = {
     model: function(args) {
@@ -627,7 +668,7 @@ window.ParameterAlignmentComponent = {
             }, m("input", {
                 type: "file",
                 id: "upload_alignment_input",
-                name: "upload_alignment_input",
+                name: "upload_alignment_input"
             }), m("input", {
                     type: "button",
                     value: "Upload",

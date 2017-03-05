@@ -238,6 +238,7 @@ window.Toolkit = {
             job = JobModel.update(args, args.isJob ? m.route.param("jobID") : m.route.param("toolname"));
             viewComponent = function() {
                 return m(JobViewComponent, {
+                    owner: Job.owner,
                     job: job,
                     add: Job.add,
                     messages: JobModel.messages,
