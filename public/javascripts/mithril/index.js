@@ -157,24 +157,33 @@ trafficBarComponent = {
         }, m("div", {
             "class": "tool-finder row centered"
         }, [
-            m("div", {
-                "class": "search-query large-12 medium-12 small-12"
-            }, m("div", {
-                "class": "columns large-12 form-group"
-            }, m("input", {
-                type: "text",
-                id: "searchInput",
-                name: "q",
-                placeholder: "Search Keywords",
-                config: typeAhead
-            }))), m("div", {
-                "class": "trafficbar",
-                id: "trafficbar",
-                config: trafficbar,
-                onclick: function () {
-                    return m.route("/jobs/" + Job.lastUpdated);
-                }
-            })
+            m("div", {"class": "news"},
+                m("div", {"class": "news_container"},
+                m("p", {"class": "news_header"}, "Social Network"),
+                m("p", {"class": "news_date"}, "February 19, 2017"),
+                m("p", {"class": "news_feed"}, "News Feed"),
+                m("p", {"class": "news_content"}, "Follow us on Facebook and Twitter.")
+                ),
+                m("div", {"class": "search_container"},
+                    m("div", {
+                        "class": "columns large-12 form-group"
+                    }, m("input", { "class": "search_Input",
+                        type: "text",
+                        id: "searchInput",
+                        name: "q",
+                        placeholder: "Search Keywords",
+                        config: typeAhead
+                    }))
+                ),
+                m("div", {
+                    "class": "trafficbar",
+                    id: "trafficbar",
+                    config: trafficbar,
+                    onclick: function () {
+                        return m.route("/jobs/" + Job.lastUpdated);
+                    }
+                })
+            )
         ]));
     }
 };
