@@ -2,7 +2,9 @@ package models.database.users
 
 import models.database._
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import org.mindrot.jbcrypt.BCrypt
+import play.api.libs.json.{Json, JsObject, Writes}
 import reactivemongo.bson._
 
 case class User(userID        : BSONObjectID,                        // ID of the User
@@ -69,7 +71,29 @@ object User {
   final val DATEUPDATED   = "dateUpdated"                       //              account data changed on field
 
   /**
-    * Define how the User object is formatted
+    * Define how the User object is formatted when turned into a json object
+    */
+  implicit object JobWrites extends Writes[User] {
+    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
+    def writes (user : User) : JsObject = Json.obj(
+      ID            -> user.userID.stringify,
+      SESSIONID     -> user.sessionID.map(_.stringify),
+      SESSIONDATA   -> user.sessionData,
+      CONNECTED     -> user.connected,
+      ACCOUNTTYPE   -> user.accountType,
+      UserData.NAMELOGIN -> user.getUserData.nameLogin,
+      UserData.EMAIL     -> user.getUserData.eMail,
+      //USERCONFIG    -> user.userConfig,
+      //USERTOKENS    -> user.userTokens,
+      JOBS          -> user.jobs,
+      DATELASTLOGIN -> user.dateLastLogin.map(dt => dtf.print(dt)),
+      DATECREATED   -> user.dateCreated.map(dt => dtf.print(dt)),
+      DATEUPDATED   -> user.dateUpdated.map(dt => dtf.print(dt))
+    )
+  }
+
+  /**
+    * Define how the User object is formatted in the DB
     */
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User = User(

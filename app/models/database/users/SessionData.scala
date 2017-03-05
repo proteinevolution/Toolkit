@@ -1,5 +1,6 @@
 package models.database.users
 
+import play.api.libs.json.{Json, JsObject, Writes}
 import reactivemongo.bson._
 
 /**
@@ -16,6 +17,13 @@ object SessionData {
   final val USERAGENT = "userAgent"
   final val LOCATION  = "location"
 
+  implicit object JobWrites extends Writes[SessionData] {
+    def writes (sessionData : SessionData) : JsObject = Json.obj(
+      IP        -> sessionData.ip,
+      USERAGENT -> sessionData.userAgent,
+      LOCATION  -> s"${sessionData.location.country} - ${sessionData.location.city.getOrElse("/")}"
+    )
+  }
 
   implicit object Reader extends BSONDocumentReader[SessionData] {
     override def read(bson: BSONDocument): SessionData = SessionData(

@@ -32,6 +32,8 @@ GET           /backend/statistics                     @controllers.Backend.stati
 GET           /backend/pushMonthlyStatistics          @controllers.Backend.pushMonthlyStatistics
 GET           /backend/cms                            @controllers.Backend.cms
 POST          /backend/cms                            @controllers.Backend.cms
+GET           /backend/users                          @controllers.Backend.users
+POST          /backend/users                          @controllers.Backend.users
 
 # Websocket
 GET           /ws                                     @controllers.Application.ws
