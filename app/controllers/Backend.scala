@@ -88,7 +88,7 @@ final class Backend @Inject()(webJarAssets                                      
       if (user.isSuperuser) {
         //CheckBackendPath && user.isSuperuser && connectedUsers.get(user.userID).get.isBeforeNow) {
         //NoCache(Ok(views.html.backend.backend(webJarAssets, views.html.backend.backend_maincontent(), "Backend")))
-        NoCache(Ok(Json.toJson("Index Page")))
+        NoCache(Ok(Json.toJson(List("Index Page"))))
       } else {
         NotFound
       }
