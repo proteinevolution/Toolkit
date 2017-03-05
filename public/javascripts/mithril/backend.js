@@ -1,8 +1,63 @@
 /**
  * Created by astephens on 21.02.17.
  */
-var editUserArray = [];
+
 window.Backend = {
+
+    user : function(inputData) {
+        var user = {
+            id            : inputData.id,
+            sessionID     : inputData.sessionID,
+            sessionData   : inputData.sessionData,
+            connected     : inputData.connected,
+            accountType   : inputData.accountType,
+            nameLogin     : inputData.nameLogin,
+            eMail         : inputData.eMail,
+            jobs          : inputData.jobs,
+            dateLastLogin : inputData.dateLastLogin,
+            dateCreated   : inputData.dateCreated,
+            dateUpdated   : inputData.dateUpdated,
+            data : function(key, val) {
+                switch (key) {
+                    case "nameLogin" :
+                        this.nameLogin = val;
+                        return this.nameLogin;
+                    case "eMail" :
+                        this.eMail = val;
+                        return this.eMail;
+                    case "accountType" :
+                        this.accountType = val;
+                        return this.accountType;
+                    default: return { id            : this.id,
+                                      sessionID     : this.sessionID,
+                                      sessionData   : this.sessionData,
+                                      connected     : this.connected,
+                                      accountType   : this.accountType,
+                                      nameLogin     : this.nameLogin,
+                                      eMail         : this.eMail,
+                                      jobs          : this.jobs,
+                                      dateLastLogin : this.dateLastLogin,
+                                      dateCreated   : this.dateCreated,
+                                      dateUpdated   : this.dateUpdated }
+                }
+            },
+            edit       : false,
+            edited     : false,
+            editField  : function(user) { return function(e) { console.log(user.data(e.target.id, e.target.value)) }},
+            editToggle : function(user) { return function(e) { user.edit = !user.edit }},
+            view : function(ctrl) {
+                return m("tr", [
+                    m("th", m("button", { class : "button small", onclick : this.editToggle(this) }, ">")),
+                    m("th", this.edit ? m("input", {id:"nameLogin",   value: this.nameLogin,   onchange: this.editField(this) }) : m("p", this.nameLogin)),
+                    m("th", this.edit ? m("input", {id:"accountType", value: this.accountType, onchange: this.editField(this) }) : m("p", this.accountType)),
+                    m("th", this.edit ? m("input", {id:"eMail",       value: this.eMail,       onchange: this.editField(this) }) : m("p", this.eMail)),
+                    m("th", m("p", this.dateCreated))
+                ])
+            }
+        };
+        //console.log(user.data());
+        return user
+    },
 
     plotter : function (ctrl) {
         return function (elem, isin, context) {
@@ -12,8 +67,7 @@ window.Backend = {
                     //return item
                 //});
                 var xAxisElements = chartElements[0].datePushed.map(function(date){
-                    var newDate = date.string;
-                    return newDate;
+                    return date.string;
                 });
                 xAxisElements.splice(0,0,"Today");
 
@@ -52,32 +106,26 @@ window.Backend = {
         }
     },
 
+    sendEdits : function (ctrl) {
+        return function (e){ console.log(ctrl.user)}
+    },
+
     content : function (ctrl) {
         switch(ctrl.section) {
             case "users" :
-                editUserArray = [];
-                return m("table", [
+                //console.log(ctrl.user);
+                var tableRows = ctrl.users.map(function(user){return user.view(ctrl)});
+                tableRows.splice(0,0,
                     m("tr", {class:"header"},[
                         m("th", "Edit"),
                         m("th", "User Name"),
                         m("th", "Account Type"),
                         m("th", "eMail Address"),
                         m("th", "Date created")
-                    ]),
-                    ctrl.data().map(function (user) {
-                        editUserArray.push(false);
-                        var arrayIndex = editUserArray.length -1;
-                        console.log(arrayIndex + " " + editUserArray[arrayIndex]);
-                        return m("tr", [
-                            m("th", m("button", {class:"button small"}, {onClick : console.log("button Pressed: " + arrayIndex)}, ">")),
-                            //editUserArray[arrayIndex] = !editUserArray[arrayIndex] TODO onclick does not seem to work - it triggers onload.
-                            m("th", editUserArray[arrayIndex] ? m("input", {value: user.nameLogin})   : m("p",user.nameLogin)),
-                            m("th", editUserArray[arrayIndex] ? m("input", {value: user.accountType}) : m("p",user.accountType)),
-                            m("th", editUserArray[arrayIndex] ? m("input", {value: user.eMail})       : m("p",user.eMail)),
-                            m("th", m("p",user.dateCreated))
-                        ])
-                    })
-                ]);
+                    ]));
+                //console.log(tableRows);
+                return [m("table", tableRows),
+                        m("button", { class : "button small", onclick : this.sendEdits(ctrl)}, "Save edited Users")];
 
             case "cms" :
                 return m("table", [
@@ -124,15 +172,30 @@ window.Backend = {
     },
 
     model : function(section) {
-        return { data : m.request({method      : "GET",
-                                   url         : "/backend/" + section})}
+        editList = [];
+
+        var data = m.request({method : "GET", url : "/backend/" + section});
+
+        var userModel = [];
+
+        data.then(function(a){
+            a.map(function(b){
+                if (section === "users") {
+                    userModel.push(new Backend.user(b))
+                }
+                return editList.push(false)
+            })
+        });
+        return { data : data , userModel : userModel}
     },
 
     controller: function() {
         var model = new Backend.model(m.route.param("section"));
+
         return {
             section : m.route.param("section"),
-            data    : model.data
+            data    : model.data,
+            users   : model.userModel
         };
     },
 
