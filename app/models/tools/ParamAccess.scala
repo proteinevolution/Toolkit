@@ -83,6 +83,7 @@ case class Param(name: String,
                  internalOrdering: Int,
                  label: String)
 
+
 object Param {
   implicit val paramWrites: Writes[Param] = (
     (JsPath \ "name").write[String] and
@@ -168,4 +169,5 @@ class ParamAccess @Inject() (tel: TEL) {
   final val INC_NUCL = select("inc_nucl", "Include nucleic acid sequence")
   final val AMINO_NUCL_REL = select("amino_nucl_rel", "Amino acids in relation to nucleotide sequence")
   final val CODON_TABLE = select("codon_table", "Select codon usage table")
+  final val PROTEOMES = select("proteomes","Proteomes")
 }
