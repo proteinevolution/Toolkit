@@ -141,7 +141,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
-    Seq(paramAccess.SEQORALI, paramAccess.HHSUITEDB,
+    Seq(paramAccess.PROTEOMES, paramAccess.SEQORALI, paramAccess.HHSUITEDB,
         paramAccess.MSA_GEN_MAX_ITER, paramAccess.SS_SCORING, paramAccess.ALIGNMODE, paramAccess.MACMODE, paramAccess.MACTHRESHOLD,
         paramAccess.MIN_COV, paramAccess.MIN_SEQID_QUERY, paramAccess.EVAL_INC_THRESHOLD,
         paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH), Seq("modeller", "hhpred")),
@@ -286,7 +286,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
             lazy val paramGroups = Map(
               "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
-                paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name)
+                paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name, paramAccess.PROTEOMES.name)
             )
             // Params which are not a part of any group (given by the name)
             lazy val remainParamName : String = "Parameters"

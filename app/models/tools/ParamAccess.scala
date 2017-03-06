@@ -83,6 +83,7 @@ case class Param(name: String,
                  internalOrdering: Int,
                  label: String)
 
+
 object Param {
   implicit val paramWrites: Writes[Param] = (
     (JsPath \ "name").write[String] and
@@ -170,4 +171,5 @@ class ParamAccess @Inject() (tel: TEL) {
   final val CODON_TABLE = select("codon_table", "Select codon usage table")
   final val MAX_HHBLITS_ITER = select("max_hhblits_iter", "MSA enrichment iterations using HHblits")
   final val EVAL_CUTOFF = Param("eval_cutoff",ParamType.UnconstrainedNumber,1, "Extract sequences up to E-value")
+  final val PROTEOMES = select("proteomes","Proteomes")
 }
