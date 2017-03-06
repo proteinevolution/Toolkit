@@ -754,15 +754,22 @@ ParameterRadioComponent = {
 
 ParameterSelectComponent = {
     view: function(ctrl, args) {
+        var paramAttrs = {
+            name: args.param.name,
+            "class": "wide",
+            id: args.param.name
+        };
+        if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
+            paramAttrs["multiple"] = "multiple"
+        }else{
+            paramAttrs["config"] = selectBoxAccess;
+        }
         return renderParameter([
             m("label", {
                 "for": args.param.name
-            }, args.param.label), m("select", {
-                name: args.param.name,
-                "class": "wide",
-                id: args.param.name,
-                config: selectBoxAccess
-            }, args.param.paramType.options.map(function(entry) {
+            }, args.param.label),
+            m("select", paramAttrs,
+                args.param.paramType.options.map(function(entry) {
                 return m("option", (entry[0] === args.value ? {
                         value: entry[0],
                         selected: "selected"
@@ -773,6 +780,7 @@ ParameterSelectComponent = {
         ]);
     }
 };
+
 
 ParameterNumberComponent = {
     view: function(ctrl, args) {
