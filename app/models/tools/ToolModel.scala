@@ -162,7 +162,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.MULTISEQ), Seq.empty),
 
     // Blammer
-    ("blammer", "Blammer", "blam", "alignment", "", Seq(paramAccess.ALIGNMENT,
+      ("blammer", "Blammer", "blam", "alignment", "", Seq(paramAccess.ALIGNMENT,
       paramAccess.MIN_QUERY_COV, paramAccess.MAX_EVAL, paramAccess.MIN_ANCHOR_WITH,
       paramAccess.MAX_SEQID, paramAccess.MAX_SEQS, paramAccess.MIN_COLSCORE), Seq.empty),
 
@@ -183,7 +183,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         Seq(paramAccess.MULTISEQ, paramAccess.GAP_OPEN, paramAccess.GAP_EXT, paramAccess.GAP_TERM, paramAccess.BONUSSCORE), Seq.empty),
 
     // Hmmer
-    ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB), Seq.empty),
+    ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
+      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVAL_CUTOFF), Seq.empty),
 
 
       // Aln2Plot
