@@ -71,10 +71,13 @@ mv query.repseq.fas ../results/query.repseq.fas
 DBS=$(echo %hhsuitedb.content | tr " " "\n")
 DBJOINED=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
 
+PROTEOMES=$(echo %proteomes.content | tr " " "\n")
+PROTEOMESJOINED=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
 # Perform HHsearch # TODO Include more parameters
 hhsearch -cpu %THREADS \
          -i ../results/query.a3m \
          ${DBJOINED}  \
+         ${PROTEOMESJOINED} \
          -o ../results/hhsearch.hhr \
          -p %pmin.content \
          -P %pmin.content \
