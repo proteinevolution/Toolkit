@@ -283,7 +283,7 @@ JobTabsComponent = {
                 }), document.cookie.split("&username=")[1] === ctrl.owner ? [ m("li", {
                         "class" : "notesheader"
                         //"style" : "display: none;"
-                }, m("a", {
+                    }, m("a", {
                         href: "#tabpanel-notes"
                     }, "Notes")) ] : [] ,
                 m("li", {
@@ -304,17 +304,17 @@ JobTabsComponent = {
                         onclick: ctrl["delete"].bind(ctrl)
                     })) : void 0
             ]), document.cookie.split("&username=")[1] === ctrl.owner ? [ m("div", {"class" : "tab-panel parameter-panel",
-                          id: "tabpanel-notes"}, [
-                              m("textarea", {
-                                  placeholder: "Type private notes here",
-                                  rows: 18,
-                                  cols: 70,
-                                  id: "notepad" + ctrl.job().jobID,
-                                  spellcheck: true,
-                                  config: jobNoteArea
-                              })
-            ]) ] : [],
-                m("form", {
+                    id: "tabpanel-notes"}, [
+                    m("textarea", {
+                        placeholder: "Type private notes here",
+                        rows: 18,
+                        cols: 70,
+                        id: "notepad" + ctrl.job().jobID,
+                        spellcheck: true,
+                        config: jobNoteArea
+                    })
+                ]) ] : [],
+            m("form", {
                 id: "jobform"
             }, ctrl.params.map(function(paramGroup) {
                 var elements;
@@ -578,32 +578,32 @@ alignmentUpload = function(elem, isInit) {
 };
 
 /*
-dropzone_psi = function(element, isInit) {
-    var handleDragOver, handleFileSelect;
-    handleFileSelect = function(evt) {
-        var f, files, i, output;
-        evt.stopPropagation();
-        evt.preventDefault();
-        files = evt.dataTransfer.files;
-        output = [];
-        i = 0;
-        f = void 0;
-        while (f = files[i]) {
-            output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ', f.size, ' bytes, last modified: ', f.lastModifiedDate.toLocaleDateString(), '</li>');
-            i++;
-        }
-        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-    };
-    handleDragOver = function(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-        evt.dataTransfer.dropEffect = 'copy';
-    };
-    if (!isInit) {
-        $(element).addEventListener('dragover', handleDragOver, false);
-        return $(element).addEventListener('drop', handleFileSelect, false);
-    }
-}; */
+ dropzone_psi = function(element, isInit) {
+ var handleDragOver, handleFileSelect;
+ handleFileSelect = function(evt) {
+ var f, files, i, output;
+ evt.stopPropagation();
+ evt.preventDefault();
+ files = evt.dataTransfer.files;
+ output = [];
+ i = 0;
+ f = void 0;
+ while (f = files[i]) {
+ output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ', f.size, ' bytes, last modified: ', f.lastModifiedDate.toLocaleDateString(), '</li>');
+ i++;
+ }
+ document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+ };
+ handleDragOver = function(evt) {
+ evt.stopPropagation();
+ evt.preventDefault();
+ evt.dataTransfer.dropEffect = 'copy';
+ };
+ if (!isInit) {
+ $(element).addEventListener('dragover', handleDragOver, false);
+ return $(element).addEventListener('drop', handleFileSelect, false);
+ }
+ }; */
 
 window.ParameterAlignmentComponent = {
     model: function(args) {
@@ -613,9 +613,10 @@ window.ParameterAlignmentComponent = {
         if(this.modes.length > 0) {
             this.label = this.modes[0].label;
             if(this.modes[0].mode == 1) {
-             this.formats = this.modes[0].formats
+                this.formats = this.modes[0].formats
             }
         }
+        this.allowsTwoTextAreas = args.param.paramType.allowsTwoTextAreas;
     },
     controller: function(args) {
         this.mo = new window.ParameterAlignmentComponent.model(args);
@@ -628,6 +629,9 @@ window.ParameterAlignmentComponent = {
             }).bind(this.mo),
             getLabel: (function() {
                 return this.label;
+            }).bind(this.mo),
+            getAllowsTwoTextAreas: (function() {
+                return this.allowsTwoTextAreas;
             }).bind(this.mo),
             setMode: (function(mode) {
                 for(var i = 0; i < this.modes.length; i++) {
@@ -648,20 +652,64 @@ window.ParameterAlignmentComponent = {
         };
     },
     view: function(ctrl, args) {
-        return renderParameter([
-            m("div", {
-                "class": "alignment_textarea"
-            }, m("textarea", {
-                name: ctrl.name,
+        if(ctrl.getAllowsTwoTextAreas()) {
+            var mbreak = m("br");
+            var checkbox = m("label", "Align two or more sequences",
+                m("input", {
+                    type: "checkbox",
+                    id: "hhpredAlign",
+                    onclick: function() {
+                        if($('#hhpredAlign').prop('checked')){
+                            $("#hhsuitedb").prop('disabled', true);
+                            $("#proteomes").prop('disabled', true);
+                            $('#hhpredAlign').prop('checked', true);
+                            $("#alignment").attr("rows","8");
+                            $("#alignment2").show();
+
+                        } else {
+                            $("#hhsuitedb").prop('disabled', false);
+                            $("#proteomes").prop('disabled', false);
+                            $('#hhpredAlign').prop('checked',false);
+                            $("#alignment").attr("rows","19");
+                            $("#alignment2").hide();
+                        }
+
+                    }
+                }));
+            var textArea2 =
+            m("textarea", {
+                name: ctrl.name+"2",
                 placeholder: ctrl.getLabel(),
-                rows: 18,
+                rows: 8,
                 cols: 70,
-                id: ctrl.id,
+                id: ctrl.id + "2",
                 value: args.value,
+                style: "display: none",
                 required: "required",
                 spellcheck: false,
                 config: validation
-            })), m("div", {
+            });
+            var mbreak = m("br");
+        };
+
+        return renderParameter([
+            m("div", {
+                    "class": "alignment_textarea"
+                },
+                m("textarea", {
+                    name: ctrl.name,
+                    placeholder: ctrl.getLabel(),
+                    rows: 18,
+                    cols: 70,
+                    id: ctrl.id,
+                    class: "alignment",
+                    value: args.value,
+                    required: "required",
+                    spellcheck: false,
+                    config: validation
+                }), mbreak,
+                textArea2),
+            m("div", {
                 id: "upload_alignment_modal",
                 "class": "tiny reveal",
                 config: alignmentUpload
@@ -669,27 +717,6 @@ window.ParameterAlignmentComponent = {
                 type: "file",
                 id: "upload_alignment_input",
                 name: "upload_alignment_input"
-            }), m("input", {
-                    type: "button",
-                    value: "Upload",
-                    onclick: function () {
-                        var formData = new FormData();
-                        formData.append('file', $('input[type=file]')[0].files[0]);
-                        $("#upload_alignment_modal").foundation('close');
-                        if (this.value) {
-                            $("#" + ctrl.id).prop("disabled", true);
-                        }
-                        return m.request({
-                            method: "POST",
-                            url: "/upload",
-                            data: formData,
-                            //simply pass the FormData object intact to the underlying XMLHttpRequest, instead of JSON.stringify'ing it
-                            serialize: function(value) {return value}
-                        }).then(
-                            alert("File uploaded.")
-
-                        )
-                    }
             })), m("div", {
                 "class": "alignment_buttons"
             }, [
@@ -712,7 +739,8 @@ window.ParameterAlignmentComponent = {
 
                 )), m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format){
                     return m("option", {value: format[0]}, format[1])}
-                ))
+                )),
+                checkbox
             ])
         ], "alignmentParameter");
     }
@@ -723,9 +751,9 @@ window.ParameterAlignmentComponent = {
 var alignment_format = function(elem, isInit) {
 
     if (!isInit) {
-         $(elem).niceSelect();
+        $(elem).niceSelect();
     } else {
-         $(elem).niceSelect('update');
+        $(elem).niceSelect('update');
     }
     if(this.length == 0) {
         $(".alignment_format").hide();
@@ -770,13 +798,13 @@ ParameterSelectComponent = {
             }, args.param.label),
             m("select", paramAttrs,
                 args.param.paramType.options.map(function(entry) {
-                return m("option", (entry[0] === args.value ? {
-                        value: entry[0],
-                        selected: "selected"
-                    } : {
-                        value: entry[0]
-                    }), entry[1]);
-            }))
+                    return m("option", (entry[0] === args.value ? {
+                            value: entry[0],
+                            selected: "selected"
+                        } : {
+                            value: entry[0]
+                        }), entry[1]);
+                }))
         ]);
     }
 };
