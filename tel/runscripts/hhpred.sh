@@ -68,11 +68,13 @@ mv query.repseq.fas ../results/query.repseq.fas
 # -#{@ali_mode} #{@ss_scoring} #{@realign} #{@mact} #{@compbiascorr}
 # -dbstrlen 10000 -cs ${HHLIB}/data/context_data.lib 1>> #{job.statuslog_path} 2>> #{job.statuslog_path}; echo 'Finished search'";
 
+DBS=$(echo %hhsuitedb.content | tr " " "\n")
+DBJOINED=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
 
 # Perform HHsearch # TODO Include more parameters
 hhsearch -cpu %THREADS \
          -i ../results/query.a3m \
-         -d '%HHSUITE/%hhsuitedb.content'  \
+         ${DBJOINED}  \
          -o ../results/hhsearch.hhr \
          -p %pmin.content \
          -P %pmin.content \
