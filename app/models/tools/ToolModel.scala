@@ -71,6 +71,13 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         case None => Seq.empty
       }
 
+      case "hhpred_align" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist_server(jobID, jsvalue)),
+            ("FullAlignment", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)))
+        case None => Seq.empty
+      }
+
       case "hhpred_manual" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out")),
         ("PIR", views.html.jobs.resultpanels.hhpred.forward(s"$jobPath$jobID/results/tomodel.pir", jobID))))
       case "hhpred_automatic" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/out.hhr"))))
