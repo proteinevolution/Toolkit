@@ -44,7 +44,7 @@ object SequenceMode {
 
 
 sealed trait ParamType
-case class Sequence(modes: Seq[SequenceMode]) extends ParamType
+case class Sequence(modes: Seq[SequenceMode], allowTwoTextAreas : Boolean) extends ParamType
 case class Number(min: Option[Int], max: Option[Int]) extends ParamType
 case class Select(options: Seq[(String, String)])   extends ParamType
 case object Bool     extends ParamType
@@ -66,7 +66,7 @@ object ParamType {
 
     def writes(paramType: ParamType): JsObject = paramType match {
 
-      case Sequence(modes) => Json.obj(FIELD_TYPE -> 1, "modes" -> modes)
+      case Sequence(modes, allowsTwoTextAreas) => Json.obj(FIELD_TYPE -> 1, "modes" -> modes, "allowsTwoTextAreas" -> allowsTwoTextAreas)
       case Number(minOpt, maxOpt) => Json.obj(FIELD_TYPE -> 2, "min" -> minOpt, "max" -> maxOpt)
       case Select(options) => Json.obj(FIELD_TYPE -> 3, "options" -> options)
       case Bool => Json.obj(FIELD_TYPE -> 4)
@@ -111,9 +111,11 @@ class ParamAccess @Inject() (tel: TEL) {
     "clu" -> "clu"
   )
 
-  final val ALIGNMENT = Param("alignment", Sequence(Seq(Alignment(alignmentFormats))),1, "")
-  final val SEQORALI = Param("alignment", Sequence(Seq(SingleSequence, Alignment(alignmentFormats))),1, "")
-  final val MULTISEQ = Param("alignment", Sequence(Seq(MultiSequence)),1, "") // for Alignment Tools
+
+  final val ALIGNMENT = Param("alignment", Sequence(Seq(Alignment(alignmentFormats)), false),1, "")
+  final val TWOTEXTALIGNMENT = Param("alignment", Sequence(Seq(Alignment(alignmentFormats)), true),1, "")
+  final val SEQORALI = Param("alignment", Sequence(Seq(SingleSequence, Alignment(alignmentFormats)), false),1, "")
+  final val MULTISEQ = Param("alignment", Sequence(Seq(MultiSequence), false),1, "") // for Alignment Tools
   final val STANDARD_DB = select("standarddb", "Select Standard Database")
   final val HHSUITEDB = select("hhsuitedb", "Select HH-Suite Database")
   final val MATRIX = select("matrix", "Scoring Matrix")

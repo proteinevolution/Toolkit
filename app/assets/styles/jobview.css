@@ -161,6 +161,8 @@ hr {
 }
 
 
+
+
 .alignment_buttons {
     height: 5em;
     display: -webkit-flex;
@@ -527,3 +529,4 @@ input.button_fullscreen:focus {
     background-color: #da4453;
     cursor: pointer;
 }
+
