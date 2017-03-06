@@ -168,4 +168,6 @@ class ParamAccess @Inject() (tel: TEL) {
   final val INC_NUCL = select("inc_nucl", "Include nucleic acid sequence")
   final val AMINO_NUCL_REL = select("amino_nucl_rel", "Amino acids in relation to nucleotide sequence")
   final val CODON_TABLE = select("codon_table", "Select codon usage table")
+  final val MAX_HHBLITS_ITER = select("max_hhblits_iter", "MSA enrichment iterations using HHblits")
+  final val EVAL_CUTOFF = Param("eval_cutoff",ParamType.UnconstrainedNumber,1, "Extract sequences up to E-value")
 }
