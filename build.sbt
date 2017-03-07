@@ -77,7 +77,7 @@ lazy val root = (project in file("."))
       "org.webjars.bower"   % "clipboard"             % "1.5.10",
       "org.webjars"         % "linkurious.js"         % "1.5.1",
       "org.webjars.bower"   % "tinymce"               % "4.4.1",
-      "org.webjars.bower"   % "datatables"            % "1.10.12",
+      "org.webjars.bower"   % "datatables"            % "1.10.13",
       "org.webjars"         % "highcharts"            % "5.0.6")),
     pipelineStages := Seq(rjs, digest, gzip),
     compile in Compile <<= (compile in Compile) dependsOn scalaJSPipeline,
