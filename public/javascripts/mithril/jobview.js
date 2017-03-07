@@ -401,6 +401,7 @@ JobSubmissionComponent = {
             submit: function(startJob) {
 
                 var form = document.getElementById("jobform");
+
                 if(!form.checkValidity()) {
                     alert("Parameters are invalid");
                     return
@@ -423,6 +424,7 @@ JobSubmissionComponent = {
                 }
                 formData.append('parentid', parentid);
                 $(".submitJob").prop("disabled", true);
+
                 return m.request({
                     method: checkRoute.method,
                     url: checkRoute.url,
@@ -658,20 +660,23 @@ window.ParameterAlignmentComponent = {
                 m("input", {
                     type: "checkbox",
                     id: "hhpredAlign",
+                    name: "hhpredAlign",
+                    value: "true",
                     onclick: function() {
                         if($('#hhpredAlign').prop('checked')){
                             $("#hhsuitedb").prop('disabled', true);
                             $("#proteomes").prop('disabled', true);
-                            $('#hhpredAlign').prop('checked', true);
+                            $("#hhpredAlign").prop('checked', true);
                             $("#alignment").attr("rows","8");
                             $("#alignment2").show();
-
+                            $("#alignment2").prop("required");
                         } else {
                             $("#hhsuitedb").prop('disabled', false);
                             $("#proteomes").prop('disabled', false);
-                            $('#hhpredAlign').prop('checked',false);
+                            $("#hhpredAlign").prop('checked',false);
                             $("#alignment").attr("rows","19");
                             $("#alignment2").hide();
+                            $("#alignment2").removeAttr("required");
                         }
 
                     }
@@ -685,7 +690,6 @@ window.ParameterAlignmentComponent = {
                 id: ctrl.id + "2",
                 value: args.value,
                 style: "display: none",
-                required: "required",
                 spellcheck: false,
                 config: validation
             });
@@ -788,7 +792,7 @@ ParameterSelectComponent = {
             id: args.param.name
         };
         if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
-            paramAttrs["multiple"] = "multiple"
+            paramAttrs["multiple"] = "multiple";
         }else{
             paramAttrs["config"] = selectBoxAccess;
         }

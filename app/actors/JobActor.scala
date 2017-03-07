@@ -11,7 +11,7 @@ import models.database.jobs._
 import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
 import models.search.JobDAO
-import modules.tel.runscripts._
+import modules.tel.runscripts.{LiteralRepresentation, Representation, _}
 import better.files._
 import com.typesafe.config.ConfigFactory
 import controllers.UserSessions
@@ -187,7 +187,7 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
       val jobCreationTime = DateTime.now()
 
       // jobid will also be available as parameter
-      val extendedParams = params + ("jobid" -> jobID)
+      var extendedParams = params + ("jobid" -> jobID)
 
       val clusterData = JobClusterData("", Some(h_vmem), Some(threads))
 
@@ -281,14 +281,6 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
       val executionContext = ExecutionContext(jobPath/jobID)
       this.currentExecutionContexts = this.currentExecutionContexts.updated(jobID, executionContext)
 
-      // Serialize the JobParameters to the JobDirectory
-      // Store the extended Parameters in the working directory for faster reloading
-      // TODO Use ExecutionContext for file access
-      (jobPath/jobID/serializedParam).createIfNotExists(asDirectory = false)
-      val oos = new ObjectOutputStream(new FileOutputStream((jobPath/jobID/serializedParam).pathAsString))
-      oos.writeObject(extendedParams)
-      oos.close()
-
       // Create a log for this job
       // TODO may want to use a different way to identify our users
       val isFromInstitute = user.getUserData.eMail.exists(_.matches(".+@tuebingen.mpg.de"))
@@ -304,10 +296,24 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
       // Get new runscript instance from the runscript manager
       val runscript = runscriptManager(toolname).withEnvironment(env)
       // Representation of the current State of the job submission
-      var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map(t => t._1 -> (t._2 -> None))
+      var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map(t => t._1 -> (t._2 -> Some(ValidArgument(new LiteralRepresentation(new RString("undefined"))))))
       for((paramName, value) <- extendedParams) {
         parameters  = supply(jobID, paramName, value, parameters)
       }
+      for(name <- parameters.map(t => t._1)) {
+        if(!(extendedParams contains name)) {
+          extendedParams = extendedParams + (name -> "undefined")
+        }
+        }
+
+      // Serialize the JobParameters to the JobDirectory
+      // Store the extended Parameters in the working directory for faster reloading
+      // TODO Use ExecutionContext for file access
+      (jobPath/jobID/serializedParam).createIfNotExists(asDirectory = false)
+      val oos = new ObjectOutputStream(new FileOutputStream((jobPath/jobID/serializedParam).pathAsString))
+      oos.writeObject(extendedParams)
+      oos.close()
+
       if(isComplete(parameters)) {
         val pendingExecution = wrapperExecutionFactory.getInstance(runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
         executionContext.accept(pendingExecution)
