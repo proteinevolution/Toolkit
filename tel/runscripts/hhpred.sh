@@ -1,5 +1,3 @@
-#Check is MSA generation is required
-
 #CHECK IF MSA generation is required or not
 if [ %msa_gen_max_iter.content == "0" ] ; then
         reformat_hhsuite.pl fas a3m %alignment.path query.a3m -M first
@@ -68,16 +66,18 @@ mv query.repseq.fas ../results/query.repseq.fas
 # -#{@ali_mode} #{@ss_scoring} #{@realign} #{@mact} #{@compbiascorr}
 # -dbstrlen 10000 -cs ${HHLIB}/data/context_data.lib 1>> #{job.statuslog_path} 2>> #{job.statuslog_path}; echo 'Finished search'";
 
-DBS=$(echo %hhsuitedb.content | tr " " "\n")
+DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
 DBJOINED=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
 
-PROTEOMES=$(echo %proteomes.content | tr " " "\n")
-PROTEOMESJOINED=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
+if [ %proteomes.content != "undefined" ]
+then
+    PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
+    DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
+fi
 # Perform HHsearch # TODO Include more parameters
 hhsearch -cpu %THREADS \
          -i ../results/query.a3m \
-         ${DBJOINED}  \
-         ${PROTEOMESJOINED} \
+         ${DBJOINED} \
          -o ../results/hhsearch.hhr \
          -p %pmin.content \
          -P %pmin.content \
