@@ -34,6 +34,7 @@ m.route(document.getElementById('main-content'), '/', {
     '/jobs/:jobID': m(Toolkit, {
         isJob: true
     }),
+    '/jobs': m(JobManager),
     '/backend/:section': m(Backend)
 });
 
