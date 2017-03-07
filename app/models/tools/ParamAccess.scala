@@ -113,7 +113,7 @@ class ParamAccess @Inject() (tel: TEL) {
 
 
   final val ALIGNMENT = Param("alignment", Sequence(Seq(Alignment(alignmentFormats)), false),1, "")
-  final val TWOTEXTALIGNMENT = Param("alignment", Sequence(Seq(Alignment(alignmentFormats)), true),1, "")
+  final val TWOTEXTALIGNMENT = Param("alignment", Sequence(Seq(SingleSequence), true),1, "")
   final val SEQORALI = Param("alignment", Sequence(Seq(SingleSequence, Alignment(alignmentFormats)), false),1, "")
   final val MULTISEQ = Param("alignment", Sequence(Seq(MultiSequence), false),1, "") // for Alignment Tools
   final val STANDARD_DB = select("standarddb", "Select Standard Database")
