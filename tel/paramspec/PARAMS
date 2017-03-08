@@ -28,3 +28,10 @@ macmode GEN macmode.prop
 macthreshold GEN macthreshold.prop
 max_hhblits_iter GEN max_hhblits_iter.prop
 proteomes GEN hhsuitedb.py
+score_ss GEN score_ss.prop
+rep_pval_threshold GEN rep_pval_threshold.prop
+self_aln_pval_threshold GEN self_aln_pval_threshold.prop
+merge_iters GEN merge_iters.prop
+mac_cutoff GEN mac_cutoff.prop
+domain_bound_detection GEN domain_bound_detection.prop
+aln_stringency GEN aln_stringency.prop

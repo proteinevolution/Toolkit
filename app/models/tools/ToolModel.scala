@@ -82,6 +82,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         ("PIR", views.html.jobs.resultpanels.hhpred.forward(s"$jobPath$jobID/results/tomodel.pir", jobID))))
       case "hhpred_automatic" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/out.hhr"))))
 
+
+      case "hhrepid" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.modeller(s"/files/$jobID/query_A.png", s"$jobPath$jobID/results/query.hhrepid"))))
+
       case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div"))))
 
       case "clustalo" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
@@ -204,10 +207,10 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     // FRrped
     ("frpred", "FRpred", "frp", "seqanal", "",Seq(paramAccess.ALIGNMENT), Seq.empty),
 
-
     // HHrepID
-    ("hhrepid", "HHrepid", "hhr", "seqanal", "",Seq(paramAccess.ALIGNMENT), Seq.empty),
-
+    ("hhrepid", "HHrepID", "hhr", "seqanal", "",Seq(paramAccess.SEQORALI, paramAccess.MSA_GEN_MAX_ITER,
+      paramAccess.SCORE_SS, paramAccess.REP_PVAL_THRESHOLD, paramAccess.SELF_ALN_PVAL_THRESHOLD, paramAccess.MERGE_ITERS,
+      paramAccess.MAC_CUTOFF, paramAccess.ALN_STRINGENCY, paramAccess.DOMAIN_BOUND_DETECTION), Seq.empty),
 
     // MARCOIL
     ("marcoil", "MARCOIL", "mar", "seqanal", "",
