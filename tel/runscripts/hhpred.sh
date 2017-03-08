@@ -1,5 +1,3 @@
-#Check is MSA generation is required
-
 #CHECK IF MSA generation is required or not
 if [ %msa_gen_max_iter.content == "0" ] ; then
         reformat_hhsuite.pl fas a3m %alignment.path query.a3m -M first
@@ -63,21 +61,36 @@ hhfilter -i ../results/query.reduced.fas \
 reformat_hhsuite.pl a3m fas  "$(readlink -f ../results/query.top.a3m)" query.repseq.fas -uc
 mv query.repseq.fas ../results/query.repseq.fas
 
-# @commands << "#{HHSUITE}/hhsearch -cpu 4 -v #{@v} -i #{@basename}.hhm -d '#{@dbs}' -o #{@basename}.hhr -p #{@Pmin} -P #{@Pmin}
-# -Z #{@max_lines} -z 1 -b 1 -B #{@max_lines} -seq #{@max_seqs} -aliw #{@aliwidth}
-# -#{@ali_mode} #{@ss_scoring} #{@realign} #{@mact} #{@compbiascorr}
-# -dbstrlen 10000 -cs ${HHLIB}/data/context_data.lib 1>> #{job.statuslog_path} 2>> #{job.statuslog_path}; echo 'Finished search'";
+# creating alignment of query and subject input
+if [  %hhpred_align.content == "true" ]
+then
+    cd ../results
+    ffindex_from_fasta -s db_fas.ffdata db_fas.ffindex %alignment_two.path
+    mpirun -np %THREADS ffindex_apply_mpi db_fas.ffdata db_fas.ffindex -i db_a3m_wo_ss.ffindex -d db_a3m_wo_ss.ffdata -- hhblits -d %UNIPROT -i stdin -oa3m stdout -n %msa_gen_max_iter.content -cpu 1 -v 0
+    mpirun -np %THREADS ffindex_apply_mpi db_a3m_wo_ss.ffdata db_a3m_wo_ss.ffindex -i db_a3m.ffindex -d db_a3m.ffdata -- addss.pl -v 0 stdin stdout
+    mpirun -np %THREADS ffindex_apply_mpi db_a3m.ffdata db_a3m.ffindex -i db_hhm.ffindex -d db_hhm.ffdata -- hhmake -i stdin -o stdout -v 0
+    OMP_NUM_THREADS=%THREADS cstranslate -A ${HHLIB}/data/cs219.lib -D ${HHLIB}/data/context_data.lib -x 0.3 -c 4 -f -i db_a3m -o db_cs219 -I a3m -b
+    ffindex_build -as db_cs219.ffdata db_cs219.ffindex
+    DBJOINED="-d ../results/db"
+    cd ../0
+else
+    #splitting input databases into array and completing with -d
+        if [ %hhsuite.content != "false" ]
+    then
+        DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
+        DBJOINED=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
+    fi
+    if [ %proteomes.content != "false" ]
+    then
+        PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
+        DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
+    fi
+fi
 
-DBS=$(echo %hhsuitedb.content | tr " " "\n")
-DBJOINED=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
-
-PROTEOMES=$(echo %proteomes.content | tr " " "\n")
-PROTEOMESJOINED=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
 # Perform HHsearch # TODO Include more parameters
 hhsearch -cpu %THREADS \
          -i ../results/query.a3m \
-         ${DBJOINED}  \
-         ${PROTEOMESJOINED} \
+         ${DBJOINED} \
          -o ../results/hhsearch.hhr \
          -p %pmin.content \
          -P %pmin.content \

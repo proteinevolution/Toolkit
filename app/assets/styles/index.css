@@ -28,7 +28,7 @@
 .grid {
     display: block;
     margin: auto;
-    margin-top: 355px;
+    margin-top: 305px;
     width: 55%;
 }
 
@@ -97,7 +97,7 @@ select {
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
-    background-color: lightgray;
+    background-color: white;
 }
 
 .search_Input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -152,7 +152,7 @@ select {
     min-height: 80px;
     position: absolute;
     z-index: 2;
-    background: rgba(51,51,51,0.7);
+    background: rgba(46,140,129,0.88);
     color:white;
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     letter-spacing:1px;
@@ -352,21 +352,25 @@ select {
     margin: 1em 1em 1em 1em;
     display: inline-block;
     float: none !important;
+
 }
 
 .tile_container {
     display: flex;
     width: 100%;
     height: 100%;
-    border: 1px solid lightgray;
     overflow: hidden;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    box-shadow: 0 1px 6px 0 #ccc;
 
 }
 
 .tile_left {
     width: 50%;
     height: 100%;
-    opacity: 0.7;
+    opacity: 0.3;
     -webkit-transition: all 1s linear;
     -moz-transition: all 1s linear;
     -o-transition: all 1s linear;
@@ -411,25 +415,25 @@ select {
 .tile_right p {
     margin-bottom: 0;
     font-size: 13px;
-    margin-top: 2em;
+    margin-top: 3em;
     vertical-align: middle;
 }
 
 .news {
 
     background-clip: content-box;
-
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     float: none;
     margin: 1em 1em 0em 1em;
     height: 10em;
-    border: 1px solid rgba(0, 110, 98, 166);
+    box-shadow: 0 1px 6px 0 #ccc;
+    background-color: #eee;
+    border-radius: 3px;
+    background-origin: padding-box;
 
 }
 
 .news_container {
-    background-color: rgba(15, 15, 15, 0.8);
-
 
 }
 
@@ -439,12 +443,13 @@ select {
     margin-bottom: 0;
     display: inline-block;
     font-size: 13px;
-    color: whitesmoke;
+    color: #222;
     padding: 1em 1em 1em 1em;
 }
 
 .news_header {
     font-weight: bold;
+    color: #2E8C81 !important;
 }
 
 .news_date {
@@ -462,14 +467,17 @@ select {
 
 }
 
+#searchInput{
+    box-shadow: unset;
+}
+
 .trafficbar {
 
     cursor: pointer;
     z-index: 99;
-    margin-top: 0.1em !important;
     margin-right: 10em;
     margin-bottom: 0.1em !important;
-    height: 0.3em;
+    height: 0.15em;
     width: 100%;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -536,5 +544,9 @@ select {
 }
 
 
-
+.slick-list{
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+}
 
