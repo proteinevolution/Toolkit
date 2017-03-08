@@ -28,7 +28,7 @@
 .grid {
     display: block;
     margin: auto;
-    margin-top: 355px;
+    margin-top: 305px;
     width: 55%;
 }
 
@@ -97,7 +97,7 @@ select {
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
-    background-color: lightgray;
+    background-color: white;
 }
 
 .search_Input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -366,7 +366,7 @@ select {
 .tile_left {
     width: 50%;
     height: 100%;
-    opacity: 0.7;
+    opacity: 0.5;
     -webkit-transition: all 1s linear;
     -moz-transition: all 1s linear;
     -o-transition: all 1s linear;
@@ -418,17 +418,19 @@ select {
 .news {
 
     background-clip: content-box;
-
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     float: none;
     margin: 1em 1em 0em 1em;
     height: 10em;
-    border: 1px solid rgba(0, 110, 98, 166);
+    box-shadow: 0 1px 6px 0 #ccc;
+    background-color: #eee;
+    border-radius: 3px;
+    background-origin: padding-box;
 
 }
 
 .news_container {
-    background-color: rgba(15, 15, 15, 0.8);
+
 
 
 }
@@ -439,7 +441,7 @@ select {
     margin-bottom: 0;
     display: inline-block;
     font-size: 13px;
-    color: whitesmoke;
+    color: #222;
     padding: 1em 1em 1em 1em;
 }
 
@@ -460,6 +462,10 @@ select {
     height: 4em !important;
     font-size: 13px;
 
+}
+
+#searchInput{
+    box-shadow: unset;
 }
 
 .trafficbar {
