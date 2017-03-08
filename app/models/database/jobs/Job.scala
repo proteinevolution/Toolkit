@@ -3,6 +3,7 @@ package models.database.jobs
 import models.Constants
 import models.tools.Toolitem
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import play.api.libs.json._
 import play.twirl.api.Html
 import reactivemongo.bson._
@@ -32,13 +33,8 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
     ownerID.isDefined // TODO why is this the only measure for being a private job?
   }
 
-  // Returns the runscript file path
-  def scriptPath : String = {
-    s"$jobPath$SEPARATOR${mainID.stringify}${SEPARATOR}tool.sh"
-  }
-
   /**
-    * Returns a clean JSON Object representation of the Job
+    * Returns a clean JSON Object representation of the Job (used in the websockets to push a job)
     *
     * @return
     */
@@ -48,6 +44,25 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
              "state"     -> status,
              "createdOn" -> dateCreated.get,
              "toolname"  -> tool)
+  }
+
+  /**
+    * Returns a clean JSON Object representation of the Job (used in the Job Manager)
+    *
+    * @param nameLogin
+    * @return
+    */
+  def withOwnerName(nameLogin : String) : JsObject = {
+    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
+    Json.obj(Job.JOBID       -> jobID,
+             Job.STATUS      -> status,
+             Job.OWNER       -> {if (ownerID.isDefined) nameLogin else "-"},
+             Job.TOOL        -> tool,
+             Job.COMMENTLIST -> commentList.length,
+             Job.DATECREATED -> dateCreated.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis)),
+             Job.DATEUPDATED -> dateUpdated.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis)),
+             Job.DATEVIEWED  -> dateViewed.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis))
+    )
   }
 
 }
@@ -73,6 +88,7 @@ object Job {
   val PARENTID      = "parentID"      //              ID of the parent job
   val JOBID         = "jobID"         //              ID for the job
   val OWNERID       = "ownerID"       //              ID of the job owner
+  val OWNER         = "owner"         //              Name of the job owner
   val STATUS        = "status"        //              Status of the job field
   val DELETION      = "deletion"      //              Deletion status flag
   val TOOL          = "tool"          //              name of the tool field
@@ -138,9 +154,9 @@ object Job {
       WATCHLIST   -> job.watchList,
       COMMENTLIST -> job.commentList,
       CLUSTERDATA -> job.clusterData,
-      DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
-      DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
-      DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis))
+      DATECREATED -> job.dateCreated.fold(-1L)(_.getMillis),
+      DATEUPDATED -> job.dateUpdated.fold(-1L)(_.getMillis),
+      DATEVIEWED  -> job.dateViewed.fold(-1L)(_.getMillis)
     )
   }
 
