@@ -656,6 +656,7 @@ window.ParameterAlignmentComponent = {
                 this.twoTextAreas = !this.twoTextAreas;
                 if (this.twoTextAreas) {
                     $(".inputDBs").prop('disabled', true);
+                    $(".inputDBs option:selected").prop("selected", false);
                     $("#hhpredAlign").prop('checked', true);
                     $("#alignment").attr("rows", "8");
                     $('#alignment2').show();
@@ -682,6 +683,7 @@ window.ParameterAlignmentComponent = {
                 if (!isInit) {
                     if (ctrl.getTwoTextAreas()) {
                         $(".inputDBs").prop('disabled', true);
+                        $(".inputDBs option:selected").prop("selected", false);
                         $("#hhpredAlign").prop('checked', true);
                         $("#alignment").attr("rows", "8");
                         $('#alignment2').show();
