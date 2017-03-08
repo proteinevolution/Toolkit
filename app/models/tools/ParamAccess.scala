@@ -162,6 +162,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val TRANSITION_PROBABILITY = select("transition_probability", "Transition Probability")
   final val MIN_SEQID_QUERY = Param("min_seqid_query", ParamType.Percentage, 1, "Minimum sequence ID with Query (%)")
   final val NUM_SEQS_EXTRACT =  Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
+  final val SCORE_SS = select("score_ss", "Score secondary structure")
   final val SS_SCORING = select("ss_scoring", "SS Scoring")
   final val UNIQUE_SEQUENCE = select("unique_sequence", "Retrieve only unique sequences")
   final val MIN_SEQID = select("min_seqid", "Minimum sequence identity")
@@ -174,4 +175,10 @@ class ParamAccess @Inject() (tel: TEL) {
   final val MAX_HHBLITS_ITER = select("max_hhblits_iter", "MSA enrichment iterations using HHblits")
   final val EVAL_CUTOFF = Param("eval_cutoff",ParamType.UnconstrainedNumber,1, "Extract sequences up to E-value")
   final val PROTEOMES = select("proteomes","Proteomes")
+  final val REP_PVAL_THRESHOLD = select("rep_pval_threshold", "Repeat family P-value threshold")
+  final val SELF_ALN_PVAL_THRESHOLD = select("self_aln_pval_threshold", "Self-Alignment P-value threshold")
+  final val MERGE_ITERS = select("merge_iters", "Merge rounds")
+  final val MAC_CUTOFF = select("mac_cutoff", "MAC threshold")
+  final val DOMAIN_BOUND_DETECTION = select("domain_bound_detection", "Domain boundary detection")
+  final val ALN_STRINGENCY = select ("aln_stringency", "Alignment stringency")
 }

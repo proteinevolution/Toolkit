@@ -63,14 +63,16 @@ export PATH="${BIOPROGS}/tools/seq2id:${PATH}" # Seq2ID
 export PATH="${BIOPROGS}/tools/mmseqs2-build/bin:${PATH}" # MMseqs2
 export PATH="${BIOPROGS}/tools/patternsearch:${PATH}" # PatternSearch
 export PATH="${BIOPROGS}/tools/sixframe:${PATH}" # 6FrameTranslation
+export PATH="${BIOPROGS}/tools/hhrepid/bin:${PATH}" # HHrepid
+
+# Setup HHrepid
+export HHREPIDPATH="${BIOPROGS}/tools/hhrepid"
 
 # Setup Blammer
 export BLAMMERJAR="${BIOPROGS}/tools/blammer/blammer.jar"
 export BLAMMERCONF="${BIOPROGS}/tools/blammer/blammer.conf"
 
-
 export HMMERBINARIES="${BIOPROGS}/tools/hmmer/binaries"
-
 
 # Setup Mafft
 export MAFFT_BINARIES="${BIOPROGS}/tools/mafft2/binaries"
