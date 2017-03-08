@@ -38,7 +38,7 @@ div#main {
 
 
 #sidebar {
-
+    padding-top: 3.75em;
     padding-left: 1.2em;
 }
 
@@ -60,6 +60,14 @@ div#main {
 
 }
 
+#job-manager-button{
+    background-color: rgba(46,140,129,0.88); !important;
+    border: solid 1px lightgray !important;
+}
+#job-manager-button:hover{
+    background-color: rgba(46,140,129,0.96); !important;
+    border: solid 1px lightgray !important;
+}
 
 .e {
     background-color: #FFDDDD;
