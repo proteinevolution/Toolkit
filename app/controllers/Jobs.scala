@@ -51,6 +51,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   }
 
 
+  //TODO make secure
   def SGEID(jobID: String, sgeID: String) = Action {
 
     findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
@@ -72,6 +73,9 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     Ok
   }
 
+
+  // TODO make secure
+
   def updateDateViewed(jobID : String)  = Action {
 
     modifyJob(BSONDocument(Job.JOBID -> jobID),
@@ -82,7 +86,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   /**
     *
     * Creates new annotation document and modifies this if it already exists in one method
-    * TODO: make this secure against CSRF
+    *
  *
     * @param jobID
     * @param content
