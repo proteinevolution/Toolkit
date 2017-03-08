@@ -1,18 +1,17 @@
 package controllers
 
-import javax.inject.{Inject,Singleton}
+import javax.inject.{Inject, Singleton}
 
 import actors.JobActor.JobStateChanged
 import models.database.jobs._
 import models.job.JobActorAccess
-import modules.CommonModule
+import modules.{CommonModule, LocationProvider}
 import org.joda.time.DateTime
 import play.api.Logger
+import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
-import play.filters.csrf._
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -27,7 +26,9 @@ We can introduce auto-coercion of the Job MainID to the BSONObject ID
   */
 @Singleton
 final class Jobs @Inject()(jobActorAccess: JobActorAccess,
-                           val reactiveMongoApi: ReactiveMongoApi) extends Controller with CommonModule {
+                           @NamedCache("userCache") implicit val userCache : CacheApi,
+                           implicit val locationProvider : LocationProvider,
+                           val reactiveMongoApi: ReactiveMongoApi) extends Controller with CommonModule with UserSessions {
 
   def jobStatusDone(jobID: String) = Action {
     jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
@@ -88,33 +89,55 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     * @return
     */
 
-  def annotation(jobID : String, content : String) : Action[AnyContent] = Action {
+  def annotation(jobID : String, content : String) : Action[AnyContent] = Action.async { implicit request =>
 
-    val entry = JobAnnotation(mainID = BSONObjectID.generate(),
-                              jobID = jobID,
-                              content = content,
-                              dateCreated = Some(DateTime.now()))
+    getUser.flatMap { user =>
 
-    upsertAnnotation(entry)
+      findJob(BSONDocument(Job.JOBID -> jobID)).map {
 
-    modifyAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID),
-      BSONDocument("$set"   -> BSONDocument(JobAnnotation.CONTENT -> content)))
+        case x if x.get.ownerID.get == user.userID =>
 
 
-    Ok("annotation upserted")
+          val entry = JobAnnotation(mainID = BSONObjectID.generate(),
+            jobID = jobID,
+            content = content,
+            dateCreated = Some(DateTime.now()))
+
+          upsertAnnotation(entry)
+
+          modifyAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID),
+            BSONDocument("$set" -> BSONDocument(JobAnnotation.CONTENT -> content)))
+          Ok("annotation upserted")
+
+        case _ =>
+
+          Logger.info("Unknown ID " + jobID.toString)
+          BadRequest("Permission denied")
+
+      }
+    }
 
   }
 
 
   def getAnnotation(jobID: String): Action[AnyContent] = Action.async { implicit request =>
 
-    findJobAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID)).map { annotationList =>
-      val foundAnnotations = annotationList.map(_.content)
+    getUser.flatMap { user =>
 
-      Ok(foundAnnotations.getOrElse(""))
+      findJobAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID)).flatMap {
 
+        x =>
+
+          findJob(BSONDocument(Job.JOBID -> jobID)).map { jobList =>
+
+            if (jobList.get.ownerID.get == user.userID) {
+
+              Ok(x.get.content)
+
+            } else BadRequest("Permission denied")
+
+          }
+      }
     }
-
   }
-
 }
