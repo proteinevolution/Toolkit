@@ -9,16 +9,6 @@ helpModalAccess = function(elem, isInit) {
     }
 };
 
-sliderAccess = function(elem, isInit) {
-    if (!isInit) {
-        return $(elem).ionRangeSlider({
-            grid: true,
-            values: [0.000000000000000000000000000000000000000000000000001,0.00000000000000000000000000000000000000001,0.000000000000000000000000000001,0.00000000000000000001,0.000000000000001,0.0000000001,0.00000001,0.000001, 0.0001, 0.001, 0.01, 0.02, 0.05, 0.1],
-            grid_snap: true,
-            keyboard: true
-        })
-    }
-};
 
 selectBoxAccess = function(elem, isInit) {
     if (!isInit) {
@@ -103,6 +93,9 @@ jobNoteArea = function(elem, isInit) {
             type: 'get',
             success: function(data) {
                 $(elem).html(data);
+            },
+            error: function(e){
+                console.warn(JSON.stringify(e));
             }
         });
         return $(elem).keyup(function(e) {
@@ -709,7 +702,7 @@ window.ParameterAlignmentComponent = {
                     config: params.oninit,
                     onclick: function() {
                         ctrl.toggleTwoTextAreas();
-                    },
+                    }
                 }));
 
             var textArea2 =
@@ -725,7 +718,7 @@ window.ParameterAlignmentComponent = {
                 config: validation
             });
             var mbreak = m("br");
-        };
+        }
 
         return renderParameter([
             m("div", {
@@ -885,13 +878,31 @@ ParameterBoolComponent = {
 };
 
 ParameterSlideComponent = {
+    model: function(args) {
+
+    },
+    controller: function(args){
+
+        this.value = args.value;
+        this.config = function (el, isInit, ctx) {
+            if (!isInit) {
+                $(el).ionRangeSlider({
+                    grid: true,
+                    values: [0.000000000000000000000000000000000000000000000000001,0.00000000000000000000000000000000000000001,0.000000000000000000000000000001,0.00000000000000000001,0.000000000000001,0.0000000001,0.00000001,0.000001, 0.0001, 0.001, 0.01, 0.02, 0.05, 0.1],
+                    grid_snap: true,
+                    keyboard: true
+                })
+            }
+        }.bind(this)
+
+    },
     view: function (ctrl, args) {
         var paramAttrs = {
             type: "range",
             id: args.param.name,
             name: args.param.name,
-            value: args.value,
-            config: sliderAccess
+            value: ctrl.value,
+            config: ctrl.config
         };
         // Add minimum and maximum if present
         if(args.param.paramType["max"]) {
@@ -901,7 +912,7 @@ ParameterSlideComponent = {
             paramAttrs["min"] = args.param.paramType["min"];
         }
         return renderParameter([
-            m("label", args.param.label),
+            m("label", args.value),
             m("input", paramAttrs)
         ])
 
