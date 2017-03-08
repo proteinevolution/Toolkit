@@ -21,7 +21,6 @@
       case ("tcoffee", "Conservation") => views.html.jobs.resultpanels.tcoffee_colored(jobID)
       case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       case ("tcoffee", "Text") => views.html.jobs.resultpanels.tcoffee_text(jobID)
-      case ("hhpred", "Hitlist") => views.html.jobs.resultpanels.hhpred.hitlist(jobID)
       case ("hhpred", "FullAlignment") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
 
 

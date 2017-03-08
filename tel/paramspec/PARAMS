@@ -35,3 +35,4 @@ merge_iters GEN merge_iters.prop
 mac_cutoff GEN mac_cutoff.prop
 domain_bound_detection GEN domain_bound_detection.prop
 aln_stringency GEN aln_stringency.prop
+proteomes GEN proteomes.py

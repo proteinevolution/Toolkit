@@ -1,49 +1,56 @@
 
-/* The containder for the JobListComponent. Let is behave like a table and occupy the full width1 */
-#joblist {
 
-    padding-top: 50px;
+/* Search form */
+#job-search-div {
+    width: 90%;
+    display: table;
+    margin-left: 15px;
+}
+
+#job-search-div .button {
+    width: 100%;
+}
+
+#job-search-div #iconsidebar {
+    color: gray;
+}
+
+/* Job Manager */
+#job-manager-panel {
+    width : 960px;
+}
+
+/* The containder for the JobListComponent. Let is behave like a table and occupy the full width1 */
+#job-list {
     display: table;
     width: 90%;
     margin-left: 15px;
 }
 
-#joblistbottom {
+#job-list-bottom {
     -webkit-box-shadow: 2px 2px 15px -5px rgba(153,153,153,1);
     -moz-box-shadow: 2px 2px 15px -5px rgba(153,153,153,1);
     box-shadow: 2px 2px 15px -5px rgba(153,153,153,1);
 }
 
-/* Searchform */
-#joblist #jobsearchform div {
-
-    display: flex;
-}
-#joblist #jobsearchform #iconsidebar {
-
-    color: gray;
-}
-
-#joblist .idsort,.toolsort {
-
+#job-list .idsort,.toolsort {
     color: #555555;
     width: 40%;
 }
 
-#joblist .job .jobid {
-
+#job-list .job .jobid {
     text-align: center;
     vertical-align: middle;
     width: 40%;
 }
-#joblist .job .toolname {
+#job-list .job .toolname {
 
     font-family: Monaco, Consolas, "Lucida Console", monospace;
     text-align: center;
     vertical-align: middle;
     width: 40%;
 }
-#joblist .boxclose {
+#job-list .boxclose {
 
     width: 20%;
 }
@@ -56,7 +63,7 @@
 
 
 /*  One job in the Joblist */
-#joblist .job {
+#job-list .job {
 
     display: flex;
     border-top: none;
@@ -69,26 +76,26 @@
 }
 
 
-#joblist .job div {
+#job-list .job div {
 
     text-align: center;
 
 }
 
 
-#joblist .job-handle {
+#job-list .job-handle {
 
     display: flex;
 }
 
-#joblist .job-handle .delete {
+#job-list .job-handle .delete {
 
     border-right: 1px solid lightgray;
 }
 
 
 .boxclose:before {
-    content: "\00d7"; // TODO Times in the file makes my Activator unhappy ~ Andrew
+    content: "\00d7";
 }
 a.boxclose{
     cursor:pointer;
@@ -101,7 +108,7 @@ a.boxclose{
     padding: 0.26em;
 }
 
-#joblist .job-button {
+#job-list .job-button {
     height: 2.5em;
     display: flex;
     /*

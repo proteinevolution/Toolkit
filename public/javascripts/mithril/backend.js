@@ -67,7 +67,7 @@ window.Backend = {
                     //return item
                 //});
                 var xAxisElements = chartElements[0].datePushed.map(function(date){
-                    return date.string;
+                    return date.string
                 });
                 xAxisElements.splice(0,0,"Today");
 
@@ -196,7 +196,7 @@ window.Backend = {
             section : m.route.param("section"),
             data    : model.data,
             users   : model.userModel
-        };
+        }
     },
 
     view: function(ctrl) {
@@ -219,6 +219,6 @@ window.Backend = {
                     this.content(ctrl)
                 ]
             )
-        ];
+        ]
     }
 };

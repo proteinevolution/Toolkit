@@ -38,6 +38,8 @@ window.JobModel = {
         "domain_bound_detection":"0",
         "aln_stringency":"0.3"
 },
+
+    },
     pushMessage: function(msg) {
         return messages().push(msg);
     },
