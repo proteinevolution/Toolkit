@@ -37,8 +37,6 @@ window.JobModel = {
         "mac_cutoff":"0.5",
         "domain_bound_detection":"0",
         "aln_stringency":"0.3"
-},
-
     },
     pushMessage: function(msg) {
         return messages().push(msg);
