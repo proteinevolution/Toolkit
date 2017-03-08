@@ -4,7 +4,7 @@
 
 window.JobManager = {
     model : function(ctrl) {
-        return { data : m.request({"url":"jobs", "method":"POST"})};
+        return { data : m.request({"url":"jobs", "method":"POST", background: true})};
     },
 
     tableObjects : {

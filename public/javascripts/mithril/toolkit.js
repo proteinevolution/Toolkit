@@ -296,7 +296,7 @@ window.Toolkit = {
                             onclick       : this.toggleJobManager(ctrl, this),
                             "data-toggle" : "job-manager-panel",
                             config        : this.initFoundation(ctrl)},
-                        "Job Manager"),
+                        "Job Manager")
                 ]),
                 m(JobListComponent, {
                     owner: ctrl.ownerName,
