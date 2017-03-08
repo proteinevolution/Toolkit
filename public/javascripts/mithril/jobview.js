@@ -619,6 +619,7 @@ window.ParameterAlignmentComponent = {
             }
         }
         this.allowsTwoTextAreas = args.param.paramType.allowsTwoTextAreas;
+        this.twoTextAreas = (window.JobModel.getParamValue("hhpred_align") == 'true');
     },
     controller: function(args) {
         this.mo = new window.ParameterAlignmentComponent.model(args);
@@ -650,40 +651,68 @@ window.ParameterAlignmentComponent = {
             }).bind(this.mo),
             getFormats: (function() {
                 return this.formats;
+            }).bind(this.mo),
+            toggleTwoTextAreas: (function() {
+                this.twoTextAreas = !this.twoTextAreas;
+                if (this.twoTextAreas) {
+                    $(".inputDBs").prop('disabled', true);
+                    $("#hhpredAlign").prop('checked', true);
+                    $("#alignment").attr("rows", "8");
+                    $('#alignment2').show();
+                    $("#alignment2").prop("required");
+                } else {
+                    $(".inputDBs").prop('disabled', false);
+                    $("#hhpredAlign").prop('checked', false);
+                    $("#alignment").attr("rows", "19");
+                    $("#alignment2").hide();
+                    $("#alignment2").removeAttr("required");
+                }
+            }).bind(this.mo),
+            setTwoTextAreas: (function(bool) {
+                this.twoTextAreas = bool;
+            }).bind(this.mo),
+            getTwoTextAreas: (function(){
+                return this.twoTextAreas;
             }).bind(this.mo)
         };
     },
     view: function(ctrl, args) {
+        var params = {
+            oninit: function (elem, isInit) {
+                if (!isInit) {
+                    if (ctrl.getTwoTextAreas()) {
+                        $(".inputDBs").prop('disabled', true);
+                        $("#hhpredAlign").prop('checked', true);
+                        $("#alignment").attr("rows", "8");
+                        $('#alignment2').show();
+                        $("#alignment2").prop("required");
+                    } else {
+                        $(".inputDBs").prop('disabled', false);
+                        $("#hhpredAlign").prop('checked', false);
+                        $("#alignment").attr("rows", "19");
+                        $("#alignment2").hide();
+                        $("#alignment2").removeAttr("required");
+                    }
+                }
+            }
+        };
         if(ctrl.getAllowsTwoTextAreas()) {
             var mbreak = m("br");
             var checkbox = m("label", "Align two or more sequences",
                 m("input", {
                     type: "checkbox",
                     id: "hhpredAlign",
-                    name: "hhpredAlign",
+                    name: "hhpred_align",
                     value: "true",
+                    config: params.oninit,
                     onclick: function() {
-                        if($('#hhpredAlign').prop('checked')){
-                            $("#hhsuitedb").prop('disabled', true);
-                            $("#proteomes").prop('disabled', true);
-                            $("#hhpredAlign").prop('checked', true);
-                            $("#alignment").attr("rows","8");
-                            $("#alignment2").show();
-                            $("#alignment2").prop("required");
-                        } else {
-                            $("#hhsuitedb").prop('disabled', false);
-                            $("#proteomes").prop('disabled', false);
-                            $("#hhpredAlign").prop('checked',false);
-                            $("#alignment").attr("rows","19");
-                            $("#alignment2").hide();
-                            $("#alignment2").removeAttr("required");
-                        }
-
-                    }
+                        ctrl.toggleTwoTextAreas();
+                    },
                 }));
+
             var textArea2 =
             m("textarea", {
-                name: ctrl.name+"2",
+                name: ctrl.name+"_two",
                 placeholder: ctrl.getLabel(),
                 rows: 8,
                 cols: 70,
@@ -793,6 +822,7 @@ ParameterSelectComponent = {
         };
         if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
             paramAttrs["multiple"] = "multiple";
+            paramAttrs["class"] = "inputDBs";
         }else{
             paramAttrs["config"] = selectBoxAccess;
         }

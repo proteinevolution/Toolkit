@@ -29,7 +29,7 @@ window.JobModel = {
         "macmode":"off",
         "macthreshold":"0.3",
         "max_hhblits_iter":"0",
-        "eval_cutoff":"1"
+        "eval_cutoff":"1",
     },
     pushMessage: function(msg) {
         return messages().push(msg);
