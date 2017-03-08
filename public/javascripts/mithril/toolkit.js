@@ -277,12 +277,6 @@ window.Toolkit = {
                 "class": "large-2 padded-column columns show-for-large",
                 id: "sidebar"
             }, [m("div", { id : "job-search-div" }, [
-                    m("button", {id            : "job-manager-button",
-                                 class         : "button small",
-                                 onclick       : this.toggleJobManager(ctrl, this),
-                                 "data-toggle" : "job-manager-panel",
-                                 config        : this.initFoundation(ctrl)},
-                      "Job Manager"),
                     m("div", { id              : "job-manager-panel",
                                class           : "dropdown-pane right",
                                "data-dropdown" : "data-dropdown",
@@ -296,7 +290,13 @@ window.Toolkit = {
                         name:        "job-search"
                     }), m("span", {
                         "class": "bar"
-                    })
+                    }),
+                    m("button", {id            : "job-manager-button",
+                            class         : "button small",
+                            onclick       : this.toggleJobManager(ctrl, this),
+                            "data-toggle" : "job-manager-panel",
+                            config        : this.initFoundation(ctrl)},
+                        "Job Manager"),
                 ]),
                 m(JobListComponent, {
                     owner: ctrl.ownerName,
