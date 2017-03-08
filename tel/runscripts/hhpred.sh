@@ -75,9 +75,11 @@ then
     cd ../0
 else
     #splitting input databases into array and completing with -d
-    DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
-    DBJOINED=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
-
+        if [ %hhsuite.content != "false" ]
+    then
+        DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
+        DBJOINED=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
+    fi
     if [ %proteomes.content != "false" ]
     then
         PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
