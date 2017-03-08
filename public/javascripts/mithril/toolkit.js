@@ -207,6 +207,23 @@ window.Job = (function() {
 })();
 
 window.Toolkit = {
+    getSuggestion : function (ctrl) {
+        return function (e) {}
+    },
+    jobManagerAdded : false,
+    toggleJobManager : function (ctrl, t) {
+        return function (e) {
+            t.jobManagerAdded = true;
+            return t.jobManagerAdded
+        }
+    },
+    initFoundation : function (ctrl) {
+        return function (elem, isInit) {
+            if (!isInit) {
+                $("#" + elem.id).foundation();
+            }
+        }
+    },
     controller: function(args) {
         var job, jobID, toolname, viewComponent;
         if (args.isJob) {
@@ -259,12 +276,35 @@ window.Toolkit = {
             m("div", {
                 "class": "large-2 padded-column columns show-for-large",
                 id: "sidebar"
-            }, m(JobListComponent, {
-                owner: ctrl.ownerName,
-                jobs: ctrl.jobs,
-                selected: ctrl.selected,
-                clear: ctrl.clear
-            })), m("div", {
+            }, [m("div", { id : "job-search-div" }, [
+                    m("button", {id            : "job-manager-button",
+                                 class         : "button small",
+                                 onclick       : this.toggleJobManager(ctrl, this),
+                                 "data-toggle" : "job-manager-panel",
+                                 config        : this.initFoundation(ctrl)},
+                      "Job Manager"),
+                    m("div", { id              : "job-manager-panel",
+                               class           : "dropdown-pane right",
+                               "data-dropdown" : "data-dropdown",
+                               config          : this.initFoundation(ctrl)},
+                        this.jobManagerAdded ? m(JobManager) : null
+                    ),
+                    m("input", {
+                        type:        "text",
+                        placeholder: "Search by JobID",
+                        id:          "job-search",
+                        name:        "job-search"
+                    }), m("span", {
+                        "class": "bar"
+                    })
+                ]),
+                m(JobListComponent, {
+                    owner: ctrl.ownerName,
+                    jobs: ctrl.jobs,
+                    selected: ctrl.selected,
+                    clear: ctrl.clear
+                })
+            ]), m("div", {
                 id: "content",
                 "class": "large-10 small-12 columns padded-column"
             }, ctrl.viewComponent())
