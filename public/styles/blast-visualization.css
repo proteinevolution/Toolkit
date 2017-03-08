@@ -268,3 +268,7 @@
 .colorSpan{
     color: #006F62;
 }
+
+.fetchError{
+    padding: 10em !important;
+}
