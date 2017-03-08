@@ -29,8 +29,15 @@ window.JobModel = {
         "macmode":"off",
         "macthreshold":"0.3",
         "max_hhblits_iter":"0",
-        "eval_cutoff":"1"
-    },
+        "eval_cutoff":"1",
+        "score_ss":"1",
+        "rep_pval_threshold":"1e-2",
+        "self_aln_pval_threshold":"1e-1",
+        "merge_iters":"3",
+        "mac_cutoff":"0.5",
+        "domain_bound_detection":"0",
+        "aln_stringency":"0.3"
+},
     pushMessage: function(msg) {
         return messages().push(msg);
     },
