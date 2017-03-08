@@ -352,14 +352,18 @@ select {
     margin: 1em 1em 1em 1em;
     display: inline-block;
     float: none !important;
+
 }
 
 .tile_container {
     display: flex;
     width: 100%;
     height: 100%;
-    border: 1px solid lightgray;
     overflow: hidden;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    box-shadow: 0 1px 6px 0 #ccc;
 
 }
 
@@ -411,7 +415,7 @@ select {
 .tile_right p {
     margin-bottom: 0;
     font-size: 13px;
-    margin-top: 2em;
+    margin-top: 3em;
     vertical-align: middle;
 }
 
@@ -430,8 +434,6 @@ select {
 }
 
 .news_container {
-
-
 
 }
 
@@ -473,10 +475,9 @@ select {
 
     cursor: pointer;
     z-index: 99;
-    margin-top: 0.1em !important;
     margin-right: 10em;
     margin-bottom: 0.1em !important;
-    height: 0.3em;
+    height: 0.15em;
     width: 100%;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -543,5 +544,9 @@ select {
 }
 
 
-
+.slick-list{
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+}
 
