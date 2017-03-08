@@ -78,7 +78,7 @@ else
     DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
     DBJOINED=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
 
-    if [ %proteomes.content != "undefined" ]
+    if [ %proteomes.content != "false" ]
     then
         PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
         DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
