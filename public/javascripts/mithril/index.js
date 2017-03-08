@@ -73,19 +73,19 @@ trafficbar = function (elem, isInit) {
             console.log("Traffic Bar goes to done");
             return $(elem).css({
                 'background': 'green',
-                'box-shadow': '0 0 10px darkgreen'
+                'box-shadow': '0 1 6px #C3FFC3'
             });
         } else if (status === 4) {
             console.log("Traffic Bar goes to error");
             return $(elem).css({
                 'background': '#ff0000',
-                'box-shadow': '0 0 10px #d2071d'
+                'box-shadow': '0 1 6px #FFC5C5'
             });
         } else if (status === 3) {
             console.log("Traffic Bar goes to running");
             return $(elem).css({
                 'background': '#ffff00',
-                'box-shadow': '0 0 10px #ffce27'
+                'box-shadow': '0 1 6px #FFF666'
             });
         }
     }
