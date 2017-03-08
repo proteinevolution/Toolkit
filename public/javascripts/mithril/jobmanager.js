@@ -1,7 +1,7 @@
 /**
  * Created by astephens on 07.03.17.
  */
-console.log("JobManager Script loaded");
+
 window.JobManager = {
     model : function(ctrl) {
         return { data : m.request({"url":"jobs", "method":"POST"})};
@@ -66,15 +66,6 @@ window.JobManager = {
     },
 
     view : function (ctrl) {
-      return [
-            m("div", {
-                "class": "large-2 padded-column columns show-for-large",
-                id: "sidebar"
-            }, ""),
-            m("div", {
-                id: "content",
-                "class": "large-10 small-12 columns padded-column"
-            }, this.viewComponent(ctrl))
-        ];
+      return this.viewComponent(ctrl)
     }
 };
