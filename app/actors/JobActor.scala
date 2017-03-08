@@ -296,15 +296,16 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
       // Get new runscript instance from the runscript manager
       val runscript = runscriptManager(toolname).withEnvironment(env)
       // Representation of the current State of the job submission
-      var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map(t => t._1 -> (t._2 -> Some(ValidArgument(new LiteralRepresentation(new RString("undefined"))))))
+      var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map(t => t._1 -> (t._2 -> Some(ValidArgument(new LiteralRepresentation(new RString("false"))))))
       for((paramName, value) <- extendedParams) {
         parameters  = supply(jobID, paramName, value, parameters)
       }
+      // adds the params of the disabled controls from formData, sets value of those to "false"
       for(name <- parameters.map(t => t._1)) {
         if(!(extendedParams contains name)) {
-          extendedParams = extendedParams + (name -> "undefined")
+          extendedParams = extendedParams + (name -> "false")
         }
-        }
+      }
 
       // Serialize the JobParameters to the JobDirectory
       // Store the extended Parameters in the working directory for faster reloading
