@@ -27,4 +27,4 @@ codon_table GEN codon_table.prop
 macmode GEN macmode.prop
 macthreshold GEN macthreshold.prop
 max_hhblits_iter GEN max_hhblits_iter.prop
-proteomes GEN hhsuitedb.py
+proteomes GEN proteomes.py
