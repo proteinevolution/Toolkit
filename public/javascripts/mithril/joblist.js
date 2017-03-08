@@ -15,19 +15,8 @@ window.JobListComponent = {
     controller: function() {},
     view: function(ctrl, args) {
         return m("div", {
-            id: "joblist"
-        }, [
-            m("form", {
-                id: "jobsearchform"
-            }, m("div", [
-                m("input", {
-                    type: "text",
-                    placeholder: "Search by JobID",
-                    id: "jobsearch"
-                }), m("span", {
-                    "class": "bar"
-                })
-            ])), m("div", {
+            id: "job-list"
+        }, [m("div", {
                 "class": "job-button"
             }, [
                 m("div", {
@@ -38,7 +27,7 @@ window.JobListComponent = {
                     onclick: Job.sortJobID
                 }, "Tool")
             ]), m("div", {
-                id: "joblistbottom"
+                id: "job-list-bottom"
             }, args.jobs().map(function(job, idx) {
                 return m("div", {
                     "class": ("job " + a[job.state]).concat(job.jobID === args.selected ? " selected" : "")
