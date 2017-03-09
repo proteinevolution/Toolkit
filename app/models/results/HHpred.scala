@@ -27,6 +27,7 @@ object HHpred extends Constants {
   private val pfamReg = """(pfam.*)|(PF.*)""".r
 
   private val pdbBaseLink = "http://pdb.rcsb.org/pdb/explore.do?structureId="
+  private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
   private val ncbiBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term="
   private val ebiBaseLink = "http://www.ebi.ac.uk/pdbe-srv/view/entry/"
   private val pubmedBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?CMD=search&db=pubmed&term="
@@ -141,11 +142,11 @@ object HHpred extends Constants {
     }
     if(db == "mmcif") {
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + idPdb + "\')\";\">Template 3D structure</a>"
+      links += generateLink(pdbeBaseLink, idPdb, "PDBe")
     }
     if (db == "pfam"){
       idCDD = idCDD.replaceAll("\\..*","")
       links += generateLink(cddBaseLink, idCDD, "CDD")
-      links += generateLink(pubmedBaseLink, id, "PubMed")
     }
     Html(links.mkString(" | "))
   }
