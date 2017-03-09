@@ -36,7 +36,11 @@ window.JobModel = {
         "merge_iters":"3",
         "mac_cutoff":"0.5",
         "domain_bound_detection":"0",
-        "aln_stringency":"0.3"
+        "aln_stringency":"0.3",
+        "gap_ext_kaln":"0.85",
+        "gap_term":"0.45",
+        "bonusscore":"0"
+
     },
     pushMessage: function(msg) {
         return messages().push(msg);
