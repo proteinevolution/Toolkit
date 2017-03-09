@@ -426,7 +426,7 @@ select {
     float: none;
     margin: 1em 1em 0em 1em;
     height: 10em;
-    box-shadow: 0 1px 6px 0 #ccc;
+    box-shadow: 0 1px 2px 0 #ccc;
     background-color: #eee;
     border-radius: 3px;
     background-origin: padding-box;
@@ -479,6 +479,7 @@ select {
     margin-bottom: 0.1em !important;
     height: 0.15em;
     width: 100%;
+    margin-top: -0.4em;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
     border-radius: 4px;
@@ -543,10 +544,4 @@ select {
     }
 }
 
-
-.slick-list{
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-}
 
