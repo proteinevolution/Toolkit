@@ -2,32 +2,12 @@
 # Set environment
 
 source /ebio/abt1_share/toolkit_support1/code/bioprogs/env/environment_server.sh
-DB=""
-
-if [ -e $scopdir/$accession.a3m ]
+if [ ! -e "results/$accession.template.fas" ]
 then
-    DB=$scopdir
-fi
-if [ -e $mmcifdir/$accession.a3m ]
-then
-    DB=$mmcifdir
-fi
-if [ -e $pfamdir/$accession.a3m ]
-then
-    DB=$pfamdir
-fi
-if [ -e $pdbdir/$accession.a3m ]
-then
-    DB=$pdbdir
-fi
-
-if [ ! -e "results/$accession.template.reduced.a3m" ]
-then
-    hhfilter -i $DB/$accession.a3m -o results/$accession.template.reduced.a3m -diff 100
+    #successively try to fetch a3m from databases
+    ffindex_get ${scopdir}scope_a3m.ffdata ${scopdir}scope_a3m.ffindex $accession >> results/$accession.a3m
+    ffindex_get ${mmcifdir}mmcif70_a3m.ffdata ${mmcifdir}mmcif70_hhm.ffindex $accession >> results/$accession.a3m
+    ffindex_get ${pfamdir}pfama_a3m.ffdata ${pfamdir}pfama_hhm.ffindex $accession >> results/$accession.a3m
+    hhfilter -i results/$accession.a3m -o results/$accession.template.reduced.a3m -diff 100
     reformat.pl a3m fas results/$accession.template.reduced.a3m results/$accession.template.fas
 fi
-
-
-#hhfilter -i $scopdir/$accession.a3m -o results/$jobID.template.reduced.a3m -diff 50
-#reformat.pl -r a3m fas results/$jobID.template.reduced.a3m results/$jobID.template.reduced.fas
-#rm results/$jobID.template.reduced.a3m
