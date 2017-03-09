@@ -75,7 +75,7 @@ then
     cd ../0
 else
     #splitting input databases into array and completing with -d
-        if [ %hhsuite.content != "false" ]
+    if [ %hhsuitedb.content != "false" ]
     then
         DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
         DBJOINED=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
