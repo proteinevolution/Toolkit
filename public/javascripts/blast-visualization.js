@@ -46,10 +46,10 @@ function toggleSS(bool) {
     if(bool){
 
         for (i = 0; i < ss_helices.length; i++) {
-            ss_helices[i].style.color = "#D00000";
+            ss_helices[i].style.color = "#0000D0";
         }
         for (i = 0; i < ss_extended.length; i++) {
-            ss_extended[i].style.color = "#0000D0";
+            ss_extended[i].style.color = "#D00000";
         }
         $("#onlySS").addClass("colorSpan");
     }
