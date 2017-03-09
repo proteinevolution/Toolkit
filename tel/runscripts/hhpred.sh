@@ -61,8 +61,9 @@ hhfilter -i ../results/query.reduced.fas \
 reformat_hhsuite.pl a3m fas  "$(readlink -f ../results/query.top.a3m)" query.repseq.fas -uc
 mv query.repseq.fas ../results/query.repseq.fas
 
+DBJOINED=""
 # creating alignment of query and subject input
-if [  %hhpred_align.content == "true" ]
+if [  "%hhpred_align.content" == "true" ]
 then
     cd ../results
     ffindex_from_fasta -s db_fas.ffdata db_fas.ffindex %alignment_two.path
@@ -71,16 +72,16 @@ then
     mpirun -np %THREADS ffindex_apply_mpi db_a3m.ffdata db_a3m.ffindex -i db_hhm.ffindex -d db_hhm.ffdata -- hhmake -i stdin -o stdout -v 0
     OMP_NUM_THREADS=%THREADS cstranslate -A ${HHLIB}/data/cs219.lib -D ${HHLIB}/data/context_data.lib -x 0.3 -c 4 -f -i db_a3m -o db_cs219 -I a3m -b
     ffindex_build -as db_cs219.ffdata db_cs219.ffindex
-    DBJOINED="-d ../results/db"
+    DBJOINED+="-d ../results/db"
     cd ../0
 else
     #splitting input databases into array and completing with -d
-    if [ %hhsuitedb.content != "false" ]
+    if [ "%hhsuitedb.content" != "false" ]
     then
         DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
-        DBJOINED=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
+        DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
     fi
-    if [ %proteomes.content != "false" ]
+    if [ "%proteomes.content" != "false" ]
     then
         PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
         DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
