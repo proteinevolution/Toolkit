@@ -50,6 +50,7 @@ case class Select(options: Seq[(String, String)])   extends ParamType
 case object Bool     extends ParamType
 case object Radio    extends ParamType
 case class Slide(min: Option[Double], max: Option[Double]) extends ParamType
+case class Decimal(step : String, min: Option[Double], max: Option[Double]) extends ParamType
 
 object ParamType {
 
@@ -72,6 +73,7 @@ object ParamType {
       case Bool => Json.obj(FIELD_TYPE -> 4)
       case Radio => Json.obj(FIELD_TYPE -> 5)
       case Slide(minVal, maxVal) => Json.obj(FIELD_TYPE -> 6, "min" -> minVal, "max" -> maxVal)
+      case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step ,"min" -> minVal, "max" -> maxVal)
     }
   }
 }
@@ -83,7 +85,6 @@ case class Param(name: String,
                  internalOrdering: Int,
                  label: String)
 
-
 object Param {
   implicit val paramWrites: Writes[Param] = (
     (JsPath \ "name").write[String] and
@@ -92,7 +93,6 @@ object Param {
       (JsPath \ "label").write[String]
     ) (unlift(Param.unapply))
 }
-
 
 /**
   * Provides the specification of the Parameters as they appear in the individual tools
@@ -139,6 +139,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val INC_AMINO = select("inc_amino", "Include amino acid sequence in output" )
   final val GENETIC_CODE = select("genetic_code", "Choose a genetic Code")
   final val LONG_SEQ_NAME =  Param("long_seq_name",Bool,1, "Use long sequence name")
+  final val NEW_TYPE = Param("newtype",Decimal("any", Some(0),Some(100)),1, "newtype")
   final val EVAL_INC_THRESHOLD = Param("inclusion_ethresh",Slide(Some(0),Some(100)),1, "E-Value inclusion threshold")
   final val MACMODE = select("macmode", "Realign with MAC")
   final val MACTHRESHOLD = select("macthreshold", "MAC realignment threshold")
