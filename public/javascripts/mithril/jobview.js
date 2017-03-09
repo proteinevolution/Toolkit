@@ -652,14 +652,14 @@ window.ParameterAlignmentComponent = {
                     $(".inputDBs option:selected").prop("selected", false);
                     $("#hhpredAlign").prop('checked', true);
                     $("#alignment").attr("rows", "8");
-                    $('#alignment2').show();
-                    $("#alignment2").prop("required");
+                    $('#alignment_two').show();
+                    $("#alignment_two").prop('required',true);
                 } else {
                     $(".inputDBs").prop('disabled', false);
                     $("#hhpredAlign").prop('checked', false);
                     $("#alignment").attr("rows", "19");
-                    $("#alignment2").hide();
-                    $("#alignment2").removeAttr("required");
+                    $("#alignment_two").hide();
+                    $("#alignment_two").prop("required",false);
                 }
             }).bind(this.mo),
             setTwoTextAreas: (function(bool) {
@@ -679,14 +679,14 @@ window.ParameterAlignmentComponent = {
                         $(".inputDBs option:selected").prop("selected", false);
                         $("#hhpredAlign").prop('checked', true);
                         $("#alignment").attr("rows", "8");
-                        $('#alignment2').show();
-                        $("#alignment2").prop("required");
+                        $('#alignment_two').show();
+                        $("#alignment_two").prop("required");
                     } else {
                         $(".inputDBs").prop('disabled', false);
                         $("#hhpredAlign").prop('checked', false);
                         $("#alignment").attr("rows", "19");
-                        $("#alignment2").hide();
-                        $("#alignment2").removeAttr("required");
+                        $("#alignment_two").hide();
+                        $("#alignment_two").removeAttr("required");
                     }
                 }
             }
@@ -711,7 +711,8 @@ window.ParameterAlignmentComponent = {
                 placeholder: ctrl.getLabel(),
                 rows: 8,
                 cols: 70,
-                id: ctrl.id + "2",
+                class: "alignment",
+                id: ctrl.id + "_two",
                 value: args.value,
                 style: "display: none",
                 spellcheck: false,
@@ -848,11 +849,14 @@ ParameterNumberComponent = {
             value: args.value
         };
         // Add minimum and maximum if present
+        if(args.param.paramType["min"] != null) {
+            paramAttrs["min"] = args.param.paramType["min"];
+        }
         if(args.param.paramType["max"]) {
             paramAttrs["max"] = args.param.paramType["max"];
         }
-        if(args.param.paramType["min"]) {
-            paramAttrs["min"] = args.param.paramType["min"];
+        if(args.param.paramType["step"]) {
+            paramAttrs["step"] = args.param.paramType["step"];
         }
         return renderParameter([
             m("label", {
