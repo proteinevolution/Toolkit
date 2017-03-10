@@ -3,4 +3,4 @@ muscle -in %alignment.path \
        -out ../results/alignment.clustalw_aln \
        -maxiters %maxrounds.content
 
-
+reformat_hhsuite.pl clu fas ../results/alignment.clustalw_aln ../results/alignment.fas
