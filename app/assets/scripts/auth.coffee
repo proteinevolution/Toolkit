@@ -63,7 +63,8 @@ $ ->
       $("#auth-link").remove()
       $("#overlay-content").html(json.message)
       Job.reloadList()
-      m.redraw(true) #something is wrong here again - redrawing the joblist does not work on login while showing joblist
+      #m.redraw(true) #something is wrong here again - redrawing the joblist does not work on login while showing joblist
+      location.reload(); # stick to reload until the aforementioned bug will be fixed
       setTimeout(loadMiniProfile,1000)
     else
       # add the error message to the view
