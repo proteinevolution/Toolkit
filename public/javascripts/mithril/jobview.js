@@ -718,7 +718,6 @@ window.ParameterAlignmentComponent = {
                 spellcheck: false,
                 config: validation
             });
-            var mbreak = m("br");
         }
 
         return renderParameter([
