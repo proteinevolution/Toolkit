@@ -28,7 +28,7 @@ window.JobListComponent = {
                 }, "Tool")
             ]), m("div", {
                 id: "job-list-bottom"
-            }, args.jobs().slice(0).slice(-5).map(function(job, idx) {
+            }, args.jobs().slice(0).slice(-5).map(function(job) {
                 return m("div", {
                     "class": ("job " + a[job.state]).concat(job.jobID === args.selected ? " selected" : "")
                 }, [
@@ -38,7 +38,7 @@ window.JobListComponent = {
                         "class": "toolname"
                     }, job.toolname.substr(0, 4).toUpperCase()), m("a", {
                         "class": "boxclose",
-                        onclick: args.clear.bind(ctrl, idx)
+                        onclick: args.clear.bind(ctrl, job.jobID)
                     })
                 ]);
             }))
