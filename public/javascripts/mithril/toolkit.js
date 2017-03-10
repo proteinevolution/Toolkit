@@ -147,7 +147,7 @@ window.Job = (function() {
 
     Job["delete"] = function(jobID) {
         return Job.list.then(function(jobs) {
-            return jobs.slice(0).slice(-5).map(function(job, idx) {
+            return jobs.map(function(job) {
                 var deletionRoute;
                 if (job.jobID === jobID) {
                     deletionRoute = jsRoutes.controllers.JobController["delete"](jobID);
@@ -155,7 +155,7 @@ window.Job = (function() {
                         url: deletionRoute.url,
                         method: deletionRoute.method
                     });
-                    return Job.clear(idx);
+                    return Job.clear(jobID);
                 }
             });
         });
