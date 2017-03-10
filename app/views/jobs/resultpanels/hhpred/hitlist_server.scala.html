@@ -493,23 +493,20 @@ function showStructure(accession) {
     var db = identifyDatabase(accession);
     var fileEnding = "";
     switch(db){
-        case "scop":
-            fileEnding = ".pdb";
-            break;
         case "mmcif":
             fileEnding = ".cif";
             break;
+        case "scop":
+            fileEnding = ".pdb";
+            break;
     }
     var url = '/getStructure/' +accession + fileEnding;
-    $.get(url).done(function () {
+
         $(document).ready(function(){
             stage = new NGL.Stage( "viewport" );
             stage.loadFile( url, { defaultRepresentation: true } );
             stage.set
         });
-    }).fail(function () {
-        $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
-    });
 
 }
 
