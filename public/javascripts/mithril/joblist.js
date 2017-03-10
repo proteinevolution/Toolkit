@@ -28,7 +28,7 @@ window.JobListComponent = {
                 }, "Tool")
             ]), m("div", {
                 id: "job-list-bottom"
-            }, args.jobs().slice(1).slice(-15).map(function(job, idx) {
+            }, args.jobs().slice(0).slice(-5).map(function(job, idx) {
                 return m("div", {
                     "class": ("job " + a[job.state]).concat(job.jobID === args.selected ? " selected" : "")
                 }, [
