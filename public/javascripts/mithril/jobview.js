@@ -682,13 +682,17 @@ window.ParameterAlignmentComponent = {
                     if (ctrl.getTwoTextAreas()) {
                         $(".inputDBs").prop('disabled', true);
                         $(".inputDBs option:selected").prop("selected", false);
-                        $("#alignment").attr("rows", "7");
-                        $("#alignment2").prop("required");
+                        $("#hhpredAlign").prop('checked', true);
+                        $("#alignment").attr("rows", "8");
+                        $('#alignment_two').show();
+                        $("#alignment_two").prop("required");
                     } else {
                         $(".inputDBs").prop('disabled', false);
-                        $("#alignment").attr("rows", "18");
-                        $("#alignment2").hide();
-                        $("#alignment2").removeAttr("required");
+                        $("#hhpredAlign").prop('checked', false);
+                        $("#alignment").attr("rows", "19");
+                        $("#alignment_two").hide();
+                        $("#alignment_two").removeAttr("required");
+
                     }
                 }
             }
@@ -704,7 +708,7 @@ window.ParameterAlignmentComponent = {
                 onclick: function () {
                     ctrl.toggleTwoTextAreas();
                 }}),
-                m("div", {"class": "sliderSwitch"})
+                m("div", {"class": "sliderSwitch round"})
             )
         );
 
@@ -728,7 +732,7 @@ window.ParameterAlignmentComponent = {
                 rows: 7,
                 cols: 70,
                 class: "alignment",
-                id: ctrl.id + "_two",
+                id: ctrl.id + "2",
                 value: args.value,
                 style: "display: none; margin-top: 1em;",
                 spellcheck: false,
