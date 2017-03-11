@@ -4,7 +4,7 @@
 
 
 <div class="reveal" id="forwardModal" data-reveal>
-    <h3>Forward</h3>
+    <p>Forward Job</p>
     <div class="select_forward">
         <select id="forwardSelect">
             <option value="">Select Tool</option>
@@ -23,17 +23,16 @@
         @if({tool.toolNameShort == "hhpred"}){
         <div class="forwardFormDiv">
             <label style="font-weight: bold">Select hits to forward</label>
-            <input type="radio" name="radio1"><label>Selected Hits</label>
+            <label class="forwardLabel"> <input type="radio" name="radio1">Selected Hits</label>
             <div class="two_input">
-                <input type="radio" name="radio1"><label>E-Value better than</label>
+                <label  class="forwardLabel"><input type="radio" name="radio1">E-Value better than</label>
                 <input class="result_inputs" type="text" value="0.001">
             </div>
         </div>
         <div class="forwardFormDiv">
             <label style="font-weight: bold">Select sequence length</label>
-            <input type="radio" name="radio2"><label>Forward slider region</label>
-            <br>
-            <input type="radio" name="radio2"><label>Forward full length sequence</label>
+            <label class="forwardLabel"><input type="radio" name="radio2">Forward slider region</label>
+            <label class="forwardLabel"><input type="radio" name="radio2">Forward full length sequence</label>
         </div>
         }
 

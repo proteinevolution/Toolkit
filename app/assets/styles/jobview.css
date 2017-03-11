@@ -165,13 +165,6 @@ hr {
     margin: 0 0 0;
 }
 
-.checkDiv {
-    display: block;
-}
-
-.checkBoxLabel {
-    display: block;
-}
 
 .alignment_buttons {
     height: 7em;
@@ -222,13 +215,6 @@ hr {
     margin-bottom: 10px;
 }
 
-label.checkBoxLabel input[type=checkbox] {
-    position: relative;
-    vertical-align: middle;
-    bottom: 4px;
-    left: 3px;
-}
-
 .switchDiv {
     width: 15em;
 }
@@ -238,7 +224,7 @@ label.checkBoxLabel input[type=checkbox] {
 }
 
 .nice-select ul {
-    width: 20em !important;
+    width: 20em;
 }
 
 .exampleReformat {
