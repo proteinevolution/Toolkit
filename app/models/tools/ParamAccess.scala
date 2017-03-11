@@ -50,6 +50,7 @@ case class Select(options: Seq[(String, String)])   extends ParamType
 case object Bool     extends ParamType
 case object Radio    extends ParamType
 case class Slide(min: Option[Double], max: Option[Double]) extends ParamType
+case class Decimal(step : String, min: Option[Double], max: Option[Double]) extends ParamType
 
 object ParamType {
 
@@ -72,6 +73,7 @@ object ParamType {
       case Bool => Json.obj(FIELD_TYPE -> 4)
       case Radio => Json.obj(FIELD_TYPE -> 5)
       case Slide(minVal, maxVal) => Json.obj(FIELD_TYPE -> 6, "min" -> minVal, "max" -> maxVal)
+      case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step ,"min" -> minVal, "max" -> maxVal)
     }
   }
 }
@@ -83,7 +85,6 @@ case class Param(name: String,
                  internalOrdering: Int,
                  label: String)
 
-
 object Param {
   implicit val paramWrites: Writes[Param] = (
     (JsPath \ "name").write[String] and
@@ -92,7 +93,6 @@ object Param {
       (JsPath \ "label").write[String]
     ) (unlift(Param.unapply))
 }
-
 
 /**
   * Provides the specification of the Parameters as they appear in the individual tools
@@ -123,14 +123,16 @@ class ParamAccess @Inject() (tel: TEL) {
   final val EVALUE = Param("evalue",ParamType.UnconstrainedNumber,1, "Evalue")
   final val GAP_OPEN = Param("gap_open",ParamType.UnconstrainedNumber,1, "Gap open penalty")
   final val GAP_EXT = Param("gap_ext",ParamType.UnconstrainedNumber,1, "Gap extension penalty")
-  final val GAP_TERM = Param("gap_term",ParamType.UnconstrainedNumber,1, "Gap termination penalty")
+  final val GAP_TERM = Param("gap_term",Decimal("0.01", Some(0),Some(10)),1, "Terminal gap penalty")
+  final val GAP_EXT_KALN = Param("gap_ext_kaln",Decimal("0.01", Some(0),Some(10)),1, "Gap extension penalty")
+  final val BONUSSCORE = Param("bonusscore",Decimal("0.01", Some(0),Some(10)),1, "Bonus Score")
+
   final val DESC = Param("desc",ParamType.UnconstrainedNumber,1, "No. of descriptions")
   final val CONSISTENCY =  Param("consistency",ParamType.UnconstrainedNumber,1, "Passes of consistency transformation")
   final val ITREFINE = Param("itrefine",ParamType.UnconstrainedNumber,1, "Passes of iterative refinements")
   final val PRETRAIN =  Param("pretrain",ParamType.UnconstrainedNumber,1, "Rounds of pretraining")
   final val MAXROUNDS = select("maxrounds", "Max. number of iterations")
   final val OFFSET = Param("offset",ParamType.UnconstrainedNumber,1, "Offset")
-  final val BONUSSCORE = Param("bonusscore",ParamType.UnconstrainedNumber,1, "Bonus Score")
   final val OUTORDER = Param("outorder",ParamType.UnconstrainedNumber,1, "Outorder")
   final val ETRESH = Param("inclusion_ethresh",ParamType.UnconstrainedNumber,1, "E-value inclusion threshold")
   final val HHBLITSDB  =  Param("hhblitsdb",Select(tel.generateValues("hhblitsdb").toSeq),1, "Select HHblts database")
@@ -147,11 +149,8 @@ class ParamAccess @Inject() (tel: TEL) {
   final val PMIN = Param("pmin",ParamType.Percentage,1, "Min. probability in hitlist (%)")
   final val MAX_SEQS = select("max_seqs", "Max. number of sequences per HMM")
   final val ALIWIDTH = Param("aliwidth", Number(Some(0),Some(100)),1, "With of alignments (columns)")
-  final val MAX_EVAL = Param("max_eval",ParamType.UnconstrainedNumber, 1, "Maximal E-Value")
   final val MAX_SEQID =  Param("max_seqid", ParamType.UnconstrainedNumber, 1, "Maximal Sequence Identity (%)")
-  final val MIN_COLSCORE = Param("min_colscore", ParamType.UnconstrainedNumber, 1, "Minimal Column Score")
   final val MIN_QUERY_COV = Param("min_query_cov", ParamType.Percentage, 1, "Minimal coverage with query (%)")
-  final val MIN_ANCHOR_WITH = Param("min_anchor_width", ParamType.UnconstrainedNumber, 1, "Minimal Anchor width")
   final val WEIGHTING = Param("weighting", Bool, 1, "Weighting")
   final val RUN_PSIPRED = Param("run_psipred", Bool,1, "Run PSIPRED")
   final val MATRIX_PHYLIP = select("matrix_phylip", "Model of AminoAcid replacement")

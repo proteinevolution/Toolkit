@@ -91,16 +91,16 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
 
       case "msaprobs" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
-        ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
+        ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
+        ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
 
       case "muscle" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
-        ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
-
-      case "blammer" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
-        ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
+        ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
+        ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
 
       case "kalign" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
-        ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
+        ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
+        ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
 
       case "mafft" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
         ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
@@ -168,13 +168,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN,
       paramAccess.GAP_EXT, paramAccess.DESC), Seq.empty),
 
-   // T-Coffee
+    // T-Coffee
     ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.MULTISEQ), Seq.empty),
-
-    // Blammer
-      ("blammer", "Blammer", "blam", "alignment", "", Seq(paramAccess.ALIGNMENT,
-      paramAccess.MIN_QUERY_COV, paramAccess.MAX_EVAL, paramAccess.MIN_ANCHOR_WITH,
-      paramAccess.MAX_SEQID, paramAccess.MAX_SEQS, paramAccess.MIN_COLSCORE), Seq.empty),
 
     // CLustalOmega
     ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT), Seq.empty),
@@ -190,7 +185,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
    // Kalign
       ("kalign", "Kalign", "kal", "alignment", "",
-        Seq(paramAccess.MULTISEQ, paramAccess.GAP_OPEN, paramAccess.GAP_EXT, paramAccess.GAP_TERM, paramAccess.BONUSSCORE), Seq.empty),
+        Seq(paramAccess.MULTISEQ, paramAccess.GAP_OPEN, paramAccess.GAP_EXT_KALN, paramAccess.GAP_TERM, paramAccess.BONUSSCORE), Seq.empty),
 
     // Hmmer
     ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,

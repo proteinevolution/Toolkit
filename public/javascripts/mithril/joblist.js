@@ -28,19 +28,19 @@ window.JobListComponent = {
                 }, "Tool")
             ]), m("div", {
                 id: "job-list-bottom"
-            }, args.jobs().slice(1).slice(-15).map(function(job, idx) {
-                return m("div", {
+            }, args.jobs().slice(0).slice(-5).map(function(job) {
+                return m('a[href="/#/jobs/' + job.jobID + '"]', m("div", {
                     "class": ("job " + a[job.state]).concat(job.jobID === args.selected ? " selected" : "")
                 }, [
                     m("div", {
                         "class": "jobid"
-                    }, m('a[href="/#/jobs/' + job.jobID + '"]', job.jobID)), m("span", {
+                    }, job.jobID), m("span", {
                         "class": "toolname"
                     }, job.toolname.substr(0, 4).toUpperCase()), m("a", {
                         "class": "boxclose",
-                        onclick: args.clear.bind(ctrl, idx)
+                        onclick: args.clear.bind(ctrl, job.jobID)
                     })
-                ]);
+                ]));
             }))
         ]);
     }

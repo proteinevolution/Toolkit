@@ -89,12 +89,19 @@ window.Job = (function() {
         });
     };
 
-    Job.clear = function(idx) {
+    Job.clear = function(jobID) {
         return Job.list.then(function(jobs) {
             var job;
-            job = jobs[idx];
-            jobs[idx] = null;
-            jobs.splice(idx, 1);
+            //console.log(JSON.stringify(jobs));
+            var index = jobs.findIndex(function(item, i){
+                return item.jobID === jobID
+            });
+            //console.log("Index: " + index);
+            job = jobs[index];
+            jobs[index] = null;
+            jobs.splice(index, 1);
+            //m.redraw(true);
+
             sendMessage({
                 "type": "ClearJob",
                 "jobID": job.jobID
@@ -140,7 +147,7 @@ window.Job = (function() {
 
     Job["delete"] = function(jobID) {
         return Job.list.then(function(jobs) {
-            return jobs.map(function(job, idx) {
+            return jobs.map(function(job) {
                 var deletionRoute;
                 if (job.jobID === jobID) {
                     deletionRoute = jsRoutes.controllers.JobController["delete"](jobID);
@@ -148,7 +155,7 @@ window.Job = (function() {
                         url: deletionRoute.url,
                         method: deletionRoute.method
                     });
-                    return Job.clear(idx);
+                    return Job.clear(jobID);
                 }
             });
         });

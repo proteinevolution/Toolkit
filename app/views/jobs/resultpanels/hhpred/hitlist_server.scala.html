@@ -102,24 +102,17 @@
                             }
                             }
                             </td>
-                            <td colspan="2">@{(alignment \ "header").get.as[String].replaceFirst("\\>.......\\s", "")}</td>
+                            <td colspan="2">@{(alignment \ "header").get.as[String].replaceFirst(">", "")}</td>
                         </tr>
                         @* Alignment Details*@
                         <tr>
                             <td colspan="3"></td>
-                            <td colspan="2">Probability: @{(alignment \ "info" \ "probab").get}, Expect: @{(alignment \ "info" \ "eval").get}</td>
+                            <td colspan="2">Probability: @{(alignment \ "info" \ "probab").get}, E-value: @{(alignment \ "info" \ "eval").get},
+                                Score: @{(alignment \ "info" \ "score").get}, Aligned Cols: @{(alignment \ "info" \ "aligned_cols").get},
+                                Identities: @{(alignment \ "info" \ "identities").get}, Similarity: @{(alignment \ "info" \ "similarity").get},
+                                Sum Probs: @{(alignment \ "info" \ "sum_probs").get}
+                            </td>
                         </tr>
-                        <tr>
-                            <td colspan="3"></td>
-                            <td colspan="2">Score: @{(alignment \ "info" \ "score").get}, Aligned Cols: @{(alignment \ "info" \ "aligned_cols").get},
-                                Identities: @{(alignment \ "info" \ "identities").get}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3"></td>
-                            <td colspan="2">Similarity: @{(alignment \ "info" \ "similarity").get}, Sum Probs: @{(alignment \ "info" \ "sum_probs").get},
-                                Template Neff: @{(alignment \ "info" \ "template_neff").get}</td>
-                        </tr>
-
                         <tr>
                             <td><br /></td>
                         </tr>
@@ -273,8 +266,8 @@ var colorBackground = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 var hitNames;
 var hitSequences;
-var ss_helices = document.getElementsByClassName("ss_h");
-var ss_extended = document.getElementsByClassName("ss_e");
+var ss_helices = document.getElementsByClassName("aa_h");
+var ss_extended = document.getElementsByClassName("ss_h");
 var aas;
 
 (function()  {
@@ -500,23 +493,20 @@ function showStructure(accession) {
     var db = identifyDatabase(accession);
     var fileEnding = "";
     switch(db){
-        case "scop":
-            fileEnding = ".pdb";
-            break;
         case "mmcif":
             fileEnding = ".cif";
             break;
+        case "scop":
+            fileEnding = ".pdb";
+            break;
     }
     var url = '/getStructure/' +accession + fileEnding;
-    $.get(url).done(function () {
+
         $(document).ready(function(){
             stage = new NGL.Stage( "viewport" );
             stage.loadFile( url, { defaultRepresentation: true } );
             stage.set
         });
-    }).fail(function () {
-        $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
-    });
 
 }
 

@@ -664,6 +664,7 @@ window.ParameterAlignmentComponent = {
                     $("#alignment").attr("rows", "18");
                     $("#alignment2").hide();
                     $("#alignment2").removeAttr("required");
+
                 }
             }).bind(this.mo),
             setTwoTextAreas: (function(bool) {
@@ -726,7 +727,8 @@ window.ParameterAlignmentComponent = {
                 placeholder: ctrl.getLabel(),
                 rows: 7,
                 cols: 70,
-                id: ctrl.id + "2",
+                class: "alignment",
+                id: ctrl.id + "_two",
                 value: args.value,
                 style: "display: none; margin-top: 1em;",
                 spellcheck: false,
@@ -871,11 +873,14 @@ ParameterNumberComponent = {
             value: args.value
         };
         // Add minimum and maximum if present
+        if(args.param.paramType["min"] != null) {
+            paramAttrs["min"] = args.param.paramType["min"];
+        }
         if(args.param.paramType["max"]) {
             paramAttrs["max"] = args.param.paramType["max"];
         }
-        if(args.param.paramType["min"]) {
-            paramAttrs["min"] = args.param.paramType["min"];
+        if(args.param.paramType["step"]) {
+            paramAttrs["step"] = args.param.paramType["step"];
         }
         return renderParameter([
             m("label", {

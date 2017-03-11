@@ -20,13 +20,15 @@ object HHpred extends Constants {
   private val sheet_pattern = """([Ee]+)""".r
   private val helix_sheets = """([Hh]+|[Ee]+)""".r("ss")
 
-  private val scopReg = """(d[0-9].*)""".r
+  private val scopReg = """([defgh][0-9a-zA-Z\.\_]+)""".r
   private val mmcifReg = """(...._[a-zA-Z])""".r
   private val mmcifShortReg = """([0-9]...)""".r
+  private val refseqReg = """([NXMRP.]+._[0-9.]+)""".r
+  private val pfamReg = """(^pfam+.+[0-9]+)|(^PF\d+.+[0-9]+)""".r
 
-  private val pfamReg = """(pfam.*)|(PF.*)""".r
-
+  private val ncbiRefseqBaseLink = "https://www.ncbi.nlm.nih.gov/Structure/cdd/wrpsb.cgi?seqinput=";
   private val pdbBaseLink = "http://pdb.rcsb.org/pdb/explore.do?structureId="
+  private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
   private val ncbiBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term="
   private val ebiBaseLink = "http://www.ebi.ac.uk/pdbe-srv/view/entry/"
   private val pubmedBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?CMD=search&db=pubmed&term="
@@ -119,9 +121,13 @@ object HHpred extends Constants {
       link += generateLink(pdbBaseLink, idPdb, id)
     }
     if(db == "pfam"){
-      var idPfam = id.replaceAll("am.*$", "")
+      var idPfam = id.replaceAll("am.*$||..*", "")
       link += generateLink(pfamBaseLink, idPfam + "#tabview=tab1", id)
     }
+    if(db == "refseq"){
+      link += generateLink(ncbiRefseqBaseLink, id, id)
+    }
+
     Html(link)
   }
 
@@ -133,19 +139,21 @@ object HHpred extends Constants {
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     var idTrimmed = id.substring(1, 5)
     var idCDD = id.replaceAll("PF", "pfam")
-    links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
     if(db == "scop") {
+      links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
       links += generateLink(scopBaseLink, id, "SCOP")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
     }
     if(db == "mmcif") {
+      links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + idPdb + "\')\";\">Template 3D structure</a>"
+      links += generateLink(pdbeBaseLink, idPdb, "PDBe")
     }
     if (db == "pfam"){
+      links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
       idCDD = idCDD.replaceAll("\\..*","")
       links += generateLink(cddBaseLink, idCDD, "CDD")
-      links += generateLink(pubmedBaseLink, id, "PubMed")
     }
     Html(links.mkString(" | "))
   }
@@ -157,8 +165,12 @@ object HHpred extends Constants {
     case mmcifReg(_) => "mmcif"
     case pfamReg(_,_) => "pfam"
     case mmcifShortReg(_) => "mmcif"
+    case refseqReg(_) => "refseq"
     case e : String => Logger.info("Struc: ("+e+") could not be matched against any database!");""
   }
+
+
+
 
 }
 

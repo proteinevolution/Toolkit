@@ -46,10 +46,10 @@ function toggleSS(bool) {
     if(bool){
 
         for (i = 0; i < ss_helices.length; i++) {
-            ss_helices[i].style.color = "#D00000";
+            ss_helices[i].style.color = "#0000D0";
         }
         for (i = 0; i < ss_extended.length; i++) {
-            ss_extended[i].style.color = "#0000D0";
+            ss_extended[i].style.color = "#D00000";
         }
         $("#onlySS").addClass("colorSpan");
     }
@@ -258,6 +258,7 @@ function getSingleLink(id){
   var db = identifyDatabase(id);
     var pdb = 'http://pdb.rcsb.org/pdb/explore.do?structureId=';
     var ncbi = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term=';
+    var ncbiRefseq = 'https://www.ncbi.nlm.nih.gov/Structure/cdd/wrpsb.cgi?seqinput=';
     var ebi = 'http://www.ebi.ac.uk/pdbe-srv/view/entry/';
     var pubmed = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?CMD=search&db=pubmed&term=';
     var scop = 'http://scop.berkeley.edu/sid=';
@@ -279,6 +280,9 @@ function getSingleLink(id){
           var idPfam = id.replace(/am.*$/ , "");
           return generateLink(pfam, idPfam+"#tabview=tab1",id);
           break;
+        case 'refseq':
+            return generateLink(ncbiRefseq, id,id);
+            break;
       default:
           return null;
   }
@@ -320,11 +324,14 @@ function generateLink(baseLink, id, name){
 function identifyDatabase(id){
     if (id == null)
         return null;
-    var scop = new RegExp('(d[0-9].....)');
+    var scop = new RegExp('([defgh][0-9a-zA-Z\.\_]+)');
     var mmcif = new RegExp('(...._[a-zA-Z])|(....)');
-    var pfam = new RegExp('(pfam*)');
+    var pfam = new RegExp('(^pfam+.+[0-9]+)|(^PF\d+.+[0-9]+)');
+    var refseq = new RegExp('([NXMRP.]+._[0-9.]+)');
     if(id.match(scop))
         return "scop";
+    else if(id.match(refseq))
+        return "refseq";
     else if(id.match(mmcif))
         return "mmcif";
     else if(id.match(pfam))
