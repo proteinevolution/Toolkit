@@ -325,10 +325,10 @@ JobTabsComponent = {
                                     }, m("div", {
                                         "class": "small-12 large-12 medium-12 columns"
                                     }, mapParam(elements[0], ctrl))), m("div", {
-                                        "class": "row small-up-1 medium-up-2 large-up-3"
+                                        "class": "row small-up-1 medium-up-2 large-up-3", "style": "margin-top: 10px;"
                                     }, elements.slice(1).map(function(param) {
                                         return m("div", {
-                                            "class": "column column-block"
+                                            "class": "column column-block multiSelectParameter"
                                         }, mapParam(param, ctrl));
                                     }))
                                 ] : m("div", {
@@ -511,10 +511,17 @@ JobSubmissionComponent = {
                 id: 'submit_again',
                 type: 'button',
                 value: 'New Submission'
-            })), !this.submitting ? m("input", {
+            })),  m("input", {
+                type: "text",
+                "class": "jobid",
+                placeholder: "E-Mail Notification",
+                style: "width: 16em; float:left;"
+            }),
+            !this.submitting ? m("input", {
                     type: "button",
                     "class": "success button small submitJob",
                     value: (args.isJob ? "Res" : "S") + "ubmit Job",
+                    style: "float: right;",
                     onclick: ctrl.submit.bind(ctrl, true)
                 }) : null, !args.isJob ? m("label", {
                     hidden: "hidden"
@@ -536,19 +543,19 @@ JobSubmissionComponent = {
                     "class": "button small addJob",
                     value: "Add Job",
                     onclick: ctrl.addJob
-                }) : null, m("input", {
+                }) : null,
+            m("input", {
                 type: "text",
                 id: "jobID",
                 "class": "jobid",
                 placeholder: "Custom JobID",
                 onchange: m.withAttr("value", ctrl.setJobID),
-                value: args.job().jobID
-            }), m("input", {
-                type: "text",
-                "class": "jobid",
-                placeholder: "E-Mail Notification",
-                style: "width: 16em; float: right;"
+                value: args.job().jobID,
+                style: "float:right"
             })
+
+
+
         ]);
     }
 };
@@ -612,7 +619,6 @@ window.ParameterAlignmentComponent = {
             }
         }
         this.allowsTwoTextAreas = args.param.paramType.allowsTwoTextAreas;
-        this.twoTextAreas = (window.JobModel.getParamValue("hhpred_align") == 'true');
     },
     controller: function(args) {
         this.mo = new window.ParameterAlignmentComponent.model(args);
@@ -650,14 +656,12 @@ window.ParameterAlignmentComponent = {
                 if (this.twoTextAreas) {
                     $(".inputDBs").prop('disabled', true);
                     $(".inputDBs option:selected").prop("selected", false);
-                    $("#hhpredAlign").prop('checked', true);
-                    $("#alignment").attr("rows", "8");
+                    $("#alignment").attr("rows", "7");
                     $('#alignment2').show();
                     $("#alignment2").prop("required");
                 } else {
                     $(".inputDBs").prop('disabled', false);
-                    $("#hhpredAlign").prop('checked', false);
-                    $("#alignment").attr("rows", "19");
+                    $("#alignment").attr("rows", "18");
                     $("#alignment2").hide();
                     $("#alignment2").removeAttr("required");
                 }
@@ -677,14 +681,11 @@ window.ParameterAlignmentComponent = {
                     if (ctrl.getTwoTextAreas()) {
                         $(".inputDBs").prop('disabled', true);
                         $(".inputDBs option:selected").prop("selected", false);
-                        $("#hhpredAlign").prop('checked', true);
-                        $("#alignment").attr("rows", "8");
-                        $('#alignment2').show();
+                        $("#alignment").attr("rows", "7");
                         $("#alignment2").prop("required");
                     } else {
                         $(".inputDBs").prop('disabled', false);
-                        $("#hhpredAlign").prop('checked', false);
-                        $("#alignment").attr("rows", "19");
+                        $("#alignment").attr("rows", "18");
                         $("#alignment2").hide();
                         $("#alignment2").removeAttr("required");
                     }
@@ -692,8 +693,22 @@ window.ParameterAlignmentComponent = {
             }
         };
         if(ctrl.getAllowsTwoTextAreas()) {
-            var mbreak = m("br");
-            var checkbox = m("label", "Align two or more sequences",
+
+            var alignmentSwitch = m("div", {"class": "switchContainer"},
+                m("label",{"class": "firstLabel"},"Align two or more sequences"),
+                m("label", {"class": "switch"},
+                m("input", {
+                    type: "checkbox",
+                    config: params.oninit,
+                onclick: function () {
+                    ctrl.toggleTwoTextAreas();
+                }}),
+                m("div", {"class": "sliderSwitch"})
+            )
+        );
+
+
+            var checkbox = m("label", {"class": "checkBoxLabel"},"Align two or more sequences",
                 m("input", {
                     type: "checkbox",
                     id: "hhpredAlign",
@@ -709,15 +724,14 @@ window.ParameterAlignmentComponent = {
             m("textarea", {
                 name: ctrl.name+"_two",
                 placeholder: ctrl.getLabel(),
-                rows: 8,
+                rows: 7,
                 cols: 70,
                 id: ctrl.id + "2",
                 value: args.value,
-                style: "display: none",
+                style: "display: none; margin-top: 1em;",
                 spellcheck: false,
                 config: validation
             });
-            var mbreak = m("br");
         }
 
         return renderParameter([
@@ -735,7 +749,7 @@ window.ParameterAlignmentComponent = {
                     required: "required",
                     spellcheck: false,
                     config: validation
-                }), mbreak,
+                }),
                 textArea2),
             m("div", {
                 id: "upload_alignment_modal",
@@ -748,6 +762,7 @@ window.ParameterAlignmentComponent = {
             })), m("div", {
                 "class": "alignment_buttons"
             }, [
+                m("div", {"class": "leftAlignmentButtons"},
                 m("input", {
                     type: "button",
                     "class": "button small alignmentExample",
@@ -762,13 +777,20 @@ window.ParameterAlignmentComponent = {
                     onclick: function() {
                         return $('#upload_alignment_modal').foundation('open');
                     }
-                }), m("select", {"class": "alignment_mode", onchange: m.withAttr("value", ctrl.setMode), config: selectBoxAccess}, ctrl.getModes().map(function(mode){
+                }),
+
+                m("select", {"class": "alignment_mode", onchange: m.withAttr("value", ctrl.setMode), config: selectBoxAccess}, ctrl.getModes().map(function(mode){
                     return m("option", {value: mode.mode}, mode.name)}
 
                 )), m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format){
                     return m("option", {value: format[0]}, format[1])}
-                )),
-                checkbox
+                ))
+                ),
+                m("div", {"class": "switchDiv"},
+                alignmentSwitch
+                )
+
+
             ])
         ], "alignmentParameter");
     }
@@ -809,6 +831,7 @@ ParameterRadioComponent = {
 };
 
 ParameterSelectComponent = {
+
     view: function(ctrl, args) {
         var paramAttrs = {
             name: args.param.name,
