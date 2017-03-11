@@ -136,6 +136,32 @@
     margin-top: 1em;
 }
 
+#forwardModal {
+    width: 36em;
+}
+
+#forwardModal p {
+    font-size: 1em;
+    font-weight: bold;
+    color: rgba(0, 110, 98, 166);
+}
+
+#forwardModal .forward_form {
+    font-size: 0.8em;
+}
+
+#forwardModal .result_inputs {
+    font-size: 0.9em;
+}
+
+#forwardModal .forwardFormLast {
+    width: 15%;
+    float: right;
+}
+
+#forwardModal .nice-select, #forwardModal .nice-select ul {
+    width: 12em;
+}
 
 #forward {
     float: right;
@@ -164,9 +190,15 @@
     background-color: #eee;
 }
 
-.select_forward div, .select_forward ul {
-    width: 15em;
+.select_forward {
+    font-size: 0.90em;
 }
+
+.select_forward div, .select_forward ul {
+    width: 20em;
+}
+
+
 
 .forward_form {
    width: 100%;
@@ -176,6 +208,14 @@
    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
    overflow: auto;
 
+
+}
+
+label.forwardLabel input[type=radio] {
+    position: relative;
+    vertical-align: middle;
+    bottom: -6px;
+    left: 3px;
 }
 
 .forward_form label {
@@ -197,11 +237,12 @@
 }
 
 .result_inputs {
-    width: 6em;
-    height: 2.5em;
+    width: 4em;
+    height: 2em;
     margin-left: 0.5em;
     margin-bottom: 0;
     padding: 0 0 0 0.25em;
+
 }
 
 .two_input {
