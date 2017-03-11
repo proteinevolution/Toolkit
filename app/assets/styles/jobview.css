@@ -18,7 +18,7 @@ body.is-reveal-open {
 #tool-tabs {
 
     background: #fefefe;
-    min-height: 600px;
+    min-height: 670px;
     border: 1px solid #ccc;
 }
 .parameter-panel {
@@ -141,9 +141,14 @@ hr {
 }
 
 .parameter label {
-    float: left;
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
     font-size: 0.9em;
+}
+
+.multiSelectLabel {
+    width: 15.5em;
+    border-bottom: 1px solid rgba(0, 110, 98, 166);
+    margin-bottom: 0.5em;
 }
 
 .parameter input {
@@ -160,18 +165,80 @@ hr {
     margin: 0 0 0;
 }
 
-
-
-
-.alignment_buttons {
-    height: 5em;
-    display: -webkit-flex;
-    display: flex;
-    flex-direction: row;
+.checkDiv {
+    display: block;
 }
 
-.parameter select {
-    width:  14em;
+.checkBoxLabel {
+    display: block;
+}
+
+.alignment_buttons {
+    height: 7em;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.leftAlignmentButtons {
+    width: 100%;
+    height: 3em;
+}
+
+.alignmentExample {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: -5px;
+    margin-bottom: 0;
+    border-bottom: 1px solid rgba(0, 110, 98, 166);
+}
+
+.alignment_format {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    float: right;
+}
+
+.alignment_mode {
+    margin-left: auto;
+    margin-top: -30px;
+    float: right;
+}
+
+.inputDBs {
+    overflow-y: auto;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+
+}
+
+.multiSelectParameter {
+    padding-left: 0;
+}
+
+.multiSelectParameter label {
+    border-bottom: 1px solid rgba(0, 110, 98, 166);
+    width: 14.5em;
+    margin-bottom: 10px;
+}
+
+label.checkBoxLabel input[type=checkbox] {
+    position: relative;
+    vertical-align: middle;
+    bottom: 4px;
+    left: 3px;
+}
+
+.switchDiv {
+    width: 15em;
+}
+
+.parameter .nice-select {
+    width: 20em !important;
+}
+
+.nice-select ul {
+    width: 20em !important;
 }
 
 .exampleReformat {
@@ -211,6 +278,7 @@ hr {
     color: black;
 }
 
+
 .parameter {
     font-size: small;
 }
@@ -221,7 +289,6 @@ hr {
     text-shadow: 0 0 0 #878787;
     /*width: 15em;*/
     height: 2.7em;
-    border: solid lightgray;
     border-width: 0 0 1px 0;
     box-shadow: none;
     background-color: white;
@@ -244,23 +311,24 @@ hr {
 
 
 .submitJob {
-    background-color: gray !important;
+    background-color: rgba(0, 110, 98, 166) !important;
     border-radius: 3px !important;
-    float: left !important;
     margin-right: 1em !important;
     color: white !important;
+    margin-left: 2em;
 }
 
 .submitJob:hover {
-    background-color: rgba(0, 110, 98, 166) !important;
+    background-color: gray !important;
 }
+
 
 .submitbuttons .jobid {
 
     color: #000;
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #878787;
-    height: 2.3em;
+    height: 2.5em;
     width: 13em;
     float: left;
     border-radius: 3px;
@@ -528,5 +596,73 @@ input.button_fullscreen:focus {
 .irs-slider, .irs-slider:hover {
     background-color: #da4453;
     cursor: pointer;
+}
+
+/*Switch for HHpred Alignment*/
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.sliderSwitch {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.sliderSwitch:before {
+    position: absolute;
+    content: "";
+    height: 17px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .sliderSwitch {
+    background-color: rgba(0, 110, 98, 166);
+}
+
+input:focus + .sliderSwitch {
+    box-shadow: 0 0 1px rgba(0, 110, 98, 166);
+}
+
+input:checked + .sliderSwitch:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+}
+
+/* Rounded sliders */
+.sliderSwitch.round {
+    border-radius: 34px;
+}
+
+.sliderSwitch.round:before {
+    border-radius: 50%;
+}
+
+.switchContainer {
+    width: 13em;
+}
+.firstLabel {
+    border-bottom: 1px solid rgba(0, 110, 98, 166);
+    margin-bottom: 0.5em;
 }
 
