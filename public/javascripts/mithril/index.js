@@ -93,6 +93,7 @@ trafficbar = function (elem, isInit) {
 
 window.Index = {
     controller: function () {
+        document.title = "Bioinformatics Toolkit";
         return Job.selected = -1;
     },
     view: function () {

@@ -243,6 +243,7 @@ window.Toolkit = {
         }
     },
     controller: function(args) {
+        document.title = "Bioinformatics Toolkit";
         var job, jobID, toolname, viewComponent;
         if (args.isJob) {
             jobID = m.route.param("jobID");
