@@ -34,7 +34,8 @@ m.route(document.getElementById('main-content'), '/', {
     '/jobs/:jobID': m(Toolkit, {
         isJob: true
     }),
-    '/backend/:section': m(Backend)
+    '/backend/:section': m(Backend),
+    '/news': m(News)
 });
 
 window.onfocus = function() {
