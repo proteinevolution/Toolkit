@@ -700,7 +700,7 @@ window.ParameterAlignmentComponent = {
         if(ctrl.getAllowsTwoTextAreas()) {
 
             var alignmentSwitch = m("div", {"class": "switchContainer"},
-                m("label",{"class": "firstLabel"},"Align two or more sequences"),
+                m("label",{"class": "firstLabel"},"Align two sequences or MSAs"),
                 m("label", {"class": "switch"},
                 m("input", {
                     type: "checkbox",
@@ -713,7 +713,7 @@ window.ParameterAlignmentComponent = {
         );
 
 
-            var checkbox = m("label", {"class": "checkBoxLabel"},"Align two or more sequences",
+            var checkbox = m("label", {"class": "checkBoxLabel"},"Align two sequences or MSAs",
                 m("input", {
                     type: "checkbox",
                     id: "hhpredAlign",
