@@ -10,7 +10,7 @@ import models.Constants
   */
 
 @Singleton
-class JobActorAccess @Inject() (actorSystem: ActorSystem,
+final class JobActorAccess @Inject() (actorSystem: ActorSystem,
                                 jobActorFactory: JobActor.Factory) extends Constants {
 
   // Just spawn all the JobActors
