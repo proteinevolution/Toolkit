@@ -784,6 +784,7 @@ window.ParameterAlignmentComponent = {
                     value: "Paste Example",
                     onclick: function() {
                         $("#" + ctrl.id).val(exampleSequence);
+                        $('.submitJob').prop('disabled', false);
                     }
                 }), m("input", {
                     type: "button",
