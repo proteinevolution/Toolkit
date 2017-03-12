@@ -92,6 +92,11 @@ jobNoteArea = function(elem, isInit) {
             url: '/api/jobs/getnotes/' + $(elem).attr('id').substring(7),
             type: 'get',
             success: function(data) {
+                if(data && data.length > 0){
+                    $("#notesTab").addClass("hasNotes");
+                } else {
+                    $("#notesTab").removeClass("hasNotes");
+                }
                 $(elem).html(data);
             },
             error: function(e){
@@ -100,6 +105,9 @@ jobNoteArea = function(elem, isInit) {
         });
         return $(elem).keyup(function(e) {
             var contentString;
+            $("#notesTab").addClass("hasNotes");
+            if($(elem).val().length === 0)
+                $("#notesTab").removeClass("hasNotes");
             contentString = $(this).val();
             $.post(jsRoutes.controllers.Jobs.annotation($(this).attr('id').substring(7), contentString), function(response) {
                 console.log('Response: ' + response);
@@ -275,9 +283,10 @@ JobTabsComponent = {
                     }, item));
                 }), document.cookie.split("&username=")[1] === ctrl.owner ? [ m("li", {
                         "class" : "notesheader"
-                        //"style" : "display: none;"
                     }, m("a", {
-                        href: "#tabpanel-notes"
+                        href: "#tabpanel-notes",
+                        id: "notesTab"
+                        //"class": "hasNotes"
                     }, "Notes")) ] : [] ,
                 m("li", {
                     style: "float: right;"
