@@ -89,6 +89,17 @@ window.Job = (function() {
         });
     };
 
+
+    clearAll = function(){
+
+        return Job.list.then(function(jobs) {
+            return jobs.map(function(job){
+                job = null;
+            });
+        });
+
+    };
+
     Job.clear = function(jobID) {
         return Job.list.then(function(jobs) {
             var job;
