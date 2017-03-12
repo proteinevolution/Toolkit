@@ -7,11 +7,7 @@ validation = function(elem, isInit, ctx) {
 
     if(!isInit) {
 
-        /** hack: get toolname from the URL because you cannot pass it as a variable to a config properly */
-
-        var url = window.location.href;
-        var parts = url.split("/");
-        var toolname = parts[parts.length-1];
+        var toolname = $("#toolnameAccess").val();
 
         return $(elem).on("keyup", function (e) {
 
@@ -25,6 +21,10 @@ validation = function(elem, isInit, ctx) {
                     else
                         feedback(true, "valid fasta");
 
+                    if($(elem).reformat('alignment'))
+                        console.log('alignment');
+                    else console.log('not aligned');
+
                     break;
                 case "mafft":
                     /** validation model for mafft:
@@ -36,7 +36,7 @@ validation = function(elem, isInit, ctx) {
                     console.warn("no tool specified");
             }
 
-            //console.log($(elem).val() + toolname);
+
 
         });
     }
