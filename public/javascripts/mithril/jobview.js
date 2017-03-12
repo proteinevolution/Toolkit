@@ -53,6 +53,7 @@ JobLineComponent = {
             }), m("span", {
                 "class": "toolname"
             }, [
+                m("input", {id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
                 args.job().tool.toolnameLong, m("a", {
                     config: helpModalAccess.bind(args)
                 }, m("i", {
