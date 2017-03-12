@@ -145,7 +145,7 @@ window.Index = {
                     ))
                 ])
             ]),
-            m(trafficBarComponent), m(styleComponent), m(tilescomponent)
+            m(trafficBarComponent), m(tilescomponent)
         ]);
     }
 };
@@ -186,12 +186,6 @@ trafficBarComponent = {
                 })
             )
         ]));
-    }
-};
-
-styleComponent = {
-    view: function () {
-        return m("style", "#jobsearchform { display: none;}");
     }
 };
 
