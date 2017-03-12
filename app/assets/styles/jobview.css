@@ -652,3 +652,10 @@ input:checked + .sliderSwitch:before {
     margin-bottom: 0.5em;
 }
 
+a.hasNotes:link,
+a.hasNotes:visited,
+a.hasNotes:hover,
+a.hasNotes:focus,
+a.hasNotes:active {
+    color: rgba(0, 110, 98, 166);
+}
