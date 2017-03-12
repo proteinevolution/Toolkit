@@ -26,7 +26,7 @@ sealed trait JobIDProvider {
 }
 
 @Singleton
-class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
+final class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
                                   val jobDao : JobDAO) extends JobIDProvider with CommonModule {
 
   case class JobIdException(message: String = "", cause: Throwable = null) extends Exception(message, cause)
@@ -77,10 +77,7 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
 
 
-
-
-
-
+ /*
 
   // -- alternative solution:
 
@@ -116,6 +113,6 @@ class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       x.next()
     }
 
-  }
+  } */
 
 }
