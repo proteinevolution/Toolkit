@@ -66,8 +66,14 @@ DBJOINED=""
 if [  "%hhpred_align.content" == "true" ]
 then
     cd ../results
-    ffindex_from_fasta -s db_fas.ffdata db_fas.ffindex %alignment_two.path
-    mpirun -np %THREADS ffindex_apply_mpi db_fas.ffdata db_fas.ffindex -i db_a3m_wo_ss.ffindex -d db_a3m_wo_ss.ffdata -- hhblits -d %UNIPROT -i stdin -oa3m stdout -n %msa_gen_max_iter.content -cpu 1 -v 0
+
+    if [ %msa_gen_max_iter.content == "0" ] ; then
+            reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
+            ffindex_build -as db_a3m_wo_ss.ff{data,index} db.a3m
+    else
+            ffindex_from_fasta -s db_fas.ffdata db_fas.ffindex %alignment_two.path
+            mpirun -np %THREADS ffindex_apply_mpi db_fas.ffdata db_fas.ffindex -i db_a3m_wo_ss.ffindex -d db_a3m_wo_ss.ffdata -- hhblits -d %UNIPROT -i stdin -oa3m stdout -n %msa_gen_max_iter.content -cpu 1 -v 0
+    fi
     mpirun -np %THREADS ffindex_apply_mpi db_a3m_wo_ss.ffdata db_a3m_wo_ss.ffindex -i db_a3m.ffindex -d db_a3m.ffdata -- addss.pl -v 0 stdin stdout
     mpirun -np %THREADS ffindex_apply_mpi db_a3m.ffdata db_a3m.ffindex -i db_hhm.ffindex -d db_hhm.ffdata -- hhmake -i stdin -o stdout -v 0
     OMP_NUM_THREADS=%THREADS cstranslate -A ${HHLIB}/data/cs219.lib -D ${HHLIB}/data/context_data.lib -x 0.3 -c 4 -f -i db_a3m -o db_cs219 -I a3m -b
