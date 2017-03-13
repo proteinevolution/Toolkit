@@ -54,8 +54,8 @@ $("#forwardModal").foundation();
 function forwardModal(){
     var select = $('#forwardSelect').val();
     if(select != "") {
-        closeModal($('#forwardModal'))
-        // IMPORTANT: Every result view must implement forward_() in order to handle forwarding
+        $('#forwardModal').foundation('close');
+        // IMPORTANT: Every result view must implement forward_() in order to handle the forwarding content
         forward_(select)
     }
 }
