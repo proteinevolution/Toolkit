@@ -668,14 +668,14 @@ window.ParameterAlignmentComponent = {
                     $(".inputDBs").prop('disabled', true);
                     $(".inputDBs option:selected").prop("selected", false);
                     $("#alignment").attr("rows", "7");
-                    $('#alignment2').show();
-                    $("#alignment2").prop("required");
+                    $('#alignment_two').show();
+                    $("#alignment_two").prop("required");
                     $("#hhpred_align").prop('checked', true);
                 } else {
                     $(".inputDBs").prop('disabled', false);
                     $("#alignment").attr("rows", "18");
-                    $("#alignment2").hide();
-                    $("#alignment2").removeAttr("required");
+                    $("#alignment_two").hide();
+                    $("#alignment_two").removeAttr("required");
                     $("#hhpred_align").prop('checked', false);
 
                 }
