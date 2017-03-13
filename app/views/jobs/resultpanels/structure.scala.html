@@ -6,6 +6,22 @@
 <script src="@routes.Assets.versioned("javascripts/vendor/ngl.js")"></script>
     <!-- JQuery -->
 <script src="@routes.WebJarAssets.at(webJarAssets.locate("3.1.1/jquery.min.js"))" type="text/javascript" ></script>
+
+<style>
+#accessionStructure {
+    font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    color: grey;
+    text-rendering: optimizeLegibility;
+    line-height: 1.4;
+    margin-top: 0;
+    margin-bottom: .5rem;
+    font-size: 1.9375rem;
+}
+</style>
+
+
 <script>
 var db = identifyDatabase('@accession');
 var fileEnding = "";
@@ -20,18 +36,19 @@ switch(db){
 var url = '/getStructure/@accession' + fileEnding;
 $(document).ready(function(){
     $.get(url).done(function () {
+        $('#accessionStructure').append("<div class='structureAccession'>3D Structure: '@accession'</div>");
         $(document).ready(function(){
             stage = new NGL.Stage( "viewport" );
             stage.loadFile( url, { defaultRepresentation: true } );
             stage.set
         });
     }).fail(function () {
-        $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
+        $('#viewport').append("<h3 class='fetchError'>Sorry, failed to fetch structure.</h3>");
     });
 });
 
 </script>
 
 
-
+<div id="accessionStructure"></div>
 <div id="viewport" style="width:700px; height: 500px;"></div>
