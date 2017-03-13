@@ -91,7 +91,8 @@ function feedback(valid, msg, type, wrongformat) {
         $v.css("display", "block").html(msg).addClass(type);
     }
     else if(valid){
-        $v.css("display", "block").html("Found format: Fasta").addClass("success");
+        $(".submitJob").prop("disabled", false);
+        $v.css("display", "block").html("Found format: <b>Fasta</b>").addClass("success");
     }
     else if(wrongformat) {
         $(".submitJob").prop("disabled", false);
@@ -139,8 +140,9 @@ function alignmentVal(el){
             changed = false;
     }
 
-    if(el.validate('fasta') && !el.reformat('alignment') && el.val().length != 0)
+    if(el.validate('fasta') && !el.reformat('alignment') && el.val().length != 0){
         feedback(false, "not aligned", "warning");
+        $(".submitJob").prop("disabled", false); }
     else if (el.val().length === 0)
         valReset();
 }
