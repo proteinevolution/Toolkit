@@ -7,5 +7,5 @@ PDB      = %DBROOT/hhpred/pdb70
 PDBALL   = %DBROOT/pdb/all
 HHOMP    = %DBROOT/hhomp/pdb
 HHBLITS  = %DBROOT/hhblits/
-SCOPE    = %DBROOT/hhpred/new_dbs/SCOPe95_2.06
+SCOPE    = %DBROOT/hhpred/new_dbs/SCOPe100_2.06
 
