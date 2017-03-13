@@ -8,3 +8,5 @@ kalign -i %alignment.path \
        -f clu
 
 reformat_hhsuite.pl clu fas ../results/alignment.clustalw_aln ../results/alignment.fas
+# Convert fasta to JSON
+fasta2json.py ../results/alignment.fas ../results/alignment.json
