@@ -267,7 +267,7 @@ var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 var hitNames;
 var hitSequences;
 var ss_helices = document.getElementsByClassName("aa_h");
-var ss_extended = document.getElementsByClassName("ss_h");
+var ss_extended = document.getElementsByClassName("ss_");
 var aas;
 
 (function()  {
@@ -482,8 +482,9 @@ function templateAlignment(accession){
             async: false
         }).done(function (data) {
             $("#alignmentTemplate").val(data.toString());
-        });
-
+        })
+    }).fail(function () {
+        $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
     });
 }
 
@@ -493,20 +494,23 @@ function showStructure(accession) {
     var db = identifyDatabase(accession);
     var fileEnding = "";
     switch(db){
-        case "mmcif":
-            fileEnding = ".cif";
-            break;
         case "scop":
             fileEnding = ".pdb";
             break;
+        case "mmcif":
+            fileEnding = ".cif";
+            break;
     }
     var url = '/getStructure/' +accession + fileEnding;
-
+    $.get(url).done(function () {
         $(document).ready(function(){
             stage = new NGL.Stage( "viewport" );
             stage.loadFile( url, { defaultRepresentation: true } );
             stage.set
         });
+    }).fail(function () {
+        $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
+    });
 
 }
 
