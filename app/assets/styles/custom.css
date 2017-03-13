@@ -40,6 +40,7 @@ div#main {
 #sidebar {
     padding-top: 3.75em;
     padding-left: 1.2em;
+    min-height: 40rem;
 }
 
 .d {
