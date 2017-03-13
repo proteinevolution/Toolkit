@@ -73,7 +73,7 @@ validation = function(elem, isInit, ctx) {
 };
 
 
-function feedback(valid, msg, type) {
+function feedback(valid, msg, type, wrongformat) {
 
     var $v = $("#validOrNot");
 
@@ -82,21 +82,25 @@ function feedback(valid, msg, type) {
         type = "alert";
 
     //remove trailing foundation classes
-    $v.removeClass("alert");
-    $v.removeClass("warning");
-    $v.removeClass("success");
-    $v.removeClass("secondary");
-    $v.removeClass("primary");
-
+    $v.removeClass("alert warning secondary primary success");
+    var t;
 
     if(!valid) {
         console.log(msg);
         $(".submitJob").prop("disabled", true);
         $v.css("display", "block").html(msg).addClass(type);
-    } else {
+    }
+    else if(valid){
+        $v.css("display", "block").html("Found format: Fasta").addClass("success");
+    }
+    else if(wrongformat) {
+        $(".submitJob").prop("disabled", false);
+        $v.css("display", "block").html(msg).addClass(type);
+    }
+    else {
         console.log(msg);
         $(".submitJob").prop("disabled", false);
-        $v.css("display", "none").html("").addClass(type);
+        $v.hide();
     }
 
 }
@@ -115,14 +119,28 @@ function valReset(){
  * alignment section specific validations
  * @param el
  */
-function alignmentVal(el){
-    if(!el.validate('fasta') && el.val().length != 0)
-        feedback(false, "this is no fasta!", "error");
-    else
-        feedback(true, "valid fasta");
 
-    if(!el.reformat('alignment') && el.val().length != 0)
+changed = false;
+
+function alignmentVal(el){
+
+
+    if(!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
+        feedback(false, "this is no fasta!", "error");
+    else if (el.val().length === 0)
+        valReset();
+    else if(!el.validate('fasta') && el.reformat('detect') != '' && el.val().length != 0) {
+        var t = el.reformat('detect');
+        feedback(false, "Wrong format found: " + t + ". <b>Auto-transformed to Fasta</b>", "success", t);
+        $("#alignment").val(el.reformat('fasta'));
+        changed = true;
+    } else if (el.validate('fasta') && changed == false) {
+            feedback(true);
+            changed = false;
+    }
+
+    if(el.validate('fasta') && !el.reformat('alignment') && el.val().length != 0)
         feedback(false, "not aligned", "warning");
-    else
-        feedback(true, "alignment");
+    else if (el.val().length === 0)
+        valReset();
 }

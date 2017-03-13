@@ -786,7 +786,9 @@ window.ParameterAlignmentComponent = {
                     onclick: function() {
                         $("#" + ctrl.id).val(exampleSequence);
                         $('.submitJob').prop('disabled', false);
-                        $("#validOrNot").css("display", "none").html("");
+                        $("#validOrNot").removeClass("alert warning primary secondary")
+                        $("#validOrNot").css("display", "block").html("Found format: " + $("#" + ctrl.id).reformat('detect')).addClass("success");
+                        changed = false; // resets changed validation filter
                     }
                 }), m("input", {
                     type: "button",
