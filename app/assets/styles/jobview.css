@@ -660,3 +660,7 @@ a.hasNotes:focus,
 a.hasNotes:active {
     color: rgba(0, 110, 98, 166);
 }
+
+#validOrNot {
+    margin-top: -22px;
+}
