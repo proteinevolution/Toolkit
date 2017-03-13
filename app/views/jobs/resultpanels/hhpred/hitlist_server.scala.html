@@ -81,9 +81,7 @@
                         @* hit number, links *@
                         <tr>
                             <td></td>
-                            <td>No  @{(hit \ "no").get}</td>
-                            <td></td>
-                            <td>
+                            <td colspan="3">
                             @{hit \ "struc" match {
                                     case JsDefined(jsValue) => HHpred.getLinks((hit \ "struc").get.as[String])
                                     case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
@@ -94,20 +92,21 @@
                         </tr>
                         @* checkboxes, accession, name of hit*@
                         <tr class="name">
-                            <td><input type="checkbox" name="templates" class="hitCheckbox" value='@{(hit \ "no").get}'></td>
-                            <td colspan="2">
+                            <td ><input type="checkbox" name="templates" class="hitCheckbox" value='@{(hit \ "no").get}'></td>
+                            <td colspan="4">@{(hit \ "no").get}.
+
                             @{hit \ "struc" match {
                                 case JsDefined(jsValue) => {HHpred.getSingleLink((hit \ "struc").get.as[String])}
                                 case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
                             }
                             }
+                            @{"  "+(alignment \ "header").get.as[String].replaceFirst(">", "")}
                             </td>
-                            <td colspan="2">@{(alignment \ "header").get.as[String].replaceFirst(">", "")}</td>
                         </tr>
                         @* Alignment Details*@
                         <tr>
-                            <td colspan="3"></td>
-                            <td colspan="2">Probability: @{(alignment \ "info" \ "probab").get}, E-value: @{(alignment \ "info" \ "eval").get},
+                            <td></td>
+                            <td colspan="4">Probability: @{(alignment \ "info" \ "probab").get}, E-value: @{(alignment \ "info" \ "eval").get},
                                 Score: @{(alignment \ "info" \ "score").get}, Aligned Cols: @{(alignment \ "info" \ "aligned_cols").get},
                                 Identities: @{(alignment \ "info" \ "identities").get}, Similarity: @{(alignment \ "info" \ "similarity").get},
                                 Sum Probs: @{(alignment \ "info" \ "sum_probs").get}
@@ -267,8 +266,8 @@ var colorBackground = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 var hitNames;
 var hitSequences;
-var ss_helices = document.getElementsByClassName("aa_h");
-var ss_extended = document.getElementsByClassName("ss_");
+var ss_helices = document.getElementsByClassName("ss_h");
+var ss_extended = document.getElementsByClassName("aa_h");
 var aas;
 
 (function()  {
@@ -299,30 +298,36 @@ var aas;
         firstQueryName = data_.query[0][0];
         firstQuerySequence = data_.query[0][1];
 
-
+        if(alignments.length > 0){
         drawDataTable(hits);
         drawInformation(info);
 
         //fill first query name and sequence for slider resubmit
-        if(alignments.length > 0){
+
             firstQueryName =  ">" + alignments[0].query.name;
             firstQuerySequence = alignments[0].query.seq;
             firstQueryStart = alignments[0].query.start;
             firstQueryEnd = alignments[0].query.end;
+            /* without timeout SLIDER is displayed */
+            setTimeout(function () {
+                slider_show(info.Match_columns, firstQueryStart, firstQueryEnd)
+            }, 1000);
+
+            aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+
+            // set color letters and SS to default
+            toggleAliColor_("letters");
+            toggleSS_();
+            $("#accordion").foundation();
+            $('.histogram').hide();
+
         }else{
             alert("No hits found!");
             firstQueryEnd = 0;
             firstQueryStart = 0;
         }
-        /* without timeout SLIDER is displayed */
-        setTimeout(function () {
-            slider_show(info.Match_columns, firstQueryStart, firstQueryEnd)
-        }, 1000);
+    });
 
-        aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
-    })
-    $("#accordion").foundation();
-    $('.histogram').hide();
 })();
 
 
