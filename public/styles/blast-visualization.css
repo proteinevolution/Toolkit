@@ -313,3 +313,7 @@ label.forwardLabel input[type=radio] {
 .fetchError{
     padding: 10em !important;
 }
+
+.structureAccession{
+    float: left;
+}
