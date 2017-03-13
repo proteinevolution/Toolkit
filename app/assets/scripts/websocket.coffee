@@ -80,35 +80,7 @@ onMessage = (event) ->
       m.startComputation()
       Job.pushJob(message.job)
       m.endComputation()
-      # Stuff with traffic bar
-      if message.state == 3
-        $('#trafficbar').css
-          'background': '#ffff00'
-          'box-shadow': '0 0 10px #ffce27'
-      else if message.state == 4
-        if window.Notification and Notification.permission != 'denied'
-          Notification.requestPermission (status) ->
-          n = new Notification('Bioinformatics Toolkit',
-            body: 'Job ' + message.jobID + " has failed!"
-            icon: '')
-          titlenotifier.add();
-        $('#trafficbar').css
-          'background': '#ff0000'
-          'box-shadow': '0 0 10px #d2071d'
-      else if message.state == 5
-        if window.Notification and Notification.permission != 'denied'
-          Notification.requestPermission (status) ->
-          n = new Notification('Bioinformatics Toolkit',
-            body: 'Job ' + message.jobID + " has finished!"
-            icon: '')
-          titlenotifier.add();
-        $('#trafficbar').css
-          'background': 'green'
-          'box-shadow': '0 0 10px darkgreen'
-      else if message.state == 'other'
-        $('#trafficbar').css
-          'background': 'transparent'
-          'box-shadow': '0 0 10px transparent'
+
 
       # Show user a popup with the submission
       if message.state == 0
