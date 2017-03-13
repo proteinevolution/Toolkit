@@ -244,7 +244,7 @@
 </div>
 <div class="reveal" id="structureModal" data-reveal>
     <a type="button" class="button success tiny hhpred_extra_button data-close" onclick="detachStructure()">Open in new window</a>
-    <h3>3D Structure</h3>
+    <div id="accessionStructure"></div>
     <div id="viewport"></div>
     <button class="close-button" data-close aria-label="Close modal" type="button">
         <span aria-hidden="true">&times;</span>
@@ -255,6 +255,7 @@
 $("#templateAlignmentModal").foundation();
 $("#structureModal").foundation();
 $("#structureModal").bind('closed.zf.reveal', (function() {
+    $('#accessionStructure').html("");
     $('#viewport canvas').remove();
 }));
 
@@ -502,14 +503,17 @@ function showStructure(accession) {
             break;
     }
     var url = '/getStructure/' +accession + fileEnding;
-    $.get(url).done(function () {
-        $(document).ready(function(){
-            stage = new NGL.Stage( "viewport" );
-            stage.loadFile( url, { defaultRepresentation: true } );
-            stage.set
+    $(document).ready(function(){
+        $.get(url).done(function () {
+            $(document).ready(function(){
+                $('#accessionStructure').append("<h3 class='structureAccession'>3D Structure: "+accession+"</h3>");
+                stage = new NGL.Stage( "viewport" );
+                stage.loadFile( url, { defaultRepresentation: true } );
+                stage.set
+            });
+        }).fail(function () {
+            $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
         });
-    }).fail(function () {
-        $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
     });
 
 }
