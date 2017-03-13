@@ -629,6 +629,7 @@ window.ParameterAlignmentComponent = {
             }
         }
         this.allowsTwoTextAreas = args.param.paramType.allowsTwoTextAreas;
+        this.twoTextAreas = (window.JobModel.getParamValue("hhpred_align") == 'true');
     },
     controller: function(args) {
         this.mo = new window.ParameterAlignmentComponent.model(args);
@@ -669,11 +670,13 @@ window.ParameterAlignmentComponent = {
                     $("#alignment").attr("rows", "7");
                     $('#alignment2').show();
                     $("#alignment2").prop("required");
+                    $("#hhpred_align").prop('checked', true);
                 } else {
                     $(".inputDBs").prop('disabled', false);
                     $("#alignment").attr("rows", "18");
                     $("#alignment2").hide();
                     $("#alignment2").removeAttr("required");
+                    $("#hhpred_align").prop('checked', false);
 
                 }
             }).bind(this.mo),
@@ -692,13 +695,13 @@ window.ParameterAlignmentComponent = {
                     if (ctrl.getTwoTextAreas()) {
                         $(".inputDBs").prop('disabled', true);
                         $(".inputDBs option:selected").prop("selected", false);
-                        $("#hhpredAlign").prop('checked', true);
+                        $("#hhpred_align").prop('checked', true);
                         $("#alignment").attr("rows", "8");
                         $('#alignment_two').show();
                         $("#alignment_two").prop("required");
                     } else {
                         $(".inputDBs").prop('disabled', false);
-                        $("#hhpredAlign").prop('checked', false);
+                        $("#hhpred_align").prop('checked', false);
                         $("#alignment").attr("rows", "19");
                         $("#alignment_two").hide();
                         $("#alignment_two").removeAttr("required");
@@ -710,31 +713,20 @@ window.ParameterAlignmentComponent = {
         if(ctrl.getAllowsTwoTextAreas()) {
 
             var alignmentSwitch = m("div", {"class": "switchContainer"},
-                m("label",{"class": "firstLabel"},"Align two sequences or MSAs"),
-                m("label", {"class": "switch"},
+                m("label", {"class": "switch tiny"},
                 m("input", {
+                    id: "hhpred_align",
                     type: "checkbox",
+                    name: "hhpred_align",
+                    value: "true",
                     config: params.oninit,
                 onclick: function () {
                     ctrl.toggleTwoTextAreas();
                 }}),
                 m("div", {"class": "sliderSwitch round"})
-            )
+            ),
+            m("label",{"class": "firstLabel"},"Align two sequences or MSAs")
         );
-
-
-            var checkbox = m("label", {"class": "checkBoxLabel"},"Align two sequences or MSAs",
-                m("input", {
-                    type: "checkbox",
-                    id: "hhpredAlign",
-                    name: "hhpred_align",
-                    value: "true",
-                    config: params.oninit,
-                    onclick: function() {
-                        ctrl.toggleTwoTextAreas();
-                    }
-                }));
-
             var textArea2 =
             m("textarea", {
                 name: ctrl.name+"_two",
