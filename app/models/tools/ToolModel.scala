@@ -57,7 +57,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         ("SOLVX", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png", s"$jobPath$jobID/results/solvx/$jobID.solvx")),
         ("ANOLEA", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png", s"$jobPath$jobID/results/$jobID.pdb.profile"))))
 
-      case "tcoffee" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)), ("Conservation", views.html.jobs.resultpanels.tcoffee_colored(jobID)),
+      case "tcoffee" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)), ("Conservation", views.html.jobs.resultpanels.tcoffee_colored(jobID)),
         ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")), ("Text", views.html.jobs.resultpanels.tcoffee_text(jobID))))
 
       case "hmmer" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/outfile")),
@@ -67,14 +67,14 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       case "hhpred" => getResult(jobID).map {
         case Some(jsvalue) =>
           Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist_server(jobID, jsvalue)),
-            ("FullAlignment", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)))
+            ("FullAlignment", views.html.jobs.resultpanels.msaviewer(jobID)))
         case None => Seq.empty
       }
 
       case "hhpred_align" => getResult(jobID).map {
         case Some(jsvalue) =>
           Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist_server(jobID, jsvalue)),
-            ("FullAlignment", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)))
+            ("FullAlignment", views.html.jobs.resultpanels.msaviewer(jobID)))
         case None => Seq.empty
       }
 
@@ -87,22 +87,22 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div"))))
 
-      case "clustalo" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
+      case "clustalo" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
         ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
 
-      case "msaprobs" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
+      case "msaprobs" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
         ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
         ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
 
-      case "muscle" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
+      case "muscle" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
         ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
         ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
 
-      case "kalign" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
+      case "kalign" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
         ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
         ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
 
-      case "mafft" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)),
+      case "mafft" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
         ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
 
       case "aln2plot" => Future.successful(Seq(("Hydrophobicity", views.html.jobs.resultpanels.image(s"/files/$jobID/hydrophobicity.png")),
