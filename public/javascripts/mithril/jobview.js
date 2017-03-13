@@ -734,7 +734,7 @@ window.ParameterAlignmentComponent = {
                 rows: 7,
                 cols: 70,
                 class: "alignment",
-                id: ctrl.id + "2",
+                id: ctrl.id + "_two",
                 value: args.value,
                 style: "display: none; margin-top: 1em;",
                 spellcheck: false,
