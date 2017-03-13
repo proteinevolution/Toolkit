@@ -18,7 +18,6 @@ body.is-reveal-open {
 #tool-tabs {
 
     background: #fefefe;
-    min-height: 670px;
     border: 1px solid #ccc;
 }
 .parameter-panel {
@@ -317,9 +316,12 @@ hr {
     width: 13em;
     float: left;
     border-radius: 3px;
-    font-size: 0.88em
+    font-size: 0.88em;
 }
 
+.submitbuttons {
+    padding-bottom: 3em;
+}
 
 .result-panel{
 font-size: 0.65em !important;
