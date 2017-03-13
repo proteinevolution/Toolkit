@@ -183,6 +183,7 @@ hr {
     margin-top: -5px;
     margin-bottom: 0;
     border-bottom: 1px solid rgba(0, 110, 98, 166);
+    line-height: 42px;
 }
 
 .alignment_format {
@@ -193,7 +194,7 @@ hr {
 
 .alignment_mode {
     margin-left: auto;
-    margin-top: -30px;
+    margin-top: -25px;
     float: right;
 }
 
@@ -210,8 +211,6 @@ hr {
 }
 
 .multiSelectParameter label {
-    border-bottom: 1px solid rgba(0, 110, 98, 166);
-    width: 14.5em;
     margin-bottom: 10px;
 }
 
@@ -586,11 +585,10 @@ input.button_fullscreen:focus {
 
 /*Switch for HHpred Alignment*/
 /* The switch - the box around the slider */
-.switch {
+.switch.tiny {
     position: relative;
     display: inline-block;
-    width: 50px;
-    height: 25px;
+    width: 3rem;
 }
 
 /* Hide default HTML checkbox */
@@ -645,11 +643,13 @@ input:checked + .sliderSwitch:before {
 }
 
 .switchContainer {
-    width: 13em;
+    width: 20em;
+    display: flex;
+    margin-top: 1.5em;
 }
 .firstLabel {
-    border-bottom: 1px solid rgba(0, 110, 98, 166);
     margin-bottom: 0.5em;
+    margin-left: 1em;
 }
 
 a.hasNotes:link,
