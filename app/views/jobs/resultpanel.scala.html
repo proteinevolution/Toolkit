@@ -17,38 +17,38 @@
       case ("marcoil", "Domains") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.Domains")
       case ("marcoil", "ProbList/PSSM") => views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbList")
 
-      case ("tcoffee", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("tcoffee", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer(jobID)
       case ("tcoffee", "Conservation") => views.html.jobs.resultpanels.tcoffee_colored(jobID)
       case ("tcoffee", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
       case ("tcoffee", "Text") => views.html.jobs.resultpanels.tcoffee_text(jobID)
-      case ("hhpred", "FullAlignment") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("hhpred", "FullAlignment") => views.html.jobs.resultpanels.msaviewer(jobID)
 
 
       case ("ancescon", "Tree" ) => views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div")
 
       // clustalo
-      case ("clustalo", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("clustalo", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer(jobID)
       case ("clustalo", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
 
       // msaprobs
-      case ("msaprobs", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("msaprobs", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer(jobID)
       case ("msaprobs", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
 
       // muscle
-      case ("muscle", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("muscle", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer(jobID)
       case ("muscle", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
 
       // blammer
-      case ("blammer", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("blammer", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer(jobID)
       case ("blammer", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
 
 
       // KAlign
-      case ("kalign", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("kalign", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer(jobID)
       case ("kalign", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
 
       // Mafft
-      case ("mafft", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer_tcoffee(jobID)
+      case ("mafft", "AlignmentViewer") => views.html.jobs.resultpanels.msaviewer(jobID)
       case ("mafft", "Alignment") => views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")
 
       // Aln2Plot
