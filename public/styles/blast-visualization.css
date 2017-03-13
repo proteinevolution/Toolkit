@@ -295,8 +295,9 @@ label.forwardLabel input[type=radio] {
 
 #viewport{
     width: 50em;
-    height: 36em;
+    height: 35em;
     margin: 0 auto;
+
 }
 
 
