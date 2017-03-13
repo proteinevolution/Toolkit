@@ -61,7 +61,7 @@ typeAhead = function (elem, isInit) {
 
 trafficbar = function (elem, isInit) {
     var status;
-    if (!isInit) {
+
         elem.setAttribute("data-disable-hover", "false");
         elem.setAttribute("data-tooltip", "data-tooltip");
         elem.setAttribute("title", "Click to view last job: " + Job.lastUpdated);
@@ -88,7 +88,6 @@ trafficbar = function (elem, isInit) {
                 'box-shadow': '0 1 6px #FFF666'
             });
         }
-    }
 };
 
 window.Index = {
