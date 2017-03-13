@@ -72,12 +72,13 @@
                 <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
                 <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
                 <a onclick="toggleSS_()" type="button"><span id="onlySS">Color only SS</span></a>
+                <hr id="line-element" colspan="4" class="horizontal-line">
             </div>
 
             <form id="hhpred_templates">
-                @for((alignment, hit) <- ((jsValue \ "hhr" \ "alignments").as[List[JsObject]], (jsValue \ "hhr" \ "hits").as[List[JsObject]]).zipped.toList){
                   <table class="unstriped">
                     <tbody>
+                    @for((alignment, hit) <- ((jsValue \ "hhr" \ "alignments").as[List[JsObject]], (jsValue \ "hhr" \ "hits").as[List[JsObject]]).zipped.toList){
                         @* hit number, links *@
                         <tr>
                             <td></td>
@@ -183,12 +184,11 @@
                             <td class="histogram" colspan="4">@FileLoader.loadHTML(s"$jobID/results/${jobID}_${(hit \ "no").get}.map")</td>
                         </tr>
                         <tr>
-                        <hr id="line-element" colspan="4" class="horizontal-line">
+                            <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
                         </tr>
+                    }
                     </tbody>
                   </table>
-
-                }
             </form>
         </div>
     </li>
