@@ -69,6 +69,12 @@ trafficbar = function (elem, isInit) {
         console.log("Traffic bar sees status " + status);
         if (status === -1) {
             return console.log("Hide Trafficbar");
+        } else if (status === 2) {
+            console.log("Traffic Bar goes to queued");
+            return $(elem).css({
+                'background': '#c0b5bf',
+                'box-shadow': '0 1 6px #9192af'
+            });
         } else if (status === 5) {
             console.log("Traffic Bar goes to done");
             return $(elem).css({
