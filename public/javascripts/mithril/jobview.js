@@ -397,7 +397,7 @@ submitModal = function(elem, isInit) {
 
 JobValidationComponent = {
     view: function(){
-        return m("div#validOrNot", {class: "callout", style: "display: none"}, "")
+        return m("div#calloutSpacer", m("div#validOrNot", {class: "callout", style: "display: none"}, ""))
     }
 };
 
