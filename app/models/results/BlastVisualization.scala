@@ -169,8 +169,5 @@ object BlastVisualization extends Constants {
     case e : String => Logger.info("Struc: ("+e+") could not be matched against any database!");""
   }
 
-
-
-
 }
 

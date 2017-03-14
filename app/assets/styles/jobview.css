@@ -36,6 +36,10 @@ body.is-reveal-open {
     font-size: 0.7rem !important;
     white-space: nowrap;
 }
+.wrap{
+    white-space: unset;
+    word-wrap: break-word !important;
+}
 
 
 .alignment_box {
@@ -115,6 +119,7 @@ hr {
 
 .unstriped{
     margin: 0 ;
+    width: 100%;
 }
 
 .sequence :hover{

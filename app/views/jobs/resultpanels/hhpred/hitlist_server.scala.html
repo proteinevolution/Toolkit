@@ -67,7 +67,7 @@
             </div>
             <!-- TODO FIX Coloring David -->
             <div class="colorOpts">
-                <a onclick="toggleSelectAll()" type="button" id="selectAllSeq">Select all</a>
+                <a onclick="toggleSelectAll()" type="button"><span id="selectAllSeq">Select all</span></a>
                 <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
                 <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
                 <a onclick="toggleSS_()" type="button"><span id="onlySS">Color only SS</span></a>
@@ -441,10 +441,14 @@ function hhpred_automatic() {
 function toggleSelectAll() {
     selectAllDatatable(this.hitlist.fnGetNodes(), 'hitCheckbox');
     this.selectAllBool = !this.selectAllBool;
-    if(this.selectAllBool)
+    if(this.selectAllBool) {
         selectAll('hitCheckbox');
-    else
+        $("#selectAllSeq").addClass("colorToggle");
+    }
+    else {
         deselectAll('hitCheckbox');
+        $("#selectAllSeq").removeClass("colorToggle");
+    }
 }
 
 function onFullscreenToggle() {

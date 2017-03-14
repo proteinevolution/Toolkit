@@ -250,13 +250,12 @@ label.forwardLabel input[type=radio] {
 }
 
 .colorOptsAlignment{
-    width: 90%;
     padding-top: 1em;
     margin: 0 auto;
 }
 .colorOptsAlignment a{
     float: left;
-    width: 25%;
+    width: 20%;
     margin-bottom: 0.5em;
 }
 
@@ -317,8 +316,13 @@ input {
 
 .colorToggle{
     color: #006F62 !important;
+    border-bottom: solid 1px rgba(0, 110, 98, 0.3) !important;
+    padding-bottom: 6px;
 }
 
+.alignmentOpts{
+    border-bottom: 1px solid rgba(180, 180, 180, 0.3);
+}
 .fetchError{
     padding: 10em !important;
 }
