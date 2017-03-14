@@ -11,7 +11,7 @@
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 
-<a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
+<a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward selected</a>
 <div class="colorOptsAlignment">
     <a onclick="toggleSelectAll()" type="button" id="selectAllSeq">Select all</a>
     <a onclick="toggleSelectTopTen()" type="button" id="selectTopTen">Select top ten</a>
@@ -60,6 +60,11 @@
         var selectAllBool = false;
         var aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
 
+        // check first ten checkboxes by default
+        $(document).ready(function () {
+                selectTopTen(checkbox);
+        });
+
         function toggleAliColor_(str){
             if(str == "letters" ){
                 if(colorLettersBool)
@@ -79,23 +84,34 @@
 
 
         function forward_(tool){
-
-            forward(tool, forwardData);
+                forward(tool, forwardData);
         }
 
         function toggleSelectAll(){
+            $("#selectAllSeq").addClass( "colorToggle" );
             this.selectAllBool = !this.selectAllBool;
-            if(selectAllBool)
+            if(selectAllBool) {
                 selectAll(checkbox);
-            else
+                $("#selectTopTen").removeClass( "colorToggle" );
+                $("#selectAllSeq").addClass( "colorToggle" );
+            }
+            else {
                 deselectAll(checkbox);
+                $("#selectAllSeq").removeClass( "colorToggle" );
+            }
         }
         function toggleSelectTopTen(){
+
             this.selectTopTenBool = !this.selectTopTenBool;
-            if(selectTopTenBool)
+            if(selectTopTenBool) {
                 selectTopTen(checkbox);
-            else
+                $("#selectTopTen").addClass( "colorToggle" );
+                $("#selectAllSeq").removeClass( "colorToggle" );
+            }
+            else {
                 deselectAll(checkbox);
+                $("#selectTopTen").removeClass( "colorToggle" );
+            }
 
         }
 
