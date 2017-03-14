@@ -57,6 +57,21 @@ function toggleSS(bool) {
 
 }
 
+function download(filename, text){
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
+}
+
 // Makes a table row with the specified content
 function makeRow(entries) {
 
@@ -236,7 +251,7 @@ setTimeout(function() {
     /*Select top ten Checkboxes*/
     function selectTopTen(checkboxName){
 
-        for(var i= 1 ; i <= 10; i++){
+        for(var i=0 ; i < 10; i++){
             $('input:checkbox.'+checkboxName+'[value="' + i + '"]').prop('checked', true);
         }
     }
@@ -246,8 +261,13 @@ setTimeout(function() {
 // parameter: tool (String)
 // forwards all checked identifier and sequences to tool
 function forward(tool, forwardData){
-    localStorage.setItem ( "resultcookie", forwardData ) ;
-    window.location.href = "/#/tools/" + tool ;
+    if(forwardData.length < 1) {
+        alert("No sequences selected!");
+    }
+    else {
+        localStorage.setItem("resultcookie", forwardData);
+        window.location.href = "/#/tools/" + tool;
+    }
 
 }
 
