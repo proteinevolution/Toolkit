@@ -421,6 +421,10 @@ textarea { resize:both; }
     font-family: Monaco, Consolas, "Lucida Console", monospace; font-weight: bold; font-size: 0.75em; padding-left: 15px;
 }
 
+.noFouc {
+    display: none;
+}
+
 #jobid {
     border-radius: 3px;
     font-size: 0.65em;
