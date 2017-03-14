@@ -109,7 +109,7 @@ hr {
     border-bottom: 1px solid rgba(180, 180, 180, 0.3) !important;
 }
 
-.name{
+.header{
     font-weight: bold;
 }
 
@@ -120,7 +120,7 @@ hr {
 .sequence :hover{
     background-color: #eee;
 }
-.name :hover{
+.header :hover{
     background-color: #eee;
 }
 
