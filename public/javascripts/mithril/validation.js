@@ -176,22 +176,29 @@ var alignmentVal = function(el){
     };
 
 
-    if(!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
+    if (!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
         feedback(false, "this is no fasta!", "error");
+
+    else if (!el.reformat('uniqueids')) {
+        console.log(JSON.stringify(fasta2json(el.val())));
+        feedback(false, "FASTA but identifiers are not unique!", "error");
+    }
 
     else if(!el.validate('fasta') && el.reformat('detect') != '' && el.val().length != 0) {
         originIsFasta = false;
         var t = el.reformat('detect');
         feedback(false, "Wrong format found: " + t + ". <b>Auto-transformed to Fasta</b>", "success", t);
-        $("#alignment").val(el.reformat('fasta')); }
-
-    else if (el.validate('fasta') && originIsFasta) {
-            this.fastaStep2();
+        $("#alignment").val(el.reformat('fasta'));
     }
 
-    if(el.validate('fasta') && !el.reformat('alignment') && el.val().length != 0){
+    else if (el.validate('fasta') && el.reformat('alignment') &&  originIsFasta)
+        this.fastaStep2();
+
+    else if(el.validate('fasta') && !el.reformat('alignment')){
         feedback(false, "not aligned", "warning");
-        $(".submitJob").prop("disabled", false); }
+        $(".submitJob").prop("disabled", false);
+    }
+
     else if (el.val().length === 0)
         valReset();
 };
