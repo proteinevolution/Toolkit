@@ -388,7 +388,7 @@ textarea { resize:both; }
 #tool_name span {
     color: grey !important;
     padding-left: 1em !important;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif !important;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif !important;
     font-size: 1em !important;
     text-transform: uppercase !important;
     font-weight: normal !important;
