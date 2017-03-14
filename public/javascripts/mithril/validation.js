@@ -9,7 +9,20 @@ validation = function(elem, isInit, ctx) {
 
         var toolname = $("#toolnameAccess").val();
 
+
         return $(elem).on("keyup", function (e) {
+
+            //---------------------------------Validation Visitors------------------------------------------//
+
+            // in order to modularize validation steps one could use visitors
+
+            var mustHave2Visitor = {
+                visit : function(alignmentVal) {
+                    alignmentVal.fastaStep2 = mustHave2($(elem));
+                }
+            };
+
+            //---------------------------------------------------------------------------------------------//
 
             switch(toolname) {
                 case "tcoffee":
@@ -39,8 +52,11 @@ validation = function(elem, isInit, ctx) {
                 case "clustalo":
                     /** validation model for clustalo:
                      * input has to be FASTA
+                     * input must consist of at least 2 seqs
                      */
-                    alignmentVal($(elem));
+
+                    var clustaloTarget = new alignmentVal($(elem));
+                    clustaloTarget.accept(mustHave2Visitor);
 
                     break;
 
@@ -50,24 +66,19 @@ validation = function(elem, isInit, ctx) {
                      * input must consist of at least 2 seqs
                      */
 
-                    // in order to modularize validation steps one could use visitors
-
-                    var visitorKalign = {
-                        visit : function(alignmentVal) {
-                            alignmentVal.fastaStep2 = mustHave2($(elem));
-                        }
-                    };
-
-                    var target = new alignmentVal($(elem));
-                    target.accept(visitorKalign);
+                    var kalignTarget = new alignmentVal($(elem));
+                    kalignTarget.accept(mustHave2Visitor);
 
                     break;
 
                 case "msaprobs":
                     /** validation model for msaprobs:
                      * input has to be FASTA
+                     * input must consist of at least 2 seqs
                      */
-                    alignmentVal($(elem));
+
+                    var msaprobsTarget = new alignmentVal($(elem));
+                    msaprobsTarget.accept(mustHave2Visitor);
 
                     break;
 
