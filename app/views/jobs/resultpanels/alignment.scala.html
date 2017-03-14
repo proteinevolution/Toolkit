@@ -12,6 +12,8 @@
 
 
 <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward selected</a>
+
+<a type="button" class="button success tiny hhpred_extra_button" id="downloadAlignment"  onclick="download_()">Download File</a>
 <div class="colorOptsAlignment">
     <a onclick="toggleSelectAll()" type="button" id="selectAllSeq">Select all</a>
     <a onclick="toggleSelectTopTen()" type="button" id="selectTopTen">Select top ten</a>
@@ -20,12 +22,15 @@
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
+    Number of sequences:
+        <br />
+        <br />
 <form id="alignmentResult">
     <table class="unstriped">
         <tbody class="alignmentTBody">
         @for((alignment,index) <- {jsValue \ "alignment"}.as[List[JsArray]].zipWithIndex) {
             <tr class="header">
-                <td ><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index+1}'></td>
+                <td ><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index}'></td>
                 <td>
                     @{index+1}.
                     @{alignment{0} match {
@@ -53,6 +58,7 @@
 </div>
 
 <script>
+        var data;
         var checkbox = "alignmentCheckbox";
         var colorLettersBool = false;
         var colorBackgroundBool = false;
@@ -63,6 +69,12 @@
         // check first ten checkboxes by default
         $(document).ready(function () {
                 selectTopTen(checkbox);
+        });
+
+        // get result json
+        var fileUrl = "/files/@jobID/alignment.json";
+        $.getJSON(fileUrl, function (data_) {
+            data = data_;
         });
 
         function toggleAliColor_(str){
@@ -83,12 +95,23 @@
         }
 
 
-        function forward_(tool){
-                forward(tool, forwardData);
+        function forward_(tool) {
+            var forwardData = [];
+            var checkedCheckboxes = [];
+            // get values of all checked Checkboxes
+            $('input:checkbox.' + checkbox + ":checked").each(function () {
+                checkedCheckboxes.push($(this).val())
+            });
+
+            //fill array with headers and sequences
+                checkedCheckboxes.forEach(function callback(currentValue) {
+                    forwardData.push(">" + data[currentValue][0]);
+                    forwardData.push(data[currentValue][1]);
+                });
+                forward(tool, forwardData.join("\n"));
         }
 
         function toggleSelectAll(){
-            $("#selectAllSeq").addClass( "colorToggle" );
             this.selectAllBool = !this.selectAllBool;
             if(selectAllBool) {
                 selectAll(checkbox);
@@ -103,7 +126,7 @@
         function toggleSelectTopTen(){
 
             this.selectTopTenBool = !this.selectTopTenBool;
-            if(selectTopTenBool) {
+            if(selectTopTenBool ) {
                 selectTopTen(checkbox);
                 $("#selectTopTen").addClass( "colorToggle" );
                 $("#selectAllSeq").removeClass( "colorToggle" );
@@ -114,6 +137,14 @@
             }
 
         }
-
+        function download_(){
+            var fileString = "";
+            for(var i = 0; i < data.length; i++){
+                fileString += ">" + data[i][0] + "\n";
+                fileString += data[i][1] + "\n";
+            }
+            var filename = "Alignment_jobID_@{jobID}.fasta";
+            download(filename, fileString);
+        }
 
 </script>
