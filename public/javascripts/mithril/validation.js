@@ -151,7 +151,7 @@ function mustHave2(el) {
 
     if(el.validate('fasta') && fasta2json(el.val()).length < 2)
         feedback(false, "must have at least 2 seqs", "error");
-    if(el.validate('fasta') && fasta2json(el.val()).length >= 2) {
+    if(el.validate('fasta') && fasta2json(el.val()).length >= 2 && el.reformat('alignment')) {
         feedback(true);
         changed = false;
     }
