@@ -155,7 +155,7 @@ function mustHave2(el) {
 
     if(el.validate('fasta') && fasta2json(el.val()).length < 2)
         feedback(false, "must have at least 2 seqs", "error");
-    else if(el.validate('fasta') && fasta2json(el.val()).length >= 2 && el.reformat('alignment') && originIsFasta) {
+    else if(el.validate('fasta') && fasta2json(el.val()).length >= 2 && el.reformat('alignment') && originIsFasta && el.reformat('uniqueids')) {
         feedback(true);
         originIsFasta = true;
     }
@@ -179,10 +179,8 @@ var alignmentVal = function(el){
     if (!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
         feedback(false, "this is no fasta!", "error");
 
-    else if (!el.reformat('uniqueids')) {
-        console.log(JSON.stringify(fasta2json(el.val())));
+    else if (!el.reformat('uniqueids'))
         feedback(false, "FASTA but identifiers are not unique!", "error");
-    }
 
     else if(!el.validate('fasta') && el.reformat('detect') != '' && el.val().length != 0) {
         originIsFasta = false;
