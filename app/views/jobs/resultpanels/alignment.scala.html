@@ -13,73 +13,90 @@
 
 <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
 <div class="colorOptsAlignment">
-    <a onclick="selectAll_()" type="button" id="selectAllSeq">Select all</a>
-    <a onclick="selectTopTen_()" type="button" id="selectTopTen">Select top ten</a>
+    <a onclick="toggleSelectAll()" type="button" id="selectAllSeq">Select all</a>
+    <a onclick="toggleSelectTopTen()" type="button" id="selectTopTen">Select top ten</a>
     <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
     <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
+<div id="alignmentResultView">
 <form id="alignmentResult">
-        <table class="unstriped">
-            <tbody class="alignmentTBody">
-            @for((alignment,index) <- {jsValue \ "alignment"}.as[List[JsArray]].zipWithIndex) {
-                <tr class="header">
-                    <td ><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index+1}'> @{index+1}.</td>
-                    <td>
-                        @{alignment{0} match {
-                            case JsDefined(jsValue) => (alignment{0}).get.as[String]
-                            }
+    <table class="unstriped">
+        <tbody class="alignmentTBody">
+        @for((alignment,index) <- {jsValue \ "alignment"}.as[List[JsArray]].zipWithIndex) {
+            <tr class="header">
+                <td ><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index+1}'></td>
+                <td>
+                    @{index+1}.
+                    @{alignment{0} match {
+                        case JsDefined(jsValue) => (alignment{0}).get.as[String]
                         }
-                    </td>
-                </tr>
-                <tr class="sequence">
-                    <td></td>
-                    <td>
-                        @{alignment{1} match {
-                            case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((alignment{1}).get.as[String]))
-                            }
+                    }
+                </td>
+            </tr>
+            <tr class="sequence">
+                <td></td>
+                <td>
+                    @{alignment{1} match {
+                        case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((alignment{1}).get.as[String]))
                         }
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
+                    }
+                </td>
+            </tr>
+        }
+            <tr><td><br/></td></tr>
+            <tr><td><br/></td></tr>
+        </tbody>
+    </table>
 
 </form>
+</div>
 
 <script>
-
-        var colorLetters = false;
-        var colorBackground = false;
+        var checkbox = "alignmentCheckbox";
+        var colorLettersBool = false;
+        var colorBackgroundBool = false;
+        var selectTopTenBool = false;
+        var selectAllBool = false;
         var aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
 
         function toggleAliColor_(str){
             if(str == "letters" ){
-                if(colorLetters)
+                if(colorLettersBool)
                     toggleAliColor("");
                 else
                     toggleAliColor("letters");
-                this.colorLetters = !this.colorLetters;
+                this.colorLettersBool = !this.colorLettersBool;
             }
             if(str == "background"){
-                if(colorBackground)
+                if(colorBackgroundBool)
                     toggleAliColor("");
                 else
                     toggleAliColor("background");
-                this.colorBackground = !this.colorBackground;
+                this.colorBackgroundBool = !this.colorBackgroundBool;
             }
         }
+
 
         function forward_(tool){
 
             forward(tool, forwardData);
         }
 
-        function selectAll_(){
-            selectAll("alignmentCheckbox");
+        function toggleSelectAll(){
+            this.selectAllBool = !this.selectAllBool;
+            if(selectAllBool)
+                selectAll(checkbox);
+            else
+                deselectAll(checkbox);
         }
-        function selectTopTen_(){
-            selectTopTen("alignmentCheckbox");
+        function toggleSelectTopTen(){
+            this.selectTopTenBool = !this.selectTopTenBool;
+            if(selectTopTenBool)
+                selectTopTen(checkbox);
+            else
+                deselectAll(checkbox);
+
         }
 
 

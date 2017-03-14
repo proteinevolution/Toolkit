@@ -214,16 +214,13 @@ setTimeout(function() {
 // parameter: all pages from dataTable example: allPages = hitlist.fnGetNodes()
 // select all checkboxes
     function selectAll(checkboxName) {
-
         // alignment
         $('input:checkbox.'+checkboxName).each(function () {
-            var checked = !$(this).data('checked');
-            $('input:checkbox.'+checkboxName).prop('checked', checked);
-            $(this).data('checked', checked);
+            $(this).prop('checked', true);
         });
 
     }
-    function selectAllDatatable(allPages){
+    function selectAllDatatable(allPages, checkboxName){
         // dataTable
         if ($('input:checkbox.'+checkboxName).prop('checked')) {
             $(allPages).find('input[type="checkbox"]').prop('checked', true);
@@ -231,20 +228,18 @@ setTimeout(function() {
             $(allPages).find('input[type="checkbox"]').prop('checked', false);
         }
     }
+    function deselectAll(checkboxName){
+        $('input:checkbox.'+checkboxName).prop('checked', false);
+    }
 
     /*Select top ten Checkboxes*/
     function selectTopTen(checkboxName){
-        // alignment
-        $('input:checkbox.'+checkboxName).each(function () {
-            if($('input:checkbox.'+checkboxName).val() > 10)
-                return;
-            var checked = !$(this).data('checked');
-            $('input:checkbox.' + checkboxName).prop('checked', checked);
-            $(this).data('checked', checked);
 
-
-        });
+        for(var i= 1 ; i <= 10; i++){
+            $('input:checkbox.'+checkboxName+'[value="' + i + '"]').prop('checked', true);
+        }
     }
+
 /* FORWARDING */
 
 // parameter: tool (String)
