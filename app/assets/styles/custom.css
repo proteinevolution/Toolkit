@@ -535,12 +535,13 @@ textarea { resize:both; }
     padding-top: 25px;
 }
 
+#metauser{
+    float: right;
+}
 
 #social {
     float: right;
-    padding-right: 35px;
-    margin-top: -5px;
-
+    padding-right: 10px;
 }
 
 #social i{
