@@ -7,7 +7,7 @@
 @import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
 @import modules.tel.TEL
-@(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
+@(toolName: String, jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 
@@ -15,14 +15,15 @@
 
 <a type="button" class="button success tiny hhpred_extra_button" id="downloadAlignment"  onclick="download_()">Download File</a>
 <div class="colorOptsAlignment">
-    <a onclick="toggleSelectAll()" type="button" id="selectAllSeq">Select all</a>
-    <a onclick="toggleSelectTopTen()" type="button" id="selectTopTen">Select top ten</a>
+    <a onclick="toggleSelectAll()" type="button"> <span id="selectAllSeq">Select all</span></a>
+    <a onclick="toggleSelectTopTen()" type="button"><span id="selectTopTen">Select top ten</span></a>
     <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
     <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
+    <a onclick='wrapSequences()' type="button"><span id="wrapSequences">Wrap sequences</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences:
+    Number of sequences: @{{jsValue \ "alignment"}.as[List[JsArray]].size}
         <br />
         <br />
 <form id="alignmentResult">
@@ -39,9 +40,9 @@
                     }
                 </td>
             </tr>
-            <tr class="sequence">
+            <tr>
                 <td></td>
-                <td>
+                <td class="sequence">
                     @{alignment{1} match {
                         case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((alignment{1}).get.as[String]))
                         }
@@ -64,11 +65,13 @@
         var colorBackgroundBool = false;
         var selectTopTenBool = false;
         var selectAllBool = false;
+        var wrapSequencesBool = false;
         var aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
 
         // check first ten checkboxes by default
         $(document).ready(function () {
-                selectTopTen(checkbox);
+            selectTopTen(checkbox);
+            $("#selectTopTen").addClass( "colorToggle" );
         });
 
         // get result json
@@ -141,10 +144,21 @@
             var fileString = "";
             for(var i = 0; i < data.length; i++){
                 fileString += ">" + data[i][0] + "\n";
-                fileString += data[i][1] + "\n";
+                    fileString += (data[i][1] + "\n");
             }
-            var filename = "Alignment_jobID_@{jobID}.fasta";
+            var filename = "@{toolName}_jobID_@{jobID}.fasta";
             download(filename, fileString);
+        }
+        function wrapSequences(){
+            this.wrapSequencesBool = !this.wrapSequencesBool;
+            if(wrapSequencesBool) {
+                $(".sequence").addClass("wrap");
+                $("#wrapSequences").addClass("colorToggle");
+            }
+            else {
+                $(".sequence").removeClass("wrap");
+                $("#wrapSequences").removeClass("colorToggle");
+            }
         }
 
 </script>
