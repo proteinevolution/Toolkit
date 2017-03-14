@@ -47,7 +47,10 @@ validation = function(elem, isInit, ctx) {
                 case "kalign":
                     /** validation model for kalign:
                      * input has to be FASTA
+                     * input must consist of at least 2 seqs
                      */
+
+                    // in order to modularize validation steps one could use visitors
 
                     var visitorKalign = {
                         visit : function(alignmentVal) {
@@ -58,7 +61,6 @@ validation = function(elem, isInit, ctx) {
 
                     var target = new alignmentVal($(elem));
                     target.accept(visitorKalign);
-                    //console.log(target.fastaStep2);
 
                     break;
 
@@ -159,11 +161,6 @@ var alignmentVal = function(el){
 
     self.accept = function (visitor) {
         visitor.visit(self);
-    };
-
-
-    self.setFastaStep2 = function(step) {
-      self.fastaStep2 = step;
     };
 
 
