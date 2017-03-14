@@ -8,7 +8,7 @@ import akka.stream.Materializer
 import models.database.statistics.ToolStatistic
 import models.search.JobDAO
 import models.Constants
-import models.results.HHpred
+import models.results.BlastVisualization
 import models.tools.ToolFactory
 import modules.tel.TEL
 import modules.{CommonModule, LocationProvider}
@@ -194,7 +194,7 @@ final class Application @Inject()(webJarAssets                                  
   def getStructureFile(filename : String ) : Action[AnyContent] = Action.async { implicit request => {
     var filepath  = ""
     var fileEnding = ""
-    val db = HHpred.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
+    val db = BlastVisualization.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
     db match{
       case "scop" =>
         filepath = env.get("SCOPE")

@@ -4,11 +4,10 @@
 @import models.results.FileLoader
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
-@import models.results.HHpred
+@import models.results.BlastVisualization
 @import modules.tel.TEL
 @(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 @* Load html Map used for the image representation *@
 <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
     <li class="accordion-item" data-accordion-item>
@@ -19,7 +18,7 @@
             <a class="success button tiny resubmitSection" onclick="resubmitSection_()" type="button" id="resubmitSection">
                 Resubmit section</a>
             <div id='blastviz'>
-                @HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
+                @BlastVisualization.html(s"$jobID/results/$jobID.html_NOIMG")
                 <p><img src="files/@jobID/@{jobID}.png" border="0" alt="blasthits" usemap="#blastmap"></p>
             </div>
             </div>
@@ -84,7 +83,7 @@
                             <td></td>
                             <td colspan="3">
                             @{hit \ "struc" match {
-                                    case JsDefined(jsValue) => HHpred.getLinks((hit \ "struc").get.as[String])
+                                    case JsDefined(jsValue) => BlastVisualization.getLinks((hit \ "struc").get.as[String])
                                     case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
                                 }
                             }
@@ -92,12 +91,12 @@
                             <td></td>
                         </tr>
                         @* checkboxes, accession, name of hit*@
-                        <tr class="name">
+                        <tr class="header">
                             <td ><input type="checkbox" name="templates" class="hitCheckbox" value='@{(hit \ "no").get}'></td>
                             <td colspan="4">@{(hit \ "no").get}.
 
                             @{hit \ "struc" match {
-                                case JsDefined(jsValue) => {HHpred.getSingleLink((hit \ "struc").get.as[String])}
+                                case JsDefined(jsValue) => {BlastVisualization.getSingleLink((hit \ "struc").get.as[String])}
                                 case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
                             }
                             }
@@ -120,62 +119,62 @@
                         @* Handle secondary structure annotation for query, if present *@
                         @{alignment \ "query" \ "ss_dssp" match {
                             case JsDefined(jsValue) =>
-                            {HHpred.makeRow("sequence", Array("Q", "ss_dssp", "" , HHpred.SSColorReplace({(alignment \ "query" \ "ss_dssp").get.as[String]}), ""))}
+                            {BlastVisualization.makeRow("sequence", Array("Q", "ss_dssp", "" , BlastVisualization.SSColorReplace({(alignment \ "query" \ "ss_dssp").get.as[String]}), ""))}
                             case undefined: JsUndefined => Logger.info("query.ss_dssp undefined in results!")
                             }
                         }
                         @{alignment \ "query" \ "ss_pred" match {
                             case JsDefined(jsValue) =>
-                            {HHpred.makeRow("sequence", Array("Q", "ss_pred", "" , HHpred.SSColorReplace({(alignment \ "query" \ "ss_pred").get.as[String]}), ""))}
+                            {BlastVisualization.makeRow("sequence", Array("Q", "ss_pred", "" , BlastVisualization.SSColorReplace({(alignment \ "query" \ "ss_pred").get.as[String]}), ""))}
                             case undefined: JsUndefined => Logger.info("query.ss_pred undefined in results!")
                             }
                         }
                         @* seq of query, if present *@
                         @{alignment \ "query" \ "seq" match {
                             case JsDefined(jsValue) =>
-                            {HHpred.makeRow("sequence", Array("Q",(alignment \ "query" \ "name").get.as[String],(alignment \ "query" \ "start").get.toString(), HHpred.colorRegexReplacer((alignment \ "query" \ "seq").get.as[String]),(alignment \ "query" \ "end").get.toString()))}
+                            {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query" \ "name").get.as[String],(alignment \ "query" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "query" \ "seq").get.as[String]),(alignment \ "query" \ "end").get.toString()))}
                             case undefined: JsUndefined => Logger.info("query.seq undefined in results!")
                             }
                         }
                         @*Consensus of query, if present*@
                         @{alignment \ "query" \ "consensus" match {
                             case JsDefined(jsValue) =>
-                                {HHpred.makeRow("sequence", Array("Q", "Consensus",(alignment \ "query" \ "start").get.toString(), (alignment \ "query" \ "consensus").get.as[String],(alignment \ "query" \ "end").get.toString()))}
+                                {BlastVisualization.makeRow("sequence", Array("Q", "Consensus",(alignment \ "query" \ "start").get.toString(), (alignment \ "query" \ "consensus").get.as[String],(alignment \ "query" \ "end").get.toString()))}
                             case undefined: JsUndefined => Logger.info("query.consensus undefined in results!")
                             }
                         }
                         @* agree of query, if present *@
                         @{alignment \ "agree" match {
                             case JsDefined(jsValue) =>
-                            {HHpred.makeRow("sequence", Array("","","",(alignment \ "agree").get.as[String], ""))}
+                            {BlastVisualization.makeRow("sequence", Array("","","",(alignment \ "agree").get.as[String], ""))}
                             case undefined: JsUndefined => Logger.info("agree undefined in results!")
                             }
                         }
                         @*  consensus template, if present *@
                         @{alignment \ "template" \ "consensus" match {
                             case JsDefined(jsValue) =>
-                            {HHpred.makeRow("sequence", Array("T", "Consensus", (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "consensus").get.as[String],(alignment \ "template" \ "end").get.toString()))}
+                            {BlastVisualization.makeRow("sequence", Array("T", "Consensus", (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "consensus").get.as[String],(alignment \ "template" \ "end").get.toString()))}
                             case undefined: JsUndefined => Logger.info("template.consensus undefined in results!")
                             }
                         }
                         @*  seq template, if present *@
                         @{alignment \ "template" \ "seq" match {
                             case JsDefined(jsValue) =>
-                            {HHpred.makeRow("sequence", Array("T", (alignment \ "template" \ "name").get.as[String], (alignment \ "template" \ "start").get.toString(), HHpred.colorRegexReplacer((alignment \ "template" \ "seq").get.as[String]),(alignment \ "template" \ "end").get.toString()))}
+                            {BlastVisualization.makeRow("sequence", Array("T", (alignment \ "template" \ "name").get.as[String], (alignment \ "template" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "template" \ "seq").get.as[String]),(alignment \ "template" \ "end").get.toString()))}
                             case undefined: JsUndefined => Logger.info("template.seq undefined in results!")
                             }
                         }
                         @* Handle secondary structure annotation for template, if present *@
                         @{alignment \ "template" \ "ss_dssp" match {
                             case JsDefined(jsValue) =>
-                            {HHpred.makeRow("sequence", Array("T", "ss_dssp", "" , HHpred.SSColorReplace({(alignment \ "template" \ "ss_dssp").get.as[String]}), ""))}
+                            {BlastVisualization.makeRow("sequence", Array("T", "ss_dssp", "" , BlastVisualization.SSColorReplace({(alignment \ "template" \ "ss_dssp").get.as[String]}), ""))}
                             case undefined: JsUndefined => Logger.info("template.ss_dssp undefined in results!")
                          }
                         }
 
                         @{alignment \ "template" \ "ss_pred" match {
                             case JsDefined(jsValue) =>
-                            {HHpred.makeRow("sequence", Array("T", "ss_pred", "" , HHpred.SSColorReplace({(alignment \ "template" \ "ss_pred").get.as[String]}), ""))}
+                            {BlastVisualization.makeRow("sequence", Array("T", "ss_pred", "" , BlastVisualization.SSColorReplace({(alignment \ "template" \ "ss_pred").get.as[String]}), ""))}
                             case undefined: JsUndefined => Logger.info("template.ss_pred undefined in results!")
                          }
                         }
@@ -251,8 +250,6 @@
 </div>
 
 <script>
-$("#templateAlignmentModal").foundation();
-$("#structureModal").foundation();
 $("#structureModal").bind('closed.zf.reveal', (function() {
     $('#accessionStructure').html("");
     $('#viewport canvas').remove();
@@ -441,7 +438,8 @@ function hhpred_automatic() {
 
 
 function selectAll_() {
-    selectAll(this.hitlist.fnGetNodes());
+    selectAllDatatable(this.hitlist.fnGetNodes());
+    selectAll("hitCheckbox");
 }
 
 function onFullscreenToggle() {

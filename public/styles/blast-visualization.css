@@ -255,6 +255,20 @@ label.forwardLabel input[type=radio] {
     margin-bottom: 0.5em;
 }
 
+.colorOptsAlignment{
+    width: 90%;
+    padding-top: 1em;
+    margin: 0 auto;
+}
+.colorOptsAlignment a{
+    float: left;
+    width: 25%;
+    margin-bottom: 0.5em;
+}
+
+input {
+    vertical-align: -2px;
+}
 
 /* DataTable */
 .dataTables_length label {
@@ -317,4 +331,8 @@ label.forwardLabel input[type=radio] {
 
 .structureAccession{
     float: left;
+}
+
+.alignmentTBody td{
+    padding: unset !important;
 }

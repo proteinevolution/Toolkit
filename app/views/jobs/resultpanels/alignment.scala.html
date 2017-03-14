@@ -1,0 +1,86 @@
+@import play.api.libs.json.JsObject
+@import play.api.libs.json.JsValue
+@import play.api.libs.json.JsArray
+@import play.api.Logger
+@import models.results.FileLoader
+@import play.api.libs.json.JsUndefined
+@import play.api.libs.json.JsDefined
+@import models.results.BlastVisualization
+@import modules.tel.TEL
+@(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
+<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+
+
+<a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
+<div class="colorOptsAlignment">
+    <a onclick="selectAll_()" type="button" id="selectAllSeq">Select all</a>
+    <a onclick="selectTopTen_()" type="button" id="selectTopTen">Select top ten</a>
+    <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
+    <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
+    <hr id="line-element" colspan="4" class="horizontal-line">
+</div>
+<form id="alignmentResult">
+        <table class="unstriped">
+            <tbody class="alignmentTBody">
+            @for((alignment,index) <- {jsValue \ "alignment"}.as[List[JsArray]].zipWithIndex) {
+                <tr class="header">
+                    <td ><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index+1}'> @{index+1}.</td>
+                    <td>
+                        @{alignment{0} match {
+                            case JsDefined(jsValue) => (alignment{0}).get.as[String]
+                            }
+                        }
+                    </td>
+                </tr>
+                <tr class="sequence">
+                    <td></td>
+                    <td>
+                        @{alignment{1} match {
+                            case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((alignment{1}).get.as[String]))
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+</form>
+
+<script>
+
+        var colorLetters = false;
+        var colorBackground = false;
+        var aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+
+        function toggleAliColor_(str){
+            if(str == "letters" ){
+                if(colorLetters)
+                    toggleAliColor("");
+                else
+                    toggleAliColor("letters");
+                this.colorLetters = !this.colorLetters;
+            }
+            if(str == "background"){
+                if(colorBackground)
+                    toggleAliColor("");
+                else
+                    toggleAliColor("background");
+                this.colorBackground = !this.colorBackground;
+            }
+        }
+
+        function forward_(tool){
+
+            forward(tool, forwardData);
+        }
+
+        function selectAll_(){
+            selectAll("alignmentCheckbox");
+        }
+        function selectTopTen_(){
+            selectTopTen("alignmentCheckbox");
+        }
+
+
+</script>

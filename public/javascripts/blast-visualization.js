@@ -213,23 +213,38 @@ setTimeout(function() {
 
 // parameter: all pages from dataTable example: allPages = hitlist.fnGetNodes()
 // select all checkboxes
-    function selectAll(allPages) {
+    function selectAll(checkboxName) {
 
         // alignment
-        $('input:checkbox.hitCheckbox').each(function () {
+        $('input:checkbox.'+checkboxName).each(function () {
             var checked = !$(this).data('checked');
-            $('input:checkbox.hitCheckbox').prop('checked', checked);
+            $('input:checkbox.'+checkboxName).prop('checked', checked);
             $(this).data('checked', checked);
-
         });
+
+    }
+    function selectAllDatatable(allPages){
         // dataTable
-        if ($('input:checkbox.hitCheckbox').prop('checked')) {
+        if ($('input:checkbox.'+checkboxName).prop('checked')) {
             $(allPages).find('input[type="checkbox"]').prop('checked', true);
         } else {
             $(allPages).find('input[type="checkbox"]').prop('checked', false);
         }
     }
 
+    /*Select top ten Checkboxes*/
+    function selectTopTen(checkboxName){
+        // alignment
+        $('input:checkbox.'+checkboxName).each(function () {
+            if($('input:checkbox.'+checkboxName).val() > 10)
+                return;
+            var checked = !$(this).data('checked');
+            $('input:checkbox.' + checkboxName).prop('checked', checked);
+            $(this).data('checked', checked);
+
+
+        });
+    }
 /* FORWARDING */
 
 // parameter: tool (String)
