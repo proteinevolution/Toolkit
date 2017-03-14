@@ -7,14 +7,18 @@ validation = function(elem, isInit, ctx) {
 
     if(!isInit) {
 
-        var toolname = $("#toolnameAccess").val();
-
+        var toolname;
+        try { toolname = $("#toolnameAccess").val(); }
+        catch(err) {
+            toolname = "unknown";
+            console.warn("toolname unspecified");
+        }
 
         return $(elem).on("keyup", function (e) {
 
             //---------------------------------Validation Visitors------------------------------------------//
 
-            // in order to modularize validation steps one could use visitors
+            // in order to modularize validation we use the visitor pattern
 
             var mustHave2Visitor = {
                 visit : function(alignmentVal) {
@@ -143,17 +147,17 @@ function valReset(){
  * @param el
  */
 
-// global filter to assert whether Fasta was the original input or the product of a conversion
-changed = false;
+// global filter to assert whether the original input has been FASTA
+originIsFasta = true;
 
 
 function mustHave2(el) {
 
     if(el.validate('fasta') && fasta2json(el.val()).length < 2)
         feedback(false, "must have at least 2 seqs", "error");
-    if(el.validate('fasta') && fasta2json(el.val()).length >= 2 && el.reformat('alignment')) {
+    else if(el.validate('fasta') && fasta2json(el.val()).length >= 2 && el.reformat('alignment') && originIsFasta) {
         feedback(true);
-        changed = false;
+        originIsFasta = true;
     }
 
 }
@@ -164,7 +168,7 @@ var alignmentVal = function(el){
 
     self.fastaStep2 = function(){
         feedback(true);
-        changed = false;
+        originIsFasta = true;
     };
 
     self.accept = function (visitor) {
@@ -174,14 +178,14 @@ var alignmentVal = function(el){
 
     if(!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
         feedback(false, "this is no fasta!", "error");
-    else if (el.val().length === 0)
-        valReset();
+
     else if(!el.validate('fasta') && el.reformat('detect') != '' && el.val().length != 0) {
+        originIsFasta = false;
         var t = el.reformat('detect');
         feedback(false, "Wrong format found: " + t + ". <b>Auto-transformed to Fasta</b>", "success", t);
-        $("#alignment").val(el.reformat('fasta'));
-        changed = true;
-    } else if (el.validate('fasta') && changed == false) {
+        $("#alignment").val(el.reformat('fasta')); }
+
+    else if (el.validate('fasta') && originIsFasta) {
             this.fastaStep2();
     }
 

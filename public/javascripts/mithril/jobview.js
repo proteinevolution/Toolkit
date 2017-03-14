@@ -788,7 +788,7 @@ window.ParameterAlignmentComponent = {
                         $('.submitJob').prop('disabled', false);
                         $("#validOrNot").removeClass("alert warning primary secondary")
                         $("#validOrNot").css("display", "block").html("Found format: <b>" + $("#" + ctrl.id).reformat('detect') + "</b>").addClass("success");
-                        changed = false; // resets changed validation filter
+                        originIsFasta = true; // resets changed validation filter
                     }
                 }), m("input", {
                     type: "button",
