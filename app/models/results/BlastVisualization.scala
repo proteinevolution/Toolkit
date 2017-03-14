@@ -13,7 +13,7 @@ import play.api.Logger
 
 import scala.collection.mutable.ArrayBuffer
 
-object HHpred extends Constants {
+object BlastVisualization extends Constants {
 
   private val color_regex = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
   private val helix_pattern = """([Hh]+)""".r

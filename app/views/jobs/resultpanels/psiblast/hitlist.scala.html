@@ -1,4 +1,4 @@
-@import models.results.HHpred
+@import models.results.BlastVisualization
 @(jobID: String)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
@@ -11,7 +11,7 @@
             <a class="success button tiny resubmitSection" onclick="resubmitSection_()" type="button" id="resubmitSection">
                 Resubmit section</a>
             <div id='blastviz'>
-                @HHpred.html(s"$jobID/results/blastviz.html")
+                @BlastVisualization.html(s"$jobID/results/blastviz.html")
                 <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
             </div>
         </div>

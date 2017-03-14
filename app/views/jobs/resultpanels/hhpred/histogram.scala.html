@@ -1,9 +1,9 @@
-@import models.results.HHpred
+@import models.results.BlastVisualization
 @(jobID: String)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
 @*  Load html Map used for the image representation *@
-@HHpred.html(s"$jobID/results/$jobID.html_NOIMG")
+@BlastVisualization.html(s"$jobID/results/$jobID.html_NOIMG")
 
 <p><img src="/files/@{jobID}/@{jobID}.png" border="0" alt="hhpredhits" usemap="#hhpredmap"></p>
 
@@ -33,18 +33,18 @@
         </tr>
     </thead>
     <tbody>
-    @for((x,i) <- HHpred.hitlist(jobID).Hits.zipWithIndex) {
+    @for((x,i) <- BlastVisualization.hitlist(jobID).Hits.zipWithIndex) {
         <tr>
             <td>@(i+1)</td>
-            <td>@HHpred.hitlist(jobID).Hits(i)</td>
-            <td>@HHpred.hitlist(jobID).Probs(i)</td>
-            <td>@HHpred.hitlist(jobID).Evals(i)</td>
-            <td>@HHpred.hitlist(jobID).Pvals(i)</td>
-            <td>@HHpred.hitlist(jobID).Scores(i)</td>
-            <td>@HHpred.hitlist(jobID).SS(i)</td>
-            <td>@HHpred.hitlist(jobID).Cols(i)</td>
-            <td>@HHpred.hitlist(jobID).Query_HMMs(i)</td>
-            <td>@HHpred.hitlist(jobID).Template_HMMs(i)</td>
+            <td>@BlastVisualization.hitlist(jobID).Hits(i)</td>
+            <td>@BlastVisualization.hitlist(jobID).Probs(i)</td>
+            <td>@BlastVisualization.hitlist(jobID).Evals(i)</td>
+            <td>@BlastVisualization.hitlist(jobID).Pvals(i)</td>
+            <td>@BlastVisualization.hitlist(jobID).Scores(i)</td>
+            <td>@BlastVisualization.hitlist(jobID).SS(i)</td>
+            <td>@BlastVisualization.hitlist(jobID).Cols(i)</td>
+            <td>@BlastVisualization.hitlist(jobID).Query_HMMs(i)</td>
+            <td>@BlastVisualization.hitlist(jobID).Template_HMMs(i)</td>
         </tr>
     }
     </tbody>
