@@ -9,8 +9,8 @@ function toggleAliColor(str) {
             aa.style.color = aa_color_font.get(aa.className);
             aa.style.backgroundColor = "white"
         }
-            $("#letterColor").addClass( "colorSpan" );
-            $("#backgroundColor").removeClass("colorSpan");
+            $("#letterColor").addClass( "colorToggle" );
+            $("#backgroundColor").removeClass("colorToggle");
 
     } else if(str == "background") {
         for(i = 0; i < aas.length; i++) {
@@ -18,14 +18,14 @@ function toggleAliColor(str) {
             aa.style.backgroundColor = aa_color_background.get(aa.className);
             aa.style.color = "black";
         }
-            $("#backgroundColor").addClass( "colorSpan" );
-            $("#letterColor").removeClass("colorSpan");
+            $("#backgroundColor").addClass( "colorToggle" );
+            $("#letterColor").removeClass("colorToggle");
     } else {
         for(i = 0; i < aas.length; i++) {
             aas[i].style.color = "black";
             aas[i].style.backgroundColor = "white";
         }
-            $("span").removeClass("colorSpan");
+            $("span").removeClass("colorToggle");
     }
 }
 
@@ -41,7 +41,7 @@ function toggleSS(bool) {
         for (i = 0; i < ss_extended.length; i++) {
             ss_extended[i].style.color = "black";
         }
-            $("#onlySS").removeClass( "colorSpan" );
+            $("#onlySS").removeClass( "colorToggle" );
     }
     if(bool){
 
@@ -51,7 +51,7 @@ function toggleSS(bool) {
         for (i = 0; i < ss_extended.length; i++) {
             ss_extended[i].style.color = "#D00000";
         }
-        $("#onlySS").addClass("colorSpan");
+        $("#onlySS").addClass("colorToggle");
     }
 
 
@@ -215,6 +215,7 @@ setTimeout(function() {
 // select all checkboxes
     function selectAll(checkboxName) {
         // alignment
+
         $('input:checkbox.'+checkboxName).each(function () {
             $(this).prop('checked', true);
         });
