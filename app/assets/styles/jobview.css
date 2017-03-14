@@ -170,7 +170,6 @@ hr {
 
 
 .alignment_buttons {
-    height: 7em;
     flex-direction: row;
     margin-top: 10px;
 }
@@ -666,5 +665,9 @@ a.hasNotes:active {
 }
 
 #validOrNot {
-    margin-top: -22px;
+    margin-top: 0;
+}
+
+div#calloutSpacer {
+   min-height: 3em;
 }
