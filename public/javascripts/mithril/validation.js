@@ -48,7 +48,17 @@ validation = function(elem, isInit, ctx) {
                     /** validation model for kalign:
                      * input has to be FASTA
                      */
-                    alignmentVal($(elem));
+
+                    var visitorKalign = {
+                        visit : function(alignmentVal) {
+                            //let's fix the garage door
+                            alignmentVal.fastaStep2 = mustHave2($(elem));
+                        }
+                    };
+
+                    var target = new alignmentVal($(elem));
+                    target.accept(visitorKalign);
+                    //console.log(target.fastaStep2);
 
                     break;
 
@@ -68,6 +78,7 @@ validation = function(elem, isInit, ctx) {
                 valReset();
             }
 
+
         });
     }
 };
@@ -83,7 +94,6 @@ function feedback(valid, msg, type, wrongformat) {
 
     //remove trailing foundation classes
     $v.removeClass("alert warning secondary primary success");
-    var t;
 
     if(!valid) {
         console.log(msg);
@@ -121,9 +131,40 @@ function valReset(){
  * @param el
  */
 
+// global filter to assert whether Fasta was the original input or the product of a conversion
 changed = false;
 
-function alignmentVal(el){
+
+function mustHave2(el) {
+
+    if(el.validate('fasta') && fasta2json(el.val()).length < 2)
+        feedback(false, "must have at least 2 seqs", "error");
+    if(el.validate('fasta') && fasta2json(el.val()).length >= 2) {
+        feedback(true);
+        changed = false;
+    }
+
+}
+
+var alignmentVal = function(el){
+
+    var self = this;
+
+    self.test = "";
+
+    self.fastaStep2 = function(){
+        feedback(true);
+        changed = false;
+    };
+
+    self.accept = function (visitor) {
+        visitor.visit(self);
+    };
+
+
+    self.setFastaStep2 = function(step) {
+      self.fastaStep2 = step;
+    };
 
 
     if(!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
@@ -136,8 +177,7 @@ function alignmentVal(el){
         $("#alignment").val(el.reformat('fasta'));
         changed = true;
     } else if (el.validate('fasta') && changed == false) {
-            feedback(true);
-            changed = false;
+            this.fastaStep2();
     }
 
     if(el.validate('fasta') && !el.reformat('alignment') && el.val().length != 0){
@@ -145,4 +185,4 @@ function alignmentVal(el){
         $(".submitJob").prop("disabled", false); }
     else if (el.val().length === 0)
         valReset();
-}
+};
