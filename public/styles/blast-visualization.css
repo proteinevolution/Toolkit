@@ -76,12 +76,6 @@
     background-color: #d1d1d1
 }
 
-#selectAllSeq {
-    float: left;
-    color: #006F62;
-    font-size: 1.05em;
-}
-
 .hhpred_extra_button {
     background-color: #eee !important;
 }
@@ -321,8 +315,8 @@ input {
     margin: 0 auto;
 }
 
-.colorSpan{
-    color: #006F62;
+.colorToggle{
+    color: #006F62 !important;
 }
 
 .fetchError{
