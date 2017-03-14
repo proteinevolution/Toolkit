@@ -143,12 +143,11 @@
 
             <!---Navigation Bar --->
              <div class="row" id="metanav">
+                 <div id="metauser">@views.html.auth.dropdown(user)</div> <!-- TODO: ugly construction -->
                  <div id="social">
                      <a href="https://github.com/zy4/Toolkit"><i class="icon-octopus"></i></a>
                      <a href="https://www.facebook.com/mpitoolkit"><i class="icon-facebook"></i></a>
                      <a href="https://twitter.com/mpitoolkit"><i class="icon-twitter"></i></a>
-                     <br>
-                     @views.html.auth.dropdown(user)
                  </div>
              </div>
 
