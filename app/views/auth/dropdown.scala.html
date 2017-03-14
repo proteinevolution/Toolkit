@@ -8,7 +8,7 @@
 <ul id="auth-dropdown-link" class="dropdown menu" data-dropdown-menu data-alignment="right" data-disable-hover=true data-click-open=true @if(user.userData.isEmpty){hidden}>
     <li>
         <button class="loggedIn" id="auth-link-text" href="#">@{user.userData.map(_.nameLogin).getOrElse("")}</button>
-        <ul class="menu">
+        <ul class="menu noFouc">
             <li><a href="#">Profile</a></li>
             <li><a href="#">Inbox</a></li>
             <li><a onclick="openNav()">User</a></li>
