@@ -54,7 +54,6 @@ validation = function(elem, isInit, ctx) {
 
                     var visitorKalign = {
                         visit : function(alignmentVal) {
-                            //let's fix the garage door
                             alignmentVal.fastaStep2 = mustHave2($(elem));
                         }
                     };
@@ -151,8 +150,6 @@ function mustHave2(el) {
 var alignmentVal = function(el){
 
     var self = this;
-
-    self.test = "";
 
     self.fastaStep2 = function(){
         feedback(true);
