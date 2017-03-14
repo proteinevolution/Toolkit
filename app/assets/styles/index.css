@@ -488,7 +488,14 @@ select {
 
 }
 
+#mainface {
+    padding-right: 0 !important;
+}
 
+#mainlabel {
+    font-size: 0.85em;
+    padding-left: 0 !important;
+}
 
 /*Responsiveness*/
 
