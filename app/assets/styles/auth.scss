@@ -105,14 +105,9 @@
   background-color: #d1d1d1;
 }
 
-span#auth-link-text {
-  font-size: 12px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 68px;
-  font-weight: bolder;
-  text-align: center;
-  float: none;
+
+#auth-link-text:hover {
+  color: #2E8C81;
 }
 
 #authoverlay {
@@ -143,7 +138,7 @@ button.loggedIn {
   font-weight: bolder;
   text-align: center;
   float: none;
-  color: #848484;
+  color: #666;
   cursor: pointer;
 
 }
