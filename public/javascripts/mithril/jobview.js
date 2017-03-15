@@ -677,13 +677,13 @@ window.ParameterAlignmentComponent = {
                     $(".inputDBs option:selected").prop("selected", false);
                     $("#alignment").attr("rows", "7");
                     $('#alignment_two').show();
-                    $("#alignment_two").prop("required");
+                    $("#alignment_two").prop("required", true);
                     $("#hhpred_align").prop('checked', true);
                 } else {
                     $(".inputDBs").prop('disabled', false);
                     $("#alignment").attr("rows", "18");
                     $("#alignment_two").hide();
-                    $("#alignment_two").removeAttr("required");
+                    $("#alignment_two").removeAttr("required", false);
                     $("#hhpred_align").prop('checked', false);
 
                 }
@@ -706,13 +706,13 @@ window.ParameterAlignmentComponent = {
                         $("#hhpred_align").prop('checked', true);
                         $("#alignment").attr("rows", "8");
                         $('#alignment_two').show();
-                        $("#alignment_two").prop("required");
+                        $("#alignment_two").prop("required", true);
                     } else {
                         $(".inputDBs").prop('disabled', false);
                         $("#hhpred_align").prop('checked', false);
                         $("#alignment").attr("rows", "19");
                         $("#alignment_two").hide();
-                        $("#alignment_two").removeAttr("required");
+                        $("#alignment_two").removeAttr("required", false);
 
                     }
                 }
@@ -965,7 +965,6 @@ ParameterSlideComponent = {
     }
 
 };
-
 
 formComponents = {
     1: ParameterAlignmentComponent,
