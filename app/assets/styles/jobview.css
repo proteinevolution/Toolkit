@@ -38,7 +38,8 @@ body.is-reveal-open {
 }
 .wrap{
     white-space: unset;
-    word-wrap: break-word !important;
+    display: inline-block;
+    word-break: break-all;
 }
 
 
