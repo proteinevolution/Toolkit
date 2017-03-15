@@ -155,6 +155,9 @@ object BlastVisualization extends Constants {
       idCDD = idCDD.replaceAll("\\..*","")
       links += generateLink(cddBaseLink, idCDD, "CDD")
     }
+    if (db == "refseq"){
+      links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
+    }
     Html(links.mkString(" | "))
   }
 
@@ -169,5 +172,10 @@ object BlastVisualization extends Constants {
     case e : String => Logger.info("Struc: ("+e+") could not be matched against any database!");""
   }
 
+  def percentage(str : String) : String = {
+    var num = str.toDouble
+    val percent = (num * 100).toInt.toString + " %"
+    percent
+  }
 }
 
