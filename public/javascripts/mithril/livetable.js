@@ -1,5 +1,5 @@
 var JobTable = {
-    controller: function() {
+    controller: function(args) {
 
     },
     view: function(ctrl, args) {
@@ -9,17 +9,18 @@ var JobTable = {
                     m('tr', [
                         m('th#run', 'Running jobs'),
                         m('th', 'Users'),
-                        m('th', 'Last job'),
+                        m('th#lastJob', 'Last job'),
                         m('th#lastJobs', 'Jobs last 24h')
-                    ])
-                ])],[
-                m('tbody', [m('tr', [
-                    m('td', '16'),
-                    m('td', '46'),
-                    m('td', 'HHpred'),
-                    m('td', '1111')
-                ])])
-            ])
+                    ])]
+                )], [
+                m('tbody',
+                    [m('tr', [
+                        m('td', '16'),
+                        m('td', '46'),
+                        m('td#lastJobName', m('a[href="/#/tools/hhpred"]', 'HHpred')),
+                        m('td', '1111')
+                     ])]
+                )])
         ]);
     }
 };
