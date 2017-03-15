@@ -31,25 +31,31 @@ validation = function(elem, isInit, ctx) {
             switch(toolname) {
                 case "tcoffee":
                     /** validation model for tcoffee:
-                     * input has to be FASTA
+                     * input has to be FASTA\
+                     * input must consist of at least 2 seqs
                      */
-                    alignmentVal($(elem));
+                    var tcoffeeTarget = new multiseqVal($(elem));
+                    tcoffeeTarget.accept(mustHave2Visitor);
 
                     break;
 
                 case "mafft":
                     /** validation model for mafft:
                      * input has to be FASTA
+                     * input must consist of at least 2 seqs
                      */
-                    alignmentVal($(elem));
+                    var mafftTarget = new multiseqVal($(elem));
+                    mafftTarget.accept(mustHave2Visitor);
 
                     break;
 
                 case "muscle":
                     /** validation model for muscle:
                      * input has to be FASTA
+                     * input must consist of at least 2 seqs
                      */
-                    alignmentVal($(elem));
+                    var muscleTarget = new multiseqVal($(elem));
+                    muscleTarget.accept(mustHave2Visitor);
 
                     break;
 
@@ -59,7 +65,7 @@ validation = function(elem, isInit, ctx) {
                      * input must consist of at least 2 seqs
                      */
 
-                    var clustaloTarget = new alignmentVal($(elem));
+                    var clustaloTarget = new multiseqVal($(elem));
                     clustaloTarget.accept(mustHave2Visitor);
 
                     break;
@@ -70,7 +76,7 @@ validation = function(elem, isInit, ctx) {
                      * input must consist of at least 2 seqs
                      */
 
-                    var kalignTarget = new alignmentVal($(elem));
+                    var kalignTarget = new multiseqVal($(elem));
                     kalignTarget.accept(mustHave2Visitor);
 
                     break;
@@ -81,7 +87,7 @@ validation = function(elem, isInit, ctx) {
                      * input must consist of at least 2 seqs
                      */
 
-                    var msaprobsTarget = new alignmentVal($(elem));
+                    var msaprobsTarget = new multiseqVal($(elem));
                     msaprobsTarget.accept(mustHave2Visitor);
 
                     break;
@@ -154,7 +160,7 @@ originIsFasta = true;
 function mustHave2(el) {
 
     if(el.validate('fasta') && fasta2json(el.val()).length < 2)
-        feedback(false, "must have at least 2 seqs", "error");
+        feedback(false, "must have at least two sequences", "error");
     else if(el.validate('fasta') && fasta2json(el.val()).length >= 2 && el.reformat('alignment') && originIsFasta && el.reformat('uniqueids')) {
         feedback(true);
         originIsFasta = true;
@@ -212,6 +218,47 @@ var alignmentVal = function(el){
 
     else if(el.validate('fasta') && !el.reformat('alignment')){
         feedback(false, "not aligned", "warning");
+        $(".submitJob").prop("disabled", false);
+    }
+
+    else if (el.val().length === 0)
+        valReset();
+};
+
+
+
+var multiseqVal = function(el){
+
+    var self = this;
+
+    self.fastaStep2 = function(){
+        feedback(true);
+        originIsFasta = true;
+    };
+
+    self.accept = function (visitor) {
+        visitor.visit(self);
+    };
+
+
+    if (!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
+        feedback(false, "this is no fasta!", "error");
+
+    else if (!el.reformat('uniqueids'))
+        feedback(false, "FASTA but identifiers are not unique!", "error");
+
+    else if(!el.validate('fasta') && el.reformat('detect') != '' && el.val().length != 0) {
+        originIsFasta = false;
+        var t = el.reformat('detect');
+        feedback(false, "Wrong format found: " + t + ". <b>Auto-transformed to Fasta</b>", "success", t);
+        $("#alignment").val(el.reformat('fasta'));
+    }
+
+    else if (el.validate('fasta') && el.reformat('alignment') &&  originIsFasta)
+        this.fastaStep2();
+
+    else if(el.validate('fasta') && !el.reformat('alignment')){
+        feedback(true);
         $(".submitJob").prop("disabled", false);
     }
 
