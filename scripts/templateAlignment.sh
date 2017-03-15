@@ -2,10 +2,10 @@
 # Set environment
 
 source /ebio/abt1_share/toolkit_support1/code/bioprogs/env/environment.sh
-
-scopdir=${DBROOT}/scope/scope
-pfamdir=${DBROOT}/pfama/pfama
-mmcifdir=${DBROOT}/mmcif70/mmcif70
+HHSUITE=$DATABASES/hh-suite
+scopdir=${HHSUITE}/scope/scope
+pfamdir=${HHSUITE}/pfama/pfama
+mmcifdir=${HHSUITE}/mmcif70/mmcif70
 
 
 if [ ! -e "results/$accession.template.fas" ]
