@@ -9,6 +9,7 @@
 @(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 @* Load html Map used for the image representation *@
+<div class="container" id="loadingDiv"></div>
 <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
@@ -108,8 +109,11 @@
                             <td></td>
                             <td colspan="4">Probability: @{(alignment \ "info" \ "probab").get}, E-value: @{(alignment \ "info" \ "eval").get},
                                 Score: @{(alignment \ "info" \ "score").get}, Aligned Cols: @{(alignment \ "info" \ "aligned_cols").get},
-                                Identities: @{(alignment \ "info" \ "identities").get}, Similarity: @{(alignment \ "info" \ "similarity").get},
+                                Identities: @{BlastVisualization.percentage((alignment \ "info" \ "identities").get.toString)},
+                                Similarity: @{BlastVisualization.percentage((alignment \ "info" \ "similarity").get.toString)},
                                 Sum Probs: @{(alignment \ "info" \ "sum_probs").get}
+
+
                             </td>
                         </tr>
                         <tr>
@@ -271,6 +275,13 @@ var ss_extended = document.getElementsByClassName("aa_h");
 var aas;
 
 (function()  {
+            $(document).ajaxStart(function() {
+                $.LoadingOverlay("show");
+            });
+    $(document).ajaxStop(function() {
+                $.LoadingOverlay("hide");
+            });
+
     $('.slider').on('moved.zf.slider', function() {
         $('#lefthandle').html($('#hidden1').val());
         $('#lefthandle').css({
@@ -320,7 +331,6 @@ var aas;
             toggleSS_();
             $("#accordion").foundation();
             $('.histogram').hide();
-
         }else{
             alert("No hits found!");
             firstQueryEnd = 0;
@@ -485,16 +495,13 @@ function resubmitHmm(tool) {
 
 
 function templateAlignment(accession){
-
     $.ajax({
         type: 'GET',
         url: '/templateAlignment/@jobID/' + accession,
-        async: false
     }).done(function () {
         $.ajax({
             type: 'GET',
             url: 'files/@jobID/' + accession + '.template.fas',
-            async: false
         }).done(function (data) {
             $("#alignmentTemplate").val(data.toString());
         })
