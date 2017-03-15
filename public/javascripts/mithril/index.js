@@ -1,4 +1,4 @@
-var slickSlider, styleComponent, tilescomponent, trafficBarComponent, trafficbar, typeAhead;
+var slickSlider, tilescomponent, trafficBarComponent, trafficbar, typeAhead;
 
 slickSlider = function (elem, isInit) {
     if (!isInit) {
@@ -169,7 +169,7 @@ trafficBarComponent = {
                 m("p", {"class": "news_date"}, "February 19, 2017"),
                 m("p", {"class": "news_feed"}, m('a[href="/#/news/"]', "News Feed")),
                 m("p", {"class": "news_content"}, "Follow us on Facebook and Twitter.")
-                ),
+                ), m(LiveTable),
                 m("div", {"class": "search_container"},
                     m("div", {
                         "class": "columns large-12 form-group"
