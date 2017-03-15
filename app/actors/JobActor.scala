@@ -54,15 +54,6 @@ object JobActor {
   // UserActor Stops Watching this Job
   case class StopWatch(jobID: String, userID: BSONObjectID)
 
-  // UserActor Registers Websocket
-  case class RegisterUser(userID : BSONObjectID, userActor : ActorRef)
-
-  // UserActor Unregisters Websocket
-  case class UnregisterUser(userID : BSONObjectID, userActor : ActorRef)
-
-  // UserActor Logged in and needs to change the user IDs
-  case class SwapUserID(oldUserID : BSONObjectID, newUserID : BSONObjectID)
-
   // JobActor is requested to Delete the job
   case class Delete(jobID: String)
 
@@ -70,13 +61,14 @@ object JobActor {
   case class JobStateChanged(jobID : String, jobState : JobState)
 }
 
-class JobActor @Inject() (             runscriptManager        : RunscriptManager, // To get runscripts to be executed
-                                       env                     : Env, // To supply the runscripts with an environment
-                                   val reactiveMongoApi        : ReactiveMongoApi,
-                                   val jobDao                  : JobDAO,
-                                       wrapperExecutionFactory : WrapperExecutionFactory,
-                          implicit val locationProvider        : LocationProvider,
- @NamedCache("userCache") implicit val userCache               : CacheApi)
+class JobActor @Inject() (               runscriptManager        : RunscriptManager, // To get runscripts to be executed
+                                         env                     : Env, // To supply the runscripts with an environment
+                                     val reactiveMongoApi        : ReactiveMongoApi,
+                                     val jobDao                  : JobDAO,
+                                         wrapperExecutionFactory : WrapperExecutionFactory,
+                            implicit val locationProvider        : LocationProvider,
+   @NamedCache("userCache") implicit val userCache               : CacheApi,
+@NamedCache("wsActorCache") implicit val wsActorCache            : CacheApi)
   extends Actor
     with Constants
     with UserSessions
@@ -86,9 +78,6 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
   private var currentJobs: Map[String, Job] = Map.empty
   private var currentJobLogs: Map[String, JobEventLog] = Map.empty
   private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty
-
-  // Map of all connected users and their Websocket Actors
-  private var users: Map[BSONObjectID, Set[ActorRef]] = Map.empty.withDefaultValue(Set.empty)
 
   // Running executions
   private var runningExecutions: Map[String, RunningExecution] = Map.empty
@@ -147,10 +136,8 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
                                               events      = List(JobEvent(job.status, Some(DateTime.now))))
       }
       this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
-      val foundWatchers = users.filter(a => job.watchList.contains(a._1))
-      //Logger.info("\n----\nFound Watchers for Job \'" + job.jobID + "\': " + foundWatchers.keys.map(_.stringify).mkString(", "))
-      //Logger.info("Job State for \'" + job.jobID + "\' changed to: " + job.status + "\n----\n")
-      foundWatchers.values.flatten.foreach(_ ! PushJob(job))
+      val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify) : Option[List[ActorRef]])
+      foundWatchers.flatten.foreach(_ ! PushJob(job))
       //watchers(jobID)
       job
     }
@@ -334,19 +321,21 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
         case Some(job) =>
           this.removeJob(jobID)
           // Message user clients to remove the job from their watchlist
-          this.users.filter (uw => job.watchList.contains (uw._1) ).values.flatten.foreach (_! ClearJob (job.jobID) )
+          val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify) : Option[List[ActorRef]])
+          foundWatchers.flatten.foreach (_ ! ClearJob (job.jobID))
         case None =>
       }
 
     // User does no longer watch this Job
     case StopWatch(jobID, userID) =>
       modifyJob(BSONDocument(Job.JOBID -> jobID),
-                BSONDocument("$pull"   -> BSONDocument(Job.WATCHLIST -> userID))).map {
+                BSONDocument("$pull"   -> BSONDocument(Job.WATCHLIST -> userID))).foreach {
         case Some(updatedJob) =>
           this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
         case None =>
       }
-      this.users(userID).foreach(_ ! ClearJob(jobID))
+      val wsActors = wsActorCache.get(userID.stringify) : Option[List[ActorRef]]
+      wsActors.foreach(_.foreach(_ ! ClearJob(jobID)))
 
       modifyUserWithCache(BSONDocument(User.IDDB -> userID),
                           BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
@@ -362,22 +351,6 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
 
       modifyUserWithCache(BSONDocument(User.IDDB   -> userID),
                           BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
-
-    // User registers to the job actor
-    case RegisterUser(userID, userActor) =>
-      val u: Set[ActorRef]     = this.users(userID)
-      this.users               = this.users.updated(userID, u.+(userActor))
-
-    // Useractor unregisters to this actor
-    case UnregisterUser(userID, userActor) =>
-      val u: Set[ActorRef]     = this.users(userID)
-      this.users               = this.users.updated(userID, u.-(userActor))
-
-    // User actor logged in and needs to copy the websocket actors
-    case SwapUserID(oldUserID : BSONObjectID, newUserID : BSONObjectID) =>
-      val u: Set[ActorRef]     = this.users(oldUserID)
-      this.users               = this.users.-(oldUserID)
-      this.users               = this.users.updated(newUserID, u)
 
     // Message from outside that the jobState has changed
     case JobStateChanged(jobID : String, jobState : JobState) =>
