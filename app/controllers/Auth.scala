@@ -2,7 +2,8 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import actors.JobActor.SwapUserID
+import actors.WebSocketActor.ChangeSessionID
+import akka.actor.ActorRef
 import models.auth._
 import models.database.users.{User, UserToken}
 import models.job.JobActorAccess
@@ -28,14 +29,15 @@ import scala.concurrent.Future
   */
 
 @Singleton
-final class Auth @Inject() (          webJarAssets     : WebJarAssets,
-                                  val messagesApi      : MessagesApi,
-                                      jobActorAccess   : JobActorAccess,
-                         implicit val mailerClient     : MailerClient,
-                         implicit val locationProvider : LocationProvider,
-@NamedCache("userCache") implicit val userCache        : CacheApi,
-                                  val tel              : TEL,
-                                  val reactiveMongoApi : ReactiveMongoApi) // Mailing Controller
+final class Auth @Inject() (             webJarAssets     : WebJarAssets,
+                                     val messagesApi      : MessagesApi,
+                                         jobActorAccess   : JobActorAccess,
+                            implicit val mailerClient     : MailerClient,
+                            implicit val locationProvider : LocationProvider,
+   @NamedCache("userCache") implicit val userCache        : CacheApi,
+@NamedCache("wsActorCache") implicit val wsActorCache    : CacheApi,
+                                     val tel              : TEL,
+                                     val reactiveMongoApi : ReactiveMongoApi) // Mailing Controller
                               extends Controller with I18nSupport
                                                  with JSONTemplate
                                                  with UserSessions
@@ -160,11 +162,12 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
                   // Change the login time and give the new Session ID to the user.
                   // Additionally add the watched jobs to the users watchlist.
                   val modifier = BSONDocument("$set"             ->
-                                 BSONDocument(User.SESSIONID     -> unregisteredUser.sessionID,
-                                              User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
-                                              "$addToSet"        ->
-                                 BSONDocument(User.JOBS          ->
-                                 BSONDocument("$each"            -> unregisteredUser.jobs)))
+                                 BSONDocument(User.SESSIONID     -> databaseUser.sessionID.getOrElse(BSONObjectID.generate()),
+                                              User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
+                  // TODO this adds the non logged in user's jobs to the now logged in user's job list
+                  //                            "$addToSet"        ->
+                  //               BSONDocument(User.JOBS          ->
+                  //               BSONDocument("$each"            -> unregisteredUser.jobs)))
                   // Finally add the edits to the collection
                   modifyUserWithCache(selector, modifier).map {
                     case Some(loggedInUser) =>
@@ -177,7 +180,14 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
                       removeUserFromCache(unregisteredUser)
 
                       // Tell the job actors to copy all jobs connected to the old user to the new user
-                      jobActorAccess.identifyUser(SwapUserID(unregisteredUser.userID, loggedInUser.userID))
+                      wsActorCache.get(unregisteredUser.userID.stringify) match {
+                        case Some(wsActors) =>
+                          val actorList : List[ActorRef] = wsActors : List[ActorRef]
+                          wsActorCache.set(loggedInUser.userID.stringify, actorList)
+                          actorList.foreach(_ ! ChangeSessionID(loggedInUser.sessionID.get))
+                          wsActorCache.remove(unregisteredUser.userID.stringify)
+                        case None =>
+                      }
 
                       // Everything is ok, let the user know that they are logged in now
                       Ok(LoggedIn(loggedInUser))

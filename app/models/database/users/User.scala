@@ -1,6 +1,5 @@
 package models.database.users
 
-import models.database._
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.mindrot.jbcrypt.BCrypt
