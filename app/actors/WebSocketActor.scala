@@ -3,19 +3,19 @@ package actors
 import javax.inject.Inject
 
 import actors.JobActor._
+import actors.WebSocketActor.ChangeSessionID
 import akka.actor.{PoisonPill, Actor, ActorLogging, ActorRef}
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import controllers.UserSessions
 import models.database.jobs.Job
-import models.database.users.User
 import models.job.JobActorAccess
 import modules.{LocationProvider, CommonModule}
 import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{JsValue, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.BSONObjectID
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -23,24 +23,33 @@ import scala.concurrent.ExecutionContext.Implicits.global
   *
   */
 object WebSocketActor {
-  trait Factory {
+  case class ChangeSessionID(sessionID : BSONObjectID)
 
+  trait Factory {
     def apply(@Assisted("sessionID") sessionID: BSONObjectID, @Assisted("out") out: ActorRef): Actor
   }
 }
 
-class WebSocketActor @Inject() (  val reactiveMongoApi: ReactiveMongoApi,
-                         implicit val locationProvider: LocationProvider,
-                                      jobActorAccess  : JobActorAccess,
-@NamedCache("userCache") implicit val userCache       : CacheApi,
-               @Assisted("sessionID") sessionID       : BSONObjectID,
-                     @Assisted("out") out             : ActorRef)
-                              extends Actor with ActorLogging with CommonModule with UserSessions {
+class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
+                            implicit val locationProvider: LocationProvider,
+                                         jobActorAccess  : JobActorAccess,
+   @NamedCache("userCache") implicit val userCache       : CacheApi,
+@NamedCache("wsActorCache") implicit val wsActorCache    : CacheApi,
+     @Assisted("sessionID") private  var sessionID       : BSONObjectID,
+           @Assisted("out")              out             : ActorRef)
+                                 extends Actor with ActorLogging with CommonModule with UserSessions {
 
   override def preStart(): Unit = {
+    // Grab the user from cache to ensure a
     getUser(sessionID).foreach {
       case Some(user) =>
-        jobActorAccess.identifyUser(RegisterUser(user.userID, self))
+        wsActorCache.get(user.userID.stringify) match {
+          case Some(wsActors) =>
+            val actorSet = (wsActors : List[ActorRef]).::(self)
+            wsActorCache.set(user.userID.stringify, actorSet)
+          case None =>
+            wsActorCache.set(user.userID.stringify, List(self))
+        }
       case None =>
         self ! PoisonPill
     }
@@ -48,7 +57,13 @@ class WebSocketActor @Inject() (  val reactiveMongoApi: ReactiveMongoApi,
   override def postStop(): Unit = {
     getUser(sessionID).foreach {
       case Some(user) =>
-        jobActorAccess.identifyUser(UnregisterUser(user.userID, self))
+        wsActorCache.get(user.userID.stringify) match {
+          case Some(wsActors) =>
+            val actorSet : List[ActorRef] = wsActors : List[ActorRef]
+            val newActorSet = actorSet.filter(_ == self)
+            wsActorCache.set(user.userID.stringify, newActorSet)
+          case None =>
+        }
       case None =>
         self ! PoisonPill
     }
@@ -94,5 +109,8 @@ class WebSocketActor @Inject() (  val reactiveMongoApi: ReactiveMongoApi,
     case ClearJob(jobID : String) =>
       //Logger.info("WS Log: " + jobID + " clear message sent")
       out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID)
+
+    case ChangeSessionID(sessionID : BSONObjectID) =>
+      this.sessionID = sessionID
   }
 }
