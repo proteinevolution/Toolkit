@@ -28,7 +28,7 @@
 .grid {
     display: block;
     margin: auto;
-    margin-top: 320px;
+    margin-top: 250px;
     width: 55%;
 }
 
@@ -84,9 +84,11 @@ select {
 }
 
 .search_container div {
-    margin-top: 1em;
+    margin-top: 0.6em;
+    padding-top: 0.3em;
     padding-left: 1em;
     padding-right: 1em;
+    padding-bottom: 0.3em;
 }
 
 .search_container span {
@@ -424,17 +426,18 @@ select {
     background-clip: content-box;
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     float: none;
-    margin: 1em 1em 0em 1em;
-    height: 10em;
+    margin: 1em 1em 0 1em;
+    height: 15.7em;
     box-shadow: 0 1px 2px 0 #ccc;
-    background-color: #eee;
+    background-color: transparent;
     border-radius: 3px;
     border: 1px solid #ccc;
 
 }
 
 .news_container {
-
+    background: rgba(238, 238, 238, 0.95);
+    padding-bottom: 10px;
 }
 
 .news p {
@@ -495,6 +498,43 @@ select {
 #mainlabel {
     font-size: 0.85em;
     padding-left: 0 !important;
+}
+
+.liveTable {
+    background: rgba(214, 214, 214, 0.94);
+    text-align: center;
+    padding: 4px 15px 4px 15px;
+    margin-bottom: 0;
+}
+
+.liveTable thead, .liveTable tbody {
+    background: transparent;
+
+}
+
+.liveTable th {
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
+    text-align: center;
+    font-size: 0.70em;
+    font-weight: normal;
+    border: #a6a6a6 1px solid;
+}
+
+.liveTable td {
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
+    text-align: center;
+    font-size: 0.70em;
+    color: black;
+    border: #a6a6a6 1px solid;
+}
+
+
+th#run{
+    max-width: 56px;
+}
+
+th#lastJobs{
+    max-width: 56px;
 }
 
 /*Responsiveness*/

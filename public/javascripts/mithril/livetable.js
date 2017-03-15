@@ -7,19 +7,17 @@ var JobTable = {
             m('table.liveTable', [
                 m('thead', [
                     m('tr', [
-                        m('th', 'Running'),
+                        m('th#run', 'Running jobs'),
                         m('th', 'Users'),
                         m('th', 'Last job'),
-                        m('th', 'Jobs last 24h'),
-                        m('th', 'Cluster load')
-                    ]),
+                        m('th#lastJobs', 'Jobs last 24h')
+                    ])
+                ])],[
                 m('tbody', [m('tr', [
-                    m('td', '10'),
-                    m('td', '200'),
+                    m('td', '16'),
+                    m('td', '46'),
                     m('td', 'HHpred'),
-                    m('td', '1111'),
-                    m('td', '14')
-                ])
+                    m('td', '1111')
                 ])])
             ])
         ]);
