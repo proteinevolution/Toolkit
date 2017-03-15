@@ -87,6 +87,9 @@
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("jquery.dataTables.min.js"))"></script>
         <link rel="stylesheet" href="@routes.WebJarAssets.at(webJarAssets.locate("jquery.dataTables.min.css"))">
 
+
+        <!-- Loading Overlay -->
+        <script src="@routes.Assets.versioned("javascripts/vendor/loadingoverlay.min.js")"></script>
         <!-- Javascript Router -->
         @helper.javascriptRouter("jsRoutes")(
             routes.javascript.Jobs.updateDateViewed,
