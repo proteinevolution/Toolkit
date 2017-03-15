@@ -162,6 +162,24 @@ function mustHave2(el) {
 
 }
 
+// TODO standard validator for the search section. If search tools differ much in their validations, this one should be kept simple and small
+
+
+var searchVal = function(el) { /*...*/ };
+
+
+// TODO other validators, similar story
+
+
+var classVal = function(el) { /*...*/ };
+var utilsVal = function(el) { /*...*/ };
+var secondaryVal = function(el) { /*...*/ };
+var ternaryVal = function(el) { /*...*/ };
+var seqAnalVal = function(el) { /*...*/ };
+
+
+// this is the standard validator for the alignment section
+
 var alignmentVal = function(el){
 
     var self = this;
