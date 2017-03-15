@@ -23,6 +23,7 @@ div#main-container {
 }
 
 #main-container .row {
+
     margin-left: 0;
     margin-right: 0;
 }
@@ -220,7 +221,7 @@ tr.job a:visited {
 }
 
 #main-content {
-
+    padding-top: 20px;
     min-height: 100%;
     display: flex;
     margin-left: 0;
