@@ -743,7 +743,7 @@ window.ParameterAlignmentComponent = {
                 cols: 70,
                 class: "alignment",
                 id: ctrl.id + "_two",
-                value: args.value,
+                value: window.JobModel.getParamValue("alignment_two"),
                 style: "display: none; margin-top: 1em;",
                 spellcheck: false,
                 config: validation
@@ -870,12 +870,12 @@ ParameterSelectComponent = {
             }, args.param.label),
             m("select", paramAttrs,
                 args.param.paramType.options.map(function(entry) {
-                    return m("option", (entry[0] === args.value ? {
+                    return m("option", (args.value.indexOf(entry[0]) > -1 ? {
                             value: entry[0],
                             selected: "selected"
                         } : {
                             value: entry[0]
-                        }), entry[1]);
+                        }), entry[1])
                 }))
         ]);
     }
