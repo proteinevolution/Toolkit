@@ -160,11 +160,12 @@ final class Auth @Inject() (          webJarAssets     : WebJarAssets,
                   // Change the login time and give the new Session ID to the user.
                   // Additionally add the watched jobs to the users watchlist.
                   val modifier = BSONDocument("$set"             ->
-                                 BSONDocument(User.SESSIONID     -> unregisteredUser.sessionID,
-                                              User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
-                                              "$addToSet"        ->
-                                 BSONDocument(User.JOBS          ->
-                                 BSONDocument("$each"            -> unregisteredUser.jobs)))
+                                 BSONDocument(User.SESSIONID     -> databaseUser.sessionID.getOrElse(BSONObjectID.generate()),
+                                              User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
+                  // TODO this adds the non logged in user's jobs to the now logged in user's job list
+                  //                            "$addToSet"        ->
+                  //               BSONDocument(User.JOBS          ->
+                  //               BSONDocument("$each"            -> unregisteredUser.jobs)))
                   // Finally add the edits to the collection
                   modifyUserWithCache(selector, modifier).map {
                     case Some(loggedInUser) =>
