@@ -139,24 +139,22 @@ object BlastVisualization extends Constants {
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     var idTrimmed = id.substring(1, 5)
     var idCDD = id.replaceAll("PF", "pfam")
+    links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
     if(db == "scop") {
-      links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
+
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
       links += generateLink(scopBaseLink, id, "SCOP")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
     }
     if(db == "mmcif") {
-      links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + idPdb + "\')\";\">Template 3D structure</a>"
       links += generateLink(pdbeBaseLink, idPdb, "PDBe")
     }
     if (db == "pfam"){
-      links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
       idCDD = idCDD.replaceAll("\\..*","")
       links += generateLink(cddBaseLink, idCDD, "CDD")
     }
     if (db == "refseq"){
-      links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
     }
     Html(links.mkString(" | "))
   }
