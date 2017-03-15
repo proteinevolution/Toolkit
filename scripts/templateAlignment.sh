@@ -23,3 +23,8 @@ then
     hhfilter -i results/$accession.a3m -o results/$accession.template.reduced.a3m -diff 100
     reformat.pl a3m fas results/$accession.template.reduced.a3m results/$accession.template.fas
 fi
+
+if [ ! -s "results/$accession.a3m" ]
+then
+    cp results/query.a3m results/$accession.template.fas
+fi

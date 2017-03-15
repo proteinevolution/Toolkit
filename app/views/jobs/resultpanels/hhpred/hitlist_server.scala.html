@@ -85,7 +85,7 @@
                             <td colspan="3">
                             @{hit \ "struc" match {
                                     case JsDefined(jsValue) => BlastVisualization.getLinks((hit \ "struc").get.as[String])
-                                    case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
+                                    case undefined: JsUndefined => BlastVisualization.getLinks("undefinedAccession") ;
                                 }
                             }
                             </td>
