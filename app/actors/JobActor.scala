@@ -340,7 +340,6 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
 
     // User does no longer watch this Job
     case StopWatch(jobID, userID) =>
-      Logger.info("User stops watching JobID " + jobID)
       modifyJob(BSONDocument(Job.JOBID -> jobID),
                 BSONDocument("$pull"   -> BSONDocument(Job.WATCHLIST -> userID))).map {
         case Some(updatedJob) =>
@@ -354,7 +353,6 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
 
     // User Starts watching job
     case StartWatch(jobID, userID) =>
-      Logger.info("User stops watching JobID " + jobID)
       modifyJob(BSONDocument(Job.JOBID   -> jobID),
                 BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID))).map {
         case Some(updatedJob) =>
@@ -378,6 +376,7 @@ class JobActor @Inject() (             runscriptManager        : RunscriptManage
     // User actor logged in and needs to copy the websocket actors
     case SwapUserID(oldUserID : BSONObjectID, newUserID : BSONObjectID) =>
       val u: Set[ActorRef]     = this.users(oldUserID)
+      this.users               = this.users.-(oldUserID)
       this.users               = this.users.updated(newUserID, u)
 
     // Message from outside that the jobState has changed
