@@ -453,4 +453,3 @@ function calcColor(prob) {
     }
     return [red, grn, blu];
 }
-
