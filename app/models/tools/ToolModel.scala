@@ -183,7 +183,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.MAXROUNDS), Seq.empty),
 
   // MAFFT
-    ("mafft", "Mafft", "mft", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.GAP_OPEN, paramAccess.OFFSET), Seq.empty),
+    ("mafft", "MAFFT", "mft", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.GAP_OPEN, paramAccess.OFFSET), Seq.empty),
 
    // Kalign
       ("kalign", "Kalign", "kal", "alignment", "",
