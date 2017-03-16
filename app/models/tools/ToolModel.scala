@@ -97,6 +97,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       case "muscle" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
         ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
         ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
+
       case "kalign" => getResult(jobID).map {
         case Some(jsvalue) =>
           Seq(("Alignment", views.html.jobs.resultpanels.alignment("Kalign",jobID, jsvalue)),
@@ -104,8 +105,14 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
             )
         case None => Seq.empty
       }
-      case "mafft" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
-        ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
+
+      case "mafft" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment("MAFFT",jobID, jsvalue)),
+            ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
+          )
+        case None => Seq.empty
+      }
 
       case "aln2plot" => Future.successful(Seq(("Hydrophobicity", views.html.jobs.resultpanels.image(s"/files/$jobID/hydrophobicity.png")),
         ("SideChainVolume", views.html.jobs.resultpanels.image(s"/files/$jobID/side_chain_volume.png"))))
@@ -183,7 +190,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.MAXROUNDS), Seq.empty),
 
   // MAFFT
-    ("mafft", "MAFFT", "mft", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.GAP_OPEN, paramAccess.OFFSET), Seq.empty),
+    ("mafft", "MAFFT", "mft", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.GAP_OPEN, paramAccess.OFFSET), Seq.empty),
 
    // Kalign
       ("kalign", "Kalign", "kal", "alignment", "",

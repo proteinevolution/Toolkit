@@ -114,6 +114,17 @@ validation = function(elem, isInit, ctx) {
 
                     break;
 
+                case "hhfilter":
+                    /** validation model for hhfilter:
+                     * input has to be aligned FASTA
+                     * input must consist of at least 2 seqs
+                     */
+
+                    var hhfilter2Target = new alignmentVal($(elem));
+                    hhfilter2Target.accept(mustHave2Visitor);
+
+                    break;
+
 
                 default:
                     console.warn("no tool specified");
