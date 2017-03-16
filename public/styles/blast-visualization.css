@@ -346,3 +346,11 @@ input {
 }
 
 
+.dataTable{
+    width: 95% !important;
+    margin-left: unset !important;
+ }
+
+.dataTables_scrollHeadInner{
+   width: unset !important;
+}
