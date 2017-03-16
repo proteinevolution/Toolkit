@@ -238,18 +238,18 @@ hr {
 }
 
 .exampleReformat:hover{
-    background-color: white !important;
+    background-color: transparent !important;
     color: black !important;
 }
 
 .exampleReformat:focus {
-    background-color: white !important;
+    background-color: transparent !important;
     color: black !important;
 }
 
 
 .alignmentParameter input {
-    background-color: white;
+    background-color: transparent;
     color: black;
     float: left;
     padding-left: 0;
@@ -257,12 +257,12 @@ hr {
 }
 
 .alignmentParameter input:hover {
-    background-color: white;
+    background-color: transparent;
     color: black;
 }
 
 .alignmentParameter input:focus {
-    background-color: white;
+    background-color: transparent;
     color: black;
 }
 
@@ -279,7 +279,7 @@ hr {
     height: 2.7em;
     border-width: 0 0 1px 0;
     box-shadow: none;
-    background-color: white;
+    background-color: transparent;
 }
 
 .parameters input:focus {
@@ -291,7 +291,7 @@ hr {
     -webkit-transition : border 100ms ease-out;
     -moz-transition : border 100ms ease-out;
     -o-transition : border 100ms ease-out;
-    background-color: white;
+    background-color: transparent;
 }
 .parameters input:invalid {
     border-color: red;
@@ -687,7 +687,10 @@ textarea:focus{
 }
 
 .callout.alert{
-    padding: 0.5em;
+    opacity: 0.9;
+    text-align: center;
+    min-width: 12em;
+    padding: 0.6em 0.7em 0.6em 0.7em;
     color:red;
     border: 1px solid #ff00001a;
     -moz-border-radius: 2px;
@@ -695,7 +698,10 @@ textarea:focus{
     border-radius: 2px;
 }
 .callout.success{
-    padding: 0.5em;
+    opacity: 0.9;
+    min-width: 12em;
+    text-align: center;
+    padding: 0.6em 0.7em 0.6em 0.7em;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     border-radius: 2px;
