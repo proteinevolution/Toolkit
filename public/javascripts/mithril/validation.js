@@ -92,6 +92,17 @@ validation = function(elem, isInit, ctx) {
 
                     break;
 
+                case "hmmer":
+                    /** validation model for hmmer:
+                     * input has to be a single FASTA sequence
+                     * or aligned FASTA with at least 2 seqs
+                     */
+
+                    var hmmerTarget = new seqoralignmentVal($(elem));
+                    
+                    break;
+
+
                 default:
                     console.warn("no tool specified");
             }
@@ -217,8 +228,8 @@ var alignmentVal = function(el){
         this.fastaStep2();
 
     else if(el.validate('fasta') && !el.reformat('alignment')){
-        feedback(false, "not aligned", "warning");
-        $(".submitJob").prop("disabled", false);
+        feedback(false, "not aligned FASTA", "error");
+        $(".submitJob").prop("disabled", true);
     }
 
     else if (el.val().length === 0)
@@ -260,6 +271,49 @@ var multiseqVal = function(el){
     else if(el.validate('fasta') && !el.reformat('alignment')){
         feedback(true);
         $(".submitJob").prop("disabled", false);
+    }
+
+    else if (el.val().length === 0)
+        valReset();
+};
+
+
+var seqoralignmentVal = function(el){
+
+    var self = this;
+
+    self.fastaStep2 = function(){
+        feedback(true);
+        originIsFasta = true;
+    };
+
+    self.accept = function (visitor) {
+        visitor.visit(self);
+    };
+
+
+    if (!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
+        feedback(false, "this is no fasta!", "error");
+
+    else if (!el.reformat('uniqueids'))
+        feedback(false, "FASTA but identifiers are not unique!", "error");
+
+    else if(!el.validate('fasta') && el.reformat('detect') != '' && el.val().length != 0) {
+        originIsFasta = false;
+        var t = el.reformat('detect');
+        feedback(false, "Wrong format found: " + t + ". <b>Auto-transformed to Fasta</b>", "success", t);
+        $("#alignment").val(el.reformat('fasta'));
+    }
+
+    else if (el.validate('fasta') && el.reformat('alignment') &&  originIsFasta)
+        this.fastaStep2();
+
+    else if(el.validate('fasta') && !el.reformat('alignment') && fasta2json(el.val()).length > 1){
+        feedback(false, "not aligned FASTA", "error");
+        $(".submitJob").prop("disabled", true);
+    }
+    else if(el.validate('fasta') && !el.reformat('alignment') && fasta2json(el.val()).length == 1){
+        this.fastaStep2();
     }
 
     else if (el.val().length === 0)
