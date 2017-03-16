@@ -293,7 +293,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // PatternSearch
     ("patsearch", "PatternSearch", "pats", "search", "",
-      Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.GRAMMAR, paramAccess.SEQ_COUNT), Seq.empty),
+      Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.GRAMMAR, paramAccess.SEQCOUNT), Seq.empty),
 
     // 6FrameTranslation
       ("6frametranslation", "6FrameTranslation", "6frt", "utils", "",
