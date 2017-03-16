@@ -229,10 +229,11 @@ hr {
 }
 
 .exampleReformat {
+    margin-top: 5px;
+    padding-left: 15px !important;
     background-color: white !important;
     color: black !important;
     float: left !important;
-    padding-left: 0 !important;
     margin-left: 0 !important;
 }
 
