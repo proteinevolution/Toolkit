@@ -195,24 +195,34 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN,
       paramAccess.GAP_EXT, paramAccess.DESC), Seq.empty),
 
-    // T-Coffee
-    ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER), Seq.empty),
 
     // CLustalOmega
-    ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT, paramAccess.OUTPUT_ORDER), Seq.empty),
+    ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT,
+      paramAccess.OUTPUT_ORDER), Seq("kalign", "tcoffee", "mafft", "msaprobs", "muscle", "hhpred", "hmmer", "hhfilter")),
+
+    // Kalign
+    ("kalign", "Kalign", "kal", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER,
+      paramAccess.GAP_OPEN, paramAccess.GAP_EXT_KALN, paramAccess.GAP_TERM, paramAccess.BONUSSCORE),
+      Seq("clustalo", "tcoffee", "mafft", "msaprobs", "muscle", "hhpred", "hmmer", "hhfilter")),
+
+    // T-Coffee
+    ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER),
+      Seq("clustalo", "kalign", "mafft", "msaprobs", "muscle", "hhpred", "hmmer", "hhfilter")),
+
+
+    // MAFFT
+    ("mafft", "MAFFT", "mft", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.GAP_OPEN,
+      paramAccess.OFFSET), Seq("clustalo", "kalign", "tcoffee", "msaprobs", "muscle", "hhpred", "hmmer", "hhfilter")),
+
 
     // MSA Probs
-    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER), Seq.empty),
+    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER),
+      Seq("clustalo", "kalign", "tcoffee", "mafft", "muscle", "hhpred", "hmmer", "hhfilter")),
 
     // MUSCLE
-    ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.MAXROUNDS), Seq.empty),
+    ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.MAXROUNDS),
+      Seq("clustalo", "kalign", "tcoffee", "mafft", "msaprobs", "hhpred", "hmmer", "hhfilter")),
 
-  // MAFFT
-    ("mafft", "MAFFT", "mft", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.GAP_OPEN, paramAccess.OFFSET), Seq.empty),
-
-   // Kalign
-      ("kalign", "Kalign", "kal", "alignment", "",
-        Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.GAP_OPEN, paramAccess.GAP_EXT_KALN, paramAccess.GAP_TERM, paramAccess.BONUSSCORE), Seq("modeller", "hhpred")),
 
     // Hmmer
     ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
