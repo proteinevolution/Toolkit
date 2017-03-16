@@ -260,7 +260,8 @@ $("#structureModal").bind('closed.zf.reveal', (function() {
     $('#accessionStructure').html("");
     $('#viewport canvas').remove();
 }));
-
+var data;
+var checkbox = "hitCheckbox";
 var currentStructureAccession = "";
 var hitlist;
 var colorSS = false;
@@ -275,6 +276,13 @@ var ss_extended = document.getElementsByClassName("aa_h");
 var aas;
 
 (function()  {
+
+    // get result json
+    var fileUrl = "/files/@jobID/hhr.json";
+    $.getJSON(fileUrl, function (data_) {
+        data = data_;
+    });
+
 
     $('.slider').on('moved.zf.slider', function() {
         $('#lefthandle').html($('#hidden1').val());
@@ -540,7 +548,52 @@ function forwardTemplateAlignment_(tool, forwardData){
 
 
 function forward_(tool){
-    forward(tool, forwardData);
+    var forwardData = []
+    var checkedCheckboxes = [];
+    var sliderRange = getSliderRange();
+    // get values of all checked Checkboxes
+    $('input:checkbox.' + checkbox + ":checked").each(function () {
+        checkedCheckboxes.push($(this).val()-1)
+    });
+
+    if($('#selectedHits').is(':checked')) {
+        //fill array with headers and sequences
+
+        checkedCheckboxes.forEach(function callback(currentValue) {
+            var seq = "";
+            if ($('#sliderRegion').is(':checked')) {
+                seq = data.alignments[currentValue].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
+            } else {
+                seq = data.alignments[currentValue].template.seq;
+            }
+            if(forwardData.indexOf(seq) == -1) {
+                forwardData.push(data.alignments[currentValue].header.substr(0, 60));
+                forwardData.push(seq);
+            }
+        });
+    } else if ($('#accordingEvalue').is(':checked')) {
+
+            for (i = 0; i < data.alignments.length; ++i) {
+                if (data.alignments[i].info.eval > $("#forwardEvalue").val()) {
+                    var seq="";
+                    if ($('#sliderRegion').is(':checked')) {
+                        seq = data.alignments[i].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
+                    } else {
+                        seq = data.alignments[i].template.seq;
+                    }
+                    if(forwardData.indexOf(seq) == -1) {
+                        forwardData.push(data.alignments[i].header.substr(0, 60));
+                        forwardData.push(seq);
+                    }
+                }
+
+            }
+        }
+
+
+    forward(tool, forwardData.join("\n"));
+
+
 }
 
 

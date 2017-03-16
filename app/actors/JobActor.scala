@@ -319,6 +319,7 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
     case Delete(jobID) =>
       this.currentJobs.get(jobID) match {
         case Some(job) =>
+          jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
           this.removeJob(jobID)
           // Message user clients to remove the job from their watchlist
           val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify) : Option[List[ActorRef]])
