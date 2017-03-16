@@ -90,10 +90,6 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       case "clustalo" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
         ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
 
-      case "muscle" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
-        ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
-        ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
-
       case "kalign" => getResult(jobID).map {
         case Some(jsvalue) =>
           Seq(("Alignment", views.html.jobs.resultpanels.alignment("Kalign",jobID, jsvalue)),
@@ -113,6 +109,14 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       case "msaprobs" => getResult(jobID).map {
         case Some(jsvalue) =>
           Seq(("Alignment", views.html.jobs.resultpanels.alignment("MSAProbs",jobID, jsvalue)),
+            ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
+          )
+        case None => Seq.empty
+      }
+
+      case "muscle" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment("MUSCLE",jobID, jsvalue)),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
           )
         case None => Seq.empty
