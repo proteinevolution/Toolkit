@@ -87,8 +87,13 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div"))))
 
-      case "clustalo" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
-        ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
+      case "clustalo" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment("Clustal Omega",jobID, jsvalue)),
+            ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
+          )
+        case None => Seq.empty
+      }
 
       case "kalign" => getResult(jobID).map {
         case Some(jsvalue) =>
@@ -189,7 +194,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.MULTISEQ), Seq.empty),
 
     // CLustalOmega
-    ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT), Seq.empty),
+    ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT, paramAccess.OUTPUT_ORDER), Seq.empty),
 
     // MSA Probs
     ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER), Seq.empty),
