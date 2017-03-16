@@ -90,10 +90,6 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       case "clustalo" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
         ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
 
-      case "msaprobs" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
-        ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
-        ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
-
       case "muscle" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
         ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
         ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
@@ -109,6 +105,14 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       case "mafft" => getResult(jobID).map {
         case Some(jsvalue) =>
           Seq(("Alignment", views.html.jobs.resultpanels.alignment("MAFFT",jobID, jsvalue)),
+            ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
+          )
+        case None => Seq.empty
+      }
+
+      case "msaprobs" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment("MSAProbs",jobID, jsvalue)),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
           )
         case None => Seq.empty
@@ -184,7 +188,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT), Seq.empty),
 
     // MSA Probs
-    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.MULTISEQ), Seq.empty),
+    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER), Seq.empty),
 
     // MUSCLE
     ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.MAXROUNDS), Seq.empty),
