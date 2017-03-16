@@ -229,6 +229,9 @@
         </div>
             </div>
 
+            <!-- scroll-top arrow -->
+        <div id="scrollTop"></div>
+
             <!-- Script Inclusions -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
 
@@ -286,7 +289,27 @@
 //                      'method': articlePushRoute.method
 //                  });
 
+                  // add loading when ajax request is send
+                  $(document).ajaxStart(function() {
+                      $.LoadingOverlay("show");
+                  });
+                  $(document).ajaxStop(function() {
+                      $.LoadingOverlay("hide");
+                  });
 
+                  // scroll arrow
+                  $(window).scroll(function() {
+                      if ($(window).scrollTop() > 200) {
+                          $('#scrollTop').show();
+                      } else {
+                          $('#scrollTop').hide();
+                      }
+                  });
+
+                  $('#scrollTop').click(function() {
+                      $("html, body").animate({ scrollTop: 0 }, 200);
+                      return false;
+                  });
                     function openNav() {
                         document.getElementById("myNav").style.height = "100%";
                     }

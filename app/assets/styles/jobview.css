@@ -293,9 +293,8 @@ hr {
     background-color: white;
 }
 .parameters input:invalid {
-    background-color: #ff9b49;
+    border-color: red;
 }
-
 
 .submitJob {
     background-color: rgba(0, 110, 98, 166) !important;
@@ -666,9 +665,38 @@ a.hasNotes:active {
 }
 
 #validOrNot {
-    margin-top: 0;
+    margin-left: auto;
+    float: right;
 }
 
 div#calloutSpacer {
    min-height: 3em;
+}
+
+.inputAlert{
+    color: #D8000C;
+    list-style-type: circle;
+}
+
+textarea:focus{
+
+}
+
+.callout.alert{
+    color: red;
+    opacity: 0.5;
+    padding: 0.7em;
+}
+
+
+#scrollTop {
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    background: url('../images/arrow-top.svg') no-repeat;
+    background-size: 40px 40px;
+    outline: 0;
 }

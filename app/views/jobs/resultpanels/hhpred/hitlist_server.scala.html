@@ -275,12 +275,6 @@ var ss_extended = document.getElementsByClassName("aa_h");
 var aas;
 
 (function()  {
-            $(document).ajaxStart(function() {
-                $.LoadingOverlay("show");
-            });
-    $(document).ajaxStop(function() {
-                $.LoadingOverlay("hide");
-            });
 
     $('.slider').on('moved.zf.slider', function() {
         $('#lefthandle').html($('#hidden1').val());
