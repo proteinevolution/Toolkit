@@ -363,7 +363,7 @@ function drawDataTable(hits){
         "aoColumns": [
             { "mDataProp": "no" },
             { "mDataProp": "struc" , render: function (data){return getSingleLink(data)}},
-            { "mDataProp": "hit" },
+            { "mDataProp": "hit" , render: function (data) {return data.replace(/;/g, "")}},
             { "mDataProp": "prob" },
             { "mDataProp": "eval" },
             { "mDataProp": "pval", render: function(data){return data.toExponential();}},
