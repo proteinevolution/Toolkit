@@ -45,7 +45,6 @@
                         <th>qEnd</th>
                         <th>tStart</th>
                         <th>tEnd</th>
-                        <th>Ref</th>
                     </tr>
                 </thead>
             </table>
@@ -136,14 +135,14 @@
                         @* seq of query, if present *@
                         @{alignment \ "query" \ "seq" match {
                             case JsDefined(jsValue) =>
-                            {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query" \ "name").get.as[String],(alignment \ "query" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "query" \ "seq").get.as[String]),(alignment \ "query" \ "end").get.toString()))}
+                            {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query" \ "name").get.as[String],(alignment \ "query" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "query" \ "seq").get.as[String]),(alignment \ "query" \ "end").get.toString(),"("+(alignment \ "query" \ "ref").get+")".toString()))}
                             case undefined: JsUndefined => Logger.info("query.seq undefined in results!")
                             }
                         }
                         @*Consensus of query, if present*@
                         @{alignment \ "query" \ "consensus" match {
                             case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("Q", "Consensus",(alignment \ "query" \ "start").get.toString(), (alignment \ "query" \ "consensus").get.as[String],(alignment \ "query" \ "end").get.toString()))}
+                                {BlastVisualization.makeRow("sequence", Array("Q", "Consensus",(alignment \ "query" \ "start").get.toString(), (alignment \ "query" \ "consensus").get.as[String],(alignment \ "query" \ "end").get.toString(),"("+(alignment \ "query" \ "ref").get+")".toString()))}
                             case undefined: JsUndefined => Logger.info("query.consensus undefined in results!")
                             }
                         }
@@ -157,14 +156,14 @@
                         @*  consensus template, if present *@
                         @{alignment \ "template" \ "consensus" match {
                             case JsDefined(jsValue) =>
-                            {BlastVisualization.makeRow("sequence", Array("T", "Consensus", (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "consensus").get.as[String],(alignment \ "template" \ "end").get.toString()))}
+                            {BlastVisualization.makeRow("sequence", Array("T", "Consensus", (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "consensus").get.as[String],(alignment \ "template" \ "end").get.toString(),"("+(alignment \ "template" \ "ref").get+(")").toString()))}
                             case undefined: JsUndefined => Logger.info("template.consensus undefined in results!")
                             }
                         }
                         @*  seq template, if present *@
                         @{alignment \ "template" \ "seq" match {
                             case JsDefined(jsValue) =>
-                            {BlastVisualization.makeRow("sequence", Array("T", (alignment \ "template" \ "name").get.as[String], (alignment \ "template" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "template" \ "seq").get.as[String]),(alignment \ "template" \ "end").get.toString()))}
+                            {BlastVisualization.makeRow("sequence", Array("T", (alignment \ "template" \ "name").get.as[String], (alignment \ "template" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "template" \ "seq").get.as[String]),(alignment \ "template" \ "end").get.toString(),"("+(alignment \ "template" \ "ref").get+")".toString()))}
                             case undefined: JsUndefined => Logger.info("template.seq undefined in results!")
                             }
                         }
@@ -185,6 +184,7 @@
 
                         <tr>
                             <td class="histogram" colspan="4">@FileLoader.loadHTML(s"$jobID/results/${jobID}_${(hit \ "no").get}.map")</td>
+
                         </tr>
                         <tr>
                             <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
@@ -373,13 +373,12 @@ function drawDataTable(hits){
             { "mDataProp": "query_begin" },
             { "mDataProp": "query_end" },
             { "mDataProp": "template_begin" },
-            { "mDataProp": "template_end" },
-            { "mDataProp": "ref" }
+            { "mDataProp": "template_end" }
         ],
         'columnDefs': [{
             'targets': 0,
             'searchable': false,
-            'orderable': false,
+            'orderable': true,
             'render': function (data){
                 return '<input type="checkbox" name="templates" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '"> ' + data;
             }
