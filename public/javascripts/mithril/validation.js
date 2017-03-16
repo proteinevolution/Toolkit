@@ -26,6 +26,7 @@ validation = function(elem, isInit, ctx) {
                 }
             };
 
+
             //---------------------------------------------------------------------------------------------//
 
             switch(toolname) {
@@ -99,7 +100,18 @@ validation = function(elem, isInit, ctx) {
                      */
 
                     var hmmerTarget = new seqoralignmentVal($(elem));
-                    
+
+                    break;
+
+                case "mmseqs2":
+                    /** validation model for mmseq2:
+                     * input has to be FASTA
+                     * input must consist of at least 2 seqs
+                     */
+
+                    var mmseqs2Target = new multiseqVal($(elem));
+                    mmseqs2Target.accept(mustHave2Visitor);
+
                     break;
 
 
@@ -178,6 +190,7 @@ function mustHave2(el) {
     }
 
 }
+
 
 // TODO standard validator for the search section. If search tools differ much in their validations, this one should be kept simple and small
 
