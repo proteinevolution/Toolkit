@@ -409,6 +409,9 @@ font-size: 0.65em !important;
     font-weight: bold;
 }
 
+.job {
+    cursor: pointer;
+}
 
 .job .jobid {
     text-overflow: ellipsis;
