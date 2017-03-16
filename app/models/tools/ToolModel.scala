@@ -57,9 +57,6 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         ("SOLVX", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png", s"$jobPath$jobID/results/solvx/$jobID.solvx")),
         ("ANOLEA", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png", s"$jobPath$jobID/results/$jobID.pdb.profile"))))
 
-      case "tcoffee" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)), ("Conservation", views.html.jobs.resultpanels.tcoffee_colored(jobID)),
-        ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")), ("Text", views.html.jobs.resultpanels.tcoffee_text(jobID))))
-
       case "hmmer" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/outfile")),
         ("Stockholm", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/outfile_multi_sto")),
         ("Domain_Table", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/domtbl"))))
@@ -87,12 +84,13 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div"))))
 
-      case "clustalo" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
-        ("Alignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln"))))
-
-      case "muscle" => Future.successful(Seq(("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID)),
-        ("ClustalAlignment", views.html.jobs.resultpanels.simple(s"/files/$jobID/alignment.clustalw_aln")),
-        ("FastaAlignment", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.fas"))))
+      case "clustalo" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment("Clustal Omega",jobID, jsvalue)),
+            ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
+          )
+        case None => Seq.empty
+      }
 
       case "kalign" => getResult(jobID).map {
         case Some(jsvalue) =>
@@ -113,6 +111,22 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       case "msaprobs" => getResult(jobID).map {
         case Some(jsvalue) =>
           Seq(("Alignment", views.html.jobs.resultpanels.alignment("MSAProbs",jobID, jsvalue)),
+            ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
+          )
+        case None => Seq.empty
+      }
+
+      case "muscle" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment("MUSCLE",jobID, jsvalue)),
+            ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
+          )
+        case None => Seq.empty
+      }
+
+      case "tcoffee" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment("T-Coffee",jobID, jsvalue)),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
           )
         case None => Seq.empty
@@ -181,24 +195,34 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN,
       paramAccess.GAP_EXT, paramAccess.DESC), Seq.empty),
 
-    // T-Coffee
-    ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.MULTISEQ), Seq.empty),
 
     // CLustalOmega
-    ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT), Seq.empty),
+    ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT,
+      paramAccess.OUTPUT_ORDER), Seq("kalign", "tcoffee", "mafft", "msaprobs", "muscle", "hhpred", "hmmer", "hhfilter")),
+
+    // Kalign
+    ("kalign", "Kalign", "kal", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER,
+      paramAccess.GAP_OPEN, paramAccess.GAP_EXT_KALN, paramAccess.GAP_TERM, paramAccess.BONUSSCORE),
+      Seq("clustalo", "tcoffee", "mafft", "msaprobs", "muscle", "hhpred", "hmmer", "hhfilter")),
+
+    // T-Coffee
+    ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER),
+      Seq("clustalo", "kalign", "mafft", "msaprobs", "muscle", "hhpred", "hmmer", "hhfilter")),
+
+
+    // MAFFT
+    ("mafft", "MAFFT", "mft", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.GAP_OPEN,
+      paramAccess.OFFSET), Seq("clustalo", "kalign", "tcoffee", "msaprobs", "muscle", "hhpred", "hmmer", "hhfilter")),
+
 
     // MSA Probs
-    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER), Seq.empty),
+    ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER),
+      Seq("clustalo", "kalign", "tcoffee", "mafft", "muscle", "hhpred", "hmmer", "hhfilter")),
 
     // MUSCLE
-    ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.MAXROUNDS), Seq.empty),
+    ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.MAXROUNDS),
+      Seq("clustalo", "kalign", "tcoffee", "mafft", "msaprobs", "hhpred", "hmmer", "hhfilter")),
 
-  // MAFFT
-    ("mafft", "MAFFT", "mft", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.GAP_OPEN, paramAccess.OFFSET), Seq.empty),
-
-   // Kalign
-      ("kalign", "Kalign", "kal", "alignment", "",
-        Seq(paramAccess.MULTISEQ, paramAccess.GAP_OPEN, paramAccess.GAP_EXT_KALN, paramAccess.GAP_TERM, paramAccess.BONUSSCORE), Seq("modeller", "hhpred")),
 
     // Hmmer
     ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
@@ -279,7 +303,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // PatternSearch
     ("patsearch", "PatternSearch", "pats", "search", "",
-      Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.GRAMMAR, paramAccess.SEQ_COUNT), Seq.empty),
+      Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.GRAMMAR, paramAccess.SEQCOUNT), Seq.empty),
 
     // 6FrameTranslation
       ("6frametranslation", "6FrameTranslation", "6frt", "utils", "",

@@ -126,7 +126,6 @@ class ParamAccess @Inject() (tel: TEL) {
   final val GAP_TERM = Param("gap_term",Decimal("0.01", Some(0),Some(10)),1, "Terminal gap penalty")
   final val GAP_EXT_KALN = Param("gap_ext_kaln",Decimal("0.01", Some(0),Some(10)),1, "Gap extension penalty")
   final val BONUSSCORE = Param("bonusscore",Decimal("0.01", Some(0),Some(10)),1, "Bonus Score")
-
   final val DESC = Param("desc",ParamType.UnconstrainedNumber,1, "No. of descriptions")
   final val CONSISTENCY =  Param("consistency",ParamType.UnconstrainedNumber,1, "Passes of consistency transformation")
   final val ITREFINE = Param("itrefine",ParamType.UnconstrainedNumber,1, "Passes of iterative refinements")
@@ -167,7 +166,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val MIN_SEQID = select("min_seqid", "Minimum sequence identity")
   final val MIN_ALN_COV = select("min_aln_cov", "Minimum alignment coverage")
   final val GRAMMAR = select("grammar", "Select grammar")
-  final val SEQ_COUNT = select("seq_count", "Maximum number of sequences to display")
+  final val SEQCOUNT = select("seqcount", "Maximum number of sequences to display")
   final val INC_NUCL = select("inc_nucl", "Include nucleic acid sequence")
   final val AMINO_NUCL_REL = select("amino_nucl_rel", "Amino acids in relation to nucleotide sequence")
   final val CODON_TABLE = select("codon_table", "Select codon usage table")
