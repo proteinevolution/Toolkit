@@ -108,6 +108,19 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     }
   }
 
+  // Checks if a mainID exists
+  def existsMainID(mainID : String): Future[RichSearchResponse] = {
+    client.execute{
+      search in jobIndex query {
+        bool(
+          must(
+            termQuery("_id", mainID)
+          )
+        )
+      }
+    }
+  }
+
   // Checks if a jobID already exists
   def existsJobID(jobID : String): Future[RichSearchResponse] = {
     client.execute{

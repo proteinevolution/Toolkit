@@ -123,9 +123,9 @@ window.Job = (function() {
         });
     };
 
-    Job.removeJob = function(jobID, sendMessage, deleteJob) {
-        if (sendMessage == null) {
-            sendMessage = false;
+    Job.removeJob = function(jobID, messageServer, deleteJob) {
+        if (messageServer == null) {
+            messageServer = false;
         }
         if (deleteJob == null) {
             deleteJob = false;
@@ -135,7 +135,7 @@ window.Job = (function() {
                 if (job.jobID === jobID) {
                     jobs[idx] = null;
                     jobs.splice(idx, 1);
-                    if (sendMessage) {
+                    if (messageServer) {
                         if (deleteJob) {
                             sendMessage({
                                 "type": "DeleteJob",

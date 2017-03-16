@@ -353,7 +353,7 @@ JobTabsComponent = {
                                 return m("div", {
                                     "class": "column column-block"
                                 }, mapParam(param, ctrl));
-                            }))), m(JobValidationComponent, {}), m(JobSubmissionComponent, {
+                            }))), m(JobSubmissionComponent, {
                             job: ctrl.job,
                             isJob: ctrl.isJob,
                             add: args.add
@@ -397,7 +397,7 @@ submitModal = function(elem, isInit) {
 
 JobValidationComponent = {
     view: function(){
-        return m("div#calloutSpacer", m("div#validOrNot", {class: "callout", style: "display: none"}, ""))
+        return m("div#validOrNot", {class: "callout", style: "display: none"}, "")
     }
 };
 
@@ -799,10 +799,8 @@ window.ParameterAlignmentComponent = {
                     }
                 }),
 
-                m("select", {"class": "alignment_mode", onchange: m.withAttr("value", ctrl.setMode), config: selectBoxAccess}, ctrl.getModes().map(function(mode){
-                    return m("option", {value: mode.mode}, mode.name)}
-
-                )), m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format){
+                    m(JobValidationComponent, {})
+                    , m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format){
                     return m("option", {value: format[0]}, format[1])}
                 ))
                 ),
