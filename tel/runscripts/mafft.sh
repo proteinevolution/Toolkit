@@ -1,6 +1,6 @@
 
 
-if [ %input_order.content == "input"] ; then
+if [ %output_order.content == "input"] ; then
 
     mafft --op %gap_open.content \
           --ep %offset.content \
