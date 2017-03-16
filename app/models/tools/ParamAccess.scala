@@ -132,7 +132,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val ITREFINE = Param("itrefine",ParamType.UnconstrainedNumber,1, "Passes of iterative refinements")
   final val PRETRAIN =  Param("pretrain",ParamType.UnconstrainedNumber,1, "Rounds of pretraining")
   final val MAXROUNDS = select("maxrounds", "Max. number of iterations")
-  final val OFFSET = Param("offset",ParamType.UnconstrainedNumber,1, "Offset")
+  final val OFFSET = Param("offset",Decimal("0.01", Some(0),Some(10)),1, "Offset")
   final val OUTORDER = Param("outorder",ParamType.UnconstrainedNumber,1, "Outorder")
   final val ETRESH = Param("inclusion_ethresh",ParamType.UnconstrainedNumber,1, "E-value inclusion threshold")
   final val HHBLITSDB  =  Param("hhblitsdb",Select(tel.generateValues("hhblitsdb").toSeq),1, "Select HHblts database")
@@ -180,4 +180,5 @@ class ParamAccess @Inject() (tel: TEL) {
   final val MAC_CUTOFF = select("mac_cutoff", "MAC threshold")
   final val DOMAIN_BOUND_DETECTION = select("domain_bound_detection", "Domain boundary detection")
   final val ALN_STRINGENCY = select ("aln_stringency", "Alignment stringency")
+  final val OUTPUT_ORDER = select ("output_order", "Output the alignment in:")
 }
