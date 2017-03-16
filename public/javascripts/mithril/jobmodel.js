@@ -39,7 +39,9 @@ window.JobModel = {
         "aln_stringency":"0.3",
         "gap_ext_kaln":"0.85",
         "gap_term":"0.45",
-        "bonusscore":"0"
+        "bonusscore":"0",
+        "offset":"0.0",
+        "output_order":"input"
 
     },
     pushMessage: function(msg) {

@@ -68,6 +68,9 @@ export PATH="${BIOPROGS}/tools/hhrepid/bin:${PATH}" # HHrepid
 # Setup HHrepid
 export HHREPIDPATH="${BIOPROGS}/tools/hhrepid"
 
+#Setup HMMER
+export HMMERPATH="${BIOPROGS}/tools/hmmer/bin"
+
 # Setup Blammer
 export BLAMMERJAR="${BIOPROGS}/tools/blammer/blammer.jar"
 export BLAMMERCONF="${BIOPROGS}/tools/blammer/blammer.conf"
