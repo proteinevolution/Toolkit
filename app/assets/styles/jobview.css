@@ -683,9 +683,26 @@ textarea:focus{
 }
 
 .callout.alert{
-    color: red;
-    opacity: 0.5;
-    padding: 0.7em;
+    padding: 0.5em;
+    color:red;
+    border: 1px solid #ff00001a;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+.callout.success{
+    padding: 0.5em;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+textarea:focus{
+    border: 1px solid #c3c3c3;
+}
+
+.invalid{
+    border: 1px solid red;
 }
 
 
@@ -700,3 +717,4 @@ textarea:focus{
     background-size: 40px 40px;
     outline: 0;
 }
+
