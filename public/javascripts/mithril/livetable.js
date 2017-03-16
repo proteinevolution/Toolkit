@@ -3,14 +3,28 @@ var JobTable = {
 
         var ctrl = this;
         ctrl.totalJobs = -1;
-        ctrl.lastJob = null;
+        ctrl.lastJob = {};
 
-        var lastJob = m.request({method: "GET", url: "/api/jobs"})
+        m.request({method: "GET", url: "/api/jobs"})
             .then(function(jobs) {
-                console.log("JOBS" + jobs);
-                ctrl.totalJobs = jobs.length;
-                ctrl.lastJob = jobs.slice(-1)[0];
-                console.log(JSON.stringify(ctrl.lastJob));
+
+                if(jobs.length > 0){
+                    ctrl.totalJobs = jobs.length;
+                    ctrl.lastJob = jobs.slice(-1)[0];
+                } else {
+                    ctrl.totalJobs = 0;
+                    ctrl.lastJob = {
+                        "jobID": -1,
+                        "toolnameLong": ""
+                    };
+                }
+
+            }).catch(function(e) {
+                ctrl.totalJobs = 0;
+                ctrl.lastJob = {
+                    "jobID": -1,
+                    "toolnameLong": ""
+                };
 
             });
 
