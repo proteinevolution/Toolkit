@@ -1,15 +1,17 @@
 
 #CHECK IF MSA generation is required or not
 
-if [ %max_hhblits_iter.content == "0" ] ; then
+SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
+
+if [ %max_hhblits_iter.content == "0" -a $SEQ_COUNT -gt "1"] ; then
     #Use user MSA to build HMM
 
-    hmmbuild --cpu %THREADS \
-             $(readlink -f ../params/infile_hmm) \
+    $HMMERPATH/hmmbuild --cpu %THREADS \
+             ../params/infile_hmm \
              %alignment.path
 else
     #MSA generation required; generation by HHblits
-    hhblits -cpu 8 \
+    hhblits -cpu %THREADS \
             -v 2 \
             -i %alignment.path \
             -d %UNIPROT  \
@@ -26,15 +28,15 @@ else
     #Convert to fasta format
     reformat.pl a3m fas ../results/query.a3m $(readlink -f ../params/infile_sto)
 
-    hmmbuild --cpu %THREADS \
-             $(readlink -f ../params/infile_hmm) \
-             $(readlink -f ../params/infile_sto)
+    $HMMERPATH/hmmbuild --cpu %THREADS \
+             ../params/infile_hmm \
+             ../params/infile_sto
 fi
 
-hmmsearch --cpu %THREADS \
+    $HMMERPATH/hmmsearch --cpu %THREADS \
           -E %eval_cutoff.content \
-          --tblout    $(readlink -f ../results/tbl) \
-          --domtblout $(readlink -f ../results/domtbl) \
-          -o $(readlink -f ../results/outfile) \
-          -A $(readlink -f ../results/outfile_multi_sto) \
-           $(readlink -f ../params/infile_hmm)  %STANDARD/%standarddb.content
+          --tblout ../results/tbl \
+          --domtblout ../results/domtbl \
+          -o ../results/outfile \
+          -A ../results/outfile_multi_sto \
+          ../params/infile_hmm  %STANDARD/%standarddb.content
