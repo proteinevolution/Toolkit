@@ -537,7 +537,11 @@ th#lastJobs{
     max-width: 56px;
 }
 
-td#lastJobName{
+th#lastJob{
+    max-width: 66px;
+}
+
+td#lastJobName {
     font-weight: bold;
 }
 
