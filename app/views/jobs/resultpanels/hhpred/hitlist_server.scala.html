@@ -495,28 +495,28 @@ function resubmitHmm(tool) {
 }
 
 
-function templateAlignment(accession){
+function templateAlignment(accession, number){
     // add loading when ajax request is send
 
     $(document).ajaxStart(function() {
-        $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
+        $("templateAlignmentModal").LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
     });
     $.ajax({
         type: 'GET',
-        url: '/templateAlignment/@jobID/' + accession
+        url: '/templateAlignment/@jobID/' + accession + '/' + number + ''
     }).done(function () {
         $.ajax({
             type: 'GET',
-            url: 'files/@jobID/' + accession + '.fas'
+            url: 'files/@jobID/' + number + '.fas'
         }).done(function (data) {
             $("#alignmentTemplate").val(data.toString());
-            $(document).ajaxStop(function() {
+            $("templateAlignmentModal").ajaxStop(function() {
                 $.LoadingOverlay("hide");
             });
         })
     }).fail(function () {
         $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
-        $(document).ajaxStop(function() {
+        $("templateAlignmentModal").ajaxStop(function() {
             $.LoadingOverlay("hide");
         });
     });
