@@ -53,6 +53,12 @@ body.is-reveal-open {
 }
 
 
+#alignment_two{
+    display: none;
+    margin-top: 1.8em;
+    margin-block-end: 0em;
+}
+
 /* Slider */
 
 
@@ -710,6 +716,7 @@ textarea:focus{
 textarea:focus{
     border: 1px solid #c3c3c3;
 }
+
 
 .invalid{
     border: 1px solid red;
