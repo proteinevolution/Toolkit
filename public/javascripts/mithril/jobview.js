@@ -401,6 +401,13 @@ JobValidationComponent = {
     }
 };
 
+//return status code if error
+var extractStatus = function(xhr, xhrOptions) {
+    if(xhr.status == 413){
+        alert("File too big!")
+        return false;
+    }
+};
 
 JobSubmissionComponent = {
     controller: function(args) {
@@ -435,11 +442,13 @@ JobSubmissionComponent = {
                 }
                 formData.append('parentid', parentid);
                 $(".submitJob").prop("disabled", true);
-
+                var file = ($("input[type=file]")[0].files[0]);
+                formData.append("file", file);
                 return m.request({
                     method: checkRoute.method,
                     url: checkRoute.url,
                     data: formData,
+                    extract: extractStatus,
                     serialize: function(data) {
                         return data;
                     }
@@ -497,7 +506,7 @@ JobSubmissionComponent = {
                             serialize: function(data) {
                                 return data;
                             }
-                        });
+                        })
                         return m.route("/jobs/" + jobID);
                     }
                 }, function(error) {
@@ -774,7 +783,13 @@ window.ParameterAlignmentComponent = {
             }, m("input", {
                 type: "file",
                 id: "upload_alignment_input",
-                name: "upload_alignment_input"
+                name: "upload_alignment_input",
+                onchange: function() {
+                    if (this.value) {
+                        $("#upload_alignment_modal").foundation("close");
+                        return $("#" + ctrl.id).prop("disabled", true);
+                    }
+                }
             })), m("div", {
                 "class": "alignment_buttons"
             }, [
