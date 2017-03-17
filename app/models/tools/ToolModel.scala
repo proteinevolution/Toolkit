@@ -156,7 +156,17 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "backtrans" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output"))))
 
-      case "hhfilter" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output.fas"))))
+      case "hhfilter" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment("HHfilter",jobID, jsvalue)),
+            ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
+          )
+        case None => Seq.empty
+      }
+
+
+
+
 
       case "patsearch" => Future.successful(Seq(("PatternSearch", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output.fas"))))
 
@@ -313,7 +323,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     // HHfilter
     ("hhfilter", "HHfilter", "hhfi", "utils", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.MAX_SEQID, paramAccess.MIN_SEQID_QUERY, paramAccess.MIN_QUERY_COV,
-        paramAccess.NUM_SEQS_EXTRACT), Seq.empty)).map { t =>
+      paramAccess.NUM_SEQS_EXTRACT), Seq("clustalo", "kalign", "tcoffee", "mafft", "msaprobs", "muscle", "hhpred",
+      "hmmer", "hhfilter"))).map { t =>
     t._1  -> tool(t._1, t._2, t._3, t._4, t._5, t._6, t._7)
   }.toMap
 

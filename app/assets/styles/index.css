@@ -78,10 +78,7 @@ select {
     height: 430px;
 }
 
-.search_container {
-    height: 5em;
 
-}
 
 .search_container div {
     margin-top: 0.6em;
@@ -480,9 +477,8 @@ select {
     z-index: 99;
     margin-right: 10em;
     margin-bottom: 0.1em !important;
-    height: 0.25em;
+    height: 0.2em;
     width: 100%;
-    margin-top: -0.7em;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
     border-radius: 4px;
@@ -503,7 +499,7 @@ select {
 .liveTable {
     background: rgba(214, 214, 214, 0.94);
     text-align: center;
-    padding: 4px 15px 4px 15px;
+    padding: 4px 15px 7px 15px;
     margin-bottom: 0;
 }
 
@@ -537,7 +533,11 @@ th#lastJobs{
     max-width: 56px;
 }
 
-td#lastJobName{
+th#lastJob{
+    max-width: 66px;
+}
+
+td#lastJobName {
     font-weight: bold;
 }
 

@@ -1,5 +1,6 @@
 package models.database.jobs
 
+import com.typesafe.config.ConfigFactory
 import models.Constants
 import models.tools.Toolitem
 import org.joda.time.DateTime
@@ -43,7 +44,8 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
     Json.obj("jobID"     -> jobID,
              "state"     -> status,
              "createdOn" -> dateCreated.get,
-             "toolname"  -> tool)
+             "toolname"  -> tool,
+             "toolnameLong" -> ConfigFactory.load().getString(s"Tools.$tool.longname"))
   }
 
   /**
