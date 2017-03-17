@@ -23,7 +23,7 @@ object BlastVisualization extends Constants {
   private val scopReg = """([defgh][0-9a-zA-Z\.\_]+)""".r
   private val mmcifReg = """(...._[a-zA-Z])""".r
   private val mmcifShortReg = """([0-9]...)""".r
-  private val refseqReg = """([NXMRP.]+._[0-9.]+)""".r
+  private val refseqReg = """[NXMRP.]+._[0-9]+}?((\#[0-9]{1})|(.[0-9]))""".r
   private val pfamReg = """(^pfam+.+[0-9]+)|(^PF\d+.+[0-9]+)""".r
 
   private val ncbiRefseqBaseLink = "https://www.ncbi.nlm.nih.gov/Structure/cdd/wrpsb.cgi?seqinput=";
@@ -116,45 +116,48 @@ object BlastVisualization extends Constants {
       var idTrimmed = id.substring (1, 5)
      link += generateLink (pdbBaseLink, idTrimmed, id)
     }
-    if(db == "mmcif") {
+    else if(db == "mmcif") {
       var idPdb = id.replaceAll("_.*$", "")
       link += generateLink(pdbBaseLink, idPdb, id)
     }
-    if(db == "pfam"){
+    else if(db == "pfam"){
       var idPfam = id.replaceAll("am.*$||..*", "")
       link += generateLink(pfamBaseLink, idPfam + "#tabview=tab1", id)
     }
-    if(db == "refseq"){
+    else if(db == "refseq"){
       link += generateLink(ncbiRefseqBaseLink, id, id)
+    }
+    else{
+      link = id;
     }
 
     Html(link)
   }
 
 
-  def getLinks(id : String) : Html = {
+  def getLinks(id : String, number: Int) : Html = {
     val db = identifyDatabase(id)
     var links = new ArrayBuffer[String]()
 
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     var idTrimmed = id.substring(1, 5)
     var idCDD = id.replaceAll("PF", "pfam")
-    links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
+    links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'template_" + number + "\')\">Template alignment</a>"
     if(db == "scop") {
 
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
       links += generateLink(scopBaseLink, id, "SCOP")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
     }
-    if(db == "mmcif") {
-      links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + idPdb + "\')\";\">Template 3D structure</a>"
+    else if(db == "mmcif") {
+      links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
       links += generateLink(pdbeBaseLink, idPdb, "PDBe")
     }
-    if (db == "pfam"){
+    else if (db == "pfam"){
       idCDD = idCDD.replaceAll("\\..*","")
       links += generateLink(cddBaseLink, idCDD, "CDD")
     }
-    if (db == "refseq"){
+    else if (db == "refseq"){
     }
     Html(links.mkString(" | "))
   }
