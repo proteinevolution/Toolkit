@@ -77,6 +77,9 @@
             <form id="hhpred_templates">
                   <table class="unstriped">
                     <tbody>
+                        Number of sequences: @{{jsValue \ "hhr" \ "hits"}.as[List[JsObject]].size}
+                        <br />
+                        <br />
                     @for((alignment, hit) <- ((jsValue \ "hhr" \ "alignments").as[List[JsObject]], (jsValue \ "hhr" \ "hits").as[List[JsObject]]).zipped.toList){
                         @* hit number, links *@
                         <tr>
@@ -92,8 +95,8 @@
                         </tr>
                         @* checkboxes, accession, name of hit*@
                         <tr class="header">
-                            <td ><input type="checkbox" name="templates" class="hitCheckbox" value='@{(hit \ "no").get}'></td>
-                            <td colspan="4">@{(hit \ "no").get}.
+                            <td ><input type="checkbox" name="templates" class="hitCheckbox" value='@{(hit \ "no").get}'> @{(hit \ "no").get}.</td>
+                            <td colspan="4">
 
                             @{hit \ "struc" match {
                                 case JsDefined(jsValue) => {BlastVisualization.getSingleLink((hit \ "struc").get.as[String])}
