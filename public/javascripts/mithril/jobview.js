@@ -787,6 +787,7 @@ window.ParameterAlignmentComponent = {
                 onchange: function() {
                     if (this.value) {
                         $("#upload_alignment_modal").foundation("close");
+                        $(".uploadFileName").show();
                         return $("#" + ctrl.id).prop("disabled", true);
                     }
                 }
@@ -812,8 +813,22 @@ window.ParameterAlignmentComponent = {
                     onclick: function() {
                         return $('#upload_alignment_modal').foundation('open');
                     }
-                }),
+                }), m("div",
+                        {"class": "uploadFileName",
+                        init: function () {
+                            $(".uploadFileName").hide();
+                        }}
+                        , ($("input[type=file]").val()),
+                    m("a", {
+                        "class": "boxclose",
+                        "id": "uploadBoxClose",
+                        onclick: function(){
+                            $(".uploadFileName").hide();
+                            $("input[type=file]").val(null);
+                            return $("#" + ctrl.id).prop("disabled", false);
+                            }
 
+                    })),
                     m(JobValidationComponent, {})
                     , m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format){
                     return m("option", {value: format[0]}, format[1])}
