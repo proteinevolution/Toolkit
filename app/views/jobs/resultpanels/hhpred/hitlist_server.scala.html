@@ -83,8 +83,8 @@
                             <td></td>
                             <td colspan="3">
                             @{hit \ "struc" match {
-                                    case JsDefined(jsValue) => BlastVisualization.getLinks((hit \ "struc").get.as[String])
-                                    case undefined: JsUndefined => BlastVisualization.getLinks("undefinedAccession") ;
+                                    case JsDefined(jsValue) => BlastVisualization.getLinks((hit \ "struc").get.as[String],(hit \ "no").get.as[Int])
+                                    case undefined: JsUndefined => BlastVisualization.getLinks("undefinedAccession",(hit \ "no").get.as[Int]) ;
                                 }
                             }
                             </td>
@@ -496,18 +496,29 @@ function resubmitHmm(tool) {
 
 
 function templateAlignment(accession){
+    // add loading when ajax request is send
+
+    $(document).ajaxStart(function() {
+        $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
+    });
     $.ajax({
         type: 'GET',
-        url: '/templateAlignment/@jobID/' + accession,
+        url: '/templateAlignment/@jobID/' + accession
     }).done(function () {
         $.ajax({
             type: 'GET',
-            url: 'files/@jobID/' + accession + '.template.fas',
+            url: 'files/@jobID/' + accession + '.fas'
         }).done(function (data) {
             $("#alignmentTemplate").val(data.toString());
+            $(document).ajaxStop(function() {
+                $.LoadingOverlay("hide");
+            });
         })
     }).fail(function () {
         $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
+        $(document).ajaxStop(function() {
+            $.LoadingOverlay("hide");
+        });
     });
 }
 
@@ -516,12 +527,15 @@ function showStructure(accession) {
     currentStructureAccession = accession;
     var db = identifyDatabase(accession);
     var fileEnding = "";
+    var chain = "";
     switch(db){
         case "scop":
             fileEnding = ".pdb";
             break;
         case "mmcif":
             fileEnding = ".cif";
+            chain = ":"+accession.split("_")[1].toUpperCase();
+            accession = accession.split("_")[0].toLowerCase();
             break;
     }
     var url = '/getStructure/' +accession + fileEnding;
@@ -530,7 +544,7 @@ function showStructure(accession) {
             $(document).ready(function(){
                 $('#accessionStructure').append("<h3 class='structureAccession'>3D Structure: "+accession+"</h3>");
                 stage = new NGL.Stage( "viewport" );
-                stage.loadFile( url, { defaultRepresentation: true } );
+                stage.loadFile( url, { defaultRepresentation: true, sele: ":A or :B or DPPC",  });
                 stage.set
             });
         }).fail(function () {
