@@ -32,9 +32,13 @@ validation = function(elem, isInit, ctx) {
             switch(toolname) {
                 case "tcoffee":
                     /** validation model for tcoffee:
-                     * input has to be FASTA\
-                     * input must consist of at least 2 seqs
-                     */
+                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+                     * Input must include at least two sequences.
+                     * ALIGNED FASTA input is allowed.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 2000.
+                     **/
                     var tcoffeeTarget = new multiseqVal($(elem));
                     tcoffeeTarget.accept(mustHave2Visitor);
 
@@ -42,9 +46,13 @@ validation = function(elem, isInit, ctx) {
 
                 case "mafft":
                     /** validation model for mafft:
-                     * input has to be FASTA
-                     * input must consist of at least 2 seqs
-                     */
+                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+                     * Input must include at least two sequences.
+                     * ALIGNED FASTA input is allowed.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 2000.
+                     **/
                     var mafftTarget = new multiseqVal($(elem));
                     mafftTarget.accept(mustHave2Visitor);
 
@@ -52,9 +60,13 @@ validation = function(elem, isInit, ctx) {
 
                 case "muscle":
                     /** validation model for muscle:
-                     * input has to be FASTA
-                     * input must consist of at least 2 seqs
-                     */
+                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+                     * Input must include at least two sequences.
+                     * ALIGNED FASTA input is allowed.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 2000.
+                     **/
                     var muscleTarget = new multiseqVal($(elem));
                     muscleTarget.accept(mustHave2Visitor);
 
@@ -62,9 +74,13 @@ validation = function(elem, isInit, ctx) {
 
                 case "clustalo":
                     /** validation model for clustalo:
-                     * input has to be FASTA
-                     * input must consist of at least 2 seqs
-                     */
+                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+                     * Input must include at least two sequences.
+                     * ALIGNED FASTA input is allowed.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 2000.
+                     **/
 
                     var clustaloTarget = new multiseqVal($(elem));
                     clustaloTarget.accept(mustHave2Visitor);
@@ -73,9 +89,13 @@ validation = function(elem, isInit, ctx) {
 
                 case "kalign":
                     /** validation model for kalign:
-                     * input has to be FASTA
-                     * input must consist of at least 2 seqs
-                     */
+                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+                     * Input must include at least two sequences.
+                     * ALIGNED FASTA input is allowed.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 2000.
+                     **/
 
                     var kalignTarget = new multiseqVal($(elem));
                     kalignTarget.accept(mustHave2Visitor);
@@ -84,9 +104,13 @@ validation = function(elem, isInit, ctx) {
 
                 case "msaprobs":
                     /** validation model for msaprobs:
-                     * input has to be FASTA
-                     * input must consist of at least 2 seqs
-                     */
+                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+                     * Input must include at least two sequences.
+                     * ALIGNED FASTA input is allowed.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 2000.
+                     **/
 
                     var msaprobsTarget = new multiseqVal($(elem));
                     msaprobsTarget.accept(mustHave2Visitor);
@@ -95,8 +119,10 @@ validation = function(elem, isInit, ctx) {
 
                 case "hmmer":
                     /** validation model for hmmer:
-                     * input has to be a single FASTA sequence
-                     * or aligned FASTA with at least 2 seqs
+                     * Input has to be a single FASTA sequence
+                     * or aligned FASTA with at least twp sequences.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
                      */
 
                     var hmmerTarget = new seqoralignmentVal($(elem));
@@ -105,8 +131,12 @@ validation = function(elem, isInit, ctx) {
 
                 case "mmseqs2":
                     /** validation model for mmseq2:
-                     * input has to be FASTA
-                     * input must consist of at least 2 seqs
+                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+                     * ALIGNED FASTA input is allowed.
+                     * Input must consist of at least two sequences.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 20000.
                      */
 
                     var mmseqs2Target = new multiseqVal($(elem));
@@ -116,8 +146,11 @@ validation = function(elem, isInit, ctx) {
 
                 case "hhfilter":
                     /** validation model for hhfilter:
-                     * input has to be aligned FASTA
-                     * input must consist of at least 2 seqs
+                     * Input has to be aligned FASTA.
+                     * Input must consist of at least two Sequences.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 10000.
                      */
 
                     var hhfilter2Target = new alignmentVal($(elem));
