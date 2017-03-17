@@ -448,7 +448,6 @@ JobSubmissionComponent = {
                     method: checkRoute.method,
                     url: checkRoute.url,
                     data: formData,
-                    extract: extractStatus,
                     serialize: function(data) {
                         return data;
                     }
@@ -503,10 +502,11 @@ JobSubmissionComponent = {
                             method: submitRoute.method,
                             url: submitRoute.url,
                             data: formData,
+                            extract: extractStatus,
                             serialize: function(data) {
                                 return data;
                             }
-                        })
+                        });
                         return m.route("/jobs/" + jobID);
                     }
                 }, function(error) {
