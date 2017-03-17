@@ -54,6 +54,7 @@ final class JobController @Inject() ( jobIDProvider    : JobIDProvider,
     }
   }
 
+
   def check(toolname: String, jobID: Option[String], hash: Boolean) : Action[AnyContent] = Action.async { implicit request =>
 
     getUser.flatMap { user =>

@@ -632,16 +632,10 @@
 
         function toolCounter() {
 
-            $.ajax({
-                url: "/api/frontendSubmit/Reformat",
-                type: "POST",
-                success: function(result){
-                    console.log("ok");
-                },
-                error: function(result){
-                    console.warn("error");
-                }
-            });
+            m.request({
+                method: "POST",
+                url: "/api/frontendSubmit/Reformat"
+            }).then(function(result) { console.log(result) })
 
         }
 
