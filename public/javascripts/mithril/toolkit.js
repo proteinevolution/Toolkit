@@ -9,6 +9,9 @@ a = ['0', 'p', 'q', 'r', 'e', 'd', 'i'];
 
 jobs = {};
 
+Users = -1;
+
+
 window.Job = (function() {
     function Job(args) {
         this.jobID = args.jobID;
