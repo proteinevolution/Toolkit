@@ -139,4 +139,4 @@ GET          /structure3D/:accession                   @controllers.HHpredContro
 # get pdb structure
 GET          /getStructure/:filename                    @controllers.Application.getStructureFile(filename : String)
 # template alignment
-GET         /templateAlignment/:jobID/:accession  @controllers.HHpredController.runScript(jobID : String, accession : String)
+GET         /templateAlignment/:jobID/:accession/:number  @controllers.HHpredController.runScript(jobID : String, accession : String, number : String)
