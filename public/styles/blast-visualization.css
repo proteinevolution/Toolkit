@@ -132,6 +132,7 @@
 
 #forwardModal {
     width: 36em;
+    background-color: #eee;
 }
 
 #forwardModal p {
