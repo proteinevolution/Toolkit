@@ -335,7 +335,7 @@ JobTabsComponent = {
                                     }, m("div", {
                                         "class": "small-12 large-12 medium-12 columns"
                                     }, mapParam(elements[0], ctrl))), m("div", {
-                                        "class": "row small-up-1 medium-up-2 large-up-3", "style": "margin-top: 10px;"
+                                        "class": "row small-up-1 medium-up-2 large-up-3", "style": "margin-top: 35px;"
                                     }, elements.slice(1).map(function(param) {
                                         return m("div", {
                                             "class": "column column-block multiSelectParameter"
@@ -709,6 +709,7 @@ window.ParameterAlignmentComponent = {
         var params = {
             oninit: function (elem, isInit) {
                 if (!isInit) {
+                    $("#uploadBoxClose").hide();
                     if (ctrl.getTwoTextAreas()) {
                         $(".inputDBs").prop('disabled', true);
                         $(".inputDBs option:selected").prop("selected", false);
@@ -788,6 +789,7 @@ window.ParameterAlignmentComponent = {
                     if (this.value) {
                         $("#upload_alignment_modal").foundation("close");
                         $(".uploadFileName").show();
+                        $("#uploadBoxClose").show();
                         return $("#" + ctrl.id).prop("disabled", true);
                     }
                 }
@@ -811,14 +813,11 @@ window.ParameterAlignmentComponent = {
                     "class": "button small alignmentExample",
                     value: "Upload File",
                     onclick: function() {
-                        return $('#upload_alignment_modal').foundation('open');
+                        $('#upload_alignment_modal').foundation('open');
                     }
                 }), m("div",
-                        {"class": "uploadFileName",
-                        init: function () {
-                            $(".uploadFileName").hide();
-                        }}
-                        , ($("input[type=file]").val()),
+                        {"class": "uploadFileName"},
+                        $("input[type=file]").val(),
                     m("a", {
                         "class": "boxclose",
                         "id": "uploadBoxClose",
@@ -827,16 +826,15 @@ window.ParameterAlignmentComponent = {
                             $("input[type=file]").val(null);
                             return $("#" + ctrl.id).prop("disabled", false);
                             }
-
                     })),
                     m(JobValidationComponent, {})
                     , m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format){
                     return m("option", {value: format[0]}, format[1])}
-                ))
+                )
                 ),
                 m("div", {"class": "switchDiv"},
                 alignmentSwitch
-                )
+                ))
 
 
             ])

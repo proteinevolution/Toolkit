@@ -440,15 +440,28 @@ font-size: 0.65em !important;
 /* File Upload */
 
 .fileUploadBox{
-margin-top: 2em;
+    margin-top: 2em;
     float: left;
     display: flex;
     padding: 0.5em;
 }
 
+#uploadBoxClose::before {
+    color: red;
+    opacity: 0.6;
+}
+
 .uploadButton{
     background-color: rgba(0, 110, 98, 166);
 
+}
+
+.uploadFileName {
+    display: flex;
+}
+
+.uploadFileName p {
+    width: 30%;
 }
 
 .addJob { display: none; }
