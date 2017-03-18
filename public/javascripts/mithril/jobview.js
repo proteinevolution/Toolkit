@@ -517,8 +517,17 @@ JobSubmissionComponent = {
         };
     },
     view: function(ctrl, args) {
+        var hide = {
+            oninit: function (elem, isInit) {
+                if (!isInit) {
+                    $("#uploadBoxClose").hide();
+                    $(".uploadFileName").hide();
+                }
+            }
+        };
         return m("div", {
-            "class": "submitbuttons"
+            "class": "submitbuttons",
+            config: hide.oninit
         }, [
             m("div", {
                 "class": "reveal",
@@ -527,7 +536,7 @@ JobSubmissionComponent = {
                 'data-overlay': 'true',
                 'transition-duration': 'fast',
                 id: 'submit_modal',
-                config: submitModal
+                config: submitModal,
             }, m("p", "Already existing job found!"), m("input", {
                 "class": 'button',
                 id: 'reload_job',
@@ -709,7 +718,6 @@ window.ParameterAlignmentComponent = {
         var params = {
             oninit: function (elem, isInit) {
                 if (!isInit) {
-                    $("#uploadBoxClose").hide();
                     if (ctrl.getTwoTextAreas()) {
                         $(".inputDBs").prop('disabled', true);
                         $(".inputDBs option:selected").prop("selected", false);
