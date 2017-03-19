@@ -229,7 +229,7 @@ hr {
 }
 
 .multiSelectParameter {
-    padding-left: 0;
+    padding-left: 0.9375em;
 }
 
 .multiSelectParameter label {
@@ -291,7 +291,10 @@ hr {
     font-size: small;
 }
 
+.parameters {
 
+    margin-bottom: 1.3em;
+}
 
 .parameters input {
     text-shadow: 0 0 0 #878787;
@@ -348,7 +351,8 @@ hr {
     left: 0;
     width: 100%;
     padding-right: 1em;
-    padding-left: 1em;
+    padding-left: 1.9375em;
+    padding-bottom: 0.3em;
 }
 
 .result-panel{
@@ -596,7 +600,6 @@ input.button_fullscreen:focus {
 .nice-select .list {
     margin-left: 0;
     border: 1px solid grey;
-    height: 15em;
     overflow-y: auto;
     margin-top: 3px;
     border-radius: 5px;
@@ -613,6 +616,10 @@ input.button_fullscreen:focus {
 
 .nice-select:active, .nice-select.open, .nice-select:focus {
     border-color: #88bfff;
+}
+
+.nice-select>span>ul {
+    z-index: 99;
 }
 
 .irs {
