@@ -76,7 +76,7 @@ i {
   color: #0a0a0a;
   padding: 0.5em;
   font-size: 1em;
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
 }
 
 .title-bar-left {
@@ -97,7 +97,7 @@ i {
 .top-bar-left .button {
 
   color: grey;
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
   z-index: 99;
   margin: 0;
   background-color: transparent !important;
@@ -167,7 +167,7 @@ i {
 
 
 .overlay {
-  height: 0%;
+  height: 0;
   width: 100%;
   position: fixed;
   z-index: 999;
@@ -225,13 +225,13 @@ i {
 
 
 .tabs {
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
   color: red !important;
   overflow-x: hidden;
   background-color: rgb(238, 238, 238);
   background-repeat: repeat;
   background-attachment: scroll;
-  background-position: 0% 0%;
+  background-position: 0 0;
   background-clip: border-box;
   background-origin: padding-box;
   background-size: auto auto;
@@ -240,12 +240,12 @@ i {
 
 
 .tabs-title{
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
   overflow-x: hidden;
   background-color: rgb(238, 238, 238);
   background-repeat: repeat;
   background-attachment: scroll;
-  background-position: 0% 0%;
+  background-position: 0 0;
   background-clip: border-box;
   background-origin: padding-box;
   background-size: auto auto;
