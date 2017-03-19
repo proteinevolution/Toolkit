@@ -80,12 +80,13 @@ select {
 
 
 
-.search_container div {
+.search_container .form-group {
     margin-top: 0.6em;
     padding-top: 0.3em;
     padding-left: 1em;
     padding-right: 1em;
     padding-bottom: 0.3em;
+    background-color: #eee;
 }
 
 .search_container span {
@@ -267,7 +268,7 @@ select {
 }
 
 .article_container {
-    margin-top: 3em;
+    margin-top: 10em;
     text-align: center;
 }
 
@@ -424,12 +425,11 @@ select {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     float: none;
     margin: 1em 1em 0 1em;
-    height: 15.7em;
+    height: 17em;
     box-shadow: 0 1px 2px 0 #ccc;
     background-color: transparent;
     border-radius: 3px;
     border: 1px solid #ccc;
-
 }
 
 .news_container {
@@ -564,9 +564,9 @@ td#lastJobName {
 }
 
 
-@media screen and (max-width: 820px) {
+@media screen and (max-width: 1000px) {
     .article_container {
-        margin-top: 20em;
+        margin-top: 15em;
     }
 }
 
@@ -594,5 +594,29 @@ td#lastJobName {
         margin-top: 160px;
     }
 }
+
+@media screen and (max-width: 1000px) {
+    .liveTable{
+        display: none;
+    }
+}
+@media screen and (max-width: 1000px) {
+    .news{
+        height: 11em;
+    }
+}
+
+@media screen and (max-width: 820px) {
+    .news{
+        height: 14em;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .search_container .form-group {
+        margin-top: 0;
+    }
+}
+
 
 
