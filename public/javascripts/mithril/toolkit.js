@@ -93,16 +93,6 @@ window.Job = (function() {
     };
 
 
-    clearAll = function(){
-
-        return Job.list.then(function(jobs) {
-            return jobs.map(function(job){
-                job = null;
-            });
-        });
-
-    };
-
     Job.clear = function(jobID) {
         return Job.list.then(function(jobs) {
             var job;
@@ -227,6 +217,16 @@ window.Job = (function() {
 
 })();
 
+
+// Velocity animation config
+
+var fadesIn = function(element, isInitialized, context) {
+    if (!isInitialized) {
+        element.style.opacity = 0;
+        $.Velocity(element, {opacity: 1})
+    }
+};
+
 window.Toolkit = {
     getSuggestion : function (ctrl) {
         return function (e) {}
@@ -297,7 +297,8 @@ window.Toolkit = {
         return [
             m("div", {
                 "class": "large-2 padded-column columns show-for-large",
-                id: "sidebar"
+                id: "sidebar",
+                config: fadesIn
             }, [m("div", { id : "job-search-div" }, [
                     m("div", { id              : "job-manager-panel",
                                class           : "dropdown-pane right",
@@ -328,7 +329,8 @@ window.Toolkit = {
                 })
             ]), m("div", {
                 id: "content",
-                "class": "large-10 small-12 columns padded-column"
+                "class": "large-10 small-12 columns padded-column",
+                config: fadesIn
             }, ctrl.viewComponent())
         ];
     }
