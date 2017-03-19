@@ -492,6 +492,7 @@ select {
 }
 
 #mainlabel {
+    letter-spacing: 0.05em;
     font-size: 0.85em;
     padding-left: 0 !important;
 }
