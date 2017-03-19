@@ -26,6 +26,7 @@ StaticRoute = {
 
 m.route.mode = 'hash';
 
+
 m.route(document.getElementById('main-content'), '/', {
     '/': Index,
     '/tools/:toolname': m(Toolkit, {
@@ -45,3 +46,5 @@ window.onfocus = function() {
 window.onclick = function() {
     return titlenotifier.reset();
 };
+
+

@@ -34,7 +34,7 @@ var JobTable = {
             m('table.liveTable', [
                 m('thead', [
                     m('tr', [
-                        m('th#run', 'Running jobs'),
+                        m('th#run', 'Cluster load'),
                         m('th', 'Users'),
                         m('th#lastJob', 'Last own job'),
                         m('th#lastJobs', 'Total own jobs')
