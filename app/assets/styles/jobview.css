@@ -618,10 +618,6 @@ input.button_fullscreen:focus {
     border-color: #88bfff;
 }
 
-.nice-select>span>ul {
-    z-index: 99;
-}
-
 .irs {
     width: 100%;
 }
