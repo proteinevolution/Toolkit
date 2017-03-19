@@ -427,7 +427,7 @@ JobSubmissionComponent = {
 
                 var checkRoute, formData, jobID, toolname, doCheck;
                 toolname = args.job().tool.toolname;
-                doCheck = !args.isJob;
+                doCheck = true;
                 jobID = args.isJob? null : args.job().jobID;
                 if (!jobID) {
                     jobID = null;
