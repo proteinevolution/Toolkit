@@ -7,7 +7,8 @@ window.News = {
         return [
             m("div", {
                     "class": "large-2 padded-column columns show-for-large",
-                    id: "sidebar"
+                    id: "sidebar",
+                    config: fadesIn
                 }, [
                     // no content in sidebar for newsfeed
                 ]
