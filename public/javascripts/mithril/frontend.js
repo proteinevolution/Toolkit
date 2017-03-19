@@ -265,7 +265,7 @@ GeneralTabComponent = {
 tabsContents = {
     "Alignment": function(ctrl) {
         return m("div", {
-            "class": "parameter-panel"
+            "class": "parameter-panel", "id": "alignmentViewerPanel"
         }, [
             m("textarea", {
                 name: "alignment",
