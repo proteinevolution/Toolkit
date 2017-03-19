@@ -404,7 +404,7 @@ JobValidationComponent = {
 //return status code if error
 var extractStatus = function(xhr, xhrOptions) {
     if(xhr.status == 413){
-        alert("File too big!")
+        alert("File too big!");
         return false;
     }
 };
@@ -425,14 +425,15 @@ JobSubmissionComponent = {
                     return
                 }
 
-                var checkRoute, formData, jobID, toolname;
+                var checkRoute, formData, jobID, toolname, doCheck;
                 toolname = args.job().tool.toolname;
-                jobID = args.job().jobID;
+                doCheck = !args.isJob;
+                jobID = args.isJob? null : args.job().jobID;
                 if (!jobID) {
                     jobID = null;
                 }
                 // Use check route and specify that the hashing function should be used
-                checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID, true);
+                checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID, doCheck);
                 formData = new FormData(form);
 
                 // appendParentID if in storage
@@ -536,7 +537,7 @@ JobSubmissionComponent = {
                 'data-overlay': 'true',
                 'transition-duration': 'fast',
                 id: 'submit_modal',
-                config: submitModal,
+                config: submitModal
             }, m("p", "Already existing job found!"), m("input", {
                 "class": 'button',
                 id: 'reload_job',
@@ -592,7 +593,7 @@ JobSubmissionComponent = {
 
 
 
-        ]);
+        ])
     }
 };
 
