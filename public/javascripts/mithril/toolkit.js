@@ -223,7 +223,7 @@ window.Job = (function() {
 var fadesIn = function(element, isInitialized, context) {
     if (!isInitialized) {
         element.style.opacity = 0;
-        $.Velocity(element, {opacity: 1})
+        $.Velocity(element, {opacity: 1, top: "50%"}, 750);
     }
 };
 
