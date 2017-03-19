@@ -35,6 +35,7 @@ body.is-reveal-open {
     border: 1px solid #ccc;
 }
 .parameter-panel {
+    height: 32em;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
