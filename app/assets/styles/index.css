@@ -539,6 +539,10 @@ th#lastJob{
 }
 
 td#lastJobName {
+    max-width: 66px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
     font-weight: bold;
 }
 
