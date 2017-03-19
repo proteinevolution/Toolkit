@@ -693,7 +693,7 @@ window.ParameterAlignmentComponent = {
                 if (this.twoTextAreas) {
                     $(".inputDBs").prop('disabled', true);
                     $(".inputDBs option:selected").prop("selected", false);
-                    $("#alignment").attr("rows", "7");
+                    $("#alignment").attr("rows", "8");
                     $('#alignment_two').show();
                     $("#alignment_two").prop("required", true);
                     $("#hhpred_align").prop('checked', true);
@@ -757,7 +757,7 @@ window.ParameterAlignmentComponent = {
             m("textarea", {
                 name: ctrl.name+"_two",
                 placeholder: ctrl.getLabel(),
-                rows: 7,
+                rows: 8,
                 cols: 70,
                 class: "alignment",
                 id: ctrl.id + "_two",
