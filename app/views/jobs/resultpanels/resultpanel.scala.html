@@ -29,11 +29,23 @@
                 <input class="result_inputs" type="text" id="forwardEvalue" value="0.001">
             </div>
         </div>
-        <div class="forwardFormDiv">
-            <label style="font-weight: bold">Select sequence length</label>
-            <label class="forwardLabel"><input type="radio" id="sliderRegion" name="radio2">Forward slider region</label>
-            <label class="forwardLabel"><input type="radio" id="fullLength" name="radio2">Forward full length sequence</label>
-        </div>
+        }
+
+        @* Psiblast *@
+        @if({tool.toolNameShort == "psiblast"}){
+            <div class="forwardFormDiv">
+                <label style="font-weight: bold">Select hits to forward</label>
+                <label class="forwardLabel"> <input type="radio" id="selectedHits" name="radio1">Selected Hits</label>
+                <div class="two_input">
+                    <label  class="forwardLabel"><input type="radio" id="accordingEvalue" name="radio1">E-Value better than</label>
+                    <input class="result_inputs" type="text" id="forwardEvalue" value="0.001">
+                </div>
+            </div>
+            <div class="forwardFormDiv">
+                <label style="font-weight: bold">Select sequence length</label>
+                <label class="forwardLabel"><input type="radio" id="sliderRegion" name="radio2">Forward slider region</label>
+                <label class="forwardLabel"><input type="radio" id="fullLength" name="radio2">Forward full length sequence</label>
+            </div>
         }
 
 

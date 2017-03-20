@@ -16,7 +16,9 @@ function toggleAliColor(str) {
         for(i = 0; i < aas.length; i++) {
             aa = aas[i];
             aa.style.backgroundColor = aa_color_background.get(aa.className);
+            aa.style.opacity = 0.8;
             aa.style.color = "black";
+
         }
             $("#backgroundColor").addClass( "colorToggle" );
             $("#letterColor").removeClass("colorToggle");
