@@ -272,19 +272,11 @@ var colorLetters = false;
 var colorBackground = false;
 var selectAllBool = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
-var hitNames;
-var hitSequences;
 var ss_helices = document.getElementsByClassName("ss_h");
 var ss_extended = document.getElementsByClassName("aa_h");
 var aas;
 
 (function()  {
-
-    // get result json
-    var fileUrl = "/files/@jobID/hhr.json";
-    $.getJSON(fileUrl, function (data_) {
-        data = data_;
-    });
 
 
     $('.slider').on('moved.zf.slider', function() {
@@ -302,11 +294,12 @@ var aas;
         });
     });
 
-    var dataRoute = jsRoutes.controllers.DataController.get("@jobID", 'hhr');
+    var dataRoute = jsRoutes.controllers.DataController.get("@jobID");
     $.ajax({
         method: dataRoute.method,
         url: dataRoute.url
     }).done(function(data_) {
+        data = data_.hhr;
         var hits = data_.hhr.hits;
         var info = data_.hhr.info;
         var alignments = data_.hhr.alignments;
@@ -583,7 +576,7 @@ function forward_(tool){
                 seq = data.alignments[currentValue].template.seq;
             }
             if(forwardData.indexOf(seq) == -1) {
-                forwardData.push(data.alignments[currentValue].header.substr(0, 60));
+                forwardData.push(">" + data.hits[currentValue].struc + data.hits[currentValue].hit.substr(0, 60));
                 forwardData.push(seq);
             }
         });
@@ -598,7 +591,7 @@ function forward_(tool){
                         seq = data.alignments[i].template.seq;
                     }
                     if(forwardData.indexOf(seq) == -1) {
-                        forwardData.push(data.alignments[i].header.substr(0, 60));
+                        forwardData.push(">" + data.hits[currentValue].struc + data.hits[currentValue].hit.substr(0, 60));
                         forwardData.push(seq);
                     }
                 }
