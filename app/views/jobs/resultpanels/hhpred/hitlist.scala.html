@@ -65,7 +65,6 @@
                         Resubmit HMM</a>
                 </div>
             </div>
-            <!-- TODO FIX Coloring David -->
             <div class="colorOpts">
                 <a onclick="toggleSelectAll()" type="button"><span id="selectAllSeq">Select all</span></a>
                 <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
@@ -86,8 +85,8 @@
                             <td></td>
                             <td colspan="3">
                             @{hit \ "struc" match {
-                                    case JsDefined(jsValue) => BlastVisualization.getLinks((hit \ "struc").get.as[String],(hit \ "no").get.as[Int])
-                                    case undefined: JsUndefined => BlastVisualization.getLinks("undefinedAccession",(hit \ "no").get.as[Int]) ;
+                                    case JsDefined(jsValue) => BlastVisualization.getLinksHHpred((hit \ "struc").get.as[String])
+                                    case undefined: JsUndefined => BlastVisualization.getLinksHHpred("undefinedAccession") ;
                                 }
                             }
                             </td>
@@ -257,12 +256,14 @@
 </div>
 
 <script>
-$("#templateAlignmentModal").foundation();
-$("#structureModal").foundation();
+
 $("#structureModal").bind('closed.zf.reveal', (function() {
+
+    //clear 3D structure modal
     $('#accessionStructure').html("");
     $('#viewport canvas').remove();
 }));
+
 var data;
 var checkbox = "hitCheckbox";
 var currentStructureAccession = "";
@@ -277,8 +278,6 @@ var ss_extended = document.getElementsByClassName("aa_h");
 var aas;
 
 (function()  {
-
-
     $('.slider').on('moved.zf.slider', function() {
         $('#lefthandle').html($('#hidden1').val());
         $('#lefthandle').css({
@@ -304,8 +303,6 @@ var aas;
         var info = data_.hhr.info;
         var alignments = data_.hhr.alignments;
 
-        firstQueryName = data_.query[0][0];
-        firstQuerySequence = data_.query[0][1];
 
         if(alignments.length > 0){
         drawDataTable(hits);
@@ -313,23 +310,28 @@ var aas;
 
         //fill first query name and sequence for slider resubmit
 
-            firstQueryName =  ">" + alignments[0].query.name;
-            firstQuerySequence = alignments[0].query.seq;
-            firstQueryStart = alignments[0].query.start;
-            firstQueryEnd = alignments[0].query.end;
-            /* without timeout SLIDER is displayed */
-            setTimeout(function () {
-                slider_show(info.Match_columns, firstQueryStart, firstQueryEnd)
-            }, 1000);
+        firstQueryName =  ">" + alignments[0].query.name;
+        firstQuerySequence = alignments[0].query.seq;
+        firstQueryStart = alignments[0].query.start;
+        firstQueryEnd = alignments[0].query.end;
+        /* without timeout SLIDER is displayed */
+        setTimeout(function () {
+            slider_show(info.Match_columns, firstQueryStart, firstQueryEnd)
+        }, 1000);
 
-            aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+        aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
 
-            // set color letters and SS to default
-            toggleAliColor_("letters");
-            toggleSS_();
-            $("#accordion").foundation();
-            $('.histogram').hide();
-        }else{
+        // set color letters and SS to default
+        toggleAliColor_("letters");
+        toggleSS_();
+
+        $("#accordion").foundation();
+        $("#templateAlignmentModal").foundation();
+        $("#structureModal").foundation();
+        $('.histogram').hide();
+
+
+        } else {
             alert("No hits found!");
             firstQueryEnd = 0;
             firstQueryStart = 0;
@@ -569,12 +571,7 @@ function forward_(tool){
         //fill array with headers and sequences
 
         checkedCheckboxes.forEach(function callback(currentValue) {
-            var seq = "";
-            if ($('#sliderRegion').is(':checked')) {
-                seq = data.alignments[currentValue].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
-            } else {
-                seq = data.alignments[currentValue].template.seq;
-            }
+            var seq = data.alignments[currentValue].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
             if(forwardData.indexOf(seq) == -1) {
                 forwardData.push(">" + data.hits[currentValue].struc + data.hits[currentValue].hit.substr(0, 60));
                 forwardData.push(seq);
@@ -584,14 +581,9 @@ function forward_(tool){
 
             for (i = 0; i < data.alignments.length; ++i) {
                 if (data.alignments[i].info.eval > $("#forwardEvalue").val()) {
-                    var seq="";
-                    if ($('#sliderRegion').is(':checked')) {
-                        seq = data.alignments[i].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
-                    } else {
-                        seq = data.alignments[i].template.seq;
-                    }
+                    var seq = data.alignments[i].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
                     if(forwardData.indexOf(seq) == -1) {
-                        forwardData.push(">" + data.hits[currentValue].struc + data.hits[currentValue].hit.substr(0, 60));
+                        forwardData.push(">" + data.hits[i].struc + data.hits[i].hit.substr(0, 60));
                         forwardData.push(seq);
                     }
                 }
@@ -599,10 +591,7 @@ function forward_(tool){
             }
         }
 
-
     forward(tool, forwardData.join("\n"));
-
-
 }
 
 
