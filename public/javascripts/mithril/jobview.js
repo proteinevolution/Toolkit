@@ -469,12 +469,12 @@ JobSubmissionComponent = {
                                 type: "RegisterJobs",
                                 "jobIDs": [jobID]
                             });
-                            Job.add(new Job({
+                            JobListComponent.pushJob(JobListComponent.Job({
                                 jobID: jobID,
                                 state: 0,
-                                createdOn: 'now',
+                                createdOn: 1,
                                 toolname: toolname
-                            }));
+                            }), true); // setActive = true
                             submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID);
                             m.request({
                                 url: submitRoute.url,
