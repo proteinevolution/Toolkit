@@ -1,0 +1,383 @@
+@import play.api.libs.json.JsObject
+@import play.api.libs.json.JsValue
+@import play.api.libs.json.JsArray
+@import play.api.Logger
+@import models.results.FileLoader
+@import play.api.libs.json.JsUndefined
+@import play.api.libs.json.JsDefined
+@import models.results.BlastVisualization
+@import modules.tel.TEL
+@(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
+<link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
+@* Load html Map used for the image representation *@
+<div class="container" id="loadingDiv"></div>
+<ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Visualization</a>
+        <div class="accordion-content" data-tab-content>
+            <div class='flat-slider' id='flat-slider'></div>
+            <div id='blastviz'>
+            <a class="success button tiny resubmitSection" onclick="resubmitSection_()" type="button" id="resubmitSection">
+                Resubmit section</a>
+                <div id='blastviz'>
+                    @BlastVisualization.html(s"$jobID/results/blastviz.html")
+                    <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
+                </div>
+            </div>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Hitlist</a>
+        <div class="accordion-content" data-tab-content>
+            <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
+            <table id="htb" class="display" cellspacing="0" width="80%">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>E-value</th>
+                        <th>Score</th>
+                        <th>Bitscore</th>
+                        <th>Identity</th>
+                        <th>Postitives</th>
+                        <th>Gaps</th>
+                        <th>qStart</th>
+                        <th>qEnd</th>
+                        <th>hStart</th>
+                        <th>hEnd</th>
+                        <th>Length</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Alignments</a>
+        <div id="alignments" class="accordion-content table-scroll" data-tab-content>
+            <div id="hhpred_alignment_control">
+                <div id="hhpred_advanced" >
+                    <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
+                </div>
+            </div>
+            <div class="colorOpts">
+                <a onclick="toggleSelectAll()" type="button"><span id="selectAllSeq">Select all</span></a>
+                <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
+                <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
+                <hr id="line-element" colspan="4" class="horizontal-line">
+            </div>
+
+
+
+            <form id="psiblast_templates">
+                  <table class="unstriped">
+                    <tbody>
+                        Number of sequences: @{{jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ 0 \ "search" \ "hits"}.as[List[JsObject]].size}
+                        <br />
+                        <br />
+                        @for((hit, index) <- ((jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ 0 \ "search" \ "hits").as[List[JsObject]]).zipWithIndex){
+                            @* hit number, links *@
+                            <tr>
+                                <td></td>
+                                <td colspan="3">
+                                @{hit \ "description" \ 0 \ "accession" match {
+                                    case JsDefined(jsValue) => BlastVisualization.getLinks((hit \ "description" \ 0 \ "accession").get.as[String])
+                                    case undefined: JsUndefined => BlastVisualization.getLinks("undefinedAccession") ;
+                                }
+                                }
+                                </td>
+                                <td></td>
+                            </tr>
+                            @* checkboxes, accession, name of hit*@
+                            <tr class="header">
+                                <td ><input type="checkbox" name="templates" class="hitCheckbox" value='@{index+1}'> @{index+1}.</td>
+                            <td colspan="4">
+
+                                @{hit \ "description" \ 0 \ "accession"  match {
+                                    case JsDefined(jsValue) => {BlastVisualization.getSingleLink((hit \ "description" \ 0 \ "accession").get.as[String])}
+                                    case undefined: JsUndefined => Logger.info("hit.desciption[0].accession undefined in results!")
+                                }
+                                }
+                                @{"  "+(hit \ "description" \ 0 \ "title").get.as[String].replaceFirst(">", "")}
+                            </td>
+                            </tr>
+                            @* Alignment Details*@
+                            <tr>
+                                <td></td>
+                            <td colspan="4">Score: @{(hit \ "hsps" \ 0 \ "bit_score").get}
+                                bits (@{(hit \ "hsps" \ 0 \ "score").get}),
+                                E-value: @{(hit \ "hsps" \ 0 \ "evalue").get},
+                                Identities: @{(hit \ "hsps" \ 0 \ "identity").get}/@{(hit \ "hsps" \ 0 \ "align_len").get}
+                                (@{BlastVisualization.calculatePercentage((hit \ "hsps" \ 0 \ "identity").get.toString, (hit \ "hsps" \ 0 \ "align_len").get.toString)}),
+                                Positives: @{(hit \ "hsps" \ 0 \ "positive").get}/@{(hit \ "hsps" \ 0 \ "align_len").get}
+                                (@{BlastVisualization.calculatePercentage((hit \ "hsps" \ 0 \ "positive").get.toString, (hit \ "hsps" \ 0 \ "align_len").get.toString)}),
+                                Gaps: @{(hit \ "hsps" \ 0 \ "gaps").get}/@{(hit \ "hsps" \ 0 \ "align_len").get}
+                                (@{BlastVisualization.calculatePercentage((hit \ "hsps" \ 0 \ "gaps").get.toString, (hit \ "hsps" \ 0 \ "align_len").get.toString)}),
+                                Length: @{(hit \ "hsps" \ 0 \ "align_len").get}
+
+                            </td>
+
+                            </tr>
+                            <tr>
+                                <td><br /></td>
+                            </tr>
+
+
+                            @* Query *@
+                            @{hit \ "hsps" \ 0 \ "qseq"  match {
+                                case JsDefined(jsValue) =>
+                                {BlastVisualization.makeRow("sequence", Array("Query" ,(hit \ "hsps" \ 0 \ "query_from").get.toString(), BlastVisualization.colorRegexReplacer({(hit \ "hsps" \ 0 \ "qseq").get.as[String]}), (hit \ "hsps" \ 0 \ "query_to").get.toString()))}
+                                case undefined: JsUndefined => Logger.info("query undefined in results!")
+                                }
+                            }
+                            @* Midline *@
+                            @{hit \ "hsps" \ 0 \ "qseq"  match {
+                                case JsDefined(jsValue) =>
+                                {BlastVisualization.makeRow("sequence", Array("" , "" , BlastVisualization.SSColorReplace({(hit \ "hsps" \ 0 \ "midline").get.as[String]}), ""))}
+                                case undefined: JsUndefined => Logger.info("midline undefined in results!")
+                            }
+                            }
+                            @* Hit *@
+                            @{hit \ "hsps" \ 0 \ "qseq"  match {
+                                case JsDefined(jsValue) =>
+                                {BlastVisualization.makeRow("sequence", Array("Hit" ,(hit \ "hsps" \ 0 \ "hit_from").get.toString(), BlastVisualization.colorRegexReplacer({(hit \ "hsps" \ 0 \ "hseq").get.as[String]}), (hit \ "hsps" \ 0 \ "hit_to").get.toString()))}
+                                case undefined: JsUndefined => Logger.info("hit undefined in results!")
+                            }
+                            }
+                            <tr>
+                                <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
+                            </tr>
+                        }
+
+                    </tbody>
+                  </table>
+            </form>
+        </div>
+    </li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Information</a>
+        <div class="accordion-content" data-tab-content>
+            <table  class="display" cellspacing="0" width="80%">
+                <tr>
+                    <td>Query</td>
+                    <td id="psiblast_query"></td>
+                </tr>
+                <tr>
+                    <td>Match_columns</td>
+                    <td id="psiblast_queryLength"></td>
+                </tr>
+            </table>
+        </div>
+    </li>
+</ul>
+
+
+<script>
+var data;
+var checkbox = "hitCheckbox";
+var hitlist;
+var colorSS = false;
+var colorLetters = false;
+var colorBackground = false;
+var selectAllBool = false;
+var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
+var aas;
+
+(function()  {
+    $('.slider').on('moved.zf.slider', function() {
+        $('#lefthandle').html($('#hidden1').val());
+        $('#lefthandle').css({
+            'color' : 'white',
+            'font-weight': 'bold',
+            'padding-left' : '2px'
+        });
+        $('#righthandle').html($('#hidden2').val());
+        $('#righthandle').css({
+            'color' : 'white',
+            'font-weight': 'bold',
+            'padding-left' : '2px'
+        });
+    });
+
+    var dataRoute = jsRoutes.controllers.DataController.get("@jobID");
+    $.ajax({
+        method: dataRoute.method,
+        url: dataRoute.url
+    }).done(function(data_) {
+
+        var numIterations = data_.output_psiblastp.BlastOutput2[0].report.results.iterations.length - 1;
+        var basenameResults = data_.output_psiblastp.BlastOutput2[0].report.results.iterations[numIterations].search;
+        data = basenameResults;
+        var hits = basenameResults.hits;
+        var numHits = hits.length;
+        var info = basenameResults.stat;
+
+
+        firstQueryName = ">" + data_.query[0][0];
+        firstQuerySequence = data_.query[0][1];
+        firstQueryLength = firstQuerySequence.length;
+
+        if(numHits > 0){
+        drawDataTable(hits);
+        drawInformation(info);
+
+        //fill first query name and sequence for slider resubmit
+
+        firstQueryStart = hits[0].hsps[0].query_from;
+        firstQueryEnd = hits[0].hsps[0].query_to;
+        /* without timeout SLIDER is displayed */
+        setTimeout(function () {
+            slider_show(firstQueryLength, firstQueryStart, firstQueryEnd)
+        }, 1000);
+
+        aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+
+        // set color letters and SS to default
+        toggleAliColor_("letters");
+        $("#accordion").foundation();
+
+        } else {
+            alert("No hits found!");
+            firstQueryEnd = 0;
+            firstQueryStart = 0;
+        }
+    });
+
+})();
+
+
+function drawInformation(info ){
+    /*  INFO TAB*/
+    $("#psiblast_query").append(firstQueryName);
+    $("#psiblast_queryLength").append(firstQueryLength);
+}
+
+function drawDataTable(hits){
+
+    hitlist = $('#htb').dataTable({
+        "bInfo": false,
+        "bFilter": true,
+        "bLengthChange": true,
+        "aaData": hits,
+        "scrollX": true,
+        "aoColumns": [
+
+            {"mDataProp": "num"},
+            {"mDataProp": "description.0.accession"},
+            {
+                "mDataProp": "hsps.0.evalue", render: function (data) {
+                return data.toExponential(2);
+            }
+            },
+            {"mDataProp": "hsps.0.score"},
+            {"mDataProp": "hsps.0.bit_score"},
+            {"mDataProp": "hsps.0.identity"},
+            {"mDataProp": "hsps.0.positive"},
+            {"mDataProp": "hsps.0.gaps"},
+            {"mDataProp": "hsps.0.query_from"},
+            {"mDataProp": "hsps.0.query_to"},
+            {"mDataProp": "hsps.0.hit_from"},
+            {"mDataProp": "hsps.0.hit_to"},
+            {"mDataProp": "len"}
+        ],
+        'columnDefs': [{
+            'targets': 0,
+            'searchable': false,
+            'orderable': true,
+            'render': function (data){
+                return '<input type="checkbox" name="templates" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '"> ' + data;
+            }
+        }]
+    });
+
+}
+
+
+function toggleSelectAll() {
+    selectAllDatatable(this.hitlist.fnGetNodes(), 'hitCheckbox');
+    this.selectAllBool = !this.selectAllBool;
+    if(this.selectAllBool) {
+        selectAll('hitCheckbox');
+        $("#selectAllSeq").addClass("colorToggle");
+    }
+    else {
+        deselectAll('hitCheckbox');
+        $("#selectAllSeq").removeClass("colorToggle");
+    }
+}
+
+function onFullscreenToggle() {
+    hitlist.draw();
+}
+
+
+
+
+function forward_(tool){
+    var hits = data.hits;
+    var forwardData = [];
+    var checkedCheckboxes = [];
+    var sliderRange = getSliderRange();
+    // get values of all checked Checkboxes
+    $('input:checkbox.' + checkbox + ":checked").each(function () {
+        checkedCheckboxes.push($(this).val()-1)
+    });
+
+    if($('#selectedHits').is(':checked')) {
+        //fill array with headers and sequences
+
+        checkedCheckboxes.forEach(function callback(currentValue) {
+            var seq = "";
+            if ($('#sliderRegion').is(':checked')) {
+                seq = hits[currentValue].hsps[0].hseq.substr(sliderRange[0] - 1, sliderRange[1]);
+            } else {
+                seq = hits[currentValue].hsps[0].hseq;
+            }
+            if(forwardData.indexOf(seq) == -1) {
+                forwardData.push(">" + hits[currentValue].description[0].title + hits[currentValue].description[0].accession.substr(0, 60));
+                forwardData.push(seq);
+            }
+        });
+    } else if ($('#accordingEvalue').is(':checked')) {
+
+        for (i = 0; i < hits.length; ++i) {
+            if (hits[i].hsps[0].evalue > $("#forwardEvalue").val()) {
+                var seq="";
+                if ($('#sliderRegion').is(':checked')) {
+                    seq = hits[i].hsps[0].hseq.substr(sliderRange[0] - 1, sliderRange[1]);
+                } else {
+                    seq = hits[i].hsps[0].hseq;
+                }
+                if(forwardData.indexOf(seq) == -1) {
+                    forwardData.push(">" + hits[i].description[0].title + hits[i].description[0].accession.substr(0, 60));
+                    forwardData.push(seq);
+                }
+            }
+        }
+    }
+
+    forward(tool, forwardData.join("\n"));
+}
+
+
+
+function toggleAliColor_(str){
+    if(str == "letters" ){
+        if(colorLetters)
+            toggleAliColor("");
+        else
+            toggleAliColor("letters");
+        this.colorLetters = !this.colorLetters;
+    }
+    if(str == "background"){
+        if(colorBackground)
+            toggleAliColor("");
+        else
+            toggleAliColor("background");
+        this.colorBackground = !this.colorBackground;
+    }
+}
+function resubmitSection_(){
+    resubmitSection(firstQuerySequence, firstQueryName);
+}
+
+</script>

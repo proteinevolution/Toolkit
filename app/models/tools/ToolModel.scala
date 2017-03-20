@@ -39,7 +39,11 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
   def getResults(jobID : String, toolname: String, jobPath: String)(implicit request: Request[AnyContent]): Future[Seq[(String, Html)]] = {
     val resultView =  toolname match {
-      case "psiblast" => Future.successful(Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID))))
+
+      case "psiblast" => getResult(jobID).map {
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID, jsvalue)))
+        case None => Seq.empty
+      }
 
       case "clans" => Future.successful(Seq.empty)
 
@@ -203,7 +207,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("psiblast", "ProtBLAST/PSI-BLAST", "pbl", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
       paramAccess.MATRIX,
       paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN,
-      paramAccess.GAP_EXT, paramAccess.DESC), Seq.empty),
+      paramAccess.GAP_EXT, paramAccess.DESC), Seq("modeller", "hhpred")),
 
 
     // CLustalOmega
