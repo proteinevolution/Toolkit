@@ -24,7 +24,7 @@ object BlastVisualization extends Constants {
   private val mmcifReg = """(...._[a-zA-Z])""".r
   private val mmcifShortReg = """([0-9]...)""".r
   private val refseqReg = """[NXMRP.]+._[0-9]+}?((\#[0-9]{1})|(.[0-9]))""".r
-  private val pfamReg = """(^pfam+.+[0-9]+)|(^PF\d+.+[0-9]+)""".r
+  private val pfamReg = """(pfam[0-9]+)|(^PF[0-9]+ ?(.[0-9]+))""".r
 
   private val ncbiRefseqBaseLink = "https://www.ncbi.nlm.nih.gov/Structure/cdd/wrpsb.cgi?seqinput=";
   private val pdbBaseLink = "http://pdb.rcsb.org/pdb/explore.do?structureId="

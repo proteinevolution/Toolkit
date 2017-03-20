@@ -499,11 +499,9 @@ function resubmitHmm(tool) {
 
 
 function templateAlignment(accession, number){
-    // add loading when ajax request is send
 
-    $(document).ajaxStart(function() {
-        $("templateAlignmentModal").LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
-    });
+    $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
+
     $.ajax({
         type: 'GET',
         url: '/templateAlignment/@jobID/' + accession + '/' + number + ''
@@ -513,16 +511,15 @@ function templateAlignment(accession, number){
             url: 'files/@jobID/' + number + '.fas'
         }).done(function (data) {
             $("#alignmentTemplate").val(data.toString());
-            $("templateAlignmentModal").ajaxStop(function() {
                 $.LoadingOverlay("hide");
-            });
-        })
-    }).fail(function () {
-        $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
-        $("templateAlignmentModal").ajaxStop(function() {
+        }).fail(function (){
+            $("#alignmentTemplate").val("Sorry, failed execute script.");
             $.LoadingOverlay("hide");
         });
-    });
+        }).fail(function () {
+        $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
+            $.LoadingOverlay("hide");
+        });
 }
 
 
@@ -565,7 +562,7 @@ function forwardTemplateAlignment_(tool, forwardData){
 
 
 function forward_(tool){
-    var forwardData = []
+    var forwardData = [];
     var checkedCheckboxes = [];
     var sliderRange = getSliderRange();
     // get values of all checked Checkboxes
