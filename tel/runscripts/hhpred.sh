@@ -62,6 +62,8 @@ reformat_hhsuite.pl a3m fas  "$(readlink -f ../results/query.top.a3m)" query.rep
 mv query.repseq.fas ../results/query.repseq.fas
 
 DBJOINED=""
+#create file in which selected dbs are written
+touch ../params/dbs
 # creating alignment of query and subject input
 if [  "%hhpred_align.content" == "true" ]
 then
@@ -86,13 +88,23 @@ else
     then
         DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
         DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
+        #write selected databses into file
+        printf "${DBS[@]}" >> ../params/dbs
+        printf "\n" >> ../params/dbs
     fi
     if [ "%proteomes.content" != "false" ]
     then
         PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
         DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
+        #write selected databses into file
+        printf "${PROTEOMES[@]}" >> ../params/dbs
     fi
 fi
+
+
+
+
+
 
 # Perform HHsearch # TODO Include more parameters
 hhsearch -cpu %THREADS \
