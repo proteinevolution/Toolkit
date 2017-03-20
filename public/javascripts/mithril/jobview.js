@@ -799,7 +799,8 @@ window.ParameterAlignmentComponent = {
                         $("#upload_alignment_modal").foundation("close");
                         $(".uploadFileName").show();
                         $("#uploadBoxClose").show();
-                        return $("#" + ctrl.id).prop("disabled", true);
+                        $("#" + ctrl.id).prop("disabled", true);
+                        $("#" + ctrl.id + "_two").prop("disabled", true);
                     }
                 }
             })), m("div", {
