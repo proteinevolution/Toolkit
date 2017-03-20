@@ -29,14 +29,14 @@ class HHpredController @Inject()(webJarAssets : WebJarAssets) extends Controller
     Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
   }
 
-  def runScript(jobID: String, accession: String, number : String) = Action.async {
+  def runScript(jobID: String, accession: String) = Action.async {
     if(!templateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${templateAlignmentScript.name} is not executable.")
     }
     else {
       Future.successful{
-        Process(templateAlignmentScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accession" -> accession, "number" -> number).run().exitValue() match {
+        Process(templateAlignmentScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accession" -> accession).run().exitValue() match {
 
           case 0 => Ok
           case _ => BadRequest

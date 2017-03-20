@@ -142,7 +142,7 @@ object BlastVisualization extends Constants {
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     var idTrimmed = id.substring(1, 5)
     var idCDD = id.replaceAll("PF", "pfam")
-    links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\',\'" + "template_" + number + "\')\">Template alignment</a>"
+    links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
     if(db == "scop") {
 
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"

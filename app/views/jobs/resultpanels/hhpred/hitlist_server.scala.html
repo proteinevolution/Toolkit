@@ -498,17 +498,19 @@ function resubmitHmm(tool) {
 }
 
 
-function templateAlignment(accession, number){
-
+function templateAlignment(accession){
+    // replace '#' for url
+    accession = accession.replace("#", "%23");
+    console.log(accession)
     $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
 
     $.ajax({
         type: 'GET',
-        url: '/templateAlignment/@jobID/' + accession + '/' + number + ''
+        url: '/templateAlignment/@jobID/' + accession
     }).done(function () {
         $.ajax({
             type: 'GET',
-            url: 'files/@jobID/' + number + '.fas'
+            url: 'files/@jobID/' + accession + '.fas'
         }).done(function (data) {
             $("#alignmentTemplate").val(data.toString());
                 $.LoadingOverlay("hide");
