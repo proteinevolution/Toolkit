@@ -71,10 +71,10 @@
             <form id="psiblast_templates">
                   <table class="unstriped">
                     <tbody>
-                        Number of sequences: @{{jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ 0 \ "search" \ "hits"}.as[List[JsObject]].size}
+                        Number of sequences: @{{jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ ((jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" ).as[List[JsObject]].size-1)\ "search" \ "hits"}.as[List[JsObject]].size}
                         <br />
                         <br />
-                        @for((hit, index) <- ((jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ 0 \ "search" \ "hits").as[List[JsObject]]).zipWithIndex){
+                        @for((hit, index) <- ((jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ ((jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" ).as[List[JsObject]].size-1) \ "search" \ "hits").as[List[JsObject]]).zipWithIndex){
                             @* hit number, links *@
                             <tr>
                                 <td></td>
