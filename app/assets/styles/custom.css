@@ -229,10 +229,9 @@ tr.job a:visited {
 }
 
 
-#sequences{
-
-    font-family: Monaco, Consolas, "Lucida Console", monospace;
-    font-size: 0.625em;
+.sequence{
+    font-family: 'Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,monospace;
+    font-size: 0.625rem;
 
 }
 
