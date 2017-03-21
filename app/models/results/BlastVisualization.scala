@@ -216,9 +216,9 @@ object BlastVisualization extends Constants {
     var seqWrapped = ""
     for { i <- 0 to seq.length if i % num == 0}
       if( i + num < seq.length ) {
-      seqWrapped += "<tr><td></td><td id=\"sequence\">" + seq.substring(i, (i+num)) + "</td></tr>"
+      seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.substring(i, (i+num)) + "</td></tr>"
     }else {
-      seqWrapped += "<tr><td></td><td id=\"sequence\">" + seq.substring(i) + "</td></tr>"
+      seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.substring(i) + "</td></tr>"
     }
 
     BlastVisualization.colorRegexReplacer(seqWrapped)
