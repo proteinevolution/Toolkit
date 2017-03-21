@@ -7,7 +7,7 @@
 @import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
 @import modules.tel.TEL
-@(toolName: String, jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
+@(toolName: String, jobID: String, filename : String,jsValue: JsValue)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 
@@ -23,13 +23,13 @@
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences: @{{jsValue \ "alignment"}.as[List[JsArray]].size}
+    Number of sequences: @{{jsValue \ filename }.as[List[JsArray]].size}
         <br />
         <br />
 <form id="alignmentResult">
     <table class="unstriped">
         <tbody class="alignmentTBody">
-        @for((alignment,index) <- {jsValue \ "alignment"}.as[List[JsArray]].zipWithIndex) {
+        @for((alignment,index) <- {jsValue \ filename }.as[List[JsArray]].zipWithIndex) {
             <tr class="header">
                 <td ><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index}'> @{index+1}.</td>
                 <td>
@@ -58,7 +58,7 @@
 </div>
 
 <script>
-        var data;
+        var data = @(jsValue \ filename).get;
         var checkbox = "alignmentCheckbox";
         var colorLettersBool = false;
         var colorBackgroundBool = false;
@@ -72,13 +72,6 @@
             selectTopTen(checkbox);
             $("#selectTopTen").addClass( "colorToggle" );
         });
-
-        // get result json
-        var fileUrl = "/files/@jobID/alignment.json";
-        $.getJSON(fileUrl, function (data_) {
-            data = data_;
-        });
-
         function toggleAliColor_(str){
             if(str == "letters" ){
                 if(colorLettersBool)
