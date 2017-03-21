@@ -233,6 +233,7 @@ var fadesIn = function(element, isInitialized, context) {
 };
 
 window.Toolkit = {
+    currentJobID : null,
     getSuggestion : function (ctrl) {
         return function (e) {}
     },
@@ -256,21 +257,17 @@ window.Toolkit = {
         var job, jobID, toolname, viewComponent;
         if (args.isJob) {
             jobID = m.route.param("jobID");
-            Job.selected = jobID;
-            Job.contains(jobID).then(function(jobIsPresent) {
-                if (!jobIsPresent) {
-                    sendMessage({
-                        type: "RegisterJobs",
-                        "jobIDs": [jobID]
-                    });
-                    return m.request({
-                        url: "/api/job/load/" + jobID,
-                        method: "GET"
-                    }).then(function(data) {
-                        return Job.add(new Job(data));
-                    });
-                }
-            });
+            console.log(jobID + " vs " + Toolkit.currentJobID + " Job list " + JobListComponent.contains(jobID));
+            //http://olt:7550/#/jobs/1912188
+            if (!JobListComponent.contains(jobID) && !(Toolkit.currentJobID === jobID)) {
+                Toolkit.currentJobID = jobID;
+                // ensure addition to the job list
+                sendMessage({ type: "RegisterJobs", "jobIDs": [jobID] });
+                // request job
+                m.request({ url: "/api/job/load/" + jobID, method: "GET" }).then(function(data) {
+                    JobListComponent.pushJob(JobListComponent.Job(data), true);
+                });
+            }
         } else {
             Job.selected = -1;
         }

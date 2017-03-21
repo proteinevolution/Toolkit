@@ -12,103 +12,149 @@ tooltipSearch = function(elem, isInit) {
 
 window.JobListComponent = {
 
-    Job : function (data) {
+    Job : function (data) { // Generates a job Object
         return {
             jobID     : data.jobID,
             state     : data.state,
             createdOn : data.createdOn,
-            toolname  : data.toolname
+            toolname  : data.toolname,
+            // Functions
+            select    : function(job) {     // marks a job as selected and changes the route
+                return function(e) {        // ensure that the event bubble is not triggering when the clear button is hit
+                    if (e.target.id != "boxclose") {
+                        console.log(job.jobID + " selected");
+                        JobListComponent.selectedJobID = job.jobID;
+                        m.route("/jobs/" + job.jobID);
+                    }
+                }
+            },
+            // View component
+            controller : function (args) {},
+            view : function (ctrl) {
+                return m("div", {
+                    class   : ("job " + a[this.state]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
+                    id      : this.jobID,
+                    onclick : this.select(this)
+                }, [
+                    m("div",  { class: "jobid"    }, this.jobID),
+                    m("span", { class: "toolname" }, this.toolname.substr(0, 4).toUpperCase()),
+                    m("a", {
+                        class   : "boxclose",
+                        id      : "boxclose",
+                        onclick : JobListComponent.removeJob.bind(ctrl, this.jobID)
+                    })
+                ]);
+            }
         }
     },
     list            : [],   // List containing the jobs
     index           : 0,    // Index of the first shown item in the job list
-    shown           : 15,   // Number of shown jobs
-    selected        : -1,   // Index of the selected job
+    numVisibleItems : 15,   // Number of shown jobs
+    selectedJobID   : null, // JobID of the selected job
     lastUpdatedJob  : null, // Job which has been updated last
     sort            : "createdOn",
     getJob          : function (jobID) {    // Returns a job with the given jobID
         var foundJob = null;
-        this.list.map(function (job){ if(job.jobID === jobID) foundJob = job });
+        JobListComponent.list.map(function (job){ if(job.jobID === jobID) foundJob = job });
         return foundJob
     },
     getJobIndex     : function (jobID) {    // Returns the index of a job with the given jobID
         var index = -1, foundIndex = null;
-        this.list.map(function (job){
+        JobListComponent.list.map(function (job){
             index++;
             if (job.jobID === jobID) foundIndex = index
         });
         return foundIndex
     },
     contains        : function (jobID) {    // Checks if the job with the given jobID is in the list
-        return this.getJob(jobID) == null
+        return this.getJob(jobID) != null
     },
     jobIDs          : function () {         // Returns the jobIDs from the list
-        return this.list.map(function(job){ return job.jobID })
+        return JobListComponent.list.map(function(job){ return job.jobID })
     },
     register        : function (jobIDs) {   // Notices the server to send update messages about the jobs
         if (jobIDs == null) { jobIDs = this.jobIDs }
         sendMessage({ type: "RegisterJobs", "jobIDs": jobIDs })
     },
-    emptyList       : function () { this.list = [] },   // empties the job list
+    emptyList       : function () { JobListComponent.list = [] },   // empties the job list
     reloadList      : function () {         // reloads the job list from the server
+        console.log("Reloaded Job List");
         var request = m.request({
             url: "/api/jobs",
             method: "GET",
-            type: this.Job
+            type: JobListComponent.Job
         });
         request.then(function(data) {
-            this.list = data;
-            register()
-        })
+            JobListComponent.list = data;
+            JobListComponent.register()
+        });
+        return JobListComponent.list
     },
     removeJob       : function(jobID, messageServer, deleteJob) { // removes a job from the list
         if (messageServer == null) { messageServer = false }
         if (deleteJob     == null) { deleteJob     = false }
-        this.list.map( function(job, idx) {
+        JobListComponent.list.map( function(job, idx) {
             if (job.jobID === jobID) {
-                jobs[idx] = null;
-                jobs.splice(idx, 1);
+                if (jobID === JobListComponent.selectedJobID) {
+                    console.log("deleting active element... " + JobListComponent.selectedJobID);
+                    JobListComponent.selectedJobID = null;
+                    m.route("/tools/" + job.toolname);
+                }
+                JobListComponent.list[idx] = null;
+                JobListComponent.list.splice(idx, 1);
                 if (messageServer) {
-                    if (deleteJob) { sendMessage({ "type" : "DeleteJob", "jobID" : job.jobID }) }
+                    if (deleteJob) {
+                        //sendMessage({ "type" : "DeleteJob", "jobID" : job.jobID }) TODO reimplement the deletion over WS
+                        m.request({ url: "/api/job/" + job.jobID, method: "DELETE" });
+                    }
                     else           { sendMessage({ "type" : "ClearJob",  "jobID" : job.jobID }) }
                 }
-                if (job.jobID === this.selected) { m.route("/tools/" + job.toolname) }
             }
         });
     },
-    sortToolname    : function(sort) {      // Sorting comperator for the tool name
-        if (sort != null) { this.sort = sort }
-        this.list.sort(function(job1, job2) {
-            switch (type) {
+    sortList        : function(sort) {      // Sorting the list elements
+        console.log("sort is: " + sort);
+        if (sort != null) { JobListComponent.sort = sort }
+        JobListComponent.list.sort(function(job1, job2) {
+            switch (JobListComponent.sort) {
                 case "toolName"  : return job2.toolname.localeCompare(job1.toolname);
                 case "jobID"     : return job2.jobID.localeCompare(job1.jobID);
                 case "createdOn" :
                 default          : return job2.createdOn.localeCompare(job1.createdOn)
             }
-        })
+        });
     },
     sortJobID       : function() {          // Sorting comperator for the jobID
-        this.list.sort(function(job1, job2) { return job2.jobID.localeCompare(job1.jobID) })
+        JobListComponent.list.sort(function(job1, job2) { return job2.jobID.localeCompare(job1.jobID) })
     },
     sortCreatedOn   : function() {          // Sorting comperator for the creation date (default)
-        this.list.sort(function(job1, job2) {  })
+        JobListComponent.list.sort(function(job1, job2) {  })
     },
-    pushJob         : function(newJob) {
+    pushJob         : function(newJob, setActive) {
         this.lastUpdatedJob = newJob;
         var index = null, oldJob;
-        this.list.map(function(job, idx){
+        if (setActive) { JobListComponent.selectedJobID = newJob.jobID }
+        JobListComponent.list.map(function(job, idx){
             if(job.jobID === newJob.jobID) { index = idx; oldJob = job }
         });
         if (index != null) {
-            this.list[index] = newJob
+            JobListComponent.list[index] = newJob
         } else {
-            this.list.push(newJob)
+            JobListComponent.list.push(newJob)
         }
-        this.sortToolname();
+        if (newJob.jobID === JobListComponent.selectedJobID) {
+            m.route("/jobs/" + newJob.jobID);
+        }
+        //this.sortList(); TODO sort after pushing
         this.index = 0;
     },
     model: function() {},
-    controller: function() {},
+    controller: function(args) {
+        JobListComponent.reloadList();
+        // TODO this is a hack to make the controller use the reload list command only once
+        JobListComponent.controller = function(){return {}};
+        return {}
+    },
     view: function(ctrl, args) {
         return m("div", {
             id: "job-list"
@@ -117,27 +163,18 @@ window.JobListComponent = {
             }, [
                 m("div", {
                     "class": "idsort textcenter",
-                    onclick: Job.sortToolname
+                    onclick: JobListComponent.sortList.bind(ctrl, "jobID")
                 }, "ID"), m("div", {
                     "class": "toolsort textcenter",
-                    onclick: Job.sortJobID
+                onclick: JobListComponent.sortList.bind(ctrl, "toolName")
                 }, "Tool")
             ]), m("div", {
                 id: "job-list-bottom"
-            }, args.jobs().slice(0).slice(-5).map(function(job) {
-                return m("div", {
-                    class   : ("job " + a[job.state]).concat(job.jobID === args.selected ? " selected" : ""),
-                    onclick : function(e) { if (e.target.id != "boxclose") m.route("/jobs/" + job.jobID) }
-                }, [
-                    m("div",  { class: "jobid"    }, job.jobID),
-                    m("span", { class: "toolname" }, job.toolname.substr(0, 4).toUpperCase()),
-                    m("a", {
-                        class   : "boxclose",
-                        id      : "boxclose",
-                        onclick : args.clear.bind(ctrl, job.jobID)
-                    })
-                ]);
-            }))
+            },
+            JobListComponent.list.slice(JobListComponent.index).slice(-JobListComponent.numVisibleItems).map(function(job) {
+                return job.view(ctrl)
+            })
+            )
         ]);
     }
 };
