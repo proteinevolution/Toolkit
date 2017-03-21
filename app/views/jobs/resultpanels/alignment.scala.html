@@ -66,7 +66,14 @@
             $("#selectTopTen").addClass( "colorToggle" );
         });
 
-        data = @(jsValue \ filename).get
+
+        // get result json
+        var fileUrl = "/files/@jobID/@jobID";
+        $.getJSON(fileUrl, function (data_) {
+            data = data_;
+        });
+
+
         function toggleAliColor_(str){
             if(str == "letters" ){
                 if(colorLettersBool)
