@@ -1,3 +1,4 @@
+JOBID=%jobid.content
 #CHECK IF MSA generation is required or not
 if [ %msa_gen_max_iter.content == "0" ] ; then
         reformat_hhsuite.pl fas a3m %alignment.path query.a3m -M first
@@ -110,7 +111,7 @@ fi
 hhsearch -cpu %THREADS \
          -i ../results/query.a3m \
          ${DBJOINED} \
-         -o ../results/hhsearch.hhr \
+         -o ../results/${JOBID}.hhr \
          -p %pmin.content \
          -P %pmin.content \
          -Z %max_lines.content \
@@ -128,10 +129,7 @@ hhsearch -cpu %THREADS \
          -mact %macthreshold.content
 
 
-JOBID=%jobid.content
 
-# Generate input files for hhviz
-cp ../results/hhsearch.hhr ../results/${JOBID}.hhr
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
@@ -156,7 +154,7 @@ reformat.pl fas \
 
 # Generate Hitlist in JSON for hhrfile
  
-hhr2json.py "$(readlink -f ../results/hhsearch.hhr)" > ../results/hhr.json
+hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
 
 # Generate Query in JSON
 fasta2json.py %alignment.path ../results/query.json

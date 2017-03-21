@@ -68,10 +68,10 @@
             <form id="hhpred_templates">
                 <table class="unstriped">
                     <tbody>
-                        Number of sequences: @{{jsValue \ "hhr" \ "hits"}.as[List[JsObject]].size}
+                        Number of sequences: @{{jsValue \ jobID \ "hits"}.as[List[JsObject]].size}
                         <br />
                         <br />
-                        @for((alignment, hit) <- ((jsValue \ "hhr" \ "alignments").as[List[JsObject]], (jsValue \ "hhr" \ "hits").as[List[JsObject]]).zipped.toList){
+                        @for((alignment, hit) <- ((jsValue \ jobID \ "alignments").as[List[JsObject]], (jsValue \ jobID \ "hits").as[List[JsObject]]).zipped.toList){
                             @* hit number, links *@
                             <tr>
                                 <td></td>
@@ -240,11 +240,10 @@
                 method: dataRoute.method,
                 url: dataRoute.url
             }).done(function(data_) {
-                data = data_.hhr;
-                var hits = data_.hhr.hits;
-                var info = data_.hhr.info;
-                var alignments = data_.hhr.alignments;
-
+                data = data_[@jobID];
+                var hits = data_[@jobID].hits;
+                var info = data_[@jobID].info;
+                var alignments = data_[@jobID].alignments;
 
                 if(alignments.length > 0){
                     drawDataTable(hits);
