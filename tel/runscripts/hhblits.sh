@@ -4,7 +4,7 @@ JOBID=%jobid.content
 hhblits -cpu 8 \
         -i $(readlink -f ../params/infile_a2m) \
         -d  %HHBLITS/%hhblitsdb.content     \
-        -o $(readlink -f ../results/out.hhr) \
+        -o $(readlink -f ../results/${JOBID}.hhr) \
         -oa3m $(readlink -f ../results/out.a3m)  \
         -e %inclusion_ethresh.content  \
         -n %maxrounds.content  \
@@ -17,7 +17,7 @@ hhblits -cpu 8 \
         -aliw %aliwidth.content \
         -%alignmode.content
 
-hhr2json.py "$(readlink -f ../results/out.hhr)" > $(readlink -f ../results/hhr.json)
+hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > $(readlink -f ../results/${JOBID}.json)
 
 
 # Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
@@ -53,8 +53,5 @@ rm ../results/out.reduced.fas ../results/out.reduced.a3m
 
 # Generate Query in JSON
 fasta2json.py %alignment.path ../results/query.json
-
-# Generate input files for hhviz
-cp ../results/out.hhr ../results/${JOBID}.hhr
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
