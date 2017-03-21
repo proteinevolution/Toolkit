@@ -211,5 +211,17 @@ object BlastVisualization extends Constants {
     val percent = ((num1/num2) * 100).toInt.toString + " %"
     percent
   }
+
+  def wrapSequence(seq : String, num : Int) : String = {
+    var seqWrapped = ""
+    for { i <- 0 to seq.length if i % num == 0}
+      if( i + num < seq.length ) {
+      seqWrapped += "<tr><td></td><td id=\"sequence\">" + seq.substring(i, (i+num)) + "</td></tr>"
+    }else {
+      seqWrapped += "<tr><td></td><td id=\"sequence\">" + seq.substring(i) + "</td></tr>"
+    }
+
+    BlastVisualization.colorRegexReplacer(seqWrapped)
+  }
 }
 

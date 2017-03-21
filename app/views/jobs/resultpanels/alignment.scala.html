@@ -19,7 +19,6 @@
     <a onclick="toggleSelectTopTen()" type="button"><span id="selectTopTen">Select top ten</span></a>
     <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
     <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
-    <a onclick='wrapSequences()' type="button"><span id="wrapSequences">Wrap sequences</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -39,15 +38,10 @@
                     }
                 </td>
             </tr>
-            <tr>
-                <td></td>
-                <td class="sequence">
                     @{alignment{1} match {
-                        case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((alignment{1}).get.as[String]))
+                        case JsDefined(jsValue) => Html(BlastVisualization.wrapSequence((alignment{1}).get.as[String], 60))
                         }
                     }
-                </td>
-            </tr>
         }
             <tr><td><br/></td></tr>
             <tr><td><br/></td></tr>
@@ -58,13 +52,12 @@
 </div>
 
 <script>
-        var data = @(jsValue \ filename).get;
+        var data;
         var checkbox = "alignmentCheckbox";
         var colorLettersBool = false;
         var colorBackgroundBool = false;
         var selectTopTenBool = false;
         var selectAllBool = false;
-        var wrapSequencesBool = false;
         var aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
 
         // check first ten checkboxes by default
@@ -72,6 +65,8 @@
             selectTopTen(checkbox);
             $("#selectTopTen").addClass( "colorToggle" );
         });
+
+        data = @(jsValue \ filename).get
         function toggleAliColor_(str){
             if(str == "letters" ){
                 if(colorLettersBool)
@@ -140,17 +135,6 @@
             }
             var filename = "@{toolName}_jobID_@{jobID}.fasta";
             download(filename, fileString);
-        }
-        function wrapSequences(){
-            this.wrapSequencesBool = !this.wrapSequencesBool;
-            if(wrapSequencesBool) {
-                $(".sequence").addClass("wrap");
-                $("#wrapSequences").addClass("colorToggle");
-            }
-            else {
-                $(".sequence").removeClass("wrap");
-                $("#wrapSequences").removeClass("colorToggle");
-            }
         }
 
 </script>
