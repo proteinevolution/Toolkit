@@ -1,18 +1,26 @@
-@(jobID: String)(implicit request: RequestHeader)
+@import play.api.libs.json.JsObject
+@import play.api.libs.json.JsValue
+@import play.api.Logger
+@import models.results.FileLoader
+@import play.api.libs.json.JsUndefined
+@import play.api.libs.json.JsDefined
+@import models.results.BlastVisualization
+@import modules.tel.TEL
+@(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
-
-
-@*  Load html Map used for the image representation *@
+@* Load html Map used for the image representation *@
+<div class="container" id="loadingDiv"></div>
 <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-    <li class="accordion-item is-active"  data-accordion-item>
+    <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Visualization</a>
         <div class="accordion-content" data-tab-content>
-            <div>
-                <div class='flat-slider' id='flat-slider'></div>
-                    <div id='blastviz'>
-                     <!-- Create visual overview with Snap -->
-                     <svg id="hhpred_viz"  width="100%"></svg>
+            <div class='flat-slider' id='flat-slider'></div>
+            <div id='blastviz'>
+                <a class="success button tiny resubmitSection" onclick="resubmitSection_()" type="button" id="resubmitSection">
+                    Resubmit section</a>
+                <div id='blastviz'>
+                    @BlastVisualization.html(s"$jobID/results/$jobID.html_NOIMG")
+                    <p><img src="files/@jobID/@{jobID}.png" border="0" alt="blasthits" usemap="#blastmap"></p>
                 </div>
             </div>
         </div>
@@ -20,11 +28,13 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Hitlist</a>
         <div class="accordion-content" data-tab-content>
+            <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
             <table id="htb" class="display" cellspacing="0" width="80%">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Hit</th>
+                        <th>Name</th>
                         <th>Prob</th>
                         <th>E-value</th>
                         <th>P-value</th>
@@ -35,7 +45,6 @@
                         <th>qEnd</th>
                         <th>tStart</th>
                         <th>tEnd</th>
-                        <th>Ref</th>
                     </tr>
                 </thead>
             </table>
@@ -44,23 +53,114 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Alignments</a>
         <div id="alignments" class="accordion-content table-scroll" data-tab-content>
-
             <div id="hhpred_alignment_control">
-            <select id="hhpred_color_select" onchange="toggleAliColor(this)">
-                <option value="none">No color</option>
-                <option value="letters">Letters</option>
-                <option value="background">Background</option>
-            </select>
-            <input type="checkbox" onchange="toggleSS(this)"> Color SS
+                <div id="hhpred_advanced" >
+                    <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
+                </div>
             </div>
+            <div class="colorOpts">
+                <a onclick="toggleSelectAll()" type="button"><span id="selectAllSeq">Select all</span></a>
+                <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
+                <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
+                <hr id="line-element" colspan="4" class="horizontal-line">
+            </div>
+
             <form id="hhpred_templates">
+                <table class="unstriped">
+                    <tbody>
+                        Number of sequences: @{{jsValue \ "hhr" \ "hits"}.as[List[JsObject]].size}
+                        <br />
+                        <br />
+                        @for((alignment, hit) <- ((jsValue \ "hhr" \ "alignments").as[List[JsObject]], (jsValue \ "hhr" \ "hits").as[List[JsObject]]).zipped.toList){
+                            @* hit number, links *@
+                            <tr>
+                                <td></td>
+                                <td colspan="3">
+                                @{hit \ "struc" match {
+                                    case JsDefined(jsValue) => BlastVisualization.getLinksHHpred((hit \ "struc").get.as[String])
+                                    case undefined: JsUndefined => BlastVisualization.getLinksHHpred("undefinedAccession") ;
+                                }
+                                }
+                                </td>
+                                <td></td>
+                            </tr>
+                            @* checkboxes, accession, name of hit*@
+                            <tr class="header">
+                                <td ><input type="checkbox" name="templates" class="hitCheckbox" value='@{(hit \ "no").get}'> @{(hit \ "no").get}.</td>
+                            <td colspan="4">
+
+                                @{hit \ "struc" match {
+                                    case JsDefined(jsValue) => {BlastVisualization.getSingleLink((hit \ "struc").get.as[String])}
+                                    case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
+                                }
+                                }
+                                @{"  "+(alignment \ "header").get.as[String].replaceFirst(">", "")}
+                            </td>
+                            </tr>
+                            @* Alignment Details*@
+                            <tr>
+                                <td></td>
+                                <td colspan="4">Probability: @{(alignment \ "info" \ "probab").get}, E-value: @{(alignment \ "info" \ "eval").get},
+                                    Score: @{(alignment \ "info" \ "score").get}, Aligned Cols: @{(alignment \ "info" \ "aligned_cols").get},
+                                    Identities: @{BlastVisualization.percentage((alignment \ "info" \ "identities").get.toString)},
+                                    Similarity: @{BlastVisualization.percentage((alignment \ "info" \ "similarity").get.toString)},
+                                    Sum Probs: @{(alignment \ "info" \ "sum_probs").get}
+
+
+                            </td>
+                            </tr>
+                            <tr>
+                                <td><br /></td>
+                            </tr>
+
+                            @* seq of query, if present *@
+                            @{alignment \ "query" \ "seq" match {
+                                case JsDefined(jsValue) =>
+                                {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query" \ "name").get.as[String],(alignment \ "query" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "query" \ "seq").get.as[String]),(alignment \ "query" \ "end").get.toString(),"("+(alignment \ "query" \ "ref").get+")".toString()))}
+                                case undefined: JsUndefined => Logger.info("query.seq undefined in results!")
+                            }
+                            }
+                            @*Consensus of query, if present*@
+                            @{alignment \ "query" \ "consensus" match {
+                                case JsDefined(jsValue) =>
+                                {BlastVisualization.makeRow("sequence", Array("Q", "Consensus",(alignment \ "query" \ "start").get.toString(), (alignment \ "query" \ "consensus").get.as[String],(alignment \ "query" \ "end").get.toString(),"("+(alignment \ "query" \ "ref").get+")".toString()))}
+                                case undefined: JsUndefined => Logger.info("query.consensus undefined in results!")
+                            }
+                            }
+                            @* agree of query, if present *@
+                            @{alignment \ "agree" match {
+                                case JsDefined(jsValue) =>
+                                {BlastVisualization.makeRow("sequence", Array("","","",(alignment \ "agree").get.as[String], ""))}
+                                case undefined: JsUndefined => Logger.info("agree undefined in results!")
+                            }
+                            }
+                            @*  consensus template, if present *@
+                            @{alignment \ "template" \ "consensus" match {
+                                case JsDefined(jsValue) =>
+                                {BlastVisualization.makeRow("sequence", Array("T", "Consensus", (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "consensus").get.as[String],(alignment \ "template" \ "end").get.toString(),"("+(alignment \ "template" \ "ref").get+(")").toString()))}
+                                case undefined: JsUndefined => Logger.info("template.consensus undefined in results!")
+                            }
+                            }
+                            @*  seq template, if present *@
+                            @{alignment \ "template" \ "seq" match {
+                                case JsDefined(jsValue) =>
+                                {BlastVisualization.makeRow("sequence", Array("T", (alignment \ "template" \ "name").get.as[String], (alignment \ "template" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "template" \ "seq").get.as[String]),(alignment \ "template" \ "end").get.toString(),"("+(alignment \ "template" \ "ref").get+")".toString()))}
+                                case undefined: JsUndefined => Logger.info("template.seq undefined in results!")
+                            }
+                            }
+                            <tr>
+                                <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </form>
         </div>
     </li>
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Information</a>
         <div class="accordion-content" data-tab-content>
-            <table  class="display" cellspacing="0" width="80%">
+            <table class="display" cellspacing="0" width="80%">
                 <tr>
                     <td>Query</td>
                     <td id="hhpred_query"></td>
@@ -90,251 +190,310 @@
     </li>
 </ul>
 
+@*MODALS*@
 
+
+<div class="reveal" id="templateAlignmentModal" data-reveal>
+    <h3>Template Alignment</h3>
+    <div>
+        <select>
+            <option selected>Forward To</option>
+            <option onclick="forwardTemplateAlignment_('modeller', $('#alignmentTemplate').val())";>Modeller</option>
+        </select>
+    </div>
+    <textarea rows="50" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
 <script>
 
-    function onFullscreenToggle() {
-            hitlist.draw();
-    }
-
-    var ss_helices = document.getElementsByClassName("ss_h");
-    var ss_extended = document.getElementsByClassName("ss_e");
-    var aas;
-    var hitlist;
-    var queryLength;
-    var firstHitBegin;
-    var firstHitEnd;
-
-
+        var data;
+        var checkbox = "hitCheckbox";
+        var currentStructureAccession = "";
+        var hitlist;
+        var colorLetters = false;
+        var colorBackground = false;
+        var selectAllBool = false;
+        var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
+        var aas;
 
         (function()  {
-         $('.slider').on('moved.zf.slider', function() {
-             $('#lefthandle').html($('#hidden1').val());
-             $('#lefthandle').css({
-                 'color' : 'white',
-                 'font-weight': 'bold',
-                 'padding-left' : '2px'
-             });
-             $('#righthandle').html($('#hidden2').val());
-             $('#righthandle').css({
-                 'color' : 'white',
-                 'font-weight': 'bold',
-                 'padding-left' : '2px'
-             });
-         });
-         var dataRoute = jsRoutes.controllers.DataController.get("@jobID", 'hhr');
-         $.ajax({
-             method: dataRoute.method,
-             url: dataRoute.url
-         }).done(function(data) {
-             // For the hitlist and the vizualization
-             var hits = data.hhr.hits;
+            $('.slider').on('moved.zf.slider', function() {
+                $('#lefthandle').html($('#hidden1').val());
+                $('#lefthandle').css({
+                    'color' : 'white',
+                    'font-weight': 'bold',
+                    'padding-left' : '2px'
+                });
+                $('#righthandle').html($('#hidden2').val());
+                $('#righthandle').css({
+                    'color' : 'white',
+                    'font-weight': 'bold',
+                    'padding-left' : '2px'
+                });
+            });
 
-             draw_hits("hhpred_viz", hits);
-
-             var info = data.hhr.info;
-             var alignments = data.hhr.alignments;
-             queryLength = info.Match_columns;
-             $("#hhpred_query").append(info.Query);
-             $("#hhpred_match_columns").append(info.Match_columns);
-             $("#hhpred_noseqs").append(info.No_of_seqs);
-             $("#hhpred_neff").append(info.Neff);
-             $("#hhpred_searchedhmms").append(info.Searched_HMMs);
-             $("#hhpred_date").append(info.Date);
-             hitlist = $('#htb').dataTable({
-                 "bInfo": false,
-                 "bFilter": true,
-                 "bLengthChange": true,
-                 "aaData": hits,
-                 "scrollY": 600,
-                 "scrollX": true,
-                 "aoColumns": [
-                     { "mDataProp": "no" },
-                     { "mDataProp": "hit" },
-                     { "mDataProp": "prob" },
-                     { "mDataProp": "eval" },
-                     { "mDataProp": "pval", render: function(data){return data.toExponential();}},
-                     { "mDataProp": "score" },
-                     { "mDataProp": "ss" },
-                     { "mDataProp": "cols" },
-                     { "mDataProp": "query_begin" },
-                     { "mDataProp": "query_end" },
-                     { "mDataProp": "template_begin" },
-                     { "mDataProp": "template_end" },
-                     { "mDataProp": "ref" }
-                 ]
-             });
-
-             // get beg and end of first hit to set slider handles
-             if(hits.length > 0 ) {
-                 firstHitBegin = hits[0].query_begin;
-                 firstHitEnd = hits[0].query_end;
-             }
-             else {
-                 firstHitBegin = 0;
-                 firstHitEnd = 0;
-             }
-
-             var alignments_container = document.getElementById("hhpred_templates");
-             for(var i = 0; i < alignments.length; i++) {
-
-                 var ali = alignments[i];
-                 var current_seq;
-                 var divAlignment = document.createElement("div");
-                 divAlignment.setAttribute("class", "alignment_box");
-                 var checkbox = document.createElement("input");
-                 checkbox.setAttribute("type", "checkbox");
-                 checkbox.setAttribute("value", ali.no.toString());
-                 checkbox.setAttribute("name", "templates");
-                 divAlignment.appendChild(checkbox);
-                 var tab = document.createElement("table");
-                 tab.className += " unstriped ";
-                 var tabbody = document.createElement("tbody");
-
-                 // hit details
-                 var aligned_cols = ali.info.aligned_cols;
-                 var evalue = ali.info.eval;
-                 var identities = ali.info.identities;
-                 var probabab= ali.info.probab;
-                 var score = ali.info.score;
-                 var similarity = ali.info.similarity;
-                 var sum_probs = ali.info.sum_probs;
-                 var template_neff = ali.info.template_neff;
-
-                 tabbody.appendChild(makeRowColspan(["","Probability: "+probabab+", Expect: "+ evalue],3,"td"));
-                 tabbody.appendChild(makeRowColspan(["","Score: " + score + ", Aligned Cols: " + aligned_cols + ", Identities: " + identities ],3,"td"));
-                 tabbody.appendChild(makeRowColspan(["","Similarity: " + similarity + ", Sum Probs: " + sum_probs + ", Template Neff: " + template_neff],3,"td"));
+            var dataRoute = jsRoutes.controllers.DataController.get("@jobID");
+            $.ajax({
+                method: dataRoute.method,
+                url: dataRoute.url
+            }).done(function(data_) {
+                data = data_.hhr;
+                var hits = data_.hhr.hits;
+                var info = data_.hhr.info;
+                var alignments = data_.hhr.alignments;
 
 
-                 // break
-                 tabbody.appendChild(makeRow(["<br></br>"]))
+                if(alignments.length > 0){
+                    drawDataTable(hits);
+                    drawInformation(info);
+
+                    //fill first query name and sequence for slider resubmit
+
+                    firstQueryName =  ">" + alignments[0].query.name;
+                    firstQuerySequence = alignments[0].query.seq;
+                    firstQueryStart = alignments[0].query.start;
+                    firstQueryEnd = alignments[0].query.end;
+                    /* without timeout SLIDER is displayed */
+                    setTimeout(function () {
+                        slider_show(info.Match_columns, firstQueryStart, firstQueryEnd)
+                    }, 1000);
+
+                    aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+
+                    // set color letters and SS to default
+                    toggleAliColor_("letters");
+
+                    $("#accordion").foundation();
+                    $("#templateAlignmentModal").foundation();
 
 
-                 // Handle secondary structure annotation for query, if present
-                 if(typeof ali.query.ss_dssp !== 'undefined') {
+                } else {
+                    alert("No hits found!");
+                    firstQueryEnd = 0;
+                    firstQueryStart = 0;
+                }
+            });
 
-                     current_seq = ali.query.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
-                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
-                     tabbody.appendChild(makeRow(["Q", "ss_dssp", "", current_seq]));
-                 }
-                 if(typeof ali.query.ss_pred !== 'undefined') {
-
-                     current_seq = ali.query.ss_pred.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
-                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
-                     tabbody.appendChild(makeRow(["Q", "ss_pred", "", current_seq]));
-                 }
-
-
-                 current_seq = ali.query.seq.replace(color_regex, color_regex_replacer);
-                 tabbody.appendChild(makeRow(["Q", ali.query.name, ali.query.start, current_seq]));
-                 // Consensus, if present
-                 if(typeof ali.query.consensus !== 'undefined') {
-                     var queryRow = makeRow(["Q", "Consensus", ali.query.start, ali.query.consensus]);
-                     queryRow.setAttribute("class", "sequence");
-                     tabbody.appendChild(queryRow);
-                 }
-                 if(typeof ali.agree !== 'undefined') {
-                     var midlineRow = makeRow(["", "", "", ali.agree]);
-                     midlineRow.setAttribute("class", "sequence");
-                     tabbody.appendChild(midlineRow);
-                 }
-                 if(typeof ali.template.consensus !== 'undefined') {
-                     var templateRow = makeRow(["T", "Consensus", ali.template.start, ali.template.consensus]);
-                     templateRow.setAttribute("class", "sequence");
-                     tabbody.appendChild(templateRow);
-                 }
-
-                 // replace contiguous sequences of AA with the respective colors
-                 current_seq = ali.template.seq.replace(color_regex, color_regex_replacer);
-                 tabbody.appendChild(makeRow(["T", ali.template.name, ali.template.start, current_seq]));
-
-                 // Handle secondary structure annotation for template
-                 if(typeof ali.template.ss_dssp !== 'undefined') {
-
-                     current_seq = ali.template.ss_dssp.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
-                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
-                     tabbody.appendChild(makeRow(["T", "ss_dssp", "", current_seq]));
-                 }
-                 if(typeof ali.template.ss_pred !== 'undefined') {
-
-                     current_seq = ali.template.ss_pred.replace(/[Ee]+/g, "<span class=\"ss_e\">$&</span>");
-                     current_seq = current_seq.replace(/[Hh]+/g, "<span class=\"ss_h\">$&</span>");
-                     tabbody.appendChild(makeRow(["T", "ss_pred", "", current_seq]));
-                 }
-
-                    // line
-                 var line = makeRowColspan(["<hr id=\"line-element\"></hr>"],4,"td");
-                 line.setAttribute("class","horizontal-line")
-                 tabbody.appendChild(line)
-
-
-                 tab.appendChild(tabbody);
-                 divAlignment.appendChild(tab);
-                 alignments_container.appendChild(divAlignment);
-             }
-             aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
-             $("#accordion").foundation();
-             $('#hhpred_color_select').niceSelect();
-         });
         })();
 
-    /* without timeout SLIDER is not loaded */
-        setTimeout(function() {slider_show(queryLength, firstHitBegin, firstHitEnd)}, 1000);
-        
-    function draw_hits(id, hits) {
-        var s = Snap("#" +id);
-        // Get maximum of query_end with map and reduce
-        document.getElementById(id).setAttribute("viewBox", "0 0 " + hits.map(function(hit){return hit.query_end;})
-                        .reduce(function(a,b){return Math.max(a,b);}) + " " + hits.length);
-        for(var i = 0; i < hits.length; ++i) {
-            var hit = hits[i];
-            var diff = hit.query_end - hit.query_begin;
-            var r = s.rect(hit.query_begin,i, diff, 0.5, 0.5,0.5);
-            var text = s.text((diff/2), i + 0.4, hit.hit);
-            text.attr({
-                'font-size': 0.5,
-                'fill': 'white',
-                'font-weight': 'bold'
-            });
-            var colors = calcColor(hit.prob).map(function(val){return val*255});
-            r.attr({
-                fill: Snap.rgb(colors[0], colors[1], colors[2])
-            });
-        }
-    }
 
-    function calcColor(prob) {
-        var red, grn, blu;
-        if(prob > 40) {
-            var signif = ((prob - 40) / 60);
-            var col = 4 * signif;
-            if(col > 3) {
-                col -= 3.0;
-                red = 1;
-                grn = 0.7*(1-col);
-                blu = 0;
-            } else if(col > 2) {
-                col -= 2.0;
-                red = col;
-                grn = 0.7+0.3*(1-col);
-                blu = 0;
-            } else if(col > 1) {
-                col -= 1.0;
-                red = 0;
-                grn = 1-0.3*(1-col);
-                blu = 1-col;
-            } else {
-                red = 0;
-                grn = 0.7 * col;
-                blu = 1;
-            }
-        } else {
-            signif = Math.pow((prob / 40), 3);
-            red = 0.2*(1-signif);
-            grn = 0.2*(1-signif);
-            blu = 0.2 + 0.8*signif;
+        function drawInformation(info ){
+            /*  INFO TAB*/
+            $("#hhpred_query").append(info.Query);
+            $("#hhpred_match_columns").append(info.Match_columns);
+            $("#hhpred_noseqs").append(info.No_of_seqs);
+            $("#hhpred_neff").append(info.Neff);
+            $("#hhpred_searchedhmms").append(info.Searched_HMMs);
+            $("#hhpred_date").append(info.Date);
         }
-       return [red, grn, blu];
-    }
+
+        function drawDataTable(hits){
+
+            hitlist = $('#htb').dataTable({
+                "bInfo": false,
+                "bFilter": true,
+                "bLengthChange": true,
+                "aaData": hits,
+                "scrollY": 600,
+                "scrollX": true,
+                "aoColumns": [
+                    { "mDataProp": "no" },
+                    { "mDataProp": "struc" , render: function (data){return getSingleLink(data)}},
+                    { "mDataProp": "hit" , render: function (data) {return data.replace(/;/g, "")}},
+                    { "mDataProp": "prob" },
+                    { "mDataProp": "eval" },
+                    { "mDataProp": "pval", render: function(data){return data.toExponential();}},
+                    { "mDataProp": "score" },
+                    { "mDataProp": "ss" },
+                    { "mDataProp": "cols" },
+                    { "mDataProp": "query_begin" },
+                    { "mDataProp": "query_end" },
+                    { "mDataProp": "template_begin" },
+                    { "mDataProp": "template_end" }
+                ],
+                'columnDefs': [{
+                    'targets': 0,
+                    'searchable': false,
+                    'orderable': true,
+                    'render': function (data){
+                        return '<input type="checkbox" name="templates" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '"> ' + data;
+                    }
+                }]
+            });
+
+        }
+
+
+
+        function hhpred_manual() {
+            // Get selected templates and append parentID
+            var formData = new FormData(document.getElementById("hhpred_templates"));
+            if (!formData.has("templates")) {
+                alert("Please select at least one template for modeling");
+                return;
+            }
+            formData.append("parentid", '@{jobID}');
+
+            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_manual", null, false);
+            m.request({
+                method: checkRoute.method,
+                url: checkRoute.url,
+                data: formData,
+                serialize: function (data) {
+                    return data;
+                }
+            }).then(function (data) {
+                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_manual", data.jobID);
+                m.request({
+                    method: submitRoute.method,
+                    url: submitRoute.url,
+                    data: formData,
+                    serialize: function (data) {
+                        return data;
+                    }
+                });
+            });
+        }
+
+        function hhpred_automatic() {
+            // Get selected templates and append parentID
+            var formData = new FormData(document.getElementById("hhpred_templates"));
+            formData.append("parentid", '@{jobID}');
+
+            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_automatic", null, false);
+            m.request({
+                method: checkRoute.method,
+                url: checkRoute.url,
+                data: formData,
+                serialize: function (data) {
+                    return data;
+                }
+            }).then(function (data) {
+
+                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_automatic", data.jobID);
+                m.request({
+                    method: submitRoute.method,
+                    url: submitRoute.url,
+                    data: formData,
+                    serialize: function (data) {
+                        return data;
+                    }
+                });
+            });
+        }
+
+
+
+
+        function toggleSelectAll() {
+            selectAllDatatable(this.hitlist.fnGetNodes(), 'hitCheckbox');
+            this.selectAllBool = !this.selectAllBool;
+            if(this.selectAllBool) {
+                selectAll('hitCheckbox');
+                $("#selectAllSeq").addClass("colorToggle");
+            }
+            else {
+                deselectAll('hitCheckbox');
+                $("#selectAllSeq").removeClass("colorToggle");
+            }
+        }
+
+        function onFullscreenToggle() {
+            hitlist.draw();
+        }
+
+
+        function templateAlignment(accession){
+            // replace '#' for url
+            accession = accession.replace("#", "%23");
+            console.log(accession)
+            $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
+
+            $.ajax({
+                type: 'GET',
+                url: '/templateAlignment/@jobID/' + accession
+            }).done(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: 'files/@jobID/' + accession + '.fas'
+                }).done(function (data) {
+                    $("#alignmentTemplate").val(data.toString());
+                    $.LoadingOverlay("hide");
+                }).fail(function (){
+                    $("#alignmentTemplate").val("Sorry, failed execute script.");
+                    $.LoadingOverlay("hide");
+                });
+            }).fail(function () {
+                $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
+                $.LoadingOverlay("hide");
+            });
+        }
+
+
+        function forwardTemplateAlignment_(tool, forwardData){
+            $('#templateAlignmentModal').foundation('close');
+            forward(tool, forwardData);
+        }
+
+
+        function forward_(tool){
+            var forwardData = [];
+            var checkedCheckboxes = [];
+            var sliderRange = getSliderRange();
+            // get values of all checked Checkboxes
+            $('input:checkbox.' + checkbox + ":checked").each(function () {
+                checkedCheckboxes.push($(this).val()-1)
+            });
+
+            if($('#selectedHits').is(':checked')) {
+                //fill array with headers and sequences
+
+                checkedCheckboxes.forEach(function callback(currentValue) {
+                    var seq = data.alignments[currentValue].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
+                    if(forwardData.indexOf(seq) == -1) {
+                        forwardData.push(">" + data.hits[currentValue].struc + data.hits[currentValue].hit.substr(0, 60));
+                        forwardData.push(seq);
+                    }
+                });
+            } else if ($('#accordingEvalue').is(':checked')) {
+
+                for (i = 0; i < data.alignments.length; ++i) {
+                    if (data.alignments[i].info.eval > $("#forwardEvalue").val()) {
+                        var seq = data.alignments[i].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
+                        if(forwardData.indexOf(seq) == -1) {
+                            forwardData.push(">" + data.hits[i].struc + data.hits[i].hit.substr(0, 60));
+                            forwardData.push(seq);
+                        }
+                    }
+
+                }
+            }
+
+            forward(tool, forwardData.join("\n"));
+        }
+
+
+        function toggleAliColor_(str){
+            if(str == "letters" ){
+                if(colorLetters)
+                    toggleAliColor("");
+                else
+                    toggleAliColor("letters");
+                this.colorLetters = !this.colorLetters;
+            }
+            if(str == "background"){
+                if(colorBackground)
+                    toggleAliColor("");
+                else
+                    toggleAliColor("background");
+                this.colorBackground = !this.colorBackground;
+            }
+        }
+        function resubmitSection_(){
+            resubmitSection(firstQuerySequence, firstQueryName);
+        }
+
 </script>
