@@ -41,7 +41,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     val resultView =  toolname match {
 
       case "psiblast" => getResult(jobID).map {
-        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID, jsvalue)))
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID, jsvalue)),
+          ("E-values", views.html.jobs.resultpanels.evalues(jobID)))
         case None => Seq.empty
       }
 

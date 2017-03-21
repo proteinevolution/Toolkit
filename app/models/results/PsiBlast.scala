@@ -29,7 +29,7 @@ object PsiBlast extends Constants {
 
   def evalues(mainID: String) : List[String] = {
 
-    val path = s"$jobPath$mainID/results/out.psiblastp_evalues"
+    val path = s"$jobPath$mainID/results/evalues"
     Source.fromFile(path).getLines().toList
   }
 
