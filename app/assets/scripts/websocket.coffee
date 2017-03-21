@@ -73,14 +73,13 @@ onMessage = (event) ->
     when "ClearJob"
       # clear a job which has been removed server side
       m.startComputation()
-      Job.removeJob(message.jobID)
+      JobListComponent.removeJob(message.jobID)
       m.endComputation()
 
-    when "UpdateJob"
+    when "PushJob"
       m.startComputation()
-      Job.pushJob(message.job)
+      JobListComponent.pushJob(JobListComponent.Job(message.job))
       m.endComputation()
-
 
       # Show user a popup with the submission
       if message.state == 0
