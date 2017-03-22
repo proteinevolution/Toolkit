@@ -102,7 +102,7 @@ onMessage = (event) ->
     when "Ping"
       sendMessage("type":"Ping")
 
-@sendMessage = (object) ->
+window.sendMessage = (object) ->
   ws.send(JSON.stringify(object))
 
 @addJob = (jobID) ->

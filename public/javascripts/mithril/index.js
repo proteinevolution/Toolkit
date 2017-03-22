@@ -1,4 +1,4 @@
-var slickSlider, tilescomponent, trafficBarComponent, trafficbar, typeAhead;
+var slickSlider, tilescomponent, trafficBarComponent, trafficbar, typeAhead, sendMessage;
 
 slickSlider = function (elem, isInit) {
     if (!isInit) {
@@ -235,6 +235,8 @@ tilescomponent = {
 
     }
 };
+
+window.sendMessage = function (object) {};
 
 
 // ("div", {
