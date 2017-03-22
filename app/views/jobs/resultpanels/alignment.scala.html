@@ -19,6 +19,7 @@
     <a onclick="toggleSelectTopTen()" type="button"><span id="selectTopTen">Select top ten</span></a>
     <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
     <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
+    <a onclick='wrapSequences()' type="button"><span id="wrapSequences">Wrap sequences</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -38,10 +39,15 @@
                     }
                 </td>
             </tr>
+            <tr class="sequenceAlignment">
+                <td></td>
+                <td>
                     @{alignment{1} match {
-                        case JsDefined(jsValue) => Html(BlastVisualization.wrapSequence((alignment{1}).get.as[String], 60))
+                        case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((alignment{1}).get.as[String]))
                         }
                     }
+                </td>
+            </tr>
         }
             <tr><td><br/></td></tr>
             <tr><td><br/></td></tr>
@@ -58,12 +64,14 @@
         var colorBackgroundBool = false;
         var selectTopTenBool = false;
         var selectAllBool = false;
+        var wrapSequencesBool = false;
         var aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
 
         // check first ten checkboxes by default
         $(document).ready(function () {
             selectTopTen(checkbox);
             $("#selectTopTen").addClass( "colorToggle" );
+            wrapSequences()
         });
 
 
@@ -72,6 +80,18 @@
         $.getJSON(fileUrl, function (data_) {
             data = data_;
         });
+
+        function wrapSequences(){
+            this.wrapSequencesBool = !this.wrapSequencesBool;
+            if(wrapSequencesBool) {
+                $(".sequenceAlignment").addClass("wrap");
+                $("#wrapSequences").addClass("colorToggle");
+            }
+            else {
+                $(".sequenceAlignment").removeClass("wrap");
+                $("#wrapSequences").removeClass("colorToggle");
+            }
+        }
 
 
         function toggleAliColor_(str){
