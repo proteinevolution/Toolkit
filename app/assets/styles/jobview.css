@@ -48,13 +48,6 @@ body.is-reveal-open {
     background: inherit;
 }
 
-.wrap{
-    white-space: unset;
-    display: inline-block;
-    word-break: break-all;
-}
-
-
 .alignment_box {
     display: flex;
     flex-direction: row;
@@ -136,10 +129,29 @@ hr {
     font-weight: bold;
 }
 
+.wrap{
+    word-break: break-all;
+    white-space: unset;
+}
+
 .unstriped{
     margin: 0 ;
     width: 100%;
 }
+
+.sequence{
+    font-family: 'Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,monospace;
+    font-size: 0.625rem;
+    white-space: pre;
+    background-color: rgba(241, 241, 241, 0.75) !important;
+}
+
+.sequenceAlignment{
+    font-family: 'Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,monospace;
+    font-size: 0.625rem;
+    background-color: rgba(241, 241, 241, 0.75) !important;
+}
+
 
 .sequence :hover{
     background-color: #eee;
@@ -768,3 +780,7 @@ textarea:focus{
     outline: 0;
 }
 
+.patternMatch{
+    color: red;
+    background-color: rgba(255, 0, 8, 0.1);
+}
