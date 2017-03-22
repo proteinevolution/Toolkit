@@ -122,3 +122,5 @@ scalacOptions ++= Seq(
   "-Ywarn-inaccessible",
   "-Ywarn-dead-code"
 )
+
+JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
