@@ -130,17 +130,30 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
       findJobAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID)).flatMap {
 
-        x =>
+        case Some(x) =>
 
           findJob(BSONDocument(Job.JOBID -> jobID)).map { jobList =>
 
             if (jobList.get.ownerID.get == user.userID) {
 
-              Ok(x.get.content)
+              Ok(x.content)
 
             } else BadRequest("Permission denied")
 
           }
+
+        case None =>
+
+          findJob(BSONDocument(Job.JOBID -> jobID)).map { jobList =>
+
+            if (jobList.get.ownerID.get == user.userID) {
+
+              Ok
+
+            } else BadRequest("Permission denied")
+
+          }
+
       }
     }
   }
