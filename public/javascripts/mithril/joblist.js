@@ -22,7 +22,6 @@ window.JobListComponent = {
             select    : function(job) {     // marks a job as selected and changes the route
                 return function(e) {        // ensure that the event bubble is not triggering when the clear button is hit
                     if (e.target.id != "boxclose") {
-                        console.log(job.jobID + " selected");
                         JobListComponent.selectedJobID = job.jobID;
                         m.route("/jobs/" + job.jobID);
                     }
@@ -49,7 +48,7 @@ window.JobListComponent = {
     },
     list            : [],   // List containing the jobs
     index           : 0,    // Index of the first shown item in the job list
-    numVisibleItems : 15,   // Number of shown jobs
+    numVisibleItems : 10,   // Number of shown jobs
     selectedJobID   : null, // JobID of the selected job
     lastUpdatedJob  : null, // Job which has been updated last
     sort            : "createdOn",
@@ -78,7 +77,6 @@ window.JobListComponent = {
     },
     emptyList       : function () { JobListComponent.list = [] },   // empties the job list
     reloadList      : function () {         // reloads the job list from the server
-        console.log("Reloaded Job List");
         var request = m.request({
             url: "/api/jobs",
             method: "GET",
@@ -96,7 +94,6 @@ window.JobListComponent = {
         JobListComponent.list.map( function(job, idx) {
             if (job.jobID === jobID) {
                 if (jobID === JobListComponent.selectedJobID) {
-                    console.log("deleting active element... " + JobListComponent.selectedJobID);
                     JobListComponent.selectedJobID = null;
                     m.route("/tools/" + job.toolname);
                 }
@@ -120,15 +117,9 @@ window.JobListComponent = {
                 case "toolName"  : return job2.toolname.localeCompare(job1.toolname);
                 case "jobID"     : return job2.jobID.localeCompare(job1.jobID);
                 case "createdOn" :
-                default          : return job2.createdOn.localeCompare(job1.createdOn)
+                default          : return job2.createdOn.toString().localeCompare(job1.createdOn)
             }
         });
-    },
-    sortJobID       : function() {          // Sorting comperator for the jobID
-        JobListComponent.list.sort(function(job1, job2) { return job2.jobID.localeCompare(job1.jobID) })
-    },
-    sortCreatedOn   : function() {          // Sorting comperator for the creation date (default)
-        JobListComponent.list.sort(function(job1, job2) {  })
     },
     pushJob         : function(newJob, setActive) {
         this.lastUpdatedJob = newJob;
@@ -138,15 +129,30 @@ window.JobListComponent = {
             if(job.jobID === newJob.jobID) { index = idx; oldJob = job }
         });
         if (index != null) {
-            JobListComponent.list[index] = newJob
+            JobListComponent.list[index] = newJob;
         } else {
-            JobListComponent.list.push(newJob)
+            index = JobListComponent.list.length;
+            JobListComponent.list.push(newJob);
         }
         if (newJob.jobID === JobListComponent.selectedJobID) {
             m.route("/jobs/" + newJob.jobID);
+            this.scrollToJobListItem(index);
         }
         //this.sortList(); TODO sort after pushing
-        this.index = 0;
+    },
+    scrollJobList : function (number, doScroll) {
+        return function(e) {
+            if (doScroll) {
+                var numScrollItems = JobListComponent.index + number;
+                JobListComponent.index = numScrollItems < 0 ? 0 : numScrollItems;
+            }
+        }
+    },
+    scrollToJobListItem : function (index) {
+        var scrollIndex = Math.floor(index / JobListComponent.numVisibleItems);
+        scrollIndex *= JobListComponent.numVisibleItems;
+        JobListComponent.index = scrollIndex < 0 ? 0 : scrollIndex;
+        //console.log("scrolling to " + index + " scroll index is " + scrollIndex + ", current scroll index is " + JobListComponent.index);
     },
     model: function() {},
     controller: function(args) {
@@ -156,25 +162,39 @@ window.JobListComponent = {
         return {}
     },
     view: function(ctrl, args) {
-        return m("div", {
-            id: "job-list"
-        }, [m("div", {
-                "class": "job-button"
-            }, [
-                m("div", {
-                    "class": "idsort textcenter",
-                    onclick: JobListComponent.sortList.bind(ctrl, "jobID")
-                }, "ID"), m("div", {
-                    "class": "toolsort textcenter",
-                onclick: JobListComponent.sortList.bind(ctrl, "toolName")
-                }, "Tool")
-            ]), m("div", {
-                id: "job-list-bottom"
-            },
-            JobListComponent.list.slice(JobListComponent.index).slice(-JobListComponent.numVisibleItems).map(function(job) {
-                return job.view(ctrl)
-            })
-            )
+        var shownList, listLength, listTooLong, onTopOfList, onBottomOfList, numScrollItems;
+        shownList  = this.list.slice(this.index, this.numVisibleItems + this.index);
+        listLength = this.list.length;                                      // lenght of the original list
+        listTooLong = listLength > this.numVisibleItems;                    // is the list longer than numVisibleItems?
+        onTopOfList = (this.index <= 0);                                        // is the list at the top?
+        onBottomOfList = ((this.index + this.numVisibleItems) >= listLength);   // is the list at the bottom?
+        if (onBottomOfList && (this.index >= listLength)) this.scrollToJobListItem(-this.numVisibleItems); // ensures view when elements are cleared
+        // show the status of the job list in the log
+        //console.log({"Scroll Index"            : this.index,
+        //             "Page Index"              : Math.floor(this.index / this.numVisibleItems),
+        //             "Number of visible Items" : this.numVisibleItems,
+        //             "Length of the List"      : listLength,
+        //             "on Top"                  : onTopOfList,
+        //             "on Bottom"               : onBottomOfList});
+        numScrollItems = this.numVisibleItems; // How many items to scroll per click
+        return m("div", { id: "job-list" }, [
+            m("div", { class: "job-button" }, [
+                m("div", { class: "idsort textcenter", onclick: this.sortList.bind(ctrl, "jobID") }, "ID"),
+                m("div", { class: "toolsort textcenter", onclick: this.sortList.bind(ctrl, "toolName") }, "Tool")
+            ]),
+            m("div", { id: "job-list-bottom" }, [
+                listTooLong ?   // Show only when list is longer than numVisibleItems
+                    m("div", {
+                        class: "textcenter", // TODO Add class to gray out when onTopOfList == true
+                        onclick: this.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2"
+                    ) : null,
+                shownList.map(function(job) { return job.view(ctrl) }),
+                listTooLong ?   // Show only when list is longer than numVisibleItems
+                    m("div", {
+                        class: "textcenter", // TODO Add class to gray out when onBottomOfList == true
+                        onclick: this.scrollJobList(+numScrollItems, !onBottomOfList) }, "\u25bc"
+                    ) : null
+            ])
         ]);
     }
 };

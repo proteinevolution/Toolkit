@@ -257,9 +257,7 @@ window.Toolkit = {
         var job, jobID, toolname, viewComponent;
         if (args.isJob) {
             jobID = m.route.param("jobID");
-            console.log(jobID + " vs " + Toolkit.currentJobID + " Job list " + JobListComponent.contains(jobID));
-            //http://olt:7550/#/jobs/1912188
-            if (!JobListComponent.contains(jobID) && !(Toolkit.currentJobID === jobID)) {
+            if (!JobListComponent.contains(jobID) || !(Toolkit.currentJobID === jobID)) {
                 Toolkit.currentJobID = jobID;
                 // ensure addition to the job list
                 sendMessage({ type: "RegisterJobs", "jobIDs": [jobID] });
@@ -267,9 +265,12 @@ window.Toolkit = {
                 m.request({ url: "/api/job/load/" + jobID, method: "GET" }).then(function(data) {
                     JobListComponent.pushJob(JobListComponent.Job(data), true);
                 });
+            } else {
+                Toolkit.currentJobID = jobID;
             }
         } else {
             Job.selected = -1;
+            JobListComponent.selectedJobID = null;
         }
         toolname = m.route.param("toolname");
         if (FrontendTools[toolname]) {
@@ -277,7 +278,7 @@ window.Toolkit = {
                 return FrontendTools[toolname];
             };
         } else {
-            job = JobModel.update(args, args.isJob ? m.route.param("jobID") : m.route.param("toolname"));
+            job = JobModel.update(args, args.isJob ? jobID : toolname);
             viewComponent = function() {
                 return m(JobViewComponent, {
                     owner: Job.owner,
@@ -324,12 +325,7 @@ window.Toolkit = {
                             config        : this.initFoundation(ctrl)},
                         "Job Manager")
                 ]),
-                m(JobListComponent, {
-                    owner: ctrl.ownerName,
-                    jobs: ctrl.jobs,
-                    selected: ctrl.selected,
-                    clear: ctrl.clear
-                })
+                m(JobListComponent, { activejobID : m.route.param("jobID") })
             ]), m("div", {
                 id: "content",
                 "class": "large-10 small-12 columns padded-column",
