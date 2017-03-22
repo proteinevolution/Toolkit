@@ -1,0 +1,149 @@
+@import play.api.libs.json.JsObject
+@import play.api.libs.json.JsValue
+@import play.api.libs.json.JsArray
+@import play.api.Logger
+@import models.results.FileLoader
+@import play.api.libs.json.JsUndefined
+@import play.api.libs.json.JsDefined
+@import models.results.BlastVisualization
+@import modules.tel.TEL
+@(toolName: String, jobID: String, filename : String,jsValue: JsValue)(implicit request: RequestHeader)
+<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+
+
+<a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward selected</a>
+<a type="button" class="button success tiny hhpred_extra_button" id="downloadAlignment"  onclick="download_()">Download File</a>
+<div class="colorOptsAlignment">
+    <a onclick="toggleSelectAll()" type="button"> <span id="selectAllSeq">Select all</span></a>
+    <a onclick="toggleSelectTopTen()" type="button"><span id="selectTopTen">Select top ten</span></a>
+    <a onclick='wrapSequences()' type="button"><span id="wrapSequences">Wrap sequences</span></a>
+    <hr id="line-element" colspan="4" class="horizontal-line">
+</div>
+<div id="alignmentResultView">
+    <br/>
+    Number of sequences: @{{jsValue \ filename \ "hits"}.as[List[JsObject]].size}
+    <br />
+    <br />
+    <form id="alignmentResult">
+        <table class="unstriped">
+            <tbody class="alignmentTBody">
+                @for((hit,index) <- {jsValue \ filename \ "hits" }.as[List[JsObject]].zipWithIndex) {
+                    <tr class="header">
+                        <td><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index}'> @{index+1}.
+                        </td>
+                        <td>
+                            @{ hit \ "name" match {
+                                case JsDefined(jsValue) => (hit \ "name").get.as[String]
+                            }
+                            }
+                        </td>
+                    </tr>
+                    <tr class="sequenceAlignment">
+                        <td></td>
+                        <td>
+                        @{ hit \ "seq" match {
+                            case JsDefined(jsVal) => Html(BlastVisualization.insertMatch((hit \ "seq").get.as[String], (jsValue \ filename \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
+                        }
+                        }
+                        </td>
+                    </tr>
+                }
+
+
+                <tr><td><br/></td></tr>
+                <tr><td><br/></td></tr>
+            </tbody>
+        </table>
+
+    </form>
+</div>
+
+<script>
+        var data;
+        var checkbox = "alignmentCheckbox";
+        var selectTopTenBool = false;
+        var wrapSequencesBool = false;
+        var selectAllBool = false;
+
+        // check first ten checkboxes by default
+        $(document).ready(function () {
+            selectTopTen(checkbox);
+            $("#selectTopTen").addClass( "colorToggle" );
+            wrapSequences()
+        });
+
+
+        // get result json
+        var fileUrl = "/files/@jobID/@{filename}.json";
+        $.getJSON(fileUrl, function (data_) {
+            data = data_;
+        });
+
+
+
+        function wrapSequences(){
+            this.wrapSequencesBool = !this.wrapSequencesBool;
+            if(wrapSequencesBool) {
+                $(".sequenceAlignment").addClass("wrap");
+                $("#wrapSequences").addClass("colorToggle");
+            }
+            else {
+                $(".sequenceAlignment").removeClass("wrap");
+                $("#wrapSequences").removeClass("colorToggle");
+            }
+        }
+
+        function forward_(tool) {
+            var forwardData = [];
+            var checkedCheckboxes = [];
+            // get values of all checked Checkboxes
+            $('input:checkbox.' + checkbox + ":checked").each(function () {
+                checkedCheckboxes.push($(this).val())
+            });
+
+            //fill array with headers and sequences
+            checkedCheckboxes.forEach(function callback(currentValue) {
+                forwardData.push(">" + data[currentValue][0]);
+                forwardData.push(data[currentValue][1]);
+            });
+            forward(tool, forwardData.join("\n"));
+        }
+
+        function toggleSelectAll(){
+            this.selectAllBool = !this.selectAllBool;
+            if(selectAllBool) {
+                selectAll(checkbox);
+                $("#selectTopTen").removeClass( "colorToggle" );
+                $("#selectAllSeq").addClass( "colorToggle" );
+            }
+            else {
+                deselectAll(checkbox);
+                $("#selectAllSeq").removeClass( "colorToggle" );
+            }
+        }
+
+        function toggleSelectTopTen(){
+
+            this.selectTopTenBool = !this.selectTopTenBool;
+            if(selectTopTenBool ) {
+                selectTopTen(checkbox);
+                $("#selectTopTen").addClass( "colorToggle" );
+                $("#selectAllSeq").removeClass( "colorToggle" );
+            }
+            else {
+                deselectAll(checkbox);
+                $("#selectTopTen").removeClass( "colorToggle" );
+            }
+
+        }
+        function download_(){
+            var fileString = "";
+            for(var i = 0; i < data.hits.length; i++){
+                fileString +=  data.hits[i].name + "\n";
+                fileString += data.hits[i].seq + "\n";
+            }
+            var filename = "@{toolName}_jobID_@{jobID}.fasta";
+            download(filename, fileString);
+        }
+
+</script>
