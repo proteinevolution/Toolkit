@@ -497,6 +497,19 @@ select {
     padding-left: 0 !important;
 }
 
+#clusterLoad {
+    background: rgba(214, 214, 214, 0.9);
+    text-align: center;
+    padding-top: 0;
+    max-height: 89px;
+
+}
+
+tspan{
+
+    color: black !important;
+}
+
 .liveTable {
     background: rgba(214, 214, 214, 0.9);
     text-align: center;
