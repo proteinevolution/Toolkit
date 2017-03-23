@@ -22,7 +22,7 @@ object BlastVisualization extends Constants {
   private val sheet_pattern = """([Ee]+)""".r
   private val helix_sheets = """([Hh]+|[Ee]+)""".r("ss")
 
-  private val uniprotReg = """([a-z]+\|[A-Z0-9]+\|.*)""".r
+  private val uniprotReg = """([A-Z0-9]{10})""".r
   private val scopReg = """([defgh][0-9a-zA-Z\.\_]+)""".r
   private val mmcifReg = """(...._[a-zA-Z])""".r
   private val mmcifShortReg = """([0-9]...)""".r
@@ -130,8 +130,7 @@ object BlastVisualization extends Constants {
     else if(db == "ncbi"){
       link += generateLink(ncbiProteinBaseLink, id, id)
     } else if(db == "uniprot"){
-      var idSplit = id.split("""\|"""){1}
-      link += generateLink(uniprotBaseLik,idSplit,idSplit)
+      link += generateLink(uniprotBaseLik,id,id)
     }
 
     else{
