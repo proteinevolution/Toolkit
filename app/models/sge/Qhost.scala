@@ -1,6 +1,7 @@
 package models.sge
 
 import sys.process._
+import scala.language.postfixOps
 
 /**
   * Model for qhost command to monitor the cluster load
