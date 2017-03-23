@@ -188,6 +188,7 @@ var colorBackground = false;
 var selectAllBool = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 var aas;
+var evalueParam = null;
 
 (function()  {
     $('.slider').on('moved.zf.slider', function() {
@@ -217,6 +218,7 @@ var aas;
         var hits = basenameResults.hits;
         var numHits = hits.length;
         var info = basenameResults.stat;
+        evalueParam = data_.output_psiblastp.BlastOutput2[0].report.params.expect;
 
 
         firstQueryName = ">" + data_.query[0][0];
@@ -226,7 +228,6 @@ var aas;
         if(numHits > 0){
         drawDataTable(hits);
         drawInformation(info);
-
         //fill first query name and sequence for slider resubmit
 
         firstQueryStart = hits[0].hsps[0].query_from;
@@ -241,7 +242,7 @@ var aas;
         // set color letters and SS to default
         toggleAliColor_("letters");
         $("#accordion").foundation();
-
+        checkAllBetterThan();
         }
     });
 
@@ -296,7 +297,7 @@ function drawDataTable(hits){
 
 
 function toggleSelectAll() {
-    selectAllDatatable(this.hitlist.fnGetNodes(), 'hitCheckbox');
+    selectAllDatatable(this.hitlist.fnGetNodes());
     this.selectAllBool = !this.selectAllBool;
     if(this.selectAllBool) {
         selectAll('hitCheckbox');
@@ -304,6 +305,7 @@ function toggleSelectAll() {
     }
     else {
         deselectAll('hitCheckbox');
+        deselectAllDatatable(this.hitlist.fnGetNodes());
         $("#selectAllSeq").removeClass("colorToggle");
     }
 }
@@ -312,7 +314,15 @@ function onFullscreenToggle() {
     hitlist.draw();
 }
 
-
+function checkAllBetterThan(){
+    var hits = data.hits;
+    // get values of all checked Checkboxes
+    hits.forEach(function callback(currentValue) {
+        if (currentValue.hsps[0].evalue < this.evalueParam) {
+            $(":checkbox[value="+currentValue.num+"]").prop("checked","true");
+        }
+    });
+}
 
 
 function forward_(tool){
