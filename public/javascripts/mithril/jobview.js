@@ -88,7 +88,7 @@ foundationConfig = function(elem, isInit) {
 
 
 jobNoteArea = function(elem, isInit) {
-    if (!isInit) {
+    if (!isInit && $(elem).attr('id').substring(7) > -1) {
         $.ajax({
             url: '/api/jobs/getnotes/' + $(elem).attr('id').substring(7),
             type: 'get',

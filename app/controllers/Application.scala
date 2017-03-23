@@ -4,6 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import actors.WebSocketActor
 import akka.actor.{ActorSystem, Props}
+import models.sge.Cluster
 import akka.stream.Materializer
 import models.database.statistics.ToolStatistic
 import models.search.JobDAO
@@ -41,6 +42,7 @@ final class Application @Inject()(webJarAssets                                  
                                   mat                                             : Materializer,
                                   val tel                                         : TEL,
                                   val env                                         : Env,
+                                  val cluster                                     : Cluster,
                                   val search                                      : Search,
                                   val settings                                    : Settings,
                                   configuration                                   : Configuration)
@@ -55,7 +57,7 @@ final class Application @Inject()(webJarAssets                                  
   val SID = "sid"
 
   // Run this once to generate database objects for the statistics
-  def generateStatisticsDB() = {
+  def generateStatisticsDB() : Unit = {
     for (toolName : String <- toolFactory.values.keys) {
       addStatistic(ToolStatistic(BSONObjectID.generate(), toolName, 0, 0, List.empty, List.empty, List.empty))
     }
@@ -132,7 +134,7 @@ final class Application @Inject()(webJarAssets                                  
     val hostname = request.host.slice(0, request.host.indexOf(":"))
     env.configure("PORT", port)
     env.configure("HOSTNAME", hostname)
-
+    cluster.getLoad()
     TEL.port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
     TEL.hostname = hostname
     println("[CONFIG:] running on port "+TEL.port)
@@ -182,10 +184,16 @@ final class Application @Inject()(webJarAssets                                  
     getUser.map { user =>
 
       // mainID exists, allow send File
+      if (new java.io.File(s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename").exists)
 
-      Ok.sendFile(new java.io.File(s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename"))
-        .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
-        .as("text/plain") //TODO Only text/plain for files currently supported
+        Ok.sendFile (new java.io.File (s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename") )
+          .withSession (sessionCookie (request, user.sessionID.get, Some (user.getUserData.nameLogin) ) )
+          .as ("text/plain") //TODO Only text/plain for files currently supported
+
+      else
+
+        Ok // TODO This needs more case validations
+
     }
   }
 
