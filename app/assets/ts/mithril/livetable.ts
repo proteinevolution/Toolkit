@@ -1,7 +1,7 @@
-var JobTable = {
-    controller: function(args) {
+let JobTable = {
+    controller: function(args : any) {
 
-        var ctrl = this;
+        let ctrl = this;
         ctrl.totalJobs = -1;
         ctrl.lastJob = {};
 
@@ -20,16 +20,16 @@ var JobTable = {
                 }
 
             }).catch(function(e) {
-                ctrl.totalJobs = 0;
-                ctrl.lastJob = {
-                    "jobID": -1,
-                    "toolnameLong": ""
-                };
+            ctrl.totalJobs = 0;
+            ctrl.lastJob = {
+                "jobID": -1,
+                "toolnameLong": ""
+            };
 
-            });
+        });
 
     },
-    view: function(ctrl, args) {
+    view: function(ctrl : any, args : any) {
         return m('div', [
             m('table.liveTable', [
                 m('thead', [
@@ -46,18 +46,18 @@ var JobTable = {
                         m('td', '46'),
                         m('td#lastJobName', m('a[href="/#/jobs/' + ctrl.lastJob.jobID + '"]', ctrl.lastJob.toolnameLong)),
                         m('td', ctrl.totalJobs)
-                     ])]
+                    ])]
                 )])
         ]);
     }
 };
 
-var LiveTable = {
-    controller: function(args) {
-        var ctrl = this;
+let LiveTable = {
+    controller: function(args : any) {
+        let ctrl = this;
 
     },
-    view: function(ctrl, args) {
+    view: function(ctrl : any, args : any) {
         return m('div', [
             m.component(JobTable, {})
         ]);
