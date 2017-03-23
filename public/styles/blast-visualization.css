@@ -132,7 +132,6 @@
 
 #forwardModal {
     width: 36em;
-    background-color: #eee;
 }
 
 #forwardModal p {
@@ -163,7 +162,7 @@
     background-color: #008979;
     color: white;
     margin-bottom: 0;
-    margin-top: 7em;
+    margin-top: 2em;
 }
 
 .forward_panel {
@@ -196,12 +195,14 @@
 
 
 .forward_form {
-   width: 100%;
+   width: 99%;
    display: flex;
    margin-top: 2em;
    margin-left: 0.25em;
    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
    overflow: auto;
+   background-color: #eee;
+   border-radius: 4px;
 
 
 }
@@ -221,6 +222,7 @@ label.forwardLabel input[type=radio] {
 
 .forwardFormDiv {
     width: 45%;
+    margin: 1em;
 }
 
 .forwardFormLast {
