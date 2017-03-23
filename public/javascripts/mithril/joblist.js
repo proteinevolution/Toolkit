@@ -51,7 +51,7 @@ window.JobListComponent = {
     numVisibleItems : 10,   // Number of shown jobs
     selectedJobID   : null, // JobID of the selected job
     lastUpdatedJob  : null, // Job which has been updated last
-    sort            : "createdOn",
+    sort            : { mode : "createdOn", asc : true },
     getJob          : function (jobID) {    // Returns a job with the given jobID
         var foundJob = null;
         JobListComponent.list.map(function (job){ if(job.jobID === jobID) foundJob = job });
@@ -84,7 +84,8 @@ window.JobListComponent = {
         });
         request.then(function(data) {
             JobListComponent.list = data;
-            JobListComponent.register()
+            JobListComponent.register();
+            JobListComponent.sortList();
         });
         return JobListComponent.list
     },
@@ -110,35 +111,38 @@ window.JobListComponent = {
         });
     },
     sortList        : function(sort) {      // Sorting the list elements
-        console.log("sort is: " + sort);
-        if (sort != null) { JobListComponent.sort = sort }
+        var oldSort, sameMode, inv;
+        oldSort = JobListComponent.sort;
+        sameMode = (oldSort.mode === sort);
+        if (sort != null || sameMode) { JobListComponent.sort = { mode : sort, asc : (sameMode ? !oldSort.asc : true) } }
+        inv = JobListComponent.sort.asc ? 1 : -1;
         JobListComponent.list.sort(function(job1, job2) {
-            switch (JobListComponent.sort) {
-                case "toolName"  : return job2.toolname.localeCompare(job1.toolname);
-                case "jobID"     : return job2.jobID.localeCompare(job1.jobID);
+            switch (JobListComponent.sort.mode) {
+                case "toolName"  : return inv * job2.toolname.localeCompare(job1.toolname);
+                case "jobID"     : return inv * job2.jobID.localeCompare(job1.jobID);
                 case "createdOn" :
-                default          : return job2.createdOn.toString().localeCompare(job1.createdOn)
+                default          : return inv * (job2.createdOn - job1.createdOn);
             }
         });
     },
     pushJob         : function(newJob, setActive) {
         this.lastUpdatedJob = newJob;
         var index = null, oldJob;
-        if (setActive) { JobListComponent.selectedJobID = newJob.jobID }
-        JobListComponent.list.map(function(job, idx){
+        if (setActive) { this.selectedJobID = newJob.jobID }
+        this.list.map(function(job, idx){
             if(job.jobID === newJob.jobID) { index = idx; oldJob = job }
         });
         if (index != null) {
             JobListComponent.list[index] = newJob;
         } else {
-            index = JobListComponent.list.length;
             JobListComponent.list.push(newJob);
         }
+        this.sortList();
+        index = this.getJobIndex(newJob.jobID);
         if (newJob.jobID === JobListComponent.selectedJobID) {
             m.route("/jobs/" + newJob.jobID);
             this.scrollToJobListItem(index);
         }
-        //this.sortList(); TODO sort after pushing
     },
     scrollJobList : function (number, doScroll) {
         return function(e) {
@@ -186,7 +190,7 @@ window.JobListComponent = {
                 listTooLong ?   // Show only when list is longer than numVisibleItems
                     m("div", {
                         class: "textcenter", // TODO Add class to gray out when onTopOfList == true
-                        onclick: this.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2"
+                        onclick: this.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2" + this.index
                     ) : null,
                 shownList.map(function(job) { return job.view(ctrl) }),
                 listTooLong ?   // Show only when list is longer than numVisibleItems
