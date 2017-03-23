@@ -9,6 +9,7 @@ slickSlider = function (elem, isInit) {
             autoplayspeed: 5000,
             speed: 2500,
             dots: false,
+            arrows: false,
             fade: true,
             lazyLoad: "ondemand",
             cssEase: "ease-out",
