@@ -184,10 +184,16 @@ final class Application @Inject()(webJarAssets                                  
     getUser.map { user =>
 
       // mainID exists, allow send File
+      if (new java.io.File(s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename").exists)
 
-      Ok.sendFile(new java.io.File(s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename"))
-        .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
-        .as("text/plain") //TODO Only text/plain for files currently supported
+        Ok.sendFile (new java.io.File (s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename") )
+          .withSession (sessionCookie (request, user.sessionID.get, Some (user.getUserData.nameLogin) ) )
+          .as ("text/plain") //TODO Only text/plain for files currently supported
+
+      else
+
+        Ok // TODO This needs more case validations
+
     }
   }
 
