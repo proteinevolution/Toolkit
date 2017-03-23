@@ -9,6 +9,7 @@
     "removeComments": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
-    "outFile": "../../public/javascripts/typescriptc.js"
+    "outFile": "../../public/javascripts/typescriptc.js",
+    "typeRoots" : ["./types"]
   }
 }
