@@ -39,12 +39,5 @@ m.route(document.getElementById('main-content'), '/', {
     '/news': m(News)
 });
 
-window.onfocus = function() {
-    return titlenotifier.reset();
-};
-
-window.onclick = function() {
-    return titlenotifier.reset();
-};
 
 

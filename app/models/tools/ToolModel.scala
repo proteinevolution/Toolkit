@@ -95,7 +95,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "clustalo" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Alignment", views.html.jobs.resultpanels.alignment("Clustal Omega",jobID, "alignment.",jsvalue)),
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment("Clustal Omega",jobID, "alignment",jsvalue)),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
           )
         case None => Seq.empty
@@ -176,9 +176,11 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
 
 
-
-      case "patsearch" => Future.successful(Seq(("PatternSearch", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output.fas"))))
-
+      case "patsearch" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("PatternSearch", views.html.jobs.resultpanels.patternSearch("PatternSearch",jobID, "output", jsvalue)))
+        case None => Seq.empty
+      }
     }
 
     resultView.map { seq =>

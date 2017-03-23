@@ -44,7 +44,7 @@ final class JobController @Inject() ( jobIDProvider    : JobIDProvider,
         // TODO Ensure that deleted Jobs cannot be loaded and that the user is allowed to load the Job
         selectJob(jobID).map {
           case Some(job) => Ok(job.cleaned())
-          case None => NotFound
+          case None => Ok // NotFound throws console error
         }
   }
   def listJobs : Action[AnyContent] = Action.async { implicit request =>
