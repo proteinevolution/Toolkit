@@ -2,10 +2,12 @@
  * Created by astephens on 21.02.17.
  */
 
+interface Window { Backend: any; }
+
 window.Backend = {
 
-    user : function(inputData) {
-        var user = {
+    user : function(inputData : any) {
+        let user = {
             id            : inputData.id,
             sessionID     : inputData.sessionID,
             sessionData   : inputData.sessionData,
@@ -17,7 +19,7 @@ window.Backend = {
             dateLastLogin : inputData.dateLastLogin,
             dateCreated   : inputData.dateCreated,
             dateUpdated   : inputData.dateUpdated,
-            data : function(key, val) {
+            data : function(key : string, val : string) {
                 switch (key) {
                     case "nameLogin" :
                         this.nameLogin = val;
@@ -29,25 +31,25 @@ window.Backend = {
                         this.accountType = val;
                         return this.accountType;
                     default: return { id            : this.id,
-                                      sessionID     : this.sessionID,
-                                      sessionData   : this.sessionData,
-                                      connected     : this.connected,
-                                      accountType   : this.accountType,
-                                      nameLogin     : this.nameLogin,
-                                      eMail         : this.eMail,
-                                      jobs          : this.jobs,
-                                      dateLastLogin : this.dateLastLogin,
-                                      dateCreated   : this.dateCreated,
-                                      dateUpdated   : this.dateUpdated }
+                        sessionID     : this.sessionID,
+                        sessionData   : this.sessionData,
+                        connected     : this.connected,
+                        accountType   : this.accountType,
+                        nameLogin     : this.nameLogin,
+                        eMail         : this.eMail,
+                        jobs          : this.jobs,
+                        dateLastLogin : this.dateLastLogin,
+                        dateCreated   : this.dateCreated,
+                        dateUpdated   : this.dateUpdated }
                 }
             },
             edit       : false,
             edited     : false,
-            editField  : function(user) { return function(e) { console.log(user.data(e.target.id, e.target.value)) }},
-            editToggle : function(user) { return function(e) { user.edit = !user.edit }},
-            view : function(ctrl) {
+            editField  : function(user : any) { return function(e) { console.log(user.data(e.target.id, e.target.value)) }},
+            editToggle : function(user : any) { return function(e) { user.edit = !user.edit }},
+            view : function(ctrl : any) {
                 return m("tr", [
-                    m("th", m("button", { class : "button small", onclick : this.editToggle(this) }, ">")),
+                    m("th", m("button", { "class" : "button small", onclick : this.editToggle(this) }, ">")),
                     m("th", this.edit ? m("input", {id:"nameLogin",   value: this.nameLogin,   onchange: this.editField(this) }) : m("p", this.nameLogin)),
                     m("th", this.edit ? m("input", {id:"accountType", value: this.accountType, onchange: this.editField(this) }) : m("p", this.accountType)),
                     m("th", this.edit ? m("input", {id:"eMail",       value: this.eMail,       onchange: this.editField(this) }) : m("p", this.eMail)),
@@ -59,26 +61,26 @@ window.Backend = {
         return user
     },
 
-    plotter : function (ctrl) {
-        return function (elem, isin, context) {
+    plotter : function (ctrl : any) {
+        return function (elem : any, isin : boolean, context : any) {
             if (!isin) {
-                var chartElements = ctrl.data();//.map(function (item) {
-                    //console.log(item);
-                    //return item
+                let chartElements = ctrl.data();//.map(function (item) {
+                //console.log(item);
+                //return item
                 //});
-                var xAxisElements = chartElements[0].datePushed.map(function(date){
+                let xAxisElements = chartElements[0].datePushed.map(function(date){
                     return date.string
                 });
                 xAxisElements.splice(0,0,"Today");
 
-                context.chart = new Highcharts.chart("statchart",
+                context.chart = Highcharts.chart("statchart",
                     {
                         chart: { type: 'area'},
                         title: { text: 'Monthly useage by Tool' },
                         yAxis: { title: { text: 'Jobs per month' } },
                         xAxis: { title: { text: 'Month'},
-                                 categories: xAxisElements,
-                                 reversed: true
+                            categories: xAxisElements,
+                            reversed: true
                         },
                         plotOptions: {
                             area: {
@@ -91,9 +93,9 @@ window.Backend = {
                                 }
                             }
                         },
-                        series: chartElements.map(function (item) {
-                            var monthlyElements = [item.current];
-                            item.monthly.forEach(function(element){monthlyElements.push(element)});
+                        series: chartElements.map(function (item : any) {
+                            let monthlyElements = [item.current];
+                            item.monthly.forEach(function(element : any){monthlyElements.push(element)});
                             //console.log(monthlyElements);
                             return {
                                 name : item.toolName,
@@ -106,17 +108,17 @@ window.Backend = {
         }
     },
 
-    sendEdits : function (ctrl) {
-        return function (e){ console.log(ctrl.user)}
+    sendEdits : function (ctrl : any) {
+        return function (e : any){ console.log(ctrl.user)}
     },
 
-    content : function (ctrl) {
+    content : function (ctrl : any) {
         switch(ctrl.section) {
             case "users" :
                 //console.log(ctrl.user);
-                var tableRows = ctrl.users.map(function(user){return user.view(ctrl)});
+                let tableRows = ctrl.users.map(function(user : any){return user.view(ctrl)});
                 tableRows.splice(0,0,
-                    m("tr", {class:"header"},[
+                    m("tr", {"class":"header"},[
                         m("th", "Edit"),
                         m("th", "User Name"),
                         m("th", "Account Type"),
@@ -125,15 +127,15 @@ window.Backend = {
                     ]));
                 //console.log(tableRows);
                 return [m("table", tableRows),
-                        m("button", { class : "button small", onclick : this.sendEdits(ctrl)}, "Save edited Users")];
+                    m("button", { "class" : "button small", onclick : this.sendEdits(ctrl)}, "Save edited Users")];
 
             case "cms" :
                 return m("table", [
-                    m("tr", {class:"header"},[
+                    m("tr", {"class" :"header"},[
                         m("th", "Title"),
                         m("th", "Date created")
                     ]),
-                    ctrl.data().map(function (item) {
+                    ctrl.data().map(function (item : any) {
                         return m("tr", [
                             m("th", item.title),
                             m("th", item.dateCreated)
@@ -143,45 +145,45 @@ window.Backend = {
 
             case "statistics" :
                 return [m("#statchart", {config : this.plotter(ctrl)}),
-                m("table", [
-                    m("tr", {class: "header"}, [
-                        m("th", "Tool"),
-                        m("th", "Usage this month"),
-                        m("th", "Usage total"),
-                        m("th", "Failed this month"),
-                        m("th", "Failed total"),
-                        m("th", "Last reset")]),
-                    ctrl.data().map(function (item) {
-                        var total       = item.current;
-                        var totalFailed = item.currentFailed;
-                        item.monthly.forEach(function(monthlyAmount){total = total + monthlyAmount});
-                        item.monthlyFailed.forEach(function(monthlyAmount){totalFailed = totalFailed + monthlyAmount});
-                        return m("tr", [
-                            m("th", item.toolName),
-                            m("th", item.current),
-                            m("th", total),
-                            m("th", item.currentFailed),
-                            m("th", totalFailed),
-                            m("th", item.datePushed[item.datePushed.length - 1].string)
-                        ])
-                    })
-                ])];
+                    m("table", [
+                        m("tr", {"class": "header"}, [
+                            m("th", "Tool"),
+                            m("th", "Usage this month"),
+                            m("th", "Usage total"),
+                            m("th", "Failed this month"),
+                            m("th", "Failed total"),
+                            m("th", "Last reset")]),
+                        ctrl.data().map(function (item : any) {
+                            let total       = item.current;
+                            let totalFailed = item.currentFailed;
+                            item.monthly.forEach(function(monthlyAmount : number){total = total + monthlyAmount});
+                            item.monthlyFailed.forEach(function(monthlyAmount : number){totalFailed = totalFailed + monthlyAmount});
+                            return m("tr", [
+                                m("th", item.toolName),
+                                m("th", item.current),
+                                m("th", total),
+                                m("th", item.currentFailed),
+                                m("th", totalFailed),
+                                m("th", item.datePushed[item.datePushed.length - 1].string)
+                            ])
+                        })
+                    ])];
             default:
                 return "Index Page"
         }
     },
 
-    model : function(section) {
-        editList = [];
+    model : function(section : any) {
+        let editList : any = [];
 
-        var data = m.request({method : "GET", url : "/backend/" + section});
+        let data = m.request({method : "GET", url : "/backend/" + section});
 
-        var userModel = [];
+        let userModel : any = [];
 
         data.then(function(a){
-            a.map(function(b){
+            a.map(function(b : any){
                 if (section === "users") {
-                    userModel.push(new Backend.user(b))
+                    userModel.push(new window.Backend.user(b))
                 }
                 return editList.push(false)
             })
@@ -190,7 +192,7 @@ window.Backend = {
     },
 
     controller: function() {
-        var model = new Backend.model(m.route.param("section"));
+        let model = new window.Backend.model(m.route.param("section"));
 
         return {
             section : m.route.param("section"),
@@ -199,23 +201,23 @@ window.Backend = {
         }
     },
 
-    view: function(ctrl) {
+    view: function(ctrl : any) {
         return [
             m("div", {
-                "class": "large-2 padded-column columns show-for-large",
-                id: "sidebar"
+                    "class": "large-2 padded-column columns show-for-large",
+                    id: "sidebar"
                 }, [
-                m("ul",[
-                    m("li", m("a", {href:"#/backend/index"}, "Index")),
-                    m("li", m("a", {href:"#/backend/statistics"}, "Statistics")),
-                    m("li", m("a", {href:"#/backend/cms"}, "CMS")),
-                    m("li", m("a", {href:"#/backend/users"}, "Users"))
+                    m("ul",[
+                        m("li", m("a", {href:"#/backend/index"}, "Index")),
+                        m("li", m("a", {href:"#/backend/statistics"}, "Statistics")),
+                        m("li", m("a", {href:"#/backend/cms"}, "CMS")),
+                        m("li", m("a", {href:"#/backend/users"}, "Users"))
                     ])
                 ]
             ),
             m("div", {
-                "class": "large-10 padded-column columns show-for-large",
-                id: "content"}, [
+                    "class": "large-10 padded-column columns show-for-large",
+                    id: "content"}, [
                     this.content(ctrl)
                 ]
             )
