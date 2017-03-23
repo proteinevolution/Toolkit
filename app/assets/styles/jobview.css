@@ -260,23 +260,17 @@ hr {
 }
 
 .exampleReformat {
-    margin-top: 10px;
-    padding-left: 14px !important;
-    background-color: white !important;
-    color: black !important;
-    float: left !important;
-    margin-left: 0 !important;
+    margin-top: 0 !important;
+    height: 2.7em;
+    padding-left: 0;
+    border-width: 0 0 1px 0;
+    background-color: transparent;
 }
 
-.exampleReformat:hover{
-    background-color: transparent !important;
-    color: black !important;
+.exampleReformat:hover, .exampleReformat:focus {
+    background-color: transparent;
 }
 
-.exampleReformat:focus {
-    background-color: transparent !important;
-    color: black !important;
-}
 
 
 .alignmentParameter input {
