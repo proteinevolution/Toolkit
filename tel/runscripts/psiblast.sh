@@ -33,15 +33,51 @@ psiblast -db %STANDARD/%standarddb.content \
          -num_threads %THREADS \
          -max_target_seqs %desc.content \
          -${INPUT} %alignment.path \
-         -out ../results/output_psiblastp.json \
-         -outfmt 15 \
+         -out ../results/output_psiblastp.asn \
+         -outfmt 11 \
          -max_hsps 1 \
          -out_pssm ../results/out.ksf
 
-# create HTML and PNG for blastviz visualisation
+#converst ASN.1 output to JSON
+blast_formatter -archive ../results/output_psiblastp.asn \
+                -outfmt 15 \
+                -out ../results/output_psiblastp.json \
+                -max_target_seqs %desc.content
 
+#converst ASN.1 output to HTML
+blast_formatter -archive ../results/output_psiblastp.asn \
+                -html \
+                -out \
+                ../results/output_psiblastp.html \
+                -num_descriptions %desc.content \
+                -num_alignments %desc.content
+
+#keep results only of the last iteration
+shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_psiblastp.html
+
+
+#extract MSA
+alignhits_html.pl   ../results/output_psiblastp.html ../results/output_psiblastp.aln \
+                    -Q %alignment.path \
+                    -e %evalue.content \
+                    -fas \
+                    -no_link \
+                    -blastplus
+
+
+#retrieve full length sequences
+#seq_retrieve.pl -i %alignment.path \
+#                -o ../results/sequences.fa
+#                -d %STANDARD/%standarddb.content \
+#                -unique 1 > ../results/unretrievable
+
+
+
+
+# create HTML and PNG for blastviz visualisation
 blastJson2tab.py ../results/output_psiblastp.json ../results/output_psiblastp.tab
 blastviz_json.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
+
 # Generate Query in JSON
 fasta2json.py %alignment.path ../results/query.json
 
