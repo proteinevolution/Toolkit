@@ -472,7 +472,7 @@ JobSubmissionComponent = {
                             JobListComponent.pushJob(JobListComponent.Job({
                                 jobID: jobID,
                                 state: 0,
-                                createdOn: 1,
+                                createdOn: Date.now().valueOf(),
                                 toolname: toolname
                             }), true); // setActive = true
                             submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID);
@@ -492,12 +492,12 @@ JobSubmissionComponent = {
                             type: "RegisterJobs",
                             "jobIDs": [jobID]
                         });
-                        Job.add(new Job({
+                        JobListComponent.pushJob(JobListComponent.Job({
                             jobID: jobID,
                             state: 0,
-                            createdOn: 'now',
+                            createdOn: Date.now().valueOf(),
                             toolname: toolname
-                        }));
+                        }), true); // setActive = true
                         submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID);
                         m.request({
                             method: submitRoute.method,
@@ -518,7 +518,8 @@ JobSubmissionComponent = {
         };
     },
     view: function(ctrl, args) {
-        var hide = {
+        var hide, oldJobID, version, newJobID;
+        hide = {
             oninit: function (elem, isInit) {
                 if (!isInit) {
                     $("#uploadBoxClose").hide();
@@ -526,6 +527,13 @@ JobSubmissionComponent = {
                 }
             }
         };
+        if (args.job().jobID != null) {
+            oldJobID = args.job().jobID.split(".");
+            version  = parseInt(oldJobID[1]);
+            newJobID = oldJobID[0] + "." + (Number.isNaN(version) ? 1 : version + 1);
+        } else {
+            newJobID = "";
+        }
         return m("div", {
             "class": "submitbuttons",
             config: hide.oninit
@@ -587,7 +595,7 @@ JobSubmissionComponent = {
                 "class": "jobid",
                 placeholder: "Custom JobID",
                 onchange: m.withAttr("value", ctrl.setJobID),
-                value: args.job().jobID,
+                value: newJobID,
                 style: "float:right"
             })
 

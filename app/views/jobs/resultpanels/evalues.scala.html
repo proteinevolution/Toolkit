@@ -1,6 +1,6 @@
 @import models.results.PsiBlast
 
-@(mainID : String)(implicit request: RequestHeader)
+@(jobID : String)(implicit request: RequestHeader)
 
 
 <div id="hcontainer" style="min-width: 610px; height: 400px; margin: 0 auto"></div>
@@ -8,7 +8,7 @@
 <script>
         var bins = new Array();
 
-        @for(lines <- PsiBlast.evalues(mainID)){
+        @for(lines <- PsiBlast.evalues(jobID)){
             console.log("@lines");
             bins.push(@lines);
         }
