@@ -1,6 +1,9 @@
 $(function() {
+
+    let form_data : string;
+
     $("#profile-edit-form").on('submit', function(event) {
-        var form_data;
+
         event.preventDefault();
         form_data = $("#profile-edit-form").serialize();
         return $.ajax({
@@ -13,7 +16,7 @@ $(function() {
         });
     });
     return $("#profile-password-edit-form").on('submit', function(event) {
-        var form_data;
+
         event.preventDefault();
         form_data = $("#profile-password-edit-form").serialize();
         return $.ajax({
