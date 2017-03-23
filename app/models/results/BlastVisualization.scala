@@ -22,7 +22,7 @@ object BlastVisualization extends Constants {
   private val sheet_pattern = """([Ee]+)""".r
   private val helix_sheets = """([Hh]+|[Ee]+)""".r("ss")
 
-  private val uniprotReg = """([A-Z0-9]{10})""".r
+  private val uniprotReg = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
   private val scopReg = """([defgh][0-9a-zA-Z\.\_]+)""".r
   private val mmcifReg = """(...._[a-zA-Z])""".r
   private val mmcifShortReg = """([0-9]...)""".r
@@ -33,10 +33,7 @@ object BlastVisualization extends Constants {
   private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
   private val ncbiBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term="
   private val ncbiProteinBaseLink = "https://www.ncbi.nlm.nih.gov/protein/"
-  private val ebiBaseLink = "http://www.ebi.ac.uk/pdbe-srv/view/entry/"
-  private val pubmedBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?CMD=search&db=pubmed&term="
   private val scopBaseLink = "http://scop.berkeley.edu/sid="
-  private val scopLineageBaseLink = "http://scop.berkeley.edu/sccs="
   private val pfamBaseLink = "http://pfam.xfam.org/family/"
   private val cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLik = "http://www.uniprot.org/uniprot/"
