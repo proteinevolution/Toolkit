@@ -10,7 +10,12 @@
 @(toolName: String, jobID: String, filename : String,jsValue: JsValue)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
+@if((jsValue \ filename \ "hits").as[List[JsObject]].size < 1) {
+    <div class="callout alert noHits" id="noHits">
+        <h6>No hits found!</h6>
+    </div>
 
+}else{
 <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward selected</a>
 <a type="button" class="button success tiny hhpred_extra_button" id="downloadAlignment"  onclick="download_()">Download File</a>
 <div class="colorOptsAlignment">
@@ -38,9 +43,9 @@
                             }
                         </td>
                     </tr>
-                    <tr class="sequenceAlignment">
+                    <tr>
                         <td></td>
-                        <td>
+                        <td class="sequenceAlignment">
                         @{ hit \ "seq" match {
                             case JsDefined(jsVal) => Html(BlastVisualization.insertMatch((hit \ "seq").get.as[String], (jsValue \ filename \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
                         }
@@ -56,6 +61,7 @@
         </table>
 
     </form>
+    }
 </div>
 
 <script>

@@ -355,3 +355,8 @@ input {
 .dataTables_scrollHeadInner{
    width: unset !important;
 }
+
+.noHits{
+    width: 5em;
+    margin-top: 3em;
+}
