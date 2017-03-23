@@ -1,20 +1,42 @@
+# set gapopen and gapextend costs depending on given matrix
+GAPOPEN=11
+GAPEXT=1
+INPUT="query"
+
+SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
+
+if [ $SEQ_COUNT -gt 1 ] ; then
+    INPUT="in_msa"
+fi
+
+
+if [ "%matrix.content" = "BLOSUM80" ] || [ "%matrix.content" = "PAM70" ] ; then
+    GAPOPEN=10
+fi
+if [ "%matrix.content" = "PAM30" ] ; then
+    GAPOPEN=9
+fi
+if [ "%matrix.content" = "BLOSUM45" ] ; then
+    GAPOPEN=15
+    GAPEXT=2
+fi
+
+#%inclusion_ethresh.content (switch to this after the slider is fixed)
+
 psiblast -db %STANDARD/%standarddb.content \
          -matrix %matrix.content \
          -num_iterations %num_iter.content \
          -evalue %evalue.content \
-         -inclusion_ethresh %inclusion_ethresh.content \
-         -gapopen %gap_open.content \
-         -gapextend %gap_ext.content \
+         -inclusion_ethresh 0.005 \
+         -gapopen $GAPOPEN \
+         -gapextend $GAPEXT \
          -num_threads %THREADS \
-         -num_descriptions %desc.content \
-         -num_alignments %desc.content \
-         -in_msa %alignment.path \
+         -max_target_seqs %desc.content \
+         -${INPUT} %alignment.path \
          -out ../results/output_psiblastp.json \
          -outfmt 15 \
+         -max_hsps 1 \
          -out_pssm ../results/out.ksf
-
-
-
 
 # create HTML and PNG for blastviz visualisation
 

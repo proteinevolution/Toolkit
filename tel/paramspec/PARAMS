@@ -37,3 +37,4 @@ domain_bound_detection GEN domain_bound_detection.prop
 aln_stringency GEN aln_stringency.prop
 proteomes GEN proteomes.py
 output_order GEN output_order.prop
+use_nr70 GEN use_nr70.prop

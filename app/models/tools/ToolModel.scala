@@ -211,8 +211,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     // PSI-BLAST
     ("psiblast", "ProtBLAST/PSI-BLAST", "pbl", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
       paramAccess.MATRIX,
-      paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.GAP_OPEN,
-      paramAccess.GAP_EXT, paramAccess.DESC), Seq("modeller", "hhpred")),
+      paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.DESC, paramAccess.USE_NR70),
+      Seq("modeller", "hhpred")),
 
 
     // CLustalOmega
