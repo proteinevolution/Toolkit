@@ -347,7 +347,7 @@ tr.job a:visited {
 
 .off-canvas-wrapper{
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 :focus {
