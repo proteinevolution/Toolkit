@@ -45,8 +45,8 @@ window.Backend = {
             },
             edit       : false,
             edited     : false,
-            editField  : function(user : any) { return function(e) { console.log(user.data(e.target.id, e.target.value)) }},
-            editToggle : function(user : any) { return function(e) { user.edit = !user.edit }},
+            editField  : function(user : any) { return function(e : any) { console.log(user.data(e.target.id, e.target.value)) }},
+            editToggle : function(user : any) { return function(e : any) { user.edit = !user.edit }},
             view : function(ctrl : any) {
                 return m("tr", [
                     m("th", m("button", { "class" : "button small", onclick : this.editToggle(this) }, ">")),
@@ -68,7 +68,7 @@ window.Backend = {
                 //console.log(item);
                 //return item
                 //});
-                let xAxisElements = chartElements[0].datePushed.map(function(date){
+                let xAxisElements = chartElements[0].datePushed.map(function(date : any){
                     return date.string
                 });
                 xAxisElements.splice(0,0,"Today");
@@ -112,7 +112,7 @@ window.Backend = {
         return function (e : any){ console.log(ctrl.user)}
     },
 
-    content : function (ctrl : any) {
+    content : function (ctrl : any) : any {
         switch(ctrl.section) {
             case "users" :
                 //console.log(ctrl.user);
