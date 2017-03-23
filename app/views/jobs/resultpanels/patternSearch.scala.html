@@ -12,60 +12,58 @@
 
 
 <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward selected</a>
-
 <a type="button" class="button success tiny hhpred_extra_button" id="downloadAlignment"  onclick="download_()">Download File</a>
 <div class="colorOptsAlignment">
     <a onclick="toggleSelectAll()" type="button"> <span id="selectAllSeq">Select all</span></a>
     <a onclick="toggleSelectTopTen()" type="button"><span id="selectTopTen">Select top ten</span></a>
-    <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
-    <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
     <a onclick='wrapSequences()' type="button"><span id="wrapSequences">Wrap sequences</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences: @{{jsValue \ filename }.as[List[JsArray]].size}
-        <br />
-        <br />
-<form id="alignmentResult">
-    <table class="unstriped">
-        <tbody class="alignmentTBody">
-        @for((alignment,index) <- {jsValue \ filename }.as[List[JsArray]].zipWithIndex) {
-            <tr class="header">
-                <td ><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index}'> @{index+1}.</td>
-                <td>
-                    @{alignment{0} match {
-                        case JsDefined(jsValue) => (alignment{0}).get.as[String]
+    <br/>
+    Number of sequences: @{{jsValue \ filename \ "hits"}.as[List[JsObject]].size}
+    <br />
+    <br />
+    <form id="alignmentResult">
+        <table class="unstriped">
+            <tbody class="alignmentTBody">
+                @for((hit,index) <- {jsValue \ filename \ "hits" }.as[List[JsObject]].zipWithIndex) {
+                    <tr class="header">
+                        <td><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index}'> @{index+1}.
+                        </td>
+                        <td>
+                            @{ hit \ "name" match {
+                                case JsDefined(jsValue) => (hit \ "name").get.as[String]
+                            }
+                            }
+                        </td>
+                    </tr>
+                    <tr class="sequenceAlignment">
+                        <td></td>
+                        <td>
+                        @{ hit \ "seq" match {
+                            case JsDefined(jsVal) => Html(BlastVisualization.insertMatch((hit \ "seq").get.as[String], (jsValue \ filename \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
                         }
-                    }
-                </td>
-            </tr>
-            <tr class="sequenceAlignment">
-                <td></td>
-                <td>
-                    @{alignment{1} match {
-                        case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((alignment{1}).get.as[String]))
                         }
-                    }
-                </td>
-            </tr>
-        }
-            <tr><td><br/></td></tr>
-            <tr><td><br/></td></tr>
-        </tbody>
-    </table>
+                        </td>
+                    </tr>
+                }
 
-</form>
+
+                <tr><td><br/></td></tr>
+                <tr><td><br/></td></tr>
+            </tbody>
+        </table>
+
+    </form>
 </div>
 
 <script>
         var data;
         var checkbox = "alignmentCheckbox";
-        var colorLettersBool = false;
-        var colorBackgroundBool = false;
         var selectTopTenBool = false;
-        var selectAllBool = false;
         var wrapSequencesBool = false;
-        var aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+        var selectAllBool = false;
 
         // check first ten checkboxes by default
         $(document).ready(function () {
@@ -76,10 +74,12 @@
 
 
         // get result json
-        var fileUrl = "/files/@jobID/@jobID";
+        var fileUrl = "/files/@jobID/@{filename}.json";
         $.getJSON(fileUrl, function (data_) {
             data = data_;
         });
+
+
 
         function wrapSequences(){
             this.wrapSequencesBool = !this.wrapSequencesBool;
@@ -93,25 +93,6 @@
             }
         }
 
-
-        function toggleAliColor_(str){
-            if(str == "letters" ){
-                if(colorLettersBool)
-                    toggleAliColor("");
-                else
-                    toggleAliColor("letters");
-                this.colorLettersBool = !this.colorLettersBool;
-            }
-            if(str == "background"){
-                if(colorBackgroundBool)
-                    toggleAliColor("");
-                else
-                    toggleAliColor("background");
-                this.colorBackgroundBool = !this.colorBackgroundBool;
-            }
-        }
-
-
         function forward_(tool) {
             var forwardData = [];
             var checkedCheckboxes = [];
@@ -121,11 +102,11 @@
             });
 
             //fill array with headers and sequences
-                checkedCheckboxes.forEach(function callback(currentValue) {
-                    forwardData.push(">" + data[currentValue][0]);
-                    forwardData.push(data[currentValue][1]);
-                });
-                forward(tool, forwardData.join("\n"));
+            checkedCheckboxes.forEach(function callback(currentValue) {
+                forwardData.push(">" + data[currentValue][0]);
+                forwardData.push(data[currentValue][1]);
+            });
+            forward(tool, forwardData.join("\n"));
         }
 
         function toggleSelectAll(){
@@ -140,6 +121,7 @@
                 $("#selectAllSeq").removeClass( "colorToggle" );
             }
         }
+
         function toggleSelectTopTen(){
 
             this.selectTopTenBool = !this.selectTopTenBool;
@@ -156,9 +138,9 @@
         }
         function download_(){
             var fileString = "";
-            for(var i = 0; i < data.length; i++){
-                fileString += ">" + data[i][0] + "\n";
-                    fileString += (data[i][1] + "\n");
+            for(var i = 0; i < data.hits.length; i++){
+                fileString +=  data.hits[i].name + "\n";
+                fileString += data.hits[i].seq + "\n";
             }
             var filename = "@{toolName}_jobID_@{jobID}.fasta";
             download(filename, fileString);

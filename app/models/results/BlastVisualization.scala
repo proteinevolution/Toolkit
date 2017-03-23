@@ -15,11 +15,14 @@ import scala.collection.mutable.ArrayBuffer
 
 object BlastVisualization extends Constants {
 
+
+
   private val color_regex = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
   private val helix_pattern = """([Hh]+)""".r
   private val sheet_pattern = """([Ee]+)""".r
   private val helix_sheets = """([Hh]+|[Ee]+)""".r("ss")
 
+  private val uniprotReg = """([a-z]+\|[A-Z0-9]+\|.*)""".r
   private val scopReg = """([defgh][0-9a-zA-Z\.\_]+)""".r
   private val mmcifReg = """(...._[a-zA-Z])""".r
   private val mmcifShortReg = """([0-9]...)""".r
@@ -36,6 +39,7 @@ object BlastVisualization extends Constants {
   private val scopLineageBaseLink = "http://scop.berkeley.edu/sccs="
   private val pfamBaseLink = "http://pfam.xfam.org/family/"
   private val cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
+  private val uniprotBaseLik = "http://www.uniprot.org/uniprot/"
 
   /**
     * Renders file content as plain HTML. Can be used for scripts that produce HTML from the old Toolkit
@@ -125,10 +129,15 @@ object BlastVisualization extends Constants {
     }
     else if(db == "ncbi"){
       link += generateLink(ncbiProteinBaseLink, id, id)
+    } else if(db == "uniprot"){
+      var idSplit = id.split("""\|"""){1}
+      link += generateLink(uniprotBaseLik,idSplit,idSplit)
     }
+
     else{
       link = id
     }
+
 
     Html(link)
   }
@@ -196,6 +205,7 @@ object BlastVisualization extends Constants {
     case mmcifReg(_) => "mmcif"
     case pfamReg(_,_) => "pfam"
     case ncbiReg(_) => "ncbi"
+    case uniprotReg(_) => "uniprot"
     case e : String => Logger.info("Struc: ("+e+") could not be matched against any database!");""
   }
 
@@ -221,7 +231,18 @@ object BlastVisualization extends Constants {
       seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.substring(i) + "</td></tr>"
     }
 
-    BlastVisualization.colorRegexReplacer(seqWrapped)
+    seqWrapped
+  }
+
+  def insertMatch (seq : String, length : Int, hitArr : List[Int]) : String = {
+    var newSeq = ""
+    for (starPos <- hitArr){
+      val endPos = starPos+length
+      newSeq += seq.substring(0, starPos) + "<span class=\"patternMatch\">" + seq.substring(starPos, endPos) + "</span>" + seq.substring(endPos)
+
+    }
+    newSeq.replaceAll("""\s""", "")
+    newSeq
   }
 }
 
