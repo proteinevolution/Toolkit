@@ -19,6 +19,8 @@ hhblits -cpu 8 \
 
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > $(readlink -f ../results/${JOBID}.json)
 
+json2fasta.py ../results/${JOBID}.json ../results/${JOBID}.fasta
+
 
 # Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
 hhfilter -i $(readlink -f ../results/out.a3m) \
