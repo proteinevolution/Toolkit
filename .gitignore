@@ -33,3 +33,5 @@ mvc/mvc.iml
 jobDB/src/main/resources/application.conf
 application.conf
 bioprogs
+public/javascripts/typescriptc.js
+public/javascripts/typescriptc.js.map
