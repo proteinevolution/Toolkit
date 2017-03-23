@@ -301,8 +301,7 @@ window.Toolkit = {
         return [
             m("div", {
                 "class": "large-2 padded-column columns show-for-large",
-                id: "sidebar",
-                config: fadesIn
+                id: "sidebar"
             }, [m("div", { id : "job-search-div" }, [
                     m("div", { id              : "job-manager-panel",
                                class           : "dropdown-pane right",
