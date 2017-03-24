@@ -64,16 +64,6 @@ alignhits_html.pl   ../results/output_psiblastp.html ../results/output_psiblastp
                     -no_link \
                     -blastplus
 
-
-#retrieve full length sequences
-#seq_retrieve.pl -i %alignment.path \
-#                -o ../results/sequences.fa
-#                -d %STANDARD/%standarddb.content \
-#                -unique 1 > ../results/unretrievable
-
-
-
-
 # create HTML and PNG for blastviz visualisation
 blastJson2tab.py ../results/output_psiblastp.json ../results/output_psiblastp.tab
 blastviz_json.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
@@ -90,3 +80,4 @@ fasta2json.py %alignment.path ../results/query.json
 # Produce Evalues list
 awk {'print $(NF-6)'} ../results/output_psiblastp.tab >> ../results/evalues
 
+echo "%standarddb.content" >> ../params/db
