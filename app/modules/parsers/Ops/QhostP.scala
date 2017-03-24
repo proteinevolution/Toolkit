@@ -32,7 +32,7 @@ case class Node(hostname : String, ncpu: Int, load: Double, memtot: Double, memu
     lazy val rest : QhostP.Parser.Parser[String] = """.*""".r
 
 
-    lazy val entry : QhostP.Parser.Parser[QhostP.Node] = hostname  ~ arch ~ ncpu ~ load ~ memtot ~ memuse ~ rest ^^ {
+    lazy val entry : QhostP.Parser.Parser[QhostP.Node] = hostname ~ arch ~ ncpu ~ load ~ memtot ~ memuse ~ rest ^^ {
       case he ~ ar ~ n ~ l ~ mt ~ mu ~ r => Node(he,n,l,mt,mu)
     }
 
