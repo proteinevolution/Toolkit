@@ -1,12 +1,14 @@
-reformat.pl fas a2m %alignment.path  $(readlink -f ../params/infile_a2m)
 JOBID=%jobid.content
 
-hhblits -cpu 8 \
-        -i $(readlink -f ../params/infile_a2m) \
-        -d  %HHBLITS/%hhblitsdb.content     \
+###Fix after slider works
+##   -e %inclusion_ethresh.content  \
+
+hhblits -cpu %THREADS \
+        -i %alignment.path \
+        -d %HHBLITS/%hhblitsdb.content     \
         -o $(readlink -f ../results/${JOBID}.hhr) \
         -oa3m $(readlink -f ../results/out.a3m)  \
-        -e %inclusion_ethresh.content  \
+        -e 0.001 \
         -n %maxrounds.content  \
         -p %pmin.content \
         -Z %max_lines.content \

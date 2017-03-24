@@ -9,7 +9,6 @@ if [ $SEQ_COUNT -gt 1 ] ; then
     INPUT="in_msa"
 fi
 
-
 if [ "%matrix.content" = "BLOSUM80" ] || [ "%matrix.content" = "PAM70" ] ; then
     GAPOPEN=10
 fi
