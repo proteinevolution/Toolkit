@@ -9,7 +9,7 @@
 @(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
-@if((jsValue \ jobID \ "hits").as[List[JsObject]].size > 0) {
+@if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
     <div class="callout alert noHits" id="noHits">
         <h6>No hits found!</h6>
     </div>
