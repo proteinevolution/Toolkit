@@ -12,7 +12,7 @@ class Cluster @Inject()(qhost : Qhost) {
 
   def getLoad() : Unit = {
 
-    println("TEST")
+    qhost.get()
 
   }
 
