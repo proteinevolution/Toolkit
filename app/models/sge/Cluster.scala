@@ -27,7 +27,7 @@ final class Cluster @Inject()(qhost : Qhost,
     val c = cluster.map(_.load).toArray.sum / cluster.map(_.ncpu).toArray.sum
     val m = cluster.map(_.memtot).toArray.sum / cluster.map(_.memuse).toArray.sum
 
-    val l = (c + m)/2
+    val l = math.max(c,m) // take the resource which is more booked out to define the current load
 
 
     Load(c, m, l)
