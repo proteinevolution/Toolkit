@@ -140,3 +140,6 @@ GET          /structure3D/:accession                   @controllers.HHpredContro
 GET          /getStructure/:filename                    @controllers.Application.getStructureFile(filename : String)
 # template alignment
 GET         /templateAlignment/:jobID/:accession  @controllers.HHpredController.runScript(jobID : String, accession : String)
+
+# retrieveFullSeq
+POST        /retrieveFullSeq/:jobID                     @controllers.PsiblastController.runScript(jobID : String)
