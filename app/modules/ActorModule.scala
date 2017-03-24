@@ -1,6 +1,6 @@
 package modules
 
-import actors.{JobActor, WebSocketActor}
+import actors.{ClusterMonitor, JobActor, WebSocketActor}
 import com.google.inject.AbstractModule
 import play.api.libs.concurrent.AkkaGuiceSupport
 
@@ -8,7 +8,8 @@ import play.api.libs.concurrent.AkkaGuiceSupport
 class ActorModule extends AbstractModule with AkkaGuiceSupport {
 
 
-  def configure = {
+  override def configure() : Unit = {
+    bindActor[ClusterMonitor]("clusterMonitor")
     bindActorFactory[JobActor, JobActor.Factory]
     bindActorFactory[WebSocketActor, WebSocketActor.Factory]
   }
