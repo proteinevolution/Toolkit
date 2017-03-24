@@ -56,7 +56,6 @@ let JobTable = {
     },
     view: function(ctrl : any, args : any) {
         return m('div', {"class" : "row"}, [
-            m('div#clusterLoad', {"class" : "column large-4", config: gaugeConfig}, ''),
             m('table.liveTable', {"class" : "column large-5"}, [
                 m('thead', [
                     m('tr', [
