@@ -64,6 +64,7 @@
             <div id="hhpred_alignment_control">
                 <div id="hhpred_advanced" >
                     <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
+                    <a type="button" class="button success tiny hhpred_extra_button" onclick="retrieveFullSeq()">retrieve full seq</a>
                 </div>
             </div>
             <div class="colorOpts">
@@ -180,6 +181,7 @@
 }
 <script>
 var data;
+var hits;
 var checkbox = "hitCheckbox";
 var hitlist;
 var colorSS = false;
@@ -188,7 +190,7 @@ var colorBackground = false;
 var selectAllBool = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 var aas;
-var evalueParam = null;
+var chosenDB = null;
 
 (function()  {
     $('.slider').on('moved.zf.slider', function() {
@@ -215,11 +217,12 @@ var evalueParam = null;
         var numIterations = data_.output_psiblastp.BlastOutput2[0].report.results.iterations.length - 1;
         var basenameResults = data_.output_psiblastp.BlastOutput2[0].report.results.iterations[numIterations].search;
         data = basenameResults;
-        var hits = basenameResults.hits;
+
+        hits = basenameResults.hits;
         var numHits = hits.length;
         var info = basenameResults.stat;
-        evalueParam = data_.output_psiblastp.BlastOutput2[0].report.params.expect;
-
+        var evalueParam = data_.output_psiblastp.BlastOutput2[0].report.params.expect;
+        chosenDB = data_.output_psiblastp.BlastOutput2[0].report.search_target.db.split('/').pop().trim();
 
         firstQueryName = ">" + data_.query[0][0];
         firstQuerySequence = data_.query[0][1];
@@ -242,7 +245,7 @@ var evalueParam = null;
         // set color letters and SS to default
         toggleAliColor_("letters");
         $("#accordion").foundation();
-        checkAllBetterThan();
+        checkAllBetterThan(evalueParam);
         }
     });
 
@@ -296,6 +299,11 @@ function drawDataTable(hits){
 }
 
 
+function _deselectAll(){
+    deselectAll('hitCheckbox');
+    deselectAllDatatable(this.hitlist.fnGetNodes());
+}
+
 function toggleSelectAll() {
     selectAllDatatable(this.hitlist.fnGetNodes());
     this.selectAllBool = !this.selectAllBool;
@@ -304,8 +312,7 @@ function toggleSelectAll() {
         $("#selectAllSeq").addClass("colorToggle");
     }
     else {
-        deselectAll('hitCheckbox');
-        deselectAllDatatable(this.hitlist.fnGetNodes());
+        _deselectAll();
         $("#selectAllSeq").removeClass("colorToggle");
     }
 }
@@ -314,61 +321,102 @@ function onFullscreenToggle() {
     hitlist.draw();
 }
 
-function checkAllBetterThan(){
-    var hits = data.hits;
+function checkAllBetterThan(evalue){
+    var jsonData = {};
+    jsonData.accessions = [];
+    jsonData.seqs = [];
     // get values of all checked Checkboxes
     hits.forEach(function callback(currentValue) {
-        if (currentValue.hsps[0].evalue < this.evalueParam) {
+        if (currentValue.hsps[0].evalue < evalue) {
             $(":checkbox[value="+currentValue.num+"]").prop("checked","true");
+            jsonData.accessions.push(currentValue.description[0].accession);
+            jsonData.seqs.push(currentValue.hsps[0].hseq);
         }
     });
+    return jsonData;
 }
 
 
-function forward_(tool){
-    var hits = data.hits;
-    var forwardData = [];
-    var checkedCheckboxes = [];
-    var sliderRange = getSliderRange();
-    // get values of all checked Checkboxes
+function getCheckboxesData(){
+    var jsonData = {};
+    jsonData.accessions = [];
+    jsonData.seqs = [];
+
+
+    // get all checked checkboxes and their respective accession
     $('input:checkbox.' + checkbox + ":checked").each(function () {
-        checkedCheckboxes.push($(this).val()-1)
+        var index = $(this).val() - 1;
+        var seq = hits[index].hsps[0].hseq;
+        if (jsonData.seqs.indexOf(seq) == -1) {
+            jsonData.accessions.push(hits[index].description[0].accession);
+            jsonData.seqs.push(seq);
+        }
     });
+    return jsonData;
+}
+
+function applySliderRange(jsonData){
+    // get slider range
+    var sliderRange = getSliderRange();
+    //slider range is applied
+    jsonData.seqs = jsonData.seqs.map(function(e) {return e.substr(sliderRange[0] - 1, sliderRange[1]) + '\n'});
+    return jsonData;
+}
+
+
+function preprocessingForward(){
 
     if($('#selectedHits').is(':checked')) {
-        //fill array with headers and sequences
+        // get checked checkboxes
+        var jsonData = getCheckboxesData();
+        // slider range is applied
+        if($('#sliderRegion').is(':checked')) {
+            jsonData = applySliderRange(jsonData);
+        }
 
-        checkedCheckboxes.forEach(function callback(currentValue) {
-            var seq = "";
-            if ($('#sliderRegion').is(':checked')) {
-                seq = hits[currentValue].hsps[0].hseq.substr(sliderRange[0] - 1, sliderRange[1]);
-            } else {
-                seq = hits[currentValue].hsps[0].hseq;
-            }
-            if(forwardData.indexOf(seq) == -1) {
-                forwardData.push(">" + hits[currentValue].description[0].title + hits[currentValue].description[0].accession.substr(0, 60));
-                forwardData.push(seq);
-            }
-        });
     } else if ($('#accordingEvalue').is(':checked')) {
-
-        for (i = 0; i < hits.length; ++i) {
-            if (hits[i].hsps[0].evalue > $("#forwardEvalue").val()) {
-                var seq="";
-                if ($('#sliderRegion').is(':checked')) {
-                    seq = hits[i].hsps[0].hseq.substr(sliderRange[0] - 1, sliderRange[1]);
-                } else {
-                    seq = hits[i].hsps[0].hseq;
-                }
-                if(forwardData.indexOf(seq) == -1) {
-                    forwardData.push(">" + hits[i].description[0].title + hits[i].description[0].accession.substr(0, 60));
-                    forwardData.push(seq);
-                }
-            }
+        // first deselect all previous selected checkboxes
+        _deselectAll();
+        // now select all Better than given evalue
+        var jsonData = checkAllBetterThan($("#forwardEvalue").val());
+        // slider range is applied
+        if($('#sliderRegion').is(':checked')) {
+            jsonData = applySliderRange(jsonData);
         }
     }
+    return jsonData;
+}
+function forward_(tool){
 
-    forward(tool, forwardData.join("\n"));
+    var forwardData = ''
+    var data = preprocessingForward();
+
+    // full seq is retrieved
+    if($('#fullLength').is(':checked')) {
+        // retrieve full Seq
+        var jsonData = new Object();
+        jsonData.db =  chosenDB;
+        jsonData.accessionsStr = data.accessions.join(" ");
+
+        $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
+        $.ajax({
+            url: 'retrieveFullSeq/@jobID',
+            contentType: "application/json",
+            type: 'POST',
+            data: JSON.stringify(jsonData)
+        }).done(function() {
+            $.ajax({
+                type: 'GET',
+                url: 'files/@jobID/sequences.fa'
+            }).done(function (data) {
+                forward(tool, data.toString());
+            }).always( function(){
+                $.LoadingOverlay("hide");
+            });
+        });
+    }else{
+        forward(tool, data.accessions.join(" "));
+    }
 }
 
 

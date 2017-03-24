@@ -238,14 +238,16 @@ setTimeout(function() {
         });
 
     }
-    function selectAllDatatable(allPages, checkboxName){
+    function deselectAllDatatable(allPages){
         // dataTable
-        if ($('input:checkbox.'+checkboxName).prop('checked')) {
-            $(allPages).find('input[type="checkbox"]').prop('checked', true);
-        } else {
             $(allPages).find('input[type="checkbox"]').prop('checked', false);
-        }
     }
+
+    function selectAllDatatable(allPages) {
+        // dataTable
+        $(allPages).find('input[type="checkbox"]').prop('checked', false);
+    }
+
     function deselectAll(checkboxName){
         $('input:checkbox.'+checkboxName).prop('checked', false);
     }

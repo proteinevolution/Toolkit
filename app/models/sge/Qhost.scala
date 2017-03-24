@@ -1,5 +1,7 @@
 package models.sge
 
+import modules.parsers.Ops.QhostP
+
 import sys.process._
 import scala.language.postfixOps
 
@@ -9,16 +11,13 @@ import scala.language.postfixOps
   */
 
 
-class Qhost {
-
-  case class Node(hostname: String, ncpu: Int, load: Double, memtot: Double, memuse: Double, swapto: Double, swapus: Double)
+final class Qhost {
 
 
+  def get() : List[QhostP.Node] = {
 
-  private[this] val cmd = "qhost" !
+    QhostP.fromString("qhost" !!)
 
-  def qhost() = cmd
-
-
+  }
 
 }

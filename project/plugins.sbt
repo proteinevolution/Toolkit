@@ -10,6 +10,8 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
 
 addSbtPlugin("org.ensime" % "ensime-sbt" % "0.2.3")
 
+resolvers += Resolver.url("GitHub repository", url("http://shaggyyeti.github.io/releases"))(Resolver.ivyStylePatterns)
+
 addSbtPlugin("default" % "sbt-sass" % "0.1.9")
 
 addSbtPlugin("com.vmunier" % "sbt-web-scalajs" % "1.0.3")
