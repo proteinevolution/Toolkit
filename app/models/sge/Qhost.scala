@@ -14,17 +14,9 @@ import scala.language.postfixOps
 final class Qhost {
 
 
-  private[this] val cmd = "qhost" !!
-
   def get() : List[QhostP.Node] = {
 
-    val result = QhostP.fromString(cmd)
-
-    /*for (x <- result) {
-      println(x.hostname + " " + x.ncpu + " " + x.load + " " + x.memtot + " " + x.memuse)
-    } */
-
-    result
+    QhostP.fromString("qhost" !!)
 
   }
 

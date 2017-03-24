@@ -30,6 +30,7 @@ final class Cluster @Inject()(qhost : Qhost,
     val l = math.max(c,m) // take the resource which is more booked out to define the current load
 
 
+
     Load(c, m, l)
 
   }

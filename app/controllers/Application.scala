@@ -134,7 +134,6 @@ final class Application @Inject()(webJarAssets                                  
     val hostname = request.host.slice(0, request.host.indexOf(":"))
     env.configure("PORT", port)
     env.configure("HOSTNAME", hostname)
-    println("current cluster load: " + cluster.getLoad.loadEst)
     TEL.port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
     TEL.hostname = hostname
     println("[CONFIG:] running on port "+TEL.port)
