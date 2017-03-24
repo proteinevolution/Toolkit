@@ -8,7 +8,11 @@ import javax.inject.{Inject, Singleton}
   */
 
 @Singleton
-class Cluster @Inject()(qhost : Qhost) {
+class Cluster @Inject()(qhost : Qhost,
+                        qstat : Qstat) {
+
+
+
 
   def getLoad() : Unit = {
 

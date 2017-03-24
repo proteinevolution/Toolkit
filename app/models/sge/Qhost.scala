@@ -11,29 +11,21 @@ import scala.language.postfixOps
   */
 
 
-class Qhost {
-
-
-
-  case class Node(hostname: String, ncpu: Int, load: Double, memtot: Double, memuse: Double, swapto: Double, swapus: Double)
-
+final class Qhost {
 
 
   private[this] val cmd = "qhost" !!
 
-  def qhost() = cmd
-
-  def get() = {
+  def get() : List[QhostP.Node] = {
 
     val result = QhostP.fromString(cmd)
 
-
-    for (x <- result) {
+    /*for (x <- result) {
       println(x.hostname + " " + x.ncpu + " " + x.load + " " + x.memtot + " " + x.memuse)
-    }
+    } */
+
+    result
 
   }
-
-
 
 }
