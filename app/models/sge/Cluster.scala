@@ -1,57 +1,41 @@
-package modules.parsers.Ops
+package models.sge
+
+import javax.inject.{Inject, Singleton}
 
 
-import scala.util.parsing.combinator.RegexParsers
 
 /**
-  * Created by snam on 23.03.17.
+  * Created by snam on 19.03.17.
   */
 
-object QhostP {
-
-  // Ignored: ARCH, SWAPTO, SWAPUS
-
-case class Node(hostname : String, ncpu: Int, load: Double, memtot: Double, memuse: Double)
-
-
-  def fromString( input: String ) : List[QhostP.Node] = {
-
-    Parser.parse(input.split('\n').drop(3).mkString("\n")) // ignores first three lines
-
-  }
-
-
-  private object Parser extends RegexParsers {
-
-    lazy val hostname : QhostP.Parser.Parser[String] = """(?m)^node(.*?)[0-9]+""".r
-    lazy val arch : QhostP.Parser.Parser[String] = """\S*""".r
-    lazy val ncpu : QhostP.Parser.Parser[Int] = """\d*""".r ^^ { _.toInt }
-    lazy val load : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+|-""".r ^^ { case x if x == "-" => 0 case x if x != "-" => x.toDouble }
-    lazy val memtot : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+G""".r ^^ { _.dropRight(1).toDouble }
-    lazy val memuse : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+G|-""".r ^^ { case x if x == "-" => 0 case x if x != "-" => x.dropRight(1).toDouble}
-    lazy val rest : QhostP.Parser.Parser[String] = """.*""".r
-
-
-    lazy val entry : QhostP.Parser.Parser[QhostP.Node] = hostname ~ arch ~ ncpu ~ load ~ memtot ~ memuse ~ rest ^^ {
-      case h ~ a ~ n ~ l ~ mt ~ mu ~ r => Node(h,n,l,mt,mu)
-    }
-
-    lazy val entries : QhostP.Parser.Parser[scala.List[QhostP.Node]] = rep1( entry )
+@Singleton
+final class Cluster @Inject()(qhost : Qhost,
+                        qstat : Qstat) {
 
 
 
+  case class Load(cpuLoad : Double, memUsed : Double, loadEst : Double)
 
-    private[QhostP] def parse( input: String ): List[Node]  = {
-      parseAll( entries, input ) match {
-        case Success( es , _ ) => es
-        case x: NoSuccess =>  throw new Exception(x.toString)
-      }
-    }
+
+  def getLoad : Load = {
+
+    // get the infos from the qstat command
+    val cluster = qhost.get()
+
+    //compute some kind of load status
+
+    val c = cluster.map(_.load).toArray.sum / cluster.map(_.ncpu).toArray.sum
+    val m = cluster.map(_.memtot).toArray.sum / cluster.map(_.memuse).toArray.sum
+
+    val l = (c + m)/2
+
+
+    Load(c, m, l)
+
   }
 
 
 }
-
 
 
 /*
