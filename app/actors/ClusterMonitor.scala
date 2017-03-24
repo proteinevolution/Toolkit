@@ -24,7 +24,7 @@ class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorLogging
   protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
 
 
-  // Fetch the latest qhost status every 75ms
+  // Fetch the latest qhost status every 375ms
   val Tick : Cancellable = {
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, FetchLatest)(context.system.dispatcher)
