@@ -194,7 +194,9 @@ window.JobListComponent = {
         return m("div", { id: "job-list" }, [
             m("div", { class: "job-button" }, [
                 m("div", { class: "idsort textcenter", onclick: this.sortList.bind(ctrl, "jobID") }, "ID"),
-                m("div", { class: "toolsort textcenter", onclick: this.sortList.bind(ctrl, "toolName") }, "Tool")
+                m("div", { class: "toolsort textcenter", onclick: this.sortList.bind(ctrl, "toolName") }, "Tool"),
+                m("div", { class: "openJobManager"}, m('a[href="/#/joblist/"]',
+                m("i", {class: "icon-list"})))
             ]),
             m("div", { id: "job-list-bottom" }, [
                 listTooLong ?   // Show only when list is longer than numVisibleItems
@@ -210,5 +212,6 @@ window.JobListComponent = {
                     ) : null
             ])
         ]);
+
     }
 };
