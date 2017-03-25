@@ -277,7 +277,7 @@ window.Toolkit = {
         } else {
             job = JobModel.update(args, args.isJob ? jobID : toolname);
             viewComponent = function() {
-                return m(JobViewComponent, { job: job, owner: job.owner });
+                return m(JobViewComponent, { job: job });
             };
         }
         return {
