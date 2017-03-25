@@ -11,7 +11,6 @@ import controllers.UserSessions
 import models.database.jobs.Job
 import models.job.JobActorAccess
 import modules.{LocationProvider, CommonModule}
-import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{JsValue, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
