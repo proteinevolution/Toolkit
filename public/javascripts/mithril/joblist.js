@@ -58,11 +58,8 @@ window.JobListComponent = {
         return foundJob
     },
     getJobIndex     : function (jobID) {    // Returns the index of a job with the given jobID
-        var index = -1, foundIndex = null;
-        JobListComponent.list.map(function (job){
-            index++;
-            if (job.jobID === jobID) foundIndex = index
-        });
+        var foundIndex = null;
+        JobListComponent.list.map(function (job, index){ if (job.jobID === jobID) foundIndex = index });
         return foundIndex
     },
     contains        : function (jobID) {    // Checks if the job with the given jobID is in the list
@@ -83,9 +80,9 @@ window.JobListComponent = {
             type: JobListComponent.Job
         });
         request.then(function(data) {
-            JobListComponent.list = data;
-            JobListComponent.register();
-            JobListComponent.sortList();
+            JobListComponent.list = data;   // put the jobs in the list
+            JobListComponent.register();    // send the server a message that these items are being watched
+            JobListComponent.sortList();    // sort the list with the current sorting mode
         });
         return JobListComponent.list
     },
@@ -111,11 +108,17 @@ window.JobListComponent = {
         });
     },
     sortList        : function(sort) {      // Sorting the list elements
-        var oldSort, sameMode, inv;
-        oldSort = JobListComponent.sort;
-        sameMode = (oldSort.mode === sort);
+        var oldSort, sameMode, inv, selectedJobID, selectedInView;
+        oldSort = JobListComponent.sort;    // grab the old sort
+        sameMode = (oldSort.mode === sort); // see if the mode has changed
+        // If the mode has changed adjust the order (ascending - true / descending - false)
         if (sort != null || sameMode) { JobListComponent.sort = { mode : sort, asc : (sameMode ? !oldSort.asc : true) } }
+        // inv gets multiplied to invert the sorting order
         inv = JobListComponent.sort.asc ? 1 : -1;
+        // Check if the selected jobID is in the view to get the new index to scroll to
+        selectedJobID = JobListComponent.selectedJobID;
+        JobListComponent.visibleJobs().map(function(job) { if (job.jobID === selectedJobID) selectedInView = true; });
+        // Sort the list
         JobListComponent.list.sort(function(job1, job2) {
             switch (JobListComponent.sort.mode) {
                 case "toolName"  : return inv * job2.toolname.localeCompare(job1.toolname);
@@ -124,35 +127,42 @@ window.JobListComponent = {
                 default          : return inv * (job2.createdOn - job1.createdOn);
             }
         });
+        // Scroll to the selected item if it was in the view before
+        if (selectedJobID != null && selectedInView) {
+            JobListComponent.scrollToJobListItem(JobListComponent.getJobIndex(selectedJobID));
+        }
     },
     pushJob         : function(newJob, setActive) {
-        this.lastUpdatedJob = newJob;
+        this.lastUpdatedJob = newJob;                           // change the "last updated" job to this one
         var index = null, oldJob;
-        if (setActive) { this.selectedJobID = newJob.jobID }
-        this.list.map(function(job, idx){
+        if (setActive) { this.selectedJobID = newJob.jobID }    // change the selectedJobID to this job when setActive is on
+        this.list.map(function(job, idx){                       // check if the job is in the list already
             if(job.jobID === newJob.jobID) { index = idx; oldJob = job }
         });
         if (index != null) {
-            JobListComponent.list[index] = newJob;
+            JobListComponent.list[index] = newJob;              // Job is not new, update it
         } else {
-            JobListComponent.list.push(newJob);
+            JobListComponent.list.push(newJob);                 // Job is new, push it to the list
         }
-        this.sortList();
-        index = this.getJobIndex(newJob.jobID);
-        if (newJob.jobID === JobListComponent.selectedJobID) {
-            m.route("/jobs/" + newJob.jobID);
-            this.scrollToJobListItem(index);
+        this.sortList();                                        // Sort the list with the current sorting mode
+        if (newJob.jobID === JobListComponent.selectedJobID) {  // Since the job is selected
+            index = this.getJobIndex(newJob.jobID);             // find the new index of the job,
+            m.route("/jobs/" + newJob.jobID);                   // actualize the content view and
+            this.scrollToJobListItem(index);                    // scroll to the new position in the joblist
         }
     },
-    scrollJobList : function (number, doScroll) {
+    visibleJobs : function () {     // function cuts the list down to the visible elements
+        return JobListComponent.list.slice(JobListComponent.index, JobListComponent.numVisibleItems + JobListComponent.index);
+    },
+    scrollJobList : function (number, doScroll) {   // function scrolls the index number of items up or down
         return function(e) {
             if (doScroll) {
                 var numScrollItems = JobListComponent.index + number;
-                JobListComponent.index = numScrollItems < 0 ? 0 : numScrollItems;
+                JobListComponent.index = numScrollItems < 0 ? 0 : numScrollItems;   // ensure that the index is not overscrolled
             }
         }
     },
-    scrollToJobListItem : function (index) {
+    scrollToJobListItem : function (index) {    // function scrolls the job list to the index while scrolling exact numVisibleItems
         var scrollIndex = Math.floor(index / JobListComponent.numVisibleItems);
         scrollIndex *= JobListComponent.numVisibleItems;
         JobListComponent.index = scrollIndex < 0 ? 0 : scrollIndex;
@@ -167,7 +177,7 @@ window.JobListComponent = {
     },
     view: function(ctrl, args) {
         var shownList, listLength, listTooLong, onTopOfList, onBottomOfList, numScrollItems;
-        shownList  = this.list.slice(this.index, this.numVisibleItems + this.index);
+        shownList  = this.visibleJobs();
         listLength = this.list.length;                                      // lenght of the original list
         listTooLong = listLength > this.numVisibleItems;                    // is the list longer than numVisibleItems?
         onTopOfList = (this.index <= 0);                                        // is the list at the top?
