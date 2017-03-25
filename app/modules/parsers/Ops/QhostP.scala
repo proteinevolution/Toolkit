@@ -28,7 +28,7 @@ case class Node(hostname : String, ncpu: Int, load: Double, memtot: Double, memu
     val ncpu : QhostP.Parser.Parser[Int] = """\d*""".r ^^ { _.toInt }
     val load : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+|-""".r ^^ {
       case x if x == "-" => 0
-      case x if x != "-" => x.toDouble
+      case x => x.toDouble
     }
     val memtot : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M)""".r ^^ {
       case x if x.endsWith("M") => "0.".concat(x.dropRight(1).filterNot(_ == '.')).toDouble
