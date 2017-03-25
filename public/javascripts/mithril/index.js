@@ -61,46 +61,47 @@ typeAhead = function (elem, isInit) {
 };
 
 trafficbar = function (elem, isInit) {
-    var status;
-
+    var job;
+    job = JobListComponent.lastUpdatedJob;
+    if (job != null) {
         elem.setAttribute("data-disable-hover", "false");
         elem.setAttribute("data-tooltip", "data-tooltip");
-        elem.setAttribute("title", "Click to view last job: " + Job.lastUpdated);
-        status = Job.lastUpdatedState;
-        console.log("Traffic bar sees status " + status);
-        if (status === -1) {
+        elem.setAttribute("title", "Click to view last job: " + job.jobID);
+        console.log("Traffic bar sees status " + job.status);
+        if (job.status === -1) {
             return console.log("Hide Trafficbar");
-        } else if (status === 2) {
+        } else if (job.status === 2) {
             console.log("Traffic Bar goes to queued");
             return $(elem).css({
                 'background': '#c0b5bf',
                 'box-shadow': '0 1 6px #9192af'
             });
-        } else if (status === 5) {
+        } else if (job.status === 5) {
             console.log("Traffic Bar goes to done");
             return $(elem).css({
                 'background': 'green',
                 'box-shadow': '0 1 6px #C3FFC3'
             });
-        } else if (status === 4) {
+        } else if (job.status === 4) {
             console.log("Traffic Bar goes to error");
             return $(elem).css({
                 'background': '#ff0000',
                 'box-shadow': '0 1 6px #FFC5C5'
             });
-        } else if (status === 3) {
+        } else if (job.status === 3) {
             console.log("Traffic Bar goes to running");
             return $(elem).css({
                 'background': '#ffff00',
                 'box-shadow': '0 1 6px #FFF666'
             });
         }
+    }
 };
 
 window.Index = {
     controller: function () {
         document.title = "Bioinformatics Toolkit";
-        return Job.selected = -1;
+        return JobListComponent.selectedJobID = null;
     },
     view: function () {
         return m("div", {
@@ -188,7 +189,10 @@ trafficBarComponent = {
                     id: "trafficbar",
                     config: trafficbar,
                     onclick: function () {
-                        return m.route("/jobs/" + Job.lastUpdated);
+                        var job = JobListComponent.lastUpdatedJob;
+                        if (job != null) {
+                            return m.route("/jobs/" + job.jobID);
+                        }
                     }
                 })
             )

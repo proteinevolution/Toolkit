@@ -11,7 +11,7 @@ jobs = {};
 
 Users = -1;
 
-
+/*
 window.Job = (function() {
     function Job(args) {
         this.jobID = args.jobID;
@@ -216,7 +216,7 @@ window.Job = (function() {
     return Job;
 
 })();
-
+*/
 
 // Velocity animation config
 
@@ -269,40 +269,25 @@ window.Toolkit = {
                 Toolkit.currentJobID = jobID;
             }
         } else {
-            Job.selected = -1;
             JobListComponent.selectedJobID = null;
         }
         toolname = m.route.param("toolname");
         if (FrontendTools[toolname]) {
-            viewComponent = function() {
-                return FrontendTools[toolname];
-            };
+            viewComponent = function() { return FrontendTools[toolname]; };
         } else {
             job = JobModel.update(args, args.isJob ? jobID : toolname);
             viewComponent = function() {
-                return m(JobViewComponent, {
-                    owner: Job.owner,
-                    job: job,
-                    add: Job.add,
-                    messages: JobModel.messages,
-                    joblistItem: Job.getJobByID(jobID)
-                });
+                return m(JobViewComponent, { job: job, owner: job.owner });
             };
         }
         return {
-            jobs: Job.list,
-            viewComponent: viewComponent,
-            selected: Job.selected,
-            clear: Job.clear,
-            ownerName: Job.owner
+            viewComponent: viewComponent
         };
     },
     view: function(ctrl) {
         return [
-            m("div", {
-                "class": "large-2 padded-column columns show-for-large",
-                id: "sidebar"
-            }, [m("div", { id : "job-search-div" }, [
+            m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
+                m("div", { id : "job-search-div" }, [
                     m("div", { id              : "job-manager-panel",
                                class           : "dropdown-pane right",
                                "data-dropdown" : "data-dropdown",
@@ -314,22 +299,20 @@ window.Toolkit = {
                         placeholder: "Search by JobID",
                         id:          "job-search",
                         name:        "job-search"
-                    }), m("span", {
-                        "class": "bar"
                     }),
-                    m("button", {id            : "job-manager-button",
-                            class         : "button small",
-                            onclick       : this.toggleJobManager(ctrl, this),
-                            "data-toggle" : "job-manager-panel",
-                            config        : this.initFoundation(ctrl)},
+                    m("span", { "class": "bar" }),
+                    m("button", {
+                        id            : "job-manager-button",
+                        class         : "button small",
+                        onclick       : this.toggleJobManager(ctrl, this),
+                        "data-toggle" : "job-manager-panel",
+                        config        : this.initFoundation(ctrl) },
                         "Job Manager")
                 ]),
                 m(JobListComponent, { activejobID : m.route.param("jobID") })
-            ]), m("div", {
-                id: "content",
-                "class": "large-10 small-12 columns padded-column",
-                config: fadesIn
-            }, ctrl.viewComponent())
+            ]),
+            m("div", { id: "content", "class": "large-10 small-12 columns padded-column", config: fadesIn },
+                ctrl.viewComponent())
         ];
     }
 };
