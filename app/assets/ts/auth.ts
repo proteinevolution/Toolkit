@@ -4,10 +4,10 @@
 
 
 $(function() {
-    var checkAuthResponse, loadMiniProfile;
+    let checkAuthResponse : any, loadMiniProfile : any;
     $("#auth-tabs").tabs();
     $("#signin-form").on('submit', function(event) {
-        var form_data;
+        let form_data : string;
         event.preventDefault();
         form_data = $("#signin-form").serialize();
         return $.ajax({
@@ -18,8 +18,8 @@ $(function() {
             return checkAuthResponse(json);
         });
     });
-    $("#signup-form").on('submit', function(event) {
-        var form_data;
+    $("#signup-form").on('submit', function(event) : any {
+        let form_data : string;
         event.preventDefault();
         if (!$("#signup-submit").hasClass("disabled")) {
             form_data = $("#signup-form").serialize();
@@ -40,7 +40,7 @@ $(function() {
         }
     });
     $("#signup-form").change(function(event) {
-        var buttonDisabled;
+        let buttonDisabled : boolean;
         buttonDisabled = $("#acceptToS").val() === "false";
         $("#signup-form").find(':input').each(function() {
             if (!this.value && this.type !== "submit") {
@@ -56,12 +56,13 @@ $(function() {
             return $("#signup-submit").removeClass('disabled');
         }
     });
-    checkAuthResponse = function(json) {
+    checkAuthResponse = function(json : any) : any {
         if (json.successful) {
             $("#auth-link-text").html(json.user.nameLogin);
             $("#auth-dropdown-link").show();
             $("#auth-link").remove();
             $("#overlay-content").html(json.message);
+
             JobListComponent.reloadList();
             return setTimeout(loadMiniProfile, 1000);
         } else {
