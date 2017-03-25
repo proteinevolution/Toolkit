@@ -63,32 +63,33 @@ typeAhead = function (elem, isInit) {
 trafficbar = function (elem, isInit) {
     var job;
     job = JobListComponent.lastUpdatedJob;
+    //console.log(job);
     if (job != null) {
         elem.setAttribute("data-disable-hover", "false");
         elem.setAttribute("data-tooltip", "data-tooltip");
         elem.setAttribute("title", "Click to view last job: " + job.jobID);
-        console.log("Traffic bar sees status " + job.status);
-        if (job.status === -1) {
+        console.log("Traffic bar sees status " + job.state);
+        if (job.state === -1) {
             return console.log("Hide Trafficbar");
-        } else if (job.status === 2) {
+        } else if (job.state === 2) {
             console.log("Traffic Bar goes to queued");
             return $(elem).css({
                 'background': '#c0b5bf',
                 'box-shadow': '0 1 6px #9192af'
             });
-        } else if (job.status === 5) {
+        } else if (job.state === 5) {
             console.log("Traffic Bar goes to done");
             return $(elem).css({
                 'background': 'green',
                 'box-shadow': '0 1 6px #C3FFC3'
             });
-        } else if (job.status === 4) {
+        } else if (job.state === 4) {
             console.log("Traffic Bar goes to error");
             return $(elem).css({
                 'background': '#ff0000',
                 'box-shadow': '0 1 6px #FFC5C5'
             });
-        } else if (job.status === 3) {
+        } else if (job.state === 3) {
             console.log("Traffic Bar goes to running");
             return $(elem).css({
                 'background': '#ffff00',
@@ -101,7 +102,7 @@ trafficbar = function (elem, isInit) {
 window.Index = {
     controller: function () {
         document.title = "Bioinformatics Toolkit";
-        return JobListComponent.selectedJobID = null;
+        return JobListComponent.selectedJobID = -1;
     },
     view: function () {
         return m("div", {
