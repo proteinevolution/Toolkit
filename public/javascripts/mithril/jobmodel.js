@@ -54,7 +54,6 @@ window.JobModel = {
                 url: "/api/job/" + value
             }).then(function(data) {
                 JobModel.paramValues = data.paramValues;
-                Job.owner = data.ownerName;
                 return {
                     tool: data.toolitem,
                     isJob: true,

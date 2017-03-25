@@ -142,4 +142,4 @@ GET          /getStructure/:filename                    @controllers.Application
 GET         /templateAlignment/:jobID/:accession  @controllers.HHpredController.runScript(jobID : String, accession : String)
 
 # retrieveFullSeq
-POST        /retrieveFullSeq/:jobID                     @controllers.PsiblastController.runScript(jobID : String)
+POST        /retrieveFullSeq/:jobID                     @controllers.PsiblastController.retrieveSeqs(jobID : String)

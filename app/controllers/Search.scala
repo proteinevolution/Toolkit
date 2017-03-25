@@ -131,7 +131,9 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
 
   def checkJobID(jobID : String) : Action[AnyContent] = Action.async{
     jobDao.existsJobID(jobID).map{ richSearchResponse =>
-      Ok(Json.obj("exists" -> {richSearchResponse.getHits.getTotalHits > 0}))
+      val jobIDExists : Boolean = richSearchResponse.getHits.getTotalHits > 0
+      Logger.info("Looked for jobID: " + jobID + " Found: " + jobIDExists)
+      Ok(Json.obj("exists" -> jobIDExists))
     }
   }
 
