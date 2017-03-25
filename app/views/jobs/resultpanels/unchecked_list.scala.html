@@ -1,0 +1,41 @@
+@import play.api.libs.json.JsValue
+
+@(toolName: String, jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
+
+<a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward selected</a>
+<a type="button" class="button success tiny hhpred_extra_button" id="downloadAlignment"  onclick="download_()">Download File</a>
+
+
+<div class="h1">Number of IDs: @{{jsValue \ "ids" \ "ACC_IDS"}.as[List[JsValue]].size}<br><br></div>
+
+
+
+ <div class="uncheckedListWrap">
+    @for((id) <- (jsValue \ "ids" \ "ACC_IDS").as[List[JsValue]]){
+
+       <div class="sequence"> @{id.as[String]} </div>
+
+    }
+ </div>
+
+<script>
+    var data=null;
+    // get result json
+    var fileUrl = "/files/@jobID/ids.json";
+    $.getJSON(fileUrl, function (data_) {
+    data = data_;
+    });
+
+    function forward_(tool) {
+        forwardData = data.ACC_IDS;
+        console.log(JSON.stringify(data));
+        forward(tool, forwardData.join("\n"));
+    }
+
+    function download_(){
+        var fileString = "";
+        fileString = data.ACC_IDS;
+        var filename = "@{toolName}_jobID_@{jobID}.fasta";
+        download(filename, fileString.join("\n"));
+    }
+</script>
