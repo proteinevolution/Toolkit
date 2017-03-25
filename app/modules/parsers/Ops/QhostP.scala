@@ -23,30 +23,30 @@ case class Node(hostname : String, ncpu: Int, load: Double, memtot: Double, memu
 
   private object Parser extends RegexParsers {
 
-    lazy val hostname : QhostP.Parser.Parser[String] = """(?m)^node(.*?)[0-9]+""".r
-    lazy val arch : QhostP.Parser.Parser[String] = """\S*""".r
-    lazy val ncpu : QhostP.Parser.Parser[Int] = """\d*""".r ^^ { _.toInt }
-    lazy val load : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+|-""".r ^^ {
+    val hostname : QhostP.Parser.Parser[String] = """(?m)^node(.*?)[0-9]+""".r
+    val arch : QhostP.Parser.Parser[String] = """\S*""".r
+    val ncpu : QhostP.Parser.Parser[Int] = """\d*""".r ^^ { _.toInt }
+    val load : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+|-""".r ^^ {
       case x if x == "-" => 0
       case x if x != "-" => x.toDouble
     }
-    lazy val memtot : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M)""".r ^^ {
+    val memtot : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M)""".r ^^ {
       case x if x.endsWith("M") => "0.".concat(x.dropRight(1).filterNot(_ == '.')).toDouble
       case x if x.endsWith("G") => x.dropRight(1).toDouble
     }
-    lazy val memuse : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M)|-""".r ^^ {
+    val memuse : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M)|-""".r ^^ {
       case x if x == "-" => 0
       case x if x.endsWith("M") => "0.".concat(x.dropRight(1).filterNot(_ == '.')).toDouble
       case x if x.endsWith("G") => x.dropRight(1).toDouble
     }
-    lazy val rest : QhostP.Parser.Parser[String] = """.*""".r
+    val rest : QhostP.Parser.Parser[String] = """.*""".r
 
 
-    lazy val entry : QhostP.Parser.Parser[QhostP.Node] = hostname ~ arch ~ ncpu ~ load ~ memtot ~ memuse ~ rest ^^ {
+    val entry : QhostP.Parser.Parser[QhostP.Node] = hostname ~ arch ~ ncpu ~ load ~ memtot ~ memuse ~ rest ^^ {
       case h ~ a ~ n ~ l ~ mt ~ mu ~ r => Node(h,n,l,mt,mu)
     }
 
-    lazy val entries : QhostP.Parser.Parser[scala.List[QhostP.Node]] = rep1( entry )
+    val entries : QhostP.Parser.Parser[scala.List[QhostP.Node]] = rep1( entry )
 
 
 
