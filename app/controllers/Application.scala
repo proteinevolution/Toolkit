@@ -199,7 +199,7 @@ final class Application @Inject()(webJarAssets                                  
 
 
   def getStructureFile(filename : String ) : Action[AnyContent] = Action.async { implicit request => {
-    
+
     val db = BlastVisualization.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
     val filepath = db match{
       case "scop" =>
