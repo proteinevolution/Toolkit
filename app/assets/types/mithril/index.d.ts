@@ -161,7 +161,7 @@ declare namespace Mithril {
          * @return A String object instance with an added internal flag to mark
          * it as trusted.
          */
-        trust(html: string): TrustedString;
+        trust(html: string): string;
 
         /**
          * Render a virtual DOM tree.
