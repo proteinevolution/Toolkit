@@ -233,7 +233,7 @@ var fadesIn = function(element, isInitialized, context) {
 };
 
 window.Toolkit = {
-    currentJobID : null,
+    currentJobID : -1,
     getSuggestion : function (ctrl) {
         return function (e) {}
     },
@@ -269,7 +269,7 @@ window.Toolkit = {
                 Toolkit.currentJobID = jobID;
             }
         } else {
-            JobListComponent.selectedJobID = null;
+            JobListComponent.selectedJobID = -1;
         }
         toolname = m.route.param("toolname");
         if (FrontendTools[toolname]) {

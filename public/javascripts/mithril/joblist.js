@@ -49,7 +49,7 @@ window.JobListComponent = {
     list            : [],   // List containing the jobs
     index           : 0,    // Index of the first shown item in the job list
     numVisibleItems : 10,   // Number of shown jobs
-    selectedJobID   : null, // JobID of the selected job
+    selectedJobID   : -1, // JobID of the selected job
     lastUpdatedJob  : null, // Job which has been updated last
     sort            : { mode : "createdOn", asc : true },
     getJob          : function (jobID) {    // Returns a job with the given jobID
