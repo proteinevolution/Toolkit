@@ -1,28 +1,6 @@
 import ElementConfig = Mithril.ElementConfig;
 
 
-let gaugeConfig = function(elem: Element, isInit: boolean, ctx: any) {
-
-    if(!isInit){
-
-        let g = new JustGage({
-            id: "clusterLoad",
-            value:32,
-            min:0,
-            max:100,
-            title:"Cluster load",
-            label:"",
-            showMinMax:false,
-            gaugeColor:"#fff",
-            levelColors:["#a9d70b", "#f9c802", "#ff0000"],
-            refreshAnimationType:"linear"
-        });
-
-    }
-
-};
-
-
 let JobTable = {
     controller: function(args : any) {
 
