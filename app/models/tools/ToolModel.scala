@@ -157,7 +157,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "seq2id" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Results", views.html.jobs.resultpanels.checkbox_list(jobID, jsvalue)))
+          Seq(("Results", views.html.jobs.resultpanels.unchecked_list("Seq2ID",jobID, jsvalue)))
         case None => Seq.empty
       }
 
@@ -299,7 +299,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // Seq2ID
     ("seq2id", "Seq2ID", "s2id", "utils", "",
-      Seq(paramAccess.ALIGNMENT), Seq.empty),
+      Seq(paramAccess.ALIGNMENT), Seq("retseq")),
 
     // ANCESCON
     ("ancescon", "ANCESCON", "anc", "classification", "",
