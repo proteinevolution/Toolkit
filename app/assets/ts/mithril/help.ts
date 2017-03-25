@@ -1,13 +1,22 @@
-var accordion, accordionContent, accordionItem, exampleContent, helpContent, helpModalReveal, helpModalTabs, parameterContent;
+import Component = Mithril.Component;
 
-helpModalReveal = function(elem, isInit) {
+let accordion : ElementConfig,
+    accordionContent : any,
+    accordionItem : ElementConfig,
+    exampleContent : any,
+    helpContent : any,
+    helpModalReveal : ElementConfig,
+    helpModalTabs : ElementConfig,
+    parameterContent : any;
+
+helpModalReveal = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         elem.setAttribute("data-reveal", "data-reveal");
         return $(elem).foundation();
     }
 };
 
-helpModalTabs = function(elem, isInit) {
+helpModalTabs = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         return $(elem).tabs();
     }
@@ -30,7 +39,7 @@ exampleContent = {
     "psiblast": ["Search with an amino acid sequence against protein databases for locally similar sequences.\nSimilar to Protein BLAST+ but more sensitive. PSI-BLAST+ first performs a BLAST+ search and builds an alignment\nfrom the best local hits. This alignment is then used as a query for the next round of search.\nAfter each successive round the search alignment is updated.", ["Alignment", "Database", "Matrix", "Number of Iterations", "E-Value", "E-value inclusion threshold", "Filter (low complexity)", "Compute Smith-Waterman alignment", "Use nr70 for all but last iteration", "Alignments and descriptions"], "At the top of the results page is a \"View alignment\"-\"button, that shows the multiple alignment of all hits.\nThen there is a list with brief information about all hits that were found.\nThey are listed together with their scores and e-values.\nThere you can select the ones, you want to work with. Below this you can find more information.\nThere are all pairwise alignments and there is also additional information about the method,\nthe identities and the positives. There you also have the possibility to select the hits, you want to work with.\nAt the bottom you can find more information about the database and the matrix.\nThe \"View alignment\"-button shows the multiple alignment of all sequences that was found by PSI-BLAST. The different colours illustrate the identities between the different amino acids. This helps you to decide, whether the found sequences may be really homologue."]
 };
 
-helpContent = function(tool) {
+helpContent = function(tool : string) {
     if (exampleContent[tool]) {
         return exampleContent[tool];
     } else {
@@ -38,27 +47,28 @@ helpContent = function(tool) {
     }
 };
 
-accordion = function(elem, isInit) {
+accordion = function(elem : Element, isInit : boolean) : any {
     if (!isInit) {
         return elem.setAttribute("data-accordion", "data-accordion");
     }
 };
 
-accordionItem = function(elem, isInit) {
+accordionItem = function(elem : Element, isInit : boolean) : any {
     if (!isInit) {
         return elem.setAttribute("data-accordion-item", "data-accordion-item");
     }
 };
 
-accordionContent = function(elem, isInit) {
+accordionContent = function(elem : Element, isInit : boolean) {
     if (!isInit) {
         return elem.setAttribute("data-tab-content", "data-tab-content");
     }
 };
 
-window.HelpModalComponent = {
-    view: function(ctrl, args) {
-        var overview, params, results;
+(<any>window).HelpModalComponent = {
+    controller: function(){},
+    view: function(ctrl : any, args : any) {
+        let overview : any, params : any, results : any;
         overview = helpContent(args.toolname)[0];
         params = helpContent(args.toolname)[1];
         results = helpContent(args.toolname)[2];
@@ -90,7 +100,7 @@ window.HelpModalComponent = {
             }, m("ul", {
                 "class": "accordion",
                 config: accordion
-            }, params.map(function(param) {
+            }, params.map(function(param : any) {
                 return m("li", {
                     "class": "accordion-item",
                     config: accordionItem
@@ -101,7 +111,7 @@ window.HelpModalComponent = {
                     }, param), m("div", {
                         "class": "accordion-content",
                         config: accordionContent
-                    }, m.trust(parameterContent[param]))
+                    }, [ m.trust(parameterContent[param]) ])
                 ]);
             }))), m("div", {
                 id: "help-tabs3"
