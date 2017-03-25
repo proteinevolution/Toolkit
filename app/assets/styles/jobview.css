@@ -129,6 +129,12 @@ hr {
     font-weight: bold;
 }
 
+.h1{
+    font-weight: bold;
+    font-size: 12px;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+}
+
 .wrap{
     word-break: break-all;
     white-space: unset;
@@ -140,15 +146,17 @@ hr {
 }
 
 .sequence{
-    font-family: 'Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,monospace;
-    font-size: 0.625rem;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    letter-spacing: 0.05em;
+    font-size: 0.725rem;
     white-space: pre;
     background-color: rgba(241, 241, 241, 0.75) !important;
 }
 
 .sequenceAlignment{
-    font-family: 'Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,monospace;
-    font-size: 0.625rem;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    letter-spacing: 0.05em;
+    font-size: 0.725rem;
     background-color: rgba(241, 241, 241, 0.75) !important;
 }
 
@@ -156,6 +164,13 @@ hr {
 .sequence :hover{
     background-color: #eee;
 }
+
+.uncheckedListWrap {
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
 .header :hover{
     background-color: #eee;
 }
