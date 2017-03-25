@@ -7,7 +7,7 @@ let JobTable = {
         let ctrl = this;
         ctrl.totalJobs = -1;
         ctrl.lastJob = {};
-        m.request({method: "GET", url: "/api/jobs"})
+        m.request({method: "GET", url: "jobscleaned"})
             .then(function(jobs) {
 
                 if(jobs.length > 0){
