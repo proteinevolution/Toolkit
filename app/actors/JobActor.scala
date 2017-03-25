@@ -4,7 +4,7 @@ import java.io.{FileOutputStream, ObjectOutputStream}
 import javax.inject.Inject
 
 import actors.JobActor._
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{Actor, ActorRef, PoisonPill}
 import akka.event.LoggingReceive
 import models.Constants
 import models.database.jobs._
@@ -157,6 +157,7 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
 
 
   override def receive = LoggingReceive {
+
 
     case CreateJob(jobID, user, toolname, params) =>
 
@@ -326,6 +327,7 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
           foundWatchers.flatten.foreach (_ ! ClearJob (job.jobID))
         case None =>
       }
+      self ! PoisonPill // TODO execute qdel as well!
 
     // User does no longer watch this Job
     case StopWatch(jobID, userID) =>
@@ -386,6 +388,7 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
                   Logger.info("Job has been removed from JobActor")
                 }
               }
+              self ! PoisonPill
             // Currently no further error handling
             case Error =>
               this.updateJobState(job).map { job =>
@@ -394,11 +397,14 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
                 // Update the statistics for the failed job
                 increaseJobCount(job.tool, failed = true)
               }
+              self ! PoisonPill
             case _ =>
               Logger.info("Job State for \'" + jobID + "\' changed to invalid JobStateChanged State: " + jobState)
+              self ! PoisonPill
           }
         case None =>
           Logger.info("Job not found: " + jobID)
+          self ! PoisonPill
       }
   }
 }
