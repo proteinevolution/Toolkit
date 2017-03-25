@@ -379,20 +379,25 @@ JobSubmissionComponent = {
     currentJobID : null,                    // Currently entered jobID
     jobIDValid : true,                      //
     checkJobID : function (jobID) {
-        m.request({ method: "GET", url: "/search/checkJobID/"+jobID }).then(
-            function (data) { JobSubmissionComponent.jobIDValid = !data.exists; }
-        );
+        if (jobID !== "") {
+            m.request({ method: "GET", url: "/search/checkJobID/"+jobID }).then(
+                function (data) { JobSubmissionComponent.jobIDValid = !data.exists; }
+            );
+        }
         JobSubmissionComponent.currentJobID = jobID;
         return jobID;
     },
     jobIDComponent : function (ctrl) {
+        var style = "float:right;background-color:";
+        style += JobSubmissionComponent.currentJobID === "" ? "#ffffff;" :
+            (JobSubmissionComponent.jobIDValid ? "#dbffdb;" : "#da4453;");
         return m("input", { type: "text",
             id: "jobID",
             class: "jobid",
             placeholder: "Custom JobID",
             onchange: m.withAttr("value", JobSubmissionComponent.checkJobID),
             value: JobSubmissionComponent.currentJobID,
-            style: "float:right;background-color:" + (JobSubmissionComponent.jobIDValid ? "#dbffdb;" : "#da4453;")
+            style: style
         })
     },
     controller: function(args) {
@@ -407,7 +412,6 @@ JobSubmissionComponent = {
             }
             JobSubmissionComponent.currentJobID = newJobID;
         }
-        console.log(JobSubmissionComponent.currentJobID);
         return {
             submit: function(startJob) {
                 if (this.submitting) return;
