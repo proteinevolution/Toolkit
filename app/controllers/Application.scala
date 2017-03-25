@@ -199,14 +199,13 @@ final class Application @Inject()(webJarAssets                                  
 
 
   def getStructureFile(filename : String ) : Action[AnyContent] = Action.async { implicit request => {
-    var filepath  = ""
-    var fileEnding = ""
+    
     val db = BlastVisualization.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
-    db match{
+    val filepath = db match{
       case "scop" =>
-        filepath = env.get("SCOPE")
+        env.get("SCOPE")
       case "mmcif" =>
-        filepath = env.get("CIF")
+        env.get("CIF")
     }
     Future.successful(Ok.sendFile(new java.io.File(s"$filepath$SEPARATOR$filename")).as("text/plain"))
   }
