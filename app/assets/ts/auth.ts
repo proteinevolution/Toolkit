@@ -42,7 +42,7 @@ $(function() {
     $("#signup-form").change(function(event) {
         let buttonDisabled : boolean;
         buttonDisabled = $("#acceptToS").val() === "false";
-        $("#signup-form").find(':input').each(function() {
+        $("#signup-form").find(':input').each(function() : any {
             if (!this.value && this.type !== "submit") {
                 return buttonDisabled = true;
             }

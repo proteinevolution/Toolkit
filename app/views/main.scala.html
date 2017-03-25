@@ -289,24 +289,6 @@
 //                  });
 
 
-                  // scroll arrow
-                  $(window).scroll(function() {
-                      if ($(window).scrollTop() > 200) {
-                          $('#scrollTop').show();
-                      } else {
-                          $('#scrollTop').hide();
-                      }
-                  });
-
-                  $('#scrollTop').click(function() {
-                      $("html, body").animate({ scrollTop: 0 }, 200);
-                      return false;
-                  });
-
-                  function myFunction(x) {
-                      x.classList.toggle("change");
-                  }
-
                     $(document).ready(function() {
                         $(document).foundation();
                     });
