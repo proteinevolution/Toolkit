@@ -78,7 +78,6 @@ onOpen = function(event) {
     connecting = false;
     retryCount = 1;
     $("#offline-alert").fadeOut();
-    return Job.reloadList();
 };
 
 onError = function(event) {

@@ -28,13 +28,8 @@ window.JobViewComponent = {
             return m("div", {
                 id: "jobview"
             }, [
-                m(JobLineComponent, {
-                    job: args.job
-                }), m(JobTabsComponent, {
-                    owner: args.owner,
-                    job: args.job,
-                    add: args.add
-                })
+                m(JobLineComponent, { job: args.job }),
+                m(JobTabsComponent, { job: args.job, owner: args.owner })
             ]);
         }
     }
@@ -47,36 +42,25 @@ JobLineComponent = {
         return m("div", {
             "class": "jobline"
         }, [
-            m(HelpModalComponent, {
-                toolname: args.job().tool.toolname,
-                toolnameLong: args.job().tool.toolnameLong
-            }), m("span", {
-                "class": "toolname"
-            }, [
-                m("input", {id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
-                args.job().tool.toolnameLong, m("a", {
-                    config: helpModalAccess.bind(args)
-                }, m("i", {
-                    "class": "icon-information_white helpicon"
-                }))
-            ]), m("span", {
-                "class": "jobdate"
-            }, isJob ? "Created: " + (args.job().createdOn) : ""), m("span", {
-                "class": "jobinfo"
-            }, isJob ? "JobID: " + (args.job().jobID) : "Submit a new Job")
+            m(HelpModalComponent, { toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong }),
+            m("span", { class: "toolname" }, [
+                m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
+                args.job().tool.toolnameLong,
+                m("a", { config: helpModalAccess.bind(args) },
+                    m("i", { class: "icon-information_white helpicon" })
+                )
+            ]),
+            m("span", { class: "jobdate" }, isJob ? "Created: " + (args.job().createdOn) : ""),
+            m("span", { class: "jobinfo" }, isJob ? "JobID: " + (args.job().jobID) : "Submit a new Job")
         ]);
     }
 };
 
 SearchformComponent = {
     view: function() {
-        return m("div", {
-            id: "jobsearchform"
-        }, m("input", {
-            type: "text",
-            placeholder: "Search by JobID, e.g. 6881313",
-            id: "jobsearch"
-        }));
+        return m("div", { id: "jobsearchform" },
+            m("input", { type: "text", placeholder: "Search by JobID, e.g. 6881313", id: "jobsearch" })
+        );
     }
 };
 
@@ -120,48 +104,42 @@ jobNoteArea = function(elem, isInit) {
 
 JobErrorComponent = {
     view: function() {
-        return m("div", {
-            "class": "error-panel"
-        }, m("p", "Job has reached Error state"));
+        return m("div", { class: "error-panel" }, m("p", "Job has reached Error state"));
     }
 };
 
 JobQueuedComponent = {
     view: function(ctrl, args) {
-        return m("div", {
-            "class": "queued-panel"
-        }, [
-            m("table", {
-                config: foundationConfig
-            }, m("tbody", [m("tr", [m("td", "JobID"), m("td", args.job().jobID)]), m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])]))
+        return m("div", { class: "queued-panel" }, [
+            m("table", { config: foundationConfig },
+                m("tbody", [
+                    m("tr", [ m("td", "JobID"), m("td", args.job().jobID)]),
+                    m("tr", [ m("td", "Created On"), m("td", args.job().createdOn)])
+                ])
+            )
         ]);
     }
 };
 
 JobRunningComponent = {
     view: function(ctrl, args) {
-        return m("div", {
-            "class": "running-panel"
-        }, [
-            m("table", {
-                config: foundationConfig
-            }, m("tbody", [m("tr", [m("td", "JobID"), m("td", args.job().jobID)]), m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])]))
+        return m("div", { class: "running-panel" }, [
+            m("table", { config: foundationConfig },
+                m("tbody", [
+                    m("tr", [m("td", "JobID"), m("td", args.job().jobID)]),
+                    m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])
+                ])
+            )
         ]);
     }
 };
 
 tabulated = function(element, isInit) {
-    if (!isInit) {
-        return $(element).tabs({
-            active: this.active
-        });
-    }
+    if (!isInit) { return $(element).tabs({ active: this.active }); }
 };
 
 renderParameter = function(content, moreClasses) {
-    return m("div", {
-        "class": moreClasses ? "parameter " + moreClasses : "parameter"
-    }, content);
+    return m("div", { class: moreClasses ? "parameter " + moreClasses : "parameter" }, content);
 };
 
 mapParam = function(param, ctrl) {
@@ -264,50 +242,50 @@ JobTabsComponent = {
                 jobID = this.job().jobID;
                 if (confirm("Do you really want to delete this Job (ID: " + jobID + ")")) {
                     console.log("Delete for job " + jobID + " clicked");
-                    return Job["delete"](jobID);
+                    return JobListComponent.removeJob(jobID, true, true);
                 }
             }
         };
     },
     view: function(ctrl, args) {
-        return m("div", {
-            "class": "tool-tabs",
-            id: "tool-tabs",
-            config: tabulated.bind(ctrl)
-        }, [
+        return m("div", { class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl) }, [
             m("ul", [
                 ctrl.listitems.map(function(item) {
-                    return m("li", {
-                        id: "tab-" + item
-                    }, m("a", {
-                        href: "#tabpanel-" + item
-                    }, item));
-                }), document.cookie.split("&username=")[1] === ctrl.owner ? [ m("li", {
+                    return m("li", { id: "tab-" + item },
+                        m("a", { href: "#tabpanel-" + item }, item)
+                    );
+                }),
+                document.cookie.split("&username=")[1] === ctrl.owner ? [ m("li", {
                         "class" : "notesheader"
                     }, m("a", {
                         href: "#tabpanel-notes",
                         id: "notesTab"
                         //"class": "hasNotes"
                     }, "Notes")) ] : [] ,
-                m("li", {
-                    style: "float: right;"
-                }, m("input", {
-                    type: "button",
-                    id: "collapseMe",
-                    "class": "button small button_fullscreen",
-                    value: ctrl.getLabel(),
-                    onclick: ctrl.fullscreen,
-                    config: closeShortcut
-                })), ctrl.isJob ? m("li", {
-                        style: "float: right;"
-                    }, m("input", {
+                m("li", { style: "float: right;" },
+                    m("input", {
+                        type:    "button",
+                        id:      "collapseMe",
+                        class:   "button small button_fullscreen",
+                        value:   ctrl.getLabel(),
+                        onclick: ctrl.fullscreen,
+                        config:  closeShortcut
+                    })
+                ),
+                ctrl.isJob ? m("li", { style: "float: right;" },
+                    m("input", {
                         type: "button",
-                        "class": "button small delete",
+                        class: "button small delete",
                         value: "Delete Job",
                         onclick: ctrl["delete"].bind(ctrl)
-                    })) : void 0
-            ]), document.cookie.split("&username=")[1] === ctrl.owner ? [ m("div", {"class" : "tab-panel parameter-panel",
-                    id: "tabpanel-notes"}, [
+                    })
+                ) : void 0
+            ]),
+            document.cookie.split("&username=")[1] === ctrl.owner ? [
+                m("div", {
+                    class: "tab-panel parameter-panel",
+                    id:    "tabpanel-notes"
+                }, [
                     m("textarea", {
                         placeholder: "Type private notes here",
                         rows: 18,
@@ -316,71 +294,58 @@ JobTabsComponent = {
                         spellcheck: true,
                         config: jobNoteArea
                     })
-                ]) ] : [],
-            m("form", {
-                id: "jobform"
-            }, ctrl.params.map(function(paramGroup) {
+                ])
+            ] : null,
+            m("form", { id: "jobform" },
+                ctrl.params.map(function(paramGroup) {
                 var elements;
                 if (paramGroup[1].length !== 0) {
                     elements = paramGroup[1];
                     return m("div", {
-                        "class": "tabs-panel parameter-panel",
-                        id: "tabpanel-" + paramGroup[0]
+                        class: "tabs-panel parameter-panel",
+                        id:    "tabpanel-" + paramGroup[0]
                     }, [
-                        m("div", {
-                            "class": "parameters"
-                        }, paramGroup[0] === "Input" ? elements[0].name === "alignment" ? [
-                                    m("div", {
-                                        "class": "row"
-                                    }, m("div", {
-                                        "class": "small-12 large-12 medium-12 columns"
-                                    }, mapParam(elements[0], ctrl))), m("div", {
-                                        "class": "row small-up-1 medium-up-2 large-up-3", "style": "margin-top: 35px;"
-                                    }, elements.slice(1).map(function(param) {
-                                        return m("div", {
-                                            "class": "column column-block multiSelectParameter"
-                                        }, mapParam(param, ctrl));
-                                    }))
-                                ] : m("div", {
-                                    "class": "row small-up-1 medium-up-2 large-up-3"
-                                }, elements.map(function(param) {
-                                    return m("div", {
-                                        "class": "column column-block"
-                                    }, mapParam(param, ctrl));
-                                })) : m("div", {
-                                "class": "row small-up-1 medium-up-2 large-up-3"
-                            }, elements.map(function(param) {
-                                return m("div", {
-                                    "class": "column column-block"
-                                }, mapParam(param, ctrl));
-                            }))), m(JobSubmissionComponent, {
-                            job: ctrl.job,
-                            isJob: ctrl.isJob,
-                            add: args.add
-                        })
+                        m("div", { class: "parameters" },
+                            paramGroup[0] === "Input" ?
+                                elements[0].name === "alignment" ? [
+                                    m("div", { class: "row" },
+                                        m("div", { class: "small-12 large-12 medium-12 columns" },
+                                            mapParam(elements[0], ctrl)
+                                        )
+                                    ),
+                                    m("div", { class: "row small-up-1 medium-up-2 large-up-3", style: "margin-top: 35px;" },
+                                        elements.slice(1).map(function(param) {
+                                            return m("div", { class: "column column-block multiSelectParameter" },
+                                                mapParam(param, ctrl));
+                                        })
+                                    )
+                                ] :
+                                m("div", { class: "row small-up-1 medium-up-2 large-up-3" },
+                                    elements.map(function(param) {
+                                        return m("div", { class: "column column-block" }, mapParam(param, ctrl));
+                                    })
+                                ) :
+                            m("div", { class: "row small-up-1 medium-up-2 large-up-3" },
+                                elements.map(function(param) {
+                                    return m("div", { class: "column column-block" }, mapParam(param, ctrl));
+                                })
+                            )
+                        ),
+                        m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob })
                     ])
-                }
-            }), ctrl.isJob && ctrl.state === 2 ? m("div", {
-                    "class": "tabs-panel",
-                    id: "tabpanel-Queued"
-                }, m(JobQueuedComponent, {
-                    job: ctrl.job
-                })) : void 0, ctrl.isJob && ctrl.state === 3 ? m("div", {
-                    "class": "tabs-panel",
-                    id: "tabpanel-Running"
-                }, m(JobRunningComponent, {
-                    job: ctrl.job
-                })) : void 0, ctrl.isJob && ctrl.state === 4 ? m("div", {
-                    "class": "tabs-panel",
-                    id: "tabpanel-Error"
-                }, JobErrorComponent) : void 0), ctrl.views ? ctrl.views.map(function(view) {
-                    return m("div", {
-                        "class": "tabs-panel",
-                        id: "tabpanel-" + view[0]
-                    }, m("div", {
-                        "class": "result-panel"
-                    }, m.trust(view[1])));
-                }) : void 0
+                }}),
+                ctrl.isJob && ctrl.state === 2 ? m("div", { class: "tabs-panel", id: "tabpanel-Queued"  },
+                    m(JobQueuedComponent, { job: ctrl.job })) : void 0,
+                ctrl.isJob && ctrl.state === 3 ? m("div", { class: "tabs-panel", id: "tabpanel-Running" },
+                    m(JobRunningComponent, { job: ctrl.job })) : void 0,
+                ctrl.isJob && ctrl.state === 4 ? m("div", { class: "tabs-panel", id: "tabpanel-Error"   },
+                    JobErrorComponent) : void 0
+            ),
+            ctrl.views ? ctrl.views.map(function(view) {
+                return m("div", { class: "tabs-panel", id: "tabpanel-" + view[0] },
+                    m("div", { class: "result-panel" }, m.trust(view[1]))
+                );
+            }) : void 0
         ]);
     }
 };
@@ -410,14 +375,43 @@ var extractStatus = function(xhr, xhrOptions) {
 };
 
 JobSubmissionComponent = {
+    submitting : false,                     // Job is being sent if true
+    currentJobID : null,                    // Currently entered jobID
+    jobIDValid : true,                      //
+    checkJobID : function (jobID) {
+        m.request({ method: "GET", url: "/search/checkJobID/"+jobID }).then(
+            function (data) { JobSubmissionComponent.jobIDValid = !data.exists; }
+        );
+        JobSubmissionComponent.currentJobID = jobID;
+        return jobID;
+    },
+    jobIDComponent : function (ctrl) {
+        return m("input", { type: "text",
+            id: "jobID",
+            class: "jobid",
+            placeholder: "Custom JobID",
+            onchange: m.withAttr("value", JobSubmissionComponent.checkJobID),
+            value: JobSubmissionComponent.currentJobID,
+            style: "float:right;background-color:" + (JobSubmissionComponent.jobIDValid ? "#dbffdb;" : "#da4453;")
+        })
+    },
     controller: function(args) {
-        this.submitting = false;
+        if (JobSubmissionComponent.jobID == null) {
+            var oldJobID, version, newJobID;
+            if (args.isJob) {
+                oldJobID = args.job().jobID.split(".");
+                version = parseInt(oldJobID[1]);
+                newJobID = oldJobID[0] + "." + (Number.isNaN(version) ? 1 : version + 1);
+            } else {
+                newJobID = "";
+            }
+            JobSubmissionComponent.currentJobID = newJobID;
+        }
+        console.log(JobSubmissionComponent.currentJobID);
         return {
-            setJobID: (function(jobID) {
-                return this.jobID = jobID;
-            }).bind(args.job()),
             submit: function(startJob) {
-
+                if (this.submitting) return;
+                this.submitting = true; // ensure that the submission is not reinitiated while a submission is ongoing
                 var form = document.getElementById("jobform");
 
                 if(!form.checkValidity()) {
@@ -428,7 +422,7 @@ JobSubmissionComponent = {
                 var checkRoute, formData, jobID, toolname, doCheck;
                 toolname = args.job().tool.toolname;
                 doCheck = true;
-                jobID = args.isJob? null : args.job().jobID;
+                jobID = JobSubmissionComponent.jobIDValid ? JobSubmissionComponent.currentJobID : null;
                 if (!jobID) {
                     jobID = null;
                 }
@@ -490,7 +484,7 @@ JobSubmissionComponent = {
                     } else {
                         sendMessage({
                             type: "RegisterJobs",
-                            "jobIDs": [jobID]
+                            jobIDs: [jobID]
                         });
                         JobListComponent.pushJob(JobListComponent.Job({
                             jobID: jobID,
@@ -518,8 +512,7 @@ JobSubmissionComponent = {
         };
     },
     view: function(ctrl, args) {
-        var hide, oldJobID, version, newJobID;
-        hide = {
+        var hide = {
             oninit: function (elem, isInit) {
                 if (!isInit) {
                     $("#uploadBoxClose").hide();
@@ -527,80 +520,35 @@ JobSubmissionComponent = {
                 }
             }
         };
-        if (args.job().jobID != null) {
-            oldJobID = args.job().jobID.split(".");
-            version  = parseInt(oldJobID[1]);
-            newJobID = oldJobID[0] + "." + (Number.isNaN(version) ? 1 : version + 1);
-        } else {
-            newJobID = "";
-        }
-        return m("div", {
-            "class": "submitbuttons",
-            config: hide.oninit
-        }, [
+        return m("div", { class:  "submitbuttons", config: hide.oninit }, [
             m("div", {
-                "class": "reveal",
-                'data-reveal': 'data-reveal',
-                'data-animation-in': 'fade-in',
-                'data-overlay': 'true',
-                'transition-duration': 'fast',
-                id: 'submit_modal',
-                config: submitModal
-            }, m("p", "Already existing job found!"), m("input", {
-                "class": 'button',
-                id: 'reload_job',
-                type: 'button',
-                value: 'Reload'
-            }), m("input", {
-                "class": 'button',
-                id: 'submit_again',
-                type: 'button',
-                value: 'New Submission'
-            })),  m("input", {
-                type: "text",
-                "class": "jobid",
-                placeholder: "E-Mail Notification",
-                style: "width: 16em; float:left;"
-            }),
+                class:                 "reveal",
+                "data-reveal":         "data-reveal",
+                "data-animation-in":   "fade-in",
+                "data-overlay":        "true",
+                "transition-duration": "fast",
+                id:                    "submit_modal",
+                config:                submitModal
+            }, [
+                m("p", "Already existing job found!"),
+                m("input", { class: 'button', id: 'reload_job', type: 'button', value: 'Reload' }),
+                m("input", { class: 'button', id: 'submit_again', type: 'button', value: 'New Submission' })
+            ]),
+            m("input", { type: "text", class: "jobid", placeholder: "E-Mail Notification", style: "width: 16em; float:left;" }),
             !this.submitting ? m("input", {
-                    type: "button",
-                    "class": "success button small submitJob",
-                    value: (args.isJob ? "Res" : "S") + "ubmit Job",
-                    style: "float: right;",
-                    onclick: ctrl.submit.bind(ctrl, true)
-                }) : null, !args.isJob ? m("label", {
-                    hidden: "hidden"
-                }, [
-                    m("input", {
-                        type: "checkbox",
-                        name: "private",
-                        value: "true",
-                        checked: "checked",
-                        hidden: "hidden"
-                    }), "Private"
-                ]) : null, args.isJob && args.job().jobstate === 1 ? m("input", {
-                    type: "button",
-                    "class": "button small addJob",
-                    value: "Start Job",
-                    onclick: ctrl.startJob
-                }) : null, args.isJob ? m("input", {
-                    type: "button",
-                    "class": "button small addJob",
-                    value: "Add Job",
-                    onclick: ctrl.addJob
-                }) : null,
-            m("input", {
-                type: "text",
-                id: "jobID",
-                "class": "jobid",
-                placeholder: "Custom JobID",
-                onchange: m.withAttr("value", ctrl.setJobID),
-                value: newJobID,
-                style: "float:right"
-            })
-
-
-
+                type: "button",
+                class: "success button small submitJob",
+                value: (args.isJob ? "Res" : "S") + "ubmit Job",
+                style: "float: right;",
+                onclick: ctrl.submit.bind(ctrl, true)
+            }) : null,
+            //!args.isJob ? m("label", m("input", { type: "checkbox", name: "private", value: "true", checked: "checked" }), "Private" ) : null, // TODO reimplement private checkbox
+            //args.isJob && args.job().jobstate === 1 ?
+            //    m("input", { type: "button", class: "button small addJob", value: "Start Job", onclick: ctrl.startJob })
+            //    : null,
+            //args.isJob ? m("input", { type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob })
+            //    : null,
+            this.jobIDComponent(ctrl)
         ])
     }
 };
