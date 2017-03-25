@@ -26,9 +26,19 @@ case class Node(hostname : String, ncpu: Int, load: Double, memtot: Double, memu
     lazy val hostname : QhostP.Parser.Parser[String] = """(?m)^node(.*?)[0-9]+""".r
     lazy val arch : QhostP.Parser.Parser[String] = """\S*""".r
     lazy val ncpu : QhostP.Parser.Parser[Int] = """\d*""".r ^^ { _.toInt }
-    lazy val load : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+|-""".r ^^ { case x if x == "-" => 0 case x if x != "-" => x.toDouble }
-    lazy val memtot : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M)""".r ^^ { _.dropRight(1).toDouble }
-    lazy val memuse : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M)|-""".r ^^ { case x if x == "-" => 0 case x if x != "-" => x.dropRight(1).toDouble}
+    lazy val load : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+|-""".r ^^ {
+      case x if x == "-" => 0
+      case x if x != "-" => x.toDouble
+    }
+    lazy val memtot : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M)""".r ^^ {
+      case x if x.endsWith("M") => "0.".concat(x.dropRight(1).filterNot(_ == '.')).toDouble
+      case x if x.endsWith("G") => x.dropRight(1).toDouble
+    }
+    lazy val memuse : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M)|-""".r ^^ {
+      case x if x == "-" => 0
+      case x if x.endsWith("M") => "0.".concat(x.dropRight(1).filterNot(_ == '.')).toDouble
+      case x if x.endsWith("G") => x.dropRight(1).toDouble
+    }
     lazy val rest : QhostP.Parser.Parser[String] = """.*""".r
 
 
