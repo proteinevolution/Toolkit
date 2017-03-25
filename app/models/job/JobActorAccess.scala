@@ -16,11 +16,12 @@ final class JobActorAccess @Inject() (actorSystem: ActorSystem,
   // Just spawn all the JobActors
   private val jobActors: Seq[ActorRef] = Seq.fill(nJobActors)(actorSystem.actorOf(Props(jobActorFactory.apply)))
 
+
   def sendToJobActor(jobID: String, message: Any): Unit = {
     this.jobActors(Math.abs(jobID.trim().hashCode()) % nJobActors) ! message
   }
 
-  def identifyUser(message: Any) : Unit = {
+  def broadcast(message: Any) : Unit = {
     this.jobActors.foreach(_ ! message)
   }
 }
