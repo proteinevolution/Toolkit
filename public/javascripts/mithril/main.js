@@ -36,7 +36,8 @@ m.route(document.getElementById('main-content'), '/', {
         isJob: true
     }),
     '/backend/:section': m(Backend),
-    '/news': m(News)
+    '/news': m(News),
+    '/joblist': m(JobManager)
 });
 
 //m.mount(document.getElementById('mithril-overlay-content'), JobListComponent);

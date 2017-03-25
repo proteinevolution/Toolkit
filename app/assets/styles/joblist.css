@@ -55,6 +55,11 @@
     width: 20%;
 }
 
+.icon-list {
+    font-size: 1.5em;
+    margin-left: 1em;
+}
+
 .textcenter {
     text-align: center;
     vertical-align: middle;
