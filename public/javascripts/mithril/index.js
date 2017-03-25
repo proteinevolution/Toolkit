@@ -63,10 +63,10 @@ typeAhead = function (elem, isInit) {
 trafficbar = function (elem, isInit) {
     var job;
     job = JobListComponent.lastUpdatedJob;
-    //console.log(job);
+    console.log(job);
     if (job != null) {
         elem.setAttribute("data-disable-hover", "false");
-        elem.setAttribute("data-tooltip", "data-tooltip");
+        //elem.setAttribute("data-tooltip", "data-tooltip");
         elem.setAttribute("title", "Click to view last job: " + job.jobID);
         console.log("Traffic bar sees status " + job.state);
         if (job.state === -1) {
@@ -79,6 +79,7 @@ trafficbar = function (elem, isInit) {
             });
         } else if (job.state === 5) {
             console.log("Traffic Bar goes to done");
+            m.redraw(true);
             return $(elem).css({
                 'background': 'green',
                 'box-shadow': '0 1 6px #C3FFC3'

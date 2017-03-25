@@ -7,13 +7,13 @@ let JobTable = {
         let ctrl = this;
         ctrl.totalJobs = -1;
         ctrl.lastJob = {};
-
         m.request({method: "GET", url: "/api/jobs"})
             .then(function(jobs) {
 
                 if(jobs.length > 0){
                     ctrl.totalJobs = jobs.length;
                     ctrl.lastJob = jobs.slice(-1)[0];
+                    JobListComponent.lastUpdatedJob = ctrl.lastJob;
                 } else {
                     ctrl.totalJobs = 0;
                     ctrl.lastJob = {
