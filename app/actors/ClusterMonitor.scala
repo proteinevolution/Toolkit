@@ -1,13 +1,16 @@
 package actors
 
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable}
+import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable, Props}
 import akka.event.LoggingReceive
+import models.job.JobActorAccess
 import models.sge.Cluster
+import play.api.cache.{CacheApi, NamedCache}
+import play.libs.Akka
 
-import scala.collection.immutable.{HashSet, Queue}
+import scala.collection.immutable.HashSet
 import scala.concurrent.duration._
 
 
@@ -15,8 +18,10 @@ import scala.concurrent.duration._
   * Created by snam on 24.03.17.
   */
 
-
-class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorLogging {
+@Singleton
+class ClusterMonitor @Inject()(cluster: Cluster,
+                               jobActorAccess  : JobActorAccess,
+                               @NamedCache("userCache") implicit val userCache : CacheApi) extends Actor with ActorLogging {
 
   private val random = scala.util.Random
   private val fetchLatestInterval = 375.millis
@@ -30,10 +35,13 @@ class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorLogging
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, FetchLatest)(context.system.dispatcher)
   }
 
+  //val websocket : ActorRef = Akka.system.actorOf(Props[WebSocketActor])
+
   override def receive = LoggingReceive {
     case FetchLatest =>
       val load = cluster.getLoad.loadEst
       println("current cluster load: " + load)
+      jobActorAccess.broadcast(UpdateLoad(load))
 
   }
 
@@ -41,3 +49,5 @@ class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorLogging
 
 
 case object FetchLatest
+
+case class UpdateLoad(load : Double)
