@@ -116,8 +116,8 @@ let JobTable = {
     },
     view: function(ctrl : any, args : any) {
         return m('div', {"class" : "row"}, [
-            m('div', {"class" : "clusterLoad column large-4"}, ""),
-            m('table.liveTable', {"class" : "column large-8"}, [
+            //m('div', {"class" : "clusterLoad column large-4"}, ""),
+            m('table.liveTable', {"class" : "column large-12"}, [
                 m('thead', [
                     m('tr', [
                         m('th#currentLoad', 'Cluster load'),
