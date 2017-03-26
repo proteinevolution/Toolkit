@@ -3,7 +3,7 @@
 // Definitions by: Tom Wanzek <https://github.com/tomwanzek>, Alex Ford <https://github.com/gustavderdrache>, Boris Yankov <https://github.com/borisyankov>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-import { CountableTimeInterval, TimeInterval } from '../d3-time';
+import { CountableTimeInterval, TimeInterval } from '../d3-time/index';
 
 // -------------------------------------------------------------------------------
 // Shared Types and Interfaces

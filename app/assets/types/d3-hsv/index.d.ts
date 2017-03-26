@@ -3,7 +3,7 @@
 // Definitions by: Yuri Feldman <https://github.com/arrayjam>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-import {Color, RGBColor, ColorSpaceObject, ColorCommonInstance} from '../d3-color';
+import {Color, RGBColor, ColorSpaceObject, ColorCommonInstance} from '../d3-color/index';
 
 type ColorSpaceObjectWithHSV = ColorSpaceObject | HSVColor;
 

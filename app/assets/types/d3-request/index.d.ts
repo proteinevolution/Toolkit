@@ -3,7 +3,7 @@
 // Definitions by: Hugues Stefanski <https://github.com/Ledragon>, Alex Ford <https://github.com/gustavderdrache>, Boris Yankov <https://github.com/borisyankov>, Tom Wanzek <https://github.com/tomwanzek>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-import { DSVParsedArray, DSVRowString, DSVRowAny } from '../d3-dsv';
+import { DSVParsedArray, DSVRowString, DSVRowAny } from '../d3-dsv/index';
 
 export interface Request {
     abort(): this;
