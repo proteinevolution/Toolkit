@@ -57,6 +57,16 @@ body.is-reveal-open {
     align-content: stretch;
 }
 
+.clansResults {
+    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, Sans-Serif;
+    font-size:1.2em;
+}
+
+.clansResults a{
+    color: #27776e;
+    font-weight: bold;
+
+}
 
 #alignment_two{
     display: none;

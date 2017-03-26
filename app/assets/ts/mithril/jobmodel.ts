@@ -43,9 +43,7 @@ window.JobModel = {
         "bonusscore":"0",
         "offset":"0.0",
         "output_order":"input",
-        "clustering_pval_threshold":"1",
-        "clustering_method":"pairwise"
-
+        "clustering_pval_threshold":"1"
     },
 
     /* Seems not to be used
