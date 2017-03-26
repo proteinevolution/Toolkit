@@ -3,7 +3,7 @@
 // Definitions by: Tom Wanzek <https://github.com/tomwanzek>, Alex Ford <https://github.com/gustavderdrache>, Boris Yankov <https://github.com/borisyankov>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-import { ArrayLike, Selection, TransitionLike, ValueFn } from '../d3-selection';
+import { ArrayLike, Selection, TransitionLike, ValueFn } from '../d3-selection/index';
 
 /**
  * Type alias for a BrushSelection. For a two-dimensional brush, it must be defined as [[x0, y0], [x1, y1]],
