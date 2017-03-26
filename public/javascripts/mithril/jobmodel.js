@@ -41,7 +41,9 @@ window.JobModel = {
         "gap_term":"0.45",
         "bonusscore":"0",
         "offset":"0.0",
-        "output_order":"input"
+        "output_order":"input",
+        "clustering_pval_threshold":"1",
+        "clustering_method":"pairwise"
 
     },
     pushMessage: function(msg) {
