@@ -6,7 +6,6 @@ import javax.inject.{Inject, Singleton}
 import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable}
 import akka.event.LoggingReceive
 import models.sge.Cluster
-import play.api.cache.{CacheApi, NamedCache}
 
 import scala.collection.immutable.HashSet
 import scala.concurrent.duration._
@@ -17,7 +16,7 @@ import scala.concurrent.duration._
   */
 
 @Singleton
-class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorLogging {
+final class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorLogging {
 
   private val fetchLatestInterval = 375.millis
   protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
@@ -37,7 +36,8 @@ class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorLogging
 
     case FetchLatest =>
       val load = cluster.getLoad.loadEst
-      watchers.foreach(_ ! UpdateLoad(load: Double))
+      watchers.foreach(_ ! UpdateLoad(load))
+      //println(load)
 
   }
 
