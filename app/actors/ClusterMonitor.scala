@@ -38,7 +38,6 @@ final class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorL
       val load = cluster.getLoad.loadEst
       watchers.foreach(_ ! UpdateLoad(load))
       //watchers.foreach(_ ! ConnectedUsers(watchers.size))
-      //println(load)
 
   }
 
