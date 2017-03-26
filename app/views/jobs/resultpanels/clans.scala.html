@@ -1,0 +1,14 @@
+@(toolName: String, jobID: String)(implicit request: RequestHeader)
+@import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".clans"; var fileName=jobID + ".clans";
+
+
+<div class="clansResults">
+
+	<br/><hr><br/><br/><br/><br/>
+	Download the CLANS file generated for your sequences: <a href="@fileURL" download>@fileName</a>
+    <br/><br/>
+	Download the CLANS application here: <a href="ftp://ftp.tuebingen.mpg.de/pub/protevo/CLANS/clans.jar">clans.jar</a>
+	and visualize your CLANS file using the 'Load Run' option in the 'File' menu.
+	<br/><br/>Please make sure you have Java Runtime Environment (JRE) installed.
+	<br/><br/><br/><br/><hr><br/>
+</div>

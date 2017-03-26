@@ -158,6 +158,22 @@ validation = function(elem, isInit, ctx) {
 
                     break;
 
+                case "clans":
+                    /** validation model for clans:
+                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+                     * Input must include at least two sequences.
+                     * ALIGNED FASTA input is allowed.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 10000.
+                     **/
+
+                    var clansTarget = new multiseqVal($(elem));
+                    clansTarget.accept(mustHave2Visitor);
+
+                    break;
+
+
 
                 default:
                     console.warn("no tool specified");

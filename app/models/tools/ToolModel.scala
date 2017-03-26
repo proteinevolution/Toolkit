@@ -46,7 +46,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         case None => Seq.empty
       }
 
-      case "clans" => Future.successful(Seq.empty)
+      case "clans" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.clans("CLANS", jobID))))
 
       case "hhblits" => getResult(jobID).map {
         case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hhblits.hitlist(jobID, jsvalue)),
@@ -307,8 +307,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // CLANS
       ("clans", "CLANS", "clan", "classification", "",
-        Seq(paramAccess.MULTISEQ, paramAccess.EVALUE, paramAccess.MATRIX, paramAccess.CLUSTERING_PVAL_THRESHOLD,
-          paramAccess.CLUSTERING_METHOD), Seq.empty),
+        Seq(paramAccess.MULTISEQ, paramAccess.EVALUE, paramAccess.MATRIX, paramAccess.CLUSTERING_PVAL_THRESHOLD),
+        Seq.empty),
 
     // PHYLIP
     ("phylip", "PHYLIP-NEIGHBOR", "phyn", "classification", "",
