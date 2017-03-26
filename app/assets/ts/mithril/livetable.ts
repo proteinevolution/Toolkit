@@ -73,23 +73,23 @@ let JobTable = {
         let ctrl = this;
         ctrl.totalJobs = -1;
         ctrl.lastJob = {};
+        ctrl.load = -1;
+
+        ctrl.color = "black";
+
         m.request({method: "GET", url: "/api/jobs"})
             .then(function(jobs) {
 
                 if(jobs.length > 0){
-                    //ctrl.totalJobs = jobs.length;
                     ctrl.lastJob = jobs.slice(-1)[0];
                     JobListComponent.lastUpdatedJob = ctrl.lastJob;
                 } else {
-                    //ctrl.totalJobs = 0;
                     ctrl.lastJob = {
                         "jobID": -1,
                         "toolnameLong": ""
                     };
                 }
-
             }).catch(function(e) {
-            //ctrl.totalJobs = 0;
             ctrl.lastJob = {
                 "jobID": -1,
                 "toolnameLong": ""
@@ -99,17 +99,31 @@ let JobTable = {
 
         m.request({method: "GET", url: "count"})
             .then(function(count) {
-
                 if(count > 0){
                     ctrl.totalJobs = count;
-
                 } else {
                     ctrl.totalJobs = 0;
-
                 }
-
             }).catch(function(e) {
             ctrl.totalJobs = 0;
+
+        });
+
+
+        m.request({method: "GET", url: "load"})
+            .then(function(load) {
+                if(load.length > 0){
+                    //console.log(load);
+                    ctrl.load = (parseFloat(load) * 100).toPrecision(4) + " %";
+                    if(parseFloat(load) > 0.9)
+                        ctrl.color = "red";
+                    else if (parseFloat(load) < 0.7)
+                        ctrl.color = "green";
+                } else {
+                    ctrl.load = 0;
+                }
+            }).catch(function(e) {
+            ctrl.load = 0;
 
         });
 
@@ -127,7 +141,7 @@ let JobTable = {
                 )], [
                 m('tbody',
                     [m('tr', [
-                        m('td#currentLoad', ''),
+                        m('td#currentLoad', {"style" : "color: " + ctrl.color + ";"}, ctrl.load),
                         m('td#lastJobName', m('a[href="/#/jobs/' + ctrl.lastJob.jobID + '"]', ctrl.lastJob.toolnameLong)),
                         m('td', m('a[href="/#/joblist/"]', {"style" : "font-weight: bold;"}, ctrl.totalJobs))
                     ])]
