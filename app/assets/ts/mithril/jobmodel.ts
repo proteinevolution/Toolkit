@@ -1,3 +1,4 @@
+interface Window { JobModel: any; }
 window.JobModel = {
     paramValues: {},
     defaultValues: {
@@ -44,16 +45,19 @@ window.JobModel = {
         "output_order":"input"
 
     },
-    pushMessage: function(msg) {
+
+    /* Seems not to be used
+    pushMessage: function(msg : string) {
         return messages().push(msg);
-    },
-    update: function(args, value) {
+    }, */
+
+    update: function(args : any, value : any) : any {
         if (args.isJob) {
             return m.request({
                 method: 'GET',
                 url: "/api/job/" + value
             }).then(function(data) {
-                JobModel.paramValues = data.paramValues;
+                window.JobModel.paramValues = data.paramValues;
                 return {
                     tool: data.toolitem,
                     isJob: true,
@@ -69,7 +73,7 @@ window.JobModel = {
                 method: 'GET',
                 url: "/api/tools/" + value
             }).then(function(toolitem) {
-                JobModel.paramValues = {};
+                window.JobModel.paramValues = {};
                 return {
                     tool: toolitem,
                     isJob: false,
@@ -78,15 +82,15 @@ window.JobModel = {
             });
         }
     },
-    getParamValue: function(param) {
+    getParamValue: function(param : any) : any {
         // Update the value with the one from the local storage
-        var resultcookie = localStorage.getItem("resultcookie");
+        let resultcookie = localStorage.getItem("resultcookie");
         if (resultcookie) {
-            JobModel.paramValues["alignment"] = resultcookie;
+            window.JobModel.paramValues["alignment"] = resultcookie;
             localStorage.removeItem("resultcookie");
         }
-        var val = JobModel.paramValues[param];
-        var defVal = JobModel.defaultValues[param];
+        let val = window.JobModel.paramValues[param];
+        let defVal = window.JobModel.defaultValues[param];
         if (val) {
             return val;
         } else if (defVal) {
