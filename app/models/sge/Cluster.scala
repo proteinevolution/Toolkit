@@ -35,7 +35,7 @@ final class Cluster @Inject()(qhost : Qhost,
     val nativeLoad = cluster.map { x => x.load }.sum / ( cluster.length * 100 )
 
 
-    Load(c, m, nativeLoad)
+    Load(c, m, l)
 
   }
 
