@@ -126,6 +126,9 @@ onMessage = function(event : any) : any {
                 return $('.jobformclear').click();
             }
             break;
+        case "UpdateLoad":
+            console.log(message.load);
+            break;
         case "JobIDUnknown":
             text = "Sorry, but there is no such Job ID.";
             return $(".jobsearchform").notify(text);
