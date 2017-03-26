@@ -11,6 +11,9 @@ function catch_errors() {
 }
 curl -X POST http://%HOSTNAME:%PORT/jobs/running/%jobid.content > /dev/null 2>&1
 
+# retrieve sge id
+
+curl -X POST http://%HOSTNAME:%PORT/jobs/sge/%jobid.content/${JOB_ID} > /dev/null 2>&1
 
 # Recreate results and log directories
 rm -rf ../results
