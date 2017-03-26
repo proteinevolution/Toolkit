@@ -130,6 +130,10 @@ onMessage = function(event : any) : any {
             console.log(message.load);
             //$(".clusterLoad").text(message.load);
             $("td#currentLoad").text((parseFloat(message.load) * 100).toPrecision(4) + " %");
+            if(message.load > 0.9)
+                $("td#currentLoad").css("color", "red");
+            else if (message.load < 0.7)
+                $("td#currentLoad").css("color", "green");
             break;
         case "JobIDUnknown":
             text = "Sorry, but there is no such Job ID.";

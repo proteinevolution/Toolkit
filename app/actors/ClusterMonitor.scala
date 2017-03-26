@@ -18,7 +18,7 @@ import scala.concurrent.duration._
 @Singleton
 final class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorLogging {
 
-  private val fetchLatestInterval = 375.millis
+  private val fetchLatestInterval = 75.millis
   protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
   // Fetch the latest qhost status every 375ms
   val Tick : Cancellable = {
@@ -37,7 +37,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorL
     case FetchLatest =>
       val load = cluster.getLoad.loadEst
       watchers.foreach(_ ! UpdateLoad(load))
-      //println(load)
+      //watchers.foreach(_ ! ConnectedUsers(watchers.size))
 
   }
 
@@ -51,3 +51,5 @@ case object Connect
 case object FetchLatest
 
 case class UpdateLoad(load : Double)
+
+case class ConnectedUsers(users : Int)
