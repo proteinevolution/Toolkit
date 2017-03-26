@@ -23,7 +23,7 @@ case class Node(hostname : String, ncpu: Int, load: Double, memtot: Double, memu
 
   private object Parser extends RegexParsers {
 
-    val hostname : QhostP.Parser.Parser[String] = """(?m)^node(.*?)[0-9]+""".r
+    val hostname : QhostP.Parser.Parser[String] = """(?m)^[\S]+""".r
     val arch : QhostP.Parser.Parser[String] = """\S*""".r
     val ncpu : QhostP.Parser.Parser[Int] = """\d*""".r ^^ { _.toInt }
     val load : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+|-""".r ^^ {
