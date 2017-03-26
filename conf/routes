@@ -89,6 +89,11 @@ POST          /jobs/queued/:jobID                     @controllers.Jobs.jobStatu
 POST          /jobs/sge/:jobID/:sgeID                 @controllers.Jobs.SGEID(jobID: String, sgeID: String)
 POST          /jobs/message/:mainID                   @controllers.Jobs.pushMessage(mainID, message: String)
 POST          /jobs/dateviewed/:mainID                @controllers.Jobs.updateDateViewed(mainID)
+
+# Cluster
+
+GET           /load                                   @controllers.ClusterController.getLoad
+
 # Static route
 GET           /static/get/:static                     @controllers.Service.static(static : String)
 
