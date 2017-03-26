@@ -129,7 +129,7 @@ let JobTable = {
                     [m('tr', [
                         m('td#currentLoad', ''),
                         m('td#lastJobName', m('a[href="/#/jobs/' + ctrl.lastJob.jobID + '"]', ctrl.lastJob.toolnameLong)),
-                        m('td', ctrl.totalJobs)
+                        m('td', m('a[href="/#/joblist/"]', {"style" : "font-weight: bold;"}, ctrl.totalJobs))
                     ])]
                 )])
         ]);
