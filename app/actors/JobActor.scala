@@ -15,6 +15,7 @@ import modules.tel.runscripts.{LiteralRepresentation, Representation, _}
 import better.files._
 import com.typesafe.config.ConfigFactory
 import controllers.UserSessions
+import models.sge.Qdel
 import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
 import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
@@ -65,6 +66,7 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
                                          env                     : Env, // To supply the runscripts with an environment
                                      val reactiveMongoApi        : ReactiveMongoApi,
                                      val jobDao                  : JobDAO,
+                                         qdel                    : Qdel,
                                          wrapperExecutionFactory : WrapperExecutionFactory,
                             implicit val locationProvider        : LocationProvider,
    @NamedCache("userCache") implicit val userCache               : CacheApi,
@@ -327,7 +329,13 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
           foundWatchers.flatten.foreach (_ ! ClearJob (job.jobID))
         case None =>
       }
-      //TODO execute qdel as well!
+
+      findJobSGE(jobID).map {
+        x =>
+          Logger.info(s"[CLUSTER] execute qdel " + jobID)
+          qdel.delete(x.clusterData.get.sgeID)
+      }
+
 
     // User does no longer watch this Job
     case StopWatch(jobID, userID) =>
