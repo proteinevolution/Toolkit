@@ -1,8 +1,8 @@
 package modules
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.{FrontendJob, JobAnnotation, Job}
-import models.database.statistics.{ToolStatistic, JobEventLog}
+import models.database.jobs.{FrontendJob, Job, JobAnnotation, JobClusterData}
+import models.database.statistics.{JobEventLog, ToolStatistic}
 import models.database.users.User
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
@@ -12,6 +12,8 @@ import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONDocument
 import play.api.Logger
+import play.libs.Json
+
 import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -51,7 +53,7 @@ trait CommonModule extends ReactiveMongoComponents {
     val selector = BSONDocument("dateCreated" -> -1)
     _.find(BSONDocument()).sort(selector).cursor[FeaturedArticle]().collect[List](numArticles, Cursor.FailOnError[List[FeaturedArticle]]())
   }
-  protected def writeArticleDatabase(featuredArticle: FeaturedArticle) = articleCollection.flatMap(_.insert(featuredArticle))
+  protected def writeArticleDatabase(featuredArticle: FeaturedArticle) : Future[WriteResult] = articleCollection.flatMap(_.insert(featuredArticle))
 
 
 
@@ -86,6 +88,19 @@ trait CommonModule extends ReactiveMongoComponents {
 
   protected def findJobs(selector : BSONDocument) : Future[scala.List[Job]] = {
     jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
+  }
+
+
+  protected def findJobSGE(jobID: String) : Future[Job] = {
+
+    val selector = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
+    val projection = BSONDocument("clusterData" -> 1)
+    val sgeID = jobCollection.flatMap(_.find(selector, projection).one[Job]).map {
+      case Some(x) => x
+    }
+
+    sgeID
+
   }
 
   protected def countJobs(selector : BSONDocument) : Future[Int] = {

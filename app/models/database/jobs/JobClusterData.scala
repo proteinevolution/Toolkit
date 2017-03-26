@@ -32,6 +32,8 @@ object JobClusterData {
         val sgeID       = (obj \ SGEID).asOpt[String]
         val memory      = (obj \ MEMORY).asOpt[Int]
         val threads     = (obj \ THREADS).asOpt[Int]
+        val dateStarted = (obj \ DATESTARTED).asOpt[String]
+        val dateFinished = (obj \ DATEFINISHED).asOpt[String]
         JsSuccess(JobClusterData(
           sgeID        = "",
           memory       = Some(""),
