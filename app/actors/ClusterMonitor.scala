@@ -17,10 +17,8 @@ import scala.concurrent.duration._
   */
 
 @Singleton
-class ClusterMonitor @Inject()(cluster: Cluster,
-                               @NamedCache("userCache") implicit val userCache : CacheApi) extends Actor with ActorLogging {
+class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorLogging {
 
-  private val random = scala.util.Random
   private val fetchLatestInterval = 375.millis
   protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
   // Fetch the latest qhost status every 375ms

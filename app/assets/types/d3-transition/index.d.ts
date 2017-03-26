@@ -3,12 +3,12 @@
 // Definitions by: Tom Wanzek <https://github.com/tomwanzek>, Alex Ford <https://github.com/gustavderdrache>, Boris Yankov <https://github.com/borisyankov>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-import { ArrayLike, BaseType, Selection, ValueFn } from '../d3-selection';
+import { ArrayLike, BaseType, Selection, ValueFn } from '../d3-selection/index';
 
 /**
  * Extend interface 'Selection' by declaration merging with 'd3-selection'
  */
-declare module '../d3-selection' {
+declare module '../d3-selection/index' {
     export interface Selection<GElement extends BaseType, Datum, PElement extends BaseType, PDatum> {
         interrupt(name?: string): Transition<GElement, Datum, PElement, PDatum>;
         transition(name?: string): Transition<GElement, Datum, PElement, PDatum>;
