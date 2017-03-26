@@ -1,6 +1,6 @@
 body{
 
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
     color: #707070;
     overflow-x: hidden;
     background-image: none;
@@ -506,7 +506,7 @@ textarea { resize:both; }
     height: 20px;
     bottom: 0;
     width: 100%;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
 
 }
 #sub-nav a {
@@ -554,7 +554,7 @@ textarea { resize:both; }
 }
 
 .biojs_msa_labels{
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
     font-size: 12px;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -566,7 +566,7 @@ textarea { resize:both; }
 
 
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
     font-size: 0.9em;
 }
 
@@ -591,3 +591,4 @@ textarea { resize:both; }
     right: 0;
     overflow: auto;
 }
+
