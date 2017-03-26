@@ -62,7 +62,7 @@ $(function() {
             $("#auth-dropdown-link").show();
             $("#auth-link").remove();
             $("#overlay-content").html(json.message);
-
+            location.reload();
             JobListComponent.reloadList();
             return setTimeout(loadMiniProfile, 1000);
         } else {
