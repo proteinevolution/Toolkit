@@ -38,12 +38,12 @@
                 <label class="forwardLabel"> <input type="radio" id="selectedHits" name="radio1">Selected Hits</label>
                 <div class="two_input">
                     <label  class="forwardLabel"><input type="radio" id="accordingEvalue" name="radio1">E-Value better than</label>
-                    <input class="result_inputs" type="text" id="forwardEvalue" value="0.001">
+                    <input class="result_inputs" type="text" id="forwardEvalue" value="0.001" >
                 </div>
             </div>
             <div class="forwardFormDiv">
                 <label style="font-weight: bold">Select sequence length</label>
-                <label class="forwardLabel"><input type="radio" id="sliderRegion" name="radio2">Forward slider region</label>
+                <label class="forwardLabel"><input type="radio" id="sliderRegion" name="radio2" checked="checked">Forward slider region</label>
                 <label class="forwardLabel"><input type="radio" id="fullLength" name="radio2">Forward full length sequence</label>
             </div>
         }
@@ -61,6 +61,11 @@
 
 $('#forwardSelect').niceSelect();
 $("#forwardModal").foundation();
+
+//default check radio buttons
+$("#selectedHits").prop("checked", true);
+$("#sliderRegion").prop("checked", true);
+
 
 
 function forwardModal(){
