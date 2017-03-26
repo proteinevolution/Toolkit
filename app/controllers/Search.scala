@@ -139,6 +139,14 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
     }
   }
 
+  def countJobs : Action[AnyContent] = Action.async { implicit request=>
+    getUser.flatMap { user =>
+      countJobs(BSONDocument(Job.OWNERID -> user.userID)).map{ count =>
+        Ok(Json.toJson(count))
+      }
+    }
+  }
+
   def checkJobID(jobID : String) : Action[AnyContent] = Action.async{
     jobDao.existsJobID(jobID).map{ richSearchResponse =>
       val jobIDExists : Boolean = richSearchResponse.getHits.getTotalHits > 0

@@ -7,15 +7,15 @@ let JobTable = {
         let ctrl = this;
         ctrl.totalJobs = -1;
         ctrl.lastJob = {};
-        m.request({method: "GET", url: "jobscleaned"})
+        m.request({method: "GET", url: "/api/jobs"})
             .then(function(jobs) {
 
                 if(jobs.length > 0){
-                    ctrl.totalJobs = jobs.length;
+                    //ctrl.totalJobs = jobs.length;
                     ctrl.lastJob = jobs.slice(-1)[0];
                     JobListComponent.lastUpdatedJob = ctrl.lastJob;
                 } else {
-                    ctrl.totalJobs = 0;
+                    //ctrl.totalJobs = 0;
                     ctrl.lastJob = {
                         "jobID": -1,
                         "toolnameLong": ""
@@ -23,11 +23,27 @@ let JobTable = {
                 }
 
             }).catch(function(e) {
-            ctrl.totalJobs = 0;
+            //ctrl.totalJobs = 0;
             ctrl.lastJob = {
                 "jobID": -1,
                 "toolnameLong": ""
             };
+
+        });
+
+        m.request({method: "GET", url: "count"})
+            .then(function(count) {
+
+                if(count > 0){
+                    ctrl.totalJobs = count;
+
+                } else {
+                    ctrl.totalJobs = 0;
+
+                }
+
+            }).catch(function(e) {
+            ctrl.totalJobs = 0;
 
         });
 

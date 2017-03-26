@@ -95,11 +95,11 @@ trait CommonModule extends ReactiveMongoComponents {
 
     val selector = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
     val projection = BSONDocument("clusterData" -> 1)
-    val sgeID = jobCollection.flatMap(_.find(selector, projection).one[Job]).map {
+    val job = jobCollection.flatMap(_.find(selector, projection).one[Job]).map {
       case Some(x) => x
     }
 
-    sgeID
+    job
 
   }
 

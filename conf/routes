@@ -80,6 +80,7 @@ GET           /getCurrentUser                         @controllers.Auth.profile2
 GET           /jobs/find/:queryString                 @controllers.Search.getJob(queryString : String)
 POST          /jobs                                   @controllers.Search.get
 GET           /jobscleaned                            @controllers.Search.getCleaned
+GET           /count                                  @controllers.Search.countJobs
 # Update Job status
 POST          /jobs/done/:jobID                       @controllers.Jobs.jobStatusDone(jobID : String)
 POST          /jobs/error/:jobID                      @controllers.Jobs.jobStatusError(jobID : String)
