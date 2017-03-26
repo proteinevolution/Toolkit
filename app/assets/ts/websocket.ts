@@ -128,6 +128,7 @@ onMessage = function(event : any) : any {
             break;
         case "UpdateLoad":
             console.log(message.load);
+
             break;
         case "JobIDUnknown":
             text = "Sorry, but there is no such Job ID.";
