@@ -517,7 +517,7 @@ svg#loadGraph {
 }
 
 .clusterLoad {
-    min-height: 89px;
+    min-height: 90px;
     background-color: rgba(214, 214, 214, 0.9);
     padding-right: 0;
 }
