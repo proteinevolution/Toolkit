@@ -127,7 +127,7 @@ onMessage = function(event : any) : any {
             }
             break;
         case "UpdateLoad":
-            console.log(message.load);
+            //console.log(message.load);
             //$(".clusterLoad").text(message.load);
             $("td#currentLoad").text((parseFloat(message.load) * 100).toPrecision(4) + " %");
             if(message.load > 0.9)

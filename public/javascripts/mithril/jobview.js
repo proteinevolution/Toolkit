@@ -672,7 +672,8 @@ window.ParameterAlignmentComponent = {
             }).bind(this.mo),
             getTwoTextAreas: (function(){
                 return this.twoTextAreas;
-            }).bind(this.mo)
+            }).bind(this.mo),
+
         };
     },
     view: function(ctrl, args) {
@@ -847,12 +848,32 @@ ParameterRadioComponent = {
 };
 
 ParameterSelectComponent = {
+    //not needed so far but is working
+    controller: function(args) {
+        return {
+            preventMultiSelection: (function () {
+                var last_valid_selection = null;
+
+                $('.inputDBs').change(function (event) {
+
+                    if ($('#hhsuitedb').val().length > 3) {
+
+                        $('#hhsuitedb').val(last_valid_selection);
+                    } else {
+                        last_valid_selection = $('#hhsuitedb').val();
+                    }
+                });
+            }).bind(this.mo)
+        }
+    },
 
     view: function(ctrl, args) {
         var paramAttrs = {
             name: args.param.name,
             "class": "wide",
-            id: args.param.name
+            id: args.param.name,
+            //if max count of chosen databases is needed
+            //onclick: ctrl.preventMultiSelection
         };
         if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
             paramAttrs["multiple"] = "multiple";

@@ -218,19 +218,6 @@ window.Job = (function() {
 })();
 */
 
-// Velocity animation config
-
-var fadesIn = function(element, isInitialized, context) {
-
-    var url = window.location.href;
-    var parts = url.split("/");
-    var isJob = parts[parts.length-2] == "jobs";
-
-    if (!isInitialized && !isJob) {
-        element.style.opacity = 0;
-        $.Velocity(element, {opacity: 1, top: "50%"}, 750);
-    }
-};
 
 window.Toolkit = {
     currentJobID : -1,
