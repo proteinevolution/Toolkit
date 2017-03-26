@@ -2,6 +2,7 @@ package actors
 
 import javax.inject.{Inject, Named}
 
+import actors.ClusterMonitor._
 import actors.JobActor._
 import actors.WebSocketActor.ChangeSessionID
 import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
