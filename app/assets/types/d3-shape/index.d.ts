@@ -96,9 +96,10 @@ export interface Line<Datum> {
     x(): (d: Datum, index: number, data: Array<Datum>) => number;
     x(x: number): this;
     x(x: (d: Datum, index: number, data: Array<Datum>) => number): this;
-    y(): (d: Datum, index: number, data: Array<Datum>) => number;
+    y(): (d: number, index: number, data: Array<Datum>) => number;
     y(y: number): this;
-    y(y: (d: Datum, index: number, data: Array<Datum>) => number): this;
+    y(y: (d: number, index: number, data: Array<Datum>) => number): this;
+
     defined(): (d: Datum, index: number, data: Array<Datum>) => boolean;
     defined(defined: boolean): this;
     defined(defined: (d: Datum, index: number, data: Array<Datum>) => boolean): this;
@@ -108,6 +109,9 @@ export interface Line<Datum> {
     context(context: CanvasRenderingContext2D): this;
     context(context: null): this;
 }
+
+//export interface Datum extends Number {}
+
 export function line(): Line<[number, number]>;
 export function line<Datum>(): Line<Datum>;
 export function line<This, Datum>(): Line<Datum>;

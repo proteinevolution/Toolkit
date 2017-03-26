@@ -128,7 +128,8 @@ onMessage = function(event : any) : any {
             break;
         case "UpdateLoad":
             console.log(message.load);
-
+            //$(".clusterLoad").text(message.load);
+            $("td#currentLoad").text((parseFloat(message.load) * 100).toPrecision(4) + " %");
             break;
         case "JobIDUnknown":
             text = "Sorry, but there is no such Job ID.";

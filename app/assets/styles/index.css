@@ -505,6 +505,23 @@ select {
 
 }
 
+.line {
+    fill: none;
+    stroke: #000;
+    stroke-width: 1.5px;
+}
+
+svg#loadGraph {
+    width: 360px;
+    height: 100px;
+}
+
+.clusterLoad {
+    min-height: 89px;
+    background-color: rgba(214, 214, 214, 0.9);
+    padding-right: 0;
+}
+
 tspan{
 
     color: black !important;
@@ -538,6 +555,14 @@ tspan{
     border: #a6a6a6 1px solid;
 }
 
+th#currentLoad{
+    max-width: 43px;
+}
+
+td#currentLoad{
+    max-width: 43px;
+}
+
 
 th#run{
     max-width: 56px;
@@ -548,11 +573,11 @@ th#lastJobs{
 }
 
 th#lastJob{
-    max-width: 66px;
+    max-width: 60px;
 }
 
 td#lastJobName {
-    max-width: 66px;
+    max-width: 60px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
