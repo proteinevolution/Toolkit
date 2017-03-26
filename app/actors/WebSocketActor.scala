@@ -1,21 +1,23 @@
 package actors
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 import actors.JobActor._
 import actors.WebSocketActor.ChangeSessionID
-import akka.actor.{PoisonPill, Actor, ActorLogging, ActorRef}
+import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import controllers.UserSessions
 import models.database.jobs.Job
 import models.job.JobActorAccess
-import modules.{LocationProvider, CommonModule}
+import modules.{CommonModule, LocationProvider}
 import play.api.cache._
 import play.api.libs.json.{JsValue, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
+
 import scala.concurrent.ExecutionContext.Implicits.global
+
 
 /**
   * Actor that listens to the WebSocket and accepts messages from and passes messages to it.
@@ -32,6 +34,7 @@ object WebSocketActor {
 class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
                             implicit val locationProvider: LocationProvider,
                                          jobActorAccess  : JobActorAccess,
+   @Named("clusterMonitor") clusterMonitor               : ActorRef,
    @NamedCache("userCache") implicit val userCache       : CacheApi,
 @NamedCache("wsActorCache") implicit val wsActorCache    : CacheApi,
      @Assisted("sessionID") private  var sessionID       : BSONObjectID,
@@ -40,6 +43,7 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
 
   override def preStart(): Unit = {
     // Grab the user from cache to ensure a
+    clusterMonitor ! Connect
     getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get(user.userID.stringify) match {
@@ -87,7 +91,6 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
               case None => // Client has send strange message over the Websocket
             }
 
-
           // Request to remove a Job from the user's view but it will remain stored
           case "ClearJob" =>
 
@@ -104,6 +107,9 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
     case PushJob(job : Job) =>
       //Logger.info("WS Log: " + job.jobID + " is now " + job.status.toString)
       out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
+
+    case UpdateLoad(load: Double) =>
+      out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
 
     case ClearJob(jobID : String) =>
       //Logger.info("WS Log: " + jobID + " clear message sent")
