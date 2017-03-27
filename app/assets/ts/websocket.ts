@@ -96,7 +96,7 @@ onMessage = function(event : MessageEvent) : any {
             m.endComputation();
             break;
         case "UpdateLoad":
-            console.log(message.load);
+            //console.log(message.load);
             m.startComputation();
             LiveTable.updateLoad(message.load);
             m.endComputation();
@@ -108,6 +108,8 @@ onMessage = function(event : MessageEvent) : any {
             break;
     }
 };
+
+
 
 let sendMessage = function(object : any) : any {
     console.log("sending message:", object);
