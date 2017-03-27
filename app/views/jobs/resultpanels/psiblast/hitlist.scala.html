@@ -47,7 +47,6 @@
                         <th>Bitscore</th>
                         <th>Identity</th>
                         <th>Postitives</th>
-                        <th>Gaps</th>
                         <th>qStart</th>
                         <th>qEnd</th>
                         <th>hStart</th>
@@ -64,7 +63,6 @@
             <div id="hhpred_alignment_control">
                 <div id="hhpred_advanced" >
                     <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
-                    <a type="button" class="button success tiny hhpred_extra_button" onclick="retrieveFullSeq()">retrieve full seq</a>
                 </div>
             </div>
             <div class="colorOpts">
@@ -184,6 +182,7 @@ var data;
 var hits;
 var checkbox = "hitCheckbox";
 var hitlist;
+var query;
 var colorSS = false;
 var colorLetters = false;
 var colorBackground = false;
@@ -223,9 +222,9 @@ var chosenDB = null;
         var info = basenameResults.stat;
         var evalueParam = data_.output_psiblastp.BlastOutput2[0].report.params.expect;
         chosenDB = data_.output_psiblastp.BlastOutput2[0].report.search_target.db.split('/').pop().trim();
-
-        firstQueryName = ">" + data_.query[0][0];
-        firstQuerySequence = data_.query[0][1];
+        query = data_.query;
+        firstQueryName = ">" + query[0][0];
+        firstQuerySequence = query[0][1];
         firstQueryLength = firstQuerySequence.length;
 
         if(numHits > 0){
@@ -279,7 +278,6 @@ function drawDataTable(hits){
             {"mDataProp": "hsps.0.bit_score"},
             {"mDataProp": "hsps.0.identity"},
             {"mDataProp": "hsps.0.positive"},
-            {"mDataProp": "hsps.0.gaps"},
             {"mDataProp": "hsps.0.query_from"},
             {"mDataProp": "hsps.0.query_to"},
             {"mDataProp": "hsps.0.hit_from"},
@@ -325,12 +323,14 @@ function checkAllBetterThan(evalue){
     var jsonData = {};
     jsonData.accessions = [];
     jsonData.seqs = [];
+    jsonData.index = [];
     // get values of all checked Checkboxes
     hits.forEach(function callback(currentValue) {
         if (currentValue.hsps[0].evalue < evalue) {
             $(":checkbox[value="+currentValue.num+"]").prop("checked","true");
             jsonData.accessions.push(currentValue.description[0].accession);
             jsonData.seqs.push(currentValue.hsps[0].hseq);
+            jsonData.index.push(currentValue.num);
         }
     });
     return jsonData;
@@ -341,6 +341,7 @@ function getCheckboxesData(){
     var jsonData = {};
     jsonData.accessions = [];
     jsonData.seqs = [];
+    jsonData.index = [];
 
 
     // get all checked checkboxes and their respective accession
@@ -350,6 +351,7 @@ function getCheckboxesData(){
         if (jsonData.seqs.indexOf(seq) == -1) {
             jsonData.accessions.push(hits[index].description[0].accession);
             jsonData.seqs.push(seq);
+            jsonData.index.push(index);
         }
     });
     return jsonData;
@@ -388,17 +390,17 @@ function preprocessingForward(){
 }
 function forward_(tool){
 
-    var forwardData = ''
-    var data = preprocessingForward();
-
+    var forwardData = '';
+    var dataTmp = preprocessingForward();
+    $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
     // full seq is retrieved
     if($('#fullLength').is(':checked')) {
         // retrieve full Seq
         var jsonData = new Object();
         jsonData.db =  chosenDB;
-        jsonData.accessionsStr = data.accessions.join(" ");
+        jsonData.accessionsStr = dataTmp.accessions.join(" ");
 
-        $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
+
         $.ajax({
             url: 'retrieveFullSeq/@jobID',
             contentType: "application/json",
@@ -408,14 +410,33 @@ function forward_(tool){
             $.ajax({
                 type: 'GET',
                 url: 'files/@jobID/sequences.fa'
-            }).done(function (data) {
-                forward(tool, data.toString());
-            }).always( function(){
-                $.LoadingOverlay("hide");
+            }).done(function (data_) {
+                forward(tool, data_.toString());
             });
+        }).always( function(){
+            $.LoadingOverlay("hide");
         });
     }else{
-        forward(tool, data.accessions.join(" "));
+        // get slider range
+        var sliderRange = getSliderRange();
+        var forwardData = '';
+        var alignmentData;
+        // get alignment json
+        var fileUrl = "/files/@jobID/alignment.json";
+        $.getJSON(fileUrl, function (data_) {
+            alignmentData = data_;
+            var numOfQuery = query.length -1 ;
+            for(var i=0; i < dataTmp.index.length; i++){
+                // index + number of querys because alignment json contains query sequences in alignment first
+                var index = dataTmp.index[i];
+                console.log(index)
+                forwardData += ">" + alignmentData[index + numOfQuery][0] + '\n';
+                forwardData += alignmentData[index+ numOfQuery][1].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
+            }
+            forward(tool, forwardData);
+        }).always( function(){
+            $.LoadingOverlay("hide");
+        });
     }
 }
 
