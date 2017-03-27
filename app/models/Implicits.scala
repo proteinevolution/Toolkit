@@ -19,9 +19,9 @@ object Implicits {
        //
        // I'm just fooling, these are of course not two distinct types, I just want to make clear that comment-lines
        // resultpanel in empty Strings in the iterator and not in removing the string from the iterator!
-       def withoutComment(c : Char) = s.map(_.split(c)(0))
+       def withoutComment(c : Char) : Iterator[String] = s.map(_.split(c)(0))
 
        // Removed all Lines that just consist of whitespace
-       def noWSLines = s.withFilter(!_.trim().isEmpty)
+       def noWSLines : Iterator[String] = s.withFilter(!_.trim().isEmpty)
 }
 }

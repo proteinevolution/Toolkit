@@ -56,7 +56,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
       record = record.::(load)
       val messagingTime = DateTime.now()
       watchers.foreach(_ ! UpdateLoad(load))
-      Logger.info( s"""Updated Load with ${watchers.size} Users. Time needed: ${DateTime.now().getMillis - messagingTime.getMillis}ms""".stripMargin)
+      //Logger.info( s"""Updated Load with ${watchers.size} Users. Time needed: ${DateTime.now().getMillis - messagingTime.getMillis}ms""".stripMargin)
       //watchers.foreach(_ ! ConnectedUsers(watchers.size))
       //println(load)
 

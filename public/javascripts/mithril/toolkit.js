@@ -247,7 +247,7 @@ window.Toolkit = {
             if (!JobListComponent.contains(jobID) || !(Toolkit.currentJobID === jobID)) {
                 Toolkit.currentJobID = jobID;
                 // ensure addition to the job list
-                sendMessage({ type: "RegisterJobs", "jobIDs": [jobID] });
+                //sendMessage({ type: "RegisterJobs", "jobIDs": [jobID] });
                 // request job
                 m.request({ url: "/api/job/load/" + jobID, method: "GET" }).then(function(data) {
                     JobListComponent.pushJob(JobListComponent.Job(data), true);
