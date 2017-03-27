@@ -1,4 +1,4 @@
-var slickSlider, tilescomponent, trafficBarComponent, trafficbar, typeAhead, sendMessage;
+var slickSlider, tilescomponent, trafficBarComponent, typeAhead;
 
 slickSlider = function (elem, isInit) {
     if (!isInit) {
@@ -60,48 +60,10 @@ typeAhead = function (elem, isInit) {
     }
 };
 
-trafficbar = function (elem, isInit) {
-    var job;
-    job = JobListComponent.lastUpdatedJob;
-    if (job != null) {
-        elem.setAttribute("data-disable-hover", "false");
-        //elem.setAttribute("data-tooltip", "data-tooltip");
-        elem.setAttribute("title", "Click to view last job: " + job.jobID);
-        console.log("Traffic bar sees status " + job.state);
-        if (job.state === -1) {
-            return console.log("Hide Trafficbar");
-        } else if (job.state === 2) {
-            console.log("Traffic Bar goes to queued");
-            return $(elem).css({
-                'background': '#c0b5bf',
-                'box-shadow': '0 1 6px #9192af'
-            });
-        } else if (job.state === 5) {
-            console.log("Traffic Bar goes to done");
-            return $(elem).css({
-                'background': 'green',
-                'box-shadow': '0 1 6px #C3FFC3'
-            });
-        } else if (job.state === 4) {
-            console.log("Traffic Bar goes to error");
-            return $(elem).css({
-                'background': '#ff0000',
-                'box-shadow': '0 1 6px #FFC5C5'
-            });
-        } else if (job.state === 3) {
-            console.log("Traffic Bar goes to running");
-            return $(elem).css({
-                'background': '#ffff00',
-                'box-shadow': '0 1 6px #FFF666'
-            });
-        }
-    }
-};
-
 window.Index = {
     controller: function () {
         document.title = "Bioinformatics Toolkit";
-        return JobListComponent.selectedJobID = -1;
+        return JobListComponent.selectedJobID = null;
     },
     view: function () {
         return m("div", {
@@ -162,39 +124,29 @@ window.Index = {
 trafficBarComponent = {
     view: function () {
         return m("div", {
-            "class": "grid"
+            class: "grid"
         }, m("div", {
-            "class": "tool-finder row centered"
+            class: "tool-finder row centered"
         }, [
-            m("div", {"class": "news"},
-                m("div", {"class": "news_container"},
-                m("p", {"class": "news_header"}, "Social Network"),
-                m("p", {"class": "news_date"}, "February 19, 2017"),
-                m("p", {"class": "news_feed"}, m('a[href="/#/news/"]', "News Feed")),
-                m("p", {"class": "news_content"}, "Follow us on Facebook and Twitter.")
-                ), m(LiveTable),
-                m("div", {"class": "search_container"},
+            m("div", {class: "news"},
+                m("div", {class: "news_container"},
+                    m("p", {class: "news_header"}, "Social Network"),
+                    m("p", {class: "news_date"}, "February 19, 2017"),
+                    m("p", {class: "news_feed"}, m('a[href="/#/news/"]', "News Feed")),
+                    m("p", {class: "news_content"}, "Follow us on Facebook and Twitter.")
+                ),
+                m.component(LiveTable, {}),
+                m("div", {class: "search_container"},
                     m("div", {
-                        "class": "columns large-12 form-group"
-                    }, m("input", { "class": "search_Input",
+                        class: "columns large-12 form-group"
+                    }, m("input", { class: "search_Input",
                         type: "text",
                         id: "searchInput",
                         name: "q",
                         placeholder: "Search Keywords",
                         config: typeAhead
                     }))
-                ),
-                m("div", {
-                    "class": "trafficbar",
-                    id: "trafficbar",
-                    config: trafficbar,
-                    onclick: function () {
-                        var job = JobListComponent.lastUpdatedJob;
-                        if (job != null) {
-                            return m.route("/jobs/" + job.jobID);
-                        }
-                    }
-                })
+                )
             )
         ]));
     }
@@ -241,7 +193,7 @@ tilescomponent = {
     }
 };
 
-window.sendMessage = function (object) {};
+
 
 
 // ("div", {

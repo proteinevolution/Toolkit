@@ -105,18 +105,22 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
   // JobActor removes the Job from its maps
   private def removeJob(jobID: String) = {
     val job = this.currentJobs(jobID)
-    // If the job Appears in the running Execution, terminate it
-    this.currentJobs = this.currentJobs.-(jobID)
+
+    // If the job is in the current jobs remove it
+    this.currentJobs = this.currentJobs.filter(_._1 == jobID)
 
     // Save Job Event Log to the collection and remove it from the map afterwards
-    addJobLog(this.currentJobLogs(job.jobID))
-    this.currentJobLogs = this.currentJobLogs.-(job.jobID)
+    if(this.currentJobLogs.contains(jobID)) {
+      addJobLog(this.currentJobLogs(jobID))
+      this.currentJobLogs = this.currentJobLogs.filter(_._1 == jobID)
+    }
 
+    // If the job Appears in the running Execution, terminate it
     if(this.runningExecutions.contains(jobID)) {
       this.runningExecutions(jobID).terminate()
-      this.runningExecutions = this.runningExecutions.-(jobID)
+      this.runningExecutions = this.runningExecutions.filter(_._1 == jobID)
     }
-    this.currentExecutionContexts = this.currentExecutionContexts.-(jobID)
+    this.currentExecutionContexts = this.currentExecutionContexts.filter(_._1 == jobID)
   }
 
 
@@ -322,11 +326,15 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
     case Delete(jobID) =>
       this.currentJobs.get(jobID) match {
         case Some(job) =>
+          Logger.info("Removing Job from Elastic Search.")
           jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
+          Logger.info("Removing Job from current Jobs.")
           this.removeJob(jobID)
           // Message user clients to remove the job from their watchlist
+          Logger.info("Informing Users of deletion.")
           val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify) : Option[List[ActorRef]])
           foundWatchers.flatten.foreach (_ ! ClearJob (job.jobID))
+          Logger.info("Deletion Complete.")
         case None =>
       }
 
