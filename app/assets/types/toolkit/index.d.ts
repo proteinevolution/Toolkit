@@ -34,3 +34,11 @@ declare class JobViewComponent {
 
 }
 
+
+declare class Job {
+
+    jobID : string;
+    toolnameLong : string;
+
+
+}
