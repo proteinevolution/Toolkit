@@ -1,5 +1,24 @@
 /* Data table helpers */
 
+/* BASELINKS */
+
+var pdbBaseLink = "http://pdb.rcsb.org/pdb/explore.do?structureId=";
+var pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/";
+var ncbiBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term=";
+var ncbiProteinBaseLink = "https://www.ncbi.nlm.nih.gov/protein/";
+var scopBaseLink = "http://scop.berkeley.edu/sid=";
+var pfamBaseLink = "http://pfam.xfam.org/family/";
+var cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=";
+var uniprotBaseLik = "http://www.uniprot.org/uniprot/";
+
+
+/* REGEX FOR DB IDENTIFICATION*/
+var uniprotReg = "^([A-Z0-9]{10}|[A-Z0-9]{6})$";
+var scopReg = "^([defgh][0-9a-zA-Z\.\_]+)$";
+var mmcifReg = "^(...._[a-zA-Z])$";
+var mmcifShortReg = "^([0-9]...)$";
+var pfamReg = "^(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)$";
+var ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5})$";
 
 function toggleAliColor(str) {
     var i;
@@ -290,61 +309,52 @@ $(document).ready(function() {
 
 
 function getSingleLink(id){
-  var db = identifyDatabase(id);
-    var pdb = 'http://pdb.rcsb.org/pdb/explore.do?structureId=';
-    var ncbi = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term=';
-    var ncbiRefseq = 'https://www.ncbi.nlm.nih.gov/Structure/cdd/wrpsb.cgi?seqinput=';
-    var ebi = 'http://www.ebi.ac.uk/pdbe-srv/view/entry/';
-    var pubmed = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?CMD=search&db=pubmed&term=';
-    var scop = 'http://scop.berkeley.edu/sid=';
-    var scopLineage = 'http://scop.berkeley.edu/sccs=';
-    var pfam = 'http://pfam.xfam.org/family?acc=';
-    var cdd = 'http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=';
-
+    var db = identifyDatabase(id);
+    var idTrimmed = id.substring (1, 5);
+    var idPfam = id.replace("am.*$||..*", "");
+    var idPdb = id.replace("_.*$", "");
 
     switch(db){
       case 'scop':
-          var idTrimmed = id.substr(1,4);
-          return generateLink(pdb, idTrimmed,id);
+          return generateLink(pdbBaseLink, idTrimmed,id);
           break;
       case 'mmcif':
-          var idPdb = id.replace(/\_.*$/ , "");
-          return generateLink(pdb, idPdb,id);
+          return generateLink(pdbBaseLink, idPdb,id);
           break;
       case 'pfam':
-          var idPfam = id.replace(/am.*$/ , "");
-          return generateLink(pfam, idPfam+"#tabview=tab1",id);
+          return generateLink(pfamBaseLink, idPfam+"#tabview=tab1",id);
           break;
-        case 'refseq':
-            return generateLink(ncbiRefseq, id,id);
-            break;
+      case 'ncbi':
+          return generateLink(ncbiProteinBaseLink, id,id);
+          break;
+      case 'uniprot':
+          return generateLink(uniprotBaseLik,id,id);
+          break;
       default:
           return null;
   }
 }
 
-
 function getLinks(id){
     var db = identifyDatabase(id);
     var links = [];
-    var pdb = 'http://pdb.rcsb.org/pdb/explore.do?structureId=';
-    var ncbi = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term=';
-    var ebi = 'http://www.ebi.ac.uk/pdbe-srv/view/entry/';
-    var pubmed = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?CMD=search&db=pubmed&term=';
-    var scop = 'http://scop.berkeley.edu/sid=';
-    var pfam = 'http://pfam.xfam.org/family?acc=';
-    var cdd = 'http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=';
-
-
+    var idNcbi = id.replace("#", ".") + "?report=fasta";
+    var idPdb = id.replace("_.*$", "").toString().toLowerCase();
+    var idTrimmed = id.substring(1, 5);
+    var idCDD = id.replace("PF", "pfam");
     switch(db){
         case 'scop':
-            var idNCBI = id.substr(1,4);
-            links.push(generateLink(scop, id, "SCOP"));
-            links.push(generateLink(ncbi, idNCBI,"NCBI"));
+            links.push(generateLink(scopBaseLink, id, "SCOP"));
+            links.push(generateLink(ncbiProteinBaseLink, idTrimmed,"NCBI"));
             break;
         case 'pfam':
-            links.push(generateLink(cdd, id, "CDD"));
-            links.push(generateLink(pubmed, id,"PubMed"));
+            links.push(generateLink(cddBaseLink, idCDD, "CDD"));
+            break;
+        case 'mmcif':
+            links.push(generateLink(pdbeBaseLink, idCDD, "PDBe"));
+            break;
+        case 'ncbi':
+            links.push(generateLink(ncbiProteinBaseLink, idNcbi,"NCBI Fasta"));
             break;
     }
     if(links.length > 0)
@@ -359,18 +369,18 @@ function generateLink(baseLink, id, name){
 function identifyDatabase(id){
     if (id == null)
         return null;
-    var scop = new RegExp('([defgh][0-9a-zA-Z\.\_]+)');
-    var mmcif = new RegExp('(...._[a-zA-Z])|(....)');
-    var pfam = new RegExp('(^pfam+.+[0-9]+)|(^PF\d+.+[0-9]+)');
-    var refseq = new RegExp('([NXMRP.]+._[0-9.]+)');
-    if(id.match(scop))
+    if(id.match(scopReg))
         return "scop";
-    else if(id.match(refseq))
-        return "refseq";
-    else if(id.match(mmcif))
+    else if(id.match(mmcifShortReg))
         return "mmcif";
-    else if(id.match(pfam))
+    else if(id.match(mmcifReg))
+        return "mmcif";
+    else if(id.match(pfamReg))
         return "pfam";
+    else if(id.match(ncbiReg))
+        return "ncbi";
+    else if(id.match(uniprotReg))
+        return "uniprot";
     else
         return null;
 }
