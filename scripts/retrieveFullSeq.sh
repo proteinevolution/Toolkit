@@ -11,12 +11,12 @@ DB=$(<params/db)
 
 #retrieve full length sequences
 seq_retrieve.pl -i results/accessionsToRetrieve \
-                -o sequences_tmp.fa \
+                -o results/sequences_tmp.fa \
                 -d ${STANDARDNEW}/${DB} \
                 -unique 1 > results/unretrievable
 
 # remove first 5 lines that contain information about retrieving
-tail -n +5 sequences_tmp.fa > results/sequences.fa
+tail -n +5 results/sequences_tmp.fa > results/sequences.fa
 
 # remove temp file
-rm sequences_tmp.fa
+rm results/sequences_tmp.fa
