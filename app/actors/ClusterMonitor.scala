@@ -6,20 +6,24 @@ import javax.inject.{Inject, Singleton}
 import actors.ClusterMonitor._
 import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable}
 import akka.event.LoggingReceive
+import models.database.statistics.ClusterLoadEvent
 import models.sge.Cluster
+import modules.CommonModule
 import org.joda.time.DateTime
 import play.api.Logger
+import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.bson.BSONObjectID
 
 import scala.collection.immutable.HashSet
 import scala.concurrent.duration._
-
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by snam on 24.03.17.
   */
 
 @Singleton
-final class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorLogging {
+final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: ReactiveMongoApi) extends Actor with ActorLogging with CommonModule {
 
 
   case class RecordedTick(load: Double, timestamp : DateTime)
@@ -58,9 +62,12 @@ final class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorL
 
     case Recording =>
       val loadAverage = record.sum[Double] / record.length
-      Logger.info("Average: " + loadAverage + " - " + record.mkString(", "))
-      record = List.empty[Double]
       val currentTimestamp = DateTime.now()
+      upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate() , record, loadAverage, Some(currentTimestamp))).map{ clusterLoadEvent =>
+
+        //Logger.info("Average: " + loadAverage + " - " + record.mkString(", "))
+        record = List.empty[Double]
+      }
   }
 }
 
