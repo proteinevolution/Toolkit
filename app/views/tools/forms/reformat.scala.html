@@ -39,14 +39,14 @@
                                 <li style="padding-top: 15px; padding-left: 10px;">
                                     <select id="forwardTool" style="font-size: 12px;">
                                         <option selected>Forward To</option>
-                                        <option  id="clans" onclick="forward('clans')" value="psi">Clans</option>
-                                        <option  id="csblast" onclick="forward('csblast')" value="psi">CS-BLAST</option>
-                                        <option  id="hhblits" onclick="forward('hhblits')" value="psi">HHblits</option>
-                                        <option  id="hhpred" onclick="forward('hhpred')" value="psi">HHpred</option>
-                                        <option  id="hmmer3" onclick="forward('hmmer3')" value="psi">Hmmer3</option>
-                                        <option  id="mafft" onclick="forward('mafft')" value="psi">Mafft</option>
-                                        <option  id="psiblast" onclick="forward('psiblast')" value="psi">PSI-BLAST</option>
-                                        <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
+                                        <option  id="clans" onclick="forwardTo('clans')" value="psi">Clans</option>
+                                        <option  id="csblast" onclick="forwardTo('csblast')" value="psi">CS-BLAST</option>
+                                        <option  id="hhblits" onclick="forwardTo('hhblits')" value="psi">HHblits</option>
+                                        <option  id="hhpred" onclick="forwardTo('hhpred')" value="psi">HHpred</option>
+                                        <option  id="hmmer3" onclick="forwardTo('hmmer3')" value="psi">Hmmer3</option>
+                                        <option  id="mafft" onclick="forwardTo('mafft')" value="psi">Mafft</option>
+                                        <option  id="psiblast" onclick="forwardTo('psiblast')" value="psi">PSI-BLAST</option>
+                                        <option  id="tcoffee" onclick="forwardTo('tcoffee')" value="psi">T-Coffee</option>
                                     </select>
                                 </li>
                             </ul>
@@ -58,14 +58,14 @@
                         <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
                         <select id="forwardTool">
                             <option selected>Forward To</option>
-                            <option  id="clans" onclick="forward('clans')" value="psi">Clans</option>
-                            <option  id="csblast" onclick="forward('csblast')" value="psi">CS-BLAST</option>
-                            <option  id="hhblits" onclick="forward('hhblits')" value="psi">HHblits</option>
-                            <option  id="hhpred" onclick="forward('hhpred')" value="psi">HHpred</option>
-                            <option  id="hmmer3" onclick="forward('hmmer3')" value="psi">Hmmer3</option>
-                            <option  id="mafft" onclick="forward('mafft')" value="psi">Mafft</option>
-                            <option  id="psiblast" onclick="forward('psiblast')" value="psi">PSI-BLAST</option>
-                            <option  id="tcoffee" onclick="forward('tcoffee')" value="psi">T-Coffee</option>
+                            <option  id="clans" onclick="forwardTo('clans')" value="psi">Clans</option>
+                            <option  id="csblast" onclick="forwardTo('csblast')" value="psi">CS-BLAST</option>
+                            <option  id="hhblits" onclick="forwardTo('hhblits')" value="psi">HHblits</option>
+                            <option  id="hhpred" onclick="forwardTo('hhpred')" value="psi">HHpred</option>
+                            <option  id="hmmer3" onclick="forwardTo('hmmer3')" value="psi">Hmmer3</option>
+                            <option  id="mafft" onclick="forwardTo('mafft')" value="psi">Mafft</option>
+                            <option  id="psiblast" onclick="forwardTo('psiblast')" value="psi">PSI-BLAST</option>
+                            <option  id="tcoffee" onclick="forwardTo('tcoffee')" value="psi">T-Coffee</option>
                         </select>
                     </ul>
 
@@ -619,12 +619,12 @@
 
         /* Forwarding */
 
-        function forward(tool) {
+        function forwardTo(tool) {
             if(myCodeMirror2.lineCount()>1) {
                var seqs = myCodeMirror2.getValue ( ) ;
                localStorage.setItem ( "resultcookie", seqs ) ;
                window.location.href = "/#/tools/" + tool ;
-               } else alert("No output to forward.");
+               } else alert("No output to forwardTo.");
             }
 
 
