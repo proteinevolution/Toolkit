@@ -66,98 +66,107 @@ let clusterLoadConfig = function(elem : Element, isInit : boolean, ctx : any) : 
 };
 
 
+let trafficBarConfig = function(lastJob : any) {
+    return function (elem : any, isInit : Boolean) {
+        if (lastJob != null && !isInit) {
+            elem.setAttribute("data-disable-hover", "false");
+            //elem.setAttribute("data-tooltip", "data-tooltip");
+            elem.setAttribute("title", "Click to view last job: " + lastJob.jobID);
+            console.log("Traffic bar sees status " + lastJob.state);
+            if (lastJob.state === -1) {
+                return console.log("Hide Trafficbar");
+            } else if (lastJob.state === 2) {
+                console.log("Traffic Bar goes to queued");
+                return $(elem).css({
+                    'background': '#c0b5bf',
+                    'box-shadow': '0 1 6px #9192af'
+                });
+            } else if (lastJob.state === 5) {
+                console.log("Traffic Bar goes to done");
+                return $(elem).css({
+                    'background': 'green',
+                    'box-shadow': '0 1 6px #C3FFC3'
+                });
+            } else if (lastJob.state === 4) {
+                console.log("Traffic Bar goes to error");
+                return $(elem).css({
+                    'background': '#ff0000',
+                    'box-shadow': '0 1 6px #FFC5C5'
+                });
+            } else if (lastJob.state === 3) {
+                console.log("Traffic Bar goes to running");
+                return $(elem).css({
+                    'background': '#ffff00',
+                    'box-shadow': '0 1 6px #FFF666'
+                });
+            }
+        }
+    };
+};
 
-let JobTable = {
-    controller: function(args : any) {
+class LiveTable {
+    static lastJob     : Object = null;
+    static totalJobs   : Number = 0;
+    static load        : Number = 0.5;
+    static updateJobInfo () : void {
+        m.request({method: "GET", url: "indexPageInfo"})
+            .then(function(pageInfo) {
+                console.log(pageInfo);
+                LiveTable.lastJob   = pageInfo.lastJob;
+                LiveTable.totalJobs = pageInfo.totalJobs;
+            }).catch(function(error){console.log(error);});
+    }
+    static updateLoad (load : Number) : void {
+        LiveTable.load = load;
+    }
+    static controller (args : any) : any {
+        if (args) {
+            LiveTable.lastJob   = args.lastJob   ? args.lastJob          : LiveTable.lastJob;
+            LiveTable.totalJobs = args.totalJobs ? args.totalJobs        : LiveTable.totalJobs;
+            LiveTable.load      = args.load      ? parseFloat(args.load) : LiveTable.load;
 
-        let ctrl = this;
-        ctrl.totalJobs = -1;
-        ctrl.lastJob = {};
-        ctrl.load = -1;
+            if(args.totalJobs == null && args.lastJob == null) {
+                LiveTable.updateJobInfo();
+            }
+        }
+        //console.log("register load..");
+        //(<any>window).sendMessage({type: "RegisterLoad"}); // <- TODO this wont work for some reason
+        //console.log("...sent!");
+        return {}
+    }
+    static view (ctrl : any, args : any) : any {
+        let loadString  : string = (LiveTable.load * 100).toPrecision(4) + "%",
+            colorString : string = LiveTable.load < 0.7 ? "green;" : LiveTable.load < 0.9 ? "yellow;" : "red;";
 
-        ctrl.color = "black";
-
-        m.request({method: "GET", url: "/api/jobs"})
-            .then(function(jobs) {
-
-                if(jobs.length > 0){
-                    ctrl.lastJob = jobs.slice(-1)[0];
-                    JobListComponent.lastUpdatedJob = ctrl.lastJob;
-                } else {
-                    ctrl.lastJob = {
-                        "jobID": -1,
-                        "toolnameLong": ""
-                    };
-                }
-            }).catch(function(e) {
-            ctrl.lastJob = {
-                "jobID": -1,
-                "toolnameLong": ""
-            };
-
-        });
-
-        m.request({method: "GET", url: "count"})
-            .then(function(count) {
-                if(count > 0){
-                    ctrl.totalJobs = count;
-                } else {
-                    ctrl.totalJobs = 0;
-                }
-            }).catch(function(e) {
-            ctrl.totalJobs = 0;
-
-        });
-
-
-        m.request({method: "GET", url: "load"})
-            .then(function(load) {
-                if(load.length > 0){
-                    //console.log(load);
-                    ctrl.load = (parseFloat(load) * 100).toPrecision(4) + " %";
-                    if(parseFloat(load) > 0.9)
-                        ctrl.color = "red";
-                    else if (parseFloat(load) < 0.7)
-                        ctrl.color = "green";
-                } else {
-                    ctrl.load = 0;
-                }
-            }).catch(function(e) {
-            ctrl.load = 0;
-
-        });
-
-    },
-    view: function(ctrl : any, args : any) {
-        return m('div', {"class" : "row"}, [
+        return m('div', [
             //m('div', {"class" : "clusterLoad column large-4"}, ""),
-            m('table.liveTable', {"class" : "column large-12"}, [
+            m('table', {class : "liveTable column large-12"}, [
                 m('thead', [
                     m('tr', [
-                        m('th#currentLoad', 'Cluster load'),
-                        m('th#lastJob', 'Last own job'),
-                        m('th#lastJobs', 'Total own jobs')
+                        m('th', { id: 'currentLoadLabel'} , 'Cluster load'),
+                        m('th', { id: 'lastJobLabel'}, 'Last own job'),
+                        m('th', { id: 'lastJobsLabel'}, 'Total own jobs')
                     ])]
                 )], [
                 m('tbody',
                     [m('tr', [
-                        m('td#currentLoad', {"style" : "color: " + ctrl.color + ";"}, ctrl.load),
-                        m('td#lastJobName', m('a[href="/#/jobs/' + ctrl.lastJob.jobID + '"]', ctrl.lastJob.toolnameLong)),
-                        m('td', m('a[href="/#/joblist/"]', {"style" : "font-weight: bold;"}, ctrl.totalJobs))
+                        m('td', { id: 'currentLoad', style: "color: " + colorString}, "" + loadString),
+                        m('td', { id: 'lastJobName' },
+                            LiveTable.lastJob != null ?
+                                m('a', { href: "/#/jobs/" + LiveTable.lastJob.jobID}, LiveTable.lastJob.toolnameLong) :
+                                m('b', "No Jobs")
+                        ),
+                        m('td',
+                            m('a', { href: "/#/joblist/", style: "font-weight: bold;" }, "" + LiveTable.totalJobs)
+                        )
                     ])]
-                )])
+                )
+            ]),
+            m("div", { id: "trafficbar",
+                       class: "trafficbar",
+                       config: trafficBarConfig(LiveTable.lastJob),
+                       onclick: function () { m.route("/jobs/" + LiveTable.lastJob.jobID); }
+            })
         ]);
     }
-};
-
-let LiveTable = {
-    controller: function(args : any) {
-        let ctrl = this;
-
-    },
-    view: function(ctrl : any, args : any) {
-        return m('div', [
-            m.component(JobTable, {})
-        ]);
-    }
-};
+}

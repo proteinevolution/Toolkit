@@ -375,16 +375,23 @@ var extractStatus = function(xhr, xhrOptions) {
 };
 
 JobSubmissionComponent = {
-    submitting : false,                     // Job is being sent if true
-    currentJobID : null,                    // Currently entered jobID
-    jobIDValid : true,                      //
+    submitting      : false,    // Job is being sent if true
+    currentJobID    : null,     // Currently entered jobID
+    jobIDValid      : false,    // Is the current jobID valid?
+    jobIDValidationTimeout : null,     //
     checkJobID : function (jobID) {
-        if (jobID !== "") {
-            m.request({ method: "GET", url: "/search/checkJobID/"+jobID }).then(
-                function (data) { JobSubmissionComponent.jobIDValid = !data.exists; }
-            );
+        clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);    // clear all previous timeouts
+        JobSubmissionComponent.jobIDValid = false;      // ensure that the user can not send the job form
+        JobSubmissionComponent.currentJobID = jobID;    // set the jobID to the new jobID
+        if (jobID !== "") { // ignore checking if the field is empty as the server will generate a jobID in that case.
+            JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
+                m.request({ method: "GET", url: "/search/checkJobID/"+jobID }).then(
+                    function (data) { JobSubmissionComponent.jobIDValid = !data.exists; }
+                );
+            }, 500);
+        } else {
+            JobSubmissionComponent.jobIDValid = true;
         }
-        JobSubmissionComponent.currentJobID = jobID;
         return jobID;
     },
     jobIDComponent : function (ctrl) {
@@ -395,7 +402,7 @@ JobSubmissionComponent = {
             id: "jobID",
             class: "jobid",
             placeholder: "Custom JobID",
-            onchange: m.withAttr("value", JobSubmissionComponent.checkJobID),
+            onkeyup: m.withAttr("value", JobSubmissionComponent.checkJobID),
             value: JobSubmissionComponent.currentJobID,
             style: style
         })
@@ -407,8 +414,10 @@ JobSubmissionComponent = {
                 oldJobID = args.job().jobID.split(".");
                 version = parseInt(oldJobID[1]);
                 newJobID = oldJobID[0] + "." + (Number.isNaN(version) ? 1 : version + 1);
+                JobSubmissionComponent.jobIDValid = false;
             } else {
                 newJobID = "";
+                JobSubmissionComponent.jobIDValid = true;
             }
             JobSubmissionComponent.currentJobID = newJobID;
         }

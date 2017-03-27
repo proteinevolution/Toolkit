@@ -8,6 +8,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable}
 import akka.event.LoggingReceive
 import models.sge.Cluster
 import org.joda.time.DateTime
+import play.api.Logger
 
 import scala.collection.immutable.HashSet
 import scala.concurrent.duration._
@@ -23,7 +24,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorL
 
   case class RecordedTick(load: Double, timestamp : DateTime)
 
-  private val fetchLatestInterval = 75.millis
+  private val fetchLatestInterval = 3000.millis
   private val recordingInterval = 10.minutes
   protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
   // Fetch the latest qhost status every 375ms
@@ -35,15 +36,17 @@ final class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorL
 
   override def receive = LoggingReceive {
 
-    case Connect =>
-      watchers = watchers + sender
+    case Connect(actorRef) =>
+      watchers = watchers + actorRef
 
-    case Disconnect =>
-      watchers = watchers - sender
+    case Disconnect(actorRef) =>
+      watchers = watchers - actorRef
 
     case FetchLatest =>
       val load = cluster.getLoad.loadEst
+      //val messagingTime = DateTime.now()
       watchers.foreach(_ ! UpdateLoad(load))
+      //Logger.info( s"""Updated Load with ${watchers.size} Users. Time needed: ${DateTime.now().getMillis - messagingTime.getMillis}ms""".stripMargin)
       //watchers.foreach(_ ! ConnectedUsers(watchers.size))
       //println(load)
 
@@ -58,9 +61,9 @@ final class ClusterMonitor @Inject()(cluster: Cluster) extends Actor with ActorL
 
 object ClusterMonitor {
 
-  case object Disconnect
+  case class Disconnect(actorRef : ActorRef)
 
-  case object Connect
+  case class Connect(actorRef : ActorRef)
 
   case object FetchLatest
 
