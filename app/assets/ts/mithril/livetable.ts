@@ -40,7 +40,7 @@ let trafficBarConfig = function(lastJob : any) {
 };
 
 class LiveTable {
-    static lastJob     : Job;
+    static lastJob     : Job = null;
     static totalJobs   : number = 0;
     static load        : number = 0.5;
     static updateJobInfo () : void {
