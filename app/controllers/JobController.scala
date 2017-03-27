@@ -6,6 +6,7 @@ import javax.inject.{Inject, Singleton}
 import actors.JobActor.{CreateJob, Delete}
 import models.Constants
 import models.database.jobs.{Error, Job, JobDeletion, JobDeletionFlag}
+import models.database.users.User
 import models.job.{JobActorAccess, JobIDProvider}
 import models.search.JobDAO
 import modules.{CommonModule, LocationProvider}
@@ -231,6 +232,9 @@ final class JobController @Inject() ( jobIDProvider    : JobIDProvider,
                        BSONDocument("$pull"  ->
                        BSONDocument(Job.WATCHLIST -> user.userID)))
           }
+          modifyUserWithCache(BSONDocument(User.IDDB -> user.userID),
+                              BSONDocument("$pull"   ->
+                              BSONDocument(User.JOBS -> job.jobID)))
           Ok
         case None =>
           NotFound
