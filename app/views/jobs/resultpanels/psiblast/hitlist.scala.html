@@ -168,8 +168,12 @@
                     <td id="psiblast_query"></td>
                 </tr>
                 <tr>
-                    <td>Match_columns</td>
+                    <td>Query Length</td>
                     <td id="psiblast_queryLength"></td>
+                </tr>
+                <tr>
+                    <td>DB</td>
+                    <td id="psiblast_db"></td>
                 </tr>
             </table>
         </div>
@@ -192,6 +196,14 @@ var aas;
 var chosenDB = null;
 
 (function()  {
+
+    // adding loading overlay
+    $(document).ajaxStart(function(){
+        $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
+        });
+    $(document).ajaxComplete(function(){
+        $.LoadingOverlay("hide");
+    });
     $('.slider').on('moved.zf.slider', function() {
         $('#lefthandle').html($('#hidden1').val());
         $('#lefthandle').css({
@@ -220,8 +232,19 @@ var chosenDB = null;
         hits = basenameResults.hits;
         var numHits = hits.length;
         var info = basenameResults.stat;
-        var evalueParam = data_.output_psiblastp.BlastOutput2[0].report.params.expect;
-        chosenDB = data_.output_psiblastp.BlastOutput2[0].report.search_target.db.split('/').pop().trim();
+
+        // get jobinformation
+
+        var url = "/api/job/@jobID";
+        $.getJSON(url, function(data_){
+            chosenDB = data_.paramValues.standarddb;
+            evalueParam = data_.paramValues.inclusion_ethresh;
+            // check all betther than evalue
+            checkAllBetterThan(evalueParam);
+        });
+
+
+
         query = data_.query;
         firstQueryName = ">" + query[0][0];
         firstQuerySequence = query[0][1];
@@ -244,7 +267,6 @@ var chosenDB = null;
         // set color letters and SS to default
         toggleAliColor_("letters");
         $("#accordion").foundation();
-        checkAllBetterThan(evalueParam);
         }
     });
 
@@ -255,6 +277,8 @@ function drawInformation(info ){
     /*  INFO TAB*/
     $("#psiblast_query").append(firstQueryName);
     $("#psiblast_queryLength").append(firstQueryLength);
+    $("#psiblast_db").append(chosenDB);
+
 }
 
 function drawDataTable(hits){
@@ -268,7 +292,7 @@ function drawDataTable(hits){
         "aoColumns": [
 
             {"mDataProp": "num"},
-            {"mDataProp": "description.0.accession"},
+            {"mDataProp": "description.0.accession", render: function (data){return getSingleLink(data)}},
             {
                 "mDataProp": "hsps.0.evalue", render: function (data) {
                 return data.toExponential(2);
@@ -389,10 +413,7 @@ function preprocessingForward(){
     return jsonData;
 }
 function forward_(tool){
-
-    var forwardData = '';
     var dataTmp = preprocessingForward();
-    $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
     // full seq is retrieved
     if($('#fullLength').is(':checked')) {
         // retrieve full Seq
@@ -413,29 +434,25 @@ function forward_(tool){
             }).done(function (data_) {
                 forward(tool, data_.toString());
             });
-        }).always( function(){
-            $.LoadingOverlay("hide");
         });
     }else{
+        var forwardData = '';
         // get slider range
         var sliderRange = getSliderRange();
-        var forwardData = '';
         var alignmentData;
         // get alignment json
         var fileUrl = "/files/@jobID/alignment.json";
         $.getJSON(fileUrl, function (data_) {
             alignmentData = data_;
-            var numOfQuery = query.length -1 ;
+            var numOfQuery = query.length;
             for(var i=0; i < dataTmp.index.length; i++){
                 // index + number of querys because alignment json contains query sequences in alignment first
                 var index = dataTmp.index[i];
-                console.log(index)
                 forwardData += ">" + alignmentData[index + numOfQuery][0] + '\n';
                 forwardData += alignmentData[index+ numOfQuery][1].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
             }
+            console.log(forwardData)
             forward(tool, forwardData);
-        }).always( function(){
-            $.LoadingOverlay("hide");
         });
     }
 }
