@@ -4,7 +4,7 @@ import models.database.jobs.Job
 import play.Logger
 import models.Constants
 import play.api.cache._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNull, Json}
 import javax.inject.{Inject, Singleton}
 
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
@@ -139,10 +139,16 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
     }
   }
 
-  def countJobs : Action[AnyContent] = Action.async { implicit request=>
+  /**
+    * Returns a json object containing both the last updated job and the most recent total number of jobs.
+    * @return
+    */
+  def getIndexPageInfo : Action[AnyContent] = Action.async { implicit request=>
     getUser.flatMap { user =>
-      countJobs(BSONDocument(Job.OWNERID -> user.userID)).map{ count =>
-        Ok(Json.toJson(count))
+      findSortedJob(BSONDocument(Job.OWNERID -> user.userID), BSONDocument(Job.DATEUPDATED -> -1)).flatMap{ lastJob =>
+        countJobs(BSONDocument(Job.OWNERID -> user.userID)).map { count =>
+          Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned()), "totalJobs" -> count))
+        }
       }
     }
   }

@@ -12,6 +12,7 @@ import controllers.UserSessions
 import models.database.jobs.Job
 import models.job.JobActorAccess
 import modules.{CommonModule, LocationProvider}
+import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{JsValue, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -35,7 +36,7 @@ object WebSocketActor {
 class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
                             implicit val locationProvider: LocationProvider,
                                          jobActorAccess  : JobActorAccess,
-   @Named("clusterMonitor") clusterMonitor               : ActorRef,
+   @Named("clusterMonitor")              clusterMonitor  : ActorRef,
    @NamedCache("userCache") implicit val userCache       : CacheApi,
 @NamedCache("wsActorCache") implicit val wsActorCache    : CacheApi,
      @Assisted("sessionID") private  var sessionID       : BSONObjectID,
@@ -43,8 +44,8 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
                                  extends Actor with ActorLogging with CommonModule with UserSessions {
 
   override def preStart(): Unit = {
-    // Grab the user from cache to ensure a
-    clusterMonitor ! Connect
+    // Grab the user from cache to ensure a working job
+    clusterMonitor ! Connect(self)
     getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get(user.userID.stringify) match {
@@ -57,8 +58,10 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
       case None =>
         self ! PoisonPill
     }
-  } // May not be able to send any messages at this point of init
+  } // TODO May not be able to send any messages at this point of init
+
   override def postStop(): Unit = {
+    clusterMonitor ! Disconnect(self)
     getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get(user.userID.stringify) match {
@@ -72,7 +75,6 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
         self ! PoisonPill
     }
   }
-
 
   def receive = LoggingReceive {
 
@@ -97,9 +99,20 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
 
             (js \ "jobID").validate[String].asOpt match {
               case Some(jobID) =>
+                Logger.info("Recieved StopWatch for job " + jobID)
                 jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, user.userID))
               case None => //
             }
+
+          // Request to receive load messages
+          case "RegisterLoad" =>
+            Logger.info("Received RegisterLoad message.")
+            clusterMonitor ! Connect(self)
+
+          // Request to no longer receive load messages
+          case "UnregisterLoad" =>
+            clusterMonitor ! Disconnect(self)
+
         }
         case None =>
           self ! PoisonPill

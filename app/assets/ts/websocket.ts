@@ -2,174 +2,120 @@
  *  Handles the Connection to the WebSocket and its connection to ModelView elements like provided by
  *  Mithril.
  */
-let connect : any,
-    connected : boolean,
-    connecting : any,
-    connectionCountdown : any,
-    connectionTimeRandomizer : any,
-    onClose : any,
-    onError : any,
-    onMessage : any,
-    onOpen : any,
-    reconnect : any,
-    reconnecting : any,
-    retryCount : number,
-    retryCountdown : number,
-    addJob : any,
-    retryCountdownInterval : number;
+let ws : WebSocket = null,
+    connect      : Function,
+    connected    : boolean = false,
+    connecting   : boolean = false,
+    reconnecting : boolean = false,
+    connectionCountdown : Function,
+    connectionTimeRandomizer : Function,
+    onClose   : Function,
+    onError   : Function,
+    onMessage : Function,
+    onOpen    : Function,
+    reconnect : Function,
+    retryCount     : number  = 1,
+    retryCountdown : number  = 0,
+    addJob : Function,
+    retryCountdownInterval : number = null;
 
-
-let ws : any = null;
-
-connected = false;
-
-connecting = false;
-
-reconnecting = false;
-
-retryCount = 1;
-
-retryCountdown = 0;
-
-retryCountdownInterval = null;
 
 connect = function() : any {
-    if (!connecting) {
-        reconnecting = false;
-        connecting = true;
-        clearInterval(retryCountdownInterval);
-        ws = new WebSocket($("body").data("ws-url"));
-        ws.onopen = function(evt : any) : any {
-            return onOpen(evt);
-        };
-        ws.onclose = function(evt : any) : any{
-            return onClose(evt);
-        };
-        ws.onmessage = function(evt : any) : any{
-            return onMessage(evt);
-        };
-        return ws.onerror = function(evt : any) : any{
-            return onError(evt);
-        };
+    if (!connecting) {          // check if we are already connecting
+        reconnecting = false;   // we are not reconnecting
+        connecting   = true;    // we are connecting
+        clearInterval(retryCountdownInterval);  // Remove the timer
+        ws = new WebSocket($("body").data("ws-url"));   // create the new websocket
+        ws.onopen    = function(evt : Event)        : any { return onOpen(evt); };
+        ws.onclose   = function(evt : CloseEvent)   : any { return onClose(evt); };
+        ws.onmessage = function(evt : MessageEvent) : any { return onMessage(evt); };
+        ws.onerror   = function(evt : ErrorEvent)   : any { return onError(evt); };
+        return
     }
 };
 
 connectionCountdown = function() : any {
-    retryCountdown = retryCountdown - 1;
-    $("#offline-alert-timer").text(retryCountdown);
-    if (retryCountdown < 1) {
-        retryCountdown = 1;
-        clearInterval(retryCountdownInterval);
-        return connect();
+    retryCountdown = retryCountdown - 1;            // count one down
+    $("#offline-alert-timer").text(retryCountdown); // render count down text
+    if (retryCountdown < 1) {   // we are at 0, retry now.
+        retryCountdown = 1;     // reset countdown.
+        clearInterval(retryCountdownInterval);  // remove the interval.
+        return connect();       // reconnect.
     }
 };
 
-connectionTimeRandomizer = function() : any {
-    if (retryCount < 38) {
-        retryCount++;
-    }
-    return parseInt("" + Math.random() * 3 * retryCount + 6);
+connectionTimeRandomizer = function() : any {   // Randomizes the countdown time
+    if (retryCount < 38) { retryCount++; }      // maximum of 38 reconnects before constant change
+    return parseInt("" + Math.random() * 3 * retryCount + 6);   // 38 * 3s + 6s = 120s = 2min
 };
 
-reconnect = function(force : any) : any{
-    if (force == null) {
-        force = false;
-    }
+reconnect = function(force : any) : any{    // reconnect the websocket to the server.
+    if (force == null) { force = false; }   // force is there to ensure a reconnect
     if ((!reconnecting && !connected && !connecting) || force) {
-        ws.close();
-        connected = false;
-        connecting = false;
-        reconnecting = true;
-        retryCountdown = parseInt(connectionTimeRandomizer());
-        $("#offline-alert").fadeIn();
-        connectionCountdown();
-        return retryCountdownInterval = setInterval(connectionCountdown, 1000);
+        console.log("Trying to Reconnect Websocket.");
+        ws.close();             //close any remaining connection
+        connected = false;      // set the connected status to false
+        connecting = false;     // set the connecting status to false
+        reconnecting = true;    // set the reconnecting status to true
+        retryCountdown = parseInt(connectionTimeRandomizer());  // set the retry countdown
+        $("#offline-alert").fadeIn();   // show the "Reconnecting ..." message
+        connectionCountdown();  // start the countdown
+        retryCountdownInterval = setInterval(connectionCountdown, 1000);
     }
 };
 
-onOpen = function(event : any) : any {
-    clearInterval(retryCountdownInterval);
-    connected = true;
-    connecting = false;
-    retryCount = 1;
-    $("#offline-alert").fadeOut();
+onOpen = function(event : Event) : any {
+    console.log("Websocket is Connected.");
+    clearInterval(retryCountdownInterval);  // Close all reconnection timers
+    connected = true;               // We are connected now.
+    connecting = false;             // No Longer connecting
+    retryCount = 1;                 // Reset the retry counter
+    $("#offline-alert").fadeOut();  // Hide the Offline alert
 };
 
-onError = function(event : any) : any {
-    return setTimeout(reconnect(true), 3000);
+onError = function(event : ErrorEvent) : any {
+    setTimeout(reconnect(true), 3000);
 };
 
-onClose = function(event : any) : any {
+onClose = function(event : CloseEvent) : any {
     connected = false;
-    return setTimeout(reconnect, 5000);
+    setTimeout(reconnect, 5000);
 };
 
-onMessage = function(event : any) : any {
-    let i : number,
-        job : any,
-        jobHTMLString : string,
-        len : number,
-        message : any,
-        ref : any,
-        text : string;
-    message = JSON.parse(event.data);
+onMessage = function(event : MessageEvent) : any {
+    let message : any = JSON.parse(event.data);
     switch (message.type) {
         case "ClearJob":
             m.startComputation();
             JobListComponent.removeJob(message.jobID);
-            return m.endComputation();
+            m.endComputation();
+            break;
         case "PushJob":
             m.startComputation();
             JobListComponent.pushJob(JobListComponent.Job(message.job));
             m.endComputation();
-            if (message.state === 0) {
-                return $('.jobformclear').click();
-            }
             break;
         case "UpdateLoad":
-            //console.log(message.load);
-            //$(".clusterLoad").text(message.load);
-            $("td#currentLoad").text((parseFloat(message.load) * 100).toPrecision(4) + " %");
-            if(message.load > 0.9)
-                $("td#currentLoad").css("color", "red");
-            else if (message.load < 0.7)
-                $("td#currentLoad").css("color", "green");
+            console.log(message.load);
+            m.startComputation();
+            LiveTable.updateLoad(message.load);
+            m.endComputation();
             break;
-        case "JobIDUnknown":
-            text = "Sorry, but there is no such Job ID.";
-            return $(".jobsearchform").notify(text);
-        case "AutoCompleteReply":
-            return $("#jobsearch").autocomplete({
-                source: message.list
-            });
-        case "SearchReply":
-            jobHTMLString = "<p>found jobs:</p>";
-            ref = message.list;
-            for (i = 0, len = ref.length; i < len; i++) {
-                job = ref[i];
-                jobHTMLString += "<p>Job ID: " + job.jobID + " JobID: " + job.jobID + "</p>";
-            }
-            return $("#modal").html(jobHTMLString).foundation('open');
         case "Ping":
-            return (<any>window).sendMessage({
+            sendMessage({
                 "type": "Ping"
             });
+            break;
     }
 };
 
-(<any>window).sendMessage = function(object : any) : any {
+let sendMessage = function(object : any) : any {
+    console.log("sending message:", object);
     return ws.send(JSON.stringify(object));
 };
 
-addJob = function(jobID : string) : any {
-    return (<any>window).sendMessage({
-        "type": "AddJob",
-        "jobID": jobID
-    });
-};
+addJob = function(jobID : string) : any { sendMessage({ "type": "AddJob", "jobID": jobID }); };
 
 connect();
 
-$("#offline-alert").on('click', function(event) {
-    return connect();
-});
+$("#offline-alert").on('click', function(event) { connect(); });
