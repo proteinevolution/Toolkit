@@ -2,7 +2,7 @@ package modules
 
 import models.database.CMS.FeaturedArticle
 import models.database.jobs.{FrontendJob, Job, JobAnnotation, JobClusterData}
-import models.database.statistics.{JobEventLog, ToolStatistic}
+import models.database.statistics.{ClusterLoadEvent, JobEventLog, ToolStatistic}
 import models.database.users.User
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
@@ -107,6 +107,12 @@ trait CommonModule extends ReactiveMongoComponents {
     jobCollection.flatMap(_.count(Some(selector)))
   }
 
+  /**
+    * Finds the first / last job with the matching sort
+    */
+  protected def findSortedJob(selector : BSONDocument, sort : BSONDocument) : Future[Option[Job]] = {
+    jobCollection.flatMap(_.find(selector).sort(sort).one[Job])
+  }
 
   protected def selectJob(jobID: String): Future[Option[Job]] = {
 
@@ -188,6 +194,14 @@ trait CommonModule extends ReactiveMongoComponents {
                                                         else        {ToolStatistic.CURRENT}}
                                                                               -> 1))))
   }
+
+  protected def loadStatisticsCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("loadStatistics"))
+
+  protected def upsertLoadStatistic(clusterLoadEvent: ClusterLoadEvent) : Future[Option[ClusterLoadEvent]] =
+    loadStatisticsCollection.flatMap(_.findAndUpdate(selector = BSONDocument(ClusterLoadEvent.IDDB -> clusterLoadEvent.id),
+                                                     update   = clusterLoadEvent,
+                                                     upsert   = true,
+                                                     fetchNewObject = true).map(_.result[ClusterLoadEvent]))
 
   // User DB access
   protected def userCollection : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
