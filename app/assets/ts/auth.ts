@@ -62,8 +62,10 @@ $(function() {
             $("#auth-dropdown-link").show();
             $("#auth-link").remove();
             $("#overlay-content").html(json.message);
-            location.reload();
             JobListComponent.reloadList();
+            m.startComputation();
+            LiveTable.updateJobInfo();
+            m.endComputation();
             return setTimeout(loadMiniProfile, 1000);
         } else {
             $("#auth-alert").html(json.message);

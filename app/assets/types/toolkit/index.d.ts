@@ -9,7 +9,7 @@ declare class JobListComponent {
     public static pushJob(param : any) : any;
     public static pushJob(param: any, bool : boolean) : any;
     public static Job(param : any) : any;
-    public static selectedJobID : any;
+    public static selectedJobID : string;
     public static contains(jobID : string) : any;
 
     public static controller : any;

@@ -107,6 +107,12 @@ trait CommonModule extends ReactiveMongoComponents {
     jobCollection.flatMap(_.count(Some(selector)))
   }
 
+  /**
+    * Finds the first / last job with the matching sort
+    */
+  protected def findSortedJob(selector : BSONDocument, sort : BSONDocument) : Future[Option[Job]] = {
+    jobCollection.flatMap(_.find(selector).sort(sort).one[Job])
+  }
 
   protected def selectJob(jobID: String): Future[Option[Job]] = {
 
