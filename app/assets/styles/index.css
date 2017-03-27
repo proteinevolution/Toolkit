@@ -81,7 +81,7 @@ select {
 
 
 .search_container .form-group {
-    margin-top: 0.6em;
+    margin-top: 0.2em;/*TODO changed this to close gap - please readjust*/
     padding-top: 0.3em;
     padding-left: 1em;
     padding-right: 1em;
