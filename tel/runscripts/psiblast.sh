@@ -70,6 +70,10 @@ blastviz_json.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../r
 # Generate Query in JSON
 fasta2json.py %alignment.path ../results/query.json
 
+
+# Generate Query in JSON
+fasta2json.py ../results/output_psiblastp.aln ../results/alignment.json
+
 # extract alignment from
 #alignhits_html.pl ../results/out.psiblastp ../results/out.align -e %evalue.content -fas -no_link -blastplus
 
@@ -79,4 +83,4 @@ fasta2json.py %alignment.path ../results/query.json
 # Produce Evalues list
 awk {'print $(NF-6)'} ../results/output_psiblastp.tab >> ../results/evalues
 
-echo "%standarddb.content" >> ../params/db
+echo "%standarddb.content" > ../params/db
