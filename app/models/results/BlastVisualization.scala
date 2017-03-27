@@ -112,16 +112,16 @@ object BlastVisualization extends Constants {
   def getSingleLink(id : String) : Html = {
     val db = identifyDatabase(id)
     var link = ""
+    val idTrimmed = id.substring (1, 5)
+    val idPfam = id.replaceAll("am.*$||..*", "")
+    val idPdb = id.replaceAll("_.*$", "")
     if(db == "scop") {
-      var idTrimmed = id.substring (1, 5)
      link += generateLink (pdbBaseLink, idTrimmed, id)
     }
     else if(db == "mmcif") {
-      var idPdb = id.replaceAll("_.*$", "")
       link += generateLink(pdbBaseLink, idPdb, id)
     }
     else if(db == "pfam"){
-      var idPfam = id.replaceAll("am.*$||..*", "")
       link += generateLink(pfamBaseLink, idPfam + "#tabview=tab1", id)
     }
     else if(db == "ncbi"){
