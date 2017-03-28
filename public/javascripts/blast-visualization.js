@@ -46,7 +46,8 @@ function toggleAliColor(str) {
             aas[i].style.color = "black";
             aas[i].style.backgroundColor = "white";
         }
-            $("span").removeClass("colorToggle");
+        $("#backgroundColor").removeClass( "colorToggle" );
+        $("#letterColor").removeClass("colorToggle");
     }
 }
 

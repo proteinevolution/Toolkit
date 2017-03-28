@@ -280,10 +280,19 @@ var colorBackground = false;
 var selectAllBool = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 var ss_helices = document.getElementsByClassName("ss_h");
-var ss_extended = document.getElementsByClassName("aa_h");
+var ss_extended = document.getElementsByClassName("ss_e");
 var aas;
 
 (function()  {
+
+    // adding loading overlay
+    $(document).ajaxStart(function(){
+        $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
+    });
+    $(document).ajaxComplete(function(){
+        $.LoadingOverlay("hide");
+    });
+
     $('.slider').on('moved.zf.slider', function() {
         $('#lefthandle').html($('#hidden1').val());
         $('#lefthandle').css({
@@ -498,7 +507,6 @@ function resubmitHmm(tool) {
 function templateAlignment(accession){
     // replace '#' for url
     accession = accession.replace("#", "%23");
-    $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
 
     $.ajax({
         type: 'GET',
@@ -509,8 +517,6 @@ function templateAlignment(accession){
             url: 'files/@jobID/' + accession + '.fas'
         }).done(function (data) {
             $("#alignmentTemplate").val(data.toString());
-        }).always( function(){
-            $.LoadingOverlay("hide");
         });
     }).fail(function () {
     $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
@@ -600,6 +606,7 @@ function toggleAliColor_(str){
         else
             toggleAliColor("letters");
         this.colorLetters = !this.colorLetters;
+        this.colorBackground = !this.colorBackground;
     }
     if(str == "background"){
         if(colorBackground)
@@ -607,6 +614,7 @@ function toggleAliColor_(str){
         else
             toggleAliColor("background");
         this.colorBackground = !this.colorBackground;
+        this.colorLetters = !this.colorLetters;
     }
 }
 function resubmitSection_(){

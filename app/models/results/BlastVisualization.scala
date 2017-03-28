@@ -85,7 +85,7 @@ object BlastVisualization extends Constants {
 
   def SSColorReplace(sequence: String): String = this.helix_sheets.replaceAllIn(sequence, { m =>
     m.group("ss") match {
-      case this.helix_pattern(substr) => "<span class=\"aa_h\">" + substr + "</span>"
+      case this.helix_pattern(substr) => "<span class=\"ss_e\">" + substr + "</span>"
       case this.sheet_pattern(substr) => "<span class=\"ss_h\">" + substr + "</span>"
     }
   })
