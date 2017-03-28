@@ -441,11 +441,9 @@ function forward_(tool){
             for(var i=0; i < dataTmp.index.length; i++){
                 // index + number of querys because alignment json contains query sequences in alignment first
                 var index = dataTmp.index[i];
-                console.log("index: " + index + "numofQuery" + numOfQuery);
                 forwardData += ">" + alignmentData[index + numOfQuery][0] + '\n';
                 forwardData += alignmentData[index+ numOfQuery][1].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
             }
-            console.log(forwardData)
             forward(tool, forwardData);
         });
     }
