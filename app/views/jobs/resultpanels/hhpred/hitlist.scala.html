@@ -37,7 +37,7 @@
                 <table id="htb" class="display" cellspacing="0" width="80%">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>Nr</th>
                             <th>Hit</th>
                             <th>Name</th>
                             <th>Prob</th>
@@ -116,8 +116,7 @@
                                 <td colspan="4">Probability: @{(alignment \ "info" \ "probab").get}, E-value: @{(alignment \ "info" \ "eval").get},
                                     Score: @{(alignment \ "info" \ "score").get}, Aligned Cols: @{(alignment \ "info" \ "aligned_cols").get},
                                     Identities: @{BlastVisualization.percentage((alignment \ "info" \ "identities").get.toString)},
-                                    Similarity: @{BlastVisualization.percentage((alignment \ "info" \ "similarity").get.toString)},
-                                    Sum Probs: @{(alignment \ "info" \ "sum_probs").get}
+                                    Similarity: @{BlastVisualization.percentage((alignment \ "info" \ "similarity").get.toString)}
 
 
                                 </td>

@@ -40,17 +40,13 @@
             <table id="htb" class="display" cellspacing="0" width="80%">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Name</th>
+                        <th>Nr</th>
+                        <th>Id</th>
+                        <th>Title</th>
                         <th>E-value</th>
                         <th>Score</th>
                         <th>Bitscore</th>
                         <th>Identity</th>
-                        <th>Postitives</th>
-                        <th>qStart</th>
-                        <th>qEnd</th>
-                        <th>hStart</th>
-                        <th>hEnd</th>
                         <th>Length</th>
                     </tr>
                 </thead>
@@ -188,7 +184,7 @@ var checkbox = "hitCheckbox";
 var hitlist;
 var query;
 var colorSS = false;
-var colorLetters = true;
+var colorLetters = false;
 var colorBackground = false;
 var selectAllBool = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
@@ -293,6 +289,7 @@ function drawDataTable(hits){
 
             {"mDataProp": "num"},
             {"mDataProp": "description.0.accession", render: function (data){return getSingleLink(data)}},
+            {"mDataProp": "description.0.title"},
             {
                 "mDataProp": "hsps.0.evalue", render: function (data) {
                 return data.toExponential(2);
@@ -301,11 +298,6 @@ function drawDataTable(hits){
             {"mDataProp": "hsps.0.score"},
             {"mDataProp": "hsps.0.bit_score"},
             {"mDataProp": "hsps.0.identity"},
-            {"mDataProp": "hsps.0.positive"},
-            {"mDataProp": "hsps.0.query_from"},
-            {"mDataProp": "hsps.0.query_to"},
-            {"mDataProp": "hsps.0.hit_from"},
-            {"mDataProp": "hsps.0.hit_to"},
             {"mDataProp": "len"}
         ],
         'columnDefs': [{
