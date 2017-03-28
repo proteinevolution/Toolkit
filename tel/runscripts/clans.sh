@@ -21,13 +21,14 @@ fi
 removeInvalid.pl %alignment.path ../results/${JOBID}.fas
 
 ffindex_from_fasta ../results/${JOBID}.ffdata ../results/${JOBID}.ffindex ../results/${JOBID}.fas
-makeblastdb -in ../results/${JOBID}.fas -parse_seqids -dbtype prot
+makeblastdb -in ../results/${JOBID}.fas -dbtype prot
+
 
 blastp -query ../results/${JOBID}.fas \
        -db ../results/${JOBID}.fas \
        -outfmt "6 qacc sacc evalue" \
        -matrix %matrix.content \
-       -evalue 10  \
+       -evalue 1  \
        -gapopen ${GAPOPEN} \
        -gapextend ${GAPEXT} \
        -max_target_seqs ${SEQ_COUNT} \
