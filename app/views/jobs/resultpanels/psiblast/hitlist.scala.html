@@ -463,18 +463,24 @@ function toggleAliColor_(str){
     if(str == "letters" ){
         if(colorLetters)
             toggleAliColor("");
-        else
+        else {
             toggleAliColor("letters");
+            if(colorBackground)
+                this.colorBackground = !this.colorBackground;
+        }
         this.colorLetters = !this.colorLetters;
-        this.colorBackground = !this.colorBackground;
+
     }
     if(str == "background"){
         if(colorBackground)
             toggleAliColor("");
-        else
+        else {
             toggleAliColor("background");
+            if(colorLetters)
+                this.colorLetters = !this.colorLetters;
+        }
         this.colorBackground = !this.colorBackground;
-        this.colorLetters = !this.colorLetters;
+
     }
 }
 function resubmitSection_(){

@@ -484,16 +484,18 @@
                     toggleAliColor("");
                 else
                     toggleAliColor("letters");
+                    this.colorBackground = !this.colorBackground;
                 this.colorLetters = !this.colorLetters;
-                this.colorBackground = !this.colorBackground;
+
             }
             if(str == "background"){
                 if(colorBackground)
                     toggleAliColor("");
                 else
                     toggleAliColor("background");
+                    this.colorLetters = !this.colorLetters;
                 this.colorBackground = !this.colorBackground;
-                this.colorLetters = !this.colorLetters;
+
             }
         }
         function resubmitSection_(){
