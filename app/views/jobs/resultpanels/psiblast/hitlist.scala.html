@@ -188,7 +188,7 @@ var checkbox = "hitCheckbox";
 var hitlist;
 var query;
 var colorSS = false;
-var colorLetters = false;
+var colorLetters = true;
 var colorBackground = false;
 var selectAllBool = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
@@ -466,6 +466,7 @@ function toggleAliColor_(str){
         else
             toggleAliColor("letters");
         this.colorLetters = !this.colorLetters;
+        this.colorBackground = !this.colorBackground;
     }
     if(str == "background"){
         if(colorBackground)
@@ -473,6 +474,7 @@ function toggleAliColor_(str){
         else
             toggleAliColor("background");
         this.colorBackground = !this.colorBackground;
+        this.colorLetters = !this.colorLetters;
     }
 }
 function resubmitSection_(){
