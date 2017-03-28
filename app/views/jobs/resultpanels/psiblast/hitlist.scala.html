@@ -234,7 +234,8 @@ var chosenDB = null;
         var url = "/api/job/@jobID";
         $.getJSON(url, function(data_){
             chosenDB = data_.paramValues.standarddb;
-            evalueParam = data_.paramValues.inclusion_ethresh;
+            evalueParam = 0.001;
+            //evalueParam = data_.paramValues.inclusion_ethresh;
             // check all betther than evalue
             checkAllBetterThan(evalueParam);
         });
@@ -346,7 +347,7 @@ function checkAllBetterThan(evalue){
             $(":checkbox[value="+currentValue.num+"]").prop("checked","true");
             jsonData.accessions.push(currentValue.description[0].accession);
             jsonData.seqs.push(currentValue.hsps[0].hseq);
-            jsonData.index.push(currentValue.num);
+            jsonData.index.push(currentValue.num-1);
         }
     });
     return jsonData;
@@ -440,6 +441,7 @@ function forward_(tool){
             for(var i=0; i < dataTmp.index.length; i++){
                 // index + number of querys because alignment json contains query sequences in alignment first
                 var index = dataTmp.index[i];
+                console.log("index: " + index + "numofQuery" + numOfQuery);
                 forwardData += ">" + alignmentData[index + numOfQuery][0] + '\n';
                 forwardData += alignmentData[index+ numOfQuery][1].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
             }
