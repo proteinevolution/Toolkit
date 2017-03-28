@@ -18,23 +18,22 @@ if [ "%matrix.content" = "BLOSUM45" ] ; then
     GAPEXT=2
 fi
 
-mkdir ../results/tmp
+removeInvalid.pl %alignment.path ../results/${JOBID}.fas
 
-#Perform all-against-all sequence comparison using legacy BLAST
-java -Xmx24G -jar ${CLANSPATH}/allblast.jar \
-     -infile %alignment.path \
-     -blastpath "blastall -p blastp -e %evalue.content -F F -M BLOSUM80 -G ${GAPOPEN} -E ${GAPEXT} -g T -v ${SEQ_COUNT} -b ${SEQ_COUNT} -T T -I T " \
-     -formatdbpath formatdb \
-     -eval 10 \
-     -saveblast ../results/${JOBID}.nxnblast \
-     -tmpdir ../results/tmp/
+ffindex_from_fasta ../results/${JOBID}.ffdata ../results/${JOBID}.ffindex ../results/${JOBID}.fas
+makeblastdb -in ../results/${JOBID}.fas -parse_seqids -dbtype prot
 
+blastp -query ../results/${JOBID}.fas \
+       -db ../results/${JOBID}.fas \
+       -outfmt "6 qacc sacc evalue" \
+       -matrix %matrix.content \
+       -evalue 10  \
+       -gapopen ${GAPOPEN} \
+       -gapextend ${GAPEXT} \
+       -max_target_seqs ${SEQ_COUNT} \
+       -max_hsps 1 \
+       -out ../results/${JOBID}.nxnblast \
+       -seg no \
+       -num_threads %THREADS
 
-#Perform clustering
-java -Xmx24G -jar ${CLANSPATH}/blast2clans.jar \
-     -i ../results/${JOBID}.nxnblast \
-     -o ../results/${JOBID}.clans \
-     -savetype all \
-     -pval %clustering_pval_threshold.content
-
-rm -r ../results/tmp
+blast2clans.pl ../results/${JOBID} ../results/${JOBID}.fas

@@ -14,10 +14,7 @@
 GET           /                                       @controllers.Application.index
 
 # Dashboard for Admin
-#GET         /login                                         @controllers.Auth.login
-#GET         /logout                                        @controllers.Auth.logout()
-#GET         /@/backend                                  `  @controllers.Auth.backend
-#POST        /login                                         @controllers.Auth.backendLogin()
+
 POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)
 POST          /settings/memset                        @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
 
@@ -46,7 +43,6 @@ GET           /files/:mainID/:filename                @controllers.Application.f
 
 # Assets
 GET           /webjars/*file                          controllers.WebJarAssets.at(file)
-#GET           /assets/*file                           controllers.Assets.at(path="/public", file)
 GET           /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)
 
 
