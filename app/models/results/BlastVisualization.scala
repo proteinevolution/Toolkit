@@ -85,7 +85,7 @@ object BlastVisualization extends Constants {
       link += generateLink(pdbBaseLink, idPdb, id)
     }
     else if(db == "pfam"){
-      link += generateLink(pfamBaseLink, idPfam + "#tabview=tab1", id)
+      link += generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
     }
     else if(db == "ncbi"){
       link += generateLink(ncbiProteinBaseLink, id, id)
