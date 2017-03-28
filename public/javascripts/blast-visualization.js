@@ -17,8 +17,8 @@ var uniprotReg = "^([A-Z0-9]{10}|[A-Z0-9]{6})$";
 var scopReg = "^([defgh][0-9a-zA-Z\.\_]+)$";
 var mmcifReg = "^(...._[a-zA-Z])$";
 var mmcifShortReg = "^([0-9]...)$";
-var pfamReg = "^(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)$";
-var ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5})$";
+var pfamReg = "^(pfam[0-9]+&|^PF[0-9]+(\.[0-9]+)?)$";
+var ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?$|^[A-Z]{3}[0-9]{5})$";
 
 function toggleAliColor(str) {
     var i;
