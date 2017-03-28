@@ -336,64 +336,6 @@
 
 
 
-        function hhpred_manual() {
-            // Get selected templates and append parentID
-            var formData = new FormData(document.getElementById("hhpred_templates"));
-            if (!formData.has("templates")) {
-                alert("Please select at least one template for modeling");
-                return;
-            }
-            formData.append("parentid", '@{jobID}');
-
-            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_manual", null, false);
-            m.request({
-                method: checkRoute.method,
-                url: checkRoute.url,
-                data: formData,
-                serialize: function (data) {
-                    return data;
-                }
-            }).then(function (data) {
-                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_manual", data.jobID);
-                m.request({
-                    method: submitRoute.method,
-                    url: submitRoute.url,
-                    data: formData,
-                    serialize: function (data) {
-                        return data;
-                    }
-                });
-            });
-        }
-
-        function hhpred_automatic() {
-            // Get selected templates and append parentID
-            var formData = new FormData(document.getElementById("hhpred_templates"));
-            formData.append("parentid", '@{jobID}');
-
-            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_automatic", null, false);
-            m.request({
-                method: checkRoute.method,
-                url: checkRoute.url,
-                data: formData,
-                serialize: function (data) {
-                    return data;
-                }
-            }).then(function (data) {
-
-                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_automatic", data.jobID);
-                m.request({
-                    method: submitRoute.method,
-                    url: submitRoute.url,
-                    data: formData,
-                    serialize: function (data) {
-                        return data;
-                    }
-                });
-            });
-        }
-
-
 
 
         function toggleSelectAll() {
@@ -420,7 +362,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: '/templateAlignment/@jobID/' + accession
+                url: '/templateAlignmentHHblits/@jobID/' + accession
             }).done(function () {
                 $.ajax({
                     type: 'GET',
