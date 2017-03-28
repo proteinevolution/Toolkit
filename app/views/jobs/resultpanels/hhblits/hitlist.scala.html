@@ -482,18 +482,22 @@
             if(str == "letters" ){
                 if(colorLetters)
                     toggleAliColor("");
-                else
+                else {
                     toggleAliColor("letters");
-                    this.colorBackground = !this.colorBackground;
+                    if(colorBackground)
+                        this.colorBackground = !this.colorBackground;
+                }
                 this.colorLetters = !this.colorLetters;
 
             }
             if(str == "background"){
                 if(colorBackground)
                     toggleAliColor("");
-                else
+                else {
                     toggleAliColor("background");
-                    this.colorLetters = !this.colorLetters;
+                    if(colorLetters)
+                        this.colorLetters = !this.colorLetters;
+                }
                 this.colorBackground = !this.colorBackground;
 
             }
