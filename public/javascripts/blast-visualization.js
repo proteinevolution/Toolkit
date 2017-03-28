@@ -323,7 +323,7 @@ function getSingleLink(id){
           return generateLink(pdbBaseLink, idPdb,id);
           break;
       case 'pfam':
-          return generateLink(pfamBaseLink, idPfam+"#tabview=tab1",id);
+          return generateLink(pfamBaseLink, idPfam+"#tabview=tab0",id);
           break;
       case 'ncbi':
           return generateLink(ncbiProteinBaseLink, id,id);
