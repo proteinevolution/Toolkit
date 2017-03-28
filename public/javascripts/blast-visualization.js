@@ -468,3 +468,18 @@ function calcColor(prob) {
     }
     return [red, grn, blu];
 }
+
+
+function scrollToElem(num){
+
+    if (!$("#alignments").parent(".is-active").length) {
+        $("#accordion").foundation('down',$("#alignments"));
+    }
+    var offsetParent = $("#alignments").offset().top;
+    var pos = $('.hitCheckbox:input[type=checkbox][value='+num+']').offset().top;
+    console.log(pos+offsetParent)
+    $('html, body').animate({
+        scrollTop: pos+offsetParent + 'px'
+    }, 'fast');
+
+}
