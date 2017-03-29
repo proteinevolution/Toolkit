@@ -60,8 +60,7 @@
 }
 
 #line-element{
-    margin-top: 1rem
-    !important;
+    margin-top: 0.5rem !important;
     margin-bottom: 1rem !important;
 }
 
@@ -78,52 +77,11 @@
 
 .hhpred_extra_button {
     background-color: #eee !important;
+    margin-bottom: 0;
 }
 
 .hhpred_extra_button:hover {
     background-color: #d1d1d1 !important;
-}
-
-
-#hhpred_alignment_control{
-    width: 100%;
-    margin-top: 1em;
-    margin-bottom: 2em;
-    display: flex;
-
-}
-
-#hhpred_alignment_control ul {
-    width: 17em;
-}
-
-
-#hhpred_alignment_control a {
-    background-color: #eee;
-}
-
-#hhpred_alignment_control a:hover {
-    background-color: #d1d1d1
-}
-
-
-#hhpred_advanced {
-    width: 60%;
-    margin: 1em 1em 1em 0em;
-}
-
-#hhpred_advanced a {
-    float: right;
-    width: 20em;
-    margin: 0em 0em 1em 1em;
-}
-
-#hhpred_histo {
-    width: 40%;
-}
-
-#hhpred_histo a {
-    margin: 1em;
 }
 
 #psiblast_templates {
@@ -369,4 +327,8 @@ input {
 .noHits{
     width: 5em;
     margin-top: 3em;
+}
+
+#htb_wrapper {
+    margin-top: 1em;
 }
