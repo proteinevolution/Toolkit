@@ -3,7 +3,7 @@
 source /ebio/abt1_share/toolkit_support1/code/bioprogs/env/environment.sh
 
 HHBLITS=${DATABASES}/hhblits/
-DB="uniclust30_2016_09";
+DB=$( grep "^[^#]" ${DATABASES}/hhblits/DB )
 
 
 MAPPINGFILE="uniclust_uniprot_mapping.tsv"
