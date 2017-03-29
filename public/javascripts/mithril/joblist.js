@@ -201,13 +201,13 @@ window.JobListComponent = {
             m("div", { id: "job-list-bottom" }, [
                 listTooLong ?   // Show only when list is longer than numVisibleItems
                     m("div", {
-                        class: "textcenter", // TODO Add class to gray out when onTopOfList == true
-                        onclick: this.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2" + this.index
+                        class: "joblistTop", // TODO Add class to gray out when onTopOfList == true
+                        onclick: this.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2"
                     ) : null,
                 shownList.map(function(job) { return job.view(ctrl) }),
                 listTooLong ?   // Show only when list is longer than numVisibleItems
                     m("div", {
-                        class: "textcenter", // TODO Add class to gray out when onBottomOfList == true
+                        class: "joblistBottom", // TODO Add class to gray out when onBottomOfList == true
                         onclick: this.scrollJobList(+numScrollItems, !onBottomOfList) }, "\u25bc"
                     ) : null
             ])
