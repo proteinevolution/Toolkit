@@ -1,0 +1,3 @@
+[submodule "public/javascripts/vendor/reformat"]
+	path = public/javascripts/vendor/reformat
+	url = https://github.com/zy4/reformat.js.git
