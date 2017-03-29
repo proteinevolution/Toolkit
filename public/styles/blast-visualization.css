@@ -131,7 +131,8 @@
 }
 
 #forwardModal {
-    width: 36em;
+    width: 38em;
+    height: 18em;
 }
 
 #forwardModal p {
@@ -149,12 +150,13 @@
 }
 
 #forwardModal .forwardFormLast {
-    width: 15%;
     float: right;
 }
 
 #forwardModal .nice-select, #forwardModal .nice-select ul {
     width: 12em;
+    margin-top: 1.75em;
+    margin-left: 0.25em;
 }
 
 #forward {
@@ -163,6 +165,8 @@
     color: white;
     margin-bottom: 0;
     margin-top: 2em;
+    font-size: 0.70em;
+
 }
 
 .forward_panel {
@@ -188,16 +192,16 @@
     font-size: 0.90em;
 }
 
-.select_forward div, .select_forward ul {
-    width: 20em;
+.select_forward ul {
+    top: auto !important;
+    bottom: 100%;
+    margin-bottom: 1px;
 }
-
-
 
 .forward_form {
    width: 99%;
    display: flex;
-   margin-top: 2em;
+   margin-top: 1em;
    margin-left: 0.25em;
    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
    overflow: auto;
@@ -225,8 +229,12 @@ label.forwardLabel input[type=radio] {
     margin: 1em;
 }
 
-.forwardFormLast {
-    width: 10%;
+#forwardWarning {
+    width: 100%;
+    color: black;
+    margin-bottom: 0;
+    margin-top: 1.9em;
+    font-size: 0.75em;
 }
 
 .hitCheckbox{
@@ -234,7 +242,7 @@ label.forwardLabel input[type=radio] {
 }
 
 .result_inputs {
-    width: 4em;
+    width: 7em;
     height: 2em;
     margin-left: 0.5em;
     margin-bottom: 0;
