@@ -872,6 +872,16 @@ ParameterSelectComponent = {
                         last_valid_selection = $('#hhsuitedb').val();
                     }
                 });
+            }).bind(this.mo),
+
+            solveDBSelection: (function () {
+                if((($('#hhsuitedb').val() != "") || ($('#proteomes').val() != ""))) {
+                    $('.inputDBs').removeAttr("required");
+                }
+
+                if((($('#hhsuitedb').val() == "") && ($('#proteomes').val() == ""))) {
+                    $('.inputDBs').prop("required", true);
+                }
             }).bind(this.mo)
         }
     },
@@ -881,8 +891,10 @@ ParameterSelectComponent = {
             name: args.param.name,
             "class": "wide",
             id: args.param.name,
+            "required": "required",
             //if max count of chosen databases is needed
             //onclick: ctrl.preventMultiSelection
+            onclick: ctrl.solveDBSelection
         };
         if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
             paramAttrs["multiple"] = "multiple";
