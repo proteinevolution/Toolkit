@@ -2,6 +2,7 @@
  * Created by snam on 03.03.17.
  */
 
+var seqLimit;
 
 validation = function(elem, isInit, ctx) {
 
@@ -41,6 +42,7 @@ validation = function(elem, isInit, ctx) {
                      **/
                     var tcoffeeTarget = new multiseqVal($(elem));
                     tcoffeeTarget.accept(mustHave2Visitor);
+                    seqLimit = 2000;
 
                     break;
 
@@ -55,6 +57,7 @@ validation = function(elem, isInit, ctx) {
                      **/
                     var mafftTarget = new multiseqVal($(elem));
                     mafftTarget.accept(mustHave2Visitor);
+                    seqLimit = 2000;
 
                     break;
 
@@ -69,6 +72,7 @@ validation = function(elem, isInit, ctx) {
                      **/
                     var muscleTarget = new multiseqVal($(elem));
                     muscleTarget.accept(mustHave2Visitor);
+                    seqLimit = 2000;
 
                     break;
 
@@ -84,6 +88,7 @@ validation = function(elem, isInit, ctx) {
 
                     var clustaloTarget = new multiseqVal($(elem));
                     clustaloTarget.accept(mustHave2Visitor);
+                    seqLimit = 2000;
 
                     break;
 
@@ -99,6 +104,7 @@ validation = function(elem, isInit, ctx) {
 
                     var kalignTarget = new multiseqVal($(elem));
                     kalignTarget.accept(mustHave2Visitor);
+                    seqLimit = 2000;
 
                     break;
 
@@ -114,13 +120,14 @@ validation = function(elem, isInit, ctx) {
 
                     var msaprobsTarget = new multiseqVal($(elem));
                     msaprobsTarget.accept(mustHave2Visitor);
+                    seqLimit = 2000;
 
                     break;
 
                 case "hmmer":
                     /** validation model for hmmer:
                      * Input has to be a single FASTA sequence
-                     * or aligned FASTA with at least twp sequences.
+                     * or aligned FASTA with at least two sequences.
                      * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
                      * first space, in the header are used as ID.
                      */
@@ -141,6 +148,7 @@ validation = function(elem, isInit, ctx) {
 
                     var mmseqs2Target = new multiseqVal($(elem));
                     mmseqs2Target.accept(mustHave2Visitor);
+                    seqLimit = 20000;
 
                     break;
 
@@ -155,6 +163,7 @@ validation = function(elem, isInit, ctx) {
 
                     var hhfilter2Target = new alignmentVal($(elem));
                     hhfilter2Target.accept(mustHave2Visitor);
+                    seqLimit = 10000;
 
                     break;
 
@@ -324,9 +333,14 @@ var multiseqVal = function(el){
         visitor.visit(self);
     };
 
-
     if (!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
         feedback(false, "this is no fasta!", "error");
+
+    else if (el.reformat('maxseqnumber', seqLimit)) {
+        feedback(false, "Input contains too many sequences!", "error");
+    }
+    else if (!el.reformat('maxlength',1000000))
+        feedback(false, "Input too large!", "error");
 
     else if (!el.reformat('uniqueids'))
         feedback(false, "FASTA but identifiers are not unique!", "error");
