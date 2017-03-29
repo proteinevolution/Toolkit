@@ -26,7 +26,7 @@ else
              -id 90
 
     #Convert to fasta format
-    reformat.pl a3m fas ../results/${JOBID}.a3m $(readlink -f ../results/${JOBID}.fas)
+    reformat_hhsuite.pl a3m fas ../results/${JOBID}.a3m $(readlink -f ../results/${JOBID}.fas)
 
     $HMMERPATH/hmmbuild --cpu %THREADS \
              -n "${JOBID}" \
