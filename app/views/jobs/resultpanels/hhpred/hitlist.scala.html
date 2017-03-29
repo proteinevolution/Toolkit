@@ -58,17 +58,13 @@
         <li class="accordion-item" data-accordion-item>
             <a href="#" class="accordion-title">Alignments</a>
             <div id="alignments" class="accordion-content table-scroll" data-tab-content>
-                <div id="hhpred_alignment_control">
-                    <div id="hhpred_histo">
-                        <a type="button" class="button success tiny hhpred_extra_button" onclick="toggleHistogram()">Histogram</a>
-                    </div>
-                    <div id="hhpred_advanced" >
-                        <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
-                        <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_manual()">Manual template selection</a>
-                        <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_automatic()">Select Templates Automatically</a>
-                        <a type="button" class="button success tiny hhpred_extra_button" onclick="resubmitHmm();">
-                            Resubmit HMM</a>
-                    </div>
+                <div>
+                    <a type="button" class="button success tiny hhpred_extra_button" onclick="toggleHistogram()">Histogram</a>
+                    <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
+                    <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_manual()">Manual template selection</a>
+                    <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_automatic()">Select Templates Automatically</a>
+                    <a type="button" class="button success tiny hhpred_extra_button" onclick="resubmitHmm();">Resubmit HMM</a>
+                    <hr id="line-element" colspan="4" class="horizontal-line">
                 </div>
                 <div class="colorOpts">
                     <a onclick="toggleSelectAll()" type="button"><span id="selectAllSeq">Select all</span></a>
