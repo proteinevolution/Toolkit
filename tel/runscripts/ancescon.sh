@@ -1,4 +1,4 @@
-reformat.pl fas clu %alignment.path "$(readlink -f ../results/alignment.clu)"
+reformat_hhsuite.pl fas clu %alignment.path "$(readlink -f ../results/alignment.clu)"
 
 
 # Remove CLUSTAL text in alignment.clu
