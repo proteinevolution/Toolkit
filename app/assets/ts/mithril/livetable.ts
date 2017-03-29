@@ -76,23 +76,32 @@ class LiveTable {
         return m('div', [
             //m('div', {"class" : "clusterLoad column large-4"}, ""),
             m('table', {"class" : "liveTable column large-12"}, [
-                m('thead', [
-                    m('tr', [
-                        m('th', { id: 'currentLoadLabel'} , 'Cluster load'),
-                        m('th', { id: 'lastJobLabel'}, 'Last own job'),
-                        m('th', { id: 'lastJobsLabel'}, 'Total own jobs')
-                    ])]
-                )], [
+               ], [
                 m('tbody',
                     [m('tr', [
-                        m('td', { id: 'currentLoad', style: "color: " + colorString}, "" + loadString),
+                        m('td',{id: 'clusterLoadString'}, "Clusterload"),
+                        m('td', {id: 'currentLoad', style: "color: " + colorString}, [
+                        m("ul",
+                            m("li"),
+                            m("li"),
+                            m("li"),
+                            m("li"),
+                            m("li"),
+                            m("li"),
+                            m("li"),
+                        )
+                        ]),
+                        m('td',{id: 'currentLoadNumber'}, "" + loadString),
+                        m('td',{id: 'separator'}),
                         m('td', { id: 'lastJobName' },
                             LiveTable.lastJob != null ?
-                                m('a', { href: "/#/jobs/" + LiveTable.lastJob.jobID}, LiveTable.lastJob.toolnameLong) :
+                                m('a', { href: "/#/jobs/" + LiveTable.lastJob.jobID}, "Last Job: " + LiveTable.lastJob.toolnameLong) :
                                 m('b', "No Jobs")
                         ),
-                        m('td',
-                            m('a', { href: "/#/joblist/", style: "font-weight: bold;" }, "" + LiveTable.totalJobs)
+                        m('td', {id: "joblistIcon"},
+                            m('a', {href: "/#/joblist/", style: "font-weight: bold;" }, [
+                                m("i", {class: "icon-list"})
+                            ])
                         )
                     ])]
                 )
