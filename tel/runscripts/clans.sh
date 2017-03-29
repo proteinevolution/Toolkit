@@ -18,14 +18,15 @@ if [ "%matrix.content" = "BLOSUM45" ] ; then
     GAPEXT=2
 fi
 
-removeInvalid.pl %alignment.path ../results/${JOBID}.fas
+#remove '-' from sequences, merge sequences split into multiple lines, create an indexed copy of the FASTA file
+prepareForClans.pl %alignment.path ../results/${JOBID}.0.fas ../results/${JOBID}.1.fas
 
-ffindex_from_fasta ../results/${JOBID}.ffdata ../results/${JOBID}.ffindex ../results/${JOBID}.fas
-makeblastdb -in ../results/${JOBID}.fas -dbtype prot
+#BLAST formatted database
+makeblastdb -in ../results/${JOBID}.1.fas -dbtype prot
 
-
-blastp -query ../results/${JOBID}.fas \
-       -db ../results/${JOBID}.fas \
+#NXN BLAST
+blastp -query ../results/${JOBID}.1.fas \
+       -db ../results/${JOBID}.1.fas \
        -outfmt "6 qacc sacc evalue" \
        -matrix %matrix.content \
        -evalue 1  \
@@ -37,4 +38,7 @@ blastp -query ../results/${JOBID}.fas \
        -seg no \
        -num_threads %THREADS
 
-blast2clans.pl ../results/${JOBID} ../results/${JOBID}.fas
+blast2clans.pl ../results/${JOBID} ../results/${JOBID}.0.fas ${SEQ_COUNT}
+
+rm ../results/${JOBID}.nxnblast
+rm ../results/${JOBID}*fas*
