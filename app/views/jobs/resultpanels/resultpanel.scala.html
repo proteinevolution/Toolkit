@@ -52,10 +52,11 @@
             <select id="forwardSelect">
                 <option value="">Select Tool</option>
                 <div>
-                @for(forwardTool <- {
-                    tool.forward
-                }) {
-                    <option value="@forwardTool">@forwardTool</option>
+                @for(forwardTool <- {tool.forwardAlignment}) {
+                    <option class="alignmentOptions"value="@forwardTool">@forwardTool</option>
+                }
+                @for(forwardTool <- {tool.forwardMultiSeq}) {
+                    <option class="multiSeqOptions" value="@forwardTool">@forwardTool</option>
                 }
                 </div>
             </select>
@@ -76,8 +77,9 @@
 
 <script>
 
-        $('#forwardSelect').niceSelect();
         $("#forwardModal").foundation();
+        $('.alignmentOptions').show();
+        $('.multiSeqOptions').hide();
 
         //default check radio buttons
         $("#selectedHits").prop("checked", true);
@@ -87,8 +89,13 @@
             if ($(this).attr('id') == 'fullLength') {
 
                 $('#forwardWarning').css({display: 'inherit'});
+                $('.alignmentOptions').hide();
+                $('.multiSeqOptions').show();
             } else {
                 $('#forwardWarning').css({display: 'none'});
+                $('.alignmentOptions').show();
+                $('.multiSeqOptions').hide();
+
             }
 
         });
