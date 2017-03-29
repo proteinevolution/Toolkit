@@ -1,11 +1,11 @@
-reformat.pl fas fas %alignment.path %alignment.path -uc -r -M first
+reformat_hhsuite.pl fas fas %alignment.path %alignment.path -uc -r -M first
 
 cp ../params/alignment ../params/alignment.in
 
 
 deal_with_sequence.pl ../params/alignment ../params/alignment.in  ../results/buffer
 
-reformat.pl fas a3m ../params/alignment ../params/alignment.a3m -uc -num -r -M first
+reformat_hhsuite.pl fas a3m ../params/alignment ../params/alignment.a3m -uc -num -r -M first
 
 
 hhmake -i ../params/alignment.a3m -o ../results/alignment.hhm -pcm 2 -pca 0.5 -pcb 2.5 -cov 20

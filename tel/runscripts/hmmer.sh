@@ -15,7 +15,6 @@ else
             -v 2 \
             -i %alignment.path \
             -d %UNIPROT  \
-            -o ../results/${JOBID}.hhblits \
             -oa3m ../results/${JOBID}.a3m \
             -n %max_hhblits_iter.content \
             -mact 0.35
@@ -26,7 +25,7 @@ else
              -id 90
 
     #Convert to fasta format
-    reformat.pl a3m fas ../results/${JOBID}.a3m $(readlink -f ../results/${JOBID}.fas)
+    reformat_hhsuite.pl a3m fas ../results/${JOBID}.a3m $(readlink -f ../results/${JOBID}.fas)
 
     $HMMERPATH/hmmbuild --cpu %THREADS \
              -n "${JOBID}" \
@@ -36,8 +35,6 @@ fi
 
     $HMMERPATH/hmmsearch --cpu %THREADS \
           -E %eval_cutoff.content \
-          --tblout ../results/${JOBID}.tbl \
-          --domtblout ../results/${JOBID}.domtbl \
           -o ../results/${JOBID}.outfile \
           -A ../results/${JOBID}.msa_sto \
           ../results/${JOBID}.hmm  %STANDARD/%standarddb.content
@@ -48,4 +45,3 @@ fi
 
     hmmer2json.py -i ../results/${JOBID}.outfilefl \
                   -o ../results/${JOBID}.json
-                  

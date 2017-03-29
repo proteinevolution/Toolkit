@@ -28,7 +28,7 @@ json2fasta.py ../results/${JOBID}.json ../results/${JOBID}.fasta
 hhfilter -i $(readlink -f ../results/out.a3m) \
          -o $(readlink -f ../results/out.full.a3m) \
          -diff 100
-reformat.pl a3m fas \
+reformat_hhsuite.pl a3m fas \
             $(readlink -f ../results/out.full.a3m) \
             $(readlink -f ../results/out.full.fas) \
             -d 160
@@ -46,7 +46,7 @@ hhfilter -i $(readlink -f ../results/out.a3m) \
          -diff 50
 
 
-reformat.pl -r a3m fas \
+reformat_hhsuite.pl -r a3m fas \
     $(readlink -f ../results/out.reduced.a3m) \
     $(readlink -f ../results/out.reduced.fas)
 
