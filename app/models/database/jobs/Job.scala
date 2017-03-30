@@ -16,13 +16,14 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
                parentID    : Option[BSONObjectID] = None, // ID of the Parent Job
                jobID       : String,                      // User visible ID of the Job
                ownerID     : Option[BSONObjectID] = None, // User to whom the Job belongs
+               project     : Option[BSONObjectID] = None,
                status      : JobState,                    // Status of the Job
                deletion    : Option[JobDeletion] = None,      // Deletion Flag showing the reason for the deletion
                tool        : String,                      // Tool used for this Job
                label       : Option[String],
                statID      : String = "",                 //
                watchList   : List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
-               commentList : List[BSONObjectID] = List.empty, // List of comments for the Job
+               commentList : List[BSONObjectID] = List.empty, // List of Option[BSONObjectID]comments for the Job
                clusterData : Option[JobClusterData] = None,  // Cluster Data
                dateCreated : Option[DateTime],            // Creation time of the Job
                dateUpdated : Option[DateTime],            // Last Updated on
@@ -42,6 +43,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
   def cleaned() : JsObject = {
 
     Json.obj("jobID"     -> jobID,
+             "project"   -> project,
              "state"     -> status,
              "createdOn" -> dateCreated.get,
              "toolname"  -> tool,
@@ -57,6 +59,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
   def withOwnerName(nameLogin : String) : JsObject = {
     val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     Json.obj(Job.JOBID       -> jobID,
+             Job.PROJECT     -> project,
              Job.STATUS      -> status,
              Job.OWNER       -> {if (ownerID.isDefined) nameLogin else "-"},
              Job.TOOL        -> tool,
@@ -73,6 +76,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
 case class Jobitem(mainID: String,
                    newMainID: String,  // Used for job resubmission
                    jobID: String,
+                   project: String,
                    state: JobState,
                    ownerName : String,
                    createdOn: String,
@@ -89,6 +93,7 @@ object Job {
   val IDDB          = "_id"           //              ID in MongoDB
   val PARENTID      = "parentID"      //              ID of the parent job
   val JOBID         = "jobID"         //              ID for the job
+  val PROJECT       = "project"       //              project id
   val OWNERID       = "ownerID"       //              ID of the job owner
   val OWNER         = "owner"         //              Name of the job owner
   val STATUS        = "status"        //              Status of the job field
@@ -113,6 +118,7 @@ object Job {
         val parentID    = (obj \ PARENTID).asOpt[String]
         val jobID       = (obj \ JOBID).asOpt[String]
         val ownerID     = (obj \ OWNERID).asOpt[String]
+        val project     = (obj \ PROJECT).asOpt[String]
         val status      = (obj \ STATUS).asOpt[JobState]
         val deletion    = (obj \ DELETION).asOpt[JobDeletion]
         val tool        = (obj \ TOOL).asOpt[String]
@@ -128,6 +134,7 @@ object Job {
           parentID    = None,
           jobID       = "",
           ownerID     = Some(BSONObjectID.generate()),
+          project     = Some(BSONObjectID.generate()),
           status      = status.get,
           deletion    = deletion,
           tool        = "",
@@ -149,6 +156,7 @@ object Job {
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
       OWNERID     -> job.ownerID,
+      PROJECT     -> job.project,
       STATUS      -> job.status,
       DELETION    -> job.deletion,
       TOOL        -> job.tool,
@@ -171,6 +179,7 @@ object Job {
           parentID    = bson.getAs[BSONObjectID](PARENTID),
           jobID       = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
           ownerID     = bson.getAs[BSONObjectID](OWNERID),
+          project     = bson.getAs[BSONObjectID](PROJECT),
           status      = bson.getAs[JobState](STATUS).getOrElse(Error),
           deletion    = bson.getAs[JobDeletion](DELETION),
           tool        = bson.getAs[String](TOOL).getOrElse(""),
@@ -195,6 +204,7 @@ object Job {
       PARENTID    -> job.parentID,
       JOBID       -> job.jobID,
       OWNERID     -> job.ownerID,
+      PROJECT     -> job.project,
       STATUS      -> job.status,
       DELETION    -> job.deletion,
       TOOL        -> job.tool,
