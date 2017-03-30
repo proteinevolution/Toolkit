@@ -97,9 +97,9 @@ onMessage = function(event : MessageEvent) : any {
             break;
         case "UpdateLoad":
             //console.log(message.load);
-            m.startComputation();
+            //m.startComputation(); Don't redraw all the time!
             LiveTable.updateLoad(message.load);
-            m.endComputation();
+            //m.endComputation();
             break;
         case "Ping":
             sendMessage({
