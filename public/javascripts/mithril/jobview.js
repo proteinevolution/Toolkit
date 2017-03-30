@@ -267,7 +267,10 @@ JobTabsComponent = {
                             type: "button",
                             class: "button small button_fullscreen",
                             value: "Add to project",
-                            onclick: ""
+                            onclick: function() {
+                                $('#projectReveal').foundation('open');
+                            },
+                            config: foundationConfig
                         })
                     )] : [],
                 m("li", { style: "float: right;" },
@@ -569,7 +572,7 @@ JobSubmissionComponent = {
             //    : null,
             //args.isJob ? m("input", { type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob })
             //    : null,
-            this.jobIDComponent(ctrl)
+            this.jobIDComponent(ctrl), m(ProjectComponent, {})
         ])
     }
 };

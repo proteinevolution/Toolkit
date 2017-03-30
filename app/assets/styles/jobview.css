@@ -549,7 +549,19 @@ font-size: 0.65em !important;
     text-align: center;
 }
 
-#submit_modal p {
+#projectReveal {
+    background-color: white;
+    width: 200px;
+    height: 6em;
+    border: 1px solid darkgray;
+    font-size: 0.9em;
+    color: black;
+    margin-top: 5em;
+    text-align: center;
+
+}
+
+#submit_modal p, #projectReveal p {
     width: 50%;
     margin: auto;
     font-weight: bold;
@@ -567,6 +579,13 @@ font-size: 0.65em !important;
     background-color: #a1a1a1 ;
 }
 
+#projectInput {
+    max-width: 156px;
+}
+
+#findProject {
+    padding-bottom: 2px;
+}
 
 map[name="blastmap"] area { cursor: pointer; }
 
