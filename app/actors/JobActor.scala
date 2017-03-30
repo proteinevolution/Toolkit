@@ -190,6 +190,7 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
       val job = Job(mainID      = BSONObjectID.generate(),
                     jobID       = jobID,
                     ownerID     = Some(user.userID),
+                    //project     = Some(BSONObjectID.generate()),
                     status      = Submitted,
                     tool        = toolname,
                     clusterData = Some(clusterData),
