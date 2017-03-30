@@ -55,6 +55,8 @@ class LiveTable {
         LiveTable.load = load;
     }
     static controller (args : any) : any {
+
+        m.redraw.strategy("diff");
         if (args) {
             LiveTable.lastJob   = args.lastJob   ? args.lastJob          : LiveTable.lastJob;
             LiveTable.totalJobs = args.totalJobs ? args.totalJobs        : LiveTable.totalJobs;
