@@ -179,5 +179,4 @@ class ParamAccess @Inject() (tel: TEL) {
   final val DOMAIN_BOUND_DETECTION = select("domain_bound_detection", "Domain boundary detection")
   final val ALN_STRINGENCY = select ("aln_stringency", "Alignment stringency")
   final val OUTPUT_ORDER = select ("output_order", "Output the alignment in:")
-  final val CLUSTERING_PVAL_THRESHOLD = Param("clustering_pval_threshold",Decimal("0.01", Some(0),Some(1)),1, "Select P-value cutoff for clustering")
 }

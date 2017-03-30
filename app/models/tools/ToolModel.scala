@@ -307,7 +307,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // CLANS
       ("clans", "CLANS", "clan", "classification", "",
-        Seq(paramAccess.MULTISEQ, paramAccess.EVALUE, paramAccess.MATRIX, paramAccess.CLUSTERING_PVAL_THRESHOLD),
+        Seq(paramAccess.MULTISEQ, paramAccess.MATRIX),
         Seq.empty,Seq.empty),
 
     // PHYLIP
