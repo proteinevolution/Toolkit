@@ -1,10 +1,10 @@
 # fetch parameters from the parent here
-cp ../../%parentid.content/results/hhsearch.hhr ../params
+cp ../../%parentid.content/results/${JOBID}.hhr ../params
 cp ../../%parentid.content/results/query.a3m ../params
 
 mkdir -p ../results/cif
 
-checkTemplates.pl -i   ../params/hhsearch.hhr \
+checkTemplates.pl -i   ../params/${JOBID}.hhr \
                   -pir ../results/tomodel.pir \
                   -cif %CIF \
                   -o   $(readlink -f ../results/cif) \
