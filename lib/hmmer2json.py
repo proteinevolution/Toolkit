@@ -38,16 +38,18 @@ def parse_user_arguments(argv):
     return arguments
 
 
-def hit2dict(hit):
+def hit2dict(hit, num):
     """
     Turns Biopython Hit object into dictionary
     that can be easily serialized by json.
 
     :param hit: Bio.SearchIO._model.Hit object
+    :param num: number in the ordered list of hits
     :return: dictionary representation of an object
     """
 
     hit_json = {
+        'num': num,
         'description': hit.description,
         'id': hit.id,
         'bias': hit.bias,
@@ -60,16 +62,20 @@ def hit2dict(hit):
     return hit_json
 
 
-def hsp2dict(hsp):
+def hsp2dict(hsp, num):
     """
     Turns Biopython HSP object into dictionary
     that can be easily serialized by json.
 
     :param hsp: Bio.SearchIO._model.HSP
+    :param num: number in the ordered list of HSPs, same
+                as for the hit representing given HSP in
+                the hit list.
     :return:
     """
 
     hsp_json = {
+        'num': num,
         'bias': hsp.bias,
         'bitscore': hsp.bitscore,
         'evalue': hsp.evalue,
@@ -86,6 +92,7 @@ def hsp2dict(hsp):
         'hit_seq': str(hsp.hit.seq),
         'hit_start': hsp.hit_start,
         'hit_end': hsp.hit_end,
+        'hit_len': hsp.hit_end - hsp.hit_start + 1,
         'aln_ann': hsp.aln_annotation
     }
 
@@ -98,6 +105,10 @@ def hmmer2json(in_file, evalue):
     it into data that can be serialized with json.
 
     :param in_file: Input file with hmmer results
+    :param evalue: e-value of inclusion threshold,
+                   based on that hits and HSPs will
+                   be in the above or below threshold
+                   lists.
     :return: json dict
     """
 
@@ -128,12 +139,17 @@ def hmmer2json(in_file, evalue):
             results['description'] = qres.description
             # print('Nr of hits: %d' % len(qres.hits))
 
+            i = 1
             # Read hits table and add to results dict
             for hit in qres.hits:
                 if hit.evalue <= evalue:
-                    results['hits']['above_threshold'].append(hit2dict(hit))
+                    results['hits']['above_threshold'].append(hit2dict(hit=hit,
+                                                                       num=i))
+                    i += 1
                 else:
-                    results['hits']['below_threshold'].append(hit2dict(hit))
+                    results['hits']['below_threshold'].append(hit2dict(hit=hit,
+                                                                       num=i))
+                    i += 1
 
             # Read HSPs to a temporary dict and filter to
             # add only best scoring domain
@@ -142,32 +158,37 @@ def hmmer2json(in_file, evalue):
                 if hsp.hit_id not in hsps:
                     hsps[hsp.hit_id] = hsp
                 else:
-                    favorite = min(hsp, hsps[hsp.hit_id], key=lambda x: x.evalue)
+                    favorite = min(hsp, hsps[hsp.hit_id],
+                                   key=lambda x: x.evalue)
                     hsps[favorite.hit_id] = favorite
 
     # Add unique domains in the same order as hits
     for hit in results['hits']['above_threshold']:
-        results['hsps']['above_threshold'].append(hsp2dict(hsps[hit['id']]))
+        curr_hsp = hsps[hit['id']]
+        results['hsps']['above_threshold'].append(hsp2dict(hsp=curr_hsp,
+                                                           num=hit['num']))
 
     for hit in results['hits']['below_threshold']:
-        results['hsps']['below_threshold'].append(hsp2dict(hsps[hit['id']]))
+        curr_hsp = hsps[hit['id']]
+        results['hsps']['below_threshold'].append(hsp2dict(hsp=curr_hsp,
+                                                           num=hit['num']))
 
     return results
 
 
-def main(args):
+def main(arg):
     """Runs parser on input data"""
 
     # If output file is not specified - specify default
-    if not args.output_file:
-        args.output_file = '%s.json' % \
-                           args.input_file[:args.input_file.rfind('.')]
+    if not arg.output_file:
+        arg.output_file = '%s.json' % \
+                           arg.input_file[:args.input_file.rfind('.')]
 
     # Read HMMER output into JSON serializable format
-    json_data = hmmer2json(args.input_file, args.e_value)
+    json_data = hmmer2json(arg.input_file, arg.e_value)
 
     # Dump output in JSON format
-    with open(args.output_file, 'w') as handle:
+    with open(arg.output_file, 'w') as handle:
         json.dump(json_data, handle)
 
 
