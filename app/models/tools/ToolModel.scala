@@ -142,8 +142,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         case None => Seq.empty
       }
 
-      case "aln2plot" => Future.successful(Seq(("Hydrophobicity", views.html.jobs.resultpanels.image(s"/files/$jobID/hydrophobicity.png")),
-        ("SideChainVolume", views.html.jobs.resultpanels.image(s"/files/$jobID/side_chain_volume.png"))))
+      case "aln2plot" => Future.successful(Seq(("Plots", views.html.jobs.resultpanels.aln2plot(jobID))))
 
       case "phylip" => Future.successful(Seq(("NeighborJoiningTree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_nj.tree", "nj_div")),
         ("NeighborJoiningResults", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.nj")),
@@ -308,7 +307,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // CLANS
       ("clans", "CLANS", "clan", "classification", "",
-        Seq(paramAccess.MULTISEQ, paramAccess.EVALUE, paramAccess.MATRIX, paramAccess.CLUSTERING_PVAL_THRESHOLD),
+        Seq(paramAccess.MULTISEQ, paramAccess.MATRIX),
         Seq.empty,Seq.empty),
 
     // PHYLIP
