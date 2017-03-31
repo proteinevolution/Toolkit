@@ -356,7 +356,7 @@ class alignmentVal implements ToolkitValidator {
         else if (this.elem.reformat('maxseqnumber', seqLimit))
             feedback(false, "Input contains too many sequences!", "error");
 
-        else if (!this.elem.reformat('maxlength', 100000))
+        else if (!this.elem.reformat('maxlength', 1000000))
             feedback(false, "Input too large!", "error");
 
         else if (!this.elem.reformat('uniqueids'))
