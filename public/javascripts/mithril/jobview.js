@@ -262,6 +262,17 @@ JobTabsComponent = {
                         id: "notesTab"
                         //"class": "hasNotes"
                     }, "Notes")) ] : [] ,
+                document.cookie.split("&username=")[1] != 'invalid' ? [m("li", { style: "float: right;" },
+                        m("input", {
+                            type: "button",
+                            class: "button small button_fullscreen",
+                            value: "Add to project",
+                            onclick: function() {
+                                $('#projectReveal').foundation('open');
+                            },
+                            config: foundationConfig
+                        })
+                    )] : [],
                 m("li", { style: "float: right;" },
                     m("input", {
                         type:    "button",
@@ -395,9 +406,9 @@ JobSubmissionComponent = {
         return jobID;
     },
     jobIDComponent : function (ctrl) {
-        var style = "float:right;background-color:";
-        style += JobSubmissionComponent.currentJobID === "" ? "#ffffff;" :
-            (JobSubmissionComponent.jobIDValid ? "#dbffdb;" : "#da4453;");
+        var style = "float:right;border:";
+        style += JobSubmissionComponent.currentJobID === "" ? "1px solid #ffffff;" :
+            (JobSubmissionComponent.jobIDValid ? "1px solid green;" : "1px solid #da4453;");
         return m("input", { type: "text",
             id: "jobID",
             class: "jobid",
@@ -561,7 +572,7 @@ JobSubmissionComponent = {
             //    : null,
             //args.isJob ? m("input", { type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob })
             //    : null,
-            this.jobIDComponent(ctrl)
+            this.jobIDComponent(ctrl), m(ProjectComponent, {})
         ])
     }
 };

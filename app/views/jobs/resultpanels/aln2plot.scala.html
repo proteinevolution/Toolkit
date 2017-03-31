@@ -1,0 +1,10 @@
+@(jobID: String)(implicit request: RequestHeader)
+@import java.lang.String; var hydroPlot="/files/" + jobID + "/" + jobID + "_hyd.png"; var scvolPlot="/files/" + jobID + "/" + jobID + "_scvol.png";
+
+<div>
+    <br/><br/>
+    <img hspace="34" src="@hydroPlot">
+    <br/><br/><br/>
+    <img hspace="17" src="@scvolPlot">
+    <br/><br/>
+</div>
