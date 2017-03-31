@@ -94,6 +94,7 @@ final class Service @Inject() (webJarAssets                                     
       (JsPath \ "mainID").write[String] and
       (JsPath \ "newMainID").write[String] and
       (JsPath \ "jobID").write[String] and
+      (JsPath \ "project").write[String] and
       (JsPath \ "state").write[JobState] and
       (JsPath \ "ownerName").write[String] and
       (JsPath \ "createdOn").write[String] and
@@ -157,6 +158,7 @@ final class Service @Inject() (webJarAssets                                     
                   Jobitem(job.mainID.stringify,
                     BSONObjectID.generate().stringify, // Used for resubmitting
                     job.jobID,
+                    BSONObjectID.generate().stringify,
                     job.status,
                     ownerN,
                     DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get),
