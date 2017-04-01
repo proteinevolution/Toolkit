@@ -45,7 +45,7 @@ JobLineComponent = {
             m(HelpModalComponent, { toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong }),
             m("span", { class: "toolname" }, [
                 m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
-                args.job().tool.toolnameLong,
+                m("a", { href: "/#/tools/" + args.job().tool.toolname }, args.job().tool.toolnameLong),
                 m("a", { config: helpModalAccess.bind(args) },
                     m("i", { class: "icon-information_white helpicon" })
                 )
@@ -430,7 +430,7 @@ JobSubmissionComponent = {
                 newJobID = "";
                 JobSubmissionComponent.jobIDValid = true;
             }
-            JobSubmissionComponent.currentJobID = newJobID;
+            JobSubmissionComponent.checkJobID(newJobID);
         }
         return {
             submit: function(startJob) {

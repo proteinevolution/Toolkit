@@ -40,6 +40,6 @@ m.route(document.getElementById('main-content'), '/', {
     '/joblist': m(JobManager)
 });
 
-//m.mount(document.getElementById('mithril-overlay-content'), JobListComponent);
+m.mount(document.getElementById('off-canvas-joblist'), JobListComponent);
 
 

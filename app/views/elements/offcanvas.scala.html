@@ -5,40 +5,32 @@
     <li>
         <a>Search</a>
         <ul class="vertical menu">
-            @for(tool <- tools) {
-                @if(tool.category == "search") {
-                    <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-                }
+            @for(tool <- tools.filter(_.category == "search")) {
+                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
         </ul>
     </li>
     <li>
         <a>Alignment</a>
         <ul class="vertical menu">
-        @for(tool <- tools) {
-            @if(tool.category == "alignment") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-            }
+        @for(tool <- tools.filter(_.category == "alignment")) {
+            <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>
     </li>
     <li>
         <a>Sequence Analysis</a>
         <ul class="vertical menu">
-        @for(tool <- tools) {
-            @if(tool.category == "seqanal") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-            }
+        @for(tool <- tools.filter(_.category == "seqanal")) {
+            <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>
     </li>
     <li>
         <a>2ary Structure</a>
         <ul class="vertical menu">
-        @for(tool <- tools) {
-            @if(tool.category == "2ary") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-            }
+        @for(tool <- tools.filter(_.category == "2ary")) {
+            <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>
 
@@ -46,30 +38,24 @@
     <li>
         <a>3ary Structure</a>
         <ul class="vertical menu">
-        @for(tool <- tools) {
-            @if(tool.category == "3ary" || tool.optional == "3ary") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-            }
+        @for(tool <- tools.filter(tool => tool.category == "3ary" || tool.optional == "3ary")) {
+            <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>
     </li>
     <li>
         <a>Classification</a>
         <ul class="vertical menu">
-        @for(tool <- tools) {
-            @if(tool.category == "classification") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-            }
+        @for(tool <- tools.filter(_.category == "classification")) {
+            <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>
     </li>
     <li>
         <a>Utilities</a>
         <ul class="vertical menu">
-            @for(tool <- tools) {
-                @if(tool.category == "utils") {
-                    <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-                }
+            @for(tool <- tools.filter(_.category == "utils")) {
+                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
             <li><a href='/#/reformat'>Reformat</a></li>
         </ul>

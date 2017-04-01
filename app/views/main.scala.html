@@ -110,7 +110,7 @@
         <link href='http://fonts.googleapis.com/css?family=Vollkorn:400,700' rel='stylesheet' type='text/css'>
     </head>
 
-    <body data-ws-url="@routes.Application.ws().webSocketURL()">
+    <body data-ws-url="@routes.Application.ws().webSocketURL()" style="display:inline-block; transform:scaleX(-1);">
 
         <div id="main-container">
 
@@ -194,6 +194,7 @@
                 <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
                     <div class="off-canvas position-left" id="offCanvas" data-off-canvas>
                         @elements.offcanvas(tools)
+                        <div id="off-canvas-joblist"></div>
                     </div>
 
                      <!---Off Canvas Content includes main content--->

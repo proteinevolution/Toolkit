@@ -21,10 +21,8 @@
 <div class="tabs-content" data-tabs-content="navbar-tabs" style="padding-bottom:15px;">
     <div class="tabs-panel" id="panel1">
         <ul id="toolsec">
-        @for(tool <- tools){
-            @if(tool.category == "search") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-            }
+        @for(tool <- tools.filter(_.category == "search")){
+            <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>
     </div>
@@ -32,13 +30,10 @@
 
 
     <div class="tabs-panel" id="panel2">
-
         <div id="toolsec" class="toolsec-2">
             <a id="alnviz" href="/#/tools/alnviz">AlignmentViewer</a>
-        @for(tool <- tools){
-            @if(tool.category == "alignment") {
-                <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
-            }
+        @for(tool <- tools.filter(_.category == "alignment")){
+            <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
         }
         </div>
     </div>
@@ -47,46 +42,40 @@
 
     <div class="tabs-panel" id="panel3">
         <ul id="toolsec">
-        @for(tool <- tools){
-            @if(tool.category == "seqanal") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-            }
+        @for(tool <- tools.filter(_.category == "seqanal")){
+            <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>
     </div>
+
     <div class="tabs-panel" id="panel4">
         <ul id="toolsec">
-        @for(tool <- tools){
-            @if(tool.category == "2ary") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-            }
+        @for(tool <- tools.filter(_.category == "2ary")){
+            <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>
     </div>
+
     <div class="tabs-panel" id="panel5">
         <ul id="toolsec">
-        @for(tool <- tools){
-            @if(tool.category == "3ary" || tool.optional == "3ary") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-            }
+        @for(tool <- tools.filter(tool => tool.category == "3ary" || tool.optional == "3ary")){
+            <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>
     </div>
+
     <div class="tabs-panel" id="panel6">
         <ul id="toolsec">
-        @for(tool <- tools){
-            @if(tool.category == "classification") {
-                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-            }
+        @for(tool <- tools.filter(_.category == "classification")){
+            <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>
     </div>
+
     <div class="tabs-panel" id="panel7">
         <ul id="toolsec">
-            @for(tool <- tools){
-                @if(tool.category == "utils") {
-                    <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
-                }
+            @for(tool <- tools.filter(_.category == "utils")){
+                <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
             <li><a id="reformat" href="/#/tools/reformat">Reformat</a></li>
         </ul>
