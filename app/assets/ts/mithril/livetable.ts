@@ -55,7 +55,7 @@ class LiveTable {
         LiveTable.load = load;
     }
     static controller (args : any) : any {
-
+        currentRoute = "index"; // Need to use this method to find the current route
         m.redraw.strategy("diff");
         if (args) {
             LiveTable.lastJob   = args.lastJob   ? args.lastJob          : LiveTable.lastJob;
@@ -66,14 +66,12 @@ class LiveTable {
                 LiveTable.updateJobInfo();
             }
         }
-        //console.log("register load..");
-        //(<any>window).sendMessage({type: "RegisterLoad"}); // <- TODO this wont work for some reason
-        //console.log("...sent!");
         return {}
     }
     static view (ctrl : any, args : any) : any {
-        let loadString  : any = (LiveTable.load * 100).toPrecision(4) + "%",
-            colorString : string = LiveTable.load < 0.7 ? "green;" : LiveTable.load < 0.9 ? "yellow;" : "red;";
+        let currentLoad : number = LiveTable.load,
+            loadString : string = (currentLoad * 100).toPrecision(4) + "%",
+            colorClass : string = currentLoad < 0.90 ? "green" : currentLoad < 1.3 ? "yellow" : "red";
 
         return m('div', [
             //m('div', {"class" : "clusterLoad column large-4"}, ""),
@@ -81,27 +79,33 @@ class LiveTable {
                ], [
                 m('tbody',
                     [m('tr', [
-                        m('td',{id: 'clusterLoadString'}, "Clusterload"),
-                        m('td', {id: 'currentLoad', style: "color: " + colorString}, [
-                        m("ul",
-                            m("li"),
-                            m("li"),
-                            m("li"),
-                            m("li"),
-                            m("li"),
-                            m("li"),
-                            m("li"),
-                        )
-                        ]),
+                        m('td', {id: 'currentLoadString'}, "Cluster workload"),
+                        m('td', {id: 'currentLoadBar'},
+                            m("ul",[
+                                m("li", {class: colorClass + (currentLoad < 0.4 ? " pulsating" : "")}),
+                                m("li", {class: (currentLoad < 0.4 ? "gray" : colorClass) +
+                                                (0.4  < currentLoad && currentLoad < 0.6 ? " pulsating" : "")}),
+                                m("li", {class: (currentLoad < 0.6 ? "gray" : colorClass) +
+                                                (0.6 <= currentLoad && currentLoad < 0.8 ? " pulsating" : "")}),
+                                m("li", {class: (currentLoad < 0.8 ? "gray" : colorClass) +
+                                                (0.8 <= currentLoad && currentLoad < 1.0 ? " pulsating" : "")}),
+                                m("li", {class: (currentLoad < 1.0 ? "gray" : colorClass) +
+                                                (1.0 <= currentLoad && currentLoad < 2.5 ? " pulsating" : "")}),
+                                m("li", {class: (currentLoad < 2.5 ? "gray" : colorClass) +
+                                                (2.5 <= currentLoad && currentLoad < 5.0 ? " pulsating" : "")}),
+                                m("li", {class: (currentLoad < 5.0 ? "gray" : colorClass + " pulsating")})
+                            ])
+                        ),
                         m('td',{id: 'currentLoadNumber'}, "" + loadString),
                         m('td',{id: 'separator'}),
-                        m('td', { id: 'lastJobName' },
+                        m('td', { id: 'lastJob' },
                             LiveTable.lastJob != null ?
-                                m('a', { href: "/#/jobs/" + LiveTable.lastJob.jobID}, "Last Job: " + LiveTable.lastJob.toolnameLong) :
+                                m('a', { href: "/#/jobs/" + LiveTable.lastJob.jobID },
+                                    "Last Job: " + LiveTable.lastJob.toolnameLong) :
                                 m('b', "No Jobs")
                         ),
                         m('td', {id: "joblistIcon"},
-                            m('a', {href: "/#/joblist/", style: "font-weight: bold;" }, [
+                            m('a', {href: "/#/jobmanager", style: "font-weight: bold;" }, [
                                 m("i", {class: "icon-list"})
                             ])
                         )

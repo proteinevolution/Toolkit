@@ -26,20 +26,16 @@ StaticRoute = {
 
 m.route.mode = 'hash';
 
-
+// Define the mithril routes
 m.route(document.getElementById('main-content'), '/', {
-    '/': Index,
-    '/tools/:toolname': m(Toolkit, {
-        isJob: false
-    }),
-    '/jobs/:jobID': m(Toolkit, {
-        isJob: true
-    }),
+    '/':                 Index,
+    '/tools/:toolname':  m(Toolkit, { isJob: false }),
+    '/jobs/:jobID':      m(Toolkit, { isJob: true }),
     '/backend/:section': m(Backend),
-    '/news': m(News),
-    '/joblist': m(JobManager)
+    '/news':             m(News),
+    '/jobmanager':       m(JobManager)
 });
-
+// Add the job list to the off canvas element
 m.mount(document.getElementById('off-canvas-joblist'), JobListComponent);
 
 
