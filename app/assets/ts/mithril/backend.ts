@@ -191,7 +191,8 @@ window.Backend = {
         return { data : data , userModel : userModel}
     },
 
-    controller: function() {
+    controller: function(args : any) {
+        currentRoute = "backend";
         let model = new window.Backend.model(m.route.param("section"));
 
         return {
