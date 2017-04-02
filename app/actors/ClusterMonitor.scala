@@ -27,9 +27,8 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
 
 
   case class RecordedTick(load: Double, timestamp : DateTime)
-
-  private val fetchLatestInterval = 3000.millis
-  private val recordingInterval = 1.minutes
+  private val fetchLatestInterval = 3.seconds
+  private val recordMaxLength = 20
   private var record: List[Double] = List.empty[Double]
   protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
   // Fetch the latest qhost status every 375ms
@@ -37,11 +36,6 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, FetchLatest)(context.system.dispatcher)
   }
-  val Tick2 : Cancellable = {
-    // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(Duration.Zero, recordingInterval, self, Recording)(context.system.dispatcher)
-  }
-
 
   override def receive = LoggingReceive {
 
@@ -54,8 +48,9 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
     case FetchLatest =>
       val load = cluster.getLoad.loadEst
       record = record.::(load)
-      val messagingTime = DateTime.now()
+      //val messagingTime = DateTime.now()
       watchers.foreach(_ ! UpdateLoad(load))
+      if (record.length >= recordMaxLength) self ! Recording
       //Logger.info( s"""Updated Load with ${watchers.size} Users. Time needed: ${DateTime.now().getMillis - messagingTime.getMillis}ms""".stripMargin)
       //watchers.foreach(_ ! ConnectedUsers(watchers.size))
       //println(load)

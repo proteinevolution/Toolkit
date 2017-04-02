@@ -38,7 +38,7 @@ window.JobManager = {
                 "className": "addButton",
                 "orderable": false,
                 "data": null,
-                "defaultContent": "<"
+                "defaultContent": "\u25c0"
             });
             return tableRowDataSelection
         }
@@ -64,17 +64,23 @@ window.JobManager = {
     },
 
     controller: function () {
+        currentRoute = "jobmanager";
         var model = new JobManager.model();
         return {data: model.data}
     },
 
     view: function (ctrl) {
-        return m("div",
-            m("table", {id: "jobManagerTable", class: "dataTable", config: this.dataTableLoader(ctrl)}, [
-                    m("thead", m("tr", JobManager.tableObjects.toColumnItems())),
-                    m("tbody", [])
-                ]
+        return [
+            m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" },
+                m(JobListComponent, { activejobID : m.route.param("jobID") })
+            ),
+            m("div", { id: "content", "class": "large-10 small-12 columns padded-column", config: fadesIn },
+                m("table", {id: "jobManagerTable", class: "dataTable", config: this.dataTableLoader(ctrl)}, [
+                        m("thead", m("tr", JobManager.tableObjects.toColumnItems())),
+                        m("tbody", [])
+                    ]
+                )
             )
-        )
+        ];
     }
 };

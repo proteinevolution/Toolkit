@@ -96,10 +96,14 @@ onMessage = function(event : MessageEvent) : any {
             m.endComputation();
             break;
         case "UpdateLoad":
-            //console.log(message.load);
-            //m.startComputation(); Don't redraw all the time!
-            LiveTable.updateLoad(message.load);
-            //m.endComputation();
+            // TODO Don't redraw all the time!
+            // Tried to limit this by saving the "currentRoute", but we might need something proper in the future.
+            // m.startComputation is needed to redraw in any case when trying to update a mithril component from here.
+            if (currentRoute === "index") {
+                m.startComputation();
+                LiveTable.updateLoad(message.load);
+                m.endComputation();
+            }
             break;
         case "Ping":
             sendMessage({
@@ -115,7 +119,7 @@ let sendMessage = function(object : any) : any {
     console.log("sending message:", object);
     return ws.send(JSON.stringify(object));
 };
-
+let currentRoute : string = "";
 addJob = function(jobID : string) : any { sendMessage({ "type": "AddJob", "jobID": jobID }); };
 
 connect();

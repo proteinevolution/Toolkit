@@ -239,7 +239,7 @@ window.Toolkit = {
         }
     },
     controller: function(args) {
-
+        currentRoute = args.isJob ? "jobs" : "tools";
         document.title = "Bioinformatics Toolkit";
         var job, jobID, toolname, viewComponent;
         if (args.isJob) {

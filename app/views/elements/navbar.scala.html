@@ -5,7 +5,7 @@
 
 </div>
 
-<ul class="tabs" data-tabs id="navbar-tabs">
+<ul class="tabs slicky" data-tabs id="navbar-tabs">
     <li class="tabs-title" id="first-tab"><a href="#panel1">Search</a></li>
     <li class="tabs-title"><a href="#panel2">Alignment</a></li>
 
@@ -20,7 +20,7 @@
 
 <div class="tabs-content" data-tabs-content="navbar-tabs" style="padding-bottom:15px;">
     <div class="tabs-panel" id="panel1">
-        <ul id="toolsec">
+        <ul id="toolsec" class="slicky">
         @for(tool <- tools.filter(_.category == "search")){
             <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
@@ -30,7 +30,7 @@
 
 
     <div class="tabs-panel" id="panel2">
-        <div id="toolsec" class="toolsec-2">
+        <div id="toolsec" class="toolsec-2 slicky">
             <a id="alnviz" href="/#/tools/alnviz">AlignmentViewer</a>
         @for(tool <- tools.filter(_.category == "alignment")){
             <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
@@ -41,7 +41,7 @@
 
 
     <div class="tabs-panel" id="panel3">
-        <ul id="toolsec">
+        <ul id="toolsec" class="slicky">
         @for(tool <- tools.filter(_.category == "seqanal")){
             <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
@@ -49,7 +49,7 @@
     </div>
 
     <div class="tabs-panel" id="panel4">
-        <ul id="toolsec">
+        <ul id="toolsec" class="slicky">
         @for(tool <- tools.filter(_.category == "2ary")){
             <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
@@ -57,7 +57,7 @@
     </div>
 
     <div class="tabs-panel" id="panel5">
-        <ul id="toolsec">
+        <ul id="toolsec" class="slicky">
         @for(tool <- tools.filter(tool => tool.category == "3ary" || tool.optional == "3ary")){
             <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
@@ -65,7 +65,7 @@
     </div>
 
     <div class="tabs-panel" id="panel6">
-        <ul id="toolsec">
+        <ul id="toolsec" class="slicky">
         @for(tool <- tools.filter(_.category == "classification")){
             <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
@@ -73,7 +73,7 @@
     </div>
 
     <div class="tabs-panel" id="panel7">
-        <ul id="toolsec">
+        <ul id="toolsec" class="slicky">
             @for(tool <- tools.filter(_.category == "utils")){
                 <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
@@ -83,16 +83,10 @@
 </div>
 
 
-    <script>
-
-            $(document).ready(function(){
-                $('.toolsec-2').slick({
-                    infinite: true,
-                    centerMode: true,
-                    slidesToShow: 4,
-                    slidesToScroll: 1,
-                    variableWidth: true,
-                    arrows: true
-                });
-            });
-    </script>
+<script>
+    $(document).ready(function(){
+        // TODO move this into a JS file. also might need to have a better slider?
+        var slickConf = { centerMode: true, slidesToShow: 4, slidesToScroll: 1, variableWidth: true, arrows: true };
+        $('.slicky').slick(slickConf);
+    });
+</script>
