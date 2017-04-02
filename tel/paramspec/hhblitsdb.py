@@ -14,10 +14,7 @@ def main(argv):
         for line in infile:
             line = line.strip()
             if line and not line.startswith('#') and not line.startswith('$'):
-#todo: delete two lines
-                to_print = 'hhblits/%s %s' % (line, line)
-                print(to_print)
-#                print(line)
+                print(line)
 
 if __name__ == '__main__':
     main(sys.argv)
