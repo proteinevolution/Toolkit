@@ -12,6 +12,7 @@ import modules.tel.TELConstants
 import modules.tools.FNV
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 import org.elasticsearch.common.unit.Fuzziness
+import play.libs.Json
 import reactivemongo.bson.BSONObjectID
 
 import scala.util.hashing.MurmurHash3
@@ -37,6 +38,7 @@ final class JobDAO @Inject()(cs: ClusterSetup,
 
   /**
     * generates Param hash for matching already existing jobs
+    *
     * @param params
     * @return
     */
@@ -50,6 +52,7 @@ final class JobDAO @Inject()(cs: ClusterSetup,
 
   /**
     * hashes the runscripts which is used for a job
+    *
     * @param toolname
     * @return
     */
@@ -65,6 +68,7 @@ final class JobDAO @Inject()(cs: ClusterSetup,
 
   /**
     * hashes the tool version and version of helper scripts specified in the tools.conf config
+    *
     * @param name
     * @return
     */
@@ -162,26 +166,39 @@ final class JobDAO @Inject()(cs: ClusterSetup,
 
   // only use this for setting completion type for the jobID field
 
-  def preMap : CreateIndexResponse = {
-
+  def preMap : Future[CreateIndexResponse] = {
     client.execute {
       createIndex("tkplay_dev").mappings(
         mapping("jobs").fields(
           completionField("jobID")
         )
       )
-    }.await
-  }
-
-
-  def jobIDcompletionSuggester(queryString : String): Future[RichSearchResponse] = {
-    client.execute {
-      search(jobIndex).suggestions {
-        completionSuggestion("a").field("jobID").text(queryString).size(10)
-      }
     }
   }
 
+
+  /* TODO this is the output of the query builder - a valid jobID is provided, yet no proper output is delivered due to an mapping error.
+curl -XPOST 'balata:9200/tkplay_dev/jobs/_search?pretty' -H 'Content-Type: application/json' -d'{
+  "suggest" : {
+    "jobIDfield" : {
+      "text" : "3791643",
+      "completion" : {
+        "field" : "jobID",
+        "size" : 10
+      }
+    }
+  }
+}'
+   */
+  def jobIDcompletionSuggester(queryString : String): Future[RichSearchResponse] = {
+    val suggestionBuild = search in jobIndex suggestions {
+      completionSuggestion("jobIDfield").field("jobID").text(queryString).size(10)
+    }
+    println(suggestionBuild)
+    client.execute {
+      suggestionBuild
+    }
+  }
 
   def fuzzySearchJobID(queryString : String): Future[RichSearchResponse] = { // similarity search with Levensthein edit distance
     client.execute {
@@ -191,17 +208,18 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     }
   }
 
-
   def jobsWithTool(toolName : String, userID : BSONObjectID) : Future[RichSearchResponse] = {
-    client.execute {
-      search in jobIndex query {
-        bool(
-          should(
-            termQuery("tool", toolName),
-            termQuery("ownerID", userID)
-          )
+    val queryBuild = search in jobIndex query {
+      bool(
+        should(
+          termQuery("tool", toolName),
+          termQuery("ownerID", userID)
         )
-      }
+      )
+    }
+    println(queryBuild)
+    client.execute {
+      queryBuild
     }
   }
 }
