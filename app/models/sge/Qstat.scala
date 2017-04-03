@@ -9,7 +9,7 @@ import scala.language.postfixOps
   */
 final class Qstat {
 
-  private[this] val cmd = "qstat -u \"*\"" !!
+  //private[this] val cmd = "qstat -u \"*\"" !!
 
   def get() : Unit = {
 
