@@ -285,7 +285,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // TPRpred
     ("tprpred", "TPRpred", "tprp", "seqanal", "",
-      Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
+      Seq(paramAccess.SINGLESEQ, paramAccess.EVAL_TPR), Seq.empty,Seq.empty),
 
     // HHomp
     ("hhomp", "HHomp", "hho", "2ary", "",
