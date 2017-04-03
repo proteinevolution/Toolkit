@@ -101,7 +101,7 @@ onMessage = function(event : MessageEvent) : any {
             // m.startComputation is needed to redraw in any case when trying to update a mithril component from here.
             if (currentRoute === "index") {
                 m.startComputation();
-                LiveTable.updateLoad(message.load);
+                LoadBar.updateLoad(message.load);
                 m.endComputation();
             }
             break;
