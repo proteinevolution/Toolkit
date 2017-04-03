@@ -399,6 +399,18 @@ class alignmentVal implements ToolkitValidator {
             feedback(false, "Must have single sequence!", "error");
         }
     }
+
+    DNAvalidation(): any {
+
+        if(this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
+            feedback(false, "Must have single sequence!", "error");
+
+        else if (!this.elem.reformat('maxlength', 10000))
+            feedback(false, "Input too large!", "error");
+
+        else if(this.elem.reformat('type') != "DNA")
+            feedback(false, "Illegal characters used!", "error");
+    }
 }
 
 
