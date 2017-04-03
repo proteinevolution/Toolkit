@@ -53,7 +53,7 @@ typeAhead = function (elem, isInit) {
                 empty: ['<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>'],
                 suggestion: function (data) {
                     console.log(data);
-                    return '<div class="list-group-item"><a href="#/jobs/' + data.jobID + '">' + data.jobID + '</a> - ' + data.toolname + '</div>';
+                    return '<div class="list-group-item"><a href="#/jobs/' + data.jobID + '">' + data.jobID + '</a> - ' + data.toolnameLong + '</div>';
                 }
             }
         });
