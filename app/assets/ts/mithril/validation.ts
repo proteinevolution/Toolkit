@@ -395,21 +395,51 @@ class alignmentVal implements ToolkitValidator {
 
     mustHave1() : any {
 
-        if(this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
+        if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
             feedback(false, "Must have single sequence!", "error");
         }
     }
 
     DNAvalidation(): any {
 
-        if(this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
+        if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
             feedback(false, "Must have single sequence!", "error");
 
         else if (!this.elem.reformat('maxlength', 10000))
             feedback(false, "Input too large!", "error");
 
-        else if(this.elem.reformat('type') != "DNA")
+        else if(!this.elem.reformat('DNA'))
             feedback(false, "Illegal characters used!", "error");
+
+        else if (this.elem.val().length === 0)
+            valReset();
+    }
+
+    seq2IDvalidation(): any {
+
+        if (!this.elem.reformat('header'))
+            feedback(false, "At least one header expected!", "error");
+
+        else if (!this.elem.reformat('maxlength', 1000000))
+            feedback(false, "Input too large!", "error");
+
+        else if (this.elem.reformat('maxheadernumber', 20000))
+            feedback(false, "Input contains too many headers!", "error");
+
+        else if (this.elem.val().length === 0)
+            valReset();
+    }
+
+    patternSearchValidation(): any {
+
+        if (!this.elem.reformat('line'))
+            feedback(false, "Input has to be one line without spaces!", "error");
+
+        else if (!this.elem.reformat('maxlength', 100))
+            feedback(false, "Input too large!", "error");
+
+        else if (this.elem.val().length === 0)
+            valReset();
     }
 }
 
