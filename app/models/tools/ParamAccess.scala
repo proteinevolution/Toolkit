@@ -116,6 +116,8 @@ class ParamAccess @Inject() (tel: TEL) {
   final val TWOTEXTALIGNMENT = Param("alignment", Sequence(Seq(SingleSequence, Alignment(alignmentFormats)), true),1, "")
   final val SEQORALI = Param("alignment", Sequence(Seq(SingleSequence, Alignment(alignmentFormats)), false),1, "")
   final val MULTISEQ = Param("alignment", Sequence(Seq(MultiSequence), false),1, "") // for Alignment Tools
+  final val SINGLESEQ = Param("alignment", Sequence(Seq(SingleSequence), false),1, "")
+
   final val STANDARD_DB = select("standarddb", "Select Standard Database")
   final val HHSUITEDB = select("hhsuitedb", "Select HH-Suite Database")
   final val MATRIX = select("matrix", "Scoring Matrix")
@@ -179,4 +181,5 @@ class ParamAccess @Inject() (tel: TEL) {
   final val DOMAIN_BOUND_DETECTION = select("domain_bound_detection", "Domain boundary detection")
   final val ALN_STRINGENCY = select ("aln_stringency", "Alignment stringency")
   final val OUTPUT_ORDER = select ("output_order", "Output the alignment in:")
+  final val EVAL_TPR = select("eval_tpr", "E-value inclusion TPR & SEL")
 }
