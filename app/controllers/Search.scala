@@ -51,24 +51,23 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
 
   def autoComplete(queryString : String) : Action[AnyContent] = Action.async{ implicit request =>
     getUser.flatMap { user =>
+      val toolOpt : Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
+      Logger.info("user is looking for: " + queryString + " Found Tool: " + toolOpt)
       val mainIDStrings : Future[List[String]] =
         // Find out if the user looks for a certain tool or for a jobID
+        toolOpt match {
+          case Some(tool) => // Find the Jobs with the matching tool
+            jobDao.jobsWithTool(tool.toolNameShort, user.userID).map(_.getHits.hits().toList.map(_.id()))
+          case None =>       // Grab Job ID auto completions
+            val jobIDSuggestions = jobDao.jobIDcompletionSuggester(queryString)
+              .map(_.suggestion("jobIDfield").entries.flatMap(_.options.map(_.text)).toList)
+            jobIDSuggestions.map(ids => Logger.info("Found Strings: " + ids.mkString(", ")))
 
-        if(toolFactory.values.get(queryString).isDefined) {
-        //if (ToolModel.toolMap.get(queryString).isDefined) {
-          // Find the Jobs with the matching tool
-          Logger.info("user is looking for tool: " + queryString)
-          jobDao.jobsWithTool(queryString, user.userID).map(_.getHits.hits().toList.map(_.id()))
-        } else {
-          // Grab Job ID auto completions
-          val jobIDSuggestions = jobDao.jobIDcompletionSuggester(queryString).map(_.suggestion("jobID").entry(queryString).optionsText.toList)
-          jobIDSuggestions.map(ids => Logger.info("Found Strings: " + ids.toString()))
-
-          // Search for jobIDs in ES
-          val searchHits = jobIDSuggestions.flatMap(jobIDSuggestions => jobDao.getJobIDs(jobIDSuggestions)).map(_.getHits)
-          //searchHits.map(ids => Logger.info("Found Hits: " + ids.totalHits()))
-          // Grab main IDs from the hits
-          searchHits.map(_.hits().toList.map(_.id()))
+            // Search for jobIDs in ES
+            val searchHits = jobIDSuggestions.flatMap(jobIDSuggestions => jobDao.getJobIDs(jobIDSuggestions)).map(_.getHits)
+            //searchHits.map(ids => Logger.info("Found Hits: " + ids.totalHits()))
+            // Grab main IDs from the hits
+            searchHits.map(_.hits().toList.map(_.id()))
         }
 
       // Convert to BSON mainIDs
@@ -141,6 +140,7 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
 
   /**
     * Returns a json object containing both the last updated job and the most recent total number of jobs.
+    *
     * @return
     */
   def getIndexPageInfo : Action[AnyContent] = Action.async { implicit request=>
