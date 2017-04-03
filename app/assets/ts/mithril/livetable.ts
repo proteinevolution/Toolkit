@@ -39,10 +39,49 @@ let trafficBarConfig = function(lastJob : any) {
     };
 };
 
+class LoadBar {
+    static load : number = 0.5;
+    static updateLoad (load : number) : any {
+        LoadBar.load = load;
+    }
+    static controller (args : any) : any {
+        if (args) {
+            LoadBar.load      = args.load      ? parseFloat(args.load) : LoadBar.load;
+        }
+        return {}
+    }
+    static view (ctrl : any, args : any) : any {
+        console.log("redrawing");
+        let currentLoad : number = LoadBar.load,
+            loadString : string = (currentLoad * 100).toPrecision(4) + "%",
+            colorClass : string = "loadBar " + (currentLoad < 0.90 ? "green" : currentLoad < 1.3 ? "yellow" : "red");
+
+        return m('div', {id:"indexLoadBar"},  [
+            m('div', {class: 'loadBarLabel'}, "Cluster workload"),
+            m('div', {class: 'loadBarGraph'}, m('div', {class: 'loadBarSize'}, m('table',
+                m('tr', [
+                    m("th", {class: colorClass + (currentLoad < 0.4 ? " pulsating" : "")}),
+                    m("th", {class: (currentLoad < 0.4 ? "loadBar gray" : colorClass) +
+                                    (0.4  < currentLoad && currentLoad < 0.6 ? " pulsating" : "")}),
+                    m("th", {class: (currentLoad < 0.6 ? "loadBar gray" : colorClass) +
+                                    (0.6 <= currentLoad && currentLoad < 0.8 ? " pulsating" : "")}),
+                    m("th", {class: (currentLoad < 0.8 ? "loadBar gray" : colorClass) +
+                                    (0.8 <= currentLoad && currentLoad < 1.0 ? " pulsating" : "")}),
+                    m("th", {class: (currentLoad < 1.0 ? "loadBar gray" : colorClass) +
+                                    (1.0 <= currentLoad && currentLoad < 2.5 ? " pulsating" : "")}),
+                    m("th", {class: (currentLoad < 2.5 ? "loadBar gray" : colorClass) +
+                                    (2.5 <= currentLoad && currentLoad < 5.0 ? " pulsating" : "")}),
+                    m("th", {class: (currentLoad < 5.0 ? "loadBar gray" : colorClass + " pulsating")})
+                ])
+            ))),
+            m('div',{class: 'loadBarString'}, "" + loadString)
+        ])
+    }
+}
+
 class LiveTable {
     static lastJob     : Job = null;
     static totalJobs   : number = 0;
-    static load        : number = 0.5;
     static updateJobInfo () : void {
         m.request({method: "GET", url: "indexPageInfo"})
             .then(function(pageInfo) {
@@ -51,16 +90,12 @@ class LiveTable {
                 LiveTable.totalJobs = pageInfo.totalJobs;
             }).catch(function(error){console.log(error);});
     }
-    static updateLoad (load : number) : void {
-        LiveTable.load = load;
-    }
     static controller (args : any) : any {
         currentRoute = "index"; // Need to use this method to find the current route
         m.redraw.strategy("diff");
         if (args) {
             LiveTable.lastJob   = args.lastJob   ? args.lastJob          : LiveTable.lastJob;
             LiveTable.totalJobs = args.totalJobs ? args.totalJobs        : LiveTable.totalJobs;
-            LiveTable.load      = args.load      ? parseFloat(args.load) : LiveTable.load;
 
             if(args.totalJobs == null && args.lastJob == null) {
                 LiveTable.updateJobInfo();
@@ -69,34 +104,12 @@ class LiveTable {
         return {}
     }
     static view (ctrl : any, args : any) : any {
-        let currentLoad : number = LiveTable.load,
-            loadString : string = (currentLoad * 100).toPrecision(4) + "%",
-            colorClass : string = currentLoad < 0.90 ? "green" : currentLoad < 1.3 ? "yellow" : "red";
-
         return m('div', [
             //m('div', {"class" : "clusterLoad column large-4"}, ""),
-            m('table', {"class" : "liveTable column large-12"}, [
-               ], [
+            m('table', {"class" : "liveTable"}, [
                 m('tbody',
                     [m('tr', [
-                        m('td', {id: 'currentLoadString'}, "Cluster workload"),
-                        m('td', {id: 'currentLoadBar'},
-                            m("ul",[
-                                m("li", {class: colorClass + (currentLoad < 0.4 ? " pulsating" : "")}),
-                                m("li", {class: (currentLoad < 0.4 ? "gray" : colorClass) +
-                                                (0.4  < currentLoad && currentLoad < 0.6 ? " pulsating" : "")}),
-                                m("li", {class: (currentLoad < 0.6 ? "gray" : colorClass) +
-                                                (0.6 <= currentLoad && currentLoad < 0.8 ? " pulsating" : "")}),
-                                m("li", {class: (currentLoad < 0.8 ? "gray" : colorClass) +
-                                                (0.8 <= currentLoad && currentLoad < 1.0 ? " pulsating" : "")}),
-                                m("li", {class: (currentLoad < 1.0 ? "gray" : colorClass) +
-                                                (1.0 <= currentLoad && currentLoad < 2.5 ? " pulsating" : "")}),
-                                m("li", {class: (currentLoad < 2.5 ? "gray" : colorClass) +
-                                                (2.5 <= currentLoad && currentLoad < 5.0 ? " pulsating" : "")}),
-                                m("li", {class: (currentLoad < 5.0 ? "gray" : colorClass + " pulsating")})
-                            ])
-                        ),
-                        m('td',{id: 'currentLoadNumber'}, "" + loadString),
+                        m('td', m.component(LoadBar, {})),
                         m('td',{id: 'separator'}),
                         m('td', { id: 'lastJob' },
                             LiveTable.lastJob != null ?
