@@ -220,10 +220,9 @@
                 <footer class="row" id="app">
                     <div class="columns large-12">
                         <div id="sub-nav">
-                            <a href="#">Help</a>
+                            <a data-open="subnavHelpModal">Help</a>
                             <a href="#">Disclaimer</a>
-                            <a href="http://www.eb.tuebingen.mpg.de/impressum" target="_blank">Imprint</a>
-                            <a href="#">Tool Versions</a>
+                            <a data-open="imprintModal">Imprint</a>
                             <a href="/contact">Contact</a>
                             <a href="/#/news">News</a>
                         </div>
@@ -235,6 +234,16 @@
 
             <!-- scroll-top arrow -->
         <div id="scrollTop"></div>
+
+
+        <div class="small reveal" id="imprintModal" data-reveal>
+            @helpmodals.imprintmodal()
+        </div>
+
+        <div class="small reveal" id="subnavHelpModal" data-reveal>
+            @helpmodals.helpmodal()
+        </div>
+
 
             <!-- Script Inclusions -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
