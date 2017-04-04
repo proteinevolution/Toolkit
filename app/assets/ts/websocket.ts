@@ -98,11 +98,8 @@ onMessage = function(event : MessageEvent) : any {
         case "UpdateLoad":
             // TODO Don't redraw all the time!
             // Tried to limit this by saving the "currentRoute", but we might need something proper in the future.
-            // m.startComputation is needed to redraw in any case when trying to update a mithril component from here.
             if (currentRoute === "index") {
-                m.startComputation();
                 LoadBar.updateLoad(message.load);
-                m.endComputation();
             }
             break;
         case "Ping":
