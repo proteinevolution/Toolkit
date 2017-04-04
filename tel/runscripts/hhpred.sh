@@ -1,7 +1,13 @@
 JOBID=%jobid.content
+
+SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
+
+reformat_hhsuite.pl fas fas %alignment.path ${JOBID}.fas -l 32000 -uc
+mv ${JOBID}.fas ../results
+
 #CHECK IF MSA generation is required or not
-if [ %msa_gen_max_iter.content == "0" ] ; then
-        reformat_hhsuite.pl fas a3m %alignment.path query.a3m -M first
+if [ %msa_gen_max_iter.content == "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
+        reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas query.a3m -M first
         mv query.a3m ../results/query.a3m
         addss.pl ../results/query.a3m
 else
@@ -12,7 +18,7 @@ else
     if [ %msa_gen_method.content == "hhblits" ] ; then
         hhblits -cpu %THREADS \
                 -v 2 \
-                -i %alignment.path \
+                -i ../results/${JOBID}.fas \
                 -d %UNIPROT  \
                 -oa3m ../results/query.a3m \
                 -n %msa_gen_max_iter.content \
@@ -22,7 +28,6 @@ else
     if [ %msa_gen_method.content == "psiblast" ] ; then
         #Check if input is a single sequence or an MSA
         INPUT="query"
-        SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
         if [ $SEQ_COUNT -gt 1 ] ; then
             INPUT="in_msa"
         fi
@@ -35,7 +40,7 @@ else
                  -num_descriptions 20000 \
                  -num_alignments 20000 \
                  -html \
-                 -${INPUT} %alignment.path \
+                 -${INPUT} ../results/${JOBID}.fas \
                  -out ../results/output_psiblastp.html
 
         #keep results only of the last iteration
@@ -43,7 +48,7 @@ else
 
         #extract MSA in a3m format
         alignhits_html.pl   ../results/output_psiblastp.html ../results/query.a3m \
-                    -Q %alignment.path \
+                    -Q ../results/${JOBID}.fas \
                     -e 0.001 \
                     -cov 20 \
                     -a3m \
@@ -189,4 +194,4 @@ reformat.pl fas \
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
 
 # Generate Query in JSON
-fasta2json.py %alignment.path ../results/query.json
+fasta2json.py ../results/${JOBID}.fas ../results/query.json
