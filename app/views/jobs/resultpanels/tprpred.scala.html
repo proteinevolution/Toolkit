@@ -1,10 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+@import play.api.libs.json.JsValue
+@import play.api.libs.json.JsObject
+@import play.api.libs.json.JsDefined
+@import models.results.BlastVisualization
+
+@(toolName: String, jobID: String,jsValue: JsValue)(implicit request: RequestHeader)
+
+@if((jsValue \ jobID \ "hits").as[List[JsValue]].size < 1) {
+        <div class="callout alert noHits" id="noHits">
+                <h6>No hits found!</h6>
+        </div>
+} else {
+
+        <div class="tprResults">
+                <br>
+
+                @for((info) <- (jsValue \ jobID \ "desc").as[List[JsValue]]){
+
+                        <div class="tprInfo">  @{{info \ 0 }.get.as[String]} : <span>@{{info \ 1 }.get.as[String]} </span>  </div>
+                }
+                <br>
+                <br>
+                <div class="colorOptsAlignment">
+                        <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
+                        <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
+                        <hr id="line-element" colspan="4" class="horizontal-line">
+                </div>
+        <table class="unstriped">
+                <tbody class="alignmentTBody">
+                        <tr class="header">
+                                <td>Repeat</td>
+                                <td>Begin</td>
+                                <td>Alignment</td>
+                                <td>End</td>
+                                <td>P-value</td>
+                        </tr>
+                        @for((seq) <- (jsValue \ jobID \ "hits").as[List[JsValue]]){
+                        <tr class="sequenceAlignment">
+                                <td>@{{seq \ 1 }.get.as[String]} </td>
+                                <td>@{{seq \ 2 }.get.as[String]} </td>
+                                <td class="tprHit">
+                                        @{seq \ 0 match {
+                                                case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((seq \ 0).get.as[String]))
+                                        }
+                                        }
+
+                                </td>
+                                <td>@{{seq \ 3 }.get.as[String]} </td>
+                                <td>@{{seq \ 4 }.get.as[String]} </td>
+                        </tr>
+                        }
+                </tbody>
+        </table>
+
+
+        </div>
+
+}
+
+<script>
+        var data = null;
+        // get result json
+        var fileUrl = "/files/" + @jobID + "/" + @jobID + ".json";
+        $.getJSON(fileUrl, function (data_) {
+            data = data_;
+        });
+
+        var aas = $('span[class^="aa_"]');
+        var colorLettersBool = false;
+        var colorBackgroundBool = false;
+
+
+        function toggleAliColor_(str){
+                if(str == "letters" ){
+                        if(colorLettersBool)
+                                toggleAliColor("");
+                        else
+                                toggleAliColor("letters");
+                        this.colorLettersBool = !this.colorLettersBool;
+                }
+                if(str == "background"){
+                        if(colorBackgroundBool)
+                                toggleAliColor("");
+                        else
+                                toggleAliColor("background");
+                        this.colorBackgroundBool = !this.colorBackgroundBool;
+                }
+        }
+
+
+
+</script>
