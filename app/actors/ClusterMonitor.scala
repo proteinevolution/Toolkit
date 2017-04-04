@@ -4,8 +4,9 @@ package actors
 import javax.inject.{Inject, Singleton}
 
 import actors.ClusterMonitor._
-import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable}
+import akka.actor._
 import akka.event.LoggingReceive
+import controllers.Settings
 import models.database.statistics.ClusterLoadEvent
 import models.sge.Cluster
 import modules.CommonModule
@@ -24,7 +25,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 
 @Singleton
-final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: ReactiveMongoApi) extends Actor with ActorLogging with CommonModule {
+final class ClusterMonitor @Inject()(cluster: Cluster,
+                                     val reactiveMongoApi: ReactiveMongoApi,
+                                     val settings: Settings) extends Actor with ActorLogging with CommonModule {
 
 
   case class RecordedTick(load: Double, timestamp : DateTime)
@@ -37,6 +40,16 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, FetchLatest)(context.system.dispatcher)
   }
+
+
+  override def preStart(): Unit = {
+
+    if (settings.clusterMode == "LOCAL")
+      context.stop(self)
+
+  }
+
+  override def postStop() = Tick.cancel()
 
   override def receive = LoggingReceive {
 
