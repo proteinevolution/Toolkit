@@ -131,6 +131,12 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
     }
 
   }
+  def getUserData : Action[AnyContent] = Action.async { implicit request =>
+    getUser.map { user =>
+      Logger.info("Sending user data.")
+      Ok(Json.obj("user" -> user.userData))
+    }
+  }
 
 
   /**
