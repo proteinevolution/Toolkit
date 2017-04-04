@@ -364,15 +364,26 @@ hr {
 
 
 .submitbuttons .jobid {
-
     color: #000;
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #878787;
     height: 2.5em;
     width: 7em;
-    float: left;
+    float: right;
     border-radius: 3px;
     font-size: 0.88em;
+}
+
+.submitbuttons .jobid.white {
+    border:1px solid #ffffff;
+}
+
+.submitbuttons .jobid.green {
+    border:1px solid green;
+}
+
+.submitbuttons .jobid.red {
+    border:1px solid #da4453;
 }
 
 .submitbuttons {

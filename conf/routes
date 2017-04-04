@@ -59,10 +59,13 @@ POST          /upload                                 @controllers.Application.u
 # Contact
 
 # Routes for Auth Service
+GET           /userData                               @controllers.Auth.getUserData
 GET           /signin                                 @controllers.Auth.signIn(userName : String = "")
 GET           /signin/:userName                       @controllers.Auth.signIn(userName : String)
 POST          /signin/submit/                         @controllers.Auth.signInSubmit()
+POST          /signin                                 @controllers.Auth.signInSubmit()
 GET           /signup                                 @controllers.Auth.signUp()
+POST          /signup                                 @controllers.Auth.signUpSubmit()
 POST          /signup/submit/                         @controllers.Auth.signUpSubmit()
 GET           /signout                                @controllers.Auth.signOut()
 GET           /miniprofile                            @controllers.Auth.miniProfile()

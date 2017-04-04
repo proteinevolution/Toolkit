@@ -50,8 +50,7 @@ JobLineComponent = {
                     m("i", { class: "icon-information_white helpicon" })
                 )
             ]),
-            m("span", { class: "jobdate" }, isJob ? "Created: " + (args.job().createdOn) : ""),
-            m("span", { class: "jobinfo" }, isJob ? "JobID: " + (args.job().jobID) : "Submit a new Job")
+            m("span", { class: "jobdate" }, isJob ? "Created: " + (args.job().createdOn) : "")
         ]);
     }
 };
@@ -406,16 +405,15 @@ JobSubmissionComponent = {
         return jobID;
     },
     jobIDComponent : function (ctrl) {
-        var style = "float:right;border:";
-        style += JobSubmissionComponent.currentJobID === "" ? "1px solid #ffffff;" :
-            (JobSubmissionComponent.jobIDValid ? "1px solid green;" : "1px solid #da4453;");
-        return m("input", { type: "text",
-            id: "jobID",
-            class: "jobid",
-            placeholder: "Custom JobID",
-            onkeyup: m.withAttr("value", JobSubmissionComponent.checkJobID),
-            value: JobSubmissionComponent.currentJobID,
-            style: style
+        var style = "jobid";
+        style += JobSubmissionComponent.currentJobID === "" ? " white" :
+                (JobSubmissionComponent.jobIDValid          ? " green" : " red");
+        return m("input", { type:        "text",
+                            id:          "jobID",
+                            class:       style,
+                            placeholder: "Custom JobID",
+                            onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobID),
+                            value:       JobSubmissionComponent.currentJobID
         })
     },
     controller: function(args) {
