@@ -86,3 +86,27 @@
   margin-right: 200px;
 
 }
+
+#imprintModal, #subnavHelpModal {
+  font-size: 0.75em;
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+
+  h3 {
+    border-bottom: 2px solid #006F62;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+  }
+
+  h6 {
+    width: 40%;
+    border-bottom: 2px solid #006F62;
+    font-weight: bold;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+  }
+
+}
+
+#imprintContent, #helpModalContent {
+  border: 1px solid #eee;
+  padding: 1em;
+  background-color: #eee;
+}
