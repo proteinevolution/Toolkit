@@ -9,6 +9,7 @@ import akka.event.LoggingReceive
 import models.database.statistics.ClusterLoadEvent
 import models.sge.Cluster
 import modules.CommonModule
+import modules.tel.TEL
 import org.joda.time.DateTime
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -47,6 +48,15 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
 
     case FetchLatest =>
       val load = cluster.getLoad.loadEst
+
+      if (load > 1.2) {
+        TEL.memFactor = 0.5
+        TEL.threadsFactor = 0.5
+      } else {
+        TEL.memFactor = 1
+        TEL.threadsFactor = 1
+      }
+
       record = record.::(load)
       //val messagingTime = DateTime.now()
       watchers.foreach(_ ! UpdateLoad(load))
