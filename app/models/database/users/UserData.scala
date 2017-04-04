@@ -1,5 +1,6 @@
 package models.database.users
 
+import play.api.libs.json.{Json, JsObject, Writes}
 import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter}
 
 case class UserData(nameLogin : String,                // User Login Name
@@ -29,6 +30,21 @@ object UserData {
   final val COUNTRY     = "country"
   final val GROUPS      = "groups"
   final val ROLES       = "roles"
+
+  implicit object JobWrites extends Writes[UserData] {
+    def writes (userData : UserData) : JsObject = Json.obj(
+      NAMELOGIN  -> userData.nameLogin,
+      EMAIL      -> userData.eMail,
+      NAMEFIRST  -> userData.nameFirst,
+      NAMELAST   -> userData.nameLast,
+      INSTITUTE  -> userData.institute,
+      STREET     -> userData.street,
+      CITY       -> userData.city,
+      COUNTRY    -> userData.country,
+      GROUPS     -> userData.groups,
+      ROLES      -> userData.roles
+    )
+  }
 
   /**
     * Object containing the reader for the Class

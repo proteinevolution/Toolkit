@@ -43,6 +43,8 @@ class LoadBar {
     static load : number = 0.5;
     static updateLoad (load : number) : any {
         LoadBar.load = load;
+        m.redraw.strategy("diff");
+        m.redraw();
     }
     static controller (args : any) : any {
         if (args) {
@@ -88,11 +90,11 @@ class LiveTable {
                 console.log(pageInfo);
                 LiveTable.lastJob   = pageInfo.lastJob;
                 LiveTable.totalJobs = pageInfo.totalJobs;
+                m.redraw.strategy("diff");
             }).catch(function(error){console.log(error);});
     }
     static controller (args : any) : any {
         currentRoute = "index"; // Need to use this method to find the current route
-        m.redraw.strategy("diff");
         if (args) {
             LiveTable.lastJob   = args.lastJob   ? args.lastJob          : LiveTable.lastJob;
             LiveTable.totalJobs = args.totalJobs ? args.totalJobs        : LiveTable.totalJobs;
