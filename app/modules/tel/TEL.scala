@@ -38,5 +38,9 @@ object TEL {
 
   var hostname = ""
 
+  var memFactor : Double = 1
+
+  var threadsFactor : Double = 1
+
 }
 

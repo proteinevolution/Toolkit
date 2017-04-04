@@ -4,11 +4,13 @@ package actors
 import javax.inject.{Inject, Singleton}
 
 import actors.ClusterMonitor._
-import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable}
+import akka.actor._
 import akka.event.LoggingReceive
+import controllers.Settings
 import models.database.statistics.ClusterLoadEvent
 import models.sge.Cluster
 import modules.CommonModule
+import modules.tel.TEL
 import org.joda.time.DateTime
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -23,7 +25,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 
 @Singleton
-final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: ReactiveMongoApi) extends Actor with ActorLogging with CommonModule {
+final class ClusterMonitor @Inject()(cluster: Cluster,
+                                     val reactiveMongoApi: ReactiveMongoApi,
+                                     val settings: Settings) extends Actor with ActorLogging with CommonModule {
 
 
   case class RecordedTick(load: Double, timestamp : DateTime)
@@ -37,6 +41,16 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, FetchLatest)(context.system.dispatcher)
   }
 
+
+  override def preStart(): Unit = {
+
+    if (settings.clusterMode == "LOCAL")
+      context.stop(self)
+
+  }
+
+  override def postStop() = Tick.cancel()
+
   override def receive = LoggingReceive {
 
     case Connect(actorRef) =>
@@ -47,6 +61,15 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
 
     case FetchLatest =>
       val load = cluster.getLoad.loadEst
+
+      if (load > 1.2) {
+        TEL.memFactor = 0.5
+        TEL.threadsFactor = 0.5
+      } else {
+        TEL.memFactor = 1
+        TEL.threadsFactor = 1
+      }
+
       record = record.::(load)
       //val messagingTime = DateTime.now()
       watchers.foreach(_ ! UpdateLoad(load))
