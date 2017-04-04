@@ -44,7 +44,8 @@ window.JobModel = {
         "offset":"0.0",
         "output_order":"input",
         "clustering_pval_threshold":"1",
-        "eval_tpr":"1e-6"
+        "eval_tpr":"1e-6",
+        "msa_gen_method":"hhblits"
     },
 
     /* Seems not to be used
