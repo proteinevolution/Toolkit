@@ -170,6 +170,22 @@ hr {
     background-color: rgba(241, 241, 241, 0.75) !important;
 }
 
+.tprHit {
+    width: 27em;
+    text-align: center;
+}
+
+.tprResults table {
+    width: 80%;
+}
+
+.tprInfo {
+    font-size: 1.2em !important;
+}
+
+.tprInfo span {
+    font-weight: bold;
+}
 
 .sequence :hover{
     background-color: #eee;
