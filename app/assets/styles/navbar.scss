@@ -285,90 +285,46 @@ i {
 
 
 #panel1 {
-  padding-right: 1em;
-  padding-left: 1em;
   border-top: 2px solid #D0BA89;
+  padding: 0.4rem 0.5rem;
+  margin: 0 0 -1.5rem 0;
 }
 #panel2 {
-  padding-right: 1em;
-  padding-left: 1em;
+  padding: 0.4rem 0.5rem;
+  margin: 0 0 -1.5rem 0;
   border-top: 2px solid #FFCC66;
 }
 #panel3 {
-  padding-right: 1em;
-  padding-left: 1em;
+  padding: 0.4rem 0.5rem;
+  margin: 0 0 -1.5rem 0;
   border-top: 2px solid #669933;
 }
 #panel4 {
-  padding-right: 1em;
-  padding-left: 1em;
+  padding: 0.4rem 0.5rem;
+  margin: 0 0 -1.5rem 0;
   border-top: 2px solid #79A4C4;
 }
 #panel5 {
-  padding-right: 1em;
-  padding-left: 1em;
+  padding: 0.4rem 0.5rem;
+  margin: 0 0 -1.5rem 0;
   border-top: 2px solid #666699;
 }
 #panel6 {
-  padding-right: 1em;
-  padding-left: 1em;
+  padding: 0.4rem 0.5rem;
+  margin: 0 0 -1.5rem 0;
   border-top: 2px solid #D6ABAB;
 }
 #panel7 {
-  padding-right: 1em;
-  padding-left: 1em;
+  padding: 0.4rem 0.5rem;
+  margin: 0 0 -1.5rem 0;
   border-top: 2px solid #CC3333;
 }
-
-
-
-#toolsec {
-  border: 0;
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-#toolsec li {
-  display: inline;
-  margin-top: -12px;
-  float: left;
-  color: grey;
-  border-right: 0 solid lightgray;
-  border-radius: 5px;
-  line-height: 1;
-}
-
-#toolsec li:hover {
-  background: rgba(220,220,220,0.5);
-}
-
-#toolsec li:last-child {
-  border-right: none;
-}
-
-#toolsec li a {
-  border-right: none;
-  color: grey;
-  text-decoration: none;
-  display: block;
-  text-align: center;
-  font-size: 0.75em;
-  padding: 1rem 1rem 1rem 1rem;
-
-}
-
 
 #metanav {
 
   margin-top: -5px;
   min-height: 39px;
 
-}
-
-
-#nav-spacer {
-  min-height: 20px;
 }
 
 img#logomin {
@@ -382,7 +338,7 @@ img#logomin {
   height: 60%;
 }
 
-.toolsec-2 a {
+.toolsec a {
 
   border-right: none;
   color: grey;
@@ -398,7 +354,7 @@ img#logomin {
 
 }
 
-.toolsec-2 a:active {
+.toolsec a:active {
 
   border-right: none;
   color: grey;
@@ -414,7 +370,7 @@ img#logomin {
 
 }
 
-.toolsec-2 a:hover {
+.toolsec a:hover {
 
   border-right: none;
   color: grey;
@@ -430,7 +386,7 @@ img#logomin {
 
 }
 
-.toolsec-2 a:visited {
+.toolsec a:visited {
 
   border-right: none;
   color: grey;
@@ -445,7 +401,6 @@ img#logomin {
 
 }
 
-#panel2 {
-  padding: 0.4rem 0.5rem !important;
-  margin: 0 0 -1.5rem 0;
+.toolsec a:focus {
+  color: grey;
 }
