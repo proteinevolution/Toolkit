@@ -59,6 +59,12 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "clans" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.clans("CLANS", jobID))))
 
+      case "tprpred" => getResult(jobID).map {
+        case Some(jsvalue) =>
+          Seq(("Results", views.html.jobs.resultpanels.tprpred("TPRpred",jobID, jsvalue)))
+        case None => Seq.empty
+      }
+
       case "hhblits" => getResult(jobID).map {
         case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hhblits.hitlist(jobID, jsvalue)),
           ("Full_Alignment", views.html.jobs.resultpanels.alignment("HHblits", "Full-alignment", "full",jsvalue)),
