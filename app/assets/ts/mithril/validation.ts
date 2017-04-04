@@ -368,7 +368,7 @@ class alignmentVal implements ToolkitValidator {
         else if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '' && this.elem.val().length != 0) {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
-            feedback(false, "Wrong format found: " + t + ". <b>Auto-transformed to Fasta</b>", "success", t);
+            feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
             $("#alignment").val(this.elem.reformat('fasta'));
         }
 
@@ -402,7 +402,10 @@ class alignmentVal implements ToolkitValidator {
 
     DNAvalidation(): any {
 
-        if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
+        if (!this.elem.validate('fasta') && this.elem.reformat('detect') === '' && this.elem.val().length != 0)
+            feedback(false, "This is no fasta!", "error");
+
+        else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
             feedback(false, "Must have single sequence!", "error");
 
         else if (!this.elem.reformat('maxlength', 10000))
@@ -413,6 +416,8 @@ class alignmentVal implements ToolkitValidator {
 
         else if (this.elem.val().length === 0)
             valReset();
+
+        else feedback(true);
     }
 
     seq2IDvalidation(): any {
@@ -428,6 +433,8 @@ class alignmentVal implements ToolkitValidator {
 
         else if (this.elem.val().length === 0)
             valReset();
+
+        else feedback(true);
     }
 
     patternSearchValidation(): any {
@@ -440,6 +447,8 @@ class alignmentVal implements ToolkitValidator {
 
         else if (this.elem.val().length === 0)
             valReset();
+
+        else feedback(true);
     }
 }
 
