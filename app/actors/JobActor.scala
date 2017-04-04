@@ -11,6 +11,7 @@ import models.database.jobs._
 import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
 import models.search.JobDAO
+import modules.tel.TEL
 import modules.tel.runscripts.{LiteralRepresentation, Representation, _}
 import better.files._
 import com.typesafe.config.ConfigFactory
@@ -168,10 +169,10 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
     case CreateJob(jobID, user, toolname, params) =>
 
 
+      // set memory allocation on the cluster and let the clusterMonitor define the multiplier
 
-      // set memory allocation on the cluster
-      val h_vmem = ConfigFactory.load().getString(s"Tools.$toolname.memory")
-      val threads = ConfigFactory.load().getInt(s"Tools.$toolname.threads")
+      val h_vmem = (ConfigFactory.load().getString(s"Tools.$toolname.memory").dropRight(1).toInt * TEL.memFactor).toString + "G"
+      val threads = math.ceil(ConfigFactory.load().getInt(s"Tools.$toolname.threads") * TEL.threadsFactor).toInt
       env.configure(s"MEMORY", h_vmem)
       env.configure("THREADS", threads.toString)
       Logger.info(s"$jobID is running with $h_vmem h_vmem")
