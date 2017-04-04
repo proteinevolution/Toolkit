@@ -38,3 +38,4 @@ aln_stringency GEN aln_stringency.prop
 proteomes GEN proteomes.py
 output_order GEN output_order.prop
 eval_tpr GEN eval_tpr.prop
+msa_gen_method GEN msa_gen_method.prop

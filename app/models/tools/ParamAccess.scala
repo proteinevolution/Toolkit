@@ -138,6 +138,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val HHBLITSDB  =  Param("hhblitsdb",Select(tel.generateValues("hhblitsdb").toSeq),1, "Select HHblts database")
   final val ALIGNMODE = select("alignmode", "Alignment Mode")
   final val MSA_GEN_MAX_ITER = select("msa_gen_max_iter", "Maximal no. of MSA generation steps")
+  final val MSA_GEN_METHOD = select("msa_gen_method", "MSA generation method")
   final val INC_AMINO = select("inc_amino", "Include amino acid sequence in output" )
   final val GENETIC_CODE = select("genetic_code", "Choose a genetic Code")
   final val LONG_SEQ_NAME =  Param("long_seq_name",Bool,1, "Use long sequence name")
