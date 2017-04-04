@@ -6,15 +6,51 @@ if [ %msa_gen_max_iter.content == "0" ] ; then
         addss.pl ../results/query.a3m
 else
     #MSA generation required
+    #Check what method to use (PSI-BLAST? HHblits?)
+
     #MSA generation by HHblits
-    hhblits -cpu 8 \
-            -v 2 \
-            -i %alignment.path \
-            -d %UNIPROT  \
-            -o ../results/msagen.hhblits \
-            -oa3m ../results/query.a3m \
-            -n %msa_gen_max_iter.content \
-            -mact 0.35
+    if [ %msa_gen_method.content == "hhblits" ] ; then
+        hhblits -cpu %THREADS \
+                -v 2 \
+                -i %alignment.path \
+                -d %UNIPROT  \
+                -oa3m ../results/query.a3m \
+                -n %msa_gen_max_iter.content \
+                -mact 0.35
+    fi
+    #MSA generation by HHblits
+    if [ %msa_gen_method.content == "psiblast" ] ; then
+        #Check if input is a single sequence or an MSA
+        INPUT="query"
+        SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
+        if [ $SEQ_COUNT -gt 1 ] ; then
+            INPUT="in_msa"
+        fi
+
+        psiblast -db ${STANDARDNEW}/nre70 \
+                 -num_iterations %msa_gen_max_iter.content \
+                 -evalue 0.001 \
+                 -inclusion_ethresh 0.001 \
+                 -num_threads %THREADS \
+                 -num_descriptions 20000 \
+                 -num_alignments 20000 \
+                 -html \
+                 -${INPUT} %alignment.path \
+                 -out ../results/output_psiblastp.html
+
+        #keep results only of the last iteration
+        shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_psiblastp.html
+
+        #extract MSA in a3m format
+        alignhits_html.pl   ../results/output_psiblastp.html ../results/query.a3m \
+                    -Q %alignment.path \
+                    -e 0.001 \
+                    -cov 20 \
+                    -a3m \
+                    -no_link \
+                    -blastplus
+    fi
+
     addss.pl ../results/query.a3m
 fi
 
@@ -101,10 +137,6 @@ else
         printf "${PROTEOMES[@]}" >> ../params/dbs
     fi
 fi
-
-
-
-
 
 
 # Perform HHsearch # TODO Include more parameters
