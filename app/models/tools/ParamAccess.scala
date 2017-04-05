@@ -13,6 +13,7 @@ import play.api.libs.json._
 abstract class SequenceMode(val label: String)
 case class Alignment(formats: Seq[(String,String)]) extends SequenceMode("Multiple Sequence Alignment")
 case object SingleSequence extends SequenceMode("Single Sequence")
+case object SingleSequenceDNA extends SequenceMode("Single DNA Sequence in FASTA format")
 case object MultiSequence extends SequenceMode("Muliple Sequences")
 case object BLASTHTML extends SequenceMode("BLAST HTML page")     // BLAMMER
 case object PIR extends SequenceMode("PIR Format")
@@ -37,6 +38,7 @@ object SequenceMode {
       case MultiSequence =>   Json.obj(FIELD_MODE -> 3, FIELD_LABEL -> MultiSequence.label, FIELD_NAME -> "MultiSequence")
       case BLASTHTML =>       Json.obj(FIELD_MODE -> 4 , FIELD_LABEL -> BLASTHTML.label, FIELD_NAME -> "BLASTHTML")
       case PIR =>             Json.obj(FIELD_MODE -> 5 , FIELD_LABEL -> PIR.label, FIELD_NAME -> "PIR")
+      case SingleSequenceDNA =>  Json.obj(FIELD_MODE -> 6, FIELD_LABEL -> SingleSequenceDNA.label, FIELD_NAME -> "Single Sequence DNA")
     }
   }
 }
@@ -117,6 +119,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val SEQORALI = Param("alignment", Sequence(Seq(SingleSequence, Alignment(alignmentFormats)), false),1, "")
   final val MULTISEQ = Param("alignment", Sequence(Seq(MultiSequence), false),1, "") // for Alignment Tools
   final val SINGLESEQ = Param("alignment", Sequence(Seq(SingleSequence), false),1, "")
+  final val SINGLESEQDNA = Param("alignment", Sequence(Seq(SingleSequenceDNA), false),1, "")
 
   final val STANDARD_DB = select("standarddb", "Select Standard Database")
   final val HHSUITEDB = select("hhsuitedb", "Select HH-Suite Database")
