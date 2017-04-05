@@ -293,9 +293,6 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("tprpred", "TPRpred", "tprp", "seqanal", "",
       Seq(paramAccess.SINGLESEQ, paramAccess.EVAL_TPR), Seq.empty,Seq.empty),
 
-    // HHomp
-    ("hhomp", "HHomp", "hho", "2ary", "",
-      Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
 
     // Quick 2D
     ("quick2d", "Quick2D", "q2d", "2ary", "",
@@ -309,13 +306,17 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("modeller", "Modeller", "mod", "3ary", "",
       Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
 
+    // SamCC
+    ("samcc", "SamCC", "sam", "3ary", "",
+      Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
+
     // RetrieveSeq
     ("retseq", "RetrieveSeq", "ret", "utils", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE), Seq.empty,Seq.empty),
 
     // Seq2ID
     ("seq2id", "Seq2ID", "s2id", "utils", "",
-      Seq(paramAccess.ALIGNMENT), Seq("retseq"),Seq.empty),
+      Seq(paramAccess.FASTAHEADERS), Seq("retseq"),Seq.empty),
 
     // ANCESCON
     ("ancescon", "ANCESCON", "anc", "classification", "",
@@ -335,8 +336,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       Seq(paramAccess.ALIGNMENT, paramAccess.MIN_SEQID, paramAccess.MIN_ALN_COV), Seq.empty,Seq.empty),
 
     // Backtranslator
-    ("backtrans", "Backtranslator", "bac", "utils", "",
-      Seq(paramAccess.ALIGNMENT, paramAccess.INC_AMINO, paramAccess.GENETIC_CODE), Seq.empty,Seq.empty),
+    ("backtrans", "BackTranslator", "bac", "utils", "",
+      Seq(paramAccess.SINGLESEQ, paramAccess.INC_AMINO, paramAccess.GENETIC_CODE), Seq.empty,Seq.empty),
 
     // PatternSearch
     ("patsearch", "PatternSearch", "pats", "search", "",
