@@ -422,14 +422,31 @@ class alignmentVal implements ToolkitValidator {
 
     seq2IDvalidation(): any {
 
-        if (!this.elem.reformat('header'))
-            feedback(false, "At least one header expected!", "error");
+        console.log(this.elem.reformat('fastaheaders'));
+
+        if (!this.elem.validate('fasta') && !this.elem.validate('fastaheaders') && this.elem.reformat('detect') != '' && this.elem.val().length != 0) {
+            originIsFasta = false;
+            let t = this.elem.reformat('detect');
+            feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
+            $("#alignment").val(this.elem.reformat('fasta'));
+        }
+
+        else if((!this.elem.validate('fasta')) && !(/>/.test(this.elem.reformat('fastaheaders'))))
+            feedback(false, "At least one header required!", "error");
+
+        else if ((/>\n/.test(this.elem.reformat('fastaheaders'))))
+            feedback(false, "Empty header!", "error");
 
         else if (!this.elem.reformat('maxlength', 1000000))
             feedback(false, "Input too large!", "error");
 
         else if (this.elem.reformat('maxheadernumber', 20000))
             feedback(false, "Input contains too many headers!", "error");
+
+        else if (this.elem.reformat('detect') == 'fastaheaders' && this.elem.val().length != 0) {
+            $(".submitJob").prop("disabled", false);
+            $("#validOrNot").css("display", "block").html("Valid input").addClass("success");
+        }
 
         else if (this.elem.val().length === 0)
             valReset();
