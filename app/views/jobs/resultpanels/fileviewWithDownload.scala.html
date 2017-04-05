@@ -1,0 +1,25 @@
+@import play.api.mvc.RequestHeader
+@import models.results.FileLoader
+
+@(toolName: String, filePath: String, jobID: String)(implicit request: RequestHeader)
+
+@import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".out";
+
+<a type="button" href="@fileURL" class="button success tiny hhpred_extra_button" id="downloadAlignment" download>Download</a>
+<br/><br/>
+
+<pre class="fileview" >@FileLoader.loadFile(filePath)</pre>
+
+<script>
+
+        function onExpand() {
+          $(".fileview").css("overflow-y", "visible");
+        }
+        function onCollapse() {
+
+          $(".fileview").css("overflow-y", "scroll");
+        }
+
+</script>
+
+
