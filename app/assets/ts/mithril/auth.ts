@@ -12,10 +12,10 @@ let jqueryUITabsInit = function(elem : Element, isInit : boolean) : void {
 class SignIn {
     static nameLogin : string = "";
     static password  : string = "";
-    static nameLoginSetter (nameLogin : string) { SignIn.nameLogin = nameLogin; m.redraw.strategy("none"); }
-    static passwordSetter  (password  : string) { SignIn.password  = password;  m.redraw.strategy("none"); }
+    static nameLoginSetter (nameLogin : string) : void { SignIn.nameLogin = nameLogin; redrawDelay(); }
+    static passwordSetter  (password  : string) : void { SignIn.password  = password;  redrawDelay(); }
 
-    static validate(event : Event) : void {
+    static submit(event : Event) : void {
         event.preventDefault();
         var dataS = {nameLogin:SignIn.nameLogin, password:SignIn.password};
         m.request({method: "POST", url: "signin", data: dataS }).then(function(authMessage) {
@@ -30,7 +30,7 @@ class SignIn {
     }
     static view (ctrl : any, args : any) : any {
         return m("div", { class : "auth-form" },
-            m("form", { 'data-abide': 'ajax', id: 'signin-form', novalidate:'novalidate', onsubmit: SignIn.validate }, [
+            m("form", { 'data-abide': 'ajax', id: 'signin-form', novalidate:'novalidate', onsubmit: SignIn.submit }, [
                 m("div", m("label",
                     m("input", { id:         'nameLogin',
                                  name:       'nameLogin',
@@ -69,18 +69,12 @@ class SignUp {
     static nameLogin : string = "";
     static eMail     : string = "";
     static password  : string = "";
-    static nameLoginF(nameLogin : string) : string {
-        if (nameLogin) SignUp.nameLogin = nameLogin;
-        return SignUp.nameLogin
-    }
-    static eMailF(eMail : string) : string {
-        if (eMail) SignUp.eMail = eMail;
-        return SignUp.eMail
-    }
-    static passwordF(password : string) : string {
-        if (password) SignUp.password = password;
-        return SignUp.password
-    }
+    static acceptToS : boolean = false;
+    static formValid : boolean = false;
+    static nameLoginSetter(nameLogin  : string)  : void { SignUp.nameLogin = nameLogin; redrawDelay(); }
+    static eMailSetter    (eMail      : string)  : void { SignUp.eMail     = eMail;     redrawDelay(); }
+    static passwordSetter (password   : string)  : void { SignUp.password  = password;  redrawDelay(); }
+    static acceptToSSetter(acceptToS? : boolean) : void { SignUp.acceptToS = acceptToS ? acceptToS : !SignUp.acceptToS; }
 
     static controller (args : any) : any {
         if (args) {
@@ -90,9 +84,41 @@ class SignUp {
         }
         return { nameLogin : SignUp.nameLogin, eMail : SignUp.eMail, password : SignUp.password }
     }
+
+    static validate(event : Event) : boolean {
+        if (!SignUp.acceptToS) {
+            console.log("invalid ToS");
+            return SignUp.formValid = false;
+        }
+        $("#signup-form").find(':input').each(function() : any {
+            if (!this.value && this.type !== "submit") { console.log("null Input"); return SignUp.formValid = false; }
+        });
+        $(".is-invalid-input").each(function() { console.log("invalid Input"); return SignUp.formValid = false; });
+        return SignUp.formValid = true;
+    }
+
+    static submit(event : Event) : void {
+        event.preventDefault();
+        if (SignUp.formValid || SignUp.validate(event)) {
+            var dataS = {nameLogin : SignUp.nameLogin,
+                         password  : SignUp.password,
+                         eMail     : SignUp.eMail,
+                         acceptToS : SignUp.acceptToS };
+            m.request({method: "POST", url: "signup", data: dataS }).then(function(authMessage) {
+                //type : AuthMessage
+                Auth.updateStatus(authMessage);
+            });
+        }
+    }
+
     static view (ctrl : any, args : any) : any {
         return m("div", {class: "auth-form"},
-            m("form", {'data-abide': 'ajax', id:'signup-form', novalidate:'novalidate'}, [
+            m("form", {'data-abide': 'ajax',
+                        id:          'signup-form',
+                        onsubmit:    SignUp.submit,
+                        onchange:    SignUp.validate,
+                        novalidate:  'novalidate'
+            }, [
                 m("div", m("label", [
                     m("input", { id:         'nameLogin',
                                  name:       'nameLogin',
@@ -100,7 +126,8 @@ class SignUp {
                                  placeholder:'Username',
                                  required:   'required',
                                  type:       'text',
-                                 onKeyUp:     m.withAttr("value", SignUp.nameLoginF),
+                                 onkeyup:     m.withAttr("value", SignUp.nameLoginSetter),
+                                 onchange:    m.withAttr("value", SignUp.nameLoginSetter),
                                  value:       SignUp.nameLogin
                     }),
                     m("span", {class:"form-error"}, "Username must be at least 6 characters long!")
@@ -111,7 +138,8 @@ class SignUp {
                                  placeholder:'Password',
                                  required:   'required',
                                  type:       'password',
-                                 onKeyUp:     m.withAttr("value", SignUp.passwordF),
+                                 onkeyup:     m.withAttr("value", SignUp.passwordSetter),
+                                 onchange:    m.withAttr("value", SignUp.passwordSetter),
                                  value:       SignUp.password
                     }),
                     m("span", {class:"form-error"}, "Passwords must be at least 8 characters long!")
@@ -132,8 +160,10 @@ class SignUp {
                                  name:        'eMail',
                                  pattern:     'email',
                                  placeholder: 'E-Mail',
+                                 required:    'required',
                                  type:        'text',
-                                 onKeyUp:     m.withAttr("value", SignUp.eMailF),
+                                 onkeyup:     m.withAttr("value", SignUp.eMailSetter),
+                                 onchange:    m.withAttr("value", SignUp.eMailSetter),
                                  value:       SignUp.eMail
                     }),
                     m("span", {class:"form-error"}, "Please enter a valid e-Mail address!")
@@ -143,12 +173,13 @@ class SignUp {
                                  name:     'acceptToS',
                                  required: 'required',
                                  type:     'checkbox',
-                                 value:    'false'
+                                 onchange: m.withAttr("checked", SignUp.acceptToSSetter),
+                                 value:    SignUp.acceptToS
                     }),
                     "I Accept the Terms of Sevice",
-                    m("span", {class:"form-error",id:'acceptToSText'}, "You must accept the ToS!")
+                    m("span", {class:"form-error", id:'acceptToSText'}, "You must accept the ToS!")
                 ])),
-                m("input", { class: "input small expanded secondary button disabled",
+                m("input", { class: "input small expanded secondary button" + (SignUp.formValid? "" : " disabled"),
                              id:    'signup-submit',
                              type:  'submit',
                              value: 'Register'
@@ -158,37 +189,38 @@ class SignUp {
     }
 }
 
-
 class ForgotPassword {
     static nameLogin : string = "";
     static eMail     : string = "";
-    static nameLoginF(nameLogin : string) : string {
-        if (nameLogin) ForgotPassword.nameLogin = nameLogin;
-        return ForgotPassword.nameLogin
-    }
-    static eMailF(eMail : string) : string {
-        if (eMail) ForgotPassword.eMail = eMail;
-        return ForgotPassword.eMail
+    static nameLoginSetter (nameLogin  : string) : void { ForgotPassword.nameLogin = nameLogin; redrawDelay(); }
+    static eMailSetter     (eMail      : string) : void { ForgotPassword.eMail     = eMail;     redrawDelay(); }
+
+    static submit(event : Event) : void {
+        event.preventDefault();
+        var dataS = {nameLogin:ForgotPassword.nameLogin, eMail:ForgotPassword.eMail};
+        console.log(dataS);
+        m.request({method: "POST", url: "forgotPassword", data: dataS }).then(function(authMessage) {
+            //type : AuthMessage
+            if (authMessage.successful) { SignIn.password = null }
+            Auth.updateStatus(authMessage);
+        });
     }
 
     static controller (args : any) : any {
-        if (args) {
-            ForgotPassword.nameLogin = args.nameLogin ? args.nameLogin : ForgotPassword.nameLogin;
-            ForgotPassword.eMail     = args.eMail     ? args.eMail     : ForgotPassword.eMail;
-        }
-        return { nameLogin : ForgotPassword.nameLogin, eMail : ForgotPassword.eMail }
+        return {}
     }
     static view (ctrl : any, args : any) : any {
         return m("div", { class : "auth-form" },
-            m("form", { 'data-abide': 'ajax', id: 'forgot-password-form', novalidate : 'novalidate' }, [
+            m("form", { 'data-abide': 'ajax', id: 'signup-form', novalidate:'novalidate', onsubmit: ForgotPassword.submit }, [
                 m("div", m("label",
-                    m("input", { id:          'nameLogin',
-                                 name:        'nameLogin',
-                                 pattern:     '[a-zA-Z0-9_]{6,40}',
-                                 placeholder: 'Username',
-                                 type:        'text',
-                                 onKeyUp:     m.withAttr("value", ForgotPassword.nameLoginF),
-                                 value:       ForgotPassword.nameLogin
+                    m("input", { id:         'nameLogin',
+                                 name:       'nameLogin',
+                                 pattern:    '[a-zA-Z0-9_]{6,40}',
+                                 placeholder:'Username',
+                                 type:       'text',
+                                 onkeyup:    m.withAttr("value", ForgotPassword.nameLoginSetter),
+                                 onchange:   m.withAttr("value", ForgotPassword.nameLoginSetter),
+                                 value:      ForgotPassword.nameLogin
                     })
                 )),
                 m("div", m("label",
@@ -197,12 +229,13 @@ class ForgotPassword {
                                  pattern:     'email',
                                  placeholder: 'E-Mail',
                                  type:        'text',
-                                 onKeyUp:     m.withAttr("value", ForgotPassword.eMailF),
+                                 onkeyup:     m.withAttr("value", ForgotPassword.eMailSetter),
+                                 onchange:    m.withAttr("value", ForgotPassword.eMailSetter),
                                  value:       ForgotPassword.eMail
                     })
                 )),
                 m("input", { class: "input small expanded secondary button",
-                             id:    'forgot-password-submit',
+                             id:    'signin-submit',
                              type:  'submit',
                              value: 'Sign In'
                 })
@@ -248,7 +281,7 @@ class Profile {
                                  placeholder:'Password',
                                  required:   'required',
                                  type:       'password',
-                                 onKeyUp:     m.withAttr("value", SignUp.passwordF),
+                                 onKeyUp:     m.withAttr("value", SignUp.passwordSetter),
                                  value:       SignUp.password
                     }),
                     m("span", {class:"form-error"}, "Passwords must be at least 8 characters long!")
@@ -270,7 +303,7 @@ class Profile {
                                  pattern:     'email',
                                  placeholder: 'E-Mail',
                                  type:        'text',
-                                 onKeyUp:     m.withAttr("value", SignUp.eMailF),
+                                 onKeyUp:     m.withAttr("value", SignUp.eMailSetter),
                                  value:       SignUp.eMail
                     }),
                     m("span", {class:"form-error"}, "Please enter a valid e-Mail address!")
@@ -299,7 +332,6 @@ class Profile {
 
 class AuthDropdown {
     static controller (args : any) : any {
-        //Auth.changeUser(new User("a", "b"));
         if (args) {
         }
         return {}

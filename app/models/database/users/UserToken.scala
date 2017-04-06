@@ -10,7 +10,7 @@ import reactivemongo.bson._
 case class UserToken(tokenType    : Int,
                      token        : String           = RandomString.randomAlphaNumString(10),
                      passwordHash : Option[String]   = None,
-                     newEmail     : Option[String]   = None,
+                     eMail        : Option[String]   = None,
                      changeDate   : Option[DateTime] = Some(DateTime.now()))
 
 object UserToken {
@@ -25,10 +25,10 @@ object UserToken {
     */
   implicit object UserTokenReader extends BSONReader[BSONDocument, UserToken] {
     def read(doc: BSONDocument) = UserToken(
-      tokenType    = doc.getAs[Int](TYPE).get,
+      tokenType    = doc.getAs[Int](TYPE).getOrElse(-1),
       token        = doc.getAs[String](TOKEN).get,
       passwordHash = doc.getAs[String](NEWPASSWORDHASH),
-      newEmail     = doc.getAs[String](NEWEMAIL),
+      eMail        = doc.getAs[String](NEWEMAIL),
       changeDate   = doc.getAs[BSONDateTime](CHANGEDATE).map(dt => new DateTime(dt.value)))
   }
 
@@ -40,7 +40,7 @@ object UserToken {
       TYPE            -> userToken.tokenType,
       TOKEN           -> userToken.token,
       NEWPASSWORDHASH -> userToken.passwordHash,
-      NEWEMAIL        -> userToken.newEmail,
+      NEWEMAIL        -> userToken.eMail,
       CHANGEDATE      -> BSONDateTime(userToken.changeDate.fold(-1L)(_.getMillis)))
   }
 }
