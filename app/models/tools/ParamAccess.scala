@@ -55,6 +55,7 @@ case object Bool     extends ParamType
 case object Radio    extends ParamType
 case class Slide(min: Option[Double], max: Option[Double]) extends ParamType
 case class Decimal(step : String, min: Option[Double], max: Option[Double]) extends ParamType
+case object Text extends ParamType
 
 object ParamType {
 
@@ -78,6 +79,7 @@ object ParamType {
       case Radio => Json.obj(FIELD_TYPE -> 5)
       case Slide(minVal, maxVal) => Json.obj(FIELD_TYPE -> 6, "min" -> minVal, "max" -> maxVal)
       case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step ,"min" -> minVal, "max" -> maxVal)
+      case Text => Json.obj(FIELD_TYPE -> 7)
     }
   }
 }
@@ -189,4 +191,5 @@ class ParamAccess @Inject() (tel: TEL) {
   final val ALN_STRINGENCY = select ("aln_stringency", "Alignment stringency")
   final val OUTPUT_ORDER = select ("output_order", "Output the alignment in:")
   final val EVAL_TPR = select("eval_tpr", "E-value inclusion TPR & SEL")
+  final val CODON_TABLE_ORGANISM = Param("codon_table_organism", Text, 1, "Use codon usage table of")
 }

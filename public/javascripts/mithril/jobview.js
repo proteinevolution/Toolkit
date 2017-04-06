@@ -1,4 +1,4 @@
-var JobErrorComponent, jobNoteArea, JobValidationComponent, ParameterAlignmentComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterSelectComponent, ParameterSlideComponent, SearchformComponent, alignmentUpload, closeShortcut, exampleSequence, formComponents, foundationConfig, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
+var JobErrorComponent, jobNoteArea, JobValidationComponent, ParameterAlignmentComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterSelectComponent, ParameterTextComponent, ParameterSlideComponent, SearchformComponent, alignmentUpload, closeShortcut, exampleSequence, formComponents, foundationConfig, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
 
 exampleSequence = ">NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEE\n>CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRD\n>CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQD\n>NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRA\n>YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQE\n>YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRA\n>NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRA\n>YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQT";
 
@@ -220,14 +220,12 @@ JobTabsComponent = {
                 if (this.isFullscreen) {
                     job_tab_component.removeClass("fullscreen");
                     this.isFullscreen = false;
-                    this.label = "Expand";
                     if (typeof onCollapse === "function") {
                         onCollapse();
                     }
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
-                    this.label = "Collapse";
                     if (typeof onExpand === "function") {
                         onExpand();
                     }
@@ -273,20 +271,18 @@ JobTabsComponent = {
                         })
                     )] : [],
                 m("li", { style: "float: right;" },
-                    m("input", {
+                    m("i", {
                         type:    "button",
                         id:      "collapseMe",
-                        class:   "button small button_fullscreen",
-                        value:   ctrl.getLabel(),
+                        class:   "button_fullscreen fa fa-expand",
                         onclick: ctrl.fullscreen,
                         config:  closeShortcut
                     })
                 ),
-                ctrl.isJob ? m("li", { style: "float: right;" },
-                    m("input", {
+                ctrl.isJob ? m("li", { style: "float: right; margin-right: 24px; margin-top: 7px" },
+                    m("i", {
                         type: "button",
-                        class: "button small delete",
-                        value: "Delete Job",
+                        class: "delete icon-trash_can",
                         onclick: ctrl["delete"].bind(ctrl)
                     })
                 ) : void 0
@@ -955,6 +951,23 @@ ParameterNumberComponent = {
     }
 };
 
+
+ParameterTextComponent = {
+    view: function(ctrl, args) {
+        var paramAttrs = {
+            type: "text",
+            id: args.param.name,
+            name: args.param.name,
+            value: args.value
+        };
+        return renderParameter([
+            m("label", {
+                "for": args.param.name
+            }, args.param.label), m("input", paramAttrs)
+        ]);
+    }
+};
+
 ParameterBoolComponent = {
     view: function(ctrl, args) {
         return renderParameter([
@@ -1019,5 +1032,6 @@ formComponents = {
     3: ParameterSelectComponent,
     4: ParameterBoolComponent,
     5: ParameterRadioComponent,
-    6: ParameterSlideComponent
+    6: ParameterSlideComponent,
+    7: ParameterTextComponent
 };
