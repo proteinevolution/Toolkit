@@ -1,6 +1,6 @@
 package models.auth
 
-import models.database.users.{UserData, User}
+import models.database.users.{UserToken, UserData, User}
 import org.joda.time.DateTime
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
@@ -141,6 +141,17 @@ object FormDefinitions {
         Some(("******","******"))
       case None =>
         None
+    }
+  )
+
+  def ForgottenPasswordEdit = Form(
+    mapping(
+      UserData.NAMELOGIN -> optional (text(6,40) verifying pattern(textRegex, error = "error.NameLogin")),
+      UserData.EMAIL     -> optional (email)) {
+      (nameLoginOpt : Option[String], eMailOpt : Option[String]) =>
+        Some(nameLoginOpt, eMailOpt)
+    } { _ =>
+      None
     }
   )
 }
