@@ -22,6 +22,7 @@
         <link href="@routes.Assets.versioned("styles/mfglabs_iconset.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/ion.rangeSlider.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/ion.rangeSlider.skinFlat.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/font-awesome-4.7.0/css/font-awesome.min.css")" rel="stylesheet">
 
         <link href="@routes.Assets.versioned("styles/motion-ui.css")" rel="stylesheet">
 
@@ -221,9 +222,9 @@
                     <div class="columns large-12">
                         <div id="sub-nav">
                             <a data-open="subnavHelpModal">Help</a>
-                            <a href="#">Disclaimer</a>
+                            <a data-open="privacyPolicyModal">Privacy Policy</a>
                             <a data-open="imprintModal">Imprint</a>
-                            <a href="/contact">Contact</a>
+                            <a data-open="contactModal">Contact</a>
                             <a href="/#/news">News</a>
                         </div>
                         <div id="socket"> © 2008-@(new Date().format("yyyy")) , Dept. of Protein Evolution at the Max Planck Institute for Developmental Biology, Tübingen </div>
@@ -244,8 +245,17 @@
             @helpmodals.helpmodal()
         </div>
 
+        <div class="small reveal" id="privacyPolicyModal" data-reveal>
+            @helpmodals.privacypolicymodal()
+        </div>
 
-            <!-- Script Inclusions -->
+        <div class="small reveal" id="contactModal" data-reveal>
+            @helpmodals.contactmodal()
+        </div>
+
+
+
+        <!-- Script Inclusions -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
 
 

@@ -580,6 +580,11 @@ textarea { resize:both; }
     color: #666;
 }
 
+.close-button {
+    margin-top: 0.75em;
+    margin-right: 0.5em;
+}
+
 
 
 /* To make elements on the website full screen */

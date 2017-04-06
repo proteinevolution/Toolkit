@@ -384,14 +384,14 @@ hr {
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #878787;
     height: 2.5em;
-    width: 7em;
+    width: 8em;
     float: right;
     border-radius: 3px;
     font-size: 0.88em;
 }
 
 .submitbuttons .jobid.white {
-    border:1px solid #ffffff;
+    border:1px solid #cacaca;
 }
 
 .submitbuttons .jobid.green {
@@ -626,41 +626,51 @@ map[name="blastmap"] area { cursor: pointer; }
 
 /* Side buttons */
 
-input.delete {
+i.delete {
     color: #e66f72 !important;
     background-color: inherit;
-    margin-top: 0.5em;
+    font-size: 1.25em;
 }
-input.delete:hover {
+i.delete:hover {
     background-color: inherit;
-    margin-top: 0.5em;
+    font-size: 1.25em;
+    cursor: pointer;
 }
-input.delete:active {
+i.delete:active {
     background-color: inherit;
-    margin-top: 0.5em;
+    font-size: 1.25em;
 }
-input.delete:focus {
+i.delete:focus {
     background-color: inherit;
-    margin-top: 0.5em;
+    font-size: 1.25em;
 }
 
 
-input.button_fullscreen{
-    color: darkolivegreen !important;
+i.button_fullscreen{
+    color: rgba(0, 110, 98, 166) !important;
     background-color: inherit;
-    margin-top: 0.5em;
+    margin-top: 0.3em;
+    margin-right: 0.5em;
+    font-size: 1.5em;
 }
-input.button_fullscreen:hover {
+i.button_fullscreen:hover {
     background-color: inherit;
-    margin-top: 0.5em;
+    margin-top: 0.3em;
+    margin-right: 0.5em;
+    font-size: 1.5em;
+    cursor: pointer;
 }
-input.button_fullscreen:active {
+i.button_fullscreen:active {
     background-color: inherit;
-    margin-top: 0.5em;
+    margin-top: 0.3em;
+    margin-right: 0.5em;
+    font-size: 1.5em;
 }
-input.button_fullscreen:focus {
+i.button_fullscreen:focus {
     background-color: inherit;
-    margin-top: 0.5em;
+    margin-top: 0.3em;
+    margin-right: 0.5em;
+    font-size: 1.5em;
 }
 
 /* Nice select */
@@ -815,6 +825,7 @@ textarea:focus{
     border-radius: 2px;
 }
 .callout.success{
+    background-color: #DBFFDB;
     opacity: 0.9;
     min-width: 12em;
     text-align: center;

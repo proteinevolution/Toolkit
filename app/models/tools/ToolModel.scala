@@ -179,7 +179,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "6frametranslation" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload("6FrameTranslation",s"$jobPath$jobID/results/" + jobID + ".out", jobID))))
 
-      case "backtrans" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output"))))
+      case "backtrans" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".out"))))
 
       case "hhfilter" => getResult(jobID).map {
         case Some(jsvalue) =>
@@ -337,7 +337,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // Backtranslator
     ("backtrans", "BackTranslator", "bac", "utils", "",
-      Seq(paramAccess.SINGLESEQ, paramAccess.INC_AMINO, paramAccess.GENETIC_CODE), Seq.empty,Seq.empty),
+      Seq(paramAccess.SINGLESEQ, paramAccess.INC_AMINO, paramAccess.GENETIC_CODE, paramAccess.CODON_TABLE_ORGANISM), Seq.empty,Seq.empty),
 
     // PatternSearch
     ("patsearch", "PatternSearch", "pats", "search", "",
