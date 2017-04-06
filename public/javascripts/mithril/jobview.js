@@ -220,14 +220,12 @@ JobTabsComponent = {
                 if (this.isFullscreen) {
                     job_tab_component.removeClass("fullscreen");
                     this.isFullscreen = false;
-                    this.label = "Expand";
                     if (typeof onCollapse === "function") {
                         onCollapse();
                     }
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
-                    this.label = "Collapse";
                     if (typeof onExpand === "function") {
                         onExpand();
                     }
@@ -273,20 +271,18 @@ JobTabsComponent = {
                         })
                     )] : [],
                 m("li", { style: "float: right;" },
-                    m("input", {
+                    m("i", {
                         type:    "button",
                         id:      "collapseMe",
-                        class:   "button small button_fullscreen",
-                        value:   ctrl.getLabel(),
+                        class:   "button_fullscreen fa fa-expand",
                         onclick: ctrl.fullscreen,
                         config:  closeShortcut
                     })
                 ),
-                ctrl.isJob ? m("li", { style: "float: right;" },
-                    m("input", {
+                ctrl.isJob ? m("li", { style: "float: right; margin-right: 24px; margin-top: 7px" },
+                    m("i", {
                         type: "button",
-                        class: "button small delete",
-                        value: "Delete Job",
+                        class: "delete icon-trash_can",
                         onclick: ctrl["delete"].bind(ctrl)
                     })
                 ) : void 0
