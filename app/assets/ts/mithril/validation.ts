@@ -42,11 +42,11 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                      **/
 
                     let tcoffeeTarget = new alignmentVal($(elem));
-                    tcoffeeTarget.seq2IDvalidation();
+                    tcoffeeTarget.basicValidation();
 
-                    //if (feedback) {
-                    //    tcoffeeTarget.mustHave2();
-                    //}
+                    if (feedback) {
+                        tcoffeeTarget.mustHave2();
+                    }
                     seqLimit = 2000;
 
                     break;
