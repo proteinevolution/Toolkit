@@ -7,7 +7,7 @@ import akka.actor.ActorRef
 import models.auth._
 import models.database.users.{User, UserToken}
 import models.job.JobActorAccess
-import models.mailing.{ChangePasswordMail, NewUserWelcomeMail}
+import models.mailing.{ResetPasswordMail, ChangePasswordMail, NewUserWelcomeMail}
 import modules.LocationProvider
 import modules.tel.TEL
 import org.joda.time.DateTime
@@ -265,7 +265,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                   val modifier = BSONDocument("$set"          ->
                                  BSONDocument(User.USERDATA   -> signUpFormUser.getUserData),
                                               "$push"         ->
-                                 BSONDocument(User.USERTOKENS -> UserToken(tokenType = 1, newEmail = Some(signUpFormUser.getUserData.eMail.head))))
+                                 BSONDocument(User.USERTOKENS -> UserToken(tokenType = 1, eMail = Some(signUpFormUser.getUserData.eMail.head))))
                   modifyUserWithCache(selector,modifier).map {
                     case Some(registeredUser) =>
                       // All done. User is registered, now send the welcome eMail
@@ -382,6 +382,78 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
       }
     }
   }
+
+  /**
+    * Allows a User to reset their password. A confirmation eMail is sent for them to
+    * ensure a secure change
+    *
+    * @return
+    */
+  def passwordReset : Action[AnyContent] = Action.async { implicit request =>
+    FormDefinitions.ForgottenPasswordEdit.bindFromRequest.fold(
+      errors =>
+        Future.successful{
+          Ok(FormError())
+        },
+      // when there are no errors, then insert the user to the collection
+      {
+        case Some(formOutput : (Option[String], Option[String])) =>
+          val selector : BSONDocument = formOutput match {
+            case (Some(nameLogin: String), Some(eMail: String)) =>
+              Logger.info("2 Parameters nameLogin" + nameLogin + " eMail" + eMail)
+              BSONDocument("$or" -> List(BSONDocument(User.NAMELOGIN -> nameLogin), BSONDocument(User.EMAIL -> eMail)))
+            case (Some(nameLogin: String), None) =>
+              Logger.info("1st Parameter" + nameLogin)
+              BSONDocument(User.NAMELOGIN -> nameLogin)
+            case (None, Some(eMail: String)) =>
+              Logger.info("2nd Parameter" + eMail)
+              BSONDocument(User.EMAIL -> eMail)
+            case (None, None) =>
+              Logger.info("No Parameter")
+              BSONDocument.empty
+          }
+          if (selector != BSONDocument.empty) {
+            findUser(selector).flatMap {
+              case Some(user) =>
+                user.userData match {
+                  case Some(userData) =>
+
+                    // Generate a new Token to wait for the confirmation eMail
+                    val token = UserToken(tokenType = 3)
+                    // create a modifier document to change the last login date in the Database
+                    val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                    // Push to the database using selector and modifier
+                    val selector = BSONDocument(User.IDDB          -> user.userID)
+                    val modifier = BSONDocument("$set"             ->
+                                   BSONDocument(User.DATEUPDATED   -> bsonCurrentTime),
+                                                "$push"            ->
+                                   BSONDocument(User.USERTOKENS    -> token))
+                    modifyUser(selector,modifier).map {
+                      case Some(registeredUser) =>
+                        // All done. User is registered, now send the welcome eMail
+                        val eMail = ResetPasswordMail(tel, registeredUser, token.token)
+                        eMail.send
+                        Ok(PasswordRequestSent)
+                      case None =>
+                        Ok(FormError())
+                    }
+
+                  case None =>
+                  Logger.info("User is a Guest.")
+                  // User is not registered? Should not happen.
+                  Future.successful(Ok(NoSuchUser))
+                }
+              case None =>
+                Logger.info("No such User.")
+                Future.successful(Ok(NoSuchUser))
+            }
+          } else {
+            Future.successful(Ok(OneParameterNeeded))
+          }
+      }
+    )
+  }
+
 
   /**
     * Verifies a Token which was sent to the Users eMail address.

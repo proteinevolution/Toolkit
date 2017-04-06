@@ -112,4 +112,19 @@ trait JSONTemplate {
       success    = true,
       userOption = Some(user))
   }
+
+  def PasswordRequestSent : JsValue = {
+    authMessage("We have sent You a token for resetting Your password.\nPlease check your eMails.",
+      success    = true)
+  }
+
+  def NoSuchUser : JsValue = {
+    authMessage("Could not find any Users with the matching user name or eMail address.",
+      success    = false)
+  }
+
+  def OneParameterNeeded : JsValue = {
+    authMessage("Need either a user name or a eMail address.",
+      success    = false)
+  }
 }

@@ -107,3 +107,33 @@ case class ChangePasswordMail (tel: TEL, userParam : User, token : String) exten
     )
   }
 }
+
+case class ResetPasswordMail (tel: TEL, userParam : User, token : String) extends MailTemplate {
+  override def subject = "Bioinformatics Toolkit - Password Verification"
+
+  val user : User = userParam
+
+  val bodyText : String = {
+    s"""Hello ${user.getUserData.nameLogin},
+        |You requested to reset your password and set a new one.
+        |To complete the process, visit
+        |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
+        |If You did not request this, then someone may have tried to log into your account.
+        |Your Toolkit Team
+     """.stripMargin
+  }
+
+  val bodyHtml : String = {
+    super.bodyHtmlTemplate(
+      s"""Hello ${user.getUserData.nameLogin},""".stripMargin,
+      s"""You requested to reset your password and set a new one.
+          |To complete the process, visit <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a>
+          |or copy this URL and visit this page in your browser:
+          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
+          |If You did not request this, then your account has been used by someone else.
+          |Log in and change the password yourself to ensure that this other Person can no longer access your account.
+          |Your Toolkit Team
+     """.stripMargin
+    )
+  }
+}

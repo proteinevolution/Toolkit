@@ -2,6 +2,9 @@
  *  Handles the Connection to the WebSocket and its connection to ModelView elements like provided by
  *  Mithril.
  */
+let currentRoute : string = null;
+let redrawDelayTimer  : number = null,
+    redrawDelay  : Function;
 let ws : WebSocket = null,
     connect      : Function,
     connected    : boolean = false,
@@ -98,7 +101,7 @@ onMessage = function(event : MessageEvent) : any {
         case "UpdateLoad":
             // TODO Don't redraw all the time!
             // Tried to limit this by saving the "currentRoute", but we might need something proper in the future.
-            if (currentRoute === "index") {
+            if (currentRoute === "index" && redrawDelayTimer == null) {
                 LoadBar.updateLoad(message.load);
             }
             break;
@@ -110,13 +113,20 @@ onMessage = function(event : MessageEvent) : any {
     }
 };
 
-
+redrawDelay = function () : void {
+    console.log("halting ws redraw events Timer:" + redrawDelayTimer);
+    clearInterval(redrawDelayTimer);
+    redrawDelayTimer = setTimeout(function(e) {
+        m.redraw(true);
+        redrawDelayTimer = null;
+        console.log("resuming ws redraw events");
+    }, 2000);
+};
 
 let sendMessage = function(object : any) : any {
     console.log("sending message:", object);
     return ws.send(JSON.stringify(object));
 };
-let currentRoute : string = "";
 addJob = function(jobID : string) : any { sendMessage({ "type": "AddJob", "jobID": jobID }); };
 
 connect();
