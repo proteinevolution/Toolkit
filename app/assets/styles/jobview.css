@@ -815,6 +815,7 @@ textarea:focus{
     border-radius: 2px;
 }
 .callout.success{
+    background-color: #DBFFDB;
     opacity: 0.9;
     min-width: 12em;
     text-align: center;
