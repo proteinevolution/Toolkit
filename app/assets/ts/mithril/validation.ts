@@ -422,9 +422,7 @@ class alignmentVal implements ToolkitValidator {
 
     seq2IDvalidation(): any {
 
-        console.log(this.elem.reformat('fastaheaders'));
-
-        if (!this.elem.validate('fasta') && !this.elem.validate('fastaheaders') && this.elem.reformat('detect') != '' && this.elem.val().length != 0) {
+        if (!this.elem.validate('fasta') && !this.elem.validate('fastaheaders') && !this.elem.validate('line') && this.elem.reformat('detect') != '' && this.elem.val().length != 0) {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
             feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
@@ -443,9 +441,9 @@ class alignmentVal implements ToolkitValidator {
         else if (this.elem.reformat('maxheadernumber', 20000))
             feedback(false, "Input contains too many headers!", "error");
 
-        else if (this.elem.reformat('detect') == 'fastaheaders' && this.elem.val().length != 0) {
+        else if (this.elem.validate('fastaheaders') && this.elem.val().length != 0) {
             $(".submitJob").prop("disabled", false);
-            $("#validOrNot").css("display", "block").html("Valid input").addClass("success");
+            $("#validOrNot").css("display", "block").html("Valid input").removeClass("alert").addClass("success");
         }
 
         else if (this.elem.val().length === 0)
@@ -456,111 +454,21 @@ class alignmentVal implements ToolkitValidator {
 
     patternSearchValidation(): any {
 
-        if (!this.elem.reformat('line'))
+        if(this.elem.validate('fasta') || /^>/.test(this.elem.reformat('fastaheaders')))
+            feedback(false, "Input must not start with \">\"!", "error");
+
+        else if (!this.elem.validate('line') && !this.elem.validate('fastaheaders'))
             feedback(false, "Input has to be one line without spaces!", "error");
 
         else if (!this.elem.reformat('maxlength', 100))
             feedback(false, "Input too large!", "error");
 
+        else if (this.elem.validate('line') && this.elem.val().length != 0) {
+            $(".submitJob").prop("disabled", false);
+            $("#validOrNot").css("display", "block").html("Valid input").removeClass("alert").addClass("success");
+        }
+
         else if (this.elem.val().length === 0)
             valReset();
-
-        else feedback(true);
     }
 }
-
-
-
-
-    /*
-     var multiSeqVal - function(el) {
-
-     var self = this;
-
-     self.fastaStep2 = function(){
-     feedback(true);
-     originIsFasta = true;
-     };
-
-     self.accept = function (visitor) {
-     visitor.visit(self);
-     };
-
-     if (!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
-     feedback(false, "this is no fasta!", "error");
-
-     else if (el.reformat('maxseqnumber', seqLimit)) {
-     feedback(false, "Input contains too many sequences!", "error");
-     }
-     else if (!el.reformat('maxlength',1000000))
-     feedback(false, "Input too large!", "error");
-
-     else if (!el.reformat('uniqueids'))
-     feedback(false, "FASTA but identifiers are not unique!", "error");
-
-     else if(!el.validate('fasta') && el.reformat('detect') != '' && el.val().length != 0) {
-     originIsFasta = false;
-     var t = el.reformat('detect');
-     feedback(false, "Wrong format found: " + t + ". <b>Auto-transformed to Fasta</b>", "success", t);
-     $("#alignment").val(el.reformat('fasta'));
-     }
-
-     else if (el.validate('fasta') && el.reformat('alignment') &&  originIsFasta)
-     this.fastaStep2();
-
-     else if(el.validate('fasta') && !el.reformat('alignment')){
-     feedback(true);
-     $(".submitJob").prop("disabled", false);
-     }
-
-     else if (el.val().length === 0)
-     valReset();
-    }
-}
-*/
-
-
-
-
-/*
- let seqoralignmentVal = function(el){
-
- var self = this;
-
- self.fastaStep2 = function(){
- feedback(true);
- originIsFasta = true;
- };
-
- self.accept = function (visitor) {
- visitor.visit(self);
- };
-
-
- if (!el.validate('fasta') && el.reformat('detect') === '' && el.val().length != 0)
- feedback(false, "this is no fasta!", "error");
-
- else if (!el.reformat('uniqueids'))
- feedback(false, "FASTA but identifiers are not unique!", "error");
-
- else if(!el.validate('fasta') && el.reformat('detect') != '' && el.val().length != 0) {
- originIsFasta = false;
- var t = el.reformat('detect');
- feedback(false, "Wrong format found: " + t + ". <b>Auto-transformed to Fasta</b>", "success", t);
- $("#alignment").val(el.reformat('fasta'));
- }
-
- else if (el.validate('fasta') && el.reformat('alignment') &&  originIsFasta)
- this.fastaStep2();
-
- else if(el.validate('fasta') && !el.reformat('alignment') && fasta2json(el.val()).length > 1){
- feedback(false, "not aligned FASTA", "error");
- $(".submitJob").prop("disabled", true);
- }
- else if(el.validate('fasta') && !el.reformat('alignment') && fasta2json(el.val()).length == 1){
- this.fastaStep2();
- }
-
- else if (el.val().length === 0)
- valReset();
- }; */
