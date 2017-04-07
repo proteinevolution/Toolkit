@@ -62,12 +62,17 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
     case FetchLatest =>
       val load = cluster.getLoad.loadEst
 
-      if (load > 1.2) {
-        TEL.memFactor = 0.5
-        TEL.threadsFactor = 0.5
-      } else {
-        TEL.memFactor = 1
-        TEL.threadsFactor = 1
+      /**
+        * dynamically adjust the cluster resources dependent on the current cluster load
+        */
+
+      load match {
+
+        case x if x > 1.2 => TEL.memFactor = 0.5; TEL.threadsFactor = 0.5
+        case x if x < 0.5 && x > 0.1 => TEL.memFactor = 2; TEL.threadsFactor = 2
+        case x if x < 0.1 => TEL.memFactor = 4; TEL.threadsFactor = 4
+        case _ => TEL.memFactor = 1; TEL.threadsFactor = 1
+
       }
 
       record = record.::(load)
