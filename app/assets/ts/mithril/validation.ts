@@ -2,6 +2,7 @@
  * Created by snam on 03.03.17.
  */
 
+
 let seqLimit : any;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
@@ -14,6 +15,27 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
             toolname = "unknown";
             console.warn("toolname unspecified");
         }
+
+        // Placeholder overrides
+
+        switch(toolname) {
+
+            case "hhpred":
+                $(elem).attr("placeholder", "foo");
+                break;
+
+            case "tcoffee":
+                $(elem).attr("placeholder", "bar");
+                break;
+
+            default:
+                break;
+
+
+        }
+
+
+
 
         return $(elem).on("keyup", function (e) {
 
