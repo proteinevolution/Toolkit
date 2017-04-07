@@ -686,7 +686,7 @@ window.ParameterAlignmentComponent = {
             }).bind(this.mo),
             getTwoTextAreas: (function(){
                 return this.twoTextAreas;
-            }).bind(this.mo),
+            }).bind(this.mo)
 
         };
     },
@@ -786,10 +786,11 @@ window.ParameterAlignmentComponent = {
                     type: "button",
                     "class": "button small alignmentExample",
                     value: "Paste Example",
+                    config: sampleSeqConfig,
                     onclick: function() {
-                        $("#" + ctrl.id).val(exampleSequence);
+                        //$("#" + ctrl.id).val(exampleSequence);
                         $('.submitJob').prop('disabled', false);
-                        $("#validOrNot").removeClass("alert warning primary secondary")
+                        $("#validOrNot").removeClass("alert warning primary secondary");
                         $("#validOrNot").css("display", "block").html("Found format: <b>" + $("#" + ctrl.id).reformat('detect') + "</b>").addClass("success");
                         originIsFasta = true; // resets changed validation filter
                     }
