@@ -165,8 +165,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         ("UPGMATree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")),
         ("UPGMAResults", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.upgma"))))
 
-      case "mmseqs2" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output.rep")),
-        ("Summary", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/output.clu"))))
+      case "mmseqs2" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload("mmseqs2",s"$jobPath$jobID/results/" + jobID + ".fas", jobID, jobID + ".fas")),
+        ("Summary", views.html.jobs.resultpanels.fileviewWithDownload("mmseqs2",s"$jobPath$jobID/results/" + jobID + ".clu", jobID, jobID + ".clu"))))
 
       case "retseq" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/sequences.fa")),
         ("Summary", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/unretrievable"))))
@@ -177,7 +177,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         case None => Seq.empty
       }
 
-      case "6frametranslation" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload("6FrameTranslation",s"$jobPath$jobID/results/" + jobID + ".out", jobID))))
+      case "6frametranslation" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload("6FrameTranslation",s"$jobPath$jobID/results/" + jobID + ".out", jobID, jobID + ".out"))))
 
       case "backtrans" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".out"))))
 
