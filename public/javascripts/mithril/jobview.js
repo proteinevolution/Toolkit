@@ -477,12 +477,11 @@ JobSubmissionComponent = {
                         $('#submit_again').on('click', function() {
                             var submitRoute;
                             $('#submit_modal').foundation('close');
-                            JobListComponent.pushJob(JobListComponent.Job({
-                                jobID: jobID,
-                                state: 0,
-                                createdOn: Date.now().valueOf(),
-                                toolname: toolname
-                            }), true); // setActive = true
+                            var jobListComp = JobListComponent.Job(
+                                    { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolname }
+                            );
+                            console.log(jobListComp);
+                            JobListComponent.pushJob(jobListComp, true); // setActive = true
                             submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID);
                             m.request({
                                 url: submitRoute.url,
@@ -494,12 +493,12 @@ JobSubmissionComponent = {
                         });
                         return $('#submit_modal').foundation('open');
                     } else {
-                        JobListComponent.pushJob(JobListComponent.Job({
-                            jobID: jobID,
-                            state: 0,
-                            createdOn: Date.now().valueOf(),
-                            toolname: toolname
-                        }), true); // setActive = true
+                        var jobListComp = JobListComponent.Job(
+                            { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolname }
+                        );
+                        console.log(jobListComp);
+                        JobListComponent.pushJob(jobListComp, true); // setActive = true
+
                         submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID);
                         m.request({
                             method: submitRoute.method,
