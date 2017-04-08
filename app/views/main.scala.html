@@ -138,19 +138,13 @@
                 <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
                 <div class="overlay-content" id="overlay-content">
                     <div class="mithril-overlay-content" id="mithril-overlay-content"></div>
-                @{user.userData match {
-                    case Some(userData) =>
-                        views.html.auth.miniprofile(user)
-                    case None =>
-                        views.html.general.auth()
-                }}
                 </div>
             </div>
 
 
             <!---Navigation Bar --->
              <div class="row" id="metanav">
-                 <div id="metauser">@views.html.auth.dropdown(user)</div> <!-- TODO: ugly construction -->
+                 <div id="metauser"></div> <!-- TODO: ugly construction -->
                  <div id="social">
                      <a href="https://github.com/zy4/Toolkit"><i class="icon-octopus"></i></a>
                      <a href="https://www.facebook.com/mpitoolkit"><i class="icon-facebook"></i></a>
