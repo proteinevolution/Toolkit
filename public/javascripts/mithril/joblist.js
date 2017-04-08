@@ -65,14 +65,19 @@ window.JobListComponent = {
     contains        : function (jobID) {    // Checks if the job with the given jobID is in the list
         return this.getJob(jobID) != null
     },
-    jobIDs          : function () {         // Returns the jobIDs from the list
+    jobIDs          : function () {         // Returns all the jobIDs from the list
         return JobListComponent.list.map(function(job){ return job.jobID })
+    },
+    jobIDsFiltered  : function () {         // Returns all the jobIDs from the list which can still be updated
+        return JobListComponent.list.filter(function(job){
+            return job.state != 4 && job.state != 5
+        }).map(function(job){ return job.jobID })
     },
     register        : function (jobIDs) {   // Notices the server to send update messages about the jobs
         if (jobIDs) {
             sendMessage({ type: "RegisterJobs", "jobIDs": jobIDs });
         } else {
-            sendMessage({ type: "RegisterJobs", "jobIDs": JobListComponent.jobIDs });
+            sendMessage({ type: "RegisterJobs", "jobIDs": JobListComponent.jobIDsFiltered() });
         }
 
     },
