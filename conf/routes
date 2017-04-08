@@ -71,6 +71,8 @@ GET           /signout                                @controllers.Auth.signOut(
 POST          /forgotPassword                         @controllers.Auth.passwordReset
 GET           /miniprofile                            @controllers.Auth.miniProfile()
 GET           /profile                                @controllers.Auth.profile()
+POST          /profile                                @controllers.Auth.profileSubmit()
+POST          /password                               @controllers.Auth.passwordChangeSubmit()
 POST          /profile/submit/userData/               @controllers.Auth.profileSubmit()
 POST          /profile/submit/password/               @controllers.Auth.passwordChangeSubmit()
 GET           /verification/:userName/:token          @controllers.Auth.verification(userName : String, token : String)

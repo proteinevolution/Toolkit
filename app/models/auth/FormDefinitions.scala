@@ -84,13 +84,13 @@ object FormDefinitions {
     */
   def ProfileEdit(user : User) = Form(
     mapping(
-      UserData.EMAIL     -> email,
+      UserData.EMAIL     -> list(email),
       UserData.NAMEFIRST -> optional(text(1,100) verifying pattern(textRegex, error = "error.NameFirst")),
       UserData.NAMELAST  -> optional(text(1,100) verifying pattern(textRegex, error = "error.NameLast")),
       UserData.INSTITUTE -> optional(text(1,100) verifying pattern(textRegex, error = "error.Institute")),
       UserData.STREET    -> optional(text(1,100) verifying pattern(textRegex, error = "error.Street")),
       UserData.CITY      -> optional(text(1,100) verifying pattern(textRegex, error = "error.City")),
-      UserData.COUNTRY   -> optional(text(1,100) verifying pattern(textRegex, error = "error.Country")),
+      UserData.COUNTRY   -> optional(text(3,3) verifying pattern(textRegex, error = "error.Country")),
       UserData.GROUPS    -> optional(text(1,100) verifying pattern(textRegex, error = "error.Groups")),
       UserData.ROLES     -> optional(text(1,100) verifying pattern(textRegex, error = "error.Roles")),
       UserData.PASSWORD  -> (text(8,128) verifying pattern(textRegex, error = "error.Password"))) {
@@ -109,7 +109,7 @@ object FormDefinitions {
         }
     } {
       case Some(userData) =>
-      Some((userData.eMail.head,
+      Some((userData.eMail,
             userData.nameFirst,
             userData.nameLast,
             userData.institute,

@@ -134,7 +134,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
   def getUserData : Action[AnyContent] = Action.async { implicit request =>
     getUser.map { user =>
       Logger.info("Sending user data.")
-      Ok(Json.obj("user" -> user.userData))
+      Ok(Json.toJson(user.userData))
     }
   }
 
@@ -344,7 +344,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
           FormDefinitions.ProfilePasswordEdit(user).bindFromRequest.fold(
             errors =>
               Future.successful{
-                Ok(FormError())
+                Ok(FormError(errors.errors.mkString(",\n")))
               },
             // when there are no errors, then insert the user to the collection
             {
@@ -400,16 +400,12 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
         case Some(formOutput : (Option[String], Option[String])) =>
           val selector : BSONDocument = formOutput match {
             case (Some(nameLogin: String), Some(eMail: String)) =>
-              Logger.info("2 Parameters nameLogin" + nameLogin + " eMail" + eMail)
               BSONDocument("$or" -> List(BSONDocument(User.NAMELOGIN -> nameLogin), BSONDocument(User.EMAIL -> eMail)))
             case (Some(nameLogin: String), None) =>
-              Logger.info("1st Parameter" + nameLogin)
               BSONDocument(User.NAMELOGIN -> nameLogin)
             case (None, Some(eMail: String)) =>
-              Logger.info("2nd Parameter" + eMail)
               BSONDocument(User.EMAIL -> eMail)
             case (None, None) =>
-              Logger.info("No Parameter")
               BSONDocument.empty
           }
           if (selector != BSONDocument.empty) {
@@ -428,7 +424,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                                    BSONDocument(User.DATEUPDATED   -> bsonCurrentTime),
                                                 "$push"            ->
                                    BSONDocument(User.USERTOKENS    -> token))
-                    modifyUser(selector,modifier).map {
+                    modifyUser(selector, modifier).map {
                       case Some(registeredUser) =>
                         // All done. User is registered, now send the welcome eMail
                         val eMail = ResetPasswordMail(tel, registeredUser, token.token)
@@ -439,15 +435,15 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                     }
 
                   case None =>
-                  Logger.info("User is a Guest.")
                   // User is not registered? Should not happen.
                   Future.successful(Ok(NoSuchUser))
                 }
               case None =>
-                Logger.info("No such User.")
+                // No user found.
                 Future.successful(Ok(NoSuchUser))
             }
           } else {
+            // User has sent an empty form.
             Future.successful(Ok(OneParameterNeeded))
           }
       }
