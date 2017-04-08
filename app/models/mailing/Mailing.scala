@@ -66,11 +66,11 @@ case class NewUserWelcomeMail (tel: TEL, userParam : User, token : String) exten
 
   val bodyHtml : String = {
     super.bodyHtmlTemplate(
-      s"""Welcome ${user.getUserData.nameLogin},""".stripMargin,
-      s"""Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
-       |To do this, click <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a>
-       |or copy this URL and visit this page in your browser:
-       |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
+      s"""Welcome ${user.getUserData.nameLogin},<br />""".stripMargin,
+      s"""Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.<br />
+       |To do this, click <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
+       |or copy this URL and visit this page in your browser:<br />
+       |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token<br />
        |Your Toolkit Team
      """.stripMargin
     )
@@ -95,14 +95,14 @@ case class ChangePasswordMail (tel: TEL, userParam : User, token : String) exten
 
   val bodyHtml : String = {
     super.bodyHtmlTemplate(
-      s"""Hello ${user.getUserData.nameLogin},""".stripMargin,
-      s"""You requested a password change.
-          |To complete the process, click <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a>
-          |or copy this URL and visit this page in your browser:
-          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
-          |If You did not request this, then your account has been used by someone else.
-          |Log in and change the password yourself to ensure that this other Person can no longer access your account.
-          |Your Toolkit Team
+      s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
+      s"""You requested a password change.<br />
+          |To complete the process, click <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
+          |or copy this URL and visit this page in your browser:<br />
+          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token<br />
+          |If You did not request this, then your account has been used by someone else.<br />
+          |Log in and change the password yourself to ensure that this other Person can no longer access your account.<br />
+          |Your Toolkit Team<br />
      """.stripMargin
     )
   }
@@ -125,13 +125,13 @@ case class ResetPasswordMail (tel: TEL, userParam : User, token : String) extend
 
   val bodyHtml : String = {
     super.bodyHtmlTemplate(
-      s"""Hello ${user.getUserData.nameLogin},""".stripMargin,
-      s"""You requested to reset your password and set a new one.
-          |To complete the process, visit <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a>
-          |or copy this URL and visit this page in your browser:
-          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
-          |If You did not request this, then your account has been used by someone else.
-          |Log in and change the password yourself to ensure that this other Person can no longer access your account.
+      s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
+      s"""You requested to reset your password and set a new one.<br />
+          |To complete the process, visit <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
+          |or copy this URL and visit this page in your browser:<br />
+          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token<br />
+          |If You did not request this, then your account has been used by someone else.<br />
+          |Log in and change the password yourself to ensure that this other Person can no longer access your account.<br />
           |Your Toolkit Team
      """.stripMargin
     )
