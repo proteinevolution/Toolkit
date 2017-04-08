@@ -477,10 +477,6 @@ JobSubmissionComponent = {
                         $('#submit_again').on('click', function() {
                             var submitRoute;
                             $('#submit_modal').foundation('close');
-                            sendMessage({
-                                type: "RegisterJobs",
-                                "jobIDs": [jobID]
-                            });
                             JobListComponent.pushJob(JobListComponent.Job({
                                 jobID: jobID,
                                 state: 0,
@@ -492,18 +488,12 @@ JobSubmissionComponent = {
                                 url: submitRoute.url,
                                 method: submitRoute.method,
                                 data: formData,
-                                serialize: function(data) {
-                                    return data;
-                                }
+                                serialize: function(data) { m.route("/jobs/" + jobID); return data; }
                             });
-                            return m.route("/jobs/" + jobID);
+                            return null;
                         });
                         return $('#submit_modal').foundation('open');
                     } else {
-                        sendMessage({
-                            type: "RegisterJobs",
-                            jobIDs: [jobID]
-                        });
                         JobListComponent.pushJob(JobListComponent.Job({
                             jobID: jobID,
                             state: 0,
@@ -516,11 +506,9 @@ JobSubmissionComponent = {
                             url: submitRoute.url,
                             data: formData,
                             extract: extractStatus,
-                            serialize: function(data) {
-                                return data;
-                            }
+                            serialize: function(data) { m.route("/jobs/" + jobID); return data; }
                         });
-                        return m.route("/jobs/" + jobID);
+                        return null;
                     }
                 }, function(error) {
                     console.warn("Bad Request");

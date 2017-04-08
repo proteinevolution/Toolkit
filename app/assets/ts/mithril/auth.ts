@@ -274,6 +274,7 @@ class SignIn {
             if (authMessage.successful) {
                 SignIn.password = null;
                 LiveTable.updateJobInfo();
+                JobListComponent.reloadList();
             }
             Auth.updateStatus(authMessage);
         });
