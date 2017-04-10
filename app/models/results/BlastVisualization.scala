@@ -22,7 +22,7 @@ object BlastVisualization extends Constants {
   private val mmcifReg = """(...._[a-zA-Z])""".r
   private val mmcifShortReg = """([0-9]...)""".r
   private val pfamReg = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
-  private val ncbiReg = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}""".r
+  private val ncbiReg = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
 
   private val pdbBaseLink = "http://pdb.rcsb.org/pdb/explore.do?structureId="
   private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
@@ -126,6 +126,16 @@ object BlastVisualization extends Constants {
       links += generateLink(cddBaseLink, idCDD, "CDD")
     }
     else if (db == "ncbi"){
+      links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+    }
+    Html(links.mkString(" | "))
+  }
+
+  def getLinksHmmer(id : String) : Html = {
+    val db = identifyDatabase(id)
+    var links = new ArrayBuffer[String]()
+    var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
+    if (db == "ncbi"){
       links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
     }
     Html(links.mkString(" | "))
