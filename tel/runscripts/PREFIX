@@ -4,7 +4,7 @@
 # Make Request to Toolkit to indicate current state of execution
 trap catch_errors ERR;
 function catch_errors() {
-
+    echo "error" >> ../results/process.log
     curl -X POST http://%HOSTNAME:%PORT/jobs/error/%jobid.content
     echo "script aborted, because of errors"
     exit 0
