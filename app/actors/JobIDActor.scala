@@ -19,10 +19,9 @@ class JobIDActor extends Actor {
 
 
 
-  override def receive : Unit = {
+  override def receive = {
 
-    case GetId(id: String) =>
-
+    case GetId(id : String) =>
 
   }
 
