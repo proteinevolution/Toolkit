@@ -307,10 +307,11 @@ var aas;
         method: dataRoute.method,
         url: dataRoute.url
     }).done(function(data_) {
-        data = data_[@jobID];
-        var hits = data_[@jobID].hits;
-        var info = data_[@jobID].info;
-        var alignments = data_[@jobID].alignments;
+        console.log(data_);
+        data = data_.@{jobID};
+        var hits = data_.@{jobID}.hits;
+        var info = data_.@{jobID}.info;
+        var alignments = data_.@{jobID}.alignments;
 
 
         if(alignments.length > 0){
