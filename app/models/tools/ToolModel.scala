@@ -267,7 +267,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // Hmmer
     ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
-      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVAL_CUTOFF), Seq.empty,Seq.empty),
+      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVAL_CUTOFF), Seq("kalign"),Seq.empty),
 
 
       // Aln2Plot
