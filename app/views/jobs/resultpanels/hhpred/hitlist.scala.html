@@ -59,7 +59,6 @@
             <a href="#" class="accordion-title">Alignments</a>
             <div id="alignments" class="accordion-content table-scroll" data-tab-content>
                 <div>
-                    <a type="button" class="button success tiny hhpred_extra_button" onclick="toggleHistogram()">Histogram</a>
                     <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
                     <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_manual()">Manual template selection</a>
                     <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_automatic()">Select Templates Automatically</a>
@@ -183,11 +182,6 @@
                                 case undefined: JsUndefined => Logger.info("template.ss_pred undefined in results!")
                              }
                             }
-
-                            <tr>
-                                <td class="histogram" colspan="4">@FileLoader.loadHTML(s"$jobID/results/${jobID}_${(hit \ "no").get}.map")</td>
-
-                            </tr>
                             <tr>
                                 <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
                             </tr>
@@ -338,7 +332,6 @@ var aas;
         $("#accordion").foundation();
         $("#templateAlignmentModal").foundation();
         $("#structureModal").foundation();
-        $('.histogram').hide();
 
 
         }
@@ -471,17 +464,6 @@ function toggleSelectAll() {
 function onFullscreenToggle() {
     hitlist.draw();
 }
-
-function toggleHistogram(){
-    if($('.sequence').is(':hidden')){
-        $('.sequence').show();
-        $('.histogram').hide();
-    }else{
-        $('.sequence').hide();
-        $('.histogram').show();
-    }
-}
-
 function toggleSS_(){
     this.colorSS = !this.colorSS;
     toggleSS(this.colorSS);
