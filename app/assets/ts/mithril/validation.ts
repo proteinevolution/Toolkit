@@ -367,6 +367,140 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
                     break;
 
+                case "aln2plot":
+
+                    let aln2plotTarget = new alignmentVal($(elem));
+                    aln2plotTarget.basicValidation();
+
+                    if (aln2plotTarget.basicValidation()) {
+                        aln2plotTarget.sameLengthValidation();
+                        if (aln2plotTarget.sameLengthValidation())
+                            aln2plotTarget.mustHave2();
+                    }
+
+                    seqLimit = 2000;
+
+                    break;
+
+                case "frpred":
+
+                    let frpredTarget = new alignmentVal($(elem));
+                    frpredTarget.basicValidation();
+
+                    if (frpredTarget.basicValidation()) {
+                        frpredTarget.sameLengthValidation();
+                    }
+
+                    seqLimit = 2000;
+
+                    break;
+
+                case "hhrepid":
+
+                    let hhrepidTarget = new alignmentVal($(elem));
+                    hhrepidTarget.basicValidation();
+
+                    if (hhrepidTarget.basicValidation()) {
+                        hhrepidTarget.sameLengthValidation();
+                    }
+
+                    seqLimit = 2000;
+
+                    break;
+
+                case "pcoils":
+
+                    let pcoilsTarget = new alignmentVal($(elem));
+                    pcoilsTarget.basicValidation();
+
+                    if (pcoilsTarget.basicValidation()) {
+                        pcoilsTarget.sameLengthValidation();
+                    }
+
+                    seqLimit = 2000;
+
+                    break;
+
+                case "repper":
+
+                    let repperTarget = new alignmentVal($(elem));
+                    repperTarget.basicValidation();
+
+                    if (repperTarget.basicValidation()) {
+                        repperTarget.sameLengthValidation();
+                    }
+
+                    seqLimit = 2000;
+
+                    break;
+
+                case "marcoil":
+
+                    let marcoilTarget = new alignmentVal($(elem));
+                    marcoilTarget.basicValidation();
+
+                    if (marcoilTarget.basicValidation()) {
+                        marcoilTarget.mustHave1();
+                    }
+
+                    seqLimit = 2000;
+
+                    break;
+
+                case "tprpred":
+
+                    let tprpredTarget = new alignmentVal($(elem));
+                    tprpredTarget.basicValidation();
+
+                    if (tprpredTarget.basicValidation()) {
+                        tprpredTarget.mustHave1();
+                    }
+
+                    break;
+
+                case "ali2d":
+
+                    let ali2dTarget = new alignmentVal($(elem));
+                    ali2dTarget.basicValidation();
+
+                    if (ali2dTarget.basicValidation()) {
+                        ali2dTarget.sameLengthValidation();
+                        if (ali2dTarget.sameLengthValidation())
+                            ali2dTarget.mustHave2();
+                    }
+
+                    seqLimit = 2000;
+
+                    break;
+
+                case "quick2d":
+
+                    let quick2dTarget = new alignmentVal($(elem));
+                    quick2dTarget.basicValidation();
+
+                    if (quick2dTarget.basicValidation()) {
+                        quick2dTarget.sameLengthValidation();
+                    }
+
+                    seqLimit = 2000;
+
+                    break;
+
+                case "ancescon":
+
+                    let ancesconTarget = new alignmentVal($(elem));
+                    ancesconTarget.basicValidation();
+
+                    if (ancesconTarget.basicValidation()) {
+                        ancesconTarget.sameLengthValidation();
+                        if (ancesconTarget.sameLengthValidation())
+                            ancesconTarget.mustHave2();
+                    }
+
+                    seqLimit = 20000;
+
+                    break;
+
                 case "mmseqs2":
                     /** validation model for mmseq2:
                      * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
@@ -384,6 +518,59 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                         mmseqs2Target.mustHave2();
                     }
                     seqLimit = 20000;
+
+                    break;
+
+                case "phylip":
+
+                    let phylipTarget = new alignmentVal($(elem));
+                    phylipTarget.basicValidation();
+
+                    if (phylipTarget.basicValidation()) {
+                        phylipTarget.sameLengthValidation();
+                        if (phylipTarget.sameLengthValidation())
+                            phylipTarget.mustHave2();
+                    }
+
+                    seqLimit = 200;
+
+                    break;
+
+                case "clans":
+                    /** validation model for clans:
+                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+                     * Input must include at least two sequences.
+                     * ALIGNED FASTA input is allowed.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 10000.
+                     **/
+
+                    let clansTarget = new alignmentVal($(elem));
+                    clansTarget.basicValidation();
+
+                    if (clansTarget.basicValidation()) {
+                        clansTarget.mustHave2();
+                    }
+                    seqLimit = 10000;
+
+                    break;
+
+                case "6frametranslation":
+
+                    let sixframetranslationTarget = new alignmentVal($(elem));
+                    sixframetranslationTarget.DNAvalidation();
+
+                    break;
+
+                case "backtrans":
+
+                    let backtransTarget = new alignmentVal($(elem));
+                    backtransTarget.basicValidation();
+
+                    if (backtransTarget.basicValidation()) {
+                        backtransTarget.mustHave1();
+                    }
 
                     break;
 
@@ -406,25 +593,20 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
                     break;
 
-                case "clans":
-                /** validation model for clans:
-                 * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
-                 * Input must include at least two sequences.
-                 * ALIGNED FASTA input is allowed.
-                 * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                 * first space, in the header are used as ID.
-                 * Limit the maximum number of sequences to 10000.
-                 **/
+                case "seq2id":
+                    /** validation model for hhfilter:
+                     * Input has to be aligned FASTA.
+                     * Input must consist of at least two Sequences.
+                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+                     * first space, in the header are used as ID.
+                     * Limit the maximum number of sequences to 10000.
+                     */
 
-                let clansTarget = new alignmentVal($(elem));
-                    clansTarget.basicValidation();
-
-                    if (clansTarget.basicValidation()) {
-                        clansTarget.mustHave2();
-                    }
-                    seqLimit = 10000;
+                    let seq2idTarget = new alignmentVal($(elem));
+                    seq2idTarget.seq2IDvalidation();
 
                     break;
+
 
                 default:
                     console.warn("No tool specified");
@@ -591,28 +773,36 @@ class alignmentVal implements ToolkitValidator {
 
     }
 
-    sameLengthValidation(): any {
+    sameLengthValidation(): boolean {
 
-        if (!this.elem.reformat('samelength'))
+        if (!this.elem.reformat('samelength')) {
             feedback(false, "Sequences should have the same length!", "error");
+            return false;
+        }
+        return true;
     }
 
-    mustHave2() : any {
+    mustHave2() : boolean {
 
-        if(this.elem.validate('fasta') && this.elem.reformat('numbers') < 2)
-        feedback(false, "Must have at least two sequences!", "error");
+        if(this.elem.validate('fasta') && this.elem.reformat('numbers') < 2) {
+            feedback(false, "Must have at least two sequences!", "error");
+            return false;
+        }
+        return true;
     }
 
-    mustHave1() : any {
+    mustHave1() : boolean {
 
         if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
             feedback(false, "Must have single sequence!", "error");
+            return false;
         }
+        return true;
     }
 
     DNAvalidation(): any {
 
-        if (!this.elem.validate('fasta') && this.elem.reformat('detect') === '' && this.elem.val().length != 0)
+        if (!this.elem.validate('fasta') && (this.elem.validate('fastaheaders') || this.elem.validate('line') || this.elem.reformat('detect') === '') && this.elem.val().length != 0)
             feedback(false, "This is no fasta!", "error");
 
         else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
