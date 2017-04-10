@@ -310,8 +310,10 @@ $(document).ready(function() {
 
 
 function getSingleLink(id){
+    if(!id)
+        return;
     var db = identifyDatabase(id);
-    var idTrimmed = id.substr(1, 5);
+    var idTrimmed = id.substring(1, 5);
     var idPfam = id.replace("am.*$||..*", "");
     var idPdb = id.replace("_.*$", "");
 
