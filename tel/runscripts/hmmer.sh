@@ -39,9 +39,18 @@ fi
           -A ../results/${JOBID}.msa_sto \
           ../results/${JOBID}.hmm  %STANDARD/%standarddb.content
 
+    #Convert to fasta format
+    reformat_hhsuite.pl sto fas ../results/${JOBID}.msa_sto $(readlink -f ../results/${JOBID}.msa_fas)
+
+    #remove tmp sto file
+    rm ../results/${JOBID}.msa_sto
 
     prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
 
 
     hmmer2json.py -i ../results/${JOBID}.outfilefl \
-                  -o ../results/${JOBID}.json
+                  -o ../results/${JOBID}.json \
+                  -e %eval_cutoff.content
+
+# Generate Query in JSON
+fasta2json.py %alignment.path ../results/query.json

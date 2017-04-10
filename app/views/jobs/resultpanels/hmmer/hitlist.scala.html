@@ -74,7 +74,7 @@
                                     <td colspan="3">
                                     @{alignment \ "hit_id" match {
                                         case JsDefined(jsValue) => BlastVisualization.getLinksHHpred((alignment \ "hit_id").get.as[String])
-                                        case undefined: JsUndefined => BlastVisualization.getLinksHHpred("undefinedAccession") ;
+                                        case undefined: JsUndefined =>
                                     }
                                     }
                                     </td>
@@ -87,7 +87,7 @@
 
                                     @{alignment \ "hit_id" match {
                                         case JsDefined(jsValue) => {BlastVisualization.getSingleLink((alignment \ "hit_id").get.as[String])}
-                                        case undefined: JsUndefined => Logger.info("hit.hit_id undefined in results!")
+                                        case undefined: JsUndefined =>
                                     }
                                     }
                                     @{"  "+(alignment \ "hit_description").get.as[String].replaceFirst(">", "")}
@@ -98,11 +98,34 @@
                                     <td></td>
                                     <td colspan="4">E-value: @{(alignment \ "evalue").get},
                                         Score: @{(alignment \ "bitscore").get}, Hit length: @{(alignment \ "hit_len").get},
-                                        Domain expected number: @{(hit \ "domain_exp_num").get}, Domain observed number: @{(hit \ "domain _obs_num").get},
-
-
+                                        Domain expected number: @{(hit \ "dom_exp_num").get}, Domain observed number: @{(hit \ "domain_obs_num").get},
                                 </td>
                                 </tr>
+                                @* seq of query, if present *@
+                                @{alignment \ "query_seq" match {
+                                    case JsDefined(jsValue) =>
+                                    {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query_start").get.toString(), BlastVisualization.colorRegexReplacer(((alignment \ "query_seq").get.as[String]).toUpperCase()),(alignment \ "query_end").get.toString()))}
+                                    case undefined: JsUndefined =>
+                                }
+                                }
+
+                                @* agree of query, if present *@
+                                @* agree of query, if present *@
+                                @{alignment \ "aln_ann" \ "PP" match {
+                                    case JsDefined(jsValue) =>
+                                    {BlastVisualization.makeRow("sequence", Array("","",(alignment \ "aln_ann" \ "PP").get.as[String],""))}
+                                    case undefined: JsUndefined =>
+                                }
+                                }
+
+                                @* seq of hit, if present *@
+                                @{alignment \ "hit_seq" match {
+                                    case JsDefined(jsValue) =>
+                                    {BlastVisualization.makeRow("sequence", Array("H",(alignment \ "hit_start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "hit_seq").get.as[String]),(alignment \ "hit_end").get.toString()))}
+                                    case undefined: JsUndefined =>
+                                }
+                                }
+
                                 <tr>
                                     <td><br /></td>
                                 </tr>
