@@ -153,7 +153,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
 
 
-        return $(elem).on("keyup", function (e) {
+        return $(elem).on("keyup mouseover", function (e) {
 
             //---------------------------------Validation Visitors------------------------------------------//
 
