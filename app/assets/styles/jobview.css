@@ -146,6 +146,7 @@ hr {
 }
 
 .wrap{
+    word-break: break-word !important;
     word-break: break-all;
     white-space: unset;
 }
@@ -153,6 +154,11 @@ hr {
 .unstriped{
     margin: 0 ;
     width: 100%;
+}
+
+.wrapSpan{
+    word-break: break-all;
+    word-wrap: break-word;
 }
 
 .sequence{
