@@ -832,8 +832,10 @@ class AuthDropdown {
                             m("li", m("a", { href:"/#/" }, "Profile")),
                             m("li", m("a", { href:"/#/" }, "Inbox")),
                             m("li", m("a", { onclick:openNav }, "User")),
-                            //Auth.user.isSuperUser() ? m("li", m("a", { href:"/#/backend/index" }, "Backend")) : null,
-                            m("li", m("a", { href:"/signout" }, "Log Out"))
+                            Auth.user.institute ? m("li", m("a", { href:"/#/backend/index" }, "Backend")) : null,
+                            m("li", m("a", {
+                                onclick: function(e : Event) { window.location.replace("/signout") }
+                            }, "Sign Out"))
                         ])
                     ])
                 )
@@ -886,9 +888,9 @@ class ProfileTabs {
                           onclick: Auth.resetStatus()}, Auth.message.message),
             m("div", {class:"tabs-panel", id:"auth-tab-user"}, m("div", [
                 m("p", {id:"eMailDisplay"}, Auth.user.eMail[0]),
-                m("input", { type:  "submit",
+                m("input", { type:  "button",
                              class: "small expanded secondary button",
-                             onClick: function(e : Event) { window.location.href="/signout" },
+                             onclick: function(e : Event) { window.location.replace("/signout") },
                              value: "Sign Out" })
             ])),
             m("div", {class:"tabs-panel", id:"auth-tab-edit"},     m.component(Profile, {})),
