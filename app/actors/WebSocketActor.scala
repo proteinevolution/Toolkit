@@ -4,7 +4,7 @@ import javax.inject.{Inject, Named}
 
 import actors.ClusterMonitor._
 import actors.JobActor._
-import actors.WebSocketActor.ChangeSessionID
+import actors.WebSocketActor.{LogOut, ChangeSessionID}
 import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
@@ -27,6 +27,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 object WebSocketActor {
   case class ChangeSessionID(sessionID : BSONObjectID)
+  case object LogOut
 
   trait Factory {
     def apply(@Assisted("sessionID") sessionID: BSONObjectID, @Assisted("out") out: ActorRef): Actor
@@ -131,5 +132,8 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
 
     case ChangeSessionID(sessionID : BSONObjectID) =>
       this.sessionID = sessionID
+
+    case LogOut =>
+      out ! Json.obj("type" -> "LogOut")
   }
 }
