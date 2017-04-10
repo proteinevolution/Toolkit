@@ -399,46 +399,16 @@
         }
         function forward_(tool){
             var dataTmp = preprocessingForward();
-            // full seq is retrieved
-            if($('#fullLength').is(':checked')) {
-                // retrieve full Seq
-                var jsonData = new Object();
-                jsonData.db =  chosenDB;
-                jsonData.accessionsStr = dataTmp.accessions.join(" ");
-
-
-                $.ajax({
-                    url: 'retrieveFullSeq/@jobID',
-                    contentType: "application/json",
-                    type: 'POST',
-                    data: JSON.stringify(jsonData)
-                }).done(function() {
-                    $.ajax({
-                        type: 'GET',
-                        url: 'files/@jobID/sequences.fa'
-                    }).done(function (data_) {
-                        forward(tool, data_.toString());
-                    });
-                });
-            }else{
                 var forwardData = '';
                 // get slider range
                 var sliderRange = getSliderRange();
-                var alignmentData;
-                // get alignment json
-                var fileUrl = "/files/@jobID/alignment.json";
-                $.getJSON(fileUrl, function (data_) {
-                    alignmentData = data_;
-                    var numOfQuery = query.length;
-                    for(var i=0; i < dataTmp.index.length; i++){
-                        // index + number of querys because alignment json contains query sequences in alignment first
-                        var index = dataTmp.index[i];
-                        forwardData += ">" + alignmentData[index + numOfQuery][0] + '\n';
-                        forwardData += alignmentData[index+ numOfQuery][1].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
-                    }
-                    forward(tool, forwardData);
-                });
-            }
+                for(var i=0; i < dataTmp.index.length; i++){
+                    // index + number of querys because alignment json contains query sequences in alignment first
+                    var index = dataTmp.index[i];
+                    forwardData += ">" + hits[index].hit_id + '\n';
+                    forwardData += hits[index].hit_seq.substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
+                }
+                forward(tool, forwardData);
         }
 
 
