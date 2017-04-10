@@ -1,13 +1,4 @@
-let jqueryUITabsInit = function(elem : Element, isInit : boolean) : void {
-    if (!isInit) {
-        $("#" + elem.id).tabs();
-    }
-};
-let foundationDropdownInit = function(elem : Element, isInit : boolean) : void {
-    if (!isInit) {
-        $("#" + elem.id).foundation();
-    }
-};
+declare var jsRoutes: any;
 
 let regions = [ ["","Country"],
     ["AFG","Afghanistan"],
@@ -269,7 +260,8 @@ class SignIn {
     static submit(event : Event) : void {
         event.preventDefault();
         var dataS = {nameLogin:SignIn.nameLogin, password:SignIn.password};
-        m.request({method: "POST", url: "signin", data: dataS }).then(function(authMessage) {
+        var route = jsRoutes.controllers.Auth.signInSubmit();
+        m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
             //type : AuthMessage
             if (authMessage.successful) {
                 SignIn.password = null;
@@ -363,7 +355,8 @@ class SignUp {
                          password  : SignUp.password,
                          eMail     : SignUp.eMail,
                          acceptToS : SignUp.acceptToS };
-            m.request({method: "POST", url: "signup", data: dataS }).then(function(authMessage) {
+            var route = jsRoutes.controllers.Auth.signUpSubmit();
+            m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
                 //type : AuthMessage
                 Auth.updateStatus(authMessage);
             });
@@ -467,7 +460,8 @@ class ForgotPassword {
         event.preventDefault();
         var dataS = {nameLogin:ForgotPassword.nameLogin, eMail:ForgotPassword.eMail};
         console.log(dataS);
-        m.request({method: "POST", url: "forgotPassword", data: dataS }).then(function(authMessage) {
+        var route = jsRoutes.controllers.Auth.passwordReset();
+        m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
             if (authMessage.successful) { SignIn.password = null }
             Auth.updateStatus(authMessage);
         });
@@ -533,8 +527,8 @@ class Profile {
         event.preventDefault();
         var userwithpw : any = { password:Profile.password };
         for (var prop in Profile.user){ if (!prop.split("_")[1]){ userwithpw[prop] = Profile.user[prop]; } }
-        console.log(userwithpw);
-        m.request({method: "POST", url: "profile", data: userwithpw }).then(function(authMessage) {
+        var route = jsRoutes.controllers.Auth.profileSubmit();
+        m.request({method: route.method, url: route.url, data: userwithpw }).then(function(authMessage) {
             Auth.updateStatus(authMessage);
         });
     }
@@ -731,7 +725,8 @@ class PasswordChange {
     static submit(event : Event) : void {
         event.preventDefault();
         var password : any = { passwordOld : PasswordChange.passwordOld, passwordNew : PasswordChange.passwordNew };
-        m.request({method: "POST", url: "password", data: password }).then(function(authMessage) {
+        var route = jsRoutes.controllers.Auth.passwordChangeSubmit();
+        m.request({method: route.method, url: route.url, data: password }).then(function(authMessage) {
             if (authMessage.success) {
                 PasswordChange.passwordOld     = "";
                 PasswordChange.passwordNew     = "";
@@ -819,7 +814,7 @@ class AuthDropdown {
         if (Auth.user == null) {
             return m("button", { id:"auth-link", onclick: openNav}, "Sign in")
         } else {
-            return m("div", { id:    "auth-dropdown", config: foundationDropdownInit },
+            return m("div", { id:    "auth-dropdown", config: foundationInit },
                     m("ul", { id:    "auth-dropdown-link",
                               class: "dropdown menu",
                               'data-dropdown-menu': 'data-dropdown-menu',
@@ -923,13 +918,15 @@ class Auth {
     }
     static loadUser () : any {
         console.log("Requesting userdata");
-        return m.request({method: "GET", url: "userData", type : User }).then(function(user) {
+        var route = jsRoutes.controllers.Auth.getUserData();
+        return m.request({method: route.method, url: route.url, type : User }).then(function(user) {
             //type : AuthMessage
             console.log("user: ", user);
             if (user) {
                 SignIn.password = null;
                 Auth.user       = user.nameLogin != null ? user : null;
             }
+            console.log(Auth.user);
             m.mount(document.getElementById('metauser'), AuthDropdown);
             m.mount(document.getElementById('mithril-overlay-content'), AuthOverlay);
         }).catch(function(error) {

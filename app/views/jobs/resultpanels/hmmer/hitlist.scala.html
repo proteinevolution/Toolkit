@@ -73,7 +73,7 @@
                                     <td></td>
                                     <td colspan="3">
                                     @{alignment \ "hit_id" match {
-                                        case JsDefined(jsValue) => BlastVisualization.getLinksHHpred((alignment \ "hit_id").get.as[String])
+                                        case JsDefined(jsValue) => BlastVisualization.getLinksHmmer((alignment \ "hit_id").get.as[String])
                                         case undefined: JsUndefined =>
                                     }
                                     }
