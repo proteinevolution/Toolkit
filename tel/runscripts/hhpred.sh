@@ -4,6 +4,8 @@ SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
 
 reformat_hhsuite.pl fas fas %alignment.path ${JOBID}.fas -l 32000 -uc
 mv ${JOBID}.fas ../results
+echo "#starting HHPred script" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 #CHECK IF MSA generation is required or not
 if [ %msa_gen_max_iter.content == "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
@@ -59,6 +61,9 @@ else
     addss.pl ../results/query.a3m
 fi
 
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 # Here assume that the query alignment exists
 
 # prepare histograms
@@ -66,6 +71,8 @@ fi
 hhfilter -i ../results/query.a3m \
          -o ../results/query.reduced.a3m \
          -diff 100
+
+
 
 # max. 160 chars in description
 reformat_hhsuite.pl a3m fas "$(readlink -f ../results/query.reduced.a3m)" query.fas -d 160 -uc
@@ -143,6 +150,9 @@ else
     fi
 fi
 
+echo "#HHsearch" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
 
 # Perform HHsearch # TODO Include more parameters
 hhsearch -cpu %THREADS \
@@ -166,13 +176,10 @@ hhsearch -cpu %THREADS \
          -mact %macthreshold.content
 
 
-
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
-
-profile_logos.pl ${JOBID} ../results/ ../results/
-
-tar xfvz ../results/${JOBID}.tar.gz -C ../results/
 
 tenrep.rb -i ../results/query.repseq.fas -h ../results/${JOBID}.hhr -p 40 -o ../results/query.tenrep_file
 
