@@ -128,7 +128,7 @@ final class Application @Inject()(webJarAssets                                  
     * not already present.
     * Currently the index controller will assign a session id to the user for identification purpose.
     */
-  def index : Action[AnyContent] = Action.async { implicit request =>
+  def index(message : String = "") : Action[AnyContent] = Action.async { implicit request =>
     //generateStatisticsDB
     val port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
     val hostname = request.host.slice(0, request.host.indexOf(":"))
@@ -140,7 +140,7 @@ final class Application @Inject()(webJarAssets                                  
     println("[CONFIG:] execution mode: "+settings.clusterMode)
     getUser.map { user =>
       Logger.info(user.toString)
-      Ok(views.html.main(webJarAssets, user, toolFactory.values.values.toSeq.sortBy(_.toolNameLong)))
+      Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
         .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
     }
   }

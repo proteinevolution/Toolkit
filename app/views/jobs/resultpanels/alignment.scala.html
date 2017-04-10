@@ -43,7 +43,7 @@
                 <td></td>
                 <td>
                     @{alignment{1} match {
-                        case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((alignment{1}).get.as[String]))
+                        case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((alignment{1}).get.as[String]).replace("-", "&#8209;"))
                         }
                     }
                 </td>
@@ -65,7 +65,7 @@
         var selectTopTenBool = false;
         var selectAllBool = false;
         var wrapSequencesBool = false;
-        var aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+        var aas = $('font[class^="aa_"]'); // Have to use jQuery for that one
 
         // check first ten checkboxes by default
         $(document).ready(function () {
