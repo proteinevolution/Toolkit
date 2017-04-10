@@ -14,10 +14,10 @@ window.JobListComponent = {
 
     Job : function (data) { // Generates a job Object
         return {
-            jobID     : data.jobID,
-            state     : data.state,
-            createdOn : data.createdOn,
-            toolname  : data.toolname,
+            jobID     : data ? data.jobID : null,
+            state     : data ? data.state : null,
+            createdOn : data ? data.createdOn : null,
+            toolname  : data ? data.toolname  : null,
             // Functions
             select    : function(job) {     // marks a job as selected and changes the route
                 return function(e) {        // ensure that the event bubble is not triggering when the clear button is hit
@@ -65,12 +65,21 @@ window.JobListComponent = {
     contains        : function (jobID) {    // Checks if the job with the given jobID is in the list
         return this.getJob(jobID) != null
     },
-    jobIDs          : function () {         // Returns the jobIDs from the list
+    jobIDs          : function () {         // Returns all the jobIDs from the list
         return JobListComponent.list.map(function(job){ return job.jobID })
     },
+    jobIDsFiltered  : function () {         // Returns all the jobIDs from the list which can still be updated
+        return JobListComponent.list.filter(function(job){
+            return job.state != 4 && job.state != 5
+        }).map(function(job){ return job.jobID })
+    },
     register        : function (jobIDs) {   // Notices the server to send update messages about the jobs
-        if (jobIDs == null) { jobIDs = this.jobIDs }
-        sendMessage({ type: "RegisterJobs", "jobIDs": jobIDs })
+        if (jobIDs) {
+            sendMessage({ type: "RegisterJobs", "jobIDs": jobIDs });
+        } else {
+            sendMessage({ type: "RegisterJobs", "jobIDs": JobListComponent.jobIDsFiltered() });
+        }
+
     },
     emptyList       : function () { JobListComponent.list = [] },   // empties the job list
     reloadList      : function () {         // reloads the job list from the server
@@ -133,6 +142,7 @@ window.JobListComponent = {
         }
     },
     pushJob         : function(newJob, setActive) {
+        if (newJob == null || newJob.jobID == null) { console.log(newJob); return }  // ensure that there are no empty jobs pushed
         this.lastUpdatedJob = newJob;                           // change the "last updated" job to this one
         var index = null, oldJob;
         if (setActive) { this.selectedJobID = newJob.jobID }    // change the selectedJobID to this job when setActive is on
@@ -143,6 +153,7 @@ window.JobListComponent = {
             JobListComponent.list[index] = newJob;              // Job is not new, update it
         } else {
             JobListComponent.list.push(newJob);                 // Job is new, push it to the list
+            JobListComponent.register([newJob.jobID]);
         }
         this.sortList();                                        // Sort the list with the current sorting mode
         if (newJob.jobID === JobListComponent.selectedJobID) {  // Since the job is selected

@@ -71,14 +71,22 @@ window.JobManager = {
 
     view: function (ctrl) {
         return [
-            m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" },
-                m(JobListComponent, { activejobID : m.route.param("jobID") })
+            m("div", {"class": "large-2 padded-column columns show-for-large", id: "sidebar"},
+                m(JobListComponent, {activejobID: m.route.param("jobID")})
             ),
-            m("div", { id: "content", "class": "large-10 small-12 columns padded-column", config: fadesIn },
-                m("table", {id: "jobManagerTable", class: "dataTable", config: this.dataTableLoader(ctrl)}, [
-                        m("thead", m("tr", JobManager.tableObjects.toColumnItems())),
-                        m("tbody", [])
-                    ]
+            m("div", {class: "jobManagerContainer large-10"},
+                m("div", {class: "jobline"}, [
+                    m("span", {class: "toolname"}, [
+                        m("a", "Job Manager")
+
+                    ])
+                ]),
+                m("div", {id: "content", "class": "row columns padded-column", config: fadesIn},
+                    m("table", {id: "jobManagerTable", class: "dataTable hover row-border compact", config: this.dataTableLoader(ctrl)}, [
+                            m("thead", m("tr", JobManager.tableObjects.toColumnItems())),
+                            m("tbody", [])
+                        ]
+                    )
                 )
             )
         ];

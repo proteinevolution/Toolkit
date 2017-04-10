@@ -146,6 +146,7 @@ hr {
 }
 
 .wrap{
+    word-break: break-word !important;
     word-break: break-all;
     white-space: unset;
 }
@@ -153,6 +154,11 @@ hr {
 .unstriped{
     margin: 0 ;
     width: 100%;
+}
+
+.wrapSpan{
+    word-break: break-all;
+    word-wrap: break-word;
 }
 
 .sequence{
@@ -835,6 +841,10 @@ textarea:focus{
     border-radius: 2px;
 }
 
+.errorStateCallout{
+    width: 30%;
+    margin: 1em;
+}
 textarea:focus{
     border: 1px solid #c3c3c3;
 }
@@ -860,4 +870,36 @@ textarea:focus{
 .patternMatch{
     color: red;
     background-color: rgba(255, 0, 8, 0.1);
+}
+
+/* Process Logs */
+
+.logElem{
+    display: flex;
+    margin-left: 1em;
+}
+
+.logElemRunning{
+    background:url('../images/ellipsis.gif') no-repeat center center;
+    width: 32px;
+    height: 15px;
+    margin-top: 0.6em;
+    margin-right: 0.5em;
+}
+
+.logElemDone{
+    font-size: 1.3em;
+    color: rgba(40,120,111,0.636);
+    margin-right: 1.3em;
+}
+
+.logElemError{
+    font-size: 1.3em;
+    color: #da4453;
+    margin-right: 1.3em;
+
+}
+.logElemText{
+    margin-left: 1em;
+    margin-top: 0.2em;
 }

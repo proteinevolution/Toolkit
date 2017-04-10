@@ -263,14 +263,6 @@ tr.job a:visited {
 
 }
 
-#auth-dropdown {
-    z-index: 100;
-    position: absolute;
-    top: 0px !important;
-    left: 1135px !important;
-}
-
-
 #helpDiv {
     float: right;
 }

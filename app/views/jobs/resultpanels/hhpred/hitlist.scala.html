@@ -59,7 +59,6 @@
             <a href="#" class="accordion-title">Alignments</a>
             <div id="alignments" class="accordion-content table-scroll" data-tab-content>
                 <div>
-                    <a type="button" class="button success tiny hhpred_extra_button" onclick="toggleHistogram()">Histogram</a>
                     <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
                     <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_manual()">Manual template selection</a>
                     <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_automatic()">Select Templates Automatically</a>
@@ -183,11 +182,6 @@
                                 case undefined: JsUndefined => Logger.info("template.ss_pred undefined in results!")
                              }
                             }
-
-                            <tr>
-                                <td class="histogram" colspan="4">@FileLoader.loadHTML(s"$jobID/results/${jobID}_${(hit \ "no").get}.map")</td>
-
-                            </tr>
                             <tr>
                                 <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
                             </tr>
@@ -276,6 +270,7 @@ var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 var ss_helices = document.getElementsByClassName("ss_h");
 var ss_extended = document.getElementsByClassName("ss_e");
 var aas;
+var jobID;
 
 (function()  {
 
@@ -307,10 +302,11 @@ var aas;
         method: dataRoute.method,
         url: dataRoute.url
     }).done(function(data_) {
-        data = data_[@jobID];
-        var hits = data_[@jobID].hits;
-        var info = data_[@jobID].info;
-        var alignments = data_[@jobID].alignments;
+        jobID = data_.jobID;
+        data = data_[jobID];
+        var hits = data.hits;
+        var info = data.info;
+        var alignments = data.alignments;
 
 
         if(alignments.length > 0){
@@ -337,7 +333,6 @@ var aas;
         $("#accordion").foundation();
         $("#templateAlignmentModal").foundation();
         $("#structureModal").foundation();
-        $('.histogram').hide();
 
 
         }
@@ -470,17 +465,6 @@ function toggleSelectAll() {
 function onFullscreenToggle() {
     hitlist.draw();
 }
-
-function toggleHistogram(){
-    if($('.sequence').is(':hidden')){
-        $('.sequence').show();
-        $('.histogram').hide();
-    }else{
-        $('.sequence').hide();
-        $('.histogram').show();
-    }
-}
-
 function toggleSS_(){
     this.colorSS = !this.colorSS;
     toggleSS(this.colorSS);

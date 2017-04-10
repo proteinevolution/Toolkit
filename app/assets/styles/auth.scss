@@ -1,5 +1,5 @@
 
-#auth-tabs {
+.auth-tabs {
   border: none;
   width: 25%;
   min-height: 20em;
@@ -9,42 +9,40 @@
   margin: auto;
 
 }
-#auth-tabs .ui-widget-header {
+.auth-tabs .ui-widget-header {
   background: #eeeeee;
   border: none;
   width: 100%;
-
 }
-#auth-tabs .ui-tabs-nav .ui-state-default {
+.auth-tabs .ui-tabs-nav .ui-state-default {
   background: #eeeeee;
   border: none;
   height: 2.5em;
 }
-#auth-tabs .ui-tabs-nav .ui-state-active {
+.auth-tabs .ui-tabs-nav .ui-state-active {
   border: 1px solid grey;
 }
-#auth-tabs .ui-tabs-nav .ui-state-default a {
+.auth-tabs .ui-tabs-nav .ui-state-default a {
   color: grey;
 }
-#auth-tabs .ui-tabs-nav .ui-state-active a {
+.auth-tabs .ui-tabs-nav .ui-state-active a {
   color: grey;
 }
 
-#auth-tabs .ui-tabs-panel  {
+.auth-tabs .ui-tabs-panel  {
   background: white;
 }
 
-#signup-form, #signin-form, #forgot-form {
-  margin-top: 2em;
-  margin-bottom: 2em;
+.auth-form {
+  margin: 2em auto;
 }
 
-#signup-form div, #signin-form div, #forgot-form div {
+.auth-form div {
   width: 13em;
   margin: 0 auto;
 }
 
-#checklabel, #acceptToSText {
+.auth-form label {
   font-size: 0.75em;
 }
 
@@ -58,13 +56,11 @@
   box-shadow: 0 0 10px #2E8C81;
 }
 
-#signin-submit, #signup-submit, #forgot-submit, #signout-submit {
+.auth-form input[type=submit] {
   width: 40%;
   background-color: #2E8C81;
   font-size-adjust: none;
-  margin: auto;
-  margin-top: 3em;
-
+  margin: 3em auto;
 }
 
 #edit-submit {
@@ -78,13 +74,13 @@
   font-size: 0.85em;
 }
 
-#profile-edit-form input, #profile-edit-form select {
-  font-size: 0.8em;
+#profile-edit-form select {
+  font-size: 0.85em;
   height: 2.5em;
 }
 
-#profile-password-edit-form input,  #profile-password-edit-form select {
-  font-size: 0.8em;
+#profile-edit-form select option {
+  font-size: 0.85em;
   height: 2.5em;
 }
 
@@ -162,4 +158,17 @@ button.loggedIn {
 .country_drop ul {
   overflow: hidden;
   width: 100%;
+}
+
+#eMailDisplay {
+  margin-top: 4em;
+  font-size: 0.85em;
+}
+
+
+#auth-dropdown {
+  z-index: 100;
+  /*position: absolute;*/
+  /*top: 0px !important;*/
+  /*left: 1135px !important;*/
 }
