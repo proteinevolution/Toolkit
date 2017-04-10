@@ -145,9 +145,8 @@ trait UserSessions extends CommonModule {
     */
   def removeUserFromCache(user : User, withDB : Boolean = true) = {
     Logger.info("Removing User: \n" + user.toString)
-    if(user.sessionID.nonEmpty) {
-      userCache.remove(user.sessionID.getOrElse(BSONObjectID.generate()).stringify)
-    }
+    // Remove user from the cache
+    user.sessionID.foreach(sessionID => userCache.remove(sessionID.stringify))
 
     if (withDB) {
       userCollection.flatMap(_.update(BSONDocument(User.IDDB -> user.userID),
