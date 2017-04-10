@@ -102,8 +102,40 @@ jobNoteArea = function(elem, isInit) {
 
 
 JobErrorComponent = {
-    view: function() {
-        return m("div", { class: "error-panel" }, m("p", "Job has reached Error state"));
+    log : "",
+    controller: function (args) {
+        m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
+            deserialize: function (data) {JobRunningComponent.log = data.toString().split('#')}});
+
+        return {}
+    },
+    view: function(ctrl, args) {
+        return m("div", { class: "running-panel" }, [
+            m("h6", { class: "callout alert errorStateCallout" }, "Job has reached Error state"),
+            m("br"),
+            m("br"),
+            JobRunningComponent.log.map(function(logElem){
+                if(logElem == "")
+                    return;
+                logElem = logElem.split("\n");
+                if(logElem.length > 1){
+                    if(logElem[1] == "done"){
+                        return m("div", {class: "logElem"},
+                            m("i", {class: "icon-check_circle logElemDone"}),
+                            m("div", {class: "logElemText"}, logElem[0]))
+                    }
+                    else if(logElem[1] == "error"){
+                        return m("div", {class: "logElem"},
+                            m("i", {class: "icon-cancel_circle logElemError"}),
+                            m("div", {class: "logElemText"}, logElem[0]))
+                    }
+                }
+                return m("div", {class: "logElem"},
+                    m("div", {class: "logElemRunning"}),
+                    m("div", {class: "logElemText"}, logElem[0]))
+            })
+
+        ]);
     }
 };
 
@@ -121,6 +153,13 @@ JobQueuedComponent = {
 };
 
 JobRunningComponent = {
+    log : "",
+    controller: function (args) {
+            m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
+                deserialize: function (data) {JobRunningComponent.log = data.toString().split('#')}});
+
+      return {}
+    },
     view: function(ctrl, args) {
         return m("div", { class: "running-panel" }, [
             m("table", { config: foundationConfig },
@@ -128,7 +167,27 @@ JobRunningComponent = {
                     m("tr", [m("td", "JobID"), m("td", args.job().jobID)]),
                     m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])
                 ])
-            )
+            ),
+            JobRunningComponent.log.map(function(logElem){
+                if(logElem == "")
+                    return;
+                logElem = logElem.split("\n");
+                if(logElem.length > 1){
+                    if(logElem[1] == "done"){
+                        return m("div", {class: "logElem"},
+                            m("i", {class: "icon-check_circle logElemDone"}),
+                            m("div", {class: "logElemText"}, logElem[0]))
+                    }
+                    else if(logElem[1] == "error"){
+                        return m("div", {class: "logElem"},
+                            m("i", {class: "icon-cancel_circle logElemError"}),
+                            m("div", {class: "logElemText"}, logElem[0]))
+                    }
+                }
+                    return m("div", {class: "logElem"},
+                        m("div", {class: "logElemRunning"}),
+                        m("div", {class: "logElemText"}, logElem[0]))
+            })
         ]);
     }
 };
@@ -345,7 +404,7 @@ JobTabsComponent = {
                 ctrl.isJob && ctrl.state === 3 ? m("div", { class: "tabs-panel", id: "tabpanel-Running" },
                     m(JobRunningComponent, { job: ctrl.job })) : void 0,
                 ctrl.isJob && ctrl.state === 4 ? m("div", { class: "tabs-panel", id: "tabpanel-Error"   },
-                    JobErrorComponent) : void 0
+                    m(JobErrorComponent, {job: ctrl.job})) : void 0
             ),
             ctrl.views ? ctrl.views.map(function(view) {
                 return m("div", { class: "tabs-panel", id: "tabpanel-" + view[0] },
@@ -477,50 +536,37 @@ JobSubmissionComponent = {
                         $('#submit_again').on('click', function() {
                             var submitRoute;
                             $('#submit_modal').foundation('close');
-                            sendMessage({
-                                type: "RegisterJobs",
-                                "jobIDs": [jobID]
-                            });
-                            JobListComponent.pushJob(JobListComponent.Job({
-                                jobID: jobID,
-                                state: 0,
-                                createdOn: Date.now().valueOf(),
-                                toolname: toolname
-                            }), true); // setActive = true
+                            var jobListComp = JobListComponent.Job(
+                                    { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolname }
+                            );
+                            console.log(jobListComp);
+                            JobListComponent.pushJob(jobListComp, true); // setActive = true
                             submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID);
                             m.request({
                                 url: submitRoute.url,
                                 method: submitRoute.method,
                                 data: formData,
-                                serialize: function(data) {
-                                    return data;
-                                }
+                                serialize: function(data) { m.route("/jobs/" + jobID); return data; }
                             });
-                            return m.route("/jobs/" + jobID);
+                            return null;
                         });
                         return $('#submit_modal').foundation('open');
                     } else {
-                        sendMessage({
-                            type: "RegisterJobs",
-                            jobIDs: [jobID]
-                        });
-                        JobListComponent.pushJob(JobListComponent.Job({
-                            jobID: jobID,
-                            state: 0,
-                            createdOn: Date.now().valueOf(),
-                            toolname: toolname
-                        }), true); // setActive = true
+                        var jobListComp = JobListComponent.Job(
+                            { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolname }
+                        );
+                        console.log(jobListComp);
+                        JobListComponent.pushJob(jobListComp, true); // setActive = true
+
                         submitRoute = jsRoutes.controllers.JobController.create(toolname, jobID);
                         m.request({
                             method: submitRoute.method,
                             url: submitRoute.url,
                             data: formData,
                             extract: extractStatus,
-                            serialize: function(data) {
-                                return data;
-                            }
+                            serialize: function(data) { m.route("/jobs/" + jobID); return data; }
                         });
-                        return m.route("/jobs/" + jobID);
+                        return null;
                     }
                 }, function(error) {
                     console.warn("Bad Request");

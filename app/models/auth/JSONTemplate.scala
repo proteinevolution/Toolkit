@@ -26,15 +26,9 @@ trait JSONTemplate {
   def authMessage(message    : String,
                   success    : Boolean      = false,
                   userOption : Option[User] = None) : JsValue = {
-    Json.toJson(userOption match {
-      case Some(user) =>
-        Json.obj("message"    -> message,
-                 "successful" -> success,
-                 "user"       -> userToJSON(user))
-      case None =>
-        Json.obj("message"    -> message,
-                 "successful" -> success)
-    })
+     Json.obj("message"    -> message,
+              "successful" -> success,
+              "user"       -> userOption)
   }
 
   def LoggedIn(user : User) : JsValue = {
@@ -97,8 +91,8 @@ trait JSONTemplate {
     authMessage("You are not logged in.")
   }
 
-  def FormError() : JsValue = {
-    authMessage("There was a Form error.")
+  def FormError(errorString : String = "") : JsValue = {
+    authMessage("There was a Form error:" + errorString)
   }
 
   def EditSuccessful(user : User) : JsValue = {

@@ -11,7 +11,7 @@
 ############################################################################
 
 # Index Page requested by user. Note that the controller is injected
-GET           /                                       @controllers.Application.index
+GET           /                                       @controllers.Application.index()
 
 # Dashboard for Admin
 
@@ -71,6 +71,8 @@ GET           /signout                                @controllers.Auth.signOut(
 POST          /forgotPassword                         @controllers.Auth.passwordReset
 GET           /miniprofile                            @controllers.Auth.miniProfile()
 GET           /profile                                @controllers.Auth.profile()
+POST          /profile                                @controllers.Auth.profileSubmit()
+POST          /password                               @controllers.Auth.passwordChangeSubmit()
 POST          /profile/submit/userData/               @controllers.Auth.profileSubmit()
 POST          /profile/submit/password/               @controllers.Auth.passwordChangeSubmit()
 GET           /verification/:userName/:token          @controllers.Auth.verification(userName : String, token : String)
@@ -88,6 +90,9 @@ POST          /jobs/queued/:jobID                     @controllers.Jobs.jobStatu
 POST          /jobs/sge/:jobID/:sgeID                 @controllers.Jobs.SGEID(jobID: String, sgeID: String)
 POST          /jobs/message/:mainID                   @controllers.Jobs.pushMessage(mainID, message: String)
 POST          /jobs/dateviewed/:mainID                @controllers.Jobs.updateDateViewed(mainID)
+# update process log
+POST          /jobs/updateLog/:jobID           @controllers.Jobs.updateLog(jobID : String)
+
 
 # Cluster
 

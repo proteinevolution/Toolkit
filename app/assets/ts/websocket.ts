@@ -3,8 +3,7 @@
  *  Mithril.
  */
 let currentRoute : string = null;
-let redrawDelayTimer  : number = null,
-    redrawDelay  : Function;
+let noRedraw     : boolean = false;
 let ws : WebSocket = null,
     connect      : Function,
     connected    : boolean = false,
@@ -101,7 +100,7 @@ onMessage = function(event : MessageEvent) : any {
         case "UpdateLoad":
             // TODO Don't redraw all the time!
             // Tried to limit this by saving the "currentRoute", but we might need something proper in the future.
-            if (currentRoute === "index" && redrawDelayTimer == null) {
+            if (currentRoute === "index" && !noRedraw) {
                 LoadBar.updateLoad(message.load);
             }
             break;
@@ -113,15 +112,8 @@ onMessage = function(event : MessageEvent) : any {
     }
 };
 
-redrawDelay = function () : void {
-    console.log("halting ws redraw events Timer:" + redrawDelayTimer);
-    clearInterval(redrawDelayTimer);
-    redrawDelayTimer = setTimeout(function(e) {
-        m.redraw(true);
-        redrawDelayTimer = null;
-        console.log("resuming ws redraw events");
-    }, 2000);
-};
+let focusInNoRedraw = function(event : Event) : void { noRedraw = true;  console.log('focus in - no redraw');  },
+    focusOutRedraw  = function(event : Event) : void { noRedraw = false; console.log('focus out - redrawing'); };
 
 let sendMessage = function(object : any) : any {
     console.log("sending message:", object);

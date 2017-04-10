@@ -1,8 +1,7 @@
-@import models.database.users.User
 @import play.api.mvc.RequestHeader
 @import java.util.Date
 @import models.tools.Tool
-@(webJarAssets: WebJarAssets, user: User, tools: Iterable[Tool])(implicit messages: Messages, request: RequestHeader)
+@(webJarAssets: WebJarAssets, tools: Iterable[Tool], message : String = "")(implicit messages: Messages, request: RequestHeader)
 
 <!DOCTYPE html>
 
@@ -103,7 +102,15 @@
             routes.javascript.Jobs.annotation,
             routes.javascript.DataController.get,
             routes.javascript.DataController.writeArticle,
-            routes.javascript.DataController.getRecentArticles)
+            routes.javascript.DataController.getRecentArticles,
+            routes.javascript.Auth.getUserData,
+            routes.javascript.Auth.signInSubmit,
+            routes.javascript.Auth.signUpSubmit,
+            routes.javascript.Auth.verification,
+            routes.javascript.Auth.profileSubmit,
+            routes.javascript.Auth.passwordReset,
+            routes.javascript.Auth.passwordChangeSubmit
+        )
 
         <!-- Google Fonts -->
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
@@ -112,6 +119,12 @@
     </head>
 
     <body data-ws-url="@routes.Application.ws().webSocketURL()">
+
+        <div id="message-float" style="position: fixed; top: 0px; left: 0px; width: 100%; text-align: center; z-index: 1000;">
+            <div id="message-container" data-closable data-close class="callout" @if(message==""){hidden="hidden"} style="text-align: center; position:relative;height:50px;padding:10px;margin:0 auto;">
+                @{message}
+            </div>
+        </div>
 
         <div id="main-container">
 
@@ -138,19 +151,13 @@
                 <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
                 <div class="overlay-content" id="overlay-content">
                     <div class="mithril-overlay-content" id="mithril-overlay-content"></div>
-                @{user.userData match {
-                    case Some(userData) =>
-                        views.html.auth.miniprofile(user)
-                    case None =>
-                        views.html.general.auth()
-                }}
                 </div>
             </div>
 
 
             <!---Navigation Bar --->
              <div class="row" id="metanav">
-                 <div id="metauser">@views.html.auth.dropdown(user)</div> <!-- TODO: ugly construction -->
+                 <div id="metauser"></div> <!-- TODO: ugly construction -->
                  <div id="social">
                      <a href="https://github.com/zy4/Toolkit"><i class="icon-octopus"></i></a>
                      <a href="https://www.facebook.com/mpitoolkit"><i class="icon-facebook"></i></a>
@@ -290,8 +297,6 @@
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-io-newick.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-vis-tree.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/snap.svg-min.js")'></script>
-
-
 
         <script type="text/javascript">
 

@@ -2,12 +2,13 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import actors.WebSocketActor.ChangeSessionID
+import actors.WebSocketActor.{LogOut, ChangeSessionID}
 import akka.actor.ActorRef
 import models.auth._
 import models.database.users.{User, UserToken}
 import models.job.JobActorAccess
 import models.mailing.{ResetPasswordMail, ChangePasswordMail, NewUserWelcomeMail}
+import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.tel.TEL
 import org.joda.time.DateTime
@@ -32,10 +33,11 @@ import scala.concurrent.Future
 final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                                      val messagesApi      : MessagesApi,
                                          jobActorAccess   : JobActorAccess,
+                                         toolFactory      : ToolFactory,
                             implicit val mailerClient     : MailerClient,
                             implicit val locationProvider : LocationProvider,
    @NamedCache("userCache") implicit val userCache        : CacheApi,
-@NamedCache("wsActorCache") implicit val wsActorCache    : CacheApi,
+@NamedCache("wsActorCache") implicit val wsActorCache     : CacheApi,
                                      val tel              : TEL,
                                      val reactiveMongoApi : ReactiveMongoApi) // Mailing Controller
                               extends Controller with I18nSupport
@@ -134,7 +136,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
   def getUserData : Action[AnyContent] = Action.async { implicit request =>
     getUser.map { user =>
       Logger.info("Sending user data.")
-      Ok(Json.obj("user" -> user.userData))
+      Ok(Json.toJson(user.userData))
     }
   }
 
@@ -344,7 +346,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
           FormDefinitions.ProfilePasswordEdit(user).bindFromRequest.fold(
             errors =>
               Future.successful{
-                Ok(FormError())
+                Ok(FormError(errors.errors.mkString(",\n")))
               },
             // when there are no errors, then insert the user to the collection
             {
@@ -400,16 +402,12 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
         case Some(formOutput : (Option[String], Option[String])) =>
           val selector : BSONDocument = formOutput match {
             case (Some(nameLogin: String), Some(eMail: String)) =>
-              Logger.info("2 Parameters nameLogin" + nameLogin + " eMail" + eMail)
               BSONDocument("$or" -> List(BSONDocument(User.NAMELOGIN -> nameLogin), BSONDocument(User.EMAIL -> eMail)))
             case (Some(nameLogin: String), None) =>
-              Logger.info("1st Parameter" + nameLogin)
               BSONDocument(User.NAMELOGIN -> nameLogin)
             case (None, Some(eMail: String)) =>
-              Logger.info("2nd Parameter" + eMail)
               BSONDocument(User.EMAIL -> eMail)
             case (None, None) =>
-              Logger.info("No Parameter")
               BSONDocument.empty
           }
           if (selector != BSONDocument.empty) {
@@ -428,7 +426,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                                    BSONDocument(User.DATEUPDATED   -> bsonCurrentTime),
                                                 "$push"            ->
                                    BSONDocument(User.USERTOKENS    -> token))
-                    modifyUser(selector,modifier).map {
+                    modifyUser(selector, modifier).map {
                       case Some(registeredUser) =>
                         // All done. User is registered, now send the welcome eMail
                         val eMail = ResetPasswordMail(tel, registeredUser, token.token)
@@ -439,15 +437,15 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                     }
 
                   case None =>
-                  Logger.info("User is a Guest.")
                   // User is not registered? Should not happen.
                   Future.successful(Ok(NoSuchUser))
                 }
               case None =>
-                Logger.info("No such User.")
+                // No user found.
                 Future.successful(Ok(NoSuchUser))
             }
           } else {
+            // User has sent an empty form.
             Future.successful(Ok(OneParameterNeeded))
           }
       }
@@ -459,6 +457,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
     * Verifies a Token which was sent to the Users eMail address.
     * Token Types: 1 - eMail verification
     *              2 - password change verification
+    *              3 - password reset verification + reset
     *
     * @param userName
     * @param token
@@ -474,46 +473,92 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
           matchingToken match {
             case Some(usedToken) =>
               // generate new list of tokens minus the type of token used for this token
-              val newTokens : List[UserToken] = userToVerify.userTokens.filterNot(_.tokenType == usedToken.tokenType)
+              val remainingTokens : List[UserToken] = userToVerify.userTokens.filterNot(_.tokenType == usedToken.tokenType)
               usedToken.tokenType match {
-                case 1 =>
-                  // Token for eMail verification
+
+
+                case 1 => // Token for eMail verification
                   modifyUserWithCache(
                              BSONDocument(User.IDDB        -> userToVerify.userID),
                              BSONDocument("$set"           ->
                              BSONDocument(User.ACCOUNTTYPE -> 1,
                                           User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis),
-                                          User.USERTOKENS  -> newTokens))).map {
+                                          User.USERTOKENS  -> remainingTokens))).map {
                   case Some(modifiedUser) =>
-                    Ok(views.html.auth.message("Account verification was successful."))
-                  case None =>
-                    Ok(views.html.auth.message("Verification was not successful. Please try again."))
+                    Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                      "Account verification was successful. Please log in."))
+                  case None =>  // Could not save the modified user to the DB
+                    Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                      "Verification was not successful due to a database error. Please try again later."))
                 }
-                case 2 =>
-                  // Token for password change validation
+
+
+                case 2 => // Token for password change validation
+                  usedToken.passwordHash match {
+                    case Some(newPassword) =>
+                      modifyUser(BSONDocument(User.IDDB        -> userToVerify.userID),
+                                 BSONDocument("$set"           ->
+                                 BSONDocument(User.PASSWORD    -> newPassword,
+                                              User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis),
+                                              User.USERTOKENS  -> remainingTokens),
+                                              "$unset"         ->
+                                 BSONDocument(User.SESSIONID   -> "",
+                                              User.CONNECTED   -> ""))).map {
+                        case Some(modifiedUser) =>
+                          removeUserFromCache(user = modifiedUser, withDB = false)
+                          if (modifiedUser.connected) {
+                            // Force Log Out on all connected users.
+                            (wsActorCache.get(modifiedUser.userID.stringify) : Option[List[ActorRef]]) match {
+                              case Some(webSocketActors) =>
+                                webSocketActors.foreach(_ ! LogOut)
+                              case None =>
+                            }
+                          }
+                          // User modified properly
+                          Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                            "Password change verification was successful. Please log in with Your new password."))
+                        case None =>  // Could not save the modified user to the DB
+                          Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                            "Verification was not successful due to a database error. Please try again later."))
+                      }
+                    case None =>
+                      // This should not happen - Failsafe
+                      Future.successful(
+                        Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                        "The Password you had entered was insufficient, please create a new one.")))
+                  }
+
+
+                case 3 =>
+                  // Token for password reset validation
                   modifyUser(BSONDocument(User.IDDB        -> userToVerify.userID),
                              BSONDocument("$set"           ->
                              BSONDocument(User.PASSWORD    -> usedToken.passwordHash.getOrElse(""),
                                           User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis),
-                                          User.USERTOKENS  -> newTokens),
+                                          User.USERTOKENS  -> remainingTokens),
                                           "$unset"         ->
                              BSONDocument(User.SESSIONID   -> "",
                                           User.CONNECTED   -> ""))).map {
                     case Some(modifiedUser) =>
                       removeUserFromCache(user = userToVerify, withDB = false)
-                      if(userToVerify.connected) {
-                        // TODO maybe add a forced logout here to ensure all open windows are getting logged out.
-                      }
-                      Ok(views.html.auth.message("Password change verification was successful. Please log in with Your new password."))
+                      Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                        "Password change verification was successful. Please log in with Your new password."))
                     case None =>
-                      Ok(views.html.auth.message("Verification was not successful. Please try again."))
+                      Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                        "Verification was not successful. Please try again."))
                   }
+                case _ =>
+                  Future.successful(Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                    "There was an error with finding your token.")))
               }
-            case None =>
-              Future.successful(Ok(views.html.auth.message("Verification was not successful. Please try again.")))
+
+            case None => // No Token in DB
+              Future.successful(Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                "Verification was not successful. Please try again.")))
           }
-        case None =>
-          Future.successful(Ok(views.html.auth.message("Verification was not successful. Please try again.")))
+        case None => // No user with matching Username in DB
+          Future.successful(Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+            "Verification was not successful. Please try again.")))
       }
     }
   }

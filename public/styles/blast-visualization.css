@@ -234,28 +234,56 @@ input {
 
 /* DataTable */
 .dataTables_length label {
-    font-size: 1.15em;
+    font-size: 0.9em;
 }
 .dataTables_length select{
-    width: 7em;
-    height: 2.5em;
+    width: 5em;
+    height: 2em;
     padding: 0;
     margin-bottom: 0;
     border-radius: 5px;
 }
 
 .dataTables_filter {
-    width: 25em;
+    width: 20em;
 }
 
 .dataTables_filter input {
-    height: 3em;
+    height: 2em;
     border-radius: 5px;
 }
 
 .dataTables_filter label {
     display: flex;
-    font-size: 1.2em;
+    font-size: 0.9em;
+}
+
+.dataTables_info {
+    font-size: 0.9em;
+}
+
+.dataTables_paginate {
+    font-size: 0.9em;
+}
+
+.dataTables_paginate a {
+    padding: 0.25em 0.75em !important;
+}
+
+.dataTables_wrapper {
+    background-color: white;
+    padding: 1.75em;
+    border: 1px solid #ccc;
+}
+
+.jobManagerContainer {
+    width: 82%;
+    padding-left: 0.75em;
+}
+
+#jobManagerTable thead, #jobManagerTable thead:hover, #jobManagerTable thead tr, #jobManagerTable thead tr:hover  {
+    background: rgba(0, 110, 98, 166) !important;
+    color: white;
 }
 
 @media only screen and (max-width: 720px) {
@@ -316,8 +344,8 @@ input {
 
 
 .dataTable{
-    width: 95% !important;
     margin-left: unset !important;
+    font-size: 0.9em;
  }
 
 .dataTables_scrollHeadInner{

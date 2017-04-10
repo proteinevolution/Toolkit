@@ -61,6 +61,11 @@ object JobActor {
 
   // Job Controller receives a job state change from the SGE
   case class JobStateChanged(jobID : String, jobState : JobState)
+
+  // Job Controller receives push message to update the log
+  case class UpdateLog(jobID : String)
+
+
 }
 
 class JobActor @Inject() (               runscriptManager        : RunscriptManager, // To get runscripts to be executed
@@ -423,6 +428,13 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
         case None =>
           Logger.info("Job not found: " + jobID)
 
+      }
+    case UpdateLog(jobID : String) =>
+      currentJobs.get(jobID) match {
+        case Some(job) =>
+          val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify) : Option[List[ActorRef]])
+          foundWatchers.flatten.foreach(_ ! PushJob(job))
+        case None =>
       }
   }
 }

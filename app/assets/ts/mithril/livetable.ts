@@ -55,7 +55,7 @@ class LoadBar {
     static view (ctrl : any, args : any) : any {
         console.log("redrawing");
         let currentLoad : number = LoadBar.load,
-            loadString : string = (currentLoad * 100).toPrecision(4) + "%",
+            loadString : string = Math.ceil(currentLoad * 100) + "%",
             colorClass : string = "loadBar " + (currentLoad < 0.90 ? "green" : currentLoad < 1.3 ? "yellow" : "red");
 
         return m('div', {id:"indexLoadBar"},  [
