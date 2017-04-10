@@ -1,0 +1,444 @@
+@import play.api.libs.json.JsObject
+@import play.api.libs.json.JsValue
+@import play.api.libs.json.JsArray
+@import play.api.Logger
+@import models.results.FileLoader
+@import play.api.libs.json.JsUndefined
+@import play.api.libs.json.JsDefined
+@import models.results.BlastVisualization
+@import modules.tel.TEL
+@(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
+<link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
+@* Load html Map used for the image representation *@
+
+@if((jsValue \ jobID \ "hsps" \ "above_threshold" ).as[List[JsObject]].size + (jsValue \ jobID \ "hsps" \ "below_threshold" ).as[List[JsObject]].size < 1) {
+    <div class="callout alert noHits" id="noHits">
+        <h6>No hits found!</h6>
+    </div>
+
+}else{
+    <div class="container" id="loadingDiv"></div>
+    <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+        <li class="accordion-item" data-accordion-item>
+            <a href="#" class="accordion-title">Visualization</a>
+            <div class="accordion-content" data-tab-content>
+                <div class='flat-slider' id='flat-slider'></div>
+                <div id='blastviz'>
+                    <a class="success button tiny resubmitSection" onclick="resubmitSection_()" type="button" id="resubmitSection">
+                        Resubmit section</a>
+                </div>
+            </div>
+        </li>
+        <li class="accordion-item" data-accordion-item>
+            <a href="#" class="accordion-title">Hitlist</a>
+            <div class="accordion-content" data-tab-content>
+                <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
+                <table id="htb" class="display" cellspacing="0" width="80%">
+                    <thead>
+                        <tr>
+                            <th>Nr</th>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>E-value</th>
+                            <th>Bitscore</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </li>
+        <li class="accordion-item" data-accordion-item>
+            <a href="#" class="accordion-title">Alignments</a>
+            <div id="alignments" class="accordion-content table-scroll" data-tab-content>
+                <div id="hhpred_alignment_control">
+                    <div id="hhpred_advanced" >
+                        <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
+                    </div>
+                </div>
+                <div class="colorOpts">
+                    <a onclick="toggleSelectAll()" type="button"><span id="selectAllSeq">Select all</span></a>
+                    <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
+                    <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
+                    <hr id="line-element" colspan="4" class="horizontal-line">
+                </div>
+
+                <form id="hhpred_templates">
+                    <table class="unstriped">
+                        <tbody>
+                            Number of sequences: @{{jsValue \ jobID \ "hsps" \ "above_threshold"}.as[List[JsObject]].size + {jsValue \ jobID \ "hsps" \ "below_threshold"}.as[List[JsObject]].size}
+                            <br />
+                            <br />
+                            @for((alignment, hit) <- ((jsValue \ jobID \ "hsps" \ "above_threshold").as[List[JsObject]], (jsValue \ jobID \ "hits" \ "above_threshold").as[List[JsObject]]).zipped.toList){
+                                @* hit number, links *@
+                                <tr>
+                                    <td></td>
+                                    <td colspan="3">
+                                    @{alignment \ "hit_id" match {
+                                        case JsDefined(jsValue) => BlastVisualization.getLinksHmmer((alignment \ "hit_id").get.as[String])
+                                        case undefined: JsUndefined =>
+                                    }
+                                    }
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                @* checkboxes, accession, name of hit*@
+                                <tr class="header">
+                                    <td ><input type="checkbox" name="templates" class="hitCheckbox" value='@{(alignment \ "num").get}'> @{(alignment \ "num").get}.</td>
+                                <td colspan="4">
+
+                                    @{alignment \ "hit_id" match {
+                                        case JsDefined(jsValue) => {BlastVisualization.getSingleLink((alignment \ "hit_id").get.as[String])}
+                                        case undefined: JsUndefined =>
+                                    }
+                                    }
+                                    @{"  "+(alignment \ "hit_description").get.as[String].replaceFirst(">", "")}
+                                </td>
+                                </tr>
+                                @* Alignment Details*@
+                                <tr>
+                                    <td></td>
+                                    <td colspan="4">E-value: @{(alignment \ "evalue").get},
+                                        Score: @{(alignment \ "bitscore").get}, Hit length: @{(alignment \ "hit_len").get},
+                                        Domain expected number: @{(hit \ "dom_exp_num").get}, Domain observed number: @{(hit \ "domain_obs_num").get},
+                                </td>
+                                </tr>
+                                @* seq of query, if present *@
+                                @{alignment \ "query_seq" match {
+                                    case JsDefined(jsValue) =>
+                                    {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query_start").get.toString(), BlastVisualization.colorRegexReplacer(((alignment \ "query_seq").get.as[String]).toUpperCase()),(alignment \ "query_end").get.toString()))}
+                                    case undefined: JsUndefined =>
+                                }
+                                }
+
+                                @* agree of query, if present *@
+                                @* agree of query, if present *@
+                                @{alignment \ "aln_ann" \ "PP" match {
+                                    case JsDefined(jsValue) =>
+                                    {BlastVisualization.makeRow("sequence", Array("","",(alignment \ "aln_ann" \ "PP").get.as[String],""))}
+                                    case undefined: JsUndefined =>
+                                }
+                                }
+
+                                @* seq of hit, if present *@
+                                @{alignment \ "hit_seq" match {
+                                    case JsDefined(jsValue) =>
+                                    {BlastVisualization.makeRow("sequence", Array("H",(alignment \ "hit_start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "hit_seq").get.as[String]),(alignment \ "hit_end").get.toString()))}
+                                    case undefined: JsUndefined =>
+                                }
+                                }
+
+                                <tr>
+                                    <td><br /></td>
+                                </tr>
+
+
+                                <tr>
+                                    <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </form>
+
+
+            </div>
+        </li>
+        <li class="accordion-item" data-accordion-item>
+            <a href="#" class="accordion-title">Information</a>
+            <div class="accordion-content" data-tab-content>
+                <table  class="display" cellspacing="0" width="80%">
+                    <tr>
+                        <td>Query</td>
+                        <td id="psiblast_query"></td>
+                    </tr>
+                    <tr>
+                        <td>Query Length</td>
+                        <td id="psiblast_queryLength"></td>
+                    </tr>
+                    <tr>
+                        <td>DB</td>
+                        <td id="psiblast_db"></td>
+                    </tr>
+                </table>
+            </div>
+        </li>
+    </ul>
+
+}
+<script>
+        var data;
+        var hits =[];
+        var checkbox = "hitCheckbox";
+        var hitlist;
+        var query;
+        var colorSS = false;
+        var colorLetters = false;
+        var colorBackground = false;
+        var selectAllBool = false;
+        var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
+        var aas;
+        var chosenDB = null;
+
+        (function()  {
+
+            // adding loading overlay
+            $(document).ajaxStart(function(){
+                $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
+            });
+            $(document).ajaxComplete(function(){
+                $.LoadingOverlay("hide");
+            });
+            $('.slider').on('moved.zf.slider', function() {
+                $('#lefthandle').html($('#hidden1').val());
+                $('#lefthandle').css({
+                    'color' : 'white',
+                    'font-weight': 'bold',
+                    'padding-left' : '2px'
+                });
+                $('#righthandle').html($('#hidden2').val());
+                $('#righthandle').css({
+                    'color' : 'white',
+                    'font-weight': 'bold',
+                    'padding-left' : '2px'
+                });
+            });
+
+            var dataRoute = jsRoutes.controllers.DataController.get("@jobID");
+            $.ajax({
+                method: dataRoute.method,
+                url: dataRoute.url
+            }).done(function(data_) {
+
+                var basenameResults = data_[@jobID];
+                data = basenameResults;
+
+                // fill hits with above_threshold and below_threshold
+
+                for(var i =0; i < data.hsps.above_threshold.length; i++){
+                    hits.push(data.hsps.above_threshold[i]);
+                }
+                for(var i =0; i < data.hsps.below_threshold.length; i++){
+                    hits.push(data.hsps.below_threshold[i]);
+                }
+
+
+
+                var numHits = hits.length;
+                //var info = basenameResults.stat;
+
+                // get jobinformation
+
+                var url = "/api/job/@jobID";
+                $.getJSON(url, function(data_){
+                    chosenDB = data_.paramValues.standarddb;
+                    evalueParam = 0.001;
+                    //evalueParam = data_.paramValues.inclusion_ethresh;
+                    // check all betther than evalue
+                    //checkAllBetterThan(evalueParam);
+                });
+
+
+                console.log(JSON.stringify(hits))
+                query = data_.query;
+                firstQueryName = ">" + query[0][0];
+                firstQuerySequence = query[0][1];
+                firstQueryLength = firstQuerySequence.length;
+                if(numHits > 0){
+                    drawDataTable(hits);
+                    //drawInformation(info);
+                    //fill first query name and sequence for slider resubmit
+                    firstQueryStart = hits[0].query_start;
+                    firstQueryEnd = hits[0].query_end;
+                    /* without timeout SLIDER is displayed */
+                    setTimeout(function () {
+                        slider_show(firstQueryLength, firstQueryStart, firstQueryEnd)
+                    }, 1000);
+
+                    aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
+
+                    // set color letters and SS to default
+                    toggleAliColor_("letters");
+                    $("#accordion").foundation();
+
+                }
+            });
+
+        })();
+
+
+        function drawInformation(info ){
+            /*  INFO TAB*/
+            $("#psiblast_query").append(firstQueryName);
+            $("#psiblast_queryLength").append(firstQueryLength);
+            $("#psiblast_db").append(chosenDB);
+
+        }
+
+        function drawDataTable(hits){
+
+            hitlist = $('#htb').dataTable({
+                "bInfo": false,
+                "bFilter": true,
+                "bLengthChange": true,
+                "aaData": hits,
+                "scrollX": true,
+                "aoColumns": [
+
+                    {"mDataProp": "num"},
+                    {"mDataProp": "hit_id", render: function (data){return getSingleLink(data)}},
+                    {"mDataProp": "hit_description"},
+                    {
+                        "mDataProp": "evalue", render: function (data) {
+                        return data.toExponential(2);
+                    }
+                    },
+                    {"mDataProp": "bitscore"},
+                ],
+                'columnDefs': [{
+                    'targets': 0,
+                    'searchable': false,
+                    'orderable': true,
+                    'render': function (data){
+                        return '<input type="checkbox" name="templates" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '"> ' + data;
+                    }
+                }]
+            });
+
+        }
+
+
+        function _deselectAll(){
+            deselectAll('hitCheckbox');
+            deselectAllDatatable(this.hitlist.fnGetNodes());
+        }
+
+        function toggleSelectAll() {
+            selectAllDatatable(this.hitlist.fnGetNodes());
+            this.selectAllBool = !this.selectAllBool;
+            if(this.selectAllBool) {
+                selectAll('hitCheckbox');
+                $("#selectAllSeq").addClass("colorToggle");
+            }
+            else {
+                _deselectAll();
+                $("#selectAllSeq").removeClass("colorToggle");
+            }
+        }
+
+        function onFullscreenToggle() {
+            hitlist.draw();
+        }
+
+        function checkAllBetterThan(evalue){
+            var jsonData = {};
+            jsonData.accessions = [];
+            jsonData.seqs = [];
+            jsonData.index = [];
+            // get values of all checked Checkboxes
+            hits.forEach(function callback(currentValue) {
+                if (currentValue.evalue < evalue) {
+                    $(":checkbox[value="+currentValue.num+"]").prop("checked","true");
+                    jsonData.accessions.push(currentValue.hit_description);
+                    jsonData.seqs.push(currentValue.hit_seq);
+                    jsonData.index.push(currentValue.num-1);
+                }
+            });
+            return jsonData;
+        }
+
+
+        function getCheckboxesData(){
+            var jsonData = {};
+            jsonData.accessions = [];
+            jsonData.seqs = [];
+            jsonData.index = [];
+
+
+            // get all checked checkboxes and their respective accession
+            $('input:checkbox.' + checkbox + ":checked").each(function () {
+                var index = $(this).val() - 1;
+                var seq = hits[index].hit_seq;
+                if (jsonData.seqs.indexOf(seq) == -1) {
+                    jsonData.accessions.push(hits[index].hit_description);
+                    jsonData.seqs.push(seq);
+                    jsonData.index.push(index);
+                }
+            });
+            return jsonData;
+        }
+
+        function applySliderRange(jsonData){
+            // get slider range
+            var sliderRange = getSliderRange();
+            //slider range is applied
+            jsonData.seqs = jsonData.seqs.map(function(e) {return e.substr(sliderRange[0] - 1, sliderRange[1]) + '\n'});
+            return jsonData;
+        }
+
+
+        function preprocessingForward(){
+
+            if($('#selectedHits').is(':checked')) {
+                // get checked checkboxes
+                var jsonData = getCheckboxesData();
+                // slider range is applied
+                if($('#sliderRegion').is(':checked')) {
+                    jsonData = applySliderRange(jsonData);
+                }
+
+            } else if ($('#accordingEvalue').is(':checked')) {
+                // first deselect all previous selected checkboxes
+                _deselectAll();
+                // now select all Better than given evalue
+                var jsonData = checkAllBetterThan($("#forwardEvalue").val());
+                // slider range is applied
+                if($('#sliderRegion').is(':checked')) {
+                    jsonData = applySliderRange(jsonData);
+                }
+            }
+            return jsonData;
+        }
+        function forward_(tool){
+            var dataTmp = preprocessingForward();
+                var forwardData = '';
+                // get slider range
+                var sliderRange = getSliderRange();
+                for(var i=0; i < dataTmp.index.length; i++){
+                    // index + number of querys because alignment json contains query sequences in alignment first
+                    var index = dataTmp.index[i];
+                    forwardData += ">" + hits[index].hit_id + '\n';
+                    forwardData += hits[index].hit_seq.substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
+                }
+                forward(tool, forwardData);
+        }
+
+
+
+        function toggleAliColor_(str){
+            if(str == "letters" ){
+                if(colorLetters)
+                    toggleAliColor("");
+                else {
+                    toggleAliColor("letters");
+                    if(colorBackground)
+                        this.colorBackground = !this.colorBackground;
+                }
+                this.colorLetters = !this.colorLetters;
+
+            }
+            if(str == "background"){
+                if(colorBackground)
+                    toggleAliColor("");
+                else {
+                    toggleAliColor("background");
+                    if(colorLetters)
+                        this.colorLetters = !this.colorLetters;
+                }
+                this.colorBackground = !this.colorBackground;
+
+            }
+        }
+        function resubmitSection_(){
+            resubmitSection(firstQuerySequence, firstQueryName);
+        }
+
+</script>

@@ -1,3 +1,15 @@
+
+let jqueryUITabsInit = function(elem : Element, isInit : boolean) : void {
+    if (!isInit) {
+        $("#" + elem.id).tabs();
+    }
+};
+let foundationInit = function(elem : Element, isInit : boolean) : void {
+    if (!isInit) {
+        $("#" + elem.id).foundation();
+    }
+};
+
 function openNav() {
     document.getElementById("myNav").style.height = "100%";
 }

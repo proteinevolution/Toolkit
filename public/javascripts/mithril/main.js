@@ -39,5 +39,3 @@ m.route(document.getElementById('main-content'), '/', {
 });
 // Add the job list to the off canvas element
 m.mount(document.getElementById('off-canvas-joblist'), JobListComponent);
-//m.mount(document.getElementById('metauser'), AuthDropdown);
-//m.mount(document.getElementById('mithril-overlay-content'), AuthOverlay);
