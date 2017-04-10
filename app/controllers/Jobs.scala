@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import actors.JobActor.JobStateChanged
+import actors.JobActor.{JobStateChanged, UpdateLog}
 import models.database.jobs._
 import models.job.JobActorAccess
 import modules.{CommonModule, LocationProvider}
@@ -12,6 +12,7 @@ import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -50,6 +51,10 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     Ok
   }
 
+  def updateLog(jobID: String) = Action {
+    jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID))
+    Ok
+  }
 
   //TODO make secure
   def SGEID(jobID: String, sgeID: String) = Action {
