@@ -90,6 +90,9 @@ POST          /jobs/queued/:jobID                     @controllers.Jobs.jobStatu
 POST          /jobs/sge/:jobID/:sgeID                 @controllers.Jobs.SGEID(jobID: String, sgeID: String)
 POST          /jobs/message/:mainID                   @controllers.Jobs.pushMessage(mainID, message: String)
 POST          /jobs/dateviewed/:mainID                @controllers.Jobs.updateDateViewed(mainID)
+# update process log
+POST          /jobs/updateLog/:jobID           @controllers.Jobs.updateLog(jobID : String)
+
 
 # Cluster
 
