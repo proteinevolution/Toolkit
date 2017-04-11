@@ -731,7 +731,7 @@ class alignmentVal implements ToolkitValidator {
 
     basicValidation(): boolean {
 
-        if (!this.elem.validate('fasta') && (this.elem.validate('fastaheaders') || this.elem.validate('line') || this.elem.reformat('detect') === '') && this.elem.val().length != 0) {
+        if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') === '') {
             feedback(false, "This is no fasta!", "error");
             return false;
         }
@@ -756,7 +756,7 @@ class alignmentVal implements ToolkitValidator {
             return false;
         }
 
-        else if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '' && this.elem.val().length != 0) {
+        else if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
             feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
@@ -764,7 +764,7 @@ class alignmentVal implements ToolkitValidator {
             return true;
         }
 
-        else if (this.elem.val().length === 0)
+        else if (this.elem.val() === "")
             valReset();
 
         else feedback(true);
@@ -802,7 +802,7 @@ class alignmentVal implements ToolkitValidator {
 
     DNAvalidation(): any {
 
-        if (!this.elem.validate('fasta') && (this.elem.validate('fastaheaders') || this.elem.validate('line') || this.elem.reformat('detect') === '') && this.elem.val().length != 0)
+        if (!this.elem.validate('fasta'))
             feedback(false, "This is no fasta!", "error");
 
         else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
@@ -814,7 +814,7 @@ class alignmentVal implements ToolkitValidator {
         else if(!this.elem.reformat('DNA'))
             feedback(false, "Illegal characters used!", "error");
 
-        else if (this.elem.val().length === 0)
+        else if (this.elem.val() == "")
             valReset();
 
         else feedback(true);
@@ -822,56 +822,52 @@ class alignmentVal implements ToolkitValidator {
 
     seq2IDvalidation(): any {
 
-        if (!this.elem.validate('fasta') && !this.elem.validate('fastaheaders') && !this.elem.validate('line') && this.elem.reformat('detect') != '' && this.elem.val().length != 0) {
+        if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '') {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
             feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
             $("#alignment").val(this.elem.reformat('fasta'));
         }
 
-        else if((!this.elem.validate('fasta')) && !(/>/.test(this.elem.reformat('fastaheaders'))))
+        else if(this.elem.reformat('extractheaders') === false)
             feedback(false, "At least one header required!", "error");
 
-        else if ((/>\n/.test(this.elem.reformat('fastaheaders'))))
+        else if ((/^\n$/m.test(this.elem.reformat('extractheaders'))))
             feedback(false, "Empty header!", "error");
 
-        else if (!this.elem.reformat('maxlength', 1000000))
-            feedback(false, "Input contains over one million characters!", "error");
+        else if (!this.elem.reformat('maxlength', 1000000)) {
+            console.log((!this.elem.reformat('maxlength', 1000000)));
+            feedback(false, "Input contains over one million characters!", "error");}
 
         else if (this.elem.reformat('maxheadernumber', 20000))
             feedback(false, "Input contains over 20,000 headers!", "error");
 
-        else if (this.elem.validate('fastaheaders') && this.elem.val().length != 0) {
+        else if (this.elem.reformat('extractheaders') !== "") {
             $(".submitJob").prop("disabled", false);
             $("#validOrNot").css("display", "block").html("Valid input").removeClass("alert").addClass("success");
         }
 
-        else if (this.elem.val().length === 0)
+        else if (this.elem.val() == "")
             valReset();
-
-        else feedback(true);
     }
 
     patternSearchValidation(): any {
 
-        if(this.elem.validate('fasta') || /^>/.test(this.elem.reformat('fastaheaders')))
-            feedback(false, "Input must not start with \">\"!", "error");
-
-        else if (!this.elem.validate('line') && !this.elem.validate('fastaheaders'))
+        if (!this.elem.reformat('line'))
             feedback(false, "Input has to be one line!", "error");
 
-        else if (/\s/i.test(this.elem.reformat('line')))
+        else if (/\s/.test(this.elem.val()))
             feedback(false, "Input must not contain spaces!", "error");
 
         else if (!this.elem.reformat('maxlength', 100))
             feedback(false, "Input contains over 100 characters!", "error");
 
-        else if (this.elem.validate('line') && this.elem.val().length != 0) {
+        else if (this.elem.reformat('line')) {
             $(".submitJob").prop("disabled", false);
             $("#validOrNot").css("display", "block").html("Valid input").removeClass("alert").addClass("success");
         }
 
-        else if (this.elem.val().length === 0)
+        else if (this.elem.val() == "")
             valReset();
     }
 }
