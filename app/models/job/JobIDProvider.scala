@@ -1,7 +1,10 @@
 package models.job
 
-import javax.inject.{Inject, Singleton}
+import java.util.UUID
+import javax.inject.{Named, Inject, Singleton}
 
+import actors.JobIDActor.{GetId, GetIdReply}
+import akka.actor.ActorRef
 import akka.util.Timeout
 import com.google.inject.ImplementedBy
 import models.search.JobDAO
@@ -15,6 +18,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scalaz.concurrent.Task
 
+
+import akka.pattern.ask
+
 /**
   * Created by lzimmermann on 02.12.16.
   */
@@ -27,7 +33,8 @@ sealed trait JobIDProvider {
 
 @Singleton
 final class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
-                                  val jobDao : JobDAO) extends JobIDProvider with CommonModule {
+                                        val jobDao : JobDAO,
+                                        @Named("jobIDActor") repo : ActorRef) extends JobIDProvider with CommonModule {
 
   case class JobIdException(message: String = "", cause: Throwable = null) extends Exception(message, cause)
 
@@ -75,6 +82,17 @@ final class JobIDProviderImpl @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
   def provide: Future[String] = retryTask.unsafePerformSync
 
+
+
+
+  private def getUniqueId(): Future[String] = {
+    implicit val timeout = Timeout(500.millis)
+    val id = UUID.randomUUID().toString
+    repo ? GetId(id) flatMap {
+      case GetIdReply(Some(_)) => getUniqueId()
+      case GetIdReply(None) => Future.successful(id)
+    }
+  }
 
 
  /*
