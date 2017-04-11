@@ -952,7 +952,6 @@ ParameterSelectComponent = {
             name: args.param.name,
             "class": "wide",
             id: args.param.name,
-            "required": "required",
             //if max count of chosen databases is needed
             //onclick: ctrl.preventMultiSelection
             onclick: ctrl.solveDBSelection
