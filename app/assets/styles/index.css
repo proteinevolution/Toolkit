@@ -425,7 +425,7 @@ select {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     float: none;
     margin: 1em 1em 0 1em;
-    height: 17em;
+    height: 15em;
     box-shadow: 0 1px 2px 0 #ccc;
     background-color: transparent;
     border-radius: 3px;
@@ -434,7 +434,6 @@ select {
 
 .news_container {
     background: rgba(238, 238, 238, 0.95);
-    padding-bottom: 10px;
 }
 
 .news p {
@@ -530,7 +529,7 @@ tspan{
 .liveTable {
     background: rgba(214, 214, 214, 0.96);
     text-align: center;
-    padding: 7px 7px 7px 7px;
+    padding: 0px 7px 0px 7px;
     margin-bottom: 0;
 }
 
@@ -680,11 +679,12 @@ td#joblistIcon i {
 
 #indexLoadBar .loadBarGraph {
     text-align: center;
+    display: flex;
 }
 
 #indexLoadBar .loadBarSize {
     width: 12em;
-    margin: 0 auto;
+    margin-left: 6.2em;
 }
 
 #indexLoadBar .loadBarGraph table {
@@ -726,6 +726,10 @@ td#joblistIcon i {
     -moz-animation: pulse 1s alternate infinite;
 }
 
+.loadBarString{
+    margin-left: 1em;
+    line-height: 1.2;
+}
 @-webkit-keyframes pulse {
     0% {
         background: rgba(255,255,255,1);

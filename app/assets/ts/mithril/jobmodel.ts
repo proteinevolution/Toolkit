@@ -15,7 +15,6 @@ window.JobModel = {
         "use_nr70": "1",
         "max_lines": 100,
         "pmin": 20,
-        "aliwidth": 80,
         "max_seqid": 90,
         "min_seqid": "0.8",
         "min_aln_cov": "0.8",
@@ -45,7 +44,8 @@ window.JobModel = {
         "output_order":"input",
         "clustering_pval_threshold":"1",
         "eval_tpr":"1e-6",
-        "msa_gen_method":"hhblits"
+        "msa_gen_method":"hhblits",
+        "hhsuitedb": "scope70/scope"
     },
 
     /* Seems not to be used
