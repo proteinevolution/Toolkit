@@ -15,7 +15,7 @@ $( "#pats" ).prop('title', 'Search based on PROSITE pattern/regular expression')
 
 $( "#pbl" ).prop('title', 'NCBI (PSI-)BLAST+').tooltip();
 
-$( "#alnviz" ).prop('title', 'Alignment viewer with BioJS MSA viewer').tooltip();
+$( "#alnviz" ).prop('title', 'BioJS multiple sequence alignment viewer').tooltip();
 
 $( "#cluo" ).prop('title', 'Multiple sequence alignment tool').tooltip();
 
@@ -53,21 +53,21 @@ $( "#sam" ).prop('title', 'Measures structural parameters of four-helical bundle
 
 $( "#anc" ).prop('title', 'Reconstructs ancestral protein sequences').tooltip();
 
-$( "#clan" ).prop('title', 'Clustering based on all-against-all BLAST similarities').tooltip();
+$( "#clan" ).prop('title', 'Clustering based on all-against-all BLAST+ similarities').tooltip();
 
-$( "#mseq" ).prop('title', 'ENTER TOOLTIP HERE').tooltip();
+$( "#mseq" ).prop('title', 'Ultra fast and sensitive protein sequence clustering').tooltip();
 
 $( "#phyn" ).prop('title', 'Infer phylogenies').tooltip();
 
 $( "#6frt" ).prop('title', 'Six-frame translation of nucleotide sequences').tooltip();
 
-$( "#bac" ).prop('title', 'Reverse translation of amino acid into nucleotide sequences').tooltip();
+$( "#bac" ).prop('title', 'Reverse translation of protein sequences into nucleotide sequences').tooltip();
 
 $( "#hhfi" ).prop('title', 'Extraction of a representative set of sequences from an alignment').tooltip();
 
-$( "#ret" ).prop('title', 'Sequence retrieval using a list of GI numbers').tooltip();
+$( "#ret" ).prop('title', 'Sequence retrieval using a list of accession IDs').tooltip();
 
-$( "#s2id" ).prop('title', 'ENTER TOOLTIP HERE').tooltip();
+$( "#s2id" ).prop('title', 'Extractions of accessions IDs').tooltip();
 
 $( "#reformat" ).prop('title', 'Sequence reformatting utility').tooltip();
 
