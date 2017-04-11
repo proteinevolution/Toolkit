@@ -34,7 +34,7 @@ fasta2json.py ../results/${JOBID}.full.fas ../results/${JOBID}.full.json
 
 
 # Reformat query into fasta format; 100 most diverse sequences
-hhfilter -i $(readlink -f ../results${JOBID}.a3m) \
+hhfilter -i $(readlink -f ../results/${JOBID}.a3m) \
          -o $(readlink -f ../results/${JOBID}.rep100.a3m) \
          -diff 100
 
