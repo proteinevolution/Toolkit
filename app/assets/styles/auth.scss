@@ -1,14 +1,17 @@
 
 .auth-tabs {
   border: none;
+  border-radius: 4px;
   width: 25%;
+  min-width: 380px;
+  background: #FFF;
   min-height: 20em;
   padding: 0;
   overflow: hidden;
   display: block;
   margin: auto;
-
 }
+
 .auth-tabs .ui-widget-header {
   background: #eeeeee;
   border: none;
@@ -27,6 +30,14 @@
 }
 .auth-tabs .ui-tabs-nav .ui-state-active a {
   color: grey;
+}
+
+.auth-tabs .ui-tabs-tab:nth-child(n+2) {
+  width: 33%;
+}
+
+.auth-tabs .ui-tabs-tab:nth-child(1) {
+  width: 34%;
 }
 
 .auth-tabs .ui-tabs-panel  {

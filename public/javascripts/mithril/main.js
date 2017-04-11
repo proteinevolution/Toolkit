@@ -1,7 +1,5 @@
 var StaticRoute;
 
-Auth.loadUser();
-
 StaticRoute = {
     controller: function() {
         return {
