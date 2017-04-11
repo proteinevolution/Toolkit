@@ -280,10 +280,12 @@ input {
     width: 82%;
     padding-left: 0.75em;
 }
+table.dataTable.no-footer{
+    border-bottom: 1px solid #1111114d !important;
+}
 
 #jobManagerTable thead, #jobManagerTable thead:hover, #jobManagerTable thead tr, #jobManagerTable thead tr:hover  {
-    background: rgba(0, 110, 98, 166) !important;
-    color: white;
+    color: grey;
 }
 
 @media only screen and (max-width: 720px) {

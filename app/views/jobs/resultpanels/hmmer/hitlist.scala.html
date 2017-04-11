@@ -135,6 +135,74 @@
                                     <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
                                 </tr>
                             }
+                                @for((alignment, hit) <- ((jsValue \ jobID \ "hsps" \ "below_threshold").as[List[JsObject]], (jsValue \ jobID \ "hits" \ "below_threshold").as[List[JsObject]]).zipped.toList){
+                                    @* hit number, links *@
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="3">
+                                        @{alignment \ "hit_id" match {
+                                            case JsDefined(jsValue) => BlastVisualization.getLinksHmmer((alignment \ "hit_id").get.as[String])
+                                            case undefined: JsUndefined =>
+                                        }
+                                        }
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    @* checkboxes, accession, name of hit*@
+                                    <tr class="header">
+                                        <td ><input type="checkbox" name="templates" class="hitCheckbox" value='@{(alignment \ "num").get}'> @{(alignment \ "num").get}.</td>
+                                    <td colspan="4">
+
+                                        @{alignment \ "hit_id" match {
+                                            case JsDefined(jsValue) => {BlastVisualization.getSingleLink((alignment \ "hit_id").get.as[String])}
+                                            case undefined: JsUndefined =>
+                                        }
+                                        }
+                                        @{"  "+(alignment \ "hit_description").get.as[String].replaceFirst(">", "")}
+                                    </td>
+                                    </tr>
+                                    @* Alignment Details*@
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="4">E-value: @{(alignment \ "evalue").get},
+                                            Score: @{(alignment \ "bitscore").get}, Hit length: @{(alignment \ "hit_len").get},
+                                            Domain expected number: @{(hit \ "dom_exp_num").get}, Domain observed number: @{(hit \ "domain_obs_num").get},
+                                        </td>
+                                    </tr>
+                                    @* seq of query, if present *@
+                                    @{alignment \ "query_seq" match {
+                                        case JsDefined(jsValue) =>
+                                        {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query_start").get.toString(), BlastVisualization.colorRegexReplacer(((alignment \ "query_seq").get.as[String]).toUpperCase()),(alignment \ "query_end").get.toString()))}
+                                        case undefined: JsUndefined =>
+                                    }
+                                    }
+
+                                    @* agree of query, if present *@
+                                    @* agree of query, if present *@
+                                    @{alignment \ "aln_ann" \ "PP" match {
+                                        case JsDefined(jsValue) =>
+                                        {BlastVisualization.makeRow("sequence", Array("","",(alignment \ "aln_ann" \ "PP").get.as[String],""))}
+                                        case undefined: JsUndefined =>
+                                    }
+                                    }
+
+                                    @* seq of hit, if present *@
+                                    @{alignment \ "hit_seq" match {
+                                        case JsDefined(jsValue) =>
+                                        {BlastVisualization.makeRow("sequence", Array("H",(alignment \ "hit_start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "hit_seq").get.as[String]),(alignment \ "hit_end").get.toString()))}
+                                        case undefined: JsUndefined =>
+                                    }
+                                    }
+
+                                    <tr>
+                                        <td><br /></td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
+                                    </tr>
+                                }
                         </tbody>
                     </table>
                 </form>
