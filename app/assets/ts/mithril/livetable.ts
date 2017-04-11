@@ -13,25 +13,25 @@ let trafficBarConfig = function(lastJob : any) {
             } else if (lastJob.state === 2) {
                 console.log("Traffic Bar goes to queued");
                 $(elem).css({
-                    'background': '#c0b5bf',
+                    'background': 'rgba(192, 181, 191, 0.5)',
                     'box-shadow': '0 1 6px #9192af'
                 });
             } else if (lastJob.state === 5) {
                 console.log("Traffic Bar goes to done");
                 $(elem).css({
-                    'background': 'green',
+                    'background': 'rgba(0, 180, 40, 0.2)',
                     'box-shadow': '0 1 6px #C3FFC3'
                 });
             } else if (lastJob.state === 4) {
                 console.log("Traffic Bar goes to error");
                 $(elem).css({
-                    'background': '#ff0000',
+                    'background': 'rgba(180, 0, 40, 0.2)',
                     'box-shadow': '0 1 6px #FFC5C5'
                 });
             } else if (lastJob.state === 3) {
                 console.log("Traffic Bar goes to running");
                 $(elem).css({
-                    'background': '#ffff00',
+                    'background': 'rgba(255, 255, 0, 0.4)',
                     'box-shadow': '0 1 6px #FFF666'
                 });
             }
@@ -73,10 +73,10 @@ class LoadBar {
                                     (1.0 <= currentLoad && currentLoad < 2.5 ? " pulsating" : "")}),
                     m("th", {class: (currentLoad < 2.5 ? "loadBar gray" : colorClass) +
                                     (2.5 <= currentLoad && currentLoad < 5.0 ? " pulsating" : "")}),
-                    m("th", {class: (currentLoad < 5.0 ? "loadBar gray" : colorClass + " pulsating")})
+                    m("th", {class: (currentLoad < 5.0 ? "loadBar gray" : colorClass + " pulsating")}),
                 ])
-            ))),
-            m('div',{class: 'loadBarString'}, "" + loadString)
+            )),m('div',{class: 'loadBarString'}, "" + loadString)),
+
         ])
     }
 }
