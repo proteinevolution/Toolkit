@@ -7,9 +7,9 @@
 @import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
 @import modules.tel.TEL
-@(toolName: String, jobID: String, filename : String,jsValue: JsValue)(implicit request: RequestHeader)
+@import play.api.libs.json.JsLookupResult
+@(toolName: String, jobID: String, jsValue: JsLookupResult)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
-
 
 <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward selected</a>
 
@@ -23,13 +23,13 @@
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences: @{{jsValue \ filename }.as[List[JsArray]].size}
+    Number of sequences: @{{jsValue}.as[List[JsArray]].size}
         <br />
         <br />
 <form id="alignmentResult">
     <table class="unstriped">
         <tbody class="alignmentTBody">
-        @for((alignment,index) <- {jsValue \ filename }.as[List[JsArray]].zipWithIndex) {
+        @for((alignment,index) <- {jsValue }.as[List[JsArray]].zipWithIndex) {
             <tr class="header">
                 <td ><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index}'> @{index+1}.</td>
                 <td>
