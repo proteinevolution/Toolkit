@@ -38,7 +38,7 @@ case class User(userID        : BSONObjectID,                        // ID of th
   }
   override def toString : String = {
     s"""userID: ${userID.stringify}
-       |sessionID: ${sessionID.get.stringify}
+       |sessionID: ${sessionID match { case Some(sid) => sid.stringify case None => "not logged in" }}
        |connected: ${if(connected) "Yes" else "No"}
        |nameLogin: ${getUserData.nameLogin}
        |watched jobIDs: ${jobs.mkString(",")}"""
