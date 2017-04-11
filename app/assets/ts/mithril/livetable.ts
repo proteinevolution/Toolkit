@@ -120,7 +120,7 @@ class LiveTable {
                                 m('b', "No Jobs")
                         ),
                         m('td', {id: "joblistIcon"},
-                            m('a', {href: "/#/jobmanager", style: "font-weight: bold;" }, [
+                            m('a', {href: "/#/jobmanager", id: "jobmanagerIcon", style: "font-weight: bold;" }, [
                                 m("i", {class: "icon-list"})
                             ])
                         )
