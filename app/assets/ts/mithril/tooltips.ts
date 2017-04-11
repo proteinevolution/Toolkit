@@ -67,7 +67,7 @@ $( "#hhfi" ).prop('title', 'Extraction of a representative set of sequences from
 
 $( "#ret" ).prop('title', 'Sequence retrieval using a list of accession IDs').tooltip();
 
-$( "#s2id" ).prop('title', 'Extractions of accessions IDs').tooltip();
+$( "#s2id" ).prop('title', 'Extraction of accessions IDs').tooltip();
 
 $( "#reformat" ).prop('title', 'Sequence reformatting utility').tooltip();
 
