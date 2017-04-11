@@ -15,7 +15,6 @@ window.JobModel = {
         "use_nr70": "1",
         "max_lines": 100,
         "pmin": 20,
-        "aliwidth": 80,
         "max_seqid": 90,
         "min_seqid": "0.8",
         "min_aln_cov": "0.8",

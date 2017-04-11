@@ -215,14 +215,14 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     // HHblits
     ("hhblits", "HHblits", "hhb", "search", "",
     Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.EVAL_INC_THRESHOLD, paramAccess.MAXROUNDS,
-      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE), Seq.empty,Seq.empty),
+      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIGNMODE), Seq.empty,Seq.empty),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
     Seq(paramAccess.PROTEOMES, paramAccess.HHSUITEDB, paramAccess.TWOTEXTALIGNMENT, paramAccess.MSA_GEN_METHOD,
         paramAccess.MSA_GEN_MAX_ITER, paramAccess.SS_SCORING, paramAccess.MACMODE, paramAccess.MACTHRESHOLD,
         paramAccess.MIN_COV, paramAccess.MIN_SEQID_QUERY, paramAccess.EVAL_INC_THRESHOLD,
-        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIWIDTH, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq.empty),
+        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq.empty),
 
     // HHpred - Manual Template Selection
     ("hhpred_manual", "HHpred - ManualTemplate Selection", "hhp", "forward", "",  Seq.empty, Seq.empty,Seq.empty),
