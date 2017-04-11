@@ -68,7 +68,8 @@ GET           /signup                                 @controllers.Auth.signUp()
 POST          /signup                                 @controllers.Auth.signUpSubmit()
 POST          /signup/submit/                         @controllers.Auth.signUpSubmit()
 GET           /signout                                @controllers.Auth.signOut()
-POST          /forgotPassword                         @controllers.Auth.passwordReset
+POST          /resetPassword                          @controllers.Auth.resetPassword
+POST          /resetPasswordChange                    @controllers.Auth.resetPasswordChange
 GET           /miniprofile                            @controllers.Auth.miniProfile()
 GET           /profile                                @controllers.Auth.profile()
 POST          /profile                                @controllers.Auth.profileSubmit()
