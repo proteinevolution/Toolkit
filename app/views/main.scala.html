@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
 @import java.util.Date
 @import models.tools.Tool
-@(webJarAssets: WebJarAssets, tools: Iterable[Tool], message : String = "")(implicit messages: Messages, request: RequestHeader)
+@(webJarAssets: WebJarAssets, tools: Iterable[Tool], message : String = "", view : String = "")(implicit messages: Messages, request: RequestHeader)
 
 <!DOCTYPE html>
 
@@ -108,8 +108,9 @@
             routes.javascript.Auth.signUpSubmit,
             routes.javascript.Auth.verification,
             routes.javascript.Auth.profileSubmit,
-            routes.javascript.Auth.passwordReset,
-            routes.javascript.Auth.passwordChangeSubmit
+            routes.javascript.Auth.passwordChangeSubmit,
+            routes.javascript.Auth.resetPassword,
+            routes.javascript.Auth.resetPasswordChange
         )
 
         <!-- Google Fonts -->
@@ -299,66 +300,19 @@
         <script src='@routes.Assets.versioned("javascripts/vendor/snap.svg-min.js")'></script>
 
         <script type="text/javascript">
-
-                  //TODO connect this to backend somehow to be able to write and store articles for landing page
-                  //ajax call to push article into the database
-//                  var articlePushRoute = jsRoutes.controllers.DataController.writeArticle("MPI Toolkit",
-//                          "Welcome to the Bioinformatics Toolkit hosted at the Max Planck Institute for Developmental Biology in Tuebingen, Germany.",
-//                          "https://www.gesundheitsindustrie-bw.de/files/cache/619c00ba8a9e09dbc17430924315a5d8_f9398.jpg");
-//                  $.ajax({
-//                      'url': articlePushRoute.url,
-//                      'method': articlePushRoute.method
-//                  });
-
-
-                    $(document).ready(function() {
-                        $(document).foundation();
-                    });
-
-
-                    var aa_color_font = new Map();
-                    aa_color_font.set("aa_W", "#808080");
-                    aa_color_font.set("aa_Y", "#808080");
-                    aa_color_font.set("aa_F", "#808080");
-                    aa_color_font.set("aa_L", "#00ff00");
-                    aa_color_font.set("aa_I", "#00ff00");
-                    aa_color_font.set("aa_V", "#00ff00");
-                    aa_color_font.set("aa_M", "#00ff00");
-                    aa_color_font.set("aa_A", "#404040");
-                    aa_color_font.set("aa_S", "#404040");
-                    aa_color_font.set("aa_T", "#404040");
-                    aa_color_font.set("aa_K", "red");
-                    aa_color_font.set("aa_R", "red");
-                    aa_color_font.set("aa_D", "blue");
-                    aa_color_font.set("aa_E", "blue");
-                    aa_color_font.set("aa_Q", "#d000a0");
-                    aa_color_font.set("aa_N", "#d000a0");
-                    aa_color_font.set("aa_H", "#E06000");
-                    aa_color_font.set("aa_C", "#A08000");
-                    aa_color_font.set("aa_P", "#191919");
-                    aa_color_font.set("aa_G", "#404040");
-
-                    var aa_color_background = new Map();
-                    aa_color_background.set("aa_W", "#00c000");
-                    aa_color_background.set("aa_Y", "#00c000");
-                    aa_color_background.set("aa_F", "#00c000");
-                    aa_color_background.set("aa_L", "#02ff02");
-                    aa_color_background.set("aa_I", "#02ff02");
-                    aa_color_background.set("aa_V", "#02ff02");
-                    aa_color_background.set("aa_M", "#02ff02");
-                    aa_color_background.set("aa_A", "#404040");
-                    aa_color_background.set("aa_S", "#404040");
-                    aa_color_background.set("aa_T", "#404040");
-                    aa_color_background.set("aa_K", "#ff0000");
-                    aa_color_background.set("aa_R", "#ff0000");
-                    aa_color_background.set("aa_D", "#6080ff");
-                    aa_color_background.set("aa_E", "#6080ff");
-                    aa_color_background.set("aa_Q", "#e080ff");
-                    aa_color_background.set("aa_N", "#e080ff");
-                    aa_color_background.set("aa_H", "#ff8000");
-                    aa_color_background.set("aa_C", "#ffff00;");
-                    aa_color_background.set("aa_P", "#a0a0a0");
-                    aa_color_background.set("aa_G", "#404040");
-            </script>
+            var view = "@view";
+            $(document).ready(function() {
+                $(document).foundation();
+                switch (view) {
+                    case "":
+                        break;
+                    case "passwordReset":
+                        AuthOverlay.passwordReset = true;
+                    default:
+                        openNav(view);
+                }
+                Auth.loadUser();
+            });
+        </script>
     </body>
 </html>
