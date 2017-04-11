@@ -43,14 +43,7 @@
                             <th>Name</th>
                             <th>Prob</th>
                             <th>E-value</th>
-                            <th>P-value</th>
                             <th>Score</th>
-                            <th>SS</th>
-                            <th>Cols</th>
-                            <th>qStart</th>
-                            <th>qEnd</th>
-                            <th>tStart</th>
-                            <th>tEnd</th>
                         </tr>
                     </thead>
                 </table>
@@ -82,8 +75,8 @@
                                 <tr>
                                     <td></td>
                                     <td colspan="3">
-                                    @{hit \ "struc" match {
-                                        case JsDefined(jsValue) => BlastVisualization.getLinksHHpred((hit \ "struc").get.as[String])
+                                    @{alignment \ "template" \ "name" match {
+                                        case JsDefined(jsValue) => BlastVisualization.getLinksHHpred((alignment \ "template" \ "name").get.as[String])
                                         case undefined: JsUndefined => BlastVisualization.getLinksHHpred("undefinedAccession") ;
                                     }
                                     }
@@ -95,9 +88,9 @@
                                     <td ><input type="checkbox" name="templates" class="hitCheckbox" value='@{(hit \ "no").get}'> @{(hit \ "no").get}.</td>
                                 <td colspan="4">
 
-                                    @{hit \ "struc" match {
-                                        case JsDefined(jsValue) => {BlastVisualization.getSingleLink((hit \ "struc").get.as[String])}
-                                        case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
+                                    @{alignment \ "template" \ "name" match {
+                                        case JsDefined(jsValue) => {BlastVisualization.getSingleLink((alignment \ "template" \ "name").get.as[String])}
+                                        case undefined: JsUndefined =>
                                     }
                                     }
                                     @{"  "+(alignment \ "header").get.as[String].replaceFirst(">", "")}
@@ -122,35 +115,35 @@
                                 @{alignment \ "query" \ "seq" match {
                                     case JsDefined(jsValue) =>
                                     {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query" \ "name").get.as[String],(alignment \ "query" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "query" \ "seq").get.as[String]),(alignment \ "query" \ "end").get.toString(),"("+(alignment \ "query" \ "ref").get+")".toString()))}
-                                    case undefined: JsUndefined => Logger.info("query.seq undefined in results!")
+                                    case undefined: JsUndefined =>
                                 }
                                 }
                                 @*Consensus of query, if present*@
                                 @{alignment \ "query" \ "consensus" match {
                                     case JsDefined(jsValue) =>
                                     {BlastVisualization.makeRow("sequence", Array("Q", "Consensus",(alignment \ "query" \ "start").get.toString(), (alignment \ "query" \ "consensus").get.as[String],(alignment \ "query" \ "end").get.toString(),"("+(alignment \ "query" \ "ref").get+")".toString()))}
-                                    case undefined: JsUndefined => Logger.info("query.consensus undefined in results!")
+                                    case undefined: JsUndefined =>
                                 }
                                 }
                                 @* agree of query, if present *@
                                 @{alignment \ "agree" match {
                                     case JsDefined(jsValue) =>
                                     {BlastVisualization.makeRow("sequence", Array("","","",(alignment \ "agree").get.as[String], ""))}
-                                    case undefined: JsUndefined => Logger.info("agree undefined in results!")
+                                    case undefined: JsUndefined =>
                                 }
                                 }
                                 @*  consensus template, if present *@
                                 @{alignment \ "template" \ "consensus" match {
                                     case JsDefined(jsValue) =>
                                     {BlastVisualization.makeRow("sequence", Array("T", "Consensus", (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "consensus").get.as[String],(alignment \ "template" \ "end").get.toString(),"("+(alignment \ "template" \ "ref").get+(")").toString()))}
-                                    case undefined: JsUndefined => Logger.info("template.consensus undefined in results!")
+                                    case undefined: JsUndefined =>
                                 }
                                 }
                                 @*  seq template, if present *@
                                 @{alignment \ "template" \ "seq" match {
                                     case JsDefined(jsValue) =>
                                     {BlastVisualization.makeRow("sequence", Array("T", (alignment \ "template" \ "name").get.as[String], (alignment \ "template" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "template" \ "seq").get.as[String]),(alignment \ "template" \ "end").get.toString(),"("+(alignment \ "template" \ "ref").get+")".toString()))}
-                                    case undefined: JsUndefined => Logger.info("template.seq undefined in results!")
+                                    case undefined: JsUndefined =>
                                 }
                                 }
                                 <tr>
@@ -261,7 +254,7 @@
                 var alignments = data.alignments;
 
                 if(alignments.length > 0){
-                    drawDataTable(hits);
+                    drawDataTable(alignments);
                     drawInformation(info);
 
                     //fill first query name and sequence for slider resubmit
@@ -300,29 +293,22 @@
             $("#hhpred_date").append(info.Date);
         }
 
-        function drawDataTable(hits){
+        function drawDataTable(alignments){
 
             hitlist = $('#htb').dataTable({
                 "bInfo": false,
                 "bFilter": true,
                 "bLengthChange": true,
-                "aaData": hits,
+                "aaData": alignments,
                 "scrollY": 600,
                 "scrollX": true,
                 "aoColumns": [
                     { "mDataProp": "no" },
-                    { "mDataProp": "struc" , render: function (data){return getSingleLink(data)}},
-                    { "mDataProp": "hit" , render: function (data) {return data.replace(/;/g, "")}},
-                    { "mDataProp": "prob" },
-                    { "mDataProp": "eval" },
-                    { "mDataProp": "pval", render: function(data){return data.toExponential();}},
-                    { "mDataProp": "score" },
-                    { "mDataProp": "ss" },
-                    { "mDataProp": "cols" },
-                    { "mDataProp": "query_begin" },
-                    { "mDataProp": "query_end" },
-                    { "mDataProp": "template_begin" },
-                    { "mDataProp": "template_end" }
+                    { "mDataProp": "template.name" , render: function (data){return getSingleLink(data)}},
+                    { "mDataProp": "header" , render: function (data) {return data.replace(/;/g, "")}},
+                    { "mDataProp": "info.probab" },
+                    { "mDataProp": "info.eval" , render: function(data){return data.toExponential()}},
+                    { "mDataProp": "info.score" },
                 ],
                 'columnDefs': [{
                     'targets': 0,
