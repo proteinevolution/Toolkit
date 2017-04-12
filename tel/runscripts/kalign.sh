@@ -1,3 +1,4 @@
+JOBID=%jobid.content
 SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
 
 echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
@@ -30,9 +31,10 @@ curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>
 echo "#Preparing output." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
+reformat_hhsuite.pl clu fas ../results/alignment.clustalw_aln ../results/alignment.fas
+# Convert fasta to JSON
+fasta2json.py ../results/alignment.fas ../results/${JOBID}.alignment.json
+
 echo "done"  >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
-reformat_hhsuite.pl clu fas ../results/alignment.clustalw_aln ../results/alignment.fas
-# Convert fasta to JSON
-fasta2json.py ../results/alignment.fas ../results/alignment.json

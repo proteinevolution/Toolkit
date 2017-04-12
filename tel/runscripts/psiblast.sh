@@ -1,3 +1,4 @@
+JOBID=%jobid.content
 # set gapopen and gapextend costs depending on given matrix
 GAPOPEN=11
 GAPEXT=1
@@ -72,7 +73,7 @@ fasta2json.py %alignment.path ../results/query.json
 
 
 # Generate Query in JSON
-fasta2json.py ../results/output_psiblastp.aln ../results/alignment.json
+fasta2json.py ../results/output_psiblastp.aln ../results/${JOBID}.alignment.json
 
 # extract alignment from
 #alignhits_html.pl ../results/out.psiblastp ../results/out.align -e %evalue.content -fas -no_link -blastplus
