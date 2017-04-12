@@ -37,7 +37,7 @@ object FormDefinitions {
           sessionID     = user.sessionID,
           sessionData   = user.sessionData,
           connected     = user.connected,
-          accountType   = if (acceptToS) 1 else 0,
+          accountType   = if (acceptToS) 0 else -1,
           userData      = Some(UserData(nameLogin = nameLogin,
                                         password  = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
                                         eMail     = List(eMail))),
@@ -46,16 +46,8 @@ object FormDefinitions {
           dateCreated   = Some(new DateTime()),
           dateUpdated   = Some(new DateTime())
         )
-    } { user =>
-      Some((
-        user.getUserData.nameLogin,
-        "",
-        user.getUserData.eMail.head,
-        true,
-        user.dateLastLogin.map(_.getMillis),
-        user.dateCreated.map(_.getMillis),
-        user.dateUpdated.map(_.getMillis)
-        ))
+    } { _ =>
+      None
     }
   )
 
@@ -71,11 +63,8 @@ object FormDefinitions {
           nameLogin,
           password
         )
-    } { user =>
-      Some((
-        user.nameLogin,
-        "******"
-        ))
+    } { _ =>
+      None
     }
   )
 
@@ -108,18 +97,7 @@ object FormDefinitions {
           None
         }
     } {
-      case Some(userData) =>
-      Some((userData.eMail,
-            userData.nameFirst,
-            userData.nameLast,
-            userData.institute,
-            userData.street,
-            userData.city,
-            userData.country,
-            userData.groups,
-            userData.roles,
-            "******"))
-      case None =>
+      case _ =>
         None
     })
 
@@ -136,10 +114,7 @@ object FormDefinitions {
         } else {
           None
         }
-    } {
-      case Some(password) =>
-        Some(("******","******"))
-      case None =>
+    } { _ =>
         None
     }
   )
@@ -150,6 +125,14 @@ object FormDefinitions {
       UserData.EMAIL     -> optional (email)) {
       (nameLoginOpt : Option[String], eMailOpt : Option[String]) =>
         Some(nameLoginOpt, eMailOpt)
+    } { _ =>
+      None
+    }
+  )
+
+  def ForgottenPasswordChange = Form(
+    mapping(UserData.PASSWORDNEW -> (text(8,128) verifying pattern(textRegex, error = "error.NewPassword"))) {
+      (passwordNew) => BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS))
     } { _ =>
       None
     }

@@ -45,7 +45,8 @@ window.JobModel = {
         "clustering_pval_threshold":"1",
         "eval_tpr":"1e-6",
         "msa_gen_method":"hhblits",
-        "hhsuitedb": "scope70/scope"
+        "hhsuitedb": "scope70/scope",
+        "hhpred_incl_eval": "1E-3"
     },
 
     /* Seems not to be used
