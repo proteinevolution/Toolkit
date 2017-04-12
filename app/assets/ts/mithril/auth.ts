@@ -259,10 +259,10 @@ class SignIn {
 
     static submit(event : Event) : void {
         event.preventDefault();
-        var dataS = {nameLogin:SignIn.nameLogin, password:SignIn.password};
+        let dataS = {nameLogin:SignIn.nameLogin, password:SignIn.password};
         var route = jsRoutes.controllers.Auth.signInSubmit();
         m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
-            //type : AuthMessage
+            dataS = null;
             if (authMessage.successful) {
                 SignIn.password = null;
                 LiveTable.updateJobInfo();
@@ -351,13 +351,13 @@ class SignUp {
     static submit(event : Event) : void {
         event.preventDefault();
         if (SignUp.formValid || SignUp.validate(event)) {
-            var dataS = {nameLogin : SignUp.nameLogin,
+            let dataS = {nameLogin : SignUp.nameLogin,
                          password  : SignUp.password,
                          eMail     : SignUp.eMail,
                          acceptToS : SignUp.acceptToS };
             var route = jsRoutes.controllers.Auth.signUpSubmit();
             m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
-                //type : AuthMessage
+                dataS = null;
                 Auth.updateStatus(authMessage);
             });
         }
@@ -458,11 +458,12 @@ class ForgotPassword {
 
     static submit(event : Event) : void {
         event.preventDefault();
-        var dataS = {nameLogin:ForgotPassword.nameLogin, eMail:ForgotPassword.eMail};
+        let dataS = {nameLogin:ForgotPassword.nameLogin, eMail:ForgotPassword.eMail};
         console.log(dataS);
-        var route = jsRoutes.controllers.Auth.passwordReset();
+        var route = jsRoutes.controllers.Auth.resetPassword();
         m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
-            if (authMessage.successful) { SignIn.password = null }
+            dataS = null;
+            if (authMessage.successful) { SignIn.password = null; SignIn.nameLogin = null; }
             Auth.updateStatus(authMessage);
         });
     }
@@ -525,10 +526,12 @@ class Profile {
 
     static submit(event : Event) : void {
         event.preventDefault();
-        var userwithpw : any = { password:Profile.password };
+        let userwithpw : any = { password:Profile.password };
         for (var prop in Profile.user){ if (!prop.split("_")[1]){ userwithpw[prop] = Profile.user[prop]; } }
         var route = jsRoutes.controllers.Auth.profileSubmit();
         m.request({method: route.method, url: route.url, data: userwithpw }).then(function(authMessage) {
+            userwithpw = null;
+            Profile.password = "";
             Auth.updateStatus(authMessage);
         });
     }
@@ -724,9 +727,10 @@ class PasswordChange {
 
     static submit(event : Event) : void {
         event.preventDefault();
-        var password : any = { passwordOld : PasswordChange.passwordOld, passwordNew : PasswordChange.passwordNew };
+        let password : any = { passwordOld : PasswordChange.passwordOld, passwordNew : PasswordChange.passwordNew };
         var route = jsRoutes.controllers.Auth.passwordChangeSubmit();
         m.request({method: route.method, url: route.url, data: password }).then(function(authMessage) {
+            password = null;
             if (authMessage.success) {
                 PasswordChange.passwordOld     = "";
                 PasswordChange.passwordNew     = "";
@@ -805,6 +809,83 @@ class PasswordChange {
     }
 }
 
+// Password Reset
+class PasswordReset {
+    static passwordNew      : string = "";
+    static passwordConfirm  : string = "";
+    static passwordNewSetter (password : string)  : void { PasswordReset.passwordNew  = password; }
+    static passwordConfirmSetter (password : string)  : void { PasswordReset.passwordConfirm  = password; }
+
+    static submit(event : Event) : void {
+        event.preventDefault();
+        let password : any = { passwordNew : PasswordReset.passwordNew };
+        var route = jsRoutes.controllers.Auth.resetPasswordChange();
+        m.request({method: route.method, url: route.url, data: password }).then(function(authMessage) {
+            password = null;
+            if (authMessage.success) {
+                PasswordReset.passwordNew     = "";
+                PasswordReset.passwordConfirm = "";
+            }
+            Auth.updateStatus(authMessage, true);
+        });
+    }
+
+    static controller (args : any) : any {
+        return { }
+    }
+
+    static view (ctrl : any, args : any) : any {
+        return m("div", {class:"auth-tabs"}, m("div", { class: "auth-form"},
+            m("form", { 'data-abide': 'ajax',
+                        id:           'password-edit-form',
+                        class:        'password-edit-form',
+                        onsubmit:     PasswordReset.submit
+            }, [
+                Auth.message == null ? null :
+                    !Auth.message.successful ?
+                        m("div", {class:"callout alert", id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message) :
+                        m("div", {class:"callout",       id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message),
+                m("div", {}, "Please Enter a new Password."),
+                m("div", m("label", [
+                    m("input", { id:         'passwordCheck',
+                                 pattern:    '.{8,128}',
+                                 placeholder:'New Password',
+                                 required:   'required',
+                                 type:       'password',
+                                 onkeyup:     m.withAttr("value", PasswordReset.passwordNewSetter),
+                                 onchange:    m.withAttr("value", PasswordReset.passwordNewSetter),
+                                 onfocus:     focusInNoRedraw,
+                                 onblur:      focusOutRedraw,
+                                 value:       PasswordReset.passwordNew
+                    }),
+                    m("span", { class:"form-error"}, "Passwords must be at least 8 characters long!")
+                ])),
+                m("div", m("label", [
+                    m("input", { id:             'password',
+                                 name:           'password',
+                                 pattern:        '.{8,128}',
+                                 placeholder:    'Confirm password',
+                                 'data-equalto': 'passwordCheck',
+                                 required:       'required',
+                                 type:           'password',
+                                 onkeyup:        m.withAttr("value", PasswordReset.passwordConfirmSetter),
+                                 onchange:       m.withAttr("value", PasswordReset.passwordConfirmSetter),
+                                 onfocus:        focusInNoRedraw,
+                                 onblur:         focusOutRedraw,
+                                 value:          PasswordReset.passwordConfirm
+                    }),
+                    m("span", { class:"form-error"}, "Passwords must match!")
+                ])),
+                m("input", { class: "input small expanded secondary button",
+                    id:    'password-reset-submit',
+                    type:  'submit',
+                    value: 'Reset Password'
+                })
+            ])
+        ))
+    }
+}
+
 // Auth dropdown
 class AuthDropdown {
     static controller (args : any) : any {
@@ -812,7 +893,7 @@ class AuthDropdown {
     }
     static view (ctrl : any, args : any) : any {
         if (Auth.user == null) {
-            return m("button", { id:"auth-link", onclick: openNav}, "Sign in")
+            return m("button", { id:"auth-link", onclick: function(e : Event) { return openNav("signin") } }, "Sign in")
         } else {
             return m("div", { id:    "auth-dropdown", config: foundationInit },
                     m("ul", { id:    "auth-dropdown-link",
@@ -824,10 +905,10 @@ class AuthDropdown {
                     }, m("li", [
                         m("button", { class : "loggedIn", id: "auth-link-text"}, Auth.user.nameLogin),
                         m("ul", { class :"menu" }, [
-                            m("li", m("a", { href:"/#/" }, "Profile")),
+                            m("li", m("a", { onclick:function(e : Event) { return openNav("profile")} }, "Profile")),
                             m("li", m("a", { href:"/#/" }, "Inbox")),
-                            m("li", m("a", { onclick:openNav }, "User")),
-                            Auth.user.institute ? m("li", m("a", { href:"/#/backend/index" }, "Backend")) : null,
+                            m("li", m("a", { onclick:function(e : Event) { return openNav("user")} }, "User")),
+                            Auth.user.institute === "MPG" ? m("li", m("a", { href:"/#/backend/index" }, "Backend")) : null,
                             m("li", m("a", {
                                 onclick: function(e : Event) { window.location.replace("/signout") }
                             }, "Sign Out"))
@@ -895,15 +976,16 @@ class ProfileTabs {
 }
 
 class AuthOverlay {
-    static controller (args : any) : any {
-        if (args) {
-        }
-        return { }
-    }
+    static passwordReset : boolean = false;
+    static controller (args : any) : any { return { } }
 
     static view (ctrl : any, args : any) : any {
         return m("div", {id: "auth-overlay"},
-            Auth.user == null ? m.component(LoginTabs, {}) : m.component(ProfileTabs, {})
+            Auth.user == null ?
+                AuthOverlay.passwordReset ?
+                    m.component(PasswordReset, {})  // Reset Password
+                :   m.component(LoginTabs, {})      // Login Panel
+            :   m.component(ProfileTabs, {})        // Profile Panel
         )
     }
 }
@@ -911,9 +993,9 @@ class AuthOverlay {
 class Auth {
     static user    : User = null;
     static message : AuthMessage = null;
+    static messageTimer : number = null;
     static changeUser (user : User) : User {
         Auth.user = user;
-        var timer = setTimeout(Auth.resetStatus(), 2000);
         return Auth.user
     }
     static loadUser () : any {
@@ -933,13 +1015,23 @@ class Auth {
             console.log(error);
         });
     }
-    static updateStatus(authMessage : AuthMessage) : void {
+    static updateStatus(authMessage : AuthMessage, closeAuthOverlay : boolean = false) : void {
         console.log("updating status!", authMessage);
         Auth.message = authMessage;
-        Auth.loadUser();
+        if (authMessage.successful && authMessage.user != null) {
+            Auth.changeUser(authMessage.user)
+        }
+        clearTimeout(Auth.messageTimer);
+        Auth.messageTimer = setTimeout(Auth.resetStatus(), 5000);
     }
-    static resetStatus() : Function {
-        return function(e : Event) { Auth.message = null }
+    static resetStatus(closeAuthOverlay : boolean = false) : Function {
+        return function(e : Event) {
+            Auth.message = null;
+            AuthOverlay.passwordReset = false;
+            if (closeAuthOverlay) {
+                closeNav()
+            }
+        }
     }
 }
 
@@ -947,16 +1039,6 @@ class AuthMessage {
     constructor (public message : string, public successful : boolean, public user : User = null) {
         console.log("new message: ", message, successful, user)
     }
-}
-
-class LoginObject {
-    constructor (private _nameLogin : string = "", private _password : string = "") {
-        console.log("new login object")
-    }
-    get nameLogin (): string { return this._nameLogin }
-    get password  (): string { return this._password  }
-    public nameLoginSetter (nameLogin : string) : string { this._nameLogin = nameLogin ; console.log(this._nameLogin); return this._nameLogin}
-    public passwordSetter  (password  : string) : string { this._password  = password  ; console.log(this._password);  return this._password}
 }
 
 class User {

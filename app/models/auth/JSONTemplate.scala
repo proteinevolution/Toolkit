@@ -28,7 +28,7 @@ trait JSONTemplate {
                   userOption : Option[User] = None) : JsValue = {
      Json.obj("message"    -> message,
               "successful" -> success,
-              "user"       -> userOption)
+              "user"       -> userOption.map(user => Json.toJson(user.userData)))
   }
 
   def LoggedIn(user : User) : JsValue = {
@@ -36,6 +36,11 @@ trait JSONTemplate {
     authMessage(s"Welcome, ${user.getUserData.nameLogin}. \n You are now logged in.",
                 success    = true,
                 userOption = Some(user))
+  }
+
+  def SignedUp : JsValue = {
+    authMessage(s"Your Account has been created.\n Please Check your eMails to Verify your Account.",
+      success    = true)
   }
 
   def LoggedOut() : JsValue = {
@@ -63,6 +68,10 @@ trait JSONTemplate {
 
   def MustAcceptToS() : JsValue = {
     authMessage("Please accept the terms for our service to register.")
+  }
+
+  def MustVerify() : JsValue = {
+    authMessage("Please verify your account.\nCheck Your eMails for the verification token.")
   }
 
   def AlreadyLoggedIn() : JsValue = {
@@ -112,6 +121,12 @@ trait JSONTemplate {
       success    = true)
   }
 
+  def PasswordResetChanged(user : User) : JsValue = {
+    authMessage("Password has been accepted.\nPlease sign in with your new Password.",
+      success    = true,
+      userOption = Some(user))
+  }
+
   def NoSuchUser : JsValue = {
     authMessage("Could not find any Users with the matching user name or eMail address.",
       success    = false)
@@ -119,6 +134,11 @@ trait JSONTemplate {
 
   def OneParameterNeeded : JsValue = {
     authMessage("Need either a user name or a eMail address.",
+      success    = false)
+  }
+
+  def DatabaseError : JsValue = {
+    authMessage("The Database could not be reached. Try again later.",
       success    = false)
   }
 }
