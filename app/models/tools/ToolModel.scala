@@ -69,7 +69,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "hhblits" => getResult(jobID).map {
         case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hhblits.hitlist(jobID,jsvalue, this.values(toolname))),
-          ("Full_Alignment", views.html.jobs.resultpanels.alignment(jobID, (jsvalue \ jobID).as[JsValue], "full" ,this.values(toolname))))
+          ("Representative_Alignment", views.html.jobs.resultpanels.alignment(jobID, (jsvalue \ jobID).as[JsValue], "rep100" ,this.values(toolname))))
         case None => Seq.empty
       }
 
@@ -207,8 +207,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
   lazy val values : Map[String, Tool] = Set(
     // HHblits
     ("hhblits", "HHblits", "hhb", "search", "",
-    Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.EVAL_INC_THRESHOLD, paramAccess.MAXROUNDS,
-      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq("modeller")),
+    Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.HHBLITS_INCL_EVAL, paramAccess.MAXROUNDS,
+      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIGNMODE), Seq.empty,Seq.empty),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
