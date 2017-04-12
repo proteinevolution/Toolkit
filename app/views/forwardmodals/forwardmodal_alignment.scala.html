@@ -1,0 +1,58 @@
+@(tool: models.tools.Tool, viewName: String)
+
+
+<div class="reveal forwardModal" id="forwardModal_@viewName" data-reveal>
+    <p>Forward Job</p>
+
+
+    <div class="forward_form">
+        <div class="forwardFormDiv">
+            <label style="font-weight: bold">Select tool to forward</label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="select_forward large-4 columns">
+            <select class="selectedHits_@viewName" id="forwardSelect_@viewName">
+                <option value="">Select Tool</option>
+                <div>
+                    @for(forwardTool <- {tool.forwardAlignment}) {
+                        <option class="alignmentOptions_@viewName"value="@forwardTool">@forwardTool</option>
+                    }
+                    @for(forwardTool <- {tool.forwardMultiSeq}) {
+                        <option class="multiSeqOptions_@viewName" value="@forwardTool">@forwardTool</option>
+                    }
+                </div>
+            </select>
+        </div>
+        <div class="large-5 columns">
+            <div class="callout alert" id="forwardWarning" style="display: none;" >
+                <span>Some tools take alignments as input</span>
+            </div>
+        </div>
+
+        <div class="forwardFormLast large-3 columns"><a class="success button tiny" id="forward" onclick="@{viewName}_forward_();" type="button">
+            Forward Job</a>
+        </div>
+    </div>
+
+
+</div>
+
+<script>
+
+        window["@{viewName}_forward_"] = function(){
+            var selectedTool = $('#forwardSelect_@viewName').val();
+            @{viewName}_forward(selectedTool);
+            if (selectedTool != "") {
+                $('#forwardModal_@{viewName}').foundation('close');
+            }
+        };
+        $("#forwardModal_@viewName").foundation();
+        $('.alignmentOptions_@viewName').show();
+        $('.multiSeqOptions_@viewName').hide();
+
+
+
+</script>
+
