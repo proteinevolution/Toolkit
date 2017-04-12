@@ -1,4 +1,4 @@
-
+JOBID=%jobid.content
 export DIR_4_TCOFFEE=./tmp  
 export TMP_4_TCOFFEE=./tmp
 export CACHE_4_TCOFFEE=./tmp
@@ -23,4 +23,4 @@ mv alignment.* ../results/
 reformat_hhsuite.pl clu fas ../results/alignment.clustalw_aln ../results/alignment.fas
 
 # Convert fasta to JSON
-fasta2json.py ../results/alignment.fas ../results/alignment.json
+fasta2json.py ../results/alignment.fas ../results/${JOBID}.alignment.json
