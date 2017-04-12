@@ -53,6 +53,11 @@
             boolSelectedHits = $('#selectedHits_@viewName').is(':checked');
             selectedTool = $('#forwardSelect_@viewName').val();
             evalue = $("#forwardEvalue_@viewName").val();
+            if(selectedTool == ""){
+                alert("no sequences selected!")
+                $('#forwardModal_@{viewName}').foundation('close');
+                return;
+            }
             @{viewName}_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, false, false);
             if (selectedTool != "") {
                 $('#forwardModal_@{viewName}').foundation('close');
