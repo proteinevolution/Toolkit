@@ -61,6 +61,11 @@
         selectedTool = $('#forwardSelect_@viewName').val();
         evalue = $("#forwardEvalue_@viewName").val();
         sliderRegion = $('#sliderRegion_@viewName').is(':checked')
+        if(selectedTool == ""){
+            alert("no sequences selected!")
+            $('#forwardModal_@{viewName}').foundation('close');
+            return;
+        }
         @{viewName}_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength, sliderRegion);
         if (selectedTool != "") {
             $('#forwardModal_@{viewName}').foundation('close');
