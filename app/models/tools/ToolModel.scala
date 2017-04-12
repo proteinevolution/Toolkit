@@ -201,8 +201,6 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         case None => Seq.empty
       }
     }
-
-   resultView
   }
 
   // Contains the tool specifications and generates tool objects accordingly
