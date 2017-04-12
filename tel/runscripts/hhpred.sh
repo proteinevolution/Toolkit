@@ -47,7 +47,7 @@ else
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
         hhblits -cpu %THREADS \
                 -v 2 \
-                -e 0.001 \
+                -e %hhpred_incl_eval.content \
                 -i ../results/${JOBID}.fas \
                 -d %UNIPROT  \
                 -oa3m ../results/${JOBID}.a3m \
@@ -73,7 +73,7 @@ else
 
         psiblast -db ${STANDARDNEW}/nre70 \
                  -num_iterations %msa_gen_max_iter.content \
-                 -evalue 0.001 \
+                 -evalue %hhpred_incl_eval.content \
                  -inclusion_ethresh 0.001 \
                  -num_threads %THREADS \
                  -num_descriptions 20000 \
@@ -88,7 +88,7 @@ else
         #extract MSA in a3m format
         alignhits_html.pl   ../results/output_psiblastp.html ../results/${JOBID}.a3m \
                     -Q ../results/${JOBID}.fas \
-                    -e 0.001 \
+                    -e %hhpred_incl_eval.content \
                     -cov %min_cov.content \
                     -a3m \
                     -no_link \

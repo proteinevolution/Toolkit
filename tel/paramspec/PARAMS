@@ -40,3 +40,4 @@ output_order GEN output_order.prop
 eval_tpr GEN eval_tpr.prop
 msa_gen_method GEN msa_gen_method.prop
 hhpred_incl_eval GEN hhpred_incl_eval.prop
+hhblits_incl_eval GEN hhblits_incl_eval.prop

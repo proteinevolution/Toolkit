@@ -10,7 +10,7 @@ sed -i '/CLUSTAL/Id' ../results/alignment.clu
 
 
 # Rename sequences
-< ../results/alignment.clu  awk 'BEGIN{i=0}{if(/^\s*$/){i=0} else {$1=i;i++}; print }' > ../results/alignment2.clu
+< ../results/alignment.clu  awk 'BEGIN{i=0}{if(/^\s*$/){i=0} else {$1=sequence".i;i++}; print }' > ../results/alignment2.clu
 
 
 ancestral -i ../results/alignment2.clu \

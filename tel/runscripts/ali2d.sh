@@ -1,0 +1,1 @@
+#java -Xmx500m -jar prepareAli2d.jar 1007101.aln 1007101 30 1007101.mainlog
