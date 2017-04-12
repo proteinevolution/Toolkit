@@ -51,7 +51,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
 
   def getResults(jobID : String, toolname: String, jobPath: String)(implicit request: Request[AnyContent]): Future[Seq[(String, Html)]] = {
-    val resultView =  toolname match {
+    toolname match {
 
       case "psiblast" => getResult(jobID).map {
         case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID, jsvalue, this.values(toolname))),
@@ -201,8 +201,6 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         case None => Seq.empty
       }
     }
-
-   resultView
   }
 
   // Contains the tool specifications and generates tool objects accordingly
