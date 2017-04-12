@@ -59,16 +59,9 @@
         var fileUrl = "/files/@jobID/@{jobID}.@{resultName}.json";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.fasta";
         var checkbox_@{resultName} = "checkbox_@{resultName}";
-        var data_@{resultName};
         var selectAllBool_@{resultName} = false;
         var wrapSequencesBool_@{resultName} = false;
 
-        // check first ten checkboxes by default
-        $(document).ready(function () {
-            $.getJSON(fileUrl, function (data_) {
-                data_@{resultName} = data_;
-            });
-        });
         window["@{resultName}_wrap"] = function(){
             this.wrapSequencesBool_@{resultName} = !this.wrapSequencesBool_@{resultName};
             if(wrapSequencesBool_@{resultName}) {
@@ -90,13 +83,15 @@
             $('input:checkbox.' + checkbox_@{resultName} + ":checked").each(function () {
                 checkedCheckboxes.push($(this).val())
             });
+            $.getJSON(fileUrl, function (data) {
 
             //fill array with headers and sequences
                 checkedCheckboxes.forEach(function callback(currentValue) {
-                    forwardData.push(">" + data_@{resultName}[currentValue][0]);
-                    forwardData.push(data_@{resultName}[currentValue][1]);
+                    forwardData.push(">" + data[currentValue][0]);
+                    forwardData.push(data[currentValue][1]);
                 });
                 forward(selectedTool, forwardData.join("\n"));
+            });
         };
 
         window["@{resultName}_selectAll"] = function(){
@@ -109,15 +104,16 @@
                 deselectAll(checkbox_@{resultName});
                 $("#selectAllSeq_@{resultName}").removeClass( "colorToggle" );
             }
-        }
+        };
         window["@{resultName}_download"] = function(){
-
+            $.getJSON(fileUrl, function (data) {
             var fileString = "";
-            for(var i = 0; i < data_@{resultName}.length; i++){
-                fileString += ">" + data_@{resultName}[i][0] + "\n";
-                    fileString += (data_@{resultName}[i][1] + "\n");
+            for(var i = 0; i < data.length; i++){
+                fileString += ">" + data[i][0] + "\n";
+                    fileString += data[i][1] + "\n";
             }
             download(this.downloadFilename, fileString);
-        }
+            })
+        };
 
 </script>
