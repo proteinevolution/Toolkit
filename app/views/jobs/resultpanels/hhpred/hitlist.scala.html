@@ -256,7 +256,7 @@ $("#structureModal").bind('closed.zf.reveal', (function() {
 }));
 
 var data;
-var checkbox.@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
+var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
 var currentStructureAccession = "";
 var hitlist;
 var colorSS = false;
@@ -318,11 +318,7 @@ var jobID;
         setTimeout(function () {
             slider_show(info.Match_columns, firstQueryStart, firstQueryEnd)
         }, 1000);
-
-        aas = $('span[class^="aa_"]'); // Have to use jQuery for that one
-
-        // set color letters and SS to default
-        toggleAliColor_("letters");
+            
         toggleSS_();
 
         $("#accordion").foundation();
