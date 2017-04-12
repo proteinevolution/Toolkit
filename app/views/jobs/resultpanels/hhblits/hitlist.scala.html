@@ -16,7 +16,7 @@
 }else{
     @* Loads ForwardModal *@
     @views.html.forwardmodals.forwardmodal(tool, tool.toolNameShort)
-
+    @views.html.forwardmodals.forwardmodal_hhsuite(tool, tool.toolNameShort+"_hhsuite")
     @* Load html Map used for the image representation *@
     <div class="container" id="loadingDiv"></div>
     <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
@@ -58,6 +58,7 @@
                 <div class="colorOpts">
                     <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
+                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
                     <hr id="line-element" colspan="4" class="horizontal-line">
                 </div>
 
@@ -187,7 +188,8 @@
 
 }
 <script>
-
+        var fileUrlQueryMSA = "/files/@jobID/@{jobID}.rep100.json";
+        var fileUrlQueryMSAFas = "/files/@jobID/@{jobID}.rep100.fas";
         var data;
         var alignments;
         var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
@@ -379,8 +381,7 @@
                 var sliderRange = getSliderRange();
                 var alignmentData;
                 // get alignment json
-                var fileUrl = "/files/"+jobID+"/"+jobID+".rep100.json";
-                $.getJSON(fileUrl, function (data_) {
+                $.getJSON(fileUrlQueryMSA, function (data_) {
                     alignmentData = data_;
                     for(var i=0; i < dataTmp.index.length; i++){
                         // index + number of querys because alignment json contains query sequences in alignment first
@@ -394,6 +395,14 @@
         }
 
 
+        window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
+            $.ajax({
+                type: 'GET',
+                url: fileUrlQueryMSAFas
+            }).done(function (data_) {
+                forward(selectedTool, data_.toString());
+            });
+        };
         window["@{tool.toolNameShort}_resubmitSection"] = function(){
             resubmitSection(firstQuerySequence, firstQueryName);
         };
