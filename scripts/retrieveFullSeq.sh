@@ -14,9 +14,5 @@ seq_retrieve.pl -i results/accessionsToRetrieve \
                 -o results/sequences_tmp.fa \
                 -d ${STANDARDNEW}/${DB} \
                 -unique 1 > results/unretrievable
-
-# remove first 5 lines that contain information about retrieving
-tail -n +5 results/sequences_tmp.fa > results/sequences.fa
-
 # remove temp file
 rm results/sequences_tmp.fa
