@@ -390,7 +390,7 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
         var sliderRange = getSliderRange();
         var alignmentData;
         // get alignment json
-        var fileUrl = "/files/@jobID/alignment.json";
+        var fileUrl = "/files/@jobID/@{jobID}.alignment.json";
         $.getJSON(fileUrl, function (data_) {
             alignmentData = data_;
             var numOfQuery = query.length;
