@@ -1,14 +1,27 @@
 JOBID=%jobid.content
 
-###Fix after slider works
-##   -e %inclusion_ethresh.content  \
+SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
+
+if [ $SEQ_COUNT -gt "1" ] ; then
+       echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
+       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+else
+       echo "#Query is a single protein sequence." >> ../results/process.log
+       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+fi
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+echo "#Searching %hhblitsdb.content." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 hhblits -cpu %THREADS \
         -i %alignment.path \
         -d %HHBLITS/%hhblitsdb.content     \
         -o $(readlink -f ../results/${JOBID}.hhr) \
         -oa3m $(readlink -f ../results/${JOBID}.a3m)  \
-        -e 0.001 \
+        -e %hhblits_incl_eval.content \
         -n %maxrounds.content  \
         -p %pmin.content \
         -Z %max_lines.content \
@@ -18,19 +31,18 @@ hhblits -cpu %THREADS \
         -seq %max_seqs.content \
         -%alignmode.content
 
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+
+echo "#Generating output" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > $(readlink -f ../results/${JOBID}.json)
 json2fasta.py ../results/${JOBID}.json ../results/${JOBID}.fasta
 #Visualization
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
-
-# Reformat query into fasta format; full alignment
-reformat_hhsuite.pl a3m fas \
-            $(readlink -f ../results/${JOBID}.a3m) \
-            $(readlink -f ../results/${JOBID}.full.fas) \
-            -d 160
-
-#create full alignment json; use for forwarding
-fasta2json.py ../results/${JOBID}.full.fas ../results/${JOBID}.full.json
 
 
 # Reformat query into fasta format; 100 most diverse sequences
@@ -51,3 +63,5 @@ fasta2json.py ../results/${JOBID}.rep100.fas ../results/${JOBID}.rep100.json
 # Generate Query in JSON
 fasta2json.py %alignment.path ../results/query.json
 
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
