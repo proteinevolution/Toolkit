@@ -2,32 +2,69 @@ JOBID=%jobid.content
 
 SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
 
+if [  "%hhpred_align.content" = "true" ] ; then
+        echo "#Pairwise comparison mode." >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        echo "done" >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+fi
+
+
 reformat_hhsuite.pl fas fas %alignment.path ${JOBID}.fas -l 32000 -uc
 mv ${JOBID}.fas ../results
-echo "#starting HHPred script" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 #CHECK IF MSA generation is required or not
-if [ %msa_gen_max_iter.content == "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
-        reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas query.a3m -M first
-        mv query.a3m ../results/query.a3m
-        addss.pl ../results/query.a3m
+if [ %msa_gen_max_iter.content = "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
+        echo "#Query is an MSA with ${SEQ_COUNT} sequences. No MSA generation required for building A3M." >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
+        mv ${JOBID}.a3m ../results/${JOBID}.a3m
+        hhfilter -i ../results/${JOBID}.a3m \
+                 -o ../results/${JOBID}.a3m \
+                 -cov %min_cov.content\
+                 -qid %min_seqid_query.content
+
+        addss.pl ../results/${JOBID}.a3m
+        echo "done" >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 else
     #MSA generation required
     #Check what method to use (PSI-BLAST? HHblits?)
 
+    if [ $SEQ_COUNT -gt "1" ] ; then
+        echo "#Query is an MSA with ${SEQ_COUNT} sequences. MSA generation required." >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    else
+        echo "#Query is a single protein sequence. MSA generation required." >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    fi
+    echo "done" >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
     #MSA generation by HHblits
-    if [ %msa_gen_method.content == "hhblits" ] ; then
+    if [ %msa_gen_method.content = "hhblits" ] ; then
+        echo "#Running HHblits for query MSA and A3M generation." >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
         hhblits -cpu %THREADS \
                 -v 2 \
+                -e 0.001 \
                 -i ../results/${JOBID}.fas \
                 -d %UNIPROT  \
-                -oa3m ../results/query.a3m \
+                -oa3m ../results/${JOBID}.a3m \
                 -n %msa_gen_max_iter.content \
+                -qid %min_seqid_query.content \
+                -cov %min_cov.content \
                 -mact 0.35
+
+        echo "done" >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
     fi
-    #MSA generation by HHblits
-    if [ %msa_gen_method.content == "psiblast" ] ; then
+    #MSA generation by PSI-BLAST
+    if [ %msa_gen_method.content = "psiblast" ] ; then
+
+        echo "#Running PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
         #Check if input is a single sequence or an MSA
         INPUT="query"
         if [ $SEQ_COUNT -gt 1 ] ; then
@@ -49,76 +86,43 @@ else
         shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_psiblastp.html
 
         #extract MSA in a3m format
-        alignhits_html.pl   ../results/output_psiblastp.html ../results/query.a3m \
+        alignhits_html.pl   ../results/output_psiblastp.html ../results/${JOBID}.a3m \
                     -Q ../results/${JOBID}.fas \
                     -e 0.001 \
-                    -cov 20 \
+                    -cov %min_cov.content \
                     -a3m \
                     -no_link \
                     -blastplus
+        echo "done" >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
     fi
 
-    addss.pl ../results/query.a3m
+    addss.pl ../results/${JOBID}.a3m
+
 fi
 
 
-echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 # Here assume that the query alignment exists
 
 # prepare histograms
 # Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
-hhfilter -i ../results/query.a3m \
-         -o ../results/query.reduced.a3m \
+hhfilter -i ../results/${JOBID}.a3m \
+         -o ../results/${JOBID}.reduced.a3m \
          -diff 100
-
-
-
-# max. 160 chars in description
-reformat_hhsuite.pl a3m fas "$(readlink -f ../results/query.reduced.a3m)" query.fas -d 160 -uc
-mv query.fas ../results/query.fas
-
-# Reformat query into fasta format (reduced alignment)  (Careful: would need 32-bit version to execute on web server!!)
-hhfilter -i ../results/query.a3m \
-         -o ../results/query.reduced.a3m \
-         -diff 50
-
-reformat_hhsuite.pl -r a3m fas "$(readlink -f ../results/query.reduced.a3m)" query.reduced.fas -uc
-mv query.reduced.fas ../results/query.reduced.fas
-
-rm ../results/query.reduced.a3m
-
-
-
-# build histogram
-
-reformat.pl a3m \
-            fas \
-            "$(readlink -f  ../results/query.a3m)" \
-            "$(readlink -f  ../results/query.full.fas)"
-
-
-hhfilter -i ../results/query.reduced.fas \
-         -o ../results/query.top.a3m \
-         -id 90 \
-         -qid 0 \
-         -qsc 0 \
-         -cov 0 \
-         -diff 10
-
-
-reformat_hhsuite.pl a3m fas  "$(readlink -f ../results/query.top.a3m)" query.repseq.fas -uc
-mv query.repseq.fas ../results/query.repseq.fas
 
 DBJOINED=""
 #create file in which selected dbs are written
 touch ../params/dbs
 # creating alignment of query and subject input
-if [  "%hhpred_align.content" == "true" ]
+if [  "%hhpred_align.content" = "true" ]
 then
+    echo "#Running HHblits for template MSA and A3M generation." >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
     cd ../results
 
-    if [ %msa_gen_max_iter.content == "0" ] ; then
+    if [ %msa_gen_max_iter.content = "0" ] ; then
             reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
             ffindex_build -as db_a3m_wo_ss.ff{data,index} db.a3m
     else
@@ -131,6 +135,8 @@ then
     ffindex_build -as db_cs219.ffdata db_cs219.ffindex
     DBJOINED+="-d ../results/db"
     cd ../0
+    echo "done" >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 else
     #splitting input databases into array and completing with -d
     if [ "%hhsuitedb.content" != "false" ]
@@ -150,15 +156,21 @@ else
     fi
 fi
 
-echo "#HHsearch" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
+if [  "%hhpred_align.content" = "true" ] ; then
+      echo "#Comparing query profile HMM with template profile HMM." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+else
+      echo "#Searching profile HMM database(s)." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+fi
 
-# Perform HHsearch # TODO Include more parameters
+# Perform HHsearch #
 hhsearch -cpu %THREADS \
-         -i ../results/query.a3m \
+         -i ../results/${JOBID}.reduced.a3m \
          ${DBJOINED} \
          -o ../results/${JOBID}.hhr \
+         -oa3m ../results/${JOBID}.a3m \
          -p %pmin.content \
          -P %pmin.content \
          -Z %max_lines.content \
@@ -168,7 +180,6 @@ hhsearch -cpu %THREADS \
          -B %max_lines.content \
          -ssm %ss_scoring.content \
          -seq 1 \
-         -aliw %aliwidth.content \
          -dbstrlen 10000 \
          -cs ${HHLIB}/data/context_data.lib \
          -atab $(readlink -f ../results/hhsearch.start.tab) \
@@ -179,26 +190,21 @@ hhsearch -cpu %THREADS \
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
+echo "#Preparing output." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
-tenrep.rb -i ../results/query.repseq.fas -h ../results/${JOBID}.hhr -p 40 -o ../results/query.tenrep_file
-
-cp ../results/query.tenrep_file ../results/query.tenrep_file_backup
-
-parse_jalview.rb -i ../results/query.tenrep_file -o ../results/query.tenrep_file
-
-
-# Reformat tenrep file such that we can display it in the full alignment section
-reformat.pl fas \
-            clu \
-            "$(readlink -f ../results/query.tenrep_file)" \
-            "$(readlink -f ../results/alignment.clustalw_aln)"
-
-
-
 # Generate Hitlist in JSON for hhrfile
- 
+
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
 
 # Generate Query in JSON
 fasta2json.py ../results/${JOBID}.fas ../results/query.json
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+#TODO display JOBID}.a3m and JOBID}.reduced.a3m; use the latter for forwarding
+
