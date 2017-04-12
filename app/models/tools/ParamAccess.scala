@@ -191,4 +191,5 @@ class ParamAccess @Inject() (tel: TEL) {
   final val OUTPUT_ORDER = select ("output_order", "Output the alignment in:")
   final val EVAL_TPR = select("eval_tpr", "E-value inclusion TPR & SEL")
   final val CODON_TABLE_ORGANISM = Param("codon_table_organism", Text, 1, "Use codon usage table of")
+  final val HHPRED_INCL_EVAL = select("hhpred_incl_eval", "E-value inclusion threshold")
 }

@@ -92,8 +92,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       }
       case "hhpred" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, jsvalue)),
-            ("FullAlignment", views.html.jobs.resultpanels.msaviewer(jobID)))
+          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, jsvalue)))
         case None => Seq.empty
       }
 
@@ -194,7 +193,6 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
 
 
-
       case "patsearch" => getResult(jobID).map {
         case Some(jsvalue) =>
           Seq(("PatternSearch", views.html.jobs.resultpanels.patternSearch("PatternSearch",jobID, "output", jsvalue)))
@@ -220,7 +218,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     ("hhpred", "HHpred", "hhp", "search", "",
     Seq(paramAccess.PROTEOMES, paramAccess.HHSUITEDB, paramAccess.TWOTEXTALIGNMENT, paramAccess.MSA_GEN_METHOD,
         paramAccess.MSA_GEN_MAX_ITER, paramAccess.SS_SCORING, paramAccess.MACMODE, paramAccess.MACTHRESHOLD,
-        paramAccess.MIN_COV, paramAccess.MIN_SEQID_QUERY, paramAccess.EVAL_INC_THRESHOLD,
+        paramAccess.MIN_COV, paramAccess.MIN_SEQID_QUERY, paramAccess.HHPRED_INCL_EVAL,
         paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq.empty),
 
     // HHpred - Manual Template Selection
