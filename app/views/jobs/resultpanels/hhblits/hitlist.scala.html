@@ -370,7 +370,7 @@
                         type: 'GET',
                         url: 'files/@jobID/sequences.fa'
                     }).done(function (data_) {
-                        forward(tool, data_.toString());
+                        forward(selectedTool, data_.toString());
                     });
                 });
             }else{
@@ -379,7 +379,7 @@
                 var sliderRange = getSliderRange();
                 var alignmentData;
                 // get alignment json
-                var fileUrl = "/files/"+jobID+"/"+jobID+".full.json";
+                var fileUrl = "/files/"+jobID+"/"+jobID+".rep100.json";
                 $.getJSON(fileUrl, function (data_) {
                     alignmentData = data_;
                     for(var i=0; i < dataTmp.index.length; i++){
@@ -388,7 +388,7 @@
                         forwardData += ">" + alignmentData[index][0] + '\n';
                         forwardData += alignmentData[index][1].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
                     }
-                    forward(tool, forwardData);
+                    forward(selectedTool, forwardData);
                 });
             }
         }
