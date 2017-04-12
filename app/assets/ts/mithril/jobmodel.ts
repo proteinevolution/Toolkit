@@ -10,7 +10,7 @@ window.JobModel = {
         "gap_open": 11,
         "desc": 500,
         "alignmode": "local",
-        "maxrounds": "3",
+        "maxrounds": "2",
         "matrix": "BLOSUM62",
         "use_nr70": "1",
         "max_lines": 100,
@@ -46,7 +46,8 @@ window.JobModel = {
         "eval_tpr":"1e-6",
         "msa_gen_method":"hhblits",
         "hhsuitedb": "scope70/scope",
-        "hhpred_incl_eval": "1E-3"
+        "hhpred_incl_eval": "1E-3",
+        "hhblits_incl_eval": "1E-3"
     },
 
     /* Seems not to be used
