@@ -5,7 +5,7 @@
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
-@(jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
+@(jobID: String, jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
 @if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
@@ -13,6 +13,8 @@
         <h6>No hits found!</h6>
     </div>
 }else{
+    @* Loads ForwardModal *@
+    @views.html.forwardmodals.forwardmodal_simple(tool, tool.toolNameShort)
     @* Load html Map used for the image representation *@
     <div class="container" id="loadingDiv"></div>
     <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
@@ -21,7 +23,7 @@
             <div class="accordion-content" data-tab-content>
                 <div class='flat-slider' id='flat-slider'></div>
                 <div id='blastviz'>
-                <a class="success button tiny resubmitSection" onclick="resubmitSection_()" type="button" id="resubmitSection">
+                    <a class="success button tiny resubmitSection" onclick="@{tool.toolNameShort}_resubmitSection()" type="button" id="resubmitSection">
                     Resubmit section</a>
                 <div id='blastviz'>
                     @BlastVisualization.html(s"$jobID/results/$jobID.html_NOIMG")
@@ -33,7 +35,7 @@
         <li class="accordion-item" data-accordion-item>
             <a href="#" class="accordion-title">Hitlist</a>
             <div class="accordion-content" data-tab-content>
-                <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
+                <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
                 <table id="htb" class="display" cellspacing="0" width="80%">
                     <thead>
                         <tr>
@@ -58,17 +60,12 @@
         <li class="accordion-item" data-accordion-item>
             <a href="#" class="accordion-title">Alignments</a>
             <div id="alignments" class="accordion-content table-scroll" data-tab-content>
-                <div>
-                    <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward</a>
-                    <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_manual()">Manual template selection</a>
-                    <a type="button" class="button success tiny hhpred_extra_button" onclick="hhpred_automatic()">Select Templates Automatically</a>
-                    <a type="button" class="button success tiny hhpred_extra_button" onclick="resubmitHmm();">Resubmit HMM</a>
-                    <hr id="line-element" colspan="4" class="horizontal-line">
-                </div>
                 <div class="colorOpts">
                     <a onclick="toggleSelectAll()" type="button"><span id="selectAllSeq">Select all</span></a>
-                    <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
-                    <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
+                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
+                    <a type="button" onclick="hhpred_manual()">Manual template selection</a>
+                    <a type="button" onclick="hhpred_automatic()">Select Templates Automatically</a>
+                    <a type="button" onclick="resubmitHmm();">Resubmit HMM</a>
                     <a onclick="toggleSS_()" type="button"><span id="onlySS">Color only SS</span></a>
                     <hr id="line-element" colspan="4" class="horizontal-line">
                 </div>
@@ -259,13 +256,11 @@ $("#structureModal").bind('closed.zf.reveal', (function() {
 }));
 
 var data;
-var checkbox = "hitCheckbox";
+var checkbox.@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
 var currentStructureAccession = "";
 var hitlist;
 var colorSS = false;
-var colorLetters = false;
-var colorBackground = false;
-var selectAllBool = false;
+var selectAllBool_@{tool.toolNameShort} = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 var ss_helices = document.getElementsByClassName("ss_h");
 var ss_extended = document.getElementsByClassName("ss_e");
@@ -447,20 +442,22 @@ function hhpred_automatic() {
 }
 
 
+function _deselectAll(){
+    deselectAll(checkbox_@{tool.toolNameShort}, this.hitlist.fnGetNodes());
+}
 
-
-function toggleSelectAll() {
-    selectAllDatatable(this.hitlist.fnGetNodes(), 'hitCheckbox');
-    this.selectAllBool = !this.selectAllBool;
-    if(this.selectAllBool) {
-        selectAll('hitCheckbox');
-        $("#selectAllSeq").addClass("colorToggle");
+window["@{tool.toolNameShort}_selectAll"] = function () {
+    selectAllDatatable(this.hitlist.fnGetNodes());
+    this.selectAllBool_@{tool.toolNameShort} = !this.selectAllBool_@{tool.toolNameShort};
+    if(this.selectAllBool_@{tool.toolNameShort}) {
+        selectAll(checkbox_@{tool.toolNameShort});
+        $("#selectAllSeq_@{tool.toolNameShort}").addClass("colorToggle");
     }
     else {
-        deselectAll('hitCheckbox');
-        $("#selectAllSeq").removeClass("colorToggle");
+        _deselectAll();
+        $("#selectAllSeq_@{tool.toolNameShort}").removeClass("colorToggle");
     }
-}
+};
 
 function onFullscreenToggle() {
     hitlist.draw();
@@ -540,16 +537,16 @@ function forwardTemplateAlignment_(tool, forwardData){
 }
 
 
-function forward_(tool){
+window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
     var forwardData = [];
     var checkedCheckboxes = [];
     var sliderRange = getSliderRange();
     // get values of all checked Checkboxes
-    $('input:checkbox.' + checkbox + ":checked").each(function () {
+    $('input:checkbox.' + checkbox_@{tool.toolNameShort} + ":checked").each(function () {
         checkedCheckboxes.push($(this).val()-1)
     });
 
-    if($('#selectedHits').is(':checked')) {
+    if(boolSelectedHits) {
         //fill array with headers and sequences
 
         checkedCheckboxes.forEach(function callback(currentValue) {
@@ -559,10 +556,10 @@ function forward_(tool){
                 forwardData.push(seq);
             }
         });
-    } else if ($('#accordingEvalue').is(':checked')) {
+    } else if (boolEvalue) {
 
             for (i = 0; i < data.alignments.length; ++i) {
-                if (data.alignments[i].info.eval < $("#forwardEvalue").val()) {
+                if (data.alignments[i].info.eval < evalue) {
                     var seq = data.alignments[i].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
                     if(forwardData.indexOf(seq) == -1) {
                         forwardData.push(">" + data.hits[i].struc + data.hits[i].hit.substr(0, 60));
@@ -573,37 +570,13 @@ function forward_(tool){
             }
         }
 
-    forward(tool, forwardData.join("\n"));
+    forward(selectedTool, forwardData.join("\n"));
 }
 
 
-function toggleAliColor_(str){
-    if(str == "letters" ){
-        if(colorLetters)
-            toggleAliColor("");
-        else {
-            toggleAliColor("letters");
-            if(colorBackground)
-                this.colorBackground = !this.colorBackground;
-        }
-        this.colorLetters = !this.colorLetters;
-
-    }
-    if(str == "background"){
-        if(colorBackground)
-            toggleAliColor("");
-        else {
-            toggleAliColor("background");
-            if(colorLetters)
-                this.colorLetters = !this.colorLetters;
-        }
-        this.colorBackground = !this.colorBackground;
-
-    }
-}
-function resubmitSection_(){
+window["@{tool.toolNameShort}_resubmitSection"] = function(){
     resubmitSection(firstQuerySequence, firstQueryName);
-}
+};
 
 function detachStructure(){
     $('#structureModal').foundation('close');

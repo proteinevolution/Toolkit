@@ -220,7 +220,6 @@ setTimeout(function() {
 
     // listens to alignment
     $('input:checkbox.hitCheckbox').click(function (e) {
-        allPages = hitlist.fnGetNodes();
         var currentVal = $(this).val();
         var currentState = $(this).prop('checked');
         // alignment
@@ -236,6 +235,7 @@ setTimeout(function() {
     $(allPages).find('input[type="checkbox"]').click(function (e) {
         allPages = hitlist.fnGetNodes();
         var currentVal = $(this).val();
+        console.log(currentVal)
         var currentState = $(this).prop('checked');
         // alignment
         $('input[value=' + currentVal + ']').each(function () {
@@ -247,29 +247,63 @@ setTimeout(function() {
 },2000);
 
 
+/**
+ *  This function preprocesses data for forwarding
+ * @param selectedTool
+ * @param boolSelectedHits
+ * @param boolEvalue
+ * @param evalue
+ * @returns {*}
+ */
+
+function preprocessingForward(selectedTool, boolSelectedHits,boolEvalue, evalue, sliderRegion){
+    var sliderRange = getSliderRange();
+    if(boolSelectedHits) {
+        // get checked checkboxes
+        var jsonData = getCheckboxesData();
+    } else if (boolEvalue) {
+        // first deselect all previous selected checkboxes
+        _deselectAll();
+        // now select all Better than given evalue
+        var jsonData = checkAllBetterThan(evalue);
+    }
+    if(sliderRegion) {
+        jsonData = applySliderRange(jsonData, sliderRange);
+    }
+    return jsonData;
+}
+
+/**
+ *  this function applies a range on jsData containing seqs
+ * @param jsonData
+ * @returns {*}
+ */
+
+function applySliderRange(jsonData, sliderRange){
+    // get slider range
+    //slider range is applied
+    jsonData.seqs = jsonData.seqs.map(function(e) {return e.substr(sliderRange[0] - 1, sliderRange[1]) + '\n'});
+    return jsonData;
+}
 
 // parameter: all pages from dataTable example: allPages = hitlist.fnGetNodes()
 // select all checkboxes
     function selectAll(checkboxName) {
         // alignment
-
         $('input:checkbox.'+checkboxName).each(function () {
             $(this).prop('checked', true);
         });
 
     }
-    function deselectAllDatatable(allPages){
-        // dataTable
-            $(allPages).find('input[type="checkbox"]').prop('checked', false);
-    }
 
     function selectAllDatatable(allPages) {
         // dataTable
-        $(allPages).find('input[type="checkbox"]').prop('checked', false);
+        $(allPages).find('input[type="checkbox"]').prop('checked', true);
     }
 
-    function deselectAll(checkboxName){
+    function deselectAll(checkboxName, allPages){
         $('input:checkbox.'+checkboxName).prop('checked', false);
+        $(allPages).find('input[type="checkbox"]').prop('checked', false);
     }
 
     /*Select top ten Checkboxes*/

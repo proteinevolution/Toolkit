@@ -88,35 +88,44 @@
     margin-top: 1em;
 }
 
-#forwardModal {
+.forwardModal {
     width: 38em;
     height: 18em;
 }
 
-#forwardModal p {
+.forwardModal p {
     font-size: 1em;
     font-weight: bold;
     color: rgba(0, 110, 98, 166);
 }
 
-#forwardModal .forward_form {
+.forwardModal .forward_form {
     font-size: 0.8em;
 }
 
-#forwardModal .result_inputs {
+.forwardModal .result_inputs {
     font-size: 0.9em;
 }
 
-#forwardModal .forwardFormLast {
+.forwardModal .forwardFormLast {
     float: right;
 }
 
-#forwardModal .nice-select, #forwardModal .nice-select ul {
+.forwardModal .nice-select, #forwardModal .nice-select ul {
     width: 12em;
     margin-top: 1.75em;
     margin-left: 0.25em;
 }
 
+.forward {
+    float: right;
+    background-color: #008979;
+    color: white;
+    margin-bottom: 0;
+    margin-top: 2em;
+    font-size: 0.70em;
+
+}
 #forward {
     float: right;
     background-color: #008979;
