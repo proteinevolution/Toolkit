@@ -8,7 +8,7 @@
 @import models.results.BlastVisualization
 @import modules.tel.TEL
 @import play.api.libs.json.JsLookupResult
-@(jobID: String, jsValue: JsValue, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
+@(jobID: String, jsLookupResult: JsLookupResult, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 @views.html.forwardmodals.forwardmodal_alignment(tool, resultName)
@@ -21,13 +21,13 @@
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences: @{{jsValue \ resultName}.as[List[JsArray]].size}
+    Number of sequences: @{{jsLookupResult \ resultName}.as[List[JsArray]].size}
         <br />
         <br />
 <form id="alignmentResult">
     <table class="unstriped">
         <tbody class="alignmentTBody">
-        @for((alignment,index) <- {jsValue \ resultName}.as[List[JsArray]].zipWithIndex) {
+        @for((alignment,index) <- {jsLookupResult \ resultName}.as[List[JsArray]].zipWithIndex) {
             <tr class="header">
                 <td ><input type="checkbox" name="templates" class="checkbox_@{resultName}" value='@{index}'> @{index+1}.</td>
                 <td>
