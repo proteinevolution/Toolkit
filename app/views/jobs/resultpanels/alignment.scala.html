@@ -8,30 +8,28 @@
 @import models.results.BlastVisualization
 @import modules.tel.TEL
 @import play.api.libs.json.JsLookupResult
-@(toolName: String, jobID: String, jsValue: JsLookupResult)(implicit request: RequestHeader)
+@(jobID: String, jsValue: JsValue, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
-<a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward selected</a>
+@views.html.forwardmodals.forwardmodal_alignment(tool, resultName)
 
-<a type="button" class="button success tiny hhpred_extra_button" id="downloadAlignment"  onclick="download_()">Download File</a>
 <div class="colorOptsAlignment">
-    <a onclick="toggleSelectAll()" type="button"> <span id="selectAllSeq">Select all</span></a>
-    <a onclick="toggleSelectTopTen()" type="button"><span id="selectTopTen">Select top ten</span></a>
-    <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
-    <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
-    <a onclick='wrapSequences()' type="button"><span id="wrapSequences">Wrap sequences</span></a>
+    <a onclick="@{resultName}_selectAll()" type="button"> <span id="selectAllSeq_@{resultName}">Select all</span></a>
+    <a onclick='@{resultName}_wrap()' type="button"><span id="wrap_@{resultName}">Wrap sequences</span></a>
+    <a type="button" data-open="forwardModal_@resultName"><span>Forward selected</span></a>
+    <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download File</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences: @{{jsValue}.as[List[JsArray]].size}
+    Number of sequences: @{{jsValue \ resultName}.as[List[JsArray]].size}
         <br />
         <br />
 <form id="alignmentResult">
     <table class="unstriped">
         <tbody class="alignmentTBody">
-        @for((alignment,index) <- {jsValue }.as[List[JsArray]].zipWithIndex) {
+        @for((alignment,index) <- {jsValue \ resultName}.as[List[JsArray]].zipWithIndex) {
             <tr class="header">
-                <td ><input type="checkbox" name="templates" class="alignmentCheckbox" value='@{index}'> @{index+1}.</td>
+                <td ><input type="checkbox" name="templates" class="checkbox_@{resultName}" value='@{index}'> @{index+1}.</td>
                 <td>
                     @{alignment{0} match {
                         case JsDefined(jsValue) => (alignment{0}).get.as[String]
@@ -58,110 +56,68 @@
 </div>
 
 <script>
-        var data;
-        var checkbox = "alignmentCheckbox";
-        var colorLettersBool = false;
-        var colorBackgroundBool = false;
-        var selectTopTenBool = false;
-        var selectAllBool = false;
-        var wrapSequencesBool = false;
-        var aas = $('font[class^="aa_"]'); // Have to use jQuery for that one
+        var fileUrl = "/files/@jobID/@{jobID}.@{resultName}.json";
+        var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.fasta";
+        var checkbox_@{resultName} = "checkbox_@{resultName}";
+        var data_@{resultName};
+        var selectAllBool_@{resultName} = false;
+        var wrapSequencesBool_@{resultName} = false;
 
         // check first ten checkboxes by default
         $(document).ready(function () {
-            selectTopTen(checkbox);
-            $("#selectTopTen").addClass( "colorToggle" );
-            wrapSequences()
+            $.getJSON(fileUrl, function (data_) {
+                data_@{resultName} = data_;
+            });
         });
-
-
-        // get result json
-        var fileUrl = "/files/@jobID/@jobID";
-        $.getJSON(fileUrl, function (data_) {
-            data = data_;
-        });
-
-        function wrapSequences(){
-            this.wrapSequencesBool = !this.wrapSequencesBool;
-            if(wrapSequencesBool) {
+        window["@{resultName}_wrap"] = function(){
+            this.wrapSequencesBool_@{resultName} = !this.wrapSequencesBool_@{resultName};
+            if(wrapSequencesBool_@{resultName}) {
                 $(".sequenceAlignment").addClass("wrap");
-                $("#wrapSequences").addClass("colorToggle");
+                $("#wrap_@{resultName}").addClass("colorToggle");
             }
             else {
                 $(".sequenceAlignment").removeClass("wrap");
-                $("#wrapSequences").removeClass("colorToggle");
+                $("#wrap_@{resultName}").removeClass("colorToggle");
             }
         }
 
 
-        function toggleAliColor_(str){
-            if(str == "letters" ){
-                if(colorLettersBool)
-                    toggleAliColor("");
-                else
-                    toggleAliColor("letters");
-                this.colorLettersBool = !this.colorLettersBool;
-            }
-            if(str == "background"){
-                if(colorBackgroundBool)
-                    toggleAliColor("");
-                else
-                    toggleAliColor("background");
-                this.colorBackgroundBool = !this.colorBackgroundBool;
-            }
-        }
-
-
-        function forward_(tool) {
+        window["@{resultName}_forward"] = function(selectedTool){
+            // get result json
             var forwardData = [];
             var checkedCheckboxes = [];
             // get values of all checked Checkboxes
-            $('input:checkbox.' + checkbox + ":checked").each(function () {
+            $('input:checkbox.' + checkbox_@{resultName} + ":checked").each(function () {
                 checkedCheckboxes.push($(this).val())
             });
 
             //fill array with headers and sequences
                 checkedCheckboxes.forEach(function callback(currentValue) {
-                    forwardData.push(">" + data[currentValue][0]);
-                    forwardData.push(data[currentValue][1]);
+                    forwardData.push(">" + data_@{resultName}[currentValue][0]);
+                    forwardData.push(data_@{resultName}[currentValue][1]);
                 });
-                forward(tool, forwardData.join("\n"));
-        }
+                forward(selectedTool, forwardData.join("\n"));
+        };
 
-        function toggleSelectAll(){
-            this.selectAllBool = !this.selectAllBool;
-            if(selectAllBool) {
-                selectAll(checkbox);
-                $("#selectTopTen").removeClass( "colorToggle" );
-                $("#selectAllSeq").addClass( "colorToggle" );
+        window["@{resultName}_selectAll"] = function(){
+            this.selectAllBool_@{resultName} = !this.selectAllBool_@{resultName};
+            if(selectAllBool_@{resultName}) {
+                selectAll(checkbox_@{resultName});
+                $("#selectAllSeq_@{resultName}").addClass( "colorToggle" );
             }
             else {
-                deselectAll(checkbox);
-                $("#selectAllSeq").removeClass( "colorToggle" );
+                deselectAll(checkbox_@{resultName});
+                $("#selectAllSeq_@{resultName}").removeClass( "colorToggle" );
             }
         }
-        function toggleSelectTopTen(){
+        window["@{resultName}_download"] = function(){
 
-            this.selectTopTenBool = !this.selectTopTenBool;
-            if(selectTopTenBool ) {
-                selectTopTen(checkbox);
-                $("#selectTopTen").addClass( "colorToggle" );
-                $("#selectAllSeq").removeClass( "colorToggle" );
-            }
-            else {
-                deselectAll(checkbox);
-                $("#selectTopTen").removeClass( "colorToggle" );
-            }
-
-        }
-        function download_(){
             var fileString = "";
-            for(var i = 0; i < data.length; i++){
-                fileString += ">" + data[i][0] + "\n";
-                    fileString += (data[i][1] + "\n");
+            for(var i = 0; i < data_@{resultName}.length; i++){
+                fileString += ">" + data_@{resultName}[i][0] + "\n";
+                    fileString += (data_@{resultName}[i][1] + "\n");
             }
-            var filename = "@{toolName}_jobID_@{jobID}.fasta";
-            download(filename, fileString);
+            download(this.downloadFilename, fileString);
         }
 
 </script>

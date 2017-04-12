@@ -1,9 +1,11 @@
 package models.tools
 
 import javax.inject.{Inject, Singleton}
+import play.api.libs.json.JsValue
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import modules.CommonModule
+import play.api.libs.json.JsLookupResult
 import play.api.mvc.{AnyContent, Request}
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.twirl.api.Html
@@ -52,7 +54,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     val resultView =  toolname match {
 
       case "psiblast" => getResult(jobID).map {
-        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID, jsvalue)),
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID, jsvalue, this.values(toolname))),
           ("E-values", views.html.jobs.resultpanels.evalues(jobID)))
         case None => Seq.empty
       }
@@ -66,8 +68,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       }
 
       case "hhblits" => getResult(jobID).map {
-        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hhblits.hitlist(jobID, jsvalue)),
-          ("Full_Alignment", views.html.jobs.resultpanels.alignment("HHblits", jobID, jsvalue \ jobID \ "full")))
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hhblits.hitlist(jobID,jsvalue, this.values(toolname))),
+          ("Full_Alignment", views.html.jobs.resultpanels.alignment(jobID, (jsvalue \ jobID).as[JsValue], "full" ,this.values(toolname))))
         case None => Seq.empty
       }
 
@@ -87,19 +89,19 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 //        ("Domain_Table", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/domtbl"))))
 
       case "hmmer" => getResult(jobID).map {
-        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hmmer.hitlist(jobID, jsvalue)))
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hmmer.hitlist(jobID, jsvalue, this.values(toolname))))
         case None => Seq.empty
       }
       case "hhpred" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, jsvalue)),
+          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, jsvalue, this.values(toolname))),
             ("FullAlignment", views.html.jobs.resultpanels.msaviewer(jobID)))
         case None => Seq.empty
       }
 
       case "hhpred_align" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, jsvalue)),
+          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, jsvalue, this.values(toolname))),
             ("FullAlignment", views.html.jobs.resultpanels.msaviewer(jobID)))
         case None => Seq.empty
       }
@@ -115,7 +117,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "clustalo" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Alignment", views.html.jobs.resultpanels.alignment("Clustal Omega",jobID, jsvalue \ "alignment")),
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(toolname))),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
           )
         case None => Seq.empty
@@ -123,7 +125,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "kalign" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Alignment", views.html.jobs.resultpanels.alignment("Kalign",jobID, jsvalue \ "alignment")),
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(toolname))),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
             )
         case None => Seq.empty
@@ -131,7 +133,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "mafft" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Alignment", views.html.jobs.resultpanels.alignment("MAFFT",jobID, jsvalue \ "alignment")),
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(toolname))),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
           )
         case None => Seq.empty
@@ -139,7 +141,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "msaprobs" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Alignment", views.html.jobs.resultpanels.alignment("MSAProbs",jobID, jsvalue \ "alignment")),
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(toolname))),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
           )
         case None => Seq.empty
@@ -147,7 +149,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "muscle" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Alignment", views.html.jobs.resultpanels.alignment("MUSCLE",jobID, jsvalue \ "alignment")),
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(toolname))),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
           )
         case None => Seq.empty
@@ -155,7 +157,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "tcoffee" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Alignment", views.html.jobs.resultpanels.alignment("T-Coffee",jobID, jsvalue \ "alignment")),
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(toolname))),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
           )
         case None => Seq.empty
@@ -186,7 +188,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "hhfilter" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Alignment", views.html.jobs.resultpanels.alignment("HHfilter",jobID, jsvalue \ "alignment")),
+          Seq(("Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(toolname))),
             ("AlignmentViewer", views.html.jobs.resultpanels.msaviewer(jobID))
           )
         case None => Seq.empty
@@ -202,11 +204,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       }
     }
 
-    resultView.map { seq =>
-      seq.map { elem =>
-        elem._1 -> views.html.jobs.resultpanels.resultpanel(this.values(toolname), elem._2)
-      }
-    }
+   resultView
   }
 
   // Contains the tool specifications and generates tool objects accordingly
@@ -214,7 +212,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     // HHblits
     ("hhblits", "HHblits", "hhb", "search", "",
     Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.EVAL_INC_THRESHOLD, paramAccess.MAXROUNDS,
-      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIGNMODE), Seq.empty,Seq.empty),
+      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq("modeller")),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
