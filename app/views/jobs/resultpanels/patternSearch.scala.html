@@ -16,12 +16,11 @@
     </div>
 
 }else{
-<a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward selected</a>
-<a type="button" class="button success tiny hhpred_extra_button" id="downloadAlignment"  onclick="download_()">Download File</a>
 <div class="colorOptsAlignment">
     <a onclick="toggleSelectAll()" type="button"> <span id="selectAllSeq">Select all</span></a>
-    <a onclick="toggleSelectTopTen()" type="button"><span id="selectTopTen">Select top ten</span></a>
     <a onclick='wrapSequences()' type="button"><span id="wrapSequences">Wrap sequences</span></a>
+    <a onclick="download_()" type="buttom"><span id="downloadAlignment">Download File</span></a>
+    <a onclick="forward_()" type="buttom"><span id="downloadAlignment">Forward Selected</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -67,14 +66,11 @@
 <script>
         var data;
         var checkbox = "alignmentCheckbox";
-        var selectTopTenBool = false;
         var wrapSequencesBool = false;
         var selectAllBool = false;
 
         // check first ten checkboxes by default
         $(document).ready(function () {
-            selectTopTen(checkbox);
-            $("#selectTopTen").addClass( "colorToggle" );
             wrapSequences()
         });
 
@@ -128,20 +124,6 @@
             }
         }
 
-        function toggleSelectTopTen(){
-
-            this.selectTopTenBool = !this.selectTopTenBool;
-            if(selectTopTenBool ) {
-                selectTopTen(checkbox);
-                $("#selectTopTen").addClass( "colorToggle" );
-                $("#selectAllSeq").removeClass( "colorToggle" );
-            }
-            else {
-                deselectAll(checkbox);
-                $("#selectTopTen").removeClass( "colorToggle" );
-            }
-
-        }
         function download_(){
             var fileString = "";
             for(var i = 0; i < data.hits.length; i++){
