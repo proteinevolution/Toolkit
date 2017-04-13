@@ -62,7 +62,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                 break;
 
             case "tcoffee":
-                $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                $(elem).attr("placeholder", "Enter protein sequences (<500) in FASTA format");
                 break;
 
             case "aln2plot":
@@ -176,7 +176,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                      * ALIGNED FASTA input is allowed.
                      * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
                      * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 2000.
+                     * Limit the maximum number of sequences to 500.
                      **/
 
                     let tcoffeeTarget = new alignmentVal($(elem));
@@ -185,7 +185,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     if (tcoffeeTarget.basicValidation()) {
                         tcoffeeTarget.mustHave2();
                     }
-                    seqLimit = 2000;
+                    seqLimit = 500;
 
                     break;
 
