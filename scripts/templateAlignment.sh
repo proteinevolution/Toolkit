@@ -31,7 +31,8 @@ then
         ffindex_get results/db_a3m.ffdata results/db_a3m.ffindex "db.a3m" >> results/$accession.a3m
         ffindex_get results/db_a3m.ffdata results/db_a3m.ffindex $accession >> results/$accession.a3m
     fi
-fi
 
-hhfilter -i results/$accession.a3m -o results/$accession.reduced.a3m -diff 100
-reformat.pl a3m fas results/$accession.reduced.a3m results/$accession.fas
+
+    hhfilter -i results/$accession.a3m -o results/$accession.reduced.a3m -diff 100
+    reformat.pl a3m fas results/$accession.reduced.a3m results/$accession.fas
+fi
