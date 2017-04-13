@@ -1,6 +1,8 @@
 #!/bin/bash
 # Set environment
 source /ebio/abt1_share/toolkit_support1/code/bioprogs/env/environment.sh
+
+#separate accessions in string by whitespace
 ACCESSIONS=$(echo $accessionsStr | tr " " "\n")
 
 # write accessions to be retrieved in file
