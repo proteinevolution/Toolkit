@@ -20,7 +20,7 @@ object BlastVisualization extends Constants {
   private val uniprotReg = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
   private val scopReg = """([defgh][0-9a-zA-Z\.\_]+)""".r
   private val mmcifReg = """(...._[a-zA-Z])""".r
-  private val mmcifShortReg = """([0-9]...)""".r
+  private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
   private val ncbiReg = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
 
@@ -75,7 +75,7 @@ object BlastVisualization extends Constants {
   def getSingleLink(id : String) : Html = {
     val db = identifyDatabase(id)
     var link = ""
-    val idTrimmed = id.substring (1, 5)
+    val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
     val idPfam = id.replaceAll("am.*$||..*", "")
     val idPdb = id.replaceAll("_.*$", "")
     if(db == "scop") {
@@ -107,7 +107,7 @@ object BlastVisualization extends Constants {
     var links = new ArrayBuffer[String]()
 
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
-    var idTrimmed = id.substring(1, 5)
+    val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
     var idCDD = id.replaceAll("PF", "pfam")
     var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
@@ -146,7 +146,7 @@ object BlastVisualization extends Constants {
     var links = new ArrayBuffer[String]()
     var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
-    var idTrimmed = id.substring(1, 5)
+    val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
     var idCDD = id.replaceAll("PF", "pfam")
     if(db == "scop") {
       links += generateLink(scopBaseLink, id, "SCOP")
