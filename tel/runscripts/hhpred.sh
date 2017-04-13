@@ -194,6 +194,17 @@ echo "#Preparing output." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 
+
+# Reformat query into fasta format; full alignment
+reformat_hhsuite.pl a3m fas \
+            $(readlink -f ../results/${JOBID}.reduced.a3m) \
+            $(readlink -f ../results/${JOBID}.reduced.fas) \
+            -d 160
+
+#create full alignment json; use for forwarding
+fasta2json.py ../results/${JOBID}.reduced.fas ../results/reduced.json
+
+
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 # Generate Hitlist in JSON for hhrfile
