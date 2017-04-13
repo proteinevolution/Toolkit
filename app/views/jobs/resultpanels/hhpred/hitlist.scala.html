@@ -531,7 +531,7 @@ function detachStructure(){
 window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
     $.ajax({
         type: 'GET',
-        url: "files/@jobID/@{jobID}.reduced.a3m"
+        url: "files/@jobID/@{jobID}.reduced.msa"
     }).done(function (data_) {
         forward(selectedTool, data_.toString());
     });
