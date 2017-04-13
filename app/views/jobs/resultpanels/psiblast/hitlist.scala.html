@@ -38,7 +38,11 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title">Hitlist</a>
         <div class="accordion-content" data-tab-content>
-            <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
+            <div class="colorOpts">
+                <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
+                <hr id="line-element" colspan="4" class="horizontal-line">
+            </div>
             <table id="htb" class="display" cellspacing="0" width="80%">
                 <thead>
                     <tr>
