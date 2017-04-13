@@ -214,8 +214,13 @@ hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
 # Generate Query in JSON
 fasta2json.py ../results/${JOBID}.fas ../results/query.json
 
+
+reformat_hhsuite.pl a3m fas ../results/${JOBID}.reduced.a3m "$(readlink -f ../results/${JOBID}.reduced.a3m)"
+
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
-#TODO display JOBID}.a3m and JOBID}.reduced.a3m; use the latter for forwarding
+
+
+#TODO display ${JOBID}.reduced.a3m; use the latter for forwarding
 
