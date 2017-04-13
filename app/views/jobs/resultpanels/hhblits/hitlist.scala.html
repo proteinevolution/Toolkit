@@ -187,6 +187,25 @@
     </ul>
 
 }
+
+@*MODALS*@
+
+
+<div class="reveal" id="templateAlignmentModal" data-reveal>
+    <h3>Template Alignment</h3>
+    <div>
+        <select>
+            <option selected>Forward To</option>
+            <option onclick="forwardTemplateAlignment_('modeller', $('#alignmentTemplate').val())";>Modeller</option>
+        </select>
+    </div>
+    <textarea rows="50" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+
 <script>
         var fileUrlQueryMSA = "/files/@jobID/@{jobID}.rep100.json";
         var fileUrlQueryMSAFas = "/files/@jobID/@{jobID}.rep100.fas";
@@ -401,6 +420,32 @@
         window["@{tool.toolNameShort}_resubmitSection"] = function(){
             resubmitSection(firstQuerySequence, firstQueryName);
         };
+
+
+        function templateAlignment(accession){
+            // replace '#' for url
+            accession = accession.replace("#", "%23");
+
+            $.ajax({
+                type: 'GET',
+                url: '/templateAlignmentHHblits/@jobID/' + accession
+            }).done(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: 'files/@jobID/' + accession + '.fas'
+                }).done(function (data) {
+                    $("#alignmentTemplate").val(data.toString());
+                });
+            }).fail(function () {
+                $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
+            });
+        }
+
+
+        function forwardTemplateAlignment_(tool, forwardData){
+            $('#templateAlignmentModal').foundation('close');
+            forward(tool, forwardData);
+        }
 
 
 </script>
