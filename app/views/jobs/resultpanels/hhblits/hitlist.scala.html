@@ -37,7 +37,12 @@
         <li class="accordion-item" data-accordion-item>
             <a href="#" class="accordion-title">Hitlist</a>
             <div class="accordion-content" data-tab-content>
-                <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
+                <div class="colorOpts">
+                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
+                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
+                    <hr id="line-element" colspan="4" class="horizontal-line">
+                </div>
                 <table id="htb" class="display" cellspacing="0" width="80%">
                     <thead>
                         <tr>
@@ -187,6 +192,25 @@
     </ul>
 
 }
+
+@*MODALS*@
+
+
+<div class="reveal" id="templateAlignmentModal" data-reveal>
+    <h3>Template Alignment</h3>
+    <div>
+        <select>
+            <option selected>Forward To</option>
+            <option onclick="forwardTemplateAlignment_('modeller', $('#alignmentTemplate').val())";>Modeller</option>
+        </select>
+    </div>
+    <textarea rows="50" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+
 <script>
         var fileUrlQueryMSA = "/files/@jobID/@{jobID}.rep100.json";
         var fileUrlQueryMSAFas = "/files/@jobID/@{jobID}.rep100.fas";
@@ -375,19 +399,14 @@
                 });
             }else{
                 var forwardData = '';
-                // get slider range
-                var sliderRange = getSliderRange();
-                var alignmentData;
-                // get alignment json
-                console.log(JSON.stringify(dataTmp))
                     for(var i=0; i < dataTmp.index.length; i++){
                         var index = dataTmp.index[i];
                         forwardData += ">" + dataTmp.accessions[index]+ '\n';
-                        forwardData += dataTmp.seqs[index].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
+                        forwardData += dataTmp.seqs[index] + '\n';
                     }
                     forward(selectedTool, forwardData);
             }
-        }
+        };
 
 
         window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
@@ -401,6 +420,32 @@
         window["@{tool.toolNameShort}_resubmitSection"] = function(){
             resubmitSection(firstQuerySequence, firstQueryName);
         };
+
+
+        function templateAlignment(accession){
+            // replace '#' for url
+            accession = accession.replace("#", "%23");
+
+            $.ajax({
+                type: 'GET',
+                url: '/templateAlignmentHHblits/@jobID/' + accession
+            }).done(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: 'files/@jobID/' + accession + '.fas'
+                }).done(function (data) {
+                    $("#alignmentTemplate").val(data.toString());
+                });
+            }).fail(function () {
+                $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
+            });
+        }
+
+
+        function forwardTemplateAlignment_(tool, forwardData){
+            $('#templateAlignmentModal').foundation('close');
+            forward(tool, forwardData);
+        }
 
 
 </script>
