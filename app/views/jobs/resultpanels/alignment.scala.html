@@ -41,7 +41,7 @@
                 <td></td>
                 <td>
                     @{alignment{1} match {
-                        case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((alignment{1}).get.as[String]).replace("-", "&#8209;"))
+                        case JsDefined(jsValue) => Html((alignment{1}).get.as[String].replace("-", "&#8209;"))
                         }
                     }
                 </td>
