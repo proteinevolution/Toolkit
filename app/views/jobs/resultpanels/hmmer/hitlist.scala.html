@@ -406,8 +406,8 @@
                 for(var i=0; i < dataTmp.index.length; i++){
                     // index + number of querys because alignment json contains query sequences in alignment first
                     var index = dataTmp.index[i];
-                    forwardData += ">" + hits[index].hit_id + '\n';
-                    forwardData += hits[index].hit_seq.substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
+                    forwardData += ">" + dataTmp.accessions[index] + '\n';
+                    forwardData += dataTmp.seqs[index].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
                 }
                 forward(selectedTool, forwardData);
         };
