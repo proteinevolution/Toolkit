@@ -75,7 +75,7 @@ object BlastVisualization extends Constants {
   def getSingleLink(id : String) : Html = {
     val db = identifyDatabase(id)
     var link = ""
-    val idTrimmed = id.substring (1, 5)
+    val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
     val idPfam = id.replaceAll("am.*$||..*", "")
     val idPdb = id.replaceAll("_.*$", "")
     if(db == "scop") {
@@ -107,7 +107,7 @@ object BlastVisualization extends Constants {
     var links = new ArrayBuffer[String]()
 
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
-    var idTrimmed = id.substring(1, 5)
+    val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
     var idCDD = id.replaceAll("PF", "pfam")
     var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
@@ -146,7 +146,7 @@ object BlastVisualization extends Constants {
     var links = new ArrayBuffer[String]()
     var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
-    var idTrimmed = id.substring(1, 5)
+    val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
     var idCDD = id.replaceAll("PF", "pfam")
     if(db == "scop") {
       links += generateLink(scopBaseLink, id, "SCOP")
