@@ -34,5 +34,8 @@ then
 
 
     hhfilter -i results/$accession.a3m -o results/$accession.reduced.a3m -diff 100
-    reformat.pl a3m fas results/$accession.reduced.a3m results/$accession.fas
+    reformat.pl a3m fas results/$accession.reduced.a3m results/${accession}_tmp.fas
+
+    grep -A $( cat results/${accession}_tmp.fas | wc -l) "$accession" results/${accession}_tmp.fas > results/$accession.fas
+    rm results/${accession}_tmp.fas
 fi
