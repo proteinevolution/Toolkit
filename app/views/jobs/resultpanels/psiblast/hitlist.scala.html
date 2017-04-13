@@ -389,8 +389,6 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
         });
     }else{
         var forwardData = '';
-        // get slider range
-        var sliderRange = getSliderRange();
         var alignmentData;
         // get alignment json
         var fileUrl = "/files/@jobID/@{jobID}.alignment.json";
@@ -401,7 +399,7 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
                 // index + number of querys because alignment json contains query sequences in alignment first
                 var index = dataTmp.index[i];
                 forwardData += ">" + alignmentData[index + numOfQuery][0] + '\n';
-                forwardData += alignmentData[index+ numOfQuery][1].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
+                forwardData += alignmentData[index+ numOfQuery][1] + '\n';
             }
             forward(selectedTool, forwardData);
         });
