@@ -456,6 +456,7 @@ window["@{tool.toolNameShort}_selectAll"] = function () {
 };
 
 function templateAlignment(accession){
+    $('textarea#alignmentTemplate').val(" ");
     // replace '#' for url
     accession = accession.replace("#", "%23");
 
