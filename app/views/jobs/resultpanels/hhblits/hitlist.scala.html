@@ -358,12 +358,10 @@
             if(boolFullLength) {
                 // retrieve full Seq
                 var jsonData = new Object();
-                jsonData.db =  chosenDB;
                 jsonData.accessionsStr = dataTmp.accessions.join(" ");
 
-
                 $.ajax({
-                    url: 'retrieveFullSeq/@jobID',
+                    url: 'fullSeqHHblits/@jobID',
                     contentType: "application/json",
                     type: 'POST',
                     data: JSON.stringify(jsonData)
@@ -381,16 +379,13 @@
                 var sliderRange = getSliderRange();
                 var alignmentData;
                 // get alignment json
-                $.getJSON(fileUrlQueryMSA, function (data_) {
-                    alignmentData = data_;
+                console.log(JSON.stringify(dataTmp))
                     for(var i=0; i < dataTmp.index.length; i++){
-                        // index + number of querys because alignment json contains query sequences in alignment first
                         var index = dataTmp.index[i];
-                        forwardData += ">" + alignmentData[index][0] + '\n';
-                        forwardData += alignmentData[index][1].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
+                        forwardData += ">" + dataTmp.accessions[index]+ '\n';
+                        forwardData += dataTmp.seqs[index].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
                     }
                     forward(selectedTool, forwardData);
-                });
             }
         }
 
