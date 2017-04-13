@@ -68,8 +68,10 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       }
 
       case "hhblits" => getResult(jobID).map {
+
         case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hhblits.hitlist(jobID,jsvalue, this.values(toolname))),
           ("Representative_Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "rep100" ,this.values(toolname))))
+
         case None => Seq.empty
       }
 
@@ -207,7 +209,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     // HHblits
     ("hhblits", "HHblits", "hhb", "search", "",
     Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.HHBLITS_INCL_EVAL, paramAccess.MAXROUNDS,
-      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIGNMODE), Seq.empty,Seq.empty),
+      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq("modeller", "hhpred")),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
