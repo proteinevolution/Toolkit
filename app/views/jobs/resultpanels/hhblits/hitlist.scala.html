@@ -358,12 +358,10 @@
             if(boolFullLength) {
                 // retrieve full Seq
                 var jsonData = new Object();
-                jsonData.db =  chosenDB;
                 jsonData.accessionsStr = dataTmp.accessions.join(" ");
 
-
                 $.ajax({
-                    url: 'retrieveFullSeq/@jobID',
+                    url: 'fullSeqHHblits/@jobID',
                     contentType: "application/json",
                     type: 'POST',
                     data: JSON.stringify(jsonData)

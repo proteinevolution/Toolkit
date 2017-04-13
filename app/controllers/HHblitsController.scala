@@ -19,16 +19,21 @@ import models.Constants
 class HHblitsController @Inject()(webJarAssets : WebJarAssets) extends Controller with Constants {
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
+  private val retrieveFullSeqScript = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
   private final val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE)
 
   templateAlignmentScript.setPermissions(filePermissions)
+  retrieveFullSeqScript.setPermissions(filePermissions)
 
 
   def show3DStructure(accession: String) = Action { implicit request =>
     Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
   }
 
-  def runScript(jobID: String, accession: String) = Action.async {
+  def retrieveTemplateAlignment(jobID: String, accession: String) = Action.async {
+    if(jobID.isEmpty || accession.isEmpty){
+      Logger.info("either job or accession is empty")
+    }
     if(!templateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${templateAlignmentScript.name} is not executable.")
@@ -36,6 +41,24 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets) extends Controlle
     else {
       Future.successful{
         Process(templateAlignmentScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accession" -> accession).run().exitValue() match {
+          case 0 => Ok
+          case _ => BadRequest
+        }
+      }
+    }
+  }
+
+  def retrieveFullSeq(jobID: String) = Action.async { implicit request =>
+    if(!templateAlignmentScript.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${retrieveFullSeqScript.name} is not executable.")
+    }
+    else {
+      Future.successful{
+        val json =  request.body.asJson.get
+        val accessionsStr = (json \ "accessionsStr").get.as[String]
+
+        Process(retrieveFullSeqScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accessionsStr" -> accessionsStr).run().exitValue() match {
 
           case 0 => Ok
           case _ => BadRequest
@@ -43,6 +66,8 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets) extends Controlle
       }
     }
   }
+
+
   // Exceptions
   case class FileException(message : String) extends Exception(message)
 }
