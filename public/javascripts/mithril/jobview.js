@@ -353,6 +353,7 @@ JobTabsComponent = {
                     m("i", {
                         type: "button",
                         class: "delete icon-trash_can",
+                        title :"Delete job",
                         onclick: ctrl["delete"].bind(ctrl)
                     })
                 ) : void 0
