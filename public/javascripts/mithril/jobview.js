@@ -108,7 +108,7 @@ JobErrorComponent = {
     },
     view: function(ctrl, args) {
         return m("div", { class: "running-panel" }, [
-            m("h6", { class: "callout alert errorStateCallout" }, "Job has reached Error state"),
+            m("h6", "Job has reached Error state"),
             m("br"),
             m("br"),
             JobRunningComponent.log.map(function(logElem){
