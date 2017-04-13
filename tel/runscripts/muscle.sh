@@ -35,4 +35,4 @@ curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>
 reformat_hhsuite.pl fas clu ../results/alignment.fas  ../results/alignment.clustalw_aln
 
 # Convert fasta to JSON
-fasta2json.py ../results/alignment.fas ../results/${JOBID}.alignment.json
+fasta2json.py ../results/alignment.fas ../results/alignment.json
