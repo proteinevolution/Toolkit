@@ -5,6 +5,9 @@ SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
 if [  "%hhpred_align.content" = "true" ] ; then
         echo "#Pairwise comparison mode." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+        SEQ_COUNT2=$(egrep '^>' ../params/alignment_two  -c)
+
         echo "done" >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 fi
@@ -24,7 +27,6 @@ if [ %msa_gen_max_iter.content = "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
                  -cov %min_cov.content\
                  -qid %min_seqid_query.content
 
-        addss.pl ../results/${JOBID}.a3m
         echo "done" >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 else
@@ -98,10 +100,21 @@ else
 
     fi
 
-    addss.pl ../results/${JOBID}.a3m
+
 
 fi
 
+#Generate representative MSA for forwarding
+hhfilter -i ../results/${JOBID}.a3m \
+         -o ../results/${JOBID}.reduced.msa \
+         -diff 100
+
+reformat_hhsuite.pl a3m fas \
+         $(readlink -f ../results/${JOBID}.reduced.msa) \
+         $(readlink -f ../results/${JOBID}.reduced.msa) \
+         -d 160
+
+addss.pl ../results/${JOBID}.a3m
 
 # Here assume that the query alignment exists
 
@@ -122,7 +135,7 @@ then
 
     cd ../results
 
-    if [ %msa_gen_max_iter.content = "0" ] ; then
+    if [ %msa_gen_max_iter.content = "0" ] && [ $SEQ_COUNT2 -gt "1" ] ; then
             reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
             ffindex_build -as db_a3m_wo_ss.ff{data,index} db.a3m
     else
@@ -193,34 +206,17 @@ curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>
 echo "#Preparing output." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
-
-
-# Reformat query into fasta format; full alignment
-reformat_hhsuite.pl a3m fas \
-            $(readlink -f ../results/${JOBID}.reduced.a3m) \
-            $(readlink -f ../results/${JOBID}.reduced.fas) \
-            -d 160
-
 #create full alignment json; use for forwarding
-fasta2json.py ../results/${JOBID}.reduced.fas ../results/reduced.json
-
+fasta2json.py ../results/${JOBID}.reduced.msa ../results/reduced.json
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 # Generate Hitlist in JSON for hhrfile
-
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
 
 # Generate Query in JSON
 fasta2json.py ../results/${JOBID}.fas ../results/query.json
 
-
-reformat_hhsuite.pl a3m fas ../results/${JOBID}.reduced.a3m "$(readlink -f ../results/${JOBID}.reduced.a3m)"
-
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-
-
-
-#TODO display ${JOBID}.reduced.a3m; use the latter for forwarding
 
