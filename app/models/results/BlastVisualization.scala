@@ -20,7 +20,7 @@ object BlastVisualization extends Constants {
   private val uniprotReg = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
   private val scopReg = """([defgh][0-9a-zA-Z\.\_]+)""".r
   private val mmcifReg = """(...._[a-zA-Z])""".r
-  private val mmcifShortReg = """([0-9]...)""".r
+  private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
   private val ncbiReg = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
 
