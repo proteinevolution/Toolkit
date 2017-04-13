@@ -26,7 +26,7 @@ class PsiblastController @Inject()(webJarAssets : WebJarAssets) extends Controll
   retrieveFullSeq.setPermissions(filePermissions)
 
 
-  def retrieveSeqs(jobID : String) = Action.async { implicit request =>
+  def retrieveFullSeqs(jobID : String) = Action.async { implicit request =>
 
     if(!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
