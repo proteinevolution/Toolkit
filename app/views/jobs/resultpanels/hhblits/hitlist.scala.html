@@ -399,19 +399,14 @@
                 });
             }else{
                 var forwardData = '';
-                // get slider range
-                var sliderRange = getSliderRange();
-                var alignmentData;
-                // get alignment json
-                console.log(JSON.stringify(dataTmp))
                     for(var i=0; i < dataTmp.index.length; i++){
                         var index = dataTmp.index[i];
                         forwardData += ">" + dataTmp.accessions[index]+ '\n';
-                        forwardData += dataTmp.seqs[index].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
+                        forwardData += dataTmp.seqs[index] + '\n';
                     }
                     forward(selectedTool, forwardData);
             }
-        }
+        };
 
 
         window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
