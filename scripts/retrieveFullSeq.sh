@@ -2,10 +2,6 @@
 # Set environment
 source /ebio/abt1_share/toolkit_support1/code/bioprogs/env/environment.sh
 
-
-if [ ! -e "results/sequences.fa" ]
-then
-
     #separate accessions in string by whitespace
     ACCESSIONS=$(echo $accessionsStr | tr " " "\n")
 
@@ -20,4 +16,3 @@ then
                     -o results/sequences.fa \
                     -d ${STANDARDNEW}/${DB} \
                     -unique 1 > results/unretrievable
-fi

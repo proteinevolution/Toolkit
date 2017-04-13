@@ -2,9 +2,6 @@
 # Set environment
 source /ebio/abt1_share/toolkit_support1/code/bioprogs/env/environment.sh
 
-
-if [ ! -e "results/sequences.fa" ]
-then
     HHBLITS=${DATABASES}/hhblits/
     DB=${STANDARDNEW}/uniprot
 
@@ -23,5 +20,3 @@ then
                     -o results/sequences.fa \
                     -d ${DB} \
                     -unique 1 > results/unretrievabl
-
-fi
