@@ -34,7 +34,12 @@
         <li class="accordion-item" data-accordion-item>
             <a href="#" class="accordion-title">Hitlist</a>
             <div class="accordion-content" data-tab-content>
-                <a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
+                <div id="alignments" class="accordion-content table-scroll" data-tab-content>
+                    <div class="colorOpts">
+                        <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                        <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
+                        <hr id="line-element" colspan="4" class="horizontal-line">
+                    </div>
                 <table id="htb" class="display" cellspacing="0" width="80%">
                     <thead>
                         <tr>
@@ -401,13 +406,11 @@
         window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
             var dataTmp = preprocessingForward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength);
                 var forwardData = '';
-                // get slider range
-                var sliderRange = getSliderRange();
                 for(var i=0; i < dataTmp.index.length; i++){
                     // index + number of querys because alignment json contains query sequences in alignment first
                     var index = dataTmp.index[i];
                     forwardData += ">" + dataTmp.accessions[index] + '\n';
-                    forwardData += dataTmp.seqs[index].substr(sliderRange[0] - 1, sliderRange[1]) + '\n';
+                    forwardData += dataTmp.seqs[index] + '\n';
                 }
                 forward(selectedTool, forwardData);
         };
