@@ -2,6 +2,12 @@ JOBID=%jobid.content
 
 SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
 
+
+reformat_hhsuite.pl fas fas \
+	$(readlink -f %alignment.path) \
+        $(readlink -f ../results/${JOBID}.in.fas) \
+        -d 160 -uc
+
 if [ $SEQ_COUNT -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
@@ -17,7 +23,7 @@ echo "#Searching %hhblitsdb.content." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 hhblits -cpu %THREADS \
-        -i %alignment.path \
+        -i ../results/${JOBID}.in.fas \
         -d %HHBLITS/%hhblitsdb.content     \
         -o $(readlink -f ../results/${JOBID}.hhr) \
         -oa3m $(readlink -f ../results/${JOBID}.a3m)  \
@@ -61,7 +67,7 @@ fasta2json.py ../results/${JOBID}.rep100.fas ../results/rep100.json
 
 
 # Generate Query in JSON
-fasta2json.py %alignment.path ../results/query.json
+fasta2json.py ../results/${JOBID}.in.fas ../results/query.json
 
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
