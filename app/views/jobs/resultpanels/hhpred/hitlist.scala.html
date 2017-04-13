@@ -14,7 +14,7 @@
     </div>
 }else{
     @* Loads ForwardModals *@
-    @views.html.forwardmodals.forwardmodal_hhsuite(tool, tool.toolNameShort+"_hhsuite")
+    @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort+"_hhsuite")
     @* Load html Map used for the image representation *@
     <div class="container" id="loadingDiv"></div>
     <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
@@ -231,9 +231,9 @@
     <div class="reveal" id="templateAlignmentModal" data-reveal>
         <h3>Template Alignment</h3>
         <div>
-            <select>
-                <option selected>Forward To</option>
-                <option onclick="forwardTemplateAlignment_('modeller', $('#alignmentTemplate').val())";>Modeller</option>
+            <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
+                <option value="" selected>Forward To</option>
+                <option value="modeller" >Modeller</option>
             </select>
         </div>
         <textarea rows="50" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
@@ -508,6 +508,9 @@ function showStructure(accession) {
 
 
 function forwardTemplateAlignment_(tool, forwardData){
+    if(tool == ""){
+        return;
+    }
     $('#templateAlignmentModal').foundation('close');
     forward(tool, forwardData);
 }
