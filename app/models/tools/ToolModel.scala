@@ -94,7 +94,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       }
       case "hhpred" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, jsvalue, this.values(toolname))))
+          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, jsvalue, this.values(toolname))),
+            ("Representative_Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "reduced" ,this.values(toolname))))
       }
 
       case "hhpred_align" => getResult(jobID).map {
