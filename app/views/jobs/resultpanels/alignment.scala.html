@@ -11,7 +11,7 @@
 @(jobID: String, jsLookupResult: JsLookupResult, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
-@views.html.forwardmodals.forwardmodal_alignment(tool, resultName)
+@views.html.forwardmodals.alignment(tool, resultName)
 
 <div class="colorOptsAlignment">
     <a onclick="@{resultName}_selectAll()" type="button"> <span id="selectAllSeq_@{resultName}">Select all</span></a>
