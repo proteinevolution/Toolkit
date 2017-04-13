@@ -13,8 +13,9 @@
         <h6>No hits found!</h6>
     </div>
 }else{
-    @* Loads ForwardModal *@
+    @* Loads ForwardModals *@
     @views.html.forwardmodals.forwardmodal_simple(tool, tool.toolNameShort)
+    @views.html.forwardmodals.forwardmodal_hhsuite(tool, tool.toolNameShort+"_hhsuite")
     @* Load html Map used for the image representation *@
     <div class="container" id="loadingDiv"></div>
     <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
@@ -61,12 +62,10 @@
             <a href="#" class="accordion-title">Alignments</a>
             <div id="alignments" class="accordion-content table-scroll" data-tab-content>
                 <div class="colorOpts">
-                    <a onclick="toggleSelectAll()" type="button"><span id="selectAllSeq">Select all</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
+                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" onclick="hhpred_manual()">Manual template selection</a>
                     <a type="button" onclick="hhpred_automatic()">Select Templates Automatically</a>
-                    <a type="button" onclick="resubmitHmm();">Resubmit HMM</a>
-                    <a onclick="toggleSS_()" type="button"><span id="onlySS">Color only SS</span></a>
+                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
                     <hr id="line-element" colspan="4" class="horizontal-line">
                 </div>
 
@@ -91,7 +90,7 @@
                             </tr>
                             @* checkboxes, accession, name of hit*@
                             <tr class="header">
-                                <td ><input type="checkbox" name="templates" class="hitCheckbox" value='@{(hit \ "no").get}'> @{(hit \ "no").get}.</td>
+                                <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{(hit \ "no").get}'> @{(hit \ "no").get}.</td>
                                 <td colspan="4">
 
                                 @{hit \ "struc" match {
@@ -259,13 +258,10 @@ var data;
 var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
 var currentStructureAccession = "";
 var hitlist;
-var colorSS = false;
 var selectAllBool_@{tool.toolNameShort} = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
-var ss_helices = document.getElementsByClassName("ss_h");
-var ss_extended = document.getElementsByClassName("ss_e");
-var aas;
 var jobID;
+
 
 (function()  {
 
@@ -318,8 +314,6 @@ var jobID;
         setTimeout(function () {
             slider_show(info.Match_columns, firstQueryStart, firstQueryEnd)
         }, 1000);
-            
-        toggleSS_();
 
         $("#accordion").foundation();
         $("#templateAlignmentModal").foundation();
@@ -371,7 +365,7 @@ function drawDataTable(hits){
             'searchable': false,
             'orderable': true,
             'render': function (data){
-                return '<input type="checkbox" name="templates" class="hitCheckbox" value="' + $('<div/>').text(data).html() + '"> ' + data;
+                return '<input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value="' + $('<div/>').text(data).html() + '"> ' + data;
             }
         }]
     });
@@ -438,7 +432,7 @@ function hhpred_automatic() {
 }
 
 
-function _deselectAll(){
+function @{tool.toolNameShort}_deselectAll(){
     deselectAll(checkbox_@{tool.toolNameShort}, this.hitlist.fnGetNodes());
 }
 
@@ -448,32 +442,13 @@ window["@{tool.toolNameShort}_selectAll"] = function () {
     if(this.selectAllBool_@{tool.toolNameShort}) {
         selectAll(checkbox_@{tool.toolNameShort});
         $("#selectAllSeq_@{tool.toolNameShort}").addClass("colorToggle");
+        console.log("called")
     }
     else {
-        _deselectAll();
+        @{tool.toolNameShort}_deselectAll();
         $("#selectAllSeq_@{tool.toolNameShort}").removeClass("colorToggle");
     }
 };
-
-function onFullscreenToggle() {
-    hitlist.draw();
-}
-function toggleSS_(){
-    this.colorSS = !this.colorSS;
-    toggleSS(this.colorSS);
-}
-
-
-function resubmitHmm(tool) {
-    $.ajax({
-        type: 'GET',
-        url: 'files/@jobID/query.a3m'
-    }).done(function (data) {
-        $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
-        $('#alignment').val(data.toString());
-    });
-}
-
 
 function templateAlignment(accession){
     // replace '#' for url
@@ -578,4 +553,17 @@ function detachStructure(){
     $('#structureModal').foundation('close');
     window.open('/structure3D/' + currentStructureAccession, '_blank','location=yes,height=550,width=850,scrollbars=yes,status=yes');
 }
+
+
+window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
+    $.ajax({
+        type: 'GET',
+        url: "files/@jobID/@{jobID}.reduced.a3m"
+    }).done(function (data_) {
+        forward(selectedTool, data_.toString());
+    });
+};
+window["@{tool.toolNameShort}_resubmitSection"] = function(){
+    resubmitSection(firstQuerySequence, firstQueryName);
+};
 </script>
