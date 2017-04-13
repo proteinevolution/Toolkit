@@ -20,64 +20,6 @@ var mmcifShortReg = "^([0-9]...)$";
 var pfamReg = "^(pfam[0-9]+&|^PF[0-9]+(\.[0-9]+)?)$";
 var ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?$|^[A-Z]{3}[0-9]{5})$";
 
-function toggleAliColor(str) {
-    var i;
-    if(str == "letters") {
-        for(i = 0; i < aas.length; i++) {
-            var aa = aas[i];
-            aa.style.color = aa_color_font.get(aa.className);
-            aa.style.backgroundColor = "white"
-        }
-            $("#letterColor").addClass( "colorToggle" );
-            $("#backgroundColor").removeClass("colorToggle");
-
-    } else if(str == "background") {
-        for(i = 0; i < aas.length; i++) {
-            aa = aas[i];
-            aa.style.backgroundColor = aa_color_background.get(aa.className);
-            aa.style.opacity = 0.8;
-            aa.style.color = "black";
-
-        }
-            $("#backgroundColor").addClass( "colorToggle" );
-            $("#letterColor").removeClass("colorToggle");
-    } else {
-        for(i = 0; i < aas.length; i++) {
-            aas[i].style.color = "black";
-            aas[i].style.backgroundColor = "white";
-        }
-        $("#backgroundColor").removeClass( "colorToggle" );
-        $("#letterColor").removeClass("colorToggle");
-    }
-}
-
-
-function toggleSS(bool) {
-    var i;
-
-    if(!bool) {
-
-        for (i = 0; i < ss_helices.length; i++) {
-            ss_helices[i].style.color = "black";
-        }
-        for (i = 0; i < ss_extended.length; i++) {
-            ss_extended[i].style.color = "black";
-        }
-            $("#onlySS").removeClass( "colorToggle" );
-    }
-    if(bool){
-
-        for (i = 0; i < ss_helices.length; i++) {
-            ss_helices[i].style.color = "#0000D0";
-        }
-        for (i = 0; i < ss_extended.length; i++) {
-            ss_extended[i].style.color = "#D00000";
-        }
-        $("#onlySS").addClass("colorToggle");
-    }
-
-
-}
 
 function download(filename, text){
     var pom = document.createElement('a');
