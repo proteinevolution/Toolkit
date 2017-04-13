@@ -14,7 +14,6 @@
     </div>
 }else{
     @* Loads ForwardModals *@
-    @views.html.forwardmodals.forwardmodal_simple(tool, tool.toolNameShort)
     @views.html.forwardmodals.forwardmodal_hhsuite(tool, tool.toolNameShort+"_hhsuite")
     @* Load html Map used for the image representation *@
     <div class="container" id="loadingDiv"></div>
@@ -513,42 +512,6 @@ function forwardTemplateAlignment_(tool, forwardData){
     forward(tool, forwardData);
 }
 
-
-window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
-    var forwardData = [];
-    var checkedCheckboxes = [];
-    var sliderRange = getSliderRange();
-    // get values of all checked Checkboxes
-    $('input:checkbox.' + checkbox_@{tool.toolNameShort} + ":checked").each(function () {
-        checkedCheckboxes.push($(this).val()-1)
-    });
-
-    if(boolSelectedHits) {
-        //fill array with headers and sequences
-
-        checkedCheckboxes.forEach(function callback(currentValue) {
-            var seq = data.alignments[currentValue].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
-            if(forwardData.indexOf(seq) == -1) {
-                forwardData.push(">" + data.hits[currentValue].struc + data.hits[currentValue].hit.substr(0, 60));
-                forwardData.push(seq);
-            }
-        });
-    } else if (boolEvalue) {
-
-            for (i = 0; i < data.alignments.length; ++i) {
-                if (data.alignments[i].info.eval < evalue) {
-                    var seq = data.alignments[i].template.seq.substr(sliderRange[0] - 1, sliderRange[1]);
-                    if(forwardData.indexOf(seq) == -1) {
-                        forwardData.push(">" + data.hits[i].struc + data.hits[i].hit.substr(0, 60));
-                        forwardData.push(seq);
-                    }
-                }
-
-            }
-        }
-
-    forward(selectedTool, forwardData.join("\n"));
-}
 
 
 window["@{tool.toolNameShort}_resubmitSection"] = function(){
