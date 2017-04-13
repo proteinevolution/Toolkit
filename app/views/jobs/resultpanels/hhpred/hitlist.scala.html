@@ -69,8 +69,8 @@
                 <div class="colorOpts">
                     <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
-                    <a type="button" onclick="hhpred_manual()">Modeller: Manual template selection</a>
-                    <a type="button" onclick="hhpred_automatic()">Select Templates Automatically</a>
+                    <a type="button" data-open="createModelModal"><span>Create Model</span></a>
+
                     <hr id="line-element" colspan="4" class="horizontal-line">
                 </div>
 
@@ -251,13 +251,25 @@
         </button>
     </div>
 
-    <div class="reveal" id="structureModal" data-reveal>
-        <a type="button" class="button success tiny hhpred_extra_button data-close" onclick="detachStructure()">Open in new window</a>
-        <div id="accessionStructure"></div>
-        <div id="viewport"></div>
-        <button class="close-button" data-close aria-label="Close modal" type="button">
-            <span aria-hidden="true">&times;</span>
-        </button>
+    <div class="reveal" id="createModelModal" data-reveal>
+        <h3>Create Model</h3>
+        <div>
+            <div>
+            Manual template selection: <br/>Generate a PIR-alignment of your sequence with the selected template or templates in order to build a 3D model with MODELLER.
+            </div>
+            <br />
+            <a type="button" class="button success tiny hhpred_extra_button"  onclick="hhpred_manual()">Modeller: Manual template selection</a>
+
+        </div>
+        <br />
+        <br />
+        <div>
+            <div>
+            Automatic template selection: <br />Optimize diversities of query and template HMMs, rerank templates and automatically select best set. In further steps a multiple alignment is created from this set, and a 3D model is build with MODELLER using this alignment.
+            </div>
+            <br />
+            <a type="button" class="button success tiny hhpred_extra_button"  onclick="hhpred_automatic()">Select Templates Automatically</a>
+        </div>
     </div>
 }
 <script>
@@ -333,6 +345,7 @@ var jobID;
         $("#accordion").foundation();
         $("#templateAlignmentModal").foundation();
         $("#structureModal").foundation();
+        $("#createModelModal").foundation();
 
 
         }
@@ -390,6 +403,7 @@ function drawDataTable(hits){
 
 
 function hhpred_manual() {
+    $('#createModelModal').foundation('close');
     // Get selected templates and append parentID
     var formData = new FormData(document.getElementById("hhpred_templates"));
     if (!formData.has("templates")) {
@@ -420,6 +434,7 @@ function hhpred_manual() {
 }
 
 function hhpred_automatic() {
+    $('#createModelModal').foundation('close');
     // Get selected templates and append parentID
     var formData = new FormData(document.getElementById("hhpred_templates"));
     formData.append("parentid", '@{jobID}');
