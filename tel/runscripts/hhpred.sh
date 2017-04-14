@@ -2,7 +2,7 @@ JOBID=%jobid.content
 
 SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
 
-if [  "%hhpred_align.content" = "true" ] ; then
+if [ "%hhpred_align.content" = "true" ] ; then
         echo "#Pairwise comparison mode." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 

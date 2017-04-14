@@ -43,7 +43,6 @@ case class Tool(toolNameShort: String,
   }
 }
 
-
 // Class which provides access to all Tools
 @Singleton
 final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi) extends CommonModule{
@@ -75,11 +74,13 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         case None => Seq.empty
       }
 
-
       case "marcoil" => Future.successful(Seq(("CC-Prob", views.html.jobs.resultpanels.image(s"/files/$jobID/alignment_ncoils.png")),
         ("ProbState", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbPerState")),
         ("Domains", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.Domains")),
         ("ProbList/PSSM", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbList"))))
+
+      case "pcoils" => Future.successful(Seq(("CC-Prob", views.html.jobs.resultpanels.image(s"/files/$jobID/" + jobID + "_ncoils.png")),
+        ("ProbList", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".numerical"))))
 
       case "modeller" => Future.successful(Seq(("3D-Structure", views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb")),
         ("VERIFY3D", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.verify3d.png", s"$jobPath$jobID/results/verify3d/$jobID.plotdat")),
@@ -270,7 +271,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // PCOILS
     ("pcoils", "PCOILS", "pco", "seqanal", "",
-      Seq(paramAccess.ALIGNMENT, paramAccess.WEIGHTING, paramAccess.MATRIX_PCOILS, paramAccess.RUN_PSIPRED), Seq.empty,Seq.empty),
+      Seq(paramAccess.ALIGNMENT, paramAccess.PCOILS_INPUT_MODE, paramAccess.PCOILS_MATRIX, paramAccess.PCOILS_WEIGHTING), Seq.empty,Seq.empty),
 
     // FRrped
     ("frpred", "FRpred", "frp", "seqanal", "",Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
