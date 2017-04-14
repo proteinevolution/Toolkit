@@ -129,12 +129,6 @@ trafficBarComponent = {
             class: "tool-finder row centered"
         }, [
             m("div", {class: "news"},
-                m("div", {class: "news_container"},
-                    m("p", {class: "news_header"}, "Social Network"),
-                    m("p", {class: "news_date"}, "February 19, 2017"),
-                    m("p", {class: "news_feed"}, m('a[href="/#/news/"]', {title :"See what's new in the Toolkit"}, "News Feed")),
-                    m("p", {class: "news_content"}, "Follow us on Facebook and Twitter.")
-                ),
                 m.component(LiveTable, {}),
                 m("div", {class: "search_container"},
                     m("div", {

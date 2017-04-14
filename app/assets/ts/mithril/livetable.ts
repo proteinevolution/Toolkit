@@ -112,13 +112,6 @@ class LiveTable {
                 m('tbody',
                     [m('tr', [
                         m('td', m.component(LoadBar, {})),
-                        m('td',{id: 'separator'}),
-                        m('td', { id: 'lastJob' },
-                            LiveTable.lastJob != null ?
-                                m('a', { href: "/#/jobs/" + LiveTable.lastJob.jobID },
-                                    "Last Job: " + LiveTable.lastJob.toolnameLong) :
-                                m('b', "No Jobs")
-                        ),
                         m('td', {id: "joblistIcon"},
                             m('a', {href: "/#/jobmanager", id: "jobmanagerIcon", title: "Go to job manager" , style: "font-weight: bold;" }, [
                                 m("i", {class: "icon-list"})
