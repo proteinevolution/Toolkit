@@ -1,3 +1,15 @@
+CHAR_COUNT=$(egrep '^>' ../params/alignment  -c)
+
+echo "#Query is a protein sequence with ${CHAR_COUNT} residues." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+
+echo "#Executing MARCOIL." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
 # Switch on correct Matrix
 if [ "mtk" = "%matrix_marcoil.content" ] ; then
 
@@ -30,6 +42,12 @@ marcoil  ${PARAMMATRIX} \
                       -P "$(readlink -f ../params/alignment)" \
                       "$(readlink -f ../params/alignment.in)"
 
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+echo "#Preparting OUTPUT." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
 # Prepare MARCOIL GNUPLOT
 if [ "${PARAMMATRIX}" = "-C -i" ] || [ "${PARAMMATRIX}" = "-C" ] ;then
 
@@ -44,12 +62,5 @@ create_numerical_marcoil.rb "$(readlink -f ../params/)/"
 
 cp ../params/* ../results/
 
-
-
-
-#     user_values =""  
-#     if(@is_userdefined)
-#     user_values = "+r #{@param_r} +t #{@param_t} +i #{@param_i}"
-#     end
-
-
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
