@@ -17,7 +17,7 @@ reformat_hhsuite.pl fas fas %alignment.path ${JOBID}.fas -l 32000 -uc
 mv ${JOBID}.fas ../results
 
 #CHECK IF MSA generation is required or not
-if [ %msa_gen_max_iter.content = "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
+if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         echo "#Query is an MSA with ${SEQ_COUNT} sequences. No MSA generation required for building A3M." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
         reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
@@ -33,7 +33,7 @@ else
     #MSA generation required
     #Check what method to use (PSI-BLAST? HHblits?)
 
-    if [ $SEQ_COUNT -gt "1" ] ; then
+    if [ ${SEQ_COUNT} -gt "1" ] ; then
         echo "#Query is an MSA with ${SEQ_COUNT} sequences. MSA generation required." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
     else
@@ -44,7 +44,7 @@ else
     curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
     #MSA generation by HHblits
-    if [ %msa_gen_method.content = "hhblits" ] ; then
+    if [ "%msa_gen_method.content" = "hhblits" ] ; then
         echo "#Running HHblits for query MSA and A3M generation." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
         hhblits -cpu %THREADS \
@@ -63,7 +63,7 @@ else
 
     fi
     #MSA generation by PSI-BLAST
-    if [ %msa_gen_method.content = "psiblast" ] ; then
+    if [ "%msa_gen_method.content" = "psiblast" ] ; then
 
         echo "#Running PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
@@ -133,7 +133,7 @@ then
 
     cd ../results
 
-    if [ %msa_gen_max_iter.content = "0" ] && [ $SEQ_COUNT2 -gt "1" ] ; then
+    if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT2} -gt "1" ] ; then
             reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
     else
             hhblits -d %UNIPROT -i %alignment_two.path -oa3m db.a3m -n %msa_gen_max_iter.content -cpu %THREADS -v 2
