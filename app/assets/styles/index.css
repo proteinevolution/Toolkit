@@ -28,7 +28,7 @@
 .grid {
     display: block;
     margin: auto;
-    margin-top: 339px;
+    margin-top: 331px;
     width: 55%;
 }
 
@@ -425,7 +425,7 @@ select {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     float: none;
     margin: 1em 1em 0 1em;
-    height: 10em;
+    height: 11em;
     box-shadow: 0 1px 2px 0 #ccc;
     border-radius: 3px;
     border: 1px solid #ccc;
@@ -674,7 +674,7 @@ td#joblistIcon i {
     color: #727272;
     background: none;
     margin: 0;
-    padding: 0.4rem 0.625rem 0.4rem;
+    padding: 0.9rem 0.625rem 0.4rem;
 }
 
 #indexLoadBar .loadBarGraph {
