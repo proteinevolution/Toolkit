@@ -28,7 +28,7 @@
 .grid {
     display: block;
     margin: auto;
-    margin-top: 280px;
+    margin-top: 339px;
     width: 55%;
 }
 
@@ -81,7 +81,7 @@ select {
 
 
 .search_container .form-group {
-    margin-top: 1em;/*TODO changed this to close gap - please readjust*/
+    margin-top: 1em;
     padding-top: 0.3em;
     padding-left: 1em;
     padding-right: 1em;
@@ -425,9 +425,8 @@ select {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     float: none;
     margin: 1em 1em 0 1em;
-    height: 15em;
+    height: 10em;
     box-shadow: 0 1px 2px 0 #ccc;
-    background-color: transparent;
     border-radius: 3px;
     border: 1px solid #ccc;
 }
@@ -577,12 +576,13 @@ td#lastJob {
 }
 
 td#joblistIcon {
-    width: 15%;
+    width: 50%;
 }
 
 td#joblistIcon i {
     margin-left: 0;
     opacity: 0.9;
+    line-height: 1em;
 }
 
 .liveTable .icon-list {
@@ -674,7 +674,7 @@ td#joblistIcon i {
     color: #727272;
     background: none;
     margin: 0;
-    padding: 0;
+    padding: 0.4rem 0.625rem 0.4rem;
 }
 
 #indexLoadBar .loadBarGraph {
