@@ -47,7 +47,10 @@ window.JobModel = {
         "msa_gen_method":"hhblits",
         "hhsuitedb": "scope70/scope",
         "hhpred_incl_eval": "1E-3",
-        "hhblits_incl_eval": "1E-3"
+        "hhblits_incl_eval": "1E-3",
+        "pcoils_matrix": "2",
+        "pcoils_weighting":"1",
+        "pcoils_input_mode":"0"
     },
 
     /* Seems not to be used
