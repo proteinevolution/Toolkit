@@ -5,8 +5,8 @@ SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
 
 reformat_hhsuite.pl fas fas \
 	$(readlink -f %alignment.path) \
-        $(readlink -f ../results/${JOBID}.in.fas) \
-        -d 160 -uc
+    $(readlink -f ../results/${JOBID}.in.fas) \
+    -d 160 -uc -l 32000
 
 if [ $SEQ_COUNT -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
