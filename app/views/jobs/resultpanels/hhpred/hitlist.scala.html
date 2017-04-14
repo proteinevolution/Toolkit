@@ -503,15 +503,13 @@ function showStructure(accession) {
     currentStructureAccession = accession;
     var db = identifyDatabase(accession);
     var fileEnding = "";
-    var chain = "";
     switch(db){
         case "scop":
             fileEnding = ".pdb";
             break;
         case "mmcif":
             fileEnding = ".cif";
-            chain = ":"+accession.split("_")[1].toUpperCase();
-            accession = accession.split("_")[0].toLowerCase();
+            accession = accession;
             break;
     }
     var url = '/getStructure/' +accession + fileEnding;
