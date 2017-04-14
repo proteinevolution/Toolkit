@@ -159,10 +159,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val MAX_SEQS = select("max_seqs", "Max. number of sequences per HMM")
   final val MAX_SEQID =  Param("max_seqid", ParamType.UnconstrainedNumber, 1, "Maximal Sequence Identity (%)")
   final val MIN_QUERY_COV = Param("min_query_cov", ParamType.Percentage, 1, "Minimal coverage with query (%)")
-  final val WEIGHTING = Param("weighting", Bool, 1, "Weighting")
-  final val RUN_PSIPRED = Param("run_psipred", Bool,1, "Run PSIPRED")
   final val MATRIX_PHYLIP = select("matrix_phylip", "Model of AminoAcid replacement")
-  final val MATRIX_PCOILS = select("matrix_pcoils", "Matrix")
   final val PROTBLASTPROGRAM = select("protblastprogram", "Program for Protein BLAST")
   final val FILTER_LOW_COMPLEXITY = Param("filter_low_complexity", Bool, 1, "Filter for low complexity regions")
   final val MATRIX_MARCOIL =  select("matrix_marcoil", "Matrix")
@@ -193,5 +190,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val CODON_TABLE_ORGANISM = Param("codon_table_organism", Text, 1, "Use codon usage table of")
   final val HHPRED_INCL_EVAL = select("hhpred_incl_eval", "E-value inclusion threshold")
   final val HHBLITS_INCL_EVAL = select("hhblits_incl_eval", "E-value inclusion threshold")
-
+  final val PCOILS_INPUT_MODE = select("pcoils_input_mode", "Input mode")
+  final val PCOILS_WEIGHTING = select("pcoils_weighting", "Weighting")
+  final val PCOILS_MATRIX = select("pcoils_matrix", "Matrix")
 }

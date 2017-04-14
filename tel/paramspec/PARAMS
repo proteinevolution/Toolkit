@@ -8,7 +8,6 @@ inclusion_ethresh GEN inclusion_ethresh.prop
 min_cov GEN min_cov.prop
 matrix GEN matrix.prop
 matrix_phylip GEN matrix_phylip.prop
-matrix_pcoils GEN matrix_pcoils.prop
 matrix_marcoil GEN matrix_marcoil.prop
 protblastprogram GEN protblastprogram.prop
 transition_probability GEN transition_probability.prop
@@ -41,3 +40,6 @@ eval_tpr GEN eval_tpr.prop
 msa_gen_method GEN msa_gen_method.prop
 hhpred_incl_eval GEN hhpred_incl_eval.prop
 hhblits_incl_eval GEN hhblits_incl_eval.prop
+pcoils_input_mode GEN pcoils_input_mode.prop
+pcoils_weighting GEN pcoils_weighting.prop
+pcoils_matrix GEN pcoils_matrix.prop
