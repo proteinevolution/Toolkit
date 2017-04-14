@@ -108,6 +108,12 @@ JobErrorComponent = {
     },
     view: function(ctrl, args) {
         return m("div", { class: "running-panel" }, [
+            m("table", { config: foundationConfig },
+                m("tbody", [
+                    m("tr", [m("td", "JobID"), m("td", args.job().jobID)]),
+                    m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])
+                ])
+            ),
             m("h6", "Job has reached Error state"),
             m("br"),
             m("br"),
