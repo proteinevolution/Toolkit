@@ -29,7 +29,7 @@
         <tbody class="alignmentTBody">
         @for((alignment,index) <- {jsValue \ resultName}.as[List[JsArray]].zipWithIndex) {
             <tr class="header">
-                <td ><input type="checkbox" name="templates" class="checkbox_@{resultName}" value='@{index}'> @{index+1}.</td>
+                <td ><input type="checkbox" class="checkbox_@{resultName}" value='@{index}'> @{index+1}.</td>
                 <td>
                     @{alignment{0} match {
                         case JsDefined(jsValue) => (alignment{0}).get.as[String]

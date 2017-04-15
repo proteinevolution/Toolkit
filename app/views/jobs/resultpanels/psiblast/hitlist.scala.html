@@ -297,7 +297,7 @@ function drawDataTable(hits){
             'searchable': false,
             'orderable': true,
             'render': function (data){
-                return '<input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value="' + $('<div/>').text(data).html() + '"> ' + data;
+                return '<input type="checkbox" class="checkbox_@{tool.toolNameShort}" value="' + $('<div/>').text(data).html() + '"><a onclick="scrollToElem('+data+')">'+data+'</a>';
             }
         }]
     });
