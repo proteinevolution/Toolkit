@@ -455,9 +455,9 @@ function scrollToElem(num){
     }
     var offsetParent = $("#alignments").offset().top;
     var pos = $('input[name=templates][value='+num+']').offset().top;
-    console.log(pos+offsetParent)
+    console.log(pos+ " " + offsetParent)
     $('html, body').animate({
-        scrollTop: pos+offsetParent + 'px'
+        scrollTop: pos+offsetParent-1400 + 'px'
     }, 'fast');
 
 }
