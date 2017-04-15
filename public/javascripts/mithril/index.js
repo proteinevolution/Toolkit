@@ -128,7 +128,7 @@ trafficBarComponent = {
         }, m("div", {
             class: "tool-finder row centered"
         }, [
-            m("div", {class: "news"},
+            m("div", {class: "liveTableContainer"},
                 m.component(LiveTable, {}),
                 m("div", {class: "search_container"},
                     m("div", {
