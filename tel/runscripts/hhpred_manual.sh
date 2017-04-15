@@ -6,7 +6,7 @@ mkdir -p ../results/cif
 
 checkTemplates.pl -i   ../params/%parentid.content.hhr \
                   -pir ../results/tomodel.pir \
-                  -cif %CIF \
+                  -cif %CIFALL \
                   -o   $(readlink -f ../results/cif) \
                   -m   %templates.content  >   ../results/results.out
 
