@@ -633,6 +633,7 @@ map[name="blastmap"] area { cursor: pointer; }
 /* Side buttons */
 
 i.delete {
+    -webkit-appearance: none;
     color: #e66f72 !important;
     background-color: inherit;
     font-size: 1.25em;
@@ -653,6 +654,7 @@ i.delete:focus {
 
 
 i.button_fullscreen{
+    -webkit-appearance: none;
     color: rgba(0, 110, 98, 166) !important;
     background-color: inherit;
     margin-top: 0.3em;
