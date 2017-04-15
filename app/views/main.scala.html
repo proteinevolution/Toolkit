@@ -301,19 +301,32 @@
         <script src='@routes.Assets.versioned("javascripts/vendor/snap.svg-min.js")'></script>
 
         <script type="text/javascript">
-            var view = "@view";
-            $(document).ready(function() {
-                $(document).foundation();
-                switch (view) {
-                    case "":
-                        break;
-                    case "passwordReset":
-                        AuthOverlay.passwordReset = true;
-                    default:
-                        openNav(view);
-                }
-                Auth.loadUser();
-            });
+
+
+                //TODO connect this to backend somehow to be able to write and store articles for landing page
+                //ajax call to push article into the database
+//                var articlePushRoute = jsRoutes.controllers.DataController.writeArticle("MPI Toolkit",
+//                        "Welcome to the Bioinformatics Toolkit hosted at the Max Planck Institute for Developmental Biology in Tuebingen, Germany.",
+//                        "https://www.gesundheitsindustrie-bw.de/files/cache/619c00ba8a9e09dbc17430924315a5d8_f9398.jpg");
+//                $.ajax({
+//                    'url': articlePushRoute.url,
+//                    'method': articlePushRoute.method
+//                });
+
+
+                var view = "@view";
+                $(document).ready(function () {
+                    $(document).foundation();
+                    switch (view) {
+                        case "":
+                            break;
+                        case "passwordReset":
+                            AuthOverlay.passwordReset = true;
+                        default:
+                            openNav(view);
+                    }
+                    Auth.loadUser();
+                });
         </script>
     </body>
 </html>

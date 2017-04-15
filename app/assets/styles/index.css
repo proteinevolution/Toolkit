@@ -28,7 +28,7 @@
 .grid {
     display: block;
     margin: auto;
-    margin-top: 331px;
+    margin-top: 333px;
     width: 55%;
 }
 
@@ -81,7 +81,6 @@ select {
 
 
 .search_container .form-group {
-    margin-top: 1em;
     padding-top: 0.3em;
     padding-left: 1em;
     padding-right: 1em;
@@ -98,6 +97,11 @@ select {
     -moz-border-radius: 4px;
     border-radius: 4px;
     background-color: white;
+}
+
+.search_Input {
+    margin-bottom: 0;
+    margin-top: 0.8em;
 }
 
 .search_Input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -124,6 +128,7 @@ select {
     box-shadow: 0 0 5px #f1e6f9;;
 
 }
+
 
 .selectors {
     padding-left: 1.5em;
@@ -268,14 +273,8 @@ select {
 }
 
 .article_container {
-    margin-top: 10em;
+    margin-top: 5em;
     text-align: center;
-}
-
-@media only screen and (max-width: 520px) {
-    .article_container {
-        margin-top: 5em;
-    }
 }
 
 
@@ -419,50 +418,17 @@ select {
     vertical-align: middle;
 }
 
-.news {
+.liveTableContainer {
 
     background-clip: content-box;
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     float: none;
     margin: 1em 1em 0 1em;
-    height: 11em;
+    height: 10em;
     box-shadow: 0 1px 2px 0 #ccc;
     border-radius: 3px;
     border: 1px solid #ccc;
-}
-
-.news_container {
-    background: rgba(238, 238, 238, 0.95);
-}
-
-.news p {
-
-    height: 2.5em;
-    margin-bottom: 0;
-    display: inline-block;
-    font-size: 13px;
-    color: #222;
-    padding: 1em 1em 1em 1em;
-}
-
-.news_header {
-    font-weight: bold;
-    color: #2E8C81 !important;
-}
-
-.news_date {
-    font-style: italic;
-}
-
-.news_feed {
-    float: right;
-}
-
-.news_content {
-    width: 100%;
-    height: 4em !important;
-    font-size: 13px;
-
+    overflow: hidden;
 }
 
 #searchInput{
@@ -530,6 +496,7 @@ tspan{
     text-align: center;
     padding: 0px 7px 0px 7px;
     margin-bottom: 0;
+
 }
 
 .liveTable thead, .liveTable tbody {
@@ -591,30 +558,78 @@ td#joblistIcon i {
 
 /*Responsiveness*/
 
-@media screen and (max-width: 820px) {
+/*Change slider on medium screen and adjust page elements */
+@media screen and (max-width: 950px) {
     .slick-slide img {
-       height: 230px;
+        height: 300px;
     }
 
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 950px) {
     .slide-caption {
         width: 300px;
     }
 }
 
-@media screen and (max-width: 820px) {
+@media screen and (max-width: 950px) {
     .slide-caption {
         display: none;
     }
 
 }
 
+@media screen and (max-width: 950px) {
+    .grid {
+        margin-top: 205px;
+    }
+}
 
-@media screen and (max-width: 1000px) {
+
+
+/*Hide Livetable on small screen and adjust page elements */
+@media screen and (max-width: 730px) {
+    .liveTable {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 730px) {
+    .trafficbar {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 730px) {
+    .liveTableContainer {
+        height: 5em;
+    }
+}
+
+@media screen and (max-width: 730px) {
+    .grid {
+        margin-top: 230px;
+    }
+}
+
+@media screen and (max-width: 730px) {
     .article_container {
-        margin-top: 15em;
+        margin-top: 0;
+    }
+}
+
+/*Hide slider on very small screen and adjust page elements */
+@media screen and (max-width: 550px) {
+    .slider {
+        display: none;
+        height: 0;
+        overflow-y: hidden;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    .grid {
+        margin-top: 10px;
     }
 }
 
@@ -637,34 +652,7 @@ td#joblistIcon i {
     }
 }
 
-@media screen and (max-width: 820px) {
-    .grid {
-        margin-top: 160px;
-    }
-}
 
-@media screen and (max-width: 1000px) {
-    .liveTable{
-        display: none;
-    }
-}
-@media screen and (max-width: 1000px) {
-    .news{
-        height: 11em;
-    }
-}
-
-@media screen and (max-width: 820px) {
-    .news{
-        height: 14em;
-    }
-}
-
-@media screen and (max-width: 1000px) {
-    .search_container .form-group {
-        margin-top: 0;
-    }
-}
 
 /*Load Bar styling*/
 
