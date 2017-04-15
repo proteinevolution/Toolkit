@@ -314,7 +314,7 @@
                     'searchable': false,
                     'orderable': true,
                     'render': function (data){
-                        return '<input type="checkbox" name="templates" value="' + $('<div/>').text(data).html() + '"> ' + data;
+                        return '<input type="checkbox" value="' + $('<div/>').text(data).html() + '"><a onclick="scrollToElem('+data+')">'+data+'</a>';
                     }
                 }]
             });
