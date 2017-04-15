@@ -699,7 +699,7 @@ td#joblistIcon i {
 #indexLoadBar .loadBar {
     border-radius: 3px;
     margin: 0 7px 0 7px;
-    padding: 0;
+    padding: 1px;
 }
 
 #indexLoadBar .loadBar.green {
