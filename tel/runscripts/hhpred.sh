@@ -96,9 +96,7 @@ else
                     -blastplus
         echo "done" >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-
     fi
-
 fi
 
 #Generate representative MSA for forwarding
@@ -216,4 +214,3 @@ fasta2json.py ../results/${JOBID}.fas ../results/query.json
 
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-
