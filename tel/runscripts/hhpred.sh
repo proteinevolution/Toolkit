@@ -80,7 +80,6 @@ else
                  -num_threads %THREADS \
                  -num_descriptions 20000 \
                  -num_alignments 20000 \
-                 -html \
                  -${INPUT} ../results/${JOBID}.fas \
                  -out ../results/output_psiblastp.html
 
