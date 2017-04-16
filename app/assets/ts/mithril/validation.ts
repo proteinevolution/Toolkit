@@ -741,7 +741,7 @@ class alignmentVal implements ToolkitValidator {
             return false;
         }
 
-        else if (!this.elem.reformat('maxlength', 1000000)) {
+        else if (!this.elem.reformat('maxlength', 2000000)) {
             feedback(false, "Input contains over one million characters!", "error");
             return false;
         }
@@ -835,8 +835,8 @@ class alignmentVal implements ToolkitValidator {
         else if ((/^\n$/m.test(this.elem.reformat('extractheaders'))))
             feedback(false, "Empty header!", "error");
 
-        else if (!this.elem.reformat('maxlength', 1000000)) {
-            console.log((!this.elem.reformat('maxlength', 1000000)));
+        else if (!this.elem.reformat('maxlength', 2000000)) {
+            console.log((!this.elem.reformat('maxlength', 2000000)));
             feedback(false, "Input contains over one million characters!", "error");}
 
         else if (this.elem.reformat('maxheadernumber', 20000))
