@@ -1,7 +1,7 @@
 package actors
 
 import java.io.{FileOutputStream, ObjectOutputStream}
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 import actors.JobActor._
 import akka.actor.{Actor, ActorRef}
@@ -39,6 +39,9 @@ object JobActor {
                        user      : User,
                        toolname  : String,
                        params    : Map[String, String])
+
+
+
   trait Factory {
 
     def apply : Actor
@@ -68,24 +71,26 @@ object JobActor {
 
 }
 
-class JobActor @Inject() (               runscriptManager        : RunscriptManager, // To get runscripts to be executed
-                                         env                     : Env, // To supply the runscripts with an environment
-                                     val reactiveMongoApi        : ReactiveMongoApi,
-                                     val jobDao                  : JobDAO,
-                                         qdel                    : Qdel,
-                                         wrapperExecutionFactory : WrapperExecutionFactory,
-                            implicit val locationProvider        : LocationProvider,
-   @NamedCache("userCache") implicit val userCache               : CacheApi,
-@NamedCache("wsActorCache") implicit val wsActorCache            : CacheApi)
-  extends Actor
-    with Constants
-    with UserSessions
-    with CommonModule {
+class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get runscripts to be executed
+                          env                     : Env, // To supply the runscripts with an environment
+                          val reactiveMongoApi    : ReactiveMongoApi,
+                          val jobDao              : JobDAO,
+                          qdel                    : Qdel,
+                          wrapperExecutionFactory : WrapperExecutionFactory,
+                          implicit val locationProvider : LocationProvider,
+                          @Named("jobIDActor") jobIDActor : ActorRef,
+                          @NamedCache("userCache") implicit val userCache : CacheApi,
+                          @NamedCache("wsActorCache") implicit val wsActorCache : CacheApi) extends Actor with Constants with UserSessions with CommonModule {
+
 
   // Attributes asssocidated with a Job
   private var currentJobs: Map[String, Job] = Map.empty
   private var currentJobLogs: Map[String, JobEventLog] = Map.empty
   private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty
+
+  // TODO use this later when everything works :P private var params : Map[String,String] = Map.empty
+
+
 
   // Running executions
   private var runningExecutions: Map[String, RunningExecution] = Map.empty
@@ -171,7 +176,13 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
   override def receive = LoggingReceive {
 
 
+
     case CreateJob(jobID, user, toolname, params) =>
+
+
+
+      println("received " + jobID)
+
 
 
       // set memory allocation on the cluster and let the clusterMonitor define the multiplier
@@ -279,7 +290,7 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
       modifyUserWithCache(BSONDocument(User.IDDB -> user.userID), BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
 
       // Establish exection context for the newJob
-      val executionContext = ExecutionContext(jobPath/jobID)
+      val executionContext = ExecutionContext(jobPath/jobID) // TODO check whether directory already exists and catch the resulting error
       this.currentExecutionContexts = this.currentExecutionContexts.updated(jobID, executionContext)
 
       // Create a log for this job
@@ -297,7 +308,7 @@ class JobActor @Inject() (               runscriptManager        : RunscriptMana
       // Get new runscript instance from the runscript manager
       val runscript = runscriptManager(toolname).withEnvironment(env)
       // Representation of the current State of the job submission
-      var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map(t => t._1 -> (t._2 -> Some(ValidArgument(new LiteralRepresentation(new RString("false"))))))
+      var parameters : Seq[(String, (Evaluation, Option[Argument]))] = runscript.parameters.map(t => t._1 -> (t._2 -> Some(ValidArgument(new LiteralRepresentation(RString("false"))))))
       for((paramName, value) <- extendedParams) {
         parameters  = supply(jobID, paramName, value, parameters)
       }
