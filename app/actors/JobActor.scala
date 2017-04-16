@@ -88,10 +88,6 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
   private var currentJobLogs: Map[String, JobEventLog] = Map.empty
   private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty
 
-  // TODO use this later when everything works :P private var params : Map[String,String] = Map.empty
-
-
-
   // Running executions
   private var runningExecutions: Map[String, RunningExecution] = Map.empty
 

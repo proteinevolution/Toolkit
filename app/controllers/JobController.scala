@@ -72,7 +72,6 @@ final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
           selectJob(id).map { job => if (job.isDefined) Left(BadRequest) else Right(id) }
 
         case None =>
-          //Future.successful(Right("None"))
           Future.successful(Right(JobIDActor.provide))
 
       }).flatMap {
