@@ -109,6 +109,8 @@ onMessage = function(event : MessageEvent) : any {
                 "type": "Ping"
             });
             break;
+        default:
+            break;
     }
 };
 

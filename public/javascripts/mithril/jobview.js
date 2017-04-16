@@ -124,7 +124,7 @@ JobErrorComponent = {
                 // delete empty entries from array
                 logElem = logElem.filter(Boolean);
                 var len = logElem.length-1;
-                console.log(len)
+                console.log(len);
                 if(len > 0){
                     if(len > 1){
                         return [m("div", {class: "logElem"},
@@ -654,33 +654,7 @@ alignmentUpload = function(elem, isInit) {
     }
 };
 
-/*
- dropzone_psi = function(element, isInit) {
- var handleDragOver, handleFileSelect;
- handleFileSelect = function(evt) {
- var f, files, i, output;
- evt.stopPropagation();
- evt.preventDefault();
- files = evt.dataTransfer.files;
- output = [];
- i = 0;
- f = void 0;
- while (f = files[i]) {
- output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ', f.size, ' bytes, last modified: ', f.lastModifiedDate.toLocaleDateString(), '</li>');
- i++;
- }
- document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
- };
- handleDragOver = function(evt) {
- evt.stopPropagation();
- evt.preventDefault();
- evt.dataTransfer.dropEffect = 'copy';
- };
- if (!isInit) {
- $(element).addEventListener('dragover', handleDragOver, false);
- return $(element).addEventListener('drop', handleFileSelect, false);
- }
- }; */
+
 
 window.ParameterAlignmentComponent = {
     model: function(args) {
