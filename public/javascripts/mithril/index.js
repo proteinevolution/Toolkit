@@ -77,8 +77,8 @@ window.Index = {
                     m("div", {
                             "class": "slide-caption"
                         },
-                        m("div", {"class": "slide-header"}, "Max Planck Institute for Developmental Biology"),
-                        m("div", {"class": "slide-text"}, "Welcome to the Bioinformatics Toolkit hosted at the Max Planck Institute for Developmental Biology in Tübingen, Germany.")
+                        m("div", {"class": "slide-header"}, "Welcome to the Bioinformatics Toolkit"),
+                        m("div", {"class": "slide-text"}, "of the Max Planck Institute for Developmental Biology, Tübingen, Germany.")
                     ),
                     m("div",
                     m("img", {style: "width: 100%",
