@@ -1,13 +1,15 @@
 package controllers
 
 import java.nio.file.Files
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor.{CreateJob, Delete}
+import actors.JobIDActor
+import akka.actor.ActorRef
 import models.Constants
 import models.database.jobs.{Error, Job, JobDeletion, JobDeletionFlag}
 import models.database.users.User
-import models.job.{JobActorAccess, JobIDProvider}
+import models.job.JobActorAccess
 import models.search.JobDAO
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.DateTime
@@ -27,8 +29,8 @@ import modules.tel.env.Env
   * Created by lzimmermann on 02.12.16.
   */
 @Singleton
-final class JobController @Inject() ( jobIDProvider    : JobIDProvider,
-                                      jobActorAccess   : JobActorAccess,
+final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
+                                      @Named("jobIDActor") jobIDActor : ActorRef,
                                       env              : Env,
 @NamedCache("userCache") implicit val userCache        : CacheApi,
                          implicit val locationProvider : LocationProvider,
@@ -57,6 +59,7 @@ final class JobController @Inject() ( jobIDProvider    : JobIDProvider,
   }
 
 
+
   def check(toolname: String, jobID: Option[String], hash: Boolean) : Action[AnyContent] = Action.async { implicit request =>
 
     getUser.flatMap { user =>
@@ -67,16 +70,16 @@ final class JobController @Inject() ( jobIDProvider    : JobIDProvider,
         // Bad Request if the jobID can be matched to one from the database
         case Some(id) =>
           selectJob(id).map { job => if (job.isDefined) Left(BadRequest) else Right(id) }
-        case None =>
 
-          // Ask JobID provider to return a newly generated jobID
-          jobIDProvider.provide.map { s =>
-            Right(s)
-          }
+        case None =>
+          //Future.successful(Right("None"))
+          Future.successful(Right(JobIDActor.provide))
+
       }).flatMap {
 
         case Left(status) => Future.successful(status)
         case Right(jobIDnew) =>
+
 
           // Grab the formData from the request data
           val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString(formMultiValueSeparator))
