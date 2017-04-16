@@ -180,11 +180,6 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
     case CreateJob(jobID, user, toolname, params) =>
 
 
-
-      println("received " + jobID)
-
-
-
       // set memory allocation on the cluster and let the clusterMonitor define the multiplier
 
       val h_vmem = (ConfigFactory.load().getString(s"Tools.$toolname.memory").dropRight(1).toInt * TEL.memFactor).toString + "G"
