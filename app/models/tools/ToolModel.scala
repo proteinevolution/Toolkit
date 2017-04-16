@@ -351,8 +351,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     // HHfilter
     ("hhfilter", "HHfilter", "hhfi", "utils", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.MAX_SEQID, paramAccess.MIN_SEQID_QUERY, paramAccess.MIN_QUERY_COV,
-      paramAccess.NUM_SEQS_EXTRACT), Seq("clustalo", "kalign", "tcoffee", "mafft", "msaprobs", "muscle", "hhpred",
-      "hmmer", "hhfilter"),Seq.empty)).map { t =>
+      paramAccess.NUM_SEQS_EXTRACT), Seq("hhblits", "hhpred", "hmmer", "psiblast", "clustalo", "kalign", "mafft", "msaprobs",
+      "muscle", "tcoffee", "aln2plot", "hhrepid", "pcoils", "hhfilter"),Seq.empty)).map { t =>
     t._1  -> tool(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8)
   }.toMap
 
