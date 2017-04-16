@@ -4,6 +4,8 @@ GAPOPEN=11
 GAPEXT=1
 INPUT="query"
 
+reformat_hhsuite.pl fas fas $(readlink -f %alignment.path) $(readlink -f %alignment.path) -uc -r -M first -l 32000
+
 SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
 
 if [ $SEQ_COUNT -gt 1 ] ; then
@@ -35,8 +37,7 @@ psiblast -db %STANDARD/%standarddb.content \
          -${INPUT} %alignment.path \
          -out ../results/output_psiblastp.asn \
          -outfmt 11 \
-         -max_hsps 1 \
-         -out_pssm ../results/out.ksf
+         -max_hsps 1
 
 #converst ASN.1 output to JSON
 blast_formatter -archive ../results/output_psiblastp.asn \
@@ -46,9 +47,7 @@ blast_formatter -archive ../results/output_psiblastp.asn \
 
 #converst ASN.1 output to HTML
 blast_formatter -archive ../results/output_psiblastp.asn \
-                -html \
-                -out \
-                ../results/output_psiblastp.html \
+                -out ../results/output_psiblastp.html \
                 -num_descriptions %desc.content \
                 -num_alignments %desc.content
 
@@ -74,12 +73,6 @@ fasta2json.py %alignment.path ../results/query.json
 
 # Generate Query in JSON
 fasta2json.py ../results/output_psiblastp.aln ../results/${JOBID}.alignment.json
-
-# extract alignment from
-#alignhits_html.pl ../results/out.psiblastp ../results/out.align -e %evalue.content -fas -no_link -blastplus
-
-## Produces the alignment fasta output
-#%SCALA %HELPER/psiblastpPostProcess.scala ../results/out.psiblastp
 
 # Produce Evalues list
 awk {'print $(NF-6)'} ../results/output_psiblastp.tab >> ../results/evalues
