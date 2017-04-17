@@ -229,7 +229,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     // PSI-BLAST
     ("psiblast", "ProtBLAST/PSI-BLAST", "pbl", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
       paramAccess.MATRIX,
-      paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.EVAL_INC_THRESHOLD, paramAccess.DESC),
+      paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.HHPRED_INCL_EVAL, paramAccess.DESC),
       Seq("modeller", "hhpred"),Seq("modeller")),
 
 
@@ -263,7 +263,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // Hmmer
     ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
-      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVAL_CUTOFF), Seq("kalign"),Seq.empty),
+      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVALUE), Seq("kalign"),Seq.empty),
 
 
       // Aln2Plot

@@ -3,7 +3,7 @@ window.JobModel = {
     paramValues: {},
     defaultValues: {
         "num_iter": 1,
-        "evalue": 10,
+        "evalue": "1e-3",
         "inclusion_ethresh": "0.001",
         "min_cov": "20",
         "min_seqid_query": "0",
@@ -29,7 +29,6 @@ window.JobModel = {
         "macmode":"off",
         "macthreshold":"0.3",
         "max_hhblits_iter":"0",
-        "eval_cutoff":"1",
         "score_ss":"1",
         "rep_pval_threshold":"1e-2",
         "self_aln_pval_threshold":"1e-1",
@@ -46,8 +45,8 @@ window.JobModel = {
         "eval_tpr":"1e-6",
         "msa_gen_method":"hhblits",
         "hhsuitedb": "scope70/scope",
-        "hhpred_incl_eval": "1E-3",
-        "hhblits_incl_eval": "1E-3",
+        "hhpred_incl_eval": "1e-3",
+        "hhblits_incl_eval": "1e-3",
         "pcoils_matrix": "2",
         "pcoils_weighting":"1",
         "pcoils_input_mode":"0"
