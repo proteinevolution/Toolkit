@@ -34,7 +34,7 @@ else
 fi
 
     $HMMERPATH/hmmsearch --cpu %THREADS \
-          -E %eval_cutoff.content \
+          -E %evalue.content \
           -o ../results/${JOBID}.outfile \
           -A ../results/${JOBID}.msa_sto \
           ../results/${JOBID}.hmm  %STANDARD/%standarddb.content
