@@ -2,7 +2,7 @@
  *  Handles the Connection to the WebSocket and its connection to ModelView elements like provided by
  *  Mithril.
  */
-let currentRoute : string = null;
+
 let noRedraw     : boolean = false;
 let ws : WebSocket = null,
     connect      : Function,
