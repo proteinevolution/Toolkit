@@ -43,3 +43,4 @@ hhblits_incl_eval GEN hhblits_incl_eval.prop
 pcoils_input_mode GEN pcoils_input_mode.prop
 pcoils_weighting GEN pcoils_weighting.prop
 pcoils_matrix GEN pcoils_matrix.prop
+evalue GEN evalue.prop

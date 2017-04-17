@@ -29,7 +29,7 @@ psiblast -db %STANDARD/%standarddb.content \
          -matrix %matrix.content \
          -num_iterations %num_iter.content \
          -evalue %evalue.content \
-         -inclusion_ethresh 0.005 \
+         -inclusion_ethresh %hhpred_incl_eval.content \
          -gapopen $GAPOPEN \
          -gapextend $GAPEXT \
          -num_threads %THREADS \
