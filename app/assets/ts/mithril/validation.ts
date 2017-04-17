@@ -4,6 +4,7 @@
 
 
 let seqLimit : any;
+let charLimitPerSeq : any;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
@@ -337,6 +338,8 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     if (hhpredTarget.basicValidation()) {
                         hhpredTarget.sameLengthValidation();
                     }
+
+                    charLimitPerSeq = 3000;
 
                     break;
 
@@ -738,6 +741,11 @@ class alignmentVal implements ToolkitValidator {
 
         else if (this.elem.reformat('maxseqnumber', seqLimit)) {
             feedback(false, "Input contains more than " + seqLimit + " sequences!", "error");
+            return false;
+        }
+
+        else if (!this.elem.reformat('maxseqlength', charLimitPerSeq)) {
+            feedback(false, "Input contains more than " + charLimitPerSeq + " chars in a sequence!", "error");
             return false;
         }
 
