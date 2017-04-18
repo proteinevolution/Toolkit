@@ -144,7 +144,7 @@ GET           /api/job/results/:jobID                 @controllers.DataControlle
 
 # DataTables
 
-GET           /api/job/results/psidt/:jobID           @controllers.DataController.psiDT(jobID: String)
+GET           /api/job/results/psidt/:jobID/:numiter  @controllers.DataController.psiDT(jobID: String, numiter: Int)
 
 # Article
 GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)

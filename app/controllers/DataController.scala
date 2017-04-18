@@ -65,7 +65,7 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
     * DataTables for job results
     */
 
-  def psiDT(jobID : String) = Action {
+  def psiDT(jobID : String, numiter: Int) : Action[AnyContent] = Action { implicit request =>
 
     Ok
 
