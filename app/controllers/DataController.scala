@@ -21,7 +21,7 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
   /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with
     * stored given a particular key
    */
-  def get(jobID: String) = Action.async {
+  def get(jobID: String) : Action[AnyContent] = Action.async {
     getResult(jobID).map {
       case Some(jsValue) => Ok(jsValue)
       case None => NotFound
@@ -32,7 +32,7 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
     * Action to fetch article with articleID from database
     */
 
-  def fetchArticle(articleID: String) = Action.async{
+  def fetchArticle(articleID: String) : Action[AnyContent] = Action.async{
     getArticle(articleID).map {
         case Some(realArticle) => Ok
         case None => NotFound
@@ -41,7 +41,7 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
   /**
     * Action to fetch the last N recent articles database
     */
-  def getRecentArticles(numArticles: Int) = Action.async{
+  def getRecentArticles(numArticles: Int) : Action[AnyContent] = Action.async{
     getArticles(numArticles).map { seq =>
       val  x = Json.toJson(seq)
       Ok(x)
@@ -50,7 +50,7 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
   /**
     * Action to write an article into the database
     */
-  def writeArticle(title: String, text: String, imagePath: String) = Action.async{
+  def writeArticle(title: String, text: String, imagePath: String) : Action[AnyContent] = Action.async{
     val article = FeaturedArticle(BSONObjectID.generate(),title, text,imagePath,Some(DateTime.now()),None)
     writeArticleDatabase(article).map { wr =>
       if(wr.ok){
@@ -60,6 +60,19 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
       }
     }
   }
+
+  /**
+    * DataTables for job results
+    */
+
+  def psiDT(jobID : String) = Action {
+
+    Ok
+
+  }
+
+
+
 }
 
 
