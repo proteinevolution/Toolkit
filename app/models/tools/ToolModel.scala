@@ -115,7 +115,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "hhrepid" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.modeller(s"/files/$jobID/query_A.png", s"$jobPath$jobID/results/query.hhrepid"))))
 
-      case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment2.clu.tre", "ancescon_div"))))
+      case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/" + jobID + ".clu.tre", "ancescon_div")),
+        ("Data", views.html.jobs.resultpanels.fileviewWithDownload("ancescon",s"$jobPath$jobID/results/" + jobID + ".anc_out", jobID, jobID + ".anc_out"))))
 
       case "clustalo" => getResult(jobID).map {
         case Some(jsvalue) =>
@@ -320,7 +321,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // ANCESCON
     ("ancescon", "ANCESCON", "anc", "classification", "",
-      Seq(paramAccess.ALIGNMENT, paramAccess.LONG_SEQ_NAME), Seq.empty,Seq.empty),
+      Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
 
     // CLANS
       ("clans", "CLANS", "clan", "classification", "",
