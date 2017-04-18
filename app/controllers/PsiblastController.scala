@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import java.nio.file.attribute.PosixFilePermission
 
 import com.typesafe.config.ConfigFactory
@@ -12,6 +11,7 @@ import scala.concurrent.Future
 import scala.sys.process._
 import better.files._
 import models.Constants
+import modules.CommonModule
 
 
 /**
@@ -68,6 +68,11 @@ class PsiblastController @Inject()(webJarAssets : WebJarAssets) extends Controll
       }
     }
   }
+
+
+
+
+
   // Exceptions
   case class FileException(message : String) extends Exception(message)
 }
