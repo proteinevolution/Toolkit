@@ -11,7 +11,6 @@ import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.collection.parallel.ParSeq
-import scala.collection.parallel.immutable.ParVector
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.util.Random
