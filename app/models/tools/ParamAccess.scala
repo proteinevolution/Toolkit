@@ -126,6 +126,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val SINGLESEQDNA = Param("alignment", Sequence(Seq(SingleSequenceDNA), false),1, "")
   final val FASTAHEADERS = Param("alignment", Sequence(Seq(FASTAHeaders), false),1, "")
 
+  final val HMMER_DB = select("hmmerdb", "Select Database")
   final val STANDARD_DB = select("standarddb", "Select Standard Database")
   final val HHSUITEDB = select("hhsuitedb", "Select HH-Suite Database")
   final val MATRIX = select("matrix", "Scoring Matrix")
