@@ -168,10 +168,9 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "aln2plot" => Future.successful(Seq(("Plots", views.html.jobs.resultpanels.aln2plot(jobID))))
 
-      case "phylip" => Future.successful(Seq(("NeighborJoiningTree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_nj.tree", "nj_div")),
-        ("NeighborJoiningResults", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.nj")),
-        ("UPGMATree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/alignment_upgma.tree", "upgma_div")),
-        ("UPGMAResults", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.upgma"))))
+
+      case "phyml" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt", "phyml_div")),
+        ("Data", views.html.jobs.resultpanels.fileviewWithDownload("phyml",s"$jobPath$jobID/results/" + jobID + ".phy_phyml_stats.txt", jobID, jobID + ".phy_phyml_stats.txt"))))
 
       case "mmseqs2" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload("mmseqs2",s"$jobPath$jobID/results/" + jobID + ".fas", jobID, jobID + ".fas")),
         ("Summary", views.html.jobs.resultpanels.fileviewWithDownload("mmseqs2",s"$jobPath$jobID/results/" + jobID + ".clu", jobID, jobID + ".clu"))))
@@ -264,7 +263,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // Hmmer
     ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
-      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVALUE), Seq("kalign"),Seq.empty),
+      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVALUE, paramAccess.DESC), Seq("kalign"),Seq.empty),
 
 
       // Aln2Plot
@@ -328,9 +327,10 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         Seq(paramAccess.MULTISEQ, paramAccess.MATRIX),
         Seq.empty,Seq.empty),
 
-    // PHYLIP
-    ("phylip", "PHYLIP-NEIGHBOR", "phyn", "classification", "",
-      Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYLIP), Seq.empty,Seq.empty),
+    // PhyML
+    ("phyml", "PhyML", "phym", "classification", "",
+      Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYML, paramAccess.NO_REPLICATES,
+        paramAccess.GAMMA_RATE), Seq.empty,Seq.empty),
 
     // MMseqs2
     ("mmseqs2", "MMseqs2", "mseq", "classification", "",

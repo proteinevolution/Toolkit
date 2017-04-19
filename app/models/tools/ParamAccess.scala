@@ -65,6 +65,7 @@ object ParamType {
 
   final val UnconstrainedNumber = Number(None, None)
   final val Percentage = Number(Some(0), Some(100))
+  final val ConstrainedNumber = Number(Some(1), Some(10000))
 
   // JSON conversion
   final val FIELD_TYPE = "type"
@@ -135,7 +136,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val GAP_TERM = Param("gap_term",Decimal("0.01", Some(0),Some(10)),1, "Terminal gap penalty")
   final val GAP_EXT_KALN = Param("gap_ext_kaln",Decimal("0.01", Some(0),Some(10)),1, "Gap extension penalty")
   final val BONUSSCORE = Param("bonusscore",Decimal("0.01", Some(0),Some(10)),1, "Bonus Score")
-  final val DESC = Param("desc",ParamType.UnconstrainedNumber,1, "No. of target sequences")
+  final val DESC = Param("desc",ParamType.ConstrainedNumber,1, "No. of target sequences (up to 10000)")
   final val CONSISTENCY =  Param("consistency",ParamType.UnconstrainedNumber,1, "Passes of consistency transformation")
   final val ITREFINE = Param("itrefine",ParamType.UnconstrainedNumber,1, "Passes of iterative refinements")
   final val PRETRAIN =  Param("pretrain",ParamType.UnconstrainedNumber,1, "Rounds of pretraining")
@@ -158,7 +159,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val MAX_SEQS = select("max_seqs", "Max. number of sequences per HMM")
   final val MAX_SEQID =  Param("max_seqid", ParamType.UnconstrainedNumber, 1, "Maximal Sequence Identity (%)")
   final val MIN_QUERY_COV = Param("min_query_cov", ParamType.Percentage, 1, "Minimal coverage with query (%)")
-  final val MATRIX_PHYLIP = select("matrix_phylip", "Model of AminoAcid replacement")
+  final val MATRIX_PHYML = select("matrix_phyml", "Model of AminoAcid replacement")
   final val PROTBLASTPROGRAM = select("protblastprogram", "Program for Protein BLAST")
   final val FILTER_LOW_COMPLEXITY = Param("filter_low_complexity", Bool, 1, "Filter for low complexity regions")
   final val MATRIX_MARCOIL =  select("matrix_marcoil", "Matrix")
@@ -191,4 +192,8 @@ class ParamAccess @Inject() (tel: TEL) {
   final val PCOILS_INPUT_MODE = select("pcoils_input_mode", "Input mode")
   final val PCOILS_WEIGHTING = select("pcoils_weighting", "Weighting")
   final val PCOILS_MATRIX = select("pcoils_matrix", "Matrix")
+  final val NO_REPLICATES = select("no_replicates", "Number of replicates" )
+  final val GAMMA_RATE = Param("gamma_rate",Decimal("0.01", Some(0),Some(100)),1, "Gamma distributed rates across sites")
+
+
 }
