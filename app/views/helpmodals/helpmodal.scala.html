@@ -2,29 +2,28 @@
     <h3>Welcome to the MPI Bioinformatics Toolkit</h3>
     <br>
     The MPI Bioinformatics Toolkit is a platform that integrates a great variety of
-    tools for protein sequence analysis. Many tools are developed in-house, and serveral
+    tools for protein sequence analysis. Many tools are developed in-house, and several
     public tools are offered with extended functionality.
     <br>
-    The toolkit includes, among others: NucleotideBLAST, ProteinBLAST, PSI-BLAST, fastHMMER, HHsenser;
-    ClustalW, MUSCLE, Mafft, ProbCons; HHrep, PCOILS, REPPER; Quick2D; HHpred, Modeller;
-    CLANS, ANCESCON, PHYLIP; Reformat, RetrieveSeq, gi2promoter. For a short descrition of the tools, click the section tabs.
+    The toolkit includes, among others: PSI-BLAST+, HHblits, HMMER;
+    ClustalOmega, MUSCLE, MAFFT, ProbCons; HHrepID, PCOILS, REPPER; Quick2D; HHpred, Modeller;
+    CLANS, ANCESCON, PHYLIP; Reformat, RetrieveSeq, HHfilter.
     <br>
     <br>
     <h6>Job submission</h6>
     Each tool has a separate input page with a web form in which the user can input sequence data,
     upload sequence files, and specify options. All tools that take alignments
-    as input accept the most widely used formats (FASTA, CLUSTAL, Stockholm and
-    A3M). You may also choose your own job-names to organize your work.
-    Snail symbols inside the submit buttons inform you about tools that
-    typically run for more than 10 minutes.
+    as input accept FASTA and CLUSTAL formats. Upon submission, each job is assigned an unique
+    identifier; You may also choose your own job-names to organize your work.
 
     <br>
     <br>
     <h6>Job management</h6>
     Located on the left of the screen is a sidebar pane that holds a status
-    and section-coded list of all recent jobs in the current session. You can click
-    on previously submitted jobs to check their status and view their results.
-    <br>
+    list of all recent jobs in the current session. You can click
+    on previously submitted jobs to check their status and view their results. An icon above the list
+    provides access to the job manager, which allows easy searching and ordering of jobs.
+    <br><br>
     In general a session will last until the web browser is closed. However,
     because of different session implementations by the various browser types, jobs
     may occasionally disappear from the joblist. Therefore, noting down the job ids is
@@ -33,8 +32,8 @@
 
     <br>
     <br>
-    Please keep in mind, that the toolkit is focussed on providing tools,
-    not on storing results or other data: We don't backup of your
+    Please keep in mind, that the toolkit is focused on providing tools,
+    not on storing results or other data: We don't make backups of your
     results. If the storage medium crashes or your job is deleted, we
     cannot restore it! After removal or updates of databases or tools, you
     probably will not be able to get the same results any more, even if
@@ -43,22 +42,20 @@
 
     <br>
     <br>
-    <h6>Interconnectivity</h6>
+    <h6>Inter-connectivity</h6>
     Most of the tools in the Toolkit are
     interconnected, allowing job results of one tool to be forwarded as input to
-    others. For example, you could run PSI-BLAST, parse out a multiple alignment of selected
-    hits and send the results to a cluster analysis tool.
+    others. For example, you could run PSI-BLAST+, parse out a multiple alignment of selected
+    hits and send the results to the cluster analysis tool CLANS.
 
     <br>
     <br>
-    <h6>User databases</h6>
-    You may upload customized databases which are then accessible throughout the whole toolkit (upload once, use many times).
-    Reference:
-    Biegert A, Mayer C, Remmert M, Söding J and Lupas A. The
-    MPI Toolkit for protein sequence analysis <em>Nucleic Acids Res.</em>
-    <strong>34</strong>, W335-339
-    <a target="_blank" href="http://nar.oxfordjournals.org/cgi/reprint/34/suppl_2/W335">(download
-        pdf)</a>
+    <h6>Reference</h6>
+    If you find our Toolkit useful for your research, please cite us:
+    <br><br>
+    Alva V., Nam SZ., Söding J., Lupas AN. (2016). <a target="_blank" href="https://www.ncbi.nlm.nih.gov/pubmed/27131380"> The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis. Nucleic Acids Res. </a>
+
+
 
 
     <button class="close-button" data-close aria-label="Close modal" type="button">
