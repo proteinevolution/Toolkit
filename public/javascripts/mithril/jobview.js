@@ -616,7 +616,11 @@ JobSubmissionComponent = {
                 m("input", { class: 'button', id: 'reload_job', type: 'button', value: 'Reload' }),
                 m("input", { class: 'button', id: 'submit_again', type: 'button', value: 'New Submission' })
             ]),
-            m("input", { type: "text", class: "jobid", placeholder: "E-Mail Notification", style: "width: 16em; float:left;" }),
+            Auth.user == null ? null :
+                m("label", {style: "width: 16em; float:left;"}, [
+                    m("input", { type: "checkbox", id:"emailUpdate", name: "emailUpdate", value:true}),
+                    "E-Mail notification"
+                ]),
             !this.submitting ? m("input", {
                 type: "button",
                 class: "success button small submitJob",

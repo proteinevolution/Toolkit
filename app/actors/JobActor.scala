@@ -10,6 +10,7 @@ import models.Constants
 import models.database.jobs._
 import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
+import models.mailing.JobFinishedMail
 import models.search.JobDAO
 import modules.tel.TEL
 import modules.tel.runscripts.{LiteralRepresentation, Representation, _}
@@ -24,6 +25,7 @@ import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
+import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
@@ -74,6 +76,7 @@ object JobActor {
 class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get runscripts to be executed
                           env                     : Env, // To supply the runscripts with an environment
                           val reactiveMongoApi    : ReactiveMongoApi,
+                 implicit val mailerClient        : MailerClient,
                           val jobDao              : JobDAO,
                           qdel                    : Qdel,
                           wrapperExecutionFactory : WrapperExecutionFactory,
@@ -151,7 +154,6 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
       val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify) : Option[List[ActorRef]])
       foundWatchers.flatten.foreach(_ ! PushJob(job))
-      //watchers(jobID)
       job
     }
   }
@@ -168,14 +170,25 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
     params.forall( item  => item._2._2.isDefined)
   }
 
+  private def sendJobUpdateMail(job : Job) : Boolean = {
+    if (job.emailUpdate && job.ownerID.isDefined) {
+      findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach{
+        case Some(user) =>
+          Logger.info("Sending EMail to owner: " + user.getUserData.eMail)
+          val eMail = JobFinishedMail(user, job)
+          eMail.send
+        case None =>
+      }
+      true
+    } else {
+      false
+    }
+  }
+
 
   override def receive = LoggingReceive {
-
-
-
     case CreateJob(jobID, user, toolname, params) =>
-
-
+      // TODO Add param validation here
       // set memory allocation on the cluster and let the clusterMonitor define the multiplier
 
       val h_vmem = (ConfigFactory.load().getString(s"Tools.$toolname.memory").dropRight(1).toInt * TEL.memFactor).toString + "G"
@@ -185,7 +198,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       Logger.info(s"$jobID is running with $h_vmem h_vmem")
       Logger.info(s"$jobID is running with $threads threads")
 
-
+      // Get the current date to set it for all three dates
       val jobCreationTime = DateTime.now()
 
       // jobid will also be available as parameter
@@ -200,6 +213,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
                     ownerID     = Some(user.userID),
                     //project     = Some(BSONObjectID.generate()),
                     status      = Submitted,
+                    emailUpdate = params.get(Job.EMAILUPDATE).isDefined,
                     tool        = toolname,
                     clusterData = Some(clusterData),
                     label       = params.get("label"),
@@ -211,25 +225,20 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
 
       // Add job to database
       upsertJob(job)
-      val paramsWithoutMainID = params - "mainID" - "jobID" // need to hash without mainID and without the jobID
+      // filter unique parameters
+      val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE
 
       // get hold of the database in use
-
-
       val DBNAME = params match {
-
         case x if x isDefinedAt "standarddb" => params.getOrElse("standarddb", "")
         case x if x isDefinedAt "hhblitsdb"  => params.getOrElse("hhblitsdb", "")
         case x if x isDefinedAt "hhsuitedb"  => params.getOrElse("hhsuitedb", "")
         case _ => ""
-
       }
-
 
       val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb","")).toFile
       val HHBLITSDBMTIME = env.get("HHBLITS").toFile.lastModifiedTime.toString
       val HHSUITEDBMTIME = env.get("HHSUITE").toFile.lastModifiedTime.toString
-
 
       val jobHash = {
       params match {
@@ -277,7 +286,6 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       hashCollection.flatMap(_.insert(jobHash))
 
       // Add Job to user in database
-      //upsertUser(user.copy(jobs = user.jobs.::(job.jobID)))
       modifyUserWithCache(BSONDocument(User.IDDB -> user.userID), BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
 
       // Establish exection context for the newJob
@@ -294,7 +302,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
                                                                     events      = List(JobEvent(job.status, Some(DateTime.now)))))
 
       // Update the statistics
-      increaseJobCount(job.tool)
+      increaseJobCount(job.tool) // TODO switch to better statistic handling
 
       // Get new runscript instance from the runscript manager
       val runscript = runscriptManager(toolname).withEnvironment(env)
@@ -391,17 +399,13 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
 
           // Dependent on the state, we have to do different things
           job.status match {
-
-            case Queued =>
-              this.updateJobState(job)
-            case Running => this.updateJobState(job)
-
             case Done =>
-
               // Job is no longer running
               Logger.info("Removing execution context")
               this.runningExecutions = this.runningExecutions.-(job.jobID)
               Logger.info("DONE Removing execution context")
+              // Tell the user that their job finished via eMail
+              sendJobUpdateMail(job)
 
               // Put the result files into the database, JobActor has to wait until this process has finished
               Future.sequence((jobPath / job.jobID / "results").list.withFilter(_.hasExtension).withFilter(_.extension.get == ".json").map { file =>
@@ -419,13 +423,15 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
               this.updateJobState(job).map { job =>
                 this.removeJob(job.jobID)
 
-                // Update the statistics for the failed job
+                // Tell the user that their job failed via eMail
+                sendJobUpdateMail(job)
+
+                // Update the statistics for the failed job TODO - swap to better statistic handling
                 increaseJobCount(job.tool, failed = true)
               }
 
             case _ =>
-              Logger.info("Job State for \'" + jobID + "\' changed to invalid JobStateChanged State: " + jobState)
-
+              this.updateJobState(job)
           }
         case None =>
           Logger.info("Job not found: " + jobID)
