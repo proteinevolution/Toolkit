@@ -165,3 +165,9 @@ POST         /fullSeqHHblits/:jobID                    @controllers.HHblitsContr
 
 # retrieveFullSeq
 POST        /retrieveFullSeq/:jobID                    @controllers.PsiblastController.retrieveFullSeqs(jobID : String)
+
+# Hmmer retrieve seqs with evale < threshold
+GET         /evalHmmer/:jobID/:eval                     @controllers.HmmerController.evalHmmer(jobID, eval)
+
+# Hmmer retrieve seqs with evale < threshold
+POST         /fasHmmer/:jobID                   @controllers.HmmerController.fasHmmer(jobID)
