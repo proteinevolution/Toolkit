@@ -69,7 +69,6 @@
                                         <td></td>
                                         <td colspan="3">
                                         @BlastVisualization.getLinksHmmer(hit.accession)
-
                                         </td>
                                         <td></td>
                                     </tr>
@@ -77,9 +76,7 @@
                                     <tr class="header">
                                         <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}</td>
                                         <td colspan="4">
-
                                             @BlastVisualization.getSingleLink(hit.accession)
-
                                             @{"  "+hit.description}
                                         </td>
                                     </tr>
@@ -93,30 +90,19 @@
                                     </tr>
                                     @* seq of query, if present *@
                                     @{BlastVisualization.makeRow("sequence", Array("Q",hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq),hit.query_end.toString))}
-
                                     @* agree of query, if present *@
-
                                     @{BlastVisualization.makeRow("sequence", Array("","",(hit.midline),""))}
-
-
                                     @* seq of hit, if present *@
-
                                     @{BlastVisualization.makeRow("sequence", Array("H",hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq),hit.hit_end.toString))}
-
                                     <tr>
                                         <td><br /></td>
                                     </tr>
-
-
                                     <tr>
                                         <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
                                     </tr>
-
                                     <tr>
                                         <td><br /></td>
                                     </tr>
-
-
                                     <tr>
                                         <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
                                     </tr>

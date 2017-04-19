@@ -22,7 +22,7 @@ case class HmmerHSP(evalue: Double, num: Int,
                     hit_len: Int,
                     accession: String, midline: String, description: String, dom_exp_num: Double, domain_obs_num: Int)
 
-case class Info(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
+case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 
 case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int)
 
