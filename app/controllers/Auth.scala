@@ -7,7 +7,7 @@ import akka.actor.ActorRef
 import models.auth._
 import models.database.users.{User, UserToken}
 import models.job.JobActorAccess
-import models.mailing.{ResetPasswordMail, ChangePasswordMail, NewUserWelcomeMail}
+import models.mailing.{PasswordChangedMail, ResetPasswordMail, ChangePasswordMail, NewUserWelcomeMail}
 import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.tel.TEL
@@ -38,7 +38,6 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                             implicit val locationProvider : LocationProvider,
    @NamedCache("userCache") implicit val userCache        : CacheApi,
 @NamedCache("wsActorCache") implicit val wsActorCache     : CacheApi,
-                                     val tel              : TEL,
                                      val reactiveMongoApi : ReactiveMongoApi) // Mailing Controller
                               extends Controller with I18nSupport
                                                  with JSONTemplate
@@ -270,7 +269,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                   upsertUser(newUser).map {
                     case Some(registeredUser) =>
                       // All done. User is registered, now send the welcome eMail
-                      val eMail = NewUserWelcomeMail(tel, registeredUser, registeredUser.userTokens.head.token)
+                      val eMail = NewUserWelcomeMail(registeredUser, registeredUser.userTokens.head.token)
                       eMail.send
                       Ok(SignedUp)
                     case None =>
@@ -364,7 +363,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                 modifyUserWithCache(selector, modifier).map {
                   case Some(updatedUser) =>
                     // All done. Now send the eMail
-                    val eMail = ChangePasswordMail(tel, updatedUser, token.token)
+                    val eMail = ChangePasswordMail(updatedUser, token.token)
                     eMail.send
                     // Everything is ok, let the user know that they are logged in now
                     Ok(PasswordChanged(updatedUser))
@@ -428,7 +427,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                     modifyUser(selector, modifier).map {
                       case Some(registeredUser) =>
                         // All done. User is registered, now send the welcome eMail
-                        val eMail = ResetPasswordMail(tel, registeredUser, token.token)
+                        val eMail = ResetPasswordMail(registeredUser, token.token)
                         eMail.send
                         Ok(PasswordRequestSent)
                       case None =>
@@ -482,11 +481,9 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                                       BSONDocument(User.USERTOKENS ->
                                       BSONDocument(UserToken.TOKEN -> token.token)))).map {
                     case Some(updatedUser) =>
-                      // TODO add a small email to notify the user of the changed password.
-                      // All done. Now send the eMail
-                      //                  val eMail = ChangePasswordMail(tel, updatedUser, token.token)
-                      //                  eMail.send
-                      // Everything is ok, let the user know that they are logged in now
+                      // All done. Now send the eMail to notify the user that the password has been changed
+                      val eMail = PasswordChangedMail(updatedUser)
+                      eMail.send
                       Ok(PasswordChanged(updatedUser))
                     case None =>
                       Ok(DatabaseError)
@@ -556,6 +553,8 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                                               User.CONNECTED   -> ""))).map {
                         case Some(modifiedUser) =>
                           removeUserFromCache(user = modifiedUser, withDB = false)
+                          val eMail = PasswordChangedMail(modifiedUser)
+                          eMail.send
                           if (modifiedUser.connected) {
                             // Force Log Out on all connected users.
                             (wsActorCache.get(modifiedUser.userID.stringify) : Option[List[ActorRef]]) match {

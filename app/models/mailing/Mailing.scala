@@ -1,5 +1,6 @@
 package models.mailing
 
+import models.database.jobs._
 import models.database.users.User
 import play.api.libs.mailer.{MailerClient, Email}
 import modules.tel.TEL
@@ -50,8 +51,8 @@ sealed trait MailTemplate {
     """.stripMargin
 }
 
-case class NewUserWelcomeMail (tel: TEL, userParam : User, token : String) extends MailTemplate {
-  override def subject = "Bioinformatics Toolkit - Account Verification"
+case class NewUserWelcomeMail (userParam : User, token : String) extends MailTemplate {
+  override def subject = "Account Verification - Bioinformatics Toolkit"
 
   val user : User = userParam
 
@@ -77,8 +78,8 @@ case class NewUserWelcomeMail (tel: TEL, userParam : User, token : String) exten
   }
 }
 
-case class ChangePasswordMail (tel: TEL, userParam : User, token : String) extends MailTemplate {
-  override def subject = "Bioinformatics Toolkit - Password Verification"
+case class ChangePasswordMail (userParam : User, token : String) extends MailTemplate {
+  override def subject = "Password Verification - Bioinformatics Toolkit"
 
   val user : User = userParam
 
@@ -108,8 +109,8 @@ case class ChangePasswordMail (tel: TEL, userParam : User, token : String) exten
   }
 }
 
-case class ResetPasswordMail (tel: TEL, userParam : User, token : String) extends MailTemplate {
-  override def subject = "Bioinformatics Toolkit - Password Verification"
+case class ResetPasswordMail (userParam : User, token : String) extends MailTemplate {
+  override def subject = "Password Verification - Bioinformatics Toolkit"
 
   val user : User = userParam
 
@@ -132,6 +133,64 @@ case class ResetPasswordMail (tel: TEL, userParam : User, token : String) extend
           |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token<br />
           |If You did not request this, then your account has been used by someone else.<br />
           |Log in and change the password yourself to ensure that this other Person can no longer access your account.<br />
+          |Your Toolkit Team
+     """.stripMargin
+    )
+  }
+}
+
+case class PasswordChangedMail (userParam : User) extends MailTemplate {
+  override def subject = "Password Changed - Bioinformatics Toolkit"
+
+  val user : User = userParam
+
+  val bodyText : String = {
+    s"""Hello ${user.getUserData.nameLogin},
+        |As requested your password has been changed. You can do this at any time in your user profile.
+        |If You did not request this, then someone else may have changed your password.
+        |Your Toolkit Team
+     """.stripMargin
+  }
+
+  val bodyHtml : String = {
+    super.bodyHtmlTemplate(
+      s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
+      s"""You requested to reset your password and set a new one.<br />
+          |As requested your password has been changed. You can do this at any time in your user profile.<br />
+          |If You did not request this, then someone else may have changed your password.<br />
+          |Your Toolkit Team
+     """.stripMargin
+    )
+  }
+}
+
+case class JobFinishedMail (userParam : User, job : Job) extends MailTemplate {
+  override def subject = s"""Job ${job.jobID} finished running - Bioinformatics Toolkit""".stripMargin
+
+  val user : User = userParam
+
+  def statusMessage : String = {
+    job.status match {
+      case Done =>  "Your job has finished sucessfully. You can now look at the results."
+      case Error => "Your job has failed. Please check all parameters and see if you find any issues."
+      case _ =>     "Has changed state"
+    }
+  }
+
+  val bodyText : String = {
+    s"""Hello ${user.getUserData.nameLogin},
+        |$statusMessage
+        |You can view it at any time at http://${TEL.hostname}:${TEL.port}/jobs/${job.jobID}
+        |Your Toolkit Team
+     """.stripMargin
+  }
+
+  val bodyHtml : String = {
+    super.bodyHtmlTemplate(
+      s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
+      s"""$statusMessage
+          |You can view it at any time <a href=\"http://${TEL.hostname}:${TEL.port}/jobs/${job.jobID}>here</a>
+          |or go to http://${TEL.hostname}:${TEL.port}/jobs/${job.jobID} in your browser<br />
           |Your Toolkit Team
      """.stripMargin
     )
