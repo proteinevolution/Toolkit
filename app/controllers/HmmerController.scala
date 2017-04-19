@@ -25,9 +25,7 @@ class HmmerController @Inject() (val reactiveMongoApi : ReactiveMongoApi) extend
   }
 
 
-  def fasHmmer(jobID : String): Action[AnyContent] = Action.async { implicit request =>
-    val json =  request.body.asJson.get
-    val numList = (json \ "numList").as[List[Int]]
+  def fasHmmer(jobID : String, numList : Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
       getResult(jobID).map {
         case Some(jsValue) => Ok(getFas(Hmmer.parseHmmerResult(jsValue), numList))
         case _ => NotFound
@@ -43,9 +41,9 @@ class HmmerController @Inject() (val reactiveMongoApi : ReactiveMongoApi) extend
     fas.mkString
   }
 
-  def getFas(result : HmmerResult, list: List[Int]): String = {
+  def getFas(result : HmmerResult, list: Seq[Int]): String = {
     val fas = list.map { num =>
-        ">" + result.HSPS(num.toInt).accession + "\n" + result.HSPS(num.toInt).hit_seq + "\n"
+        ">" + result.HSPS(num -1 ).accession + "\n" + result.HSPS(num - 1).hit_seq + "\n"
       }
     fas.mkString
   }

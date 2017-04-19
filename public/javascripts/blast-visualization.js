@@ -215,6 +215,16 @@ function preprocessingForward(selectedTool, boolSelectedHits,boolEvalue, evalue,
     return jsonData;
 }
 
+
+function getCheckedCheckboxes(className ){
+    var json = [];
+    $('input:checkbox.' + className + ":checked").each(function () {
+        json.push($(this).val());
+    });
+    return json;
+}
+
+
 /**
  *  this function applies a range on jsData containing seqs
  * @param jsonData
