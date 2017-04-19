@@ -1,12 +1,11 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import java.nio.file.attribute.PosixFilePermission
 
 import com.typesafe.config.ConfigFactory
 import play.api.Logger
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, Controller}
 
 import scala.concurrent.Future
 import scala.sys.process._
@@ -25,11 +24,11 @@ class HHpredController @Inject()(webJarAssets : WebJarAssets) extends Controller
   templateAlignmentScript.setPermissions(filePermissions)
 
 
-  def show3DStructure(accession: String) = Action { implicit request =>
+  def show3DStructure(accession: String) : Action[AnyContent] = Action { implicit request =>
     Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
   }
 
-  def runScript(jobID: String, accession: String) = Action.async {
+  def runScript(jobID: String, accession: String) : Action[AnyContent] = Action.async {
     if(!templateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${templateAlignmentScript.name} is not executable.")

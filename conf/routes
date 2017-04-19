@@ -142,6 +142,10 @@ GET           /api/jobs/getnotes/:jobID               @controllers.Jobs.getAnnot
 # Results
 GET           /api/job/results/:jobID                 @controllers.DataController.get(jobID: String)
 
+# DataTables
+
+GET           /api/job/results/psidt/:jobID/:numiter  @controllers.DataController.psiDT(jobID: String, numiter: Int)
+
 # Article
 GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)
 POST          /api/writeArticle                       @controllers.DataController.writeArticle(title: String, text: String, imagePath: String)

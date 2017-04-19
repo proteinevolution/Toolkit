@@ -5,7 +5,7 @@ import java.nio.file.attribute.PosixFilePermission
 
 import com.typesafe.config.ConfigFactory
 import play.api.Logger
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, Controller}
 
 import scala.concurrent.Future
 import scala.sys.process._
@@ -26,11 +26,11 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets) extends Controlle
   retrieveFullSeqScript.setPermissions(filePermissions)
 
 
-  def show3DStructure(accession: String) = Action { implicit request =>
+  def show3DStructure(accession: String) : Action[AnyContent] = Action { implicit request =>
     Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
   }
 
-  def retrieveTemplateAlignment(jobID: String, accession: String) = Action.async {
+  def retrieveTemplateAlignment(jobID: String, accession: String) : Action[AnyContent] = Action.async {
     if(jobID.isEmpty || accession.isEmpty){
       Logger.info("either job or accession is empty")
     }
@@ -48,7 +48,7 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets) extends Controlle
     }
   }
 
-  def retrieveFullSeq(jobID: String) = Action.async { implicit request =>
+  def retrieveFullSeq(jobID: String) : Action[AnyContent] = Action.async { implicit request =>
     if(!templateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeqScript.name} is not executable.")
