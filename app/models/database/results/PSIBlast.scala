@@ -33,7 +33,7 @@ object PSIBlast {
   def parsePSIBlastResult(json: JsValue): PSIBlastResult = json match {
     case obj: JsObject => try {
       val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" ).as[List[JsObject]].size-1
-      val jobID = (obj \ "jobID").as[String]
+
       val hits = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ iter_num \ "search" \ "hits").as[List[JsObject]]
       val num_hits = hits.length
       val hsplist = hits.map{ x =>
@@ -47,7 +47,7 @@ object PSIBlast {
     val descriptionBase = hit \ "description" \ 0
     val hsps = hit \ "hsps" \ 0
     val evalue = (hsps \ "evalue").getOrElse(Json.toJson(-1)).as[Double]
-    val num = (hsps \ "num").getOrElse(Json.toJson(-1)).as[Int]
+    val num = (hit \ "num").getOrElse(Json.toJson(-1)).as[Int]
     val bitscore = (hsps \ "bit_score").getOrElse(Json.toJson(-1)).as[Double]
     val score = (hsps \ "score").getOrElse(Json.toJson(-1)).as[Int]
     val positive = (hsps \ "positive").getOrElse(Json.toJson(-1)).as[Int]

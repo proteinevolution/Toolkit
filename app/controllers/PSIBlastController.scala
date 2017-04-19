@@ -1,23 +1,25 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
-import java.nio.file.attribute.PosixFilePermission
 
-import com.typesafe.config.ConfigFactory
-import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Controller}
-
-import scala.concurrent.Future
+import java.nio.file.attribute.PosixFilePermission
+import com.typesafe.config.ConfigFactory
 import scala.sys.process._
 import better.files._
 import models.Constants
+import models.database.results.{PSIBlast, PSIBlastResult}
+import play.api.mvc.{Action, AnyContent, Controller}
+import javax.inject.Inject
+import play.modules.reactivemongo.ReactiveMongoApi
+import scala.concurrent.Future
 import modules.CommonModule
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 /**
   * Created by drau on 01.03.17.
   */
-class PsiblastController @Inject()(webJarAssets : WebJarAssets) extends Controller with Constants {
+class PSIBlastController @Inject()(webJarAssets : WebJarAssets, val reactiveMongoApi : ReactiveMongoApi) extends Controller with Constants with CommonModule{
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
   private val alignSeqs = (serverScripts + "/align.sh").toFile
@@ -69,6 +71,36 @@ class PsiblastController @Inject()(webJarAssets : WebJarAssets) extends Controll
     }
   }
 
+
+  def evalPSIBlast(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+    getResult(jobID).map {
+      case Some(jsValue) => Ok(getFasEval(PSIBlast.parsePSIBlastResult(jsValue), eval.toDouble))
+      case _=> NotFound
+    }
+  }
+
+  def fasPSIBlast(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+    getResult(jobID).map {
+      case Some(jsValue) => Ok(getFas(PSIBlast.parsePSIBlastResult(jsValue), numList))
+      case _ => NotFound
+    }
+  }
+
+  def getFasEval(result : PSIBlastResult, eval : Double): String = {
+    val fas = result.HSPS.map { hit =>
+      if(hit.evalue < eval){
+        ">" + hit.accession + "\n" + hit.hit_seq + "\n"
+      }
+    }
+    fas.mkString
+  }
+
+  def getFas(result : PSIBlastResult, list: Seq[Int]): String = {
+    val fas = list.map { num =>
+      ">" + result.HSPS(num - 1).accession + "\n" + result.HSPS(num - 1).hit_seq + "\n"
+    }
+    fas.mkString
+  }
 
 
 

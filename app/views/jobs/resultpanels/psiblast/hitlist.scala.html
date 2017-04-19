@@ -157,7 +157,7 @@ var chosenDB = null;
     // adding loading overlay
     $(document).ajaxStart(function(){
         $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
-        });
+    });
     $(document).ajaxComplete(function(){
         $.LoadingOverlay("hide");
     });
@@ -176,98 +176,40 @@ var chosenDB = null;
         });
     });
 
-    var dataRoute = jsRoutes.controllers.DataController.get("@jobID");
-    $.ajax({
-        method: dataRoute.method,
-        url: dataRoute.url
-    }).done(function(data_) {
+    var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
+    var selectAllBool_@{tool.toolNameShort} = false;
+    var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
+    var chosenDB = null;
+    var numHits = @{result.num_hits};
+    var urlParams = "/api/job/@jobID";
+    var urlQuery = "/files/" + @jobID + "/query.json";
+    var evalueParam = null;
 
-        var numIterations = data_.output_psiblastp.BlastOutput2[0].report.results.iterations.length - 1;
-        var basenameResults = data_.output_psiblastp.BlastOutput2[0].report.results.iterations[numIterations].search;
-        data = basenameResults;
-
-        hits = basenameResults.hits;
-        var numHits = hits.length;
-        var info = basenameResults.stat;
-
-        // get jobinformation
-
-        var url = "/api/job/@jobID";
-        $.getJSON(url, function(data_){
-            chosenDB = data_.paramValues.standarddb;
-            evalueParam = data_.paramValues.inclusion_ethresh;
-            // check all betther than evalue
-            checkAllBetterThan(evalueParam);
-        });
+    $.getJSON(urlParams, function(data_){
+        chosenDB = data_.paramValues.standarddb;
+        evalueParam = data_.paramValues.inclusion_ethresh;
+    });
 
 
-
-        query = data_.query;
+    $.getJSON(urlQuery, function(query){
         firstQueryName = ">" + query[0][0];
         firstQuerySequence = query[0][1];
         firstQueryLength = firstQuerySequence.length;
-
         if(numHits > 0){
-        drawDataTable(hits);
-        drawInformation(info);
-        //fill first query name and sequence for slider resubmit
+            firstQueryStart = @result.HSPS(0).query_start;
+            firstQueryEnd = @result.HSPS(0).query_end;
+            /* without timeout SLIDER is displayed */
+            setTimeout(function () {
+                slider_show(firstQueryLength, firstQueryStart, firstQueryEnd)
+            }, 1000);
 
-        firstQueryStart = hits[0].hsps[0].query_from;
-        firstQueryEnd = hits[0].hsps[0].query_to;
-        /* without timeout SLIDER is displayed */
-        setTimeout(function () {
-            slider_show(firstQueryLength, firstQueryStart, firstQueryEnd)
-        }, 1000);
+            $("#accordion").foundation();
 
-        $("#accordion").foundation();
         }
     });
-
 })();
 
 
-function drawInformation(info ){
-    /*  INFO TAB*/
-    $("#psiblast_query").append(firstQueryName);
-    $("#psiblast_queryLength").append(firstQueryLength);
-    $("#psiblast_db").append(chosenDB);
-
-}
-
-function drawDataTable(hits){
-
-    hitlist = $('#htb').dataTable({
-        "bInfo": false,
-        "bFilter": true,
-        "bLengthChange": true,
-        "aaData": hits,
-        "scrollX": true,
-        "aoColumns": [
-
-            {"mDataProp": "num"},
-            {"mDataProp": "description.0.accession", render: function (data){return getSingleLink(data)}},
-            {"mDataProp": "description.0.title"},
-            {
-                "mDataProp": "hsps.0.evalue", render: function (data) {
-                return data.toExponential(2);
-            }
-            },
-            {"mDataProp": "hsps.0.score"},
-            {"mDataProp": "hsps.0.bit_score"},
-            {"mDataProp": "hsps.0.identity"},
-            {"mDataProp": "len"}
-        ],
-        'columnDefs': [{
-            'targets': 0,
-            'searchable': false,
-            'orderable': true,
-            'render': function (data){
-                return '<input type="checkbox" class="checkbox_@{tool.toolNameShort}" value="' + $('<div/>').text(data).html() + '"><a onclick="scrollToElem('+data+')">'+data+'</a>';
-            }
-        }]
-    });
-
-}
 
 
 function _deselectAll(){
@@ -275,7 +217,7 @@ function _deselectAll(){
 }
 
 window["@{tool.toolNameShort}_selectAll"] = function () {
-    selectAllDatatable(this.hitlist.fnGetNodes());
+    //selectAllDatatable(this.hitlist.fnGetNodes());
     this.selectAllBool_@{tool.toolNameShort} = !this.selectAllBool_@{tool.toolNameShort};
     if(this.selectAllBool_@{tool.toolNameShort}) {
         selectAll(checkbox_@{tool.toolNameShort});
@@ -287,89 +229,51 @@ window["@{tool.toolNameShort}_selectAll"] = function () {
     }
 };
 
-function onFullscreenToggle() {
-    hitlist.draw();
-}
-
-function checkAllBetterThan(evalue){
-    var jsonData = {};
-    jsonData.accessions = [];
-    jsonData.seqs = [];
-    jsonData.index = [];
-    // get values of all checked Checkboxes
-    hits.forEach(function callback(currentValue) {
-        if (currentValue.hsps[0].evalue < evalue) {
-            $(":checkbox[value="+currentValue.num+"]").prop("checked","true");
-            jsonData.accessions.push(currentValue.description[0].accession);
-            jsonData.seqs.push(currentValue.hsps[0].hseq);
-            jsonData.index.push(currentValue.num-1);
-        }
-    });
-    return jsonData;
-}
-
-
-function getCheckboxesData(){
-    var jsonData = {};
-    jsonData.accessions = [];
-    jsonData.seqs = [];
-    jsonData.index = [];
-
-
-    // get all checked checkboxes and their respective accession
-    $('input:checkbox.' + checkbox_@{tool.toolNameShort} + ":checked").each(function () {
-        var index = $(this).val() - 1;
-        var seq = hits[index].hsps[0].hseq;
-        if (jsonData.seqs.indexOf(seq) == -1) {
-            jsonData.accessions.push(hits[index].description[0].accession);
-            jsonData.seqs.push(seq);
-            jsonData.index.push(index);
-        }
-    });
-    return jsonData;
-}
 
 window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
-    var dataTmp = preprocessingForward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength);
     // full seq is retrieved
+    var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
+
     if(boolFullLength) {
-        // retrieve full Seq
-        var jsonData = new Object();
-        jsonData.db =  chosenDB;
-        jsonData.accessionsStr = dataTmp.accessions.join(" ");
-
-
-        $.ajax({
-            url: 'retrieveFullSeq/@jobID',
-            contentType: "application/json",
-            type: 'POST',
-            data: JSON.stringify(jsonData)
-        }).done(function() {
+        if(boolEvalue) {
+            // retrieve full Seq
+            var jsonData = new Object();
+            jsonData.db = chosenDB;
+            jsonData.accessionsStr = dataTmp.accessions.join(" ");
+            $.ajax({
+                url: 'retrieveFullSeq/@jobID',
+                contentType: "application/json",
+                type: 'POST',
+                data: JSON.stringify(jsonData)
+            }).done(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: 'files/@jobID/sequences.fa'
+                }).done(function (data_) {
+                    forward(selectedTool, data_.toString());
+                });
+            });
+        }else if (boolSelectedHits){
+        }
+    }else{
+        if(boolEvalue) {
             $.ajax({
                 type: 'GET',
-                url: 'files/@jobID/sequences.fa'
+                url: 'evalPSIBlast/@jobID/'+evalue
             }).done(function (data_) {
-                forward(selectedTool, data_.toString());
+                forward(selectedTool, data_);
             });
-        });
-    }else{
-        var forwardData = '';
-        var alignmentData;
-        // get alignment json
-        var fileUrl = "/files/@jobID/@{jobID}.alignment.json";
-        $.getJSON(fileUrl, function (data_) {
-            alignmentData = data_;
-            var numOfQuery = query.length;
-            for(var i=0; i < dataTmp.index.length; i++){
-                // index + number of querys because alignment json contains query sequences in alignment first
-                var index = dataTmp.index[i];
-                forwardData += ">" + alignmentData[index + numOfQuery][0] + '\n';
-                forwardData += alignmentData[index+ numOfQuery][1] + '\n';
-            }
-            forward(selectedTool, forwardData);
-        });
+        }else if(boolSelectedHits){
+            var route = jsRoutes.controllers.PSIBlastController.fasPSIBlast('@jobID', checkedCheckboxes);
+            $.ajax({
+                method: route.method,
+                url: route.url
+            }).done(function (data_) {
+                forward(selectedTool, data_);
+            });
+        }
     }
-}
+};
 
 window["@{tool.toolNameShort}_resubmitSection"] = function(){
     resubmitSection(firstQuerySequence, firstQueryName);
