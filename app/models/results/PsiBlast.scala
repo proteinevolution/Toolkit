@@ -8,21 +8,14 @@ package models.results
  *
  */
 import models.Constants
-import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 
 import scala.io.Source
-import modules.parsers.FASTA
-import net.ruippeixotog.scalascraper.dsl.DSL._
-import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
-import net.ruippeixotog.scalascraper.dsl.DSL.Parse._
-import net.ruippeixotog.scalascraper.model.Element
 import better.files._
-import play.api.Logger
+
+
 
 object PsiBlast extends Constants {
 
-
-  val browser = JsoupBrowser()
 
 
   /* reads the evalues.dat file from the job directory and returns the evalues as a list */
@@ -39,6 +32,7 @@ object PsiBlast extends Constants {
   def blastviz(mainID: String) : String = {
     s"$jobPath$mainID/results/blastviz.html".toFile.contentAsString
   }
+
 
 
 
