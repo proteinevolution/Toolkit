@@ -1,15 +1,14 @@
 package models.tools
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.JsValue
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import modules.CommonModule
-import play.api.libs.json.JsLookupResult
 import play.api.mvc.{AnyContent, Request}
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.twirl.api.Html
 import models.database.results.Hmmer._
+import models.database.results.PSIBlast._
 
 import scala.concurrent.Future
 
@@ -54,7 +53,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     toolname match {
 
       case "psiblast" => getResult(jobID).map {
-        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID, jsvalue, this.values(toolname))),
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID, parsePSIBlastResult(jsvalue), this.values(toolname))),
           ("E-values", views.html.jobs.resultpanels.evalues(jobID)))
         case None => Seq.empty
       }
