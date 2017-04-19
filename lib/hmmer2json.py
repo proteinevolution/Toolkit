@@ -99,30 +99,21 @@ def hsp2dict(hsp, num):
     return hsp_json
 
 
-def hmmer2json(in_file, evalue):
+def hmmer2json(in_file, max_num):
     """
     Reads hmmer results with biopython and turns
     it into data that can be serialized with json.
 
     :param in_file: Input file with hmmer results
-    :param evalue: e-value of inclusion threshold,
-                   based on that hits and HSPs will
-                   be in the above or below threshold
-                   lists.
+    :param max_num: max number of hits in output file
     :return: json dict
     """
 
     # This is how json output will be structured
     results = {'id': '',
                'description': '',
-               'hits': {
-                   'above_threshold': [],
-                   'below_threshold': []
-               },
-               'hsps': {
-                   'above_threshold': [],
-                   'below_threshold': []
-               }
+               'hits': [],
+               'hsps': [],
                }
 
     # Not the best way to do this, but for now it will work
@@ -142,12 +133,8 @@ def hmmer2json(in_file, evalue):
             i = 1
             # Read hits table and add to results dict
             for hit in qres.hits:
-                if hit.evalue <= evalue:
-                    results['hits']['above_threshold'].append(hit2dict(hit=hit,
-                                                                       num=i))
-                    i += 1
-                else:
-                    results['hits']['below_threshold'].append(hit2dict(hit=hit,
+                if hit.num <= max_num:
+                    results['hits'].append(hit2dict(hit=hit,
                                                                        num=i))
                     i += 1
 
@@ -163,14 +150,9 @@ def hmmer2json(in_file, evalue):
                     hsps[favorite.hit_id] = favorite
 
     # Add unique domains in the same order as hits
-    for hit in results['hits']['above_threshold']:
+    for hit in results['hits']:
         curr_hsp = hsps[hit['id']]
-        results['hsps']['above_threshold'].append(hsp2dict(hsp=curr_hsp,
-                                                           num=hit['num']))
-
-    for hit in results['hits']['below_threshold']:
-        curr_hsp = hsps[hit['id']]
-        results['hsps']['below_threshold'].append(hsp2dict(hsp=curr_hsp,
+        results['hsps'].append(hsp2dict(hsp=curr_hsp,
                                                            num=hit['num']))
 
     return results

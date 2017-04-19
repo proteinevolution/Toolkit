@@ -9,6 +9,7 @@ import play.api.libs.json.JsLookupResult
 import play.api.mvc.{AnyContent, Request}
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.twirl.api.Html
+import models.database.results.Hmmer._
 
 import scala.concurrent.Future
 
@@ -92,7 +93,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 //        ("Domain_Table", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/domtbl"))))
 
       case "hmmer" => getResult(jobID).map {
-        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hmmer.hitlist(jobID, jsvalue, this.values(toolname))))
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hmmer.hitlist(jobID, parseHmmerResult(jsvalue), this.values(toolname))))
         case None => Seq.empty
       }
       case "hhpred" => getResult(jobID).map {
@@ -369,7 +370,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
             lazy val paramGroups = Map(
               "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
-                paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name, paramAccess.PROTEOMES.name)
+                paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name, paramAccess.PROTEOMES.name, paramAccess.HMMER_DB.name)
             )
             // Params which are not a part of any group (given by the name)
             lazy val remainParamName : String = "Parameters"

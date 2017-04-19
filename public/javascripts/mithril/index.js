@@ -151,7 +151,7 @@ trafficBarComponent = {
 // TODO add different type of tile (bigger one?)
 tilescomponent = {
     model: function () {
-        var getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(5);
+        var getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(2);
         return {
             articles: m.request({
                 url: getRecentArticlesRoute.url,
@@ -178,9 +178,10 @@ tilescomponent = {
                         ),
                         m("div", {"class": "tile_right"},
                             m("div", {"class": "rightContainer"},
-                                m("a", article.title),
+                                m("a", {href: article.link},article.title),
                                 m("hr"),
-                                m("p", article.text)
+                                m("p", article.text),
+                                m("a", {href: article.link}, m("i", {"class": "fa  fa-angle-right fa-2x"}))
                             )
                         )
                     )
