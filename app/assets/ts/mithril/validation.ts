@@ -122,8 +122,8 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                 $(elem).attr("placeholder", "Enter protein sequences (<20000) in FASTA format");
                 break;
 
-            case "phylip":
-                $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<200) in FASTA or CLUSTAL format");
+            case "phyml":
+                $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<100) in FASTA or CLUSTAL format");
                 break;
 
             case "6frametranslation":
@@ -524,18 +524,18 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
                     break;
 
-                case "phylip":
+                case "phyml":
 
-                    let phylipTarget = new alignmentVal($(elem));
-                    phylipTarget.basicValidation();
+                    let phymlTarget = new alignmentVal($(elem));
+                    phymlTarget.basicValidation();
 
-                    if (phylipTarget.basicValidation()) {
-                        phylipTarget.sameLengthValidation();
-                        if (phylipTarget.sameLengthValidation())
-                            phylipTarget.mustHave2();
+                    if (phymlTarget.basicValidation()) {
+                        phymlTarget.sameLengthValidation();
+                        if (phymlTarget.sameLengthValidation())
+                            phymlTarget.mustHave2();
                     }
 
-                    seqLimit = 200;
+                    seqLimit = 100;
 
                     break;
 
