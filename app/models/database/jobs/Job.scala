@@ -18,12 +18,12 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
                ownerID     : Option[BSONObjectID] = None, // User to whom the Job belongs
                project     : Option[BSONObjectID] = None,
                status      : JobState,                    // Status of the Job
-               deletion    : Option[JobDeletion] = None,      // Deletion Flag showing the reason for the deletion
+               emailUpdate : Boolean              = false, // Owner wants to be notified when the job is ready
+               deletion    : Option[JobDeletion]  = None, // Deletion Flag showing the reason for the deletion
                tool        : String,                      // Tool used for this Job
                label       : Option[String],
-               statID      : String = "",                 //
                watchList   : List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
-               commentList : List[BSONObjectID] = List.empty, // List of Option[BSONObjectID]comments for the Job
+               commentList : List[BSONObjectID] = List.empty, // List of comment IDs for the Job
                clusterData : Option[JobClusterData] = None,  // Cluster Data
                dateCreated : Option[DateTime],            // Creation time of the Job
                dateUpdated : Option[DateTime],            // Last Updated on
@@ -84,9 +84,6 @@ case class Jobitem(mainID: String,
                    views: Seq[(String, Html)],
                    paramValues: Map[String, String])
 
-
-
-
 object Job {
   // Constants for the JSON object identifiers
   val ID            = "id"            // name for the ID in scala
@@ -97,18 +94,16 @@ object Job {
   val OWNERID       = "ownerID"       //              ID of the job owner
   val OWNER         = "owner"         //              Name of the job owner
   val STATUS        = "status"        //              Status of the job field
+  val EMAILUPDATE   = "emailUpdate"   //              check if the user wants a notification when the job is done
   val DELETION      = "deletion"      //              Deletion status flag
   val TOOL          = "tool"          //              name of the tool field
   val LABEL         = "label"
-  val STATID        = "statID"        //              ID of the stats for this Job
   val WATCHLIST     = "watchList"     //              optional list of watching users references
   val COMMENTLIST   = "commentList"   //              comment list references
   val CLUSTERDATA   = "clusterData"   //              detailed data on the cluster usage
   val DATECREATED   = "dateCreated"   //              created on field
   val DATEUPDATED   = "dateUpdated"   //              changed on field
   val DATEVIEWED    = "dateViewed"    //              last view on field
-
-  //implicit val format: Format[Job] = Json.format[Job]
 
   implicit object JsonReader extends Reads[Job] {
     // TODO this is unused at the moment, as there is no convertion of JSON -> Job needed.
@@ -123,7 +118,6 @@ object Job {
         val deletion    = (obj \ DELETION).asOpt[JobDeletion]
         val tool        = (obj \ TOOL).asOpt[String]
         val label       = (obj \ LABEL).asOpt[String]
-        val statID      = (obj \ STATID).asOpt[String]
         val watchList   = (obj \ WATCHLIST).asOpt[List[String]]
         val commentList = (obj \ COMMENTLIST).asOpt[List[String]]
         val dateCreated = (obj \ DATECREATED).asOpt[String]
@@ -158,9 +152,9 @@ object Job {
       OWNERID     -> job.ownerID,
       PROJECT     -> job.project,
       STATUS      -> job.status,
+      EMAILUPDATE -> job.emailUpdate,
       DELETION    -> job.deletion,
       TOOL        -> job.tool,
-      STATID      -> job.statID,
       WATCHLIST   -> job.watchList,
       COMMENTLIST -> job.commentList,
       CLUSTERDATA -> job.clusterData,
@@ -181,10 +175,10 @@ object Job {
           ownerID     = bson.getAs[BSONObjectID](OWNERID),
           project     = bson.getAs[BSONObjectID](PROJECT),
           status      = bson.getAs[JobState](STATUS).getOrElse(Error),
+          emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
           deletion    = bson.getAs[JobDeletion](DELETION),
           tool        = bson.getAs[String](TOOL).getOrElse(""),
           label       = bson.getAs[String](LABEL),
-          statID      = bson.getAs[String](STATID).getOrElse(""),
           watchList   = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
           commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
           clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
@@ -199,25 +193,27 @@ object Job {
     * Object containing the writer for the Class
     */
   implicit object Writer extends BSONDocumentWriter[Job] {
-    def write(job: Job) : BSONDocument = BSONDocument(
-      IDDB        -> job.mainID,
-      PARENTID    -> job.parentID,
-      JOBID       -> job.jobID,
-      OWNERID     -> job.ownerID,
-      PROJECT     -> job.project,
-      STATUS      -> job.status,
-      DELETION    -> job.deletion,
-      TOOL        -> job.tool,
-      LABEL       -> job.label,
-      STATID      -> job.statID,
-      WATCHLIST   -> job.watchList,
-      COMMENTLIST -> job.commentList,
-      CLUSTERDATA -> job.clusterData,
-      DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
-      DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
-      DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis))
-    )
+    def write(job: Job) : BSONDocument = {
+      val emailUpdate = if (job.emailUpdate) Some(true) else None
+      BSONDocument(
+        IDDB        -> job.mainID,
+        PARENTID    -> job.parentID,
+        JOBID       -> job.jobID,
+        OWNERID     -> job.ownerID,
+        PROJECT     -> job.project,
+        STATUS      -> job.status,
+        EMAILUPDATE -> emailUpdate,
+        DELETION    -> job.deletion,
+        TOOL        -> job.tool,
+        LABEL       -> job.label,
+        WATCHLIST   -> job.watchList,
+        COMMENTLIST -> job.commentList,
+        CLUSTERDATA -> job.clusterData,
+        DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
+        DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
+        DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis))
+      )
+    }
   }
 }
-
 
