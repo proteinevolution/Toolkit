@@ -28,6 +28,15 @@ div#main-container {
     margin-right: 0;
 }
 
+
+#main-content {
+    padding-top: 20px;
+    min-height: 100%;
+    display: flex;
+    margin-left: 0;
+    margin-right: 0;
+}
+
 div#main {
     margin-bottom: 55px;
     background-color: #cecece;
@@ -35,31 +44,6 @@ div#main {
     -webkit-box-shadow: 1px 3px 7px 4px rgba(200,200,200,0.75);
     -moz-box-shadow: 1px 3px 7px 4px rgba(200,200,200,0.75);
     box-shadow: 1px 3px 7px 4px rgba(200,200,200,0.75);
-}
-
-
-#sidebar {
-    padding-top: 3.75em;
-    padding-left: 1.2em;
-    min-height: 40rem;
-}
-
-.d {
-    background-color: #DBFFDB;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-.d:hover {
-    background-color: #C3FFC3;
-    border: solid red thick;
-}
-.d.selected {
-    background-color: #C3FFC3;
-    box-shadow: 1px 0 6px darkgreen;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 3px;
-
 }
 
 #job-manager-button{
@@ -71,71 +55,6 @@ div#main {
     border: solid 1px lightgray !important;
 }
 
-.e {
-    background-color: #FFDDDD;
-}
-.e:hover {
-    background-color: #FFC5C5;
-}
-.e.selected {
-    background-color: #FFC5C5;
-    box-shadow: 1px 0 6px #d2071d;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 3px;
-}
-
-
-.r{
-    background-color: #FFFF94;
-}
-.r:hover {
-    background-color: #FFF666;
-}
-.r.selected {
-    background-color: #FFF666;
-    box-shadow: 1px 0 6px #dcb21f;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 3px;
-
-}
-
-.q {
-    background-color: #c0b5bf;
-}
-.q:hover {
-    background-color: #c0b5bf;
-}
-.q.selected {
-    background-color: #c0b5bf;
-    box-shadow: 1px 0 6px #9192af;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 3px;
-}
-
-.i {
-    background-color: #f2f2f2;
-}
-.i:hover {
-    background-color: #DADADA;
-}
-.i.selected {
-    background-color: #DADADA;
-}
-
-.p {
-    background-color: #f2f2f2;
-}
-.p:hover {
-    background-color: #DADADA;
-}
-.p.selected {
-    background-color: #DADADA;
-}
-
-
 .clear{
     border: 0;
 }
@@ -144,22 +63,6 @@ tr.spaceUnder > td
 {
     padding-bottom: 0em;
 }
-
-/*
-.content {
-    width: 60%;
-    margin-left: 6.250em;
-    padding-top: 6.250em;
-    padding-left: 3.125em;
-    padding-right: 3.125em;
-}
-
-#content {
-    width: 100%;
-    padding: 0.625em 0.625em 0.625em 0.625em;
-}
-*/
-
 
 .alnviz{
 
@@ -218,14 +121,6 @@ tr.job a:visited {
 
 .padded-column {
     padding: 0.625em;
-}
-
-#main-content {
-    padding-top: 20px;
-    min-height: 100%;
-    display: flex;
-    margin-left: 0;
-    margin-right: 0;
 }
 
 .example-alignment {
@@ -370,10 +265,6 @@ textarea { resize:both; }
 
 }
 
-.job div {
-    width: 43% !important;
-}
-
 #job_id span {
 
     color: grey !important;
@@ -388,24 +279,6 @@ textarea { resize:both; }
     font-weight: normal !important;
 }
 
-.nav-tabs {
-    color: #787878;
-    font-weight: bold;
-    font-size: 12px;
-    text-align: center;
-    padding: 0;
-    border: none;
-    width: 91%;
-    height: 40em;
-    display: none;
-    -webkit-box-shadow: 1px 1px 5px 0px rgba(102,102,102,1);
-    -moz-box-shadow: 1px 1px 5px 0px rgba(102,102,102,1);
-    box-shadow: 1px 1px 5px 0px rgba(102,102,102,1);
-}
-
-
-
-
 [data-accordion-menu] ul {
     display: none;
 }
@@ -417,12 +290,6 @@ textarea { resize:both; }
 
 .noFouc {
     display: none;
-}
-
-#jobid {
-    border-radius: 3px;
-    font-size: 0.65em;
-    width: 250px;
 }
 
 #past_example a {
@@ -487,34 +354,6 @@ textarea { resize:both; }
     height: 100%;
 }
 
-
-
-#sub-nav {
-    color: #848484;
-    padding: 3px 5px;
-    margin-bottom: 1em;
-    border-top-color: rgb(204, 204, 204);
-    border-right-color: rgb(204, 204, 204);
-    border-bottom-color: rgb(204, 204, 204);
-    border-left-color: rgb(204, 204, 204);
-    -moz-border-top-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-bottom-colors: none;
-    -moz-border-left-colors: none;
-    border-image-source: none;
-    border-image-repeat: stretch stretch;
-    text-align: center;
-    height: 20px;
-    bottom: 0;
-    width: 100%;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
-
-}
-#sub-nav a {
-    color: gray;
-    font-size: 0.575em;
-    padding: 0 1em 0 1em;
-}
 
 .dropzone{
 

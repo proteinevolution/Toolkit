@@ -122,6 +122,9 @@
   margin: auto;
 }
 
+#auth-alert {
+  margin-top: 1em;
+}
 
 #hamburgerInside {
   position: absolute;
@@ -151,9 +154,40 @@ button.loggedIn {
 }
 
 .is-dropdown-submenu {
-  width: 100px !important;
   box-shadow: 2px 5px 6px rgba(0,0,0,0.3);
 
+}
+
+.submenu {
+  min-width: 90px;
+  width: 90px;
+  font-size: 0.75em;
+  margin-top: 0.85em;
+  border: none;
+
+}
+
+.submenu:after {
+  content: "";
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-bottom-color: white;
+  border-top: none;
+  position: absolute;
+  margin-left: 2.95em;
+  margin-top: -6.2em;
+}
+
+.submenu a {
+  padding: 0.75em 0.75em 0.75em 0.75em !important;
+}
+
+.submenu i {
+  margin-right: 0.7em !important;
+  margin-bottom: 0.2em;
+  color: #666;
+  opacity: 0.6;
 }
 
 .menu.vertical > li a:not(.button):hover {

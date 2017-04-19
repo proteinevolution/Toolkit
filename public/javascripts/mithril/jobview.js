@@ -299,12 +299,16 @@ JobTabsComponent = {
                     if (typeof onCollapse === "function") {
                         onCollapse();
                     }
+                    $("#collapseMe").addClass("fa-expand");
+                    $("#collapseMe").removeClass("fa-compress");
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
                     if (typeof onExpand === "function") {
                         onExpand();
                     }
+                    $("#collapseMe").removeClass("fa-expand");
+                    $("#collapseMe").addClass("fa-compress");
                 }
                 if (typeof onFullscreenToggle === "function") {
                     return onFullscreenToggle();
@@ -335,16 +339,16 @@ JobTabsComponent = {
                         id: "notesTab"
                         //"class": "hasNotes"
                     }, "Notes")) ] : [] ,
-                document.cookie.split("&username=")[1] != 'invalid' ? [m("li", { style: "float: right;" },
-                        m("input", {
-                            type: "button",
-                            class: "button small button_fullscreen",
-                            value: "Add to project",
-                            onclick: function() {
-                                $('#projectReveal').foundation('open');
-                            },
-                            config: foundationConfig
-                        })
+                document.cookie.split("&username=")[1] != 'invalid' ? [m("li", { style: "float: right;" }
+                        // m("input", {
+                        //     type: "button",
+                        //     class: "button small button_fullscreen",
+                        //     value: "Add to project",
+                        //     onclick: function() {
+                        //         $('#projectReveal').foundation('open');
+                        //     },
+                        //     config: foundationConfig
+                        // })
                     )] : [],
                 m("li", { style: "float: right;" },
                     m("i", {
@@ -358,7 +362,7 @@ JobTabsComponent = {
                 ctrl.isJob ? m("li", { style: "float: right; margin-right: 24px; margin-top: 7px" },
                     m("i", {
                         type: "button",
-                        class: "delete icon-trash_can",
+                        class: "delete fa fa-trash-o",
                         title :"Delete job",
                         onclick: ctrl["delete"].bind(ctrl)
                     })
