@@ -9,6 +9,7 @@ import play.api.libs.json.JsLookupResult
 import play.api.mvc.{AnyContent, Request}
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.twirl.api.Html
+import models.database.results.Hmmer._
 
 import scala.concurrent.Future
 
@@ -92,7 +93,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 //        ("Domain_Table", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/domtbl"))))
 
       case "hmmer" => getResult(jobID).map {
-        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hmmer.hitlist(jobID, jsvalue, this.values(toolname))))
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hmmer.hitlist(jobID, parseHmmerResult(jsvalue), this.values(toolname))))
         case None => Seq.empty
       }
       case "hhpred" => getResult(jobID).map {
