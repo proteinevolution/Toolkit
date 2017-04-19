@@ -905,13 +905,11 @@ class AuthDropdown {
                     }, m("li", [
                         m("button", { class : "loggedIn", id: "auth-link-text"}, Auth.user.nameLogin),
                         m("ul", { class :"menu" }, [
-                            m("li", m("a", { onclick:function(e : Event) { return openNav("profile")} }, "Profile")),
-                            m("li", m("a", { href:"/#/" }, "Inbox")),
-                            m("li", m("a", { onclick:function(e : Event) { return openNav("user")} }, "User")),
-                            Auth.user.institute === "MPG" ? m("li", m("a", { href:"/#/backend/index" }, "Backend")) : null,
+                            m("li", m("a", { onclick:function(e : Event) { return openNav("profile")} }, m("i", {"class": "icon-user"}),"Profile")),
+                            Auth.user.institute === "MPG" ? m("li", m("a", { href:"/#/backend/index" }, m("i", {"class": "icon-display_graph"}), "Backend")) : null,
                             m("li", m("a", {
                                 onclick: function(e : Event) { window.location.replace("/signout") }
-                            }, "Sign Out"))
+                            },  m("i", {"class": "icon-signout"}), "Sign Out"))
                         ])
                     ])
                 )
