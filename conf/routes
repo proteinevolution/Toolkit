@@ -142,9 +142,13 @@ GET           /api/jobs/getnotes/:jobID               @controllers.Jobs.getAnnot
 # Results
 GET           /api/job/results/:jobID                 @controllers.DataController.get(jobID: String)
 
+# DataTables
+
+GET           /api/job/results/psidt/:jobID/:numiter  @controllers.DataController.psiDT(jobID: String, numiter: Int)
+
 # Article
 GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)
-POST          /api/writeArticle                       @controllers.DataController.writeArticle(title: String, text: String, imagePath: String)
+POST          /api/writeArticle                       @controllers.DataController.writeArticle(title: String, text: String, link: String, imagePath: String)
 
 # 3D structure
 GET          /structure3D/:accession                  @controllers.HHpredController.show3DStructure(accession : String)
@@ -161,3 +165,9 @@ POST         /fullSeqHHblits/:jobID                    @controllers.HHblitsContr
 
 # retrieveFullSeq
 POST        /retrieveFullSeq/:jobID                    @controllers.PsiblastController.retrieveFullSeqs(jobID : String)
+
+# Hmmer retrieve seqs with evale < threshold
+GET         /evalHmmer/:jobID/:eval                     @controllers.HmmerController.evalHmmer(jobID, eval)
+
+# Hmmer retrieve seqs with evale < threshold
+POST         /fasHmmer/:jobID                   @controllers.HmmerController.fasHmmer(jobID)

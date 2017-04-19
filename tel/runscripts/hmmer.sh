@@ -50,7 +50,7 @@ fi
 
     hmmer2json.py -i ../results/${JOBID}.outfilefl \
                   -o ../results/${JOBID}.json \
-                  -e %evalue.content
+                  -m 3
 
 # Generate Query in JSON
 fasta2json.py %alignment.path ../results/query.json

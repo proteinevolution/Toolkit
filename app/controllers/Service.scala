@@ -46,7 +46,7 @@ final class Service @Inject() (webJarAssets                                     
 
   implicit val timeout = Timeout(1.seconds)
 
-  def static(static: String) = Action { implicit request =>
+  def static(static: String) : Action[AnyContent] = Action { implicit request =>
 
     static match {
 
