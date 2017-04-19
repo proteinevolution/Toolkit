@@ -14,6 +14,7 @@ import reactivemongo.bson.Macros
 case class FeaturedArticle(articleID   : BSONObjectID,     // ID of the Article
                    title       : String,           //Title of the Article
                    text        : String,           // Article
+                   link        : String,
                    imagePath   : String,           // path of the image
                    dateCreated : Option[DateTime], // Creation time of the Article
                    dateUpdated : Option[DateTime]) // Last changed on (set this when replaced by a newer version)
@@ -24,6 +25,7 @@ object FeaturedArticle{
   val IDDB        = "_id"           //              ID in MongoDB
   val TITLE       = "title"
   val TEXT        = "text"
+  val LINK        = "link"
   val IMAGEPATH   = "imagePath"
   val DATECREATED = "dateCreated"   //              created on field
   val DATEUPDATED = "dateUpdated"   //              changed on field
@@ -38,6 +40,7 @@ object FeaturedArticle{
           articleID   = BSONObjectID.generate(),
           title = "",
           text = "",
+          link = "",
           imagePath = "",
           dateCreated = Some(new DateTime()),
           dateUpdated = Some(new DateTime())))
@@ -55,6 +58,7 @@ object FeaturedArticle{
       IDDB        -> featuredArticle.articleID,
       TITLE       -> featuredArticle.title,
       TEXT        -> featuredArticle.text,
+      LINK        -> featuredArticle.link,
       IMAGEPATH   -> featuredArticle.imagePath,
       DATECREATED -> featuredArticle.dateCreated.map(dt => dtf.print(dt)),
       DATEUPDATED -> featuredArticle.dateUpdated.map(dt => dtf.print(dt))
@@ -70,6 +74,7 @@ object FeaturedArticle{
         articleID   = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         title       = bson.getAs[String](TITLE).get,
         text        = bson.getAs[String](TEXT).getOrElse("Error Loading Article."),
+        link        = bson.getAs[String](LINK).get,
         imagePath   = bson.getAs[String](IMAGEPATH).getOrElse("Error Loading URL."),
         dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
         dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value))
@@ -85,6 +90,7 @@ object FeaturedArticle{
       IDDB        -> featuredArticle.articleID,
       TITLE       -> featuredArticle.title,
       TEXT        -> featuredArticle.text,
+      LINK        -> featuredArticle.link,
       IMAGEPATH   -> featuredArticle.imagePath,
       DATECREATED -> BSONDateTime(featuredArticle.dateCreated.fold(-1L)(_.getMillis)),
       DATEUPDATED -> BSONDateTime(featuredArticle.dateUpdated.fold(-1L)(_.getMillis))
