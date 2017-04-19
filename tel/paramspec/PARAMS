@@ -1,3 +1,4 @@
+hmmerdb GEN hmmerdb.py
 standarddb GEN standarddb.sh
 hhblitsdb  GEN hhblitsdb.py
 hhsuitedb  GEN hhsuitedb.py
