@@ -206,11 +206,13 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
 
       val clusterData = JobClusterData("", Some(h_vmem), Some(threads))
 
+      // Set private or public
+      val ownerOption = if(params.get("private").isDefined) { Some(user.userID) } else { None }
+
       // Make a new JobObject and set the initial values
-      // TODO Currently the job always belongs to the submitting user. Change the OwnerID to None for Public Jobs
       val job = Job(mainID      = BSONObjectID.generate(),
                     jobID       = jobID,
-                    ownerID     = Some(user.userID),
+                    ownerID     = ownerOption,
                     //project     = Some(BSONObjectID.generate()),
                     status      = Submitted,
                     emailUpdate = params.get(Job.EMAILUPDATE).isDefined,
@@ -226,7 +228,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       // Add job to database
       upsertJob(job)
       // filter unique parameters
-      val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE
+      val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "private"
 
       // get hold of the database in use
       val DBNAME = params match {
