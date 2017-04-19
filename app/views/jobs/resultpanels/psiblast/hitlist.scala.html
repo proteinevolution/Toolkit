@@ -1,17 +1,10 @@
-@import play.api.libs.json.JsObject
-@import play.api.libs.json.JsValue
-@import play.api.libs.json.JsArray
-@import play.api.Logger
-@import models.results.FileLoader
-@import play.api.libs.json.JsUndefined
-@import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
-@import modules.tel.TEL
-@(jobID: String, jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
+@import models.database.results.PSIBlastResult
+@(jobID: String, result: PSIBlastResult, tool: models.tools.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 @* Load html Map used for the image representation *@
 
-@if((jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ ((jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" ).as[List[JsObject]].size-1) \ "search" \ "hits").as[List[JsObject]].size < 1) {
+@if(result.num_hits < 1) {
     <div class="callout alert noHits" id="noHits">
         <h6>No hits found!</h6>
     </div>
@@ -73,83 +66,55 @@
             <form id="psiblast_templates">
                   <table class="unstriped">
                     <tbody>
-                        Number of sequences: @{{jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ ((jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" ).as[List[JsObject]].size-1)\ "search" \ "hits"}.as[List[JsObject]].size}
+                        Number of sequences: @{result.num_hits}
                         <br />
                         <br />
-                        @for((hit, index) <- ((jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ ((jsValue \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" ).as[List[JsObject]].size-1) \ "search" \ "hits").as[List[JsObject]]).zipWithIndex){
+                        @for(hit <- result.HSPS ){
                             @* hit number, links *@
                             <tr>
                                 <td></td>
                                 <td colspan="3">
-                                @{hit \ "description" \ 0 \ "accession" match {
-                                    case JsDefined(jsValue) => BlastVisualization.getLinks((hit \ "description" \ 0 \ "accession").get.as[String])
-                                    case undefined: JsUndefined => BlastVisualization.getLinks("undefinedAccession") ;
-                                }
-                                }
+
+                                   @BlastVisualization.getLinks(hit.accession)
                                 </td>
                                 <td></td>
                             </tr>
                             @* checkboxes, accession, name of hit*@
                             <tr class="header">
-                                <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{index+1}'> @{index+1}.</td>
+                                <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}.</td>
                             <td colspan="4">
-
-                                @{hit \ "description" \ 0 \ "accession"  match {
-                                    case JsDefined(jsValue) => {BlastVisualization.getSingleLink((hit \ "description" \ 0 \ "accession").get.as[String])}
-                                    case undefined: JsUndefined => Logger.info("hit.desciption[0].accession undefined in results!")
-                                }
-                                }
-                                @{"  "+(hit \ "description" \ 0 \ "title").get.as[String].replaceFirst(">", "")}
+                                @{BlastVisualization.getSingleLink(hit.accession)}
+                                @{"  "+hit.description}
                             </td>
                             </tr>
                             @* Alignment Details*@
                             <tr>
                                 <td></td>
-                            <td colspan="4">Score: @{(hit \ "hsps" \ 0 \ "bit_score").get}
-                                bits (@{(hit \ "hsps" \ 0 \ "score").get}),
-                                E-value: @{(hit \ "hsps" \ 0 \ "evalue").get},
-                                Identities: @{(hit \ "hsps" \ 0 \ "identity").get}/@{(hit \ "hsps" \ 0 \ "align_len").get}
-                                (@{BlastVisualization.calculatePercentage((hit \ "hsps" \ 0 \ "identity").get.toString, (hit \ "hsps" \ 0 \ "align_len").get.toString)}),
-                                Positives: @{(hit \ "hsps" \ 0 \ "positive").get}/@{(hit \ "hsps" \ 0 \ "align_len").get}
-                                (@{BlastVisualization.calculatePercentage((hit \ "hsps" \ 0 \ "positive").get.toString, (hit \ "hsps" \ 0 \ "align_len").get.toString)}),
-                                Gaps: @{(hit \ "hsps" \ 0 \ "gaps").get}/@{(hit \ "hsps" \ 0 \ "align_len").get}
-                                (@{BlastVisualization.calculatePercentage((hit \ "hsps" \ 0 \ "gaps").get.toString, (hit \ "hsps" \ 0 \ "align_len").get.toString)}),
-                                Length: @{(hit \ "hsps" \ 0 \ "align_len").get}
-
+                            <td colspan="4">Score: @{hit.bitscore}
+                                bits (@{hit.score}),
+                                E-value: @{hit.evalue},
+                                Identities: @{hit.identity}/@{hit.hit_len}
+                                (@{BlastVisualization.calculatePercentage(hit.identity, hit.hit_len)}),
+                                Positives: @{hit.positive}/@{hit.hit_len}
+                                (@{BlastVisualization.calculatePercentage(hit.positive, hit.hit_len)}),
+                                Gaps: @{hit.gaps}/@{hit.hit_len}
+                                (@{BlastVisualization.calculatePercentage(hit.gaps, hit.hit_len)}),
+                                Length: @{hit.hit_len}
                             </td>
-
                             </tr>
                             <tr>
                                 <td><br /></td>
                             </tr>
-
-
                             @* Query *@
-                            @{hit \ "hsps" \ 0 \ "qseq"  match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("Query" ,(hit \ "hsps" \ 0 \ "query_from").get.toString(), BlastVisualization.colorRegexReplacer({(hit \ "hsps" \ 0 \ "qseq").get.as[String]}), (hit \ "hsps" \ 0 \ "query_to").get.toString()))}
-                                case undefined: JsUndefined => Logger.info("query undefined in results!")
-                                }
-                            }
+                            @{BlastVisualization.makeRow("sequence", Array("Query" ,hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq), hit.query_end.toString))}
                             @* Midline *@
-                            @{hit \ "hsps" \ 0 \ "qseq"  match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("" , "" , BlastVisualization.SSColorReplace({(hit \ "hsps" \ 0 \ "midline").get.as[String]}), ""))}
-                                case undefined: JsUndefined => Logger.info("midline undefined in results!")
-                            }
-                            }
+                            @{BlastVisualization.makeRow("sequence", Array("" , "" , BlastVisualization.SSColorReplace(hit.midline), ""))}
                             @* Hit *@
-                            @{hit \ "hsps" \ 0 \ "qseq"  match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("Hit" ,(hit \ "hsps" \ 0 \ "hit_from").get.toString(), BlastVisualization.colorRegexReplacer({(hit \ "hsps" \ 0 \ "hseq").get.as[String]}), (hit \ "hsps" \ 0 \ "hit_to").get.toString()))}
-                                case undefined: JsUndefined => Logger.info("hit undefined in results!")
-                            }
-                            }
+                            @{BlastVisualization.makeRow("sequence", Array("Hit" ,hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))}
                             <tr>
                                 <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
                             </tr>
                         }
-
                     </tbody>
                   </table>
             </form>
