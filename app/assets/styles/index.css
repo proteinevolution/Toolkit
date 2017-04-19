@@ -404,9 +404,9 @@ select {
 }
 
 .rightContainer {
-    height: 4em;
+    height: 7em;
     overflow: hidden;
-    margin-top: 6em;
+    margin-top: 3em;
     -webkit-transition: all 0.5s linear;
     -moz-transition: all 0.5s linear;
     -o-transition: all 0.5s linear;
