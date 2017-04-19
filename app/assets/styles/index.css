@@ -379,7 +379,7 @@ select {
 
 
 .tile_left {
-    width: 60%;
+    width: 45%;
     height: 100%;
     opacity: 0.6;
     -webkit-transition: all 1s linear;
@@ -398,7 +398,7 @@ select {
     border-right-color: white;
     border-left: none;
     position: absolute;
-    margin-left: 7em;
+    margin-left: 4.45em;
     margin-top: 5.25em;
 
 }
@@ -413,9 +413,18 @@ select {
     transition: all 0.5s linear;
 }
 
+.rightContainer a, .rightContainer i {
+    cursor: pointer;
+}
+
+.rightContainer i {
+    float: right;
+    margin-top: 0.5em;
+}
+
 
 .tile_right {
-    width: 40%;
+    width: 55%;
     height: 100%;
     background-color: white;
     padding: 1em 1em 1em 1em;
@@ -424,7 +433,7 @@ select {
 }
 
 .tile_right:hover > .rightContainer {
-    margin-top: 1em;
+    margin-top: 2em;
     height: 100%;
     -webkit-transition: all 0.5s linear;
     -moz-transition: all 0.5s linear;
