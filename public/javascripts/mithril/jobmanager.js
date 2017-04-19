@@ -71,7 +71,7 @@ window.JobManager = {
 
     view: function (ctrl) {
         return [
-            m("div", {"class": "large-2 padded-column columns show-for-large", id: "sidebar"},
+            m("div", {"class": "large-2 padded-column columns show-for-large sidebar"},
                 m(JobListComponent, {activejobID: m.route.param("jobID")})
             ),
             m("div", {class: "jobManagerContainer large-10"},

@@ -1,17 +1,12 @@
 @import play.api.libs.json.JsObject
-@import play.api.libs.json.JsValue
-@import play.api.libs.json.JsArray
-@import play.api.Logger
-@import models.results.FileLoader
-@import play.api.libs.json.JsUndefined
-@import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
-@import modules.tel.TEL
-@(jobID: String, jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
+@import models.database.results.HmmerResult
+@import models.database.results.HmmerHSP
+@(jobID: String, result: HmmerResult, tool: models.tools.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 @* Load html Map used for the image representation *@
 
-@if((jsValue \ jobID \ "hsps" \ "above_threshold" ).as[List[JsObject]].size + (jsValue \ jobID \ "hsps" \ "below_threshold" ).as[List[JsObject]].size < 1) {
+@if(result.num_hits < 1) {
     <div class="callout alert noHits" id="noHits">
         <h6>No hits found!</h6>
     </div>
@@ -65,141 +60,49 @@
                 <form id="hhpred_templates">
                     <table class="unstriped">
                         <tbody>
-                            Number of sequences: @{{jsValue \ jobID \ "hsps" \ "above_threshold"}.as[List[JsObject]].size + {jsValue \ jobID \ "hsps" \ "below_threshold"}.as[List[JsObject]].size}
+                            Number of sequences: @{result.num_hits}
                             <br />
                             <br />
-                            @for((alignment, hit) <- ((jsValue \ jobID \ "hsps" \ "above_threshold").as[List[JsObject]], (jsValue \ jobID \ "hits" \ "above_threshold").as[List[JsObject]]).zipped.toList){
-                                @* hit number, links *@
-                                <tr>
-                                    <td></td>
-                                    <td colspan="3">
-                                    @{alignment \ "hit_id" match {
-                                        case JsDefined(jsValue) => BlastVisualization.getLinksHmmer((alignment \ "hit_id").get.as[String])
-                                        case undefined: JsUndefined =>
-                                    }
-                                    }
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                @* checkboxes, accession, name of hit*@
-                                <tr class="header">
-                                    <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{(alignment \ "num").get}'> @{(alignment \ "num").get}.</td>
-                                <td colspan="4">
-
-                                    @{alignment \ "hit_id" match {
-                                        case JsDefined(jsValue) => {BlastVisualization.getSingleLink((alignment \ "hit_id").get.as[String])}
-                                        case undefined: JsUndefined =>
-                                    }
-                                    }
-                                    @{"  "+(alignment \ "hit_description").get.as[String].replaceFirst(">", "")}
-                                </td>
-                                </tr>
-                                @* Alignment Details*@
-                                <tr>
-                                    <td></td>
-                                    <td colspan="4">E-value: @{(alignment \ "evalue").get},
-                                        Score: @{(alignment \ "bitscore").get}, Hit length: @{(alignment \ "hit_len").get},
-                                        Domain expected number: @{(hit \ "dom_exp_num").get}, Domain observed number: @{(hit \ "domain_obs_num").get},
-                                </td>
-                                </tr>
-                                @* seq of query, if present *@
-                                @{alignment \ "query_seq" match {
-                                    case JsDefined(jsValue) =>
-                                    {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query_start").get.toString(), BlastVisualization.colorRegexReplacer(((alignment \ "query_seq").get.as[String]).toUpperCase()),(alignment \ "query_end").get.toString()))}
-                                    case undefined: JsUndefined =>
-                                }
-                                }
-
-                                @* agree of query, if present *@
-                                @* agree of query, if present *@
-                                @{alignment \ "aln_ann" \ "PP" match {
-                                    case JsDefined(jsValue) =>
-                                    {BlastVisualization.makeRow("sequence", Array("","",(alignment \ "aln_ann" \ "PP").get.as[String],""))}
-                                    case undefined: JsUndefined =>
-                                }
-                                }
-
-                                @* seq of hit, if present *@
-                                @{alignment \ "hit_seq" match {
-                                    case JsDefined(jsValue) =>
-                                    {BlastVisualization.makeRow("sequence", Array("H",(alignment \ "hit_start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "hit_seq").get.as[String]),(alignment \ "hit_end").get.toString()))}
-                                    case undefined: JsUndefined =>
-                                }
-                                }
-
-                                <tr>
-                                    <td><br /></td>
-                                </tr>
-
-
-                                <tr>
-                                    <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
-                                </tr>
-                            }
-                                @for((alignment, hit) <- ((jsValue \ jobID \ "hsps" \ "below_threshold").as[List[JsObject]], (jsValue \ jobID \ "hits" \ "below_threshold").as[List[JsObject]]).zipped.toList){
+                                @for(hit <- result.HSPS){
                                     @* hit number, links *@
                                     <tr>
                                         <td></td>
                                         <td colspan="3">
-                                        @{alignment \ "hit_id" match {
-                                            case JsDefined(jsValue) => BlastVisualization.getLinksHmmer((alignment \ "hit_id").get.as[String])
-                                            case undefined: JsUndefined =>
-                                        }
-                                        }
+                                        @BlastVisualization.getLinksHmmer(hit.accession)
                                         </td>
                                         <td></td>
                                     </tr>
                                     @* checkboxes, accession, name of hit*@
                                     <tr class="header">
-                                        <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{(alignment \ "num").get}'> @{(alignment \ "num").get}.</td>
-                                    <td colspan="4">
-
-                                        @{alignment \ "hit_id" match {
-                                            case JsDefined(jsValue) => {BlastVisualization.getSingleLink((alignment \ "hit_id").get.as[String])}
-                                            case undefined: JsUndefined =>
-                                        }
-                                        }
-                                        @{"  "+(alignment \ "hit_description").get.as[String].replaceFirst(">", "")}
-                                    </td>
+                                        <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}</td>
+                                        <td colspan="4">
+                                            @BlastVisualization.getSingleLink(hit.accession)
+                                            @{"  "+hit.description}
+                                        </td>
                                     </tr>
                                     @* Alignment Details*@
                                     <tr>
                                         <td></td>
-                                        <td colspan="4">E-value: @{(alignment \ "evalue").get},
-                                            Score: @{(alignment \ "bitscore").get}, Hit length: @{(alignment \ "hit_len").get},
-                                            Domain expected number: @{(hit \ "dom_exp_num").get}, Domain observed number: @{(hit \ "domain_obs_num").get},
-                                        </td>
+                                        <td colspan="4">E-value: @{hit.evalue},
+                                            Score: @{hit.bitscore}, Hit length: @{hit.hit_len},
+                                            Domain expected number: @{hit.dom_exp_num}, Domain observed number: @{hit.domain_obs_num}
+                                    </td>
                                     </tr>
                                     @* seq of query, if present *@
-                                    @{alignment \ "query_seq" match {
-                                        case JsDefined(jsValue) =>
-                                        {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query_start").get.toString(), BlastVisualization.colorRegexReplacer(((alignment \ "query_seq").get.as[String]).toUpperCase()),(alignment \ "query_end").get.toString()))}
-                                        case undefined: JsUndefined =>
-                                    }
-                                    }
-
+                                    @{BlastVisualization.makeRow("sequence", Array("Q",hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq),hit.query_end.toString))}
                                     @* agree of query, if present *@
-                                    @* agree of query, if present *@
-                                    @{alignment \ "aln_ann" \ "PP" match {
-                                        case JsDefined(jsValue) =>
-                                        {BlastVisualization.makeRow("sequence", Array("","",(alignment \ "aln_ann" \ "PP").get.as[String],""))}
-                                        case undefined: JsUndefined =>
-                                    }
-                                    }
-
+                                    @{BlastVisualization.makeRow("sequence", Array("","",(hit.midline),""))}
                                     @* seq of hit, if present *@
-                                    @{alignment \ "hit_seq" match {
-                                        case JsDefined(jsValue) =>
-                                        {BlastVisualization.makeRow("sequence", Array("H",(alignment \ "hit_start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "hit_seq").get.as[String]),(alignment \ "hit_end").get.toString()))}
-                                        case undefined: JsUndefined =>
-                                    }
-                                    }
-
+                                    @{BlastVisualization.makeRow("sequence", Array("H",hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq),hit.hit_end.toString))}
                                     <tr>
                                         <td><br /></td>
                                     </tr>
-
-
+                                    <tr>
+                                        <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br /></td>
+                                    </tr>
                                     <tr>
                                         <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
                                     </tr>
@@ -234,14 +137,11 @@
 
 }
 <script>
-        var data;
-        var hits =[];
         var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
         var hitlist;
         var query;
         var selectAllBool_@{tool.toolNameShort} = false;
         var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
-        var aas;
         var chosenDB = null;
 
         (function()  {
@@ -268,50 +168,28 @@
                 });
             });
 
-            var dataRoute = jsRoutes.controllers.DataController.get("@jobID");
-            $.ajax({
-                method: dataRoute.method,
-                url: dataRoute.url
-            }).done(function(data_) {
+            var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
+            var selectAllBool_@{tool.toolNameShort} = false;
+            var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
+            var chosenDB = null;
+            var numHits = @{result.num_hits};
+            var urlParams = "/api/job/@jobID";
+            var urlQuery = "/files/" + @jobID + "/query.json";
+            var evalueParam = null;
 
-                var basenameResults = data_[@jobID];
-                data = basenameResults;
-
-                // fill hits with above_threshold and below_threshold
-
-                for(var i =0; i < data.hsps.above_threshold.length; i++){
-                    hits.push(data.hsps.above_threshold[i]);
-                }
-                for(var i =0; i < data.hsps.below_threshold.length; i++){
-                    hits.push(data.hsps.below_threshold[i]);
-                }
+            $.getJSON(urlParams, function(data_){
+                chosenDB = data_.paramValues.standarddb;
+                evalueParam = data_.paramValues.inclusion_ethresh;
+            });
 
 
-
-                var numHits = hits.length;
-                //var info = basenameResults.stat;
-
-                // get jobinformation
-
-                var url = "/api/job/@jobID";
-                $.getJSON(url, function(data_){
-                    chosenDB = data_.paramValues.standarddb;
-                    evalueParam = 0.001;
-                    //evalueParam = data_.paramValues.inclusion_ethresh;
-                    // check all betther than evalue
-                    //checkAllBetterThan(evalueParam);
-                });
-
-                query = data_.query;
+            $.getJSON(urlQuery, function(query){
                 firstQueryName = ">" + query[0][0];
                 firstQuerySequence = query[0][1];
                 firstQueryLength = firstQuerySequence.length;
                 if(numHits > 0){
-                    drawDataTable(hits);
-                    //drawInformation(info);
-                    //fill first query name and sequence for slider resubmit
-                    firstQueryStart = hits[0].query_start;
-                    firstQueryEnd = hits[0].query_end;
+                    firstQueryStart = @result.HSPS(0).query_start;
+                    firstQueryEnd = @result.HSPS(0).query_end;
                     /* without timeout SLIDER is displayed */
                     setTimeout(function () {
                         slider_show(firstQueryLength, firstQueryStart, firstQueryEnd)
@@ -321,101 +199,42 @@
 
                 }
             });
-
         })();
 
 
-        function drawInformation(info ){
-            /*  INFO TAB*/
-            $("#psiblast_query").append(firstQueryName);
-            $("#psiblast_queryLength").append(firstQueryLength);
-            $("#psiblast_db").append(chosenDB);
-
-        }
-
-        function drawDataTable(hits){
-
-            hitlist = $('#htb').dataTable({
-                "bInfo": false,
-                "bFilter": true,
-                "bLengthChange": true,
-                "aaData": hits,
-                "scrollX": true,
-                "aoColumns": [
-
-                    {"mDataProp": "num"},
-                    {"mDataProp": "hit_id", render: function (data){return getSingleLink(data)}},
-                    {"mDataProp": "hit_description"},
-                    {
-                        "mDataProp": "evalue", render: function (data) {
-                        return data.toExponential(2);
-                    }
-                    },
-                    {"mDataProp": "bitscore"},
-                ],
-                'columnDefs': [{
-                    'targets': 0,
-                    'searchable': false,
-                    'orderable': true,
-                    'render': function (data){
-                        return '<input type="checkbox" class="checkbox_@{tool.toolNameShort}" value="' + $('<div/>').text(data).html() + '"><a onclick="scrollToElem('+data+')">'+data+'</a>';
-                    }
-                }]
-            });
-
-        }
-
-        function checkAllBetterThan(evalue){
-            var jsonData = {};
-            jsonData.accessions = [];
-            jsonData.seqs = [];
-            jsonData.index = [];
-            // get values of all checked Checkboxes
-            hits.forEach(function callback(currentValue) {
-                if (currentValue.evalue < evalue) {
-                    $(":checkbox[value="+currentValue.num+"]").prop("checked","true");
-                    jsonData.accessions.push(currentValue.hit_description);
-                    jsonData.seqs.push(currentValue.hit_seq);
-                    jsonData.index.push(currentValue.num-1);
-                }
-            });
-            return jsonData;
-        }
-
-
-        function getCheckboxesData(){
-            var jsonData = {};
-            jsonData.accessions = [];
-            jsonData.seqs = [];
-            jsonData.index = [];
-
-
-            // get all checked checkboxes and their respective accession
-            $('input:checkbox.' + checkbox_@{tool.toolNameShort} + ":checked").each(function () {
-                var index = $(this).val() - 1;
-                var seq = hits[index].hit_seq;
-                if (jsonData.seqs.indexOf(seq) == -1) {
-                    jsonData.accessions.push(hits[index].hit_description);
-                    jsonData.seqs.push(seq);
-                    jsonData.index.push(index);
-                }
-            });
-            return jsonData;
-        }
-
         window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
-            var dataTmp = preprocessingForward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength);
-                var forwardData = '';
-                for(var i=0; i < dataTmp.index.length; i++){
-                    // index + number of querys because alignment json contains query sequences in alignment first
-                    var index = dataTmp.index[i];
-                    forwardData += ">" + dataTmp.accessions[index] + '\n';
-                    forwardData += dataTmp.seqs[index] + '\n';
-                }
-                forward(selectedTool, forwardData);
+            if(boolEvalue) {
+                $.ajax({
+                    type: 'GET',
+                    url: 'evalHmmer/@jobID/'+evalue
+                }).done(function (data_) {
+                    forward(selectedTool, data_.toString());
+                });
+            }else if(boolSelectedHits){
+                var data = getCheckedCheckboxes();
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    url: 'fasHmmer/@jobID'
+                }).done(function (data_) {
+                    forward(selectedTool, data_.toString());
+                });
+            }
         };
+
+
+
+        function getCheckedCheckboxes(){
+            var json = { "numList": []};
+            $('input:checkbox.' + checkbox_@{tool.toolNameShort} + ":checked").each(function () {
+                json.numList.push($(this).val());
+            });
+            return json;
+        }
+
+
         window["@{tool.toolNameShort}_selectAll"] = function () {
-            selectAllDatatable(this.hitlist.fnGetNodes());
+            //selectAllDatatable(this.hitlist.fnGetNodes());
             this.selectAllBool_@{tool.toolNameShort} = !this.selectAllBool_@{tool.toolNameShort};
             if(this.selectAllBool_@{tool.toolNameShort}) {
                 selectAll(checkbox_@{tool.toolNameShort});
@@ -435,5 +254,6 @@
         window["@{tool.toolNameShort}_resubmitSection"] = function(){
             resubmitSection(firstQuerySequence, firstQueryName);
         };
+
 
 </script>
