@@ -5,6 +5,7 @@ import models.database.jobs.{FrontendJob, Job, JobAnnotation}
 import models.database.results.datatables.PSIBlastDT
 import models.database.statistics.{ClusterLoadEvent, JobEventLog, ToolStatistic}
 import models.database.users.User
+import play.api.Logger
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
@@ -13,6 +14,9 @@ import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONDocument
 import play.api.Logger
+import play.libs.Json
+import models.database.results.{Hmmer, HmmerResult}
+
 import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -80,16 +84,10 @@ trait CommonModule extends ReactiveMongoComponents {
     }
   }
 
-
-
   protected def getPsiblastResult(jobID: String, numiter : Int): Future[List[PSIBlastDT]] = {
     val selector = BSONDocument("jobID" -> BSONDocument("$eq" -> BSONDocument("$eq" -> s"output_psiblastp.BlastOutput2[0].report.results.iterations[$numiter].search")))
     resultCollection.map(_.find(selector).cursor[PSIBlastDT]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[PSIBlastDT]]()))
   }
-
-
-
-
   protected def findJob(selector : BSONDocument) : Future[Option[Job]] = jobCollection.flatMap(_.find(selector).one[Job])
 
   protected def findJobAnnotation(selector : BSONDocument) : Future[Option[JobAnnotation]] = jobAnnotationCollection.flatMap(_.find(selector).one[JobAnnotation])

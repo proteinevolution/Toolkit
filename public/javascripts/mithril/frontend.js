@@ -240,10 +240,10 @@ GeneralTabComponent = {
                 }, tab));
             }), m("li", {
                 style: "float: right;"
-            }, m("input", {
+            }, m("i", {
                 type: "button",
                 id: "collapseMe",
-                "class": "button small button_fullscreen",
+                "class": "fa fa-expand button_fullscreen",
                 value: ctrl.getLabel(),
                 onclick: ctrl.fullscreen,
                 config: closeShortcut
