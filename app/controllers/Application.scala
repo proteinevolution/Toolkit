@@ -147,31 +147,18 @@ final class Application @Inject()(webJarAssets                                  
 
 
 
-  // Route is handled by Mithril
-  def showTool(toolName: String) = Action { implicit request =>
-
+  // Routes are handled by Mithril, redirect.
+  def showTool(toolName: String) : Action[AnyContent] = Action { implicit request =>
     Redirect(s"/#/tools/$toolName")
   }
 
 
-  def showJob(idString : String) : Action[AnyContent] = Action.async { implicit request =>
-    BSONObjectID.parse(idString).toOption match {
-      case Some(mainID) =>
-        Future.successful(Redirect(s"/#/jobs/${mainID.stringify}"))
-      case None =>
-        jobDao.fuzzySearchJobID(idString).map { hit =>
-          hit.getHits.getHits.headOption match {
-            case Some(jobHit) =>
-              Redirect(s"/#/jobs/${jobHit.getId}")
-            case None =>
-              NotFound
-          }
-        }
-    }
+  def showJob(idString : String) : Action[AnyContent] = Action { implicit request =>
+    Redirect(s"/#/jobs/$idString")
   }
 
 
-  def static(static : String) = Action { implicit request =>
+  def static(static : String) : Action[AnyContent] = Action { implicit request =>
     Redirect(s"/#/$static")
   }
 

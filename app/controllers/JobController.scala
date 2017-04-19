@@ -183,15 +183,17 @@ final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
       selectJob(jobID).map {
         case Some(_) => BadRequest //If the jobID has become unavailable between checking and submitting
         case None =>
-          var formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString(formMultiValueSeparator))
-          if(request.body.asMultipartFormData.get.file("file").isDefined) {
-            formData = formData.updated("alignment", request.body.asMultipartFormData.get.file("file") match {
-              case Some(a) => scala.io.Source.fromFile(a.ref.file).getLines().mkString("\n")
-            })
+          request.body.asMultipartFormData match {
+            case Some(mpfd) =>
+              val formData = mpfd.dataParts.mapValues(_.mkString(formMultiValueSeparator))
+              mpfd.file("file").foreach { file =>
+                  formData.updated("alignment", scala.io.Source.fromFile(file.ref.file).getLines().mkString("\n"))
+              }
+              jobActorAccess.sendToJobActor(jobID, CreateJob(jobID, user, toolname, formData))
+              Ok
+            case None =>
+              BadRequest // Job has no proper form
           }
-          jobActorAccess.sendToJobActor(jobID, CreateJob(jobID, user, toolname, formData))
-
-          Ok
       }
     }
   }
