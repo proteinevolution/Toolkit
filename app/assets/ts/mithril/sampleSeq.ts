@@ -148,7 +148,7 @@ let sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
                     $a.val(multiProtSeq);
                     break;
 
-                case "phylip":
+                case "phyml":
                     $a.val(msaProtSeq);
                     break;
 

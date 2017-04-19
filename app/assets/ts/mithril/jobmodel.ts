@@ -49,8 +49,11 @@ window.JobModel = {
         "hhblits_incl_eval": "1e-3",
         "pcoils_matrix": "2",
         "pcoils_weighting":"1",
-        "pcoils_input_mode":"0"
-    },
+        "pcoils_input_mode":"0",
+        "no_replicates":"0",
+        "matrix_phyml":"LG",
+        "gamma_rate":"1"
+},
 
     /* Seems not to be used
     pushMessage: function(msg : string) {
