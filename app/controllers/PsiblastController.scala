@@ -5,7 +5,7 @@ import java.nio.file.attribute.PosixFilePermission
 
 import com.typesafe.config.ConfigFactory
 import play.api.Logger
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, Controller}
 
 import scala.concurrent.Future
 import scala.sys.process._
@@ -26,7 +26,7 @@ class PsiblastController @Inject()(webJarAssets : WebJarAssets) extends Controll
   retrieveFullSeq.setPermissions(filePermissions)
 
 
-  def retrieveFullSeqs(jobID : String) = Action.async { implicit request =>
+  def retrieveFullSeqs(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
 
     if(!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
@@ -47,7 +47,7 @@ class PsiblastController @Inject()(webJarAssets : WebJarAssets) extends Controll
     }
   }
 
-  def getAlignment(jobID : String) = Action.async { implicit request =>
+  def getAlignment(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
 
     if(!alignSeqs.isExecutable) {
       Future.successful(BadRequest)
