@@ -8,6 +8,7 @@ import play.api.libs.json._
 
 case class AlignmentItem(accession: String, seq: String)
 case class Alignment(alignment : List[AlignmentItem])
+case class Query(accession: String, seq: String)
 
 object General {
 
@@ -28,4 +29,13 @@ object General {
       AlignmentItem(accession, seq)
     }
   }
+
+  def parseQuery(jsArray : JsArray): Query = jsArray match{
+    case arr: JsArray => try{
+      val accession = (arr \ 0).as[String]
+      val seq = (arr \ 1).as[String]
+     Query(accession, seq)
+    }
+  }
+
 }
