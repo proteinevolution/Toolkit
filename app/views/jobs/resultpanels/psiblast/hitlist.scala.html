@@ -105,12 +105,34 @@
                             <tr>
                                 <td><br /></td>
                             </tr>
-                            @* Query *@
-                            @{BlastVisualization.makeRow("sequence", Array("Query" ,hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq), hit.query_end.toString))}
-                            @* Midline *@
-                            @{BlastVisualization.makeRow("sequence", Array("" , "" , BlastVisualization.SSColorReplace(hit.midline), ""))}
-                            @* Hit *@
-                            @{BlastVisualization.makeRow("sequence", Array("Hit" ,hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))}
+                            @* color only 150 first hits, to avoid bloating of the generated html*@
+                            @if(hit.num < 150) {
+                                @* Query *@
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("Query", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq), hit.query_end.toString))
+                                }
+                                @* Midline *@
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline), ""))
+                                }
+                                @* Hit *@
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("Hit", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))
+                                }
+                            }else{
+                                @* Query *@
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("Query", hit.query_start.toString, hit.query_seq, hit.query_end.toString))
+                                }
+                                @* Midline *@
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("", "", hit.midline, ""))
+                                }
+                                @* Hit *@
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("Hit", hit.hit_start.toString, hit.hit_seq, hit.hit_end.toString))
+                                }
+                            }
                             <tr>
                                 <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
                             </tr>
