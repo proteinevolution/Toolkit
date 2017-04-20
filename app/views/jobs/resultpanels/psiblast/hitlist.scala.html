@@ -179,17 +179,9 @@ var chosenDB = null;
     var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
     var selectAllBool_@{tool.toolNameShort} = false;
     var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
-    var chosenDB = null;
     var numHits = @{result.num_hits};
     var urlParams = "/api/job/@jobID";
     var urlQuery = "/files/" + @jobID + "/query.json";
-    var evalueParam = null;
-
-    $.getJSON(urlParams, function(data_){
-        chosenDB = data_.paramValues.standarddb;
-        evalueParam = data_.paramValues.inclusion_ethresh;
-    });
-
 
     $.getJSON(urlQuery, function(query){
         firstQueryName = ">" + query[0][0];
@@ -233,18 +225,12 @@ window["@{tool.toolNameShort}_selectAll"] = function () {
 window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
     // full seq is retrieved
     var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
-
     if(boolFullLength) {
         if(boolEvalue) {
-            // retrieve full Seq
-            var jsonData = new Object();
-            jsonData.db = chosenDB;
-            jsonData.accessionsStr = dataTmp.accessions.join(" ");
+            var route = jsRoutes.controllers.PSIBlastController.evalPSIBlastFull('@jobID', evalue);
             $.ajax({
-                url: 'retrieveFullSeq/@jobID',
-                contentType: "application/json",
-                type: 'POST',
-                data: JSON.stringify(jsonData)
+                url: route.url,
+                method: route.method
             }).done(function () {
                 $.ajax({
                     type: 'GET',
@@ -253,25 +239,33 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
                     forward(selectedTool, data_.toString());
                 });
             });
-        }else if (boolSelectedHits){
+        }else{
+            var route = jsRoutes.controllers.PSIBlastController.fasPSIBlastFull('@jobID', checkedCheckboxes);
+            $.ajax({
+                url: route.url,
+                method: route.method
+            }).done(function (data_) {
+                $.ajax({
+                    type: 'GET',
+                    url: 'files/@jobID/sequences.fa'
+                }).done(function (data_) {
+                    forward(selectedTool, data_.toString());
+                });;
+            });
         }
     }else{
+        var route;
         if(boolEvalue) {
-            $.ajax({
-                type: 'GET',
-                url: 'evalPSIBlast/@jobID/'+evalue
-            }).done(function (data_) {
-                forward(selectedTool, data_);
-            });
-        }else if(boolSelectedHits){
-            var route = jsRoutes.controllers.PSIBlastController.fasPSIBlast('@jobID', checkedCheckboxes);
-            $.ajax({
-                method: route.method,
-                url: route.url
-            }).done(function (data_) {
-                forward(selectedTool, data_);
-            });
+            route = jsRoutes.controllers.PSIBlastController.evalPSIBlast('@jobID', evalue);
+        }else{
+            route = jsRoutes.controllers.PSIBlastController.fasPSIBlast('@jobID', checkedCheckboxes);
         }
+        $.ajax({
+            url: route.url,
+            method: route.method
+        }).done(function (data_) {
+            forward(selectedTool, data_);
+        });
     }
 };
 

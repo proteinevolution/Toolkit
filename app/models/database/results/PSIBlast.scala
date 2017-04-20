@@ -25,7 +25,7 @@ case class PSIBlastHSP(evalue: Double, num: Int,
 
 case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 
-case class PSIBlastResult(HSPS: List[PSIBlastHSP], num_hits: Int, iter_num: Int)
+case class PSIBlastResult(HSPS: List[PSIBlastHSP], num_hits: Int, iter_num: Int, db: String, evalue: Double)
 
 
 object PSIBlast {
@@ -33,13 +33,14 @@ object PSIBlast {
   def parsePSIBlastResult(json: JsValue): PSIBlastResult = json match {
     case obj: JsObject => try {
       val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" ).as[List[JsObject]].size-1
-
+      val db = (obj \ "output_psiblastp" \ "db").as[String]
+      val evalue = (obj \ "output_psiblastp" \ "evalue").as[String].toDouble
       val hits = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ iter_num \ "search" \ "hits").as[List[JsObject]]
       val num_hits = hits.length
       val hsplist = hits.map{ x =>
         parsePSIBlastHSP(x)
       }
-      PSIBlastResult(hsplist, num_hits, iter_num)
+      PSIBlastResult(hsplist, num_hits, iter_num, db, evalue)
     }
   }
 
