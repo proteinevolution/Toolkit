@@ -168,10 +168,10 @@ POST         /alnEvalHmmer                              @controllers.HmmerContro
 # Hmmer retrieve selected seqs
 POST         /alnHmmer                                  @controllers.HmmerController.alnHmmer(jobID: String, listNum: Seq[Int])
 # PSIblast retrieve seqs with evalue < threshold
-POST         /evalPSIBlast                               @controllers.PSIBlastController.evalPSIBlast(jobID: String, eval:String)
+POST         /evalPSIBlast                               @controllers.PSIBlastController.alnEvalPSIBlast(jobID: String, eval:String)
 # PSIblast retrieve selected seqs
-POST         /fasPSIBlast                                @controllers.PSIBlastController.fasPSIBlast(jobID:String, listNum: Seq[Int])
+POST         /fasPSIBlast                                @controllers.PSIBlastController.alnPSIBlast(jobID:String, listNum: Seq[Int])
 # PSIblast retrieve full seqs with evalue < threshold
 POST        /evalPSIBlastFull                            @controllers.PSIBlastController.evalPSIBlastFull(jobID : String, eval: String)
 # PSIblast retrieve selected full seqs
-POST        /fasPSIBlastFull                              @controllers.PSIBlastController.fasPSIBlastFull(jobID : String, listNum: Seq[Int])
+POST        /PSIBlastFull                              @controllers.PSIBlastController.PSIBlastFull(jobID : String, listNum: Seq[Int])
