@@ -25,7 +25,7 @@ case class HmmerHSP(evalue: Double, num: Int,
 
 case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 
-case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int, alignment: List[AlignmentItem])
+case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int, alignment: List[AlignmentItem], query : Query)
 
 
 object Hmmer {
@@ -38,7 +38,7 @@ object Hmmer {
       val alignment = (obj \ "alignment").as[List[JsArray]].map{ x =>
         General.parseAlignmentItem(x)
       }
-
+      val query = General.parseQuery((obj \ jobID \ "query").as[JsArray])
       val hsps = (obj \ jobID \ "hsps").as[List[JsObject]]
       val hits = (obj \ jobID \ "hits").as[List[JsObject]]
       val num_hits = hits.length
@@ -46,7 +46,7 @@ object Hmmer {
       val hsplist = hsps.zip(hits).map{ x =>
         parseHmmerHSP(x._1, x._2)
       }
-      HmmerResult(hsplist, num_hits, alignment)
+      HmmerResult(hsplist, num_hits, alignment, query)
     }
   }
 
