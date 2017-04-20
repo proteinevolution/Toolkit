@@ -231,7 +231,7 @@ function drawDataTable(){
     hitlist = $('#htb').dataTable({
         "bProcessing" : true,
         "bServerSide" : true,
-        "sAjaxSource" : "/api/job/results/psidt/1543125"
+        "sAjaxSource" : "/api/job/results/psidt/" + @jobID
 });
 }
 
@@ -268,7 +268,7 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
                 forward(selectedTool, data_.toString());
             });
         }else{
-            var route = jsRoutes.controllers.PSIBlastController.PSIBlastFull('@jobID', checkedCheckboxes);
+            route = jsRoutes.controllers.PSIBlastController.PSIBlastFull('@jobID', checkedCheckboxes);
             $.ajax({
                 url: route.url,
                 method: route.method
