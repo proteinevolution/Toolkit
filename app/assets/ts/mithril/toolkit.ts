@@ -51,7 +51,7 @@ let Toolkit : any = {
                 Toolkit.currentJobID = jobID;
             }
         } else {
-            JobListComponent.selectedJobID = -1;
+            JobListComponent.selectedJobID = null;
         }
         toolname = m.route.param("toolname");
         if (FrontendTools[toolname]) {
