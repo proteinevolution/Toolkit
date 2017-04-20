@@ -34,7 +34,7 @@
             <div class="colorOpts">
                 <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                 <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
-                <hr id="line-element" colspan="4" class="horizontal-line">
+                <hr id="line-element" class="horizontal-line">
             </div>
             <table id="htb" class="display" cellspacing="0" width="80%">
                 <thead>
@@ -58,7 +58,7 @@
             <div class="colorOpts">
                 <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                 <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
-                <hr id="line-element" colspan="4" class="horizontal-line">
+                <hr id="line-element" class="horizontal-line">
             </div>
 
 
@@ -112,7 +112,7 @@
                             @* Hit *@
                             @{BlastVisualization.makeRow("sequence", Array("Hit" ,hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))}
                             <tr>
-                                <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
+                                <td colspan="5"><hr id="line-element" class="horizontal-line"></td>
                             </tr>
                         }
                     </tbody>
@@ -143,14 +143,13 @@
 
 }
 <script>
-var data;
-var hits;
+
 var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
 var hitlist;
 var query;
 var selectAllBool_@{tool.toolNameShort} = false;
-var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
-var chosenDB = null;
+var firstQueryName, firstQuerySequence = null;
+
 
 (function()  {
 
@@ -188,8 +187,11 @@ var chosenDB = null;
         firstQuerySequence = query[0][1];
         firstQueryLength = firstQuerySequence.length;
         if(numHits > 0){
-            firstQueryStart = @result.HSPS(0).query_start;
-            firstQueryEnd = @result.HSPS(0).query_end;
+
+            drawDataTable();
+
+            firstQueryStart = @result.HSPS.head.query_start;
+            firstQueryEnd = @result.HSPS.head.query_end;
             /* without timeout SLIDER is displayed */
             setTimeout(function () {
                 slider_show(firstQueryLength, firstQueryStart, firstQueryEnd)
@@ -202,6 +204,14 @@ var chosenDB = null;
 })();
 
 
+
+function drawDataTable(){
+    hitlist = $('#htb').dataTable({
+        "bProcessing" : true,
+        "bServerSide" : true,
+        "sAjaxSource" : "/api/job/results/psidt/1543125"
+});
+}
 
 
 function _deselectAll(){
@@ -225,9 +235,10 @@ window["@{tool.toolNameShort}_selectAll"] = function () {
 window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
     // full seq is retrieved
     var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
+    var route = jsRoutes.controllers.PSIBlastController.evalPSIBlastFull('@jobID', evalue);
     if(boolFullLength) {
         if(boolEvalue) {
-            var route = jsRoutes.controllers.PSIBlastController.evalPSIBlastFull('@jobID', evalue);
+
             $.ajax({
                 url: route.url,
                 method: route.method
@@ -240,7 +251,7 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
                 });
             });
         }else{
-            var route = jsRoutes.controllers.PSIBlastController.fasPSIBlastFull('@jobID', checkedCheckboxes);
+
             $.ajax({
                 url: route.url,
                 method: route.method
@@ -250,11 +261,11 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
                     url: 'files/@jobID/sequences.fa'
                 }).done(function (data_) {
                     forward(selectedTool, data_.toString());
-                });;
+                });
             });
         }
     }else{
-        var route;
+
         if(boolEvalue) {
             route = jsRoutes.controllers.PSIBlastController.evalPSIBlast('@jobID', evalue);
         }else{

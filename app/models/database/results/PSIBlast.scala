@@ -6,7 +6,8 @@ import play.api.libs.json._
   */
 
 
-case class PSIBlastHSP(evalue: Double, num: Int,
+case class PSIBlastHSP(evalue: Double,
+                       num: Int,
                        bitscore: Double,
                        score: Int,
                        hit_start: Int,
@@ -21,7 +22,20 @@ case class PSIBlastHSP(evalue: Double, num: Int,
                        identity: Int,
                        positive: Int,
                        ref_len: Int,
-                       accession: String, midline: String, description: String)
+                       accession: String,
+                       midline: String,
+                       description: String){
+  def toDataTable: JsValue = Json.toJson(
+    Map(
+      "0" -> Json.toJson(num),
+      "1" -> Json.toJson(accession),
+      "2" -> Json.toJson(description),
+      "3" -> Json.toJson(evalue),
+      "4" -> Json.toJson(score),
+      "5" -> Json.toJson(bitscore),
+      "6" -> Json.toJson(identity),
+      "7" -> Json.toJson(hit_len)))
+}
 
 case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 
@@ -29,6 +43,7 @@ case class PSIBlastResult(HSPS: List[PSIBlastHSP], num_hits: Int, iter_num: Int,
 
 
 object PSIBlast {
+
 
   def parsePSIBlastResult(json: JsValue): PSIBlastResult = json match {
     case obj: JsObject => try {
@@ -66,7 +81,7 @@ object PSIBlast {
     val accession = (descriptionBase \ "accession").getOrElse(Json.toJson("")).as[String]
     val midline = (hsps \ "midline").getOrElse(Json.toJson("")).as[String].toUpperCase
     val description = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
-    PSIBlastHSP(evalue, num, bitscore, score,  hit_start, hit_end, hit_seq, query_seq, query_start, query_end, query_id, hit_len, gaps, identity, positive, ref_len ,accession, midline, description)
+    PSIBlastHSP(evalue, num, bitscore, score, hit_start, hit_end, hit_seq, query_seq, query_start, query_end, query_id, hit_len, gaps, identity, positive, ref_len ,accession, midline, description)
 
   }
 
