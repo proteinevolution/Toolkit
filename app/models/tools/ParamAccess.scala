@@ -194,7 +194,4 @@ class ParamAccess @Inject() (tel: TEL) {
   final val PCOILS_WEIGHTING = select("pcoils_weighting", "Weighting")
   final val PCOILS_MATRIX = select("pcoils_matrix", "Matrix")
   final val NO_REPLICATES = select("no_replicates", "Number of replicates" )
-  final val GAMMA_RATE = Param("gamma_rate",Decimal("0.01", Some(0),Some(100)),1, "Gamma distributed rates across sites")
-
-
 }
