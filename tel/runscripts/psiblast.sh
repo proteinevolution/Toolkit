@@ -72,7 +72,7 @@ fasta2json.py %alignment.path ../results/query.json
 
 
 # Generate Query in JSON
-fasta2json.py ../results/output_psiblastp.aln ../results/${JOBID}.alignment.json
+fasta2json.py ../results/output_psiblastp.aln ../results/alignment.json
 
 # Produce Evalues list
 awk {'print $(NF-6)'} ../results/output_psiblastp.tab >> ../results/evalues
