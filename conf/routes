@@ -163,14 +163,15 @@ GET         /templateAlignmentHHblits/:jobID/:accession @controllers.HHblitsCont
 # retrieve Full Seq
 POST         /fullSeqHHblits/:jobID                     @controllers.HHblitsController.retrieveFullSeq(jobID : String)
 
-# retrieveFullSeq
-POST        /retrieveFullSeq/:jobID                     @controllers.PSIBlastController.retrieveFullSeqs(jobID : String)
-
 # Hmmer retrieve seqs with evale < threshold
 GET         /evalHmmer/:jobID/:eval                     @controllers.HmmerController.evalHmmer(jobID, eval)
-# Hmmer retrieve seqs with evale < threshold
+# Hmmer retrieve selected seqs
 POST         /fasHmmer                                  @controllers.HmmerController.fasHmmer(jobID, listNum: Seq[Int])
-# PSIblast retrieve seqs with evale < threshold
-GET         /evalPSIBlast/:jobID/:eval                  @controllers.PSIBlastController.evalPSIBlast(jobID, eval)
-# PSIblast retrieve seqs with evale < threshold
-POST         /fasPSIBlast                                @controllers.PSIBlastController.fasPSIBlast(jobID, listNum: Seq[Int])
+# PSIblast retrieve seqs with evalue < threshold
+POST         /evalPSIBlast                               @controllers.PSIBlastController.evalPSIBlast(jobID: String, eval:String)
+# PSIblast retrieve selected seqs
+POST         /fasPSIBlast                                @controllers.PSIBlastController.fasPSIBlast(jobID:String, listNum: Seq[Int])
+# PSIblast retrieve full seqs with evalue < threshold
+POST        /evalPSIBlastFull                            @controllers.PSIBlastController.evalPSIBlastFull(jobID : String, eval: String)
+# PSIblast retrieve selected full seqs
+POST        /fasPSIBlastFull                              @controllers.PSIBlastController.fasPSIBlastFull(jobID : String, listNum: Seq[Int])
