@@ -10,8 +10,8 @@ import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 import org.joda.time.DateTime
-import play.api.libs.json.Json
-
+import play.api.libs.json.{JsObject, Json}
+import play.api.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -86,12 +86,13 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, sup: Hi
       x => x
     }
 
-    /*
+    Logger.info(":::::::::" + params.sSearch)
+
     val hitsOrderBy = (params.iSortCol, params.sSortDir) match {
       case (1, "asc") => hits.map(x => x.sortBy(_.accession))
       case (1, "desc") => hits.map(x => x.sortWith(_.accession > _.accession))
-      case (2, "asc") => hits.map(x => x.sortBy(_.title))
-      case (2, "desc") => hits.map(x => x.sortWith(_.title > _.title))
+      case (2, "asc") => hits.map(x => x.sortBy(_.description))
+      case (2, "desc") => hits.map(x => x.sortWith(_.description > _.description))
       case (3, "asc") => hits.map(x => x.sortBy(_.evalue))
       case (3, "desc") => hits.map(x => x.sortWith(_.evalue > _.evalue))
       case (4, "asc") => hits.map(x => x.sortBy(_.score))
@@ -100,21 +101,20 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, sup: Hi
       case (5, "desc") => hits.map(x => x.sortWith(_.bitscore > _.bitscore))
       case (6, "asc") => hits.map(x => x.sortBy(_.identity))
       case (6, "desc") => hits.map(x => x.sortWith(_.identity > _.identity))
-      case (7, "asc") => hits.map(x => x.sortBy(_.length))
-      case (7, "desc") => hits.map(x => x.sortWith(_.length > _.length))
+      case (7, "asc") => hits.map(x => x.sortBy(_.hit_len))
+      case (7, "desc") => hits.map(x => x.sortWith(_.hit_len > _.hit_len))
       case (_, _) => hits.map(x => x.sortBy(_.num))
-    } */
+    }
 
 
-    //val jsonObject = Json.toJson(Map("aaData" -> hitsOrderBy.map(_.foreach(_._toJson))))
+    //val jsonObject = Json.toJson(Map("aaData" -> hitsOrderBy.map(_.foreach(_.toDataTable))))
 
     //val dataTableJson = Json.toJson(Map("iTotalRecords" -> totalHits, "iTotalDisplayRecords" -> totalHits))
     //.as[JsObject].deepMerge(jsonObject.as[JsObject])
 
 
-
+    //Ok(dataTableJson)
     Ok
-
   }
 
 
