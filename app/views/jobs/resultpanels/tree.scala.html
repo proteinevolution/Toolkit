@@ -34,11 +34,12 @@
   var vertical_layout = treelib.tree.layout.vertical();
   var radial_layout = treelib.tree.layout.radial();
   vertical_layout.width(width);
-  vertical_layout.scale(false);
+  vertical_layout.scale(true);
+  vertical_layout.height(20);
   radial_layout.width(width);
   radial_layout.scale(false);
 
-  tree.layout(radial_layout );
+  tree.layout(radial_layout);
   tree.data(parser.parse_newick('@Ancescon.readTree(treePath)'));
   tree.on_click(function(node) {
       node.toggle();
