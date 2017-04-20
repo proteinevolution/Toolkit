@@ -47,10 +47,12 @@ fi
 
     prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
 
-
     hmmer2json.py -i ../results/${JOBID}.outfilefl \
                   -o ../results/${JOBID}.json \
                   -m %desc.content
+
+# Generate MSA in JSON
+fasta2json.py ../results/${JOBID}.msa_fas ../results/alignment.json
 
 # Generate Query in JSON
 fasta2json.py %alignment.path ../results/query.json
