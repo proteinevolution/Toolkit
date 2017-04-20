@@ -39,7 +39,7 @@ case class PSIBlastHSP(evalue: Double,
 
 case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int )
 
-case class PSIBlastResult(HSPS: List[PSIBlastHSP], num_hits: Int, iter_num: Int, db: String, evalue: Double, alignment: List[AlignmentItem], qeury: Query)
+case class PSIBlastResult(HSPS: List[PSIBlastHSP], num_hits: Int, iter_num: Int, db: String, evalue: Double, alignment: List[AlignmentItem], query: Query)
 
 
 object PSIBlast {
