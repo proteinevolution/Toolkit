@@ -130,7 +130,6 @@ window.JobListComponent = {
         selectedJobID = JobListComponent.selectedJobID;
         JobListComponent.visibleJobs().map(function(job) { if (job.jobID === selectedJobID) selectedInView = true; });
         // Sort the list
-        console.log(JobListComponent, sort, oldSort, sameMode, inv, selectedJobID, selectedInView);
         JobListComponent.list.sort(function(job1, job2) {
             switch (JobListComponent.sort.mode) {
                 case "toolName"  : return inv * job2.toolname.localeCompare(job1.toolname);
@@ -148,7 +147,7 @@ window.JobListComponent = {
         if (newJob == null || newJob.jobID == null) { console.log(newJob); return }  // ensure that there are no empty jobs pushed
         JobListComponent.lastUpdatedJob = newJob;                        // change the "last updated" job to this one
         if (setActive) { JobListComponent.selectedJobID = newJob.jobID } // change the selectedJobID to this job when setActive is on
-        var index = JobListComponent.getIndex(newJob.jobID);             // check if the job is in the list already
+        var index = JobListComponent.getJobIndex(newJob.jobID);             // check if the job is in the list already
         if (index != null) {
             JobListComponent.list[index] = newJob;              // Job is not new, update it
         } else {
