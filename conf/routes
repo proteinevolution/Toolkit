@@ -92,7 +92,7 @@ POST          /jobs/sge/:jobID/:sgeID                 @controllers.Jobs.SGEID(jo
 POST          /jobs/message/:mainID                   @controllers.Jobs.pushMessage(mainID, message: String)
 POST          /jobs/dateviewed/:mainID                @controllers.Jobs.updateDateViewed(mainID)
 # update process log
-POST          /jobs/updateLog/:jobID           @controllers.Jobs.updateLog(jobID : String)
+POST          /jobs/updateLog/:jobID                  @controllers.Jobs.updateLog(jobID : String)
 
 
 # Cluster
@@ -144,7 +144,7 @@ GET           /api/job/results/:jobID                 @controllers.DataControlle
 
 # DataTables
 
-GET           /api/job/results/psidt/:jobID/          @controllers.DataController.psiDT(jobID: String)
+GET           /api/job/results/psidt/:jobID           @controllers.DataController.psiDT(jobID: String)
 
 # Article
 GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)

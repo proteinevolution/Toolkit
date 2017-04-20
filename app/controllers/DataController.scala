@@ -12,8 +12,9 @@ import reactivemongo.bson.BSONObjectID
 import org.joda.time.DateTime
 import play.api.libs.json.{JsObject, Json}
 import play.api.Logger
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by lzimmermann on 26.01.17.
@@ -69,7 +70,7 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, sup: Hi
     */
 
   def psiDT(jobID : String) : Action[AnyContent] = Action { implicit request =>
-
+    
     val params = PSIBlastDTParam(
       request.getQueryString("sSearch").getOrElse(""),
       request.getQueryString("iDisplayStart").getOrElse("0").toInt,
@@ -79,7 +80,7 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, sup: Hi
 
 
     val totalHits = sup.getHits(jobID).map {
-      x => x.toString.length
+      x => x.length
     }
 
     val hits = sup.getHitsByKeyWord(jobID, params).map {
@@ -107,14 +108,17 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, sup: Hi
     }
 
 
-    //val jsonObject = Json.toJson(Map("aaData" -> hitsOrderBy.map(_.foreach(_.toDataTable))))
-
-    //val dataTableJson = Json.toJson(Map("iTotalRecords" -> totalHits, "iTotalDisplayRecords" -> totalHits))
-    //.as[JsObject].deepMerge(jsonObject.as[JsObject])
+    //println("TEST123" + Await.result(hitsOrderBy, scala.concurrent.duration.Duration(1, "seconds")).head.hit_len)
 
 
-    //Ok(dataTableJson)
-    Ok
+    val jsonObject = Json.toJson(Map("aaData" -> Await.result(hitsOrderBy, scala.concurrent.duration.Duration(1, "seconds")).map(_.toDataTable)))
+
+    val dataTableJson = Json.toJson(Map("iTotalRecords" -> Await.result(totalHits, scala.concurrent.duration.Duration(1, "seconds")),
+      "iTotalDisplayRecords" -> Await.result(totalHits, scala.concurrent.duration.Duration(1, "seconds")))).as[JsObject].deepMerge(jsonObject.as[JsObject])
+
+
+    Ok(dataTableJson)
+
   }
 
 
