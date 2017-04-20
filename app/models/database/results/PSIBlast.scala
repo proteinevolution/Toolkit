@@ -90,20 +90,5 @@ object PSIBlast {
 
   }
 
-
-  implicit object JobWrites extends Writes[PSIBlastHSP] {
-    def writes (hsp : PSIBlastHSP) : JsObject = Json.obj(
-      "0" -> hsp.num,
-      "1" -> hsp.accession,
-      "2" -> hsp.description,
-      "3" -> hsp.evalue,
-      "4" -> hsp.score,
-      "5" -> hsp.bitscore,
-      "6" -> hsp.identity,
-      "7" -> hsp.hit_len
-    )
-  }
-
-
 }
 
