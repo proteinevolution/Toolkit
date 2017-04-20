@@ -53,7 +53,6 @@ class LoadBar {
         return {}
     }
     static view (ctrl : any, args : any) : any {
-        console.log("redrawing");
         let currentLoad : number = LoadBar.load,
             loadString : string = Math.ceil(currentLoad * 100) + "%",
             colorClass : string = "loadBar " + (currentLoad < 0.90 ? "green" : currentLoad < 1.3 ? "yellow" : "red");
@@ -73,10 +72,10 @@ class LoadBar {
                                     (1.0 <= currentLoad && currentLoad < 2.5 ? " pulsating" : "")}),
                     m("th", {class: (currentLoad < 2.5 ? "loadBar gray" : colorClass) +
                                     (2.5 <= currentLoad && currentLoad < 5.0 ? " pulsating" : "")}),
-                    m("th", {class: (currentLoad < 5.0 ? "loadBar gray" : colorClass + " pulsating")}),
+                    m("th", {class: (currentLoad < 5.0 ? "loadBar gray" : colorClass + " pulsating")})
                 ])
-            )),m('div',{class: 'loadBarString'}, "" + loadString)),
-
+            )),
+            m('div',{class: 'loadBarString'}, "" + loadString))
         ])
     }
 }
