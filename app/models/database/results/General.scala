@@ -11,9 +11,9 @@ case class Alignment(alignment : List[AlignmentItem])
 
 object General {
 
-  def parseAlignment(jsValue: JsValue): Alignment = jsValue match {
-    case obj: JsObject => try {
-      val alignment = (obj \ "alignment").as[List[JsArray]]
+  def parseAlignment(jsArray: JsArray): Alignment = jsArray match {
+    case obj: JsArray => try {
+      var alignment = obj.as[List[JsArray]]
       val list = alignment.map{ x =>
         parseAlignmentItem(x)
       }
@@ -27,6 +27,5 @@ object General {
       val seq = (arr \ 1).as[String]
       AlignmentItem(accession, seq)
     }
-
   }
 }

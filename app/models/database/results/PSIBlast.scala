@@ -37,9 +37,9 @@ case class PSIBlastHSP(evalue: Double,
       "7" -> Json.toJson(hit_len)))
 }
 
-case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
+case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int )
 
-case class PSIBlastResult(HSPS: List[PSIBlastHSP], num_hits: Int, iter_num: Int, db: String, evalue: Double)
+case class PSIBlastResult(HSPS: List[PSIBlastHSP], num_hits: Int, iter_num: Int, db: String, evalue: Double, alignment: List[AlignmentItem])
 
 
 object PSIBlast {
@@ -47,6 +47,10 @@ object PSIBlast {
 
   def parsePSIBlastResult(json: JsValue): PSIBlastResult = json match {
     case obj: JsObject => try {
+      val jobID = (obj \ "jobID").as[String]
+      val alignment = (obj \ "alignment").as[List[JsArray]].map{ x =>
+        General.parseAlignmentItem(x)
+      }
       val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" ).as[List[JsObject]].size-1
       val db = (obj \ "output_psiblastp" \ "db").as[String]
       val evalue = (obj \ "output_psiblastp" \ "evalue").as[String].toDouble
@@ -55,7 +59,7 @@ object PSIBlast {
       val hsplist = hits.map{ x =>
         parsePSIBlastHSP(x)
       }
-      PSIBlastResult(hsplist, num_hits, iter_num, db, evalue)
+      PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment)
     }
   }
 
@@ -81,6 +85,7 @@ object PSIBlast {
     val accession = (descriptionBase \ "accession").getOrElse(Json.toJson("")).as[String]
     val midline = (hsps \ "midline").getOrElse(Json.toJson("")).as[String].toUpperCase
     val description = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
+
     PSIBlastHSP(evalue, num, bitscore, score, hit_start, hit_end, hit_seq, query_seq, query_start, query_end, query_id, hit_len, gaps, identity, positive, ref_len ,accession, midline, description)
 
   }
@@ -98,6 +103,7 @@ object PSIBlast {
       "7" -> hsp.hit_len
     )
   }
+
 
 }
 
