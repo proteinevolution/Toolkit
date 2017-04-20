@@ -39,7 +39,7 @@ case class PSIBlastHSP(evalue: Double,
 
 case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int )
 
-case class PSIBlastResult(HSPS: List[PSIBlastHSP], num_hits: Int, iter_num: Int, db: String, evalue: Double, alignment: List[AlignmentItem])
+case class PSIBlastResult(HSPS: List[PSIBlastHSP], num_hits: Int, iter_num: Int, db: String, evalue: Double, alignment: List[AlignmentItem], qeury: Query)
 
 
 object PSIBlast {
@@ -51,6 +51,7 @@ object PSIBlast {
       val alignment = (obj \ "alignment").as[List[JsArray]].map{ x =>
         General.parseAlignmentItem(x)
       }
+      val query = General.parseQuery((obj \ jobID \ "query").as[JsArray])
       val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" ).as[List[JsObject]].size-1
       val db = (obj \ "output_psiblastp" \ "db").as[String]
       val evalue = (obj \ "output_psiblastp" \ "evalue").as[String].toDouble
@@ -59,7 +60,7 @@ object PSIBlast {
       val hsplist = hits.map{ x =>
         parsePSIBlastHSP(x)
       }
-      PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment)
+      PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query)
     }
   }
 
