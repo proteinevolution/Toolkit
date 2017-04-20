@@ -6,16 +6,23 @@ package controllers
 
 import play.api.mvc.{Action, AnyContent, Controller}
 import java.nio.file.attribute.PosixFilePermission
+
 import com.typesafe.config.ConfigFactory
+
 import scala.sys.process._
 import better.files._
 import models.Constants
-import models.database.results.{PSIBlast, PSIBlastResult}
+import models.database.results.{General, PSIBlast, PSIBlastResult}
 import play.api.mvc.{Action, AnyContent, Controller}
 import javax.inject.Inject
+
+import models.database.results.Alignment
 import play.modules.reactivemongo.ReactiveMongoApi
+
 import scala.concurrent.Future
 import modules.CommonModule
+import play.api.libs.json.JsArray
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -46,7 +53,7 @@ class PSIBlastController @Inject()(webJarAssets : WebJarAssets, val reactiveMong
     }
   }
 
-  def fasPSIBlastFull(jobID : String, numList: Seq[Int]) : Action[AnyContent] = Action.async { implicit request =>
+  def PSIBlastFull(jobID : String, numList: Seq[Int]) : Action[AnyContent] = Action.async { implicit request =>
 
     if(!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
@@ -68,32 +75,32 @@ class PSIBlastController @Inject()(webJarAssets : WebJarAssets, val reactiveMong
   }
 
 
-  def evalPSIBlast(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEvalPSIBlast(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
-      case Some(jsValue) => Ok(getFasEval(PSIBlast.parsePSIBlastResult(jsValue), eval.toDouble))
+      case Some(jsValue) => Ok(getAlnEval(PSIBlast.parsePSIBlastResult(jsValue), eval.toDouble))
       case _=> NotFound
     }
   }
 
-  def fasPSIBlast(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def alnPSIBlast(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
-      case Some(jsValue) => Ok(getFas(PSIBlast.parsePSIBlastResult(jsValue), numList))
+      case Some(jsValue) => Ok(getAln(General.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
       case _ => NotFound
     }
   }
 
-  def getFasEval(result : PSIBlastResult, eval : Double): String = {
+  def getAlnEval(result : PSIBlastResult,  eval : Double): String = {
     val fas = result.HSPS.map { hit =>
       if(hit.evalue < eval){
-        ">" + hit.accession + "\n" + hit.hit_seq + "\n"
+        ">" + result.alignment(hit.num -1).accession + "\n" + result.alignment(hit.num-1).seq + "\n"
       }
     }
     fas.mkString
   }
 
-  def getFas(result : PSIBlastResult, numList: Seq[Int]): String = {
+  def getAln(alignment : Alignment, numList: Seq[Int]): String = {
     val fas = numList.map { num =>
-      ">" + result.HSPS(num - 1).accession + "\n" + result.HSPS(num - 1).hit_seq + "\n"
+      ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num -1 ).seq + "\n"
     }
     fas.mkString
   }

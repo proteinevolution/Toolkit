@@ -5,6 +5,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import modules.CommonModule
 import models.database.results._
+import play.api.libs.json.JsArray
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 
@@ -17,7 +18,7 @@ class HmmerController @Inject() (val reactiveMongoApi : ReactiveMongoApi) extend
 
   def alnEvalHmmer(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
       getResult(jobID).map {
-        case Some(jsValue) => Ok(getAlnEval(Hmmer.parseHmmerResult(jsValue), General.parseAlignment(jsValue), eval.toDouble))
+        case Some(jsValue) => Ok(getAlnEval(Hmmer.parseHmmerResult(jsValue), eval.toDouble))
         case _=> NotFound
       }
   }
@@ -25,15 +26,15 @@ class HmmerController @Inject() (val reactiveMongoApi : ReactiveMongoApi) extend
 
   def alnHmmer(jobID : String, numList : Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
       getResult(jobID).map {
-        case Some(jsValue) => Ok(getAln(General.parseAlignment(jsValue), numList))
+        case Some(jsValue) => Ok(getAln(General.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
         case _ => NotFound
       }
   }
 
-  def getAlnEval(result : HmmerResult, alignment: Alignment, eval : Double): String = {
+  def getAlnEval(result : HmmerResult, eval : Double): String = {
     val fas = result.HSPS.map { hit =>
       if(hit.evalue < eval){
-        ">" + alignment.alignment(hit.num -1).accession + "\n" + alignment.alignment(hit.num-1).seq + "\n"
+        ">" + result.alignment(hit.num -1).accession + "\n" + result.alignment(hit.num-1).seq + "\n"
       }
     }
     fas.mkString
@@ -45,5 +46,4 @@ class HmmerController @Inject() (val reactiveMongoApi : ReactiveMongoApi) extend
       }
     fas.mkString
   }
-
 }
