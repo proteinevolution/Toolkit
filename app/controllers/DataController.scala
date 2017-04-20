@@ -3,19 +3,22 @@ package controllers
 import javax.inject.Inject
 
 import models.database.CMS.FeaturedArticle
+import models.datatables.HitListDAL.PSIBlastDTParam
+import models.datatables.HitlistDAL
 import modules.CommonModule
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 import org.joda.time.DateTime
 import play.api.libs.json.Json
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
 /**
   * Created by lzimmermann on 26.01.17.
   */
-class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
+class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, sup: HitlistDAL)
   extends Controller with CommonModule {
 
   /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with
@@ -65,7 +68,50 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi)
     * DataTables for job results
     */
 
-  def psiDT(jobID : String, numiter: Int) : Action[AnyContent] = Action { implicit request =>
+  def psiDT(jobID : String) : Action[AnyContent] = Action { implicit request =>
+
+    val params = PSIBlastDTParam(
+      request.getQueryString("sSearch").getOrElse(""),
+      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
+      request.getQueryString("iDisplayLength").getOrElse("10").toInt,
+      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
+      request.getQueryString("sSortDir_0").getOrElse("asc"))
+
+
+    val totalHits = sup.getHits(jobID).map {
+      x => x.toString.length
+    }
+
+    val hits = sup.getHitsByKeyWord(jobID, params).map {
+      x => x
+    }
+
+    /*
+    val hitsOrderBy = (params.iSortCol, params.sSortDir) match {
+      case (1, "asc") => hits.map(x => x.sortBy(_.accession))
+      case (1, "desc") => hits.map(x => x.sortWith(_.accession > _.accession))
+      case (2, "asc") => hits.map(x => x.sortBy(_.title))
+      case (2, "desc") => hits.map(x => x.sortWith(_.title > _.title))
+      case (3, "asc") => hits.map(x => x.sortBy(_.evalue))
+      case (3, "desc") => hits.map(x => x.sortWith(_.evalue > _.evalue))
+      case (4, "asc") => hits.map(x => x.sortBy(_.score))
+      case (4, "desc") => hits.map(x => x.sortWith(_.score > _.score))
+      case (5, "asc") => hits.map(x => x.sortBy(_.bitscore))
+      case (5, "desc") => hits.map(x => x.sortWith(_.bitscore > _.bitscore))
+      case (6, "asc") => hits.map(x => x.sortBy(_.identity))
+      case (6, "desc") => hits.map(x => x.sortWith(_.identity > _.identity))
+      case (7, "asc") => hits.map(x => x.sortBy(_.length))
+      case (7, "desc") => hits.map(x => x.sortWith(_.length > _.length))
+      case (_, _) => hits.map(x => x.sortBy(_.num))
+    } */
+
+
+    //val jsonObject = Json.toJson(Map("aaData" -> hitsOrderBy.map(_.foreach(_._toJson))))
+
+    //val dataTableJson = Json.toJson(Map("iTotalRecords" -> totalHits, "iTotalDisplayRecords" -> totalHits))
+    //.as[JsObject].deepMerge(jsonObject.as[JsObject])
+
+
 
     Ok
 
