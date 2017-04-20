@@ -70,7 +70,7 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, sup: Hi
     */
 
   def psiDT(jobID : String) : Action[AnyContent] = Action { implicit request =>
-    
+
     val params = PSIBlastDTParam(
       request.getQueryString("sSearch").getOrElse(""),
       request.getQueryString("iDisplayStart").getOrElse("0").toInt,
@@ -87,7 +87,7 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, sup: Hi
       x => x
     }
 
-    Logger.info(":::::::::" + params.sSearch)
+    Logger.info(":::::::::" + params)
 
     val hitsOrderBy = (params.iSortCol, params.sSortDir) match {
       case (1, "asc") => hits.map(x => x.sortBy(_.accession))
