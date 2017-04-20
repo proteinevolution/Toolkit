@@ -27,10 +27,9 @@ class HitlistDAL @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends Commo
   }
 
 
-  def getHitsByKeyWord(jobID: String, params: PSIBlastDTParam) = {
+  def getHitsByKeyWord(jobID: String, params: PSIBlastDTParam) : Future[List[PSIBlastHSP]] = {
     params.sSearch.isEmpty match {
-      case true => getHits(jobID).map { x => x
-        //x.slice(params.iDisplayStart,params.iDisplayLength)
+      case true => getHits(jobID).map { x => x.drop(params.iDisplayStart).take(params.iDisplayLength)
       }
       //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
     }
