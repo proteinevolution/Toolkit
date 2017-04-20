@@ -88,12 +88,23 @@
                                             Domain expected number: @{hit.dom_exp_num}, Domain observed number: @{hit.domain_obs_num}
                                     </td>
                                     </tr>
-                                    @* seq of query, if present *@
-                                    @{BlastVisualization.makeRow("sequence", Array("Q",hit.query_start.toString, hit.query_seq,hit.query_end.toString))}
-                                    @* agree of query, if present *@
-                                    @{BlastVisualization.makeRow("sequence", Array("","",(hit.midline),""))}
-                                    @* seq of hit, if present *@
-                                    @{BlastVisualization.makeRow("sequence", Array("H",hit.hit_start.toString, hit.hit_seq,hit.hit_end.toString))}
+                                    @* color only 150 first hits, to avoid bloating of the generated html*@
+                                    @if(hit.num <  150) {
+                                        @* seq of query, if present *@
+                                        @{
+                                            BlastVisualization.makeRow("sequence", Array("Q", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq), hit.query_end.toString))
+                                        }
+                                        @* agree of query, if present *@
+                                        @{
+                                            BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline), ""))
+                                        }
+                                        @* seq of hit, if present *@
+                                        @{
+                                            BlastVisualization.makeRow("sequence", Array("H", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))
+                                        }
+                                    }else{
+
+                                    }
                                     <tr>
                                         <td><br /></td>
                                     </tr>
@@ -198,15 +209,16 @@
 
         window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
             if(boolEvalue) {
+                var route = jsRoutes.controllers.HmmerController.alnEvalHmmer('@jobID', evalue);
                 $.ajax({
-                    type: 'GET',
-                    url: 'evalHmmer/@jobID/'+evalue
+                    url: route.url,
+                    method: route.method
                 }).done(function (data_) {
                     forward(selectedTool, data_.toString());
                 });
             }else if(boolSelectedHits){
                 var data = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
-                var route = jsRoutes.controllers.HmmerController.fasHmmer('@jobID', data);
+                var route = jsRoutes.controllers.HmmerController.alnHmmer('@jobID', data);
                 $.ajax({
                     url: route.url,
                     method: route.method

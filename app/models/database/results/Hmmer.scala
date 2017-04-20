@@ -1,5 +1,6 @@
 package models.database.results
 
+import models.tools.Alignment
 import play.api.libs.json.Reads
 import play.api.libs.json._
 import reactivemongo.bson._
@@ -24,16 +25,17 @@ case class HmmerHSP(evalue: Double, num: Int,
 
 case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 
-case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int)
+case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int, alignment: Alignment)
 
 
 object Hmmer {
 
 
 
-  def parseHmmerResult(json: JsValue): HmmerResult = json match {
+  def parseHmmerResult(jsValue: JsValue): HmmerResult = jsValue match {
     case obj: JsObject => try {
       val jobID = (obj \ "jobID").as[String]
+      val alignment = General.parseAlignment(jsValue)
       val hsps = (obj \ jobID \ "hsps").as[List[JsObject]]
       val hits = (obj \ jobID \ "hits").as[List[JsObject]]
       val num_hits = hits.length
@@ -41,7 +43,7 @@ object Hmmer {
       val hsplist = hsps.zip(hits).map{ x =>
         parseHmmerHSP(x._1, x._2)
       }
-      HmmerResult(hsplist, num_hits)
+      HmmerResult(hsplist, num_hits, alignment)
     }
   }
 

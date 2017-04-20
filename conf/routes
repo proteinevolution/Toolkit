@@ -164,9 +164,9 @@ GET         /templateAlignmentHHblits/:jobID/:accession @controllers.HHblitsCont
 POST         /fullSeqHHblits/:jobID                     @controllers.HHblitsController.retrieveFullSeq(jobID : String)
 
 # Hmmer retrieve seqs with evale < threshold
-GET         /evalHmmer/:jobID/:eval                     @controllers.HmmerController.evalHmmer(jobID, eval)
+POST         /alnEvalHmmer                              @controllers.HmmerController.alnEvalHmmer(jobID: String, eval:String)
 # Hmmer retrieve selected seqs
-POST         /fasHmmer                                  @controllers.HmmerController.fasHmmer(jobID, listNum: Seq[Int])
+POST         /alnHmmer                                  @controllers.HmmerController.alnHmmer(jobID: String, listNum: Seq[Int])
 # PSIblast retrieve seqs with evalue < threshold
 POST         /evalPSIBlast                               @controllers.PSIBlastController.evalPSIBlast(jobID: String, eval:String)
 # PSIblast retrieve selected seqs

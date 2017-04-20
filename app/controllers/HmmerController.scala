@@ -15,35 +15,33 @@ import scala.concurrent.Future
   */
 class HmmerController @Inject() (val reactiveMongoApi : ReactiveMongoApi) extends Controller with CommonModule {
 
-  def evalHmmer(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEvalHmmer(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
       getResult(jobID).map {
-        case Some(jsValue) => Ok(getFasEval(Hmmer.parseHmmerResult(jsValue), eval.toDouble))
+        case Some(jsValue) => Ok(getAlnEval(Hmmer.parseHmmerResult(jsValue), General.parseAlignment(jsValue), eval.toDouble))
         case _=> NotFound
       }
-
-
   }
 
 
-  def fasHmmer(jobID : String, numList : Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def alnHmmer(jobID : String, numList : Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
       getResult(jobID).map {
-        case Some(jsValue) => Ok(getFas(Hmmer.parseHmmerResult(jsValue), numList))
+        case Some(jsValue) => Ok(getAln(General.parseAlignment(jsValue), numList))
         case _ => NotFound
       }
   }
 
-  def getFasEval(result : HmmerResult, eval : Double): String = {
+  def getAlnEval(result : HmmerResult, alignment: Alignment, eval : Double): String = {
     val fas = result.HSPS.map { hit =>
       if(hit.evalue < eval){
-        ">" + hit.accession + "\n" + hit.hit_seq + "\n"
+        ">" + alignment.alignment(hit.num -1).accession + "\n" + alignment.alignment(hit.num-1).seq + "\n"
       }
     }
     fas.mkString
   }
 
-  def getFas(result : HmmerResult, list: Seq[Int]): String = {
+  def getAln(alignment : Alignment, list: Seq[Int]): String = {
     val fas = list.map { num =>
-        ">" + result.HSPS(num -1 ).accession + "\n" + result.HSPS(num - 1).hit_seq + "\n"
+        ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num -1 ).seq + "\n"
       }
     fas.mkString
   }
