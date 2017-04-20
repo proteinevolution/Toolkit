@@ -172,7 +172,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
       case "phyml" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt", "phyml_div")),
         ("NewickTree", views.html.jobs.resultpanels.fileviewWithDownload("phyml",s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt", jobID, jobID + ".phy_phyml_tree.txt")),
-        ("Data", views.html.jobs.resultpanels.fileviewWithDownload("phyml",s"$jobPath$jobID/results/" + jobID + ".phy_phyml_stats.txt", jobID, jobID + ".phy_phyml_stats.txt"))))
+        ("Data", views.html.jobs.resultpanels.fileviewWithDownload("phyml",s"$jobPath$jobID/results/" + jobID + ".stats", jobID, jobID + ".stats"))))
 
       case "mmseqs2" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload("mmseqs2",s"$jobPath$jobID/results/" + jobID + ".fas", jobID, jobID + ".fas")),
         ("Summary", views.html.jobs.resultpanels.fileviewWithDownload("mmseqs2",s"$jobPath$jobID/results/" + jobID + ".clu", jobID, jobID + ".clu"))))
@@ -331,8 +331,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
     // PhyML
     ("phyml", "PhyML", "phym", "classification", "",
-      Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYML, paramAccess.NO_REPLICATES,
-        paramAccess.GAMMA_RATE), Seq.empty,Seq.empty),
+      Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYML, paramAccess.NO_REPLICATES), Seq.empty,Seq.empty),
 
     // MMseqs2
     ("mmseqs2", "MMseqs2", "mseq", "classification", "",
