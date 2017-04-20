@@ -380,6 +380,7 @@
             var dataTmp = preprocessingForward(selectedTool, boolSelectedHits,boolEvalue, evalue);
             // full seq is retrieved
             if(boolFullLength) {
+                if(boolSelectedHits )
                 // retrieve full Seq
                 var jsonData = new Object();
                 jsonData.accessionsStr = dataTmp.accessions.join(" ");
