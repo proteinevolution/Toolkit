@@ -217,11 +217,11 @@ function preprocessingForward(selectedTool, boolSelectedHits,boolEvalue, evalue,
 
 
 function getCheckedCheckboxes(className ){
-    var json = [];
+    var numList = [];
     $('input:checkbox.' + className + ":checked").each(function () {
-        json.push($(this).val());
+        numList.push($(this).val());
     });
-    return json;
+    return numList;
 }
 
 
@@ -271,14 +271,8 @@ function applySliderRange(jsonData, sliderRange){
 // parameter: tool (String)
 // forwards all checked identifier and sequences to tool
 function forward(tool, forwardData){
-    if(forwardData.length < 1) {
-        alert("No sequences selected!");
-    }
-    else {
-        localStorage.setItem("resultcookie", forwardData);
-        window.location.href = "/#/tools/" + tool;
-    }
-
+    localStorage.setItem("resultcookie", forwardData);
+    window.location.href = "/#/tools/" + tool;
 }
 
 // load forwarded data into alignment field
