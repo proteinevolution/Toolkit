@@ -260,12 +260,16 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
     var route = jsRoutes.controllers.PSIBlastController.evalPSIBlastFull('@jobID', evalue);
     if(boolFullLength) {
         if(boolEvalue) {
-
             $.ajax({
                 url: route.url,
                 method: route.method
             }).done(function () {
-                forward(selectedTool, data_.toString());
+                $.ajax({
+                    type: 'GET',
+                    url: 'files/@jobID/sequences.fa'
+                }).done(function (data_) {
+                    forward(selectedTool, data_.toString());
+                });
             });
         }else{
             route = jsRoutes.controllers.PSIBlastController.PSIBlastFull('@jobID', checkedCheckboxes);
@@ -273,7 +277,12 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
                 url: route.url,
                 method: route.method
             }).done(function (data_) {
-                forward(selectedTool, data_.toString());
+                $.ajax({
+                    type: 'GET',
+                    url: 'files/@jobID/sequences.fa'
+                }).done(function (data_) {
+                    forward(selectedTool, data_.toString());
+                });
             });
         }
     }else{
