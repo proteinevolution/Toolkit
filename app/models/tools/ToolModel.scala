@@ -116,6 +116,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
       case "hhrepid" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.modeller(s"/files/$jobID/query_A.png", s"$jobPath$jobID/results/query.hhrepid"))))
 
       case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/" + jobID + ".clu.tre", "ancescon_div")),
+        ("NewickTree", views.html.jobs.resultpanels.fileviewWithDownload("ancescon",s"$jobPath$jobID/results/" + jobID + ".clu.tre", jobID, jobID + ".clu.tre")),
         ("Data", views.html.jobs.resultpanels.fileviewWithDownload("ancescon",s"$jobPath$jobID/results/" + jobID + ".anc_out", jobID, jobID + ".anc_out"))))
 
       case "clustalo" => getResult(jobID).map {
@@ -170,6 +171,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
 
 
       case "phyml" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt", "phyml_div")),
+        ("NewickTree", views.html.jobs.resultpanels.fileviewWithDownload("phyml",s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt", jobID, jobID + ".phy_phyml_tree.txt")),
         ("Data", views.html.jobs.resultpanels.fileviewWithDownload("phyml",s"$jobPath$jobID/results/" + jobID + ".phy_phyml_stats.txt", jobID, jobID + ".phy_phyml_stats.txt"))))
 
       case "mmseqs2" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload("mmseqs2",s"$jobPath$jobID/results/" + jobID + ".fas", jobID, jobID + ".fas")),
