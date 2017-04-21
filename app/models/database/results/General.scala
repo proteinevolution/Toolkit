@@ -13,6 +13,8 @@ case class Query(accession: String, seq: String)
 @Singleton
 class General {
 
+  private val accessionMalFormat = """.*\|(.*)\|.*""".r
+
   def parseAlignment(jsArray: JsArray): Alignment = jsArray match {
     case obj: JsArray => try {
       var alignment = obj.as[List[JsArray]]
@@ -38,5 +40,11 @@ class General {
      Query(accession, seq)
     }
   }
+
+  def refineAccession(seq: String) = seq match{
+      case this.accessionMalFormat(group) => group
+      case _ => seq
+    }
+
 
 }
