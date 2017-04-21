@@ -229,7 +229,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer) (paramAccess: Par
     ("psiblast", "ProtBLAST/PSI-BLAST", "pbl", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
       paramAccess.MATRIX,
       paramAccess.NUM_ITER, paramAccess.EVALUE, paramAccess.HHPRED_INCL_EVAL, paramAccess.DESC),
-      Seq("modeller", "hhpred"),Seq("modeller")),
+      Seq("psiblast", "hhpred", "hhblits", "hmmer", "clustalo", "kalign", "tcoffee", "mafft", "msaprobs", "muscle",
+        "aln2plot", "pcoils", "hhrepid", "seq2id", "clans", "mmseqs2", "hhfilter"), Seq("clans", "mmseqs2", "seq2id")),
 
 
     // CLustalOmega
