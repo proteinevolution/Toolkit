@@ -997,16 +997,12 @@ class Auth {
         return Auth.user
     }
     static loadUser () : any {
-        console.log("Requesting userdata");
         var route = jsRoutes.controllers.Auth.getUserData();
         return m.request({method: route.method, url: route.url, type : User }).then(function(user) {
-            //type : AuthMessage
-            console.log("user: ", user);
             if (user) {
                 SignIn.password = null;
                 Auth.user       = user.nameLogin != null ? user : null;
             }
-            console.log(Auth.user);
             m.mount(document.getElementById('metauser'), AuthDropdown);
             m.mount(document.getElementById('mithril-overlay-content'), AuthOverlay);
         }).catch(function(error) {

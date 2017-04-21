@@ -63,7 +63,7 @@ window.JobListComponent = {
         return foundIndex
     },
     contains        : function (jobID) {    // Checks if the job with the given jobID is in the list
-        return this.getJob(jobID) != null
+        return JobListComponent.getJob(jobID) != null
     },
     jobIDs          : function () {         // Returns all the jobIDs from the list
         return JobListComponent.list.map(function(job){ return job.jobID })
@@ -116,12 +116,14 @@ window.JobListComponent = {
             }
         });
     },
-    sortList        : function(sort) {      // Sorting the list elements
-        var oldSort, sameMode, inv, selectedJobID, selectedInView;
+    sortList        : function(sort, reverse) {      // Sorting the list elements
+        var oldSort, sameMode, inv, selectedJobID, selectedInView = false;
         oldSort = JobListComponent.sort;    // grab the old sort
         sameMode = (oldSort.mode === sort); // see if the mode has changed
         // If the mode has changed adjust the order (ascending - true / descending - false)
-        if (sort != null || sameMode) { JobListComponent.sort = { mode : sort, asc : (sameMode ? !oldSort.asc : true) } }
+        if (sort != null || sameMode) { // check if the same mode is on
+            JobListComponent.sort = { mode : sort, asc : (sameMode && reverse ? !oldSort.asc : true) }
+        }
         // inv gets multiplied to invert the sorting order
         inv = JobListComponent.sort.asc ? 1 : -1;
         // Check if the selected jobID is in the view to get the new index to scroll to
@@ -143,19 +145,16 @@ window.JobListComponent = {
     },
     pushJob         : function(newJob, setActive) {
         if (newJob == null || newJob.jobID == null) { console.log(newJob); return }  // ensure that there are no empty jobs pushed
-        this.lastUpdatedJob = newJob;                           // change the "last updated" job to this one
-        var index = null, oldJob;
-        if (setActive) { this.selectedJobID = newJob.jobID }    // change the selectedJobID to this job when setActive is on
-        this.list.map(function(job, idx){                       // check if the job is in the list already
-            if(job.jobID === newJob.jobID) { index = idx; oldJob = job }
-        });
+        JobListComponent.lastUpdatedJob = newJob;                        // change the "last updated" job to this one
+        if (setActive) { JobListComponent.selectedJobID = newJob.jobID } // change the selectedJobID to this job when setActive is on
+        var index = JobListComponent.getJobIndex(newJob.jobID);             // check if the job is in the list already
         if (index != null) {
             JobListComponent.list[index] = newJob;              // Job is not new, update it
         } else {
             JobListComponent.list.push(newJob);                 // Job is new, push it to the list
             JobListComponent.register([newJob.jobID]);
+            JobListComponent.sortList();                        // Sort the list with the current sorting mode
         }
-        this.sortList();                                        // Sort the list with the current sorting mode
         if (newJob.jobID === JobListComponent.selectedJobID) {  // Since the job is selected
             index = this.getJobIndex(newJob.jobID);             // find the new index of the job,
             m.route("/jobs/" + newJob.jobID);                   // actualize the content view and
@@ -208,20 +207,20 @@ window.JobListComponent = {
         numScrollItems = this.numVisibleItems; // How many items to scroll per click
         return m("div", { id: "job-list" }, [
             m("div", { class: "job-button" }, [
-                m("div", { class: "idsort textcenter", onclick: this.sortList.bind(ctrl, "jobID") }, "ID"),
-                m("div", { class: "toolsort textcenter", onclick: this.sortList.bind(ctrl, "toolName") }, "Tool"),
+                m("div", { class: "idsort textcenter", onclick: this.sortList.bind(ctrl, "jobID", true) }, "ID"),
+                m("div", { class: "toolsort textcenter", onclick: this.sortList.bind(ctrl, "toolName", true) }, "Tool"),
                 m("div", { class: "openJobManager"}, m('a', { href : "/#/jobmanager"}, m("i", {class: "icon-list"})))
             ]),
             m("div", { id: "job-list-bottom" }, [
                 listTooLong ?   // Show only when list is longer than numVisibleItems
                     m("div", {
-                        class: "joblistTop", // TODO Add class to gray out when onTopOfList == true
+                        class: "jobListArrow top" + (onTopOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
                         onclick: this.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2"
                     ) : null,
                 shownList.map(function(job) { return job.view(ctrl) }),
                 listTooLong ?   // Show only when list is longer than numVisibleItems
                     m("div", {
-                        class: "joblistBottom", // TODO Add class to gray out when onBottomOfList == true
+                        class: "jobListArrow bottom" + (onBottomOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
                         onclick: this.scrollJobList(+numScrollItems, !onBottomOfList) }, "\u25bc"
                     ) : null
             ])
