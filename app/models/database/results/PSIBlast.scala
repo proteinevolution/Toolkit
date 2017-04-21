@@ -86,7 +86,7 @@ class PSIBlast @Inject() (general: General) {
     val query_id = (hsps \ "query_id").getOrElse(Json.toJson("")).as[String]
     val ref_len = (hit \ "ref_len").getOrElse(Json.toJson(-1)).as[Int]
     val hit_len = (hsps \ "align_len").getOrElse(Json.toJson(-1)).as[Int]
-    val accession = (descriptionBase \ "accession").getOrElse(Json.toJson("")).as[String]
+    val accession = general.refineAccession((descriptionBase \ "accession").getOrElse(Json.toJson("")).as[String])
     val midline = (hsps \ "midline").getOrElse(Json.toJson("")).as[String].toUpperCase
     val description = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
 

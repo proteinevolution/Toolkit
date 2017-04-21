@@ -71,7 +71,7 @@ class Hmmer @Inject() (general: General) {
     val query_end = (hsp \ "query_end").getOrElse(Json.toJson(-1)).as[Int]
     val query_id = (hsp \ "query_id").getOrElse(Json.toJson("")).as[String]
     val hit_len = (hsp \ "hit_len").getOrElse(Json.toJson(-1)).as[Int]
-    val accession = (hsp \ "hit_id").getOrElse(Json.toJson("")).as[String]
+    val accession = general.refineAccession((hsp \ "hit_id").getOrElse(Json.toJson("")).as[String])
     val midline = (hsp \ "aln_ann" \ "PP").getOrElse(Json.toJson("")).as[String].toUpperCase
     val description = (hsp \ "hit_description").getOrElse(Json.toJson("")).as[String]
     val dom_exp_num = (hit \ "dom_exp_num").getOrElse(Json.toJson(-1)).as[Double]
