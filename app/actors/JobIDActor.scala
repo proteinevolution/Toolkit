@@ -10,6 +10,7 @@ import modules.CommonModule
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
 
+import scala.collection.mutable.Queue
 import scala.collection.parallel.ParSeq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
@@ -27,42 +28,30 @@ class JobIDActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
 
   private val fetchLatestInterval = 5.seconds
+  private val iter = Iterator.continually[String](Random.nextInt(9999999).toString.padTo(7, '0')).filter(x=> Await.result(isValid(x), scala.concurrent.duration.Duration.Inf))
+
 
   val Tick : Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, Ensure)(context.system.dispatcher)
+    context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, Refill)(context.system.dispatcher)
   }
 
 
   // check ElasticSearch
 
   private def isValid(id : String) : Future[Boolean] = {
-
-
-    jobDao.existsJobID(id).map {
-
-      case x if x.totalHits == 0 => true
-      case _ => false
-
-    }
-
+    jobDao.existsJobID(id).map { _.totalHits == 0}
   }
 
 
   override def receive = LoggingReceive {
 
-
-    case Ensure =>
-
-      if(jobIDRepo.length < 100)
-        self ! Refill
-
-
     case Refill =>
 
-      val candIt = Iterator.continually[Seq[String]](Stream.continually(Random.nextInt(9999999).toString.padTo(7, '0')).take(100))
-      jobIDRepo = jobIDRepo.union(candIt.next()).distinct.filter(x => Await.result(isValid(x), scala.concurrent.duration.Duration(1, "seconds")))
-
+      if (jobIDRepo.length < 100) {
+        jobIDRepo.enqueue(Seq.fill(200)(iter.next()):_*)
+        jobIDRepo = jobIDRepo.distinct
+      }
       Logger.info("refilling jobID repository. Now " + jobIDRepo.length + " jobIDs in store.")
 
 
@@ -70,10 +59,8 @@ class JobIDActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
 
   override def preStart() : Unit = {
-
-    val candIt = Iterator.continually[Seq[String]](Stream.continually(Random.nextInt(9999999).toString.padTo(7, '0')).take(50))
-    jobIDRepo = jobIDRepo.union(candIt.next()).distinct.filter(x => Await.result(isValid(x), scala.concurrent.duration.Duration(1, "seconds")))
-
+    jobIDRepo.enqueue(Seq.fill(50)(iter.next()):_*)
+    jobIDRepo = jobIDRepo.distinct
   }
 
 
@@ -90,17 +77,10 @@ class JobIDActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
 object JobIDActor {
 
-
-  private var jobIDRepo : ParSeq[String] = ParSeq.empty[String]
-
-
+  private var jobIDRepo : Queue[String] = Queue.empty[String]
   def provide : String = {
-
-    val pick = jobIDRepo.head
-    jobIDRepo = jobIDRepo.zipWithIndex.collect {case (a,i) if a != pick => a}
-    Logger.info(jobIDRepo.length + " jobIDs in in repository")
-    pick
-
+    Logger.info(jobIDRepo.length-1 + " jobIDs in in repository")
+    jobIDRepo.dequeue()
   }
 
   case object Refill
