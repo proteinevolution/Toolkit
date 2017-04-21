@@ -12,11 +12,9 @@ import com.typesafe.config.ConfigFactory
 import scala.sys.process._
 import better.files._
 import models.Constants
-import models.database.results.{General, PSIBlast, PSIBlastResult}
+import models.database.results._
 import play.api.mvc.{Action, AnyContent, Controller}
 import javax.inject.Inject
-
-import models.database.results.Alignment
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.Future
@@ -26,13 +24,13 @@ import play.api.libs.json.JsArray
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class PSIBlastController @Inject()(webJarAssets : WebJarAssets, val reactiveMongoApi : ReactiveMongoApi) extends Controller with Constants with CommonModule{
+class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJarAssets : WebJarAssets, val reactiveMongoApi : ReactiveMongoApi) extends Controller with Constants with CommonModule{
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
   private final val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE)
 
   retrieveFullSeq.setPermissions(filePermissions)
-  def evalPSIBlastFull(jobID : String, eval: String) : Action[AnyContent] = Action.async { implicit request =>
+  def evalFull(jobID : String, eval: String) : Action[AnyContent] = Action.async { implicit request =>
 
     if(!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
@@ -40,7 +38,7 @@ class PSIBlastController @Inject()(webJarAssets : WebJarAssets, val reactiveMong
     } else {
       getResult(jobID).map {
         case Some(jsValue) => {
-          val result = PSIBlast.parsePSIBlastResult(jsValue)
+          val result = psiblast.parseResult(jsValue)
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
           val db = result.db
           Process(retrieveFullSeq.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accessionsStr" -> accessionsStr, "db" -> db).run().exitValue() match {
@@ -53,7 +51,7 @@ class PSIBlastController @Inject()(webJarAssets : WebJarAssets, val reactiveMong
     }
   }
 
-  def PSIBlastFull(jobID : String, numList: Seq[Int]) : Action[AnyContent] = Action.async { implicit request =>
+  def full(jobID : String, numList: Seq[Int]) : Action[AnyContent] = Action.async { implicit request =>
 
     if(!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
@@ -61,7 +59,7 @@ class PSIBlastController @Inject()(webJarAssets : WebJarAssets, val reactiveMong
     } else {
       getResult(jobID).map {
       case Some(jsValue) => {
-        val result = PSIBlast.parsePSIBlastResult(jsValue)
+        val result = psiblast.parseResult(jsValue)
         val accessionsStr = getAccessions(result, numList)
         val db = result.db
           Process(retrieveFullSeq.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accessionsStr" -> accessionsStr, "db" -> db).run().exitValue() match {
@@ -75,16 +73,16 @@ class PSIBlastController @Inject()(webJarAssets : WebJarAssets, val reactiveMong
   }
 
 
-  def alnEvalPSIBlast(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
-      case Some(jsValue) => Ok(getAlnEval(PSIBlast.parsePSIBlastResult(jsValue), eval.toDouble))
+      case Some(jsValue) => Ok(getAlnEval(psiblast.parseResult(jsValue), eval.toDouble))
       case _=> NotFound
     }
   }
 
-  def alnPSIBlast(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def aln(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
-      case Some(jsValue) => Ok(getAln(General.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
+      case Some(jsValue) => Ok(getAln(general.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
       case _ => NotFound
     }
   }
@@ -118,6 +116,19 @@ class PSIBlastController @Inject()(webJarAssets : WebJarAssets, val reactiveMong
       }
     }
     fas.mkString
+  }
+
+
+
+  def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[PSIBlastHSP]] = {
+    if(params.sSearch.isEmpty){
+      getResult(jobID).map {
+        case Some(result) => psiblast.parseResult(result).HSPS.slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+      }
+    }else{
+      ???
+    }
+    //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
   // Exceptions
   case class FileException(message : String) extends Exception(message)
