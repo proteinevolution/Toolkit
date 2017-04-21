@@ -21,43 +21,30 @@
 }
 
 /* The containder for the JobListComponent. Let is behave like a table and occupy the full width1 */
-#job-list {
+.job-list {
     display: table;
     width: 90%;
     margin-left: 15px;
 }
 
-#job-list-bottom {
+.job-list .elements {
+    display: table-row-group;
     -webkit-box-shadow: 2px 2px 15px -5px rgba(153,153,153,1);
     -moz-box-shadow: 2px 2px 15px -5px rgba(153,153,153,1);
     box-shadow: 2px 2px 15px -5px rgba(153,153,153,1);
 }
 
-#job-list .idsort{
+.job-list .idsort {
     width: 48%;
 }
 
-#job-list .toolsort{
-    width: 43%;
+.job-list .toolsort {
+    width: 48%;
 }
 
-#job-list .job .jobid {
-    vertical-align: middle;
-    width: 40%;
-    padding-left: 0.35em;
-}
-
-#job-list .job .toolname {
-
-    font-family: Monaco, Consolas, "Lucida Console", monospace;
-    vertical-align: middle;
-    width: 40%;
-    text-align: left;
-    margin-left: 0.85em;
-}
-#job-list .boxclose {
-
+.job-list .boxclose {
     width: 20%;
+    opacity: 0.8;
 }
 
 .icon-list {
@@ -73,9 +60,8 @@
 
 
 /*  One job in the Joblist */
-#job-list .job {
-
-    display: flex;
+.job-list .job {
+    display: table-row;
     border-top: none;
     border-bottom: 1px solid lightgray;
     border-left: 1px solid lightgray;
@@ -85,56 +71,66 @@
     padding-top: 0.5em;
 }
 
+/*.job-list .selected {*/
+    /*border-right: 1px solid transparent;*/
+/*}*/
 
-#job-list .job div {
-
+.job-list div.job{
+    display: flex;
+    width:100%;
+    vertical-align: middle;
     text-align: center;
-
 }
 
+.job-list .job .jobid {
+    padding: 0 0 0 0.35em;
+    margin: 0 auto;
+}
 
-#job-list .job-handle {
+.job-list .job .toolname {
+    float:right;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    text-align: left;
+    margin-left: 0.85em;
+}
 
+.job-list .job-handle {
     display: flex;
 }
 
-#job-list .job-handle .delete {
-
+.job-list .job-handle .delete {
     border-right: 1px solid lightgray;
 }
 
-
-.boxclose:before {
-    content: "\00d7";
-}
-a.boxclose{
+.job-list .boxclose{
+    float:right;
     cursor:pointer;
     color: #808080;
     border-radius: 30px;
     font-size: 2.6em;
-
     display: inline-block;
     line-height: 0px;
     padding: 0.26em;
 }
 
-#job-list .job-button {
-    height: 2.5em;
-    display: flex;
+.job-list .boxclose:before {
+    content: "\00d7";
+}
+
+.job-list .job-button {
+    /*Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
     /*
     -webkit-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
     -moz-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
     box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
+    background: rgb(238,238,238);  Old browsers
+    background: -moz-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%);  FF3.6-15
+    background: -webkit-linear-gradient(top, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);   Chrome10-25,Safari5.1-6
+    background: linear-gradient(to bottom, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);  W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 );   IE6-9
     */
-}
-
-.job-button {
-    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
-    /*background: rgb(238,238,238);*/ /* Old browsers */
-    /* background: -moz-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%); */ /*FF3.6-15 */
-    /* background: -webkit-linear-gradient(top, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); */ /* Chrome10-25,Safari5.1-6 */
-    /* background: linear-gradient(to bottom, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); *//* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    /* filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 ); */ /* IE6-9 */
+    display: flex;
+    height: 2.5em;
     width: 100%;
     border: solid 1px lightgray !important;
     color: gray !important;
@@ -144,67 +140,28 @@ a.boxclose{
     -moz-box-shadow: 0 1px 6px 0 #ccc;
     box-shadow: 0 1px 6px 0 #ccc;
     background-color: #eee;
-
-}
-
-.idsort {
     cursor: pointer;
 }
 
-.toolsort {
-    cursor: pointer;
-}
-
-.jobnotes textarea {
-    border: 1px solid #ccc;
-    font-size: 0.75em;
-    flex-grow: 1;
-    padding: 8px;
-    box-sizing: border-box;
-    background-color: transparent;
-    color: #343434;
-    line-height: 1.7em;
-    outline: none;
-    resize: none;
-    height: 200px;
-}
-
-/*.notesheader {
-    margin-top: 30px;
-    flex: 1 1 auto;
-    border: 1px solid #ccc;
-    border-width: 0 1px 1px 0;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    padding: 4px 8px 5px 8px;
-    background: #e0e0e0;
-    opacity: 0.7;
-    cursor: pointer;
-} */
-.jobListArrow {
+.job-list .arrow {
     height: 1.7em;
     text-align: center;
     border: 1px solid lightgray;
     color: #80808099;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
-.jobListArrow.inactive {
+
+.job-list .arrow.inactive {
     color: rgba(210, 210, 230, 0.5);
 }
-.jobListArrow.top {
+
+.job-list .arrow.top {
     -moz-border-radius-topleft: 4px;
     -moz-border-radius-topright: 4px;
     border-top-left-radius: 4px ;
     border-top-right-radius: 4px ;
     line-height: 1.5;
 }
-.jobListArrow.bottom {
+.job-list .arrow.bottom {
     height: 1.7em;
     border-top: unset;
     -moz-border-radius-bottomleft: 4px;
@@ -214,85 +171,69 @@ a.boxclose{
     line-height: 1.1;
 }
 
-.d {
+.job-list .d {
     background-color: #DBFFDB;
     text-overflow: ellipsis;
     overflow: hidden;
 }
-.d:hover {
+.job-list .d:hover {
     background-color: #C3FFC3;
-    border: solid red thick;
 }
-.d.selected {
+.job-list .d.selected {
     background-color: #C3FFC3;
-    box-shadow: 1px 0 6px darkgreen;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 3px;
-
+    box-shadow: 6px 0 6px -3px darkgreen;
 }
 
-
-.e {
+.job-list .e {
     background-color: #FFDDDD;
 }
-.e:hover {
+.job-list .e:hover {
     background-color: #FFC5C5;
 }
-.e.selected {
+.job-list .e.selected {
     background-color: #FFC5C5;
-    box-shadow: 1px 0 6px #d2071d;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 3px;
+    box-shadow: 6px 0 6px -3px #d2071d;
 }
 
 
-.r{
+.job-list .r{
     background-color: #FFFF94;
 }
-.r:hover {
+.job-list .r:hover {
     background-color: #FFF666;
 }
-.r.selected {
+.job-list .r.selected {
     background-color: #FFF666;
-    box-shadow: 1px 0 6px #dcb21f;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 3px;
-
+    box-shadow: 6px 0 6px -3px #dcb21f;
 }
 
-.q {
+.job-list .q {
     background-color: #c0b5bf;
 }
-.q:hover {
+.job-list .q:hover {
     background-color: #c0b5bf;
 }
-.q.selected {
+.job-list .q.selected {
     background-color: #c0b5bf;
-    box-shadow: 1px 0 6px #9192af;
-    margin-right: 2px;
-    margin-top: 2px;
-    margin-bottom: 3px;
+    box-shadow: 6px 0 6px -3px #9192af;
 }
 
-.i {
+.job-list .i {
     background-color: #f2f2f2;
 }
-.i:hover {
+.job-list .i:hover {
     background-color: #DADADA;
 }
-.i.selected {
+.job-list .i.selected {
     background-color: #DADADA;
 }
 
-.p {
+.job-list .p {
     background-color: #f2f2f2;
 }
-.p:hover {
+.job-list .p:hover {
     background-color: #DADADA;
 }
-.p.selected {
+.job-list .p.selected {
     background-color: #DADADA;
 }
