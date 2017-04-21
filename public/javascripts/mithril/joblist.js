@@ -35,11 +35,10 @@ window.JobListComponent = {
                     id      : this.jobID,
                     onclick : this.select(this)
                 }, [
-                    m("div",  { class: "jobid"    }, this.jobID),
-                    m("span", { class: "toolname" }, this.toolname.substr(0, 4).toUpperCase()),
-                    m("a", {
+                    m("div", { class: "jobid"    }, this.jobID),
+                    m("div", { class: "toolname" }, this.toolname.substr(0, 4).toUpperCase()),
+                    m("div", {
                         class   : "boxclose",
-                        id      : "boxclose",
                         onclick : JobListComponent.removeJob.bind(ctrl, this.jobID)
                     })
                 ]);
@@ -205,22 +204,22 @@ window.JobListComponent = {
         //             "on Top"                  : onTopOfList,
         //             "on Bottom"               : onBottomOfList});
         numScrollItems = this.numVisibleItems; // How many items to scroll per click
-        return m("div", { id: "job-list" }, [
+        return m("div", { "class": "job-list" }, [
             m("div", { class: "job-button" }, [
                 m("div", { class: "idsort textcenter", onclick: this.sortList.bind(ctrl, "jobID", true) }, "ID"),
                 m("div", { class: "toolsort textcenter", onclick: this.sortList.bind(ctrl, "toolName", true) }, "Tool"),
                 m("div", { class: "openJobManager"}, m('a', { href : "/#/jobmanager"}, m("i", {class: "icon-list"})))
             ]),
-            m("div", { id: "job-list-bottom" }, [
+            m("div", { class: "elements noselect" }, [
                 listTooLong ?   // Show only when list is longer than numVisibleItems
                     m("div", {
-                        class: "jobListArrow top" + (onTopOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
+                        class: "arrow top" + (onTopOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
                         onclick: this.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2"
                     ) : null,
                 shownList.map(function(job) { return job.view(ctrl) }),
                 listTooLong ?   // Show only when list is longer than numVisibleItems
                     m("div", {
-                        class: "jobListArrow bottom" + (onBottomOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
+                        class: "arrow bottom" + (onBottomOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
                         onclick: this.scrollJobList(+numScrollItems, !onBottomOfList) }, "\u25bc"
                     ) : null
             ])
