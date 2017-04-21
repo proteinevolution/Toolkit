@@ -14,19 +14,19 @@ import scala.concurrent.Future
 /**
   * Created by drau on 18.04.17.
   */
-class HmmerController @Inject() (val reactiveMongoApi : ReactiveMongoApi) extends Controller with CommonModule {
+class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMongoApi : ReactiveMongoApi) extends Controller with CommonModule {
 
-  def alnEvalHmmer(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
       getResult(jobID).map {
-        case Some(jsValue) => Ok(getAlnEval(Hmmer.parseHmmerResult(jsValue), eval.toDouble))
+        case Some(jsValue) => Ok(getAlnEval(hmmer.parseResult(jsValue), eval.toDouble))
         case _=> NotFound
       }
   }
 
 
-  def alnHmmer(jobID : String, numList : Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def aln(jobID : String, numList : Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
       getResult(jobID).map {
-        case Some(jsValue) => Ok(getAln(General.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
+        case Some(jsValue) => Ok(getAln(general.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
         case _ => NotFound
       }
   }
@@ -45,5 +45,15 @@ class HmmerController @Inject() (val reactiveMongoApi : ReactiveMongoApi) extend
         ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num -1 ).seq + "\n"
       }
     fas.mkString
+  }
+
+  def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[HmmerHSP]] = {
+    if (params.sSearch.isEmpty) {
+      getResult(jobID).map {
+        case Some(result) => hmmer.parseResult(result).HSPS.slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+      }
+    } else {
+      ???
+    }
   }
 }

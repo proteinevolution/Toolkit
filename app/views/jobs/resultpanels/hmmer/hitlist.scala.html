@@ -29,12 +29,11 @@
         <li class="accordion-item" data-accordion-item>
             <a href="#" class="accordion-title">Hitlist</a>
             <div class="accordion-content" data-tab-content>
-                <div id="alignments" class="accordion-content table-scroll" data-tab-content>
-                    <div class="colorOpts">
-                        <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
-                        <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
-                        <hr id="line-element" colspan="4" class="horizontal-line">
-                    </div>
+                <div class="colorOpts">
+                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
+                    <hr id="line-element" class="horizontal-line">
+                </div>
                 <table id="htb" class="display" cellspacing="0" width="80%">
                     <thead>
                         <tr>
@@ -43,6 +42,7 @@
                             <th>Title</th>
                             <th>E-value</th>
                             <th>Bitscore</th>
+                            <th>Length</th>
                         </tr>
                     </thead>
                 </table>
@@ -146,7 +146,7 @@
         var hitlist;
         var query;
         var selectAllBool_@{tool.toolNameShort} = false;
-        var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
+        var firstQueryStart, firstQueryEnd = null;
         var chosenDB = null;
 
         (function()  {
@@ -175,41 +175,42 @@
 
             var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
             var selectAllBool_@{tool.toolNameShort} = false;
-            var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
+            var firstQueryStart, firstQueryEnd = null;
             var chosenDB = null;
             var numHits = @{result.num_hits};
             var urlParams = "/api/job/@jobID";
-            var urlQuery = "/files/" + @jobID + "/query.json";
             var evalueParam = null;
+
 
             $.getJSON(urlParams, function(data_){
                 chosenDB = data_.paramValues.standarddb;
                 evalueParam = data_.paramValues.inclusion_ethresh;
             });
-
-
-            $.getJSON(urlQuery, function(query){
-                firstQueryName = ">" + query[0][0];
-                firstQuerySequence = query[0][1];
-                firstQueryLength = firstQuerySequence.length;
                 if(numHits > 0){
                     firstQueryStart = @result.HSPS(0).query_start;
                     firstQueryEnd = @result.HSPS(0).query_end;
                     /* without timeout SLIDER is displayed */
+                    drawDataTable();
                     setTimeout(function () {
-                        slider_show(firstQueryLength, firstQueryStart, firstQueryEnd)
+                        slider_show('@{result.query.seq.length}', firstQueryStart, firstQueryEnd)
                     }, 1000);
 
                     $("#accordion").foundation();
 
                 }
-            });
         })();
 
+        function drawDataTable(){
+            hitlist = $('#htb').dataTable({
+                "bProcessing" : true,
+                "bServerSide" : true,
+                "sAjaxSource" : "/api/job/results/dataTableHmmer/@jobID"
+            });
+        }
 
         window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
             if(boolEvalue) {
-                var route = jsRoutes.controllers.HmmerController.alnEvalHmmer('@jobID', evalue);
+                var route = jsRoutes.controllers.HmmerController.alnEval('@jobID', evalue);
                 $.ajax({
                     url: route.url,
                     method: route.method
@@ -218,7 +219,7 @@
                 });
             }else if(boolSelectedHits){
                 var data = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
-                var route = jsRoutes.controllers.HmmerController.alnHmmer('@jobID', data);
+                var route = jsRoutes.controllers.HmmerController.aln('@jobID', data);
                 $.ajax({
                     url: route.url,
                     method: route.method
@@ -230,7 +231,7 @@
 
 
         window["@{tool.toolNameShort}_selectAll"] = function () {
-            //selectAllDatatable(this.hitlist.fnGetNodes());
+            selectAllDatatable(this.hitlist.fnGetNodes());
             this.selectAllBool_@{tool.toolNameShort} = !this.selectAllBool_@{tool.toolNameShort};
             if(this.selectAllBool_@{tool.toolNameShort}) {
                 selectAll(checkbox_@{tool.toolNameShort});
@@ -248,7 +249,7 @@
 
 
         window["@{tool.toolNameShort}_resubmitSection"] = function(){
-            resubmitSection(firstQuerySequence, firstQueryName);
+            resubmitSection('@{result.query.seq}', '@{result.query.accession}');
         };
 
 
