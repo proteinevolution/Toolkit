@@ -37,7 +37,7 @@ fi
           -E %evalue.content \
           -o ../results/${JOBID}.outfile \
           -A ../results/${JOBID}.msa_sto \
-          ../results/${JOBID}.hmm  %STANDARD/%standarddb.content
+          ../results/${JOBID}.hmm  %STANDARD/%hmmerdb.content
 
     #Convert to fasta format
     reformat_hhsuite.pl sto fas ../results/${JOBID}.msa_sto $(readlink -f ../results/${JOBID}.msa_fas)
