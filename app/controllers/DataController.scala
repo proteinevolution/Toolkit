@@ -3,23 +3,24 @@ package controllers
 import javax.inject.Inject
 
 import models.database.CMS.FeaturedArticle
-import models.datatables.HitListDAL.PSIBlastDTParam
-import models.datatables.HitlistDAL
 import modules.CommonModule
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 import org.joda.time.DateTime
-import play.api.libs.json.{JsObject, Json}
-import play.api.Logger
+import play.api.libs.json.{JsArray, JsObject, Json}
+
 import scala.concurrent.Future
-import scala.concurrent.Await
+import controllers.PSIBlastController
+import controllers.HmmerController
+import models.database.results.{Hmmer, PSIBlast}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by lzimmermann on 26.01.17.
   */
-class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, sup: HitlistDAL)
+class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, psiblastController: PSIBlastController, hmmerController: HmmerController, hmmer: Hmmer, psi: PSIBlast)
   extends Controller with CommonModule {
 
   /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with
@@ -69,55 +70,50 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, sup: Hi
     * DataTables for job results
     */
 
-  def psiDT(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
-
-    val params = PSIBlastDTParam(
+  def dataTableHmmer(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
+    val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),
       request.getQueryString("iDisplayStart").getOrElse("0").toInt,
-      request.getQueryString("iDisplayLength").getOrElse("10").toInt,
+      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
       request.getQueryString("iSortCol_0").getOrElse("1").toInt,
       request.getQueryString("sSortDir_0").getOrElse("asc"))
 
-
-    val totalHits = sup.getHits(jobID).map {
-      x => x.length
+    val hits = hmmerController.getHitsByKeyWord(jobID, params)
+    val total = getResult(jobID).map {
+      case Some(jsValue) => hmmer.parseResult(jsValue).num_hits
     }
-
-    val hits = sup.getHitsByKeyWord(jobID, params).map {
-      x => x
-    }
-
-    Logger.info(":::::::::" + params)
-
-    val hitsOrderBy = (params.iSortCol, params.sSortDir) match {
-      case (1, "asc") => hits.map(x => x.sortBy(_.accession))
-      case (1, "desc") => hits.map(x => x.sortWith(_.accession > _.accession))
-      case (2, "asc") => hits.map(x => x.sortBy(_.description))
-      case (2, "desc") => hits.map(x => x.sortWith(_.description > _.description))
-      case (3, "asc") => hits.map(x => x.sortBy(_.evalue))
-      case (3, "desc") => hits.map(x => x.sortWith(_.evalue > _.evalue))
-      case (4, "asc") => hits.map(x => x.sortBy(_.score))
-      case (4, "desc") => hits.map(x => x.sortWith(_.score > _.score))
-      case (5, "asc") => hits.map(x => x.sortBy(_.bitscore))
-      case (5, "desc") => hits.map(x => x.sortWith(_.bitscore > _.bitscore))
-      case (6, "asc") => hits.map(x => x.sortBy(_.identity))
-      case (6, "desc") => hits.map(x => x.sortWith(_.identity > _.identity))
-      case (7, "asc") => hits.map(x => x.sortBy(_.hit_len))
-      case (7, "desc") => hits.map(x => x.sortWith(_.hit_len > _.hit_len))
-      case (_, _) => hits.map(x => x.sortBy(_.num))
-    }
-
-
-    hitsOrderBy.flatMap { list =>
-      totalHits.map{ total =>
-        Ok(Json.toJson(Map("iTotalRecords" -> total, "iTotalDisplayRecords" -> total))
+    hmmer.hitsOrderBy(params, hits).flatMap { list =>
+      total.map { total_ =>
+        Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
           .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable))))
       }
     }
   }
+
+  def dataTablePSIBlast(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
+    val params = DTParam(
+      request.getQueryString("sSearch").getOrElse(""),
+      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
+      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
+      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
+      request.getQueryString("sSortDir_0").getOrElse("asc"))
+
+    val total = getResult(jobID).map {
+      case Some(jsValue) => psi.parseResult(jsValue).num_hits
+    }
+    val hits = psiblastController.getHitsByKeyWord(jobID, params)
+
+    psi.hitsOrderBy(params, hits).flatMap { list =>
+      total.map { total_ =>
+        Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
+          .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable))))
+      }
+    }
+  }
+
 }
 
-
+case class DTParam(sSearch: String, iDisplayStart: Int, iDisplayLength: Int, iSortCol: Int, sSortDir: String)
 
 
 

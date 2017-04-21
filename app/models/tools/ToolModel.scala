@@ -1,14 +1,15 @@
 package models.tools
 
 import javax.inject.{Inject, Singleton}
+
+import models.database.results.{Hmmer, PSIBlast}
+
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import modules.CommonModule
 import play.api.mvc.{AnyContent, Request}
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.twirl.api.Html
-import models.database.results.Hmmer._
-import models.database.results.PSIBlast._
 
 import scala.concurrent.Future
 
@@ -45,7 +46,7 @@ case class Tool(toolNameShort: String,
 
 // Class which provides access to all Tools
 @Singleton
-final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi) extends CommonModule{
+final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer) (paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi) extends CommonModule{
 
 
 
@@ -53,7 +54,7 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
     toolname match {
 
       case "psiblast" => getResult(jobID).map {
-        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID, parsePSIBlastResult(jsvalue), this.values(toolname))),
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.psiblast.hitlist(jobID, psi.parseResult(jsvalue), this.values(toolname))),
           ("E-values", views.html.jobs.resultpanels.evalues(jobID)))
         case None => Seq.empty
       }
@@ -87,12 +88,8 @@ final class ToolFactory @Inject() (paramAccess: ParamAccess, val reactiveMongoAp
         ("SOLVX", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png", s"$jobPath$jobID/results/solvx/$jobID.solvx")),
         ("ANOLEA", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png", s"$jobPath$jobID/results/$jobID.pdb.profile"))))
 
-//      case "hmmer" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/outfile")),
-//        ("Stockholm", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/outfile_multi_sto")),
-//        ("Domain_Table", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/domtbl"))))
-
       case "hmmer" => getResult(jobID).map {
-        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hmmer.hitlist(jobID, parseHmmerResult(jsvalue), this.values(toolname))))
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hmmer.hitlist(jobID, hmmer.parseResult(jsvalue), this.values(toolname))))
         case None => Seq.empty
       }
       case "hhpred" => getResult(jobID).map {

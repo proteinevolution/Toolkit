@@ -43,9 +43,7 @@
                         <th>Id</th>
                         <th>Title</th>
                         <th>E-value</th>
-                        <th>Score</th>
                         <th>Bitscore</th>
-                        <th>Identity</th>
                         <th>Length</th>
                     </tr>
                 </thead>
@@ -231,7 +229,7 @@ function drawDataTable(){
     hitlist = $('#htb').dataTable({
         "bProcessing" : true,
         "bServerSide" : true,
-        "sAjaxSource" : "/api/job/results/psidt/" + @jobID
+        "sAjaxSource" : "/api/job/results/dataTablePSIBlast/@jobID"
 });
 }
 
@@ -257,7 +255,7 @@ window["@{tool.toolNameShort}_selectAll"] = function () {
 window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
     // full seq is retrieved
     var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
-    var route = jsRoutes.controllers.PSIBlastController.evalPSIBlastFull('@jobID', evalue);
+    var route = jsRoutes.controllers.PSIBlastController.evalFull('@jobID', evalue);
     if(boolFullLength) {
         if(boolEvalue) {
             $.ajax({
@@ -272,7 +270,7 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
                 });
             });
         }else{
-            route = jsRoutes.controllers.PSIBlastController.PSIBlastFull('@jobID', checkedCheckboxes);
+            route = jsRoutes.controllers.PSIBlastController.full('@jobID', checkedCheckboxes);
             $.ajax({
                 url: route.url,
                 method: route.method
@@ -288,9 +286,9 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
     }else{
 
         if(boolEvalue) {
-            route = jsRoutes.controllers.PSIBlastController.alnEvalPSIBlast('@jobID', evalue);
+            route = jsRoutes.controllers.PSIBlastController.alnEval('@jobID', evalue);
         }else{
-            route = jsRoutes.controllers.PSIBlastController.alnPSIBlast('@jobID', checkedCheckboxes);
+            route = jsRoutes.controllers.PSIBlastController.aln('@jobID', checkedCheckboxes);
         }
         $.ajax({
             url: route.url,
