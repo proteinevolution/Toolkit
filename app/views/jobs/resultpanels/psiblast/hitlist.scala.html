@@ -197,30 +197,23 @@ var firstQueryName, firstQuerySequence = null;
 
     var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
     var selectAllBool_@{tool.toolNameShort} = false;
-    var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
     var numHits = @{result.num_hits};
     var urlParams = "/api/job/@jobID";
     var urlQuery = "/files/" + @jobID + "/query.json";
 
-    $.getJSON(urlQuery, function(query){
-        firstQueryName = ">" + query[0][0];
-        firstQuerySequence = query[0][1];
-        firstQueryLength = firstQuerySequence.length;
-        if(numHits > 0){
+    if(numHits > 0){
 
-            drawDataTable();
+        drawDataTable();
+        var firstQueryStart = @result.HSPS.head.query_start;
+        var firstQueryEnd = @result.HSPS.head.query_end;
+        /* without timeout SLIDER is displayed */
+        setTimeout(function () {
+            slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd)
+        }, 1000);
 
-            firstQueryStart = @result.HSPS.head.query_start;
-            firstQueryEnd = @result.HSPS.head.query_end;
-            /* without timeout SLIDER is displayed */
-            setTimeout(function () {
-                slider_show(firstQueryLength, firstQueryStart, firstQueryEnd)
-            }, 1000);
+        $("#accordion").foundation();
 
-            $("#accordion").foundation();
-
-        }
-    });
+    }
 })();
 
 
@@ -300,7 +293,7 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
 };
 
 window["@{tool.toolNameShort}_resubmitSection"] = function(){
-    resubmitSection(firstQuerySequence, firstQueryName);
+    resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
 };
 
 </script>

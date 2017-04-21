@@ -175,7 +175,6 @@
 
             var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
             var selectAllBool_@{tool.toolNameShort} = false;
-            var firstQueryStart, firstQueryEnd = null;
             var chosenDB = null;
             var numHits = @{result.num_hits};
             var urlParams = "/api/job/@jobID";
@@ -187,8 +186,8 @@
                 evalueParam = data_.paramValues.inclusion_ethresh;
             });
                 if(numHits > 0){
-                    firstQueryStart = @result.HSPS(0).query_start;
-                    firstQueryEnd = @result.HSPS(0).query_end;
+                    var firstQueryStart = @result.HSPS(0).query_start;
+                    var firstQueryEnd = @result.HSPS(0).query_end;
                     /* without timeout SLIDER is displayed */
                     drawDataTable();
                     setTimeout(function () {
@@ -249,7 +248,7 @@
 
 
         window["@{tool.toolNameShort}_resubmitSection"] = function(){
-            resubmitSection('@{result.query.seq}', '@{result.query.accession}');
+            resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
         };
 
 
