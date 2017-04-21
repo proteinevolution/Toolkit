@@ -262,7 +262,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer) (paramAccess: Par
 
 
     // Hmmer
-    ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.STANDARD_DB,
+    ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.HMMER_DB,
       paramAccess.MAX_HHBLITS_ITER, paramAccess.EVALUE, paramAccess.DESC), Seq("kalign"),Seq.empty),
 
 
