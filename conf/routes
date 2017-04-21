@@ -143,9 +143,8 @@ GET           /api/jobs/getnotes/:jobID               @controllers.Jobs.getAnnot
 GET           /api/job/results/:jobID                 @controllers.DataController.get(jobID: String)
 
 # DataTables
-
-GET           /api/job/results/psidt/:jobID           @controllers.DataController.psiDT(jobID: String)
-
+GET          /api/job/results/dataTableHmmer/:jobID      @controllers.DataController.dataTableHmmer(jobID: String)
+GET          /api/job/results/dataTablePSIBlast/:jobID              @controllers.DataController.dataTablePSIBlast(jobID: String)
 # Article
 GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)
 POST          /api/writeArticle                       @controllers.DataController.writeArticle(title: String, text: String, link: String, imagePath: String)
@@ -164,14 +163,14 @@ GET         /templateAlignmentHHblits/:jobID/:accession @controllers.HHblitsCont
 POST         /fullSeqHHblits/:jobID                     @controllers.HHblitsController.retrieveFullSeq(jobID : String)
 
 # Hmmer retrieve seqs with evale < threshold
-POST         /alnEvalHmmer                              @controllers.HmmerController.alnEvalHmmer(jobID: String, eval:String)
+POST         /alnEvalHmmer                              @controllers.HmmerController.alnEval(jobID: String, eval:String)
 # Hmmer retrieve selected seqs
-POST         /alnHmmer                                  @controllers.HmmerController.alnHmmer(jobID: String, listNum: Seq[Int])
+POST         /alnHmmer                                  @controllers.HmmerController.aln(jobID: String, listNum: Seq[Int])
 # PSIblast retrieve seqs with evalue < threshold
-POST         /evalPSIBlast                               @controllers.PSIBlastController.alnEvalPSIBlast(jobID: String, eval:String)
+POST         /evalPSIBlast                               @controllers.PSIBlastController.alnEval(jobID: String, eval:String)
 # PSIblast retrieve selected seqs
-POST         /fasPSIBlast                                @controllers.PSIBlastController.alnPSIBlast(jobID:String, listNum: Seq[Int])
+POST         /fasPSIBlast                                @controllers.PSIBlastController.aln(jobID:String, listNum: Seq[Int])
 # PSIblast retrieve full seqs with evalue < threshold
-POST        /evalPSIBlastFull                            @controllers.PSIBlastController.evalPSIBlastFull(jobID : String, eval: String)
+POST        /evalPSIBlastFull                            @controllers.PSIBlastController.evalFull(jobID : String, eval: String)
 # PSIblast retrieve selected full seqs
-POST        /PSIBlastFull                              @controllers.PSIBlastController.PSIBlastFull(jobID : String, listNum: Seq[Int])
+POST        /PSIBlastFull                              @controllers.PSIBlastController.full(jobID : String, listNum: Seq[Int])
