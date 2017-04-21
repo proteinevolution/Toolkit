@@ -215,7 +215,7 @@ window.JobListComponent = {
                     m("div", {
                         class: "arrow top" + (onTopOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
                         onclick: this.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2"
-                    ) : null,
+                    , m("span",{class: "toolsortnum"},(this.index)+"-"+(this.index+numScrollItems))) : null,
                 shownList.map(function(job) { return job.view(ctrl) }),
                 listTooLong ?   // Show only when list is longer than numVisibleItems
                     m("div", {
