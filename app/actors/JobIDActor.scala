@@ -48,7 +48,7 @@ class JobIDActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
     case Refill =>
 
-      if (jobIDRepo.length < 100) {
+      if (jobIDRepo.length < 250) {
         jobIDRepo.enqueue(Seq.fill(200)(iter.next()):_*)
         jobIDRepo = jobIDRepo.distinct
       }
@@ -79,7 +79,6 @@ object JobIDActor {
 
   private var jobIDRepo : Queue[String] = Queue.empty[String]
   def provide : String = {
-    Logger.info(jobIDRepo.length-1 + " jobIDs in in repository")
     jobIDRepo.dequeue()
   }
 
