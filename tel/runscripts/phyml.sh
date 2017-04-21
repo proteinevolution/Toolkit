@@ -17,9 +17,16 @@ curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>
 echo "#Running PhyML." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
+if [ "%no_replicates.content" -gt 0 ] ; then
+    echo "done" >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    echo "#Performing %no_replicates.content bootstrap iterations." >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+fi
+
 PhyML-3.1_linux64 -i ../results/${JOBID}.phy \
                   -d aa \
-                  - %matrix_phyml.content \
+                  -m %matrix_phyml.content \
                   -b %no_replicates.content \
                   -a e \
                   -v e \
