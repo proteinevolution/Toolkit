@@ -1,17 +1,34 @@
 @import models.results.Ancescon
-@(treePath: String, iddiv: String)(implicit request: RequestHeader)
+@(filename: String, treePath: String, jobID: String, iddiv: String)(implicit request: RequestHeader)
 
 
 <select id="@{iddiv}_select" onchange="setLayout()">
-    <option value="radial">Radial</option>
-    <option value="vertical">Vertical</option>
-</select> <br />
+        <option value="radial">Radial</option>
+        <option value="vertical">Vertical</option>
+    </select>
+    <a type="button" onclick="@{iddiv}_download()" id="downloadAlignment">Download Newick Tree</a>
+<hr id="line-element" colspan="4" class="horizontal-line">
+
 <div id="@iddiv"></div>
+
 
 
 <script>
     var s = $("#@{iddiv}_select");
     s.niceSelect();
+    var downloadFilename = "@{iddiv}_@{jobID}";
+    window["@{iddiv}_download"] = function(){
+        var downloadFilename = "@{iddiv}_@{jobID}";
+        var fileURL="/files/@{jobID}/@{filename}";
+        $.ajax({
+            method: "GET",
+            url: fileURL
+        }).done(function(data){
+            download(downloadFilename, data);
+        })
+    };
+
+
     function setLayout() {
 
         var v = s.val();

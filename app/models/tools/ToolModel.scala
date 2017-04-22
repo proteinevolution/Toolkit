@@ -112,9 +112,6 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer) (paramAccess: Par
 
       case "hhrepid" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.modeller(s"/files/$jobID/query_A.png", s"$jobPath$jobID/results/query.hhrepid"))))
 
-      case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/" + jobID + ".clu.tre", "ancescon_div")),
-        ("NewickTree", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".clu.tre",s"$jobPath$jobID/results/" + jobID + ".clu.tre", jobID, "ancescon_output_tree")),
-        ("Data", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".anc_out",s"$jobPath$jobID/results/" + jobID + ".anc_out", jobID, "ancescon_output_data"))))
 
       case "clustalo" => getResult(jobID).map {
         case Some(jsvalue) =>
@@ -166,13 +163,14 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer) (paramAccess: Par
 
       case "aln2plot" => Future.successful(Seq(("Plots", views.html.jobs.resultpanels.aln2plot(jobID))))
 
+      case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(jobID + ".clu.tre",s"$jobPath$jobID/results/" + jobID + ".clu.tre", jobID, "ancescon_output_tree")),
+                ("Data", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".anc_out",s"$jobPath$jobID/results/" + jobID + ".anc_out", jobID, "ancescon_output_data"))))
 
-      case "phyml" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt", "phyml_div")),
-        ("NewickTree", views.html.jobs.resultpanels.fileviewWithDownload("phyml",s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt", jobID, jobID + ".phy_phyml_tree.txt")),
-        ("Data", views.html.jobs.resultpanels.fileviewWithDownload("phyml",s"$jobPath$jobID/results/" + jobID + ".stats", jobID, jobID + ".stats"))))
+      case "phyml" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(jobID + ".phy_phyml_tree.txt",s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt", jobID, "phyml_tree")),
+        ("Data", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".stats",s"$jobPath$jobID/results/" + jobID + ".stats", jobID, "phyml_data"))))
 
-      case "mmseqs2" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload("mmseqs2",s"$jobPath$jobID/results/" + jobID + ".fas", jobID, jobID + ".fas")),
-        ("Summary", views.html.jobs.resultpanels.fileviewWithDownload("mmseqs2",s"$jobPath$jobID/results/" + jobID + ".clu", jobID, jobID + ".clu"))))
+      case "mmseqs2" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".fas",s"$jobPath$jobID/results/" + jobID + ".fas", jobID, "mmseqs_reps")),
+        ("Summary", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".clu",s"$jobPath$jobID/results/" + jobID + ".clu", jobID, "mmseqs_clusters"))))
 
       case "retseq" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/sequences.fa")),
         ("Summary", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/unretrievable"))))
@@ -183,7 +181,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer) (paramAccess: Par
         case None => Seq.empty
       }
 
-      case "6frametranslation" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload("6FrameTranslation",s"$jobPath$jobID/results/" + jobID + ".out", jobID, jobID + ".out"))))
+      case "6frametranslation" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out", s"$jobPath$jobID/results/" + jobID + ".out", jobID, "6frametrans"))))
 
       case "backtrans" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".out"))))
 
