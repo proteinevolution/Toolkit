@@ -80,5 +80,5 @@ awk {'print $(NF-6)'} ../results/output_psiblastp.tab >> ../results/evalues
 # add DB to json
 manipulate_json.py -k 'db' -v '%standarddb.content' ../results/output_psiblastp.json
 
-# add DB to json
+# add evalue to json
 manipulate_json.py -k 'evalue' -v '%evalue.content' ../results/output_psiblastp.json

@@ -73,7 +73,7 @@
                                 <td></td>
                                 <td colspan="3">
 
-                                   @BlastVisualization.getLinks(hit.accession)
+                                   @BlastVisualization.getLinksDB(result.db, hit.accession)
                                 </td>
                                 <td></td>
                             </tr>
@@ -81,7 +81,7 @@
                             <tr class="header">
                                 <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}.</td>
                             <td colspan="4">
-                                @{BlastVisualization.getSingleLink(hit.accession)}
+                                @{BlastVisualization.getSingleLinkDB(result.db , hit.accession)}
                                 @{"  "+hit.description}
                             </td>
                             </tr>

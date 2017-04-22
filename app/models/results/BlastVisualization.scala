@@ -5,8 +5,8 @@ import models.Constants
 import play.twirl.api.Html
 import play.api.Logger
 
-
 import scala.collection.mutable.ArrayBuffer
+import scala.util.matching.Regex
 
 object BlastVisualization extends Constants {
 
@@ -24,6 +24,11 @@ object BlastVisualization extends Constants {
   private val pfamReg = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
   private val ncbiReg = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
 
+  private val envNrNameReg = """(env.*|nr.*)""".r
+  private val pdbNameReg = """(pdb.*)""".r
+  private val uniprotNameReg = """(uniprot.*)""".r
+  private val pfamNameReg = """(Pfam.*)""".r
+
   private val pdbBaseLink = "http://pdb.rcsb.org/pdb/explore.do?structureId="
   private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
   private val ncbiBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term="
@@ -32,6 +37,7 @@ object BlastVisualization extends Constants {
   private val pfamBaseLink = "http://pfam.xfam.org/family/"
   private val cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLik = "http://www.uniprot.org/uniprot/"
+
 
   /**
     * Renders file content as plain HTML. Can be used for scripts that produce HTML from the old Toolkit
@@ -99,6 +105,63 @@ object BlastVisualization extends Constants {
     Html(link)
   }
 
+
+  def getLinks(id : String) : Html = {
+    val db = identifyDatabase(id)
+    var links = new ArrayBuffer[String]()
+    var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
+    var idPdb = id.replaceAll("_.*$", "").toLowerCase
+    val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
+    var idCDD = id.replaceAll("PF", "pfam")
+    if(db == "scop") {
+      links += generateLink(scopBaseLink, id, "SCOP")
+      links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
+    }
+    else if(db == "mmcif") {
+      links += generateLink(pdbeBaseLink, idPdb, "PDBe")
+    }
+    else if (db == "pfam"){
+      idCDD = idCDD.replaceAll("\\..*","")
+      links += generateLink(cddBaseLink, idCDD, "CDD")
+    }
+    else if (db == "ncbi"){
+      links += generateLink(ncbiProteinBaseLink, idNcbi , "NCBI Fasta")
+    }
+
+    Html(links.mkString(" | "))
+  }
+
+  def getSingleLinkDB(db: String, id: String): Html = {
+    var link = ""
+    val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
+    val idPfam = id.replaceAll("am.*$||..*", "")
+    val idPdb = id.replaceAll("_.*$", "")
+    db match {
+      case envNrNameReg(_) => link += generateLink(ncbiProteinBaseLink, id, id)
+      case pdbNameReg(_) => link += generateLink(pdbBaseLink, idPdb, id)
+      case uniprotNameReg(_) => link += generateLink(uniprotBaseLik,id,id)
+      case pfamNameReg(_) => link += generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
+      case _ => link = id
+    }
+    Html(link)
+  }
+
+  def getLinksDB(db: String, id: String) : Html ={
+    var links = new ArrayBuffer[String]()
+    var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
+    var idPdb = id.replaceAll("_.*$", "").toLowerCase
+    val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
+    var idCDD = id.replaceAll("PF", "pfam")
+    db match {
+      case envNrNameReg(_) => links += generateLink(ncbiProteinBaseLink, idNcbi , "NCBI Fasta")
+      case pdbNameReg(_) => links += generateLink(pdbeBaseLink, idPdb, "PDBe")
+      case pfamNameReg(_) => {
+        idCDD = idCDD.replaceAll("\\..*","")
+        links += generateLink(cddBaseLink, idCDD, "CDD")
+      }
+    }
+    Html(links.mkString(" | "))
+  }
   def getSingleLinkHHBlits(id: String) : Html ={
     var link = ""
     val idPdb = id.replaceAll("_.*$", "")
@@ -145,30 +208,6 @@ object BlastVisualization extends Constants {
     Html(links.mkString(" | "))
   }
 
-  def getLinks(id : String) : Html = {
-    val db = identifyDatabase(id)
-    var links = new ArrayBuffer[String]()
-    var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    var idPdb = id.replaceAll("_.*$", "").toLowerCase
-    val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
-    var idCDD = id.replaceAll("PF", "pfam")
-    if(db == "scop") {
-      links += generateLink(scopBaseLink, id, "SCOP")
-      links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
-    }
-    else if(db == "mmcif") {
-      links += generateLink(pdbeBaseLink, idPdb, "PDBe")
-    }
-    else if (db == "pfam"){
-      idCDD = idCDD.replaceAll("\\..*","")
-      links += generateLink(cddBaseLink, idCDD, "CDD")
-    }
-    else if (db == "ncbi"){
-      links += generateLink(ncbiProteinBaseLink, idNcbi , "NCBI Fasta")
-    }
-
-    Html(links.mkString(" | "))
-  }
 
   def generateLink(baseLink : String, id : String, name : String) : String = "<a href='"+baseLink+id+"' target='_blank'>"+name+"</a>"
 

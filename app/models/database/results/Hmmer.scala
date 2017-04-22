@@ -36,7 +36,7 @@ case class HmmerHSP(evalue: Double, num: Int,
 
 case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 
-case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int, alignment: List[AlignmentItem], query : Query)
+case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int, alignment: List[AlignmentItem], query : Query, db: String)
 
 @Singleton
 class Hmmer @Inject() (general: General) {
@@ -47,6 +47,7 @@ class Hmmer @Inject() (general: General) {
       val alignment = (obj \ "alignment").as[List[JsArray]].map { x =>
         general.parseAlignmentItem(x)
       }
+      val db = (obj \ jobID \"db").as[String]
       val query = general.parseQuery((obj \ "query").as[JsArray])
       val hsps = (obj \ jobID \ "hsps").as[List[JsObject]]
       val hits = (obj \ jobID \ "hits").as[List[JsObject]]
@@ -55,7 +56,7 @@ class Hmmer @Inject() (general: General) {
       val hsplist = hsps.zip(hits).map { x =>
         parseHSP(x._1, x._2)
       }
-      HmmerResult(hsplist, num_hits, alignment, query)
+      HmmerResult(hsplist, num_hits, alignment, query, db)
     }
   }
 
