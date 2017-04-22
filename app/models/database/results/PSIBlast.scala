@@ -2,8 +2,10 @@ package models.database.results
 
 import javax.inject.Inject
 import javax.inject.Singleton
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
+import models.results.BlastVisualization
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -31,10 +33,10 @@ case class PSIBlastHSP(evalue: Double,
                        accession: String,
                        midline: String,
                        description: String){
-  def toDataTable: JsValue = Json.toJson(
+  def toDataTable(db: String): JsValue = Json.toJson(
     Map(
-      "0" -> Json.toJson(num),
-      "1" -> Json.toJson(accession),
+      "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
+      "1" -> Json.toJson(BlastVisualization.getSingleLinkDB(db, accession).toString),
       "2" -> Json.toJson(description),
       "3" -> Json.toJson(evalue),
       "4" -> Json.toJson(bitscore),
