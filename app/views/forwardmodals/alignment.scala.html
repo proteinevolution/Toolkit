@@ -57,6 +57,19 @@
         $('.alignmentOptions_@viewName').show();
         $('.multiSeqOptions_@viewName').hide();
 
+        $("input[name='radio2']").change(function (e) {
+            if ($(this).attr('id') == 'fullLength_@viewName') {
+                $('#forwardWarning').css({display: 'inherit'});
+                $('.alignmentOptions_@viewName').hide();
+                $('.multiSeqOptions_@viewName').show();
+            } else {
+                $('#forwardWarning').css({display: 'none'});
+                $('.alignmentOptions_@viewName').show();
+                $('.multiSeqOptions_@viewName').hide();
+
+            }
+
+        });
 
 
 </script>
