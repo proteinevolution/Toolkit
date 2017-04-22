@@ -96,11 +96,15 @@ object BlastVisualization extends Constants {
     else{
       link = id
     }
-
-
     Html(link)
   }
 
+  def getSingleLinkHHBlits(id: String) : Html ={
+    var link = ""
+    val idPdb = id.replaceAll("_.*$", "")
+    link += generateLink(uniprotBaseLik,id,id)
+    Html(link)
+  }
 
   def getLinksHHpred(id : String) : Html = {
     val db = identifyDatabase(id)
