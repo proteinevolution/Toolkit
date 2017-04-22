@@ -110,7 +110,7 @@
                                 <td colspan="4">Probability: @{(alignment \ "info" \ "probab").get}, E-value: @{(alignment \ "info" \ "eval").get},
                                     Score: @{(alignment \ "info" \ "score").get}, Aligned Cols: @{(alignment \ "info" \ "aligned_cols").get},
                                     Identities: @{BlastVisualization.percentage((alignment \ "info" \ "identities").get.toString)},
-                                    Similarity: @{BlastVisualization.percentage((alignment \ "info" \ "similarity").get.toString)}
+                                    Similarity: @{(alignment \ "info" \ "similarity").get.toString}
 
 
                                 </td>
@@ -265,7 +265,7 @@ var hitlist;
 var selectAllBool_@{tool.toolNameShort} = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 var jobID;
-
+var chosenDB = "";
 
 (function()  {
 
@@ -276,6 +276,11 @@ var jobID;
     $(document).ajaxComplete(function(){
         $.LoadingOverlay("hide");
     });
+    var urlParams = "/api/job/@jobID";
+    $.getJSON(urlParams, function(data_){
+        chosenDB = data_.paramValues.standarddb;
+    });
+
 
     $('.slider').on('moved.zf.slider', function() {
         $('#lefthandle').html($('#hidden1').val());
