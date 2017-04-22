@@ -75,24 +75,13 @@
                             <br />
                             @for((alignment, hit) <- ((jsValue \ jobID \ "alignments").as[List[JsObject]], (jsValue \ jobID \ "hits").as[List[JsObject]]).zipped.toList){
                                 @* hit number, links *@
-                                <tr>
-                                    <td></td>
-                                    <td colspan="3">
-                                    @{alignment \ "template" \ "name" match {
-                                        case JsDefined(jsValue) => BlastVisualization.getLinksHHpred((alignment \ "template" \ "name").get.as[String])
-                                        case undefined: JsUndefined => BlastVisualization.getLinksHHpred("undefinedAccession") ;
-                                    }
-                                    }
-                                    </td>
-                                    <td></td>
-                                </tr>
                                 @* checkboxes, accession, name of hit*@
                                 <tr class="header">
                                     <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{(hit \ "no").get}'> @{(hit \ "no").get}.</td>
                                 <td colspan="4">
 
                                     @{alignment \ "template" \ "name" match {
-                                        case JsDefined(jsValue) => {BlastVisualization.getSingleLink((alignment \ "template" \ "name").get.as[String])}
+                                        case JsDefined(jsValue) => {BlastVisualization.getSingleLinkHHBlits((alignment \ "template" \ "name").get.as[String])}
                                         case undefined: JsUndefined =>
                                     }
                                     }
