@@ -161,7 +161,7 @@ window.JobListComponent = {
         }
     },
     visibleJobs : function () {     // function cuts the list down to the visible elements
-        return JobListComponent.list.slice(JobListComponent.index, JobListComponent.numVisibleItems + JobListComponent.index);
+        return JobListComponent.list.slice(JobListComponent.index, JobListComponent.index + JobListComponent.numVisibleItems);
     },
     scrollJobList : function (number, doScroll) {   // function scrolls the index number of items up or down
         return function(e) {
@@ -189,38 +189,41 @@ window.JobListComponent = {
         return {}
     },
     view: function(ctrl, args) {
-        var shownList, listLength, listTooLong, onTopOfList, onBottomOfList, numScrollItems;
-        shownList  = this.visibleJobs();
-        listLength = this.list.length;                                      // lenght of the original list
-        listTooLong = listLength > this.numVisibleItems;                    // is the list longer than numVisibleItems?
-        onTopOfList = (this.index <= 0);                                        // is the list at the top?
-        onBottomOfList = ((this.index + this.numVisibleItems) >= listLength);   // is the list at the bottom?
-        if (onBottomOfList && (this.index >= listLength)) this.scrollToJobListItem(-this.numVisibleItems); // ensures view when elements are cleared
+        var shownList, listLength, listTooLong, onTopOfList, onBottomOfList, numScrollItems, page, pagesTotal;
+        shownList  = JobListComponent.visibleJobs();
+        listLength = JobListComponent.list.length;                                      // lenght of the original list
+        page       = Math.floor(JobListComponent.index / JobListComponent.numVisibleItems);
+        pagesTotal = Math.floor(JobListComponent.list.length / JobListComponent.numVisibleItems);
+        listTooLong = listLength > JobListComponent.numVisibleItems;                    // is the list longer than numVisibleItems?
+        onTopOfList = (JobListComponent.index <= 0);                                        // is the list at the top?
+        onBottomOfList = ((JobListComponent.index + JobListComponent.numVisibleItems) >= listLength);   // is the list at the bottom?
+        if (onBottomOfList && (JobListComponent.index >= listLength)) JobListComponent.scrollToJobListItem(-JobListComponent.numVisibleItems); // ensures view when elements are cleared
         // show the status of the job list in the log
-        //console.log({"Scroll Index"            : this.index,
-        //             "Page Index"              : Math.floor(this.index / this.numVisibleItems),
-        //             "Number of visible Items" : this.numVisibleItems,
+        //console.log({"Scroll Index"            : JobListComponent.index,
+        //             "Page Index"              : Math.floor(JobListComponent.index / JobListComponent.numVisibleItems),
+        //             "Number of visible Items" : JobListComponent.numVisibleItems,
         //             "Length of the List"      : listLength,
         //             "on Top"                  : onTopOfList,
         //             "on Bottom"               : onBottomOfList});
-        numScrollItems = this.numVisibleItems; // How many items to scroll per click
+        numScrollItems = JobListComponent.numVisibleItems; // How many items to scroll per click
         return m("div", { "class": "job-list" }, [
             m("div", { class: "job-button" }, [
-                m("div", { class: "idsort textcenter", onclick: this.sortList.bind(ctrl, "jobID", true) }, "ID"),
-                m("div", { class: "toolsort textcenter", onclick: this.sortList.bind(ctrl, "toolName", true) }, "Tool"),
+                m("div", { class: "idsort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
+                m("div", { class: "toolsort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "toolName", true) }, "Tool"),
                 m("div", { class: "openJobManager"}, m('a', { href : "/#/jobmanager"}, m("i", {class: "icon-list"})))
             ]),
             m("div", { class: "elements noselect" }, [
                 listTooLong ?   // Show only when list is longer than numVisibleItems
                     m("div", {
                         class: "arrow top" + (onTopOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
-                        onclick: this.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2"
-                    , m("span",{class: "toolsortnum"},(this.index)+"-"+(this.index+numScrollItems))) : null,
+                        onclick: JobListComponent.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2"
+                    ) : null,
+                listTooLong ? m("div", {class: "pages"},"Page "+page+" of "+pagesTotal) : null,
                 shownList.map(function(job) { return job.view(ctrl) }),
                 listTooLong ?   // Show only when list is longer than numVisibleItems
                     m("div", {
                         class: "arrow bottom" + (onBottomOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
-                        onclick: this.scrollJobList(+numScrollItems, !onBottomOfList) }, "\u25bc"
+                        onclick: JobListComponent.scrollJobList(+numScrollItems, !onBottomOfList) }, "\u25bc"
                     ) : null
             ])
         ]);
