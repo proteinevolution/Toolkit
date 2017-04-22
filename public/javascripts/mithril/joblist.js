@@ -38,6 +38,7 @@ window.JobListComponent = {
                     m("div", { class: "jobid"    }, this.jobID),
                     m("div", { class: "toolname" }, this.toolname.substr(0, 4).toUpperCase()),
                     m("div", {
+                        id      : "boxclose",
                         class   : "boxclose",
                         onclick : JobListComponent.removeJob.bind(ctrl, this.jobID)
                     })
@@ -47,8 +48,8 @@ window.JobListComponent = {
     },
     list            : [],   // List containing the jobs
     index           : 0,    // Index of the first shown item in the job list
-    numVisibleItems : 10,   // Number of shown jobs
-    selectedJobID   : -1, // JobID of the selected job
+    numVisibleItems : 12,   // Number of shown jobs
+    selectedJobID   : null, // JobID of the selected job
     lastUpdatedJob  : null, // Job which has been updated last
     sort            : { mode : "createdOn", asc : true },
     getJob          : function (jobID) {    // Returns a job with the given jobID
@@ -146,7 +147,7 @@ window.JobListComponent = {
         if (newJob == null || newJob.jobID == null) { console.log(newJob); return }  // ensure that there are no empty jobs pushed
         JobListComponent.lastUpdatedJob = newJob;                        // change the "last updated" job to this one
         if (setActive) { JobListComponent.selectedJobID = newJob.jobID } // change the selectedJobID to this job when setActive is on
-        var index = JobListComponent.getJobIndex(newJob.jobID);             // check if the job is in the list already
+        var index = JobListComponent.getJobIndex(newJob.jobID);          // check if the job is in the list already
         if (index != null) {
             JobListComponent.list[index] = newJob;              // Job is not new, update it
         } else {
@@ -191,11 +192,11 @@ window.JobListComponent = {
     view: function(ctrl, args) {
         var shownList, listLength, listTooLong, onTopOfList, onBottomOfList, numScrollItems, page, pagesTotal;
         shownList  = JobListComponent.visibleJobs();
-        listLength = JobListComponent.list.length;                                      // lenght of the original list
-        page       = Math.floor(JobListComponent.index / JobListComponent.numVisibleItems);
-        pagesTotal = Math.floor(JobListComponent.list.length / JobListComponent.numVisibleItems);
-        listTooLong = listLength > JobListComponent.numVisibleItems;                    // is the list longer than numVisibleItems?
-        onTopOfList = (JobListComponent.index <= 0);                                        // is the list at the top?
+        listLength = JobListComponent.list.length;                   // lenght of the original list
+        page       = Math.floor(JobListComponent.index / JobListComponent.numVisibleItems) + 1;  // Calculate the current page
+        pagesTotal = Math.ceil(JobListComponent.list.length / JobListComponent.numVisibleItems); // Calculate the total pages
+        listTooLong = listLength > JobListComponent.numVisibleItems; // is the list longer than numVisibleItems - if so don't display any page buttons
+        onTopOfList = (JobListComponent.index <= 0);                 // is the list at the top?
         onBottomOfList = ((JobListComponent.index + JobListComponent.numVisibleItems) >= listLength);   // is the list at the bottom?
         if (onBottomOfList && (JobListComponent.index >= listLength)) JobListComponent.scrollToJobListItem(-JobListComponent.numVisibleItems); // ensures view when elements are cleared
         // show the status of the job list in the log
@@ -213,14 +214,14 @@ window.JobListComponent = {
                 m("div", { class: "openJobManager"}, m('a', { href : "/#/jobmanager"}, m("i", {class: "icon-list"})))
             ]),
             m("div", { class: "elements noselect" }, [
-                listTooLong ?   // Show only when list is longer than numVisibleItems
+                listTooLong ?
                     m("div", {
                         class: "arrow top" + (onTopOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
                         onclick: JobListComponent.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2"
                     ) : null,
-                listTooLong ? m("div", {class: "pages"},"Page "+page+" of "+pagesTotal) : null,
                 shownList.map(function(job) { return job.view(ctrl) }),
-                listTooLong ?   // Show only when list is longer than numVisibleItems
+                listTooLong ? m("div", {class: "pages"},"Page "+page+" of "+pagesTotal) : null,
+                listTooLong ?
                     m("div", {
                         class: "arrow bottom" + (onBottomOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
                         onclick: JobListComponent.scrollJobList(+numScrollItems, !onBottomOfList) }, "\u25bc"
