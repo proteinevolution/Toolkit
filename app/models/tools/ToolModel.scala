@@ -181,9 +181,9 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer) (paramAccess: Par
         case None => Seq.empty
       }
 
-      case "6frametranslation" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out", s"$jobPath$jobID/results/" + jobID + ".out", jobID, "6frametrans"))))
-
-      case "backtrans" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".out"))))
+      case "6frametranslation" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out",s"$jobPath$jobID/results/" + jobID + ".out", jobID, "sixframetrans_out"))))
+        
+      case "backtrans" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out",s"$jobPath$jobID/results/" + jobID + ".out", jobID, "backtrans"))))
 
       case "hhfilter" => getResult(jobID).map {
         case Some(jsvalue) =>
