@@ -13,6 +13,7 @@
     <script>
         var downloadFilename = "@{resultname}_@{jobID}";
         window["@{resultname}_download"] = function(){
+            var downloadFilename = "@{resultname}_jobID_@{jobID}";
             var fileURL="/files/@{jobID}/@{filename}";
             $.ajax({
                 method: "GET",
