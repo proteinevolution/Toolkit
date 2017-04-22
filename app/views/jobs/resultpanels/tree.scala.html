@@ -50,7 +50,17 @@
   function onFullscreenToggle() {
 
    var layout = tree.layout();
-   layout.width($("#tool-tabs").width() - 200);
+   layout.width($("#tool-tabs").width() - 900);
+   document.getElementById("@iddiv").children[0].setAttribute('id', 'treeSvgContainer');
    tree.update();
   }
+
+  function onCollapsescreen() {
+      var layout = tree.layout();
+      document.getElementById("@iddiv").children[0].removeAttribute('id');
+      layout.width($("#tool-tabs").width() - 200);
+      tree.update();
+  }
+
+
 </script>

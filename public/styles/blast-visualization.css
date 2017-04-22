@@ -371,3 +371,11 @@ table.dataTable.no-footer{
 #htb_wrapper {
     margin-top: 1em;
 }
+
+#treeSvgContainer {
+    text-align: center;
+}
+
+#treeSvgContainer svg {
+    width: 60%;
+}

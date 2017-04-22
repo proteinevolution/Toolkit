@@ -310,8 +310,10 @@ JobTabsComponent = {
                     $("#collapseMe").removeClass("fa-expand");
                     $("#collapseMe").addClass("fa-compress");
                 }
-                if (typeof onFullscreenToggle === "function") {
+                if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
+                } else if(typeof onCollapsescreen === "function" && this.isFullscreen === false) {
+                    return onCollapsescreen();
                 }
             }).bind(mo),
             "delete": function() {
