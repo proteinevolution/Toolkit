@@ -76,7 +76,7 @@
                                     <tr class="header">
                                         <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}</td>
                                         <td colspan="4">
-                                            @BlastVisualization.getSingleLink(hit.accession)
+                                            @BlastVisualization.getSingleLinkDB(result.db,hit.accession)
                                             @{"  "+hit.description}
                                         </td>
                                     </tr>
