@@ -113,8 +113,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer) (paramAccess: Par
       case "hhrepid" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.modeller(s"/files/$jobID/query_A.png", s"$jobPath$jobID/results/query.hhrepid"))))
 
       case "ancescon" => Future.successful(Seq(("Tree", views.html.jobs.resultpanels.tree(s"$jobPath$jobID/results/" + jobID + ".clu.tre", "ancescon_div")),
-        ("NewickTree", views.html.jobs.resultpanels.fileviewWithDownload("ancescon",s"$jobPath$jobID/results/" + jobID + ".clu.tre", jobID, jobID + ".clu.tre")),
-        ("Data", views.html.jobs.resultpanels.fileviewWithDownload("ancescon",s"$jobPath$jobID/results/" + jobID + ".anc_out", jobID, jobID + ".anc_out"))))
+        ("NewickTree", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".clu.tre",s"$jobPath$jobID/results/" + jobID + ".clu.tre", jobID, "ancescon_output_tree")),
+        ("Data", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".anc_out",s"$jobPath$jobID/results/" + jobID + ".anc_out", jobID, "ancescon_output_data"))))
 
       case "clustalo" => getResult(jobID).map {
         case Some(jsvalue) =>
