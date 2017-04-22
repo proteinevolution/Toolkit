@@ -56,3 +56,6 @@ fasta2json.py ../results/${JOBID}.msa_fas ../results/alignment.json
 
 # Generate Query in JSON
 fasta2json.py %alignment.path ../results/query.json
+
+# add DB to json
+manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
