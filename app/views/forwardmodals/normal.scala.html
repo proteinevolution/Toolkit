@@ -29,10 +29,10 @@
                 <option value="">Select Tool</option>
                 <div>
                     @for(forwardTool <- {tool.forwardAlignment}) {
-                        <option id="alignmentOptions_@viewName"value="@forwardTool">@forwardTool</option>
+                        <option class="alignmentOptions_@viewName"value="@forwardTool">@forwardTool</option>
                     }
                     @for(forwardTool <- {tool.forwardMultiSeq}) {
-                        <option id="multiSeqOptions_@viewName" value="@forwardTool">@forwardTool</option>
+                        <option class="multiSeqOptions_@viewName" value="@forwardTool">@forwardTool</option>
                     }
                 </div>
             </select>
@@ -76,16 +76,15 @@
     };
 
         $("#forwardModal_@viewName").foundation();
-        $('#alignmentOptions_@viewName').show();
-        $('#multiSeqOptions_@viewName').hide();
+        $('.alignmentOptions_@viewName').show();
+        $('.multiSeqOptions_@viewName').hide();
 
         //default check radio buttons
         $("#selectedHits_@viewName").prop("checked", true);
         $("#sliderRegion_@viewName").prop("checked", true);
 
         $("input[name='radio2']").change(function (e) {
-            if ($(this).attr('id') == 'fullLength') {
-
+            if ($(this).attr('id') == 'fullLength_@viewName') {
                 $('#forwardWarning').css({display: 'inherit'});
                 $('.alignmentOptions_@viewName').hide();
                 $('.multiSeqOptions_@viewName').show();
