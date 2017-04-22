@@ -246,6 +246,11 @@ object BlastVisualization extends Constants {
     seqWrapped
   }
 
+
+  def getCheckbox(num: Int): String ={
+    "<input type=\"checkbox\" value=\"' + $('<div/>').text("+num+").html() + '\"><a onclick=\"scrollToElem("+num+")\">"+num+"</a>"
+  }
+
   def insertMatch (seq : String, length : Int, hitArr : List[Int]) : String = {
     var newSeq = ""
     for (starPos <- hitArr){
