@@ -46,3 +46,6 @@ pcoils_weighting GEN pcoils_weighting.prop
 pcoils_matrix GEN pcoils_matrix.prop
 evalue GEN evalue.prop
 no_replicates GEN no_replicates.prop
+samcc_periodicity GEN samcc_periodicity.prop
+eff_crick_angle GEN eff_crick_angle.prop
+
