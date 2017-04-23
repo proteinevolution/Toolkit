@@ -1,6 +1,8 @@
 package controllers
 
 
+import java.nio.file.attribute.PosixFilePermission
+
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoComponents
 import play.api.mvc.Controller
@@ -24,6 +26,9 @@ private[controllers] trait Common extends Controller with ContentTypes with Reac
   protected def NoCache(res: Result): Result = res.withHeaders(
     CACHE_CONTROL -> "no-cache, no-store, must-revalidate", EXPIRES -> "0"
   )
+
+  protected val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
+    PosixFilePermission.GROUP_EXECUTE, PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE)
 
 
 }

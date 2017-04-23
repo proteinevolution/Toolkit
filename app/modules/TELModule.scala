@@ -123,7 +123,8 @@ class TELEnvProvider @Inject()(tv : TELEnv, configuration: Configuration) extend
       fallBackFile
     }.toFile.list.foreach { file =>
 
-      file.setPermissions(Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE))
+      file.setPermissions(Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
+        PosixFilePermission.GROUP_EXECUTE, PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE))
 
       file.extension match {
 
