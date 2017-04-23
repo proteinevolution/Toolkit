@@ -299,16 +299,14 @@ JobTabsComponent = {
                     if (typeof onCollapse === "function") {
                         onCollapse();
                     }
-                    $("#collapseMe").addClass("fa-expand");
-                    $("#collapseMe").removeClass("fa-compress");
+                    $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
                     if (typeof onExpand === "function") {
                         onExpand();
                     }
-                    $("#collapseMe").removeClass("fa-expand");
-                    $("#collapseMe").addClass("fa-compress");
+                    $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
@@ -328,7 +326,7 @@ JobTabsComponent = {
     },
     view: function(ctrl, args) {
         return m("div", { class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl) }, [
-            m("ul", [
+            m("ul", [ // Tab List
                 ctrl.listitems.map(function(item) {
                     return m("li", { id: "tab-" + item },
                         m("a", { href: "#tabpanel-" + item }, item)
@@ -369,7 +367,7 @@ JobTabsComponent = {
                         onclick: ctrl["delete"].bind(ctrl)
                     })
                 ) : void 0
-            ]),
+            ]), // Actual Tab Divs start here
             document.cookie.split("&username=")[1] === ctrl.owner ? [
                 m("div", {
                     class: "tab-panel parameter-panel",
@@ -386,7 +384,7 @@ JobTabsComponent = {
                 ])
             ] : null,
             m("form", { id: "jobform" },
-                ctrl.params.map(function(paramGroup, index) {
+                ctrl.params.map(function(paramGroup) {
                 var elements;
                 if (paramGroup[1].length !== 0) {
                     elements = paramGroup[1];
@@ -402,12 +400,12 @@ JobTabsComponent = {
                                             mapParam(elements[0], ctrl)
                                         )
                                     ),
-                                    m("div", { class: "row small-up-1 medium-up-2 large-up-3", style: "margin-top: 35px;" },
+                                    elements.length > 1 ? m("div", { class: "row small-up-1 medium-up-2 large-up-3", style: "margin-top: 35px;" },
                                         elements.slice(1).map(function(param) {
                                             return m("div", { class: "column column-block multiSelectParameter" },
                                                 mapParam(param, ctrl));
                                         })
-                                    )
+                                    ) : void 0
                                 ] :
                                 m("div", { class: "row small-up-1 medium-up-2 large-up-3" },
                                     elements.map(function(param) {
@@ -419,8 +417,7 @@ JobTabsComponent = {
                                     return m("div", { class: "column column-block" }, mapParam(param, ctrl));
                                 })
                             )
-                        ),
-                        index == 0 ? m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob }) : null
+                        )
                     ])
                 }}),
                 ctrl.isJob && ctrl.state === 2 ? m("div", { class: "tabs-panel", id: "tabpanel-Queued"  },
@@ -428,7 +425,8 @@ JobTabsComponent = {
                 ctrl.isJob && ctrl.state === 3 ? m("div", { class: "tabs-panel", id: "tabpanel-Running" },
                     m(JobRunningComponent, { job: ctrl.job })) : void 0,
                 ctrl.isJob && ctrl.state === 4 ? m("div", { class: "tabs-panel", id: "tabpanel-Error"   },
-                    m(JobErrorComponent, {job: ctrl.job})) : void 0
+                    m(JobErrorComponent, {job: ctrl.job})) : void 0,
+                m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob })
             ),
             ctrl.views ? ctrl.views.map(function(view) {
                 return m("div", { class: "tabs-panel", id: "tabpanel-" + view[0] },
@@ -467,17 +465,20 @@ JobSubmissionComponent = {
     submitting      : false,    // Job is being sent if true
     currentJobID    : null,     // Currently entered jobID
     jobIDValid      : false,    // Is the current jobID valid?
-    jobIDValidationTimeout : null,     //
+    jobIDValidationTimeout : null,     // timer ID for the timeout
+    jobIDRegExp     : new RegExp(/^\w{6,96}(\.\d{1,3})?$/),
     checkJobID : function (jobID) {
         clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);    // clear all previous timeouts
-        JobSubmissionComponent.jobIDValid = false;      // ensure that the user can not send the job form
+        JobSubmissionComponent.jobIDValid   = false;    // ensure that the user can not send the job form
         JobSubmissionComponent.currentJobID = jobID;    // set the jobID to the new jobID
         if (jobID !== "") { // ignore checking if the field is empty as the server will generate a jobID in that case.
-            JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
-                m.request({ method: "GET", url: "/search/checkJobID/"+jobID }).then(
-                    function (data) { JobSubmissionComponent.jobIDValid = !data.exists; }
-                );
-            }, 500);
+            if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
+                JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
+                    m.request({ method: "GET", url: "/search/checkJobID/"+jobID }).then(
+                        function (data) { JobSubmissionComponent.jobIDValid = !data.exists; }
+                    );
+                }, 800);
+            }
         } else {
             JobSubmissionComponent.jobIDValid = true;
         }
@@ -492,6 +493,7 @@ JobSubmissionComponent = {
                             class:       style,
                             placeholder: "Custom JobID",
                             onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobID),
+                            onchange:    m.withAttr("value", JobSubmissionComponent.checkJobID),
                             value:       JobSubmissionComponent.currentJobID
         })
     },
@@ -645,7 +647,7 @@ JobSubmissionComponent = {
             //    : null,
             //args.isJob ? m("input", { type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob })
             //    : null,
-            this.jobIDComponent(ctrl), m(ProjectComponent, {})
+            JobSubmissionComponent.jobIDComponent(ctrl), m(ProjectComponent, {})
         ])
     }
 };
