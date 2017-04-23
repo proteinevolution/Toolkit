@@ -299,16 +299,14 @@ JobTabsComponent = {
                     if (typeof onCollapse === "function") {
                         onCollapse();
                     }
-                    $("#collapseMe").addClass("fa-expand");
-                    $("#collapseMe").removeClass("fa-compress");
+                    $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
                     if (typeof onExpand === "function") {
                         onExpand();
                     }
-                    $("#collapseMe").removeClass("fa-expand");
-                    $("#collapseMe").addClass("fa-compress");
+                    $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
@@ -328,7 +326,7 @@ JobTabsComponent = {
     },
     view: function(ctrl, args) {
         return m("div", { class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl) }, [
-            m("ul", [
+            m("ul", [ // Tab List
                 ctrl.listitems.map(function(item) {
                     return m("li", { id: "tab-" + item },
                         m("a", { href: "#tabpanel-" + item }, item)
@@ -369,7 +367,7 @@ JobTabsComponent = {
                         onclick: ctrl["delete"].bind(ctrl)
                     })
                 ) : void 0
-            ]),
+            ]), // Actual Tab Divs start here
             document.cookie.split("&username=")[1] === ctrl.owner ? [
                 m("div", {
                     class: "tab-panel parameter-panel",
@@ -386,7 +384,7 @@ JobTabsComponent = {
                 ])
             ] : null,
             m("form", { id: "jobform" },
-                ctrl.params.map(function(paramGroup, index) {
+                ctrl.params.map(function(paramGroup) {
                 var elements;
                 if (paramGroup[1].length !== 0) {
                     elements = paramGroup[1];
@@ -402,12 +400,12 @@ JobTabsComponent = {
                                             mapParam(elements[0], ctrl)
                                         )
                                     ),
-                                    m("div", { class: "row small-up-1 medium-up-2 large-up-3", style: "margin-top: 35px;" },
+                                    elements.length > 1 ? m("div", { class: "row small-up-1 medium-up-2 large-up-3", style: "margin-top: 35px;" },
                                         elements.slice(1).map(function(param) {
                                             return m("div", { class: "column column-block multiSelectParameter" },
                                                 mapParam(param, ctrl));
                                         })
-                                    )
+                                    ) : void 0
                                 ] :
                                 m("div", { class: "row small-up-1 medium-up-2 large-up-3" },
                                     elements.map(function(param) {
@@ -419,8 +417,7 @@ JobTabsComponent = {
                                     return m("div", { class: "column column-block" }, mapParam(param, ctrl));
                                 })
                             )
-                        ),
-                        index == 0 ? m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob }) : null
+                        )
                     ])
                 }}),
                 ctrl.isJob && ctrl.state === 2 ? m("div", { class: "tabs-panel", id: "tabpanel-Queued"  },
@@ -428,7 +425,8 @@ JobTabsComponent = {
                 ctrl.isJob && ctrl.state === 3 ? m("div", { class: "tabs-panel", id: "tabpanel-Running" },
                     m(JobRunningComponent, { job: ctrl.job })) : void 0,
                 ctrl.isJob && ctrl.state === 4 ? m("div", { class: "tabs-panel", id: "tabpanel-Error"   },
-                    m(JobErrorComponent, {job: ctrl.job})) : void 0
+                    m(JobErrorComponent, {job: ctrl.job})) : void 0,
+                m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob })
             ),
             ctrl.views ? ctrl.views.map(function(view) {
                 return m("div", { class: "tabs-panel", id: "tabpanel-" + view[0] },
@@ -467,17 +465,23 @@ JobSubmissionComponent = {
     submitting      : false,    // Job is being sent if true
     currentJobID    : null,     // Currently entered jobID
     jobIDValid      : false,    // Is the current jobID valid?
-    jobIDValidationTimeout : null,     //
+    jobIDValidationTimeout : null,     // timer ID for the timeout
+    jobIDRegExp     : new RegExp(/^\w{6,96}(\.\d{1,3})?$/),
     checkJobID : function (jobID) {
         clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);    // clear all previous timeouts
-        JobSubmissionComponent.jobIDValid = false;      // ensure that the user can not send the job form
+        JobSubmissionComponent.jobIDValid   = false;    // ensure that the user can not send the job form
         JobSubmissionComponent.currentJobID = jobID;    // set the jobID to the new jobID
         if (jobID !== "") { // ignore checking if the field is empty as the server will generate a jobID in that case.
-            JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
-                m.request({ method: "GET", url: "/search/checkJobID/"+jobID }).then(
-                    function (data) { JobSubmissionComponent.jobIDValid = !data.exists; }
-                );
-            }, 500);
+            if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
+                JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
+                    m.request({ method: "GET", url: "/search/checkJobID/"+jobID }).then(
+                        function (data) {
+                            JobSubmissionComponent.jobIDValid = !data.exists;
+                            console.log("Current JobID is: ", jobID, "valid:", JobSubmissionComponent.jobIDValid);
+                        }
+                    );
+                }, 800);
+            }
         } else {
             JobSubmissionComponent.jobIDValid = true;
         }
@@ -492,6 +496,7 @@ JobSubmissionComponent = {
                             class:       style,
                             placeholder: "Custom JobID",
                             onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobID),
+                            onchange:    m.withAttr("value", JobSubmissionComponent.checkJobID),
                             value:       JobSubmissionComponent.currentJobID
         })
     },
@@ -511,11 +516,12 @@ JobSubmissionComponent = {
         }
         return {
             submit: function(startJob) {
-                if (this.submitting) return;
-                this.submitting = true; // ensure that the submission is not reinitiated while a submission is ongoing
+                if (JobSubmissionComponent.submitting || !JobSubmissionComponent.jobIDValid) return;
+                JobSubmissionComponent.submitting = true; // ensure that the submission is not reinitiated while a submission is ongoing
                 var form = document.getElementById("jobform");
 
                 if(!form.checkValidity()) {
+                    JobSubmissionComponent.submitting = false;
                     alert("Parameters are invalid");
                     return
                 }
@@ -523,10 +529,10 @@ JobSubmissionComponent = {
                 var checkRoute, formData, jobID, toolname, doCheck;
                 toolname = args.job().tool.toolname;
                 doCheck = true;
-                jobID = JobSubmissionComponent.jobIDValid ? JobSubmissionComponent.currentJobID : null;
-                if (!jobID) {
-                    jobID = null;
-                }
+                jobID = JobSubmissionComponent.currentJobID;
+                if (!jobID) { jobID = null; }
+                console.log("Current JobID is: ", jobID, JobSubmissionComponent.currentJobID, "valid:", JobSubmissionComponent.jobIDValid);
+
                 // Use check route and specify that the hashing function should be used
                 checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID, doCheck);
                 formData = new FormData(form);
@@ -548,18 +554,16 @@ JobSubmissionComponent = {
                         return data;
                     }
                 }).then(function(data) {
-                    var submitRoute;
+                    var submitRoute, modal = $('#submit_modal');
                     jobID = data.jobID;
                     if (data.existingJobs) {
-                        $('#reload_job').unbind('click');
-                        $('#submit_again').unbind('click');
-                        $('#reload_job').on('click', function() {
-                            $('#submit_modal').foundation('close');
+                        $('#reload_job').unbind('click').on('click', function() {
+                            modal.foundation('close');
                             return m.route("/jobs/" + data.existingJob.jobID);
                         });
-                        $('#submit_again').on('click', function() {
+                        $('#submit_again').unbind('click').on('click', function() {
                             var submitRoute;
-                            $('#submit_modal').foundation('close');
+                            modal.foundation('close');
                             var jobListComp = JobListComponent.Job(
                                     { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolname }
                             );
@@ -574,7 +578,11 @@ JobSubmissionComponent = {
                             });
                             return null;
                         });
-                        return $('#submit_modal').foundation('open');
+                        modal.on('closed.zf.reveal', function(){
+                            modal.unbind('closed.zf.reveal');
+                            JobSubmissionComponent.submitting = false ;
+                        }).foundation('open');
+                        return
                     } else {
                         var jobListComp = JobListComponent.Job(
                             { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolname }
@@ -590,7 +598,7 @@ JobSubmissionComponent = {
                             extract: extractStatus,
                             serialize: function(data) { m.route("/jobs/" + jobID); return data; }
                         });
-                        return null;
+                        return
                     }
                 }, function(error) {
                     console.warn("Bad Request");
@@ -632,20 +640,20 @@ JobSubmissionComponent = {
                     m("input", { type: "checkbox", id:"private", name: "private", checked:"checked", value:true}),
                     "Private"
                 ]),
-            !this.submitting ? m("input", {
+            m("input", {
                 type: "button",
                 class: "success button small submitJob",
                 value: (args.isJob ? "Res" : "S") + "ubmit Job",
                 style: "float: right;",
                 onclick: ctrl.submit.bind(ctrl, true)
-            }) : null,
+            }),
             //!args.isJob ? m("label", m("input", { type: "checkbox", name: "private", value: "true", checked: "checked" }), "Private" ) : null, // TODO reimplement private checkbox
             //args.isJob && args.job().jobstate === 1 ?
             //    m("input", { type: "button", class: "button small addJob", value: "Start Job", onclick: ctrl.startJob })
             //    : null,
             //args.isJob ? m("input", { type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob })
             //    : null,
-            this.jobIDComponent(ctrl), m(ProjectComponent, {})
+            JobSubmissionComponent.jobIDComponent(ctrl), m(ProjectComponent, {})
         ])
     }
 };
