@@ -289,13 +289,13 @@ table.dataTable thead th {
     border-bottom: 1px solid #b4b4b4 !important;
 }
     /*Data Tables in Hitlists */
-.accordion-content .dataTables_wrapper {
+.result-panel .dataTables_wrapper {
     border: none;
     padding: 0;
     font-size: 1.25em;
 }
 
-.accordion-content .dataTable {
+.result-panel .dataTable {
     width: 100%;
 }
 
@@ -393,3 +393,24 @@ table.dataTable.no-footer{
 #treeSvgContainer svg {
     width: 60%;
 }
+
+#alignments {
+    overflow: auto;
+}
+
+.scrollContainer {
+    width: 10em;
+    position: fixed;
+    right: 16em;
+    top: 18em;
+    box-shadow: 6px 5px 16px -1px #302e2e66;
+    font-size: 1.4em;
+    padding: 1em;
+    opacity: 0.8;
+    background: white;
+    border-radius: 5px;
+    z-index: 99;
+}
+
+
+

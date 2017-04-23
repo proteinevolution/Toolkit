@@ -1,6 +1,13 @@
 #!/bin/bash
 # Set environment
-source /ebio/abt1_share/toolkit_support1/code/bioprogs/env/environment.sh
+if [ "$HOSTNAME" = "olt" ]
+  then
+    source /ebio/abt1_share/toolkit_support1/code/bioprogs/env/environment.sh
+
+elif [ "$HOSTNAME" = "rye" ]
+  then
+    source /cluster/toolkit/production/bioprogs/env/environment_prod.sh
+  fi
 
 
 if [ ! -e "results/$accession.fas" ]

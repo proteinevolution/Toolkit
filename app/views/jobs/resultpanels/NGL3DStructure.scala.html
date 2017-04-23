@@ -1,16 +1,30 @@
 @import play.api.mvc.RequestHeader
 
-@(filepath : String)(implicit request: RequestHeader)
+@(filepath : String, filename : String, jobID : String, resultname : String)(implicit request: RequestHeader)
 
-<script>
-
-        $(document).ready(function(){
-            stage = new NGL.Stage( "viewport" );
-            stage.loadFile( "@filepath", { defaultRepresentation: true } );
-            stage.set
-        });
-</script>
-
-
+<a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download PDB file</a>
+<hr id="line-element" colspan="4" class="horizontal-line">
 
 <div id="viewport" style="width:50pc; height: 30pc; margin: 0 auto;"></div>
+
+<script>
+        var downloadFilename = "@{resultname}_@{jobID}";
+        window["@{resultname}_download"] = function(){
+            var downloadFilename = "@{resultname}_@{jobID}";
+            var fileURL="/files/@{jobID}/@{filename}";
+            $.ajax({
+                method: "GET",
+                url: fileURL
+            }).done(function(data){
+                download(downloadFilename, data);
+            })
+        };
+
+        $("#viewport").ready(function(){
+            setTimeout(function(){
+                stage = new NGL.Stage( "viewport" );
+                stage.loadFile('@filepath', {defaultRepresentation: true});
+                stage.set
+            }, 100);
+        });
+</script>

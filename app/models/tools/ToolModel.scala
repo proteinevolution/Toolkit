@@ -80,7 +80,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
       case "pcoils" => Future.successful(Seq(("CC-Prob", views.html.jobs.resultpanels.image(s"/files/$jobID/" + jobID + "_ncoils.png")),
         ("ProbList", views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".numerical"))))
 
-      case "modeller" => Future.successful(Seq(("3D-Structure", views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb")),
+      case "modeller" => Future.successful(Seq(("3D-Structure", views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "Modeller")),
         ("VERIFY3D", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.verify3d.png", s"$jobPath$jobID/results/verify3d/$jobID.plotdat")),
         ("SOLVX", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png", s"$jobPath$jobID/results/solvx/$jobID.solvx")),
         ("ANOLEA", views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png", s"$jobPath$jobID/results/$jobID.pdb.profile"))))
@@ -177,6 +177,10 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
           Seq(("Results", views.html.jobs.resultpanels.unchecked_list("Seq2ID",jobID, jsvalue)))
         case None => Seq.empty
       }
+
+      case "samcc" => Future.successful(Seq(("3D-Structure-With-Axes", views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "samcc_PDB_AXES")),
+        ("Plots", views.html.jobs.resultpanels.samcc(s"/files/$jobID/out0.png", s"/files/$jobID/out1.png", s"/files/$jobID/out2.png", s"/files/$jobID/out3.png")),
+        ("NumericalData", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out",s"$jobPath$jobID/results/" + jobID + ".out", jobID, "samcc"))))
 
       case "6frametranslation" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out",s"$jobPath$jobID/results/" + jobID + ".out", jobID, "sixframetrans_out"))))
         
@@ -303,7 +307,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
     // SamCC
     ("samcc", "SamCC", "sam", "3ary", "",
-      Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
+      Seq(paramAccess.ALIGNMENT, paramAccess.SAMCC_PERIODICITY, paramAccess.EFF_CRICK_ANGLE), Seq.empty,Seq.empty),
 
     // RetrieveSeq
     ("retseq", "RetrieveSeq", "ret", "utils", "",

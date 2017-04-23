@@ -1,2 +1,2 @@
-PERLLIB  = /ebio/abt1_share/toolkit_support1/code/bioprogs/lib
+PERLLIB  = perllib_foo
 
