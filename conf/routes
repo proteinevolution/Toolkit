@@ -143,8 +143,9 @@ GET           /api/jobs/getnotes/:jobID               @controllers.Jobs.getAnnot
 GET           /api/job/results/:jobID                 @controllers.DataController.get(jobID: String)
 
 # DataTables
-GET          /api/job/results/dataTableHmmer/:jobID      @controllers.DataController.dataTableHmmer(jobID: String)
-GET          /api/job/results/dataTablePSIBlast/:jobID              @controllers.DataController.dataTablePSIBlast(jobID: String)
+GET          /api/job/results/dataTableHmmer/:jobID      @controllers.HmmerController.dataTable(jobID: String)
+GET          /api/job/results/dataTablePSIBlast/:jobID   @controllers.PSIBlastController.dataTable(jobID: String)
+GET          /api/job/results/dataTableHHpred/:jobID              @controllers.HHpredController.dataTable(jobID: String)
 # Article
 GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)
 POST          /api/writeArticle                       @controllers.DataController.writeArticle(title: String, text: String, link: String, imagePath: String)

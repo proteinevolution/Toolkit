@@ -2,7 +2,7 @@ package models.tools
 
 import javax.inject.{Inject, Singleton}
 
-import models.database.results.{Hmmer, PSIBlast}
+import models.database.results.{HHPred, Hmmer, PSIBlast}
 
 import scala.concurrent._
 import ExecutionContext.Implicits.global
@@ -46,7 +46,7 @@ case class Tool(toolNameShort: String,
 
 // Class which provides access to all Tools
 @Singleton
-final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer) (paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi) extends CommonModule{
+final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred) (paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi) extends CommonModule{
 
 
 
@@ -94,13 +94,13 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer) (paramAccess: Par
       }
       case "hhpred" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, jsvalue, this.values(toolname))),
+          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, hhpred.parseResult(jsvalue), this.values(toolname))),
             ("Representative_Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "reduced" ,this.values(toolname))))
       }
 
       case "hhpred_align" => getResult(jobID).map {
         case Some(jsvalue) =>
-          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, jsvalue, this.values(toolname))),
+          Seq(("Hitlist", views.html.jobs.resultpanels.hhpred.hitlist(jobID, hhpred.parseResult(jsvalue), this.values(toolname))),
             ("FullAlignment", views.html.jobs.resultpanels.msaviewer(jobID)))
         case None => Seq.empty
       }

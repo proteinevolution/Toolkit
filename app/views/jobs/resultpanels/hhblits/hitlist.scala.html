@@ -49,8 +49,8 @@
                             <th>Nr</th>
                             <th>Hit</th>
                             <th>Name</th>
+                            <th>Probability</th>
                             <th>E-value</th>
-                            <th>Score</th>
                             <th>Cols</th>
                             <th>Length of Target</th>
                         </tr>
@@ -211,8 +211,8 @@
     </button>
 </div>
 
-
 <script>
+
         var fileUrlQueryMSA = "/files/@jobID/@{jobID}.rep100.json";
         var fileUrlQueryMSAFas = "/files/@jobID/@{jobID}.rep100.fas";
         var data;
@@ -306,8 +306,8 @@
                     { "mDataProp": "no" },
                     { "mDataProp": "template.name" , render: function (data){return getSingleLink(data)}},
                     { "mDataProp": "header" , render: function (data) {return data.replace(/;/g, "")}},
-                    { "mDataProp": "info.eval" , render: function(data){return data.toExponential()}},
                     { "mDataProp": "info.score" },
+                    { "mDataProp": "info.eval" , render: function(data){return data.toExponential()}},
                     { "mDataProp": "info.aligned_cols" },
                     { "mDataProp": "template.ref" },
 

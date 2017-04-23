@@ -212,5 +212,14 @@ hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
 # Generate Query in JSON
 fasta2json.py ../results/${JOBID}.fas ../results/query.json
 
+# Generate Query in JSON
+fasta2json.py %alignment.path ../results/query.json
+
+# add DB to json
+manipulate_json.py -k 'db' -v '%hhsuitedb.content' ../results/${JOBID}.json
+
+# add DB to json
+manipulate_json.py -k 'proteomes' -v '%proteomes.content' ../results/${JOBID}.json
+
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
