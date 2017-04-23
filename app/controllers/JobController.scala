@@ -1,6 +1,5 @@
 package controllers
 
-import java.nio.file.Files
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor.{CreateJob, Delete}
@@ -23,6 +22,7 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
+import models.tools.ToolFactory
 import modules.tel.env.Env
 
 /**
@@ -35,6 +35,7 @@ final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
 @NamedCache("userCache") implicit val userCache        : CacheApi,
                          implicit val locationProvider : LocationProvider,
                                   val jobDao           : JobDAO,
+                                  val toolFactory      : ToolFactory,
                                   val reactiveMongoApi : ReactiveMongoApi)
                               extends Controller with UserSessions with CommonModule with Constants{
 
@@ -81,7 +82,18 @@ final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
 
 
           // Grab the formData from the request data
-          val formData = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString(formMultiValueSeparator))
+          val formData : Map[String, String] = request.body.asMultipartFormData.get.dataParts.mapValues(_.mkString(formMultiValueSeparator))
+
+          // Get the parameters of the tool for validation purpose
+          val toolParams  = toolFactory.values(toolname).params
+
+          // validate formData if it is a tool parameter
+          val x = formData.filterKeys( x => toolParams.contains(x)).map { t =>
+            t._1 -> toolParams(t._1).paramType.validate(t._2)
+          }
+
+          // 
+
 
           // If we do not hash (usually forwarding) just provide the new JobID
           if (!hash) {
