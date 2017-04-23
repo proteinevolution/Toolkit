@@ -2,19 +2,17 @@
 @import models.results.FileLoader
 
 @(filename: String, filePath: String, jobID: String, resultname: String)(implicit request: RequestHeader)
-@import java.lang.String;
+    @import java.lang.String;
 
-<a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
-<hr id="line-element" colspan="4" class="horizontal-line">
+    <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
+    <hr id="line-element" colspan="4" class="horizontal-line">
 
-<pre class="fileview" >@FileLoader.loadFile(filePath)</pre>
+    <pre class="fileview" >@FileLoader.loadFile(filePath)</pre>
 
-<script>
-
-
-
+    <script>
+        var downloadFilename = "@{resultname}_@{jobID}";
         window["@{resultname}_download"] = function(){
-            var downloadFilename = "@{resultname}_jobID_@{jobID}";
+            var downloadFilename = "@{resultname}_@{jobID}";
             var fileURL="/files/@{jobID}/@{filename}";
             $.ajax({
                 method: "GET",
@@ -22,20 +20,12 @@
             }).done(function(data){
                 download(downloadFilename, data);
             })
-
-
         };
-
         function onExpand() {
-          $(".fileview").css("overflow-y", "visible");
-          $(".fileview").css("height", "100%");
-
+            $(".fileview").css("overflow-y", "visible");
+            $(".fileview").css("height", "100%");
         }
         function onCollapse() {
-
-          $(".fileview").css("height", "30pc");
+            $(".fileview").css("height", "30pc");
         }
-
 </script>
-
-

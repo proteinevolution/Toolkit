@@ -58,7 +58,7 @@ class LoadBar {
             colorClass : string = "loadBar " + (currentLoad < 0.90 ? "green" : currentLoad < 1.3 ? "yellow" : "red");
 
         return m('div', {id:"indexLoadBar"},  [
-            m('div', {class: 'loadBarLabel'}, "Cluster workload"),
+            m('div', {class: 'loadBarLabel'}, "Cluster workload: " + loadString),
             m('div', {class: 'loadBarGraph'}, m('div', {class: 'loadBarSize'}, m('table',
                 m('tr', [
                     m("th", {class: colorClass + (currentLoad < 0.4 ? " pulsating" : "")}),
@@ -74,8 +74,7 @@ class LoadBar {
                                     (2.5 <= currentLoad && currentLoad < 5.0 ? " pulsating" : "")}),
                     m("th", {class: (currentLoad < 5.0 ? "loadBar gray" : colorClass + " pulsating")})
                 ])
-            )),
-            m('div',{class: 'loadBarString'}, "" + loadString))
+            )))
         ])
     }
 }

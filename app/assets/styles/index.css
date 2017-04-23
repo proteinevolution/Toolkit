@@ -695,7 +695,7 @@ td#joblistIcon i {
 
 #indexLoadBar .loadBarSize {
     width: 12em;
-    margin-left: 6.2em;
+    margin: 0 auto;
 }
 
 #indexLoadBar .loadBarGraph table {

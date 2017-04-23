@@ -344,10 +344,9 @@ hr {
     font-size: small;
 }
 
-.parameters {
-
-    margin-bottom: 1.3em;
-}
+/*.parameters {*/
+    /*margin-bottom: 1.3em;*/
+/*}*/
 
 .parameters input {
     text-shadow: 0 0 0 #878787;
@@ -410,7 +409,7 @@ hr {
 }
 
 .submitbuttons {
-    position: absolute;
+    display: inline-block;
     bottom: 0;
     left: 0;
     width: 100%;
