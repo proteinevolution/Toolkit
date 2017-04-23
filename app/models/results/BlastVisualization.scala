@@ -152,6 +152,7 @@ object BlastVisualization extends Constants {
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
     var idCDD = id.replaceAll("PF", "pfam")
+
     db match {
       case envNrNameReg(_) => links += generateLink(ncbiProteinBaseLink, idNcbi , "NCBI Fasta")
       case pdbNameReg(_) => links += generateLink(pdbeBaseLink, idPdb, "PDBe")
@@ -167,6 +168,9 @@ object BlastVisualization extends Constants {
     val idPdb = id.replaceAll("_.*$", "")
     link += generateLink(uniprotBaseLik,id,id)
     Html(link)
+  }
+  def getLinksHHBlits(id: String): Html = {
+    Html("<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>")
   }
 
   def getLinksHHpred(id : String) : Html = {

@@ -49,9 +49,10 @@
                             <th>Nr</th>
                             <th>Hit</th>
                             <th>Name</th>
-                            <th>Prob</th>
                             <th>E-value</th>
                             <th>Score</th>
+                            <th>Cols</th>
+                            <th>Length of Target</th>
                         </tr>
                     </thead>
                 </table>
@@ -75,6 +76,17 @@
                             <br />
                             @for((alignment, hit) <- ((jsValue \ jobID \ "alignments").as[List[JsObject]], (jsValue \ jobID \ "hits").as[List[JsObject]]).zipped.toList){
                                 @* hit number, links *@
+                                @* hit number, links *@
+                                <tr>
+                                    <td></td>
+                                    <td colspan="3">
+                                    @{alignment \ "template" \ "name" match {
+                                        case JsDefined(jsValue) => BlastVisualization.getLinksHHBlits((alignment \ "template" \ "name").get.as[String])
+                                    }
+                                    }
+                                    </td>
+                                    <td></td>
+                                </tr>
                                 @* checkboxes, accession, name of hit*@
                                 <tr class="header">
                                     <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{(hit \ "no").get}'> @{(hit \ "no").get}.</td>
@@ -94,7 +106,7 @@
                                     <td colspan="4">Probability: @{(alignment \ "info" \ "probab").get}, E-value: @{(alignment \ "info" \ "eval").get},
                                         Score: @{(alignment \ "info" \ "score").get}, Aligned Cols: @{(alignment \ "info" \ "aligned_cols").get},
                                         Identities: @{BlastVisualization.percentage((alignment \ "info" \ "identities").get.toString)},
-                                        Similarity: @{BlastVisualization.percentage((alignment \ "info" \ "similarity").get.toString)}
+                                        Similarity: @{(alignment \ "info" \ "similarity").get.toString}
 
 
                                 </td>
@@ -294,9 +306,11 @@
                     { "mDataProp": "no" },
                     { "mDataProp": "template.name" , render: function (data){return getSingleLink(data)}},
                     { "mDataProp": "header" , render: function (data) {return data.replace(/;/g, "")}},
-                    { "mDataProp": "info.probab" },
                     { "mDataProp": "info.eval" , render: function(data){return data.toExponential()}},
                     { "mDataProp": "info.score" },
+                    { "mDataProp": "info.aligned_cols" },
+                    { "mDataProp": "template.ref" },
+
                 ],
                 'columnDefs': [{
                     'targets': 0,
@@ -369,7 +383,6 @@
             var dataTmp = preprocessingForward(selectedTool, boolSelectedHits,boolEvalue, evalue);
             // full seq is retrieved
             if(boolFullLength) {
-                if(boolSelectedHits )
                 // retrieve full Seq
                 var jsonData = new Object();
                 jsonData.accessionsStr = dataTmp.accessions.join(" ");
