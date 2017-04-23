@@ -34,7 +34,7 @@
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
                     <hr id="line-element" class="horizontal-line">
                 </div>
-                <table id="htb" class="display" cellspacing="0" width="80%">
+                <table id="htb" class="display" width="100%">
                     <thead>
                         <tr>
                             <th>Nr</th>
@@ -203,7 +203,8 @@
             hitlist = $('#htb').dataTable({
                 "bProcessing" : true,
                 "bServerSide" : true,
-                "sAjaxSource" : "/api/job/results/dataTableHmmer/@jobID"
+                "sAjaxSource" : "/api/job/results/dataTableHmmer/@jobID",
+                "autoWidth": false
             });
         }
 
