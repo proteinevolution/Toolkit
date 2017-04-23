@@ -66,60 +66,6 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, psiblas
     }
   }
 
-  /**
-    * DataTables for job results
-    */
-
-  def dataTableHmmer(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
-    val params = DTParam(
-      request.getQueryString("sSearch").getOrElse(""),
-      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
-      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
-      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
-      request.getQueryString("sSortDir_0").getOrElse("asc"))
-
-    val hits = hmmerController.getHitsByKeyWord(jobID, params)
-    var db = ""
-    val total = getResult(jobID).map {
-      case Some(jsValue) => {
-        val result = hmmer.parseResult(jsValue)
-        db = result.db
-        result.num_hits
-      }
-    }
-    hmmer.hitsOrderBy(params, hits).flatMap { list =>
-      total.map { total_ =>
-        Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
-          .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
-      }
-    }
-  }
-
-  def dataTablePSIBlast(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
-    val params = DTParam(
-      request.getQueryString("sSearch").getOrElse(""),
-      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
-      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
-      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
-      request.getQueryString("sSortDir_0").getOrElse("asc"))
-
-    var db = ""
-    val total = getResult(jobID).map {
-      case Some(jsValue) => {
-        val result = psi.parseResult(jsValue)
-        db = result.db
-        result.num_hits
-      }
-    }
-    val hits = psiblastController.getHitsByKeyWord(jobID, params)
-
-    psi.hitsOrderBy(params, hits).flatMap { list =>
-      total.map { total_ =>
-        Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
-          .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
-      }
-    }
-  }
 
 }
 

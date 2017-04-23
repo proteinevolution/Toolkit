@@ -5,10 +5,11 @@
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
-@(jobID: String, jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
+@import models.database.results.HHPredResult
+@(jobID: String, result: HHPredResult, tool: models.tools.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
-@if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
+@if(result.num_hits < 1) {
     <div class="callout alert noHits" id="noHits">
         <h6>No hits found!</h6>
     </div>
@@ -47,16 +48,10 @@
                             <th>Nr</th>
                             <th>Hit</th>
                             <th>Name</th>
-                            <th>Prob</th>
+                            <th>Probability</th>
                             <th>E-value</th>
-                            <th>P-value</th>
-                            <th>Score</th>
-                            <th>SS</th>
                             <th>Cols</th>
-                            <th>qStart</th>
-                            <th>qEnd</th>
-                            <th>tStart</th>
-                            <th>tEnd</th>
+                            <th>Length of Target</th>
                         </tr>
                     </thead>
                 </table>
@@ -75,42 +70,33 @@
                 <form id="hhpred_templates">
                       <table class="unstriped">
                         <tbody>
-                            Number of sequences: @{{jsValue \ jobID \ "hits"}.as[List[JsObject]].size}
+                            Number of sequences: @result.num_hits
                             <br />
                             <br />
-                        @for((alignment, hit) <- ((jsValue \ jobID \ "alignments").as[List[JsObject]], (jsValue \ jobID \ "hits").as[List[JsObject]]).zipped.toList){
+                        @for(hit <- result.HSPS){
                             @* hit number, links *@
                             <tr>
                                 <td></td>
                                 <td colspan="3">
-                                @{hit \ "struc" match {
-                                        case JsDefined(jsValue) => BlastVisualization.getLinksHHpred((hit \ "struc").get.as[String])
-                                        case undefined: JsUndefined => BlastVisualization.getLinksHHpred("undefinedAccession") ;
-                                    }
-                                }
+                                @BlastVisualization.getLinksHHpred(hit.template.accession)
                                 </td>
                                 <td></td>
                             </tr>
                             @* checkboxes, accession, name of hit*@
                             <tr class="header">
-                                <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{(hit \ "no").get}'> @{(hit \ "no").get}.</td>
+                                <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}.</td>
                                 <td colspan="4">
-
-                                @{hit \ "struc" match {
-                                    case JsDefined(jsValue) => {BlastVisualization.getSingleLink((hit \ "struc").get.as[String])}
-                                    case undefined: JsUndefined => Logger.info("hit.struc undefined in results!")
-                                }
-                                }
-                                @{"  "+(alignment \ "header").get.as[String].replaceFirst(">", "")}
+                                    @BlastVisualization.getSingleLink(hit.template.accession)
+                                @{"  "+ hit.description}
                                 </td>
                             </tr>
                             @* Alignment Details*@
                             <tr>
                                 <td></td>
-                                <td colspan="4">Probability: @{(alignment \ "info" \ "probab").get}, E-value: @{(alignment \ "info" \ "eval").get},
-                                    Score: @{(alignment \ "info" \ "score").get}, Aligned Cols: @{(alignment \ "info" \ "aligned_cols").get},
-                                    Identities: @{BlastVisualization.percentage((alignment \ "info" \ "identities").get.toString)},
-                                    Similarity: @{(alignment \ "info" \ "similarity").get.toString}
+                                <td colspan="4">Probability: @{hit.info.probab}, E-value: @{hit.info.evalue},
+                                    Score: @{hit.info.score}, Aligned Cols: @{hit.info.aligned_cols},
+                                    Identities: @{BlastVisualization.percentage(hit.info.identities.toString)},
+                                    Similarity: @{hit.info.similarity}
 
 
                                 </td>
@@ -120,66 +106,53 @@
                             </tr>
 
                             @* Handle secondary structure annotation for query, if present *@
-                            @{alignment \ "query" \ "ss_dssp" match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("Q", "ss_dssp", "" , BlastVisualization.SSColorReplace({(alignment \ "query" \ "ss_dssp").get.as[String]}), ""))}
-                                case undefined: JsUndefined => Logger.info("query.ss_dssp undefined in results!")
+                            @if(!hit.query.ss_dssp.isEmpty) {
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("Q", "ss_dssp", "", BlastVisualization.SSColorReplace(hit.query.ss_dssp), ""))
                                 }
                             }
-                            @{alignment \ "query" \ "ss_pred" match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("Q", "ss_pred", "" , BlastVisualization.SSColorReplace({(alignment \ "query" \ "ss_pred").get.as[String]}), ""))}
-                                case undefined: JsUndefined => Logger.info("query.ss_pred undefined in results!")
+                            @if(!hit.query.ss_pred.isEmpty) {
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("Q", "ss_pred", "", BlastVisualization.SSColorReplace(hit.query.ss_pred), ""))
                                 }
                             }
-                            @* seq of query, if present *@
-                            @{alignment \ "query" \ "seq" match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("Q",(alignment \ "query" \ "name").get.as[String],(alignment \ "query" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "query" \ "seq").get.as[String]),(alignment \ "query" \ "end").get.toString(),"("+(alignment \ "query" \ "ref").get+")".toString()))}
-                                case undefined: JsUndefined => Logger.info("query.seq undefined in results!")
+                            @if(!hit.query.seq.isEmpty) {
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("Q",hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq),hit.query.end.toString,"("+hit.query.ref+")"))
                                 }
                             }
                             @*Consensus of query, if present*@
-                            @{alignment \ "query" \ "consensus" match {
-                                case JsDefined(jsValue) =>
-                                    {BlastVisualization.makeRow("sequence", Array("Q", "Consensus",(alignment \ "query" \ "start").get.toString(), (alignment \ "query" \ "consensus").get.as[String],(alignment \ "query" \ "end").get.toString(),"("+(alignment \ "query" \ "ref").get+")".toString()))}
-                                case undefined: JsUndefined => Logger.info("query.consensus undefined in results!")
+                           @if(!hit.query.consensus.isEmpty) {
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("Q", "Consensus",hit.query.start.toString, hit.query.consensus,hit.query.end.toString,"("+hit.query.ref+")"))
                                 }
-                            }
+                             }
                             @* agree of query, if present *@
-                            @{alignment \ "agree" match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("","","",(alignment \ "agree").get.as[String], ""))}
-                                case undefined: JsUndefined => Logger.info("agree undefined in results!")
-                                }
-                            }
+
+                            @BlastVisualization.makeRow("sequence", Array("","","",hit.agree, ""))
+
                             @*  consensus template, if present *@
-                            @{alignment \ "template" \ "consensus" match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("T", "Consensus", (alignment \ "template" \ "start").get.toString(), (alignment \ "template" \ "consensus").get.as[String],(alignment \ "template" \ "end").get.toString(),"("+(alignment \ "template" \ "ref").get+(")").toString()))}
-                                case undefined: JsUndefined => Logger.info("template.consensus undefined in results!")
+                            @if(!hit.template.consensus.isEmpty) {
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("T", "Consensus",hit.template.start.toString, hit.template.consensus,hit.query.end.toString,"("+hit.template.ref+")"))
                                 }
                             }
                             @*  seq template, if present *@
-                            @{alignment \ "template" \ "seq" match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("T", (alignment \ "template" \ "name").get.as[String], (alignment \ "template" \ "start").get.toString(), BlastVisualization.colorRegexReplacer((alignment \ "template" \ "seq").get.as[String]),(alignment \ "template" \ "end").get.toString(),"("+(alignment \ "template" \ "ref").get+")".toString()))}
-                                case undefined: JsUndefined => Logger.info("template.seq undefined in results!")
+                            @if(!hit.template.seq.isEmpty) {
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("T",hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq),hit.template.end.toString,"("+hit.query.ref+")"))
                                 }
                             }
                             @* Handle secondary structure annotation for template, if present *@
-                            @{alignment \ "template" \ "ss_dssp" match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("T", "ss_dssp", "" , BlastVisualization.SSColorReplace({(alignment \ "template" \ "ss_dssp").get.as[String]}), ""))}
-                                case undefined: JsUndefined => Logger.info("template.ss_dssp undefined in results!")
-                             }
+                            @if(!hit.template.ss_pred.isEmpty) {
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("T", "ss_pred", "", BlastVisualization.SSColorReplace(hit.template.ss_pred), ""))
+                                }
                             }
-
-                            @{alignment \ "template" \ "ss_pred" match {
-                                case JsDefined(jsValue) =>
-                                {BlastVisualization.makeRow("sequence", Array("T", "ss_pred", "" , BlastVisualization.SSColorReplace({(alignment \ "template" \ "ss_pred").get.as[String]}), ""))}
-                                case undefined: JsUndefined => Logger.info("template.ss_pred undefined in results!")
-                             }
+                            @if(!hit.template.ss_dssp.isEmpty) {
+                                @{
+                                    BlastVisualization.makeRow("sequence", Array("T", "ss_dssp", "", BlastVisualization.SSColorReplace(hit.template.ss_dssp), ""))
+                                }
                             }
                             <tr>
                                 <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
@@ -264,8 +237,6 @@ var currentStructureAccession = "";
 var hitlist;
 var selectAllBool_@{tool.toolNameShort} = false;
 var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
-var jobID;
-var chosenDB = "";
 
 (function()  {
 
@@ -276,11 +247,6 @@ var chosenDB = "";
     $(document).ajaxComplete(function(){
         $.LoadingOverlay("hide");
     });
-    var urlParams = "/api/job/@jobID";
-    $.getJSON(urlParams, function(data_){
-        chosenDB = data_.paramValues.standarddb;
-    });
-
 
     $('.slider').on('moved.zf.slider', function() {
         $('#lefthandle').html($('#hidden1').val());
@@ -310,7 +276,7 @@ var chosenDB = "";
 
 
         if(alignments.length > 0){
-        drawDataTable(hits);
+        drawDataTable();
         drawInformation(info);
 
         //fill first query name and sequence for slider resubmit
@@ -321,7 +287,7 @@ var chosenDB = "";
         firstQueryEnd = alignments[0].query.end;
         /* without timeout SLIDER is displayed */
         setTimeout(function () {
-            slider_show(info.Match_columns, firstQueryStart, firstQueryEnd)
+            slider_show(@result.query.seq.length, firstQueryStart, firstQueryEnd)
         }, 1000);
 
         $("#accordion").foundation();
@@ -346,42 +312,13 @@ function drawInformation(info ){
     $("#hhpred_date").append(info.Date);
 }
 
-function drawDataTable(hits){
-
+function drawDataTable(){
     hitlist = $('#htb').dataTable({
-        "bInfo": false,
-        "bFilter": true,
-        "bLengthChange": true,
-        "aaData": hits,
-        "scrollY": 600,
-        "scrollX": true,
-        "aoColumns": [
-            { "mDataProp": "no" },
-            { "mDataProp": "struc" , render: function (data){return getSingleLink(data)}},
-            { "mDataProp": "hit" , render: function (data) {return data.replace(/;/g, "")}},
-            { "mDataProp": "prob" },
-            { "mDataProp": "eval" },
-            { "mDataProp": "pval", render: function(data){return data.toExponential();}},
-            { "mDataProp": "score" },
-            { "mDataProp": "ss" },
-            { "mDataProp": "cols" },
-            { "mDataProp": "query_begin" },
-            { "mDataProp": "query_end" },
-            { "mDataProp": "template_begin" },
-            { "mDataProp": "template_end" }
-        ],
-        'columnDefs': [{
-            'targets': 0,
-            'searchable': false,
-            'orderable': true,
-            'render': function (data){
-                return '<input type="checkbox" class="checkbox_@{tool.toolNameShort}" value="' + $('<div/>').text(data).html() + '"><a onclick="scrollToElem('+data+')">'+data+'</a>';
-            }
-        }]
+        "bProcessing" : true,
+        "bServerSide" : true,
+        "sAjaxSource" : "/api/job/results/dataTableHHpred/@jobID"
     });
-
 }
-
 
 
 function hhpred_manual() {
@@ -494,12 +431,6 @@ function forwardTemplateAlignment_(tool, forwardData){
     forward(tool, forwardData);
 }
 
-
-
-window["@{tool.toolNameShort}_resubmitSection"] = function(){
-    resubmitSection(firstQuerySequence, firstQueryName);
-};
-
 function detachStructure(){
     $('#structureModal').foundation('close');
     window.open('/structure3D/' + currentStructureAccession, '_blank','location=yes,height=550,width=850,scrollbars=yes,status=yes');
@@ -515,6 +446,6 @@ window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
     });
 };
 window["@{tool.toolNameShort}_resubmitSection"] = function(){
-    resubmitSection(firstQuerySequence, firstQueryName);
+    resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
 };
 </script>

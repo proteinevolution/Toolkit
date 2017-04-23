@@ -5,7 +5,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import modules.CommonModule
 import models.database.results._
-import play.api.libs.json.JsArray
+import play.api.libs.json.{JsArray, JsObject, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 
@@ -54,6 +54,35 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
       }
     } else {
       ???
+    }
+  }
+
+  /**
+    * DataTables for job results
+    */
+
+  def dataTable(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
+    val params = DTParam(
+      request.getQueryString("sSearch").getOrElse(""),
+      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
+      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
+      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
+      request.getQueryString("sSortDir_0").getOrElse("asc"))
+
+    val hits = getHitsByKeyWord(jobID, params)
+    var db = ""
+    val total = getResult(jobID).map {
+      case Some(jsValue) => {
+        val result = hmmer.parseResult(jsValue)
+        db = result.db
+        result.num_hits
+      }
+    }
+    hmmer.hitsOrderBy(params, hits).flatMap { list =>
+      total.map { total_ =>
+        Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
+          .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
+      }
     }
   }
 }
