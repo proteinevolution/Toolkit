@@ -453,12 +453,13 @@ function calcColor(prob) {
 
 
 function scrollToElem(num){
-
-    if (!$("#alignments").parent(".is-active").length) {
-        $("#accordion").foundation('down',$("#alignments"));
-    }
     var pos = $('input[name=templates][value='+num+']').offset().top;
     $('html, body').animate({
         scrollTop: pos-100}, 'fast');
+}
 
+function scrollToSection(name){
+    var pos = $('div[id='+name+']').offset().top;
+    $('html, body').animate({
+        scrollTop: pos-20}, 'fast');
 }
