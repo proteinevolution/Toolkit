@@ -28,7 +28,7 @@ case class Tool(toolNameShort: String,
                 toolNameAbbrev: String,
                 category: String,
                 optional: String,
-                params: Map[String, Param],
+                params: Map[String, Param], // Maps a parameter name to the respective Param instance
                 toolitem: Toolitem,
                 paramGroups: Map[String, Seq[String]],
                 forwardAlignment: Seq[String],
@@ -47,8 +47,6 @@ case class Tool(toolNameShort: String,
 // Class which provides access to all Tools
 @Singleton
 final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred) (paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi) extends CommonModule{
-
-
 
   def getResults(jobID : String, toolname: String, jobPath: String)(implicit request: Request[AnyContent]): Future[Seq[(String, Html)]] = {
     toolname match {
