@@ -74,7 +74,8 @@ class ExecGenParamFile(name : String,  path : String) extends GenerativeParamFil
     val lines = this.env match {
       case Some(e) =>
         val tempFile = File.newTemporaryFile()
-        tempFile.setPermissions(Set(PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ))
+        tempFile.setPermissions(Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
+          PosixFilePermission.GROUP_EXECUTE, PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE))
         tempFile.write(envString.replaceAllIn(path.toFile.contentAsString, m => e.get(m.group("constant"))))
         val x = Process(tempFile.pathAsString).!!.split('\n')
         tempFile.delete(swallowIOExceptions = true)
