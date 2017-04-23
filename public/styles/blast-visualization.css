@@ -241,12 +241,12 @@ input {
     vertical-align: -2px;
 }
 
-/* DataTable */
+/* DataTable in JobManager */
 .dataTables_length label {
     font-size: 0.9em;
 }
 .dataTables_length select{
-    width: 5em;
+    width: 6em;
     height: 2em;
     padding: 0;
     margin-bottom: 0;
@@ -283,6 +283,20 @@ input {
     background-color: white;
     padding: 1.75em;
     border: 1px solid #ccc;
+}
+
+table.dataTable thead th {
+    border-bottom: 1px solid #b4b4b4 !important;
+}
+    /*Data Tables in Hitlists */
+.accordion-content .dataTables_wrapper {
+    border: none;
+    padding: 0;
+    font-size: 1.25em;
+}
+
+.accordion-content .dataTable {
+    width: 100%;
 }
 
 .jobManagerContainer {
