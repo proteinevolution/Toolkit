@@ -1,12 +1,12 @@
 package modules.tel.env
 
 import better.files._
+import com.typesafe.config.ConfigFactory
 import modules.tel.Subject
 
 import scala.sys.process.Process
 import scala.util.matching.Regex
 
-import scala.language.postfixOps
 
 
 /**
@@ -20,8 +20,7 @@ object EnvFile {
   final val placeholder : Regex = "%([A-Z]+)".r("expression")
 }
 abstract class EnvFile(path : String) extends Subject[EnvFile]{
-import sys.process._
-import scala.language.postfixOps
+
   final val f : File = path.toFile
   def load : Map[String, String]
 
@@ -56,7 +55,6 @@ class ExecFile(path : String) extends EnvFile(path) {
  */
 class PropFile(path : String) extends EnvFile(path) {
 
-  import sys.process._
 
   def load : Map[String, String] = {
 
@@ -69,18 +67,14 @@ class PropFile(path : String) extends EnvFile(path) {
           val spt = b.split('=')
 
           var updated = EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim()
-          val hostname = "hostname" !!
 
 
-
-          if(hostname.startsWith("olt") && updated.startsWith("foo")) {
-            updated = updated.replace("foo", "/ebio/abt1_share/toolkit_sync/databases")
+          if(updated.startsWith("foo")) {
+            updated = updated.replace("foo", ConfigFactory.load().getString("DBROOT"))
           }
-          else if (hostname.startsWith("rye") && updated.startsWith("foo"))
-            updated = updated.replace("foo", "/cluster/toolkit/production/databases")
-
 
           a.updated(spt(0).trim(), updated)
+
         }
   }
 }
