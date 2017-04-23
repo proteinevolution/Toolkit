@@ -134,7 +134,7 @@ trait CommonModule extends ReactiveMongoComponents {
 
   protected def insertJob(job : Job) : Future[Option[Job]] = {
     Logger.info("MongoDB Received Job insert: " + job.toString())
-    jobCollection.flatMap(_.insert(job)).map{ a =>
+    jobCollection.flatMap(_.insert(job).map{ a =>
       Logger.info("MongoDB could not insert Job:\n" + a.writeErrors.mkString(", "))
       if(a.ok) {
         Logger.info("MongoDB inserted job Successfully:\n" + job.toString())
@@ -142,7 +142,7 @@ trait CommonModule extends ReactiveMongoComponents {
       } else {
         None
       }
-    }
+    })
   }
 
   protected def upsertAnnotation(notes: JobAnnotation) : Future[Option[JobAnnotation]] =  {
