@@ -180,10 +180,6 @@
                         <td id="hhpred_noseqs"></td>
                     </tr>
                     <tr>
-                        <td>Neff</td>
-                        <td id="hhpred_neff"></td>
-                    </tr>
-                    <tr>
                         <td>Searched HMMs</td>
                         <td id="hhpred_searchedhmms"></td>
                     </tr>
@@ -231,12 +227,10 @@ $("#structureModal").bind('closed.zf.reveal', (function() {
     $('#viewport canvas').remove();
 }));
 
-var data;
 var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
 var currentStructureAccession = "";
 var hitlist;
 var selectAllBool_@{tool.toolNameShort} = false;
-var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
 
 (function()  {
 
@@ -263,53 +257,25 @@ var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
         });
     });
 
-    var dataRoute = jsRoutes.controllers.DataController.get("@jobID");
-    $.ajax({
-        method: dataRoute.method,
-        url: dataRoute.url
-    }).done(function(data_) {
-        jobID = data_.jobID;
-        data = data_[jobID];
-        var hits = data.hits;
-        var info = data.info;
-        var alignments = data.alignments;
-
-
-        if(alignments.length > 0){
+    if(@result.alignment.alignment.length > 0){
         drawDataTable();
-        drawInformation(info);
+        drawInformation();
 
-        //fill first query name and sequence for slider resubmit
-
-        firstQueryName =  ">" + alignments[0].query.name;
-        firstQuerySequence = alignments[0].query.seq;
-        firstQueryStart = alignments[0].query.start;
-        firstQueryEnd = alignments[0].query.end;
         /* without timeout SLIDER is displayed */
         setTimeout(function () {
-            slider_show(@result.query.seq.length, firstQueryStart, firstQueryEnd)
+            slider_show('@{result.query.seq.length}', '@{result.HSPS{0}.query.start}', '@{result.HSPS{0}.query.end}')
         }, 1000);
-
         $("#accordion").foundation();
         $("#templateAlignmentModal").foundation();
         $("#structureModal").foundation();
         $("#createModelModal").foundation();
-
-
-        }
-    });
-
+    }
 })();
 
 
-function drawInformation(info ){
+function drawInformation( ){
     /*  INFO TAB*/
-    $("#hhpred_query").append(info.Query);
-    $("#hhpred_match_columns").append(info.Match_columns);
-    $("#hhpred_noseqs").append(info.No_of_seqs);
-    $("#hhpred_neff").append(info.Neff);
-    $("#hhpred_searchedhmms").append(info.Searched_HMMs);
-    $("#hhpred_date").append(info.Date);
+
 }
 
 function drawDataTable(){
