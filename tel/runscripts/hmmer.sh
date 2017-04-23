@@ -50,12 +50,15 @@ fi
     hmmer2json.py -i ../results/${JOBID}.outfilefl \
                   -o ../results/${JOBID}.json \
                   -m %desc.content
-
-# Generate MSA in JSON
-fasta2json.py ../results/${JOBID}.msa_fas ../results/alignment.json
+                  # add DB to json
 
 # Generate Query in JSON
 fasta2json.py %alignment.path ../results/query.json
-
-# add DB to json
 manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
+#create tab separated file to feed into blastviz
+hmmerJson2tab.py ../results/${JOBID}.json ../results/query.json ../results/${JOBID}.tab
+blastviz_json.pl ../results/${JOBID}.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
+
+
+# Generate MSA in JSON
+fasta2json.py ../results/${JOBID}.msa_fas ../results/alignment.json

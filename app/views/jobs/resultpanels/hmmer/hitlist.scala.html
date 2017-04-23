@@ -23,6 +23,8 @@
                 <div id='blastviz'>
                     <a class="success button tiny resubmitSection" onclick="@{tool.toolNameShort}_resubmitSection()" type="button" id="resubmitSection">
                         Resubmit section</a>
+                        @BlastVisualization.html(s"$jobID/results/blastviz.html")
+                        <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
                 </div>
             </div>
         </li>
