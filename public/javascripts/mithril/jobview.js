@@ -1,4 +1,4 @@
-var JobErrorComponent, jobNoteArea, JobValidationComponent, ParameterAlignmentComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterSelectComponent, ParameterTextComponent, ParameterSlideComponent, SearchformComponent, closeShortcut, formComponents, foundationConfig, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
+var JobErrorComponent, jobNoteArea, JobValidationComponent, ParameterAlignmentComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterSelectComponent, ParameterTextComponent, ParameterSlideComponent, SearchformComponent, alignmentUpload, closeShortcut, formComponents, foundationConfig, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
 
 helpModalAccess = function(elem, isInit) {
     if (!isInit) {
@@ -110,7 +110,6 @@ JobErrorComponent = {
         return m("div", { class: "running-panel" }, [
             m("table", { config: foundationConfig },
                 m("tbody", [
-                    m("tr", [m("td", "JobID"), m("td", args.job().jobID)]),
                     m("tr", [m("td", "JobID"), m("td", args.job().jobID)]),
                     m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])
                 ])
@@ -671,6 +670,13 @@ m.capture = function(eventName, handler) {
     };
 };
 
+alignmentUpload = function(elem, isInit) {
+    if (!isInit) {
+        elem.setAttribute("data-reveal", "data-reveal");
+        return $(elem).foundation();
+    }
+};
+
 
 
 window.ParameterAlignmentComponent = {
@@ -815,8 +821,25 @@ window.ParameterAlignmentComponent = {
                     spellcheck: false,
                     config: validation
                 }),
-                textArea2)
-            , m("div", {
+                textArea2),
+            m("div", {
+                id: "upload_alignment_modal",
+                "class": "tiny reveal",
+                config: alignmentUpload
+            }, m("input", {
+                type: "file",
+                id: "upload_alignment_input",
+                name: "upload_alignment_input",
+                onchange: function() {
+                    if (this.value) {
+                        $("#upload_alignment_modal").foundation("close");
+                        $(".uploadFileName").show();
+                        $("#uploadBoxClose").show();
+                        $("#" + ctrl.id).prop("disabled", true);
+                        $("#" + ctrl.id + "_two").prop("disabled", true);
+                    }
+                }
+            })), m("div", {
                 "class": "alignment_buttons"
             }, [
                 m("div", {"class": "leftAlignmentButtons"},
@@ -831,25 +854,18 @@ window.ParameterAlignmentComponent = {
                         originIsFasta = true; // resets changed validation filter
                     }
                 }), m("input", {
-                    type: "file",
-                    id: "upload_alignment_input",
-                    name: "upload_alignment_input",
-                    onchange: function() {
-
-                        if (this.value) {
-                            $(".uploadFileName").show();
-                            $("#uploadBoxClose").show();
-                            $("#" + ctrl.id).prop("disabled", true);
-                            $("#" + ctrl.id + "_two").prop("disabled", true);
-                        }
+                    type: "button",
+                    "class": "button small alignmentExample",
+                    value: "Upload File",
+                    onclick: function() {
+                        $('#upload_alignment_modal').foundation('open');
                     }
                 }), m("div",
-                        {"class": "upload uploadFileName"},
+                        {"class": "uploadFileName"},
                         $("input[type=file]").val(),
                     m("a", {
                         "class": "boxclose",
                         "id": "uploadBoxClose",
-                        "name": "Upload File",
                         onclick: function(){
                             $(".uploadFileName").hide();
                             $("input[type=file]").val(null);
