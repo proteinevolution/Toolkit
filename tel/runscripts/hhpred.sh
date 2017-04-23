@@ -218,7 +218,7 @@ fasta2json.py %alignment.path ../results/query.json
 # add DB to json
 manipulate_json.py -k 'db' -v '%hhsuitedb.content' ../results/${JOBID}.json
 
-# add DB to json
+# add Proteomes to json
 manipulate_json.py -k 'proteomes' -v '%proteomes.content' ../results/${JOBID}.json
 
 echo "done" >> ../results/process.log
