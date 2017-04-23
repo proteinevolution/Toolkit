@@ -4,8 +4,9 @@ import better.files._
 import modules.tel.Subject
 
 import scala.sys.process.Process
+import scala.util.matching.Regex
 
-
+import scala.language.postfixOps
 
 
 /**
@@ -16,11 +17,12 @@ import scala.sys.process.Process
 object EnvFile {
 
 
-  final val placeholder = "%([A-Z]+)".r("expression")
+  final val placeholder : Regex = "%([A-Z]+)".r("expression")
 }
 abstract class EnvFile(path : String) extends Subject[EnvFile]{
-
-  final val f = path.toFile
+import sys.process._
+import scala.language.postfixOps
+  final val f : File = path.toFile
   def load : Map[String, String]
 
   // Exceptions
@@ -31,6 +33,7 @@ abstract class EnvFile(path : String) extends Subject[EnvFile]{
 
 
 class ExecFile(path : String) extends EnvFile(path) {
+
 
   def load : Map[String, String] = {
 
@@ -53,6 +56,7 @@ class ExecFile(path : String) extends EnvFile(path) {
  */
 class PropFile(path : String) extends EnvFile(path) {
 
+  import sys.process._
 
   def load : Map[String, String] = {
 
@@ -64,7 +68,18 @@ class PropFile(path : String) extends EnvFile(path) {
 
           val spt = b.split('=')
 
-          val updated = EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim()
+          var updated = EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim()
+          val hostname = "hostname" !!
+
+
+
+          if(hostname.startsWith("olt") && updated.startsWith("foo")) {
+            updated = updated.replace("foo", "/ebio/abt1_share/toolkit_sync/databases")
+          }
+          else if (hostname.startsWith("rye") && updated.startsWith("foo"))
+            updated = updated.replace("foo", "/cluster/toolkit/production/databases")
+
+
           a.updated(spt(0).trim(), updated)
         }
   }
