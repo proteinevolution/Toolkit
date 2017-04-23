@@ -128,7 +128,6 @@ body.is-reveal-open {
 
 
 hr {
-    padding-top: 0em;
     width: 100%;
     margin: 0 auto !important;
     padding: 0;
@@ -419,7 +418,7 @@ hr {
 }
 
 .result-panel{
-font-size: 0.65em !important;
+    font-size: 0.65em;
 }
 
 .result-panel a {
