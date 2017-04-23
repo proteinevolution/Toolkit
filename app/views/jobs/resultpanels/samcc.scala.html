@@ -1,3 +1,12 @@
-@(pathToImageFile : String)
-<img hspace="14" src="@pathToImageFile">
+@import play.api.mvc.RequestHeader
+@(plot0: String, plot1: String, plot2: String, plot3: String)(implicit request: RequestHeader)
+
+<img hspace="14" src="@plot0">
+<br><br><br><br>
+<img hspace="14" src="@plot1">
+<br><br><br><br>
+<img hspace="14" src="@plot2">
+<br><br><br><br>
+<img hspace="14" src="@plot3">
+
 

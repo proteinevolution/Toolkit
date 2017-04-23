@@ -1,5 +1,5 @@
-
 # TODO: parse SEQNAME and KNOWNS in a proper way
+# NGL: http://arose.github.io/ngl/api/Stage.html#event:fullscreenChanged
 
 
 #convert alignment file to PIR, if it is not already PIR
