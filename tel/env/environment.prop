@@ -1,2 +1,2 @@
-ENVIRONMENT = /ebio/abt1_share/toolkit_support1/code/bioprogs/env/environment.sh
-HELPER = /ebio/abt1_share/toolkit_support1/code/bioprogs/helpers 
+ENVIRONMENT = env_foo
+HELPER = helper_foo
