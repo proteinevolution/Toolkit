@@ -457,11 +457,8 @@ function scrollToElem(num){
     if (!$("#alignments").parent(".is-active").length) {
         $("#accordion").foundation('down',$("#alignments"));
     }
-    var offsetParent = $("#alignments").offset().top;
     var pos = $('input[name=templates][value='+num+']').offset().top;
-    console.log(pos+ " " + offsetParent)
     $('html, body').animate({
-        scrollTop: pos+offsetParent-1400 + 'px'
-    }, 'fast');
+        scrollTop: pos-100}, 'fast');
 
 }
