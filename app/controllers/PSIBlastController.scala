@@ -24,10 +24,11 @@ import play.api.libs.json.{JsArray, JsObject, Json}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJarAssets : WebJarAssets, val reactiveMongoApi : ReactiveMongoApi) extends Controller with Constants with CommonModule{
+class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJarAssets : WebJarAssets, val reactiveMongoApi : ReactiveMongoApi)
+  extends Controller with Constants with CommonModule with Common{
+
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
-  private final val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE)
 
   retrieveFullSeq.setPermissions(filePermissions)
   def evalFull(jobID : String, eval: String) : Action[AnyContent] = Action.async { implicit request =>
