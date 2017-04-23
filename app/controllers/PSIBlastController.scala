@@ -4,7 +4,6 @@
 package controllers
 
 
-import play.api.mvc.{Action, AnyContent, Controller}
 import java.nio.file.attribute.PosixFilePermission
 
 import com.typesafe.config.ConfigFactory
@@ -38,7 +37,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
       getResult(jobID).map {
-        case Some(jsValue) => {
+        case Some(jsValue) =>
           val result = psiblast.parseResult(jsValue)
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
           val db = result.db
@@ -46,7 +45,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
             case 0 => Ok
             case _ => BadRequest
           }
-        }
+
         case _=> NotFound
       }
     }
@@ -59,7 +58,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
       getResult(jobID).map {
-      case Some(jsValue) => {
+      case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
         val accessionsStr = getAccessions(result, numList)
         val db = result.db
@@ -67,7 +66,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
             case 0 => Ok
             case _ => BadRequest
         }
-      }
+
       case _=> NotFound
       }
     }
@@ -142,11 +141,11 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
 
     var db = ""
     val total = getResult(jobID).map {
-      case Some(jsValue) => {
+      case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
         db = result.db
         result.num_hits
-      }
+
     }
     val hits = getHitsByKeyWord(jobID, params)
 
