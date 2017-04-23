@@ -4,6 +4,8 @@ package models.tools
 
 import modules.tel.TEL
 import javax.inject.{Inject, Singleton}
+
+import com.sksamuel.elastic4s.mappings.NumberFieldDefinition
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -47,15 +49,70 @@ object SequenceMode {
 
 
 
-sealed trait ParamType
-case class Sequence(modes: Seq[SequenceMode], allowTwoTextAreas : Boolean) extends ParamType
-case class Number(min: Option[Int], max: Option[Int]) extends ParamType
-case class Select(options: Seq[(String, String)])   extends ParamType
-case object Bool     extends ParamType
-case object Radio    extends ParamType
-case class Slide(min: Option[Double], max: Option[Double]) extends ParamType
-case class Decimal(step : String, min: Option[Double], max: Option[Double]) extends ParamType
-case object Text extends ParamType
+sealed trait ParamType {
+
+  /**
+    * Parses the value and return the same value as Option if valid, otherwise None
+    * @param value String value to be validated
+    * @return Some(value) if value is valid, else None
+    */
+  def validate(value : String): Option[String]
+}
+case class Sequence(modes: Seq[SequenceMode], allowTwoTextAreas : Boolean) extends ParamType {
+
+  // Sequence currently alwasus valid
+  def validate(value : String): Option[String] = Some(value)
+}
+case class Number(min: Option[Int], max: Option[Int]) extends ParamType {
+
+  def validate(value: String): Option[String] = {
+    try {
+      val x = value.toDouble
+      if((! (min.isDefined && x < min.get)) && (! (max.isDefined && x > max.get))) {
+        Some(x.toString)
+      } else {
+        None
+      }
+    }
+    catch {
+      case _ : NumberFormatException => None
+    }
+  }
+}
+case class Select(options: Seq[(String, String)])   extends ParamType {
+
+  def validate(value: String): Option[String] = {
+
+    if(this.options.map(_._1).contains(value)) {
+      Some(value)
+    } else {
+      None
+    }
+  }
+}
+
+case object  Bool extends ParamType {
+  def validate(value: String): Option[String] = {
+    Some(value)
+  }
+}
+
+case object Radio extends ParamType {
+  def validate(value: String): Option[String] = {
+    Some(value)
+  }
+}
+case class Decimal(step : String, min: Option[Double], max: Option[Double]) extends ParamType {
+
+  def validate(value: String): Option[String] = {
+    Some(value)
+  }
+}
+
+case object Text extends ParamType {
+
+  def validate(value : String): Option[String] = Some(value)
+}
 
 object ParamType {
 
@@ -66,6 +123,7 @@ object ParamType {
   final val UnconstrainedNumber = Number(None, None)
   final val Percentage = Number(Some(0), Some(100))
   final val ConstrainedNumber = Number(Some(1), Some(10000))
+
 
   // JSON conversion
   final val FIELD_TYPE = "type"
@@ -78,7 +136,6 @@ object ParamType {
       case Select(options) => Json.obj(FIELD_TYPE -> 3, "options" -> options)
       case Bool => Json.obj(FIELD_TYPE -> 4)
       case Radio => Json.obj(FIELD_TYPE -> 5)
-      case Slide(minVal, maxVal) => Json.obj(FIELD_TYPE -> 6, "min" -> minVal, "max" -> maxVal)
       case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step ,"min" -> minVal, "max" -> maxVal)
       case Text => Json.obj(FIELD_TYPE -> 7)
     }
