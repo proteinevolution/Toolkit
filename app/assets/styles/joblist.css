@@ -190,7 +190,9 @@
 }
 .job-list .d.selected {
     background-color: #C3FFC3;
-    box-shadow: 6px 0 6px -4px darkgreen;
+    box-shadow: 2px 0px 4px 0px #777;
+    margin-left: -2px;
+    margin-bottom: 1px;
 }
 
 .job-list .e {
@@ -201,7 +203,9 @@
 }
 .job-list .e.selected {
     background-color: #FFC5C5;
-    box-shadow: 6px 0 6px -3px #d2071d;
+    box-shadow: 2px 0px 4px 0px #d2071d;
+    margin-left: -2px;
+    margin-bottom: 1px;
 }
 
 
@@ -213,7 +217,9 @@
 }
 .job-list .r.selected {
     background-color: #FFF666;
-    box-shadow: 6px 0 6px -3px #dcb21f;
+    box-shadow: 2px 0px 4px 0px #dcb21f;
+    margin-left: -2px;
+    margin-bottom: 1px;
 }
 
 .job-list .q {
@@ -224,7 +230,9 @@
 }
 .job-list .q.selected {
     background-color: #c0b5bf;
-    box-shadow: 6px 0 6px -3px #9192af;
+    box-shadow: 2px 0px 4px 0px #9192af;
+    margin-left: -2px;
+    margin-bottom: 1px;
 }
 
 .job-list .i {
