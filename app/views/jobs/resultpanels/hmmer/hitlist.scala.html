@@ -103,6 +103,18 @@
                                             BlastVisualization.makeRow("sequence", Array("H", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))
                                         }
                                     }else{
+                                        @* seq of query, if present *@
+                                        @{
+                                            BlastVisualization.makeRow("sequence", Array("Q", hit.query_start.toString, hit.query_seq, hit.query_end.toString))
+                                        }
+                                        @* agree of query, if present *@
+                                        @{
+                                            BlastVisualization.makeRow("sequence", Array("", "", hit.midline, ""))
+                                        }
+                                        @* seq of hit, if present *@
+                                        @{
+                                            BlastVisualization.makeRow("sequence", Array("H", hit.hit_start.toString, hit.hit_seq, hit.hit_end.toString))
+                                        }
 
                                     }
                                     <tr>
