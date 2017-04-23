@@ -21,7 +21,8 @@ case class RunningExecution(terminate: () => Boolean) extends Execution
 @Singleton
 class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath : String, env: Env) extends TELRegex {
 
-  private final val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE)
+  private final val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
+    PosixFilePermission.GROUP_EXECUTE, PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE)
 
 
   // Accept the content of a runscript and used the Wrapper script to produce the Registered Execution
