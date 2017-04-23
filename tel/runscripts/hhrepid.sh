@@ -1,12 +1,32 @@
-#Check is MSA generation is required
+JOBID=%jobid.content
+
+SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
+
+
+if [ $SEQ_COUNT -gt "1" ] ; then
+       echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
+       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+else
+       echo "#Query is a single protein sequence." >> ../results/process.log
+       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+fi
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 #CHECK IF MSA generation is required or not
-if [ %msa_gen_max_iter.content == "0" ] ; then
+if [ %msa_gen_max_iter.content == "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
+        echo "#No MSA generation required." >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
         reformat_hhsuite.pl fas a3m %alignment.path query.a3m -M first
         mv query.a3m ../results/query.a3m
+
 else
     #MSA generation required
     #MSA generation by HHblits
+    echo "#MSA generation required. Running %msa_gen_max_iter.content iteration(s) of HHblits." >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
     hhblits -cpu 8 \
             -v 2 \
             -i %alignment.path \
@@ -15,7 +35,11 @@ else
             -oa3m ../results/query.a3m \
             -n %msa_gen_max_iter.content \
             -mact 0.35
+
 fi
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 #100 maximally diverse sequences
 hhfilter -i ../results/query.a3m \
@@ -28,15 +52,8 @@ reformat_hhsuite.pl a3m fas \
          ../results/query.fas \
          -d 160
 
-hhfilter -i ../results/query.a3m \
-         -o ../results/query.reduced.a3m \
-         -diff 50
-
-reformat_hhsuite.pl a3m fas \
-         ../results/query.reduced.a3m \
-         ../results/query.reduced.fas \
-         -r
-
+echo "#Running HHblits." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 hhrepid -qsc 0.$i \
         -i ../results/query.a3m \
@@ -53,6 +70,10 @@ hhrepid -qsc 0.$i \
         -mapt2 %mac_cutoff.content \
         -mapt3 %mac_cutoff.content \
         -domm %domain_bound_detection.content
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
 
 #ruby $HHREPIDPATH/script/graphrepeats -i ../results/query.hhrepid \
 #                                -q ../results/query.fas \

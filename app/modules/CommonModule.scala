@@ -15,7 +15,7 @@ import play.api.Logger
 
 import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 
 /**
   * Created by zin on 03.08.16.
@@ -133,13 +133,7 @@ trait CommonModule extends ReactiveMongoComponents {
   }
 
   protected def insertJob(job : Job) : Future[Option[Job]] = {
-    jobCollection.flatMap(_.insert(job).map(a =>
-      if(a.ok) {
-        Some(job)
-      } else {
-        Logger.info(a.writeErrors.mkString(", "))
-        None
-      }))
+    jobCollection.flatMap(_.insert(job)).map{ a => if(a.ok) { Some(job) } else { None } }
   }
 
   protected def upsertAnnotation(notes: JobAnnotation) : Future[Option[JobAnnotation]] =  {
