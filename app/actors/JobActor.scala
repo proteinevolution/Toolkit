@@ -226,13 +226,13 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       this.currentJobs = this.currentJobs.updated(jobID, job)
 
       // Add job to database
-      Logger.info("Trying to add Job: \n" + job.toString()) // TODO resubmission is failing here.
-      insertJob(job).map{
-        case Some(a) =>
-          Logger.info("Job Successfully added: " + a.toString())
-        case None =>
-          Logger.info("Job could not be added to DB")
-      }
+      insertJob(job)
+//      .map{
+//        case Some(a) =>
+//          Logger.info("Job Successfully added: " + a.toString())
+//        case None =>
+//          Logger.info("Job could not be added to DB")
+//      }
       Logger.info("Job Database insert request done")
       // filter unique parameters
       val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "private"
