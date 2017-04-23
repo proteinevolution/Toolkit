@@ -129,9 +129,17 @@ trait CommonModule extends ReactiveMongoComponents {
     * @return
     */
   protected def upsertJob(job: Job) : Future[Option[Job]] =  {
+    jobCollection.flatMap(_.findAndUpdate(selectjobID(job.jobID), update = job, upsert = true, fetchNewObject = true).map(_.result[Job]))
+  }
 
-    jobCollection
-      .flatMap(_.findAndUpdate(selectjobID(job.jobID), update = job, upsert = true).map(_.result[Job]))
+  protected def insertJob(job : Job) : Future[Option[Job]] = {
+    jobCollection.flatMap(_.insert(job).map(a =>
+      if(a.ok) {
+        Some(job)
+      } else {
+        Logger.info(a.writeErrors.mkString(", "))
+        None
+      }))
   }
 
   protected def upsertAnnotation(notes: JobAnnotation) : Future[Option[JobAnnotation]] =  {

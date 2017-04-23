@@ -69,7 +69,17 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
              Job.DATEVIEWED  -> dateViewed.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis))
     )
   }
-
+  override def toString(): String = {
+    s"""--[Job Object]--
+        |mainID: ${this.mainID}
+        |jobID: ${this.jobID}
+        |tool: ${this.tool}
+        |state: ${this.status}
+        |ownerID: ${this.ownerID.map(_.stringify).getOrElse("no Owner")}
+        |created on: ${this.dateCreated.map(_.toString()).getOrElse("--")}
+        |--[Job Object end]--
+     """.stripMargin
+  }
 }
 
 // Server returns such an object when asked for a job
