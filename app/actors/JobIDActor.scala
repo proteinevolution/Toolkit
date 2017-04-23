@@ -9,9 +9,6 @@ import models.search.JobDAO
 import modules.CommonModule
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
-
-import scala.collection.mutable.Queue
-import scala.collection.parallel.ParSeq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.util.Random
@@ -75,12 +72,11 @@ class JobIDActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
 object JobIDActor {
 
-  private var jobIDRepo : Queue[String] = Queue.empty[String]
+  private var jobIDRepo : scala.collection.mutable.Queue[String] = scala.collection.mutable.Queue.empty[String]
   def provide : String = {
     jobIDRepo.dequeue()
   }
 
   case object Refill
-  case object Ensure
 
 }
