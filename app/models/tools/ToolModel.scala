@@ -2,7 +2,7 @@ package models.tools
 
 import javax.inject.{Inject, Singleton}
 
-import models.database.results.{HHPred, Hmmer, PSIBlast}
+import models.database.results.{HHBlits, HHPred, Hmmer, PSIBlast}
 
 import scala.concurrent._
 import ExecutionContext.Implicits.global
@@ -46,7 +46,7 @@ case class Tool(toolNameShort: String,
 
 // Class which provides access to all Tools
 @Singleton
-final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred) (paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi) extends CommonModule{
+final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, hhblits: HHBlits) (paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi) extends CommonModule{
 
   def getResults(jobID : String, toolname: String, jobPath: String)(implicit request: Request[AnyContent]): Future[Seq[(String, Html)]] = {
     toolname match {
@@ -66,8 +66,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred) (
       }
 
       case "hhblits" => getResult(jobID).map {
-
-        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hhblits.hitlist(jobID,jsvalue, this.values(toolname))),
+        case Some(jsvalue) => Seq(("Hitlist", views.html.jobs.resultpanels.hhblits.hitlist(jobID, hhblits.parseResult(jsvalue), this.values(toolname))),
           ("Representative_Alignment", views.html.jobs.resultpanels.alignment(jobID, jsvalue, "rep100" ,this.values(toolname))))
 
         case None => Seq.empty
