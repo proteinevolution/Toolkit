@@ -42,7 +42,7 @@
                     <a type="button" onclick="hhpred_manual()"><span>Create model using selected templates</span></a>
                     <hr id="line-element" colspan="4" class="horizontal-line">
                 </div>
-                <table id="htb" class="display" cellspacing="0" width="80%">
+                <table id="htb" class="display" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th>Nr</th>
@@ -316,7 +316,8 @@ function drawDataTable(){
     hitlist = $('#htb').dataTable({
         "bProcessing" : true,
         "bServerSide" : true,
-        "sAjaxSource" : "/api/job/results/dataTableHHpred/@jobID"
+        "sAjaxSource" : "/api/job/results/dataTableHHpred/@jobID",
+        "autoWidth" : false
     });
 }
 
