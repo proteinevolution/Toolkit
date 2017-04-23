@@ -21,11 +21,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by drau on 01.03.17.
   */
-class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongoApi : ReactiveMongoApi, hhblits: HHBlits, general : General) extends Controller with Constants with CommonModule{
+class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongoApi : ReactiveMongoApi, hhblits: HHBlits, general : General)
+  extends Controller with Constants with CommonModule with Common {
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
   private val retrieveFullSeqScript = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
-  private final val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE)
+
 
   templateAlignmentScript.setPermissions(filePermissions)
   retrieveFullSeqScript.setPermissions(filePermissions)

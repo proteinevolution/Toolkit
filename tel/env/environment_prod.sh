@@ -10,8 +10,8 @@ export TAXONOMY="${DATABASES}/standard/taxonomy"
 
 # JAVA
 ##########################################################
-export JAVA_HOME=/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/jdk1.8.0_112
-export JRE_HOME=/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/jdk1.8.0_112/jre
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
+export JRE_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre
 
 
 # PERL

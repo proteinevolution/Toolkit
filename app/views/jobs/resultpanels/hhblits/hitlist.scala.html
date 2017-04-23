@@ -59,9 +59,9 @@
                 </table>
             </div>
         </li>
-        <li class="accordion-item" data-accordion-item>
+        <li class="accordion-item" data-accordion-item id="alignmentAccordion">
             <a href="#" class="accordion-title">Alignments</a>
-            <div id="alignments" class="accordion-content table-scroll" data-tab-content>
+            <div id="alignments" class="accordion-content" data-tab-content>
                 <div class="colorOpts">
                     <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
@@ -265,6 +265,18 @@
             });
 
         })();
+
+        $("#alignmentAccordion").bind('down.zf.accordion', (function() {
+            $("#alignments").floatingScroll('update');
+
+        }));
+
+
+        $(document).ready(function () {
+            setTimeout(function () {
+                $("#alignments").floatingScroll('init');
+            }, 2000);
+        });
 
 
         function drawInformation(info ){

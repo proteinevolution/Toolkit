@@ -20,10 +20,10 @@ import play.api.libs.json.{JsArray, JsObject, Json}
 /**
   * Created by drau on 01.03.17.
   */
-class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : ReactiveMongoApi)(webJarAssets : WebJarAssets) extends Controller with Constants with CommonModule {
+class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : ReactiveMongoApi)(webJarAssets : WebJarAssets) extends Controller with Constants with CommonModule with Common {
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
-  private final val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE)
+
 
   templateAlignmentScript.setPermissions(filePermissions)
 
