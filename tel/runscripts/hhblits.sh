@@ -65,6 +65,10 @@ reformat_hhsuite.pl a3m fas \
 #create full alignment json; use for forwarding
 fasta2json.py ../results/${JOBID}.rep100.fas ../results/rep100.json
 
+# add DB to json
+manipulate_json.py -k 'db' -v '%hhblitsdb.content' ../results/${JOBID}.json
+
+
 
 # Generate Query in JSON
 fasta2json.py ../results/${JOBID}.in.fas ../results/query.json

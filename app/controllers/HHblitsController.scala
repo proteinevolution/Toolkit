@@ -11,12 +11,17 @@ import scala.concurrent.Future
 import scala.sys.process._
 import better.files._
 import models.Constants
+import models.database.results.{General, HHBlits, HHBlitsHSP}
+import modules.CommonModule
+import play.api.libs.json.{JsObject, Json}
+import play.modules.reactivemongo.ReactiveMongoApi
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 /**
   * Created by drau on 01.03.17.
   */
-class HHblitsController @Inject()(webJarAssets : WebJarAssets) extends Controller with Constants {
+class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongoApi : ReactiveMongoApi, hhblits: HHBlits, general : General) extends Controller with Constants with CommonModule{
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
   private val retrieveFullSeqScript = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
@@ -67,6 +72,41 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets) extends Controlle
     }
   }
 
+  def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[HHBlitsHSP]] = {
+    if(params.sSearch.isEmpty){
+      getResult(jobID).map {
+        case Some(result) => hhblits.parseResult(result).HSPS.slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+      }
+    }else{
+      ???
+    }
+    //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
+  }
+  def dataTable(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
+    val params = DTParam(
+      request.getQueryString("sSearch").getOrElse(""),
+      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
+      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
+      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
+      request.getQueryString("sSortDir_0").getOrElse("asc"))
+
+    var db = ""
+    val total = getResult(jobID).map {
+      case Some(jsValue) => {
+        val result = hhblits.parseResult(jsValue)
+        db = result.db
+        result.num_hits
+      }
+    }
+    val hits = getHitsByKeyWord(jobID, params)
+
+    hhblits.hitsOrderBy(params, hits).flatMap { list =>
+      total.map { total_ =>
+        Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
+          .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
+      }
+    }
+  }
 
   // Exceptions
   case class FileException(message : String) extends Exception(message)
