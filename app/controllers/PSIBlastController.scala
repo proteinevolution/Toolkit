@@ -15,11 +15,12 @@ import models.Constants
 import models.database.results._
 import play.api.mvc.{Action, AnyContent, Controller}
 import javax.inject.Inject
+
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.Future
 import modules.CommonModule
-import play.api.libs.json.JsArray
+import play.api.libs.json.{JsArray, JsObject, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -129,6 +130,32 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
       ???
     }
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
+  }
+
+  def dataTable(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
+    val params = DTParam(
+      request.getQueryString("sSearch").getOrElse(""),
+      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
+      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
+      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
+      request.getQueryString("sSortDir_0").getOrElse("asc"))
+
+    var db = ""
+    val total = getResult(jobID).map {
+      case Some(jsValue) => {
+        val result = psiblast.parseResult(jsValue)
+        db = result.db
+        result.num_hits
+      }
+    }
+    val hits = getHitsByKeyWord(jobID, params)
+
+    psiblast.hitsOrderBy(params, hits).flatMap { list =>
+      total.map { total_ =>
+        Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
+          .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
+      }
+    }
   }
   // Exceptions
   case class FileException(message : String) extends Exception(message)
