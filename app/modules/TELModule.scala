@@ -1,5 +1,6 @@
 package modules
 
+import java.nio.file.attribute.PosixFilePermission
 import javax.inject.{Inject, Provider}
 
 import com.google.inject.AbstractModule
@@ -8,6 +9,7 @@ import modules.tel.env.{Env, ExecFile, PropFile, TELEnv}
 import modules.tel.param.{GenerativeParamFileParser, ParamCollector, Params}
 import play.api.{Configuration, Logger}
 import com.google.inject.name.Names
+import grizzled.sys.OperatingSystem.Posix
 import modules.tel.execution.WrapperExecutionFactory
 
 /**
@@ -120,6 +122,8 @@ class TELEnvProvider @Inject()(tv : TELEnv, configuration: Configuration) extend
       Logger.warn(s"Key 'tel.env' was not found in configuration. Fall back to '$fallBackFile'") ;
       fallBackFile
     }.toFile.list.foreach { file =>
+
+      file.setPermissions(Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE))
 
       file.extension match {
 
