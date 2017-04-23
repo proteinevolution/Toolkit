@@ -69,8 +69,13 @@ class PropFile(path : String) extends EnvFile(path) {
           var updated = EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim()
 
 
-          if(updated.startsWith("foo")) {
-            updated = updated.replace("foo", ConfigFactory.load().getString("DBROOT"))
+          updated match {
+
+            case x if x.startsWith("foo") => updated = updated.replace("foo", ConfigFactory.load().getString("DBROOT"))
+            case x if x.startsWith("env_foo") => updated = updated.replace("foo", ConfigFactory.load().getString("ENVIRONMENT"))
+            case x if x.startsWith("helper_foo") => updated = updated.replace("foo", ConfigFactory.load().getString("HELPER"))
+            case _ => updated = updated
+
           }
 
           a.updated(spt(0).trim(), updated)
