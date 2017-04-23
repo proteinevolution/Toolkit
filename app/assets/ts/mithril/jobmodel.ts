@@ -51,7 +51,9 @@ window.JobModel = {
         "pcoils_weighting":"1",
         "pcoils_input_mode":"0",
         "no_replicates":"0",
-        "matrix_phyml":"LG"
+        "matrix_phyml":"LG",
+        "eff_crick_angle":"1",
+        "samcc_periodicity":"7"
 },
 
     /* Seems not to be used

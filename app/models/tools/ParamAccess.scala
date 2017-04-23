@@ -194,4 +194,6 @@ class ParamAccess @Inject() (tel: TEL) {
   final val PCOILS_WEIGHTING = select("pcoils_weighting", "Weighting")
   final val PCOILS_MATRIX = select("pcoils_matrix", "Matrix")
   final val NO_REPLICATES = select("no_replicates", "Number of replicates" )
+  final val SAMCC_PERIODICITY = select("samcc_periodicity", "Periodicity" )
+  final val EFF_CRICK_ANGLE = select("eff_crick_angle", "Effective Crick angle" )
 }
