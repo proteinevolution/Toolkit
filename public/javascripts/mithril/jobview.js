@@ -466,7 +466,7 @@ JobSubmissionComponent = {
     currentJobID    : null,     // Currently entered jobID
     jobIDValid      : false,    // Is the current jobID valid?
     jobIDValidationTimeout : null,     // timer ID for the timeout
-    jobIDRegExp     : new RegExp(/^\w{6,96}(\.\d{1,3})?$/),
+    jobIDRegExp     : new RegExp(/^\w{6,96}(\_\d{1,3})?$/),
     checkJobID : function (jobID) {
         clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);    // clear all previous timeouts
         JobSubmissionComponent.jobIDValid   = false;    // ensure that the user can not send the job form
@@ -504,9 +504,9 @@ JobSubmissionComponent = {
         if (JobSubmissionComponent.jobID == null) {
             var oldJobID, version, newJobID;
             if (args.isJob) {
-                oldJobID = args.job().jobID.split(".");
+                oldJobID = args.job().jobID.split("_");
                 version = parseInt(oldJobID[1]);
-                newJobID = oldJobID[0] + "." + (Number.isNaN(version) ? 1 : version + 1);
+                newJobID = oldJobID[0] + "_" + (Number.isNaN(version) ? 1 : version + 1);
                 JobSubmissionComponent.jobIDValid = false;
             } else {
                 newJobID = "";
@@ -516,7 +516,10 @@ JobSubmissionComponent = {
         }
         return {
             submit: function(startJob) {
-                if (JobSubmissionComponent.submitting || !JobSubmissionComponent.jobIDValid) return;
+                if (JobSubmissionComponent.submitting || !JobSubmissionComponent.jobIDValid) {
+                    console.log("Job Submission is blocked: ", JobSubmissionComponent.submitting, JobSubmissionComponent.jobIDValid);
+                    return;
+                }
                 JobSubmissionComponent.submitting = true; // ensure that the submission is not reinitiated while a submission is ongoing
                 var form = document.getElementById("jobform");
 
@@ -580,7 +583,8 @@ JobSubmissionComponent = {
                         });
                         modal.on('closed.zf.reveal', function(){
                             modal.unbind('closed.zf.reveal');
-                            JobSubmissionComponent.submitting = false ;
+                            console.log("unsetting job submission Blocking.");
+                            JobSubmissionComponent.submitting = false;
                         }).foundation('open');
                         return
                     } else {
@@ -596,7 +600,11 @@ JobSubmissionComponent = {
                             url: submitRoute.url,
                             data: formData,
                             extract: extractStatus,
-                            serialize: function(data) { m.route("/jobs/" + jobID); return data; }
+                            serialize: function(data) {
+                                console.log("unsetting job submission Blocking.");
+                                JobSubmissionComponent.submitting = false;
+                                m.route("/jobs/" + jobID); return data;
+                            }
                         });
                         return
                     }
