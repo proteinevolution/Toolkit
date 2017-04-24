@@ -1,7 +1,6 @@
 @import models.results.BlastVisualization
 @import models.database.results.PSIBlastResult
 @(jobID: String, result: PSIBlastResult, tool: models.tools.Tool)(implicit request: RequestHeader)
-<link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 @* Load html Map used for the image representation *@
 
 @if(result.num_hits < 1) {
@@ -168,7 +167,6 @@ var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
 var hitlist;
 var query;
 var selectAllBool_@{tool.toolNameShort} = false;
-var firstQueryName, firstQuerySequence = null;
 
 
 (function()  {
@@ -260,9 +258,9 @@ window["@{tool.toolNameShort}_selectAll"] = function () {
 window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
     // full seq is retrieved
     var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
-    var route = jsRoutes.controllers.PSIBlastController.evalFull('@jobID', evalue);
     if(boolFullLength) {
         if(boolEvalue) {
+            var route = jsRoutes.controllers.PSIBlastController.evalFull('@jobID', evalue);
             $.ajax({
                 url: route.url,
                 method: route.method
