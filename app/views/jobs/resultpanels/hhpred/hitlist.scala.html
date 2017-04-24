@@ -14,6 +14,7 @@
 }else{
     @* Loads ForwardModals *@
     @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort+"_hhsuite")
+    @views.html.forwardmodals.simple(tool, tool.toolNameShort)
     <div id="stickyAnchor"></div>
     <div class="scrollContainer">
         <p><a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a></p>
@@ -37,6 +38,7 @@
             <h5 id="hitlistTitle">Hitlist</h5>
                 <div class="colorOpts">
                     <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
                     @*only show create model when chosen db=mmcif70/pdb70*@
                     @if(result.db.matches("mmcif70/pdb70")) {
@@ -63,6 +65,7 @@
                 <h5 id="alignmentsTitle">Alignments</h5>
                 <div class="colorOpts">
                     <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
                     @*only show create model when chosen db=mmcif70/pdb70*@
                     @if(result.db.matches("mmcif70/pdb70")) {
@@ -138,7 +141,7 @@
                             @*  consensus template, if present *@
                             @if(!hit.template.consensus.isEmpty) {
                                 @{
-                                    BlastVisualization.makeRow("sequence", Array("T", "Consensus",hit.template.start.toString, hit.template.consensus  + " " + hit.query.end.toString + " " + "("+hit.template.ref+")"))
+                                    BlastVisualization.makeRow("sequence", Array("T", "Consensus",hit.template.start.toString, hit.template.consensus  + " " + hit.template.end.toString + " " + "("+hit.template.ref+")"))
                                 }
                             }
                             @*  seq template, if present *@
@@ -383,6 +386,27 @@ function showStructure(accession) {
             $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
         });
     });
+
+}
+
+window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
+    var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
+        if(boolEvalue) {
+            route = jsRoutes.controllers.HHpredController.alnEval('@jobID', evalue);
+        }else{
+            route = jsRoutes.controllers.HHpredController.aln('@jobID', checkedCheckboxes);
+        }
+        $.ajax({
+            url: route.url,
+            method: route.method
+        }).done(function (data_) {
+            $.ajax({
+                type: 'GET',
+                url: 'files/@jobID/alignment.fas'
+            }).done(function (data_) {
+                forward(selectedTool, data_.toString());
+            });
+        });
 
 }
 

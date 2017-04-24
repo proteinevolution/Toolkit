@@ -174,11 +174,15 @@ POST         /alnPSIBlast                                @controllers.PSIBlastCo
 POST        /evalPSIBlastFull                            @controllers.PSIBlastController.evalFull(jobID : String, eval: String)
 # PSIblast retrieve selected full seqs
 POST        /PSIBlastFull                              @controllers.PSIBlastController.full(jobID : String, listNum: Seq[Int])
-# PSIblast retrieve seqs with evalue < threshold
+# HHblits retrieve seqs with evalue < threshold
 POST         /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String, eval:String)
-# PSIblast retrieve selected seqs
+#  HHblits retrieve selected seqs
 POST         /alnHHBlits                           @controllers.HHblitsController.aln(jobID:String, listNum: Seq[Int])
-# PSIblast retrieve full seqs with evalue < threshold
+# HHblits retrieve full seqs with evalue < threshold
 POST        /evalHHBlitsFull                            @controllers.HHblitsController.evalFull(jobID : String, eval: String)
-# PSIblast retrieve selected full seqs
+# HHblits retrieve selected full seqs
 POST        /HHBlitsFull                              @controllers.HHblitsController.full(jobID : String, listNum: Seq[Int])
+# HHPred retrieve seqs with evalue < threshold
+POST         /evalHHpred                           @controllers.HHpredController.alnEval(jobID: String, eval:String)
+# HHpred retrieve selected seqs
+POST         /alnHHpred                         @controllers.HHpredController.aln(jobID:String, listNum: Seq[Int])
