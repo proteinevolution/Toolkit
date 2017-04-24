@@ -251,4 +251,5 @@ class ParamAccess @Inject() (tel: TEL) {
   final val NO_REPLICATES = select("no_replicates", "Number of replicates" )
   final val SAMCC_PERIODICITY = select("samcc_periodicity", "Periodicity" )
   final val EFF_CRICK_ANGLE = select("eff_crick_angle", "Effective Crick angle" )
+  final val REGKEY = Param("regkey", Text, 1, "Please insert your MODELLER-key")
 }
