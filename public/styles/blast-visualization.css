@@ -399,17 +399,34 @@ table.dataTable.no-footer{
 }
 
 .scrollContainer {
-    width: 10em;
+    width: 9em;
     position: fixed;
-    right: 16em;
+    right: 6em;
     top: 18em;
-    box-shadow: 6px 5px 16px -1px #302e2e66;
+    box-shadow: 2px 4px 6px -2px #302e2e4d;
     font-size: 1.4em;
     padding: 1em;
     opacity: 0.8;
-    background: white;
+    background: #f5f5f5;
     border-radius: 5px;
     z-index: 99;
+}
+
+#hitlistTitle{
+    padding-top: 2em;
+    padding-bottom: 1em;
+}
+#visualizationTitle{
+    padding-top: 1em;
+    padding-bottom: 2em;
+}
+#informationTitle{
+    padding-top: 2em;
+    padding-bottom: 1em;
+}
+#alignmentsTitle{
+    padding-top: 2em;
+    padding-bottom: 1em;
 }
 
 
