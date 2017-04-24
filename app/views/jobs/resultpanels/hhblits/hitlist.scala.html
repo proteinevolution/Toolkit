@@ -8,7 +8,6 @@
 @import modules.tel.TEL
 @import models.database.results.HHBlitsResult
 @(jobID: String, result: HHBlitsResult, tool: models.tools.Tool)(implicit request: RequestHeader)
-
 @if(result.num_hits < 1) {
     <div class="callout alert noHits" id="noHits">
         <h6>No hits found!</h6>
@@ -23,7 +22,6 @@
         <p><a onclick="scrollToSection('visualization')">Visualization</a></p>
         <p><a onclick="scrollToSection('hitlist')">Hitlist</a></p>
         <p><a onclick="scrollToSection('alignments')">Alignments</a></p>
-        <p><a onclick="scrollToSection('information')">Information</a></p>
     </div>
     <div class="container" id="loadingDiv"></div>
     <div id="visualization">
@@ -120,7 +118,7 @@
                                 }
                                 @* agree of query, if present *@
 
-                                @BlastVisualization.makeRow("sequence", Array("","","",hit.agree, ""))
+                                @BlastVisualization.makeRow("sequence", Array("","","",hit.agree))
 
                                 @*  consensus template, if present *@
                                 @if(!hit.template.consensus.isEmpty) {
@@ -142,36 +140,6 @@
                     </table>
                 </form>
         </div>
-    </div>
-
-    <div id="information">
-        <h5 id="informationTitle">Information</h5>
-            <table class="display" cellspacing="0" width="100%">
-                <tr>
-                    <td>Query</td>
-                    <td id="hhpred_query"></td>
-                </tr>
-                <tr>
-                    <td>Match_columns</td>
-                    <td id="hhpred_match_columns"></td>
-                </tr>
-                <tr>
-                    <td>No_of_Seqs</td>
-                    <td id="hhpred_noseqs"></td>
-                </tr>
-                <tr>
-                    <td>Neff</td>
-                    <td id="hhpred_neff"></td>
-                </tr>
-                <tr>
-                    <td>Searched HMMs</td>
-                    <td id="hhpred_searchedhmms"></td>
-                </tr>
-                <tr>
-                    <td>Date</td>
-                    <td id ="hhpred_date"></td>
-                </tr>
-            </table>
     </div>
 }
 
@@ -226,7 +194,6 @@
             });
             if(@result.num_hits > 0){
             drawDataTable();
-            drawInformation();
             //fill first query name and sequence for slider resubmit
             /* without timeout SLIDER is displayed */
             setTimeout(function () {
@@ -242,12 +209,6 @@
                 $("#alignments").floatingScroll('init');
             }, 2000);
         });
-
-
-        function drawInformation(){
-            /*  INFO TAB*/
-        }
-
         function drawDataTable(){
             hitlist = $('#htb').dataTable({
                 "bProcessing" : true,

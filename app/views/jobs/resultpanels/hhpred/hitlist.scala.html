@@ -7,7 +7,6 @@
 @import models.results.BlastVisualization
 @import models.database.results.HHPredResult
 @(jobID: String, result: HHPredResult, tool: models.tools.Tool)(implicit request: RequestHeader)
-
 @if(result.num_hits < 1) {
     <div class="callout alert noHits" id="noHits">
         <h6>No hits found!</h6>
@@ -20,7 +19,6 @@
         <p><a onclick="scrollToSection('visualization')">Visualization</a></p>
         <p><a onclick="scrollToSection('hitlist')">Hitlist</a></p>
         <p><a onclick="scrollToSection('alignments')">Alignments</a></p>
-        <p><a onclick="scrollToSection('information')">Information</a></p>
     </div>
     @* Load html Map used for the image representation *@
     <div class="container" id="loadingDiv"></div>
@@ -115,12 +113,12 @@
                             @* Handle secondary structure annotation for query, if present *@
                             @if(!hit.query.ss_dssp.isEmpty) {
                                 @{
-                                    BlastVisualization.makeRow("sequence", Array("Q", "ss_dssp", "", BlastVisualization.SSColorReplace(hit.query.ss_dssp), ""))
+                                    BlastVisualization.makeRow("sequence", Array("Q", "ss_dssp", "", BlastVisualization.SSColorReplace(hit.query.ss_dssp)))
                                 }
                             }
                             @if(!hit.query.ss_pred.isEmpty) {
                                 @{
-                                    BlastVisualization.makeRow("sequence", Array("Q", "ss_pred", "", BlastVisualization.SSColorReplace(hit.query.ss_pred), ""))
+                                    BlastVisualization.makeRow("sequence", Array("Q", "ss_pred", "", BlastVisualization.SSColorReplace(hit.query.ss_pred)))
                                 }
                             }
                             @if(!hit.query.seq.isEmpty) {
@@ -153,12 +151,12 @@
                             @* Handle secondary structure annotation for template, if present *@
                             @if(!hit.template.ss_pred.isEmpty) {
                                 @{
-                                    BlastVisualization.makeRow("sequence", Array("T", "ss_pred", "", BlastVisualization.SSColorReplace(hit.template.ss_pred), ""))
+                                    BlastVisualization.makeRow("sequence", Array("T", "ss_pred", "", BlastVisualization.SSColorReplace(hit.template.ss_pred)))
                                 }
                             }
                             @if(!hit.template.ss_dssp.isEmpty) {
                                 @{
-                                    BlastVisualization.makeRow("sequence", Array("T", "ss_dssp", "", BlastVisualization.SSColorReplace(hit.template.ss_dssp), ""))
+                                    BlastVisualization.makeRow("sequence", Array("T", "ss_dssp", "", BlastVisualization.SSColorReplace(hit.template.ss_dssp)))
                                 }
                             }
                             <tr>
@@ -169,31 +167,6 @@
                       </table>
                 </form>
             </div>
-        </div>
-        <div id="information">
-            <h5 id="informationTitle">Information</h5>
-                <table class="display" cellspacing="0" width="80%">
-                    <tr>
-                        <td>Query</td>
-                        <td id="hhpred_query"></td>
-                    </tr>
-                    <tr>
-                        <td>Match_columns</td>
-                        <td id="hhpred_match_columns"></td>
-                    </tr>
-                    <tr>
-                        <td>No_of_Seqs</td>
-                        <td id="hhpred_noseqs"></td>
-                    </tr>
-                    <tr>
-                        <td>Searched HMMs</td>
-                        <td id="hhpred_searchedhmms"></td>
-                    </tr>
-                    <tr>
-                        <td>Date</td>
-                        <td id ="hhpred_date"></td>
-                    </tr>
-                </table>
         </div>
 
     @*MODALS*@
@@ -267,8 +240,6 @@ var selectAllBool_@{tool.toolNameShort} = false;
 
     if(@result.num_hits > 0){
         drawDataTable();
-        drawInformation();
-
         $("#accordion").foundation();
         $("#templateAlignmentModal").foundation();
         $("#structureModal").foundation();
@@ -286,11 +257,6 @@ $(document).ready(function () {
         $("#alignments").floatingScroll();
 });
 
-
-function drawInformation( ){
-    /*  INFO TAB*/
-
-}
 
 function drawDataTable(){
     hitlist = $('#htb').dataTable({
