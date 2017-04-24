@@ -105,7 +105,7 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
 
   def aln(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
-      case Some(jsValue) => Ok(getAln(general.parseAlignment((jsValue \ "rep100").as[JsArray]), numList))
+      case Some(jsValue) => Ok(getAln(hhblits.parseResult(jsValue), numList))
       case _ => NotFound
     }
   }
@@ -113,15 +113,15 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
   def getAlnEval(result : HHBlitsResult,  eval : Double): String = {
     val fas = result.HSPS.map { hit =>
       if(hit.info.evalue < eval){
-        ">" + result.alignment.alignment(hit.num -1).accession + "\n" + result.alignment.alignment(hit.num-1).seq + "\n"
+        ">" + result.HSPS(hit.num -1).template.accession + "\n" + result.HSPS(hit.num-1).template.seq + "\n"
       }
     }
     fas.mkString
   }
 
-  def getAln(alignment : Alignment, numList: Seq[Int]): String = {
+  def getAln(result : HHBlitsResult, numList: Seq[Int]): String = {
     val fas = numList.map { num =>
-      ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num -1 ).seq + "\n"
+      ">" + result.HSPS(num -1).template.accession + "\n" + result.HSPS(num-1).template.seq + "\n"
     }
     fas.mkString
   }
