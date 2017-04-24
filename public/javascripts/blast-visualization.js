@@ -198,23 +198,6 @@ setTimeout(function() {
  * @returns {*}
  */
 
-function preprocessingForward(selectedTool, boolSelectedHits,boolEvalue, evalue, sliderRegion){
-    var sliderRange = getSliderRange();
-    if(boolSelectedHits) {
-        // get checked checkboxes
-        var jsonData = getCheckboxesData();
-    } else if (boolEvalue) {
-        // first deselect all previous selected checkboxes
-        _deselectAll();
-        // now select all Better than given evalue
-        var jsonData = checkAllBetterThan(evalue);
-    }
-    if(sliderRegion) {
-        jsonData = applySliderRange(jsonData, sliderRange);
-    }
-    return jsonData;
-}
-
 
 function getCheckedCheckboxes(className ){
     var numList = [];
