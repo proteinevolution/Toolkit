@@ -34,7 +34,6 @@ hhblits -cpu %THREADS \
         -z 1 \
         -b 1 \
         -B %max_lines.content  \
-        -seq %max_seqs.content \
         -%alignmode.content
 
 echo "done" >> ../results/process.log
