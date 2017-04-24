@@ -96,6 +96,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
 )
+resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plugins/"
 
 lazy val client = (project in file("client")).settings(
   scalaVersion := "2.11.8",
