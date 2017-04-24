@@ -5,7 +5,6 @@ package models.tools
 import modules.tel.TEL
 import javax.inject.{Inject, Singleton}
 
-import com.sksamuel.elastic4s.mappings.NumberFieldDefinition
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -105,7 +104,19 @@ case object Radio extends ParamType {
 case class Decimal(step : String, min: Option[Double], max: Option[Double]) extends ParamType {
 
   def validate(value: String): Option[String] = {
-    Some(value)
+
+    try {
+      val x = value.toDouble
+      if((! (min.isDefined && x < min.get)) && (! (max.isDefined && x > max.get))) {
+        Some(x.toString)
+      }
+      else {
+        None
+      }
+
+    } catch {
+      case _ : NumberFormatException  => None
+    }
   }
 }
 
