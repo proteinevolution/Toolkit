@@ -181,11 +181,11 @@ hhsearch -cpu %THREADS \
          -oa3m ../results/${JOBID}.a3m \
          -p %pmin.content \
          -P %pmin.content \
-         -Z %max_lines.content \
+         -Z %desc.content \
          -%alignmode.content \
          -z 1 \
          -b 1 \
-         -B %max_lines.content \
+         -B %desc.content \
          -ssm %ss_scoring.content \
          -seq 1 \
          -dbstrlen 10000 \
