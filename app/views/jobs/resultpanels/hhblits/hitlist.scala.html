@@ -273,7 +273,7 @@
                         });
                     });
                 }else{
-                    route = jsRoutes.controllers.HHblits.full('@jobID', checkedCheckboxes);
+                    route = jsRoutes.controllers.HHblitsController.full('@jobID', checkedCheckboxes);
                     $.ajax({
                         url: route.url,
                         method: route.method
@@ -297,7 +297,12 @@
                     url: route.url,
                     method: route.method
                 }).done(function (data_) {
-                    forward(selectedTool, data_);
+                    $.ajax({
+                        type: 'GET',
+                        url: 'files/@jobID/alignment.fas'
+                    }).done(function (data_) {
+                        forward(selectedTool, data_.toString());
+                    });
                 });
 
             }

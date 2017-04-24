@@ -27,11 +27,13 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
   extends Controller with Constants with CommonModule with Common {
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
+  private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
 
 
   templateAlignmentScript.setPermissions(filePermissions)
   retrieveFullSeq.setPermissions(filePermissions)
+  generateAlignmentScript.setPermissions(filePermissions)
 
 
   def show3DStructure(accession: String) : Action[AnyContent] = Action { implicit request =>
@@ -97,34 +99,46 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
   }
 
   def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
-      case Some(jsValue) => Ok(getAlnEval(hhblits.parseResult(jsValue), eval.toDouble))
-      case _=> NotFound
+    if(!generateAlignmentScript.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
+    } else {
+      getResult(jobID).map {
+        case Some(jsValue) =>
+          val result = hhblits.parseResult(jsValue)
+          val numListStr = getNumListEval(result, eval.toDouble)
+          Process(generateAlignmentScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "numList" -> numListStr).run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+
+        case _=> NotFound
+      }
     }
   }
 
   def aln(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
-      case Some(jsValue) => Ok(getAln(hhblits.parseResult(jsValue), numList))
-      case _ => NotFound
-    }
-  }
-
-  def getAlnEval(result : HHBlitsResult,  eval : Double): String = {
-    val fas = result.HSPS.map { hit =>
-      if(hit.info.evalue < eval){
-        ">" + result.HSPS(hit.num -1).template.accession + "\n" + result.HSPS(hit.num-1).template.seq + "\n"
+    if(!generateAlignmentScript.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
+    } else {
+      val numListStr = numList.mkString(" ")
+      Process(generateAlignmentScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "numList" -> numListStr).run().exitValue() match {
+        case 0 => Future.successful(Ok)
+        case _ => Future.successful(BadRequest)
       }
     }
-    fas.mkString
   }
 
-  def getAln(result : HHBlitsResult, numList: Seq[Int]): String = {
-    val fas = numList.map { num =>
-      ">" + result.HSPS(num -1).template.accession + "\n" + result.HSPS(num-1).template.seq + "\n"
+  def getNumListEval(result: HHBlitsResult, eval: Double): String ={
+    val numList = result.HSPS.map { hit =>
+      if(hit.info.evalue < eval){
+        hit.num
+      }
     }
-    fas.mkString
+    numList.mkString(" ")
   }
+
 
   def getAccessions(result : HHBlitsResult, numList : Seq[Int]) : String = {
     val fas = numList.map { num =>
