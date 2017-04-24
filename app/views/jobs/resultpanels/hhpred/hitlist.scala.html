@@ -7,7 +7,6 @@
 @import models.results.BlastVisualization
 @import models.database.results.HHPredResult
 @(jobID: String, result: HHPredResult, tool: models.tools.Tool)(implicit request: RequestHeader)
-<link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
 @if(result.num_hits < 1) {
     <div class="callout alert noHits" id="noHits">

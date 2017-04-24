@@ -3,7 +3,6 @@
 @import models.database.results.HmmerResult
 @import models.database.results.HmmerHSP
 @(jobID: String, result: HmmerResult, tool: models.tools.Tool)(implicit request: RequestHeader)
-<link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 @* Load html Map used for the image representation *@
 
 @if(result.num_hits < 1) {
