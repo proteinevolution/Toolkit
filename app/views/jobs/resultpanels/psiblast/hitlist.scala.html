@@ -195,11 +195,10 @@ var selectAllBool_@{tool.toolNameShort} = false;
 
     var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
     var selectAllBool_@{tool.toolNameShort} = false;
-    var numHits = @{result.num_hits};
     var urlParams = "/api/job/@jobID";
     var urlQuery = "/files/" + @jobID + "/query.json";
 
-    if(numHits > 0){
+    if(@{result.num_hits} > 0){
 
         drawDataTable();
         var firstQueryStart = @result.HSPS.head.query_start;
