@@ -211,14 +211,14 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
     // HHblits
     ("hhblits", "HHblits", "hhb", "search", "",
     Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.HHBLITS_INCL_EVAL, paramAccess.MAXROUNDS,
-      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq("modeller", "hhpred")),
+      paramAccess.PMIN, paramAccess.DESC, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq("modeller", "hhpred")),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
     Seq(paramAccess.PROTEOMES, paramAccess.HHSUITEDB, paramAccess.TWOTEXTALIGNMENT, paramAccess.MSA_GEN_METHOD,
         paramAccess.MSA_GEN_MAX_ITER, paramAccess.SS_SCORING, paramAccess.MACMODE, paramAccess.MACTHRESHOLD,
         paramAccess.MIN_COV, paramAccess.MIN_SEQID_QUERY, paramAccess.HHPRED_INCL_EVAL,
-        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq.empty),
+        paramAccess.DESC, paramAccess.PMIN, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq.empty),
 
     // HHpred - Manual Template Selection
     ("hhpred_manual", "HHpred - ManualTemplate Selection", "hhp", "forward", "",  Seq.empty, Seq.empty,Seq.empty),
