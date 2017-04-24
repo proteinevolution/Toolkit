@@ -304,8 +304,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
       Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
 
     // Modeller
-    ("modeller", "Modeller", "mod", "3ary", "",
-      Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
+    ("modeller", "MODELLER", "mod", "3ary", "",
+      Seq(paramAccess.ALIGNMENT, paramAccess.REGKEY), Seq.empty,Seq.empty),
 
     // SamCC
     ("samcc", "SamCC", "sam", "3ary", "",
@@ -369,7 +369,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
             lazy val paramGroups = Map(
               "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
-                paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name, paramAccess.PROTEOMES.name, paramAccess.HMMER_DB.name)
+                paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name, paramAccess.PROTEOMES.name, paramAccess.HMMER_DB.name, paramAccess.REGKEY.name,
+                paramAccess.GRAMMAR.name)
             )
             // Params which are not a part of any group (given by the name)
             lazy val remainParamName : String = "Parameters"

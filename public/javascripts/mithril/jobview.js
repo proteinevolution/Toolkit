@@ -114,9 +114,9 @@ JobErrorComponent = {
                     m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])
                 ])
             ),
-            m("h6", "Job has reached Error state"),
-            m("br"),
-            m("br"),
+            //m("h6", "Job has reached Error state"),
+            //m("br"),
+            //m("br"),
             JobRunningComponent.log.map(function(logElem){
                 if(logElem == "")
                     return;
