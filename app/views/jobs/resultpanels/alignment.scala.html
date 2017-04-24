@@ -61,6 +61,10 @@
         var checkbox_@{resultName} = "checkbox_@{resultName}";
         var selectAllBool_@{resultName} = false;
         var wrapSequencesBool_@{resultName} = false;
+        $(document).ready(function () {
+            $("#alignmentResult").floatingScroll();
+        });
+
 
         window["@{resultName}_wrap"] = function(){
             this.wrapSequencesBool_@{resultName} = !this.wrapSequencesBool_@{resultName};
