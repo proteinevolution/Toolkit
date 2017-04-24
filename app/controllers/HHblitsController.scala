@@ -131,11 +131,7 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
   }
 
   def getNumListEval(result: HHBlitsResult, eval: Double): String ={
-    val numList = result.HSPS.map { hit =>
-      if(hit.info.evalue < eval){
-        hit.num
-      }
-    }
+    val numList = result.HSPS.filter(_.info.evalue < eval).map {_.num}
     numList.mkString(" ")
   }
 
@@ -147,11 +143,7 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
     fas.mkString
   }
   def getAccessionsEval(result : HHBlitsResult, eval: Double) : String = {
-    val fas = result.HSPS.map { hit =>
-      if(hit.info.evalue < eval){
-        hit.template.accession + " "
-      }
-    }
+    val fas = result.HSPS.filter(_.info.evalue < eval).map{_.template.accession + " "}
     fas.mkString
   }
 
