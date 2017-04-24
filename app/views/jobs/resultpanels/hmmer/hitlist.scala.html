@@ -11,13 +11,17 @@
     </div>
 
 }else{
+    <div id="stickyAnchor"></div>
+    <div class="scrollContainer">
+        <p><a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a></p>
+        <p><a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hitlist</a></p>
+        <p><a id="alignmentsScroll" onclick="scrollToSection('alignments')">Alignments</a></p>
+    </div>
     @* Loads ForwardModal *@
     @views.html.forwardmodals.simple(tool, tool.toolNameShort)
     <div class="container" id="loadingDiv"></div>
-    <ul id="accordion" class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-        <li class="accordion-item" data-accordion-item>
-            <a href="#" class="accordion-title">Visualization</a>
-            <div class="accordion-content" data-tab-content>
+    <div id="visualization">
+        <h5 id="visualizationTitle">Visualization</h5>
                 <div class='flat-slider' id='flat-slider'></div>
                 <div id='blastviz'>
                     <a class="success button tiny resubmitSection" onclick="@{tool.toolNameShort}_resubmitSection()" type="button" id="resubmitSection">
@@ -25,33 +29,32 @@
                         @BlastVisualization.html(s"$jobID/results/blastviz.html")
                         <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
                 </div>
+
+    </div>
+    <div id="hitlist">
+        <h5 id="hitlistTitle">Hitlist</h5>
+            <div class="colorOpts">
+                <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
+                <hr id="line-element" class="horizontal-line">
             </div>
-        </li>
-        <li class="accordion-item" data-accordion-item>
-            <a href="#" class="accordion-title">Hitlist</a>
-            <div class="accordion-content" data-tab-content>
-                <div class="colorOpts">
-                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
-                    <hr id="line-element" class="horizontal-line">
-                </div>
-                <table id="htb" class="display" width="100%">
-                    <thead>
-                        <tr>
-                            <th>Nr</th>
-                            <th>Id</th>
-                            <th>Title</th>
-                            <th>E-value</th>
-                            <th>Bitscore</th>
-                            <th>Length</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </li>
-        <li class="accordion-item" data-accordion-item id="alignmentAccordion">
-            <a href="#" class="accordion-title">Alignments</a>
-            <div id="alignments" class="accordion-content " data-tab-content>
+            <table id="htb" class="display" width="100%">
+                <thead>
+                    <tr>
+                        <th>Nr</th>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>E-value</th>
+                        <th>Bitscore</th>
+                        <th>Length</th>
+                    </tr>
+                </thead>
+            </table>
+    </div>
+
+    <div id="alignmentResult">
+        <div id="alignments">
+            <h5 id="alignmentsTitle">Alignments</h5>
                 <div class="colorOpts">
                     <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
@@ -131,28 +134,7 @@
 
 
             </div>
-        </li>
-        <li class="accordion-item" data-accordion-item>
-            <a href="#" class="accordion-title">Information</a>
-            <div class="accordion-content" data-tab-content>
-                <table  class="display" cellspacing="0" width="80%">
-                    <tr>
-                        <td>Query</td>
-                        <td id="psiblast_query"></td>
-                    </tr>
-                    <tr>
-                        <td>Query Length</td>
-                        <td id="psiblast_queryLength"></td>
-                    </tr>
-                    <tr>
-                        <td>DB</td>
-                        <td id="psiblast_db"></td>
-                    </tr>
-                </table>
-            </div>
-        </li>
-    </ul>
-
+    </div>
 }
 <script>
         var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
@@ -163,6 +145,25 @@
         var chosenDB = null;
 
         (function()  {
+            $(document).on('scroll', function() {
+                if($(this).scrollTop()>=$('#alignments').position().top-10){
+                    $("#alignmentsScroll").addClass("colorToggle");
+                    $("#hitlistScroll").removeClass("colorToggle");
+                    $("#visualizationScroll").removeClass("colorToggle");
+                }else if($(this).scrollTop()>=$('#hitlist').position().top-10){
+                    $("#hitlistScroll").addClass("colorToggle");
+                    $("#alignmentsScroll").removeClass("colorToggle");
+                    $("#visualizationScroll").removeClass("colorToggle");
+                }  else if($(this).scrollTop()>=$('#visualization').position().top+75) {
+                    $('.scrollContainer').addClass('fixed');
+                } else if($(this).scrollTop()>=$('#visualization').position().top-10) {
+                    $("#visualizationScroll").addClass("colorToggle");
+                    $("#hitlistScroll").removeClass("colorToggle");
+                    $("#alignmentsScroll").removeClass("colorToggle");
+                }else{
+                    $('.scrollContainer').removeClass('fixed');
+                }
+            });
 
             // adding loading overlay
             $(document).ajaxStart(function(){
@@ -200,17 +201,8 @@
                     setTimeout(function () {
                         slider_show('@{result.query.seq.length}', firstQueryStart, firstQueryEnd)
                     }, 1000);
-
-                    $("#accordion").foundation();
-
                 }
         })();
-
-        $("#alignmentAccordion").bind('down.zf.accordion', (function() {
-            $("#alignments").floatingScroll('update');
-
-        }));
-
 
         $(document).ready(function () {
             setTimeout(function () {
