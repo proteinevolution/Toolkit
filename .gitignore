@@ -36,3 +36,4 @@ bioprogs
 public/javascripts/typescriptc.js
 public/javascripts/typescriptc.js.map
 /development
+*.sbt.swp
