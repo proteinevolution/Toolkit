@@ -429,5 +429,38 @@ table.dataTable.no-footer{
     padding-bottom: 1em;
 }
 
+.fixed{
+    position: fixed !important;
+}
 
+/*Responsiveness*/
 
+@media screen and (max-width: 1670px) {
+    .scrollContainer {
+        width: 100%;
+        position: unset;
+        right: 0;
+        top: 0;
+        box-shadow: 2px 4px 6px -2px #302e2e4d;
+        font-size: 1.4em;
+        padding: 1em;
+        opacity: 0.96;
+        background: #f5f5f5;
+        z-index: 99;
+        display: flex;
+        height: 3.5em;
+    }
+
+    #hitlistScroll{
+        margin-right: 2em;
+    }
+    #visualizationScroll{
+        margin-right: 2em;
+    }
+    #informationScroll{
+        margin-right: 2em;
+    }
+    #alignmentsScroll{
+        margin-right: 2em;
+    }
+}

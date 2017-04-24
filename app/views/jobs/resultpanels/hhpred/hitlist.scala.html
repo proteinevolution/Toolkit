@@ -215,7 +215,7 @@ var selectAllBool_@{tool.toolNameShort} = false;
 (function()  {
     // add scrollcontainer highlighting
     $(document).on('scroll', function() {
-        if($(this).scrollTop()>=$('#alignments').position().top-10){
+        if($(this).scrollTop()>=$('#alignments').position().top){
             $("#alignmentsScroll").addClass("colorToggle");
             $("#hitlistScroll").removeClass("colorToggle");
             $("#visualizationScroll").removeClass("colorToggle");
@@ -223,11 +223,14 @@ var selectAllBool_@{tool.toolNameShort} = false;
             $("#hitlistScroll").addClass("colorToggle");
             $("#alignmentsScroll").removeClass("colorToggle");
             $("#visualizationScroll").removeClass("colorToggle");
-        } else if($(this).scrollTop()>=$('#visualization').position().top-10){
+        }  else if($(this).scrollTop()>=$('#visualization').position().top+75) {
+            $('.scrollContainer').addClass('fixed');
+        } else if($(this).scrollTop()>=$('#visualization').position().top-10) {
             $("#visualizationScroll").addClass("colorToggle");
             $("#hitlistScroll").removeClass("colorToggle");
             $("#alignmentsScroll").removeClass("colorToggle");
-
+        }else{
+            $('.scrollContainer').removeClass('fixed');
         }
     });
 
