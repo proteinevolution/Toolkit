@@ -1,6 +1,21 @@
 # TODO: parse SEQNAME and KNOWNS in a proper way
 # NGL: http://arose.github.io/ngl/api/Stage.html#event:fullscreenChanged
 
+#Check if MODELLER license key is correct
+
+if [ "%regkey.content" = "MODELIRANJE" ] ; then
+      echo "#Starting MODELLER." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+else
+      echo "#Incorrect registration key. Please register here: https://salilab.org/modeller/registration.html." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      echo "error" >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      $?=1
+fi
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 #convert alignment file to PIR, if it is not already PIR
 
@@ -50,9 +65,18 @@ modeller modeller_script.py >> modeller.log
 mv modeller.log ../logs/
 mv $FILENAME* ../results/
 
+echo "#Running quality checks on the model." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
 #quality check
 cd ../results
 mv `echo *[0-9].pdb` $FILENAME.pdb
+
+echo "#Running VERIFY3D." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 #VERIFY3D
 mkdir verify3d
@@ -76,6 +100,12 @@ perl $BIOPROGS/helpers/verify3d/verify3d_graphics.pl $FILENAME . > $FILENAME.log
 mv $FILENAME.verify3d.png ../
 cd ../
 
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+echo "#Running ANOLEA." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
 #ANOLEA
 mkdir anolea
 cd anolea
@@ -87,6 +117,12 @@ mv *.anolea* anolea/
 mv anolea/$FILENAME.anolea.png .
 
 
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+echo "#Running Solvx." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
 #Solvx
 mkdir solvx
 cd solvx
@@ -96,3 +132,6 @@ echo "../$FILENAME.pdb" | solvx
 mv fort.29 $FILENAME.solvx
 perl $BIOPROGS/helpers/Solvx/solvx_graphics.pl "$FILENAME" . > $FILENAME.log_solvx
 mv $FILENAME.solvx.png ../
+cd ../
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
