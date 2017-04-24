@@ -893,13 +893,15 @@ textarea:focus{
 .logElemDone{
     font-size: 1.3em;
     color: rgba(40,120,111,0.636);
-    margin-right: 1.3em;
+    margin-right: 0.7em;
+    margin-left: 0.6em;
 }
 
 .logElemError{
     font-size: 1.3em;
     color: #da4453;
-    margin-right: 1.3em;
+    margin-right: 0.7em;
+    margin-left: 0.6em;
 
 }
 .logElemText{
