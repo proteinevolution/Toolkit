@@ -315,7 +315,8 @@ function hhpred_manual() {
             serialize: function (data) {
                 return data;
             }
-        });
+        }).then(setTimeout(function(){window.location.href = "/#/jobs/" + data.jobID},1000));
+
     });
 }
 
