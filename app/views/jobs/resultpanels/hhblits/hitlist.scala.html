@@ -19,9 +19,9 @@
     @* Load html Map used for the image representation *@
     <div id="stickyAnchor"></div>
     <div class="scrollContainer">
-        <p><a onclick="scrollToSection('visualization')">Visualization</a></p>
-        <p><a onclick="scrollToSection('hitlist')">Hitlist</a></p>
-        <p><a onclick="scrollToSection('alignments')">Alignments</a></p>
+        <p><a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a></p>
+        <p><a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hitlist</a></p>
+        <p><a id="alignmentsScroll" onclick="scrollToSection('alignments')">Alignments</a></p>
     </div>
     <div class="container" id="loadingDiv"></div>
     <div id="visualization">
@@ -168,6 +168,23 @@
         var hitlist;
         var selectAllBool_@{tool.toolNameShort} = false;
         var jobID;
+
+        $(document).on('scroll', function() {
+            if($(this).scrollTop()>=$('#alignments').position().top-10){
+                $("#alignmentsScroll").addClass("colorToggle");
+                $("#hitlistScroll").removeClass("colorToggle");
+                $("#visualizationScroll").removeClass("colorToggle");
+            }else if($(this).scrollTop()>=$('#hitlist').position().top-10){
+                $("#hitlistScroll").addClass("colorToggle");
+                $("#alignmentsScroll").removeClass("colorToggle");
+                $("#visualizationScroll").removeClass("colorToggle");
+            } else if($(this).scrollTop()>=$('#visualization').position().top-10){
+                $("#visualizationScroll").addClass("colorToggle");
+                $("#hitlistScroll").removeClass("colorToggle");
+                $("#alignmentsScroll").removeClass("colorToggle");
+
+            }
+        })
 
         (function()  {
             // adding loading overlay
