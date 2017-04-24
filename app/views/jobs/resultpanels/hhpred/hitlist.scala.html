@@ -42,7 +42,10 @@
                 <div class="colorOpts">
                     <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
-                    <a type="button" onclick="hhpred_manual()"><span>Create model using selected templates</span></a>
+                    @*only show create model when chosen db=mmcif70/pdb70*@
+                    @if(result.db.matches("mmcif70/pdb70")) {
+                        <a type="button" onclick="hhpred_manual()"><span>Create model using selected templates</span></a>
+                    }
                     <hr id="line-element" colspan="4" class="horizontal-line">
                 </div>
                 <table id="htb" class="display" cellspacing="0" width="100%">
@@ -65,7 +68,10 @@
                 <div class="colorOpts">
                     <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
-                    <a type="button" onclick="hhpred_manual()"><span>Create model using selected templates</span></a>
+                    @*only show create model when chosen db=mmcif70/pdb70*@
+                    @if(result.db.matches("mmcif70/pdb70")) {
+                        <a type="button" onclick="hhpred_manual()"><span>Create model using selected templates</span></a>
+                    }
                     <hr id="line-element" colspan="4" class="horizontal-line">
                 </div>
 
