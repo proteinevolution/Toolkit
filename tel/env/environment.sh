@@ -27,7 +27,6 @@ export HHPRED_CONFIG=/ebio/abt1_share/toolkit_support1/code/bioprogs/env/hhpred.
 
 
 
-
 # PATH variable 
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" # Python binary
 export PATH="${BIOPROGS}/dependencies/hh-suite_misc_scripts:$PATH" # helper scripts from the old Toolkit
@@ -64,6 +63,12 @@ export PATH="${BIOPROGS}/tools/mmseqs2-build/bin:${PATH}" # MMseqs2
 export PATH="${BIOPROGS}/tools/patternsearch:${PATH}" # PatternSearch
 export PATH="${BIOPROGS}/tools/sixframe:${PATH}" # 6FrameTranslation
 export PATH="${BIOPROGS}/tools/hhrepid/bin:${PATH}" # HHrepid
+
+#Setup Ali2D
+export ALI2DPATH="${BIOPROGS}/tools/ali2d"
+
+#Setup SamCC
+export SAMCCPATH="${BIOPROGS}/tools/samcc"
 
 # Setup HHrepid
 export HHREPIDPATH="${BIOPROGS}/tools/hhrepid"
