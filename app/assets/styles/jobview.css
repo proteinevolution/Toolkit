@@ -688,7 +688,7 @@ i.button_fullscreen:focus {
     text-shadow: 0 0 0 #000;
     line-height: 2.3em;
     height: 2.5em;
-    border: 1px solid grey;
+    border: 1px solid #80808080;
     color: #000;
 }
 
