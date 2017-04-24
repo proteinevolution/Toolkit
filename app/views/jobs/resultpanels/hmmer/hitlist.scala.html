@@ -19,7 +19,6 @@
     </div>
     @* Loads ForwardModal *@
     @views.html.forwardmodals.simple(tool, tool.toolNameShort)
-    <div class="container" id="loadingDiv"></div>
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
                 <div class='flat-slider' id='flat-slider'></div>
@@ -141,8 +140,6 @@
         var hitlist;
         var query;
         var selectAllBool_@{tool.toolNameShort} = false;
-        var firstQueryStart, firstQueryEnd = null;
-        var chosenDB = null;
 
         (function()  {
             $(document).on('scroll', function() {
@@ -190,7 +187,6 @@
             var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
             var selectAllBool_@{tool.toolNameShort} = false;
             var numHits = @{result.num_hits};
-            var urlParams = "/api/job/@jobID";
 
 
                 if(numHits > 0){
