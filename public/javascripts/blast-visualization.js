@@ -461,5 +461,5 @@ function scrollToElem(num){
 function scrollToSection(name){
     var pos = $('div[id='+name+']').offset().top;
     $('html, body').animate({
-        scrollTop: pos-20}, 'fast');
+        scrollTop: pos}, 'fast');
 }
