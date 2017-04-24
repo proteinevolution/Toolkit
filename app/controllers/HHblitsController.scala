@@ -99,9 +99,9 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
   }
 
   def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
-    if(!retrieveFullSeq.isExecutable) {
+    if(!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
+      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
       getResult(jobID).map {
         case Some(jsValue) =>
