@@ -212,7 +212,6 @@ class ParamAccess @Inject() (tel: TEL) {
   final val MACMODE = select("macmode", "Realign with MAC")
   final val MACTHRESHOLD = select("macthreshold", "MAC realignment threshold")
   final val MIN_COV = Param("min_cov",ParamType.Percentage, 1, "Min. coverage of hits (%)")
-  final val MAX_LINES = Param("max_lines",ParamType.UnconstrainedNumber,1, "Max. number of hits in hitlist")
   final val PMIN = Param("pmin",ParamType.Percentage,1, "Min. probability in hitlist (%)")
   final val MAX_SEQID =  Param("max_seqid", ParamType.UnconstrainedNumber, 1, "Maximal Sequence Identity (%)")
   final val MIN_QUERY_COV = Param("min_query_cov", ParamType.Percentage, 1, "Minimal coverage with query (%)")
