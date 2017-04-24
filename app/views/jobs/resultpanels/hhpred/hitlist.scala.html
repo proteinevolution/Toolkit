@@ -40,7 +40,7 @@
         <div id="hitlist">
             <h5>Hitlist</h5>
                 <div class="colorOpts">
-                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
                     <a type="button" onclick="hhpred_manual()"><span>Create model using selected templates</span></a>
                     <hr id="line-element" colspan="4" class="horizontal-line">
@@ -63,7 +63,7 @@
             <div id="alignments">
                 <h5>Alignments</h5>
                 <div class="colorOpts">
-                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
                     <a type="button" onclick="hhpred_manual()"><span>Create model using selected templates</span></a>
                     <hr id="line-element" colspan="4" class="horizontal-line">
@@ -345,12 +345,12 @@ window["@{tool.toolNameShort}_selectAll"] = function () {
     this.selectAllBool_@{tool.toolNameShort} = !this.selectAllBool_@{tool.toolNameShort};
     if(this.selectAllBool_@{tool.toolNameShort}) {
         selectAll(checkbox_@{tool.toolNameShort});
-        $("#selectAllSeq_@{tool.toolNameShort}").addClass("colorToggle");
+        $(".selectAllSeq_@{tool.toolNameShort}").addClass("colorToggle");
         console.log("called")
     }
     else {
         @{tool.toolNameShort}_deselectAll();
-        $("#selectAllSeq_@{tool.toolNameShort}").removeClass("colorToggle");
+        $(".selectAllSeq_@{tool.toolNameShort}").removeClass("colorToggle");
     }
 };
 

@@ -32,7 +32,7 @@
             <a href="#" class="accordion-title">Hitlist</a>
             <div class="accordion-content" data-tab-content>
                 <div class="colorOpts">
-                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
                     <hr id="line-element" class="horizontal-line">
                 </div>
@@ -54,7 +54,7 @@
             <a href="#" class="accordion-title">Alignments</a>
             <div id="alignments" class="accordion-content " data-tab-content>
                 <div class="colorOpts">
-                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span id="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
+                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
                     <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
                     <hr id="line-element" colspan="4" class="horizontal-line">
                 </div>
@@ -261,11 +261,11 @@
             this.selectAllBool_@{tool.toolNameShort} = !this.selectAllBool_@{tool.toolNameShort};
             if(this.selectAllBool_@{tool.toolNameShort}) {
                 selectAll(checkbox_@{tool.toolNameShort});
-                $("#selectAllSeq_@{tool.toolNameShort}").addClass("colorToggle");
+                $(".selectAllSeq_@{tool.toolNameShort}").addClass("colorToggle");
             }
             else {
                 _deselectAll();
-                $("#selectAllSeq_@{tool.toolNameShort}").removeClass("colorToggle");
+                $(".selectAllSeq_@{tool.toolNameShort}").removeClass("colorToggle");
             }
         };
 
