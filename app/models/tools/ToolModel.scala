@@ -109,6 +109,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
       case "hhrepid" => Future.successful(Seq(("Results", views.html.jobs.resultpanels.modeller(s"/files/$jobID/query_A.png", s"$jobPath$jobID/results/query.hhrepid"))))
 
+      case "ali2d" => Future.successful(Seq(("Data", views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".aln",s"$jobPath$jobID/results/" + jobID + ".aln", jobID, "ali2d"))))
+
 
       case "clustalo" => getResult(jobID).map {
         case Some(jsvalue) =>
@@ -209,7 +211,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
     // HHblits
     ("hhblits", "HHblits", "hhb", "search", "",
     Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.HHBLITS_INCL_EVAL, paramAccess.MAXROUNDS,
-      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.MAX_SEQS, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq("modeller", "hhpred")),
+      paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq("modeller", "hhpred")),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
