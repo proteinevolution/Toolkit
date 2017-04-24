@@ -89,10 +89,8 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
   }
 
   def getAlnEval(result : PSIBlastResult,  eval : Double): String = {
-    val fas = result.HSPS.map { hit =>
-      if(hit.evalue < eval){
+    val fas = result.HSPS.filter(_.evalue < eval).map { hit =>
         ">" + result.alignment(hit.num -1).accession + "\n" + result.alignment(hit.num-1).seq + "\n"
-      }
     }
     fas.mkString
   }
@@ -111,11 +109,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
     fas.mkString
   }
   def getAccessionsEval(result : PSIBlastResult, eval: Double) : String = {
-    val fas = result.HSPS.map { hit =>
-      if(hit.evalue < eval){
-        hit.accession + " "
-      }
-    }
+    val fas = result.HSPS.filter(_.evalue < eval).map { _.accession + " "}
     fas.mkString
   }
 

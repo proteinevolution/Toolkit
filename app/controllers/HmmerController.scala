@@ -32,10 +32,8 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
   }
 
   def getAlnEval(result : HmmerResult, eval : Double): String = {
-    val fas = result.HSPS.map { hit =>
-      if(hit.evalue < eval){
+    val fas = result.HSPS.filter(_.evalue < eval).map { hit =>
         ">" + result.alignment(hit.num -1).accession + "\n" + result.alignment(hit.num-1).seq + "\n"
-      }
     }
     fas.mkString
   }
