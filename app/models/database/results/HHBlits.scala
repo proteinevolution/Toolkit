@@ -50,7 +50,7 @@ class HHBlits @Inject() (general: General) {
       }
       val db = (obj \ jobID \ "db").as[String]
       val alignment = general.parseAlignment((obj \ "rep100").as[JsArray])
-      val query = general.parseQuery((obj \  "query").as[JsArray])
+      val query = general.parseQuery((obj \ "query").as[JsArray])
       val num_hits = hsplist.length
 
       HHBlitsResult(hsplist, alignment, num_hits, query, db)
