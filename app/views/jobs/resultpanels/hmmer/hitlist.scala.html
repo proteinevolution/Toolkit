@@ -188,16 +188,10 @@
 
             var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
             var selectAllBool_@{tool.toolNameShort} = false;
-            var chosenDB = null;
             var numHits = @{result.num_hits};
             var urlParams = "/api/job/@jobID";
-            var evalueParam = null;
 
 
-            $.getJSON(urlParams, function(data_){
-                chosenDB = data_.paramValues.standarddb;
-                evalueParam = data_.paramValues.inclusion_ethresh;
-            });
                 if(numHits > 0){
                     var firstQueryStart = @result.HSPS(0).query_start;
                     var firstQueryEnd = @result.HSPS(0).query_end;
