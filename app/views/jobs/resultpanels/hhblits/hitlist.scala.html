@@ -8,7 +8,6 @@
 @import modules.tel.TEL
 @import models.database.results.HHBlitsResult
 @(jobID: String, result: HHBlitsResult, tool: models.tools.Tool)(implicit request: RequestHeader)
-<link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
 @if(result.num_hits < 1) {
     <div class="callout alert noHits" id="noHits">
@@ -199,12 +198,9 @@
 
         var fileUrlQueryMSA = "/files/@jobID/@{jobID}.rep100.json";
         var fileUrlQueryMSAFas = "/files/@jobID/@{jobID}.rep100.fas";
-        var data;
-        var alignments;
         var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
         var hitlist;
         var selectAllBool_@{tool.toolNameShort} = false;
-        var firstQueryName, firstQuerySequence, firstQueryStart, firstQueryEnd = null;
         var jobID;
 
         (function()  {
@@ -230,46 +226,18 @@
                     'padding-left' : '2px'
                 });
             });
-
-            var dataRoute = jsRoutes.controllers.DataController.get("@jobID");
-            $.ajax({
-                method: dataRoute.method,
-                url: dataRoute.url
-            }).done(function(data_) {
-                jobID = data_.jobID;
-                data = data_[jobID];
-                var hits = data.hits;
-                var info = data.info;
-                alignments = data.alignments;
-
-                if(alignments.length > 0){
-                    drawDataTable(alignments);
-                    drawInformation(info);
-
-                    //fill first query name and sequence for slider resubmit
-
-                    firstQueryName =  ">" + alignments[0].query.name;
-                    firstQuerySequence = alignments[0].query.seq;
-                    firstQueryStart = alignments[0].query.start;
-                    firstQueryEnd = alignments[0].query.end;
-                    /* without timeout SLIDER is displayed */
-                    setTimeout(function () {
-                        slider_show(info.Match_columns, firstQueryStart, firstQueryEnd)
-                    }, 1000);
-
-                    $("#accordion").foundation();
-                    $("#templateAlignmentModal").foundation();
-
-
-                }
-            });
-
+            if(@result.num_hits > 0){
+            drawDataTable();
+            drawInformation();
+            //fill first query name and sequence for slider resubmit
+            /* without timeout SLIDER is displayed */
+            setTimeout(function () {
+                slider_show('@{result.query.seq.length}', '@{result.HSPS{0}.query.start}', '@{result.HSPS{0}.query.end}');
+            }, 1000);
+            $("#accordion").foundation();
+            $("#templateAlignmentModal").foundation();
+        }
         })();
-
-        $("#alignmentAccordion").bind('down.zf.accordion', (function() {
-            $("#alignments").floatingScroll('update');
-
-        }));
 
 
         $(document).ready(function () {
@@ -279,14 +247,8 @@
         });
 
 
-        function drawInformation(info ){
+        function drawInformation(){
             /*  INFO TAB*/
-            $("#hhpred_query").append(info.Query);
-            $("#hhpred_match_columns").append(info.Match_columns);
-            $("#hhpred_noseqs").append(info.No_of_seqs);
-            $("#hhpred_neff").append(info.Neff);
-            $("#hhpred_searchedhmms").append(info.Searched_HMMs);
-            $("#hhpred_date").append(info.Date);
         }
 
         function drawDataTable(){
@@ -315,75 +277,53 @@
             }
         };
 
-        function checkAllBetterThan(evalue){
-            var jsonData = {};
-            jsonData.accessions = [];
-            jsonData.seqs = [];
-            jsonData.index = [];
-            // get values of all checked Checkboxes
-            alignments.forEach(function callback(currentValue) {
-                if (currentValue.info.eval < evalue) {
-                    $(":checkbox[value="+currentValue.no+"]").prop("checked","true");
-                    jsonData.accessions.push(currentValue.template.name);
-                    jsonData.seqs.push(currentValue.template.seq);
-                    jsonData.index.push(currentValue.no-1);
-                }
-            });
-            return jsonData;
-        }
-
-
-        function getCheckboxesData(){
-            var jsonData = {};
-            jsonData.accessions = [];
-            jsonData.seqs = [];
-            jsonData.index = [];
-
-
-            // get all checked checkboxes and their respective accession
-            $('input:checkbox.' + checkbox_@{tool.toolNameShort} + ":checked").each(function () {
-                var index = $(this).val() - 1;
-                var seq = alignments[index].template.seq;
-                if (jsonData.seqs.indexOf(seq) == -1) {
-                    jsonData.accessions.push(alignments[index].template.name);
-                    jsonData.seqs.push(seq);
-                    jsonData.index.push(index);
-                }
-            });
-            return jsonData;
-        }
 
         window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
-            var dataTmp = preprocessingForward(selectedTool, boolSelectedHits,boolEvalue, evalue);
-            // full seq is retrieved
+            var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
             if(boolFullLength) {
-                // retrieve full Seq
-                var jsonData = new Object();
-                jsonData.accessionsStr = dataTmp.accessions.join(" ");
-
-                $.ajax({
-                    url: 'fullSeqHHblits/@jobID',
-                    contentType: "application/json",
-                    type: 'POST',
-                    data: JSON.stringify(jsonData)
-                }).done(function() {
+                if(boolEvalue) {
+                    var route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
                     $.ajax({
-                        type: 'GET',
-                        url: 'files/@jobID/sequences.fa'
-                    }).done(function (data_) {
-                        forward(selectedTool, data_.toString());
+                        url: route.url,
+                        method: route.method
+                    }).done(function () {
+                        $.ajax({
+                            type: 'GET',
+                            url: 'files/@jobID/sequences.fa'
+                        }).done(function (data_) {
+                            forward(selectedTool, data_.toString());
+                        });
                     });
-                });
+                }else{
+                    route = jsRoutes.controllers.HHblits.full('@jobID', checkedCheckboxes);
+                    $.ajax({
+                        url: route.url,
+                        method: route.method
+                    }).done(function (data_) {
+                        $.ajax({
+                            type: 'GET',
+                            url: 'files/@jobID/sequences.fa'
+                        }).done(function (data_) {
+                            forward(selectedTool, data_.toString());
+                        });
+                    });
+                }
             }else{
-                var forwardData = '';
-                    for(var i=0; i < dataTmp.index.length; i++){
-                        var index = dataTmp.index[i];
-                        forwardData += ">" + dataTmp.accessions[index]+ '\n';
-                        forwardData += dataTmp.seqs[index] + '\n';
-                    }
-                    forward(selectedTool, forwardData);
+
+                if(boolEvalue) {
+                    route = jsRoutes.controllers.HHblitsController.alnEval('@jobID', evalue);
+                }else{
+                    route = jsRoutes.controllers.HHblitsController.aln('@jobID', checkedCheckboxes);
+                }
+                $.ajax({
+                    url: route.url,
+                    method: route.method
+                }).done(function (data_) {
+                    forward(selectedTool, data_);
+                });
+
             }
-        };
+        }
 
 
         window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
@@ -394,8 +334,9 @@
                 forward(selectedTool, data_.toString());
             });
         };
+
         window["@{tool.toolNameShort}_resubmitSection"] = function(){
-            resubmitSection(firstQuerySequence, firstQueryName);
+            resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
         };
 
 

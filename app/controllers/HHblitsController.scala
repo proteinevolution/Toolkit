@@ -11,10 +11,12 @@ import scala.concurrent.Future
 import scala.sys.process._
 import better.files._
 import models.Constants
-import models.database.results.{General, HHBlits, HHBlitsHSP}
+import models.database.results.{General, HHBlits, HHBlitsHSP, HHBlitsResult}
+import models.database.results.Alignment
 import modules.CommonModule
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsArray, JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -25,11 +27,11 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
   extends Controller with Constants with CommonModule with Common {
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
-  private val retrieveFullSeqScript = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
+  private val retrieveFullSeq = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
 
 
   templateAlignmentScript.setPermissions(filePermissions)
-  retrieveFullSeqScript.setPermissions(filePermissions)
+  retrieveFullSeq.setPermissions(filePermissions)
 
 
   def show3DStructure(accession: String) : Action[AnyContent] = Action { implicit request =>
@@ -53,24 +55,90 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
       }
     }
   }
+  def evalFull(jobID : String, eval: String) : Action[AnyContent] = Action.async { implicit request =>
 
-  def retrieveFullSeq(jobID: String) : Action[AnyContent] = Action.async { implicit request =>
-    if(!templateAlignmentScript.isExecutable) {
+    if(!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${retrieveFullSeqScript.name} is not executable.")
-    }
-    else {
-      Future.successful{
-        val json =  request.body.asJson.get
-        val accessionsStr = (json \ "accessionsStr").get.as[String]
+      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
+    } else {
+      getResult(jobID).map {
+        case Some(jsValue) =>
+          val result = hhblits.parseResult(jsValue)
+          val accessionsStr = getAccessionsEval(result, eval.toDouble)
+          val db = result.db
+          Process(retrieveFullSeq.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accessionsStr" -> accessionsStr, "db" -> db).run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
 
-        Process(retrieveFullSeqScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accessionsStr" -> accessionsStr).run().exitValue() match {
-
-          case 0 => Ok
-          case _ => BadRequest
-        }
+        case _=> NotFound
       }
     }
+  }
+  def full(jobID : String, numList: Seq[Int]) : Action[AnyContent] = Action.async { implicit request =>
+
+    if(!retrieveFullSeq.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
+    } else {
+      getResult(jobID).map {
+        case Some(jsValue) =>
+          val result = hhblits.parseResult(jsValue)
+          val accessionsStr = getAccessions(result, numList)
+          val db = result.db
+          Process(retrieveFullSeq.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accessionsStr" -> accessionsStr, "db" -> db).run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+
+        case _=> NotFound
+      }
+    }
+  }
+
+  def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+    getResult(jobID).map {
+      case Some(jsValue) => Ok(getAlnEval(hhblits.parseResult(jsValue), eval.toDouble))
+      case _=> NotFound
+    }
+  }
+
+  def aln(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+    getResult(jobID).map {
+      case Some(jsValue) => Ok(getAln(general.parseAlignment((jsValue \ "rep100").as[JsArray]), numList))
+      case _ => NotFound
+    }
+  }
+
+  def getAlnEval(result : HHBlitsResult,  eval : Double): String = {
+    val fas = result.HSPS.map { hit =>
+      if(hit.info.evalue < eval){
+        ">" + result.alignment.alignment(hit.num -1).accession + "\n" + result.alignment.alignment(hit.num-1).seq + "\n"
+      }
+    }
+    fas.mkString
+  }
+
+  def getAln(alignment : Alignment, numList: Seq[Int]): String = {
+    val fas = numList.map { num =>
+      ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num -1 ).seq + "\n"
+    }
+    fas.mkString
+  }
+
+  def getAccessions(result : HHBlitsResult, numList : Seq[Int]) : String = {
+    val fas = numList.map { num =>
+      result.HSPS(num - 1).template.accession + " "
+    }
+    fas.mkString
+  }
+  def getAccessionsEval(result : HHBlitsResult, eval: Double) : String = {
+    val fas = result.HSPS.map { hit =>
+      if(hit.info.evalue < eval){
+        hit.template.accession + " "
+      }
+    }
+    fas.mkString
   }
 
   def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[HHBlitsHSP]] = {

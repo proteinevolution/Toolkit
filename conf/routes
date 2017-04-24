@@ -161,8 +161,6 @@ GET         /templateAlignment/:jobID/:accession        @controllers.HHpredContr
 #HHBlits
 # template alignment
 GET         /templateAlignmentHHblits/:jobID/:accession @controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession : String)
-# retrieve Full Seq
-POST         /fullSeqHHblits/:jobID                     @controllers.HHblitsController.retrieveFullSeq(jobID : String)
 
 # Hmmer retrieve seqs with evale < threshold
 POST         /alnEvalHmmer                              @controllers.HmmerController.alnEval(jobID: String, eval:String)
@@ -171,8 +169,16 @@ POST         /alnHmmer                                  @controllers.HmmerContro
 # PSIblast retrieve seqs with evalue < threshold
 POST         /evalPSIBlast                               @controllers.PSIBlastController.alnEval(jobID: String, eval:String)
 # PSIblast retrieve selected seqs
-POST         /fasPSIBlast                                @controllers.PSIBlastController.aln(jobID:String, listNum: Seq[Int])
+POST         /alnPSIBlast                                @controllers.PSIBlastController.aln(jobID:String, listNum: Seq[Int])
 # PSIblast retrieve full seqs with evalue < threshold
 POST        /evalPSIBlastFull                            @controllers.PSIBlastController.evalFull(jobID : String, eval: String)
 # PSIblast retrieve selected full seqs
 POST        /PSIBlastFull                              @controllers.PSIBlastController.full(jobID : String, listNum: Seq[Int])
+# PSIblast retrieve seqs with evalue < threshold
+POST         /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String, eval:String)
+# PSIblast retrieve selected seqs
+POST         /alnHHBlits                           @controllers.HHblitsController.aln(jobID:String, listNum: Seq[Int])
+# PSIblast retrieve full seqs with evalue < threshold
+POST        /evalHHBlitsFull                            @controllers.HHblitsController.evalFull(jobID : String, eval: String)
+# PSIblast retrieve selected full seqs
+POST        /HHBlitsFull                              @controllers.HHblitsController.full(jobID : String, listNum: Seq[Int])
