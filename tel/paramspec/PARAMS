@@ -14,7 +14,6 @@ protblastprogram GEN protblastprogram.prop
 transition_probability GEN transition_probability.prop
 alignmode GEN alignmode.prop
 ss_scoring GEN ss_scoring.prop
-max_seqs GEN max_seqs.prop
 maxrounds GEN maxrounds.prop
 unique_sequence GEN unique_sequence.prop
 min_seqid GEN min_seqid.prop
