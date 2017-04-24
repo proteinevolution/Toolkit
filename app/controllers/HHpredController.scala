@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import scala.sys.process._
 import better.files._
 import models.Constants
-import models.database.results.{HHPred, HHPredHSP}
+import models.database.results.{HHPred, HHPredHSP, HHPredResult}
 import play.modules.reactivemongo.ReactiveMongoApi
 import modules.CommonModule
 import play.api.libs.json.{JsArray, JsObject, Json}
@@ -23,9 +23,11 @@ import play.api.libs.json.{JsArray, JsObject, Json}
 class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : ReactiveMongoApi)(webJarAssets : WebJarAssets) extends Controller with Constants with CommonModule with Common {
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
+  private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
 
 
   templateAlignmentScript.setPermissions(filePermissions)
+  generateAlignmentScript.setPermissions(filePermissions)
 
 
   def show3DStructure(accession: String) : Action[AnyContent] = Action { implicit request =>
@@ -47,6 +49,42 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : Reactive
       }
     }
     }
+  def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+    if(!generateAlignmentScript.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
+    } else {
+      getResult(jobID).map {
+        case Some(jsValue) =>
+          val result = hhpred.parseResult(jsValue)
+          val numListStr = getNumListEval(result, eval.toDouble)
+          Process(generateAlignmentScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "numList" -> numListStr).run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+
+        case _=> NotFound
+      }
+    }
+  }
+
+  def aln(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+    if(!generateAlignmentScript.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
+    } else {
+      val numListStr = numList.mkString(" ")
+      Process(generateAlignmentScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "numList" -> numListStr).run().exitValue() match {
+        case 0 => Future.successful(Ok)
+        case _ => Future.successful(BadRequest)
+      }
+    }
+  }
+
+  def getNumListEval(result: HHPredResult, eval: Double): String ={
+    val numList = result.HSPS.filter(_.info.evalue < eval).map {_.num}
+    numList.mkString(" ")
+  }
 
   def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[HHPredHSP]] = {
     if(params.sSearch.isEmpty){
