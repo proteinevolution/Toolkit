@@ -24,7 +24,7 @@
                 <a class="success button tiny resubmitSection" onclick="@{tool.toolNameShort}_resubmitSection()" type="button" id="resubmitSection">
                 Resubmit section</a>
                     @BlastVisualization.html(s"$jobID/results/blastviz.html")
-                    <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
+                    <p><img src="files/@{jobID}/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
             </div>
     </div>
     <div id="hitlist">
@@ -188,8 +188,8 @@ var selectAllBool_@{tool.toolNameShort} = false;
 
     var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
     var selectAllBool_@{tool.toolNameShort} = false;
-    var urlParams = "/api/job/@jobID";
-    var urlQuery = "/files/" + @jobID + "/query.json";
+    var urlParams = "/api/job/@{jobID}";
+    var urlQuery = "/files/@{jobID}/query.json";
 
     if(@{result.num_hits} > 0){
 
@@ -224,7 +224,7 @@ function drawDataTable(){
     hitlist = $('#htb').dataTable({
         "bProcessing" : true,
         "bServerSide" : true,
-        "sAjaxSource" : "/api/job/results/dataTablePSIBlast/@jobID"
+        "sAjaxSource" : "/api/job/results/dataTablePSIBlast/@{jobID}"
 });
 }
 
@@ -252,27 +252,27 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
     var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
     if(boolFullLength) {
         if(boolEvalue) {
-            var route = jsRoutes.controllers.PSIBlastController.evalFull('@jobID', evalue);
+            var route = jsRoutes.controllers.PSIBlastController.evalFull('@{jobID}', evalue);
             $.ajax({
                 url: route.url,
                 method: route.method
             }).done(function () {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/@jobID/sequences.fa'
+                    url: 'files/@{jobID}/sequences.fa'
                 }).done(function (data_) {
                     forward(selectedTool, data_.toString());
                 });
             });
         }else{
-            route = jsRoutes.controllers.PSIBlastController.full('@jobID', checkedCheckboxes);
+            route = jsRoutes.controllers.PSIBlastController.full('@{jobID}', checkedCheckboxes);
             $.ajax({
                 url: route.url,
                 method: route.method
             }).done(function (data_) {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/@jobID/sequences.fa'
+                    url: 'files/@{jobID}/sequences.fa'
                 }).done(function (data_) {
                     forward(selectedTool, data_.toString());
                 });
@@ -281,9 +281,9 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
     }else{
 
         if(boolEvalue) {
-            route = jsRoutes.controllers.PSIBlastController.alnEval('@jobID', evalue);
+            route = jsRoutes.controllers.PSIBlastController.alnEval('@{jobID}', evalue);
         }else{
-            route = jsRoutes.controllers.PSIBlastController.aln('@jobID', checkedCheckboxes);
+            route = jsRoutes.controllers.PSIBlastController.aln('@{jobID}', checkedCheckboxes);
         }
         $.ajax({
             url: route.url,
