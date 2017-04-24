@@ -211,26 +211,25 @@ var currentStructureAccession = "";
 var hitlist;
 var selectAllBool_@{tool.toolNameShort} = false;
 
-$(document).on('scroll', function() {
-    if($(this).scrollTop()>=$('#alignments').position().top-10){
-        $("#alignmentsScroll").addClass("colorToggle");
-        $("#hitlistScroll").removeClass("colorToggle");
-        $("#visualizationScroll").removeClass("colorToggle");
-    }else if($(this).scrollTop()>=$('#hitlist').position().top-10){
-        $("#hitlistScroll").addClass("colorToggle");
-        $("#alignmentsScroll").removeClass("colorToggle");
-        $("#visualizationScroll").removeClass("colorToggle");
-    } else if($(this).scrollTop()>=$('#visualization').position().top-10){
-        $("#visualizationScroll").addClass("colorToggle");
-        $("#hitlistScroll").removeClass("colorToggle");
-        $("#alignmentsScroll").removeClass("colorToggle");
-
-    }
-})
 
 (function()  {
+    // add scrollcontainer highlighting
+    $(document).on('scroll', function() {
+        if($(this).scrollTop()>=$('#alignments').position().top-10){
+            $("#alignmentsScroll").addClass("colorToggle");
+            $("#hitlistScroll").removeClass("colorToggle");
+            $("#visualizationScroll").removeClass("colorToggle");
+        }else if($(this).scrollTop()>=$('#hitlist').position().top-10){
+            $("#hitlistScroll").addClass("colorToggle");
+            $("#alignmentsScroll").removeClass("colorToggle");
+            $("#visualizationScroll").removeClass("colorToggle");
+        } else if($(this).scrollTop()>=$('#visualization').position().top-10){
+            $("#visualizationScroll").addClass("colorToggle");
+            $("#hitlistScroll").removeClass("colorToggle");
+            $("#alignmentsScroll").removeClass("colorToggle");
 
-
+        }
+    });
 
     // adding loading overlay
     $(document).ajaxStart(function(){
