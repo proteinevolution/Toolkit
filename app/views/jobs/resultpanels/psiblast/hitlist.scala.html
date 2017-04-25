@@ -53,78 +53,11 @@
         <h5 id="alignmentsTitle">Alignments</h5>
             <form id="psiblast_templates">
                   <table class="unstriped">
-                    <tbody>
+                    <tbody id="alignmentTable">
                         Number of sequences: @{result.num_hits}
                         <br />
                         <br />
-                        @for(hit <- result.HSPS ){
-                            @* hit number, links *@
-                            <tr>
-                                <td></td>
-                                <td colspan="3">
 
-                                   @BlastVisualization.getLinksDB(result.db, hit.accession)
-                                </td>
-                                <td></td>
-                            </tr>
-                            @* checkboxes, accession, name of hit*@
-                            <tr class="header">
-                                <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}.</td>
-                            <td colspan="4">
-                                @{BlastVisualization.getSingleLinkDB(result.db , hit.accession)}
-                                @{"  "+hit.description}
-                            </td>
-                            </tr>
-                            @* Alignment Details*@
-                            <tr>
-                                <td></td>
-                            <td colspan="4">Score: @{hit.bitscore}
-                                bits (@{hit.score}),
-                                E-value: @{hit.evalue},
-                                Identities: @{hit.identity}/@{hit.hit_len}
-                                (@{BlastVisualization.calculatePercentage(hit.identity, hit.hit_len)}),
-                                Positives: @{hit.positive}/@{hit.hit_len}
-                                (@{BlastVisualization.calculatePercentage(hit.positive, hit.hit_len)}),
-                                Gaps: @{hit.gaps}/@{hit.hit_len}
-                                (@{BlastVisualization.calculatePercentage(hit.gaps, hit.hit_len)}),
-                                Length: @{hit.hit_len}
-                            </td>
-                            </tr>
-                            <tr>
-                                <td><br /></td>
-                            </tr>
-                            @* color only 150 first hits, to avoid bloating of the generated html*@
-                            @if(hit.num < 150) {
-                                @* Query *@
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("Query", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq), hit.query_end.toString))
-                                }
-                                @* Midline *@
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline), ""))
-                                }
-                                @* Hit *@
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("Hit", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))
-                                }
-                            }else{
-                                @* Query *@
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("Query", hit.query_start.toString, hit.query_seq, hit.query_end.toString))
-                                }
-                                @* Midline *@
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("", "", hit.midline, ""))
-                                }
-                                @* Hit *@
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("Hit", hit.hit_start.toString, hit.hit_seq, hit.hit_end.toString))
-                                }
-                            }
-                            <tr>
-                                <td colspan="5"><hr id="line-element" class="horizontal-line"></td>
-                            </tr>
-                        }
                     </tbody>
                   </table>
             </form>
@@ -136,29 +69,34 @@ var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
 var hitlist;
 var query;
 var selectAllBool_@{tool.toolNameShort} = false;
-
+var shownHits = 0;
+var showMore = 10;
 
 (function()  {
 
     // add scrollcontainer highlighting
     $(document).on('scroll', function() {
-        if($(this).scrollTop()>=$('#alignments').position().top-10){
+        if($(this).scrollTop()>=$('#alignments').position().top){
             $("#alignmentsScroll").addClass("colorToggle");
             $("#hitlistScroll").removeClass("colorToggle");
             $("#visualizationScroll").removeClass("colorToggle");
-        }else if($(this).scrollTop()>=$('#hitlist').position().top-10){
+        }else if($(this).scrollTop()>=$('#hitlist').position().top){
             $("#hitlistScroll").addClass("colorToggle");
             $("#alignmentsScroll").removeClass("colorToggle");
             $("#visualizationScroll").removeClass("colorToggle");
         }  else if($(this).scrollTop()>=$('#visualization').position().top+75) {
             $('.scrollContainer').addClass('fixed');
-        } else if($(this).scrollTop()>=$('#visualization').position().top-10) {
+        } else if($(this).scrollTop()>=$('#visualization').position().top) {
             $("#visualizationScroll").addClass("colorToggle");
             $("#hitlistScroll").removeClass("colorToggle");
             $("#alignmentsScroll").removeClass("colorToggle");
         }else{
             $('.scrollContainer').removeClass('fixed');
         }
+        if($(this).scrollTop() == $(this).height()-$(window).height()){
+            getHits(shownHits, shownHits+showMore);
+        }
+
     });
 
     // adding loading overlay
@@ -197,9 +135,7 @@ var selectAllBool_@{tool.toolNameShort} = false;
         setTimeout(function () {
             slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd)
         }, 1000);
-
-        $("#accordion").foundation();
-
+        getHits(shownHits, shownHits+showMore);
     }
 })();
 
@@ -294,5 +230,19 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
 window["@{tool.toolNameShort}_resubmitSection"] = function(){
     resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
 };
+
+function getHits(start, end){
+    if(start <= @{result.num_hits}){
+        end = end > @{result.num_hits} ? @{result.num_hits} : end;
+        this.shownHits += this.showMore;
+        var route = jsRoutes.controllers.PSIBlastController.loadHits('@{jobID}',start, end);
+        $.ajax({
+            method: route.method,
+            url: route.url
+        }).done(function (data_) {
+            $("#alignmentTable").append(data_);
+        });
+    }
+}
 
 </script>

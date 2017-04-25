@@ -1,0 +1,49 @@
+
+@import models.results.BlastVisualization
+@import models.database.results.HmmerHSP
+@(jobID: String, hit: HmmerHSP, db: String)(implicit request: RequestHeader)
+@* Load html Map used for the image representation *@
+
+@* hit number, links *@
+<tr>
+    <td></td>
+    <td colspan="3">
+        @BlastVisualization.getLinksHmmer(hit.accession)
+    </td>
+    <td></td>
+</tr>
+@* checkboxes, accession, name of hit*@
+<tr class="header">
+    <td ><input type="checkbox" name="templates" class="checkbox_hmmer" value='@{hit.num}'> @{hit.num}</td>
+    <td colspan="4">
+        @BlastVisualization.getSingleLinkDB(db,hit.accession)
+        @{"  "+hit.description}
+    </td>
+</tr>
+@* Alignment Details*@
+<tr>
+    <td></td>
+    <td colspan="4">E-value: @{hit.evalue},
+        Score: @{hit.bitscore}, Hit length: @{hit.hit_len},
+        Domain expected number: @{hit.dom_exp_num}, Domain observed number: @{hit.domain_obs_num}
+    </td>
+</tr>
+@* color only 150 first hits, to avoid bloating of the generated html*@
+    @* seq of query, if present *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("Q", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq), hit.query_end.toString))
+    }
+    @* agree of query, if present *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline), ""))
+    }
+    @* seq of hit, if present *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("H", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))
+    }
+<tr>
+    <td><br /></td>
+</tr>
+<tr>
+    <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
+</tr>
