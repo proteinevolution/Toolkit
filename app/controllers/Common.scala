@@ -29,6 +29,6 @@ private[controllers] trait Common extends Controller with ContentTypes with Reac
 
   protected val filePermissions = Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
     PosixFilePermission.GROUP_EXECUTE, PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE)
-
-
 }
+// Exceptions
+case class FileException(message : String) extends Exception(message)

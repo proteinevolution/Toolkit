@@ -30,11 +30,10 @@ hhblits -cpu %THREADS \
         -e %hhblits_incl_eval.content \
         -n %maxrounds.content  \
         -p %pmin.content \
-        -Z %max_lines.content \
+        -Z %desc.content \
         -z 1 \
         -b 1 \
-        -B %max_lines.content  \
-        -%alignmode.content
+        -B %desc.content
 
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1

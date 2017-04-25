@@ -81,9 +81,8 @@ lazy val root = (project in file("."))
       "org.webjars.bower"   % "datatables"            % "1.10.13",
       "org.webjars"         % "highcharts"            % "5.0.6",
       "org.webjars.bower"   % "velocity"              % "1.5.0",
-      "org.webjars"         % "font-awesome"          % "4.7.0",
-      "org.webjars.npm"     % "justgage"              % "1.2.2")),
-    pipelineStages := Seq(rjs, digest, gzip),
+      "org.webjars"         % "font-awesome"          % "4.7.0")),
+    pipelineStages := Seq(digest, gzip),
     compile in Compile <<= (compile in Compile) dependsOn scalaJSPipeline,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
@@ -96,6 +95,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
 )
+resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plugins/"
 
 lazy val client = (project in file("client")).settings(
   scalaVersion := "2.11.8",

@@ -161,7 +161,8 @@ setTimeout(function() {
 
 
     // listens to alignment
-    $('input:checkbox.hitCheckbox').click(function (e) {
+    $('input:checkbox').click(function (e) {
+        allPages = hitlist.fnGetNodes();
         var currentVal = $(this).val();
         var currentState = $(this).prop('checked');
         // alignment
@@ -186,7 +187,7 @@ setTimeout(function() {
     });
 
 
-},2000);
+},4000);
 
 
 /**
@@ -444,5 +445,5 @@ function scrollToElem(num){
 function scrollToSection(name){
     var pos = $('div[id='+name+']').offset().top;
     $('html, body').animate({
-        scrollTop: pos+20}, 'fast');
+        scrollTop: pos+30}, 'fast');
 }

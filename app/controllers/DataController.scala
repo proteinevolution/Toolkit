@@ -56,6 +56,7 @@ class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, psiblas
     * Action to write an article into the database
     */
   def writeArticle(title: String, text: String, link: String, imagePath: String) : Action[AnyContent] = Action.async{
+    // TODO ensure that only authorized people can write a front page article
     val article = FeaturedArticle(BSONObjectID.generate(),title, text, link,imagePath,Some(DateTime.now()),None)
     writeArticleDatabase(article).map { wr =>
       if(wr.ok){
