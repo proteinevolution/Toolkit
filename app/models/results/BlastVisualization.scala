@@ -132,8 +132,6 @@ object BlastVisualization extends Constants {
   }
 
   def getSingleLinkDB(db: String, id: String): Html = {
-    println(db)
-    println(id)
     var link = ""
     val idTrimmed = if(id.length > 4){ id.substring (1, 5)} else{ id}
     val idPfam = id.replaceAll("am.*$||..*", "")

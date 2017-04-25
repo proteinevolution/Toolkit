@@ -157,6 +157,16 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
     }
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
+  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+    getResult(jobID).map {
+      case Some(jsValue) => {
+        val result = hhblits.parseResult(jsValue)
+        val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhblits.hit(jobID, _ ))
+        Ok(hits.mkString)
+      }
+    }
+  }
+
   def dataTable(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),

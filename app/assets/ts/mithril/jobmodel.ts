@@ -53,7 +53,8 @@ window.JobModel = {
         "no_replicates":"0",
         "matrix_phyml":"LG",
         "eff_crick_angle":"1",
-        "samcc_periodicity":"7"
+        "samcc_periodicity":"7",
+        "seqcount":"500"
 },
 
     /* Seems not to be used
