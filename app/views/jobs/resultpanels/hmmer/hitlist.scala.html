@@ -11,6 +11,8 @@
     </div>
 
 }else{
+    @* Loads ForwardModal *@
+    @views.html.forwardmodals.simple(tool, tool.toolNameShort)
     <div id="stickyAnchor"></div>
     <div class="scrollContainer">
         <div id="scrollLinks">
@@ -24,8 +26,7 @@
             <a type="button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
         </div>
     </div>
-    @* Loads ForwardModal *@
-    @views.html.forwardmodals.simple(tool, tool.toolNameShort)
+    Number of sequences: @{result.num_hits}
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
             <div class='flat-slider' id='flat-slider'></div>
@@ -58,16 +59,10 @@
                 <form id="hhpred_templates">
                     <table class="unstriped">
                         <tbody id="alignmentTable">
-                            Number of sequences: @{result.num_hits}
-                            <br />
-                            <br />
-
                         </tbody>
                     </table>
                 </form>
-
-
-            </div>
+        </div>
     </div>
 }
 <script>
