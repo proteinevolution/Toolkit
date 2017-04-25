@@ -110,6 +110,16 @@ final class Service @Inject() (webJarAssets                                     
       case None => NotFound
     }
   }
+
+
+  // Fetches the result of a job for a particular result panel
+  def getResult(jobID: String, resultpanel : String) : Action[AnyContent] = Action.async {
+
+    Future.successful(Ok)
+  }
+
+
+  // TODO Change that not all jobViews but only the resultpanel titles are returned
   def getJob(jobID: String) : Action[AnyContent] = Action.async { implicit request =>
 
     selectJob(jobID).flatMap {
@@ -136,7 +146,10 @@ final class Service @Inject() (webJarAssets                                     
 
             val jobViews: Future[Seq[(String, Html)]] = job.status match {
 
-              case Done => toolFactory.getResults(job.jobID, job.tool, jobPath)
+              // TODO This is complicated but can be replaced once only the titles of the resultpanels are returned
+              case Done => Future.sequence(toolFactory.resultMap(job.tool).map { y =>
+                  y._2(jobPath, job.jobID, request).map(y._1 -> _)
+                }.toSeq)
 
               // All other views are currently computed on Clientside
               case _ => Future.successful(Nil)
