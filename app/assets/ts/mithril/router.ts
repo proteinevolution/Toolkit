@@ -24,6 +24,22 @@ let StaticRoute : any = {
     }
 };
 
+let ErrorRouteComponent : any = {
+    controller: function(args : any) : any {
+        var errorID      = m.route.param("errorID") ? m.route.param("errorID") : args.errorID,
+            errorMessage = "Page not Found";
+        return { errorID : errorID, errorMessage : errorMessage}
+    },
+    view: function(ctrl : any, args : any) : any {
+        return m("div", { class : "error-page" },[
+            m("div", { class : "title" }, "There was an error loading this page."),
+            m("div", { class : "element" }, "Error code: " + ctrl.errorID),
+            m("div", { class : "element" }, "Error message: " + ctrl.errorMessage),
+            m("div", { class : "message" }, "Please check if you have entered the correct URL and that you have the right jobID")
+        ]);
+    }
+};
+
 m.route.mode = 'hash';
 
 // Define the mithril routes
@@ -37,7 +53,8 @@ let routes : Routes = {
     '/jobs/:jobID':      m(Toolkit, { isJob: true }),
     '/backend/:section': m(Backend),
     '/news':             m(News),
-    '/jobmanager':       m(JobManager)
+    '/jobmanager':       m(JobManager),
+    '/error/:errorID':   m(ErrorRouteComponent, { })
 };
 
 m.route(mountpoint, '/', routes);
