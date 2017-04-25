@@ -211,7 +211,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
     // HHblits
     ("hhblits", "HHblits", "hhb", "search", "",
     Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.HHBLITS_INCL_EVAL, paramAccess.MAXROUNDS,
-      paramAccess.PMIN, paramAccess.DESC, paramAccess.ALIGNMODE), Seq("hhblits", "hhpred", "hhrepid" ),Seq("hhpred")),
+      paramAccess.PMIN, paramAccess.DESC), Seq("hhblits", "hhpred", "hhrepid" ),Seq("hhpred")),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
@@ -309,7 +309,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
     // SamCC
     ("samcc", "SamCC", "sam", "3ary", "",
-      Seq(paramAccess.ALIGNMENT, paramAccess.SAMCC_PERIODICITY, paramAccess.EFF_CRICK_ANGLE), Seq.empty,Seq.empty),
+      Seq(paramAccess.ALIGNMENT, paramAccess.SAMCC_HELIXONE, paramAccess.SAMCC_HELIXTWO, paramAccess.SAMCC_HELIXTHREE,
+        paramAccess.SAMCC_HELIXFOUR, paramAccess.SAMCC_PERIODICITY, paramAccess.EFF_CRICK_ANGLE), Seq.empty,Seq.empty),
 
     // RetrieveSeq
     ("retseq", "RetrieveSeq", "ret", "utils", "",
@@ -370,7 +371,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
             lazy val paramGroups = Map(
               "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
                 paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name, paramAccess.PROTEOMES.name, paramAccess.HMMER_DB.name, paramAccess.REGKEY.name,
-                paramAccess.GRAMMAR.name)
+                paramAccess.GRAMMAR.name, paramAccess.SAMCC_HELIXONE.name, paramAccess.SAMCC_HELIXTWO.name, paramAccess.SAMCC_HELIXTHREE.name, paramAccess.SAMCC_HELIXFOUR.name)
             )
             // Params which are not a part of any group (given by the name)
             lazy val remainParamName : String = "Parameters"
