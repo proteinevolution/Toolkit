@@ -1,4 +1,8 @@
-declare var jsRoutes: any;
+declare const jsRoutes: any;
+
+let noRedraw     : boolean = false;
+let focusInNoRedraw = function(event : Event) : void { noRedraw = true;  console.log('focus in - no redraw');  },
+    focusOutRedraw  = function(event : Event) : void { noRedraw = false; console.log('focus out - redrawing'); };
 
 let regions = [ ["","Country"],
     ["AFG","Afghanistan"],
@@ -437,7 +441,7 @@ class SignUp {
                                  onchange: m.withAttr("checked", SignUp.acceptToSSetter),
                                  value:    SignUp.acceptToS
                     }),
-                    "I Accept the Terms of Sevice",
+                    "I Accept the Terms of Service",
                     m("span", {class:"form-error", id:'acceptToSText'}, "You must accept the ToS!")
                 ])),
                 m("input", { class: "input small expanded secondary button" + (SignUp.formValid? "" : " disabled"),

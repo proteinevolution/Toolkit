@@ -1,0 +1,56 @@
+@import models.results.BlastVisualization
+@import models.database.results.PSIBlastHSP
+@(jobID: String, hit: PSIBlastHSP, db: String)(implicit request: RequestHeader)
+
+@* hit number, links *@
+<tr>
+    <td></td>
+    <td colspan="3">
+
+        @BlastVisualization.getLinksDB(db, hit.accession)
+    </td>
+    <td></td>
+</tr>
+@* checkboxes, accession, name of hit*@
+<tr class="header">
+    <td ><input type="checkbox" name="templates" class="checkbox_psiblast" value='@{hit.num}'> @{hit.num}.</td>
+<td colspan="4">
+    @{BlastVisualization.getSingleLinkDB(db , hit.accession)}
+    @{"  "+hit.description}
+</td>
+</tr>
+@* Alignment Details*@
+<tr>
+    <td></td>
+    <td colspan="4">Score: @{hit.bitscore}
+        bits (@{hit.score}),
+        E-value: @{hit.evalue},
+        Identities: @{hit.identity}/@{hit.hit_len}
+        (@{BlastVisualization.calculatePercentage(hit.identity, hit.hit_len)}),
+        Positives: @{hit.positive}/@{hit.hit_len}
+        (@{BlastVisualization.calculatePercentage(hit.positive, hit.hit_len)}),
+        Gaps: @{hit.gaps}/@{hit.hit_len}
+        (@{BlastVisualization.calculatePercentage(hit.gaps, hit.hit_len)}),
+        Length: @{hit.hit_len}
+    </td>
+</tr>
+<tr>
+    <td><br /></td>
+</tr>
+@* color only 150 first hits, to avoid bloating of the generated html*@
+    @* Query *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("Query", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq)+ " " + hit.query_end.toString))
+    }
+    @* Midline *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline)))
+    }
+    @* Hit *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("Hit", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + " " + hit.hit_end.toString))
+    }
+
+<tr>
+    <td colspan="5"><hr id="line-element" class="horizontal-line"></td>
+</tr>

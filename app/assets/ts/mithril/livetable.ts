@@ -1,5 +1,4 @@
 import ElementConfig = Mithril.ElementConfig;
-let currentRoute : string = null;
 
 let trafficBarConfig = function(lastJob : any) {
     return function (elem : any, isInit : Boolean) : void {

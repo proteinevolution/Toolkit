@@ -22,12 +22,16 @@ window.JobViewComponent = {
         if (!args.job()) {
             return m("div", "Waiting for Job");
         } else {
-            return m("div", {
-                id: "jobview"
-            }, [
-                m(JobLineComponent, { job: args.job }),
-                m(JobTabsComponent, { job: args.job, owner: args.owner })
-            ]);
+            if (!args.job().successful) {
+                return m.component(ErrorRouteComponent, { errorID : 404 });
+            } else {
+                return m("div", {
+                    id: "jobview"
+                }, [
+                    m(JobLineComponent, { job: args.job }),
+                    m(JobTabsComponent, { job: args.job, owner: args.owner })
+                ]);
+            }
         }
     }
 };
@@ -114,9 +118,9 @@ JobErrorComponent = {
                     m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])
                 ])
             ),
-            m("h6", "Job has reached Error state"),
-            m("br"),
-            m("br"),
+            //m("h6", "Job has reached Error state"),
+            //m("br"),
+            //m("br"),
             JobRunningComponent.log.map(function(logElem){
                 if(logElem == "")
                     return;

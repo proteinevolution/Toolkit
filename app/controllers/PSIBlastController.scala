@@ -3,9 +3,6 @@
   */
 package controllers
 
-
-import java.nio.file.attribute.PosixFilePermission
-
 import com.typesafe.config.ConfigFactory
 
 import scala.sys.process._
@@ -20,7 +17,6 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.Future
 import modules.CommonModule
 import play.api.libs.json.{JsArray, JsObject, Json}
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -89,10 +85,8 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
   }
 
   def getAlnEval(result : PSIBlastResult,  eval : Double): String = {
-    val fas = result.HSPS.map { hit =>
-      if(hit.evalue < eval){
+    val fas = result.HSPS.filter(_.evalue < eval).map { hit =>
         ">" + result.alignment(hit.num -1).accession + "\n" + result.alignment(hit.num-1).seq + "\n"
-      }
     }
     fas.mkString
   }
@@ -111,11 +105,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
     fas.mkString
   }
   def getAccessionsEval(result : PSIBlastResult, eval: Double) : String = {
-    val fas = result.HSPS.map { hit =>
-      if(hit.evalue < eval){
-        hit.accession + " "
-      }
-    }
+    val fas = result.HSPS.filter(_.evalue < eval).map { _.accession + " "}
     fas.mkString
   }
 
@@ -124,13 +114,28 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
   def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[PSIBlastHSP]] = {
     if(params.sSearch.isEmpty){
       getResult(jobID).map {
-        case Some(result) => psiblast.parseResult(result).HSPS.slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+        case Some(result) => psiblast.hitsOrderBy(params, psiblast.parseResult(result).HSPS).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
       }
     }else{
       ???
     }
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
+
+  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+    getResult(jobID).map {
+      case Some(jsValue) => {
+        val result = psiblast.parseResult(jsValue)
+        if(end > result.num_hits || start > result.num_hits ) {
+          BadRequest
+        }else {
+          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _, result.db))
+          Ok(hits.mkString)
+        }
+      }
+    }
+  }
+
 
   def dataTable(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
@@ -150,13 +155,12 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
     }
     val hits = getHitsByKeyWord(jobID, params)
 
-    psiblast.hitsOrderBy(params, hits).flatMap { list =>
+    hits.flatMap { list =>
       total.map { total_ =>
         Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
           .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
       }
     }
   }
-  // Exceptions
-  case class FileException(message : String) extends Exception(message)
+
 }

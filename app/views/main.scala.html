@@ -117,6 +117,8 @@
             routes.javascript.Auth.resetPasswordChange,
             routes.javascript.HmmerController.aln,
             routes.javascript.HmmerController.alnEval,
+            routes.javascript.HmmerController.full,
+            routes.javascript.HmmerController.evalFull,
             routes.javascript.PSIBlastController.aln,
             routes.javascript.PSIBlastController.alnEval,
             routes.javascript.PSIBlastController.full,
@@ -124,7 +126,13 @@
             routes.javascript.HHblitsController.aln,
             routes.javascript.HHblitsController.alnEval,
             routes.javascript.HHblitsController.full,
-            routes.javascript.HHblitsController.evalFull
+            routes.javascript.HHblitsController.evalFull,
+            routes.javascript.HHpredController.aln,
+            routes.javascript.HHpredController.alnEval,
+            routes.javascript.PSIBlastController.loadHits,
+            routes.javascript.HmmerController.loadHits,
+            routes.javascript.HHblitsController.loadHits,
+            routes.javascript.HHpredController.loadHits
         )
 
         <!-- Google Fonts -->
@@ -293,11 +301,7 @@
             <!-- Reformat Javascript Library -->
         <script src="@routes.Assets.versioned("javascripts/vendor/reformat/src/reformat.js")"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
-        <script src="@routes.WebJarAssets.at(webJarAssets.locate("justgage.js"))"></script>
 
-
-        <script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
 
             <!-- CoffeeScript && Mithril Assets -->
         <script src="@routes.Assets.versioned("javascripts/mithril/index.js")"></script>
@@ -307,11 +311,13 @@
         <script src="@routes.Assets.versioned("javascripts/blast-visualization.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/mithril/joblist.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/mithril/jobview.js")"></script>
-        <script src="@routes.Assets.versioned("javascripts/mithril/main.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/vendor/msa.min.js")" type="text/javascript"></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-io-newick.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-vis-tree.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/snap.svg-min.js")'></script>
+
+
+        <script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
 
         <script type="text/javascript">
 
@@ -335,8 +341,11 @@
                             break;
                         case "passwordReset":
                             AuthOverlay.passwordReset = true;
+                            openNav(view);
+                            break;
                         default:
                             openNav(view);
+                            break;
                     }
                     Auth.loadUser();
                 });
