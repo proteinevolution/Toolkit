@@ -68,95 +68,10 @@
                 <h5 id="alignmentsTitle">Alignments</h5>
                 <form id="hhpred_templates">
                       <table class="unstriped">
-                        <tbody>
+                        <tbody id="alignmentTable">
                             Number of sequences: @result.num_hits
                             <br />
                             <br />
-                        @for(hit <- result.HSPS){
-                            @* hit number, links *@
-                            <tr>
-                                <td></td>
-                                <td colspan="3">
-                                @BlastVisualization.getLinksHHpred(hit.template.accession)
-                                </td>
-                                <td></td>
-                            </tr>
-                            @* checkboxes, accession, name of hit*@
-                            <tr class="header">
-                                <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}.</td>
-                                <td colspan="4">
-                                    @BlastVisualization.getSingleLink(hit.template.accession)
-                                @{"  "+ hit.description}
-                                </td>
-                            </tr>
-                            @* Alignment Details*@
-                            <tr>
-                                <td></td>
-                                <td colspan="4">Probability: @{hit.info.probab}, E-value: @{hit.info.evalue},
-                                    Score: @{hit.info.score}, Aligned Cols: @{hit.info.aligned_cols},
-                                    Identities: @{BlastVisualization.percentage(hit.info.identities.toString)},
-                                    Similarity: @{hit.info.similarity}
-
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><br /></td>
-                            </tr>
-
-                            @* Handle secondary structure annotation for query, if present *@
-                            @if(!hit.query.ss_dssp.isEmpty) {
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("Q", "ss_dssp", "", BlastVisualization.SSColorReplace(hit.query.ss_dssp)))
-                                }
-                            }
-                            @if(!hit.query.ss_pred.isEmpty) {
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("Q", "ss_pred", "", BlastVisualization.SSColorReplace(hit.query.ss_pred)))
-                                }
-                            }
-                            @if(!hit.query.seq.isEmpty) {
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("Q",hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) +" "+hit.query.end.toString + " " +"("+hit.query.ref+")"))
-                                }
-                            }
-                            @*Consensus of query, if present*@
-                           @if(!hit.query.consensus.isEmpty) {
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("Q", "Consensus",hit.query.start.toString, hit.query.consensus + " " + hit.query.end.toString + " " + "("+hit.query.ref+")"))
-                                }
-                             }
-                            @* agree of query, if present *@
-
-                            @BlastVisualization.makeRow("sequence", Array("","","",hit.agree))
-
-                            @*  consensus template, if present *@
-                            @if(!hit.template.consensus.isEmpty) {
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("T", "Consensus",hit.template.start.toString, hit.template.consensus  + " " + hit.template.end.toString + " " + "("+hit.template.ref+")"))
-                                }
-                            }
-                            @*  seq template, if present *@
-                            @if(!hit.template.seq.isEmpty) {
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("T",hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) + " "+hit.template.end.toString + " "+"("+hit.query.ref+")"))
-                                }
-                            }
-                            @* Handle secondary structure annotation for template, if present *@
-                            @if(!hit.template.ss_pred.isEmpty) {
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("T", "ss_pred", "", BlastVisualization.SSColorReplace(hit.template.ss_pred)))
-                                }
-                            }
-                            @if(!hit.template.ss_dssp.isEmpty) {
-                                @{
-                                    BlastVisualization.makeRow("sequence", Array("T", "ss_dssp", "", BlastVisualization.SSColorReplace(hit.template.ss_dssp)))
-                                }
-                            }
-                            <tr>
-                                <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
-                            </tr>
-                        }
                         </tbody>
                       </table>
                 </form>
@@ -204,6 +119,8 @@ var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
 var currentStructureAccession = "";
 var hitlist;
 var selectAllBool_@{tool.toolNameShort} = false;
+var shownHits = 0;
+var showMore = 10;
 
 
 (function()  {
@@ -225,6 +142,9 @@ var selectAllBool_@{tool.toolNameShort} = false;
             $("#alignmentsScroll").removeClass("colorToggle");
         }else{
             $('.scrollContainer').removeClass('fixed');
+        }
+        if($(this).scrollTop() == $(this).height()-$(window).height()){
+            getHits(shownHits, shownHits+showMore);
         }
     });
 
@@ -260,6 +180,7 @@ var selectAllBool_@{tool.toolNameShort} = false;
         setTimeout(function () {
             slider_show('@{result.query.seq.length}', '@{result.HSPS{0}.query.start}', '@{result.HSPS{0}.query.end}');
         }, 1000);
+        getHits(shownHits, shownHits+showMore);
 
     }
 })();
@@ -401,7 +322,7 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
             });
         });
 
-}
+};
 
 
 function forwardTemplateAlignment_(tool, forwardData){
@@ -429,4 +350,17 @@ window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
 window["@{tool.toolNameShort}_resubmitSection"] = function(){
     resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
 };
+function getHits(start, end){
+    if(start <= @{result.num_hits}){
+        end = end > @{result.num_hits} ? @{result.num_hits} : end;
+        this.shownHits += this.showMore;
+        var route = jsRoutes.controllers.HHpredController.loadHits('@{jobID}',start, end);
+        $.ajax({
+            method: route.method,
+            url: route.url
+        }).done(function (data_) {
+            $("#alignmentTable").append(data_);
+        });
+    }
+}
 </script>
