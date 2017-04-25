@@ -1,0 +1,71 @@
+@import play.api.libs.json.JsObject
+@import play.api.libs.json.JsValue
+@import play.api.Logger
+@import models.results.FileLoader
+@import play.api.libs.json.JsUndefined
+@import play.api.libs.json.JsDefined
+@import models.results.BlastVisualization
+@import modules.tel.TEL
+@import models.database.results.HHBlitsHSP
+@(jobID: String, hit: HHBlitsHSP)(implicit request: RequestHeader)
+@* hit number, links *@
+<tr>
+    <td></td>
+    <td colspan="3">
+    @BlastVisualization.getLinksHHpred(hit.template.accession)
+    </td>
+    <td></td>
+</tr>
+@* checkboxes, accession, name of hit*@
+<tr class="header">
+    <td ><input type="checkbox" name="templates" class="checkbox_hhblits" value='@{hit.num}'> @{hit.num}.</td>
+<td colspan="4">
+    @BlastVisualization.getSingleLink(hit.template.accession)
+    @{"  "+ hit.description}
+</td>
+</tr>
+@* Alignment Details*@
+<tr>
+    <td></td>
+    <td colspan="4">Probability: @{hit.info.probab}, E-value: @{hit.info.evalue},
+        Score: @{hit.info.score}, Aligned Cols: @{hit.info.aligned_cols},
+        Identities: @{BlastVisualization.percentage(hit.info.identities.toString)},
+        Similarity: @{hit.info.similarity}
+
+
+                                </td>
+</tr>
+<tr>
+    <td><br /></td>
+</tr>
+
+@if(!hit.query.seq.isEmpty) {
+    @{
+        BlastVisualization.makeRow("sequence", Array("Q",hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) +" "+hit.query.end.toString + " "+"("+hit.query.ref+")"))
+    }
+}
+@*Consensus of query, if present*@
+@if(!hit.query.consensus.isEmpty) {
+    @{
+        BlastVisualization.makeRow("sequence", Array("Q", "Consensus",hit.query.start.toString, hit.query.consensus +" "+hit.query.end.toString +" "+"("+hit.query.ref+")"))
+    }
+}
+@* agree of query, if present *@
+
+@BlastVisualization.makeRow("sequence", Array("","","",hit.agree))
+
+@*  consensus template, if present *@
+@if(!hit.template.consensus.isEmpty) {
+    @{
+        BlastVisualization.makeRow("sequence", Array("T", "Consensus",hit.template.start.toString, hit.template.consensus + " "+hit.query.end.toString +" "+"("+hit.template.ref+")"))
+    }
+}
+@*  seq template, if present *@
+@if(!hit.template.seq.isEmpty) {
+    @{
+        BlastVisualization.makeRow("sequence", Array("T",hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) +" "+hit.template.end.toString + " "+"("+hit.query.ref+")"))
+    }
+}
+<tr>
+    <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
+</tr>
