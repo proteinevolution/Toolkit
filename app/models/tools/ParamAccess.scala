@@ -252,4 +252,8 @@ class ParamAccess @Inject() (tel: TEL) {
   final val SAMCC_PERIODICITY = select("samcc_periodicity", "Periodicity" )
   final val EFF_CRICK_ANGLE = select("eff_crick_angle", "Effective Crick angle" )
   final val REGKEY = Param("regkey", Text, 1, "Please insert your MODELLER-key")
+  final val SAMCC_HELIXONE = Param("samcc_helixone", Text, 1, "Definition for helix 1")
+  final val SAMCC_HELIXTWO = Param("samcc_helixtwo", Text, 1, "Definition for helix 2")
+  final val SAMCC_HELIXTHREE = Param("samcc_helixthree", Text, 1, "Definition for helix 3")
+  final val SAMCC_HELIXFOUR = Param("samcc_helixfour", Text, 1, "Definition for helix 4")
 }
