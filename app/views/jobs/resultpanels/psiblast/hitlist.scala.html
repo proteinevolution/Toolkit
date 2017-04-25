@@ -24,6 +24,7 @@
             <a type="button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
         </div>
     </div>
+    Number of sequences: @{result.num_hits}
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
             <div class='flat-slider' id='flat-slider'></div>
@@ -54,10 +55,6 @@
             <form id="psiblast_templates">
                   <table class="unstriped">
                     <tbody id="alignmentTable">
-                        Number of sequences: @{result.num_hits}
-                        <br />
-                        <br />
-
                     </tbody>
                   </table>
             </form>
