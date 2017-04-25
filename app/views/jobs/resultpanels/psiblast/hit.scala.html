@@ -13,7 +13,7 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td ><input type="checkbox" name="templates" class="checkbox_hhpred" value='@{hit.num}'> @{hit.num}.</td>
+    <td ><input type="checkbox" name="templates" class="checkbox_psiblast" value='@{hit.num}'> @{hit.num}.</td>
 <td colspan="4">
     @{BlastVisualization.getSingleLinkDB(db , hit.accession)}
     @{"  "+hit.description}
@@ -40,15 +40,15 @@
 @* color only 150 first hits, to avoid bloating of the generated html*@
     @* Query *@
     @{
-        BlastVisualization.makeRow("sequence", Array("Query", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq), hit.query_end.toString))
+        BlastVisualization.makeRow("sequence", Array("Query", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq)+ " " + hit.query_end.toString))
     }
     @* Midline *@
     @{
-        BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline), ""))
+        BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline)))
     }
     @* Hit *@
     @{
-        BlastVisualization.makeRow("sequence", Array("Hit", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))
+        BlastVisualization.makeRow("sequence", Array("Hit", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + " " + hit.hit_end.toString))
     }
 
 <tr>

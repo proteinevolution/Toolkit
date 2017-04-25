@@ -36,7 +36,7 @@
     </div>
     <div id="hitlist">
         <h5 id="hitlistTitle">Hitlist</h5>
-            <table id="htb" class="display" cellspacing="0" width="80%">
+            <table id="htb" class="display" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>Nr</th>
@@ -70,7 +70,7 @@ var hitlist;
 var query;
 var selectAllBool_@{tool.toolNameShort} = false;
 var shownHits = 0;
-var showMore = 10;
+var showMore = 100;
 
 (function()  {
 
@@ -167,7 +167,7 @@ function _deselectAll(){
 }
 
 window["@{tool.toolNameShort}_selectAll"] = function () {
-    //selectAllDatatable(this.hitlist.fnGetNodes());
+    selectAllDatatable(this.hitlist.fnGetNodes());
     this.selectAllBool_@{tool.toolNameShort} = !this.selectAllBool_@{tool.toolNameShort};
     if(this.selectAllBool_@{tool.toolNameShort}) {
         selectAll(checkbox_@{tool.toolNameShort});
