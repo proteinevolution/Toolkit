@@ -119,10 +119,10 @@ window.JobListComponent = {
     sortList        : function(sort, reverse) {      // Sorting the list elements
         var oldSort, sameMode, inv, selectedJobID, selectedInView = false;
         oldSort = JobListComponent.sort;    // grab the old sort
-        sameMode = (oldSort.mode === sort); // see if the mode has changed
-        // If the mode has changed adjust the order (ascending - true / descending - false)
-        if (sort != null || sameMode) { // check if the same mode is on
-            JobListComponent.sort = { mode : sort, asc : (sameMode && reverse ? !oldSort.asc : true) }
+        if (sort != null && reverse != null) {
+            sameMode = (oldSort.mode === sort); // see if the mode has changed
+            // If the mode has changed adjust the order (ascending - true / descending - false)
+            JobListComponent.sort = { mode : sort, asc : ((sameMode && reverse) ? !oldSort.asc : true) }
         }
         // inv gets multiplied to invert the sorting order
         inv = JobListComponent.sort.asc ? 1 : -1;
@@ -130,6 +130,7 @@ window.JobListComponent = {
         selectedJobID = JobListComponent.selectedJobID;
         JobListComponent.visibleJobs().map(function(job) { if (job.jobID === selectedJobID) selectedInView = true; });
         // Sort the list
+        console.log("Sorting joblist...",JobListComponent.sort);
         JobListComponent.list.sort(function(job1, job2) {
             switch (JobListComponent.sort.mode) {
                 case "toolName"  : return inv * job2.toolname.localeCompare(job1.toolname);
