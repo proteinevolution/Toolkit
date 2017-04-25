@@ -57,71 +57,11 @@
             <h5 id="alignmentsTitle">Alignments</h5>
                 <form id="hhpred_templates">
                     <table class="unstriped">
-                        <tbody>
+                        <tbody id="alignmentTable">
                             Number of sequences: @{result.num_hits}
                             <br />
                             <br />
-                                @for(hit <- result.HSPS){
-                                    @* hit number, links *@
-                                    <tr>
-                                        <td></td>
-                                        <td colspan="3">
-                                        @BlastVisualization.getLinksHmmer(hit.accession)
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                    @* checkboxes, accession, name of hit*@
-                                    <tr class="header">
-                                        <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}</td>
-                                        <td colspan="4">
-                                            @BlastVisualization.getSingleLinkDB(result.db,hit.accession)
-                                            @{"  "+hit.description}
-                                        </td>
-                                    </tr>
-                                    @* Alignment Details*@
-                                    <tr>
-                                        <td></td>
-                                        <td colspan="4">E-value: @{hit.evalue},
-                                            Score: @{hit.bitscore}, Hit length: @{hit.hit_len},
-                                            Domain expected number: @{hit.dom_exp_num}, Domain observed number: @{hit.domain_obs_num}
-                                    </td>
-                                    </tr>
-                                    @* color only 150 first hits, to avoid bloating of the generated html*@
-                                    @if(hit.num <  150) {
-                                        @* seq of query, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("Q", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq), hit.query_end.toString))
-                                        }
-                                        @* agree of query, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline), ""))
-                                        }
-                                        @* seq of hit, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("H", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))
-                                        }
-                                    }else{
-                                        @* seq of query, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("Q", hit.query_start.toString, hit.query_seq, hit.query_end.toString))
-                                        }
-                                        @* agree of query, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("", "", hit.midline, ""))
-                                        }
-                                        @* seq of hit, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("H", hit.hit_start.toString, hit.hit_seq, hit.hit_end.toString))
-                                        }
 
-                                    }
-                                    <tr>
-                                        <td><br /></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
-                                    </tr>
-                                }
                         </tbody>
                     </table>
                 </form>
@@ -135,6 +75,8 @@
         var hitlist;
         var query;
         var selectAllBool_@{tool.toolNameShort} = false;
+        var shownHits = 0;
+        var showMore = 10;
 
         (function()  {
             $(document).on('scroll', function() {
@@ -154,6 +96,9 @@
                     $("#alignmentsScroll").removeClass("colorToggle");
                 }else{
                     $('.scrollContainer').removeClass('fixed');
+                }
+                if($(this).scrollTop() == $(this).height()-$(window).height()){
+                    getHits(shownHits, shownHits+showMore);
                 }
             });
 
@@ -192,6 +137,7 @@
                     setTimeout(function () {
                         slider_show('@{result.query.seq.length}', firstQueryStart, firstQueryEnd)
                     }, 1000);
+                    getHits(shownHits, shownHits+showMore)
                 }
         })();
 
@@ -254,5 +200,19 @@
             resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
         };
 
+        function getHits(start, end){
+            if(start <= @{result.num_hits}){
+                console.log(start + " " + end)
+                end = end > @{result.num_hits} ? @{result.num_hits} : end;
+                this.shownHits += this.showMore;
+                var route = jsRoutes.controllers.HmmerController.loadHits('@{jobID}',start,end);
+                $.ajax({
+                    method: route.method,
+                    url: route.url
+                }).done(function (data_) {
+                    $("#alignmentTable").append(data_);
+                });
+            }
+        }
 
 </script>
