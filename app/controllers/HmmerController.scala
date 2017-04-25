@@ -48,7 +48,7 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
   def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[HmmerHSP]] = {
     if (params.sSearch.isEmpty) {
       getResult(jobID).map {
-        case Some(result) => hmmer.parseResult(result).HSPS.slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+        case Some(result) => hmmer.hitsOrderBy(params, hmmer.parseResult(result).HSPS).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
       }
     } else {
       ???
@@ -76,7 +76,7 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
         result.num_hits
       }
     }
-    hmmer.hitsOrderBy(params, hits).flatMap { list =>
+    hits.flatMap { list =>
       total.map { total_ =>
         Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
           .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))

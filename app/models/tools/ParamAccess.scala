@@ -202,7 +202,7 @@ class ParamAccess @Inject() (tel: TEL) {
   final val OFFSET = Param("offset",Decimal("0.01", Some(0),Some(10)),1, "Offset")
   final val OUTORDER = Param("outorder",ParamType.UnconstrainedNumber,1, "Outorder")
   final val ETRESH = Param("inclusion_ethresh",ParamType.UnconstrainedNumber,1, "E-value inclusion threshold")
-  final val HHBLITSDB  =  Param("hhblitsdb",Select(tel.generateValues("hhblitsdb").toSeq),1, "Select HHblts database")
+  final val HHBLITSDB  =  Param("hhblitsdb",Select(tel.generateValues("hhblitsdb").toSeq),1, "Select HHblits database")
   final val ALIGNMODE = select("alignmode", "Alignment Mode")
   final val MSA_GEN_MAX_ITER = select("msa_gen_max_iter", "Maximal no. of MSA generation steps")
   final val MSA_GEN_METHOD = select("msa_gen_method", "MSA generation method")

@@ -89,7 +89,7 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : Reactive
   def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[HHPredHSP]] = {
     if(params.sSearch.isEmpty){
       getResult(jobID).map {
-        case Some(result) => hhpred.parseResult(result).HSPS.slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+        case Some(result) => hhpred.hitsOrderBy(params, hhpred.parseResult(result).HSPS).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
       }
     }else{
       ???
@@ -97,12 +97,6 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : Reactive
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
   def dataTable(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
-    val params = DTParam(
-      request.getQueryString("sSearch").getOrElse(""),
-      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
-      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
-      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
-      request.getQueryString("sSortDir_0").getOrElse("asc"))
 
     var db = ""
     val total = getResult(jobID).map {
@@ -112,9 +106,16 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : Reactive
         result.num_hits
       }
     }
+    val params = DTParam(
+      request.getQueryString("sSearch").getOrElse(""),
+      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
+      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
+      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
+      request.getQueryString("sSortDir_0").getOrElse("asc"))
+
     val hits = getHitsByKeyWord(jobID, params)
 
-    hhpred.hitsOrderBy(params, hits).flatMap { list =>
+    hits.flatMap { list =>
       total.map { total_ =>
         Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
           .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
