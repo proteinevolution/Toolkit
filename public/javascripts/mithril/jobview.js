@@ -23,7 +23,7 @@ window.JobViewComponent = {
             return m("div", "Waiting for Job");
         } else {
             if (!args.job().successful) {
-                return m.route("pagenotfound");
+                return m.component(ErrorRouteComponent, { errorID : 404 });
             } else {
                 return m("div", {
                     id: "jobview"
