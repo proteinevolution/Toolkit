@@ -264,7 +264,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
     // Hmmer
     ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.HMMER_DB,
-      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVALUE, paramAccess.DESC), Seq("kalign"),Seq.empty),
+      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVALUE, paramAccess.DESC), Seq("kalign"),Seq("hhblits")),
 
 
       // Aln2Plot

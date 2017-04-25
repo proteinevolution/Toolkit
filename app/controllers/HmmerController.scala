@@ -2,6 +2,13 @@ package controllers
 
 import javax.inject.Inject
 
+import com.typesafe.config.ConfigFactory
+import com.typesafe.config.ConfigFactory
+
+import scala.sys.process._
+import better.files._
+import models.Constants
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import modules.CommonModule
 import models.database.results._
@@ -10,11 +17,70 @@ import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.Future
-
+import scala.sys.process.Process
 /**
   * Created by drau on 18.04.17.
   */
-class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMongoApi : ReactiveMongoApi) extends Controller with CommonModule {
+class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMongoApi : ReactiveMongoApi) extends Controller with CommonModule with Common with Constants{
+
+
+  private val serverScripts = ConfigFactory.load().getString("serverScripts")
+  private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
+
+  retrieveFullSeq.setPermissions(filePermissions)
+
+  def evalFull(jobID : String, eval: String) : Action[AnyContent] = Action.async { implicit request =>
+
+    if(!retrieveFullSeq.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
+    } else {
+      getResult(jobID).map {
+        case Some(jsValue) =>
+          val result = hmmer.parseResult(jsValue)
+          val accessionsStr = getAccessionsEval(result, eval.toDouble)
+          val db = result.db
+          Process(retrieveFullSeq.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accessionsStr" -> accessionsStr, "db" -> db).run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+
+        case _=> NotFound
+      }
+    }
+  }
+
+  def full(jobID : String, numList: Seq[Int]) : Action[AnyContent] = Action.async { implicit request =>
+
+    if(!retrieveFullSeq.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
+    } else {
+      getResult(jobID).map {
+        case Some(jsValue) =>
+          val result = hmmer.parseResult(jsValue)
+          val accessionsStr = getAccessions(result, numList)
+          val db = result.db
+          Process(retrieveFullSeq.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accessionsStr" -> accessionsStr, "db" -> db).run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+
+        case _=> NotFound
+      }
+    }
+  }
+
+  def getAccessions(result : HmmerResult, numList : Seq[Int]) : String = {
+    val fas = numList.map { num =>
+      result.HSPS(num - 1).accession + " "
+    }
+    fas.mkString
+  }
+  def getAccessionsEval(result : HmmerResult, eval: Double) : String = {
+    val fas = result.HSPS.filter(_.evalue < eval).map { _.accession + " "}
+    fas.mkString
+  }
 
   def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
       getResult(jobID).map {
