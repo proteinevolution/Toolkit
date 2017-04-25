@@ -89,7 +89,7 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : Reactive
   def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[HHPredHSP]] = {
     if(params.sSearch.isEmpty){
       getResult(jobID).map {
-        case Some(result) => hhpred.hitsOrderBy(params, hhpred.parseResult(result).HSPS.slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength))
+        case Some(result) => hhpred.hitsOrderBy(params, hhpred.parseResult(result).HSPS).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
       }
     }else{
       ???
