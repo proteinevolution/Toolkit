@@ -437,7 +437,7 @@ class SignUp {
                                  onchange: m.withAttr("checked", SignUp.acceptToSSetter),
                                  value:    SignUp.acceptToS
                     }),
-                    "I Accept the Terms of Sevice",
+                    "I Accept the Terms of Service",
                     m("span", {class:"form-error", id:'acceptToSText'}, "You must accept the ToS!")
                 ])),
                 m("input", { class: "input small expanded secondary button" + (SignUp.formValid? "" : " disabled"),
