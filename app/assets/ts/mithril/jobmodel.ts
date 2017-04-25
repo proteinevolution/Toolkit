@@ -8,7 +8,7 @@ window.JobModel = {
         "min_cov": "20",
         "min_seqid_query": "0",
         "gap_open": 11,
-        "desc": 500,
+        "desc": "100",
         "alignmode": "local",
         "maxrounds": "2",
         "matrix": "BLOSUM62",
@@ -53,7 +53,8 @@ window.JobModel = {
         "no_replicates":"0",
         "matrix_phyml":"LG",
         "eff_crick_angle":"1",
-        "samcc_periodicity":"7"
+        "samcc_periodicity":"7",
+        "seqcount":"500"
 },
 
     /* Seems not to be used
@@ -75,8 +76,15 @@ window.JobModel = {
                     ownerName: data.ownerName,
                     createdOn: data.createdOn,
                     jobstate: data.state,
-                    views: data.views
+                    views: data.views,
+                    successful : true
                 };
+            }).catch(function(e){
+                return {
+                    error : e,
+                    isJob: true,
+                    successful : false
+                }
             });
         } else {
             return m.request({
@@ -87,8 +95,15 @@ window.JobModel = {
                 return {
                     tool: toolitem,
                     isJob: false,
-                    jobID: ""
+                    jobID: "",
+                    successful : true
                 };
+            }).catch(function(e){
+                return {
+                    error : e,
+                    isJob: false,
+                    successful : false
+                }
             });
         }
     },

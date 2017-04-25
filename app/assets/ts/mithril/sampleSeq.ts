@@ -37,6 +37,8 @@ const tprSeq : string = ">sp|Q8N0Z6|TTC5_HUMAN Tetratricopeptide repeat protein 
 //Example of NCBI headers; headers are of H2A proteins
 const protHeaders : string = "AAN59974.1\nNP_009552.1\nXP_641587.1\nNP_001005967.1\nNP_001027366.1\nNP_175517.1\nNP_001263788.1\n";
 
+const modellerPIR : string = ">P1;UKNP\nsequence:UKNP:1    :A:132  :A::::\nMSGRGKQGG-KARAKAKTRSSRAGLQFPVGRVHRLLRKGNY-AERVGAGAPVYLAAVLEYLTAEILELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLGKVTIAQGGVLPNIQAVLLPKKTESHHKAKGK*\n>P1;4WNN\nstructure:4WNN:18  :C:100 :C::Saccharomyces cerevisiae:1.8:\n-----------------SRSAKAGLTFPVGRVHRLLRRGNY-AQRIGSGAPVYLTAVLEYLAAEILELAGNAARDNKKTRIIPRHLQLAIRNDDELNKLLG-------------------------------*\n>P1;4CAY\nstructure:4CAY:2   :A:91  :A::HOMO SAPIENS:1.48:\n-----------------SRSQRAGLQFPVGRIHRHLKSR----GRVGATAAVYSAAILEYLTAEVLELAGNASKDLKVKRITPRHLQLAIRGDEELDSLIK-ATIAGG------------------------*\n>P1;5B0Z\nstructure:5B0Z:15  :C:122 :C::Homo sapiens:1.987:\n------------RAKAKTRSSRAGLQFPVGRVHRLLRKGNY-SERVGAGAPVYLAAVLEYLTAEILELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLGRVTIAQGGVLPNIQAVLLPK-----------*"
+
 let sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
 
 
@@ -143,6 +145,11 @@ let sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
                 case "clans":
                     $a.val(multiProtSeq);
                     break;
+
+                case "modeller":
+                    $a.val(modellerPIR);
+                    break;
+
 
                 case "mmseqs2":
                     $a.val(multiProtSeq);

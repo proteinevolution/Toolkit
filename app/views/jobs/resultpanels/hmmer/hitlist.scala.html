@@ -11,32 +11,34 @@
     </div>
 
 }else{
+    @* Loads ForwardModal *@
+    @views.html.forwardmodals.normal(tool, tool.toolNameShort)
     <div id="stickyAnchor"></div>
     <div class="scrollContainer">
-        <p><a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a></p>
-        <p><a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hitlist</a></p>
-        <p><a id="alignmentsScroll" onclick="scrollToSection('alignments')">Alignments</a></p>
+        <div id="scrollLinks">
+            <a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a>
+            <a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hitlist</a>
+            <a id="alignmentsScroll" onclick="scrollToSection('alignments')">Alignments</a>
+        </div>
+        <span class="headerDivider"></span>
+        <div id="controlls">
+            <a onclick="@{tool.toolNameShort}_selectAll()" class="selectAllSeq_@{tool.toolNameShort}">Select all</a>
+            <a type="button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
+        </div>
     </div>
-    @* Loads ForwardModal *@
-    @views.html.forwardmodals.simple(tool, tool.toolNameShort)
+    Number of sequences: @{result.num_hits}
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
-                <div class='flat-slider' id='flat-slider'></div>
-                <div id='blastviz'>
-                    <a class="success button tiny resubmitSection" onclick="@{tool.toolNameShort}_resubmitSection()" type="button" id="resubmitSection">
-                        Resubmit section</a>
-                        @BlastVisualization.html(s"$jobID/results/blastviz.html")
-                        <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
-                </div>
-
+            <div class='flat-slider' id='flat-slider'></div>
+            <div id='blastviz'>
+                <a class="success button tiny resubmitSection" onclick="@{tool.toolNameShort}_resubmitSection()" type="button" id="resubmitSection">
+                    Resubmit section</a>
+                    @BlastVisualization.html(s"$jobID/results/blastviz.html")
+                    <p><img src="files/@jobID/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
+            </div>
     </div>
     <div id="hitlist">
         <h5 id="hitlistTitle">Hitlist</h5>
-            <div class="colorOpts">
-                <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
-                <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
-                <hr id="line-element" class="horizontal-line">
-            </div>
             <table id="htb" class="display" width="100%">
                 <thead>
                     <tr>
@@ -54,85 +56,13 @@
     <div id="alignmentResult">
         <div id="alignments">
             <h5 id="alignmentsTitle">Alignments</h5>
-                <div class="colorOpts">
-                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
-                    <hr id="line-element" colspan="4" class="horizontal-line">
-                </div>
-
                 <form id="hhpred_templates">
                     <table class="unstriped">
-                        <tbody>
-                            Number of sequences: @{result.num_hits}
-                            <br />
-                            <br />
-                                @for(hit <- result.HSPS){
-                                    @* hit number, links *@
-                                    <tr>
-                                        <td></td>
-                                        <td colspan="3">
-                                        @BlastVisualization.getLinksHmmer(hit.accession)
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                    @* checkboxes, accession, name of hit*@
-                                    <tr class="header">
-                                        <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}</td>
-                                        <td colspan="4">
-                                            @BlastVisualization.getSingleLinkDB(result.db,hit.accession)
-                                            @{"  "+hit.description}
-                                        </td>
-                                    </tr>
-                                    @* Alignment Details*@
-                                    <tr>
-                                        <td></td>
-                                        <td colspan="4">E-value: @{hit.evalue},
-                                            Score: @{hit.bitscore}, Hit length: @{hit.hit_len},
-                                            Domain expected number: @{hit.dom_exp_num}, Domain observed number: @{hit.domain_obs_num}
-                                    </td>
-                                    </tr>
-                                    @* color only 150 first hits, to avoid bloating of the generated html*@
-                                    @if(hit.num <  150) {
-                                        @* seq of query, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("Q", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq), hit.query_end.toString))
-                                        }
-                                        @* agree of query, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline), ""))
-                                        }
-                                        @* seq of hit, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("H", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq), hit.hit_end.toString))
-                                        }
-                                    }else{
-                                        @* seq of query, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("Q", hit.query_start.toString, hit.query_seq, hit.query_end.toString))
-                                        }
-                                        @* agree of query, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("", "", hit.midline, ""))
-                                        }
-                                        @* seq of hit, if present *@
-                                        @{
-                                            BlastVisualization.makeRow("sequence", Array("H", hit.hit_start.toString, hit.hit_seq, hit.hit_end.toString))
-                                        }
-
-                                    }
-                                    <tr>
-                                        <td><br /></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
-                                    </tr>
-                                }
+                        <tbody id="alignmentTable">
                         </tbody>
                     </table>
                 </form>
-
-
-            </div>
+        </div>
     </div>
 }
 <script>
@@ -140,6 +70,8 @@
         var hitlist;
         var query;
         var selectAllBool_@{tool.toolNameShort} = false;
+        var shownHits = 0;
+        var showMore = 100;
 
         (function()  {
             $(document).on('scroll', function() {
@@ -159,6 +91,9 @@
                     $("#alignmentsScroll").removeClass("colorToggle");
                 }else{
                     $('.scrollContainer').removeClass('fixed');
+                }
+                if($(this).scrollTop() == $(this).height()-$(window).height()){
+                    getHits(shownHits, shownHits+showMore);
                 }
             });
 
@@ -197,6 +132,7 @@
                     setTimeout(function () {
                         slider_show('@{result.query.seq.length}', firstQueryStart, firstQueryEnd)
                     }, 1000);
+                    getHits(shownHits, shownHits+showMore)
                 }
         })();
 
@@ -216,22 +152,35 @@
         }
 
         window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
-            if(boolEvalue) {
-                var route = jsRoutes.controllers.HmmerController.alnEval('@jobID', evalue);
+            var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
+            if(boolFullLength) {
+                if(boolEvalue) {
+                    var route = jsRoutes.controllers.HmmerController.evalFull('@{jobID}', evalue);
+                }else{
+                    var route = jsRoutes.controllers.HmmerController.full('@{jobID}', checkedCheckboxes);
+                }
                 $.ajax({
                     url: route.url,
                     method: route.method
-                }).done(function (data_) {
-                    forward(selectedTool, data_.toString());
+                }).done(function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: 'files/@{jobID}/sequences.fa'
+                    }).done(function (data_) {
+                        forward(selectedTool, data_.toString());
+                    });
                 });
-            }else if(boolSelectedHits){
-                var data = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
-                var route = jsRoutes.controllers.HmmerController.aln('@jobID', data);
+            }else{
+                if(boolEvalue) {
+                    route = jsRoutes.controllers.HmmerController.alnEval('@{jobID}', evalue);
+                }else{
+                    route = jsRoutes.controllers.HmmerController.aln('@{jobID}', checkedCheckboxes);
+                }
                 $.ajax({
                     url: route.url,
                     method: route.method
                 }).done(function (data_) {
-                    forward(selectedTool, data_.toString());
+                    forward(selectedTool, data_);
                 });
             }
         };
@@ -259,5 +208,19 @@
             resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
         };
 
+        function getHits(start, end){
+            if(start <= @{result.num_hits}){
+                console.log(start + " " + end)
+                end = end > @{result.num_hits} ? @{result.num_hits} : end;
+                this.shownHits += this.showMore;
+                var route = jsRoutes.controllers.HmmerController.loadHits('@{jobID}',start,end);
+                $.ajax({
+                    method: route.method,
+                    url: route.url
+                }).done(function (data_) {
+                    $("#alignmentTable").append(data_);
+                });
+            }
+        }
 
 </script>

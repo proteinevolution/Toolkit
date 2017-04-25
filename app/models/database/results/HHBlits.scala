@@ -38,14 +38,15 @@ class HHBlits @Inject() (general: General) {
     case obj: JsObject => try {
       val jobID = (obj \ "jobID").as[String]
       val alignments = (obj \ jobID \ "alignments").as[List[JsObject]]
+      val hits = (obj \ jobID \ "hits").as[List[JsObject]]
+      val hsplist = alignments.zip(hits).map{ x =>
+        val queryResult = parseQuery((x._1 \  "query").as[JsObject])
+        val infoResult = parseInfo((x._1 \ "info").as[JsObject])
 
-      val hsplist = alignments.map{ hit =>
-        val queryResult = parseQuery((hit \  "query").as[JsObject])
-        val infoResult = parseInfo((hit \ "info").as[JsObject])
-        val templateResult = parseTemplate(( hit \ "template").as[JsObject])
-        val agree = (hit \ "agree").as[String]
-        val description = ( hit \ "header").as[String]
-        val num = (hit \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
+        val templateResult = parseTemplate(( x._1 \ "template").as[JsObject], x._2)
+        val agree = (x._1 \ "agree").as[String]
+        val description = ( x._1 \ "header").as[String]
+        val num = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
         HHBlitsHSP(queryResult, templateResult, infoResult, agree, description, num)
       }
       val db = (obj \ jobID \ "db").as[String]
@@ -77,10 +78,10 @@ class HHBlits @Inject() (general: General) {
     HHBlitsInfo(aligned_cols, eval, identities, probab, score, similarity)
   }
 
-  def parseTemplate(obj: JsObject) : HHBlitsTemplate = {
+  def parseTemplate(obj: JsObject, hit: JsObject) : HHBlitsTemplate = {
     val consensus = (obj \ "consensus").getOrElse(Json.toJson("")).as[String]
     val end = (obj \ "end").getOrElse(Json.toJson(-1)).as[Int]
-    val accession = (obj \ "name").getOrElse(Json.toJson("")).as[String]
+    val accession = general.refineAccession((hit \ "struc").getOrElse(Json.toJson("")).as[String])
     val ref = (obj \ "ref").getOrElse(Json.toJson(-1)).as[Int]
     val seq = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
     val start = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
@@ -88,21 +89,21 @@ class HHBlits @Inject() (general: General) {
   }
 
 
-  def hitsOrderBy(params: DTParam, hits: Future[List[HHBlitsHSP]]) = {
+  def hitsOrderBy(params: DTParam, hits: List[HHBlitsHSP]) = {
     (params.iSortCol, params.sSortDir) match {
-      case (1, "asc") => hits.map(x => x.sortBy(_.template.accession))
-      case (1, "desc") => hits.map(x => x.sortWith(_.template.accession > _.template.accession))
-      case (2, "asc") => hits.map(x => x.sortBy(_.description))
-      case (2, "desc") => hits.map(x => x.sortWith(_.description > _.description))
-      case (3, "asc") => hits.map(x => x.sortBy(_.info.probab))
-      case (3, "desc") => hits.map(x => x.sortWith(_.info.probab > _.info.probab))
-      case (4, "asc") => hits.map(x => x.sortBy(_.info.evalue))
-      case (4, "desc") => hits.map(x => x.sortWith(_.info.evalue > _.info.evalue))
-      case (5, "asc") => hits.map(x => x.sortBy(_.info.aligned_cols))
-      case (5, "desc") => hits.map(x => x.sortWith(_.info.aligned_cols > _.info.aligned_cols))
-      case (6, "asc") => hits.map(x => x.sortBy(_.template.ref))
-      case (6, "desc") => hits.map(x => x.sortWith(_.template.ref > _.template.ref))
-      case (_, _) => hits.map(x => x.sortBy(_.num))
+      case (1, "asc") => hits.sortBy(_.template.accession)
+      case (1, "desc") => hits.sortWith(_.template.accession > _.template.accession)
+      case (2, "asc") => hits.sortBy(_.description)
+      case (2, "desc") => hits.sortWith(_.description > _.description)
+      case (3, "asc") => hits.sortBy(_.info.probab)
+      case (3, "desc") => hits.sortWith(_.info.probab > _.info.probab)
+      case (4, "asc") => hits.sortBy(_.info.evalue)
+      case (4, "desc") => hits.sortWith(_.info.evalue > _.info.evalue)
+      case (5, "asc") => hits.sortBy(_.info.aligned_cols)
+      case (5, "desc") => hits.sortWith(_.info.aligned_cols > _.info.aligned_cols)
+      case (6, "asc") => hits.sortBy(_.template.ref)
+      case (6, "desc") => hits.sortWith(_.template.ref > _.template.ref)
+      case (_, _) => hits.sortBy(_.num)
     }
   }
 }

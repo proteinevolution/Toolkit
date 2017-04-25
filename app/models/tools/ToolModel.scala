@@ -102,15 +102,16 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
   val values : Map[String, Tool] = Set(
     // HHblits
     ("hhblits", "HHblits", "hhb", "search", "",
-      Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.HHBLITS_INCL_EVAL, paramAccess.MAXROUNDS,
-        paramAccess.PMIN, paramAccess.MAX_LINES, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq("modeller", "hhpred")),
+
+    Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.HHBLITS_INCL_EVAL, paramAccess.MAXROUNDS,
+      paramAccess.PMIN, paramAccess.DESC), Seq("hhblits", "hhpred", "hhrepid" ),Seq("hhpred")),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
       Seq(paramAccess.PROTEOMES, paramAccess.HHSUITEDB, paramAccess.TWOTEXTALIGNMENT, paramAccess.MSA_GEN_METHOD,
         paramAccess.MSA_GEN_MAX_ITER, paramAccess.SS_SCORING, paramAccess.MACMODE, paramAccess.MACTHRESHOLD,
         paramAccess.MIN_COV, paramAccess.MIN_SEQID_QUERY, paramAccess.HHPRED_INCL_EVAL,
-        paramAccess.MAX_LINES, paramAccess.PMIN, paramAccess.ALIGNMODE), Seq("modeller", "hhpred"),Seq.empty),
+        paramAccess.DESC, paramAccess.PMIN, paramAccess.ALIGNMODE), Seq("hhblits", "hhpred", "hhrepid"),Seq.empty),
 
     // HHpred - Manual Template Selection
     ("hhpred_manual", "HHpred - ManualTemplate Selection", "hhp", "forward", "",  Seq.empty, Seq.empty,Seq.empty),
@@ -156,7 +157,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
     // Hmmer
     ("hmmer", "HMMER", "hmmr", "search", "", Seq(paramAccess.SEQORALI, paramAccess.HMMER_DB,
-      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVALUE, paramAccess.DESC), Seq("kalign"),Seq.empty),
+      paramAccess.MAX_HHBLITS_ITER, paramAccess.EVALUE, paramAccess.DESC), Seq("kalign"),Seq("hhblits")),
 
 
     // Aln2Plot
@@ -166,8 +167,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
     ("pcoils", "PCOILS", "pco", "seqanal", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.PCOILS_INPUT_MODE, paramAccess.PCOILS_MATRIX, paramAccess.PCOILS_WEIGHTING), Seq.empty,Seq.empty),
 
-    // FRrped
-    ("frpred", "FRpred", "frp", "seqanal", "",Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
+    // FRpred; Not for first release
+    //("frpred", "FRpred", "frp", "seqanal", "",Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
 
     // HHrepID
     ("hhrepid", "HHrepID", "hhr", "seqanal", "",Seq(paramAccess.SEQORALI, paramAccess.MSA_GEN_MAX_ITER,
@@ -178,9 +179,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
     ("marcoil", "MARCOIL", "mar", "seqanal", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_MARCOIL, paramAccess.TRANSITION_PROBABILITY), Seq.empty,Seq.empty),
 
-    // REPPER
-    ("repper", "Repper", "rep", "seqanal", "",
-      Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
+    // REPPER Not for first release
+    //("repper", "Repper", "rep", "seqanal", "", Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
 
     // TPRpred
     ("tprpred", "TPRpred", "tprp", "seqanal", "",
@@ -196,12 +196,13 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
       Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
 
     // Modeller
-    ("modeller", "Modeller", "mod", "3ary", "",
-      Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
+    ("modeller", "MODELLER", "mod", "3ary", "",
+      Seq(paramAccess.ALIGNMENT, paramAccess.REGKEY), Seq.empty,Seq.empty),
 
     // SamCC
     ("samcc", "SamCC", "sam", "3ary", "",
-      Seq(paramAccess.ALIGNMENT, paramAccess.SAMCC_PERIODICITY, paramAccess.EFF_CRICK_ANGLE), Seq.empty,Seq.empty),
+      Seq(paramAccess.ALIGNMENT, paramAccess.SAMCC_HELIXONE, paramAccess.SAMCC_HELIXTWO, paramAccess.SAMCC_HELIXTHREE,
+        paramAccess.SAMCC_HELIXFOUR, paramAccess.SAMCC_PERIODICITY, paramAccess.EFF_CRICK_ANGLE), Seq.empty,Seq.empty),
 
     // RetrieveSeq
     ("retseq", "RetrieveSeq", "ret", "utils", "",
@@ -578,7 +579,8 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
 
             lazy val paramGroups = Map(
               "Input" -> Seq(paramAccess.ALIGNMENT.name, paramAccess.STANDARD_DB.name, paramAccess.HHSUITEDB.name,
-                paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name, paramAccess.PROTEOMES.name, paramAccess.HMMER_DB.name)
+                paramAccess.PROTBLASTPROGRAM.name, paramAccess.HHBLITSDB.name, paramAccess.PROTEOMES.name, paramAccess.HMMER_DB.name, paramAccess.REGKEY.name,
+                paramAccess.GRAMMAR.name, paramAccess.SAMCC_HELIXONE.name, paramAccess.SAMCC_HELIXTWO.name, paramAccess.SAMCC_HELIXTHREE.name, paramAccess.SAMCC_HELIXFOUR.name)
             )
             // Params which are not a part of any group (given by the name)
             lazy val remainParamName : String = "Parameters"

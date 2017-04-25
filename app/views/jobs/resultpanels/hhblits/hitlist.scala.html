@@ -19,10 +19,19 @@
     @* Load html Map used for the image representation *@
     <div id="stickyAnchor"></div>
     <div class="scrollContainer">
-        <p><a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a></p>
-        <p><a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hitlist</a></p>
-        <p><a id="alignmentsScroll" onclick="scrollToSection('alignments')">Alignments</a></p>
+        <div id="scrollLinks">
+            <a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a>
+            <a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hitlist</a>
+            <a id="alignmentsScroll" onclick="scrollToSection('alignments')">Alignments</a>
+        </div>
+        <span class="headerDivider"></span>
+        <div id="controlls">
+            <a onclick="@{tool.toolNameShort}_selectAll()" class="selectAllSeq_@{tool.toolNameShort}">Select all</a>
+            <a data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
+            <a data-open="forwardModal_@{tool.toolNameShort}_hhsuite">Forward Query MSA</a>
+        </div>
     </div>
+    Number of sequences: @result.num_hits
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div class='flat-slider' id='flat-slider'></div>
@@ -37,12 +46,6 @@
     </div>
     <div id="hitlist">
         <h5 id="hitlistTitle">Hitlist</h5>
-                <div class="colorOpts">
-                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
-                    <hr id="line-element" colspan="4" class="horizontal-line">
-                </div>
                 <table id="htb" class="display" cellspacing="0" width="100%">
                     <thead>
                         <tr>
@@ -60,81 +63,9 @@
     <div id="alignmentResult">
         <div id="alignments">
             <h5 id="alignmentsTitle">Alignments</h5>
-                <div class="colorOpts">
-                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
-                    <hr id="line-element" colspan="4" class="horizontal-line">
-                </div>
                 <form id="hhpred_templates">
                     <table class="unstriped">
-                        <tbody>
-                            Number of sequences: @result.num_hits
-                            <br />
-                            <br />
-                            @for(hit <- result.HSPS){
-                                @* hit number, links *@
-                                <tr>
-                                    <td></td>
-                                    <td colspan="3">
-                                    @BlastVisualization.getLinksHHpred(hit.template.accession)
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                @* checkboxes, accession, name of hit*@
-                                <tr class="header">
-                                    <td ><input type="checkbox" name="templates" class="checkbox_@{tool.toolNameShort}" value='@{hit.num}'> @{hit.num}.</td>
-                                <td colspan="4">
-                                    @BlastVisualization.getSingleLink(hit.template.accession)
-                                    @{"  "+ hit.description}
-                                </td>
-                                </tr>
-                                @* Alignment Details*@
-                                <tr>
-                                    <td></td>
-                                    <td colspan="4">Probability: @{hit.info.probab}, E-value: @{hit.info.evalue},
-                                        Score: @{hit.info.score}, Aligned Cols: @{hit.info.aligned_cols},
-                                        Identities: @{BlastVisualization.percentage(hit.info.identities.toString)},
-                                        Similarity: @{hit.info.similarity}
-
-
-                                </td>
-                                </tr>
-                                <tr>
-                                    <td><br /></td>
-                                </tr>
-
-                                @if(!hit.query.seq.isEmpty) {
-                                    @{
-                                        BlastVisualization.makeRow("sequence", Array("Q",hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) +" "+hit.query.end.toString + " "+"("+hit.query.ref+")"))
-                                    }
-                                }
-                                @*Consensus of query, if present*@
-                                @if(!hit.query.consensus.isEmpty) {
-                                    @{
-                                        BlastVisualization.makeRow("sequence", Array("Q", "Consensus",hit.query.start.toString, hit.query.consensus +" "+hit.query.end.toString +" "+"("+hit.query.ref+")"))
-                                    }
-                                }
-                                @* agree of query, if present *@
-
-                                @BlastVisualization.makeRow("sequence", Array("","","",hit.agree))
-
-                                @*  consensus template, if present *@
-                                @if(!hit.template.consensus.isEmpty) {
-                                    @{
-                                        BlastVisualization.makeRow("sequence", Array("T", "Consensus",hit.template.start.toString, hit.template.consensus + " "+hit.query.end.toString +" "+"("+hit.template.ref+")"))
-                                    }
-                                }
-                                @*  seq template, if present *@
-                                @if(!hit.template.seq.isEmpty) {
-                                    @{
-                                        BlastVisualization.makeRow("sequence", Array("T",hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) +" "+hit.template.end.toString + " "+"("+hit.query.ref+")"))
-                                    }
-                                }
-                                <tr>
-                                    <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
-                                </tr>
-                            }
+                        <tbody id="alignmentTable">
                         </tbody>
                     </table>
                 </form>
@@ -166,7 +97,8 @@
         var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
         var hitlist;
         var selectAllBool_@{tool.toolNameShort} = false;
-        var jobID;
+        var shownHits = 0;
+        var showMore = 10;
 
 
         (function()  {
@@ -188,6 +120,9 @@
                     $("#alignmentsScroll").removeClass("colorToggle");
                 }else{
                     $('.scrollContainer').removeClass('fixed');
+                }
+                if($(this).scrollTop() == $(this).height()-$(window).height()){
+                    getHits(shownHits, shownHits+showMore);
                 }
             });
             // adding loading overlay
@@ -219,6 +154,7 @@
             setTimeout(function () {
                 slider_show('@{result.query.seq.length}', '@{result.HSPS{0}.query.start}', '@{result.HSPS{0}.query.end}');
             }, 1000);
+                getHits(shownHits, shownHits+showMore);
             $("#templateAlignmentModal").foundation();
         }
         })();
@@ -261,32 +197,21 @@
             if(boolFullLength) {
                 if(boolEvalue) {
                     var route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
-                    $.ajax({
-                        url: route.url,
-                        method: route.method
-                    }).done(function () {
-                        $.ajax({
-                            type: 'GET',
-                            url: 'files/@jobID/sequences.fa'
-                        }).done(function (data_) {
-                            forward(selectedTool, data_.toString());
-                        });
-                    });
                 }else{
-                    route = jsRoutes.controllers.HHblits.full('@jobID', checkedCheckboxes);
-                    $.ajax({
-                        url: route.url,
-                        method: route.method
-                    }).done(function (data_) {
-                        $.ajax({
-                            type: 'GET',
-                            url: 'files/@jobID/sequences.fa'
-                        }).done(function (data_) {
-                            forward(selectedTool, data_.toString());
-                        });
-                    });
+                    var route = jsRoutes.controllers.HHblitsController.full('@jobID', checkedCheckboxes);
                 }
-            }else{
+                $.ajax({
+                    url: route.url,
+                    method: route.method
+                }).done(function (data_) {
+                    $.ajax({
+                        type: 'GET',
+                        url: 'files/@jobID/sequences.fa'
+                    }).done(function (data_) {
+                        forward(selectedTool, data_.toString());
+                    });
+                });
+            } else{
 
                 if(boolEvalue) {
                     route = jsRoutes.controllers.HHblitsController.alnEval('@jobID', evalue);
@@ -297,11 +222,17 @@
                     url: route.url,
                     method: route.method
                 }).done(function (data_) {
-                    forward(selectedTool, data_);
+                    $.ajax({
+                        type: 'GET',
+                        url: 'files/@jobID/alignment.fas'
+                    }).done(function (data_) {
+                        forward(selectedTool, data_.toString());
+                    });
                 });
 
             }
         }
+
 
 
         window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
@@ -348,5 +279,18 @@
         }
 
 
+        function getHits(start, end){
+            if(start <= @{result.num_hits}){
+                end = end > @{result.num_hits} ? @{result.num_hits} : end;
+                this.shownHits += this.showMore;
+                var route = jsRoutes.controllers.HHblitsController.loadHits('@{jobID}',start, end);
+                $.ajax({
+                    method: route.method,
+                    url: route.url
+                }).done(function (data_) {
+                    $("#alignmentTable").append(data_);
+                });
+            }
+        }
 
 </script>

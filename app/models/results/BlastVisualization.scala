@@ -85,7 +85,7 @@ object BlastVisualization extends Constants {
     val idPfam = id.replaceAll("am.*$||..*", "")
     val idPdb = id.replaceAll("_.*$", "")
     if(db == "scop") {
-     link += generateLink (pdbBaseLink, idTrimmed, id)
+      link += generateLink(scopBaseLink, id, id)
     }
     else if(db == "mmcif") {
       link += generateLink(pdbBaseLink, idPdb, id)
@@ -160,6 +160,7 @@ object BlastVisualization extends Constants {
         idCDD = idCDD.replaceAll("\\..*","")
         links += generateLink(cddBaseLink, idCDD, "CDD")
       }
+      case uniprotNameReg(_) => ""
     }
     Html(links.mkString(" | "))
   }
@@ -183,9 +184,8 @@ object BlastVisualization extends Constants {
     var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
     if(db == "scop") {
-
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
-      links += generateLink(scopBaseLink, id, "SCOP")
+      links += generateLink (pdbBaseLink, idTrimmed, "PDB")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
     }
     else if(db == "mmcif") {
@@ -223,6 +223,7 @@ object BlastVisualization extends Constants {
     case ncbiReg(_) => "ncbi"
     case uniprotReg(_) => "uniprot"
     case e : String => Logger.info("Struc: ("+e+") could not be matched against any database!");""
+    case e : String => Logger.info("Struc: ("+e+") could not be matched against any database!");""
   }
 
   def percentage(str : String) : String = {
@@ -252,7 +253,7 @@ object BlastVisualization extends Constants {
 
 
   def getCheckbox(num: Int): String ={
-    "<input type=\"checkbox\" value=\"' + $('<div/>').text("+num+").html() + '\"><a onclick=\"scrollToElem("+num+")\">"+num+"</a>"
+    "<input type=\"checkbox\" value=\""+num+"\"><a onclick=\"scrollToElem("+num+")\">"+num+"</a>"
   }
 
   def insertMatch (seq : String, length : Int, hitArr : List[Int]) : String = {

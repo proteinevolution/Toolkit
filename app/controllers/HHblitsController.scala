@@ -27,11 +27,13 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
   extends Controller with Constants with CommonModule with Common {
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
+  private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
 
 
   templateAlignmentScript.setPermissions(filePermissions)
   retrieveFullSeq.setPermissions(filePermissions)
+  generateAlignmentScript.setPermissions(filePermissions)
 
 
   def show3DStructure(accession: String) : Action[AnyContent] = Action { implicit request =>
@@ -97,34 +99,42 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
   }
 
   def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
-      case Some(jsValue) => Ok(getAlnEval(hhblits.parseResult(jsValue), eval.toDouble))
-      case _=> NotFound
+    if(!generateAlignmentScript.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
+    } else {
+      getResult(jobID).map {
+        case Some(jsValue) =>
+          val result = hhblits.parseResult(jsValue)
+          val numListStr = getNumListEval(result, eval.toDouble)
+          Process(generateAlignmentScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "numList" -> numListStr).run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+
+        case _=> NotFound
+      }
     }
   }
 
   def aln(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
-      case Some(jsValue) => Ok(getAln(hhblits.parseResult(jsValue), numList))
-      case _ => NotFound
-    }
-  }
-
-  def getAlnEval(result : HHBlitsResult,  eval : Double): String = {
-    val fas = result.HSPS.map { hit =>
-      if(hit.info.evalue < eval){
-        ">" + result.HSPS(hit.num -1).template.accession + "\n" + result.HSPS(hit.num-1).template.seq + "\n"
+    if(!generateAlignmentScript.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
+    } else {
+      val numListStr = numList.mkString(" ")
+      Process(generateAlignmentScript.pathAsString, (jobPath + jobID).toFile.toJava, "jobID" -> jobID, "numList" -> numListStr).run().exitValue() match {
+        case 0 => Future.successful(Ok)
+        case _ => Future.successful(BadRequest)
       }
     }
-    fas.mkString
   }
 
-  def getAln(result : HHBlitsResult, numList: Seq[Int]): String = {
-    val fas = numList.map { num =>
-      ">" + result.HSPS(num -1).template.accession + "\n" + result.HSPS(num-1).template.seq + "\n"
-    }
-    fas.mkString
+  def getNumListEval(result: HHBlitsResult, eval: Double): String ={
+    val numList = result.HSPS.filter(_.info.evalue < eval).map {_.num}
+    numList.mkString(" ")
   }
+
 
   def getAccessions(result : HHBlitsResult, numList : Seq[Int]) : String = {
     val fas = numList.map { num =>
@@ -133,24 +143,34 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
     fas.mkString
   }
   def getAccessionsEval(result : HHBlitsResult, eval: Double) : String = {
-    val fas = result.HSPS.map { hit =>
-      if(hit.info.evalue < eval){
-        hit.template.accession + " "
-      }
-    }
+    val fas = result.HSPS.filter(_.info.evalue < eval).map{_.template.accession + " "}
     fas.mkString
   }
 
   def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[HHBlitsHSP]] = {
     if(params.sSearch.isEmpty){
       getResult(jobID).map {
-        case Some(result) => hhblits.parseResult(result).HSPS.slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+        case Some(result) => hhblits.hitsOrderBy(params, hhblits.parseResult(result).HSPS).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
       }
     }else{
       ???
     }
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
+  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+    getResult(jobID).map {
+      case Some(jsValue) => {
+        val result = hhblits.parseResult(jsValue)
+        if(end > result.num_hits || start > result.num_hits ) {
+          BadRequest
+        }else {
+          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhblits.hit(jobID, _))
+          Ok(hits.mkString)
+        }
+      }
+    }
+  }
+
   def dataTable(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),
@@ -169,14 +189,11 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
     }
     val hits = getHitsByKeyWord(jobID, params)
 
-    hhblits.hitsOrderBy(params, hits).flatMap { list =>
+    hits.flatMap { list =>
       total.map { total_ =>
         Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
           .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
       }
     }
   }
-
-  // Exceptions
-  case class FileException(message : String) extends Exception(message)
 }
