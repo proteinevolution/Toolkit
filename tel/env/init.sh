@@ -15,7 +15,7 @@
 
 L_HOSTNAME=`hostname`
 
-if [ $L_HOSTNAME == "olt" ] || [ $L_HOSTNAME == "rye" ]  ; then
+if [ $L_HOSTNAME = "olt" ] || [ $L_HOSTNAME = "rye" ]  ; then
 
 	echo "CONTEXT=sge"
 else
