@@ -197,32 +197,21 @@
             if(boolFullLength) {
                 if(boolEvalue) {
                     var route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
-                    $.ajax({
-                        url: route.url,
-                        method: route.method
-                    }).done(function () {
-                        $.ajax({
-                            type: 'GET',
-                            url: 'files/@jobID/sequences.fa'
-                        }).done(function (data_) {
-                            forward(selectedTool, data_.toString());
-                        });
-                    });
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.full('@jobID', checkedCheckboxes);
-                    $.ajax({
-                        url: route.url,
-                        method: route.method
-                    }).done(function (data_) {
-                        $.ajax({
-                            type: 'GET',
-                            url: 'files/@jobID/sequences.fa'
-                        }).done(function (data_) {
-                            forward(selectedTool, data_.toString());
-                        });
-                    });
+                    var route = jsRoutes.controllers.HHblitsController.full('@jobID', checkedCheckboxes);
                 }
-            }else{
+                $.ajax({
+                    url: route.url,
+                    method: route.method
+                }).done(function (data_) {
+                    $.ajax({
+                        type: 'GET',
+                        url: 'files/@jobID/sequences.fa'
+                    }).done(function (data_) {
+                        forward(selectedTool, data_.toString());
+                    });
+                });
+            } else{
 
                 if(boolEvalue) {
                     route = jsRoutes.controllers.HHblitsController.alnEval('@jobID', evalue);
@@ -243,6 +232,7 @@
 
             }
         }
+
 
 
         window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
