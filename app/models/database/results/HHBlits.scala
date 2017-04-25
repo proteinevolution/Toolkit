@@ -81,7 +81,7 @@ class HHBlits @Inject() (general: General) {
   def parseTemplate(obj: JsObject, hit: JsObject) : HHBlitsTemplate = {
     val consensus = (obj \ "consensus").getOrElse(Json.toJson("")).as[String]
     val end = (obj \ "end").getOrElse(Json.toJson(-1)).as[Int]
-    val accession = (hit \ "accession").getOrElse(Json.toJson("")).as[String]
+    val accession = general.refineAccession((hit \ "struc").getOrElse(Json.toJson("")).as[String])
     val ref = (obj \ "ref").getOrElse(Json.toJson(-1)).as[Int]
     val seq = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
     val start = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
