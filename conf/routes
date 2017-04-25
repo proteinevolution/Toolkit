@@ -161,6 +161,8 @@ GET         /templateAlignment/:jobID/:accession        @controllers.HHpredContr
 # template alignment
 GET         /templateAlignmentHHblits/:jobID/:accession @controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession : String)
 
+# PSIBlast load hits on request
+POST        /HmmerLoadHits                              @controllers.HmmerController.loadHits(jobID: String, start: Int, end: Int)
 # Hmmer retrieve seqs with evale < threshold
 POST         /alnEvalHmmer                              @controllers.HmmerController.alnEval(jobID: String, eval:String)
 # Hmmer retrieve selected seqs
@@ -173,6 +175,8 @@ POST         /alnPSIBlast                                @controllers.PSIBlastCo
 POST        /evalPSIBlastFull                            @controllers.PSIBlastController.evalFull(jobID : String, eval: String)
 # PSIblast retrieve selected full seqs
 POST        /PSIBlastFull                              @controllers.PSIBlastController.full(jobID : String, listNum: Seq[Int])
+# PSIBlast load hits on request
+POST        /PSIBlastLoadHits                              @controllers.PSIBlastController.loadHits(jobID: String, start: Int, end: Int)
 # HHblits retrieve seqs with evalue < threshold
 POST         /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String, eval:String)
 #  HHblits retrieve selected seqs
@@ -181,7 +185,11 @@ POST         /alnHHBlits                           @controllers.HHblitsControlle
 POST        /evalHHBlitsFull                            @controllers.HHblitsController.evalFull(jobID : String, eval: String)
 # HHblits retrieve selected full seqs
 POST        /HHBlitsFull                              @controllers.HHblitsController.full(jobID : String, listNum: Seq[Int])
+# PSIBlast load hits on request
+POST        /HHblitsLoadHits                              @controllers.HHblitsController.loadHits(jobID: String, start: Int, end: Int)
 # HHPred retrieve seqs with evalue < threshold
 POST         /evalHHpred                           @controllers.HHpredController.alnEval(jobID: String, eval:String)
 # HHpred retrieve selected seqs
 POST         /alnHHpred                         @controllers.HHpredController.aln(jobID:String, listNum: Seq[Int])
+# PSIBlast load hits on request
+POST        /HHpredLoadHits                              @controllers.HHpredController.loadHits(jobID: String, start: Int, end: Int)

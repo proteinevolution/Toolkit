@@ -83,7 +83,7 @@ lazy val root = (project in file("."))
       "org.webjars.bower"   % "velocity"              % "1.5.0",
       "org.webjars"         % "font-awesome"          % "4.7.0",
       "org.webjars.npm"     % "justgage"              % "1.2.2")),
-    pipelineStages := Seq(rjs, digest, gzip),
+    pipelineStages := Seq(digest, gzip),
     compile in Compile <<= (compile in Compile) dependsOn scalaJSPipeline,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
