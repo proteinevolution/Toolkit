@@ -83,7 +83,7 @@ class HHPred @Inject() (general: General) {
   def parseTemplate(obj: JsObject, hits: JsObject) : HHPredTemplate = {
     val consensus = (obj \ "consensus").getOrElse(Json.toJson("")).as[String]
     val end = (obj \ "end").getOrElse(Json.toJson(-1)).as[Int]
-    val accession = (hits \ "struc").getOrElse(Json.toJson("")).as[String]
+    val accession = general.refineAccession((hits \ "struc").getOrElse(Json.toJson("")).as[String])
     val ref = (obj \ "ref").getOrElse(Json.toJson(-1)).as[Int]
     val seq = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
     val ss_dssp = (obj \ "ss_dssp").getOrElse(Json.toJson("")).as[String]

@@ -299,10 +299,6 @@
             <!-- Reformat Javascript Library -->
         <script src="@routes.Assets.versioned("javascripts/vendor/reformat/src/reformat.js")"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
-        <script src="@routes.WebJarAssets.at(webJarAssets.locate("justgage.js"))"></script>
-
-
 
 
             <!-- CoffeeScript && Mithril Assets -->
@@ -343,8 +339,10 @@
                             break;
                         case "passwordReset":
                             AuthOverlay.passwordReset = true;
+                            break;
                         default:
                             openNav(view);
+                            break;
                     }
                     Auth.loadUser();
                 });

@@ -101,8 +101,12 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : Reactive
     getResult(jobID).map {
       case Some(jsValue) => {
         val result = hhpred.parseResult(jsValue)
-        val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _ ))
-        Ok(hits.mkString)
+        if(end > result.num_hits || start > result.num_hits ) {
+          BadRequest
+        }else {
+          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _))
+          Ok(hits.mkString)
+        }
       }
     }
   }
