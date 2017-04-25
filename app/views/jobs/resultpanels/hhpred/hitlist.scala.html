@@ -17,9 +17,22 @@
     @views.html.forwardmodals.simple(tool, tool.toolNameShort)
     <div id="stickyAnchor"></div>
     <div class="scrollContainer">
-        <p><a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a></p>
-        <p><a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hitlist</a></p>
-        <p><a id="alignmentsScroll" onclick="scrollToSection('alignments')">Alignments</a></p>
+        <div id="scrollLinks">
+            <a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a>
+            <a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hitlist</a>
+            <a id="alignmentsScroll" onclick="scrollToSection('alignments')">Alignments</a>
+
+        </div>
+        <span class="headerDivider"></span>
+        <div id="controlls">
+            <a onclick="@{tool.toolNameShort}_selectAll()" class="selectAllSeq_@{tool.toolNameShort}">Select all</a>
+            <a data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
+            <a data-open="forwardModal_@{tool.toolNameShort}_hhsuite">Forward Query MSA</a>
+            @*only show create model when chosen db=mmcif70/pdb70*@
+            @if(result.db.matches("mmcif70/pdb70")) {
+                <a onclick="hhpred_manual()">Create model using selected templates</a>
+            }
+        </div>
     </div>
     @* Load html Map used for the image representation *@
         <div id="visualization">
@@ -36,16 +49,6 @@
         </div>
         <div id="hitlist">
             <h5 id="hitlistTitle">Hitlist</h5>
-                <div class="colorOpts">
-                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
-                    @*only show create model when chosen db=mmcif70/pdb70*@
-                    @if(result.db.matches("mmcif70/pdb70")) {
-                        <a type="button" onclick="hhpred_manual()"><span>Create model using selected templates</span></a>
-                    }
-                    <hr id="line-element" colspan="4" class="horizontal-line">
-                </div>
                 <table id="htb" class="display" cellspacing="0" width="100%">
                     <thead>
                         <tr>
@@ -63,17 +66,6 @@
         <div id="alignmentResult">
             <div id="alignments">
                 <h5 id="alignmentsTitle">Alignments</h5>
-                <div class="colorOpts">
-                    <a onclick="@{tool.toolNameShort}_selectAll()" type="button"><span class="selectAllSeq_@{tool.toolNameShort}">Select all</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}"><span>Forward</span></a>
-                    <a type="button" data-open="forwardModal_@{tool.toolNameShort}_hhsuite"><span>Forward Query MSA</span></a>
-                    @*only show create model when chosen db=mmcif70/pdb70*@
-                    @if(result.db.matches("mmcif70/pdb70")) {
-                        <a type="button" onclick="hhpred_manual()"><span>Create model using selected templates</span></a>
-                    }
-                    <hr id="line-element" colspan="4" class="horizontal-line">
-                </div>
-
                 <form id="hhpred_templates">
                       <table class="unstriped">
                         <tbody>

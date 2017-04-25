@@ -8,7 +8,7 @@ window.JobModel = {
         "min_cov": "20",
         "min_seqid_query": "0",
         "gap_open": 11,
-        "desc": 500,
+        "desc": "100",
         "alignmode": "local",
         "maxrounds": "2",
         "matrix": "BLOSUM62",

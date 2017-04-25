@@ -161,7 +161,8 @@ setTimeout(function() {
 
 
     // listens to alignment
-    $('input:checkbox.hitCheckbox').click(function (e) {
+    $('input:checkbox').click(function (e) {
+        allPages = hitlist.fnGetNodes();
         var currentVal = $(this).val();
         var currentState = $(this).prop('checked');
         // alignment
@@ -186,7 +187,7 @@ setTimeout(function() {
     });
 
 
-},2000);
+},4000);
 
 
 /**
