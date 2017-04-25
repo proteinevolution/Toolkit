@@ -36,6 +36,37 @@ declare class JobViewComponent {
 }
 
 
+declare class Toolkit{
+    public static controller : any;
+    public static view: any;
+    public static isJob : boolean;
+}
+
+declare class Index{
+
+    public static controller : any;
+    public static view: any;
+}
+
+declare class News{
+
+    public static controller : any;
+    public static view: any;
+}
+
+declare class Backend{
+    public static controller : any;
+    public static view: any;
+}
+
+declare class JobManager{
+
+    public static controller : any;
+    public static view: any;
+
+}
+
+
 declare class Job {
 
     jobID : string;
