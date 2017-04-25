@@ -150,7 +150,7 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
   def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[HHBlitsHSP]] = {
     if(params.sSearch.isEmpty){
       getResult(jobID).map {
-        case Some(result) => hhblits.parseResult(result).HSPS.slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+        case Some(result) => hhblits.hitsOrderBy(params, hhblits.parseResult(result).HSPS).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
       }
     }else{
       ???
@@ -175,7 +175,7 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
     }
     val hits = getHitsByKeyWord(jobID, params)
 
-    hhblits.hitsOrderBy(params, hits).flatMap { list =>
+    hits.flatMap { list =>
       total.map { total_ =>
         Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
           .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
