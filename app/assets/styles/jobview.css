@@ -172,7 +172,7 @@ hr {
     font-family: Monaco, Consolas, "Lucida Console", monospace;
     letter-spacing: 0.05em;
     font-size: 0.725rem;
-    background-color: rgba(241, 241, 241, 0.75) !important;
+    /*background-color: rgba(241, 241, 241, 0.75) !important;*/
 }
 
 .tprHit {
