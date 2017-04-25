@@ -339,8 +339,10 @@
                             break;
                         case "passwordReset":
                             AuthOverlay.passwordReset = true;
+                            break;
                         default:
                             openNav(view);
+                            break;
                     }
                     Auth.loadUser();
                 });

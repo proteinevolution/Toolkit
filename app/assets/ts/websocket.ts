@@ -3,7 +3,6 @@
  *  Mithril.
  */
 
-let noRedraw     : boolean = false;
 let ws : WebSocket = null,
     connect      : Function,
     connected    : boolean = false,
@@ -114,8 +113,6 @@ onMessage = function(event : MessageEvent) : any {
     }
 };
 
-let focusInNoRedraw = function(event : Event) : void { noRedraw = true;  console.log('focus in - no redraw');  },
-    focusOutRedraw  = function(event : Event) : void { noRedraw = false; console.log('focus out - redrawing'); };
 
 let sendMessage = function(object : any) : any {
     console.log("sending message:", object);
