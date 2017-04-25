@@ -55,6 +55,16 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
     }
   }
 
+  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+    getResult(jobID).map {
+      case Some(jsValue) => {
+        val result = hmmer.parseResult(jsValue)
+        val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(jobID, _ , result.db))
+        Ok(hits.mkString)
+      }
+    }
+  }
+
   /**
     * DataTables for job results
     */
