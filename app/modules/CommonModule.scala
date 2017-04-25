@@ -10,7 +10,8 @@ import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import org.joda.time.DateTime
 import play.api.Logger
 
 import scala.language.postfixOps
@@ -153,7 +154,11 @@ trait CommonModule extends ReactiveMongoComponents {
 
   // Modifies a single Job in the database and returns it
   protected def modifyJob(selector : BSONDocument, modifier : BSONDocument) : Future[Option[Job]] = {
-    jobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
+    jobCollection.flatMap(_.findAndUpdate(
+      selector,
+      modifier.merge(BSONDocument("$set"->BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis)))),
+      fetchNewObject = true
+    ).map(_.result[Job]))
   }
   // Updates multiple Jobs in the database but does not return them
   protected def updateJobs(selector : BSONDocument, modifier : BSONDocument) : Future[UpdateWriteResult] = {

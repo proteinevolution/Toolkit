@@ -111,9 +111,10 @@ final class Service @Inject() (webJarAssets                                     
     }
   }
   def getJob(jobID: String) : Action[AnyContent] = Action.async { implicit request =>
-
     selectJob(jobID).flatMap {
-          case Some(job) =>
+      case Some(job) =>
+        job.deletion match {
+          case None =>
             Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
             val toolitem = toolFactory.values(job.tool).toolitem
             val ownerName =
@@ -122,7 +123,7 @@ final class Service @Inject() (webJarAssets                                     
                   case Some(owner) =>
                     owner.userData match {
                       case Some(ownerData) => // Owner is registered
-                        s"${ownerData.nameLogin}"
+                        ownerData.nameLogin
                       case None => // Owner is not registered
                         "Guest"
                     }
@@ -168,9 +169,14 @@ final class Service @Inject() (webJarAssets                                     
               }
             }
 
-          case _ =>
-            Logger.info("Job could not be found")
+          case Some(deletionReason) =>
+            // The job was deleted, do not show it to the user.
+            Logger.info("Job was found but deleted.")
             Future.successful(NotFound)
         }
+    case _ =>
+      Logger.info("Job could not be found")
+      Future.successful(NotFound)
+    }
   }
 }
