@@ -33,8 +33,7 @@ hhblits -cpu %THREADS \
         -Z %desc.content \
         -z 1 \
         -b 1 \
-        -B %desc.content  \
-        -%alignmode.content
+        -B %desc.content
 
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
