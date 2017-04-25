@@ -1,3 +1,5 @@
+
+
 patsearch.pl        -i  %alignment.path \
                     -d %STANDARD/%standarddb.content \
                     -o ../results/output.json \
