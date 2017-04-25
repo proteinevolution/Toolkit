@@ -59,8 +59,12 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
     getResult(jobID).map {
       case Some(jsValue) => {
         val result = hmmer.parseResult(jsValue)
-        val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(jobID, _ , result.db))
-        Ok(hits.mkString)
+        if(end > result.num_hits || start > result.num_hits ) {
+          BadRequest
+        }else {
+          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(jobID, _, result.db))
+          Ok(hits.mkString)
+        }
       }
     }
   }

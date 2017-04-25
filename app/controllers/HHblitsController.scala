@@ -161,8 +161,12 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
     getResult(jobID).map {
       case Some(jsValue) => {
         val result = hhblits.parseResult(jsValue)
-        val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhblits.hit(jobID, _ ))
-        Ok(hits.mkString)
+        if(end > result.num_hits || start > result.num_hits ) {
+          BadRequest
+        }else {
+          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhblits.hit(jobID, _))
+          Ok(hits.mkString)
+        }
       }
     }
   }
