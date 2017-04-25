@@ -118,7 +118,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
   def getHitsByKeyWord(jobID: String, params: DTParam) : Future[List[PSIBlastHSP]] = {
     if(params.sSearch.isEmpty){
       getResult(jobID).map {
-        case Some(result) => psiblast.parseResult(result).HSPS.slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+        case Some(result) => psiblast.hitsOrderBy(params, psiblast.parseResult(result).HSPS).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
       }
     }else{
       ???
@@ -144,7 +144,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
     }
     val hits = getHitsByKeyWord(jobID, params)
 
-    psiblast.hitsOrderBy(params, hits).flatMap { list =>
+    hits.flatMap { list =>
       total.map { total_ =>
         Ok(Json.toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
           .as[JsObject].deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))

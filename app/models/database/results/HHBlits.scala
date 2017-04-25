@@ -88,21 +88,21 @@ class HHBlits @Inject() (general: General) {
   }
 
 
-  def hitsOrderBy(params: DTParam, hits: Future[List[HHBlitsHSP]]) = {
+  def hitsOrderBy(params: DTParam, hits: List[HHBlitsHSP]) = {
     (params.iSortCol, params.sSortDir) match {
-      case (1, "asc") => hits.map(x => x.sortBy(_.template.accession))
-      case (1, "desc") => hits.map(x => x.sortWith(_.template.accession > _.template.accession))
-      case (2, "asc") => hits.map(x => x.sortBy(_.description))
-      case (2, "desc") => hits.map(x => x.sortWith(_.description > _.description))
-      case (3, "asc") => hits.map(x => x.sortBy(_.info.probab))
-      case (3, "desc") => hits.map(x => x.sortWith(_.info.probab > _.info.probab))
-      case (4, "asc") => hits.map(x => x.sortBy(_.info.evalue))
-      case (4, "desc") => hits.map(x => x.sortWith(_.info.evalue > _.info.evalue))
-      case (5, "asc") => hits.map(x => x.sortBy(_.info.aligned_cols))
-      case (5, "desc") => hits.map(x => x.sortWith(_.info.aligned_cols > _.info.aligned_cols))
-      case (6, "asc") => hits.map(x => x.sortBy(_.template.ref))
-      case (6, "desc") => hits.map(x => x.sortWith(_.template.ref > _.template.ref))
-      case (_, _) => hits.map(x => x.sortBy(_.num))
+      case (1, "asc") => hits.sortBy(_.template.accession)
+      case (1, "desc") => hits.sortWith(_.template.accession > _.template.accession)
+      case (2, "asc") => hits.sortBy(_.description)
+      case (2, "desc") => hits.sortWith(_.description > _.description)
+      case (3, "asc") => hits.sortBy(_.info.probab)
+      case (3, "desc") => hits.sortWith(_.info.probab > _.info.probab)
+      case (4, "asc") => hits.sortBy(_.info.evalue)
+      case (4, "desc") => hits.sortWith(_.info.evalue > _.info.evalue)
+      case (5, "asc") => hits.sortBy(_.info.aligned_cols)
+      case (5, "desc") => hits.sortWith(_.info.aligned_cols > _.info.aligned_cols)
+      case (6, "asc") => hits.sortBy(_.template.ref)
+      case (6, "desc") => hits.sortWith(_.template.ref > _.template.ref)
+      case (_, _) => hits.sortBy(_.num)
     }
   }
 }
