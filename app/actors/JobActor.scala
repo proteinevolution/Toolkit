@@ -62,15 +62,13 @@ object JobActor {
   case class StopWatch(jobID: String, userID: BSONObjectID)
 
   // JobActor is requested to Delete the job
-  case class Delete(jobID: String)
+  case class Delete(jobID: String, userID : BSONObjectID)
 
   // Job Controller receives a job state change from the SGE
   case class JobStateChanged(jobID : String, jobState : JobState)
 
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID : String)
-
-
 }
 
 class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get runscripts to be executed
@@ -133,6 +131,33 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
     this.currentExecutionContexts = this.currentExecutionContexts.filter(_._1 == jobID)
   }
 
+  private def delete(job : Job, userID : BSONObjectID) : Unit = {
+    if (job.ownerID.contains(userID)) {
+      Logger.info("Owner Requested job Deletion")
+
+      // Message user clients to remove the job from their watchlist
+      Logger.info("Informing Users of deletion.")
+      val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify) : Option[List[ActorRef]])
+      foundWatchers.flatten.foreach(_ ! ClearJob (job.jobID))
+
+      // Mark the job in mongoDB
+      modifyJob(BSONDocument(Job.IDDB      -> job.mainID),
+                BSONDocument("$set"        ->
+                BSONDocument(Job.DELETION  -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
+                BSONDocument("$unset"      ->
+                BSONDocument(Job.WATCHLIST -> "")))).foreach{
+        case Some(deletedJob) =>
+          Logger.info(s"Job Deletion from DB was sucessful:\n${deletedJob.toString()}")
+        case None =>
+          Logger.info("Job Deletion from DB failed.")
+      }
+    } else {
+      // Just clear a job which is not owned by the user
+      modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
+    }
+    // clear job from the user's watchlist
+    modifyUserWithCache(BSONDocument(User.IDDB -> userID), BSONDocument("$pull" -> BSONDocument(User.JOBS -> job.jobID)))
+  }
 
   /**
     * Updates Jobstate in Model, in database, and notifies user watchlist
@@ -349,25 +374,29 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       }
 
 
-    case Delete(jobID) =>
+    case Delete(jobID, userID) =>
+      Logger.info(s"Received Delete for $jobID")
       this.currentJobs.get(jobID) match {
         case Some(job) =>
           Logger.info("Removing Job from Elastic Search.")
           jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
           Logger.info("Removing Job from current Jobs.")
           this.removeJob(jobID)
-          // Message user clients to remove the job from their watchlist
-          Logger.info("Informing Users of deletion.")
-          val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify) : Option[List[ActorRef]])
-          foundWatchers.flatten.foreach (_ ! ClearJob (job.jobID))
+          Logger.info("Removing Job from DB")
+          this.delete(job, userID)
           Logger.info("Deletion Complete.")
         case None =>
-      }
-
-      findJobSGE(jobID).map {
-        x =>
-          Logger.info(s"[CLUSTER] execute qdel " + jobID)
-          qdel.delete(x.clusterData.get.sgeID)
+          Logger.info("No such jobID found in current jobs. Loading job from DB.")
+          findJob(BSONDocument(Job.JOBID -> jobID)).map{
+            case Some(job) =>
+              Logger.info("Found Job in DB. Deleting.")
+              Logger.info("Removing Job from Elastic Search.")
+              jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
+              Logger.info("Removing Job from DB")
+              this.delete(job, userID)
+            case None =>
+              Logger.info("No such jobID found in Database. Ignoring.")
+          }
       }
 
 

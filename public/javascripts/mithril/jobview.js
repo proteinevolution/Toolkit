@@ -22,12 +22,16 @@ window.JobViewComponent = {
         if (!args.job()) {
             return m("div", "Waiting for Job");
         } else {
-            return m("div", {
-                id: "jobview"
-            }, [
-                m(JobLineComponent, { job: args.job }),
-                m(JobTabsComponent, { job: args.job, owner: args.owner })
-            ]);
+            if (!args.job().successful) {
+                return m.route("pagenotfound");
+            } else {
+                return m("div", {
+                    id: "jobview"
+                }, [
+                    m(JobLineComponent, { job: args.job }),
+                    m(JobTabsComponent, { job: args.job, owner: args.owner })
+                ]);
+            }
         }
     }
 };

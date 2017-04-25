@@ -75,8 +75,15 @@ window.JobModel = {
                     ownerName: data.ownerName,
                     createdOn: data.createdOn,
                     jobstate: data.state,
-                    views: data.views
+                    views: data.views,
+                    successful : true
                 };
+            }).catch(function(e){
+                return {
+                    error : e,
+                    isJob: true,
+                    successful : false
+                }
             });
         } else {
             return m.request({
@@ -87,8 +94,15 @@ window.JobModel = {
                 return {
                     tool: toolitem,
                     isJob: false,
-                    jobID: ""
+                    jobID: "",
+                    successful : true
                 };
+            }).catch(function(e){
+                return {
+                    error : e,
+                    isJob: false,
+                    successful : false
+                }
             });
         }
     },
