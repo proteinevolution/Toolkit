@@ -20,6 +20,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.Future
 import modules.CommonModule
 import play.api.libs.json.{JsArray, JsObject, Json}
+import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -125,6 +126,17 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
     }
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
+
+  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+    getResult(jobID).map {
+      case Some(jsValue) => {
+        val result = psiblast.parseResult(jsValue)
+        val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _ , result.db))
+        Ok(hits.mkString)
+      }
+    }
+  }
+
 
   def dataTable(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
