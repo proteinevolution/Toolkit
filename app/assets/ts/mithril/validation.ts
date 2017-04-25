@@ -103,11 +103,11 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                 break;
 
             case "modeller":
-                $(elem).attr("placeholder", "Enter a protein multiple sequence alignment [Target sequence + template(s)].\n\nThe first sequence must be the target; the other sequences serve as templates. The header of each template should start with a PDB or SCOP identifier (see example).");
+                $(elem).attr("placeholder", "Enter a protein multiple sequence alignment [Target sequence + template(s)]. The first sequence must be the target; the other sequences serve as templates. The header of each template should start with a PDB or SCOP identifier (see example).");
                 break;
 
             case "samcc":
-                $(elem).attr("placeholder", "Enter PDB coordinates of a four-helical bundle");
+                $(elem).attr("placeholder", "Enter PDB coordinates of a four-helical bundle.\n\nNote: The definitions for helices below need to be entered according to their sequential position in the bundle (it is not relevant whether this done clockwise or counterclockwise, and whether one starts with the N-terminal helix or any other one), and not in their order from N- to C-terminus. For helices in anti-parallel orientation, the residue range should be given with the larger residue number before the smaller one.");
                 break;
 
             case "ancescon":
