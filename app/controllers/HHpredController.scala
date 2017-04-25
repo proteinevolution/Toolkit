@@ -137,6 +137,4 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : Reactive
       }
     }
   }
-  // Exceptions
-  case class FileException(message : String) extends Exception(message)
 }

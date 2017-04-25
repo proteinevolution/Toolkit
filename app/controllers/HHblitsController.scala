@@ -196,7 +196,4 @@ class HHblitsController @Inject()(webJarAssets : WebJarAssets, val reactiveMongo
       }
     }
   }
-
-  // Exceptions
-  case class FileException(message : String) extends Exception(message)
 }

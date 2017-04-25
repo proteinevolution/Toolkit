@@ -164,5 +164,3 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
   }
 
 }
-// Exceptions
-case class FileException(message : String) extends Exception(message)
