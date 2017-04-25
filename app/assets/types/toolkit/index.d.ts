@@ -35,6 +35,11 @@ declare class JobViewComponent {
 
 }
 
+declare class Backend{
+    public static controller : any;
+    public static view: any;
+}
+
 
 declare class Toolkit{
     public static controller : any;
@@ -54,10 +59,6 @@ declare class News{
     public static view: any;
 }
 
-declare class Backend{
-    public static controller : any;
-    public static view: any;
-}
 
 declare class JobManager{
 
