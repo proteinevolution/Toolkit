@@ -274,8 +274,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
     ("pcoils", "PCOILS", "pco", "seqanal", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.PCOILS_INPUT_MODE, paramAccess.PCOILS_MATRIX, paramAccess.PCOILS_WEIGHTING), Seq.empty,Seq.empty),
 
-    // FRrped
-    ("frpred", "FRpred", "frp", "seqanal", "",Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
+    // FRpred; Not for first release
+    //("frpred", "FRpred", "frp", "seqanal", "",Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
 
     // HHrepID
     ("hhrepid", "HHrepID", "hhr", "seqanal", "",Seq(paramAccess.SEQORALI, paramAccess.MSA_GEN_MAX_ITER,
@@ -286,9 +286,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
     ("marcoil", "MARCOIL", "mar", "seqanal", "",
       Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_MARCOIL, paramAccess.TRANSITION_PROBABILITY), Seq.empty,Seq.empty),
 
-    // REPPER
-    ("repper", "Repper", "rep", "seqanal", "",
-      Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
+    // REPPER Not for first release
+    //("repper", "Repper", "rep", "seqanal", "", Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
 
     // TPRpred
     ("tprpred", "TPRpred", "tprp", "seqanal", "",
