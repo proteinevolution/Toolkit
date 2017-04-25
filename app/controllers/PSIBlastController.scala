@@ -3,9 +3,6 @@
   */
 package controllers
 
-
-import java.nio.file.attribute.PosixFilePermission
-
 import com.typesafe.config.ConfigFactory
 
 import scala.sys.process._
@@ -20,8 +17,6 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.Future
 import modules.CommonModule
 import play.api.libs.json.{JsArray, JsObject, Json}
-import play.twirl.api.Html
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -167,6 +162,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
       }
     }
   }
-  // Exceptions
-  case class FileException(message : String) extends Exception(message)
+
 }
+// Exceptions
+case class FileException(message : String) extends Exception(message)
