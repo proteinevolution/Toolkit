@@ -185,7 +185,7 @@ object BlastVisualization extends Constants {
     links +=  "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
     if(db == "scop") {
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
-      links += generateLink (pdbBaseLink, idTrimmed, "SCOPe")
+      links += generateLink (pdbBaseLink, idTrimmed, "PDB")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
     }
     else if(db == "mmcif") {
@@ -222,6 +222,7 @@ object BlastVisualization extends Constants {
     case pfamReg(_,_) => "pfam"
     case ncbiReg(_) => "ncbi"
     case uniprotReg(_) => "uniprot"
+    case e : String => Logger.info("Struc: ("+e+") could not be matched against any database!");""
     case e : String => Logger.info("Struc: ("+e+") could not be matched against any database!");""
   }
 
