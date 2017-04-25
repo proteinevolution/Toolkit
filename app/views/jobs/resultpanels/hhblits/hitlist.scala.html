@@ -17,9 +17,6 @@
     @views.html.forwardmodals.normal(tool, tool.toolNameShort)
     @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort+"_hhsuite")
     @* Load html Map used for the image representation *@
-    Number of sequences: @result.num_hits
-    <br />
-    <br />
     <div id="stickyAnchor"></div>
     <div class="scrollContainer">
         <div id="scrollLinks">
@@ -34,6 +31,7 @@
             <a data-open="forwardModal_@{tool.toolNameShort}_hhsuite">Forward Query MSA</a>
         </div>
     </div>
+    Number of sequences: @result.num_hits
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div class='flat-slider' id='flat-slider'></div>
