@@ -96,19 +96,19 @@ class PSIBlast @Inject() (general: General) {
 
   }
 
-  def hitsOrderBy(params: DTParam, hits: Future[List[PSIBlastHSP]]) = {
+  def hitsOrderBy(params: DTParam, hits: List[PSIBlastHSP]) = {
     (params.iSortCol, params.sSortDir) match {
-      case (1, "asc") => hits.map(x => x.sortBy(_.accession))
-      case (1, "desc") => hits.map(x => x.sortWith(_.accession > _.accession))
-      case (2, "asc") => hits.map(x => x.sortBy(_.description))
-      case (2, "desc") => hits.map(x => x.sortWith(_.description > _.description))
-      case (3, "asc") => hits.map(x => x.sortBy(_.evalue))
-      case (3, "desc") => hits.map(x => x.sortWith(_.evalue > _.evalue))
-      case (4, "asc") => hits.map(x => x.sortBy(_.bitscore))
-      case (4, "desc") => hits.map(x => x.sortWith(_.bitscore > _.bitscore))
-      case (5, "asc") => hits.map(x => x.sortBy(_.hit_len))
-      case (5, "desc") => hits.map(x => x.sortWith(_.hit_len > _.hit_len))
-      case (_, _) => hits.map(x => x.sortBy(_.num))
+      case (1, "asc") => hits.sortBy(_.accession)
+      case (1, "desc") => hits.sortWith(_.accession > _.accession)
+      case (2, "asc") => hits.sortBy(_.description)
+      case (2, "desc") => hits.sortWith(_.description > _.description)
+      case (3, "asc") => hits.sortBy(_.evalue)
+      case (3, "desc") => hits.sortWith(_.evalue > _.evalue)
+      case (4, "asc") => hits.sortBy(_.bitscore)
+      case (4, "desc") => hits.sortWith(_.bitscore > _.bitscore)
+      case (5, "asc") => hits.sortBy(_.hit_len)
+      case (5, "desc") => hits.sortWith(_.hit_len > _.hit_len)
+      case (_, _) => hits.sortBy(_.num)
     }
   }
 }
