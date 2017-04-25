@@ -28,7 +28,7 @@ m.route.mode = 'hash';
 
 // Define the mithril routes
 
-let mountpoint: any = document.getElementById('main-content')as any;
+let mountpoint: HTMLElement = document.getElementById('main-content');
 
 
 let routes : Routes = {
