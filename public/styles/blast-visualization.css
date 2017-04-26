@@ -354,10 +354,24 @@ table.dataTable.no-footer{
     margin: 0 auto;
 }
 
+.indexCheckbox {
+    display: flex;
+    margin: 0;
+    height: 1.5em;
+}
+
+.indexCheckbox input {
+    margin-right: 1.5em;
+}
+
 .colorToggle{
     color: #006F62 !important;
     border-bottom: solid 1px rgba(0, 110, 98, 0.3) !important;
     padding-bottom:2px;
+}
+
+.hitInfo {
+    font-size: 1.2em;
 }
 
 .alignmentOpts{
