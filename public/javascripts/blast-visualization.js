@@ -467,12 +467,12 @@ function hitlistBaseFunctions(){
                 // push num of checked checkbox into array
                 checkboxes.push(currentVal);
                 // make sure array contains no duplicates
-                checkboxes = checkboxes.filter (function (value, index, array) {
+                checkboxes = checkboxes.filter(function (value, index, array) {
                     return array.indexOf (value) == index;
                 });
             }else{
                 // delete num of unchecked checkbox from array
-                checkboxes = checkboxes.filter(function(val){val != currentVal});
+                checkboxes = checkboxes.filter(val=> val != currentVal);
             }
         });
     });
