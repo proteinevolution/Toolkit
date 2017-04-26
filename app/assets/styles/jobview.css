@@ -612,6 +612,10 @@ hr {
     padding-bottom: 2px;
 }
 
+.helpModal {
+    width: 80em;
+}
+
 map[name="blastmap"] area { cursor: pointer; }
 
 @media only screen and (max-width: 1100px) {

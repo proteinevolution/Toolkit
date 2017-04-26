@@ -11,7 +11,6 @@
 }else{
     @* Loads ForwardModal *@
     @views.html.forwardmodals.normal(tool, tool.toolNameShort)
-    <div id="stickyAnchor"></div>
     <div class="scrollContainer">
         <div id="scrollLinks">
             <a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a>
@@ -110,7 +109,9 @@ function drawDataTable(){
     hitlist = $('#htb').dataTable({
         "bProcessing" : true,
         "bServerSide" : true,
-        "sAjaxSource" : "/api/job/results/dataTablePSIBlast/"+jobID
+        "sAjaxSource" : "/api/job/results/dataTablePSIBlast/"+jobID,
+        "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+        "searching": false
     });
 }
 
