@@ -63,13 +63,13 @@ class PSIBlast @Inject() (general: General) {
       val hits = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ iter_num \ "search" \ "hits").as[List[JsObject]]
       val num_hits = hits.length
       val hsplist = hits.map{ x =>
-        parseHSP(x)
+        parseHSP(x, db)
       }
       PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query)
     }
   }
 
-  def parseHSP(hit: JsObject): PSIBlastHSP = {
+  def parseHSP(hit: JsObject, db: String): PSIBlastHSP = {
     val descriptionBase = hit \ "description" \ 0
     val hsps = hit \ "hsps" \ 0
     val evalue = (hsps \ "evalue").getOrElse(Json.toJson(-1)).as[Double]
@@ -88,7 +88,14 @@ class PSIBlast @Inject() (general: General) {
     val query_id = (hsps \ "query_id").getOrElse(Json.toJson("")).as[String]
     val ref_len = (hit \ "ref_len").getOrElse(Json.toJson(-1)).as[Int]
     val hit_len = (hsps \ "align_len").getOrElse(Json.toJson(-1)).as[Int]
-    val accession = general.refineAccession((descriptionBase \ "accession").getOrElse(Json.toJson("")).as[String])
+    var accession = ""
+    // workaround: bug of psiblast output when searching pdb_nr
+    if(db == "pdb_nr") {
+      accession = ((descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]).split("\\s+").head
+    }else {
+      //accession = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
+      accession = general.refineAccession((descriptionBase \ "accession").getOrElse(Json.toJson("")).as[String])
+    }
     val midline = (hsps \ "midline").getOrElse(Json.toJson("")).as[String].toUpperCase
     val description = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
 
