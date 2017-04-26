@@ -162,8 +162,19 @@
     background-color: #eee;
 }
 
-.select_forward {
-    font-size: 0.90em;
+.select_forward select {
+    font-size: 0.80em !important;
+    -moz-appearance: none !important;
+    border-radius: 4px;
+    margin-top: 1.5em;
+    margin-left: 0.25em;
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+    height: 2.75em;
+    color: #000;
+    color: rgba(0,0,0,0);
+    text-shadow: 0 0 0 #000;
+    width: 12em;
 }
 
 .select_forward ul {

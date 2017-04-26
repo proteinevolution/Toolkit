@@ -68,12 +68,6 @@ FIELDSET {
 }
 
 
-select {
-    font-size: 1em !important;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
-}
-
-
 .slick-slide img {
     height: 400px;
 }
