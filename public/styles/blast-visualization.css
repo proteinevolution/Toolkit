@@ -111,10 +111,13 @@
     float: right;
 }
 
-.forwardModal .nice-select, #forwardModal .nice-select ul {
+.forwardModal .nice-select {
     width: 12em;
     margin-top: 1.75em;
     margin-left: 0.25em;
+}
+.forwardModal .nice-select ul {
+    width: 12em;
 }
 
 .forward {
