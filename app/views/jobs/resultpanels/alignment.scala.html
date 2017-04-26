@@ -14,10 +14,9 @@
 @views.html.forwardmodals.alignment(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="@{resultName}_selectAll()" type="button"> <span id="selectAllSeq_@{resultName}">Select all</span></a>
-    <a onclick='@{resultName}_wrap()' type="button"><span id="wrap_@{resultName}">Wrap sequences</span></a>
-    <a type="button" data-open="forwardModal_@resultName"><span>Forward selected</span></a>
-    <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download File</span></a>
+    <a onclick='alignment_wrap()' type="button"><span id="wrap_@{resultName}">Wrap sequences</span></a>
+    <a type="button" data-open="forwardModal_@resultName"><span>Forward All</span></a>
+    <a type="button" id="downloadAlignment"  onclick="alignment_download()"><span>Download File</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -29,16 +28,14 @@
         <tbody class="alignmentTBody">
         @for((alignment,index) <- {jsValue \ resultName}.as[List[JsArray]].zipWithIndex) {
             <tr class="header">
-                <td ><input type="checkbox" class="checkbox_@{resultName}" value='@{index}'> @{index+1}.</td>
                 <td>
                     @{alignment{0} match {
-                        case JsDefined(jsValue) => (alignment{0}).get.as[String]
+                        case JsDefined(jsValue) => ">"+(alignment{0}).get.as[String]
                         }
                     }
                 </td>
             </tr>
             <tr class="sequenceAlignment">
-                <td></td>
                 <td>
                     @{alignment{1} match {
                         case JsDefined(jsValue) => Html((alignment{1}).get.as[String].replace("-", "&#8209;"))
@@ -56,9 +53,8 @@
 </div>
 
 <script>
-        var fileUrl = "/files/@jobID/@{resultName}.json";
+        var fileUrl = "/files/@jobID/alignment.fas";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.fasta";
-        var checkbox_@{resultName} = "checkbox_@{resultName}";
         var selectAllBool_@{resultName} = false;
         var wrapSequencesBool_@{resultName} = false;
         $(document).ready(function () {
@@ -66,7 +62,7 @@
         });
 
 
-        window["@{resultName}_wrap"] = function(){
+        function alignment_wrap(){
             this.wrapSequencesBool_@{resultName} = !this.wrapSequencesBool_@{resultName};
             if(wrapSequencesBool_@{resultName}) {
                 $(".sequenceAlignment").addClass("wrap");
@@ -79,46 +75,25 @@
         }
 
 
-        window["@{resultName}_forward"] = function(selectedTool){
+        function alignment_forward(selectedTool){
             // get result json
-            var forwardData = [];
-            var checkedCheckboxes = [];
-            // get values of all checked Checkboxes
-            $('input:checkbox.' + checkbox_@{resultName} + ":checked").each(function () {
-                checkedCheckboxes.push($(this).val())
+            $.ajax({
+                type: 'GET',
+                url: fileUrl
+            }).done(function (data) {
+                    forward(selectedTool, data);
             });
-            $.getJSON(fileUrl, function (data) {
+        }
 
-            //fill array with headers and sequences
-                checkedCheckboxes.forEach(function callback(currentValue) {
-                    forwardData.push(">" + data[currentValue][0]);
-                    forwardData.push(data[currentValue][1]);
-                });
-                forward(selectedTool, forwardData.join("\n"));
+
+        function alignment_download(){
+            // get result json
+            $.ajax({
+                type: 'GET',
+                url: fileUrl
+            }).done(function (data) {
+                download(downloadFilename, data.toString());
             });
-        };
-
-        window["@{resultName}_selectAll"] = function(){
-            this.selectAllBool_@{resultName} = !this.selectAllBool_@{resultName};
-            if(selectAllBool_@{resultName}) {
-                selectAll(checkbox_@{resultName});
-                $("#selectAllSeq_@{resultName}").addClass( "colorToggle" );
-            }
-            else {
-                deselectAll(checkbox_@{resultName});
-                $("#selectAllSeq_@{resultName}").removeClass( "colorToggle" );
-            }
-        };
-        window["@{resultName}_download"] = function(){
-            $.getJSON(fileUrl, function (data) {
-            var fileString = "";
-            for(var i = 0; i < data.length; i++){
-                fileString += ">" + data[i][0] + "\n";
-                    fileString += data[i][1] + "\n";
-            }
-
-            download(downloadFilename, fileString);
-            })
-        };
+        }
 
 </script>
