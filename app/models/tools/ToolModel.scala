@@ -104,7 +104,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
     ("hhblits", "HHblits", "hhb", "search", "",
 
     Seq(paramAccess.SEQORALI,paramAccess.HHBLITSDB, paramAccess.HHBLITS_INCL_EVAL, paramAccess.MAXROUNDS,
-      paramAccess.PMIN, paramAccess.DESC), Seq("hhblits", "hhpred", "hhrepid" ),Seq("hhpred")),
+      paramAccess.PMIN, paramAccess.DESC), Seq("hhblits", "hhpred", "hhrepid" ),Seq("clans", "mmseqs2")),
 
     // HHpred
     ("hhpred", "HHpred", "hhp", "search", "",
