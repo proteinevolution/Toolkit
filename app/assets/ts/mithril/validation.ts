@@ -23,23 +23,23 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
 
             case "hhblits":
-                $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment in FASTA or CLUSTAL format");
+                $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
                 break;
 
             case "hhpred":
-                $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment in FASTA or CLUSTAL format");
+                $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
                 break;
 
             case "hmmer":
-                $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment in FASTA or CLUSTAL format");
+                $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
                 break;
 
             case "psiblast":
-                $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment in FASTA or CLUSTAL format");
+                $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
                 break;
 
             case "patsearch":
-                $(elem).attr("placeholder", "Enter a PROSITE grammar or regular expression");
+                $(elem).attr("placeholder", "Enter a PROSITE grammar or a regular expression");
                 break;
 
             case "clustalo":
