@@ -71,6 +71,7 @@ var showMore = 100;
 var checkboxes = [];
 var numHits = @{result.num_hits};
 var jobID = '@{jobID}';
+var loading = false;
 
 $(document).ready( function(){
     hitlistBaseFunctions();
@@ -82,7 +83,8 @@ $(document).ready( function(){
         setTimeout(function () {
             slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         }, 1000);
-        getHits(0, shownHits);
+        shownHits = shownHits > numHits ? numHits : shownHits;
+	getHits(0, shownHits);
     }
 });
 
@@ -155,15 +157,15 @@ function resubmitSection(){
 }
 
 function getHits(start, end){
-    if(start <= numHits){
-        end = end <  numHits ? end : numHits;
-        shownHits = end;
+    if(start <= numHits && end <= numHits){
+	loading = true;
         var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID,start, end);
         return $.ajax({
             method: route.method,
             url: route.url
         }).done(function (data_) {
             $("#alignmentTable").append(data_);
+	    loading = false;
         });
     }
 }
