@@ -442,81 +442,81 @@ function selectFromArray(checkboxes){
 
 
 function hitlistBaseFunctions(){
+    $(document).ready(function() {
+        // adding loading overlay
+        $(document).ajaxStart(function () {
+            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+        });
+        $(document).ajaxComplete(function () {
+            $.LoadingOverlay("hide");
 
-    // adding loading overlay
-    $(document).ajaxStart(function(){
-        $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
-    });
-    $(document).ajaxComplete(function(){
-        $.LoadingOverlay("hide");
+            // check checkboxes that are stored in array
+            // in order to make it work with pagination/lazyload
+            selectFromArray(checkboxes);
 
-        // check checkboxes that are stored in array
-        // in order to make it work with pagination/lazyload
-        selectFromArray(checkboxes);
+            $('input:checkbox').click(function (e) {
+                var currentVal = $(this).val();
+                var currentState = $(this).prop('checked');
 
-        $('input:checkbox').click(function (e) {
-            var currentVal = $(this).val();
-            var currentState = $(this).prop('checked');
-
-            // link checkboxes with same value
-            $('input:checkbox[value=' + currentVal + ']').each(function () {
-                $(this).prop('checked', currentState);
-            });
-
-            if(currentState) {
-                // push num of checked checkbox into array
-                checkboxes.push(currentVal);
-                // make sure array contains no duplicates
-                checkboxes = checkboxes.filter(function (value, index, array) {
-                    return array.indexOf (value) == index;
+                // link checkboxes with same value
+                $('input:checkbox[value=' + currentVal + ']').each(function () {
+                    $(this).prop('checked', currentState);
                 });
-            }else{
-                // delete num of unchecked checkbox from array
-                checkboxes = checkboxes.filter(val=> val != currentVal);
+
+                if (currentState) {
+                    // push num of checked checkbox into array
+                    checkboxes.push(currentVal);
+                    // make sure array contains no duplicates
+                    checkboxes = checkboxes.filter(function (value, index, array) {
+                        return array.indexOf(value) == index;
+                    });
+                } else {
+                    // delete num of unchecked checkbox from array
+                    checkboxes = checkboxes.filter(val => val != currentVal);
+                }
+            });
+        });
+
+        // add scrollcontainer highlighting
+        $(document).on('scroll', function () {
+            if ($(this).scrollTop() >= $('#alignments').position().top) {
+                $("#alignmentsScroll").addClass("colorToggle");
+                $("#hitlistScroll").removeClass("colorToggle");
+                $("#visualizationScroll").removeClass("colorToggle");
+            } else if ($(this).scrollTop() >= $('#hitlist').position().top) {
+                $("#hitlistScroll").addClass("colorToggle");
+                $("#alignmentsScroll").removeClass("colorToggle");
+                $("#visualizationScroll").removeClass("colorToggle");
+            } else if ($(this).scrollTop() >= $('#visualization').position().top + 75) {
+                $('.scrollContainer').addClass('fixed');
+            } else if ($(this).scrollTop() >= $('#visualization').position().top) {
+                $("#visualizationScroll").addClass("colorToggle");
+                $("#hitlistScroll").removeClass("colorToggle");
+                $("#alignmentsScroll").removeClass("colorToggle");
+            } else {
+                $('.scrollContainer').removeClass('fixed');
             }
-        });
-    });
-
-    // add scrollcontainer highlighting
-    $(document).on('scroll', function() {
-        if($(this).scrollTop()>=$('#alignments').position().top){
-            $("#alignmentsScroll").addClass("colorToggle");
-            $("#hitlistScroll").removeClass("colorToggle");
-            $("#visualizationScroll").removeClass("colorToggle");
-        }else if($(this).scrollTop()>=$('#hitlist').position().top){
-            $("#hitlistScroll").addClass("colorToggle");
-            $("#alignmentsScroll").removeClass("colorToggle");
-            $("#visualizationScroll").removeClass("colorToggle");
-        }  else if($(this).scrollTop()>=$('#visualization').position().top+75) {
-            $('.scrollContainer').addClass('fixed');
-        } else if($(this).scrollTop()>=$('#visualization').position().top) {
-            $("#visualizationScroll").addClass("colorToggle");
-            $("#hitlistScroll").removeClass("colorToggle");
-            $("#alignmentsScroll").removeClass("colorToggle");
-        }else{
-            $('.scrollContainer').removeClass('fixed');
-        }
-        // trigger lazyload for loading alignment
-        if($(this).scrollTop() == $(this).height()-$(window).height()){
-            var end = parseInt(shownHits) + parseInt(showMore);
-            getHits(shownHits, end);
-        }
-        // add slider val
-        $('.slider').on('moved.zf.slider', function() {
-            $('#lefthandle').html($('#hidden1').val());
-            $('#lefthandle').css({
-                'color' : 'white',
-                'font-weight': 'bold',
-                'padding-left' : '2px'
-            });
-            $('#righthandle').html($('#hidden2').val());
-            $('#righthandle').css({
-                'color' : 'white',
-                'font-weight': 'bold',
-                'padding-left' : '2px'
+            // trigger lazyload for loading alignment
+            if ($(this).scrollTop() == $(this).height() - $(window).height()) {
+                var end = parseInt(shownHits) + parseInt(showMore);
+                getHits(shownHits, end);
+            }
+            // add slider val
+            $('.slider').on('moved.zf.slider', function () {
+                $('#lefthandle').html($('#hidden1').val());
+                $('#lefthandle').css({
+                    'color': 'white',
+                    'font-weight': 'bold',
+                    'padding-left': '2px'
+                });
+                $('#righthandle').html($('#hidden2').val());
+                $('#righthandle').css({
+                    'color': 'white',
+                    'font-weight': 'bold',
+                    'padding-left': '2px'
+                });
             });
         });
+        $("#alignments").floatingScroll('init');
     });
-    $("#alignments").floatingScroll('init');
-
 }
