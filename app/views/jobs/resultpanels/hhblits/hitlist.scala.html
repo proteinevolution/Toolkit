@@ -98,7 +98,7 @@
         var numHits = @{result.num_hits};
         var shownHits = 100;
         var showMore = 100;
-
+	var loading = false;
         // use this array to store
         // checked checkboxes
         // due to pagination/lazyload
@@ -114,6 +114,7 @@
                 setTimeout(function () {
                     slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 }, 1000);
+		shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits);
                 $('#templateAlignmentModal').foundation()
             }
@@ -242,15 +243,15 @@
 
 
         function getHits(start, end){
-            if(start <= numHits){
-                end = end <  numHits ? end : numHits;
-                shownHits = end;
+            if(start <= numHits && end <= numHits){
+                loading = true;
                 var route = jsRoutes.controllers.HHblitsController.loadHits(jobID,start, end);
                 return $.ajax({
                     method: route.method,
                     url: route.url
                 }).done(function (data_) {
                     $("#alignmentTable").append(data_);
+		    loading = false;
                 });
             }
         }

@@ -498,8 +498,14 @@ function hitlistBaseFunctions(){
             }
             // trigger lazyload for loading alignment
             if ($(this).scrollTop() == $(this).height() - $(window).height()) {
-                var end = parseInt(shownHits) + parseInt(showMore);
-                getHits(shownHits, end);
+                if(!loading){
+		var end = parseInt(shownHits) + parseInt(showMore);
+                end = end <  numHits ? end : numHits;
+		if(shownHits != end){
+			getHits(shownHits, end);
+		}
+		shownHits = end;
+		}
             }
             // add slider val
             $('.slider').on('moved.zf.slider', function () {
