@@ -14,7 +14,7 @@
 @* checkboxes, accession, name of hit*@
 <tr class="header">
     <td ><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
-<td colspan="4">
+<td class="hitInfo" colspan="4">
     @{BlastVisualization.getSingleLinkDB(db , hit.accession)}
     @{"  "+hit.description}
 </td>
@@ -22,7 +22,7 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td colspan="4">Score: @{hit.bitscore}
+    <td class="hitInfo" colspan="4"><b>Score: @{hit.bitscore}
         bits (@{hit.score}),
         E-value: @{hit.evalue},
         Identities: @{hit.identity}/@{hit.hit_len}
@@ -31,7 +31,7 @@
         (@{BlastVisualization.calculatePercentage(hit.positive, hit.hit_len)}),
         Gaps: @{hit.gaps}/@{hit.hit_len}
         (@{BlastVisualization.calculatePercentage(hit.gaps, hit.hit_len)}),
-        Length: @{hit.hit_len}
+        Length: @{hit.hit_len}</b>
     </td>
 </tr>
 <tr>

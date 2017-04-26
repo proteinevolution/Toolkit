@@ -12,7 +12,7 @@
 @* checkboxes, accession, name of hit*@
 <tr class="header">
     <td ><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
-<td colspan="4">
+<td class="hitInfo"  colspan="4">
     @BlastVisualization.getSingleLink(hit.template.accession)
     @{"  "+ hit.description}
 </td>
@@ -20,12 +20,10 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td colspan="4">Probability: @{hit.info.probab}, E-value: @{hit.info.evalue},
+    <td class="hitInfo"  colspan="4"><b>Probability: @{hit.info.probab}, E-value: @{hit.info.evalue},
         Score: @{hit.info.score}, Aligned Cols: @{hit.info.aligned_cols},
         Identities: @{BlastVisualization.percentage(hit.info.identities.toString)},
-        Similarity: @{hit.info.similarity}
-
-
+        Similarity: @{hit.info.similarity} </b>
     </td>
 </tr>
 <tr>
