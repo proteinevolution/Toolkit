@@ -48,10 +48,14 @@
 }
 
 .flat-slider{
-   width: 89%;
+    width: 89%;
     margin-left: 6em !important;
     margin-top: 2em;
     max-width: 774px;
+}
+
+.flat-slider-expand {
+    margin-left: 44em !important;
 }
 
 #blastviz{
@@ -354,10 +358,24 @@ table.dataTable.no-footer{
     margin: 0 auto;
 }
 
+.indexCheckbox {
+    display: flex;
+    margin: 0;
+    height: 1.5em;
+}
+
+.indexCheckbox input {
+    margin-right: 1.5em;
+}
+
 .colorToggle{
     color: #006F62 !important;
     border-bottom: solid 1px rgba(0, 110, 98, 0.3) !important;
     padding-bottom:2px;
+}
+
+.hitInfo {
+    font-size: 1em;
 }
 
 .alignmentOpts{
@@ -462,4 +480,14 @@ table.dataTable.no-footer{
     border-right:1px solid #006e62;
     opacity: 0.3;
 }
+
+#ancescon_output_tree div {
+    text-align: center;
+}
+
+.ancescon_download {
+    float: right;
+    margin-top: 1.5em;
+}
+
 
