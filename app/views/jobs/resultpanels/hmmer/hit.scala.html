@@ -14,8 +14,8 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td ><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}</td>
-    <td colspan="4">
+    <td class="indexCheckbox" ><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}</td>
+    <td  class="hitInfo"  colspan="4">
         @BlastVisualization.getSingleLinkDB(db,hit.accession)
         @{"  "+hit.description}
     </td>
@@ -23,9 +23,9 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td colspan="4">E-value: @{hit.evalue},
-        Score: @{hit.bitscore}, Hit length: @{hit.hit_len},
-        Domain expected number: @{hit.dom_exp_num}, Domain observed number: @{hit.domain_obs_num}
+    <td class="hitInfo" colspan="4"><b>E-value: @{hit.evalue}&emsp;&emsp;&emsp;
+        Score: @{hit.bitscore}, Hit length: @{hit.hit_len}&emsp;&emsp;&emsp;
+        Domain expected number: @{hit.dom_exp_num}&emsp;&emsp;&emsp; Domain observed number: @{hit.domain_obs_num}</b>
     </td>
 </tr>
 @* color only 150 first hits, to avoid bloating of the generated html*@

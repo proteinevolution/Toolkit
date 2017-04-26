@@ -1,9 +1,3 @@
-.ui-widget {
-    font-family: inherit;
-    font-size: 1.0em !important;
-}
-
-
 body.is-reveal-open {
     overflow: visible;
 }
@@ -710,6 +704,12 @@ i.button_fullscreen:focus {
 
 .nice-select:active, .nice-select.open, .nice-select:focus {
     border-color: #88bfff;
+}
+
+.result-panel .nice-select, .result-panel .nice-select ul {
+    font-size: 1em;
+    width: 15em;
+    margin-bottom: 0.5em;
 }
 
 .irs {

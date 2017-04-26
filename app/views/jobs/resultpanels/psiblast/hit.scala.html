@@ -13,8 +13,8 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td ><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
-<td colspan="4">
+    <td class="indexCheckbox"><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
+<td class="hitInfo" colspan="4">
     @{BlastVisualization.getSingleLinkDB(db , hit.accession)}
     @{"  "+hit.description}
 </td>
@@ -22,16 +22,16 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td colspan="4">Score: @{hit.bitscore}
-        bits (@{hit.score}),
-        E-value: @{hit.evalue},
+    <td class="hitInfo" colspan="4"><b>Score: @{hit.bitscore}
+        bits (@{hit.score})&emsp;&emsp;&emsp;
+        E-value: @{hit.evalue}&emsp;&emsp;&emsp;
         Identities: @{hit.identity}/@{hit.hit_len}
-        (@{BlastVisualization.calculatePercentage(hit.identity, hit.hit_len)}),
+        (@{BlastVisualization.calculatePercentage(hit.identity, hit.hit_len)})&emsp;&emsp;&emsp;
         Positives: @{hit.positive}/@{hit.hit_len}
-        (@{BlastVisualization.calculatePercentage(hit.positive, hit.hit_len)}),
+        (@{BlastVisualization.calculatePercentage(hit.positive, hit.hit_len)})&emsp;&emsp;&emsp;
         Gaps: @{hit.gaps}/@{hit.hit_len}
-        (@{BlastVisualization.calculatePercentage(hit.gaps, hit.hit_len)}),
-        Length: @{hit.hit_len}
+        (@{BlastVisualization.calculatePercentage(hit.gaps, hit.hit_len)})&emsp;&emsp;&emsp;
+        Length: @{hit.hit_len}</b>
     </td>
 </tr>
 <tr>

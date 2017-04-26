@@ -304,6 +304,7 @@ JobTabsComponent = {
                         onCollapse();
                     }
                     $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
+                    $("#flat-slider").removeClass("flat-slider-expand");
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
@@ -311,6 +312,8 @@ JobTabsComponent = {
                         onExpand();
                     }
                     $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
+                    $("#flat-slider").addClass("flat-slider-expand");
+
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
