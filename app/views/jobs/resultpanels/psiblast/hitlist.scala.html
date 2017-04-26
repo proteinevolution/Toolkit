@@ -88,7 +88,23 @@ $(document).ready( function(){
 });
 
 
-forwardTemplateAlignment_
+function selectAll(){
+    selectAllBool = !selectAllBool;
+    if(selectAllBool) {
+        selectAllHelper(checkbox);
+        $(".selectAllSeq").addClass("colorToggle");
+        // first empty array
+        checkboxes = [];
+        // push all checkboxes (1 to num_hits) into array
+        _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
+    }
+    else {
+        deselectAll(checkbox);
+        $(".selectAllSeq").removeClass("colorToggle");
+        // delete all checkboxes from array
+        checkboxes = [];
+    }
+}
 
 function drawDataTable(){
     hitlist = $('#htb').dataTable({
