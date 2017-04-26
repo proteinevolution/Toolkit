@@ -59,6 +59,10 @@
     width: 100%;
 }
 
+#blastviz p {
+   text-align: center;
+}
+
 #line-element{
     margin-top: 0.5rem !important;
     margin-bottom: 1rem !important;
