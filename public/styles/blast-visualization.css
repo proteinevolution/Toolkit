@@ -375,7 +375,7 @@ table.dataTable.no-footer{
 }
 
 .hitInfo {
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .alignmentOpts{
@@ -480,4 +480,14 @@ table.dataTable.no-footer{
     border-right:1px solid #006e62;
     opacity: 0.3;
 }
+
+#ancescon_output_tree div {
+    text-align: center;
+}
+
+.ancescon_download {
+    float: right;
+    margin-top: 1.5em;
+}
+
 
