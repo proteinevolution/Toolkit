@@ -312,7 +312,7 @@ accordionContent = function(elem : Element, isInit : boolean) {
         references = helpContent(args.toolname)[3];
         return m("div", {
             id: "help-" + args.toolname,
-            "class": "reveal",
+            "class": "reveal helpModal",
             config: helpModalReveal
         }, m("div", {
             id: "help-tabs",

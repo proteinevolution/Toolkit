@@ -15,7 +15,6 @@
     @* Loads ForwardModals *@
     @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort+"_hhsuite")
     @views.html.forwardmodals.simple(tool, tool.toolNameShort)
-    <div id="stickyAnchor"></div>
     <div class="scrollContainer">
         <div id="scrollLinks">
             <a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a>
@@ -148,7 +147,9 @@ function drawDataTable(){
         "bProcessing" : true,
         "bServerSide" : true,
         "sAjaxSource" : "/api/job/results/dataTableHHpred/"+jobID,
-        "autoWidth" : false
+        "autoWidth" : false,
+        "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+        "searching": false
     });
 }
 
