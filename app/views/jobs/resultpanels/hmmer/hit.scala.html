@@ -14,7 +14,7 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td ><input type="checkbox" name="templates" class="checkbox_hmmer" value='@{hit.num}'> @{hit.num}</td>
+    <td ><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}</td>
     <td colspan="4">
         @BlastVisualization.getSingleLinkDB(db,hit.accession)
         @{"  "+hit.description}

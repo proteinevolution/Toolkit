@@ -20,7 +20,7 @@
         </div>
         <span class="headerDivider"></span>
         <div id="controlls">
-            <a onclick="@{tool.toolNameShort}_selectAll()" type="button"class="selectAllSeq_@{tool.toolNameShort}">Select all</a>
+            <a onclick="selectAll()" class="selectAllSeq">Select all</a>
             <a type="button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
         </div>
     </div>
@@ -29,7 +29,7 @@
         <h5 id="visualizationTitle">Visualization</h5>
             <div class='flat-slider' id='flat-slider'></div>
             <div id='blastviz'>
-                <a class="success button tiny resubmitSection" onclick="@{tool.toolNameShort}_resubmitSection()" type="button" id="resubmitSection">
+                <a class="success button tiny resubmitSection" onclick="resubmitSection()" type="button" id="resubmitSection">
                 Resubmit section</a>
                     @BlastVisualization.html(s"$jobID/results/blastviz.html")
                     <p><img src="files/@{jobID}/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
@@ -62,129 +62,50 @@
 }
 <script>
 
-var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
-var hitlist;
-var query;
-var selectAllBool_@{tool.toolNameShort} = false;
-var shownHits = 0;
+var checkbox = "checkbox";
+var selectAllBool = false;
+var shownHits = 100;
 var showMore = 100;
+// use this array to store
+// checked checkboxes
+// due to pagination/lazyload
+var checkboxes = [];
+var numHits = @{result.num_hits};
+var jobID = '@{jobID}';
 
-(function()  {
-
-    // add scrollcontainer highlighting
-    $(document).on('scroll', function() {
-        if($(this).scrollTop()>=$('#alignments').position().top){
-            $("#alignmentsScroll").addClass("colorToggle");
-            $("#hitlistScroll").removeClass("colorToggle");
-            $("#visualizationScroll").removeClass("colorToggle");
-        }else if($(this).scrollTop()>=$('#hitlist').position().top){
-            $("#hitlistScroll").addClass("colorToggle");
-            $("#alignmentsScroll").removeClass("colorToggle");
-            $("#visualizationScroll").removeClass("colorToggle");
-        }  else if($(this).scrollTop()>=$('#visualization').position().top+75) {
-            $('.scrollContainer').addClass('fixed');
-        } else if($(this).scrollTop()>=$('#visualization').position().top) {
-            $("#visualizationScroll").addClass("colorToggle");
-            $("#hitlistScroll").removeClass("colorToggle");
-            $("#alignmentsScroll").removeClass("colorToggle");
-        }else{
-            $('.scrollContainer').removeClass('fixed');
-        }
-        if($(this).scrollTop() == $(this).height()-$(window).height()){
-            getHits(shownHits, shownHits+showMore);
-        }
-
-    });
-
-    // adding loading overlay
-    $(document).ajaxStart(function(){
-        $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
-    });
-    $(document).ajaxComplete(function(){
-        $.LoadingOverlay("hide");
-    });
-    $('.slider').on('moved.zf.slider', function() {
-        $('#lefthandle').html($('#hidden1').val());
-        $('#lefthandle').css({
-            'color' : 'white',
-            'font-weight': 'bold',
-            'padding-left' : '2px'
-        });
-        $('#righthandle').html($('#hidden2').val());
-        $('#righthandle').css({
-            'color' : 'white',
-            'font-weight': 'bold',
-            'padding-left' : '2px'
-        });
-    });
-
-    var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
-    var selectAllBool_@{tool.toolNameShort} = false;
-    var urlParams = "/api/job/@{jobID}";
-    var urlQuery = "/files/@{jobID}/query.json";
-
-    if(@{result.num_hits} > 0){
-
+$(document).ready( function(){
+    hitlistBaseFunctions();
+    if(numHits > 0 ){
         drawDataTable();
         var firstQueryStart = @result.HSPS.head.query_start;
         var firstQueryEnd = @result.HSPS.head.query_end;
         /* without timeout SLIDER is displayed */
         setTimeout(function () {
-            slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd)
+            slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         }, 1000);
-        getHits(shownHits, shownHits+showMore);
+        getHits(0, shownHits);
     }
-})();
-
-$("#alignmentAccordion").bind('down.zf.accordion', (function() {
-    $("#alignments").floatingScroll('update');
-
-}));
-
-
-$(document).ready(function () {
-    setTimeout(function () {
-        $("#alignments").floatingScroll('init');
-    }, 2000);
 });
 
 
+forwardTemplateAlignment_
 
 function drawDataTable(){
     hitlist = $('#htb').dataTable({
         "bProcessing" : true,
         "bServerSide" : true,
-        "sAjaxSource" : "/api/job/results/dataTablePSIBlast/@{jobID}"
-});
+        "sAjaxSource" : "/api/job/results/dataTablePSIBlast/"+jobID
+    });
 }
 
 
-function _deselectAll(){
-    deselectAll(checkbox_@{tool.toolNameShort}, this.hitlist.fnGetNodes());
-}
-
-window["@{tool.toolNameShort}_selectAll"] = function () {
-    selectAllDatatable(this.hitlist.fnGetNodes());
-    this.selectAllBool_@{tool.toolNameShort} = !this.selectAllBool_@{tool.toolNameShort};
-    if(this.selectAllBool_@{tool.toolNameShort}) {
-        selectAll(checkbox_@{tool.toolNameShort});
-        $(".selectAllSeq_@{tool.toolNameShort}").addClass("colorToggle");
-    }
-    else {
-        _deselectAll();
-        $(".selectAllSeq_@{tool.toolNameShort}").removeClass("colorToggle");
-    }
-};
-
-
-window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
+function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
     // full seq is retrieved
-    var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
     if(boolFullLength) {
         if(boolEvalue) {
-            var route = jsRoutes.controllers.PSIBlastController.evalFull('@{jobID}', evalue);
+            var route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue);
         }else{
-            var route = jsRoutes.controllers.PSIBlastController.full('@{jobID}', checkedCheckboxes);
+            var route = jsRoutes.controllers.PSIBlastController.full(jobID, checkboxes);
         }
         $.ajax({
             url: route.url,
@@ -192,16 +113,16 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
         }).done(function (data_) {
             $.ajax({
                 type: 'GET',
-                url: 'files/@{jobID}/sequences.fa'
+                url: 'files/'+jobID+'/sequences.fa'
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });
         });
     }else{
         if(boolEvalue) {
-            route = jsRoutes.controllers.PSIBlastController.alnEval('@{jobID}', evalue);
+            route = jsRoutes.controllers.PSIBlastController.alnEval(jobID, evalue);
         }else{
-            route = jsRoutes.controllers.PSIBlastController.aln('@{jobID}', checkedCheckboxes);
+            route = jsRoutes.controllers.PSIBlastController.aln(jobID, checkboxes);
         }
         $.ajax({
             url: route.url,
@@ -210,18 +131,18 @@ window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHit
             forward(selectedTool, data_);
         });
     }
-};
+}
 
-window["@{tool.toolNameShort}_resubmitSection"] = function(){
+function resubmitSection(){
     resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
-};
+}
 
 function getHits(start, end){
-    if(start <= @{result.num_hits}){
-        end = end > @{result.num_hits} ? @{result.num_hits} : end;
-        this.shownHits += this.showMore;
-        var route = jsRoutes.controllers.PSIBlastController.loadHits('@{jobID}',start, end);
-        $.ajax({
+    if(start <= numHits){
+        end = end <  numHits ? end : numHits;
+        shownHits = end;
+        var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID,start, end);
+        return $.ajax({
             method: route.method,
             url: route.url
         }).done(function (data_) {
