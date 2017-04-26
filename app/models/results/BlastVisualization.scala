@@ -253,7 +253,7 @@ object BlastVisualization extends Constants {
 
 
   def getCheckbox(num: Int): String ={
-    "<input type=\"checkbox\" value=\""+num+"\"><a onclick=\"scrollToElem("+num+")\">"+num+"</a>"
+    "<input type=\"checkbox\" value=\""+num+"\" class=\"checkbox\"><a onclick=\"scrollToElem("+num+")\">"+num+"</a>"
   }
 
   def insertMatch (seq : String, length : Int, hitArr : List[Int]) : String = {

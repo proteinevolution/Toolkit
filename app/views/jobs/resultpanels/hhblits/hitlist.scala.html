@@ -26,7 +26,7 @@
         </div>
         <span class="headerDivider"></span>
         <div id="controlls">
-            <a onclick="@{tool.toolNameShort}_selectAll()" class="selectAllSeq_@{tool.toolNameShort}">Select all</a>
+            <a onclick="selectAll()" class="selectAllSeq">Select all</a>
             <a data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
             <a data-open="forwardModal_@{tool.toolNameShort}_hhsuite">Forward Query MSA</a>
         </div>
@@ -36,7 +36,7 @@
         <h5 id="visualizationTitle">Visualization</h5>
         <div class='flat-slider' id='flat-slider'></div>
         <div id='blastviz'>
-            <a class="success button tiny resubmitSection" onclick="@{tool.toolNameShort}_resubmitSection()" type="button" id="resubmitSection">
+            <a class="success button tiny resubmitSection" onclick="resubmitSection()" type="button" id="resubmitSection">
                 Resubmit section</a>
             <div id='blastviz'>
                 @BlastVisualization.html(s"$jobID/results/$jobID.html_NOIMG")
@@ -91,73 +91,32 @@
 </div>
 
 <script>
-
-        var fileUrlQueryMSA = "/files/@jobID/@{jobID}.rep100.json";
-        var fileUrlQueryMSAFas = "/files/@jobID/@{jobID}.rep100.fas";
-        var checkbox_@{tool.toolNameShort} = "checkbox_@{tool.toolNameShort}";
-        var hitlist;
-        var selectAllBool_@{tool.toolNameShort} = false;
-        var shownHits = 0;
-        var showMore = 10;
+        var jobID = '@{jobID}';
+        var fileUrlQueryMSA = "/files/"+jobID+"/"+jobID+".rep100.json";
+        var fileUrlQueryMSAFas = "/files/"+jobID+"/"+jobID+".rep100.fas";
+        var checkbox = "checkbox";
+        var selectAllBool = false;
+        var numHits = @{result.num_hits};
 
 
-        (function()  {
-            // add scrollcontainer highlighting
-            $(document).on('scroll', function() {
-                if($(this).scrollTop()>=$('#alignments').position().top){
-                    $("#alignmentsScroll").addClass("colorToggle");
-                    $("#hitlistScroll").removeClass("colorToggle");
-                    $("#visualizationScroll").removeClass("colorToggle");
-                }else if($(this).scrollTop()>=$('#hitlist').position().top-10){
-                    $("#hitlistScroll").addClass("colorToggle");
-                    $("#alignmentsScroll").removeClass("colorToggle");
-                    $("#visualizationScroll").removeClass("colorToggle");
-                }  else if($(this).scrollTop()>=$('#visualization').position().top+75) {
-                    $('.scrollContainer').addClass('fixed');
-                } else if($(this).scrollTop()>=$('#visualization').position().top-10) {
-                    $("#visualizationScroll").addClass("colorToggle");
-                    $("#hitlistScroll").removeClass("colorToggle");
-                    $("#alignmentsScroll").removeClass("colorToggle");
-                }else{
-                    $('.scrollContainer').removeClass('fixed');
-                }
-                if($(this).scrollTop() == $(this).height()-$(window).height()){
-                    getHits(shownHits, shownHits+showMore);
-                }
-            });
-            // adding loading overlay
-            $(document).ajaxStart(function(){
-                $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
-            });
-            $(document).ajaxComplete(function(){
-                $.LoadingOverlay("hide");
-            });
+        // use this array to store
+        // checked checkboxes
+        // due to pagination/lazyload
+        var checkboxes = [];
 
-            $('.slider').on('moved.zf.slider', function() {
-                $('#lefthandle').html($('#hidden1').val());
-                $('#lefthandle').css({
-                    'color' : 'white',
-                    'font-weight': 'bold',
-                    'padding-left' : '2px'
-                });
-                $('#righthandle').html($('#hidden2').val());
-                $('#righthandle').css({
-                    'color' : 'white',
-                    'font-weight': 'bold',
-                    'padding-left' : '2px'
-                });
-            });
-            if(@result.num_hits > 0){
-            drawDataTable();
-            //fill first query name and sequence for slider resubmit
-            /* without timeout SLIDER is displayed */
-            setTimeout(function () {
-                slider_show('@{result.query.seq.length}', '@{result.HSPS{0}.query.start}', '@{result.HSPS{0}.query.end}');
-            }, 1000);
-                getHits(shownHits, shownHits+showMore);
-            $("#templateAlignmentModal").foundation();
-        }
-        })();
+        $(document).ready( function(){
+            hitlistBaseFunctions();
+            if(numHits > 0 ){
+                drawDataTable();
+                var firstQueryStart = @result.HSPS.head.query.start;
+                var firstQueryEnd = @result.HSPS.head.query.end;
+                /* without timeout SLIDER is displayed */
+                setTimeout(function () {
+                    slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
+                }, 1000);
+                getHits(0, shownHits);
+            }
+        });
 
 
         $(document).ready(function () {
@@ -174,31 +133,31 @@
         }
 
 
-        function _deselectAll(){
-            deselectAll(checkbox_@{tool.toolNameShort}, this.hitlist.fnGetNodes());
-        }
-
-        window["@{tool.toolNameShort}_selectAll"] = function () {
-            selectAllDatatable(this.hitlist.fnGetNodes());
-            this.selectAllBool_@{tool.toolNameShort} = !this.selectAllBool_@{tool.toolNameShort};
-            if(this.selectAllBool_@{tool.toolNameShort}) {
-                selectAll(checkbox_@{tool.toolNameShort});
-                $(".selectAllSeq_@{tool.toolNameShort}").addClass("colorToggle");
+        function selectAll(){
+            selectAllBool = !selectAllBool;
+            if(selectAllBool) {
+                selectAllHelper(checkbox);
+                $(".selectAllSeq").addClass("colorToggle");
+                // first empty array
+                checkboxes = [];
+                // push all checkboxes (1 to num_hits) into array
+                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
             }
             else {
-                _deselectAll();
-                $(".selectAllSeq_@{tool.toolNameShort}").removeClass("colorToggle");
+                deselectAll(checkbox);
+                $(".selectAllSeq").removeClass("colorToggle");
+                // delete all checkboxes from array
+                checkboxes = [];
             }
-        };
+        }
 
 
-        window["@{tool.toolNameShort}_forward"] = function(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
-            var checkedCheckboxes = getCheckedCheckboxes("checkbox_@{tool.toolNameShort}");
+       function hhblits_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
             if(boolFullLength) {
                 if(boolEvalue) {
                     var route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
                 }else{
-                    var route = jsRoutes.controllers.HHblitsController.full('@jobID', checkedCheckboxes);
+                    var route = jsRoutes.controllers.HHblitsController.full('@jobID', checkboxes);
                 }
                 $.ajax({
                     url: route.url,
@@ -216,7 +175,7 @@
                 if(boolEvalue) {
                     route = jsRoutes.controllers.HHblitsController.alnEval('@jobID', evalue);
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.aln('@jobID', checkedCheckboxes);
+                    route = jsRoutes.controllers.HHblitsController.aln('@jobID', checkboxes);
                 }
                 $.ajax({
                     url: route.url,
@@ -235,18 +194,18 @@
 
 
 
-        window["@{tool.toolNameShort}_forwardQueryMSA"] = function(selectedTool){
+        function hhblits_forwardQueryMSA(selectedTool){
             $.ajax({
                 type: 'GET',
                 url: fileUrlQueryMSAFas
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });
-        };
+        }
 
-        window["@{tool.toolNameShort}_resubmitSection"] = function(){
+        function resubmitSection(){
             resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
-        };
+        }
 
 
         function templateAlignment(accession){
@@ -280,11 +239,11 @@
 
 
         function getHits(start, end){
-            if(start <= @{result.num_hits}){
-                end = end > @{result.num_hits} ? @{result.num_hits} : end;
-                this.shownHits += this.showMore;
-                var route = jsRoutes.controllers.HHblitsController.loadHits('@{jobID}',start, end);
-                $.ajax({
+            if(start <= numHits){
+                end = end <  numHits ? end : numHits;
+                shownHits = end;
+                var route = jsRoutes.controllers.HHblitsController.loadHits(jobID,start, end);
+                return $.ajax({
                     method: route.method,
                     url: route.url
                 }).done(function (data_) {
@@ -292,5 +251,6 @@
                 });
             }
         }
+
 
 </script>

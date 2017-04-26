@@ -153,60 +153,42 @@ function resubmitSection(sequence, name) {
 }
 
 
-//TODO: works only with timeout. needs to be replaced?
-// links two checkboxes with id 'hits'
-setTimeout(function() {
+// //TODO: works only with timeout. needs to be replaced?
+// // links two checkboxes with id 'hits'
+// setTimeout(function() {
+//
+//     var allPages;
+//
+//
+//     // listens to alignment
+//     $('input:checkbox').click(function (e) {
+//         allPages = hitlist.fnGetNodes();
+//         var currentVal = $(this).val();
+//         var currentState = $(this).prop('checked');
+//         // alignment
+//         $('input[value=' + currentVal + ']').each(function () {
+//             $(this).prop('checked', currentState);
+//         });
+//
+//         $(allPages).find('input[value='+currentVal+']').prop('checked', currentState);
+//
+//     });
+//
+//     // listens to dataTable
+//     $(allPages).find('input[type="checkbox"]').click(function (e) {
+//         allPages = hitlist.fnGetNodes();
+//         var currentVal = $(this).val();
+//         console.log(currentVal)
+//         var currentState = $(this).prop('checked');
+//         // alignment
+//         $('input[value=' + currentVal + ']').each(function () {
+//             $(this).prop('checked', currentState);
+//         })
+//     });
+//
+//
+// },4000);
 
-    var allPages;
-
-
-    // listens to alignment
-    $('input:checkbox').click(function (e) {
-        allPages = hitlist.fnGetNodes();
-        var currentVal = $(this).val();
-        var currentState = $(this).prop('checked');
-        // alignment
-        $('input[value=' + currentVal + ']').each(function () {
-            $(this).prop('checked', currentState);
-        });
-
-        $(allPages).find('input[value='+currentVal+']').prop('checked', currentState);
-
-    });
-
-    // listens to dataTable
-    $(allPages).find('input[type="checkbox"]').click(function (e) {
-        allPages = hitlist.fnGetNodes();
-        var currentVal = $(this).val();
-        console.log(currentVal)
-        var currentState = $(this).prop('checked');
-        // alignment
-        $('input[value=' + currentVal + ']').each(function () {
-            $(this).prop('checked', currentState);
-        })
-    });
-
-
-},4000);
-
-
-/**
- *  This function preprocesses data for forwarding
- * @param selectedTool
- * @param boolSelectedHits
- * @param boolEvalue
- * @param evalue
- * @returns {*}
- */
-
-
-function getCheckedCheckboxes(className ){
-    var numList = [];
-    $('input:checkbox.' + className + ":checked").each(function () {
-        numList.push($(this).val());
-    });
-    return numList;
-}
 
 
 /**
@@ -222,33 +204,15 @@ function applySliderRange(jsonData, sliderRange){
     return jsonData;
 }
 
-// parameter: all pages from dataTable example: allPages = hitlist.fnGetNodes()
-// select all checkboxes
-    function selectAll(checkboxName) {
-        // alignment
-        $('input:checkbox.'+checkboxName).each(function () {
-            $(this).prop('checked', true);
-        });
 
+
+/*Select top ten Checkboxes*/
+function selectTopTen(checkboxName){
+
+    for(var i=0 ; i < 10; i++){
+        $('input:checkbox.'+checkboxName+'[value="' + i + '"]').prop('checked', true);
     }
-
-    function selectAllDatatable(allPages) {
-        // dataTable
-        $(allPages).find('input[type="checkbox"]').prop('checked', true);
-    }
-
-    function deselectAll(checkboxName, allPages){
-        $('input:checkbox.'+checkboxName).prop('checked', false);
-        $(allPages).find('input[type="checkbox"]').prop('checked', false);
-    }
-
-    /*Select top ten Checkboxes*/
-    function selectTopTen(checkboxName){
-
-        for(var i=0 ; i < 10; i++){
-            $('input:checkbox.'+checkboxName+'[value="' + i + '"]').prop('checked', true);
-        }
-    }
+}
 
 /* FORWARDING */
 
@@ -437,13 +401,122 @@ function calcColor(prob) {
 
 
 function scrollToElem(num){
-    var pos = $('input[name=templates][value='+num+']').offset().top;
-    $('html, body').animate({
-        scrollTop: pos-100}, 'fast');
+    if (num > shownHits) {
+        getHits(shownHits, num).done(function(data){
+            var pos = $('input[name=templates][value=' + num + ']').offset().top;
+            $('html, body').animate({
+                scrollTop: pos - 100
+            }, 'fast')
+        });
+        shownHits = num;
+    }else{
+        var pos = $('input[name=templates][value=' + num + ']').offset().top;
+        $('html, body').animate({
+            scrollTop: pos - 100
+        }, 'fast')
+    }
 }
 
 function scrollToSection(name){
     var pos = $('div[id='+name+']').offset().top;
     $('html, body').animate({
         scrollTop: pos+30}, 'fast');
+}
+
+
+// select all checkboxes
+function selectAllHelper(name) {
+    $('input:checkbox.'+name+'').each(function () {
+        $(this).prop('checked', true);
+    });
+
+}
+function deselectAll(name){
+    $('input:checkbox.'+name+'').prop('checked', false);
+}
+function selectFromArray(checkboxes){
+    checkboxes.forEach(function (currentVal) {
+        $('input:checkbox[value='+currentVal+']').prop('checked', true);
+    })
+}
+
+
+function hitlistBaseFunctions(){
+
+    // adding loading overlay
+    $(document).ajaxStart(function(){
+        $.LoadingOverlay("show", {color:  "rgba(0,0,0,0.0)"});
+    });
+    $(document).ajaxComplete(function(){
+        $.LoadingOverlay("hide");
+
+        // check checkboxes that are stored in array
+        // in order to make it work with pagination/lazyload
+        selectFromArray(checkboxes);
+
+        $('input:checkbox').click(function (e) {
+            var currentVal = $(this).val();
+            var currentState = $(this).prop('checked');
+
+            // link checkboxes with same value
+            $('input:checkbox[value=' + currentVal + ']').each(function () {
+                $(this).prop('checked', currentState);
+            });
+
+            if(currentState) {
+                // push num of checked checkbox into array
+                checkboxes.push(currentVal);
+                // make sure array contains no duplicates
+                checkboxes = checkboxes.filter (function (value, index, array) {
+                    return array.indexOf (value) == index;
+                });
+            }else{
+                // delete num of unchecked checkbox from array
+                checkboxes = checkboxes.filter(function(val){val != currentVal});
+            }
+        });
+    });
+
+    // add scrollcontainer highlighting
+    $(document).on('scroll', function() {
+        if($(this).scrollTop()>=$('#alignments').position().top){
+            $("#alignmentsScroll").addClass("colorToggle");
+            $("#hitlistScroll").removeClass("colorToggle");
+            $("#visualizationScroll").removeClass("colorToggle");
+        }else if($(this).scrollTop()>=$('#hitlist').position().top){
+            $("#hitlistScroll").addClass("colorToggle");
+            $("#alignmentsScroll").removeClass("colorToggle");
+            $("#visualizationScroll").removeClass("colorToggle");
+        }  else if($(this).scrollTop()>=$('#visualization').position().top+75) {
+            $('.scrollContainer').addClass('fixed');
+        } else if($(this).scrollTop()>=$('#visualization').position().top) {
+            $("#visualizationScroll").addClass("colorToggle");
+            $("#hitlistScroll").removeClass("colorToggle");
+            $("#alignmentsScroll").removeClass("colorToggle");
+        }else{
+            $('.scrollContainer').removeClass('fixed');
+        }
+        // trigger lazyload for loading alignment
+        if($(this).scrollTop() == $(this).height()-$(window).height()){
+            var end = parseInt(shownHits) + parseInt(showMore);
+            getHits(shownHits, end);
+        }
+        // add slider val
+        $('.slider').on('moved.zf.slider', function() {
+            $('#lefthandle').html($('#hidden1').val());
+            $('#lefthandle').css({
+                'color' : 'white',
+                'font-weight': 'bold',
+                'padding-left' : '2px'
+            });
+            $('#righthandle').html($('#hidden2').val());
+            $('#righthandle').css({
+                'color' : 'white',
+                'font-weight': 'bold',
+                'padding-left' : '2px'
+            });
+        });
+    });
+    $("#alignments").floatingScroll('init');
+
 }
