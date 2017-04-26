@@ -27,7 +27,7 @@
         <div class="select_forward large-4 columns">
             <select class="selectedHits_@viewName" id="forwardSelect_@viewName">
                 <option value="">Select Tool</option>
-                <div>
+                <div id="niceSelectList">
                     @for(forwardTool <- {tool.forwardAlignment}) {
                         <option class="alignmentOptions_@viewName"value="@forwardTool">@forwardTool</option>
                     }
@@ -76,6 +76,8 @@
     };
 
         $("#forwardModal_@viewName").foundation();
+        $("#forwardSelect_@viewName").niceSelect();
+
         $('.alignmentOptions_@viewName').show();
         $('.multiSeqOptions_@viewName').hide();
 
