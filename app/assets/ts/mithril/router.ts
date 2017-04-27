@@ -1,3 +1,5 @@
+/// <reference path="backend.ts" />
+
 import Routes = Mithril.Routes;
 
 let StaticRoute : any = {
@@ -31,19 +33,19 @@ let ErrorRouteComponent : any = {
         return { errorID : errorID, errorMessage : errorMessage}
     },
     view: function(ctrl : any, args : any) : any {
-        return m("div", { class : "error-page" },[
-            m("div", { class : "title" }, "There was an error loading this page."),
+        return m("div", { "class" : "error-page" },[
+            m("div", { "class" : "title" }, "There was an error loading this page."),
             m("div", [
-                m("div", { class : "element" }, [
+                m("div", { "class" : "element" }, [
                     m("div", "Error code: "),
                     m("div", ctrl.errorID)
                 ]),
-                m("div", { class : "element" }, [
+                m("div", { "class" : "element" }, [
                     m("div", "Error message: "),
                     m("div", ctrl.errorMessage)
                 ])
             ]),
-            m("div", { class : "message element" },
+            m("div", { "class" : "message element" },
                 "Please check if you have entered the correct URL and that you have the right jobID"
             )
         ]);
