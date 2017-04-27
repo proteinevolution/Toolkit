@@ -1,7 +1,5 @@
-/*
-let FrontendTools : any;
 
-FrontendTools = {
+let FrontendTools : any = {
     "alnviz": FrontendAlnvizComponent,
     "reformat": FrontendReformatComponent
 };
@@ -9,42 +7,43 @@ FrontendTools = {
 let a = ['0', 'p', 'q', 'r', 'e', 'd', 'i'];
 
 let jobs = {};
-*/
 
 
-/*
+interface Window { Toolkit: any; }
 
-let Toolkit : any = {
+window.Toolkit = {
     currentJobID : -1,
     getSuggestion : function (ctrl : any) {
-        return function (e : Event) {}
+        return function (e : any) {}
     },
     jobManagerAdded : false,
     toggleJobManager : function (ctrl : any, t : any) {
-        return function (e : Event) {
+        return function (e : any) {
             t.jobManagerAdded = true;
             return t.jobManagerAdded
         }
     },
     initFoundation : function (ctrl : any) {
-        return function (elem : Element, isInit : boolean) {
+        return function (elem : any, isInit : boolean) {
             if (!isInit) {
                 $("#" + elem.id).foundation();
             }
         }
     },
     controller: function(args : any) {
-
+        currentRoute = args.isJob ? "jobs" : "tools";
         document.title = "Bioinformatics Toolkit";
-        let job : any, jobID : any, toolname : string, viewComponent : any;
+        let job : any, jobID : string, toolname : string, viewComponent : any;
         if (args.isJob) {
             jobID = m.route.param("jobID");
             if (!JobListComponent.contains(jobID) || !(Toolkit.currentJobID === jobID)) {
                 Toolkit.currentJobID = jobID;
                 // ensure addition to the job list
-                (<any>window).sendMessage({ type: "RegisterJobs", "jobIDs": [jobID] });
+                //sendMessage({ type: "RegisterJobs", "jobIDs": [jobID] });
                 // request job
-                m.request({ url: "/api/job/load/" + jobID, method: "GET" }).then(function(data) {
+                m.request({ url: "/api/job/load/" + jobID, method: "GET" }).catch(function(e) {
+                    console.log("Job Not found", e);
+                }).then(function(data) {
                     JobListComponent.pushJob(JobListComponent.Job(data), true);
                 });
             } else {
@@ -85,5 +84,3 @@ let Toolkit : any = {
         ];
     }
 };
-
-*/
