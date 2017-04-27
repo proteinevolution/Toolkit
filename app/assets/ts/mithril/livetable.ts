@@ -57,21 +57,21 @@ class LoadBar {
             colorClass : string = "loadBar " + (currentLoad < 0.90 ? "green" : currentLoad < 1.3 ? "yellow" : "red");
 
         return m('div', {id:"indexLoadBar"},  [
-            m('div', {class: 'loadBarLabel'}, "Cluster workload: " + loadString),
-            m('div', {class: 'loadBarGraph'}, m('div', {class: 'loadBarSize'}, m('table',
+            m('div', {"class": 'loadBarLabel'}, "Cluster workload: " + loadString),
+            m('div', {"class": 'loadBarGraph'}, m('div', {"class": 'loadBarSize'}, m('table',
                 m('tr', [
-                    m("th", {class: colorClass + (currentLoad < 0.4 ? " pulsating" : "")}),
-                    m("th", {class: (currentLoad < 0.4 ? "loadBar gray" : colorClass) +
+                    m("th", {"class": colorClass + (currentLoad < 0.4 ? " pulsating" : "")}),
+                    m("th", {"class": (currentLoad < 0.4 ? "loadBar gray" : colorClass) +
                                     (0.4  < currentLoad && currentLoad < 0.6 ? " pulsating" : "")}),
-                    m("th", {class: (currentLoad < 0.6 ? "loadBar gray" : colorClass) +
+                    m("th", {"class": (currentLoad < 0.6 ? "loadBar gray" : colorClass) +
                                     (0.6 <= currentLoad && currentLoad < 0.8 ? " pulsating" : "")}),
-                    m("th", {class: (currentLoad < 0.8 ? "loadBar gray" : colorClass) +
+                    m("th", {"class": (currentLoad < 0.8 ? "loadBar gray" : colorClass) +
                                     (0.8 <= currentLoad && currentLoad < 1.0 ? " pulsating" : "")}),
-                    m("th", {class: (currentLoad < 1.0 ? "loadBar gray" : colorClass) +
+                    m("th", {"class": (currentLoad < 1.0 ? "loadBar gray" : colorClass) +
                                     (1.0 <= currentLoad && currentLoad < 2.5 ? " pulsating" : "")}),
-                    m("th", {class: (currentLoad < 2.5 ? "loadBar gray" : colorClass) +
+                    m("th", {"class": (currentLoad < 2.5 ? "loadBar gray" : colorClass) +
                                     (2.5 <= currentLoad && currentLoad < 5.0 ? " pulsating" : "")}),
-                    m("th", {class: (currentLoad < 5.0 ? "loadBar gray" : colorClass + " pulsating")})
+                    m("th", {"class": (currentLoad < 5.0 ? "loadBar gray" : colorClass + " pulsating")})
                 ])
             )))
         ])
@@ -111,7 +111,7 @@ class LiveTable {
                         m('td', m.component(LoadBar, {})),
                         m('td', {id: "joblistIcon"},
                             m('a', {href: "/#/jobmanager", id: "jobmanagerIcon", title: "Go to job manager" , style: "font-weight: bold;" }, [
-                                m("i", {class: "icon-list"})
+                                m("i", {"class": "icon-list"})
                             ])
                         )
                     ])]
