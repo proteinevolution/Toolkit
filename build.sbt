@@ -73,7 +73,6 @@ lazy val root = (project in file("."))
       "org.webjars.bower"   % "d3"                    % "4.4.1",
       "org.webjars.bower"   % "slick-carousel"        % "1.6.0",
       "org.webjars.npm"     % "codemirror-minified"   % "5.22.0",
-      //"org.webjars.npm"     % "reformat.js"           % "0.1.9",
       "org.webjars"         % "dropzone"              % "4.3.0",
       "org.webjars.bower"   % "clipboard"             % "1.5.10",
       "org.webjars"         % "linkurious.js"         % "1.5.1",
@@ -87,7 +86,6 @@ lazy val root = (project in file("."))
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
   )
-
 
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
@@ -106,6 +104,7 @@ lazy val client = (project in file("client")).settings(
     "co.technius"   %%% "scalajs-mithril"   % "0.1.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
+
 
 
 fork in run := false

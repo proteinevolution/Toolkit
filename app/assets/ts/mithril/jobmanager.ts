@@ -1,3 +1,18 @@
+// Velocity animation config
+
+let fadesIn = function(element : any, isInitialized : boolean, context : any) {
+
+    let url = window.location.href;
+    let parts = url.split("/");
+    let isJob = parts[parts.length-2] == "jobs";
+
+    if (!isInitialized && !isJob) {
+        element.style.opacity = 0;
+        $(element).velocity({opacity: 1, top: "50%"}, 750);
+    }
+};
+
+
 interface Window { JobManager: any; }
 window.JobManager = {
     model: function (ctrl : any) {
