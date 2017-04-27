@@ -123,7 +123,7 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
 
   def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
-      case Some(jsValue) => {
+      case Some(jsValue) =>
         val result = hmmer.parseResult(jsValue)
         if(end > result.num_hits || start > result.num_hits ) {
           BadRequest
@@ -131,7 +131,7 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
           val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(jobID, _, result.db))
           Ok(hits.mkString)
         }
-      }
+
     }
   }
 
@@ -150,11 +150,11 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
     val hits = getHitsByKeyWord(jobID, params)
     var db = ""
     val total = getResult(jobID).map {
-      case Some(jsValue) => {
+      case Some(jsValue) =>
         val result = hmmer.parseResult(jsValue)
         db = result.db
         result.num_hits
-      }
+
     }
     hits.flatMap { list =>
       total.map { total_ =>

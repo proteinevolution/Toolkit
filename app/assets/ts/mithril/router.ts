@@ -1,4 +1,5 @@
 /// <reference path="backend.ts" />
+/// <reference path="newsfeed.ts" />
 
 import Routes = Mithril.Routes;
 
@@ -28,7 +29,7 @@ let StaticRoute : any = {
 
 let ErrorRouteComponent : any = {
     controller: function(args : any) : any {
-        var errorID      = m.route.param("errorID") ? m.route.param("errorID") : args.errorID,
+        let errorID      = m.route.param("errorID") ? m.route.param("errorID") : args.errorID,
             errorMessage = "Page not Found";
         return { errorID : errorID, errorMessage : errorMessage}
     },

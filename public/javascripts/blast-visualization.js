@@ -472,7 +472,7 @@ function hitlistBaseFunctions(){
                     });
                 } else {
                     // delete num of unchecked checkbox from array
-                    checkboxes = checkboxes.filter(val => val != currentVal);
+                    checkboxes = checkboxes.filter(function(x){return x != currentVal});
                 }
             });
         });
