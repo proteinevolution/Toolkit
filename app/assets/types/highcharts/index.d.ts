@@ -6526,7 +6526,7 @@ declare namespace Highcharts {
     }
 }
 
-
+declare global {
     interface JQuery {
         highcharts(): Highcharts.ChartObject;
         /**
@@ -6545,8 +6545,9 @@ declare namespace Highcharts {
          **/
         highcharts(options: Highcharts.Options, callback: (chart: Highcharts.ChartObject) => void): JQuery;
     }
+}
 
 
 declare var Highcharts: Highcharts.Static;
 export = Highcharts;
-export namespace Highcharts{};
+export as namespace Highcharts;
