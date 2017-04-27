@@ -264,7 +264,7 @@ class SignIn {
     static submit(event : Event) : void {
         event.preventDefault();
         let dataS = {nameLogin:SignIn.nameLogin, password:SignIn.password};
-        var route = jsRoutes.controllers.Auth.signInSubmit();
+        let route = jsRoutes.controllers.Auth.signInSubmit();
         m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
             dataS = null;
             if (authMessage.successful) {
@@ -280,7 +280,7 @@ class SignIn {
         return {}
     }
     static view (ctrl : any, args : any) : any {
-        return m("div", { class : "auth-form" },
+        return m("div", { "class" : "auth-form" },
             m("form", { 'data-abide': 'ajax', id: 'signin-form', novalidate:'novalidate', onsubmit: SignIn.submit }, [
                 m("div", m("label",
                     m("input", { id:         'nameLogin',
@@ -310,7 +310,7 @@ class SignIn {
                                  value:      SignIn.password
                     })
                 )),
-                m("input", { class: "input small expanded secondary button",
+                m("input", { "class": "input small expanded secondary button",
                              id:    'signin-submit',
                              type:  'submit',
                              value: 'Sign In'
@@ -368,9 +368,9 @@ class SignUp {
     }
 
     static view (ctrl : any, args : any) : any {
-        return m("div", {class: "auth-form"},
+        return m("div", {"class": "auth-form"},
             m("form", {'data-abide': 'ajax',
-                        class:       'auth-form',
+                        "class":       'auth-form',
                         id:          'signup-form',
                         onsubmit:    SignUp.submit,
                         onchange:    SignUp.validate,
@@ -389,7 +389,7 @@ class SignUp {
                                  onblur:      focusOutRedraw,
                                  value:       SignUp.nameLogin
                     }),
-                    m("span", {class:"form-error"}, "Username must be at least 6 characters long!")
+                    m("span", {"class":"form-error"}, "Username must be at least 6 characters long!")
                 ])),
                 m("div", m("label", [
                     m("input", { id:         'passwordCheck',
@@ -403,7 +403,7 @@ class SignUp {
                                  onblur:      focusOutRedraw,
                                  value:       SignUp.password
                     }),
-                    m("span", {class:"form-error"}, "Passwords must be at least 8 characters long!")
+                    m("span", {"class":"form-error"}, "Passwords must be at least 8 characters long!")
                 ])),
                 m("div", m("label", [
                     m("input", { id:             'password',
@@ -416,7 +416,7 @@ class SignUp {
                                  onfocus:        focusInNoRedraw,
                                  onblur:         focusOutRedraw
                     }),
-                    m("span", {class:"form-error"}, "Passwords must match!")
+                    m("span", {"class":"form-error"}, "Passwords must match!")
                 ])),
                 m("div", m("label", [
                     m("input", { id:          'eMail',
@@ -431,7 +431,7 @@ class SignUp {
                                  onblur:      focusOutRedraw,
                                  value:       SignUp.eMail
                     }),
-                    m("span", {class:"form-error"}, "Please enter a valid e-Mail address!")
+                    m("span", {"class":"form-error"}, "Please enter a valid e-Mail address!")
                 ])),
                 m("div", m("label", {id:'checklabel'}, [
                     m("input", { id:       'acceptToS',
@@ -442,9 +442,9 @@ class SignUp {
                                  value:    SignUp.acceptToS
                     }),
                     "I Accept the Terms of Service",
-                    m("span", {class:"form-error", id:'acceptToSText'}, "You must accept the ToS!")
+                    m("span", {"class":"form-error", id:'acceptToSText'}, "You must accept the ToS!")
                 ])),
-                m("input", { class: "input small expanded secondary button" + (SignUp.formValid? "" : " disabled"),
+                m("input", { "class": "input small expanded secondary button" + (SignUp.formValid? "" : " disabled"),
                              id:    'signup-submit',
                              type:  'submit',
                              value: 'Register'
@@ -479,7 +479,7 @@ class ForgotPassword {
         return m("div",
             m("form", { 'data-abide': 'ajax',
                         id:           'forgot-form',
-                        class:        "auth-form",
+                        "class":        "auth-form",
                         novalidate:   'novalidate',
                         onsubmit:     ForgotPassword.submit
             }, [
@@ -509,7 +509,7 @@ class ForgotPassword {
                                  value:        ForgotPassword.eMail
                     })
                 )),
-                m("input", { class: "input small expanded secondary button",
+                m("input", { "class": "input small expanded secondary button",
                              id:    'signin-submit',
                              type:  'submit',
                              value: 'Sign In'
@@ -552,10 +552,10 @@ class Profile {
         if (Auth.user == null) {
             return m("div")
         } else {
-            return m("div", { class: "auth-form"},
+            return m("div", { "class": "auth-form"},
                 m("form", { 'data-abide': 'ajax',
                             id:           'profile-edit-form',
-                            class:        'auth-form',
+                            "class":        'auth-form',
                             novalidate:   'novalidate',
                             onsubmit:     Profile.submit
                 }, [
@@ -587,7 +587,7 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.nameFirst
                         }),
-                        m("span", { class:"form-error"}, "First name can be only 100 characters long!")
+                        m("span", { "class" : "form-error"}, "First name can be only 100 characters long!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:          'nameLast',
@@ -601,7 +601,7 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.nameLast
                         }),
-                        m("span", { class:"form-error"}, "Last name can be only 100 characters long!")
+                        m("span", { "class":"form-error"}, "Last name can be only 100 characters long!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:          'eMail',
@@ -615,7 +615,7 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.eMail
                         }),
-                        m("span", { class:"form-error"}, "Please enter a valid e-Mail address!")
+                        m("span", { "class":"form-error"}, "Please enter a valid e-Mail address!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:          'institute',
@@ -629,7 +629,7 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.institute
                         }),
-                        m("span", { class:"form-error"}, "The name of the institute can be no longer then 100 characters!")
+                        m("span", { "class":"form-error"}, "The name of the institute can be no longer then 100 characters!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:          'street',
@@ -643,7 +643,7 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.street
                         }),
-                        m("span", { class:"form-error"}, "Please ensure that the name of the street is not longer then 100 characters!")
+                        m("span", { "class":"form-error"}, "Please ensure that the name of the street is not longer then 100 characters!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:          'city',
@@ -657,9 +657,9 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.city
                         }),
-                        m("span", { class:"form-error"}, "Please use less then 100 characters for the name of the City!")
+                        m("span", { "class":"form-error"}, "Please use less then 100 characters for the name of the City!")
                     ])),
-                    m("div", { class: "country_drop" },
+                    m("div", { "class": "country_drop" },
                         m("select", { name:"country", onchange: m.withAttr("value", Profile.userSetter("country")) },
                             regions.map(function(country){
                                 return m("option", {
@@ -681,7 +681,7 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.groups
                         }),
-                        m("span", { class:"form-error"}, "Please describe your group in less then 100 characters!")
+                        m("span", { "class":"form-error"}, "Please describe your group in less then 100 characters!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:          'roles',
@@ -695,7 +695,7 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.roles
                         }),
-                        m("span", { class:"form-error"}, "Please describe your role in less then 100 characters!")
+                        m("span", { "class":"form-error"}, "Please describe your role in less then 100 characters!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:         'password',
@@ -710,7 +710,7 @@ class Profile {
                                      value:       Profile.password
                         })
                     ])),
-                    m("input", { class: "input small expanded secondary button",
+                    m("input", { "class": "input small expanded secondary button",
                                  id:    'edit-form-submit',
                                  type:  'submit',
                                  value: 'Edit Profile'
@@ -752,10 +752,10 @@ class PasswordChange {
         if (Auth.user == null) {
             return m("div")
         } else {
-            return m("div", { class: "auth-form"},
+            return m("div", { "class": "auth-form"},
                 m("form", { 'data-abide': 'ajax',
                             id:           'password-edit-form',
-                            class:        'password-edit-form',
+                            "class":        'password-edit-form',
                             onsubmit:     PasswordChange.submit
                 }, [
                     m("div", m("label", [
@@ -770,7 +770,7 @@ class PasswordChange {
                                      onblur:      focusOutRedraw,
                                      value:       PasswordChange.passwordOld
                         }),
-                        m("span", { class:"form-error"}, "Passwords must be at least 8 characters long!")
+                        m("span", { "class":"form-error"}, "Passwords must be at least 8 characters long!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:         'passwordCheck',
@@ -784,7 +784,7 @@ class PasswordChange {
                                      onblur:      focusOutRedraw,
                                      value:       PasswordChange.passwordNew
                         }),
-                        m("span", { class:"form-error"}, "Passwords must be at least 8 characters long!")
+                        m("span", { "class":"form-error"}, "Passwords must be at least 8 characters long!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:             'password',
@@ -800,9 +800,9 @@ class PasswordChange {
                                      onblur:         focusOutRedraw,
                                      value:          PasswordChange.passwordConfirm
                         }),
-                        m("span", { class:"form-error"}, "Passwords must match!")
+                        m("span", { "class":"form-error"}, "Passwords must match!")
                     ])),
-                    m("input", { class: "input small expanded secondary button",
+                    m("input", { "class": "input small expanded secondary button",
                         id:    'password-edit-submit',
                         type:  'submit',
                         value: 'Change Password'
@@ -839,16 +839,16 @@ class PasswordReset {
     }
 
     static view (ctrl : any, args : any) : any {
-        return m("div", {class:"auth-tabs"}, m("div", { class: "auth-form"},
+        return m("div", {"class":"auth-tabs"}, m("div", { "class": "auth-form"},
             m("form", { 'data-abide': 'ajax',
                         id:           'password-edit-form',
-                        class:        'password-edit-form',
+                        "class":        'password-edit-form',
                         onsubmit:     PasswordReset.submit
             }, [
                 Auth.message == null ? null :
                     !Auth.message.successful ?
-                        m("div", {class:"callout alert", id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message) :
-                        m("div", {class:"callout",       id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message),
+                        m("div", {"class":"callout alert", id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message) :
+                        m("div", {"class":"callout",       id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message),
                 m("div", {}, "Please Enter a new Password."),
                 m("div", m("label", [
                     m("input", { id:         'passwordCheck',
@@ -862,7 +862,7 @@ class PasswordReset {
                                  onblur:      focusOutRedraw,
                                  value:       PasswordReset.passwordNew
                     }),
-                    m("span", { class:"form-error"}, "Passwords must be at least 8 characters long!")
+                    m("span", { "class":"form-error"}, "Passwords must be at least 8 characters long!")
                 ])),
                 m("div", m("label", [
                     m("input", { id:             'password',
@@ -878,9 +878,9 @@ class PasswordReset {
                                  onblur:         focusOutRedraw,
                                  value:          PasswordReset.passwordConfirm
                     }),
-                    m("span", { class:"form-error"}, "Passwords must match!")
+                    m("span", { "class":"form-error"}, "Passwords must match!")
                 ])),
-                m("input", { class: "input small expanded secondary button",
+                m("input", { "class": "input small expanded secondary button",
                     id:    'password-reset-submit',
                     type:  'submit',
                     value: 'Reset Password'
@@ -901,14 +901,14 @@ class AuthDropdown {
         } else {
             return m("div", { id:    "auth-dropdown", config: foundationInit },
                     m("ul", { id:    "auth-dropdown-link",
-                              class: "dropdown menu",
+                              "class": "dropdown menu",
                               'data-dropdown-menu': 'data-dropdown-menu',
                               'data-alignment':     "right",
                               'data-disable-hover': true,
                               'data-click-open':    true
                     }, m("li", [
-                        m("button", { class : "loggedIn", id: "auth-link-text"}, Auth.user.nameLogin),
-                        m("ul", { class :"menu" }, [
+                        m("button", { "class" : "loggedIn", id: "auth-link-text"}, Auth.user.nameLogin),
+                        m("ul", { "class" :"menu" }, [
                             m("li", m("a", { onclick:function(e : Event) { return openNav("profile")} }, m("i", {"class": "icon-user"}),"Profile")),
                             Auth.user.institute === "MPG" ? m("li", m("a", { href:"/#/backend/index" }, m("i", {"class": "icon-display_graph"}), "Backend")) : null,
                             m("li", m("a", {
@@ -929,19 +929,19 @@ class LoginTabs {
     }
 
     static view (ctrl : any, args : any) : any {
-        return m("div", {class:"auth-tabs", id:"login-tabs", config: jqueryUITabsInit}, [
-            m("ul", {class:"auth-tab"}, [
+        return m("div", {"class":"auth-tabs", id:"login-tabs", config: jqueryUITabsInit}, [
+            m("ul", {"class":"auth-tab"}, [
                 m("li", m("a", {href:"#auth-tab-signin"}, "Sign In")),
                 m("li", m("a", {href:"#auth-tab-signup"}, "Sign Up")),
                 m("li", m("a", {href:"#auth-tab-forgot"}, "Reset Password"))
             ]),
             Auth.message == null ? null :
                 !Auth.message.successful ?
-                    m("div", {class:"callout alert", id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message) :
-                    m("div", {class:"callout",       id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message),
-            m("div", {class:"tabs-panel", id:"auth-tab-signin"}, m.component(SignIn, {})),
-            m("div", {class:"tabs-panel", id:"auth-tab-signup"}, m.component(SignUp, {})),
-            m("div", {class:"tabs-panel", id:"auth-tab-forgot"}, m.component(ForgotPassword, {}))
+                    m("div", {"class":"callout alert", id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message) :
+                    m("div", {"class":"callout",       id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message),
+            m("div", {"class":"tabs-panel", id:"auth-tab-signin"}, m.component(SignIn, {})),
+            m("div", {"class":"tabs-panel", id:"auth-tab-signup"}, m.component(SignUp, {})),
+            m("div", {"class":"tabs-panel", id:"auth-tab-forgot"}, m.component(ForgotPassword, {}))
         ])
     }
 }
@@ -954,25 +954,25 @@ class ProfileTabs {
     }
 
     static view (ctrl : any, args : any) : any {
-        return m("div", {class:"auth-tabs", id: "profile-tabs", config: jqueryUITabsInit}, [
+        return m("div", {"class":"auth-tabs", id: "profile-tabs", config: jqueryUITabsInit}, [
             m("ul", {id:"auth-tab"}, [
                 m("li", m("a", {href:"#auth-tab-user"}, Auth.user.nameLogin)),
                 m("li", m("a", {href:"#auth-tab-edit"}, "Edit Profile")),
                 m("li", m("a", {href:"#auth-tab-password"}, "Change Password"))
             ]),
             Auth.message == null ? null :
-                m("div", {class:   "callout" + Auth.message.successful ? "" : " alert",
+                m("div", {"class":   "callout" + Auth.message.successful ? "" : " alert",
                           id  :    "auth-alert",
                           onclick: Auth.resetStatus()}, Auth.message.message),
-            m("div", {class:"tabs-panel", id:"auth-tab-user"}, m("div", [
+            m("div", {"class":"tabs-panel", id:"auth-tab-user"}, m("div", [
                 m("p", {id:"eMailDisplay"}, Auth.user.eMail[0]),
                 m("input", { type:  "button",
-                             class: "small expanded secondary button",
+                             "class": "small expanded secondary button",
                              onclick: function(e : Event) { window.location.replace("/signout") },
                              value: "Sign Out" })
             ])),
-            m("div", {class:"tabs-panel", id:"auth-tab-edit"},     m.component(Profile, {})),
-            m("div", {class:"tabs-panel", id:"auth-tab-password"}, m.component(PasswordChange, {}))
+            m("div", {"class":"tabs-panel", id:"auth-tab-edit"},     m.component(Profile, {})),
+            m("div", {"class":"tabs-panel", id:"auth-tab-password"}, m.component(PasswordChange, {}))
         ])
     }
 }
@@ -1001,7 +1001,7 @@ class Auth {
         return Auth.user
     }
     static loadUser () : any {
-        var route = jsRoutes.controllers.Auth.getUserData();
+        let route = jsRoutes.controllers.Auth.getUserData();
         return m.request({method: route.method, url: route.url, type : User }).then(function(user) {
             if (user) {
                 SignIn.password = null;
