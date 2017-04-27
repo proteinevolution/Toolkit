@@ -63,11 +63,20 @@ declare class News{
 
 declare class JobManager{
 
+    public static tableObjects : any;
+    public static model : any;
     public static controller : any;
     public static view: any;
 
 }
 
+
+interface JobData {
+    data : {
+
+        jobID : any;
+    }
+}
 
 declare class Job {
 
