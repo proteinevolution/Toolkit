@@ -49,7 +49,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
 
   }
 
-  override def postStop() = Tick.cancel()
+  override def postStop() : Unit = Tick.cancel()
 
   override def receive = LoggingReceive {
 
