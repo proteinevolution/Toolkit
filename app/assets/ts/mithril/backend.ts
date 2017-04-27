@@ -9,7 +9,7 @@ interface Window { Backend: any; }
 window.Backend = {
 
     user : function(inputData : any) {
-        let user = {
+        return {
             id            : inputData.id,
             sessionID     : inputData.sessionID,
             sessionData   : inputData.sessionData,
@@ -60,7 +60,6 @@ window.Backend = {
             }
         };
         //console.log(user.data());
-        return user
     },
 
     plotter : function (ctrl : any) {

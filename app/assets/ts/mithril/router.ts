@@ -62,7 +62,7 @@ let mountpoint: HTMLElement = document.getElementById('main-content');
 
 
 let routes : Routes = {
-    '/':                 Index,
+    '/':                 m(Index),
     '/tools/:toolname':  m(Toolkit, { isJob: false }),
     '/jobs/:jobID':      m(Toolkit, { isJob: true }),
     '/backend/:section': m(Backend),
