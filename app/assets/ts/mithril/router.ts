@@ -1,5 +1,6 @@
 /// <reference path="backend.ts" />
 /// <reference path="newsfeed.ts" />
+/// <reference path="toolkit.ts" />
 
 import Routes = Mithril.Routes;
 
