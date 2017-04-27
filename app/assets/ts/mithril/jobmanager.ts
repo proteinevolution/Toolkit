@@ -1,9 +1,6 @@
-/**
- * Created by astephens on 07.03.17.
- */
-
+interface Window { JobManager: any; }
 window.JobManager = {
-    model: function (ctrl) {
+    model: function (ctrl : any) {
         return {data: m.request({"url": "jobs", "method": "GET", background: true})};
     },
 
@@ -20,14 +17,14 @@ window.JobManager = {
             },
             {id: "dateViewed", label: "Last Viewed", source: {_: "dateViewed.string", sort: "dateViewed.timestamp"}}],
         toColumnItems: function () {
-            var tableHeaderItems = this.names.map(function (item) {
+            let tableHeaderItems = this.names.map(function (item : any) {
                 return m("th", {id: item.id}, item.label)
             });
             tableHeaderItems.splice(0, 0, m("th", {id: "add"}, ""));
-            return tableHeaderItems
+            return tableHeaderItems;
         },
         toColumnNames: function () {
-            var tableRowDataSelection = this.names.map(function (item) {
+            let tableRowDataSelection = this.names.map(function (item : any) {
                 if (item.source) {
                     return {data: item.source}
                 } else {
@@ -40,23 +37,24 @@ window.JobManager = {
                 "data": null,
                 "defaultContent": "\u25c0"
             });
-            return tableRowDataSelection
+            return tableRowDataSelection;
         }
     },
 
-    dataTableLoader: function (ctrl) {
-        return function (elem, isInit) {
+    dataTableLoader: function (ctrl : any) {
+        return function (elem : any, isInit : boolean) {
             if (!isInit) {
-                ctrl.data.then(function (jobData) {
-                    var table = $("#" + elem.id).DataTable({
+                ctrl.data.then(function (jobData : any) {
+                    let $table = $("#" + elem.id);
+                    let table = $table.DataTable({
                         data: jobData,
                         columns: JobManager.tableObjects.toColumnNames(),
                         order: [[1, 'asc']]
                     });
-                    table.on('click', 'td.addButton', function () {
-                        var tr = $(this).closest('tr');
-                        var row = table.row(tr);
-                        m.route("/jobs/" + row.data().jobID);
+                    $table.on('click', 'td.addButton', function () {
+                        let jobid = $(this).closest("tr").find(".sorting_1").html();
+                        //console.log("@#@#" + jobid);
+                        m.route("/jobs/" + jobid);
                     })
                 })
             }
@@ -65,24 +63,24 @@ window.JobManager = {
 
     controller: function () {
         currentRoute = "jobmanager";
-        var model = new JobManager.model();
+        let model = new JobManager.model();
         return {data: model.data}
     },
 
-    view: function (ctrl) {
+    view: function (ctrl : any) {
         return [
             m("div", {"class": "large-2 padded-column columns show-for-large sidebar"},
                 m(JobListComponent, {activejobID: m.route.param("jobID")})
             ),
-            m("div", {class: "jobManagerContainer large-10"},
-                m("div", {class: "jobline"}, [
-                    m("span", {class: "toolname"}, [
+            m("div", {"class": "jobManagerContainer large-10"},
+                m("div", {"class": "jobline"}, [
+                    m("span", {"class": "toolname"}, [
                         m("a", "Job Manager")
 
                     ])
                 ]),
                 m("div", {id: "content", "class": "row columns padded-column", config: fadesIn},
-                    m("table", {id: "jobManagerTable", class: "dataTable hover row-border compact", config: this.dataTableLoader(ctrl)}, [
+                    m("table", {id: "jobManagerTable", "class": "dataTable hover row-border compact", config: this.dataTableLoader(ctrl)}, [
                             m("thead", m("tr", JobManager.tableObjects.toColumnItems())),
                             m("tbody", [])
                         ]
