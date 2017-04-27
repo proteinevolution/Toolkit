@@ -124,7 +124,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
 
   def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
-      case Some(jsValue) => {
+      case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
         if(end > result.num_hits || start > result.num_hits ) {
           BadRequest
@@ -132,7 +132,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
           val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _, result.db))
           Ok(hits.mkString)
         }
-      }
+
     }
   }
 

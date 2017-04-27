@@ -91,7 +91,7 @@ class PSIBlast @Inject() (general: General) {
     var accession = ""
     // workaround: bug of psiblast output when searching pdb_nr
     if(db == "pdb_nr") {
-      accession = ((descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]).split("\\s+").head
+      accession = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String].split("\\s+").head
     }else {
       //accession = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
       accession = general.refineAccession((descriptionBase \ "accession").getOrElse(Json.toJson("")).as[String])
@@ -103,7 +103,7 @@ class PSIBlast @Inject() (general: General) {
 
   }
 
-  def hitsOrderBy(params: DTParam, hits: List[PSIBlastHSP]) = {
+  def hitsOrderBy(params: DTParam, hits: List[PSIBlastHSP]) : List[PSIBlastHSP] = {
     (params.iSortCol, params.sSortDir) match {
       case (1, "asc") => hits.sortBy(_.accession)
       case (1, "desc") => hits.sortWith(_.accession > _.accession)
@@ -115,7 +115,9 @@ class PSIBlast @Inject() (general: General) {
       case (4, "desc") => hits.sortWith(_.bitscore > _.bitscore)
       case (5, "asc") => hits.sortBy(_.hit_len)
       case (5, "desc") => hits.sortWith(_.hit_len > _.hit_len)
-      case (_, _) => hits.sortBy(_.num)
+      case (_, "asc") => hits.sortBy(_.num)
+      case (_, "desc") => hits.sortWith(_.num > _.num)
+      case (_,_) => hits.sortBy(_.num)
     }
   }
 }
