@@ -83,7 +83,7 @@ class Hmmer @Inject() (general: General) {
 
   }
 
-  def hitsOrderBy(params: DTParam, hits: List[HmmerHSP]) = {
+  def hitsOrderBy(params: DTParam, hits: List[HmmerHSP]) : List[HmmerHSP] = {
     (params.iSortCol, params.sSortDir) match {
       case (1, "asc") => hits.sortBy(_.accession)
       case (1, "desc") => hits.sortWith(_.accession > _.accession)
@@ -95,7 +95,9 @@ class Hmmer @Inject() (general: General) {
       case (4, "desc") => hits.sortWith(_.bitscore > _.bitscore)
       case (5, "asc") => hits.sortBy(_.hit_len)
       case (5, "desc") => hits.sortWith(_.hit_len > _.hit_len)
-      case (_, _) => hits.sortBy(_.num)
+      case (_, "asc") => hits.sortBy(_.num)
+      case (_, "desc") => hits.sortWith(_.num > _.num)
+      case (_,_) => hits.sortBy(_.num)
     }
   }
 }

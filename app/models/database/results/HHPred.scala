@@ -93,7 +93,7 @@ class HHPred @Inject() (general: General) {
   }
 
 
-  def hitsOrderBy(params: DTParam, hits: List[HHPredHSP]) = {
+  def hitsOrderBy(params: DTParam, hits: List[HHPredHSP]) : List[HHPredHSP] = {
     (params.iSortCol, params.sSortDir) match {
       case (1, "asc") => hits.sortBy(_.template.accession)
       case (1, "desc") => hits.sortWith(_.template.accession > _.template.accession)
@@ -107,7 +107,9 @@ class HHPred @Inject() (general: General) {
       case (5, "desc") => hits.sortWith(_.info.aligned_cols > _.info.aligned_cols)
       case (6, "asc") => hits.sortBy(_.template.ref)
       case (6, "desc") => hits.sortWith(_.template.ref > _.template.ref)
-      case (_, _) => hits.sortBy(_.num)
+      case (_, "asc") => hits.sortBy(_.num)
+      case (_, "desc") => hits.sortWith(_.num > _.num)
+      case (_,_) => hits.sortBy(_.num)
     }
   }
 }
