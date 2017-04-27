@@ -8,6 +8,7 @@ let a = ['0', 'p', 'q', 'r', 'e', 'd', 'i'];
 
 let jobs = {};
 
+let Users = -1;
 
 interface Window { Toolkit: any; }
 
