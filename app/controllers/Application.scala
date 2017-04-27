@@ -106,7 +106,7 @@ final class Application @Inject()(webJarAssets                                  
 
       case Some(badOrigin) =>
         logger.error(s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin")
-        false
+        true
 
       case None =>
         logger.error("originCheck: rejecting request because no Origin header found")
