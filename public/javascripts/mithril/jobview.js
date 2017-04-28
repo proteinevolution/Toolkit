@@ -15,6 +15,18 @@ selectBoxAccess = function(elem, isInit) {
     }
 };
 
+hideSubmitButtons = function (elem, isInit) {
+    if (!isInit) {
+        return $(elem).on("click", function() {
+            if(elem.parentElement.id == 'tab-Hitlist' || elem.parentElement.id == 'tab-Representative_Alignment') {
+                $('.submitbuttons').css('display', 'none');
+            } else {
+                $('.submitbuttons').css('display', 'inline-block');
+            }
+        });
+
+    }
+};
 
 
 window.JobViewComponent = {
@@ -337,8 +349,8 @@ JobTabsComponent = {
         return m("div", { class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl) }, [
             m("ul", [ // Tab List
                 ctrl.listitems.map(function(item) {
-                    return m("li", { id: "tab-" + item },
-                        m("a", { href: "#tabpanel-" + item }, item)
+                    return m("li", { id: "tab-" + item},
+                        m("a", { href: "#tabpanel-" + item, config: hideSubmitButtons }, item)
                     );
                 }),
                 document.cookie.split("&username=")[1] === ctrl.owner ? [ m("li", {
