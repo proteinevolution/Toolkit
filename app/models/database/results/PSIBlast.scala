@@ -48,13 +48,13 @@ case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int )
 case class PSIBlastResult(HSPS: List[PSIBlastHSP], num_hits: Int, iter_num: Int, db: String, evalue: Double, alignment: List[AlignmentItem], query: Query)
 
 @Singleton
-class PSIBlast @Inject() (general: General) {
+class PSIBlast @Inject() (general: General, aln : Alignment) {
 
   def parseResult(json: JsValue): PSIBlastResult = json match {
     case obj: JsObject => try {
       val jobID = (obj \ "jobID").as[String]
-      val alignment = (obj \ "alignment").as[List[JsArray]].map{ x =>
-        general.parseAlignmentItem(x)
+      val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map{ case (x, index) =>
+        aln.parseAlignmentItem(x, index)
       }
       val query = general.parseQuery((obj \ "query").as[JsArray])
       val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" ).as[List[JsObject]].size-1

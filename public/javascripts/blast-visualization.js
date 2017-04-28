@@ -477,52 +477,6 @@ function hitlistBaseFunctions(){
             });
         });
 
-        // add scrollcontainer highlighting
-        $(document).on('scroll', function () {
-            if ($(this).scrollTop() >= $('#alignments').position().top) {
-                $("#alignmentsScroll").addClass("colorToggle");
-                $("#hitlistScroll").removeClass("colorToggle");
-                $("#visualizationScroll").removeClass("colorToggle");
-            } else if ($(this).scrollTop() >= $('#hitlist').position().top) {
-                $("#hitlistScroll").addClass("colorToggle");
-                $("#alignmentsScroll").removeClass("colorToggle");
-                $("#visualizationScroll").removeClass("colorToggle");
-            } else if ($(this).scrollTop() >= $('#visualization').position().top + 75) {
-                $('.scrollContainer').addClass('fixed');
-            } else if ($(this).scrollTop() >= $('#visualization').position().top) {
-                $("#visualizationScroll").addClass("colorToggle");
-                $("#hitlistScroll").removeClass("colorToggle");
-                $("#alignmentsScroll").removeClass("colorToggle");
-            } else {
-                $('.scrollContainer').removeClass('fixed');
-            }
-            // trigger lazyload for loading alignment
-            if ($(this).scrollTop() == $(this).height() - $(window).height()) {
-                if(!loading){
-		var end = parseInt(shownHits) + parseInt(showMore);
-                end = end <  numHits ? end : numHits;
-		if(shownHits != end){
-			getHits(shownHits, end);
-		}
-		shownHits = end;
-		}
-            }
-            // add slider val
-            $('.slider').on('moved.zf.slider', function () {
-                $('#lefthandle').html($('#hidden1').val());
-                $('#lefthandle').css({
-                    'color': 'white',
-                    'font-weight': 'bold',
-                    'padding-left': '2px'
-                });
-                $('#righthandle').html($('#hidden2').val());
-                $('#righthandle').css({
-                    'color': 'white',
-                    'font-weight': 'bold',
-                    'padding-left': '2px'
-                });
-            });
-        });
-        $("#alignments").floatingScroll('init');
+        followScroll(document);
     });
 }
