@@ -142,13 +142,43 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
     }
   }
 
-  def checkJobID(jobID : String) : Action[AnyContent] = Action.async{
-    jobDao.existsJobID(jobID).map{ richSearchResponse =>
-      val jobIDExists : Boolean = richSearchResponse.getHits.getTotalHits > 0
-      Logger.info("Looked for jobID: " + jobID + " Found: " + jobIDExists)
-      Ok(Json.obj("exists" -> jobIDExists))
+  def checkJobID(jobID : String, resubmit : Boolean = false) : Action[AnyContent] = Action.async{
+    val jobIDNoVersionPattern = "([0-9a-zA-Z]+)".r
+    val jobIDPattern = "([0-9a-zA-Z]+)(_(\\d{1,3}))?".r
+    val oldJobID_option : Option[String] =
+      jobID match {
+        case jobIDNoVersionPattern(mainJobID)    => Some(mainJobID)
+        case jobIDPattern(mainJobID, _, version) => Some(mainJobID)
+        case _ => None
+      }
+
+    oldJobID_option match {
+      case None => Future.successful(BadRequest)
+      case Some(oldJobID) =>
+        val jobIDSearch = oldJobID + "(_.{1,3})?".r
+        Logger.info("Old job ID: " + oldJobID + " Current job ID: " + jobID + " Searching for: " + jobIDSearch)
+        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map{ jobs =>
+          if (jobs.isEmpty) {
+            Ok(Json.obj("exists" -> false))
+          } else {
+            if (resubmit) {
+              val jobVersions = jobs.map{ job =>
+                Logger.info("jobID to match: " + job.jobID)
+                job.jobID match {
+                  case jobIDNoVersionPattern(mainJobID) => 0
+                  case jobIDPattern(_, _, version) => Integer.parseInt(version)
+                  case _ => 0
+                }
+              }
+              val version = jobVersions.max + 1
+              Logger.info("Found " + jobs.length + " Jobs. Highest version: " + version + jobs.map(_.jobID).mkString(","))
+              Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> (oldJobID + "_" + version)))
+            } else {
+              Ok(Json.obj("exists" -> true))
+            }
+          }
+        }
+
     }
   }
-
-
 }
