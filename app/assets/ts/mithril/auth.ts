@@ -1086,3 +1086,6 @@ class User {
     get groups   () : string { return this._groups    }
     get roles    () : string { return this._roles     }
 }
+
+
+Auth.loadUser();

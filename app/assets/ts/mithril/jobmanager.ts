@@ -67,6 +67,7 @@ window.JobManager = {
                         order: [[1, 'asc']]
                     });
                     $table.on('click', 'td.addButton', function () {
+                        // TODO this will write the date as the jobID when the table is sorted by the date for example
                         let jobid = $(this).closest("tr").find(".sorting_1").html();
                         //console.log("@#@#" + jobid);
                         m.route("/jobs/" + jobid);
