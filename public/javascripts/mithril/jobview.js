@@ -29,6 +29,15 @@ hideSubmitButtons = function (elem, isInit) {
 };
 
 
+select2Config = function(elem, isInit) {
+
+    if(!isInit) {
+        return $(elem).select2();
+    }
+
+};
+
+
 window.JobViewComponent = {
     view: function(ctrl, args) {
         if (!args.job()) {
@@ -241,6 +250,7 @@ mapParam = function(param, ctrl) {
     });
 };
 
+
 closeShortcut = function() {
     return $(document).keydown(function(e) {
         if (e.keyCode === 27 && $("#tool-tabs").hasClass("fullscreen")) {
@@ -420,13 +430,14 @@ JobTabsComponent = {
                             paramGroup[0] === "Input" ?
                                 elements[0].name === "alignment" ? [
                                     m("div", { class: "row" },
-                                        m("div", { class: "small-12 large-12 medium-12 columns" },
+                                        m("div", { class: "" },
                                             mapParam(elements[0], ctrl)
                                         )
                                     ),
-                                    elements.length > 1 ? m("div", { class: "row small-up-1 medium-up-2 large-up-3", style: "margin-top: 35px;" },
+                                    elements.length > 1 ? m("div", { class: "row", style: "margin-top: 35px;" },
                                         elements.slice(1).map(function(param) {
-                                            return m("div", { class: "column column-block multiSelectParameter" },
+                                            //console.log(JSON.stringify(mapParam(param,ctrl)));
+                                            return m("div", {"class" : "large-6 medium-3 small-1 columns"},
                                                 mapParam(param, ctrl));
                                         })
                                     ) : void 0
@@ -464,7 +475,7 @@ JobTabsComponent = {
 submitModal = function(elem, isInit) {
     if (!isInit) {
         $(elem).foundation();
-        return $(elem).bind('closed.zf.reveal	', (function() {
+        return $(elem).bind('closed.zf.reveal', (function() {
             return $(".submitJob").prop("disabled", false);
         }));
     }
@@ -653,7 +664,7 @@ JobSubmissionComponent = {
                     //console.log(args.job().jobstate);
                     $("#uploadBoxClose").hide();
                     $(".uploadFileName").hide();
-                    // hide the first result tab after job finishes
+                    // hide submitbuttons
                     if (args.job().jobstate == 5)
                         $(elem).hide();
                 }
@@ -988,7 +999,8 @@ ParameterSelectComponent = {
             id: args.param.name,
             //if max count of chosen databases is needed
             //onclick: ctrl.preventMultiSelection
-            onclick: ctrl.solveDBSelection
+            onclick: ctrl.solveDBSelection,
+            config: select2Config
         };
         if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
             paramAttrs["multiple"] = "multiple";
