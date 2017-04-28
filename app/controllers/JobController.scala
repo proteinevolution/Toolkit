@@ -203,9 +203,10 @@ final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
         case None =>
           request.body.asMultipartFormData match {
             case Some(mpfd) =>
-              val formData = mpfd.dataParts.mapValues(_.mkString(formMultiValueSeparator))
+              var formData = mpfd.dataParts.mapValues(_.mkString(formMultiValueSeparator))
               mpfd.file("file").foreach { file =>
-                  formData.updated("alignment", scala.io.Source.fromFile(file.ref.file).getLines().mkString("\n"))
+                println(scala.io.Source.fromFile(file.ref.file).getLines().mkString("\n"))
+                  formData = formData.updated("alignment", scala.io.Source.fromFile(file.ref.file).getLines().mkString("\n"))
               }
               jobActorAccess.sendToJobActor(jobID, CreateJob(jobID, user, toolname, formData))
               Ok
