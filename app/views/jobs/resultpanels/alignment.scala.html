@@ -8,44 +8,26 @@
 @import models.results.BlastVisualization
 @import modules.tel.TEL
 @import play.api.libs.json.JsLookupResult
-@(jobID: String, jsValue: JsValue, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
+@import models.database.results.AlignmentResult
+@(jobID: String, alignment: AlignmentResult, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick='alignment_wrap()' type="button"><span id="wrap_@{resultName}">Wrap sequences</span></a>
-    <a type="button" data-open="forwardModal_@resultName"><span>Forward All</span></a>
+    <a onclick="selectAll()" class="selectAllSeq"><span>Select all</span></a>
+    <a onclick='alignment_wrap()' type="button"  id="wrap_@{resultName}"><span>Wrap sequences</span></a>
+    <a type="button" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="alignment_download()"><span>Download File</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences: @{{jsValue \ resultName}.as[List[JsArray]].size}
+    Number of sequences: @alignment.alignment.length
         <br />
         <br />
 <form id="alignmentResult">
     <table class="unstriped">
         <tbody class="alignmentTBody">
-        @for((alignment,index) <- {jsValue \ resultName}.as[List[JsArray]].zipWithIndex) {
-            <tr class="header">
-                <td>
-                    @{alignment{0} match {
-                        case JsDefined(jsValue) => ">"+(alignment{0}).get.as[String]
-                        }
-                    }
-                </td>
-            </tr>
-            <tr class="sequenceAlignment">
-                <td>
-                    @{alignment{1} match {
-                        case JsDefined(jsValue) => Html((alignment{1}).get.as[String].replace("-", "&#8209;"))
-                        }
-                    }
-                </td>
-            </tr>
-        }
-            <tr><td><br/></td></tr>
-            <tr><td><br/></td></tr>
         </tbody>
     </table>
 
@@ -53,15 +35,63 @@
 </div>
 
 <script>
+
+
         var fileUrl = "/files/@jobID/alignment.fas";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.fasta";
-        var selectAllBool_@{resultName} = false;
         var wrapSequencesBool_@{resultName} = false;
+        var selectAllBool = false;
+        var shownHits = 20;
+        var showMore = 20;
+        var loading = false;
+        var numHits = @alignment.alignment.length;
+         var resultName = '@resultName';
+        var jobID = '@jobID';
+        var checkboxes = [];
+        var checkbox = "checkbox";
+
+
         $(document).ready(function () {
             $("#alignmentResult").floatingScroll();
+            // trigger lazyload for loading alignmen
+            getHits(0, shownHits);
+
+            // adding loading overlay
+            $(document).ajaxStart(function () {
+                $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+            });
+            $(document).ajaxComplete(function () {
+                $.LoadingOverlay("hide");
+
+                // check checkboxes that are stored in array
+                // in order to make it work with pagination/lazyload
+                selectFromArray(checkboxes);
+
+                $('input:checkbox').click(function (e) {
+                    var currentVal = $(this).val();
+                    var currentState = $(this).prop('checked');
+
+                    // link checkboxes with same value
+                    $('input:checkbox[value=' + currentVal + ']').each(function () {
+                        $(this).prop('checked', currentState);
+                    });
+
+                    if (currentState) {
+                        // push num of checked checkbox into array
+                        checkboxes.push(currentVal);
+                        // make sure array contains no duplicates
+                        checkboxes = checkboxes.filter(function (value, index, array) {
+                            return array.indexOf(value) == index;
+                        });
+                    } else {
+                        // delete num of unchecked checkbox from array
+                        checkboxes = checkboxes.filter(function (x) {
+                            return x != currentVal
+                        });
+                    }
+                });
+            });
         });
-
-
         function alignment_wrap(){
             this.wrapSequencesBool_@{resultName} = !this.wrapSequencesBool_@{resultName};
             if(wrapSequencesBool_@{resultName}) {
@@ -74,19 +104,19 @@
             }
         }
 
-
-        function alignment_forward(selectedTool){
+        window["@{resultName}_forward"] = function(selectedTool){
+            var route = jsRoutes.controllers.AlignmentController.getAln(jobID, checkboxes, resultName);
             // get result json
             $.ajax({
-                type: 'GET',
-                url: fileUrl
+                type: route.method,
+                url: route.url
             }).done(function (data) {
                     forward(selectedTool, data);
             });
-        }
+        };
 
 
-        function alignment_download(){
+        window["@{resultName}_download"] = function(){
             // get result json
             $.ajax({
                 type: 'GET',
@@ -94,6 +124,40 @@
             }).done(function (data) {
                 download(downloadFilename, data.toString());
             });
+        };
+
+
+        function getHits(start, end){
+            if(start <= numHits && end <= numHits){
+                loading = true;
+                var route = jsRoutes.controllers.AlignmentController.loadHits(jobID,start,end, resultName);
+                return $.ajax({
+                    method: route.method,
+                    url: route.url
+                }).done(function (data_) {
+                    $(".alignmentTBody").append(data_);
+                    loading = false;
+                });
+            }
+        }
+
+
+        function selectAll(){
+            selectAllBool = !selectAllBool;
+            if(selectAllBool) {
+                selectAllHelper(checkbox);
+                $(".selectAllSeq").addClass("colorToggle");
+                // first empty array
+                checkboxes = [];
+                // push all checkboxes (1 to num_hits) into array
+                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
+            }
+            else {
+                deselectAll(checkbox);
+                $(".selectAllSeq").removeClass("colorToggle");
+                // delete all checkboxes from array
+                checkboxes = [];
+            }
         }
 
 </script>

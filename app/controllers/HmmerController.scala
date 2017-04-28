@@ -21,7 +21,7 @@ import scala.sys.process.Process
 /**
   * Created by drau on 18.04.17.
   */
-class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMongoApi : ReactiveMongoApi) extends Controller with CommonModule with Common with Constants{
+class HmmerController @Inject() (hmmer: Hmmer, general: General, aln: Alignment) (val reactiveMongoApi : ReactiveMongoApi) extends Controller with CommonModule with Common with Constants{
 
 
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
@@ -92,7 +92,7 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
 
   def aln(jobID : String, numList : Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
       getResult(jobID).map {
-        case Some(jsValue) => Ok(getAln(general.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
+        case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
         case _ => NotFound
       }
   }
@@ -104,7 +104,7 @@ class HmmerController @Inject() (hmmer: Hmmer, general: General) (val reactiveMo
     fas.mkString
   }
 
-  def getAln(alignment : Alignment, list: Seq[Int]): String = {
+  def getAln(alignment : AlignmentResult, list: Seq[Int]): String = {
     val fas = list.map { num =>
         ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num -1 ).seq + "\n"
       }
