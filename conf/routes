@@ -201,3 +201,8 @@ POST         /evalHHpred                           @controllers.HHpredController
 POST         /alnHHpred                         @controllers.HHpredController.aln(jobID:String, listNum: Seq[Int])
 # PSIBlast load hits on request
 POST        /HHpredLoadHits                              @controllers.HHpredController.loadHits(jobID: String, start: Int, end: Int)
+
+# ALignment load hits on request
+POST        /AlignmentLoadHits                              @controllers.AlignmentController.loadHits(jobID: String, start: Int, end: Int, resultName: String)
+# fetch alignment
+POST        /AlignmentGetAln                              @controllers.AlignmentController.getAln(jobID: String, listNum: Seq[Int], resultName: String)

@@ -41,13 +41,13 @@ case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int, alignment: List[AlignmentItem], query : Query, db: String)
 
 @Singleton
-class Hmmer @Inject() (general: General) {
+class Hmmer @Inject() (general: General, aln: Alignment) {
 
   def parseResult(jsValue: JsValue): HmmerResult = jsValue match {
     case obj: JsObject => try {
       val jobID = (obj \ "jobID").as[String]
-      val alignment = (obj \ "alignment").as[List[JsArray]].map { x =>
-        general.parseAlignmentItem(x)
+      val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map { case (x, index) =>
+        aln.parseAlignmentItem(x, index)
       }
       val db = (obj \ jobID \"db").as[String]
       val query = general.parseQuery((obj \ "query").as[JsArray])
