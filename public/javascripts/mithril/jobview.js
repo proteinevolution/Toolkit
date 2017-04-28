@@ -15,6 +15,18 @@ selectBoxAccess = function(elem, isInit) {
     }
 };
 
+hideSubmitButtons = function (elem, isInit) {
+    if (!isInit) {
+        return $(elem).on("click", function() {
+            if($(this).attr('href') == "#tabpanel-Input" || $(this).attr('href') == "#tabpanel-Parameters") {
+                $('.submitbuttons').show();
+            } else {
+                $('.submitbuttons').hide();
+            }
+        });
+
+    }
+};
 
 
 window.JobViewComponent = {
@@ -271,6 +283,9 @@ JobTabsComponent = {
                     break;
                 case 5:
                     active = listitems.length;
+                    break;
+                default:
+                    break;
             }
         } else {
             active = 0;
@@ -337,8 +352,8 @@ JobTabsComponent = {
         return m("div", { class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl) }, [
             m("ul", [ // Tab List
                 ctrl.listitems.map(function(item) {
-                    return m("li", { id: "tab-" + item },
-                        m("a", { href: "#tabpanel-" + item }, item)
+                    return m("li", { id: "tab-" + item},
+                        m("a", { href: "#tabpanel-" + item, config: hideSubmitButtons }, item)
                     );
                 }),
                 document.cookie.split("&username=")[1] === ctrl.owner ? [ m("li", {
@@ -635,14 +650,18 @@ JobSubmissionComponent = {
         var hide = {
             oninit: function (elem, isInit) {
                 if (!isInit) {
+                    //console.log(args.job().jobstate);
                     $("#uploadBoxClose").hide();
                     $(".uploadFileName").hide();
+                    // hide the first result tab after job finishes
+                    if (args.job().jobstate == 5)
+                        $(elem).hide();
                 }
             }
         };
-        return m("div", { class:  "submitbuttons", config: hide.oninit }, [
+        return m("div", { "class":  "submitbuttons", config: hide.oninit }, [
             m("div", {
-                class:                 "reveal",
+                "class":                 "reveal",
                 "data-reveal":         "data-reveal",
                 "data-animation-in":   "fade-in",
                 "data-overlay":        "true",
@@ -651,8 +670,8 @@ JobSubmissionComponent = {
                 config:                submitModal
             }, [
                 m("p", "Already existing job found!"),
-                m("input", { class: 'button', id: 'reload_job', type: 'button', value: 'Reload' }),
-                m("input", { class: 'button', id: 'submit_again', type: 'button', value: 'New Submission' })
+                m("input", { "class": 'button', id: 'reload_job', type: 'button', value: 'Reload' }),
+                m("input", { "class": 'button', id: 'submit_again', type: 'button', value: 'New Submission' })
             ]),
             Auth.user == null ? null :
                 m("label", {style: "width: 16em; float:left;"}, [
@@ -666,7 +685,7 @@ JobSubmissionComponent = {
                 ]),
             m("input", {
                 type: "button",
-                class: "success button small submitJob",
+                "class": "success button small submitJob",
                 value: (args.isJob ? "Res" : "S") + "ubmit Job",
                 style: "float: right;",
                 onclick: ctrl.submit.bind(ctrl, true)
