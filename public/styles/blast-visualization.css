@@ -55,7 +55,7 @@
 }
 
 .flat-slider-expand {
-    margin-left: 44em !important;
+    margin-left: 30em !important;
 }
 
 #blastviz{
@@ -98,7 +98,7 @@
 
 .forwardModal {
     width: 38em;
-    height: 18em;
+    height: 18.5em;
 }
 
 .forwardModal p {
@@ -130,7 +130,7 @@
 
 .forward {
     float: right;
-    background-color: #008979;
+    background-color: rgba(0, 110, 98, 166);
     color: white;
     margin-bottom: 0;
     margin-top: 2em;
@@ -139,11 +139,12 @@
 }
 #forward {
     float: right;
-    background-color: #008979;
+    background-color: rgba(0, 110, 98, 166);
     color: white;
     margin-bottom: 0;
     margin-top: 2em;
     font-size: 0.70em;
+    -webkit-appearance: none;
 
 }
 
@@ -169,6 +170,7 @@
 .select_forward select {
     font-size: 0.80em !important;
     -moz-appearance: none !important;
+    -webkit-appearance: none !important;
     border-radius: 4px;
     margin-top: 1.5em;
     margin-left: 0.25em;
@@ -176,7 +178,6 @@
     padding-top: 0.5em;
     height: 2.75em;
     color: #000;
-    color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #000;
     width: 12em;
 }
