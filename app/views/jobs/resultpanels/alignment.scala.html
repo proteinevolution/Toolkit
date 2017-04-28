@@ -11,7 +11,7 @@
 @(jobID: String, jsValue: JsValue, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
-@views.html.forwardmodals.alignment(tool, resultName)
+@views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
     <a onclick='alignment_wrap()' type="button"><span id="wrap_@{resultName}">Wrap sequences</span></a>
