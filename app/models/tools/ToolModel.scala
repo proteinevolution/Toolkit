@@ -236,7 +236,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
     // PatternSearch
     ("patsearch", "PatternSearch", "pats", "search", "",
-      Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.GRAMMAR, paramAccess.SEQCOUNT), Seq("kalign"),Seq.empty),
+      Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.GRAMMAR, paramAccess.SEQCOUNT), Seq("clans", "mmseqs2"),Seq.empty),
 
     // 6FrameTranslation
     ("6frametranslation", "6FrameTranslation", "6frt", "utils", "",
