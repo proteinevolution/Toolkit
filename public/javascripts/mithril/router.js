@@ -1,18 +1,10 @@
-/// <reference path="jobmanager.ts" />
-/// <reference path="backend.ts" />
-/// <reference path="newsfeed.ts" />
-/// <reference path="toolkit.ts" />
-
-
-import Routes = Mithril.Routes;
-
-let StaticRoute : any = {
+var StaticRoute = {
     controller: function() {
         return {
             "static": m.route.param('static')
         };
     },
-    view: function(controller : any) {
+    view: function(controller) {
         return $.ajax({
             type: "GET",
             url: "/static/get/" + controller["static"]
@@ -30,13 +22,13 @@ let StaticRoute : any = {
     }
 };
 
-let ErrorRouteComponent : any = {
-    controller: function(args : any) : any {
-        let errorID      = m.route.param("errorID") ? m.route.param("errorID") : args.errorID,
+var ErrorRouteComponent = {
+    controller: function(args) {
+        var errorID      = m.route.param("errorID") ? m.route.param("errorID") : args.errorID,
             errorMessage = "Page not Found";
         return { errorID : errorID, errorMessage : errorMessage}
     },
-    view: function(ctrl : any, args : any) : any {
+    view: function(ctrl, args) {
         return m("div", { "class" : "error-page" },[
             m("div", { "class" : "title" }, "There was an error loading this page."),
             m("div", [
@@ -60,10 +52,10 @@ m.route.mode = 'hash';
 
 // Define the mithril routes
 
-let mountpoint: HTMLElement = document.getElementById('main-content');
+var mountpoint = document.getElementById('main-content');
 
 
-let routes : Routes = {
+var routes = {
     '/':                 m(Index),
     '/tools/:toolname':  m(Toolkit, { isJob: false }),
     '/jobs/:jobID':      m(Toolkit, { isJob: true }),
