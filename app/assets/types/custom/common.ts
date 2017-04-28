@@ -13,3 +13,14 @@ interface MapConstructor {
     prototype: Map<any, any>;
 }
 declare var Map: MapConstructor;
+
+interface JobManagerObject {
+    jobID: string,
+    project: any,
+    status: number,
+    tool: string,
+    commentList: number,
+    dateCreated: Object,
+    dateUpdated: Object,
+    dateViewed: Object
+}
