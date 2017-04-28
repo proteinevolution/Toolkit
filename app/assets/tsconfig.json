@@ -11,5 +11,9 @@
     "noImplicitReturns": true,
     "outFile": "../../public/javascripts/typescriptc.js",
     "typeRoots" : ["./types"]
-  }
+  },
+  "files": [
+    "common.ts",
+    "mithril/*"
+  ]
 }
