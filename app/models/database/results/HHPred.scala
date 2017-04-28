@@ -29,10 +29,10 @@ case class HHPredHSP(query: HHPredQuery, template: HHPredTemplate, info: HHPredI
 case class HHPredInfo(aligned_cols: Int, evalue: Double, identities: Double, probab: Double, score: Double, similarity: Double)
 case class HHPredQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, ss_pred: String, ss_dssp: String, start: Int)
 case class HHPredTemplate(consensus: String, end: Int, accession: String, ref: Int, seq: String, ss_pred: String, ss_dssp: String, start: Int)
-case class HHPredResult(HSPS: List[HHPredHSP], alignment : Alignment, num_hits: Int, query: Query, db: String, proteomes: String)
+case class HHPredResult(HSPS: List[HHPredHSP], alignment : AlignmentResult, num_hits: Int, query: Query, db: String, proteomes: String)
 
 @Singleton
-class HHPred @Inject() (general: General) {
+class HHPred @Inject() (general: General, aln: Alignment) {
 
   def parseResult(jsValue: JsValue): HHPredResult = jsValue match {
     case obj: JsObject => try {
@@ -50,7 +50,7 @@ class HHPred @Inject() (general: General) {
       }
       val db = (obj \ jobID \ "db").as[String]
       val proteomes = (obj \ jobID \ "proteomes").as[String]
-      val alignment = general.parseAlignment((obj \ "reduced").as[JsArray])
+      val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
       val query = general.parseQuery((obj \  "query").as[JsArray])
       val num_hits = hsplist.length
 
