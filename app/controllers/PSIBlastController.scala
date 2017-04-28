@@ -20,7 +20,7 @@ import play.api.libs.json.{JsArray, JsObject, Json}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJarAssets : WebJarAssets, val reactiveMongoApi : ReactiveMongoApi)
+class PSIBlastController @Inject() (psiblast: PSIBlast, general : General, aln :Alignment)(webJarAssets : WebJarAssets, val reactiveMongoApi : ReactiveMongoApi)
   extends Controller with Constants with CommonModule with Common{
 
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
@@ -79,7 +79,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
 
   def aln(jobID : String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
-      case Some(jsValue) => Ok(getAln(general.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
+      case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
       case _ => NotFound
     }
   }
@@ -91,7 +91,7 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General)(webJa
     fas.mkString
   }
 
-  def getAln(alignment : Alignment, numList: Seq[Int]): String = {
+  def getAln(alignment : AlignmentResult, numList: Seq[Int]): String = {
     val fas = numList.map { num =>
       ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num -1 ).seq + "\n"
     }
