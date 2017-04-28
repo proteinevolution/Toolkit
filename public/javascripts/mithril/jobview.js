@@ -491,6 +491,7 @@ JobSubmissionComponent = {
     jobIDValid      : false,    // Is the current jobID valid?
     jobIDValidationTimeout : null,     // timer ID for the timeout
     jobIDRegExp     : new RegExp(/^\w{6,96}(\_\d{1,3})?$/),
+    jobResubmit     : false,
     checkJobID : function (jobID) {
         clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);    // clear all previous timeouts
         JobSubmissionComponent.jobIDValid   = false;    // ensure that the user can not send the job form
@@ -498,10 +499,15 @@ JobSubmissionComponent = {
         if (jobID !== "") { // ignore checking if the field is empty as the server will generate a jobID in that case.
             if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
                 JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
-                    m.request({ method: "GET", url: "/search/checkJobID/"+jobID }).then(
+                    m.request({ method: "GET", url: "/search/checkJobID/"+(JobSubmissionComponent.jobResubmit?"resubmit/"+jobID:jobID)}).then(
                         function (data) {
+                            console.log(data);
                             JobSubmissionComponent.jobIDValid = !data.exists;
-                            console.log("Current JobID is: ", jobID, "valid:", JobSubmissionComponent.jobIDValid);
+                            if (data.exists && data.suggested) {
+                                JobSubmissionComponent.currentJobID = data.suggested;
+                                JobSubmissionComponent.jobIDValid = true;
+                            }
+                            console.log("Current JobID is: ", jobID, "suggested version", data.version, "valid:", JobSubmissionComponent.jobIDValid);
                         }
                     );
                 }, 800);
@@ -529,6 +535,7 @@ JobSubmissionComponent = {
             var oldJobID, version, newJobID;
             if (args.isJob) {
                 oldJobID = args.job().jobID.split("_");
+                JobSubmissionComponent.jobResubmit = args.isJob;
                 version = parseInt(oldJobID[1]);
                 newJobID = oldJobID[0] + "_" + (Number.isNaN(version) ? 1 : version + 1);
                 JobSubmissionComponent.jobIDValid = false;

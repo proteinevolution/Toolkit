@@ -106,7 +106,9 @@ GET           /static/get/:static                     @controllers.Service.stati
 
 #GET     /search/jobs/:id                                   @controllers.Search.getJob(id: String)
 #GET     /search:q                                          @controllers.Search.searchJob(q: String)
-GET           /search/checkJobID/:jobID               @controllers.Search.checkJobID(jobID : String)
+GET           /search/checkJobID/:jobID               @controllers.Search.checkJobID(jobID : String, resubmit : Boolean = false)
+GET           /search/checkJobID/resubmit/:jobID      @controllers.Search.checkJobID(jobID : String, resubmit : Boolean = true)
+
 #GET           /suggest/:jobID                         @controllers.Search.ac(jobID: String)
 GET           /suggest/:jobID                         @controllers.Search.autoComplete(jobID: String)
 
