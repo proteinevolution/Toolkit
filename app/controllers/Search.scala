@@ -111,19 +111,8 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
   def get : Action[AnyContent] = Action.async { implicit request =>
     // Retrieve the jobs from the DB
     getUser.flatMap { user =>
-      findJobs(BSONDocument(Job.OWNERID -> user.userID)).map{ jobs =>
-        user.userData match {
-          case Some(userData) =>
-            val jobWithUserNames = jobs.map{ job =>
-              job.withOwnerName(userData.nameLogin)
-            }
-            Ok(Json.toJson(jobWithUserNames))
-          case None =>
-            val jobWithUserNames = jobs.map{ job =>
-              job.withOwnerName("-")
-            }
-            Ok(Json.toJson(jobWithUserNames))
-        }
+      findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map{ jobs =>
+        Ok(Json.toJson(jobs.map(_.jobManagerJob())))
       }
     }
   }

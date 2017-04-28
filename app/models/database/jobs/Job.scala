@@ -53,15 +53,13 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
   /**
     * Returns a clean JSON Object representation of the Job (used in the Job Manager)
     *
-    * @param nameLogin
     * @return
     */
-  def withOwnerName(nameLogin : String) : JsObject = {
+  def jobManagerJob() : JsObject = {
     val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     Json.obj(Job.JOBID       -> jobID,
              Job.PROJECT     -> project,
              Job.STATUS      -> status,
-             Job.OWNER       -> {if (ownerID.isDefined) nameLogin else "-"},
              Job.TOOL        -> tool,
              Job.COMMENTLIST -> commentList.length,
              Job.DATECREATED -> dateCreated.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis)),
@@ -69,7 +67,7 @@ case class Job(mainID      : BSONObjectID,                // ID of the Job in th
              Job.DATEVIEWED  -> dateViewed.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis))
     )
   }
-  override def toString(): String = {
+  override def toString: String = {
     s"""--[Job Object]--
         |mainID: ${this.mainID}
         |jobID: ${this.jobID}

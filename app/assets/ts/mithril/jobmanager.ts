@@ -23,14 +23,8 @@ window.JobManager = {
         names: [{id: "jobID", label: "Job ID"},
             {id: "tool", label: "Tool"},
             {id: "status", label: "Job State"},
-            {id: "owner", label: "Owner"},
             {id: "dateCreated", label: "Created On", source: {_: "dateCreated.string", sort: "dateCreated.timestamp"}},
-            {
-                id: "dateUpdated",
-                label: "Last Updated",
-                source: {_: "dateUpdated.string", sort: "dateUpdated.timestamp"}
-            },
-            {id: "dateViewed", label: "Last Viewed", source: {_: "dateViewed.string", sort: "dateViewed.timestamp"}}],
+        ],
         toColumnItems: function () {
             let tableHeaderItems = this.names.map(function (item : any) {
                 return m("th", {id: item.id}, item.label)
@@ -67,10 +61,10 @@ window.JobManager = {
                         order: [[1, 'asc']]
                     });
                     $table.on('click', 'td.addButton', function () {
-                        // TODO this will write the date as the jobID when the table is sorted by the date for example
-                        let jobid = $(this).closest("tr").find(".sorting_1").html();
-                        //console.log("@#@#" + jobid);
-                        m.route("/jobs/" + jobid);
+                        let tr = $(this).closest('tr');
+                        let row = table.row(tr);
+                        let rowData : JobManagerObject = <JobManagerObject>row.data();
+                        m.route("/jobs/" + rowData.jobID);
                     })
                 })
             }
