@@ -53,7 +53,7 @@ class LoadBar {
     }
     static view (ctrl : any, args : any) : any {
         let currentLoad : number = LoadBar.load,
-            loadval : number = Math.ceil(100 - currentLoad * 100),
+            loadval : number = Math.ceil(100 - 100/currentLoad),
             loadString : string = loadval + "%",
             colorClass : string = "loadBar " + (currentLoad < 0.90 ? "green" : currentLoad < 1.3 ? "yellow" : "red");
 
