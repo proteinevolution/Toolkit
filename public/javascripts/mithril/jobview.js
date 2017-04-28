@@ -1,4 +1,4 @@
-var JobErrorComponent, jobNoteArea, JobValidationComponent, ParameterAlignmentComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterSelectComponent, ParameterTextComponent, ParameterSlideComponent, SearchformComponent, alignmentUpload, closeShortcut, formComponents, foundationConfig, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
+var JobErrorComponent, jobNoteArea, JobValidationComponent, ParameterAlignmentComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterSelectComponent, ParameterTextComponent, ParameterSlideComponent, SearchformComponent, closeShortcut, formComponents, foundationConfig, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
 
 helpModalAccess = function(elem, isInit) {
     if (!isInit) {
@@ -685,13 +685,6 @@ m.capture = function(eventName, handler) {
     };
 };
 
-alignmentUpload = function(elem, isInit) {
-    if (!isInit) {
-        elem.setAttribute("data-reveal", "data-reveal");
-        return $(elem).foundation();
-    }
-};
-
 
 
 window.ParameterAlignmentComponent = {
@@ -836,25 +829,8 @@ window.ParameterAlignmentComponent = {
                     spellcheck: false,
                     config: validation
                 }),
-                textArea2),
-            m("div", {
-                id: "upload_alignment_modal",
-                "class": "tiny reveal",
-                config: alignmentUpload
-            }, m("input", {
-                type: "file",
-                id: "upload_alignment_input",
-                name: "upload_alignment_input",
-                onchange: function() {
-                    if (this.value) {
-                        $("#upload_alignment_modal").foundation("close");
-                        $(".uploadFileName").show();
-                        $("#uploadBoxClose").show();
-                        $("#" + ctrl.id).prop("disabled", true);
-                        $("#" + ctrl.id + "_two").prop("disabled", true);
-                    }
-                }
-            })), m("div", {
+                textArea2)
+            , m("div", {
                 "class": "alignment_buttons"
             }, [
                 m("div", {"class": "leftAlignmentButtons"},
@@ -868,16 +844,27 @@ window.ParameterAlignmentComponent = {
                         $("#validOrNot").removeClass("alert warning primary secondary");
                         originIsFasta = true; // resets changed validation filter
                     }
-                }), m("input", {
-                    type: "button",
-                    "class": "button small alignmentExample",
-                    value: "Upload File",
-                    onclick: function() {
-                        $('#upload_alignment_modal').foundation('open');
+                }),
+                m("label",{
+                "for": "fileUpload",
+                "class" : "button small fileUpload"
+                },"Upload File"),
+                m("input", {
+                type: "file",
+                id: "fileUpload",
+                "class": "show-for-sr",
+                onchange: function() {
+                    if (this.value) {
+                        $(".submitJob").prop("disabled", false);
+                        $(".uploadFileName").show();
+                        $("#uploadBoxClose").show();
+                        $("#" + ctrl.id).prop("disabled", true);
+                        $("#" + ctrl.id + "_two").prop("disabled", true);
+                        }
                     }
                 }), m("div",
                         {"class": "uploadFileName"},
-                        $("input[type=file]").val(),
+                        $("#fileUpload").val() ? $("#fileUpload")[0].files[0].name : "",
                     m("a", {
                         "class": "boxclose",
                         "id": "uploadBoxClose",
