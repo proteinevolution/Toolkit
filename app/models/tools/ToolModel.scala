@@ -7,6 +7,7 @@ import models.database.results.{HHBlits, HHPred, Hmmer, PSIBlast}
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import modules.CommonModule
+import play.api.libs.json.JsArray
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.twirl.api.Html
 
@@ -45,7 +46,7 @@ case class Tool(toolNameShort: String,
 
 // Class which provides access to all Tools
 @Singleton
-final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, hhblits: HHBlits) (paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi) extends CommonModule{
+final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, hhblits: HHBlits, aln: models.database.results.Alignment) (paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi) extends CommonModule{
 
 
   // Encompasses all the toolnames
@@ -297,7 +298,7 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
     "Representative_Alignment" -> { (_, jobID,requestHeader) => getResult(jobID).map {
       case Some(jsvalue) =>
         implicit val r = requestHeader
-        views.html.jobs.resultpanels.alignment(jobID, jsvalue, "rep100" ,this.values(Toolnames.HHBLITS))}}
+        views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "rep100").as[JsArray]), "rep100" ,this.values(Toolnames.HHBLITS))}}
   ),
 
   Toolnames.MARCOIL -> Map(
@@ -359,7 +360,7 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
     "Representative_Alignment" -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
-        case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, jsvalue, "reduced" ,this.values(Toolnames.HHPRED))
+        case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "reduced").as[JsArray]), "reduced" ,this.values(Toolnames.HHPRED))
       }}
   ),
   Toolnames.HHPRED_ALIGN -> Map(
@@ -405,7 +406,7 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
     Resultviews.ALIGNMENT -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
-        case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, jsvalue , "alignment", this.values(Toolnames.CLUSTALO))
+        case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.CLUSTALO))
       }},
     Resultviews.ALIGNMENTVIEWER -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
@@ -416,7 +417,7 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
     Resultviews.ALIGNMENT -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
-        case Some(jsvalue) =>  views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(Toolnames.KALIGN))
+        case Some(jsvalue) =>  views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.KALIGN))
       }},
     Resultviews.ALIGNMENTVIEWER -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
@@ -428,7 +429,7 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
       getResult(jobID).map {
         case Some(jsvalue) =>
           implicit val r = requestHeader
-          views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(Toolnames.MAFFT))
+          views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.MAFFT))
       }},
     Resultviews.ALIGNMENTVIEWER ->  { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
@@ -439,7 +440,7 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
     Resultviews.ALIGNMENT -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
-        case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(Toolnames.MSAPROBS))
+        case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.MSAPROBS))
       }},
     Resultviews.ALIGNMENTVIEWER -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
@@ -450,7 +451,7 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
     Resultviews.ALIGNMENT -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
-        case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(Toolnames.MUSCLE))
+        case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.MUSCLE))
       }},
     Resultviews.ALIGNMENTVIEWER -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
@@ -462,7 +463,7 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
       getResult(jobID).map {
         case Some(jsvalue) =>
           implicit val r = requestHeader
-          views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(Toolnames.TCOFFEE))
+          views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.TCOFFEE))
       }},
     Resultviews.ALIGNMENTVIEWER -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
@@ -547,7 +548,7 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
     Resultviews.ALIGNMENT -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
-        case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, jsvalue, "alignment", this.values(Toolnames.HHFILTER))
+        case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.HHFILTER))
       }},
     Resultviews.ALIGNMENTVIEWER -> { (_, jobID,requestHeader) =>
       implicit val r = requestHeader

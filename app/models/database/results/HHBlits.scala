@@ -29,10 +29,10 @@ case class HHBlitsHSP(query: HHBlitsQuery, template: HHBlitsTemplate, info: HHBl
 case class HHBlitsInfo(aligned_cols: Int, evalue: Double, identities: Double, probab: Double, score: Double, similarity: Double)
 case class HHBlitsQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
 case class HHBlitsTemplate(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
-case class HHBlitsResult(HSPS: List[HHBlitsHSP], alignment : Alignment, num_hits: Int, query: Query, db: String)
+case class HHBlitsResult(HSPS: List[HHBlitsHSP], alignment : AlignmentResult, num_hits: Int, query: Query, db: String)
 
 @Singleton
-class HHBlits @Inject() (general: General) {
+class HHBlits @Inject() (general: General, aln: Alignment) {
 
   def parseResult(jsValue: JsValue): HHBlitsResult = jsValue match {
     case obj: JsObject => try {
@@ -50,7 +50,7 @@ class HHBlits @Inject() (general: General) {
         HHBlitsHSP(queryResult, templateResult, infoResult, agree, description, num)
       }
       val db = (obj \ jobID \ "db").as[String]
-      val alignment = general.parseAlignment((obj \ "rep100").as[JsArray])
+      val alignment = aln.parseAlignment((obj \ "rep100").as[JsArray])
       val query = general.parseQuery((obj \ "query").as[JsArray])
       val num_hits = hsplist.length
 
