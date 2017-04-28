@@ -235,7 +235,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
     // PatternSearch
     ("patsearch", "PatternSearch", "pats", "search", "",
-      Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.GRAMMAR, paramAccess.SEQCOUNT), Seq.empty,Seq.empty),
+      Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.GRAMMAR, paramAccess.SEQCOUNT), Seq("kalign"),Seq.empty),
 
     // 6FrameTranslation
     ("6frametranslation", "6FrameTranslation", "6frt", "utils", "",
@@ -558,7 +558,7 @@ val resultMap : Map[String, Map[String, Function3[String, String,  play.api.mvc.
     "PatternSearch" -> { (_, jobID, requestHeader) =>
       implicit val  r = requestHeader
       getResult(jobID).map {
-        case Some(jsvalue) => views.html.jobs.resultpanels.patternSearch("PatternSearch",jobID, "output", jsvalue)
+        case Some(jsvalue) => views.html.jobs.resultpanels.patternSearch("PatternSearch",jobID, "output", jsvalue, this.values(Toolnames.PATSEARCH))
       }}
   )
 )
