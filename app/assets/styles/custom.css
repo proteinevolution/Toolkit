@@ -61,12 +61,12 @@ div#main {
 
 tr.spaceUnder > td
 {
-    padding-bottom: 0em;
+    padding-bottom: 0;
 }
 
 .alnviz{
 
-    border: solid 0px black;
+    border: solid 0 black;
     font-size: 1em;
     text-transform: uppercase;
 }
