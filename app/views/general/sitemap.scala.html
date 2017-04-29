@@ -122,7 +122,7 @@ function data_display(){
             .attr("transform", "translate(" + x/4 + "," + x/5 + ")");
 
  //for some reason the svg disappears when deleting the '/' and nothing is shown, couldn't fix it so far guess the route is somehow not correct
- d3.text('@routes.Assets.versioned("life.txt")', function(error, life) {
+ d3.text('@routes.Assets.versioned("../../../public/images/Examples/life.txt")', function(error, life) {
 
     if(error) throw error;
 
