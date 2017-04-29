@@ -1,6 +1,7 @@
 var GeneralTabComponent, exampleSequence, fndt, renderTabs, tabsContents, tabulated;
 
 exampleSequence = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
+// Update the value with the one from the local storage
 
 window.FrontendAlnvizComponent = {
     controller: function() {
@@ -31,9 +32,9 @@ window.FrontendAlnvizComponent = {
                 }
             },
             initMSA: function() {
-                var alignment, defMenu, menuOpts, opts, seqs, width;
+                var alignment, defMenu, menuOpts, opts, seqs;
                 seqs = $('#alignment').reformat('Fasta');
-                width = $('#tool-tabs').width() - 180;
+                height = (seqs.split('>').length-1)*15;
                 if (!seqs) {
                     return;
                 }
@@ -41,7 +42,7 @@ window.FrontendAlnvizComponent = {
                     colorscheme: {
                         "scheme": "mae"
                     },
-                    el: document.getElementById('yourDiv'),
+                    el: document.getElementById('bioJSContainer'),
                     vis: {
                         conserv: false,
                         overviewbox: false,
@@ -56,8 +57,8 @@ window.FrontendAlnvizComponent = {
                 };
                 opts.seqs = fasta2json(seqs);
                 opts.zoomer = {
-                    alignmentHeight: 600,
-                    alignmentWidth: width,
+                    alignmentHeight: height,
+                    alignmentWidth: 'auto',
                     labelNameLength: 165,
                     labelWidth: 85,
                     labelFontsize: "13px",
@@ -68,9 +69,6 @@ window.FrontendAlnvizComponent = {
                     menuItemFontsize: "14px",
                     menuItemLineHeight: "14px",
                     autoResize: true
-                };
-                opts.zoomer = {
-                    alignmentWidth: width
                 };
                 alignment = new msa.msa(opts);
                 menuOpts = {};
@@ -128,6 +126,9 @@ window.FrontendReformatComponent = {
         }, m.trust(ctrl.html()));
     }
 };
+
+
+
 
 /*
 window.FrontendRetrieveSeqComponent = {
@@ -212,6 +213,8 @@ GeneralTabComponent = {
                     if (typeof onCollapse === "function") {
                         onCollapse();
                     }
+                    $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
+                    $('#bioJSContainer').css({'overflow-x': 'scroll'});
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
@@ -219,9 +222,20 @@ GeneralTabComponent = {
                     if (typeof onExpand === "function") {
                         onExpand();
                     }
+                    $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
+                    $('#bioJSContainer').css({'overflow-x': 'auto'});
                 }
                 if (typeof onFullscreenToggle === "function") {
                     return onFullscreenToggle();
+                }
+            }).bind(mo),
+            forwardString: (function () {
+                if (localStorage.getItem("resultcookie")) {
+                    var cookieString = String(localStorage.getItem("resultcookie"));
+                    localStorage.removeItem("resultcookie");
+                    return cookieString;
+                } else {
+                    return "";
                 }
             }).bind(mo)
         };
@@ -273,7 +287,7 @@ tabsContents = {
                 options: [["fas", "FASTA"]],
                 id: "alignment",
                 rows: 25,
-                value: "",
+                value: GeneralTabComponent.controller().forwardString(),
                 spellcheck: false
             }), m("div", {
                 "class": "submitbuttons",
@@ -292,7 +306,7 @@ tabsContents = {
             m("div", {
                 id: "menuDiv"
             }), m("div", {
-                id: "yourDiv"
+                id: "bioJSContainer"
             })
         ]);
     },
