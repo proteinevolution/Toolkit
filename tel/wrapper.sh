@@ -15,6 +15,7 @@ curl -X POST http://%HOSTNAME:%PORT/jobs/queued/$JOBID
 
 if [ "$HOSTNAME" = "olt" ]
   then
+    HOSTNAME="rye"
     qsub -sync n \
          -l h_vmem=%MEMORY,h="node502|node503|node504|node505|node506|node507|node508|node509|node510|node511|node512|node513" \
          -cwd  \
