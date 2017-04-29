@@ -8,10 +8,8 @@
 <ul class="tabs slicky" data-tabs id="navbar-tabs">
     <li class="tabs-title" id="first-tab"><a href="#panel1">Search</a></li>
     <li class="tabs-title"><a href="#panel2">Alignment</a></li>
-
     <!-- all tools for testing in this section -->
     <li class="tabs-title"><a href="#panel3">Sequence Analysis</a></li>
-
     <li class="tabs-title"><a href="#panel4">2ary Structure</a></li>
     <li class="tabs-title"><a href="#panel5">3ary Structure</a></li>
     <li class="tabs-title"><a href="#panel6">Classification</a></li>
@@ -88,7 +86,7 @@
 <script>
     $(document).ready(function(){
         // TODO move this into a JS file. also might need to have a better slider?
-        var slickConf = {infinite: false, slidesToShow: 4, slidesToScroll: 1, variableWidth: true, arrows: false };
+        var slickConf = {infinite: false, slidesToShow: 4, slidesToScroll: 0, variableWidth: true, arrows: false };
         $('.slicky').slick(slickConf);
     });
 </script>
