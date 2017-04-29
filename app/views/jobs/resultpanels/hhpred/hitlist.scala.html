@@ -11,9 +11,9 @@
     <div class="callout alert noHits" id="noHits">
         <h6>No hits found!</h6>
     </div>
-}else{
+} else {
     @* Loads ForwardModals *@
-    @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort+"_hhsuite")
+    @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhsuite")
     @views.html.forwardmodals.simple(tool, tool.toolNameShort)
     <div class="scrollContainer">
         <div id="scrollLinks">
@@ -24,8 +24,12 @@
         <span class="headerDivider"></span>
         <div id="controlls">
             <a onclick="selectAll()" class="selectAllSeq">Select all</a>
-            <a data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
-            <a data-open="forwardModal_@{tool.toolNameShort}_hhsuite">Forward Query MSA</a>
+            <a data-open="forwardModal_@{
+                tool.toolNameShort
+            }">Forward</a>
+            <a data-open="forwardModal_@{
+                tool.toolNameShort
+            }_hhsuite">Forward Query MSA</a>
             @*only show create model when chosen db=mmcif70/pdb70*@
             @if(result.db.matches("mmcif70/pdb70")) {
                 <a onclick="hhpred_manual()">Create model using selection</a>
@@ -35,49 +39,45 @@
     <br>
     Number of hits: @result.num_hits
     @* Load html Map used for the image representation *@
-        <div id="visualization">
-            <h5 id="visualizationTitle">Visualization</h5>
-                <div class='flat-slider' id='flat-slider'></div>
-                <div id='blastviz'>
-                    <a class="success button tiny resubmitSection" onclick="resubmitSection()" type="button" id="resubmitSection">
-                    Resubmit section</a>
-                <div id='blastviz'>
-                    @BlastVisualization.html(s"$jobID/results/$jobID.html_NOIMG")
-                    <p><img src="files/@jobID/@{jobID}.png" border="0" alt="blasthits" usemap="#blastmap"></p>
-                </div>
-                </div>
+    <div id="visualization">
+        <h5 id="visualizationTitle">Visualization</h5>
+        <div><a class="success button tiny resubmitSection" onclick="resubmitSection()" type="button" id="resubmitSection">Resubmit section</a></div>
+        <div id='blastviz'>
+            <div class='flat-slider' id='flat-slider'></div>
+            @BlastVisualization.html(s"$jobID/results/$jobID.html_NOIMG")
+            <p><img src="files/@jobID/@{
+                jobID
+            }.png" border="0" alt="blasthits" usemap="#blastmap"></p>
         </div>
-        <div id="hitlist">
-            <h5 id="hitlistTitle">Hitlist</h5>
-                <table id="htb" class="display" cellspacing="0" width="100%">
-                    <thead>
-                        <tr>
-                            <th>Nr</th>
-                            <th>Hit</th>
-                            <th>Name</th>
-                            <th>Probability</th>
-                            <th>E-value</th>
-                            <th>Cols</th>
-                            <th>Length of Target</th>
-                        </tr>
-                    </thead>
+    </div>
+    <div id="hitlist">
+        <h5 id="hitlistTitle">Hitlist</h5>
+        <table id="htb" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Nr</th>
+                    <th>Hit</th>
+                    <th>Name</th>
+                    <th>Probability</th>
+                    <th>E-value</th>
+                    <th>Cols</th>
+                    <th>Length of Target</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="alignmentResult">
+        <div id="alignments">
+            <h5 id="alignmentsTitle">Alignments</h5>
+            <form id="hhpred_templates">
+                <table class="unstriped">
+                    <tbody id="alignmentTable">
+                    </tbody>
                 </table>
+            </form>
         </div>
-        <div id="alignmentResult">
-            <div id="alignments">
-                <h5 id="alignmentsTitle">Alignments</h5>
-                <form id="hhpred_templates">
-                      <table class="unstriped">
-                        <tbody id="alignmentTable">
-                        </tbody>
-                      </table>
-                </form>
-            </div>
-        </div>
-
+    </div>
     @*MODALS*@
-
-
     <div class="reveal" id="templateAlignmentModal" data-reveal>
         <h3>Template Alignment</h3>
         <div>
@@ -93,7 +93,8 @@
     </div>
 
     <div class="reveal" id="structureModal" data-reveal>
-        <a type="button" class="button success tiny hhpred_extra_button data-close" onclick="detachStructure()">Open in new window</a>
+        <a type="button" class="button success tiny hhpred_extra_button data-close" onclick="detachStructure()">
+            Open in new window</a>
         <div id="accessionStructure"></div>
         <div id="viewport"></div>
         <button class="close-button" data-close aria-label="Close modal" type="button">
@@ -104,221 +105,223 @@
 <script>
 
 
-$("#structureModal").bind('closed.zf.reveal', (function() {
-    //clear 3D structure modal
-    $('#accessionStructure').html("");
-    $('#viewport canvas').remove();
-}));
+        $("#structureModal").bind('closed.zf.reveal', (function () {
+            //clear 3D structure modal
+            $('#accessionStructure').html("");
+            $('#viewport canvas').remove();
+        }));
 
 
-var checkbox = "checkbox";
-var currentStructureAccession = "";
-var selectAllBool = false;
-var shownHits = 100;
-var showMore = 100;
-var numHits = @{result.num_hits};
-var jobID = '@{jobID}';
-var loading = false;
+        var checkbox = "checkbox";
+        var currentStructureAccession = "";
+        var selectAllBool = false;
+        var shownHits = 100;
+        var showMore = 100;
+        var numHits = @{result.num_hits};
+        var jobID = '@{jobID}';
+        var loading = false;
 
-// use this array to store
-// checked checkboxes
-// due to pagination/lazyload
-var checkboxes = [];
-
-
-$(document).ready( function(){
-    hitlistBaseFunctions();
-    if(numHits > 0 ){
-        drawDataTable();
-        var firstQueryStart = @{result.HSPS.head.query.start};
-        var firstQueryEnd = @{result.HSPS.head.query.end};
-        /* without timeout SLIDER is displayed */
-        setTimeout(function () {
-            slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
-        }, 1000);
-        shownHits = shownHits > numHits ? numHits : shownHits;
-	getHits(0, shownHits);
-        $('#templateAlignmentModal').foundation();
-        $('#structureModal').foundation();
-    }
-
-});
+        // use this array to store
+        // checked checkboxes
+        // due to pagination/lazyload
+        var checkboxes = [];
 
 
-
-function drawDataTable(){
-    hitlist = $('#htb').dataTable({
-        "bProcessing" : true,
-        "bServerSide" : true,
-        "sAjaxSource" : "/api/job/results/dataTableHHpred/"+jobID,
-        "autoWidth" : false,
-        "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
-        "searching": false
-    });
-}
-
-
-function hhpred_manual() {
-    // Get selected templates and append parentID
-    var formData = new FormData(document.getElementById("hhpred_templates"));
-    if (!formData.has("templates")) {
-        $("input:checkbox.checkbox_@{tool.toolNameShort}[value=1]").prop("checked",true)
-        alert("No templates selected. Using first template for modelling.");
-    }
-    formData = new FormData(document.getElementById("hhpred_templates"));
-    formData.append("parentid", jobID);
-
-    var checkRoute = jsRoutes.controllers.JobController.check("hhpred_manual", null, false);
-    m.request({
-        method: checkRoute.method,
-        url: checkRoute.url,
-        data: formData,
-        serialize: function (data) {
-            return data;
-        }
-    }).then(function (data) {
-        var submitRoute = jsRoutes.controllers.JobController.create("hhpred_manual", data.jobID);
-        m.request({
-            method: submitRoute.method,
-            url: submitRoute.url,
-            data: formData,
-            serialize: function (data) {
-                return data;
+        $(document).ready(function () {
+            hitlistBaseFunctions();
+            if (numHits > 0) {
+                drawDataTable();
+                var firstQueryStart = @{result.HSPS.head.query.start};
+                var firstQueryEnd = @{result.HSPS.head.query.end};
+                /* without timeout SLIDER is displayed */
+                setTimeout(function () {
+                    slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
+                }, 1000);
+                shownHits = shownHits > numHits ? numHits : shownHits;
+                getHits(0, shownHits);
+                $('#templateAlignmentModal').foundation();
+                $('#structureModal').foundation();
             }
-        }).then(setTimeout(function(){window.location.href = "/#/jobs/" + data.jobID},1000));
 
-    });
-}
-
-
-
-function selectAll(){
-    selectAllBool = !selectAllBool;
-    if(selectAllBool) {
-        selectAllHelper(checkbox);
-        $(".selectAllSeq").addClass("colorToggle");
-        // first empty array
-        checkboxes = [];
-        // push all checkboxes (1 to num_hits) into array
-        _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-    }
-    else {
-        deselectAll(checkbox);
-        $(".selectAllSeq").removeClass("colorToggle");
-        // delete all checkboxes from array
-        checkboxes = [];
-    }
-}
-
-function templateAlignment(accession){
-    $('textarea#alignmentTemplate').val(" ");
-    // replace '#' for url
-    accession = accession.replace("#", "%23");
-
-    $.ajax({
-        type: 'GET',
-        url: '/templateAlignment/'+jobID+'/' + accession
-    }).done(function () {
-        $.ajax({
-            type: 'GET',
-            url: 'files/'+jobID+'/'+accession + '.fas'
-        }).done(function (data) {
-            $("#alignmentTemplate").val(data.toString());
         });
-    }).fail(function () {
-    $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
-    });
-}
 
 
-function showStructure(accession) {
-    currentStructureAccession = accession;
-    var db = identifyDatabase(accession);
-    var fileEnding = "";
-    switch(db){
-        case "scop":
-            fileEnding = ".pdb";
-            break;
-        case "mmcif":
-            fileEnding = ".cif";
-            accession = accession;
-            break;
-    }
-    var url = '/getStructure/' +accession + fileEnding;
-    $(document).ready(function(){
-        $.get(url).done(function () {
-            $(document).ready(function(){
-                $('#accessionStructure').append("<h3 class='structureAccession'>3D Structure: "+accession+"</h3>");
-                stage = new NGL.Stage( "viewport" );
-                stage.loadFile( url, { defaultRepresentation: true, sele: ":A or :B or DPPC",  });
-                stage.set
+        function drawDataTable() {
+            hitlist = $('#htb').dataTable({
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": "/api/job/results/dataTableHHpred/" + jobID,
+                "autoWidth": false,
+                "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+                "searching": false
             });
-        }).fail(function () {
-            $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
-        });
-    });
-
-}
-
-function hhpred_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
-        if(boolEvalue) {
-            route = jsRoutes.controllers.HHpredController.alnEval(jobID, evalue);
-        }else{
-            route = jsRoutes.controllers.HHpredController.aln(jobID, checkboxes);
         }
-        $.ajax({
-            url: route.url,
-            method: route.method
-        }).done(function (data_) {
+
+
+        function hhpred_manual() {
+            // Get selected templates and append parentID
+            var formData = new FormData(document.getElementById("hhpred_templates"));
+            if (!formData.has("templates")) {
+                $("input:checkbox.checkbox_@{tool.toolNameShort}[value=1]").prop("checked", true)
+                alert("No templates selected. Using first template for modelling.");
+            }
+            formData = new FormData(document.getElementById("hhpred_templates"));
+            formData.append("parentid", jobID);
+
+            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_manual", null, false);
+            m.request({
+                method: checkRoute.method,
+                url: checkRoute.url,
+                data: formData,
+                serialize: function (data) {
+                    return data;
+                }
+            }).then(function (data) {
+                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_manual", data.jobID);
+                m.request({
+                    method: submitRoute.method,
+                    url: submitRoute.url,
+                    data: formData,
+                    serialize: function (data) {
+                        return data;
+                    }
+                }).then(setTimeout(function () {
+                    window.location.href = "/#/jobs/" + data.jobID
+                }, 1000));
+
+            });
+        }
+
+
+        function selectAll() {
+            selectAllBool = !selectAllBool;
+            if (selectAllBool) {
+                selectAllHelper(checkbox);
+                $(".selectAllSeq").addClass("colorToggle");
+                // first empty array
+                checkboxes = [];
+                // push all checkboxes (1 to num_hits) into array
+                _.range(1, numHits + 1).forEach(function (x) {
+                    checkboxes.push(x)
+                });
+            }
+            else {
+                deselectAll(checkbox);
+                $(".selectAllSeq").removeClass("colorToggle");
+                // delete all checkboxes from array
+                checkboxes = [];
+            }
+        }
+
+        function templateAlignment(accession) {
+            $('textarea#alignmentTemplate').val(" ");
+            // replace '#' for url
+            accession = accession.replace("#", "%23");
+
             $.ajax({
                 type: 'GET',
-                url: 'files/'+jobID+'/alignment.fas'
+                url: '/templateAlignment/' + jobID + '/' + accession
+            }).done(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: 'files/' + jobID + '/' + accession + '.fas'
+                }).done(function (data) {
+                    $("#alignmentTemplate").val(data.toString());
+                });
+            }).fail(function () {
+                $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
+            });
+        }
+
+
+        function showStructure(accession) {
+            currentStructureAccession = accession;
+            var db = identifyDatabase(accession);
+            var fileEnding = "";
+            switch (db) {
+                case "scop":
+                    fileEnding = ".pdb";
+                    break;
+                case "mmcif":
+                    fileEnding = ".cif";
+                    accession = accession;
+                    break;
+            }
+            var url = '/getStructure/' + accession + fileEnding;
+            $(document).ready(function () {
+                $.get(url).done(function () {
+                    $(document).ready(function () {
+                        $('#accessionStructure').append("<h3 class='structureAccession'>3D Structure: " + accession + "</h3>");
+                        stage = new NGL.Stage("viewport");
+                        stage.loadFile(url, {defaultRepresentation: true, sele: ":A or :B or DPPC",});
+                        stage.set
+                    });
+                }).fail(function () {
+                    $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
+                });
+            });
+
+        }
+
+        function hhpred_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
+            if (boolEvalue) {
+                route = jsRoutes.controllers.HHpredController.alnEval(jobID, evalue);
+            } else {
+                route = jsRoutes.controllers.HHpredController.aln(jobID, checkboxes);
+            }
+            $.ajax({
+                url: route.url,
+                method: route.method
+            }).done(function (data_) {
+                $.ajax({
+                    type: 'GET',
+                    url: 'files/' + jobID + '/alignment.fas'
+                }).done(function (data_) {
+                    forward(selectedTool, data_.toString());
+                });
+            });
+
+        }
+
+
+        function forwardTemplateAlignment_(tool, forwardData) {
+            if (tool == "") {
+                return;
+            }
+            $('#templateAlignmentModal').foundation('close');
+            forward(tool, forwardData);
+        }
+
+        function detachStructure() {
+            $('#structureModal').foundation('close');
+            window.open('/structure3D/' + currentStructureAccession, '_blank', 'location=yes,height=550,width=850,scrollbars=yes,status=yes');
+        }
+
+
+        function hhpred_forwardQueryMSA(selectedTool) {
+            $.ajax({
+                type: 'GET',
+                url: "files/" + jobID + "/" + jobID + ".reduced.msa"
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });
-        });
-
-}
-
-
-function forwardTemplateAlignment_(tool, forwardData){
-    if(tool == ""){
-        return;
-    }
-    $('#templateAlignmentModal').foundation('close');
-    forward(tool, forwardData);
-}
-
-function detachStructure(){
-    $('#structureModal').foundation('close');
-    window.open('/structure3D/' + currentStructureAccession, '_blank','location=yes,height=550,width=850,scrollbars=yes,status=yes');
-}
+        }
+        function resubmitSection() {
+            resubmitSection('@{result.query.seq}', '>' + '@{result.query.accession}');
+        }
 
 
-function hhpred_forwardQueryMSA(selectedTool){
-    $.ajax({
-        type: 'GET',
-        url: "files/"+jobID+"/"+jobID+".reduced.msa"
-    }).done(function (data_) {
-        forward(selectedTool, data_.toString());
-    });
-}
-function resubmitSection(){
-    resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}');
-}
-
-
-function getHits(start, end){
-    if(start <= numHits && end <= numHits){
-       	loading = true;
-        var route = jsRoutes.controllers.HHpredController.loadHits(jobID,start, end);
-        return $.ajax({
-            method: route.method,
-            url: route.url
-        }).done(function (data_) {
-            $("#alignmentTable").append(data_);
-	    loading = false;
-        });
-    }
-}
+        function getHits(start, end) {
+            if (start <= numHits && end <= numHits) {
+                loading = true;
+                var route = jsRoutes.controllers.HHpredController.loadHits(jobID, start, end);
+                return $.ajax({
+                    method: route.method,
+                    url: route.url
+                }).done(function (data_) {
+                    $("#alignmentTable").append(data_);
+                    loading = false;
+                });
+            }
+        }
 </script>
