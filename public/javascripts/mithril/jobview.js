@@ -356,7 +356,7 @@ JobTabsComponent = {
         return m("div", { class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl) }, [
             m("ul", [ // Tab List
                 ctrl.listitems.map(function(item) {
-                    if(item == "Input" || item == "Parameters" || item == "Running" || item == "Queuerd" || item == "Error"){
+                    if(item == "Input" || item == "Parameters" || item == "Running" || item == "Queued" || item == "Error"){
                         return m("li", { id: "tab-" + item},
                             m("a", { href: "#tabpanel-" + item, config: hideSubmitButtons }, item)
                         );
