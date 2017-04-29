@@ -641,7 +641,7 @@ function feedback(valid : boolean, msg : string = "unknown validation error", ty
     }
     else if(valid){
         $(".submitJob").prop("disabled", false);
-        $v.css("display", "block").html("Found format: <b>Fasta</b>").addClass("success");
+        $v.css("display", "block").html(msg).addClass(type);
     }
     else if(wrongformat) {
         $(".submitJob").prop("disabled", false);
@@ -735,7 +735,7 @@ class alignmentVal implements ToolkitValidator {
     basicValidation(): boolean {
 
         if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') === '') {
-            feedback(false, "This is no fasta!", "error");
+            feedback(false, "This is no Fasta!", "error");
             return false;
         }
 
@@ -754,14 +754,14 @@ class alignmentVal implements ToolkitValidator {
             return false;
         }
 
-        else if (!this.elem.reformat('uniqueids')) {
-            feedback(false, "FASTA but identifiers are not unique!", "error");
-            return false;
-        }
-
         else if (this.elem.reformat('dashes')) {
             feedback(false, "Sequence contains only dots/dashes!", "error");
             return false;
+        }
+
+        else if (!this.elem.reformat('uniqueids')) {
+            feedback(true, "Fasta but identifiers are not unique!", "warning");
+            return true;
         }
 
         else if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
@@ -775,7 +775,7 @@ class alignmentVal implements ToolkitValidator {
         else if (this.elem.val() === "")
             valReset();
 
-        else feedback(true);
+        else feedback(true, "Found format: <b>Fasta</b>", "success");
 
         return true;
 
@@ -811,7 +811,7 @@ class alignmentVal implements ToolkitValidator {
     DNAvalidation(): any {
 
         if (!this.elem.validate('fasta'))
-            feedback(false, "This is no fasta!", "error");
+            feedback(false, "This is no Fasta!", "error");
 
         else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
             feedback(false, "Must have single sequence!", "error");
@@ -825,7 +825,7 @@ class alignmentVal implements ToolkitValidator {
         else if (this.elem.val() == "")
             valReset();
 
-        else feedback(true);
+        else feedback(true, "Found format: <b>Fasta</b>", "success");
     }
 
     seq2IDvalidation(): any {
@@ -851,8 +851,7 @@ class alignmentVal implements ToolkitValidator {
             feedback(false, "Input contains over 20,000 headers!", "error");
 
         else if (this.elem.reformat('extractheaders') !== "") {
-            $(".submitJob").prop("disabled", false);
-            $("#validOrNot").css("display", "block").html("Valid input").removeClass("alert").addClass("success");
+            feedback(true, "Valid input", "success");
         }
 
         else if (this.elem.val() == "")
@@ -871,8 +870,7 @@ class alignmentVal implements ToolkitValidator {
             feedback(false, "Input contains over 100 characters!", "error");
 
         else if (this.elem.reformat('line')) {
-            $(".submitJob").prop("disabled", false);
-            $("#validOrNot").css("display", "block").html("Valid input").removeClass("alert").addClass("success");
+            feedback(true, "Valid input", "success");
         }
 
         else if (this.elem.val() == "")
