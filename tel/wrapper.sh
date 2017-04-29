@@ -22,6 +22,7 @@ if [ "$HOSTNAME" = "olt" ]
 
 elif [ "$HOSTNAME" = "rye" ]
   then
+      HOSTNAME="rye"
       qsub -sync n \
                -l h_vmem=%MEMORY,h="node33|node34|node35|node36" \
                -cwd  \
