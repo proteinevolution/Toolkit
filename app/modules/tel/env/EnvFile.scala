@@ -76,6 +76,7 @@ class PropFile(path : String) extends EnvFile(path) {
             case x if x.startsWith("env_foo") => updated = updated.replace("env_foo", ConfigFactory.load().getString("ENVIRONMENT"))
             case x if x.startsWith("helper_foo") => updated = updated.replace("helper_foo", ConfigFactory.load().getString("HELPER"))
             case x if x.startsWith("perllib_foo") => updated = updated.replace("perllib_foo", ConfigFactory.load().getString("PERLLIB"))
+            case x if x.startsWith("standarddb_bar") => updated = updated.replace("standarddb_bar", ConfigFactory.load().getString("STANDARDDB"))
             case _ => Logger.info("Env file has no preconfigured key in the configs")
 
           }
