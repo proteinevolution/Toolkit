@@ -94,10 +94,10 @@ onMessage = function(event : MessageEvent) : any {
         case "PushJob":
             m.startComputation();
             JobListComponent.pushJob(JobListComponent.Job(message.job));
+            LiveTable.pushJob(message.job);
             m.endComputation();
             break;
         case "UpdateLoad":
-            // TODO Don't redraw all the time!
             // Tried to limit this by saving the "currentRoute", but we might need something proper in the future.
             if (currentRoute === "index" && !noRedraw) {
                 LoadBar.updateLoad(message.load);
