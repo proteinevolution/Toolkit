@@ -21,7 +21,7 @@ class AlignmentController @Inject()(aln: Alignment, val reactiveMongoApi : React
       case Some(jsValue) =>
         val result = aln.parseAlignment((jsValue \ resultName).as[JsArray]).alignment
         val fas = listNum.map { num =>
-          ">" + result{num-1}.accession + "\n" + result{num-1}.seq
+          ">" + result{num-1}.accession + "\n" + result{num-1}.seq + "\n"
         }
         Ok(fas.mkString)
       case None => BadRequest

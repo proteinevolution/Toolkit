@@ -128,6 +128,7 @@ GET           /api/jobs                               @controllers.JobController
 POST          /api/job                                @controllers.JobController.create(toolname: String, jobID: String)
 POST          /api/job/check                          @controllers.JobController.check(toolname: String, jobID: Option[String], hash: Boolean)
 GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
+GET           /api/job/result/:jobID/:tool/:panel            @controllers.Service.getResult(jobID : String, tool: String, panel: String)
 DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
 GET           /api/job/load/:jobID                    @controllers.JobController.loadJob(jobID: String)
 

@@ -604,7 +604,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     hhfilterTarget.basicValidation();
 
                     if (hhfilterTarget.basicValidation()) {
-                        mmseqs2Target.mustHave2();
+                        hhfilterTarget.mustHave2();
                     }
                     seqLimit = 10000;
 
@@ -649,7 +649,6 @@ function feedback(valid : boolean, msg : string = "unknown validation error", ty
     $v.removeClass("alert warning secondary primary success");
 
     if(!valid) {
-        console.log(msg);
         $(".submitJob").prop("disabled", true);
         $v.css("display", "block").html(msg).addClass(type);
     }
@@ -786,8 +785,11 @@ class alignmentVal implements ToolkitValidator {
             return true;
         }
 
-        else if (this.elem.val() === "")
+        else if (this.elem.val() === "") {
+            feedback(false)
+
             valReset();
+        }
 
         else feedback(true, "Found format: <b>Fasta</b>", "success");
 
