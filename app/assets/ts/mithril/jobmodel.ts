@@ -79,12 +79,6 @@ window.JobModel = {
                     views: data.views,
                     successful : true
                 };
-            }).catch(function(e){
-                return {
-                    error : e,
-                    isJob: true,
-                    successful : false
-                }
             });
         } else {
             return m.request({
@@ -98,12 +92,6 @@ window.JobModel = {
                     jobID: "",
                     successful : true
                 };
-            }).catch(function(e){
-                return {
-                    error : e,
-                    isJob: false,
-                    successful : false
-                }
             });
         }
     },
