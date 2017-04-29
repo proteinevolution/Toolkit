@@ -22,17 +22,20 @@ final class Cluster @Inject()(qhost : Qhost,
     // get the infos from the qstat command
     val cluster = qhost.get()
 
-    //compute some kind of load status
+    //compute some kind of load status, see http://blog.scoutapp.com/articles/2009/07/31/understanding-load-averages
 
     val c = cluster.map { x => x.load / x.ncpu }.sum / cluster.length
 
     val m = cluster.map { x => x.memuse / x.memtot }.sum / cluster.length
 
     // take the resource which is more booked out to define the current load
-    val l = cluster.map { x => math.max( x.load / x.ncpu , x.memuse / x.memtot ) }.sum / cluster.length
+    val l = cluster.map { x => math.max( x.load / (5 * x.ncpu) , x.memuse / x.memtot ) }.sum / cluster.length
 
     // just uses the native load column from the qhost output
     val nativeLoad = cluster.map { x => x.load }.sum / ( cluster.length * 100 )
+
+
+
 
 
     Load(c, m, l)
