@@ -6,34 +6,6 @@ let trafficBarConfig = function(lastJob : any) {
             elem.setAttribute("data-disable-hover", "false");
             //elem.setAttribute("data-tooltip", "data-tooltip");
             elem.setAttribute("title", "Click to view last job: " + lastJob.jobID);
-            console.log("Traffic bar sees status " + lastJob.state);
-            if (lastJob.state === -1) {
-                return console.log("Hide Trafficbar");
-            } else if (lastJob.state === 2) {
-                console.log("Traffic Bar goes to queued");
-                $(elem).css({
-                    'background': 'rgba(192, 181, 191, 0.5)',
-                    'box-shadow': '0 1 6px #9192af'
-                });
-            } else if (lastJob.state === 5) {
-                console.log("Traffic Bar goes to done");
-                $(elem).css({
-                    'background': 'rgba(0, 180, 40, 0.2)',
-                    'box-shadow': '0 1 6px #C3FFC3'
-                });
-            } else if (lastJob.state === 4) {
-                console.log("Traffic Bar goes to error");
-                $(elem).css({
-                    'background': 'rgba(180, 0, 40, 0.2)',
-                    'box-shadow': '0 1 6px #FFC5C5'
-                });
-            } else if (lastJob.state === 3) {
-                console.log("Traffic Bar goes to running");
-                $(elem).css({
-                    'background': 'rgba(255, 255, 0, 0.4)',
-                    'box-shadow': '0 1 6px #FFF666'
-                });
-            }
         }
     };
 };
@@ -90,6 +62,12 @@ class LiveTable {
                 LiveTable.totalJobs = pageInfo.totalJobs;
             }).catch(function(error){console.log(error);});
     }
+    static pushJob (job : Job) : void {
+        LiveTable.lastJob = job;
+        console.log("Last job:", job);
+        m.redraw.strategy("diff");
+        m.redraw();
+    }
     static controller (args : any) : any {
         currentRoute = "index"; // Need to use this method to find the current route
         if (args) {
@@ -103,6 +81,14 @@ class LiveTable {
         return {}
     }
     static view (ctrl : any, args : any) : any {
+        let trafficBarStatus;
+        switch(LiveTable.lastJob.state) {
+            case 2: trafficBarStatus = "queue"; break;
+            case 3: trafficBarStatus = "running"; break;
+            case 4: trafficBarStatus = "error"; break;
+            case 5: trafficBarStatus = "done"; break;
+            default: trafficBarStatus = "";
+        }
         return m('div', [
             //m('div', {"class" : "clusterLoad column large-4"}, ""),
             m('table', {"class" : "liveTable"}, [
@@ -118,7 +104,7 @@ class LiveTable {
                 )
             ]),
             m("div", { id: "trafficbar",
-                       "class": "trafficbar",
+                       "class": ("trafficbar " + trafficBarStatus),
                        config: trafficBarConfig(LiveTable.lastJob),
                        onclick: function () { m.route("/jobs/" + LiveTable.lastJob.jobID); }
             })

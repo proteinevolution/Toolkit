@@ -470,10 +470,8 @@ FIELDSET {
 }
 
 .trafficbar {
-
     cursor: pointer;
     z-index: 99;
-    margin-right: 10em;
     margin-bottom: 0.1em !important;
     height: 0.2em;
     width: 100%;
@@ -482,7 +480,23 @@ FIELDSET {
     border-radius: 4px;
     -webkit-animation: background 10s cubic-bezier(1,0,0,1) infinite;
     animation: background 10s cubic-bezier(1,0,0,1) infinite;
+}
 
+.trafficbar.queue {
+    background: rgba(192, 181, 191, 0.5);
+    box-shadow: 0 1px 6px #9192af;
+}
+.trafficbar.done {
+    background: rgba(0, 180, 40, 0.2);
+    box-shadow: 0 1px 6px #C3FFC3;
+}
+.trafficbar.error {
+    background: rgba(180, 0, 40, 0.2);
+    box-shadow: 0 1px 6px #FFC5C5;
+}
+.trafficbar.running {
+    background: rgba(255, 255, 0, 0.4);
+    box-shadow: 0 1px 6px #FFF666;
 }
 
 #mainface {
@@ -620,11 +634,11 @@ td#joblistIcon i {
     }
 }
 
-@media screen and (max-width: 730px) {
-    .trafficbar {
-        display: none;
-    }
-}
+/*@media screen and (max-width: 730px) {*/
+    /*.trafficbar {*/
+        /*display: none;*/
+    /*}*/
+/*}*/
 
 @media screen and (max-width: 730px) {
     .liveTableContainer {
