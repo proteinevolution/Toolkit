@@ -43,7 +43,7 @@ body.is-reveal-open {
     font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-#bioJSContainer {
+#bioJSContainer, #rootDiv {
     overflow-x: scroll;
 }
 
