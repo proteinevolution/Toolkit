@@ -866,6 +866,17 @@ textarea:focus{
     border-radius: 2px;
 }
 
+.callout.warning{
+    background-color: #FFF666;
+    opacity: 0.9;
+    min-width: 12em;
+    text-align: center;
+    padding: 0.6em 0.7em 0.6em 0.7em;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
 .errorStateCallout{
     width: 30%;
     margin: 1em;

@@ -1,7 +1,7 @@
 DBROOT   = foo
 HHSUITE  = %DBROOT/hh-suite
 UNIPROT  = %DBROOT/hhblits/uniprot20
-STANDARD = %DBROOT/standard/NewToolkitDBs
+STANDARD = standarddb_bar
 CIF      = %DBROOT/pdb/mmcif/70
 CIFALL      = %DBROOT/pdb/mmcif/all
 PDB      = %DBROOT/hhpred/pdb70
