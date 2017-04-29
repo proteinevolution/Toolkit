@@ -786,8 +786,7 @@ class alignmentVal implements ToolkitValidator {
         }
 
         else if (this.elem.val() === "") {
-            feedback(false)
-
+            feedback(false);
             valReset();
         }
 
@@ -838,8 +837,10 @@ class alignmentVal implements ToolkitValidator {
         else if(!this.elem.reformat('DNA'))
             feedback(false, "Illegal characters used!", "error");
 
-        else if (this.elem.val() == "")
+        else if (this.elem.val() == "") {
+            feedback(false);
             valReset();
+        }
 
         else feedback(true, "Found format: <b>Fasta</b>", "success");
     }
@@ -868,8 +869,10 @@ class alignmentVal implements ToolkitValidator {
         else if (this.elem.reformat('extractheaders') !== "")
             feedback(true, "Valid input", "success");
 
-        else if (this.elem.val() == "")
+        else if (this.elem.val() == "") {
+            feedback(false);
             valReset();
+        }
     }
 
     patternSearchValidation(): any {
@@ -886,14 +889,18 @@ class alignmentVal implements ToolkitValidator {
         else if (this.elem.reformat('line'))
             feedback(true, "Valid input", "success");
 
-        else if (this.elem.val() == "")
+        else if (this.elem.val() == ""){
+            feedback(false);
             valReset();
+        }
     }
 
     modellerValidation(): any {
 
+
         if (!this.elem.validate('pir'))
             feedback(false, "This is no pir!", "error");
+
 
         else if (!this.elem.reformat('star'))
             feedback(false, "Every sequence must end with a star!", "error");
@@ -904,19 +911,25 @@ class alignmentVal implements ToolkitValidator {
         else if (this.elem.reformat('numbers') < 2)
             feedback(false, "Must have at least two sequences!", "error");
 
-        else if (this.elem.val() == "")
+        else if (this.elem.val() == "") {
+            feedback(false);
             valReset();
+        }
 
         else feedback(true, "Valid input", "success");
     }
 
     samccValidation(): any {
 
+        //console.log($('#samcc_helixone').val());
+
         if(!this.elem.reformat('atoms'))
             feedback(false, "Must have at least 25 sequences starting with \"ATOM\"");
 
-        else if (this.elem.val() == "")
+        else if (this.elem.val() == "") {
+            feedback(false);
             valReset();
+        }
 
         else feedback(true, "Valid input", "success");
     }
