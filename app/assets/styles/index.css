@@ -209,6 +209,10 @@ FIELDSET {
     margin: auto;
 }
 
+.tt-dropdown {
+    overflow-y: auto
+}
+
 .tt-menu:before, .tt-menu:after {
     content: '';
     display: block;
@@ -454,7 +458,7 @@ FIELDSET {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     float: none;
     margin: 1em 1em 0 1em;
-    height: 10em;
+    height: 500em;
     box-shadow: 0 1px 2px 0 #ccc;
     border-radius: 3px;
     border: 1px solid #ccc;
