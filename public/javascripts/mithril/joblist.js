@@ -130,7 +130,6 @@ window.JobListComponent = {
         selectedJobID = JobListComponent.selectedJobID;
         JobListComponent.visibleJobs().map(function(job) { if (job.jobID === selectedJobID) selectedInView = true; });
         // Sort the list
-        console.log("Sorting joblist...",JobListComponent.sort);
         JobListComponent.list.sort(function(job1, job2) {
             switch (JobListComponent.sort.mode) {
                 case "toolName"  : return inv * job2.toolname.localeCompare(job1.toolname);

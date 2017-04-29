@@ -57,7 +57,6 @@ class LiveTable {
     static updateJobInfo () : void {
         m.request({method: "GET", url: "indexPageInfo"})
             .then(function(pageInfo) {
-                console.log(pageInfo);
                 LiveTable.lastJob   = pageInfo.lastJob;
                 LiveTable.totalJobs = pageInfo.totalJobs;
             }).catch(function(error){console.log(error);});
