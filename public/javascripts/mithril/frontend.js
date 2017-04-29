@@ -32,9 +32,17 @@ window.FrontendAlnvizComponent = {
                 }
             },
             initMSA: function() {
-                var alignment, defMenu, menuOpts, opts, seqs;
+                var alignment, defMenu, menuOpts, opts, seqs, counter, i;
                 seqs = $('#alignment').reformat('Fasta');
                 height = (seqs.split('>').length-1)*15;
+                var split = seqs.split('\n');
+                counter = 0;
+                i = 1;
+                while(!split[i].startsWith('>')) {
+                    counter = counter + split[i].length;
+                    i++;
+                }
+                width = counter * 15;
                 if (!seqs) {
                     return;
                 }
@@ -58,7 +66,7 @@ window.FrontendAlnvizComponent = {
                 opts.seqs = fasta2json(seqs);
                 opts.zoomer = {
                     alignmentHeight: height,
-                    alignmentWidth: 'auto',
+                    alignmentWidth: width,
                     labelNameLength: 165,
                     labelWidth: 85,
                     labelFontsize: "13px",

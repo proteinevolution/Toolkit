@@ -99,7 +99,7 @@ final class Service @Inject() (webJarAssets                                     
       (JsPath \ "ownerName").write[String] and
       (JsPath \ "createdOn").write[String] and
       (JsPath \ "toolitem").write[Toolitem] and
-      (JsPath \ "views").write[Seq[(String, Html)]] and
+      (JsPath \ "views").write[Seq[String]] and
       (JsPath \ "paramValues").write[Map[String, String]](play.api.libs.json.Writes.mapWrites[String])
     ) (unlift(Jobitem.unapply))
 
@@ -112,10 +112,12 @@ final class Service @Inject() (webJarAssets                                     
   }
 
 
-  // Fetches the result of a job for a particular result panel
-  def getResult(jobID: String, resultpanel : String) : Action[AnyContent] = Action.async {
 
-    Future.successful(Ok)
+
+  // Fetches the result of a job for a particular result panel
+  def getResult(jobID : String, tool: String, resultpanel : String) : Action[AnyContent] = Action.async { implicit request =>
+    var resultPanel = toolFactory.resultMap(tool)(resultpanel)(jobID, request)
+    resultPanel.map(Ok(_))
   }
 
 
@@ -145,12 +147,9 @@ final class Service @Inject() (webJarAssets                                     
               }
             // The jobState decides which views will be appended to the job
 
-            val jobViews: Future[Seq[(String, Html)]] = job.status match {
+            val jobViews: Future[Seq[String]] = job.status match {
 
-              // TODO This is complicated but can be replaced once only the titles of the resultpanels are returned
-              case Done => Future.sequence(toolFactory.resultMap(job.tool).map { y =>
-                  y._2(jobPath, job.jobID, request).map(y._1 -> _)
-                }.toSeq)
+              case Done => Future.successful(toolFactory.resultPanels(toolitem.toolname))
 
               // All other views are currently computed on Clientside
               case _ => Future.successful(Nil)

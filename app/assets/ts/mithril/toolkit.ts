@@ -37,18 +37,16 @@ window.Toolkit = {
         let job : any, jobID : string, toolname : string, viewComponent : any;
         if (args.isJob) {
             jobID = m.route.param("jobID");
+            Toolkit.currentJobID = jobID;
             if (!JobListComponent.contains(jobID) || !(Toolkit.currentJobID === jobID)) {
-                Toolkit.currentJobID = jobID;
                 // ensure addition to the job list
                 //sendMessage({ type: "RegisterJobs", "jobIDs": [jobID] });
                 // request job
-                m.request({ url: "/api/job/load/" + jobID, method: "GET" }).catch(function(e) {
+                m.request({url: "/api/job/load/" + jobID, method: "GET"}).catch(function (e) {
                     console.log("Job Not found", e);
-                }).then(function(data) {
+                }).then(function (data) {
                     JobListComponent.pushJob(JobListComponent.Job(data), true);
                 });
-            } else {
-                Toolkit.currentJobID = jobID;
             }
         } else {
             JobListComponent.selectedJobID = null;
