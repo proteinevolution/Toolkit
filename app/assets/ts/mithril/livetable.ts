@@ -53,7 +53,7 @@ class LoadBar {
     }
     static view (ctrl : any, args : any) : any {
         let currentLoad : number = LoadBar.load,
-            loadval : number = Math.ceil(100 - 100/currentLoad),
+            loadval : number = Math.ceil(currentLoad * 100),
             loadString : string = loadval + "%",
             colorClass : string = "loadBar " + (currentLoad < 0.90 ? "green" : currentLoad < 1.3 ? "yellow" : "red");
 
@@ -88,7 +88,6 @@ class LiveTable {
                 console.log(pageInfo);
                 LiveTable.lastJob   = pageInfo.lastJob;
                 LiveTable.totalJobs = pageInfo.totalJobs;
-                m.redraw.strategy("diff");
             }).catch(function(error){console.log(error);});
     }
     static controller (args : any) : any {

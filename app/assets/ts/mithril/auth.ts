@@ -359,7 +359,7 @@ class SignUp {
                          password  : SignUp.password,
                          eMail     : SignUp.eMail,
                          acceptToS : SignUp.acceptToS };
-            var route = jsRoutes.controllers.Auth.signUpSubmit();
+            let route = jsRoutes.controllers.Auth.signUpSubmit();
             m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
                 dataS = null;
                 Auth.updateStatus(authMessage);
@@ -464,7 +464,7 @@ class ForgotPassword {
         event.preventDefault();
         let dataS = {nameLogin:ForgotPassword.nameLogin, eMail:ForgotPassword.eMail};
         console.log(dataS);
-        var route = jsRoutes.controllers.Auth.resetPassword();
+        let route = jsRoutes.controllers.Auth.resetPassword();
         m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
             dataS = null;
             if (authMessage.successful) { SignIn.password = null; SignIn.nameLogin = null; }
@@ -531,8 +531,8 @@ class Profile {
     static submit(event : Event) : void {
         event.preventDefault();
         let userwithpw : any = { password:Profile.password };
-        for (var prop in Profile.user){ if (!prop.split("_")[1]){ userwithpw[prop] = Profile.user[prop]; } }
-        var route = jsRoutes.controllers.Auth.profileSubmit();
+        for (let prop in Profile.user){ if (!prop.split("_")[1]){ userwithpw[prop] = Profile.user[prop]; } }
+        let route = jsRoutes.controllers.Auth.profileSubmit();
         m.request({method: route.method, url: route.url, data: userwithpw }).then(function(authMessage) {
             userwithpw = null;
             Profile.password = "";
@@ -732,7 +732,7 @@ class PasswordChange {
     static submit(event : Event) : void {
         event.preventDefault();
         let password : any = { passwordOld : PasswordChange.passwordOld, passwordNew : PasswordChange.passwordNew };
-        var route = jsRoutes.controllers.Auth.passwordChangeSubmit();
+        let route = jsRoutes.controllers.Auth.passwordChangeSubmit();
         m.request({method: route.method, url: route.url, data: password }).then(function(authMessage) {
             password = null;
             if (authMessage.success) {
@@ -823,7 +823,7 @@ class PasswordReset {
     static submit(event : Event) : void {
         event.preventDefault();
         let password : any = { passwordNew : PasswordReset.passwordNew };
-        var route = jsRoutes.controllers.Auth.resetPasswordChange();
+        let route = jsRoutes.controllers.Auth.resetPasswordChange();
         m.request({method: route.method, url: route.url, data: password }).then(function(authMessage) {
             password = null;
             if (authMessage.success) {

@@ -29,7 +29,7 @@ final class JobDAO @Inject()(cs: ClusterSetup,
   private[this] lazy val client = elasticFactory(cs)
   private val noHash = Set("mainID", "jobID")
 
-  private val Index = "tkplay_dev"
+  private val Index = ConfigFactory.load().getString(s"elastic4s.indexAndTypes.jobs.index")
   private val jobIndex = Index / "jobs"
   private val jobHashIndex = Index / "jobhashes"
 
