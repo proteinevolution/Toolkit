@@ -131,12 +131,12 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
     // CLustalOmega
     ("clustalo", "Clustal Omega", "cluo", "alignment", "", Seq(paramAccess.ALIGNMENT,
-      paramAccess.OUTPUT_ORDER), Seq("psiblast", "kalign", "tcoffee", "mafft", "msaprobs", "muscle", "hhpred", "hhblits", "hmmer", "hhfilter"),Seq.empty),
+      paramAccess.OUTPUT_ORDER), Seq("psiblast", "kalign", "tcoffee", "mafft", "msaprobs", "muscle", "hhpred", "hhblits", "hmmer", "hhfilter", "alnviz"),Seq.empty),
 
     // Kalign
     ("kalign", "Kalign", "kal", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER,
       paramAccess.GAP_OPEN, paramAccess.GAP_EXT_KALN, paramAccess.GAP_TERM, paramAccess.BONUSSCORE),
-      Seq("psiblast", "clustalo", "tcoffee", "mafft", "msaprobs", "muscle", "hhpred", "hhblits", "hmmer", "hhfilter"),Seq.empty),
+      Seq("psiblast", "clustalo", "tcoffee", "mafft", "msaprobs", "muscle", "hhpred", "hhblits", "hmmer", "hhfilter", "alnviz"),Seq.empty),
 
     // T-Coffee
     ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER),
@@ -145,16 +145,16 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
     // MAFFT
     ("mafft", "MAFFT", "mft", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.GAP_OPEN,
-      paramAccess.OFFSET), Seq("psiblast", "clustalo", "kalign", "tcoffee", "msaprobs", "muscle", "hhpred", "hhblits", "hmmer", "hhfilter"),Seq.empty),
+      paramAccess.OFFSET), Seq("psiblast", "clustalo", "kalign", "tcoffee", "msaprobs", "muscle", "hhpred", "hhblits", "hmmer", "hhfilter", "alnviz"),Seq.empty),
 
 
     // MSA Probs
     ("msaprobs", "MSAProbs", "msap", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER),
-      Seq("psiblast", "clustalo", "kalign", "tcoffee", "mafft", "muscle", "hhpred", "hhblits", "hmmer", "hhfilter"),Seq.empty),
+      Seq("psiblast", "clustalo", "kalign", "tcoffee", "mafft", "muscle", "hhpred", "hhblits", "hmmer", "hhfilter", "alnviz"),Seq.empty),
 
     // MUSCLE
     ("muscle", "MUSCLE", "musc", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.MAXROUNDS),
-      Seq("psiblast", "clustalo", "kalign", "tcoffee", "mafft", "msaprobs", "hhpred", "hhblits", "hmmer", "hhfilter"),Seq.empty),
+      Seq("psiblast", "clustalo", "kalign", "tcoffee", "mafft", "msaprobs", "hhpred", "hhblits", "hmmer", "hhfilter", "alnviz"),Seq.empty),
 
 
     // Hmmer
