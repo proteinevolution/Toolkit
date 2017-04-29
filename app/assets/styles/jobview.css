@@ -35,7 +35,16 @@ body.is-reveal-open {
 }
 
 #alignmentViewerPanel {
-    height: 31em;
+    height: 27em;
+}
+
+#alignmentViewerPanel textarea {
+    font-size: 0.7em;
+    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+#bioJSContainer {
+    overflow-x: scroll;
 }
 
 .tabs-panel {
@@ -394,11 +403,12 @@ hr {
     color: #000;
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #878787;
-    height: 2.5em;
+    height: 2.3em;
     width: 8em;
     float: right;
     border-radius: 3px;
     font-size: 0.88em;
+    padding: 0.25em;
 }
 
 .submitbuttons .jobid.white {
@@ -418,9 +428,9 @@ hr {
     bottom: 0;
     left: 0;
     width: 100%;
-    padding-right: 1em;
     padding-left: 1.9375em;
     padding-bottom: 0.3em;
+    padding-right: 0.5em;
 }
 
 .result-panel{
@@ -847,6 +857,17 @@ textarea:focus{
 }
 .callout.success{
     background-color: #DBFFDB;
+    opacity: 0.9;
+    min-width: 12em;
+    text-align: center;
+    padding: 0.6em 0.7em 0.6em 0.7em;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.callout.warning{
+    background-color: #FFF666;
     opacity: 0.9;
     min-width: 12em;
     text-align: center;

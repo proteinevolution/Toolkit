@@ -57,7 +57,6 @@ class LiveTable {
     static updateJobInfo () : void {
         m.request({method: "GET", url: "indexPageInfo"})
             .then(function(pageInfo) {
-                console.log(pageInfo);
                 LiveTable.lastJob   = pageInfo.lastJob;
                 LiveTable.totalJobs = pageInfo.totalJobs;
             }).catch(function(error){console.log(error);});
@@ -82,13 +81,14 @@ class LiveTable {
     }
     static view (ctrl : any, args : any) : any {
         let trafficBarStatus;
-        switch(LiveTable.lastJob.state) {
+        // TODO: THIS PART CAUSES THAT LIVETABLE IS BROKEN ON RYE
+        /*switch(LiveTable.lastJob.state) {
             case 2: trafficBarStatus = "queue"; break;
             case 3: trafficBarStatus = "running"; break;
             case 4: trafficBarStatus = "error"; break;
             case 5: trafficBarStatus = "done"; break;
-            default: trafficBarStatus = "";
-        }
+            default: trafficBarStatus = ""; break;
+        }*/
         return m('div', [
             //m('div', {"class" : "clusterLoad column large-4"}, ""),
             m('table', {"class" : "liveTable"}, [
