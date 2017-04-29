@@ -489,6 +489,13 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
                     break;
 
+                case "modeller":
+
+                    let modellerTarget = new alignmentVal($(elem));
+                    modellerTarget.modellerValidation();
+
+                    break;
+
                 case "ancescon":
 
                     let ancesconTarget = new alignmentVal($(elem));
@@ -875,5 +882,30 @@ class alignmentVal implements ToolkitValidator {
 
         else if (this.elem.val() == "")
             valReset();
+    }
+
+    modellerValidation(): any {
+
+        if (!this.elem.validate('pir')) {
+            feedback(false, "This is no pir!", "error");
+        }
+
+        else if (!this.elem.reformat('star')) {
+            feedback(false, "Every sequence must end with a star!", "error");
+        }
+
+        else if (!this.elem.reformat('samelength')) {
+            feedback(false, "Sequences should have the same length!", "error");
+            return false;
+        }
+
+        else if (this.elem.reformat('numbers') < 2) {
+            feedback(false, "Must have at least two sequences!", "error");
+        }
+
+        else if (this.elem.val() == "")
+            valReset();
+
+        else feedback(true, "Valid input", "success");
     }
 }
