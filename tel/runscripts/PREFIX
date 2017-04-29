@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#unset proxy variable
+export http_proxy=
 
 # Make Request to Toolkit to indicate current state of execution
 trap catch_errors ERR;
