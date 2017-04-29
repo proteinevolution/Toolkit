@@ -51,7 +51,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
     * @param userName usually the eMail address
     * @return
     */
-  def signIn(userName : String) = Action { implicit request =>
+  def signIn(userName : String) : Action[AnyContent] = Action { implicit request =>
     Ok(views.html.auth.signin(userName))
   }
 
@@ -60,7 +60,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
     *
     * @return
     */
-  def signUp() = Action { implicit request =>
+  def signUp() : Action[AnyContent] = Action { implicit request =>
     Ok(views.html.auth.signup())
   }
 
@@ -511,7 +511,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
     * @param token
     * @return
     */
-  def verification(userName : String, token : String) = Action.async { implicit request =>
+  def verification(userName : String, token : String) : Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user : User =>
       // Grab the user from the database in case that the logged in user is not the user to verify
       findUser(BSONDocument(User.NAMELOGIN -> userName)).flatMap {
