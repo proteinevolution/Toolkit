@@ -89,7 +89,7 @@ case class Jobitem(mainID: String,
                    ownerName : String,
                    createdOn: String,
                    toolitem: Toolitem,
-                   views: Seq[(String, Html)],
+                   views: Seq[String],
                    paramValues: Map[String, String])
 
 object Job {
