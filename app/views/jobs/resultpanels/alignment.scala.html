@@ -53,7 +53,8 @@
 
         $(document).ready(function () {
             $("#alignmentResult").floatingScroll();
-            // trigger lazyload for loading alignmen
+            // trigger lazyload for loading alignment
+            shownHits = shownHits > numHits ? numHits : shownHits;
             getHits(0, shownHits);
 
             // adding loading overlay
