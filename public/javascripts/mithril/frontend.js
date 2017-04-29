@@ -31,9 +31,9 @@ window.FrontendAlnvizComponent = {
                 }
             },
             initMSA: function() {
-                var alignment, defMenu, menuOpts, opts, seqs, width;
+                var alignment, defMenu, menuOpts, opts, seqs;
                 seqs = $('#alignment').reformat('Fasta');
-                width = $('#tool-tabs').width() - 180;
+                height = (seqs.split('>').length-1)*15;
                 if (!seqs) {
                     return;
                 }
@@ -56,8 +56,8 @@ window.FrontendAlnvizComponent = {
                 };
                 opts.seqs = fasta2json(seqs);
                 opts.zoomer = {
-                    alignmentHeight: 600,
-                    alignmentWidth: width,
+                    alignmentHeight: height,
+                    alignmentWidth: 'auto',
                     labelNameLength: 165,
                     labelWidth: 85,
                     labelFontsize: "13px",
@@ -212,6 +212,8 @@ GeneralTabComponent = {
                     if (typeof onCollapse === "function") {
                         onCollapse();
                     }
+                    $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
+                    $('#bioJSContainer').css({'overflow-x': 'scroll'});
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
@@ -219,6 +221,8 @@ GeneralTabComponent = {
                     if (typeof onExpand === "function") {
                         onExpand();
                     }
+                    $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
+                    $('#bioJSContainer').css({'overflow-x': 'auto'});
                 }
                 if (typeof onFullscreenToggle === "function") {
                     return onFullscreenToggle();
