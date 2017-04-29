@@ -139,7 +139,7 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 
     // T-Coffee
     ("tcoffee", "T-Coffee", "tcf", "alignment", "", Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER),
-      Seq("psiblast", "clustalo", "kalign", "mafft", "msaprobs", "muscle", "hhpred", "hhblits", "hmmer", "hhfilter"),Seq.empty),
+      Seq("psiblast", "clustalo", "kalign", "mafft", "msaprobs", "muscle", "hhpred", "hhblits", "hmmer", "hhfilter", "alnviz"),Seq.empty),
 
 
     // MAFFT
