@@ -41,7 +41,7 @@ window.FrontendAlnvizComponent = {
                     colorscheme: {
                         "scheme": "mae"
                     },
-                    el: document.getElementById('yourDiv'),
+                    el: document.getElementById('bioJSContainer'),
                     vis: {
                         conserv: false,
                         overviewbox: false,
@@ -68,9 +68,6 @@ window.FrontendAlnvizComponent = {
                     menuItemFontsize: "14px",
                     menuItemLineHeight: "14px",
                     autoResize: true
-                };
-                opts.zoomer = {
-                    alignmentWidth: width
                 };
                 alignment = new msa.msa(opts);
                 menuOpts = {};
@@ -296,7 +293,7 @@ tabsContents = {
             m("div", {
                 id: "menuDiv"
             }), m("div", {
-                id: "yourDiv"
+                id: "bioJSContainer"
             })
         ]);
     },
