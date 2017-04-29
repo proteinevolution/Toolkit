@@ -231,7 +231,7 @@ JobRunningComponent = {
 };
 
 tabulated = function(element, isInit) {
-    if (!isInit) { return $(element).tabs({ active: this.active }); }
+    if (!isInit) { return $(element).tabs({ active: this.active, beforeLoad: function(event, ui){ ui.panel.addClass("result-panel")}});}
 };
 
 renderParameter = function(content, moreClasses) {
@@ -299,7 +299,7 @@ JobTabsComponent = {
         views = args.job().views;
         if (views) {
             listitems = listitems.concat(views.map(function(view) {
-                return view[0];
+                return view;
             }));
         }
         return {
@@ -356,9 +356,15 @@ JobTabsComponent = {
         return m("div", { class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl) }, [
             m("ul", [ // Tab List
                 ctrl.listitems.map(function(item) {
-                    return m("li", { id: "tab-" + item},
-                        m("a", { href: "#tabpanel-" + item, config: hideSubmitButtons }, item)
-                    );
+                    if(item == "Input" || item == "Parameters"){
+                        return m("li", { id: "tab-" + item},
+                            m("a", { href: "#tabpanel-" + item, config: hideSubmitButtons }, item)
+                        );
+                    }else{
+                        return m("li", { id: "tab-" + item},
+                            m("a", { href: "/api/job/result/"+args.job().jobID+"/"+args.job().tool.toolname+"/"+item, config: hideSubmitButtons }, item)
+                        );
+                    }
                 }),
                 document.cookie.split("&username=")[1] === ctrl.owner ? [ m("li", {
                         "class" : "notesheader"
@@ -458,8 +464,7 @@ JobTabsComponent = {
                 m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob })
             ),
             ctrl.views ? ctrl.views.map(function(view) {
-                return m("div", { class: "tabs-panel", id: "tabpanel-" + view[0] },
-                    m("div", { class: "result-panel" }, m.trust(view[1]))
+                return m("div", { class: "tabs-panel", id: "tabpanel-" + view}
                 );
             }) : void 0
         ]);
