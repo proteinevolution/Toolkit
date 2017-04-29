@@ -42,7 +42,8 @@ object JobActor {
                        toolname  : String,
                        params    : Map[String, String])
 
-
+  // Messages the Job Actor to start a job
+  case class StartJob(jobID : String, userID : BSONObjectID)
 
   trait Factory {
 
@@ -394,6 +395,20 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
               jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
               Logger.info("Removing Job from DB")
               this.delete(job, userID)
+            case None =>
+              Logger.info("No such jobID found in Database. Ignoring.")
+          }
+      }
+
+    case StartJob(jobID, userID) =>
+      this.currentJobs.get(jobID) match {
+        case Some(job) =>
+          self ! JobStateChanged(jobID, Prepared)
+        case None =>
+          findJob(BSONDocument(Job.JOBID -> jobID)).map{
+            case Some(job) =>
+              this.currentJobs = this.currentJobs.updated(job.jobID, job)
+              self ! JobStateChanged(jobID, Prepared)
             case None =>
               Logger.info("No such jobID found in Database. Ignoring.")
           }
