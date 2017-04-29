@@ -48,6 +48,7 @@ typeAhead = function (elem, isInit) {
         }, {
             source: engine.ttAdapter(),
             name: 'jobList',
+            limit: 30,
             displayKey: "jobID",
             templates: {
                 empty: ['<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>'],
