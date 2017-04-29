@@ -43,9 +43,6 @@ window.JobViewComponent = {
         if (!args.job()) {
             return m("div", "Waiting for Job");
         } else {
-            if (!args.job().successful) {
-                return m.component(ErrorRouteComponent, { errorID : 404 });
-            } else {
                 return m("div", {
                     id: "jobview"
                 }, [
@@ -54,7 +51,6 @@ window.JobViewComponent = {
                 ]);
             }
         }
-    }
 };
 
 JobLineComponent = {
@@ -667,7 +663,7 @@ JobSubmissionComponent = {
                     // hide submitbuttons
                     if (args.job().jobstate == 5)
                         $(elem).hide();
-                }
+                }// };D
             }
         };
         return m("div", { "class":  "submitbuttons", config: hide.oninit }, [
