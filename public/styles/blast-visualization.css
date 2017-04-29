@@ -49,17 +49,14 @@
 
 .flat-slider{
     width: 89%;
-    margin-left: 6em !important;
-    margin-top: 2em;
+    margin: 0 auto;
     max-width: 774px;
+    margin-bottom: 1em;
 }
 
-.flat-slider-expand {
-    margin-left: 30em !important;
-}
 
 #blastviz{
-    margin-top: 1em;
+    margin-top: 7.5em;
     width: 100%;
 }
 
@@ -73,11 +70,10 @@
 }
 
 #resubmitSection {
-    float: right;
-    margin-right: 7em;
     margin-top: 1.5em;
-    margin-bottom: 0;
+    margin-bottom: 1em;
     background-color: #eee;
+    float: right;
 }
 #resubmitSection:hover, #forward:hover {
     background-color: #d1d1d1
@@ -461,8 +457,7 @@ table.dataTable.no-footer{
     padding-bottom: 1em;
 }
 #visualizationTitle{
-    padding-top: 2em;
-    padding-bottom: 2em;
+    padding-top: 0.5em;
 }
 #informationTitle{
     padding-top: 2em;
