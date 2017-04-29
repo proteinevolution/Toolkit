@@ -61,7 +61,8 @@ var routes = {
     '/jobs/:jobID':      m(Toolkit, { isJob: true }),
     '/backend/:section': m(Backend),
     '/news':             m(News),
-    '/jobmanager':       m(JobManager)
+    '/jobmanager':       m(JobManager),
+    '/:path...' :        m.component(ErrorRouteComponent, { errorID : 404 })
 };
 
 m.route(mountpoint, '/', routes);
