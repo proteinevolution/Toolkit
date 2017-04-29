@@ -52,7 +52,7 @@ body.is-reveal-open {
 }
 
 .clansResults {
-    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, Sans-Serif;
+    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size:1.2em;
 }
 
@@ -919,4 +919,14 @@ textarea:focus{
 .logElemText{
     margin-left: 1em;
     margin-top: 0.2em;
+}
+@media screen and (min-width: 756px) {
+
+    .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        box-sizing: border-box;
+        list-style: none;
+        margin: 0;
+        padding: 0 5px;
+        min-width: 300px;
+    }
 }
