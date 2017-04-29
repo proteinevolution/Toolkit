@@ -23,13 +23,13 @@
             <a type="button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
         </div>
     </div>
+    <br>
     Number of sequences: @{result.num_hits}
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
-            <div class='flat-slider' id='flat-slider'></div>
+        <div><a class="success button tiny resubmitSection" onclick="resubmitSection()" type="button" id="resubmitSection">Resubmit section</a></div>
             <div id='blastviz'>
-                <a class="success button tiny resubmitSection" onclick="resubmitSection()" type="button" id="resubmitSection">
-                Resubmit section</a>
+                <div class='flat-slider' id='flat-slider'></div>
                     @BlastVisualization.html(s"$jobID/results/blastviz.html")
                     <p><img src="files/@{jobID}/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
             </div>
