@@ -952,3 +952,8 @@ textarea:focus{
         min-width: 300px;
     }
 }
+
+.addButton {
+
+    cursor: pointer;
+}
