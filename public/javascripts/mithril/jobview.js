@@ -664,7 +664,7 @@ JobSubmissionComponent = {
                     $("#uploadBoxClose").hide();
                     $(".uploadFileName").hide();
                     // hide submitbuttons
-                    if (args.job().jobstate == 5)
+                    if (args.job().jobstate > -1)
                         $(elem).hide();
                 }// };D
             }
