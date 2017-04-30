@@ -27,7 +27,7 @@ class LoadBar {
         let currentLoad : number = LoadBar.load,
             loadval : number = Math.ceil(currentLoad * 100),
             loadString : string = loadval + "%",
-            colorClass : string = "loadBar " + (currentLoad < 0.90 ? "green" : currentLoad < 1.3 ? "yellow" : "red");
+            colorClass : string = "loadBar " + (currentLoad < 0.50 ? "green" : currentLoad < 0.7 ? "yellow" : "red");
 
         return m('div', {id:"indexLoadBar"},  [
             m('div', {"class": 'loadBarLabel'}, "Cluster workload: " + loadString),
