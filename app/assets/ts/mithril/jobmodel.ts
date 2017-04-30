@@ -44,7 +44,7 @@ window.JobModel = {
         "clustering_pval_threshold":"1",
         "eval_tpr":"1e-6",
         "msa_gen_method":"hhblits",
-        "hhsuitedb": "scope70/scope",
+        "hhsuitedb": "mmcif70/pdb70",
         "hhpred_incl_eval": "1e-3",
         "hhblits_incl_eval": "1e-3",
         "pcoils_matrix": "2",
