@@ -40,11 +40,11 @@
                 <thead>
                     <tr>
                         <th>Nr</th>
-                        <th>Id</th>
+                        <th>Accession ID</th>
                         <th>Title</th>
                         <th>E-value</th>
                         <th>Bitscore</th>
-                        <th>Length</th>
+                        <th>Aligned positions</th>
                     </tr>
                 </thead>
             </table>
@@ -63,7 +63,7 @@
 
 var checkbox = "checkbox";
 var selectAllBool = false;
-var shownHits = 100;
+var shownHits = 50;
 var showMore = 100;
 // use this array to store
 // checked checkboxes
@@ -79,10 +79,7 @@ $(document).ready( function(){
         drawDataTable();
         var firstQueryStart = @result.HSPS.head.query_start;
         var firstQueryEnd = @result.HSPS.head.query_end;
-        /* without timeout SLIDER is displayed */
-        setTimeout(function () {
-            slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
-        }, 1000);
+        slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
 	getHits(0, shownHits);
     }

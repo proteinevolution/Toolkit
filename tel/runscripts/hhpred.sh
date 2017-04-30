@@ -101,12 +101,12 @@ fi
 
 #Generate representative MSA for forwarding
 hhfilter -i ../results/${JOBID}.a3m \
-         -o ../results/${JOBID}.reduced.msa \
+         -o ../results/alignment.fas \
          -diff 100
 
 reformat_hhsuite.pl a3m fas \
-         $(readlink -f ../results/${JOBID}.reduced.msa) \
-         $(readlink -f ../results/${JOBID}.reduced.msa) \
+         $(readlink -f ../results/alignment.fas) \
+         $(readlink -f ../results/alignment.fas) \
          -d 160
 
 addss.pl ../results/${JOBID}.a3m
@@ -202,7 +202,7 @@ echo "#Preparing output." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 #create full alignment json; use for forwarding
-fasta2json.py ../results/${JOBID}.reduced.msa ../results/reduced.json
+fasta2json.py ../results/alignment.fas ../results/reduced.json
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 

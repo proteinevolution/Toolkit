@@ -377,12 +377,12 @@ val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.Request
   ),
   Toolnames.HHPRED_MANUAL -> Map(
 
-    Resultviews.RESULTS -> { ( jobID,requestHeader) =>
+    Resultviews.RESULTS -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
-      Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out")) },
-    "PIR" -> { (jobID,requestHeader) =>
+      Future.successful(views.html.jobs.resultpanels.hhpred.forward(s"$jobPath$jobID/results/tomodel.pir", jobID)) },
+    Resultviews.SUMMARY -> { ( jobID,requestHeader) =>
       implicit val r = requestHeader
-      Future.successful(views.html.jobs.resultpanels.hhpred.forward(s"$jobPath$jobID/results/tomodel.pir", jobID)) }
+    Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out")) }
   ),
   Toolnames.HHPRED_AUTOMATIC -> Map(
 
