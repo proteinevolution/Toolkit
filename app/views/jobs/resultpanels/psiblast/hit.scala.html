@@ -39,7 +39,7 @@
 @* color only 150 first hits, to avoid bloating of the generated html*@
     @* Query *@
     @{
-        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq)+ " " + hit.query_end.toString))
+        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq)+ "   " + hit.query_end.toString))
     }
     @* Midline *@
     @{
@@ -47,7 +47,7 @@
     }
     @* Hit *@
     @{
-        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + " " + hit.hit_end.toString))
+        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + "   " + hit.hit_end.toString))
     }
 
 <tr>

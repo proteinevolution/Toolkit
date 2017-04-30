@@ -39,13 +39,13 @@
 
 @if(!hit.query.seq.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) +" "+hit.query.end.toString + " "+"("+hit.query.ref+")"))
+        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) +"    "+hit.query.end.toString + " "+"("+hit.query.ref+")"))
     }
 }
 @*Consensus of query, if present*@
 @if(!hit.query.consensus.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("", "Q  Consensus",hit.query.start.toString, hit.query.consensus +" "+hit.query.end.toString +" "+"("+hit.query.ref+")"))
+        BlastVisualization.makeRow("sequence", Array("", "Q  Consensus",hit.query.start.toString, hit.query.consensus +"    "+hit.query.end.toString +" "+"("+hit.query.ref+")"))
     }
 }
 @* agree of query, if present *@
@@ -55,13 +55,13 @@
 @*  consensus template, if present *@
 @if(!hit.template.consensus.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("", "T  Consensus",hit.template.start.toString, hit.template.consensus + " "+hit.template.end.toString +" "+"("+hit.template.ref+")"))
+        BlastVisualization.makeRow("sequence", Array("", "T  Consensus",hit.template.start.toString, hit.template.consensus + "    "+hit.template.end.toString +" "+"("+hit.template.ref+")"))
     }
 }
 @*  seq template, if present *@
 @if(!hit.template.seq.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) +" "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
+        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) +"    "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
     }
 }
 <tr>
