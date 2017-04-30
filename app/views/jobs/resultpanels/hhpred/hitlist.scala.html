@@ -115,7 +115,7 @@
         var checkbox = "checkbox";
         var currentStructureAccession = "";
         var selectAllBool = false;
-        var shownHits = 100;
+        var shownHits = 50;
         var showMore = 100;
         var numHits = @{result.num_hits};
         var jobID = '@{jobID}';
@@ -134,9 +134,7 @@
                 var firstQueryStart = @{result.HSPS.head.query.start};
                 var firstQueryEnd = @{result.HSPS.head.query.end};
                 /* without timeout SLIDER is displayed */
-                setTimeout(function () {
-                    slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
-                }, 1000);
+                slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits);
                 $('#templateAlignmentModal').foundation();
