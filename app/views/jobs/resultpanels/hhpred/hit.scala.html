@@ -33,23 +33,23 @@
 @* Handle secondary structure annotation for query, if present *@
 @if(!hit.query.ss_dssp.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("Q", "ss_dssp", "", BlastVisualization.SSColorReplace(hit.query.ss_dssp)))
+        BlastVisualization.makeRow("sequence", Array("", "Q  ss_pred", "", BlastVisualization.SSColorReplace(hit.query.ss_dssp)))
     }
 }
 @if(!hit.query.ss_pred.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("Q", "ss_pred", "", BlastVisualization.SSColorReplace(hit.query.ss_pred)))
+        BlastVisualization.makeRow("sequence", Array("", "Q  ss_dssp", "", BlastVisualization.SSColorReplace(hit.query.ss_pred)))
     }
 }
 @if(!hit.query.seq.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("Q",hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) +" "+hit.query.end.toString + " " +"("+hit.query.ref+")"))
+        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) +" "+hit.query.end.toString + " " +"("+hit.query.ref+")"))
     }
 }
 @*Consensus of query, if present*@
 @if(!hit.query.consensus.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("Q", "Consensus",hit.query.start.toString, hit.query.consensus + " " + hit.query.end.toString + " " + "("+hit.query.ref+")"))
+        BlastVisualization.makeRow("sequence", Array("", "Q  Consensus",hit.query.start.toString, hit.query.consensus + " " + hit.query.end.toString + " " + "("+hit.query.ref+")"))
     }
 }
 @* agree of query, if present *@
@@ -59,24 +59,24 @@
 @*  consensus template, if present *@
 @if(!hit.template.consensus.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("T", "Consensus",hit.template.start.toString, hit.template.consensus  + " " + hit.template.end.toString + " " + "("+hit.template.ref+")"))
+        BlastVisualization.makeRow("sequence", Array("", "T  Consensus",hit.template.start.toString, hit.template.consensus  + " " + hit.template.end.toString + " " + "("+hit.template.ref+")"))
     }
 }
 @*  seq template, if present *@
 @if(!hit.template.seq.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("T",hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) + " "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
+        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) + " "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
     }
 }
 @* Handle secondary structure annotation for template, if present *@
 @if(!hit.template.ss_pred.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("T", "ss_pred", "", BlastVisualization.SSColorReplace(hit.template.ss_pred)))
+        BlastVisualization.makeRow("sequence", Array("", "T  ss_dssp", "", BlastVisualization.SSColorReplace(hit.template.ss_pred)))
     }
 }
 @if(!hit.template.ss_dssp.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("T", "ss_dssp", "", BlastVisualization.SSColorReplace(hit.template.ss_dssp)))
+        BlastVisualization.makeRow("sequence", Array("", "T  ss_pred", "", BlastVisualization.SSColorReplace(hit.template.ss_dssp)))
     }
 }
 <tr>
