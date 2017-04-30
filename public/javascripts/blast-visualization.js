@@ -445,10 +445,10 @@ function hitlistBaseFunctions(){
     $(document).ready(function() {
         // adding loading overlay
         $(document).ajaxStart(function () {
-            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+            //$.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
         });
         $(document).ajaxComplete(function () {
-            $.LoadingOverlay("hide");
+            //$.LoadingOverlay("hide");
 
             // check checkboxes that are stored in array
             // in order to make it work with pagination/lazyload
