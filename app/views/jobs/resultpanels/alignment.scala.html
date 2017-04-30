@@ -16,9 +16,8 @@
 
 <div class="colorOptsAlignment">
     <a onclick="selectAll()" class="selectAllSeq"><span>Select all</span></a>
-    <a onclick='alignment_wrap()' type="button"  id="wrap_@{resultName}"><span>Wrap sequences</span></a>
     <a type="button" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
-    <a type="button" id="downloadAlignment"  onclick="alignment_download()"><span>Download File</span></a>
+    <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download File</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -49,6 +48,7 @@
         var jobID = '@jobID';
         var checkboxes = [];
         var checkbox = "checkbox";
+
 
 
         $(document).ready(function () {
@@ -93,18 +93,6 @@
                 });
             });
         });
-        function alignment_wrap(){
-            this.wrapSequencesBool_@{resultName} = !this.wrapSequencesBool_@{resultName};
-            if(wrapSequencesBool_@{resultName}) {
-                $(".sequenceAlignment").addClass("wrap");
-                $("#wrap_@{resultName}").addClass("colorToggle");
-            }
-            else {
-                $(".sequenceAlignment").removeClass("wrap");
-                $("#wrap_@{resultName}").removeClass("colorToggle");
-            }
-        }
-
         window["@{resultName}_forward"] = function(selectedTool){
             var route = jsRoutes.controllers.AlignmentController.getAln(jobID, checkboxes, resultName);
             // get result json
