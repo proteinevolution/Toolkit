@@ -65,7 +65,7 @@
 @*  seq template, if present *@
 @if(!hit.template.seq.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("T",hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) + " "+hit.template.end.toString + " "+"("+hit.query.ref+")"))
+        BlastVisualization.makeRow("sequence", Array("T",hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) + " "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
     }
 }
 @* Handle secondary structure annotation for template, if present *@
