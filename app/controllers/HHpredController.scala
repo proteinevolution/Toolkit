@@ -99,7 +99,7 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : Reactive
 
   def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
-      case Some(jsValue) => {
+      case Some(jsValue) =>
         val result = hhpred.parseResult(jsValue)
         if(end > result.num_hits || start > result.num_hits ) {
           BadRequest
@@ -107,7 +107,6 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : Reactive
           val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _))
           Ok(hits.mkString)
         }
-      }
     }
   }
 
@@ -115,11 +114,11 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi : Reactive
 
     var db = ""
     val total = getResult(jobID).map {
-      case Some(jsValue) => {
+      case Some(jsValue) =>
         val result = hhpred.parseResult(jsValue)
         db = result.db
         result.num_hits
-      }
+
     }
     val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),
