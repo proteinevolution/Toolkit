@@ -5,6 +5,7 @@
 
 let seqLimit : any;
 let charLimitPerSeq : any;
+let modellerIsValid : boolean = false;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
@@ -156,490 +157,504 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
         return $(elem).on("keyup mouseover", function (e) {
 
-            //---------------------------------Validation Visitors------------------------------------------//
-
-            // in order to modularize validation we use the visitor pattern
-
-            /*let mustHave2Visitor = {
-                visit : function(alignmentVal : any) {
-                    alignmentVal.fastaStep2 = mustHave2($(elem));
-                }
-            };*/
-
-
-            //---------------------------------------------------------------------------------------------//
-
-            switch(toolname) {
-                case "tcoffee":
-                    /** validation model for tcoffee:
-                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
-                     * Input must include at least two sequences.
-                     * ALIGNED FASTA input is allowed.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 500.
-                     **/
-
-                    let tcoffeeTarget = new alignmentVal($(elem));
-                    tcoffeeTarget.basicValidation();
-
-                    if (tcoffeeTarget.basicValidation()) {
-                        tcoffeeTarget.mustHave2();
-                    }
-                    seqLimit = 500;
-
-                    break;
-
-                case "mafft":
-                    /** validation model for mafft:
-                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
-                     * Input must include at least two sequences.
-                     * ALIGNED FASTA input is allowed.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 2000.
-                     **/
-
-                    let mafftTarget = new alignmentVal($(elem));
-                    mafftTarget.basicValidation();
-
-                    if (mafftTarget.basicValidation()) {
-                        mafftTarget.mustHave2();
-                    }
-                    seqLimit = 2000;
-
-                    break;
-
-                case "muscle":
-                    /** validation model for muscle:
-                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
-                     * Input must include at least two sequences.
-                     * ALIGNED FASTA input is allowed.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 2000.
-                     **/
-
-                    let muscleTarget = new alignmentVal($(elem));
-                    muscleTarget.basicValidation();
-
-                    if (muscleTarget.basicValidation()) {
-                        muscleTarget.mustHave2();
-                    }
-                    seqLimit = 2000;
-
-                    break;
-
-                case "clustalo":
-                    /** validation model for clustalo:
-                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
-                     * Input must include at least two sequences.
-                     * ALIGNED FASTA input is allowed.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 2000.
-                     **/
-
-                    let clustaloTarget = new alignmentVal($(elem));
-                    clustaloTarget.basicValidation();
-
-                    if (clustaloTarget.basicValidation()) {
-                        clustaloTarget.mustHave2();
-                    }
-                    seqLimit = 2000;
-
-                    break;
-
-                case "kalign":
-                    /** validation model for kalign:
-                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
-                     * Input must include at least two sequences.
-                     * ALIGNED FASTA input is allowed.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 2000.
-                     **/
-
-                    let kalignTarget = new alignmentVal($(elem));
-                    kalignTarget.basicValidation();
-
-                    if (kalignTarget.basicValidation()) {
-                        kalignTarget.mustHave2();
-                    }
-                    seqLimit = 2000;
-
-                    break;
-
-                case "msaprobs":
-                    /** validation model for msaprobs:
-                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
-                     * Input must include at least two sequences.
-                     * ALIGNED FASTA input is allowed.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 2000.
-                     **/
-
-                    let msaprobsTarget = new alignmentVal($(elem));
-                    msaprobsTarget.basicValidation();
-
-                    if (msaprobsTarget.basicValidation()) {
-                        msaprobsTarget.mustHave2();
-                    }
-                    seqLimit = 2000;
-
-                    break;
-
-                case "hmmer":
-                    /** validation model for hmmer:
-                     * Input has to be a single FASTA sequence
-                     * or aligned FASTA with at least two sequences.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     */
-
-                    let hmmerTarget = new alignmentVal($(elem));
-                    hmmerTarget.basicValidation();
-
-                    if (hmmerTarget.basicValidation()) {
-                        hmmerTarget.sameLengthValidation();
-                    }
-
-                    break;
-
-                case "hhblits":
-                    /** validation model for hhblits:
-                     * Input has to be a single FASTA sequence
-                     * or aligned FASTA with at least two sequences.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     */
-
-                    let hhblitsTarget = new alignmentVal($(elem));
-                    hhblitsTarget.basicValidation();
-
-                    if (hhblitsTarget.basicValidation()) {
-                        hhblitsTarget.sameLengthValidation();
-                    }
-
-                    break;
-
-                case "hhpred":
-                    /** validation model for hhpred:
-                     * Input has to be a single FASTA sequence
-                     * or aligned FASTA with at least two sequences.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     */
-
-                    let hhpredTarget = new alignmentVal($(elem));
-                    hhpredTarget.basicValidation();
-
-                    if (hhpredTarget.basicValidation()) {
-                        hhpredTarget.sameLengthValidation();
-                    }
-
-                    charLimitPerSeq = 3000;
-
-                    break;
-
-                case "psiblast":
-                    /** validation model for psiblast:
-                     * Input has to be a single FASTA sequence
-                     * or aligned FASTA with at least two sequences.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     */
-
-                    let psiblastTarget = new alignmentVal($(elem));
-                    psiblastTarget.basicValidation();
-
-                    if (psiblastTarget.basicValidation()) {
-                        psiblastTarget.sameLengthValidation();
-                    }
-
-                    break;
-
-                case "patsearch":
-                    /** validation model for patsearch:
-                     * Input has to be a single line without spaces, and the first character may not be '>'
-                     */
-
-                    let patsearchTarget = new alignmentVal($(elem));
-                    patsearchTarget.patternSearchValidation();
-
-                    break;
-
-                case "aln2plot":
-
-                    let aln2plotTarget = new alignmentVal($(elem));
-                    aln2plotTarget.basicValidation();
-
-                    if (aln2plotTarget.basicValidation()) {
-                        aln2plotTarget.sameLengthValidation();
-                        if (aln2plotTarget.sameLengthValidation())
-                            aln2plotTarget.mustHave2();
-                    }
-
-                    seqLimit = 2000;
-
-                    break;
-
-                case "frpred":
-
-                    let frpredTarget = new alignmentVal($(elem));
-                    frpredTarget.basicValidation();
-
-                    if (frpredTarget.basicValidation()) {
-                        frpredTarget.sameLengthValidation();
-                    }
-
-                    seqLimit = 2000;
-
-                    break;
-
-                case "hhrepid":
-
-                    let hhrepidTarget = new alignmentVal($(elem));
-                    hhrepidTarget.basicValidation();
-
-                    if (hhrepidTarget.basicValidation()) {
-                        hhrepidTarget.sameLengthValidation();
-                    }
-
-                    seqLimit = 2000;
-
-                    break;
-
-                case "pcoils":
-
-                    let pcoilsTarget = new alignmentVal($(elem));
-                    pcoilsTarget.basicValidation();
-
-                    if (pcoilsTarget.basicValidation()) {
-                        pcoilsTarget.sameLengthValidation();
-                    }
-
-                    seqLimit = 2000;
-
-                    break;
-
-                case "repper":
-
-                    let repperTarget = new alignmentVal($(elem));
-                    repperTarget.basicValidation();
-
-                    if (repperTarget.basicValidation()) {
-                        repperTarget.sameLengthValidation();
-                    }
-
-                    seqLimit = 2000;
-
-                    break;
-
-                case "marcoil":
-
-                    let marcoilTarget = new alignmentVal($(elem));
-                    marcoilTarget.basicValidation();
-
-                    if (marcoilTarget.basicValidation()) {
-                        marcoilTarget.mustHave1();
-                    }
-
-                    seqLimit = 2000;
-
-                    break;
-
-                case "tprpred":
-
-                    let tprpredTarget = new alignmentVal($(elem));
-                    tprpredTarget.basicValidation();
-
-                    if (tprpredTarget.basicValidation()) {
-                        tprpredTarget.mustHave1();
-                    }
-
-                    break;
-
-                case "ali2d":
-
-                    let ali2dTarget = new alignmentVal($(elem));
-                    ali2dTarget.basicValidation();
-
-                    if (ali2dTarget.basicValidation()) {
-                        ali2dTarget.sameLengthValidation();
-                        if (ali2dTarget.sameLengthValidation())
-                            ali2dTarget.mustHave2();
-                    }
-
-                    seqLimit = 2000;
-
-                    break;
-
-                case "quick2d":
-
-                    let quick2dTarget = new alignmentVal($(elem));
-                    quick2dTarget.basicValidation();
-
-                    if (quick2dTarget.basicValidation()) {
-                        quick2dTarget.sameLengthValidation();
-                    }
-
-                    seqLimit = 2000;
-
-                    break;
-
-                case "modeller":
-
-                    let modellerTarget = new alignmentVal($(elem));
-                    modellerTarget.modellerValidation();
-
-                    break;
-
-                case "samcc":
-
-                    let samccTarget = new alignmentVal($(elem));
-                    samccTarget.samccValidation();
-
-                    break;
-
-                case "ancescon":
-
-                    let ancesconTarget = new alignmentVal($(elem));
-                    ancesconTarget.basicValidation();
-
-                    if (ancesconTarget.basicValidation()) {
-                        ancesconTarget.sameLengthValidation();
-                        if (ancesconTarget.sameLengthValidation())
-                            ancesconTarget.mustHave2();
-                    }
-
-                    seqLimit = 20000;
-
-                    break;
-
-                case "mmseqs2":
-                    /** validation model for mmseq2:
-                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
-                     * ALIGNED FASTA input is allowed.
-                     * Input must consist of at least two sequences.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 20000.
-                     */
-
-                    let mmseqs2Target = new alignmentVal($(elem));
-                    mmseqs2Target.basicValidation();
-
-                    if (mmseqs2Target.basicValidation()) {
-                        mmseqs2Target.mustHave2();
-                    }
-                    seqLimit = 20000;
-
-                    break;
-
-                case "phyml":
-
-                    let phymlTarget = new alignmentVal($(elem));
-                    phymlTarget.basicValidation();
-
-                    if (phymlTarget.basicValidation()) {
-                        phymlTarget.sameLengthValidation();
-                        if (phymlTarget.sameLengthValidation())
-                            phymlTarget.mustHave2();
-                    }
-
-                    seqLimit = 100;
-
-                    break;
-
-                case "clans":
-                    /** validation model for clans:
-                     * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
-                     * Input must include at least two sequences.
-                     * ALIGNED FASTA input is allowed.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 10000.
-                     **/
-
-                    let clansTarget = new alignmentVal($(elem));
-                    clansTarget.basicValidation();
-
-                    if (clansTarget.basicValidation()) {
-                        clansTarget.mustHave2();
-                    }
-                    seqLimit = 10000;
-
-                    break;
-
-                case "6frametranslation":
-
-                    let sixframetranslationTarget = new alignmentVal($(elem));
-                    sixframetranslationTarget.DNAvalidation();
-
-                    break;
-
-                case "backtrans":
-
-                    let backtransTarget = new alignmentVal($(elem));
-                    backtransTarget.basicValidation();
-
-                    if (backtransTarget.basicValidation()) {
-                        backtransTarget.mustHave1();
-                    }
-
-                    break;
-
-                case "hhfilter":
-                    /** validation model for hhfilter:
-                     * Input has to be aligned FASTA.
-                     * Input must consist of at least two Sequences.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 10000.
-                     */
-
-                    let hhfilterTarget = new alignmentVal($(elem));
-                    hhfilterTarget.basicValidation();
-
-                    if (hhfilterTarget.basicValidation()) {
-                        hhfilterTarget.mustHave2();
-                    }
-                    seqLimit = 10000;
-
-                    break;
-
-                case "seq2id":
-                    /** validation model for hhfilter:
-                     * Input has to be aligned FASTA.
-                     * Input must consist of at least two Sequences.
-                     * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
-                     * first space, in the header are used as ID.
-                     * Limit the maximum number of sequences to 10000.
-                     */
-
-                    let seq2idTarget = new alignmentVal($(elem));
-                    seq2idTarget.seq2IDvalidation();
-
-                    break;
-
-
-                default:
-                    console.warn("No tool specified");
-            }
-
-            if($(elem).val().length === 0){
-                valReset();
-            }
+            validationProcess(elem, toolname);
         });
     }
 };
 
 
+let validationProcess = function(elem: any,toolname: string){
+
+
+//    console.log(elem);
+
+    //---------------------------------Validation Visitors------------------------------------------//
+
+    // in order to modularize validation we use the visitor pattern
+
+    /*let mustHave2Visitor = {
+     visit : function(alignmentVal : any) {
+     alignmentVal.fastaStep2 = mustHave2($(elem));
+     }
+     };*/
+
+
+    //---------------------------------------------------------------------------------------------//
+
+    switch(toolname) {
+        case "tcoffee":
+            /** validation model for tcoffee:
+             * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+             * Input must include at least two sequences.
+             * ALIGNED FASTA input is allowed.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             * Limit the maximum number of sequences to 500.
+             **/
+
+            let tcoffeeTarget = new alignmentVal($(elem));
+            tcoffeeTarget.basicValidation();
+
+            if (tcoffeeTarget.basicValidation()) {
+                tcoffeeTarget.mustHave2();
+            }
+            seqLimit = 500;
+
+            break;
+
+        case "mafft":
+            /** validation model for mafft:
+             * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+             * Input must include at least two sequences.
+             * ALIGNED FASTA input is allowed.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             * Limit the maximum number of sequences to 2000.
+             **/
+
+            let mafftTarget = new alignmentVal($(elem));
+            mafftTarget.basicValidation();
+
+            if (mafftTarget.basicValidation()) {
+                mafftTarget.mustHave2();
+            }
+            seqLimit = 2000;
+
+            break;
+
+        case "muscle":
+            /** validation model for muscle:
+             * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+             * Input must include at least two sequences.
+             * ALIGNED FASTA input is allowed.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             * Limit the maximum number of sequences to 2000.
+             **/
+
+            let muscleTarget = new alignmentVal($(elem));
+            muscleTarget.basicValidation();
+
+            if (muscleTarget.basicValidation()) {
+                muscleTarget.mustHave2();
+            }
+            seqLimit = 2000;
+
+            break;
+
+        case "clustalo":
+            /** validation model for clustalo:
+             * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+             * Input must include at least two sequences.
+             * ALIGNED FASTA input is allowed.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             * Limit the maximum number of sequences to 2000.
+             **/
+
+            let clustaloTarget = new alignmentVal($(elem));
+            clustaloTarget.basicValidation();
+
+            if (clustaloTarget.basicValidation()) {
+                clustaloTarget.mustHave2();
+            }
+            seqLimit = 2000;
+
+            break;
+
+        case "kalign":
+            /** validation model for kalign:
+             * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+             * Input must include at least two sequences.
+             * ALIGNED FASTA input is allowed.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             * Limit the maximum number of sequences to 2000.
+             **/
+
+            let kalignTarget = new alignmentVal($(elem));
+            kalignTarget.basicValidation();
+
+            if (kalignTarget.basicValidation()) {
+                kalignTarget.mustHave2();
+            }
+            seqLimit = 2000;
+
+            break;
+
+        case "msaprobs":
+            /** validation model for msaprobs:
+             * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+             * Input must include at least two sequences.
+             * ALIGNED FASTA input is allowed.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             * Limit the maximum number of sequences to 2000.
+             **/
+
+            let msaprobsTarget = new alignmentVal($(elem));
+            msaprobsTarget.basicValidation();
+
+            if (msaprobsTarget.basicValidation()) {
+                msaprobsTarget.mustHave2();
+            }
+            seqLimit = 2000;
+
+            break;
+
+        case "hmmer":
+            /** validation model for hmmer:
+             * Input has to be a single FASTA sequence
+             * or aligned FASTA with at least two sequences.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             */
+
+            let hmmerTarget = new alignmentVal($(elem));
+            hmmerTarget.basicValidation();
+
+            if (hmmerTarget.basicValidation()) {
+                hmmerTarget.sameLengthValidation();
+            }
+
+            break;
+
+        case "hhblits":
+            /** validation model for hhblits:
+             * Input has to be a single FASTA sequence
+             * or aligned FASTA with at least two sequences.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             */
+
+            let hhblitsTarget = new alignmentVal($(elem));
+            hhblitsTarget.basicValidation();
+
+            if (hhblitsTarget.basicValidation()) {
+                hhblitsTarget.sameLengthValidation();
+            }
+
+            break;
+
+        case "hhpred":
+            /** validation model for hhpred:
+             * Input has to be a single FASTA sequence
+             * or aligned FASTA with at least two sequences.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             */
+
+            let hhpredTarget = new alignmentVal($(elem));
+            hhpredTarget.basicValidation();
+
+            if (hhpredTarget.basicValidation()) {
+                hhpredTarget.sameLengthValidation();
+            }
+
+            charLimitPerSeq = 3000;
+
+            break;
+
+        case "psiblast":
+            /** validation model for psiblast:
+             * Input has to be a single FASTA sequence
+             * or aligned FASTA with at least two sequences.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             */
+
+            let psiblastTarget = new alignmentVal($(elem));
+            psiblastTarget.basicValidation();
+
+            if (psiblastTarget.basicValidation()) {
+                psiblastTarget.sameLengthValidation();
+            }
+
+            break;
+
+        case "patsearch":
+            /** validation model for patsearch:
+             * Input has to be a single line without spaces, and the first character may not be '>'
+             */
+
+            let patsearchTarget = new alignmentVal($(elem));
+            patsearchTarget.patternSearchValidation();
+
+            break;
+
+        case "aln2plot":
+
+            let aln2plotTarget = new alignmentVal($(elem));
+            aln2plotTarget.basicValidation();
+
+            if (aln2plotTarget.basicValidation()) {
+                aln2plotTarget.sameLengthValidation();
+                if (aln2plotTarget.sameLengthValidation())
+                    aln2plotTarget.mustHave2();
+            }
+
+            seqLimit = 2000;
+
+            break;
+
+        case "frpred":
+
+            let frpredTarget = new alignmentVal($(elem));
+            frpredTarget.basicValidation();
+
+            if (frpredTarget.basicValidation()) {
+                frpredTarget.sameLengthValidation();
+            }
+
+            seqLimit = 2000;
+
+            break;
+
+        case "hhrepid":
+
+            let hhrepidTarget = new alignmentVal($(elem));
+            hhrepidTarget.basicValidation();
+
+            if (hhrepidTarget.basicValidation()) {
+                hhrepidTarget.sameLengthValidation();
+            }
+
+            seqLimit = 2000;
+
+            break;
+
+        case "pcoils":
+
+            let pcoilsTarget = new alignmentVal($(elem));
+            pcoilsTarget.basicValidation();
+
+            if (pcoilsTarget.basicValidation()) {
+                pcoilsTarget.sameLengthValidation();
+            }
+
+            seqLimit = 2000;
+
+            break;
+
+        case "repper":
+
+            let repperTarget = new alignmentVal($(elem));
+            repperTarget.basicValidation();
+
+            if (repperTarget.basicValidation()) {
+                repperTarget.sameLengthValidation();
+            }
+
+            seqLimit = 2000;
+
+            break;
+
+        case "marcoil":
+
+            let marcoilTarget = new alignmentVal($(elem));
+            marcoilTarget.basicValidation();
+
+            if (marcoilTarget.basicValidation()) {
+                marcoilTarget.mustHave1();
+            }
+
+            seqLimit = 2000;
+
+            break;
+
+        case "tprpred":
+
+            let tprpredTarget = new alignmentVal($(elem));
+            tprpredTarget.basicValidation();
+
+            if (tprpredTarget.basicValidation()) {
+                tprpredTarget.mustHave1();
+            }
+
+            break;
+
+        case "ali2d":
+
+            let ali2dTarget = new alignmentVal($(elem));
+            ali2dTarget.basicValidation();
+
+            if (ali2dTarget.basicValidation()) {
+                ali2dTarget.sameLengthValidation();
+                if (ali2dTarget.sameLengthValidation())
+                    ali2dTarget.mustHave2();
+            }
+
+            seqLimit = 2000;
+
+            break;
+
+        case "quick2d":
+
+            let quick2dTarget = new alignmentVal($(elem));
+            quick2dTarget.basicValidation();
+
+            if (quick2dTarget.basicValidation()) {
+                quick2dTarget.sameLengthValidation();
+            }
+
+            seqLimit = 2000;
+
+            break;
+
+        case "modeller":
+
+            let modellerTarget = new alignmentVal($(elem));
+            modellerTarget.modellerValidation();
+
+            break;
+
+        case "samcc":
+
+            let samccTarget = new alignmentVal($(elem));
+            samccTarget.samccValidation();
+
+            break;
+
+        case "ancescon":
+
+            let ancesconTarget = new alignmentVal($(elem));
+            ancesconTarget.basicValidation();
+
+            if (ancesconTarget.basicValidation()) {
+                ancesconTarget.sameLengthValidation();
+                if (ancesconTarget.sameLengthValidation())
+                    ancesconTarget.mustHave2();
+            }
+
+            seqLimit = 20000;
+
+            break;
+
+        case "mmseqs2":
+            /** validation model for mmseq2:
+             * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+             * ALIGNED FASTA input is allowed.
+             * Input must consist of at least two sequences.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             * Limit the maximum number of sequences to 20000.
+             */
+
+            let mmseqs2Target = new alignmentVal($(elem));
+            mmseqs2Target.basicValidation();
+
+            if (mmseqs2Target.basicValidation()) {
+                mmseqs2Target.mustHave2();
+            }
+            seqLimit = 20000;
+
+            break;
+
+        case "phyml":
+
+            let phymlTarget = new alignmentVal($(elem));
+            phymlTarget.basicValidation();
+
+            if (phymlTarget.basicValidation()) {
+                phymlTarget.sameLengthValidation();
+                if (phymlTarget.sameLengthValidation())
+                    phymlTarget.mustHave2();
+            }
+
+            seqLimit = 100;
+
+            break;
+
+        case "clans":
+            /** validation model for clans:
+             * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
+             * Input must include at least two sequences.
+             * ALIGNED FASTA input is allowed.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             * Limit the maximum number of sequences to 10000.
+             **/
+
+            let clansTarget = new alignmentVal($(elem));
+            clansTarget.basicValidation();
+
+            if (clansTarget.basicValidation()) {
+                clansTarget.mustHave2();
+            }
+            seqLimit = 10000;
+
+            break;
+
+        case "6frametranslation":
+
+            let sixframetranslationTarget = new alignmentVal($(elem));
+            sixframetranslationTarget.DNAvalidation();
+
+            break;
+
+        case "backtrans":
+
+            let backtransTarget = new alignmentVal($(elem));
+            backtransTarget.basicValidation();
+
+            if (backtransTarget.basicValidation()) {
+                backtransTarget.mustHave1();
+            }
+
+            break;
+
+        case "hhfilter":
+            /** validation model for hhfilter:
+             * Input has to be aligned FASTA.
+             * Input must consist of at least two Sequences.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             * Limit the maximum number of sequences to 10000.
+             */
+
+            let hhfilterTarget = new alignmentVal($(elem));
+            hhfilterTarget.basicValidation();
+
+            if (hhfilterTarget.basicValidation()) {
+                hhfilterTarget.mustHave2();
+            }
+            seqLimit = 10000;
+
+            break;
+
+        case "seq2id":
+            /** validation model for hhfilter:
+             * Input has to be aligned FASTA.
+             * Input must consist of at least two Sequences.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             * Limit the maximum number of sequences to 10000.
+             */
+
+            let seq2idTarget = new alignmentVal($(elem));
+            seq2idTarget.seq2IDvalidation();
+
+            break;
+
+
+        default:
+            console.warn("No tool specified");
+            break;
+    }
+
+    if($(elem).val().length === 0){
+        valReset();
+    }
+
+
+};
+
+
+
 function feedback(valid : boolean, msg : string = "unknown validation error", type : string = "error", wrongformat : boolean = false) : void {
 
     let $v = $("#validOrNot");
+
 
     type = type || "success";
     if(type == "error")
@@ -733,6 +748,7 @@ interface Visitor {
 class alignmentVal implements ToolkitValidator {
 
     elem: any;
+
 
     constructor(elem: any) {
         this.elem = elem;
@@ -897,10 +913,10 @@ class alignmentVal implements ToolkitValidator {
 
     modellerValidation(): any {
 
+        modellerIsValid = false;
 
         if (!this.elem.validate('pir'))
             feedback(false, "This is no pir!", "error");
-
 
         else if (!this.elem.reformat('star'))
             feedback(false, "Every sequence must end with a star!", "error");
@@ -916,7 +932,10 @@ class alignmentVal implements ToolkitValidator {
             valReset();
         }
 
-        else feedback(true, "Valid input", "success");
+        else {
+            feedback(false, "Valid input", "success");
+            modellerIsValid = true;
+        }
     }
 
     samccValidation(): any {
