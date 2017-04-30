@@ -30,7 +30,7 @@ class AlignmentController @Inject()(aln: Alignment, val reactiveMongoApi : React
 
   def loadHits(jobID: String, start: Int, end: Int, resultName: String): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
-      case Some(jsValue) => {
+      case Some(jsValue) =>
         val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
         if(end > result.alignment.length || start > result.alignment.length ) {
           BadRequest
@@ -38,7 +38,6 @@ class AlignmentController @Inject()(aln: Alignment, val reactiveMongoApi : React
           val hits = result.alignment.slice(start, end).map(views.html.jobs.resultpanels.alignmentRow(_))
           Ok(hits.mkString)
         }
-      }
     }
   }
 
