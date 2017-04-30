@@ -57,11 +57,11 @@ hhfilter -i $(readlink -f ../results/${JOBID}.a3m) \
 # Reformat query into fasta format; full alignment
 reformat_hhsuite.pl a3m fas \
             $(readlink -f ../results/${JOBID}.rep100.a3m) \
-            $(readlink -f ../results/${JOBID}.rep100.fas) \
+            $(readlink -f ../results/alignment.fas) \
             -d 160
 
 #create full alignment json; use for forwarding
-fasta2json.py ../results/${JOBID}.rep100.fas ../results/rep100.json
+fasta2json.py ../results/alignment.fas ../results/rep100.json
 
 # add DB to json
 manipulate_json.py -k 'db' -v '%hhblitsdb.content' ../results/${JOBID}.json
