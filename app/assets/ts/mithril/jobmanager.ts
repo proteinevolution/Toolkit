@@ -54,6 +54,23 @@ window.JobManager = {
         return function (elem : any, isInit : boolean) {
             if (!isInit) {
                 ctrl.data.then(function (jobData : any) {
+
+                    //console.log(JSON.stringify(jobData));
+                    
+                    jobData.map(function(x : any) : any {
+                        switch(x.status) {
+                            case 2:
+                                return x.status = "queued";
+                            case 3:
+                                return x.status = "running";
+                            case 4:
+                                return x.status = "error";
+                            case 5:
+                                return x.status = "done";
+                            default:
+                                return x.status = "undefined";
+                        }
+                    });
                     let $table = $("#" + elem.id);
                     let table = $table.DataTable({
                         data: jobData,
