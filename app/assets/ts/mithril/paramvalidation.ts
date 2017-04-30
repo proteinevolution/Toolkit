@@ -12,7 +12,6 @@ let paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
             console.warn("toolname unspecified");
         }
 
-        // Placeholder overrides
         return $(elem).on("keyup mouseover", function (e) {
             e.preventDefault();
             switch (toolname) {
