@@ -95,6 +95,10 @@ POST          /jobs/dateviewed/:mainID                @controllers.Jobs.updateDa
 POST          /jobs/updateLog/:jobID                  @controllers.Jobs.updateLog(jobID : String)
 
 
+# Validation Controller
+
+GET           /validate/modeller/:input             @controllers.Validation.validateModellerKey(input: String)
+
 # Cluster
 
 GET           /load                                   @controllers.ClusterController.getLoad

@@ -874,11 +874,15 @@ window.ParameterAlignmentComponent = {
                 m("div", {"class": "leftAlignmentButtons"},
                 m("input", {
                     type: "button",
+                    id: "pasteButton",
                     "class": "button small alignmentExample",
                     value: "Paste Example",
                     config: sampleSeqConfig,
                     onclick: function() {
-                        $('.submitJob').prop('disabled', false);
+                        //$('.submitJob').prop('disabled', false);
+                        setTimeout(function(){
+                            validationProcess($('#alignment'),$("#toolnameAccess").val());
+                        }, 100);
                         $("#validOrNot").removeClass("alert warning primary secondary");
                         originIsFasta = true; // resets changed validation filter
                     }
@@ -1058,7 +1062,8 @@ ParameterTextComponent = {
             type: "text",
             id: args.param.name,
             name: args.param.name,
-            value: args.value
+            value: args.value,
+            config: paramValidation
         };
         return renderParameter([
             m("label", {
