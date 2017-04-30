@@ -957,3 +957,7 @@ textarea:focus{
 
     cursor: pointer;
 }
+
+.result-panel {
+    padding-bottom: 50px !important;
+}
