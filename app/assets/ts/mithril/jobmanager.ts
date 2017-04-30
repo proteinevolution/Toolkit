@@ -56,7 +56,7 @@ window.JobManager = {
                 ctrl.data.then(function (jobData : any) {
 
                     //console.log(JSON.stringify(jobData));
-                    
+
                     jobData.map(function(x : any) : any {
                         switch(x.status) {
                             case 2:

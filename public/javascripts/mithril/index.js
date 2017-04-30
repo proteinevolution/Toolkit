@@ -33,7 +33,6 @@ slickSlider = function (elem, isInit) {
 typeAhead = function (elem, isInit) {
     var engine;
     if (!isInit) {
-        $.LoadingOverlay("hide");
         engine = new Bloodhound({
             remote: {
                 url: '/suggest/%QUERY%',
