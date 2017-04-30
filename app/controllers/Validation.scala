@@ -12,10 +12,7 @@ import scala.concurrent.Future
   */
 
 class Validation extends Controller {
-
-  // TODO implement me
-
-  // Bcrypt, Salt 12
+  
 
   val modeller_key = "$2a$12$ySkBGrEDxCDLf5aNVl2fc.8VnDGf9Ve003WbV8Lw8mfnJ.Lae49G."
 
