@@ -813,7 +813,8 @@ input:checked + .sliderSwitch:before {
 .switchContainer {
     width: 20em;
     display: flex;
-    margin-top: 1.5em;
+    margin-top: 2.75em;
+    margin-left: -13.2em;
 }
 .firstLabel {
     margin-bottom: 0.5em;
