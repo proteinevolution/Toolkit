@@ -233,7 +233,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       val clusterData = JobClusterData("", Some(h_vmem), Some(threads))
 
       // Set private or public
-      val ownerOption = if(params.get("private").isDefined) { Some(user.userID) } else { None }
+      val ownerOption = if(params.get("public").isEmpty) { Some(user.userID) } else { None }
 
       // Make a new JobObject and set the initial values
       val job = Job(mainID      = BSONObjectID.generate(),
@@ -253,15 +253,10 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
 
       // Add job to database
       insertJob(job)
-//      .map{
-//        case Some(a) =>
-//          Logger.info("Job Successfully added: " + a.toString())
-//        case None =>
-//          Logger.info("Job could not be added to DB")
-//      }
+
       Logger.info("Job Database insert request done")
       // filter unique parameters
-      val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "private"
+      val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public"
 
       // get hold of the database in use
       val DBNAME = params match {

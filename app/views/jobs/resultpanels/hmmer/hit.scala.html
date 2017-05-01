@@ -23,15 +23,19 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td class="hitInfo" colspan="4"><b>E-value: @{hit.evalue}&emsp;&emsp;&emsp;
-        Score: @{hit.bitscore}, Hit length: @{hit.hit_len}&emsp;&emsp;&emsp;
-        Domain expected number: @{hit.dom_exp_num}&emsp;&emsp;&emsp; Domain observed number: @{hit.domain_obs_num}</b>
+    <td class="hitInfo" colspan="4">E-value: @{hit.evalue}&emsp;&emsp;
+        Score: @{hit.bitscore}&emsp;&emsp;Aligned positions: @{hit.hit_len}&emsp;&emsp;
+        Observed domains: @{hit.domain_obs_num}
     </td>
+</tr> 
+<tr>
+    <td><br /></td>
 </tr>
+
 @* color only 150 first hits, to avoid bloating of the generated html*@
     @* seq of query, if present *@
     @{
-        BlastVisualization.makeRow("sequence", Array("Q", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq) + " "+ hit.query_end.toString))
+        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq) + "    "+ hit.query_end.toString))
     }
     @* agree of query, if present *@
     @{
@@ -39,7 +43,7 @@
     }
     @* seq of hit, if present *@
     @{
-        BlastVisualization.makeRow("sequence", Array("H", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + " " + hit.hit_end.toString))
+        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + "    " + hit.hit_end.toString))
     }
 <tr>
     <td><br /></td>
