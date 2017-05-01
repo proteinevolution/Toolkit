@@ -690,8 +690,8 @@ JobSubmissionComponent = {
                 ]),
             Auth.user == null ? null :
                 m("label", {style: "width: 16em; float:left;"}, [
-                    m("input", { type: "checkbox", id:"private", name: "private", checked:"checked", value:true}),
-                    "Private"
+                    m("input", { type: "checkbox", id:"public", name: "public", value:true}),
+                    "Public Job"
                 ]),
             m("input", {
                 type: "button",
