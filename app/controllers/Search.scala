@@ -145,17 +145,15 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
   }
 
   def checkJobID(jobID : String, resubmit : Boolean = false) : Action[AnyContent] = Action.async{
-    val jobIDCompleteMessPattern = "(_+.*|.*_+)+".r // _ __ __x _x_ should be culled out
+    val jobIDCompleteMessPattern = "(_+.*|.*_+)+".r // _ __ __x _x_ should be culled out from the start
     val jobIDNoVersionPattern = "([0-9a-zA-Z_]+)".r
     val jobVersionPattern = "(_(\\d{1,3}))?".r
     val jobIDPattern = (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
     val foundMainJobID : Option[String] =
       jobID match {
-        case jobIDCompleteMessPattern(mess)      =>
-          Logger.info("just found mess: " + mess)
-          None
-        case jobIDPattern(mainJobID, _, version) => Some(mainJobID)
-        case jobIDNoVersionPattern(mainJobID)    => Some(mainJobID)
+        case jobIDCompleteMessPattern(_)      => None
+        case jobIDNoVersionPattern(mainJobID) => Some(mainJobID)
+        case jobIDPattern(mainJobID, _, _)    => Some(mainJobID)
         case _ => None
       }
 
@@ -174,14 +172,16 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
               val jobVersions = jobs.map{ job =>
                 Logger.info("jobID to match: " + job.jobID)
                 job.jobID match {
-                  case jobIDPattern(_, _, v) => Integer.parseInt(v)
                   case jobIDNoVersionPattern(_) => 0
+                  case jobIDPattern(_, _, v)    => if(v.isEmpty) -1 else Integer.parseInt(v)
                   case _ => 0
                 }
               }
               val version : Int = jobVersions.max + 1
+              //Logger.info("Resubmitting job ID version: " + version + " for " + mainJobID)
               Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> (mainJobID + "_" + version)))
             } else {
+              //Logger.info("Main Job ID:" + mainJobID)
               Ok(Json.obj("exists" -> true))
             }
           }
