@@ -32,10 +32,10 @@ case class PSIBlastHSP(evalue: Double,
                        ref_len: Int,
                        accession: String,
                        midline: String,
-                       description: String){
+                       description: String, checked: Boolean){
   def toDataTable(db: String): JsValue = Json.toJson(
     Map(
-      "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
+      "0" -> Json.toJson(BlastVisualization.getCheckboxPre(num, checked)),
       "1" -> Json.toJson(BlastVisualization.getSingleLinkDB(db, accession).toString),
       "2" -> Json.toJson(description),
       "3" -> Json.toJson(evalue),
@@ -63,13 +63,13 @@ class PSIBlast @Inject() (general: General, aln : Alignment) {
       val hits = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ iter_num \ "search" \ "hits").as[List[JsObject]]
       val num_hits = hits.length
       val hsplist = hits.map{ x =>
-        parseHSP(x, db)
+        parseHSP(x, db, evalue)
       }
       PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query)
     }
   }
 
-  def parseHSP(hit: JsObject, db: String): PSIBlastHSP = {
+  def parseHSP(hit: JsObject, db: String, eval_threshold: Double): PSIBlastHSP = {
     val descriptionBase = hit \ "description" \ 0
     val hsps = hit \ "hsps" \ 0
     val evalue = (hsps \ "evalue").getOrElse(Json.toJson(-1)).as[Double]
@@ -98,8 +98,10 @@ class PSIBlast @Inject() (general: General, aln : Alignment) {
     }
     val midline = (hsps \ "midline").getOrElse(Json.toJson("")).as[String].toUpperCase
     val description = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
+    val checked = evalue <= eval_threshold
 
-    PSIBlastHSP(evalue, num, bitscore, score, hit_start, hit_end, hit_seq, query_seq, query_start, query_end, query_id, hit_len, gaps, identity, positive, ref_len ,accession, midline, description)
+
+    PSIBlastHSP(evalue, num, bitscore, score, hit_start, hit_end, hit_seq, query_seq, query_start, query_end, query_id, hit_len, gaps, identity, positive, ref_len ,accession, midline, description, checked)
 
   }
 
