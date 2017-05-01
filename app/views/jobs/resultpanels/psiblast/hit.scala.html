@@ -1,7 +1,6 @@
 @import models.results.BlastVisualization
 @import models.database.results.PSIBlastHSP
 @(jobID: String, hit: PSIBlastHSP, db: String)(implicit request: RequestHeader)
-
 @* hit number, links *@
 <tr>
     <td></td>
@@ -13,7 +12,11 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td class="indexCheckbox"><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
+    @if(hit.checked){
+        <td class="indexCheckbox"><input type="checkbox" checked="true" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
+    }else{
+        <td class="indexCheckbox"><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
+    }
 <td class="hitInfo" colspan="4">
     @{BlastVisualization.getSingleLinkDB(db , hit.accession)}
     @{"  "+hit.description}
