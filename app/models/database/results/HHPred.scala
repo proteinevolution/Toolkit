@@ -61,7 +61,7 @@ class HHPred @Inject() (general: General, aln: Alignment) {
   def parseQuery(obj: JsObject): HHPredQuery= {
     val consensus = (obj \ "consensus").getOrElse(Json.toJson("")).as[String]
     val end = (obj \ "end").getOrElse(Json.toJson(-1)).as[Int]
-    val accession = (obj \ "struc").getOrElse(Json.toJson("")).as[String]
+    val accession = (obj \ "name").getOrElse(Json.toJson("")).as[String]
     val ref = (obj \ "ref").getOrElse(Json.toJson(-1)).as[Int]
     val seq = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
     val ss_dssp = (obj \ "ss_dssp").getOrElse(Json.toJson("")).as[String]
