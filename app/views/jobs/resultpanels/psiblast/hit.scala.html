@@ -22,16 +22,15 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td class="hitInfo" colspan="4"><b>Score: @{hit.bitscore}
-        bits (@{hit.score})&emsp;&emsp;&emsp;
-        E-value: @{hit.evalue}&emsp;&emsp;&emsp;
+    <td class="hitInfo" colspan="4">
+        E-value: @{hit.evalue}&emsp;&emsp;Score: @{hit.bitscore}bits (@{hit.score})&emsp;&emsp;
         Identities: @{hit.identity}/@{hit.hit_len}
-        (@{BlastVisualization.calculatePercentage(hit.identity, hit.hit_len)})&emsp;&emsp;&emsp;
+        (@{BlastVisualization.calculatePercentage(hit.identity, hit.hit_len)})&emsp;&emsp;
         Positives: @{hit.positive}/@{hit.hit_len}
-        (@{BlastVisualization.calculatePercentage(hit.positive, hit.hit_len)})&emsp;&emsp;&emsp;
+        (@{BlastVisualization.calculatePercentage(hit.positive, hit.hit_len)})&emsp;&emsp;
         Gaps: @{hit.gaps}/@{hit.hit_len}
-        (@{BlastVisualization.calculatePercentage(hit.gaps, hit.hit_len)})&emsp;&emsp;&emsp;
-        Length: @{hit.hit_len}</b>
+        (@{BlastVisualization.calculatePercentage(hit.gaps, hit.hit_len)})&emsp;&emsp;
+        Aligned positions: @{hit.hit_len}</b>
     </td>
 </tr>
 <tr>
@@ -40,7 +39,7 @@
 @* color only 150 first hits, to avoid bloating of the generated html*@
     @* Query *@
     @{
-        BlastVisualization.makeRow("sequence", Array("Query", hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq)+ " " + hit.query_end.toString))
+        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq)+ "   " + hit.query_end.toString))
     }
     @* Midline *@
     @{
@@ -48,7 +47,7 @@
     }
     @* Hit *@
     @{
-        BlastVisualization.makeRow("sequence", Array("Hit", hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + " " + hit.hit_end.toString))
+        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + "   " + hit.hit_end.toString))
     }
 
 <tr>
