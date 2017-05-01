@@ -500,7 +500,7 @@ JobSubmissionComponent = {
     currentJobID    : null,     // Currently entered jobID
     jobIDValid      : false,    // Is the current jobID valid?
     jobIDValidationTimeout : null,     // timer ID for the timeout
-    jobIDRegExp     : new RegExp(/^\w{6,96}(\_\d{1,3})?$/),
+    jobIDRegExp     : new RegExp(/^[a-zA-Z0-9\_]{6,96}(\_\d{1,3})?$/),
     jobResubmit     : false,
     checkJobID : function (jobID) {
         clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);    // clear all previous timeouts
@@ -513,7 +513,7 @@ JobSubmissionComponent = {
                         function (data) {
                             console.log(data);
                             JobSubmissionComponent.jobIDValid = !data.exists;
-                            if (data.exists && data.suggested) {
+                            if (data.exists && data.suggested != null) {
                                 JobSubmissionComponent.currentJobID = data.suggested;
                                 JobSubmissionComponent.jobIDValid = true;
                             }
@@ -542,18 +542,16 @@ JobSubmissionComponent = {
     },
     controller: function(args) {
         if (JobSubmissionComponent.jobID == null) {
-            var oldJobID, version, newJobID;
+            var newJobID;
             if (args.isJob) {
-                oldJobID = args.job().jobID.split("_");
-                JobSubmissionComponent.jobResubmit = args.isJob;
-                version = parseInt(oldJobID[1]);
-                newJobID = oldJobID[0] + "_" + (Number.isNaN(version) ? 1 : version + 1);
+                JobSubmissionComponent.jobResubmit = true;
                 JobSubmissionComponent.jobIDValid = false;
+                newJobID = args.job().jobID;
+                JobSubmissionComponent.checkJobID(newJobID); // ask server for new jobID
             } else {
                 newJobID = "";
                 JobSubmissionComponent.jobIDValid = true;
             }
-            JobSubmissionComponent.checkJobID(newJobID);
         }
         return {
             submit: function(startJob) {
