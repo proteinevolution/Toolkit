@@ -93,9 +93,10 @@
     </div>
 
     <div class="reveal" id="structureModal" data-reveal>
-        <a type="button" class="button success tiny hhpred_extra_button data-close" onclick="detachStructure()">
-            Open in new window</a>
+        <p>Template 3D structure</p>
         <div id="accessionStructure"></div>
+        <a type="button" class="button success tiny data-close" onclick="detachStructure()">
+            Open in new window</a>
         <div id="viewport"></div>
         <button class="close-button" data-close aria-label="Close modal" type="button">
             <span aria-hidden="true">&times;</span>
@@ -249,7 +250,7 @@
             $(document).ready(function () {
                 $.get(url).done(function () {
                     $(document).ready(function () {
-                        $('#accessionStructure').append("<h3 class='structureAccession'>3D Structure: " + accession + "</h3>");
+                        $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
                         stage = new NGL.Stage("viewport");
                         stage.loadFile(url, {defaultRepresentation: true, sele: ":A or :B or DPPC",});
                         stage.set
