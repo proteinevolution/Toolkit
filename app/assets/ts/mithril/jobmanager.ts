@@ -44,7 +44,7 @@ window.JobManager = {
                 "className": "addButton",
                 "orderable": false,
                 "data": null,
-                "defaultContent": "\u25c0"
+                "defaultContent": "<i class='icon-reply'></i>"
             });
             return tableRowDataSelection;
         }

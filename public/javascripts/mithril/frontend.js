@@ -6,11 +6,6 @@ exampleSequence = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligas
 window.FrontendAlnvizComponent = {
     controller: function() {
         var submitted;
-        ({
-            pasteExample: function() {
-                return $('#alignment').val(exampleSequence);
-            }
-        });
         submitted = false;
         return {
             frontendSubmit: function() {
@@ -85,6 +80,9 @@ window.FrontendAlnvizComponent = {
                 defMenu = new msa.menu.defaultmenu(menuOpts);
                 alignment.addView('menu', defMenu);
                 alignment.render();
+                setTimeout(function(){
+                    $('#tab-Visualization').removeAttr('style');
+                }, 100);
                 return $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') + 1);
             },
             forwardTab: function() {
@@ -107,6 +105,7 @@ window.FrontendAlnvizComponent = {
         ]);
     }
 };
+
 
 
 fndt = function(elem, isInit) {
@@ -138,44 +137,6 @@ window.FrontendReformatComponent = {
 
 
 
-/*
-window.FrontendRetrieveSeqComponent = {
-    model: function(args) {
-        return {
-            tabs: ["Input"],
-            content: [
-                m("div", {
-                    "class": "parameter-panel"
-                }, [m("textarea")])
-            ]
-        };
-    },
-    controller: function(args) {
-        return this.model = new ParameterAlignmentComponent.model(args);
-    },
-    view: function(ctrl) {
-        return renderTabs(ctrl.model.tabs, ctrl.model.content);
-    }
-}; */
-
-
-/*
-
- $(document).foundation()
- $("html, body").animate({ scrollTop: 0 }, "fast")
-
- window.FrontendReformatComponent =
- controller: ->
-
- view: (ctrl) ->
- m "div", {id: "jobview"}, [
-
- m "div", {class: "jobline"},
- m "span", {class: "toolname"}, "Reformat"
-
- m GeneralTabComponent, {tabs: ["Alignment", "Freqs"], ctrl: ctrl}
- ]
- */
 
 renderTabs = function(tabs, content) {
     return m("div", {
@@ -256,7 +217,8 @@ GeneralTabComponent = {
         }, [
             m("ul", args.tabs.map(function(tab) {
                 return m("li", {
-                    id: "tab-" + tab
+                    id: "tab-" + tab,
+                    style: (tab == "Visualization" ? "display: none;" : "display: block;")
                 }, m("a", {
                     href: "#tabpanel-" + tab
                 }, tab));
@@ -279,10 +241,6 @@ GeneralTabComponent = {
     }
 };
 
-
-/*
- m "div", {class: "tabs-panel", id: "tabpanel-#{paramGroup[0]}"}, [
- */
 
 tabsContents = {
     "Alignment": function(ctrl) {

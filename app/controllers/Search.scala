@@ -145,36 +145,42 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
   }
 
   def checkJobID(jobID : String, resubmit : Boolean = false) : Action[AnyContent] = Action.async{
-    val jobIDNoVersionPattern = "([0-9a-zA-Z]+)".r
-    val jobIDPattern = "([0-9a-zA-Z]+)(_(\\d{1,3}))?".r
-    val oldJobID_option : Option[String] =
+    val jobIDCompleteMessPattern = "(_+.*|.*_+)+".r // _ __ __x _x_ should be culled out
+    val jobIDNoVersionPattern = "([0-9a-zA-Z_]+)".r
+    val jobVersionPattern = "(_(\\d{1,3}))?".r
+    val jobIDPattern = (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
+    val foundMainJobID : Option[String] =
       jobID match {
-        case jobIDNoVersionPattern(mainJobID)    => Some(mainJobID)
+        case jobIDCompleteMessPattern(mess)      =>
+          Logger.info("just found mess: " + mess)
+          None
         case jobIDPattern(mainJobID, _, version) => Some(mainJobID)
+        case jobIDNoVersionPattern(mainJobID)    => Some(mainJobID)
         case _ => None
       }
 
-    oldJobID_option match {
-      case None => Future.successful(BadRequest)
-      case Some(oldJobID) =>
-        val jobIDSearch = oldJobID + "(_.{1,3})?".r
-        Logger.info("Old job ID: " + oldJobID + " Current job ID: " + jobID + " Searching for: " + jobIDSearch)
+    foundMainJobID match {
+      case None => Future.successful(Ok(Json.obj("exists" -> true)))
+      case Some(mainJobID) =>
+        val jobIDSearch = mainJobID + "(_[0-9]{1,3})?"
+        Logger.info("Old job ID: " + mainJobID + " Current job ID: " + jobID + " Searching for: " + jobIDSearch)
         findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map{ jobs =>
           if (jobs.isEmpty) {
+            Logger.info("Found no such jobs.")
             Ok(Json.obj("exists" -> false))
           } else {
+            Logger.info("Found " + jobs.length + " Jobs: " + jobs.map(_.jobID).mkString(","))
             if (resubmit) {
               val jobVersions = jobs.map{ job =>
                 Logger.info("jobID to match: " + job.jobID)
                 job.jobID match {
-                  case jobIDNoVersionPattern(mainJobID) => 0
-                  case jobIDPattern(_, _, version) => Integer.parseInt(version)
+                  case jobIDPattern(_, _, v) => Integer.parseInt(v)
+                  case jobIDNoVersionPattern(_) => 0
                   case _ => 0
                 }
               }
-              val version = jobVersions.max + 1
-              Logger.info("Found " + jobs.length + " Jobs. Highest version: " + version + jobs.map(_.jobID).mkString(","))
-              Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> (oldJobID + "_" + version)))
+              val version : Int = jobVersions.max + 1
+              Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> (mainJobID + "_" + version)))
             } else {
               Ok(Json.obj("exists" -> true))
             }

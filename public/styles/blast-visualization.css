@@ -75,7 +75,7 @@
     background-color: #eee;
     float: right;
 }
-#resubmitSection:hover, #forward:hover {
+#resubmitSection:hover, #forward:hover, #structureModal .button {
     background-color: #d1d1d1
 }
 
@@ -97,10 +97,11 @@
     height: 18.5em;
 }
 
-.forwardModal p {
+.forwardModal p, #templateAlignmentModal p, #structureModal p {
     font-size: 1em;
     font-weight: bold;
     color: rgba(0, 110, 98, 166);
+    margin-bottom: 0.5em;
 }
 
 .forwardModal .forward_form {
@@ -486,4 +487,29 @@ table.dataTable.no-footer{
     margin-top: 1.5em;
 }
 
+#templateAlignmentModal, #structureModal {
+    width: 80em;
+    max-width: 80em;
+    background-color: #eee;
+}
+
+#templateAlignmentModal select {
+    font-size: 0.80em !important;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    border-radius: 4px;
+    margin-top: 1.5em;
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+    height: 2.75em;
+    color: #000;
+    text-shadow: 0 0 0 #000;
+    width: 12em;
+}
+
+#structureModal .button {
+    float: right;
+    background-color: rgba(0, 110, 98, 166);
+    color: white;
+}
 
