@@ -6,6 +6,7 @@
 let seqLimit : any;
 let charLimitPerSeq : any;
 let modellerIsValid : boolean = false;
+let samccIsValid : boolean = false;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
@@ -932,6 +933,11 @@ class alignmentVal implements ToolkitValidator {
             valReset();
         }
 
+        else if ($( "#regkey" ).css("background-color") == "rgb(219, 255, 219)"){
+            feedback(true, "Valid input", "success");
+            modellerIsValid = true;
+        }
+
         else {
             feedback(false, "Valid input", "success");
             modellerIsValid = true;
@@ -940,7 +946,7 @@ class alignmentVal implements ToolkitValidator {
 
     samccValidation(): any {
 
-        //console.log($('#samcc_helixone').val());
+        samccIsValid = false;
 
         if(!this.elem.reformat('atoms'))
             feedback(false, "Must have at least 25 sequences starting with \"ATOM\"");
@@ -950,6 +956,9 @@ class alignmentVal implements ToolkitValidator {
             valReset();
         }
 
-        else feedback(true, "Valid input", "success");
+        else {
+            feedback(false, "Valid input", "success");
+            samccIsValid = true;
+        }
     }
 }
