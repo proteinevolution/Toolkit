@@ -97,10 +97,11 @@
     height: 18.5em;
 }
 
-.forwardModal p {
+.forwardModal p, #templateAlignmentModal p {
     font-size: 1em;
     font-weight: bold;
     color: rgba(0, 110, 98, 166);
+    margin-bottom: 0;
 }
 
 .forwardModal .forward_form {
@@ -484,6 +485,25 @@ table.dataTable.no-footer{
 .ancescon_download {
     float: right;
     margin-top: 1.5em;
+}
+
+#templateAlignmentModal {
+    width: 80em;
+    background-color: #eee;
+}
+
+#templateAlignmentModal select {
+    font-size: 0.80em !important;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    border-radius: 4px;
+    margin-top: 1.5em;
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+    height: 2.75em;
+    color: #000;
+    text-shadow: 0 0 0 #000;
+    width: 12em;
 }
 
 
