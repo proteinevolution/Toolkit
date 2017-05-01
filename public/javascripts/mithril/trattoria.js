@@ -502,14 +502,14 @@ JobSubmissionComponent = {
     jobIDValidationTimeout : null,     // timer ID for the timeout
     jobIDRegExp     : new RegExp(/^[a-zA-Z0-9\_]{6,96}(\_\d{1,3})?$/),
     jobResubmit     : false,
-    checkJobID : function (jobID) {
+    checkJobID : function (jobID, addResubmitVersion) {
         clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);    // clear all previous timeouts
         JobSubmissionComponent.jobIDValid   = false;    // ensure that the user can not send the job form
         JobSubmissionComponent.currentJobID = jobID;    // set the jobID to the new jobID
         if (jobID !== "") { // ignore checking if the field is empty as the server will generate a jobID in that case.
             if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
                 JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
-                    m.request({ method: "GET", url: "/search/checkJobID/"+(JobSubmissionComponent.jobResubmit?"resubmit/"+jobID:jobID)}).then(
+                    m.request({ method: "GET", url: "/search/checkJobID/"+(addResubmitVersion?"resubmit/"+jobID:jobID)}).then(
                         function (data) {
                             console.log(data);
                             JobSubmissionComponent.jobIDValid = !data.exists;
@@ -547,7 +547,7 @@ JobSubmissionComponent = {
                 JobSubmissionComponent.jobResubmit = true;
                 JobSubmissionComponent.jobIDValid = false;
                 newJobID = args.job().jobID;
-                JobSubmissionComponent.checkJobID(newJobID); // ask server for new jobID
+                JobSubmissionComponent.checkJobID(newJobID, true); // ask server for new jobID
             } else {
                 newJobID = "";
                 JobSubmissionComponent.jobIDValid = true;
