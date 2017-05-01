@@ -79,7 +79,13 @@ window.FrontendAlnvizComponent = {
                 menuOpts.msa = alignment;
                 defMenu = new msa.menu.defaultmenu(menuOpts);
                 alignment.addView('menu', defMenu);
+
                 alignment.render();
+
+                //hide unsused options
+                document.getElementById('menuDiv').childNodes[5].style.display = 'none';
+                document.getElementById('menuDiv').childNodes[6].style.display = 'none';
+
                 setTimeout(function(){
                     $('#tab-Visualization').removeAttr('style');
                 }, 100);
