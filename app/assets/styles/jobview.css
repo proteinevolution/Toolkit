@@ -520,16 +520,10 @@ hr {
     max-width: 7em;
 }
 
-/* Running Panel */
-.running-panel {
+/* Running Panel  Queued Panel */
+.running-panel, .queued-panel {
 
-    font-size: smaller;
-}
-
-/* Queued Panel */
-.queued-panel {
-
-    font-size: smaller;
+    font-size: 0.75em;
 }
 
 /* File Upload */
@@ -832,6 +826,8 @@ a.hasNotes:active {
 #validOrNot {
     margin-left: auto;
     float: right;
+    margin-bottom: 0;
+    margin-top: -1.75em;
 }
 
 div#calloutSpacer {
@@ -916,7 +912,6 @@ textarea:focus{
 
 .logElem{
     display: flex;
-    margin-left: 1em;
 }
 
 .logElemRunning{
@@ -963,4 +958,8 @@ textarea:focus{
 
 .result-panel {
     padding-bottom: 50px !important;
+}
+
+.processJobIdContainer {
+    display: flex;
 }
