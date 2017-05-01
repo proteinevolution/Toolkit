@@ -23,8 +23,7 @@
         seqs += '@{line}\n';
     }
 
-    var width;
-    var height;
+    var width, height, defMenu,  menuOpts;
 
     var url ='files/' + jobID + '/alignment.json';
     $.getJSON(url, function (data) {
@@ -38,7 +37,6 @@
         height = (stringSeqs.split('>').length-1)*15;
 
         width = width * 15.5;
-         console.log(width)
 
         opts.el = document.getElementById("rootDiv");
         opts.seqs = seqs;
@@ -60,9 +58,20 @@
             // use script for handling
             alignmentHeight: height, alignmentWidth: width, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
         };
+        alignment = new msa.msa(opts);
+        menuOpts = {};
+        menuOpts.el = document.getElementById('menuDiv');
+        menuOpts.msa = alignment;
+        defMenu = new msa.menu.defaultmenu(menuOpts);
+        alignment.addView('menu', defMenu);
 
-        // init msa
-        var ms = new msa.msa(opts);
-        ms.render();
+        alignment.render();
+        //hide unsused options
+        document.getElementById('menuDiv').childNodes[5].style.display = 'none';
+        document.getElementById('menuDiv').childNodes[6].style.display = 'none';
+
+        //fixes option positions
+
+
     });
 </script>
