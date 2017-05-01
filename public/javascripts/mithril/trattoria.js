@@ -913,7 +913,7 @@ window.ParameterAlignmentComponent = {
                             $("input[type=file]").val(null);
                             return $("#" + ctrl.id).prop("disabled", false);
                             }
-                    })),
+                    }, m("i", {"class": "fa fa-times"}))),
                     m(JobValidationComponent, {})
                     , m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format){
                     return m("option", {value: format[0]}, format[1])}
