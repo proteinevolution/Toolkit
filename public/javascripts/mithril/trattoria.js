@@ -1132,17 +1132,19 @@ ParameterSlideComponent = {
 // add scrollcontainer highlighting
 var followScroll = function(element) {
     $(element).on('scroll', function () {
-    if ($(this).scrollTop() >= $('#alignments').position().top) {
+
+    var top = $(this).scrollTop();
+    if ($('#alignments').visible(true)) {
         $("#alignmentsScroll").addClass("colorToggle");
         $("#hitlistScroll").removeClass("colorToggle");
         $("#visualizationScroll").removeClass("colorToggle");
-    } else if ($(this).scrollTop() >= $('#hitlist').position().top) {
+    } else if ($('#hitlist').visible(true)) {
         $("#hitlistScroll").addClass("colorToggle");
         $("#alignmentsScroll").removeClass("colorToggle");
         $("#visualizationScroll").removeClass("colorToggle");
-    } else if ($(this).scrollTop() >= $('#visualization').position().top + 75) {
+    } else if (top >= $('#visualization').position().top + 75) {
         $('.scrollContainer').addClass('fixed');
-    } else if ($(this).scrollTop() >= $('#visualization').position().top) {
+    } else if ($('#visualization').visible()) {
         $("#visualizationScroll").addClass("colorToggle");
         $("#hitlistScroll").removeClass("colorToggle");
         $("#alignmentsScroll").removeClass("colorToggle");
@@ -1160,22 +1162,6 @@ var followScroll = function(element) {
             shownHits = end;
         }
     }
-    // add slider val
-    $('.slider').on('moved.zf.slider', function () {
-        $('#lefthandle').html($('#hidden1').val());
-        $('#lefthandle').css({
-            'color': 'white',
-            'font-weight': 'bold',
-            'padding-left': '2px'
-        });
-        $('#righthandle').html($('#hidden2').val());
-        $('#righthandle').css({
-            'color': 'white',
-            'font-weight': 'bold',
-            'padding-left': '2px'
-        });
-    });
-
     $("#alignments").floatingScroll('init');
 });
 
