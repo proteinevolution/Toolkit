@@ -117,21 +117,6 @@ function slider_show(sequence_length, start, end) {
 
 }
 
-/* from maplink overlay go to alignment ref */
-(function($) {
-    $.fn.goTo = function() {
-        if (!$("#alignments").parent(".is-active").length) {
-            $("#accordion").foundation('down',$("#alignments"));
-        }
-        $('html, body').animate({
-            scrollTop: $(this).offset() + 'px'
-        }, 'fast');
-        return this;
-    };
-})(jQuery);
-
-
-
 
 
 function getSliderRange() {
@@ -153,66 +138,7 @@ function resubmitSection(sequence, name) {
 }
 
 
-// //TODO: works only with timeout. needs to be replaced?
-// // links two checkboxes with id 'hits'
-// setTimeout(function() {
-//
-//     var allPages;
-//
-//
-//     // listens to alignment
-//     $('input:checkbox').click(function (e) {
-//         allPages = hitlist.fnGetNodes();
-//         var currentVal = $(this).val();
-//         var currentState = $(this).prop('checked');
-//         // alignment
-//         $('input[value=' + currentVal + ']').each(function () {
-//             $(this).prop('checked', currentState);
-//         });
-//
-//         $(allPages).find('input[value='+currentVal+']').prop('checked', currentState);
-//
-//     });
-//
-//     // listens to dataTable
-//     $(allPages).find('input[type="checkbox"]').click(function (e) {
-//         allPages = hitlist.fnGetNodes();
-//         var currentVal = $(this).val();
-//         console.log(currentVal)
-//         var currentState = $(this).prop('checked');
-//         // alignment
-//         $('input[value=' + currentVal + ']').each(function () {
-//             $(this).prop('checked', currentState);
-//         })
-//     });
-//
-//
-// },4000);
 
-
-
-/**
- *  this function applies a range on jsData containing seqs
- * @param jsonData
- * @returns {*}
- */
-
-function applySliderRange(jsonData, sliderRange){
-    // get slider range
-    //slider range is applied
-    jsonData.seqs = jsonData.seqs.map(function(e) {return e.substr(sliderRange[0] - 1, sliderRange[1]) + '\n'});
-    return jsonData;
-}
-
-
-
-/*Select top ten Checkboxes*/
-function selectTopTen(checkboxName){
-
-    for(var i=0 ; i < 10; i++){
-        $('input:checkbox.'+checkboxName+'[value="' + i + '"]').prop('checked', true);
-    }
-}
 
 /* FORWARDING */
 
@@ -225,78 +151,12 @@ function forward(tool, forwardData){
 
 // load forwarded data into alignment field
 $(document).ready(function() {
-
-    // for getting full alignment
-    //curl -X GET 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&id=NP_877456,NP_877456&rettype=fasta'
     var resultcookie = localStorage.getItem("resultcookie");
     $('#alignment').val(resultcookie);
     localStorage.removeItem("resultcookie");
 });
 
 
-/* GENERATING LINKS FOR HHPRED */
-
-
-function getSingleLink(id){
-    if(!id)
-        return;
-    var db = identifyDatabase(id);
-    var idTrimmed = id.substring(1, 5);
-    var idPfam = id.replace("am.*$||..*", "");
-    var idPdb = id.replace("_.*$", "");
-
-    switch(db){
-      case 'scop':
-          return generateLink(pdbBaseLink, idTrimmed,id);
-          break;
-      case 'mmcif':
-          return generateLink(pdbBaseLink, idPdb,id);
-          break;
-      case 'pfam':
-          return generateLink(pfamBaseLink, idPfam+"#tabview=tab0",id);
-          break;
-      case 'ncbi':
-          return generateLink(ncbiProteinBaseLink, id,id);
-          break;
-      case 'uniprot':
-          return generateLink(uniprotBaseLik,id,id);
-          break;
-      default:
-          return null;
-  }
-}
-
-function getLinks(id){
-    var db = identifyDatabase(id);
-    var links = [];
-    var idNcbi = id.replace("#", ".") + "?report=fasta";
-    var idPdb = id.replace("_.*$", "").toString().toLowerCase();
-    var idTrimmed = id.substring(1, 5);
-    var idCDD = id.replace("PF", "pfam");
-    switch(db){
-        case 'scop':
-            links.push(generateLink(scopBaseLink, id, "SCOP"));
-            links.push(generateLink(ncbiProteinBaseLink, idTrimmed,"NCBI"));
-            break;
-        case 'pfam':
-            links.push(generateLink(cddBaseLink, idCDD, "CDD"));
-            break;
-        case 'mmcif':
-            links.push(generateLink(pdbeBaseLink, idCDD, "PDBe"));
-            break;
-        case 'ncbi':
-            links.push(generateLink(ncbiProteinBaseLink, idNcbi,"NCBI Fasta"));
-            break;
-    }
-    if(links.length > 0)
-        links.unshift("<a onclick='toggleHistogram()' >Histogram</a> | <a>Template alignment</a>");
-    return links;
-}
-
-function generateLink(baseLink, id, name){
-
-    return ["<a href=\"",baseLink, id, "\" target=\"\_blank\">", name, "</a>"].join('');
-}
 function identifyDatabase(id){
     if (id == null)
         return null;
@@ -314,22 +174,6 @@ function identifyDatabase(id){
         return "uniprot";
     else
         return null;
-}
-
-
-
-/* Histograms */
-
-function imgOn(imgName, imgSrc) {
-    if (document.images) {
-        document[imgName].src = imgSrc;
-    }
-}
-
-function imgOff(imgName, imgSrc) {
-    if (document.images) {
-        document[imgName].src = imgSrc;
-    }
 }
 
 
@@ -401,26 +245,28 @@ function calcColor(prob) {
 
 
 function scrollToElem(num){
+    var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     if (num > shownHits) {
         getHits(shownHits, num).done(function(data){
             var pos = $('input[name=templates][value=' + num + ']').offset().top;
-            $('html, body').animate({
+            $(elem).animate({
                 scrollTop: pos - 100
             }, 'fast')
         });
         shownHits = num;
     }else{
         var pos = $('input[name=templates][value=' + num + ']').offset().top;
-        $('html, body').animate({
+        $(elem).animate({
             scrollTop: pos - 100
         }, 'fast')
     }
 }
 
 function scrollToSection(name){
-    var pos = $('div[id='+name+']').offset().top;
-    $('html, body').animate({
-        scrollTop: pos+30}, 'fast');
+    var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
+    var pos = $('#tool-tabs').hasClass("fullscreen") ? $('#'+name).offset().top + $(elem).scrollTop(): $('#'+name).offset().top;
+    $(elem).animate({
+        scrollTop: pos-30}, 'fast');
 }
 
 
@@ -478,5 +324,21 @@ function hitlistBaseFunctions(){
         });
 
         followScroll(document);
+
+        // add slider val
+        $('.slider').on('moved.zf.slider', function () {
+            $('#lefthandle').html($('#hidden1').val());
+            $('#lefthandle').css({
+                'color': 'white',
+                'font-weight': 'bold',
+                'padding-left': '2px'
+            });
+            $('#righthandle').html($('#hidden2').val());
+            $('#righthandle').css({
+                'color': 'white',
+                'font-weight': 'bold',
+                'padding-left': '2px'
+            });
+        });
     });
 }

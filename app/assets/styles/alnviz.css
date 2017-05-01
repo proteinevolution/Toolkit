@@ -8,30 +8,13 @@ textarea.alnvizInput {
     margin-bottom: 0;
 }
 
-
-
-.smenubar {
-    background-color: #fff !important;
-    padding-bottom: 2em !important;
-}
-
-.smenubar div {
-    background-color: #fff !important;
-}
-
 .smenubar a {
     color: grey !important;
 }
 
-.smenubar_alink {
-    background: #fff !important;
-}
-
-#viewAlignment {
-
-    float: right;
-}
-
 .smenu-dropdown {
-    position: absolute !important;
+    left: auto !important;
+    top: 85px !important;
+
+
 }
