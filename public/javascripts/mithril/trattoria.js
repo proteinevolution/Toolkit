@@ -434,7 +434,7 @@ JobTabsComponent = {
                                             mapParam(elements[0], ctrl)
                                         )
                                     ),
-                                    elements.length > 1 ? m("div", { class: "row", style: "margin-top: 35px;" },
+                                    elements.length > 1 ? m("div", { class: "row", style: "margin-top: 10px;" },
                                         elements.slice(1).map(function(param) {
                                             //console.log(JSON.stringify(mapParam(param,ctrl)));
                                             return m("div", {"class" : "large-6 medium-3 small-1 columns"},
@@ -885,6 +885,7 @@ window.ParameterAlignmentComponent = {
                         originIsFasta = true; // resets changed validation filter
                     }
                 }),
+                m("div", {"class": "uploadContainer"},
                 m("label",{
                 "for": "fileUpload",
                 "class" : "button small fileUpload"
@@ -913,7 +914,7 @@ window.ParameterAlignmentComponent = {
                             $("input[type=file]").val(null);
                             return $("#" + ctrl.id).prop("disabled", false);
                             }
-                    }, m("i", {"class": "fa fa-times"}))),
+                    }, m("i", {"class": "fa fa-times"})))),
                     m(JobValidationComponent, {})
                     , m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format){
                     return m("option", {value: format[0]}, format[1])}
