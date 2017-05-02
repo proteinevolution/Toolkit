@@ -18,6 +18,7 @@ window.call404 = function(elem : any, isInit: boolean) : any {
                 conserv: false,
                 overviewbox: false,
                 seqlogo: false,
+                markers: false,
                 labels: false,
                 labelName: false,
                 labelId: false,
