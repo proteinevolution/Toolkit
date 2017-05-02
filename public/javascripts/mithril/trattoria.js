@@ -996,7 +996,8 @@ ParameterSelectComponent = {
             //if max count of chosen databases is needed
             //onclick: ctrl.preventMultiSelection
             onclick: ctrl.solveDBSelection,
-            config: select2Config
+            config: select2Config,
+            required: true
         };
         if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
             paramAttrs["multiple"] = "multiple";

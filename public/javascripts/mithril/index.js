@@ -33,6 +33,24 @@ slickSlider = function (elem, isInit) {
 typeAhead = function (elem, isInit) {
     var engine;
     if (!isInit) {
+        $('#searchInput').on('keyup', function(e) {
+            var selectables = $('#searchInput').siblings(".tt-menu").find(".tt-selectable").find('.search-results');
+            if(e.which == 13) {
+                e.preventDefault();
+                //find the selectable item under the input, if any:
+                if (selectables.length > 0){
+                    selectables[0].click();
+                    return false;
+                }
+            }
+
+        });
+        // $('#searchInput').on('typeahead:asyncreceive', function(){
+        //     var selectables = $('#searchInput').siblings(".tt-menu").find(".tt-selectable").find('.search-results');
+        //     if(selectables.length > 0) {
+        //         $('#searchInput').val(selectables[0].name)
+        //     }
+        // });
         engine = new Bloodhound({
             remote: {
                 url: '/suggest/%QUERY%',
@@ -41,10 +59,10 @@ typeAhead = function (elem, isInit) {
             datumTokenizer: Bloodhound.tokenizers.whitespace('q'),
             queryTokenizer: Bloodhound.tokenizers.whitespace
         });
-        return $(elem).typeahead({
-            hint: true,
+        return $('.search_Input').typeahead({
             highlight: true,
-            minLength: 1
+            minLength: 1,
+            hint: true
         }, {
             source: engine.ttAdapter(),
             name: 'jobList',
@@ -53,11 +71,11 @@ typeAhead = function (elem, isInit) {
             templates: {
                 empty: ['<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>'],
                 suggestion: function (data) {
-                    console.log(data);
-                    return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '">' + data.jobID + ' - ' + data.toolnameLong + '</a></div>' ;
+                    return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="'+data.jobID+' - ' + data.toolnameLong+ '">'
+                        + data.jobID + '<span class="search-result-tool"> - ' + data.toolnameLong + '</span></a></div>' ;
                 }
             }
-        });
+        })
     }
 };
 

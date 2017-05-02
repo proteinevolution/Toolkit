@@ -199,15 +199,24 @@ FIELDSET {
     background-color: white;
 }
 
-.tt-menu, .tt-dataset {
+.tt-menu{
     position: relative;
     -webkit-box-shadow: 0px 0px 1px 0px #cacaca;
     -moz-box-shadow: 0px 0px 1px 0px #cacaca;
     box-shadow: 0px 0px 1px 0px #cacaca;
     width: 100% !important;
     display: block;
+    margin-top: 5px !important;
     margin: auto;
     border-radius: 4px;
+    background-color: white;
+}
+
+.tt-dataset {
+    position: relative;
+    width: 100% !important;
+    display: block;
+    margin: auto;
 }
 
 .tt-dropdown {
@@ -219,7 +228,6 @@ FIELDSET {
     display: block;
     margin: auto;
     text-align: center;
-    background-color: white;
 }
 
 .search-results-dropdown {
@@ -234,10 +242,6 @@ FIELDSET {
     padding: 0px 0px 5px 9px;
 }
 
-.search-results{
-    color: black;
-    font-size: 0.8em;
-}
 
 .list-group-item-notfound {
     display: block;
