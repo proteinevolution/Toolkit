@@ -11,7 +11,7 @@ window.call404 = function(elem : any, isInit: boolean) : any {
     if(!isInit) {
         let ErrorOpts = {
             colorscheme: {
-                "scheme": "cinema"
+                "scheme": "taylor"
             },
             el: document.getElementById("404msa"),
             vis: {
