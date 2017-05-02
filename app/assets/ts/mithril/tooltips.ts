@@ -70,3 +70,9 @@ $( "#ret" ).prop('title', 'Sequence retrieval using a list of accession IDs');
 $( "#s2id" ).prop('title', 'Extraction of accessions IDs');
 
 $( "#reformat" ).prop('title', 'Sequence reformatting utility');
+
+$('.toolsec a').tooltipster({
+    theme: 'tooltipster-borderless',
+    position: 'bottom',
+    animation: 'grow'
+});
