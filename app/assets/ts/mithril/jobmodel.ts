@@ -62,7 +62,7 @@ window.JobModel = {
         return messages().push(msg);
     }, */
 
-    update: function(args : any, value : any) : any {
+    update: function(args : any, value : string) : any {
         if (args.isJob) {
             return m.request({
                 method: 'GET',
