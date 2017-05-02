@@ -949,7 +949,7 @@ class alignmentVal implements ToolkitValidator {
         samccIsValid = false;
 
         if(!this.elem.reformat('atoms'))
-            feedback(false, "Must have at least 25 sequences starting with \"ATOM\"");
+            feedback(false, "Must have at least 25 sequences starting with \"ATOM\"", "error");
 
         else if (this.elem.val() == "") {
             feedback(false);
@@ -957,7 +957,7 @@ class alignmentVal implements ToolkitValidator {
         }
 
         else {
-            feedback(false, "Valid input", "success");
+            $("#validOrNot").css("display", "block").html("Valid input").removeClass("alert").addClass("success");
             samccIsValid = true;
         }
     }

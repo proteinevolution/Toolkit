@@ -1,7 +1,13 @@
 /// <reference path="validation.ts"/>
 
 
+
+
 let paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
+
+    function helixValid(helix:string) : boolean{
+        return (/[a-g];[a-zA-Z0-9];\d+;\d+/g.test(helix))
+    }
 
     if(!isInit) {
 
@@ -11,6 +17,7 @@ let paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
             toolname = "unknown";
             console.warn("toolname unspecified");
         }
+
 
         return $(elem).on("keyup mouseover", function (e) {
             setTimeout(function () {
@@ -42,20 +49,37 @@ let paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
                         }
                         break;
                     case "samcc":
-                        if(samccIsValid) {
                             let counter = 0;
-                            if ($("#samcc_helixone").val() == "a")
+
+                            if (helixValid($("#samcc_helixone").val())) {
+                                $("#samcc_helixone").css("background-color", "rgb(219, 255, 219)");
                                 counter++;
-                            if ($("#samcc_helixtwo").val() == "a")
+                            }
+                            else $( "#samcc_helixone" ).css("background-color", "rgb(255, 221, 221)");
+
+
+                            if (helixValid($("#samcc_helixtwo").val())) {
+                                $("#samcc_helixtwo").css("background-color", "rgb(219, 255, 219)");
                                 counter++;
-                            if ($("#samcc_helixthree").val() == "a")
+                            }
+                            else $( "#samcc_helixtwo" ).css("background-color", "rgb(255, 221, 221)");
+
+                            if (helixValid($("#samcc_helixthree").val())) {
+                                $("#samcc_helixthree").css("background-color", "rgb(219, 255, 219)");
                                 counter++;
-                            if ($("#samcc_helixfour").val() == "a")
+                                }
+                            else $( "#samcc_helixthree" ).css("background-color", "rgb(255, 221, 221)");
+
+                            if (helixValid($("#samcc_helixfour").val())) {
+                                $("#samcc_helixfour").css("background-color", "rgb(219, 255, 219)");
                                 counter++;
-                            if (counter == 4)
+                            }
+                             else $( "#samcc_helixfour" ).css("background-color", "rgb(255, 221, 221)");
+
+
+                            if (counter == 4 && samccIsValid)
                                 $(".submitJob").prop("disabled", false);
                             else $(".submitJob").prop("disabled", true);
-                        }
                         break;
                     default:
                         break;
@@ -63,6 +87,5 @@ let paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
             }, 500)
 
             })
-
     }
 };
