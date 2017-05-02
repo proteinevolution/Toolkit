@@ -128,13 +128,11 @@ JobErrorComponent = {
         return {}
     },
     view: function(ctrl, args) {
-        return m("div", { class: "running-panel" }, [
-            m("table", { config: foundationConfig },
-                m("tbody", [
-                    m("tr", [m("td", "JobID"), m("td", args.job().jobID)]),
-                    m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])
-                ])
-            ),
+        return m("div", { class: "running-panel", config: foundationConfig }, [
+            m('h5', "Your Job has reached error state!"),
+            m("div", {"class": "processJobIdContainer"},
+                m('b', "Job ID:"),
+                m('p', ' ' + args.job().jobID)),
             //m("h6", "Job has reached Error state"),
             //m("br"),
             //m("br"),
@@ -179,13 +177,11 @@ JobErrorComponent = {
 
 JobQueuedComponent = {
     view: function(ctrl, args) {
-        return m("div", { class: "queued-panel" }, [
-            m("table", { config: foundationConfig },
-                m("tbody", [
-                    m("tr", [ m("td", "JobID"), m("td", args.job().jobID)]),
-                    m("tr", [ m("td", "Created On"), m("td", args.job().createdOn)])
-                ])
-            )
+        return m("div", { class: "queued-panel", config: foundationConfig }, [
+            m('h5', "Your submission is queued!"),
+            m("div", {"class": "processJobIdContainer"},
+                m('b', "Job ID:"),
+                m('p', ' ' + args.job().jobID)),
         ]);
     }
 };
@@ -199,13 +195,11 @@ JobRunningComponent = {
       return {}
     },
     view: function(ctrl, args) {
-        return m("div", { class: "running-panel" }, [
-            m("table", { config: foundationConfig },
-                m("tbody", [
-                    m("tr", [m("td", "JobID"), m("td", args.job().jobID)]),
-                    m("tr", [m("td", "Created On"), m("td", args.job().createdOn)])
-                ])
-            ),
+        return m("div", { class: "running-panel" , config: foundationConfig}, [
+            m('h5', "Your submission is processing!"),
+            m("div", {"class": "processJobIdContainer"},
+                m('b', "Job ID:"),
+                m('p', ' ' + args.job().jobID)),
             JobRunningComponent.log.map(function(logElem){
                 if(logElem == "")
                     return;
@@ -434,10 +428,10 @@ JobTabsComponent = {
                                             mapParam(elements[0], ctrl)
                                         )
                                     ),
-                                    elements.length > 1 ? m("div", { class: "row", style: "margin-top: 10px;" },
+                                    elements.length > 1 ? m("div", { class: "row", style: "margin-top: 35px;" },
                                         elements.slice(1).map(function(param) {
                                             //console.log(JSON.stringify(mapParam(param,ctrl)));
-                                            return m("div", {"class" : "large-6 medium-3 small-1 columns"},
+                                            return m("div", {class : "large-6 medium-3 small-1 columns", style: "padding-right: 20px"},
                                                 mapParam(param, ctrl));
                                         })
                                     ) : void 0
