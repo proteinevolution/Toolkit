@@ -1,3 +1,4 @@
+/// <reference path="validation.ts"/>
 interface Window { JobModel: any; }
 window.JobModel = {
     paramValues: {},
@@ -99,6 +100,9 @@ window.JobModel = {
         // Update the value with the one from the local storage
         let resultcookie = localStorage.getItem("resultcookie");
         if (resultcookie) {
+            setTimeout(function(){
+                validationProcess($('#alignment'),$("#toolnameAccess").val());
+            }, 100);
             window.JobModel.paramValues["alignment"] = resultcookie;
             localStorage.removeItem("resultcookie");
         }
