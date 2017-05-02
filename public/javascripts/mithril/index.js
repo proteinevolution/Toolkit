@@ -44,7 +44,7 @@ typeAhead = function (elem, isInit) {
         return $(elem).typeahead({
             hint: true,
             highlight: true,
-            minLength: 3
+            minLength: 1
         }, {
             source: engine.ttAdapter(),
             name: 'jobList',
@@ -54,7 +54,7 @@ typeAhead = function (elem, isInit) {
                 empty: ['<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>'],
                 suggestion: function (data) {
                     console.log(data);
-                    return '<div class="list-group-item"><a href="#/jobs/' + data.jobID + '">' + data.jobID + '</a> - ' + data.toolnameLong + '</div>';
+                    return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '">' + data.jobID + ' - ' + data.toolnameLong + '</a></div>' ;
                 }
             }
         });
