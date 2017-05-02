@@ -57,6 +57,8 @@ lazy val metadata = List(
 )
 
 
+
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtWeb)
   .settings(
@@ -83,10 +85,11 @@ lazy val root = (project in file("."))
       "org.webjars"         % "font-awesome"          % "4.7.0",
       "org.webjars"         % "select2"               % "4.0.3")),
     pipelineStages := Seq(digest, gzip),
-    compile in Compile <<= (compile in Compile) dependsOn scalaJSPipeline,
+    compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
   )
+
 
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
@@ -102,7 +105,8 @@ lazy val client = (project in file("client")).settings(
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
     "org.scala-js"  %%% "scalajs-dom"       % "0.9.1",
-    "co.technius"   %%% "scalajs-mithril"   % "0.1.0"
+    "co.technius"   %%% "scalajs-mithril"   % "0.1.0",
+    "be.doeraene"   %%% "scalajs-jquery"    % "0.9.1"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 
