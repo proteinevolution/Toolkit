@@ -80,7 +80,14 @@
         <!-- Slick Slider -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("slick.min.js"))"></script>
 
-        <!-- FloatingScroll -->
+        <!-- Tooltipster -->
+        <link href="@routes.WebJarAssets.at(webJarAssets.locate("tooltipster.bundle.min.css"))" rel="stylesheet">
+        <script src="@routes.WebJarAssets.at(webJarAssets.locate("tooltipster.bundle.min.js"))"></script>
+
+
+
+
+            <!-- FloatingScroll -->
         <script src="@routes.Assets.versioned("javascripts/vendor/floatingscroll.min.js")" type="text/javascript"></script>
         <link href="@routes.Assets.versioned("styles/floatingscroll.css")" rel="stylesheet">
 
@@ -328,6 +335,7 @@
                 var view = "@view";
                 $(document).ready(function () {
                     $(document).foundation();
+                    $('.tooltipster').tooltipster();
                     switch (view) {
                         case "":
                             break;
