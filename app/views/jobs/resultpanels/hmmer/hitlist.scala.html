@@ -33,7 +33,7 @@
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div>
-            <a class="success button tiny resubmitSection" onclick="resubmitSection()" type="button" id="resubmitSection">Resubmit section</a>
+            <a class="success button tiny resubmitSection" onclick="resubmitSection('@{result.query.seq}', '>' + '@{result.query.accession}')" type="button" id="resubmitSection">Resubmit section</a>
         </div>
 
         <div id='blastviz'>
@@ -160,11 +160,6 @@
                 // delete all checkboxes from array
                 checkboxes = [];
             }
-        }
-
-
-        function resubmitSection() {
-            resubmitSection('@{result.query.seq}', '>' + '@{result.query.accession}');
         }
 
 
