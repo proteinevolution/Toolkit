@@ -106,7 +106,8 @@ lazy val client = (project in file("client")).settings(
   libraryDependencies ++= Seq(
     "org.scala-js"  %%% "scalajs-dom"       % "0.9.1",
     "co.technius"   %%% "scalajs-mithril"   % "0.1.0",
-    "be.doeraene"   %%% "scalajs-jquery"    % "0.9.1"
+    "be.doeraene"   %%% "scalajs-jquery"    % "0.9.1",
+    "com.lihaoyi"   %%% "upickle"           % "0.4.3"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 

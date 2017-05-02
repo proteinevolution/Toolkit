@@ -289,7 +289,6 @@
         </div>
 
 
-
         <!-- Script Inclusions -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js"></script>
 
@@ -297,18 +296,12 @@
         <!-- Foundation 6 -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
 
-            <!--
-            The file foundation.reveal.js must be included in your JavaScript to use this plugin, along with foundation.core.js.
-             This plugin also requires these utility libraries:
-            -->
-
 
             <!-- Reformat Javascript Library -->
         <script src="@routes.Assets.versioned("javascripts/vendor/reformat/src/reformat.js")"></script>
 
 
-
-            <!-- CoffeeScript && Mithril Assets -->
+            <!-- TypeScript && Mithril Assets -->
 
         <script src="@routes.Assets.versioned("javascripts/mithril/frontend.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/blast-visualization.js")"></script>
@@ -318,25 +311,18 @@
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-io-newick.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-vis-tree.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/snap.svg-min.js")'></script>
-
         <script src="@routes.Assets.versioned("javascripts/mithril/index.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
-        <script src="@routes.Assets.versioned("javascripts/mithril/router.js")"></script>
+
+
+            <!-- ScalaJS assets -->
+
+        @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
+        <script>Router().main();</script>
 
 
 
         <script type="text/javascript">
-
-
-                //TODO connect this to backend somehow to be able to write and store articles for landing page
-                //ajax call to push article into the database
-//                var articlePushRoute = jsRoutes.controllers.DataController.writeArticle("Welcome",
-//                        "The Bioinformatics Toolkit is a platform that integrates a great variety of tools for protein sequence analysis.", "/#/",
-//                        "/assets/images/lambda0.5_crop2.png");
-//                $.ajax({
-//                    'url': articlePushRoute.url,
-//                    'method': articlePushRoute.method
-//                });
 
 
                 var view = "@view";
