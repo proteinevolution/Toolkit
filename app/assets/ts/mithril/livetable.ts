@@ -12,18 +12,18 @@ let trafficBarConfig = function(lastJob : any) {
 
 class LoadBar {
     static load : number = 0.5;
-    static updateLoad (load : number) : any {
+    static updateLoad(load : number) : any {
         LoadBar.load = load;
         m.redraw.strategy("diff");
         m.redraw();
     }
-    static controller (args : any) : any {
+    static controller(args : any) : any {
         if (args) {
             LoadBar.load      = args.load      ? parseFloat(args.load) : LoadBar.load;
         }
         return {}
     }
-    static view (ctrl : any, args : any) : any {
+    static view(ctrl : any, args : any) : any {
         let currentLoad : number = LoadBar.load,
             loadval : number = Math.ceil(currentLoad * 100),
             loadString : string = loadval + "%",
