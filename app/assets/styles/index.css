@@ -201,42 +201,17 @@ FIELDSET {
 
 .tt-menu, .tt-dataset {
     position: relative;
-    -webkit-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
-    -moz-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
-    box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
+    -webkit-box-shadow: 0px 0px 1px 0px #cacaca;
+    -moz-box-shadow: 0px 0px 1px 0px #cacaca;
+    box-shadow: 0px 0px 1px 0px #cacaca;
     width: 100% !important;
     display: block;
     margin: auto;
+    border-radius: 4px;
 }
 
 .tt-dropdown {
     overflow-y: auto
-}
-
-.tt-menu:before, .tt-menu:after {
-    content: '';
-    display: block;
-    position: absolute;
-    bottom: 100%;
-    width: 0;
-    height: 0;
-}
-.tt-menu:before {
-    left: 15px;
-    top: -8px;
-    border: 13px solid transparent;
-    border-bottom-color: dimgray;
-    -webkit-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
-    -moz-box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
-    box-shadow: 0px 0px 5px 0px rgba(102,102,102,1);
-    transform:rotate(45deg);
-    -ms-transform:rotate(45deg);
-    -webkit-transform:rotate(45deg);
-}
-.tt-menu:after {
-    left: 16px;
-    border: 12px solid transparent;
-    border-bottom-color: #fff;
 }
 
 
@@ -256,7 +231,12 @@ FIELDSET {
 .list-group-item {
     width: 100%;
     text-align: left;
-    padding: 5px 5px 5px 5px;
+    padding: 0px 0px 5px 9px;
+}
+
+.search-results{
+    color: black;
+    font-size: 0.8em;
 }
 
 .list-group-item-notfound {
