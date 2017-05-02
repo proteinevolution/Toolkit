@@ -129,7 +129,7 @@ JobErrorComponent = {
     },
     view: function(ctrl, args) {
         return m("div", { class: "running-panel", config: foundationConfig }, [
-            m('h5', "Your Job has reached error state!"),
+            m('h6', "Your Job has reached error state!"),
             m("div", {"class": "processJobIdContainer"},
                 m('b', "Job ID:"),
                 m('p', ' ' + args.job().jobID)),
@@ -178,7 +178,7 @@ JobErrorComponent = {
 JobQueuedComponent = {
     view: function(ctrl, args) {
         return m("div", { class: "queued-panel", config: foundationConfig }, [
-            m('h5', "Your submission is queued!"),
+            m('h6', "Your submission is queued!"),
             m("div", {"class": "processJobIdContainer"},
                 m('b', "Job ID:"),
                 m('p', ' ' + args.job().jobID)),
@@ -196,7 +196,7 @@ JobRunningComponent = {
     },
     view: function(ctrl, args) {
         return m("div", { class: "running-panel" , config: foundationConfig}, [
-            m('h5', "Your submission is processing!"),
+            m('h6', "Your submission is processing!"),
             m("div", {"class": "processJobIdContainer"},
                 m('b', "Job ID:"),
                 m('p', ' ' + args.job().jobID)),
