@@ -1,4 +1,4 @@
-lazy val akkaVersion = "2.4.17"
+lazy val akkaVersion = "2.4.18"
 
 lazy val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka"     %% "akka-actor"               % akkaVersion,
