@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#set $http_proxy 
+source ~/.bashrc
+
 DBNAME="GeoLite2-City"
 
 function die {
