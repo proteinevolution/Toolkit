@@ -5,7 +5,7 @@ import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter}
 
 case class UserData(nameLogin : String,                // User Login Name
                     password  : String,                // Password of the User (Hashed)
-                    eMail     : List[String],          // User eMail Address
+                    eMail     : String,          // User eMail Address
                     nameFirst : Option[String] = None, // User First Name
                     nameLast  : Option[String] = None, // User Last Name
                     institute : Option[String] = None, // User Workplace
@@ -53,7 +53,7 @@ object UserData {
     def read(bson: BSONDocument): UserData = UserData(
         nameLogin  = bson.getAs[String](NAMELOGIN).getOrElse(""),
         password   = bson.getAs[String](PASSWORD).getOrElse(""),
-        eMail      = bson.getAs[List[String]](EMAIL).getOrElse(List.empty),
+        eMail      = bson.getAs[String](EMAIL).getOrElse(""),
         nameFirst  = bson.getAs[String](NAMEFIRST),
         nameLast   = bson.getAs[String](NAMELAST),
         institute  = bson.getAs[String](INSTITUTE),

@@ -159,7 +159,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
 
           // if no error, then insert the user to the collection
           signInFormUser => {
-            val futureUser = findUser(BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
+            val futureUser = findUser(BSONDocument(User.EMAIL -> signInFormUser.nameLogin))
             futureUser.flatMap {
               case Some(databaseUser) =>
                 // Check the password
@@ -247,25 +247,24 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                 Ok(MustAcceptToS())
               }
             } else {
-              // Check database for existing users with the same login name
+              // Check database for existing users with the same email
               val selector = BSONDocument("$or"          ->
-                                     List(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin)))
+                                     List(BSONDocument(User.EMAIL -> signUpFormUser.getUserData.eMail)))
                                           //BSONDocument(User.EMAIL     -> signUpFormUser.getUserData.eMail.head)))
               findUser(selector).flatMap {
                 case Some(otherUser) =>
                   //Logger.info("Found a user: " + otherUser.getUserData)
-                  if (otherUser.getUserData.nameLogin == signUpFormUser.getUserData.nameLogin) {
-                    // Other user with the same username exists. Show error message.
-                    Future.successful(Ok(AccountNameUsed()))
-                  } else {
+                  if (otherUser.getUserData.eMail == signUpFormUser.getUserData.eMail) {
                     // Other user with the same eMail exists. Show error message.
                     Future.successful(Ok(AccountEmailUsed()))
+                  } else {
+                    Future.successful(Ok)
                   }
                 case None =>
                   // Create the database entry.
                   val newUser = signUpFormUser.copy(userID     = BSONObjectID.generate(),
                                                     sessionID  = None,
-                                                    userTokens = List(UserToken(tokenType = 1, eMail = Some(signUpFormUser.getUserData.eMail.head))))
+                                                    userTokens = List(UserToken(tokenType = 1, eMail = Some(signUpFormUser.getUserData.eMail))))
                   upsertUser(newUser).map {
                     case Some(registeredUser) =>
                       // All done. User is registered, now send the welcome eMail
@@ -397,17 +396,8 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
         },
       // when there are no errors, then insert the user to the collection
       {
-        case Some(formOutput : (Option[String], Option[String])) =>
-          val selector : BSONDocument = formOutput match {
-            case (Some(nameLogin: String), Some(eMail: String)) =>
-              BSONDocument("$or" -> List(BSONDocument(User.NAMELOGIN -> nameLogin), BSONDocument(User.EMAIL -> eMail)))
-            case (Some(nameLogin: String), None) =>
-              BSONDocument(User.NAMELOGIN -> nameLogin)
-            case (None, Some(eMail: String)) =>
-              BSONDocument(User.EMAIL -> eMail)
-            case (None, None) =>
-              BSONDocument.empty
-          }
+        case Some(email : (String)) =>
+          val selector = BSONDocument(User.EMAIL -> email)
           if (selector != BSONDocument.empty) {
             findUser(selector).flatMap {
               case Some(user) =>
@@ -511,10 +501,10 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
     * @param token
     * @return
     */
-  def verification(userName : String, token : String) : Action[AnyContent] = Action.async { implicit request =>
+  def verification(email : String, token : String) : Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user : User =>
       // Grab the user from the database in case that the logged in user is not the user to verify
-      findUser(BSONDocument(User.NAMELOGIN -> userName)).flatMap {
+      findUser(BSONDocument(User.EMAIL -> email)).flatMap {
         case Some(userToVerify) =>
           // Filter the correct token
           val matchingToken = userToVerify.userTokens.find(_.token == token)
@@ -579,7 +569,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
 
 
                 case 3 =>
-                  // Give a token to the current user to allow them to change the password in a different view
+                  // Give a token to the current user to allow them to change the password in a different view (Password Recovery)
                   val newToken = UserToken(tokenType=4, token=usedToken.token, userID = Some(userToVerify.userID))
                   modifyUserWithCache(BSONDocument(User.IDDB        -> user.userID),
                                       BSONDocument("$set"           ->

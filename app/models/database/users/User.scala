@@ -25,7 +25,7 @@ case class User(userID        : BSONObjectID,                        // ID of th
 
   def getUserData = {
     // This should only return user data when the user is logged in.
-    userData.getOrElse(UserData("invalid", "invalid", List("invalid")))
+    userData.getOrElse(UserData("invalid", "invalid", "invalid"))
   }
 
   // Mock up function to show how a possible function to check user levels could look like.
