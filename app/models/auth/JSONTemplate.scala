@@ -39,7 +39,7 @@ trait JSONTemplate {
   }
 
   def SignedUp : JsValue = {
-    authMessage(s"Your Account has been created.\n Please Check your eMails to Verify your Account.",
+    authMessage(s"Your Account has been created.\n Please Check your emails to Verify your Account.",
       success    = true)
   }
 
@@ -59,7 +59,7 @@ trait JSONTemplate {
   }
 
   def AccountEmailUsed() : JsValue = {
-    authMessage("This eMail is already used, please try a different one.")
+    authMessage("This email is already used, please try a different one.")
   }
 
   def LoginIncorrect() : JsValue = {
@@ -71,7 +71,7 @@ trait JSONTemplate {
   }
 
   def MustVerify() : JsValue = {
-    authMessage("Please verify your account.\nCheck Your eMails for the verification token.")
+    authMessage("Please verify your account.\nCheck Your emails for the verification link.")
   }
 
   def AlreadyLoggedIn() : JsValue = {
@@ -111,13 +111,13 @@ trait JSONTemplate {
   }
 
   def PasswordChanged(user : User) : JsValue = {
-    authMessage("Password has been accepted.\nPlease check your eMails.",
+    authMessage("Password has been accepted.\nPlease check your emails.",
       success    = true,
       userOption = Some(user))
   }
 
   def PasswordRequestSent : JsValue = {
-    authMessage("We have sent You a token for resetting Your password.\nPlease check your eMails.",
+    authMessage("We have sent You a link for resetting Your password.\nPlease check your emails.",
       success    = true)
   }
 
@@ -128,12 +128,12 @@ trait JSONTemplate {
   }
 
   def NoSuchUser : JsValue = {
-    authMessage("Could not find any Users with the matching user name or eMail address.",
+    authMessage("Could not find any Users with the matching user name or email address.",
       success    = false)
   }
 
   def OneParameterNeeded : JsValue = {
-    authMessage("Need either a user name or a eMail address.",
+    authMessage("Need either a user name or a email address.",
       success    = false)
   }
 

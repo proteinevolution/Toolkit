@@ -256,14 +256,14 @@ let regions = [ ["","Country"],
     ["ZWE","Zimbabwe"] ];
 
 class SignIn {
-    static nameLogin : string = "";
+    static email : string = "";
     static password  : string = "";
-    static nameLoginSetter (nameLogin : string) : void { SignIn.nameLogin = nameLogin; }
+    static nameLoginSetter (nameLogin : string) : void { SignIn.email = nameLogin; }
     static passwordSetter  (password  : string) : void { SignIn.password  = password;  }
 
     static submit(event : Event) : void {
         event.preventDefault();
-        let dataS = {nameLogin:SignIn.nameLogin, password:SignIn.password};
+        let dataS = {nameLogin:SignIn.email, password:SignIn.password};
         let route = jsRoutes.controllers.Auth.signInSubmit();
         m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
             dataS = null;
@@ -283,17 +283,17 @@ class SignIn {
         return m("div", { "class" : "auth-form" },
             m("form", { 'data-abide': 'ajax', id: 'signin-form', novalidate:'novalidate', onsubmit: SignIn.submit }, [
                 m("div", m("label",
-                    m("input", { id:         'nameLogin',
-                                 name:       'nameLogin',
+                    m("input", { id:         'emailLogin',
+                                 name:       'emailLogin',
                                  pattern:    '[a-zA-Z0-9_]{6,40}',
-                                 placeholder:'Username',
+                                 placeholder:'email',
                                  required:   'required',
                                  type:       'text',
                                  onkeyup:    m.withAttr("value", SignIn.nameLoginSetter),
                                  onchange:   m.withAttr("value", SignIn.nameLoginSetter),
                                  onfocus:     focusInNoRedraw,
                                  onblur:      focusOutRedraw,
-                                 value:      SignIn.nameLogin
+                                 value:      SignIn.email
                     })
                 )),
                 m("div", m("label",
@@ -314,7 +314,12 @@ class SignIn {
                              id:    'signin-submit',
                              type:  'submit',
                              value: 'Sign In'
-                })
+                }),
+                m("a", {
+                    "class": "forgot-password",
+                    onclick: function(){$( "#login-tabs" ).tabs({ active: 2 });}
+                    },
+                    "Forgot password?"),
             ])
         )
     }
@@ -379,8 +384,8 @@ class SignUp {
                 m("div", m("label", [
                     m("input", { id:         'nameLogin',
                                  name:       'nameLogin',
-                                 pattern:    '[a-zA-Z0-9_]{6,40}',
-                                 placeholder:'Username',
+                                 pattern:    '[a-zA-Z0-9\s]{1,10}',
+                                 placeholder:'Name',
                                  required:   'required',
                                  type:       'text',
                                  onkeyup:     m.withAttr("value", SignUp.nameLoginSetter),
@@ -389,7 +394,22 @@ class SignUp {
                                  onblur:      focusOutRedraw,
                                  value:       SignUp.nameLogin
                     }),
-                    m("span", {"class":"form-error"}, "Username must be at least 6 characters long!")
+                    m("span", {"class":"form-error"}, "Name must be at least 1 character long!")
+                ])),
+                m("div", m("label", [
+                    m("input", { id:          'eMail',
+                        name:        'eMail',
+                        pattern:     'email',
+                        placeholder: 'E-Mail',
+                        required:    'required',
+                        type:        'text',
+                        onkeyup:     m.withAttr("value", SignUp.eMailSetter),
+                        onchange:    m.withAttr("value", SignUp.eMailSetter),
+                        onfocus:     focusInNoRedraw,
+                        onblur:      focusOutRedraw,
+                        value:       SignUp.eMail
+                    }),
+                    m("span", {"class":"form-error"}, "Please enter a valid e-Mail address!")
                 ])),
                 m("div", m("label", [
                     m("input", { id:         'passwordCheck',
@@ -418,21 +438,6 @@ class SignUp {
                     }),
                     m("span", {"class":"form-error"}, "Passwords must match!")
                 ])),
-                m("div", m("label", [
-                    m("input", { id:          'eMail',
-                                 name:        'eMail',
-                                 pattern:     'email',
-                                 placeholder: 'E-Mail',
-                                 required:    'required',
-                                 type:        'text',
-                                 onkeyup:     m.withAttr("value", SignUp.eMailSetter),
-                                 onchange:    m.withAttr("value", SignUp.eMailSetter),
-                                 onfocus:     focusInNoRedraw,
-                                 onblur:      focusOutRedraw,
-                                 value:       SignUp.eMail
-                    }),
-                    m("span", {"class":"form-error"}, "Please enter a valid e-Mail address!")
-                ])),
                 m("div", m("label", {id:'checklabel'}, [
                     m("input", { id:       'acceptToS',
                                  name:     'acceptToS',
@@ -441,7 +446,7 @@ class SignUp {
                                  onchange: m.withAttr("checked", SignUp.acceptToSSetter),
                                  value:    SignUp.acceptToS
                     }),
-                    "I Accept the Terms of Service",
+                    m("label", "I Accept the "), m("a", {"data-open": "privacyPolicyModal"}, "Privacy Policy") ,
                     m("span", {"class":"form-error", id:'acceptToSText'}, "You must accept the ToS!")
                 ])),
                 m("input", { "class": "input small expanded secondary button" + (SignUp.formValid? "" : " disabled"),
@@ -455,19 +460,17 @@ class SignUp {
 }
 
 class ForgotPassword {
-    static nameLogin : string = "";
     static eMail     : string = "";
-    static nameLoginSetter (nameLogin  : string) : void { ForgotPassword.nameLogin = nameLogin; }
     static eMailSetter     (eMail      : string) : void { ForgotPassword.eMail     = eMail;     }
 
     static submit(event : Event) : void {
         event.preventDefault();
-        let dataS = {nameLogin:ForgotPassword.nameLogin, eMail:ForgotPassword.eMail};
+        let dataS = {eMail:ForgotPassword.eMail};
         console.log(dataS);
         let route = jsRoutes.controllers.Auth.resetPassword();
         m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
             dataS = null;
-            if (authMessage.successful) { SignIn.password = null; SignIn.nameLogin = null; }
+            if (authMessage.successful) { SignIn.password = null; SignIn.email = null; }
             Auth.updateStatus(authMessage);
         });
     }
@@ -483,19 +486,8 @@ class ForgotPassword {
                         novalidate:   'novalidate',
                         onsubmit:     ForgotPassword.submit
             }, [
-                m("div", m("label",
-                    m("input", { id:          'nameLogin',
-                                 name:        'nameLogin',
-                                 pattern:     '[a-zA-Z0-9_]{6,40}',
-                                 placeholder: 'Username',
-                                 type:        'text',
-                                 onkeyup:     m.withAttr("value", ForgotPassword.nameLoginSetter),
-                                 onchange:    m.withAttr("value", ForgotPassword.nameLoginSetter),
-                                 onfocus:     focusInNoRedraw,
-                                 onblur:      focusOutRedraw,
-                                 value:       ForgotPassword.nameLogin
-                    })
-                )),
+                m("label","Provide your account email address to receive an email to reset your password."),
+                m("br"),
                 m("div", m("label",
                     m("input", { id:          'eMail',
                                  name:        'eMail',
@@ -512,7 +504,7 @@ class ForgotPassword {
                 m("input", { "class": "input small expanded secondary button",
                              id:    'signin-submit',
                              type:  'submit',
-                             value: 'Sign In'
+                             value: 'Send'
                 })
             ])
         )
@@ -849,7 +841,7 @@ class PasswordReset {
                     !Auth.message.successful ?
                         m("div", {"class":"callout alert", id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message) :
                         m("div", {"class":"callout",       id:"auth-alert", onclick:Auth.resetStatus()}, Auth.message.message),
-                m("div", {}, "Please Enter a new Password."),
+                m("label", {}, "Please Enter a new Password."), m("br"),
                 m("div", m("label", [
                     m("input", { id:         'passwordCheck',
                                  pattern:    '.{8,128}',
@@ -965,7 +957,7 @@ class ProfileTabs {
                           id  :    "auth-alert",
                           onclick: Auth.resetStatus()}, Auth.message.message),
             m("div", {"class":"tabs-panel", id:"auth-tab-user"}, m("div", [
-                m("p", {id:"eMailDisplay"}, Auth.user.eMail[0]),
+                m("p", {id:"eMailDisplay"}, Auth.user.eMail),
                 m("input", { type:  "button",
                              "class": "small expanded secondary button",
                              onclick: function(e : Event) { window.location.replace("/signout") },

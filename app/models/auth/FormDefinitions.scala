@@ -40,7 +40,7 @@ object FormDefinitions {
           accountType   = if (acceptToS) 0 else -1,
           userData      = Some(UserData(nameLogin = nameLogin,
                                         password  = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
-                                        eMail     = List(eMail))),
+                                        eMail     = eMail)),
           jobs          = user.jobs,
           dateLastLogin = Some(new DateTime()),
           dateCreated   = Some(new DateTime()),
@@ -73,7 +73,7 @@ object FormDefinitions {
     */
   def ProfileEdit(user : User) = Form(
     mapping(
-      UserData.EMAIL     -> list(email),
+      UserData.EMAIL     -> email,
       UserData.NAMEFIRST -> optional(text(1,100) verifying pattern(textRegex, error = "error.NameFirst")),
       UserData.NAMELAST  -> optional(text(1,100) verifying pattern(textRegex, error = "error.NameLast")),
       UserData.INSTITUTE -> optional(text(1,100) verifying pattern(textRegex, error = "error.Institute")),
@@ -120,11 +120,8 @@ object FormDefinitions {
   )
 
   def ForgottenPasswordEdit = Form(
-    mapping(
-      UserData.NAMELOGIN -> optional (text(6,40) verifying pattern(textRegex, error = "error.NameLogin")),
-      UserData.EMAIL     -> optional (email)) {
-      (nameLoginOpt : Option[String], eMailOpt : Option[String]) =>
-        Some(nameLoginOpt, eMailOpt)
+    mapping(UserData.EMAIL     -> email) {
+      Some(_)
     } { _ =>
       None
     }
