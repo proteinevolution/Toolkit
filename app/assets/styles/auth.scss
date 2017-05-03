@@ -54,8 +54,15 @@
 }
 
 .auth-form label {
-  font-size: 0.75em;
+  font-size: 0.8em;
+  display: flex;
 }
+
+.auth-form a {
+  font-size: 0.8em;
+  padding: unset;
+}
+
 
 .auth-form input {
   background-color: transparent;
@@ -74,6 +81,9 @@
   margin: 3em auto;
 }
 
+.forgot-password{
+  font-size: 0.6em !important;
+}
 #edit-submit {
   width: 50%;
   background-color: #2E8C81;
@@ -216,4 +226,15 @@ button.loggedIn {
   /*position: absolute;*/
   /*top: 0px !important;*/
   /*left: 1135px !important;*/
+}
+
+
+.search-results{
+ color:  #262626;;
+  font-size: 0.8em;
+}
+
+.search-result-tool{
+  font-size: 0.55;
+
 }

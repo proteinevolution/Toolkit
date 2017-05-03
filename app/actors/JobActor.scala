@@ -324,7 +324,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
 
       // Create a log for this job
       // TODO may want to use a different way to identify our users
-      val isFromInstitute = user.getUserData.eMail.exists(_.matches(".+@tuebingen.mpg.de"))
+      val isFromInstitute = user.getUserData.eMail.matches(".+@tuebingen.mpg.de")
       this.currentJobLogs = this.currentJobLogs.updated(job.jobID,
                                                         JobEventLog(mainID      = job.mainID,
                                                                     toolName    = job.tool,

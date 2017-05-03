@@ -32,7 +32,7 @@ sealed trait MailTemplate {
     val email = Email(
       subject,
       "Toolkit Team <toolkitmpg@gmail.com>",
-      Seq(user.getUserData.nameLogin + " <" + user.getUserData.eMail.head + ">"),
+      Seq(user.getUserData.nameLogin + " <" + user.getUserData.eMail + ">"),
       attachments = Seq(),
       bodyText = Some(this.bodyText), // Text version of the E-Mail in case the User has no HTML E-Mail client
       bodyHtml = Some(this.bodyHtml)  // HTML formatted E-Mail content
@@ -60,7 +60,7 @@ case class NewUserWelcomeMail (userParam : User, token : String) extends MailTem
     s"""Welcome ${user.getUserData.nameLogin},
        |Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
        |To do this, visit
-       |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
+       |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.eMail}/$token
        |Your Toolkit Team
      """.stripMargin
   }
@@ -69,9 +69,9 @@ case class NewUserWelcomeMail (userParam : User, token : String) extends MailTem
     super.bodyHtmlTemplate(
       s"""Welcome ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.<br />
-       |To do this, click <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
+       |To do this, click <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.eMail}/$token\">here</a><br />
        |or copy this URL and visit this page in your browser:<br />
-       |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token<br />
+       |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.eMail}/$token<br />
        |Your Toolkit Team
      """.stripMargin
     )
@@ -87,7 +87,7 @@ case class ChangePasswordMail (userParam : User, token : String) extends MailTem
     s"""Hello ${user.getUserData.nameLogin},
         |You requested a password change.
         |To complete the process, visit
-        |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
+        |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.eMail}/$token
         |If You did not request this, then your account has been used by someone else.
         |Log in and change the password yourself to ensure that this other Person can no longer access your account.
         |Your Toolkit Team
@@ -98,9 +98,9 @@ case class ChangePasswordMail (userParam : User, token : String) extends MailTem
     super.bodyHtmlTemplate(
       s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""You requested a password change.<br />
-          |To complete the process, click <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
+          |To complete the process, click <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.eMail}/$token\">here</a><br />
           |or copy this URL and visit this page in your browser:<br />
-          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token<br />
+          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.eMail}/$token<br />
           |If You did not request this, then your account has been used by someone else.<br />
           |Log in and change the password yourself to ensure that this other Person can no longer access your account.<br />
           |Your Toolkit Team<br />
@@ -118,7 +118,7 @@ case class ResetPasswordMail (userParam : User, token : String) extends MailTemp
     s"""Hello ${user.getUserData.nameLogin},
         |You requested to reset your password and set a new one.
         |To complete the process, visit
-        |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
+        |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.eMail}/$token
         |If You did not request this, then someone may have tried to log into your account.
         |Your Toolkit Team
      """.stripMargin
@@ -128,9 +128,9 @@ case class ResetPasswordMail (userParam : User, token : String) extends MailTemp
     super.bodyHtmlTemplate(
       s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""You requested to reset your password and set a new one.<br />
-          |To complete the process, visit <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
+          |To complete the process, visit <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.eMail}/$token\">here</a><br />
           |or copy this URL and visit this page in your browser:<br />
-          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token<br />
+          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.eMail}/$token<br />
           |If You did not request this, then your account has been used by someone else.<br />
           |Log in and change the password yourself to ensure that this other Person can no longer access your account.<br />
           |Your Toolkit Team
