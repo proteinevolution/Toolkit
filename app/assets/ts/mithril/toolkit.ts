@@ -54,20 +54,20 @@ window.Toolkit = {
             JobListComponent.selectedJobID = null;
         }
         toolname = m.route.param("toolname");
-        m.request({url: "/checktool/" + toolname, method: "GET"}).catch(function (e) {
-            m.route("/404");
-            console.log("Tool not found", e);
-        }).then(function(data) {
-           //console.log(data);
-        });
+
+
         if (FrontendTools[toolname]) {
             viewComponent = function() { return FrontendTools[toolname]; };
-        } else {
+        }
+        else {
+
             job = window.JobModel.update(args, args.isJob ? jobID : toolname);
             viewComponent = function() {
                 return m(JobViewComponent, { job: job });
             };
+
         }
+
         return {
             viewComponent: viewComponent
         };
