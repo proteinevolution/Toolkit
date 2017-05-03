@@ -74,5 +74,5 @@ $( "#reformat" ).prop('title', 'Sequence reformatting utility');
 $('.toolsec a').tooltipster({
     theme: 'tooltipster-borderless',
     position: 'bottom',
-    animation: 'grow'
+    animation: 'fade'
 });

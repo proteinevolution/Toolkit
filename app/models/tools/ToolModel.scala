@@ -35,7 +35,10 @@ case class Tool(toolNameShort: String,
                 forwardAlignment: Seq[String],
                 forwardMultiSeq: Seq[String]) {
   def isToolName (toolName : String, caseSensitive : Boolean = false): Boolean = {
-    if (caseSensitive) {
+
+    if(toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ")
+      true
+    else if (caseSensitive) {
       toolNameAbbrev.contains(toolName) || toolNameShort.contains(toolName) || toolNameLong.contains(toolName)
     } else {
       toolNameAbbrev.toLowerCase.contains(toolName.toLowerCase) ||
@@ -53,6 +56,8 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
   // Encompasses all the toolnames
   object Toolnames {
 
+    final val ALNVIZ = "alnviz"
+    final val REFORMAT = "reformat"
     final val PSIBLAST = "psiblast"
     final val CLANS = "clans"
     final val TPRPRED = "tprpred"

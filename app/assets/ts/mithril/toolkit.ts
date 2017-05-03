@@ -8,7 +8,6 @@ let a = ['0', 'p', 'q', 'r', 'e', 'd', 'i'];
 
 let jobs = {};
 
-let Users = -1;
 
 interface Window { Toolkit: any; }
 
@@ -45,6 +44,7 @@ window.Toolkit = {
                 //sendMessage({ type: "RegisterJobs", "jobIDs": [jobID] });
                 // request job
                 m.request({url: "/api/job/load/" + jobID, method: "GET"}).catch(function (e) {
+                    m.route("/404");
                     console.log("Job Not found", e);
                 }).then(function (data) {
                     JobListComponent.pushJob(JobListComponent.Job(data), true);
@@ -54,6 +54,12 @@ window.Toolkit = {
             JobListComponent.selectedJobID = null;
         }
         toolname = m.route.param("toolname");
+        m.request({url: "/checktool/" + toolname, method: "GET"}).catch(function (e) {
+            m.route("/404");
+            console.log("Tool not found", e);
+        }).then(function(data) {
+           //console.log(data);
+        });
         if (FrontendTools[toolname]) {
             viewComponent = function() { return FrontendTools[toolname]; };
         } else {
