@@ -13,7 +13,7 @@ case class User(userID        : BSONObjectID,                        // ID of th
                 accountType   : Int                  = -1,           // User Access level
                 userData      : Option[UserData]     = None,         // Personal Data of the User //TODO possibly encrypt?
                 userConfig    : UserConfig           = UserConfig(), // Configurable parts for the user
-                userTokens    : List[UserToken]      = List.empty,
+                userToken     : Option[UserToken]    = None,
                 jobs          : List[String]         = List.empty,   // List of Jobs the User has
                 dateLastLogin : Option[DateTime],                    // Last seen on
                 dateCreated   : Option[DateTime],                    // Account creation date
@@ -62,7 +62,7 @@ object User {
   final val EMAIL         = s"$USERDATA.${UserData.EMAIL}"      //              email field
   final val PASSWORD      = s"$USERDATA.${UserData.PASSWORD}"      //              password field
   final val USERCONFIG    = "userConfig"
-  final val USERTOKENS    = "userTokens"                        //              tokens list
+  final val USERTOKEN     = "userToken"                        //              token
   final val JOBS          = "jobs"                              //              job reference pointers field
   final val ACCEPTEDTOS   = "acceptToS"                         // needed for checking if the TOS was accepted
   final val DATELASTLOGIN = "dateLastLogin"                     // name for the last login field
@@ -103,7 +103,7 @@ object User {
       accountType   = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
       userData      = bson.getAs[UserData](USERDATA),
       userConfig    = bson.getAs[UserConfig](USERCONFIG).getOrElse(UserConfig()),
-      userTokens    = bson.getAs[List[UserToken]](USERTOKENS).get,
+      userToken     = bson.getAs[UserToken](USERTOKEN),
       jobs          = bson.getAs[List[String]](JOBS).getOrElse(List.empty),
       dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => new DateTime(dt.value)),
       dateCreated   = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
@@ -119,7 +119,7 @@ object User {
       ACCOUNTTYPE   -> user.accountType,
       USERDATA      -> user.userData,
       USERCONFIG    -> user.userConfig,
-      USERTOKENS    -> user.userTokens,
+      USERTOKEN    -> user.userToken,
       JOBS          -> user.jobs,
       DATELASTLOGIN -> BSONDateTime(user.dateLastLogin.fold(-1L)(_.getMillis)),
       DATECREATED   -> BSONDateTime(user.dateCreated.fold(-1L)(_.getMillis)),
