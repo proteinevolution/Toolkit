@@ -39,9 +39,10 @@ select2Config = function(elem, isInit) {
 
 
 window.JobViewComponent = {
+
     view: function(ctrl, args) {
         if (!args.job()) {
-            return m("div", "Waiting for Job");
+            return m("div", "Waiting for Job"); // TODO Styling
         } else {
                 return m("div", {
                     id: "jobview"
