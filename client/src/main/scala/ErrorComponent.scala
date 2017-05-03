@@ -1,7 +1,6 @@
 import co.technius.scalajs.mithril.{Component, MithrilComponent, MithrilProp, m}
 
 import scala.scalajs.js
-import scala.util.matching.Regex
 import js.Dynamic.{global => g}
 import scala.util.Random
 

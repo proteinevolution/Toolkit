@@ -85,6 +85,18 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
   }
 
 
+  def existsTool(queryString : String) : Action[AnyContent] = Action.async { implicit request =>
+
+    getUser.flatMap{ user =>
+      val toolOpt : Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
+      toolOpt match {
+        case Some(tool) => Future.successful(Ok(Json.toJson(true)))
+        case None => Future.successful(NotFound)
+      }
+    }
+  }
+
+
   def elasticSearch(userID : BSONObjectID, queryString : String) : Future[List[Job]] = {
     jobDao.fuzzySearchJobID(queryString).flatMap { richSearchResponse =>
       if (richSearchResponse.totalHits > 0) {
