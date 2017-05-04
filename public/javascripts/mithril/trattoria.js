@@ -219,9 +219,7 @@ JobRunningComponent = {
     }
 };
 
-tabulated = function(element, isInit) {
-    if (!isInit) { return $(element).tabs({ active: this.active, beforeLoad: function(event, ui){ ui.panel.addClass("result-panel")}});}
-};
+
 
 renderParameter = function(content, moreClasses) {
     return m("div", { class: moreClasses ? "parameter " + moreClasses : "parameter" }, content);
@@ -236,13 +234,6 @@ mapParam = function(param, ctrl) {
 };
 
 
-closeShortcut = function() {
-    return $(document).keydown(function(e) {
-        if (e.keyCode === 27 && $("#tool-tabs").hasClass("fullscreen")) {
-            $("#collapseMe").click();
-        }
-    });
-};
 
 JobTabsComponent = {
     model: function() {
