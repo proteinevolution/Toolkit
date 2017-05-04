@@ -61,9 +61,21 @@ window.Toolkit = {
         }
         else {
 
-            job = window.JobModel.update(args, args.isJob ? jobID : toolname);
+            // checks whether toolname is valid
+            if (!args.isJob) {
+                m.request({url: "/checktool/" + toolname, method: "GET"}).catch(function (e) {
+                    m.route("/404");
+                    console.log("Tool not found", e);
+                }).then(function(data) {
+                    //console.log(data);
+                });
+            }
+
+            job = window.JobModel.update(args, args.isJob ? jobID : toolname); // job variable is a toolname ?? TODO refactor this
             viewComponent = function() {
+
                 return m(JobViewComponent, { job: job });
+
             };
 
         }
