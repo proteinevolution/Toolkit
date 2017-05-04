@@ -10,7 +10,7 @@ declare var getHits: any;
 let followScroll = function(element : any) {
     $(element).on('scroll', function () {
 
-        var top = $(this).scrollTop();
+        let top = $(this).scrollTop();
         if ($('#alignments').visible(true)) {
             $("#alignmentsScroll").addClass("colorToggle");
             $("#hitlistScroll").removeClass("colorToggle");
