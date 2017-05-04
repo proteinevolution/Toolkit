@@ -28,8 +28,6 @@ object ErrorComponent extends Component {
 private[this] class ErrorComponentCtrl(args : Any) {
 
 
-  val FrontendAlnvizComponent : MithrilComponent = js.Dynamic.global.FrontendAlnvizComponent.asInstanceOf[MithrilComponent]
-
   val errorMessage : MithrilProp[String] = m.prop("Page not found.")
 
 
