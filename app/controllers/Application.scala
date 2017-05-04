@@ -21,6 +21,7 @@ import play.api.libs.Files
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
+import play.api.routing.JavaScriptReverseRouter
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 
@@ -215,6 +216,53 @@ final class Application @Inject()(webJarAssets                                  
         "error" -> "Missing file")
     }
   }
+
+
+  def javascriptRoutes : Action[AnyContent] = Action { implicit request =>
+    Ok(
+      JavaScriptReverseRouter("jsRoutes")(
+        routes.javascript.Jobs.updateDateViewed,
+        routes.javascript.Tool.frontendCount,
+        routes.javascript.JobController.create,
+        routes.javascript.JobController.check,
+        routes.javascript.JobController.delete,
+        routes.javascript.Jobs.annotation,
+        routes.javascript.DataController.get,
+        routes.javascript.DataController.writeArticle,
+        routes.javascript.DataController.getRecentArticles,
+        routes.javascript.Auth.getUserData,
+        routes.javascript.Auth.signInSubmit,
+        routes.javascript.Auth.signUpSubmit,
+        routes.javascript.Auth.verification,
+        routes.javascript.Auth.profileSubmit,
+        routes.javascript.Auth.passwordChangeSubmit,
+        routes.javascript.Auth.resetPassword,
+        routes.javascript.Auth.resetPasswordChange,
+        routes.javascript.HmmerController.aln,
+        routes.javascript.HmmerController.alnEval,
+        routes.javascript.HmmerController.full,
+        routes.javascript.HmmerController.evalFull,
+        routes.javascript.PSIBlastController.aln,
+        routes.javascript.PSIBlastController.alnEval,
+        routes.javascript.PSIBlastController.full,
+        routes.javascript.PSIBlastController.evalFull,
+        routes.javascript.HHblitsController.aln,
+        routes.javascript.HHblitsController.alnEval,
+        routes.javascript.HHblitsController.full,
+        routes.javascript.HHblitsController.evalFull,
+        routes.javascript.HHpredController.aln,
+        routes.javascript.HHpredController.alnEval,
+        routes.javascript.PSIBlastController.loadHits,
+        routes.javascript.HmmerController.loadHits,
+        routes.javascript.HHblitsController.loadHits,
+        routes.javascript.HHpredController.loadHits,
+        routes.javascript.AlignmentController.loadHits,
+        routes.javascript.AlignmentController.getAln
+      )
+    ).as("text/javascript")
+  }
+
+
 }
 
 

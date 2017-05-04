@@ -13,6 +13,8 @@
 # Index Page requested by user. Note that the controller is injected
 GET           /                                       @controllers.Application.index()
 
+GET           /javascriptRoutes                       controllers.Application.javascriptRoutes
+
 # Dashboard for Admin
 
 POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)
