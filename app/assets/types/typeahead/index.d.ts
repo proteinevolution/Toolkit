@@ -61,6 +61,12 @@ interface JQuery {
     typeahead(methodName: string, val: string): JQuery;
 
     /**
+     customized
+     */
+
+    typeahead(methodName: any, val: any): JQuery;
+
+    /**
      * Opens the suggestion menu.
      *
      * @constructor
@@ -895,7 +901,13 @@ declare namespace Bloodhound {
          * @param datum Suggestion.
          * @returns An array of string tokens.
          */
-        datumTokenizer: (datum: T) => string[];
+        //datumTokenizer: (datum: T) => string[];
+
+        /**
+         * customized
+         */
+
+        datumTokenizer: string[];
 
         /**
          * Transforms a query into an array of string tokens.

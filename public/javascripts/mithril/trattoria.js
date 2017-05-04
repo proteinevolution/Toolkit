@@ -82,12 +82,6 @@ SearchformComponent = {
     }
 };
 
-foundationConfig = function(elem, isInit) {
-    if (!isInit) {
-        return $(elem).foundation();
-    }
-};
-
 
 jobNoteArea = function(elem, isInit) {
     if (!isInit && $(elem).attr('id').substring(7) > -1) {
