@@ -160,8 +160,10 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
 
           // if no error, then insert the user to the collection
           signInFormUser => {
-            val futureUser = findUser(BSONDocument(User.EMAIL -> signInFormUser.nameLogin))
-            futureUser.flatMap {
+            val futureUserEmail = findUser(BSONDocument(User.EMAIL -> signInFormUser.nameLogin))
+            val futureUserName = findUser(BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
+            // TODO check for username and email
+            futureUserName.flatMap {
               case Some(databaseUser) =>
                 // Check the password
                 if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
@@ -249,36 +251,35 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
               }
             } else {
               // Check database for existing users with the same email
-              val selector = BSONDocument("$or" ->
-                List(BSONDocument(User.EMAIL -> signUpFormUser.getUserData.eMail)))
-              //BSONDocument(User.EMAIL     -> signUpFormUser.getUserData.eMail.head)))
-              findUser(selector).flatMap {
-                case Some(otherUser) =>
-                  //Logger.info("Found a user: " + otherUser.getUserData)
-                  if (otherUser.getUserData.eMail == signUpFormUser.getUserData.eMail) {
-                    // Other user with the same eMail exists. Show error message.
-                    Future.successful(Ok(AccountEmailUsed()))
-                  } else {
-                    Future.successful(Ok)
-                  }
+              val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> signUpFormUser.getUserData.eMail))
+              println(signUpFormUser.getUserData.eMail)
+              val selectorName = BSONDocument(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
+              findUser(selectorName).flatMap {
+                case Some(x) =>
+                    Future.successful(Ok(AccountNameUsed()))
                 case None =>
-                  // Create the database entry.
-                  val newUser = signUpFormUser.copy(userID = BSONObjectID.generate(),
-                    sessionID = None,
-                    userToken = Some(UserToken(tokenType = 1, eMail = Some(signUpFormUser.getUserData.eMail))))
-                  upsertUser(newUser).map {
-                    case Some(registeredUser) =>
-                      // All done. User is registered, now send the welcome eMail
-                      registeredUser.userToken match {
-                        case Some(token) =>
-                          val eMail = NewUserWelcomeMail(registeredUser, token.token)
-                          eMail.send
-                          Ok(SignedUp)
-                        case None => Ok(TokenMismatch())
-                      }
+                  findUser(selectorMail).flatMap {
+                    case Some(x) =>
+                        Future.successful(Ok(AccountEmailUsed()))
                     case None =>
-                      Ok(FormError())
-                  }
+                      // Create the database entry.
+                      val newUser = signUpFormUser.copy(userID = BSONObjectID.generate(),
+                      sessionID = None,
+                      userToken = Some(UserToken(tokenType = 1, eMail = Some(signUpFormUser.getUserData.eMail))))
+                      upsertUser(newUser).map {
+                        case Some(registeredUser) =>
+                          // All done. User is registered, now send the welcome eMail
+                          registeredUser.userToken match {
+                            case Some(token) =>
+                              val eMail = NewUserWelcomeMail(registeredUser, token.token)
+                              eMail.send
+                              Ok(SignedUp)
+                            case None => Ok(TokenMismatch())
+                          }
+                        case None =>
+                          Ok(FormError())
+                        }
+                   }
               }
             }
           }
@@ -453,6 +454,8 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
     * @return
     */
   def resetPasswordChange: Action[AnyContent] = Action.async { implicit request =>
+    println("called")
+    //TODO: problem: user can not be found from cache
     getUser.flatMap { user: User =>
       // Validate the password and return the new password Hash
       FormDefinitions.ForgottenPasswordChange.bindFromRequest.fold(
@@ -460,7 +463,8 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
           Future.successful(Ok(FormError(errors.errors.mkString(",\n")))), { newPasswordHash =>
           user.userToken match {
             case Some(token) =>
-              if (token.tokenType == 3 && token.userID.isDefined) {
+              print(token)
+              if (token.tokenType == 4 && token.userID.isDefined) {
                 val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
                 // Push to the database using selector and modifier
                 val selector = BSONDocument(User.IDDB -> token.userID)
@@ -569,10 +573,10 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
 
                   case 3 =>
                     // Give a token to the current user to allow them to change the password in a different view (Password Recovery)
-                    val newToken = UserToken(tokenType=4, token=userToken.token, userID = Some(userToVerify.userID))
-                    val selector =BSONDocument(User.IDDB        -> user.userID)
-                    val modifier =  BSONDocument("$set" -> BSONDocument(User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis), User.USERTOKEN  -> newToken))
-                    modifyUserWithCache(selector,modifier).map {
+                    val newToken = UserToken(tokenType = 4, token = userToken.token, userID = Some(userToVerify.userID))
+                    val selector = BSONDocument(User.IDDB -> userToVerify.userID)
+                    val modifier = BSONDocument("$set" -> BSONDocument(User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis), BSONDocument(User.USERTOKEN -> newToken)))
+                    modifyUserWithCache(selector, modifier).map {
                       case Some(changedUser) =>
                         println(changedUser.userToken)
                         Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
@@ -591,6 +595,8 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                 Future.successful(Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                   "The token you used is not valid.")))
               }
+            case None =>  Future.successful(Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+              "There was an error finding your token.")))
           }
       }
     }

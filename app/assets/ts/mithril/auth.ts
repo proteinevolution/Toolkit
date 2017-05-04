@@ -1,3 +1,4 @@
+/// <reference path="../common.ts"/>
 declare const jsRoutes: any;
 
 let noRedraw     : boolean = false;
@@ -286,7 +287,7 @@ class SignIn {
                     m("input", { id:         'emailLogin',
                                  name:       'emailLogin',
                                  pattern:    '[a-zA-Z0-9_]{6,40}',
-                                 placeholder:'email',
+                                 placeholder:'email or username',
                                  required:   'required',
                                  type:       'text',
                                  onkeyup:    m.withAttr("value", SignIn.nameLoginSetter),
@@ -384,7 +385,7 @@ class SignUp {
                 m("div", m("label", [
                     m("input", { id:         'nameLogin',
                                  name:       'nameLogin',
-                                 pattern:    '[a-zA-Z0-9\s]{1,10}',
+                                 pattern:    '[a-zA-Z0-9]{6,40}',
                                  placeholder:'Name',
                                  required:   'required',
                                  type:       'text',
@@ -486,13 +487,13 @@ class ForgotPassword {
                         novalidate:   'novalidate',
                         onsubmit:     ForgotPassword.submit
             }, [
-                m("label","Provide your account email address to receive an email to reset your password."),
+                m("label","Provide your account email address or username to receive an email to reset your password."),
                 m("br"),
                 m("div", m("label",
                     m("input", { id:          'eMail',
                                  name:        'eMail',
                                  pattern:     'email',
-                                 placeholder: 'E-Mail',
+                                 placeholder: 'email or username',
                                  type:        'text',
                                  onkeyup:      m.withAttr("value", ForgotPassword.eMailSetter),
                                  onchange:     m.withAttr("value", ForgotPassword.eMailSetter),
@@ -1081,3 +1082,16 @@ class User {
 
 
 Auth.loadUser();
+
+let authView : string = $('#authView').val();
+switch (authView) {
+    case "":
+        break;
+    case "passwordReset":
+        AuthOverlay.passwordReset = true;
+        openNav(authView);
+        break;
+    default:
+        openNav(authView);
+        break;
+}
