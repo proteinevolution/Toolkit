@@ -779,7 +779,13 @@ declare namespace Mithril {
          * @param data The data to parse.
          * @return The new instance for the list.
          */
-            type?: new (data: any) => any;
+        //type?: new (data: any) => any;
+
+
+        /**
+         * customized
+         */
+        type?: any;
 
         /**
          * The URL to send the request to.
