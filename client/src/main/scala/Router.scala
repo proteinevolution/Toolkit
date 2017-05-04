@@ -16,15 +16,16 @@ object Router extends js.JSApp {
 
   def main(): Unit = {
     m.route.mode = "hash"
-    val mountpoint = js.Dynamic.global.document.getElementById("main-content").asInstanceOf[HTMLDivElement]
+    val mountpoint = g.document.getElementById("main-content").asInstanceOf[HTMLDivElement]
 
 
 
-    val Index = js.Dynamic.global.Index.asInstanceOf[MithrilComponent]
-    val News = js.Dynamic.global.News.asInstanceOf[MithrilComponent]
-    val Backend = js.Dynamic.global.Backend.asInstanceOf[MithrilComponent]
-    val JobManager = js.Dynamic.global.JobManager.asInstanceOf[MithrilComponent]
-    val Toolkit = js.Dynamic.global.Toolkit.asInstanceOf[MithrilComponent]
+    val Index = g.Index.asInstanceOf[MithrilComponent]
+    val News = g.News.asInstanceOf[MithrilComponent]
+    val Backend = g.Backend.asInstanceOf[MithrilComponent]
+    val JobManager = g.JobManager.asInstanceOf[MithrilComponent]
+    val Toolkit = g.Toolkit.asInstanceOf[MithrilComponent]
+    val JobListComponent = g.JobListComponent.asInstanceOf[MithrilComponent]
 
 
     //g.console.log("Router initialized")
@@ -43,6 +44,8 @@ object Router extends js.JSApp {
     )
 
     m.route(mountpoint,"/", routes)
+
+    m.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
 
   }
 }
