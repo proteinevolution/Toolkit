@@ -12,9 +12,21 @@ declare class JobListComponent {
     public static selectedJobID : string;
     public static getJobIndex(jobID : string) : number;
     public static contains(jobID : string) : any;
+    public static list: any;
+    public static getJob : any;
 
     public static controller : any;
     public static view : any;
+    public static jobIDsFiltered() : any;
+    public static register() : any;
+    public static register(item : any): any;
+    public static sortList(): any;
+    public static sort : any;
+    public static visibleJobs() : any;
+    public static scrollToJobListItem(item : any) : any;
+    public static index : number;
+    public static numVisibleItems : number;
+    public static scrollJobList(scrollItems : any, pos: any) : any;
 
 }
 
