@@ -157,13 +157,11 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
   }
 
   def checkJobID(jobID : String, resubmit : Boolean = false) : Action[AnyContent] = Action.async{
-    val jobIDCompleteMessPattern = "(_+.*|.*_+)+".r // _ ____x _x_ should be culled out from the start
     val jobIDNoVersionPattern = "([0-9a-zA-Z_]+)".r
     val jobVersionPattern = "(_([0-9]{1,3}))".r
     val jobIDPattern = (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
     val foundMainJobID : Option[String] =
       jobID match {
-        case jobIDCompleteMessPattern(_)      => None
         case jobIDPattern(mainJobID, _, _)    => Some(mainJobID)
         case jobIDNoVersionPattern(mainJobID) => Some(mainJobID)
         case _ => None
@@ -172,7 +170,7 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
     foundMainJobID match {
       case None => Future.successful(Ok(Json.obj("exists" -> true)))
       case Some(mainJobID) =>
-        val jobIDSearch = mainJobID + "(_[0-9]{1,3})"
+        val jobIDSearch = mainJobID + "(_[0-9]{1,3})?"
         Logger.info("Old job ID: " + mainJobID + " Current job ID: " + jobID + " Searching for: " + jobIDSearch)
         findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map{ jobs =>
           if (jobs.isEmpty) {
@@ -180,22 +178,32 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
             Ok(Json.obj("exists" -> false))
           } else {
             Logger.info("Found " + jobs.length + " Jobs: " + jobs.map(_.jobID).mkString(","))
-            if (resubmit) {
-              val jobVersions = jobs.map{ job =>
-                Logger.info("jobID to match: " + job.jobID)
-                job.jobID match {
-                  case jobIDPattern(_, _,v)    => if(v.isEmpty){ -1 }else {println(v);Integer.parseInt(v)}
-                  case jobIDNoVersionPattern(_) => 0
-                  case _ => 0
-                }
+            val jobVersions = jobs.map{ job =>
+              Logger.info("jobID to match: " + job.jobID)
+              job.jobID match {
+                case jobIDPattern(_, _,v)    => if(v.isEmpty){ -1 }else {Integer.parseInt(v)}
+                case _ =>0
               }
-              val version : Int = jobVersions.max + 1
-              println(version)
+            }
+            val version : Int = jobVersions.max + 1
+            if (resubmit) {
               //Logger.info("Resubmitting job ID version: " + version + " for " + mainJobID)
               Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> (mainJobID + "_" + version)))
             } else {
               //Logger.info("Main Job ID:" + mainJobID)
-              Ok(Json.obj("exists" -> true))
+              var boolExists = false
+              jobVersions.foreach { version =>
+                if (mainJobID + "_" + version == jobID ) {
+                  boolExists = true
+                }
+              }
+              jobs.foreach{ x =>
+                if(x.jobID == jobID){
+                  println(x.jobID)
+                  boolExists = true
+                }
+              }
+              Ok(Json.obj("exists" -> boolExists))
             }
           }
         }
