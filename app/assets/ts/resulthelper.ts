@@ -19,7 +19,7 @@ let followScroll = function(element : any) {
             $("#hitlistScroll").addClass("colorToggle");
             $("#alignmentsScroll").removeClass("colorToggle");
             $("#visualizationScroll").removeClass("colorToggle");
-        } else if (top >= $('#visualization').position().top + 75) {
+        } else if (typeof top !== 'undefined' && top >= $('#visualization').position().top + 75) {
             $('.scrollContainer').addClass('fixed');
         } else if ($('#visualization').visible()) {
             $("#visualizationScroll").addClass("colorToggle");
