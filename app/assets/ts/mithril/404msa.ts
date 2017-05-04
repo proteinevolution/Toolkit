@@ -1,4 +1,4 @@
-/// <reference path="sampleSeq.ts"/>
+/// <reference path="sampleseq.ts"/>
 
 
 interface Window {
