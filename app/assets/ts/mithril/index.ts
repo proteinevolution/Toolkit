@@ -35,7 +35,7 @@ let slickSlider = function (elem : any, isInit : boolean) {
     }
 }; */
 
-let typeAhead = function (elem : any, isInit : boolean) {
+let typeAhead = function (elem : any, isInit : boolean) : any {
     let engine;
     if (!isInit) {
         $('#searchInput').on('keyup', function(e : any) : any {

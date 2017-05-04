@@ -1,3 +1,4 @@
+/// <reference path="frontend.ts"/>
 
 let FrontendTools : any = {
     "alnviz": FrontendAlnvizComponent,

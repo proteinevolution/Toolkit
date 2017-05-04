@@ -1,14 +1,16 @@
-var GeneralTabComponent, exampleSequence, fndt, renderTabs, tabsContents, tabulated;
-
-exampleSequence = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
+/// <reference path="helper.ts"/>
+const exampleSequence = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
 // Update the value with the one from the local storage
+
+
+interface Window { FrontendAlnvizComponent: any; }
 
 window.FrontendAlnvizComponent = {
     controller: function() {
-        var submitted;
+        let submitted : boolean;
         submitted = false;
         return {
-            frontendSubmit: function() {
+            frontendSubmit: function() : any {
                 if (!submitted) {
                     return $.ajax({
                         url: '/api/frontendSubmit/Alnviz',
@@ -26,18 +28,18 @@ window.FrontendAlnvizComponent = {
 
                 }
             },
-            initMSA: function() {
-                var alignment, defMenu, menuOpts, opts, seqs, counter, i;
+            initMSA: function() : any {
+                let alignment, defMenu, menuOpts, opts, seqs, counter, i;
                 seqs = $('#alignment').reformat('Fasta');
-                height = (seqs.split('>').length-1)*15;
-                var split = seqs.split('\n');
+                let height = (seqs.split('>').length-1)*15;
+                let split = seqs.split('\n');
                 counter = 0;
                 i = 1;
                 while(!split[i].startsWith('>')) {
                     counter = counter + split[i].length;
                     i++;
                 }
-                width = counter * 15;
+                let width = counter * 15;
                 if (!seqs) {
                     return;
                 }
@@ -56,35 +58,37 @@ window.FrontendAlnvizComponent = {
                         labelPartition: false,
                         labelCheckbox: false
                     },
-                    menu: 'small'
+                    menu: 'small',
+                    seqs : fasta2json(seqs),
+                    zoomer : {
+                        alignmentHeight: height,
+                        alignmentWidth: width,
+                        labelNameLength: 165,
+                        labelWidth: 85,
+                        labelFontsize: "13px",
+                        labelIdLength: 75,
+                        menuFontsize: "12px",
+                        menuMarginLeft: "2px",
+                        menuPadding: "0px 10px 0px 0px",
+                        menuItemFontsize: "14px",
+                        menuItemLineHeight: "14px",
+                        autoResize: true
+                    }
                 };
-                opts.seqs = fasta2json(seqs);
-                opts.zoomer = {
-                    alignmentHeight: height,
-                    alignmentWidth: width,
-                    labelNameLength: 165,
-                    labelWidth: 85,
-                    labelFontsize: "13px",
-                    labelIdLength: 75,
-                    menuFontsize: "12px",
-                    menuMarginLeft: "2px",
-                    menuPadding: "0px 10px 0px 0px",
-                    menuItemFontsize: "14px",
-                    menuItemLineHeight: "14px",
-                    autoResize: true
-                };
+
                 alignment = new msa.msa(opts);
-                menuOpts = {};
-                menuOpts.el = document.getElementById('menuDiv');
-                menuOpts.msa = alignment;
+                menuOpts = {
+                    el : document.getElementById('menuDiv'),
+                    msa : alignment
+                };
                 defMenu = new msa.menu.defaultmenu(menuOpts);
                 alignment.addView('menu', defMenu);
 
                 alignment.render();
 
                 //hide unsused options
-                document.getElementById('menuDiv').childNodes[5].style.display = 'none';
-                document.getElementById('menuDiv').childNodes[6].style.display = 'none';
+                $('div#menuDiv div:eq(5)').hide();
+                $('div#menuDiv div:eq(6)').hide();
 
                 setTimeout(function(){
                     $('#tab-Visualization').removeAttr('style');
@@ -96,7 +100,7 @@ window.FrontendAlnvizComponent = {
             }
         };
     },
-    view: function(ctrl) {
+    view: function(ctrl : any) {
         return m("div", {
             id: "jobview"
         }, [
@@ -114,11 +118,13 @@ window.FrontendAlnvizComponent = {
 
 
 
-fndt = function(elem, isInit) {
+let fndt = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         return $(elem).foundation();
     }
 };
+
+interface Window { FrontendReformatComponent: any; }
 
 window.FrontendReformatComponent = {
     controller: function() {
@@ -132,7 +138,7 @@ window.FrontendReformatComponent = {
             })
         };
     },
-    view: function(ctrl) {
+    view: function(ctrl : any) {
         return m("div", {
             id: "jobview",
             config: fndt
@@ -144,19 +150,19 @@ window.FrontendReformatComponent = {
 
 
 
-renderTabs = function(tabs, content) {
+let renderTabs = function(tabs : any, content : any) {
     return m("div", {
         "class": "tool-tabs",
         id: "tool-tabs",
         config: tabulated
     }, [
-        m("ul", tabs.map(function(tab) {
+        m("ul", tabs.map(function(tab : any) {
             return m("li", {
                 id: "tab-" + tab
             }, m("a", {
                 href: "#tabpanel-" + tab
             }, tab));
-        })), tabs.map(function(tab, idx) {
+        })), tabs.map(function(tab : any, idx : number) {
             return m("div", {
                 "class": "tabs-panel",
                 id: "tabpanel-" + tab
@@ -165,21 +171,20 @@ renderTabs = function(tabs, content) {
     ]);
 };
 
-GeneralTabComponent = {
-    model: function() {
-        return {
-            isFullscreen: false,
+let GeneralTabComponent = {
+
+    controller: function() {
+        let mo = {
+            isFullScreen : false,
             label: "Expand"
         };
-    },
-    controller: function() {
-        var mo = new GeneralTabComponent.model();
+        let onCollapse : any, onExpand : any, onFullscreenToggle : any;
         return {
             getLabel: (function() {
                 return this.label;
             }).bind(mo),
             fullscreen: (function() {
-                var job_tab_component;
+                let job_tab_component;
                 job_tab_component = $("#tool-tabs");
                 if (this.isFullscreen) {
                     job_tab_component.removeClass("fullscreen");
@@ -206,7 +211,7 @@ GeneralTabComponent = {
             }).bind(mo),
             forwardString: (function () {
                 if (localStorage.getItem("resultcookie")) {
-                    var cookieString = String(localStorage.getItem("resultcookie"));
+                    let cookieString = String(localStorage.getItem("resultcookie"));
                     localStorage.removeItem("resultcookie");
                     return cookieString;
                 } else {
@@ -215,13 +220,13 @@ GeneralTabComponent = {
             }).bind(mo)
         };
     },
-    view: function(ctrl, args) {
+    view: function(ctrl : any, args : any) {
         return m("div", {
             "class": "tool-tabs",
             id: "tool-tabs",
             config: tabulated
         }, [
-            m("ul", args.tabs.map(function(tab) {
+            m("ul", args.tabs.map(function(tab : any) {
                 return m("li", {
                     id: "tab-" + tab,
                     style: (tab == "Visualization" ? "display: none;" : "display: block;")
@@ -237,7 +242,7 @@ GeneralTabComponent = {
                 value: ctrl.getLabel(),
                 onclick: ctrl.fullscreen,
                 config: closeShortcut
-            }))), args.tabs.map(function(tab) {
+            }))), args.tabs.map(function(tab : any) {
                 return m("div", {
                     "class": "tabs-panel",
                     id: "tabpanel-" + tab
@@ -248,8 +253,8 @@ GeneralTabComponent = {
 };
 
 
-tabsContents = {
-    "Alignment": function(ctrl) {
+let tabsContents : any = {
+    "Alignment": function(ctrl : any) {
         return m("div", {
             "class": "parameter-panel", "id": "alignmentViewerPanel"
         }, [
@@ -273,7 +278,7 @@ tabsContents = {
             }))
         ]);
     },
-    "Visualization": function(ctrl) {
+    "Visualization": function(ctrl : any) {
         return m("div", [
             m("div", {
                 id: "menuDiv"
@@ -282,7 +287,7 @@ tabsContents = {
             })
         ]);
     },
-    "Freqs": function(ctrl) {
+    "Freqs": function(ctrl : any) {
         return "Test";
     }
 };
