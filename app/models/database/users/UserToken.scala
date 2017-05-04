@@ -8,7 +8,7 @@ import reactivemongo.bson._
   * Created by astephens on 22.11.16.
   */
 case class UserToken(tokenType    : Int,
-                     token        : String           = RandomString.randomAlphaNumString(10),
+                     token        : String           = RandomString.randomAlphaNumString(15),
                      passwordHash : Option[String]   = None,
                      eMail        : Option[String]   = None,
                      userID       : Option[BSONObjectID] = None,
