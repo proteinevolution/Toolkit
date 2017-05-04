@@ -1,6 +1,6 @@
-var tooltipSearch;
 
-tooltipSearch = function(elem, isInit) {
+
+let tooltipSearch = function(elem : any, isInit : boolean) {
     if (!isInit) {
         elem.setAttribute("data-tooltip", "data-tooltip");
         elem.setAttribute("aria-haspopup", "true");
@@ -9,18 +9,19 @@ tooltipSearch = function(elem, isInit) {
     }
 };
 
+interface Window { JobListComponent: any; }
 
 window.JobListComponent = {
 
-    Job : function (data) { // Generates a job Object
+    Job : function (data : any) { // Generates a job Object
         return {
             jobID     : data ? data.jobID : null,
             state     : data ? data.state : null,
             createdOn : data ? data.createdOn : null,
             toolname  : data ? data.toolname  : null,
             // Functions
-            select    : function(job) {     // marks a job as selected and changes the route
-                return function(e) {        // ensure that the event bubble is not triggering when the clear button is hit
+            select    : function(job : any) {     // marks a job as selected and changes the route
+                return function(e : any) {        // ensure that the event bubble is not triggering when the clear button is hit
                     if (e.target.id != "boxclose") {
                         JobListComponent.selectedJobID = job.jobID;
                         m.route("/jobs/" + job.jobID);
@@ -28,18 +29,18 @@ window.JobListComponent = {
                 }
             },
             // View component
-            controller : function (args) {},
-            view : function (ctrl) {
+            controller : function (args : any) {},
+            view : function (ctrl : any) {
                 return m("div", {
-                    class   : ("job " + a[this.state]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
+                    "class"   : ("job " + a[this.state]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
                     id      : this.jobID,
                     onclick : this.select(this)
                 }, [
-                    m("div", { class: "jobid"    }, this.jobID),
-                    m("div", { class: "toolname" }, this.toolname.substr(0, 4).toUpperCase()),
+                    m("div", { "class": "jobid"    }, this.jobID),
+                    m("div", { "class": "toolname" }, this.toolname.substr(0, 4).toUpperCase()),
                     m("div", {
                         id      : "boxclose",
-                        class   : "boxclose",
+                        "class"   : "boxclose",
                         onclick : JobListComponent.removeJob.bind(ctrl, this.jobID)
                     })
                 ]);
@@ -52,28 +53,28 @@ window.JobListComponent = {
     selectedJobID   : null, // JobID of the selected job
     lastUpdatedJob  : null, // Job which has been updated last
     sort            : { mode : "createdOn", asc : true },
-    getJob          : function (jobID) {    // Returns a job with the given jobID
-        var foundJob = null;
-        JobListComponent.list.map(function (job){ if(job.jobID === jobID) foundJob = job });
+    getJob          : function (jobID : string) : any {    // Returns a job with the given jobID
+        let foundJob = null;
+        JobListComponent.list.map(function (job : any){ if(job.jobID === jobID) foundJob = job });
         return foundJob
     },
-    getJobIndex     : function (jobID) {    // Returns the index of a job with the given jobID
-        var foundIndex = null;
-        JobListComponent.list.map(function (job, index){ if (job.jobID === jobID) foundIndex = index });
+    getJobIndex     : function (jobID : string) : any {    // Returns the index of a job with the given jobID
+        let foundIndex = null;
+        JobListComponent.list.map(function (job : any, index : number){ if (job.jobID === jobID) foundIndex = index });
         return foundIndex
     },
-    contains        : function (jobID) {    // Checks if the job with the given jobID is in the list
+    contains        : function (jobID : string) {    // Checks if the job with the given jobID is in the list
         return JobListComponent.getJob(jobID) != null
     },
     jobIDs          : function () {         // Returns all the jobIDs from the list
-        return JobListComponent.list.map(function(job){ return job.jobID })
+        return JobListComponent.list.map(function(job : any){ return job.jobID })
     },
     jobIDsFiltered  : function () {         // Returns all the jobIDs from the list which can still be updated
-        return JobListComponent.list.filter(function(job){
+        return JobListComponent.list.filter(function(job : any){
             return job.state != 4 && job.state != 5
-        }).map(function(job){ return job.jobID })
+        }).map(function(job : any){ return job.jobID })
     },
-    register        : function (jobIDs) {   // Notices the server to send update messages about the jobs
+    register        : function (jobIDs : string) {   // Notices the server to send update messages about the jobs
         if (jobIDs) {
             sendMessage({ type: "RegisterJobs", "jobIDs": jobIDs });
         } else {
@@ -83,22 +84,22 @@ window.JobListComponent = {
     },
     emptyList       : function () { JobListComponent.list = [] },   // empties the job list
     reloadList      : function () {         // reloads the job list from the server
-        var request = m.request({
+        let request = m.request({
             url: "/api/jobs",
             method: "GET",
             type: JobListComponent.Job
         });
-        request.then(function(data) {
+        request.then(function(data : any) {
             JobListComponent.list = data;   // put the jobs in the list
             JobListComponent.register();    // send the server a message that these items are being watched
             JobListComponent.sortList();    // sort the list with the current sorting mode
         });
         return JobListComponent.list
     },
-    removeJob       : function(jobID, messageServer, deleteJob) { // removes a job from the list
+    removeJob       : function(jobID : string, messageServer : boolean, deleteJob : boolean) { // removes a job from the list
         if (messageServer == null) { messageServer = false }
         if (deleteJob     == null) { deleteJob     = false }
-        JobListComponent.list.map( function(job, idx) {
+        JobListComponent.list.map( function(job : any, idx : number) {
             if (job.jobID === jobID) {
                 if (jobID === JobListComponent.selectedJobID) {
                     JobListComponent.selectedJobID = null;
@@ -116,8 +117,8 @@ window.JobListComponent = {
             }
         });
     },
-    sortList        : function(sort, reverse) {      // Sorting the list elements
-        var oldSort, sameMode, inv, selectedJobID, selectedInView = false;
+    sortList        : function(sort : any, reverse : any) {      // Sorting the list elements
+        let oldSort, sameMode, inv : any, selectedJobID : string, selectedInView = false;
         oldSort = JobListComponent.sort;    // grab the old sort
         if (sort != null && reverse != null) {
             sameMode = (oldSort.mode === sort); // see if the mode has changed
@@ -128,9 +129,9 @@ window.JobListComponent = {
         inv = JobListComponent.sort.asc ? 1 : -1;
         // Check if the selected jobID is in the view to get the new index to scroll to
         selectedJobID = JobListComponent.selectedJobID;
-        JobListComponent.visibleJobs().map(function(job) { if (job.jobID === selectedJobID) selectedInView = true; });
+        JobListComponent.visibleJobs().map(function(job : any) { if (job.jobID === selectedJobID) selectedInView = true; });
         // Sort the list
-        JobListComponent.list.sort(function(job1, job2) {
+        JobListComponent.list.sort(function(job1 : any, job2 : any) {
             switch (JobListComponent.sort.mode) {
                 case "toolName"  : return inv * job2.toolname.localeCompare(job1.toolname);
                 case "jobID"     : return inv * job2.jobID.localeCompare(job1.jobID);
@@ -143,11 +144,11 @@ window.JobListComponent = {
             JobListComponent.scrollToJobListItem(JobListComponent.getJobIndex(selectedJobID));
         }
     },
-    pushJob         : function(newJob, setActive) {
+    pushJob         : function(newJob : any, setActive : boolean) {
         if (newJob == null || newJob.jobID == null) { console.log(newJob); return }  // ensure that there are no empty jobs pushed
         JobListComponent.lastUpdatedJob = newJob;                        // change the "last updated" job to this one
         if (setActive) { JobListComponent.selectedJobID = newJob.jobID } // change the selectedJobID to this job when setActive is on
-        var index = JobListComponent.getJobIndex(newJob.jobID);          // check if the job is in the list already
+        let index = JobListComponent.getJobIndex(newJob.jobID);          // check if the job is in the list already
         if (index != null) {
             JobListComponent.list[index] = newJob;              // Job is not new, update it
         } else {
@@ -164,24 +165,24 @@ window.JobListComponent = {
     visibleJobs : function () {     // function cuts the list down to the visible elements
         return JobListComponent.list.slice(JobListComponent.index, JobListComponent.index + JobListComponent.numVisibleItems);
     },
-    scrollJobList : function (number, doScroll) {   // function scrolls the index number of items up or down
-        return function(e) {
+    scrollJobList : function (number : number, doScroll : boolean) {   // function scrolls the index number of items up or down
+        return function(e : any) {
             if (doScroll) {
-                var numScrollItems = JobListComponent.index + number;
+                let numScrollItems = JobListComponent.index + number;
                 JobListComponent.index = numScrollItems < 0 ? 0 : numScrollItems;   // ensure that the index is not overscrolled
             }
         }
     },
-    scrollToJobListItem : function (index) {    // function scrolls the job list to the index while scrolling exact numVisibleItems
-        var scrollIndex = Math.floor(index / JobListComponent.numVisibleItems);
+    scrollToJobListItem : function (index: number) {    // function scrolls the job list to the index while scrolling exact numVisibleItems
+        let scrollIndex = Math.floor(index / JobListComponent.numVisibleItems);
         scrollIndex *= JobListComponent.numVisibleItems;
         JobListComponent.index = scrollIndex < 0 ? 0 : scrollIndex;
         //console.log("scrolling to " + index + " scroll index is " + scrollIndex + ", current scroll index is " + JobListComponent.index);
     },
     model: function() {},
-    controller: function(args) {
+    controller: function(args : any) {
         if (args && args.activejobID) {
-            var activeJob = JobListComponent.getJob(args.activejobID);
+            let activeJob = JobListComponent.getJob(args.activejobID);
             JobListComponent.pushJob(activeJob, true);
         }
         JobListComponent.reloadList();
@@ -189,8 +190,8 @@ window.JobListComponent = {
         JobListComponent.controller = function(){return {}};
         return {}
     },
-    view: function(ctrl, args) {
-        var shownList, listLength, listTooLong, onTopOfList, onBottomOfList, numScrollItems, page, pagesTotal;
+    view: function(ctrl : any, args : any) {
+        let shownList, listLength, listTooLong, onTopOfList, onBottomOfList, numScrollItems, page, pagesTotal;
         shownList  = JobListComponent.visibleJobs();
         listLength = JobListComponent.list.length;                   // lenght of the original list
         page       = Math.floor(JobListComponent.index / JobListComponent.numVisibleItems) + 1;  // Calculate the current page
@@ -208,22 +209,22 @@ window.JobListComponent = {
         //             "on Bottom"               : onBottomOfList});
         numScrollItems = JobListComponent.numVisibleItems; // How many items to scroll per click
         return m("div", { "class": "job-list" }, [
-            m("div", { class: "job-button" }, [
-                m("div", { class: "idsort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
-                m("div", { class: "toolsort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "toolName", true) }, "Tool"),
-                m("div", { class: "openJobManager"}, m('a', { href : "/#/jobmanager"}, m("i", {class: "icon-list"})))
+            m("div", { "class": "job-button" }, [
+                m("div", { "class": "idsort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
+                m("div", { "class": "toolsort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "toolName", true) }, "Tool"),
+                m("div", { "class": "openJobManager"}, m('a', { href : "/#/jobmanager"}, m("i", {"class": "icon-list"})))
             ]),
-            m("div", { class: "elements noselect" }, [
+            m("div", { "class": "elements noselect" }, [
                 listTooLong ?
                     m("div", {
-                        class: "arrow top" + (onTopOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
+                        "class": "arrow top" + (onTopOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
                         onclick: JobListComponent.scrollJobList(-numScrollItems, !onTopOfList) }, "\u25b2"
                     ) : null,
-                shownList.map(function(job) { return job.view(ctrl) }),
-                listTooLong ? m("div", {class: "pages"},"Page "+page+" of "+pagesTotal) : null,
+                shownList.map(function(job : any) { return job.view(ctrl) }),
+                listTooLong ? m("div", {"class": "pages"},"Page "+page+" of "+pagesTotal) : null,
                 listTooLong ?
                     m("div", {
-                        class: "arrow bottom" + (onBottomOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
+                        "class": "arrow bottom" + (onBottomOfList ? " inactive" : ""), // Add class to gray out when onTopOfList == true
                         onclick: JobListComponent.scrollJobList(+numScrollItems, !onBottomOfList) }, "\u25bc"
                     ) : null
             ])
