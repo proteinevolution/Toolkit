@@ -1,6 +1,11 @@
-var slickSlider, tilescomponent, trafficBarComponent, typeAhead;
+let foundationConfig = function(elem : any, isInit : boolean) : any {
+    if (!isInit) {
+        return $(elem).foundation();
+    }
+};
 
-slickSlider = function (elem, isInit) {
+/** Slick slider in frontend not in use
+let slickSlider = function (elem : any, isInit : boolean) {
     if (!isInit) {
         return ($(elem).on("init", function () {
             return $(this).fadeIn(3000);
@@ -28,13 +33,13 @@ slickSlider = function (elem, isInit) {
             ]
         });
     }
-};
+}; */
 
-typeAhead = function (elem, isInit) {
-    var engine;
+let typeAhead = function (elem : any, isInit : boolean) {
+    let engine;
     if (!isInit) {
-        $('#searchInput').on('keyup', function(e) {
-            var selectables = $('#searchInput').siblings(".tt-menu").find(".tt-selectable").find('.search-results');
+        $('#searchInput').on('keyup', function(e : any) : any {
+            let selectables = $('#searchInput').siblings(".tt-menu").find(".tt-selectable").find('.search-results');
             if(e.which == 13) {
                 e.preventDefault();
                 //find the selectable item under the input, if any:
@@ -70,7 +75,7 @@ typeAhead = function (elem, isInit) {
             displayKey: "jobID",
             templates: {
                 empty: ['<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>'],
-                suggestion: function (data) {
+                suggestion: function (data : any) {
                     return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="'+data.jobID+' - ' + data.toolnameLong+ '">'
                         + data.jobID + '<span class="search-result-tool"> - ' + data.toolnameLong + '</span></a></div>' ;
                 }
@@ -79,8 +84,10 @@ typeAhead = function (elem, isInit) {
     }
 };
 
+interface Window { Index: any; }
+
 window.Index = {
-    controller: function () {
+    controller: function () : any {
         document.title = "Bioinformatics Toolkit";
         return JobListComponent.selectedJobID = null;
     },
@@ -100,14 +107,14 @@ window.Index = {
                         m("div", {"class": "slide-text"}, "of the Max Planck Institute for Developmental Biology, Tübingen, Germany.")
                     ),
                     m("div",
-                    m("img", {style: "width: 100%",
-                        'data-interchange': '[/assets/images/Toolkit100.png, large]',
-                        config: foundationConfig
-                    })
+                        m("img", {style: "width: 100%",
+                            'data-interchange': '[/assets/images/Toolkit100.png, large]',
+                            config: foundationConfig
+                        })
                     ), m("a", {
                         href: "http://www.eb.tuebingen.mpg.de/"
                     })
-                    ])
+                ])
                 // ]), m("div", [
                 //     m("img", {
                 //         'data-interchange': '[/assets/images/lambda0.5_crop2TwoSixth.png , small],' +
@@ -142,19 +149,20 @@ window.Index = {
 };
 
 
-trafficBarComponent = {
+let trafficBarComponent = {
+    controller : function() : any {},
     view: function () {
         return m("div", {
-            class: "grid"
+            "class": "grid"
         }, m("div", {
-            class: "tool-finder row centered"
+            "class": "tool-finder row centered"
         }, [
-            m("div", {class: "liveTableContainer"},
+            m("div", {"class": "liveTableContainer"},
                 m.component(LiveTable, {}),
-                m("div", {class: "search_container"},
+                m("div", {"class": "search_container"},
                     m("div", {
-                        class: "columns large-12 form-group"
-                    }, m("input", { class: "search_Input",
+                        "class": "columns large-12 form-group"
+                    }, m("input", { "class": "search_Input",
                         type: "text",
                         id: "searchInput",
                         name: "q",
@@ -168,9 +176,10 @@ trafficBarComponent = {
 };
 
 // TODO add different type of tile (bigger one?)
-tilescomponent = {
-    model: function () {
-        var getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(2);
+let tilescomponent = {
+
+    controller: function () {
+        let getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(2);
         return {
             articles: m.request({
                 url: getRecentArticlesRoute.url,
@@ -178,17 +187,11 @@ tilescomponent = {
             })
         };
     },
-    controller: function () {
-        var mod = new tilescomponent.model;
-        return {
-            articles: mod.articles
-        };
-    },
-    view: function (ctrl) {
+    view: function (ctrl : any) {
         return m("div", {
                 "class": "row article_container small-up-1 medium-up-2 large-up-3"
             },
-            ctrl.articles().map(function (article) {
+            ctrl.articles().map(function (article : any) {
                 return m("div", {
                         "class": "column column-block tile_main_container"
                     },
@@ -213,26 +216,3 @@ tilescomponent = {
 };
 
 
-
-
-// ("div", {
-//         "class": "column column-block article_tile"
-//     },
-//         m("div", {"class": "tile_content"},
-//             m("div", {"class": "tile_img"
-//                 },
-//                 m("img", {"src": article.imagePath})
-//             ),
-//             m("div", {"class": "tile_title"
-//                 },
-//                 m("p", article.title)
-//             ),
-//             m("div", {"class": "tile_text"
-//                 }, article.text
-//             ),
-//             m("div", {"class": "read_tile"},
-//                 m("i", {"class": "icon-chevron_right"})
-//             )
-//         )
-// )
-//
