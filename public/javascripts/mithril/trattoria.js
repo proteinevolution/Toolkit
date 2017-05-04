@@ -620,7 +620,7 @@ JobSubmissionComponent = {
                             console.log("unsetting job submission Blocking.");
                             JobSubmissionComponent.submitting = false;
                         }).foundation('open');
-                        return
+
                     } else {
                         var jobListComp = JobListComponent.Job(
                             { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolname }
@@ -640,7 +640,7 @@ JobSubmissionComponent = {
                                 m.route("/jobs/" + jobID); return data;
                             }
                         });
-                        return
+
                     }
                 }, function(error) {
                     console.warn("Bad Request");
@@ -1125,44 +1125,6 @@ ParameterSlideComponent = {
     }
 
 };
-
-// add scrollcontainer highlighting
-var followScroll = function(element) {
-    $(element).on('scroll', function () {
-
-    var top = $(this).scrollTop();
-    if ($('#alignments').visible(true)) {
-        $("#alignmentsScroll").addClass("colorToggle");
-        $("#hitlistScroll").removeClass("colorToggle");
-        $("#visualizationScroll").removeClass("colorToggle");
-    } else if ($('#hitlist').visible(true)) {
-        $("#hitlistScroll").addClass("colorToggle");
-        $("#alignmentsScroll").removeClass("colorToggle");
-        $("#visualizationScroll").removeClass("colorToggle");
-    } else if (top >= $('#visualization').position().top + 75) {
-        $('.scrollContainer').addClass('fixed');
-    } else if ($('#visualization').visible()) {
-        $("#visualizationScroll").addClass("colorToggle");
-        $("#hitlistScroll").removeClass("colorToggle");
-        $("#alignmentsScroll").removeClass("colorToggle");
-    } else {
-        $('.scrollContainer').removeClass('fixed');
-    }
-    // trigger lazyload for loading alignment
-    if ($(this).scrollTop() == $(this).height() - $(window).height()) {
-        if (!loading) {
-            var end = parseInt(shownHits) + parseInt(showMore);
-            end = end < numHits ? end : numHits;
-            if (shownHits != end) {
-                getHits(shownHits, end);
-            }
-            shownHits = end;
-        }
-    }
-    $("#alignments").floatingScroll('init');
-});
-
-}
 
 formComponents = {
     1: ParameterAlignmentComponent,

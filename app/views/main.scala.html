@@ -156,6 +156,8 @@
 
     <body data-ws-url="@routes.Application.ws().webSocketURL()">
 
+        <input type="hidden" id="authView" value="@view">
+
         <div id="message-float" style="position: fixed; top: 0px; left: 0px; width: 100%; text-align: center; z-index: 1000;">
             <div id="message-container" data-closable data-close class="callout" @if(message==""){hidden="hidden"} style="text-align: center; position:relative;height:50px;padding:10px;margin:0 auto;">
                 @{message}
@@ -331,22 +333,10 @@
 
         <script type="text/javascript">
 
-
-                var view = "@view";
                 $(document).ready(function () {
                     $(document).foundation();
                     $('.tooltipster').tooltipster();
-                    switch (view) {
-                        case "":
-                            break;
-                        case "passwordReset":
-                            AuthOverlay.passwordReset = true;
-                            openNav(view);
-                            break;
-                        default:
-                            openNav(view);
-                            break;
-                    }
+
                 });
         </script>
     </body>
