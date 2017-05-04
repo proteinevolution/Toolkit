@@ -42,7 +42,7 @@ window.JobViewComponent = {
 
     view: function(ctrl, args) {
         if (!args.job()) {
-            return m("div", "Waiting for Job"); // TODO Styling
+            return m("div", "Waiting for Job"); // TODO Styling, UPDATE: if-case probably not needed anymore...
         } else {
                 return m("div", {
                     id: "jobview"
