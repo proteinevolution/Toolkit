@@ -1,4 +1,5 @@
 lazy val akkaVersion = "2.4.18"
+lazy val kamonVersion = "0.6.6"
 
 lazy val commonDeps = Seq(ws, filters, cache,
   "com.typesafe.akka"     %% "akka-actor"               % akkaVersion,
@@ -27,7 +28,12 @@ lazy val commonDeps = Seq(ws, filters, cache,
   "com.lihaoyi"           %% "fastparse"                % "0.4.1",
   "com.vmunier"           %% "scalajs-scripts"          % "1.0.0",
   "org.typelevel"         %% "cats"                     % "0.8.1",
-  "com.mohiva"            %% "play-html-compressor"     % "0.6.3"
+  "com.mohiva"            %% "play-html-compressor"     % "0.6.3",
+  "io.kamon"              %% "kamon-play-2.5"           % kamonVersion,
+  "io.kamon"              %% "kamon-system-metrics"     % kamonVersion,
+  "io.kamon"              %% "kamon-statsd"             % kamonVersion,
+  "io.kamon"              %% "kamon-log-reporter"       % kamonVersion,
+  "org.aspectj"            % "aspectjweaver"            % "1.8.9"
 )
 
 
