@@ -7,5 +7,5 @@ $(document).ready(function(){
     $('.slicky').slick(slickConf);
     $(document).foundation();
     $('.tooltipster').tooltipster();
-
+    $('#message-container').delay(2000).fadeOut('slow');
 });
