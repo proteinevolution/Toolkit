@@ -90,6 +90,10 @@ trait JSONTemplate {
     authMessage("The given token does not match.")
   }
 
+  def TokenNotFound() : JsValue = {
+    authMessage("The given token is missing.")
+  }
+
   def VerificationSuccessful(user : User) : JsValue = {
     authMessage(s"Your E-Mail Account has been Verified, ${user.getUserData.nameLogin}.",
                 success    = true,
@@ -111,7 +115,7 @@ trait JSONTemplate {
   }
 
   def PasswordChanged(user : User) : JsValue = {
-    authMessage("Password has been accepted.\nPlease check your emails.",
+    authMessage("Password has been accepted.\nPlease check your emails in order to verify the password change.",
       success    = true,
       userOption = Some(user))
   }
