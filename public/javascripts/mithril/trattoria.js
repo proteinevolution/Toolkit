@@ -536,7 +536,8 @@ JobSubmissionComponent = {
         return {
             submit: function(startJob) {
                 if (JobSubmissionComponent.submitting || !JobSubmissionComponent.jobIDValid) {
-                    console.log("Job Submission is blocked: ", JobSubmissionComponent.submitting, JobSubmissionComponent.jobIDValid);
+                    console.log("Job Submission is blocked: Already submitting: ", JobSubmissionComponent.submitting,
+                                "jobID valid: ",                                   JobSubmissionComponent.jobIDValid);
                     return;
                 }
                 JobSubmissionComponent.submitting = true; // ensure that the submission is not reinitiated while a submission is ongoing
@@ -552,12 +553,14 @@ JobSubmissionComponent = {
                 toolname = args.job().tool.toolname;
                 doCheck = true;
                 jobID = JobSubmissionComponent.currentJobID;
-                if (!jobID) { jobID = null; }
+                if (!jobID || (jobID == "")) { jobID = null; }
                 console.log("Current JobID is: ", jobID, JobSubmissionComponent.currentJobID, "valid:", JobSubmissionComponent.jobIDValid);
 
                 // Use check route and specify that the hashing function should be used
                 checkRoute = jsRoutes.controllers.JobController.check(toolname, jobID, doCheck);
                 formData = new FormData(form);
+                formData.append("toolName", toolname);
+                formData.append("jobID", jobID);
 
                 // appendParentID if in storage
                 var parentid = localStorage.getItem("parentid");
@@ -584,7 +587,6 @@ JobSubmissionComponent = {
                             return m.route("/jobs/" + data.existingJob.jobID);
                         });
                         $('#submit_again').unbind('click').on('click', function() {
-                            var submitRoute;
                             modal.foundation('close');
                             var jobListComp = JobListComponent.Job(
                                     { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolname }

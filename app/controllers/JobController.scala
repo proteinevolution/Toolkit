@@ -2,11 +2,11 @@ package controllers
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobActor.{CreateJob, Delete}
+import actors.JobActor.{CreateJob, PrepareJob, Delete}
 import actors.JobIDActor
 import akka.actor.ActorRef
 import models.Constants
-import models.database.jobs.{Error, Job, JobDeletion, JobDeletionFlag}
+import models.database.jobs.{Error, Job, JobDeletion, JobDeletionFlag, Submitted}
 import models.database.users.User
 import models.job.JobActorAccess
 import models.search.JobDAO
@@ -65,7 +65,79 @@ final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
     }
   }
 
+  def submitJob(toolName : String) : Action[AnyContent] = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      // Grab the formData from the request data
+      request.body.asMultipartFormData match {
+        case Some(mpfd) =>
+          val formData = mpfd.dataParts.mapValues(_.mkString(formMultiValueSeparator))
+          // Determine the jobID
+          (formData.get("jobID") match {
+            case Some(jobID) =>
+              // Bad Request if the jobID can be matched to one from the database
+              selectJob(jobID).map { job => if (job.isDefined) None else Some(jobID) }
+            case None =>
+              // Use jobID Actor to get a new random jobID
+              Future.successful(Some(JobIDActor.provide))
+          }).flatMap {
+            case Some(jobID) =>
 
+              // Load the parameters for the tool
+              val toolParams = toolFactory.values(toolName).params
+
+              // Filter invalid parameters
+              val params =
+                formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
+                  paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
+                }
+
+              // Set job as either private or public
+              val ownerOption = if(params.get("public").isEmpty) { Some(user.userID) } else { None }
+
+              // Get the current date to set it for all three dates
+              val jobCreationTime = DateTime.now()
+
+              // Create a new Job object for the job and set the initial values
+              val job = Job(mainID      = BSONObjectID.generate(),
+                            jobID       = jobID,
+                            ownerID     = ownerOption,
+                            status      = Submitted,
+                            emailUpdate = params.get(Job.EMAILUPDATE).isDefined,
+                            tool        = toolName,
+                            label       = params.get("label").flatten,
+                            watchList   = List(user.userID),
+                            dateCreated = Some(jobCreationTime),
+                            dateUpdated = Some(jobCreationTime),
+                            dateViewed  = Some(jobCreationTime))
+
+              // TODO may want to use a different way to identify our users - use the account type in the user perhaps?
+              val isFromInstitute = user.getUserData.eMail.matches(".+@tuebingen.mpg.de")
+
+              // Add Job to user in database
+              modifyUserWithCache(BSONDocument(User.IDDB -> user.userID), BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID)))
+
+              // Add job to database
+              insertJob(job).map {
+                case Some(_) =>
+                  // Send the job to the jobActor for preparation
+                  jobActorAccess.sendToJobActor(jobID, PrepareJob(job, formData, startJob = false, isFromInstitute))
+                  // Notify user that the job has been submitted
+                  Ok(Json.obj("jobSubmitted" -> true, "jobID" -> jobID))
+                    .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+                case None =>
+                  // Something went wrong when pushing to the DB
+                  BadRequest
+              }
+            case None =>
+              // TODO Should not be a Bad Request but a message stating that the job ID is already taken.
+              Future.successful(BadRequest)
+          }
+        case None =>
+          // No form data - something went wrong.
+          Future.successful(BadRequest)
+      }
+    }
+  }
 
   def check(toolname: String, jobID: Option[String], hash: Boolean) : Action[AnyContent] = Action.async { implicit request =>
 
@@ -163,7 +235,6 @@ final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
                   println("[WARNING]: job in index but not in database: " + mainID.stringify)
                   jobDao.deleteJob(mainID.stringify)
                 }
-
 
                 jobsPartition._2.lastOption match {
                   case Some(job) =>
