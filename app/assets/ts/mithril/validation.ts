@@ -10,6 +10,8 @@ let samccIsValid : boolean = false;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
+    $(".submitJob").prop("disabled", true);
+
     if(!isInit) {
 
         let toolname : string;
@@ -167,7 +169,6 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 let validationProcess = function(elem: any,toolname: string){
 
 
-//    console.log(elem);
 
     //---------------------------------Validation Visitors------------------------------------------//
 
