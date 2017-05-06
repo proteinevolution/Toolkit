@@ -26,7 +26,6 @@ class ExecutionContext(val root: File) {
    A preexisting file with the same name will be overridden
    */
   def getFile(name: String, content: String) : File = {
-
     val x = repFileBase./(name)
     x.delete(swallowIOExceptions = true)
     x.write(content)
@@ -34,17 +33,15 @@ class ExecutionContext(val root: File) {
   }
 
   /** Accepts an execution which is subsequently registered in this Execution Context
-    * The working direcotry is created within the executionContext. Currently, the names
-    * of the working direcotries of subsequent executions are just incremented.
+    * The working directory is created within the executionContext. Currently, the names
+    * of the working directories of subsequent executions are just incremented.
     * @param execution
     */
   def accept(execution: PendingExecution): Unit = {
-
     executionQueue.enqueue(execution.register(root./(execNumbers.next().toString).createDirectories()))
   }
 
   def executeNext: RegisteredExecution = {
-
     executionQueue.dequeue()
     //RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),x.delete.map(f => Process(f.pathAsString)))
   }
@@ -56,10 +53,8 @@ object ExecutionContext {
   case class FileAlreadyExists(msg: String) extends IllegalArgumentException(msg)
 
   def apply(root: File): ExecutionContext = {
-
     if(root.exists) {
       throw FileAlreadyExists("ExecutionContext cannot be created because the root File already exists")
-
     } else {
       new ExecutionContext(root)
     }

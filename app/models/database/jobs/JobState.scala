@@ -26,7 +26,7 @@ case object Error             extends JobState
 case object Done              extends JobState
 // Job State which is set when the job was successfully sent to the server
 case object Submitted         extends JobState
-// Job State which is set when
+// Job State which is set when the job was validated by the hash search but a different job was found
 case object Pending           extends JobState
 
 object JobState {
