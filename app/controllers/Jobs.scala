@@ -56,7 +56,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     Ok
   }
 
-  //TODO make secure
+  //TODO make <strike>america</strike> Jobs <strike>great</strike> secure again!
   def SGEID(jobID: String, sgeID: String) = Action {
 
     findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
