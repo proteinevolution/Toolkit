@@ -252,7 +252,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
 
   override def receive = LoggingReceive {
 
-    case PrepareJob(job, params, start, isInternalJob) =>
+    case PrepareJob(job, params, startJob, isInternalJob) =>
       // TODO Add param validation here
 
       // set memory allocation for the cluster and let the clusterMonitor define the multiplier
@@ -320,7 +320,11 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
         Logger.info("STAY")
       }
 
-      self ! JobStateChanged(job.jobID, Pending)
+      if (startJob) {
+        self ! JobStateChanged(job.jobID, Prepared)
+      } else {
+        self ! JobStateChanged(job.jobID, Pending)
+      }
 
     /**
       * Checks the jobHashDB for matches and generates one for the job if there are none.
@@ -329,59 +333,58 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       // filter unique parameters
       val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public"
 
-      // get hold of the database in use
-      val DBNAME = params match {
-        case x if x isDefinedAt "standarddb" => params.getOrElse("standarddb", "")
-        case x if x isDefinedAt "hhblitsdb"  => params.getOrElse("hhblitsdb", "")
-        case x if x isDefinedAt "hhsuitedb"  => params.getOrElse("hhsuitedb", "")
-        case _ => ""
-      }
-
-      val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb","")).toFile
-      val HHBLITSDBMTIME = env.get("HHBLITS").toFile.lastModifiedTime.toString
-      val HHSUITEDBMTIME = env.get("HHSUITE").toFile.lastModifiedTime.toString
-
+      // Create the job Hash depending on what db is used
       val jobHash = {
         params match {
-          case x if x isDefinedAt "standarddb" => JobHash( mainID = job.mainID,
-            jobDao.generateHash(paramsWithoutMainID).toString(),
-            jobDao.generateRSHash(job.tool),
-            dbName = Some(DBNAME),
-            dbMtime = Some(STANDARDDB.lastModifiedTime.toString),
-            toolname = job.tool,
-            jobDao.generateToolHash(job.tool),
-            dateCreated = job.dateCreated,
-            jobID = job.jobID
-          )
-          case x if x isDefinedAt "hhsuitedb" => JobHash( mainID = job.mainID,
-            jobDao.generateHash(paramsWithoutMainID).toString(),
-            jobDao.generateRSHash(job.tool),
-            dbName = Some(DBNAME),
-            dbMtime = Some(HHSUITEDBMTIME),
-            toolname = job.tool,
-            jobDao.generateToolHash(job.tool),
-            dateCreated = job.dateCreated,
-            jobID = job.jobID
-          )
-          case x if x isDefinedAt "hhblitsdb" => JobHash( mainID = job.mainID,
-            jobDao.generateHash(paramsWithoutMainID).toString(),
-            jobDao.generateRSHash(job.tool),
-            dbName = Some(DBNAME),
-            dbMtime = Some(HHBLITSDBMTIME),
-            toolname = job.tool,
-            jobDao.generateToolHash(job.tool),
-            dateCreated = job.dateCreated,
-            jobID = job.jobID
-          )
-          case _ => JobHash( mainID = job.mainID,
-            jobDao.generateHash(paramsWithoutMainID).toString(),
-            jobDao.generateRSHash(job.tool),
-            dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
-            dbMtime = Some("1970-01-01T00:00:00Z"), // use unix epoch time
-            toolname = job.tool,
-            jobDao.generateToolHash(job.tool),
-            dateCreated = job.dateCreated,
-            jobID = job.jobID)
+          case x if x isDefinedAt "standarddb" =>
+            val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb","")).toFile
+
+            JobHash(mainID        = job.mainID,
+                    inputHash     = jobDao.generateHash(paramsWithoutMainID).toString(),
+                    runscriptHash = jobDao.generateRSHash(job.tool),
+                    dbName        = Some("standarddb"),
+                    dbMtime       = Some(STANDARDDB.lastModifiedTime.toString),
+                    toolname      = job.tool,
+                    toolHash      = jobDao.generateToolHash(job.tool),
+                    dateCreated   = job.dateCreated,
+                    jobID         = job.jobID)
+
+          case x if x isDefinedAt "hhsuitedb" =>
+            val HHSUITEDB  = env.get("HHSUITE").toFile
+
+            JobHash(mainID        = job.mainID,
+                    inputHash     = jobDao.generateHash(paramsWithoutMainID).toString(),
+                    runscriptHash = jobDao.generateRSHash(job.tool),
+                    dbName        = Some("hhsuitedb"),
+                    dbMtime       = Some(HHSUITEDB.lastModifiedTime.toString),
+                    toolname      = job.tool,
+                    toolHash      = jobDao.generateToolHash(job.tool),
+                    dateCreated   = job.dateCreated,
+                    jobID         = job.jobID)
+
+          case x if x isDefinedAt "hhblitsdb" =>
+            val HHBLITSDB = env.get("HHBLITS").toFile
+
+            JobHash(mainID        = job.mainID,
+                    inputHash     = jobDao.generateHash(paramsWithoutMainID).toString(),
+                    runscriptHash = jobDao.generateRSHash(job.tool),
+                    dbName        = Some("hhblitsdb"),
+                    dbMtime       = Some(HHBLITSDB.lastModifiedTime.toString),
+                    toolname      = job.tool,
+                    toolHash      = jobDao.generateToolHash(job.tool),
+                    dateCreated   = job.dateCreated,
+                    jobID         = job.jobID)
+
+          case _ =>
+            JobHash(mainID        = job.mainID,
+                    inputHash     = jobDao.generateHash(paramsWithoutMainID).toString(),
+                    runscriptHash = jobDao.generateRSHash(job.tool),
+                    dbName        = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
+                    dbMtime       = Some("1970-01-01T00:00:00Z"), // use unix epoch time
+                    toolname      = job.tool,
+                    toolHash      = jobDao.generateToolHash(job.tool),
+                    dateCreated   = job.dateCreated,
+                    jobID         = job.jobID)
         }
       }
       // Match the hash
