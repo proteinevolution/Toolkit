@@ -115,9 +115,10 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General, aln :
     if(params.sSearch.isEmpty){
       getResult(jobID).map {
         case Some(result) => psiblast.hitsOrderBy(params, psiblast.parseResult(result).HSPS).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+        case None => List.empty
       }
     }else{
-      ???
+      Future.successful(List.empty)
     }
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
@@ -132,7 +133,8 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General, aln :
           val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _, result.db))
           Ok(hits.mkString)
         }
-
+      case None =>
+        BadRequest
     }
   }
 
@@ -151,7 +153,8 @@ class PSIBlastController @Inject() (psiblast: PSIBlast, general : General, aln :
         val result = psiblast.parseResult(jsValue)
         db = result.db
         result.num_hits
-
+      case None =>
+        0
     }
     val hits = getHitsByKeyWord(jobID, params)
 
