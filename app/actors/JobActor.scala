@@ -167,18 +167,6 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
   }
 
   /**
-    * Reload the parameters for a job when the EC is gone
-    * @param jobID
-    * @return
-    */
-  private def reloadParams(jobID : String) : Map[String, String] = {
-    val ois = new ObjectInputStream(new FileInputStream((jobPath/jobID/"sparam").pathAsString))
-    val x = ois.readObject().asInstanceOf[Map[String, String]]
-    ois.close()
-    x
-  }
-
-  /**
     * Trys to delete a job and inform all watching users about it
     * @param job
     * @param userID
@@ -319,7 +307,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       Logger.info(s"${job.jobID} is running with $threads threads")
 
       // jobid will also be available as parameter
-      var extendedParams = params + ("jobid" -> job.jobID)
+      var extendedParams = params + ("jobID" -> job.jobID)
 
       val clusterData = JobClusterData("", Some(h_vmem), Some(threads))
 
@@ -356,11 +344,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
 
       // Serialize the JobParameters to the JobDirectory
       // Store the extended Parameters in the working directory for faster reloading
-      // TODO Use ExecutionContext for file access
-      (jobPath/job.jobID/serializedParam).createIfNotExists(asDirectory = false)
-      val oos = new ObjectOutputStream(new FileOutputStream((jobPath/job.jobID/serializedParam).pathAsString))
-      oos.writeObject(extendedParams)
-      oos.close()
+      executionContext.writeParams(extendedParams)
 
       if(isComplete(parameters)) {
         val pendingExecution = wrapperExecutionFactory.getInstance(runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
