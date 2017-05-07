@@ -96,7 +96,8 @@ final class JobDAO @Inject()(cs: ClusterSetup,
               termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z")),
               matchQuery("toolname", toolname).analyzer(StandardAnalyzer),
               matchQuery("rshash", rsHash).analyzer(StandardAnalyzer),
-              matchQuery("toolhash", toolHash).analyzer(StandardAnalyzer)
+              matchQuery("toolhash", toolHash).analyzer(StandardAnalyzer),
+              matchQuery("active", true) // Only check for active jobs
             )
           )
       }
@@ -112,9 +113,10 @@ final class JobDAO @Inject()(cs: ClusterSetup,
             matchQuery("hash", jobHash.inputHash).analyzer(StandardAnalyzer),
             matchQuery("dbname", jobHash.dbName.getOrElse("none")).analyzer(StandardAnalyzer),
             termQuery("dbmtime", jobHash.dbMtime.getOrElse("1970-01-01T00:00:00Z")),
-            matchQuery("toolname", jobHash.toolname).analyzer(StandardAnalyzer),
+            matchQuery("toolname", jobHash.toolName).analyzer(StandardAnalyzer),
             matchQuery("rshash", jobHash.runscriptHash).analyzer(StandardAnalyzer),
-            matchQuery("toolhash", jobHash.toolHash).analyzer(StandardAnalyzer)
+            matchQuery("toolhash", jobHash.toolHash).analyzer(StandardAnalyzer),
+            matchQuery("active", true) // Only check for active jobs
           )
         )
       }
