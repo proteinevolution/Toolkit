@@ -1,6 +1,8 @@
 package modules.tel.execution
 
 
+import java.io.{FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream}
+
 import better.files.File
 
 import scala.collection.mutable
@@ -14,8 +16,10 @@ import scala.collection.mutable
   * @param root
   */
 class ExecutionContext(val root: File) {
-
+  // Root directory of the Execution Context
   private val repFileBase = root./("params").createDirectories()
+  // Parameter directory of the Execution Context
+  private val sparam = repFileBase./("sparam")
 
   // a Queue of executable files for this execution Context
   private val executionQueue = mutable.Queue[RegisteredExecution]()
@@ -32,6 +36,26 @@ class ExecutionContext(val root: File) {
     x
   }
 
+  /**
+    * Writes the parameters to the ExecutionContext folder
+    * @param params
+    */
+  def writeParams(params : Map[String,String]) : Unit = {
+    val oos = new ObjectOutputStream(new FileOutputStream(sparam.pathAsString))
+    oos.writeObject(params)
+    oos.close()
+  }
+
+  /**
+    * Reload the parameters for a job when the EC is gone
+    * @return
+    */
+  private def reloadParams() : Map[String, String] = {
+    val ois = new ObjectInputStream(new FileInputStream(sparam.pathAsString))
+    val x = ois.readObject().asInstanceOf[Map[String, String]]
+    ois.close()
+    x
+  }
   /** Accepts an execution which is subsequently registered in this Execution Context
     * The working directory is created within the executionContext. Currently, the names
     * of the working directories of subsequent executions are just incremented.
