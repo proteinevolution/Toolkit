@@ -1,6 +1,6 @@
 package actors
 
-import java.io.{FileOutputStream, ObjectOutputStream}
+import java.io.{FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream}
 import javax.inject.{Inject, Named}
 
 import actors.JobActor._
@@ -167,6 +167,18 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
   }
 
   /**
+    * Reload the parameters for a job when the EC is gone
+    * @param jobID
+    * @return
+    */
+  private def reloadParams(jobID : String) : Map[String, String] = {
+    val ois = new ObjectInputStream(new FileInputStream((jobPath/jobID/"sparam").pathAsString))
+    val x = ois.readObject().asInstanceOf[Map[String, String]]
+    ois.close()
+    x
+  }
+
+  /**
     * Trys to delete a job and inform all watching users about it
     * @param job
     * @param userID
@@ -234,6 +246,11 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
     params.forall( item  => item._2._2.isDefined)
   }
 
+  /**
+    * Sends an eMail to the owner of the job
+    * @param job
+    * @return
+    */
   private def sendJobUpdateMail(job : Job) : Boolean = {
     if (job.emailUpdate && job.ownerID.isDefined) {
       findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach{
@@ -249,6 +266,44 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
     }
   }
 
+  /**
+    * Generates a JobHash for the job from the supplied parameters
+    * @param job
+    * @param params
+    * @return
+    */
+  private def generateJobHash(job : Job, params : Map[String, String]) : JobHash = {
+    // filter unique parameters
+    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public"
+
+    // Create the job Hash depending on what db is used
+
+    val dbParam = params match {
+      case x if x isDefinedAt "standarddb" =>
+        val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb","")).toFile
+        (Some("standarddb"), Some(STANDARDDB.lastModifiedTime.toString))
+
+      case x if x isDefinedAt "hhsuitedb" =>
+        val HHSUITEDB  = env.get("HHSUITE").toFile
+        (Some("hhsuitedb"), Some(HHSUITEDB.lastModifiedTime.toString))
+
+      case x if x isDefinedAt "hhblitsdb" =>
+        val HHBLITSDB = env.get("HHBLITS").toFile
+        (Some("hhblitsdb"), Some(HHBLITSDB.lastModifiedTime.toString))
+
+      case _ => (Some("none"), Some("1970-01-01T00:00:00Z"))
+    }
+
+    JobHash(mainID        = job.mainID,
+            inputHash     = jobDao.generateHash(paramsWithoutMainID).toString(),
+            runscriptHash = jobDao.generateRSHash(job.tool),
+            dbName        = dbParam._1, // field must exist so that elasticsearch can do a bool query on multiple fields
+            dbMtime       = dbParam._2, // use unix epoch time
+            toolName      = job.tool,
+            toolHash      = jobDao.generateToolHash(job.tool),
+            dateCreated   = job.dateCreated,
+            jobID         = job.jobID)
+  }
 
   override def receive = LoggingReceive {
 
@@ -323,70 +378,15 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       if (startJob) {
         self ! JobStateChanged(job.jobID, Prepared)
       } else {
-        self ! JobStateChanged(job.jobID, Pending)
+        self ! CheckJobHashes(job, params)
       }
 
     /**
       * Checks the jobHashDB for matches and generates one for the job if there are none.
       */
     case CheckJobHashes(job, params) =>
-      // filter unique parameters
-      val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public"
+      val jobHash = this.generateJobHash(job, params)
 
-      // Create the job Hash depending on what db is used
-      val jobHash = {
-        params match {
-          case x if x isDefinedAt "standarddb" =>
-            val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb","")).toFile
-
-            JobHash(mainID        = job.mainID,
-                    inputHash     = jobDao.generateHash(paramsWithoutMainID).toString(),
-                    runscriptHash = jobDao.generateRSHash(job.tool),
-                    dbName        = Some("standarddb"),
-                    dbMtime       = Some(STANDARDDB.lastModifiedTime.toString),
-                    toolname      = job.tool,
-                    toolHash      = jobDao.generateToolHash(job.tool),
-                    dateCreated   = job.dateCreated,
-                    jobID         = job.jobID)
-
-          case x if x isDefinedAt "hhsuitedb" =>
-            val HHSUITEDB  = env.get("HHSUITE").toFile
-
-            JobHash(mainID        = job.mainID,
-                    inputHash     = jobDao.generateHash(paramsWithoutMainID).toString(),
-                    runscriptHash = jobDao.generateRSHash(job.tool),
-                    dbName        = Some("hhsuitedb"),
-                    dbMtime       = Some(HHSUITEDB.lastModifiedTime.toString),
-                    toolname      = job.tool,
-                    toolHash      = jobDao.generateToolHash(job.tool),
-                    dateCreated   = job.dateCreated,
-                    jobID         = job.jobID)
-
-          case x if x isDefinedAt "hhblitsdb" =>
-            val HHBLITSDB = env.get("HHBLITS").toFile
-
-            JobHash(mainID        = job.mainID,
-                    inputHash     = jobDao.generateHash(paramsWithoutMainID).toString(),
-                    runscriptHash = jobDao.generateRSHash(job.tool),
-                    dbName        = Some("hhblitsdb"),
-                    dbMtime       = Some(HHBLITSDB.lastModifiedTime.toString),
-                    toolname      = job.tool,
-                    toolHash      = jobDao.generateToolHash(job.tool),
-                    dateCreated   = job.dateCreated,
-                    jobID         = job.jobID)
-
-          case _ =>
-            JobHash(mainID        = job.mainID,
-                    inputHash     = jobDao.generateHash(paramsWithoutMainID).toString(),
-                    runscriptHash = jobDao.generateRSHash(job.tool),
-                    dbName        = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
-                    dbMtime       = Some("1970-01-01T00:00:00Z"), // use unix epoch time
-                    toolname      = job.tool,
-                    toolHash      = jobDao.generateToolHash(job.tool),
-                    dateCreated   = job.dateCreated,
-                    jobID         = job.jobID)
-        }
-      }
       // Match the hash
       jobDao.matchHash(jobHash).map { richSearchResponse =>
         Logger.info("Retrieved richSearchResponse")
@@ -412,7 +412,10 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
 
           jobsPartition._2.lastOption match {
             case Some(matchingJob) =>
+              // TODO generate message to inform the user about a matching job
+              self ! JobStateChanged(job.jobID, Pending)
             case None =>
+              self ! JobStateChanged(job.jobID, Prepared)
               hashCollection.flatMap(_.insert(jobHash))
           }
         }
@@ -482,7 +485,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
           jobDao.generateRSHash(toolname),
           dbName = Some(DBNAME),
           dbMtime = Some(STANDARDDB.lastModifiedTime.toString),
-          toolname = toolname,
+          toolName = toolname,
           jobDao.generateToolHash(toolname),
           dateCreated = Some(jobCreationTime),
           jobID = jobID
@@ -492,7 +495,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
           jobDao.generateRSHash(toolname),
           dbName = Some(DBNAME),
           dbMtime = Some(HHSUITEDBMTIME),
-          toolname = toolname,
+          toolName = toolname,
           jobDao.generateToolHash(toolname),
           dateCreated = Some(jobCreationTime),
           jobID = jobID
@@ -502,7 +505,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
           jobDao.generateRSHash(toolname),
           dbName = Some(DBNAME),
           dbMtime = Some(HHBLITSDBMTIME),
-          toolname = toolname,
+          toolName = toolname,
           jobDao.generateToolHash(toolname),
           dateCreated = Some(jobCreationTime),
           jobID = jobID
@@ -512,7 +515,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
           jobDao.generateRSHash(toolname),
           dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
           dbMtime = Some("1970-01-01T00:00:00Z"), // use unix epoch time
-          toolname = toolname,
+          toolName = toolname,
           jobDao.generateToolHash(toolname),
           dateCreated = Some(jobCreationTime),
           jobID = jobID)
@@ -710,7 +713,6 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
           }
         case None =>
           Logger.info("Job not found: " + jobID)
-
       }
 
     case UpdateLog(jobID : String) =>
