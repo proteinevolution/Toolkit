@@ -160,10 +160,8 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
 
           // if no error, then insert the user to the collection
           signInFormUser => {
-            val futureUserEmail = findUser(BSONDocument(User.EMAIL -> signInFormUser.nameLogin))
-            val futureUserName = findUser(BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
-            // TODO check for username and email
-            futureUserName.flatMap {
+            val futureUser = findUser(BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> signInFormUser.nameLogin),BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))))
+            futureUser.flatMap {
               case Some(databaseUser) =>
                 // Check the password
                 if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
@@ -390,7 +388,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
   }
 
   /**
-    * Allows a User to reset his password. A confirmation eMail is sent for them to
+    * Allows a User to reset his password. A confirmation eMail is send to him to
     * ensure a secure change
     *
     * @return
@@ -403,14 +401,13 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
         },
       // when there are no errors, then insert the user to the collection
       {
-        case Some(email: (String)) =>
-          val selector = BSONDocument(User.EMAIL -> email)
-          if (selector != BSONDocument.empty) {
+        case Some(user: (String)) =>
+          val selector = BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> user), BSONDocument(User.NAMELOGIN -> user)))
+
             findUser(selector).flatMap {
               case Some(user) =>
                 user.userData match {
                   case Some(userData) =>
-
                     // Generate a new Token to wait for the confirmation eMail
                     val token = UserToken(tokenType = 3)
                     // create a modifier document to change the last login date in the Database
@@ -421,7 +418,7 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                       BSONDocument(User.DATEUPDATED -> bsonCurrentTime),
                       "$set" ->
                         BSONDocument(User.USERTOKEN -> token))
-                    modifyUser(selector, modifier).map {
+                    modifyUserWithCache(selector, modifier).map {
                       case Some(registeredUser) =>
                         // All done. User is registered, now send the welcome eMail
                         val eMail = ResetPasswordMail(registeredUser, token.token)
@@ -439,10 +436,6 @@ final class Auth @Inject() (             webJarAssets     : WebJarAssets,
                 // No user found.
                 Future.successful(Ok(NoSuchUser))
             }
-          } else {
-            // User has sent an empty form.
-            Future.successful(Ok(OneParameterNeeded))
-          }
       }
     )
   }
