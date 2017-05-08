@@ -577,10 +577,13 @@ td#joblistIcon {
     width: 50%;
 }
 
+#jobmanagerIcon{
+    font-size: 1.2em;
+}
 td#joblistIcon i {
-    margin-left: 0;
     opacity: 0.9;
     line-height: 1em;
+    font-size: 1.3em;;
 }
 
 .liveTable .icon-list {
