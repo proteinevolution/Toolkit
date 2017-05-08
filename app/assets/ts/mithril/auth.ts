@@ -386,7 +386,7 @@ class SignUp {
                     m("input", { id:         'nameLogin',
                                  name:       'nameLogin',
                                  pattern:    '[a-zA-Z0-9]{6,40}',
-                                 placeholder:'Name',
+                                 placeholder:'Username',
                                  required:   'required',
                                  type:       'text',
                                  onkeyup:     m.withAttr("value", SignUp.nameLoginSetter),
@@ -395,7 +395,7 @@ class SignUp {
                                  onblur:      focusOutRedraw,
                                  value:       SignUp.nameLogin
                     }),
-                    m("span", {"class":"form-error"}, "Name must be at least 1 character long!")
+                    m("span", {"class":"form-error"}, "Name must be at least 6 characters long!")
                 ])),
                 m("div", m("label", [
                     m("input", { id:          'eMail',
@@ -492,9 +492,10 @@ class ForgotPassword {
                 m("div", m("label",
                     m("input", { id:          'eMail',
                                  name:        'eMail',
-                                 pattern:     'email',
                                  placeholder: 'email or username',
+                                 pattern:    '[a-zA-Z0-9_]{6,40}',
                                  type:        'text',
+                                 required:     'required',
                                  onkeyup:      m.withAttr("value", ForgotPassword.eMailSetter),
                                  onchange:     m.withAttr("value", ForgotPassword.eMailSetter),
                                  onfocus:      focusInNoRedraw,
