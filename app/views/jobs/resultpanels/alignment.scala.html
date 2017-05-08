@@ -117,7 +117,7 @@
 
 
         function getHits(start, end){
-            if(start <= numHits && end <= numHits){
+            if(start <= numHits && end <= numHits && !loading){
                 loading = true;
                 var route = jsRoutes.controllers.AlignmentController.loadHits(jobID,start,end, resultName);
                 return $.ajax({

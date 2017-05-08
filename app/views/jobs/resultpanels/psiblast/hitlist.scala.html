@@ -151,7 +151,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
 }
 
 function getHits(start, end){
-    if(start <= numHits && end <= numHits){
+    if(start <= numHits && end <= numHits && !loading){
 	loading = true;
         var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID,start, end);
         return $.ajax({

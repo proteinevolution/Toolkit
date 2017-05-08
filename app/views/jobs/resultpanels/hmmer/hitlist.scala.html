@@ -164,7 +164,7 @@
 
 
         function getHits(start, end) {
-            if (start <= numHits && end <= numHits) {
+            if (start <= numHits && end <= numHits && !loading) {
                 loading = true;
                 var route = jsRoutes.controllers.HmmerController.loadHits(jobID, start, end);
                 return $.ajax({
