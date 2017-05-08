@@ -14,6 +14,7 @@ import reactivemongo.bson.Macros
 case class FeaturedArticle(articleID   : BSONObjectID,     // ID of the Article
                    title       : String,           //Title of the Article
                    text        : String,           // Article
+                   textlong    : String,
                    link        : String,
                    imagePath   : String,           // path of the image
                    dateCreated : Option[DateTime], // Creation time of the Article
@@ -25,6 +26,7 @@ object FeaturedArticle{
   val IDDB        = "_id"           //              ID in MongoDB
   val TITLE       = "title"
   val TEXT        = "text"
+  val TEXTLONG    = "textlong"
   val LINK        = "link"
   val IMAGEPATH   = "imagePath"
   val DATECREATED = "dateCreated"   //              created on field
@@ -40,6 +42,7 @@ object FeaturedArticle{
           articleID   = BSONObjectID.generate(),
           title = "",
           text = "",
+          textlong = "",
           link = "",
           imagePath = "",
           dateCreated = Some(new DateTime()),
@@ -58,6 +61,7 @@ object FeaturedArticle{
       IDDB        -> featuredArticle.articleID,
       TITLE       -> featuredArticle.title,
       TEXT        -> featuredArticle.text,
+      TEXTLONG    -> featuredArticle.textlong,
       LINK        -> featuredArticle.link,
       IMAGEPATH   -> featuredArticle.imagePath,
       DATECREATED -> featuredArticle.dateCreated.map(dt => dtf.print(dt)),
@@ -74,6 +78,7 @@ object FeaturedArticle{
         articleID   = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         title       = bson.getAs[String](TITLE).get,
         text        = bson.getAs[String](TEXT).getOrElse("Error Loading Article."),
+        textlong        = bson.getAs[String](TEXTLONG).getOrElse("Error Loading Article."),
         link        = bson.getAs[String](LINK).get,
         imagePath   = bson.getAs[String](IMAGEPATH).getOrElse("Error Loading URL."),
         dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
@@ -90,6 +95,7 @@ object FeaturedArticle{
       IDDB        -> featuredArticle.articleID,
       TITLE       -> featuredArticle.title,
       TEXT        -> featuredArticle.text,
+      TEXTLONG        -> featuredArticle.text,
       LINK        -> featuredArticle.link,
       IMAGEPATH   -> featuredArticle.imagePath,
       DATECREATED -> BSONDateTime(featuredArticle.dateCreated.fold(-1L)(_.getMillis)),
