@@ -1,0 +1,45 @@
+.newsfeed-title{
+    font-size: large;
+    font-weight: bold;
+    color: #28786f;
+}
+
+/*Nasa like tile*/
+
+.news-tile_main_container {
+    width: 50em !important;
+    height: auto;
+    background-color: transparent;
+    margin: 1em;
+    display: inline-block;
+    float: none !important;
+    padding-left: 9em;
+}
+
+.newsfeed-title{
+    padding-left: 12em;
+
+}
+
+.news-title {
+    text-align: left;
+    font-size: large;
+
+}
+.news-text{
+    text-align: left;
+    padding-top: 2em;
+    font-size: medium;
+}
+
+.news-image{
+    margin-top: 3em !important;
+    margin: 0 auto;
+    height: 18em;
+}
+
+.news-container{
+    background-color: white;
+    padding: 4em;
+    overflow: hidden;
+}
