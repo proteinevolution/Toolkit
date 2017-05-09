@@ -28,7 +28,7 @@ trait UserSessions extends CommonModule {
     * Associates a user with the provided sessionID
     *
     */
-  def putUser(implicit request : RequestHeader, sessionID : BSONObjectID) = {
+  def putUser(implicit request : RequestHeader, sessionID : BSONObjectID) : Future[User] = {
     val httpRequest    = HTTPRequest(request)
     val newSessionData = SessionData(ip        = request.remoteAddress,
                                      userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
@@ -122,7 +122,7 @@ trait UserSessions extends CommonModule {
   /**
     * updates a user in the cache
     */
-  def updateUserCache(user : User) = {
+  def updateUserCache(user : User) : Unit = {
     //Logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     user.sessionID match {
       case Some(sessionID) =>
@@ -147,7 +147,7 @@ trait UserSessions extends CommonModule {
   /**
     * removes a user from the sessions and the database
     */
-  def removeUserFromCache(user : User, withDB : Boolean = true) = {
+  def removeUserFromCache(user : User, withDB : Boolean = true) : Any = {
     Logger.info("Removing User: \n" + user.toString)
     // Remove user from the cache
     user.sessionID.foreach(sessionID => userCache.remove(sessionID.stringify))
