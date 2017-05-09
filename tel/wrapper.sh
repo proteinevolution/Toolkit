@@ -2,16 +2,17 @@
 
 
 HOSTNAME=$(hostname)
+# get key for job status update to job folder
+key=`date | md5sum | awk '{print $1}'`
 
-
-
+echo $key > ../key
 if [ "$HOSTNAME" = "olt" ] || [ "$HOSTNAME" = "rye" ]; then
 
 
 JOBID=$(basename $(dirname $(pwd))) 
 
 
-curl -X POST http://%HOSTNAME:%PORT/jobs/queued/$JOBID
+curl -X POST http://%HOSTNAME:%PORT/jobs/queued/$JOBID/$key
 
 if [ "$HOSTNAME" = "olt" ]
   then
