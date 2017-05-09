@@ -1,25 +1,5 @@
-var JobErrorComponent, jobNoteArea, JobValidationComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, SearchformComponent, closeShortcut, foundationConfig, helpModalAccess, mapParam, renderParameter, submitModal, tabulated ;
+var JobErrorComponent, jobNoteArea, JobValidationComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent ;
 
-helpModalAccess = function(elem, isInit) {
-    if (!isInit) {
-        return elem.setAttribute("data-open", "help-" + (this.job().tool.toolname));
-    }
-};
-
-
-
-hideSubmitButtons = function (elem, isInit) {
-    if (!isInit) {
-        return $(elem).on("click", function() {
-            if($(this).attr('href') == "#tabpanel-Input" || $(this).attr('href') == "#tabpanel-Parameters") {
-                $('.submitbuttons').show();
-            } else {
-                $('.submitbuttons').hide();
-            }
-        });
-
-    }
-};
 
 
 
@@ -60,13 +40,6 @@ JobLineComponent = {
     }
 };
 
-SearchformComponent = {
-    view: function() {
-        return m("div", { id: "jobsearchform" },
-            m("input", { type: "text", placeholder: "Search by JobID, e.g. 6881313", id: "jobsearch" })
-        );
-    }
-};
 
 
 jobNoteArea = function(elem, isInit) {
@@ -426,14 +399,6 @@ JobTabsComponent = {
     }
 };
 
-submitModal = function(elem, isInit) {
-    if (!isInit) {
-        $(elem).foundation();
-        return $(elem).bind('closed.zf.reveal', (function() {
-            return $(".submitJob").prop("disabled", false);
-        }));
-    }
-};
 
 
 JobValidationComponent = {
@@ -664,6 +629,9 @@ JobSubmissionComponent = {
     }
 };
 
+
+
+/*
 m.capture = function(eventName, handler) {
     var bindCapturingHandler;
     bindCapturingHandler = function(element) {
@@ -674,7 +642,7 @@ m.capture = function(eventName, handler) {
             bindCapturingHandler(element);
         }
     };
-};
+}; */ // TODO: most likely not in use anymore
 
 
 
@@ -886,18 +854,6 @@ window.ParameterAlignmentComponent = {
 };
 
 
-
-var alignment_format = function(elem, isInit) {
-
-    if (!isInit) {
-        $(elem).niceSelect();
-    } else {
-        $(elem).niceSelect('update');
-    }
-    if(this.length == 0) {
-        $(".alignment_format").hide();
-    }
-};
 
 
 
