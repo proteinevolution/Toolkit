@@ -21,7 +21,10 @@ let select2Config = function(elem : any, isInit : boolean) : any {
 
     if(!isInit) {
 
-        $(elem).select2();
+        $(elem).select2({
+            dropdownAutoWidth : true,
+            width: 'auto'
+        });
 
         return  $(elem).on("change", function () {
 
