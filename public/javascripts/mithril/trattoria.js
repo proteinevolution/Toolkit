@@ -1,4 +1,4 @@
-var JobErrorComponent, jobNoteArea, JobValidationComponent, ParameterAlignmentComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterSelectComponent, ParameterTextComponent, ParameterSlideComponent, SearchformComponent, closeShortcut, formComponents, foundationConfig, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
+var JobErrorComponent, jobNoteArea, JobValidationComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, SearchformComponent, closeShortcut, foundationConfig, helpModalAccess, mapParam, renderParameter, submitModal, tabulated ;
 
 helpModalAccess = function(elem, isInit) {
     if (!isInit) {
@@ -7,13 +7,6 @@ helpModalAccess = function(elem, isInit) {
 };
 
 
-selectBoxAccess = function(elem, isInit) {
-    if (!isInit) {
-        return $(elem).niceSelect();
-    } else {
-        return $(elem).niceSelect('update');
-    }
-};
 
 hideSubmitButtons = function (elem, isInit) {
     if (!isInit) {
@@ -214,17 +207,6 @@ JobRunningComponent = {
 
 
 
-renderParameter = function(content, moreClasses) {
-    return m("div", { class: moreClasses ? "parameter " + moreClasses : "parameter" }, content);
-};
-
-mapParam = function(param, ctrl) {
-    var comp = formComponents[param.paramType.type];
-    return m(comp, {
-        param: param,
-        value: ctrl.getParamValue(param.name)
-    });
-};
 
 
 
@@ -919,171 +901,3 @@ var alignment_format = function(elem, isInit) {
 
 
 
-ParameterRadioComponent = {
-    view: function(ctrl, args) {
-        return renderParameter([
-            m("label", {
-                "for": args.param.name
-            }, args.param.label), args.param.paramType.options.map(function(entry) {
-                return m("span", [
-                    m("input", {
-                        type: "radio",
-                        name: args.param.name,
-                        value: entry[0]
-                    }), entry[1]
-                ]);
-            })
-        ]);
-    }
-};
-
-ParameterSelectComponent = {
-    //not needed so far but is working
-    controller: function(args) {
-        return {
-
-        }
-    },
-
-    view: function(ctrl, args) {
-        var paramAttrs = {
-            name: args.param.name,
-            "class": "wide",
-            id: args.param.name,
-            config: select2Config
-        };
-        if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
-            paramAttrs["multiple"] = "multiple";
-            paramAttrs["class"] = "inputDBs";
-        }else{
-            paramAttrs["config"] = selectBoxAccess;
-        }
-        return renderParameter([
-            m("label", {
-                "for": args.param.name
-            }, args.param.label),
-            m("select", paramAttrs,
-                args.param.paramType.options.map(function(entry) {
-                    return m("option", (args.value.indexOf(entry[0]) > -1 ? {
-                            value: entry[0],
-                            selected: "selected"
-                        } : {
-                            value: entry[0]
-                        }), entry[1])
-                }))
-        ]);
-    }
-};
-
-
-ParameterNumberComponent = {
-    view: function(ctrl, args) {
-        var paramAttrs = {
-            type: "number",
-            id: args.param.name,
-            name: args.param.name,
-            value: args.value
-        };
-        // Add minimum and maximum if present
-        if(args.param.paramType["min"] != null) {
-            paramAttrs["min"] = args.param.paramType["min"];
-        }
-        if(args.param.paramType["max"]) {
-            paramAttrs["max"] = args.param.paramType["max"];
-        }
-        if(args.param.paramType["step"]) {
-            paramAttrs["step"] = args.param.paramType["step"];
-        }
-        return renderParameter([
-            m("label", {
-                "for": args.param.name
-            }, args.param.label), m("input", paramAttrs)
-        ]);
-    }
-};
-
-
-ParameterTextComponent = {
-    view: function(ctrl, args) {
-        var paramAttrs = {
-            type: "text",
-            id: args.param.name,
-            name: args.param.name,
-            value: args.value,
-            config: paramValidation
-        };
-        return renderParameter([
-            m("label", {
-                "for": args.param.name
-            }, args.param.label), m("input", paramAttrs)
-        ]);
-    }
-};
-
-ParameterBoolComponent = {
-    view: function(ctrl, args) {
-        return renderParameter([
-            m("label", {
-                "for": args.param.name
-            }, args.label), m("input", {
-                type: "checkbox",
-                id: args.param.name,
-                name: args.param.name,
-                value: args.value
-            })
-        ]);
-    }
-};
-
-ParameterSlideComponent = {
-    model: function(args) {
-
-    },
-    controller: function(args){
-
-        this.value = args.value;
-        this.config = function (el, isInit, ctx) {
-            if (!isInit) {
-                $(el).ionRangeSlider({
-                    grid: true,
-                    values: [0.000000000000000000000000000000000000000000000000001,0.00000000000000000000000000000000000000001,0.000000000000000000000000000001,0.00000000000000000001,0.000000000000001,0.0000000001,0.00000001,0.000001, 0.0001, 0.001, 0.01, 0.02, 0.05, 0.1],
-                    grid_snap: true,
-                    keyboard: true
-                })
-            }
-        }.bind(this)
-
-    },
-    view: function (ctrl, args) {
-        var paramAttrs = {
-            type: "range",
-            id: args.param.name,
-            name: args.param.name,
-            value: ctrl.value,
-            config: ctrl.config
-        };
-        // Add minimum and maximum if present
-        if(args.param.paramType["max"]) {
-            paramAttrs["max"] = args.param.paramType["max"];
-        }
-        if(args.param.paramType["min"]) {
-            paramAttrs["min"] = args.param.paramType["min"];
-        }
-        return renderParameter([
-            m("label", args.value),
-            m("input", paramAttrs)
-        ])
-
-    }
-
-};
-
-formComponents = {
-    1: ParameterAlignmentComponent,
-    2: ParameterNumberComponent,
-    3: ParameterSelectComponent,
-    4: ParameterBoolComponent,
-    5: ParameterRadioComponent,
-    6: ParameterSlideComponent,
-    7: ParameterTextComponent
-};
