@@ -100,14 +100,17 @@ FIELDSET {
 
 .search_Input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
     color:    darkgray;
+    font-size: 0.9em;
 }
 .search_Input::-moz-placeholder { /* Mozilla Firefox 4 to 18 */
     color:    darkgray;
     opacity:  1;
+    font-size: 0.9em;
 }
 .search_Input::-moz-placeholder { /* Mozilla Firefox 19+ */
     color:     darkgray;
     opacity:  1;
+    font-size: 0.9em;
 }
 
 
