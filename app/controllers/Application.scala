@@ -107,7 +107,7 @@ final class Application @Inject()(webJarAssets                                  
 
       case Some(badOrigin) =>
         logger.error(s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin")
-        true
+        false
 
       case None =>
         logger.error("originCheck: rejecting request because no Origin header found")
@@ -119,7 +119,7 @@ final class Application @Inject()(webJarAssets                                  
     * Returns true if the value of the Origin header contains an acceptable value.
     */
   def originMatches(origin: String): Boolean = {
-    origin.contains(TEL.hostname+":"+TEL.port)
+    origin.contains(TEL.hostname+":"+TEL.port) || origin.contains("tuebingen.mpg.de")
   }
 
 
