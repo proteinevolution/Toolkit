@@ -41,3 +41,49 @@ let select2Config = function(elem : any, isInit : boolean) : any {
     }
 
 };
+
+
+let helpModalAccess = function(elem : any, isInit: boolean) {
+    if (!isInit) {
+        return elem.setAttribute("data-open", "help-" + (this.job().tool.toolname));
+    }
+};
+
+
+
+let hideSubmitButtons = function (elem : any, isInit : boolean) : any {
+    if (!isInit) {
+        return $(elem).on("click", function() {
+            if($(this).attr('href') == "#tabpanel-Input" || $(this).attr('href') == "#tabpanel-Parameters") {
+                $('.submitbuttons').show();
+            } else {
+                $('.submitbuttons').hide();
+            }
+        });
+
+    }
+};
+
+
+let submitModal = function(elem : any, isInit : boolean) : any {
+    if (!isInit) {
+        $(elem).foundation();
+        return $(elem).bind('closed.zf.reveal', (function() {
+            return $(".submitJob").prop("disabled", false);
+        }));
+    }
+};
+
+
+let alignment_format = function(elem : any, isInit : boolean) {
+
+    if (!isInit) {
+        $(elem).niceSelect();
+    } else {
+        $(elem).niceSelect('update');
+    }
+    if(this.length == 0) {
+        $(".alignment_format").hide();
+    }
+};
+
