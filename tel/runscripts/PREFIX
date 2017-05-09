@@ -2,16 +2,18 @@
 
 #unset proxy variable
 export http_proxy=
+key=$(<../key)
+
 
 # Make Request to Toolkit to indicate current state of execution
 trap catch_errors ERR;
 function catch_errors() {
     echo "error" >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/error/%jobid.content
+    curl -X POST http://%HOSTNAME:%PORT/jobs/error/%jobid.content/$key
     echo "script aborted, because of errors"
     exit 0
 }
-curl -X POST http://%HOSTNAME:%PORT/jobs/running/%jobid.content > /dev/null 2>&1
+curl -X POST http://%HOSTNAME:%PORT/jobs/running/%jobid.content/$key > /dev/null 2>&1
 
 # retrieve sge id
 

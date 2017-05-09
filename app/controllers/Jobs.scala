@@ -3,6 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import actors.JobActor.{JobStateChanged, UpdateLog}
+import models.Constants
 import models.database.jobs._
 import models.job.JobActorAccess
 import modules.{CommonModule, LocationProvider}
@@ -12,6 +13,7 @@ import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import scala.io.Source
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -29,31 +31,40 @@ We can introduce auto-coercion of the Job MainID to the BSONObject ID
 final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            @NamedCache("userCache") implicit val userCache : CacheApi,
                            implicit val locationProvider : LocationProvider,
-                           val reactiveMongoApi: ReactiveMongoApi) extends Controller with CommonModule with UserSessions {
+                           val reactiveMongoApi: ReactiveMongoApi) extends Controller with CommonModule with UserSessions with Constants{
 
-  def jobStatusDone(jobID: String) = Action {
-    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
-    Ok
+  def jobStatusDone(jobID: String, key: String) = Action {
+
+    if(checkKey(jobID, key)) {
+      jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
+      Ok
+    } else BadRequest("Permission denied")
   }
 
-  def jobStatusError(jobID: String) = Action {
-    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Error))
-    Ok
+  def jobStatusError(jobID: String, key: String) = Action {
+    if(checkKey(jobID, key)) {
+      jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Error))
+      Ok
+    } else BadRequest("Permission denied")
   }
 
-  def jobStatusRunning(jobID: String) = Action {
-    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Running))
-    Ok
+  def jobStatusRunning(jobID: String, key: String) = Action {
+    if(checkKey(jobID, key)) {
+      jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Running))
+      Ok
+    } else BadRequest("Permission denied")
   }
 
-  def jobStatusQueued(jobID: String) = Action {
-    jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Queued))
-    Ok
+  def jobStatusQueued(jobID: String, key: String) = Action {
+    if(checkKey(jobID, key)) {
+      jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Queued))
+      Ok
+    } else BadRequest("Permission denied")
   }
 
   def updateLog(jobID: String) = Action {
-    jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID))
-    Ok
+      jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID))
+      Ok
   }
 
   //TODO make secure
@@ -161,5 +172,18 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
       }
     }
+  }
+
+  /**
+    * checks given key against the key that is
+    * located in the folder jobPath/jobID/key
+    *
+    * @param jobID
+    * @param key
+    * @return
+    */
+  def checkKey(jobID: String, key: String): Boolean = {
+    val refKey = Source.fromFile(jobPath+"/"+jobID + "/key").mkString.replaceAll("\n", "")
+    key == refKey
   }
 }
