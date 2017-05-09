@@ -15,11 +15,12 @@ import scala.collection.mutable
   *
   * @param root
   */
-class ExecutionContext(val root: File) {
+class ExecutionContext(val root: File, reOpen : Boolean = false) {
   // Root directory of the Execution Context
-  private val repFileBase = root./("params").createDirectories()
+  private val repFileBase = root./("params")
+  if (!reOpen) repFileBase.createDirectories()
   // Parameter directory of the Execution Context
-  private val sparam = repFileBase./("sparam")
+  private val serializedParameters = repFileBase./("sparam")
 
   // a Queue of executable files for this execution Context
   private val executionQueue = mutable.Queue[RegisteredExecution]()
@@ -41,7 +42,7 @@ class ExecutionContext(val root: File) {
     * @param params
     */
   def writeParams(params : Map[String,String]) : Unit = {
-    val oos = new ObjectOutputStream(new FileOutputStream(sparam.pathAsString))
+    val oos = new ObjectOutputStream(new FileOutputStream(serializedParameters.pathAsString))
     oos.writeObject(params)
     oos.close()
   }
@@ -50,8 +51,8 @@ class ExecutionContext(val root: File) {
     * Reload the parameters for a job when the EC is gone
     * @return
     */
-  private def reloadParams() : Map[String, String] = {
-    val ois = new ObjectInputStream(new FileInputStream(sparam.pathAsString))
+  def reloadParams : Map[String, String] = {
+    val ois = new ObjectInputStream(new FileInputStream(serializedParameters.pathAsString))
     val x = ois.readObject().asInstanceOf[Map[String, String]]
     ois.close()
     x
@@ -76,11 +77,11 @@ object ExecutionContext {
 
   case class FileAlreadyExists(msg: String) extends IllegalArgumentException(msg)
 
-  def apply(root: File): ExecutionContext = {
-    if(root.exists) {
+  def apply(root: File, reOpen : Boolean = false): ExecutionContext = {
+    if(root.exists && !reOpen) {
       throw FileAlreadyExists("ExecutionContext cannot be created because the root File already exists")
     } else {
-      new ExecutionContext(root)
+      new ExecutionContext(root, reOpen)
     }
   }
 }
