@@ -29,13 +29,6 @@ hideSubmitButtons = function (elem, isInit) {
 };
 
 
-select2Config = function(elem, isInit) {
-
-    if(!isInit) {
-        return $(elem).select2();
-    }
-
-};
 
 
 window.JobViewComponent = {
@@ -948,29 +941,7 @@ ParameterSelectComponent = {
     //not needed so far but is working
     controller: function(args) {
         return {
-            preventMultiSelection: (function () {
-                var last_valid_selection = null;
 
-                $('.inputDBs').change(function (event) {
-
-                    if ($('#hhsuitedb').val().length > 3) {
-
-                        $('#hhsuitedb').val(last_valid_selection);
-                    } else {
-                        last_valid_selection = $('#hhsuitedb').val();
-                    }
-                });
-            }).bind(this.mo),
-
-            solveDBSelection: (function () {
-                if((($('#hhsuitedb').val() != "") || ($('#proteomes').val() != ""))) {
-                    $('.inputDBs').removeAttr("required");
-                }
-
-                if((($('#hhsuitedb').val() == "") && ($('#proteomes').val() == ""))) {
-                    $('.inputDBs').prop("required", true);
-                }
-            }).bind(this.mo)
         }
     },
 
@@ -979,11 +950,7 @@ ParameterSelectComponent = {
             name: args.param.name,
             "class": "wide",
             id: args.param.name,
-            //if max count of chosen databases is needed
-            //onclick: ctrl.preventMultiSelection
-            onclick: ctrl.solveDBSelection,
-            config: select2Config,
-            required: true
+            config: select2Config
         };
         if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
             paramAttrs["multiple"] = "multiple";
