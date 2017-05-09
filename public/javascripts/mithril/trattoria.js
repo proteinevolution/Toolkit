@@ -1,6 +1,4 @@
-var JobErrorComponent, jobNoteArea, JobValidationComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent ;
-
-
+var JobErrorComponent, JobValidationComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent ;
 
 
 
@@ -41,36 +39,6 @@ JobLineComponent = {
 };
 
 
-
-jobNoteArea = function(elem, isInit) {
-    if (!isInit && $(elem).attr('id').substring(7) > -1) {
-        $.ajax({
-            url: '/api/jobs/getnotes/' + $(elem).attr('id').substring(7),
-            type: 'get',
-            success: function(data) {
-                if(data && data.length > 0){
-                    $("#notesTab").addClass("hasNotes");
-                } else {
-                    $("#notesTab").removeClass("hasNotes");
-                }
-                $(elem).html(data);
-            },
-            error: function(e){
-                console.warn(JSON.stringify(e));
-            }
-        });
-        return $(elem).keyup(function(e) {
-            var contentString;
-            $("#notesTab").addClass("hasNotes");
-            if($(elem).val().length === 0)
-                $("#notesTab").removeClass("hasNotes");
-            contentString = $(this).val();
-            $.post(jsRoutes.controllers.Jobs.annotation($(this).attr('id').substring(7), contentString), function(response) {
-                console.log('Response: ' + response);
-            });
-        });
-    }
-};
 
 
 JobErrorComponent = {
