@@ -219,6 +219,17 @@ JobRunningComponent = {
     }
 };
 
+JobPendingComponent = {
+    view: function(ctrl, args) {
+        return m("div", { class: "pending-panel", config: foundationConfig }, [
+            m('h6', "Your submission is pending, as there is a different job with similar parameters!"),
+            m('div', {"class":"openSimilarJob"}, m("button",{}, "Start Job anyways")),
+            m("div", {"class": "processJobIdContainer"},
+                m('b', "Job ID:"),
+                m('p', ' ' + args.job().jobID))
+        ]);
+    }
+};
 
 
 renderParameter = function(content, moreClasses) {
@@ -534,6 +545,74 @@ JobSubmissionComponent = {
             }
         }
         return {
+            submit2: function(startJob) {
+                if (JobSubmissionComponent.submitting || !JobSubmissionComponent.jobIDValid) {
+                    console.log("Job Submission is blocked: Already submitting: ", JobSubmissionComponent.submitting,
+                                "jobID valid: ",                                   JobSubmissionComponent.jobIDValid);
+                    return;
+                }
+                JobSubmissionComponent.submitting = true; // ensure that the submission is not reinitiated while a submission is ongoing
+
+                var submitRoute, formData, jobID, toolName, submitButton, form;
+                form = document.getElementById("jobform");
+                if(!form.checkValidity()) {
+                    JobSubmissionComponent.submitting = false;
+                    alert("Parameters are invalid");
+                    return;
+                }
+
+                // disable submit button
+                submitButton = $(".submitJob");
+                submitButton.prop("disabled", true);
+                toolName = args.job().tool.toolname;
+                jobID = JobSubmissionComponent.currentJobID;
+                console.log("Current JobID is: ", jobID, JobSubmissionComponent.currentJobID, "valid:", JobSubmissionComponent.jobIDValid);
+
+                // collect form data
+                formData = new FormData(form);
+                formData.append("toolName", toolName);
+
+
+                if ((jobID != null) && (jobID !== "")) { formData.append("jobID", jobID); }
+
+                // Append file to upload
+                var file = ($("input[type=file]")[0].files[0]);
+                formData.append("file", file);
+
+                // appendParentID if in storage // TODO use a better method for this (save it for the current job in the job view)
+                var parentid = localStorage.getItem("parentid");
+                if(parentid) {
+                    formData.append('parentid', parentid);
+                }
+
+                //submitRoute = jsRoutes.controllers.JobController.submitJob(toolname);
+                m.request({
+                    method: "POST",
+                    url: "/api/job/create/" + toolName,
+                    data: formData,
+                    extract: extractStatus,
+                    serialize: function(submissionReturnData) {
+                        console.log("unsetting job submission Blocking.");
+                        console.log("Data(serial):", submissionReturnData);
+                        return submissionReturnData;
+                    }
+                }).then(function(submissionReturnData){
+                    console.log("Data(then):", submissionReturnData);
+                    if (submissionReturnData.successful === true) {
+                        console.log("Job Submission was successful.");
+                        m.route("/jobs/" + submissionReturnData.jobID);
+                    } else {
+                        console.log("Error while submitting:", submissionReturnData.message)
+                    }
+                    submitButton.prop("disabled", false);
+                    JobSubmissionComponent.submitting = false;
+                }).catch(function(error){
+                    console.log("Error while submitting:", error);
+                    submitButton.prop("disabled", false);
+                    JobSubmissionComponent.submitting = false;
+                });
+                return;
+            },
             submit: function(startJob) {
                 if (JobSubmissionComponent.submitting || !JobSubmissionComponent.jobIDValid) {
                     console.log("Job Submission is blocked: Already submitting: ", JobSubmissionComponent.submitting,
@@ -553,7 +632,7 @@ JobSubmissionComponent = {
                 toolname = args.job().tool.toolname;
                 doCheck = true;
                 jobID = JobSubmissionComponent.currentJobID;
-                if (!jobID || (jobID == "")) { jobID = null; }
+                if (!jobID || (jobID === "")) { jobID = null; }
                 console.log("Current JobID is: ", jobID, JobSubmissionComponent.currentJobID, "valid:", JobSubmissionComponent.jobIDValid);
 
                 // Use check route and specify that the hashing function should be used
@@ -564,10 +643,9 @@ JobSubmissionComponent = {
 
                 // appendParentID if in storage
                 var parentid = localStorage.getItem("parentid");
-                if(!parentid) {
-                    parentid = '';
+                if(parentid) {
+                    formData.append('parentid', parentid);
                 }
-                formData.append('parentid', parentid);
                 $(".submitJob").prop("disabled", true);
                 var file = ($("input[type=file]")[0].files[0]);
                 formData.append("file", file);
@@ -678,7 +756,7 @@ JobSubmissionComponent = {
                 "class": "success button small submitJob",
                 value: (args.isJob ? "Res" : "S") + "ubmit Job",
                 style: "float: right;",
-                onclick: ctrl.submit.bind(ctrl, true)
+                onclick: ctrl.submit2.bind(ctrl, true)
             }),
             //!args.isJob ? m("label", m("input", { type: "checkbox", name: "private", value: "true", checked: "checked" }), "Private" ) : null, // TODO reimplement private checkbox
             //args.isJob && args.job().jobstate === 1 ?
