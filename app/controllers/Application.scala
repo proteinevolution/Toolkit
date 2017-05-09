@@ -6,6 +6,7 @@ import actors.WebSocketActor
 import akka.actor.{ActorSystem, Props}
 import models.sge.Cluster
 import akka.stream.Materializer
+import com.typesafe.config.ConfigFactory
 import models.database.statistics.ToolStatistic
 import models.search.JobDAO
 import models.Constants
@@ -131,16 +132,36 @@ final class Application @Inject()(webJarAssets                                  
     */
   def index(message : String = "") : Action[AnyContent] = Action.async { implicit request =>
     //generateStatisticsDB
-    val port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
-    val hostname = request.host.slice(0, request.host.indexOf(":"))
-    env.configure("PORT", port)
-    if(hostname.startsWith("rye"))
-      env.configure("HOSTNAME", "rye")
-    else env.configure("HOSTNAME", hostname)
-    TEL.port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
-    TEL.hostname = hostname
-    println("[CONFIG:] running on port "+TEL.port)
-    println("[CONFIG:] execution mode: "+settings.clusterMode)
+
+
+    ConfigFactory.load().getString(s"toolkit_mode") match {
+
+      case "prod" =>
+
+        val port = "9000"
+        val hostname = "rye"
+        env.configure("PORT", port)
+        env.configure("HOSTNAME", hostname)
+        TEL.port = port
+        TEL.hostname = hostname
+        println("[CONFIG:] running on port "+TEL.port)
+        println("[CONFIG:] execution mode: "+settings.clusterMode)
+
+
+      case _ =>
+
+        val port = request.host.slice(request.host.indexOf(":")+1,request.host.length)
+        val hostname = request.host.slice(0, request.host.indexOf(":"))
+        env.configure("PORT", port)
+        env.configure("HOSTNAME", hostname)
+        TEL.port = port
+        TEL.hostname = hostname
+        println("[CONFIG:] running on port "+TEL.port)
+        println("[CONFIG:] execution mode: "+settings.clusterMode)
+
+    }
+
+
     getUser.map { user =>
       Logger.info(user.toString)
       Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
