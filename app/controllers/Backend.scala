@@ -32,17 +32,10 @@ final class Backend @Inject()(webJarAssets                                      
                               extends Controller with I18nSupport with Common with UserSessions {
 
 
-  // Maps Session ID to Actor Ref of corresponding WebSocket
-  val connectedUsers = new scala.collection.mutable.HashMap[BSONObjectID, DateTime]
-
-
-
   //TODO currently working mithril routes for the backend
   def index : Action[AnyContent] = Action.async { implicit request =>
     getUser.map { user =>
       if (user.isSuperuser) {
-        //CheckBackendPath && user.isSuperuser && connectedUsers.get(user.userID).get.isBeforeNow) {
-        //NoCache(Ok(views.html.backend.backend(webJarAssets, views.html.backend.backend_maincontent(), "Backend")))
         NoCache(Ok(Json.toJson(List("Index Page"))))
       } else {
         NotFound
