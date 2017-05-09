@@ -70,7 +70,7 @@ final class Application @Inject()(webJarAssets                                  
     *
     * @return a fully realized websocket.
     */
-  def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
+  def ws : WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
       case rh if sameOriginCheck(rh) =>
         getUser(rh).map { user =>
@@ -257,7 +257,8 @@ final class Application @Inject()(webJarAssets                                  
         routes.javascript.HHblitsController.loadHits,
         routes.javascript.HHpredController.loadHits,
         routes.javascript.AlignmentController.loadHits,
-        routes.javascript.AlignmentController.getAln
+        routes.javascript.AlignmentController.getAln,
+        routes.javascript.Application.ws
       )
     ).as("text/javascript")
   }
