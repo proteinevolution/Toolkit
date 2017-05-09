@@ -943,7 +943,7 @@ textarea:focus{
 @media screen and (min-width: 756px) {
 
     .select2-container--default .select2-selection--multiple .select2-selection__rendered {
-        box-sizing: border-box;
+
         list-style: none;
         margin: 0;
         padding: 0 5px;
@@ -962,4 +962,12 @@ textarea:focus{
 
 .processJobIdContainer {
     display: flex;
+}
+
+#viewAlignment {
+    margin-left: -30px;
+}
+
+.select2-results__option {
+    font-size: 12px;
 }
