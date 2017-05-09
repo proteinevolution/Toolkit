@@ -70,7 +70,7 @@ final class Application @Inject()(webJarAssets                                  
     *
     * @return a fully realized websocket.
     */
-  def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
+  def ws : WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
       case rh if sameOriginCheck(rh) =>
         getUser(rh).map { user =>
@@ -107,7 +107,7 @@ final class Application @Inject()(webJarAssets                                  
 
       case Some(badOrigin) =>
         logger.error(s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin")
-        true
+        false
 
       case None =>
         logger.error("originCheck: rejecting request because no Origin header found")
@@ -119,7 +119,7 @@ final class Application @Inject()(webJarAssets                                  
     * Returns true if the value of the Origin header contains an acceptable value.
     */
   def originMatches(origin: String): Boolean = {
-    origin.contains(TEL.hostname+":"+TEL.port)
+    origin.contains(TEL.hostname+":"+TEL.port) || origin.contains("tuebingen.mpg.de")
   }
 
 
@@ -257,7 +257,8 @@ final class Application @Inject()(webJarAssets                                  
         routes.javascript.HHblitsController.loadHits,
         routes.javascript.HHpredController.loadHits,
         routes.javascript.AlignmentController.loadHits,
-        routes.javascript.AlignmentController.getAln
+        routes.javascript.AlignmentController.getAln,
+        routes.javascript.Application.ws
       )
     ).as("text/javascript")
   }

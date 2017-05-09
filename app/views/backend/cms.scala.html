@@ -1,7 +1,0 @@
-@import models.database.CMS.FeaturedArticle
-@(articles : List[FeaturedArticle])(implicit messages: Messages, request: RequestHeader)
-<table>
-@for(article <- articles) {
-  <tr><th>@{article.title}</th></tr>
-}
-</table>
