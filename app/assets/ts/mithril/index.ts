@@ -166,7 +166,7 @@ let trafficBarComponent = {
                         type: "text",
                         id: "searchInput",
                         name: "q",
-                        placeholder: "Search Keywords",
+                        placeholder: "enter a job ID or a tool name",
                         config: typeAhead
                     }))
                 )
