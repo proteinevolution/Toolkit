@@ -21,8 +21,7 @@ case class JobHash(mainID        : BSONObjectID,
                    toolName      : String,
                    toolHash      : String,
                    dateCreated   : Option[DateTime],
-                   jobID         : String,
-                   active        : Boolean = false)
+                   jobID         : String)
 
 object JobHash {
   val ID            = "_id"
@@ -34,7 +33,6 @@ object JobHash {
   val TOOLHASH      = "toolhash"
   val DATECREATED   = "dateCreated"
   val JOBID         = "jobID"
-  val ACTIVE        = "active"
 
 
   implicit object Reader extends BSONDocumentReader[JobHash] {
@@ -47,8 +45,7 @@ object JobHash {
       bson.getAs[String](TOOLNAME).getOrElse(""),
       bson.getAs[String](TOOLHASH).getOrElse("No matching hash value found"),
       bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
-      bson.getAs[String](JOBID).getOrElse(""),
-      bson.getAs[Boolean](ACTIVE).getOrElse(false)
+      bson.getAs[String](JOBID).getOrElse("")
     )
   }
 
@@ -62,8 +59,7 @@ object JobHash {
       TOOLNAME      -> jobHash.toolName,
       TOOLHASH      -> jobHash.toolHash,
       DATECREATED   -> BSONDateTime(jobHash.dateCreated.fold(-1L)(_.getMillis)),
-      JOBID         -> jobHash.jobID,
-      ACTIVE        -> jobHash.active
+      JOBID         -> jobHash.jobID
     )
   }
 }

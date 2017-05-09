@@ -122,19 +122,19 @@ final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
                   // Send the job to the jobActor for preparation
                   jobActorAccess.sendToJobActor(jobID, PrepareJob(job, formData, startJob = false, isFromInstitute))
                   // Notify user that the job has been submitted
-                  Ok(Json.obj("jobSubmitted" -> true, "jobID" -> jobID))
+                  Ok(Json.obj("successful" -> true, "jobID" -> jobID))
                     .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
                 case None =>
                   // Something went wrong when pushing to the DB
-                  BadRequest
+                  Ok(Json.obj("successful" -> false, "message" -> "Could not write to DB."))
               }
             case None =>
               // TODO Should not be a Bad Request but a message stating that the job ID is already taken.
-              Future.successful(BadRequest)
+              Future.successful(Ok(Json.obj("successful" -> false, "message" -> "Job ID is already taken.")))
           }
         case None =>
           // No form data - something went wrong.
-          Future.successful(BadRequest)
+          Future.successful(Ok(Json.obj("successful" -> false, "message" -> "The form was invalid.")))
       }
     }
   }

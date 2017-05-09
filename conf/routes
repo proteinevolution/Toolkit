@@ -132,6 +132,7 @@ GET           /api/tools/:toolname                    @controllers.Service.getTo
 
 # Get list of userjobs
 GET           /api/jobs                               @controllers.JobController.listJobs
+POST          /api/job/create/:toolName               @controllers.JobController.submitJob(toolName: String)
 POST          /api/job                                @controllers.JobController.create(toolname: String, jobID: String)
 POST          /api/job/check                          @controllers.JobController.check(toolname: String, jobID: Option[String], hash: Boolean)
 GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)

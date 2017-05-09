@@ -20,7 +20,7 @@ class ExecutionContext(val root: File, reOpen : Boolean = false) {
   private val repFileBase = root./("params")
   if (!reOpen) repFileBase.createDirectories()
   // Parameter directory of the Execution Context
-  private val serializedParameters = repFileBase./("sparam")
+  private val serializedParameters = root./("sparam")
 
   // a Queue of executable files for this execution Context
   private val executionQueue = mutable.Queue[RegisteredExecution]()

@@ -145,6 +145,13 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
     }
   }
 
+  /**
+    * Return the validated parameters
+    * @param job
+    * @param runscript
+    * @param params
+    * @return
+    */
   private def validatedParameters(job       : Job,
                                   runscript : Runscript,
                                   params    : Map[String,String]) :
@@ -335,7 +342,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
 
     case PrepareJob(job, params, startJob, isInternalJob) =>
       // jobid will also be available as parameter
-      val extendedParams = params + ("jobID" -> job.jobID)
+      val extendedParams = params + ("jobid" -> job.jobID)
 
       // Add job to the current jobs
       this.currentJobs = this.currentJobs.updated(job.jobID, job)
@@ -377,6 +384,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
             hashCollection.flatMap(_.insert(jobHash))
             self ! StartJob(job.jobID)
           } else {
+            Logger.info("JobID " + job.jobID + " will now be hashed.")
             self ! CheckJobHashes(job.jobID)
           }
         } else {
@@ -396,11 +404,13 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
       * Checks the jobHashDB for matches and generates one for the job if there are none.
       */
     case CheckJobHashes(jobID) =>
+      Logger.info("JobID " + jobID + " will now be hashed.")
       this.getCurrentJob(jobID).foreach {
         case Some(job) =>
           this.getCurrentExecutionContext(jobID) match {
             case Some(executionContext) =>
-              val params = executionContext.reloadParams
+              // Ensure that the jobID is not being hashed
+              val params = executionContext.reloadParams - "jobid" - "jobID" - "mainID"
               val jobHash = this.generateJobHash(job, params)
 
               // Match the hash
@@ -429,10 +439,12 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
                   jobsPartition._2.lastOption match {
                     case Some(_) =>
                       // TODO generate Mithril view for Pending jobs
+                      Logger.info("JobID " + jobID + " is a duplicate.")
                       self ! JobStateChanged(job.jobID, Pending)
                     case None =>
-                      self ! JobStateChanged(job.jobID, Prepared)
+                      Logger.info("JobID " + jobID + " will now be started.")
                       hashCollection.flatMap(_.insert(jobHash))
+                      self ! StartJob(job.jobID)
                   }
                 }
               }
@@ -638,12 +650,13 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
         case Some(job) =>
           this.getCurrentExecutionContext(jobID) match {
             case Some(executionContext) =>
+              Logger.info("[JobActor.StartJob] reached. starting job " + jobID)
               // set memory allocation on the cluster and let the clusterMonitor define the multiplier
 
               val h_vmem = (ConfigFactory.load().getString(s"Tools.${job.tool}.memory").dropRight(1).toInt * TEL.memFactor).toString + "G"
               val threads = math.ceil(ConfigFactory.load().getInt(s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
               env.configure(s"MEMORY", h_vmem)
-              env.configure("THREADS", threads.toString)
+              env.configure(s"THREADS", threads.toString)
               Logger.info(s"$jobID is running with $h_vmem h_vmem")
               Logger.info(s"$jobID is running with $threads threads")
 
@@ -668,6 +681,7 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
                   if(isComplete(validParameters)) {
                     val pendingExecution = wrapperExecutionFactory.getInstance(runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
                     executionContext.accept(pendingExecution)
+                    Logger.info("[JobActor.StartJob] Running job now.")
 
                     this.runningExecutions = this.runningExecutions.updated(job.jobID, executionContext.executeNext.run())
                   } else {
@@ -679,8 +693,8 @@ class JobActor @Inject() (runscriptManager        : RunscriptManager, // To get 
                 case None =>
                   Logger.error("[JobActor.StartJob] Job could not be written to DB: " + jobID)
               }
-              env.remove(s"MEMORY")
-              env.remove(s"THREADS")
+              //env.remove(s"MEMORY")
+              //env.remove(s"THREADS")
             case None =>
           }
         case None =>
