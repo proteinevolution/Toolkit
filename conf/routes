@@ -20,10 +20,6 @@ GET           /javascriptRoutes                       controllers.Application.ja
 POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)
 POST          /settings/memset                        @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
 
-GET           /@/backend/settings                     @controllers.Backend.settings
-GET           /@/backend/edit                         @controllers.Backend.edit
-GET           /@/backend/access                       @controllers.Backend.access
-GET           /@/backend/logout                       @controllers.Backend.logOut
 
 # integrated mithril route backend routes
 GET           /backend/index                          @controllers.Backend.index
@@ -99,7 +95,7 @@ POST          /jobs/updateLog/:jobID                  @controllers.Jobs.updateLo
 
 # Validation Controller
 
-GET           /validate/modeller/:input             @controllers.Validation.validateModellerKey(input: String)
+GET           /validate/modeller/:input               controllers.Validation.validateModellerKey(input: String)
 
 # Cluster
 
