@@ -27,8 +27,10 @@ connect = function() : any {
         connecting   = true;    // we are connecting
         clearInterval(retryCountdownInterval);  // Remove the timer
         let wsRoute = jsRoutes.controllers.Application.ws;
-        ws = new WebSocket(wsRoute().webSocketURL(location.protocol));   // create the new websocket
+        let isSecure = location.protocol === "https:";
+        ws = new WebSocket(wsRoute().webSocketURL(isSecure));   // create the new websocket
         console.log(ws);
+        console.log(isSecure);
         console.log(location.protocol);
         ws.onopen    = function(evt : Event)        : any { return onOpen(evt); };
         ws.onclose   = function(evt : CloseEvent)   : any { return onClose(evt); };
