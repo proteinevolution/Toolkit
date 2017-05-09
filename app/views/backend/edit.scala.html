@@ -1,7 +1,0 @@
-@(webJarAssets: WebJarAssets, content: String)(implicit messages: Messages, request: RequestHeader)
-<script src="@routes.WebJarAssets.at(webJarAssets.locate("tinymce.min.js"))"></script>
-<script>tinymce.init({ selector:'textarea' });</script>
-
-
-<h1>Recent Updates</h1>
-<textarea>@content</textarea>
