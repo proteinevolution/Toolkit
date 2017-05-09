@@ -49,6 +49,15 @@ sealed trait MailTemplate {
          |  </body>
          |</html>
     """.stripMargin
+
+
+  val origin : String = TEL.hostname match {
+
+    case "olt" => s"http://${TEL.hostname}:${TEL.port}"
+    case _ => s"https://rye.tuebingen.mpg.de" // TODO change it to toolkit.tuebingen.mpg.de later
+
+  }
+
 }
 
 case class NewUserWelcomeMail (userParam : User, token : String) extends MailTemplate {
@@ -56,11 +65,12 @@ case class NewUserWelcomeMail (userParam : User, token : String) extends MailTem
 
   val user : User = userParam
 
+
   val bodyText : String = {
     s"""Welcome ${user.getUserData.nameLogin},
        |Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
        |To do this, visit
-       |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
+       |$origin/verification/${user.getUserData.nameLogin}/$token
        |Your Toolkit Team
      """.stripMargin
   }
@@ -69,9 +79,9 @@ case class NewUserWelcomeMail (userParam : User, token : String) extends MailTem
     super.bodyHtmlTemplate(
       s"""Welcome ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.<br />
-       |To do this, click <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
+       |To do this, click <a href=\"$origin/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
        |or copy this URL and visit this page in your browser:<br />
-       |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token<br />
+       |$origin/verification/${user.getUserData.nameLogin}/$token<br />
        |Your Toolkit Team
      """.stripMargin
     )
@@ -87,7 +97,7 @@ case class ChangePasswordMail (userParam : User, token : String) extends MailTem
     s"""Hello ${user.getUserData.nameLogin},
         |You requested a password change.
         |To complete the process, visit
-        |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
+        |$origin/verification/${user.getUserData.nameLogin}/$token
         |If You did not request this, then your account has been used by someone else.
         |Log in and change the password yourself to ensure that this other Person can no longer access your account.
         |Your Toolkit Team
@@ -98,9 +108,9 @@ case class ChangePasswordMail (userParam : User, token : String) extends MailTem
     super.bodyHtmlTemplate(
       s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""You requested a password change.<br />
-          |To complete the process, click <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
+          |To complete the process, click <a href=\"$origin/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
           |or copy this URL and visit this page in your browser:<br />
-          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token<br />
+          |$origin/verification/${user.getUserData.nameLogin}/$token<br />
           |If You did not request this, then your account has been used by someone else.<br />
           |Log in and change the password yourself to ensure that this other Person can no longer access your account.<br />
           |Your Toolkit Team<br />
@@ -118,7 +128,7 @@ case class ResetPasswordMail (userParam : User, token : String) extends MailTemp
     s"""Hello ${user.getUserData.nameLogin},
         |You requested to reset your password and set a new one.
         |To complete the process, visit
-        |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token
+        |$origin/verification/${user.getUserData.nameLogin}/$token
         |If You did not request this, then someone may have tried to log into your account.
         |Your Toolkit Team
      """.stripMargin
@@ -128,9 +138,9 @@ case class ResetPasswordMail (userParam : User, token : String) extends MailTemp
     super.bodyHtmlTemplate(
       s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""You requested to reset your password and set a new one.<br />
-          |To complete the process, visit <a href=\"http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
+          |To complete the process, visit <a href=\"$origin/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
           |or copy this URL and visit this page in your browser:<br />
-          |http://${TEL.hostname}:${TEL.port}/verification/${user.getUserData.nameLogin}/$token<br />
+          |$origin/verification/${user.getUserData.nameLogin}/$token<br />
           |If You did not request this, then your account has been used by someone else.<br />
           |Log in and change the password yourself to ensure that this other Person can no longer access your account.<br />
           |Your Toolkit Team
@@ -165,7 +175,7 @@ case class PasswordChangedMail (userParam : User) extends MailTemplate {
 }
 
 case class JobFinishedMail (userParam : User, job : Job) extends MailTemplate {
-  override def subject = s"""Job ${job.jobID} finished running - Bioinformatics Toolkit""".stripMargin
+  override def subject : String = s"""Job ${job.jobID} finished running - Bioinformatics Toolkit""".stripMargin
 
   val user : User = userParam
 
@@ -180,7 +190,7 @@ case class JobFinishedMail (userParam : User, job : Job) extends MailTemplate {
   val bodyText : String = {
     s"""Hello ${user.getUserData.nameLogin},
         |$statusMessage
-        |You can view it at any time at http://${TEL.hostname}:${TEL.port}/jobs/${job.jobID}
+        |You can view it at any time at $origin/jobs/${job.jobID}
         |Your Toolkit Team
      """.stripMargin
   }
@@ -189,8 +199,8 @@ case class JobFinishedMail (userParam : User, job : Job) extends MailTemplate {
     super.bodyHtmlTemplate(
       s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""$statusMessage
-          |You can view it at any time <a href=\"http://${TEL.hostname}:${TEL.port}/jobs/${job.jobID}>here</a>
-          |or go to http://${TEL.hostname}:${TEL.port}/jobs/${job.jobID} in your browser<br />
+          |You can view it at any time <a href=\"$origin/jobs/${job.jobID}>here</a>
+          |or go to $origin/jobs/${job.jobID} in your browser<br />
           |Your Toolkit Team
      """.stripMargin
     )
