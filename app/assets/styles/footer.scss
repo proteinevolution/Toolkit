@@ -92,22 +92,17 @@
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
   width: 65%;
 
-  h3 {
-    border-bottom: 2px solid #006F62;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
+  a {
+    font-size: large;
   }
 
-  h6 {
-    width: 40%;
-    border-bottom: 2px solid #006F62;
+  p {
     font-weight: bold;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
   }
 
 }
 
 #imprintContent, #helpModalContent, #privacyPolicyContent, #contactModelContent {
-  border: 1px solid #aaaaaa;
   padding: 1em;
 }
 
