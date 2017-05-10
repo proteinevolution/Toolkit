@@ -5,7 +5,7 @@
 <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download PDB file</a>
 <hr id="line-element" colspan="4" class="horizontal-line">
 
-<div id="viewport" style="width:50pc; height: 30pc; margin: 0 auto;"></div>
+<div id="viewport"></div>
 
 <script>
         var downloadFilename = "@{resultname}_@{jobID}";
@@ -20,11 +20,26 @@
             })
         };
 
-        $("#viewport").ready(function(){
-            setTimeout(function(){
-                stage = new NGL.Stage( "viewport" );
-                stage.loadFile('@filepath', {defaultRepresentation: true});
-                stage.set
-            }, 100);
+        $(document).ready(function () {
+            setViewport();
         });
+
+        function setViewport() {
+
+            if($('#tool-tabs').hasClass('fullscreen')) {
+                $('#viewport').width(1500).height(900).find('canvas').first().remove();
+            } else {
+                $('#viewport').width(810).height(500).find('canvas').first().remove();
+            }
+
+            $("#viewport").ready(function(){
+                setTimeout(function() {
+                    stage = new NGL.Stage( "viewport" );
+                    stage.loadFile('@filepath', {defaultRepresentation: true});
+                    stage.set
+                }, 100);
+            });
+
+        }
+
 </script>
