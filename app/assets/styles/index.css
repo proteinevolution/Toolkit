@@ -458,7 +458,6 @@ FIELDSET {
 .trafficbar {
     cursor: pointer;
     z-index: 99;
-    margin-bottom: 0.1em !important;
     height: 0.2em;
     width: 100%;
     -moz-border-radius: 4px;
@@ -469,19 +468,19 @@ FIELDSET {
 }
 
 .trafficbar.queue {
-    background: rgba(192, 181, 191, 0.5);
+    background: rgba(192, 181, 191, 0.9);
     box-shadow: 0 1px 6px #9192af;
 }
 .trafficbar.done {
-    background: rgba(0, 180, 40, 0.2);
+    background: rgba(0, 180, 40, 0.9);
     box-shadow: 0 1px 6px #C3FFC3;
 }
 .trafficbar.error {
-    background: rgba(180, 0, 40, 0.2);
+    background: rgba(180, 0, 40, 0.9);
     box-shadow: 0 1px 6px #FFC5C5;
 }
 .trafficbar.running {
-    background: rgba(255, 255, 0, 0.4);
+    background: rgba(255, 255, 0, 0.9);
     box-shadow: 0 1px 6px #FFF666;
 }
 
