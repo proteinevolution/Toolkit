@@ -19,29 +19,27 @@ class TELModule extends AbstractModule {
 
   override def configure(): Unit = {
 
-       // Bind TEL Env
-        bind(classOf[Env])
-          .toProvider(classOf[TELEnvProvider])
-          .asEagerSingleton()
+    // Bind TEL Env
+    bind(classOf[Env])
+      .toProvider(classOf[TELEnvProvider])
+      .asEagerSingleton()
 
-       // Bind TEL Parameter Collector
-        bind(classOf[Params])
-          .toProvider(classOf[ParamCollectorProvider])
-          .asEagerSingleton()
+    // Bind TEL Parameter Collector
+    bind(classOf[Params])
+      .toProvider(classOf[ParamCollectorProvider])
+      .asEagerSingleton()
 
-        bind(classOf[String])
-          .annotatedWith(Names.named("runscriptPath"))
-          .toProvider(classOf[RunscriptPathProvider])
-          .asEagerSingleton()
+    bind(classOf[String])
+      .annotatedWith(Names.named("runscriptPath"))
+      .toProvider(classOf[RunscriptPathProvider])
+      .asEagerSingleton()
 
-        bind(classOf[String])
-          .annotatedWith(Names.named("wrapperPath"))
-          .toProvider(classOf[WrapperPathProvider])
-          .asEagerSingleton()
+    bind(classOf[String])
+      .annotatedWith(Names.named("wrapperPath"))
+      .toProvider(classOf[WrapperPathProvider])
+      .asEagerSingleton()
   }
 }
-
-
 
 /*
 install(new FactoryModuleBuilder()
@@ -52,8 +50,7 @@ install(new FactoryModuleBuilder()
 
 import better.files._
 
-
-class WrapperPathProvider @Inject() (configuration: Configuration) extends Provider[String] {
+class WrapperPathProvider @Inject()(configuration: Configuration) extends Provider[String] {
 
   override def get(): String = {
 
@@ -65,74 +62,79 @@ class WrapperPathProvider @Inject() (configuration: Configuration) extends Provi
   }
 }
 
-
-class RunscriptPathProvider @Inject() (configuration: Configuration) extends Provider[String] {
-
+class RunscriptPathProvider @Inject()(configuration: Configuration) extends Provider[String] {
 
   override def get(): String = {
 
-    configuration.getString("tel.runscripts").getOrElse{
+    configuration.getString("tel.runscripts").getOrElse {
       val fallBackFile = "tel/runscripts"
 
       Logger.warn(s"Key 'tel.runscripts' was not found in configuration. Fall back to '$fallBackFile'")
-     fallBackFile
+      fallBackFile
     }
   }
 }
 
-
-class ParamCollectorProvider @Inject()
-      (pc : ParamCollector,
-       configuration: Configuration,
-       generativeParamFileParser: GenerativeParamFileParser) extends Provider[ParamCollector] {
+class ParamCollectorProvider @Inject()(pc: ParamCollector,
+                                       configuration: Configuration,
+                                       generativeParamFileParser: GenerativeParamFileParser)
+    extends Provider[ParamCollector] {
 
   override def get(): ParamCollector = {
 
+    lazy val paramFilePath = configuration.getString("tel.params").getOrElse {
 
-     lazy val paramFilePath = configuration.getString("tel.params").getOrElse{
+      val fallBackFile = "tel/paramspec/PARAMS"
+      Logger.warn(s"Key 'tel.params' was not found in configuration. Fall back to '$fallBackFile'")
+      fallBackFile
+    }
 
-        val fallBackFile = "tel/paramspec/PARAMS"
-        Logger.warn(s"Key 'tel.params' was not found in configuration. Fall back to '$fallBackFile'")
-        fallBackFile
-      }
+    generativeParamFileParser.read(paramFilePath).foreach { param =>
+      pc.addParam(param.name, param)
 
-      generativeParamFileParser.read(paramFilePath).foreach { param =>
-
-        pc.addParam(param.name, param)
-
-      }
+    }
 
     pc
   }
 }
 
-
 /**
   *  Uses the tel configuration to wire the TELEnv environment to the env module
   */
-class TELEnvProvider @Inject()(tv : TELEnv, configuration: Configuration) extends  Provider[TELEnv] {
+class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends Provider[TELEnv] {
 
   override def get(): TELEnv = {
 
     // Try loading the environment files from the configured directory
-    configuration.getString("tel.env").getOrElse {
+    configuration
+      .getString("tel.env")
+      .getOrElse {
 
-      val fallBackFile = "tel/env"
+        val fallBackFile = "tel/env"
 
-      Logger.warn(s"Key 'tel.env' was not found in configuration. Fall back to '$fallBackFile'") ;
-      fallBackFile
-    }.toFile.list.foreach { file =>
-
-      file.setPermissions(Set(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
-        PosixFilePermission.GROUP_EXECUTE, PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE))
-
-      file.extension match {
-
-        case Some(".prop") => new PropFile(file.pathAsString).addObserver(tv)
-        case Some(".sh") => new ExecFile(file.pathAsString).addObserver(tv)
-        case _ => //
+        Logger.warn(s"Key 'tel.env' was not found in configuration. Fall back to '$fallBackFile'");
+        fallBackFile
       }
-    }
+      .toFile
+      .list
+      .foreach { file =>
+        file.setPermissions(
+          Set(
+            PosixFilePermission.OWNER_EXECUTE,
+            PosixFilePermission.OWNER_READ,
+            PosixFilePermission.OWNER_WRITE,
+            PosixFilePermission.GROUP_EXECUTE,
+            PosixFilePermission.GROUP_READ,
+            PosixFilePermission.GROUP_WRITE
+          ))
+
+        file.extension match {
+
+          case Some(".prop") => new PropFile(file.pathAsString).addObserver(tv)
+          case Some(".sh")   => new ExecFile(file.pathAsString).addObserver(tv)
+          case _             => //
+        }
+      }
     tv
   }
 }
