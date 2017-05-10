@@ -10,10 +10,7 @@ import scala.io.Source
   */
 object Tcoffee extends Constants {
 
-
-
-
-  def colored(mainID: String) : String = {
+  def colored(mainID: String): String = {
 
     val outfile = s"$jobPath$mainID/results/alignment.score_html"
 
@@ -28,8 +25,8 @@ object Tcoffee extends Constants {
 
   /* returns the clustal output to be embedded in biojs msa via twirl */
 
-  def alnviz(jobID: String) : Iterator[String] = {
-    Logger.info("Reading file: " + "$jobPath$jobID/results/alignment.clustalw_aln" )
+  def alnviz(jobID: String): Iterator[String] = {
+    Logger.info("Reading file: " + "$jobPath$jobID/results/alignment.clustalw_aln")
     Source.fromFile(s"$jobPath$jobID/results/alignment.clustalw_aln").getLines()
   }
 }

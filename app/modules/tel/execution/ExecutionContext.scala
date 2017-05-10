@@ -1,11 +1,8 @@
 package modules.tel.execution
 
-
 import better.files.File
 
 import scala.collection.mutable
-
-
 
 /**
   * An Execution Context represent the environment in which a runscript can be executed. Only TEL
@@ -19,13 +16,13 @@ class ExecutionContext(val root: File) {
 
   // a Queue of executable files for this execution Context
   private val executionQueue = mutable.Queue[RegisteredExecution]()
-  private val execNumbers = Iterator.from(0, 1)
+  private val execNumbers    = Iterator.from(0, 1)
 
   /**
    Registers a new file in this ExecutionContext with a certain name and content.
    A preexisting file with the same name will be overridden
-   */
-  def getFile(name: String, content: String) : File = {
+    */
+  def getFile(name: String, content: String): File = {
 
     val x = repFileBase./(name)
     x.delete(swallowIOExceptions = true)
@@ -57,7 +54,7 @@ object ExecutionContext {
 
   def apply(root: File): ExecutionContext = {
 
-    if(root.exists) {
+    if (root.exists) {
       throw FileAlreadyExists("ExecutionContext cannot be created because the root File already exists")
 
     } else {
