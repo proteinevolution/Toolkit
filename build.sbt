@@ -31,12 +31,12 @@ lazy val commonDeps = Seq(
   "com.lihaoyi"          %% "fastparse"               % "0.4.1",
   "com.vmunier"          %% "scalajs-scripts"         % "1.0.0",
   "org.typelevel"        %% "cats"                    % "0.9.0",
-  "com.mohiva"           %% "play-html-compressor"    % "0.6.3",
-  "io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
-  "io.kamon"             %% "kamon-system-metrics"    % kamonVersion,
-  "io.kamon"             %% "kamon-statsd"            % kamonVersion,
-  "io.kamon"             %% "kamon-log-reporter"      % kamonVersion,
-  "org.aspectj"          % "aspectjweaver"            % "1.8.9"
+  "com.mohiva"           %% "play-html-compressor"    % "0.6.3"
+  //"io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
+  //"io.kamon"             %% "kamon-system-metrics"    % kamonVersion,
+  //"io.kamon"             %% "kamon-statsd"            % kamonVersion,
+  //"io.kamon"             %% "kamon-log-reporter"      % kamonVersion,
+  //"org.aspectj"          % "aspectjweaver"            % "1.8.9"
 )
 
 /*
