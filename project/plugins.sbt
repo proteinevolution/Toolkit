@@ -1,6 +1,6 @@
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.14")
 
-addSbtPlugin("com.typesafe.sbt"  % "sbt-play-enhancer" % "1.1.0")
+addSbtPlugin("com.typesafe.sbt" % "sbt-play-enhancer" % "1.1.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-rjs" % "1.0.8")
 
@@ -25,3 +25,5 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-jshint" % "1.0.4")
 addSbtPlugin("net.ground5hark.sbt" % "sbt-concat" % "0.1.9")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-aspectj" % "0.10.6")
+
+addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.6.8")
