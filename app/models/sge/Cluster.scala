@@ -2,50 +2,44 @@ package models.sge
 
 import javax.inject.{Inject, Singleton}
 
-
-
 /**
   * Created by snam on 19.03.17.
   */
-
 @Singleton
-final class Cluster @Inject()(qhost : Qhost,
-                        qstat : Qstat) {
+final class Cluster @Inject()(qhost: Qhost, qstat: Qstat) {
 
+  case class Load(cpuLoad: Double, memUsed: Double, loadEst: Double)
 
-
-  case class Load(cpuLoad : Double, memUsed : Double, loadEst : Double)
-
-
-  def getLoad : Load = {
+  def getLoad: Load = {
 
     // get the infos from the qstat command
     val cluster = qhost.get()
 
     //compute some kind of load status, see http://blog.scoutapp.com/articles/2009/07/31/understanding-load-averages
 
-    val c = cluster.map { x => x.load / x.ncpu }.sum / cluster.length
+    val c = cluster.map { x =>
+      x.load / x.ncpu
+    }.sum / cluster.length
 
-    val m = cluster.map { x => x.memuse / x.memtot }.sum / cluster.length
+    val m = cluster.map { x =>
+      x.memuse / x.memtot
+    }.sum / cluster.length
 
     // take the resource which is more booked out to define the current load
-    val l = cluster.map { x => math.max( x.load / (5 * x.ncpu) , x.memuse / x.memtot ) }.sum / cluster.length
+    val l = cluster.map { x =>
+      math.max(x.load / (5 * x.ncpu), x.memuse / x.memtot)
+    }.sum / cluster.length
 
     // just uses the native load column from the qhost output
-    val nativeLoad = cluster.map { x => x.load }.sum / ( cluster.length * 100 )
-
-
-
-
+    val nativeLoad = cluster.map { x =>
+      x.load
+    }.sum / (cluster.length * 100)
 
     Load(c, m, l)
 
   }
 
-
 }
-
-
 /*
 HOSTNAME                ARCH         NCPU  LOAD  MEMTOT  MEMUSE  SWAPTO  SWAPUS
 -------------------------------------------------------------------------------
