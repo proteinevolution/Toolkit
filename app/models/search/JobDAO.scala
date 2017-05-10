@@ -18,21 +18,21 @@ import reactivemongo.bson.BSONObjectID
 import scala.util.hashing.MurmurHash3
 import scala.concurrent.Future
 
-
 @Singleton
 final class JobDAO @Inject()(cs: ClusterSetup,
-                       elasticFactory: PlayElasticFactory,
-                       toolFactory: ToolFactory,
-                       @Named("jobs") indexAndType: IndexAndType)
-  extends ElasticDsl with PlayElasticJsonSupport with TELConstants {
-  
+                             elasticFactory: PlayElasticFactory,
+                             toolFactory: ToolFactory,
+                             @Named("jobs") indexAndType: IndexAndType)
+    extends ElasticDsl
+    with PlayElasticJsonSupport
+    with TELConstants {
+
   private[this] lazy val client = elasticFactory(cs)
-  private val noHash = Set("mainID", "jobID")
+  private val noHash            = Set("mainID", "jobID")
 
-  private val Index = ConfigFactory.load().getString(s"elastic4s.indexAndTypes.jobs.index")
-  private val jobIndex = Index / "jobs"
+  private val Index        = ConfigFactory.load().getString(s"elastic4s.indexAndTypes.jobs.index")
+  private val jobIndex     = Index / "jobs"
   private val jobHashIndex = Index / "jobhashes"
-
 
   //private def toolNameLong(name : String) : String = toolFactory.values.get(name).get.toolNameLong
 
@@ -42,13 +42,11 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     * @param params
     * @return
     */
-
-  def generateHash(params: Map[String, String]): BigInt =  {
+  def generateHash(params: Map[String, String]): BigInt = {
 
     FNV.hash64(params.toString.getBytes())
 
   }
-
 
   /**
     * hashes the runscripts which is used for a job
@@ -56,13 +54,12 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     * @param toolname
     * @return
     */
-
-  def generateRSHash(toolname: String) : String = {
+  def generateRSHash(toolname: String): String = {
 
     val runscript = s"$runscriptPath$toolname.sh"
-    val content = scala.io.Source.fromFile(runscript).getLines().mkString
+    val content   = scala.io.Source.fromFile(runscript).getLines().mkString
 
-    MurmurHash3.stringHash(content,0).toString
+    MurmurHash3.stringHash(content, 0).toString
 
   }
 
@@ -72,49 +69,52 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     * @param name
     * @return
     */
-  def generateToolHash(name: String) : String = {
+  def generateToolHash(name: String): String = {
 
     try {
-      MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString,0).toString
-    }
-    catch {
-      case _ : Throwable => "No matching hash value found"
+      MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString, 0).toString
+    } catch {
+      case _: Throwable => "No matching hash value found"
     }
 
   }
 
-
   // Searches for a matching hash in the Hash DB
-  def matchHash(hash : String, rsHash: String, dbName : Option[String], dbMtime : Option[String], toolname : String, toolHash: String): Future[RichSearchResponse] = {
+  def matchHash(hash: String,
+                rsHash: String,
+                dbName: Option[String],
+                dbMtime: Option[String],
+                toolname: String,
+                toolHash: String): Future[RichSearchResponse] = {
     client.execute(
       search in jobHashIndex query {
-          bool(
-            must(
-              matchQuery("hash", hash).analyzer(StandardAnalyzer),
-              matchQuery("dbname", dbName.getOrElse("none")).analyzer(StandardAnalyzer),
-              termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z")),
-              matchQuery("toolname", toolname).analyzer(StandardAnalyzer),
-              matchQuery("rshash", rsHash).analyzer(StandardAnalyzer),
-              matchQuery("toolhash", toolHash).analyzer(StandardAnalyzer)
-            )
+        bool(
+          must(
+            matchQuery("hash", hash).analyzer(StandardAnalyzer),
+            matchQuery("dbname", dbName.getOrElse("none")).analyzer(StandardAnalyzer),
+            termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z")),
+            matchQuery("toolname", toolname).analyzer(StandardAnalyzer),
+            matchQuery("rshash", rsHash).analyzer(StandardAnalyzer),
+            matchQuery("toolhash", toolHash).analyzer(StandardAnalyzer)
           )
+        )
       }
     )
   }
 
   // Removes a Hash from ES
-  def deleteJob(mainID : String): Future[BulkResult] = {
+  def deleteJob(mainID: String): Future[BulkResult] = {
     client.execute {
       bulk(
         delete id mainID from jobIndex,
         delete id mainID from jobHashIndex
-        )
+      )
     }
   }
 
   // Checks if a mainID exists
-  def existsMainID(mainID : String): Future[RichSearchResponse] = {
-    client.execute{
+  def existsMainID(mainID: String): Future[RichSearchResponse] = {
+    client.execute {
       search in jobIndex query {
         bool(
           must(
@@ -126,8 +126,8 @@ final class JobDAO @Inject()(cs: ClusterSetup,
   }
 
   // Checks if a jobID already exists
-  def existsJobID(jobID : String): Future[RichSearchResponse] = {
-    client.execute{
+  def existsJobID(jobID: String): Future[RichSearchResponse] = {
+    client.execute {
       search in jobIndex query {
         bool(
           must(
@@ -138,35 +138,32 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     }
   }
 
-
-
-  def multiExistsJobID(set : Traversable[String]) : Future[RichSearchResponse] = {
+  def multiExistsJobID(set: Traversable[String]): Future[RichSearchResponse] = {
     client.execute {
-        search in jobIndex query termsQuery("jobID", set.toSeq: _* ) // opt: "limit 100"
+      search in jobIndex query termsQuery("jobID", set.toSeq: _*) // opt: "limit 100"
     }
   }
 
   // Simple multiple jobID search
-  def getJobIDs(jobIDs : List[String]): Future[RichSearchResponse] = {
-    client.execute{
+  def getJobIDs(jobIDs: List[String]): Future[RichSearchResponse] = {
+    client.execute {
       search in jobIndex query {
-        termsQuery("jobID", jobIDs : _*) // - termsQuery does not seem to work
+        termsQuery("jobID", jobIDs: _*) // - termsQuery does not seem to work
       }
     }
   }
 
-  def jobIDtermSuggester(queryString : String): Future[RichSearchResponse] = { // this is a spelling correction mechanism, don't use this for autocompletion
-   client.execute {
+  def jobIDtermSuggester(queryString: String): Future[RichSearchResponse] = { // this is a spelling correction mechanism, don't use this for autocompletion
+    client.execute {
       search in jobIndex suggestions {
         termSuggestion("jobID") field "jobID" text queryString mode SuggestMode.Always
       }
     }
   }
 
-
   // only use this for setting completion type for the jobID field
 
-  def preMap : Future[CreateIndexResponse] = {
+  def preMap: Future[CreateIndexResponse] = {
     client.execute {
       createIndex("tkplay_dev").mappings(
         mapping("jobs").fields(
@@ -175,7 +172,6 @@ final class JobDAO @Inject()(cs: ClusterSetup,
       )
     }
   }
-
 
   /* TODO this is the output of the query builder - a valid jobID is provided, yet no proper output is delivered due to an mapping error.
 curl -XPOST 'balata:9200/tkplay_dev/jobs/_search?pretty' -H 'Content-Type: application/json' -d'{
@@ -190,7 +186,7 @@ curl -XPOST 'balata:9200/tkplay_dev/jobs/_search?pretty' -H 'Content-Type: appli
   }
 }'
    */
-  def jobIDcompletionSuggester(queryString : String): Future[RichSearchResponse] = {
+  def jobIDcompletionSuggester(queryString: String): Future[RichSearchResponse] = {
     val suggestionBuild = search in jobIndex suggestions {
       completionSuggestion("jobIDfield").field("jobID").text(queryString).size(10)
     }
@@ -200,7 +196,7 @@ curl -XPOST 'balata:9200/tkplay_dev/jobs/_search?pretty' -H 'Content-Type: appli
     }
   }
 
-  def fuzzySearchJobID(queryString : String): Future[RichSearchResponse] = { // similarity search with Levensthein edit distance
+  def fuzzySearchJobID(queryString: String): Future[RichSearchResponse] = { // similarity search with Levensthein edit distance
     client.execute {
       search in jobIndex query {
         fuzzyQuery("jobID", queryString).fuzziness(Fuzziness.AUTO).prefixLength(4).maxExpansions(10)
@@ -208,7 +204,7 @@ curl -XPOST 'balata:9200/tkplay_dev/jobs/_search?pretty' -H 'Content-Type: appli
     }
   }
 
-  def jobsWithTool(toolName : String, userID : BSONObjectID) : Future[RichSearchResponse] = {
+  def jobsWithTool(toolName: String, userID: BSONObjectID): Future[RichSearchResponse] = {
     val queryBuild = search in jobIndex query {
       bool(
         should(

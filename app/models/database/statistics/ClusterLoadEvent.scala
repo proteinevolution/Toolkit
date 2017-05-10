@@ -7,10 +7,10 @@ import reactivemongo.bson._
 /**
   * Created by astephens on 27.03.17.
   */
-case class ClusterLoadEvent (id          : BSONObjectID,
-                             listLoad    : List[Double],
-                             averageLoad : Double,
-                             timestamp   : Option[DateTime] = Some(DateTime.now()))
+case class ClusterLoadEvent(id: BSONObjectID,
+                            listLoad: List[Double],
+                            averageLoad: Double,
+                            timestamp: Option[DateTime] = Some(DateTime.now()))
 
 object ClusterLoadEvent {
   val IDDB      = "_id"
@@ -19,16 +19,16 @@ object ClusterLoadEvent {
   val TIMESTAMP = "timestamp"
 
   implicit object JsonWriter extends Writes[ClusterLoadEvent] {
-    override def writes(clusterLoadEvent : ClusterLoadEvent) : JsObject = Json.obj(
-      IDDB        -> clusterLoadEvent.id.stringify,
-      LISTLOAD    -> clusterLoadEvent.listLoad,
-      AVERAGE     -> clusterLoadEvent.averageLoad,
-      TIMESTAMP   -> clusterLoadEvent.timestamp
+    override def writes(clusterLoadEvent: ClusterLoadEvent): JsObject = Json.obj(
+      IDDB      -> clusterLoadEvent.id.stringify,
+      LISTLOAD  -> clusterLoadEvent.listLoad,
+      AVERAGE   -> clusterLoadEvent.averageLoad,
+      TIMESTAMP -> clusterLoadEvent.timestamp
     )
   }
 
   implicit object Reader extends BSONDocumentReader[ClusterLoadEvent] {
-    def read(bson : BSONDocument) : ClusterLoadEvent = {
+    def read(bson: BSONDocument): ClusterLoadEvent = {
       ClusterLoadEvent(
         bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         bson.getAs[List[Double]](LISTLOAD).getOrElse(List.empty[Double]),
@@ -39,7 +39,7 @@ object ClusterLoadEvent {
   }
 
   implicit object Writer extends BSONDocumentWriter[ClusterLoadEvent] {
-    def write(clusterLoadEvent : ClusterLoadEvent) : BSONDocument = BSONDocument(
+    def write(clusterLoadEvent: ClusterLoadEvent): BSONDocument = BSONDocument(
       IDDB      -> clusterLoadEvent.id,
       LISTLOAD  -> clusterLoadEvent.listLoad,
       AVERAGE   -> clusterLoadEvent.averageLoad,
