@@ -263,52 +263,55 @@ final class ToolFactory @Inject()(psi: PSIBlast, hmmer: Hmmer, hhpred: HHPred, h
 val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.RequestHeader,  Future[Html]]]  ] = Map(
 
   Toolnames.PSIBLAST -> Map(
-
     Resultviews.HITLIST -> { (jobID, requestHeader) =>
-
       getResult(jobID).map {
-
         case Some(jsvalue) =>
-          implicit val  r = requestHeader
+          implicit val r = requestHeader
           views.html.jobs.resultpanels.psiblast.hitlist(jobID, psi.parseResult(jsvalue), this.values("psiblast"))
+        case _ => views.html.empty()
       }
     },
     "E-values" ->  { (jobID, requestHeader) =>
       implicit val r = requestHeader
       Future.successful(views.html.jobs.resultpanels.evalues(jobID)) }
   ),
-  Toolnames.CLANS -> Map(
 
+  Toolnames.CLANS -> Map(
       Resultviews.RESULTS -> { (jobID,requestHeader) =>
         implicit val r = requestHeader
         Future.successful(views.html.jobs.resultpanels.clans("CLANS", jobID)) }
   ),
-  Toolnames.TPRPRED -> Map(
 
-    Resultviews.RESULTS -> { (jobID,requestHeader) =>
+  Toolnames.TPRPRED -> Map(
+    Resultviews.RESULTS -> { (jobID, requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
-      case Some(jsvalue) =>
-        implicit val r = requestHeader
-        views.html.jobs.resultpanels.tprpred("TPRpred",jobID, jsvalue)}}
+        case Some(jsvalue) =>
+          implicit val r = requestHeader
+          views.html.jobs.resultpanels.tprpred("TPRpred", jobID, jsvalue)
+        case _ => views.html.empty()
+      }}
   ),
-  Toolnames.HHBLITS -> Map(
 
+  Toolnames.HHBLITS -> Map(
     Resultviews.HITLIST -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
       case Some(jsvalue) =>
         implicit val r = requestHeader
-        views.html.jobs.resultpanels.hhblits.hitlist(jobID, hhblits.parseResult(jsvalue), this.values(Toolnames.HHBLITS))}},
+        views.html.jobs.resultpanels.hhblits.hitlist(jobID, hhblits.parseResult(jsvalue), this.values(Toolnames.HHBLITS))
+      case _ => views.html.empty()
+    }},
 
     "Representative_Alignment" -> { (jobID,requestHeader) => getResult(jobID).map {
       case Some(jsvalue) =>
         implicit val r = requestHeader
-        views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "rep100").as[JsArray]), "rep100" ,this.values(Toolnames.HHBLITS))}}
+        views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "rep100").as[JsArray]), "rep100" ,this.values(Toolnames.HHBLITS))
+      case _ => views.html.empty()
+    }}
   ),
 
   Toolnames.MARCOIL -> Map(
-
     "CC-Prob" ->  { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful(views.html.jobs.resultpanels.image(s"/files/$jobID/alignment_ncoils.png")) },
@@ -322,8 +325,8 @@ val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.Request
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbList")) }
   ),
-  Toolnames.PCOILS -> Map(
 
+  Toolnames.PCOILS -> Map(
     "CC-Prob" -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful(views.html.jobs.resultpanels.image(s"/files/$jobID/" + jobID + "_ncoils.png"))},
@@ -331,8 +334,8 @@ val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.Request
       implicit val r = requestHeader
       Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".numerical"))}
   ),
-  Toolnames.MODELLER -> Map(
 
+  Toolnames.MODELLER -> Map(
     "3D-Structure" ->  { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "Modeller"))},
@@ -346,42 +349,47 @@ val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.Request
       implicit val r = requestHeader
       Future.successful(views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png", s"$jobPath$jobID/results/$jobID.pdb.profile"))}
   ),
-  Toolnames.HMMER -> Map(
 
+  Toolnames.HMMER -> Map(
       Resultviews.HITLIST ->  { (jobID,requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
           case Some(jsvalue) =>
             implicit val r = requestHeader
             views.html.jobs.resultpanels.hmmer.hitlist(jobID, hmmer.parseResult(jsvalue), this.values(Toolnames.HMMER))
-        }}
+          case _ => views.html.empty()
+        }
+      }
   ),
-  Toolnames.HHPRED -> Map(
 
+  Toolnames.HHPRED -> Map(
     Resultviews.HITLIST ->  { (jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
         case Some(jsvalue) => views.html.jobs.resultpanels.hhpred.hitlist(jobID, hhpred.parseResult(jsvalue), this.values(Toolnames.HHPRED))
+        case _ => views.html.empty()
       }},
     "Representative_Alignment" -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
         case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "reduced").as[JsArray]), "reduced" ,this.values(Toolnames.HHPRED))
+        case _ => views.html.empty()
       }}
   ),
-  Toolnames.HHPRED_ALIGN -> Map(
 
+  Toolnames.HHPRED_ALIGN -> Map(
     Resultviews.HITLIST -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
         case Some(jsvalue) => views.html.jobs.resultpanels.hhpred.hitlist(jobID, hhpred.parseResult(jsvalue), this.values(Toolnames.HHPRED_ALIGN))
+        case _ => views.html.empty()
       }},
     "FullAlignment" -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful(views.html.jobs.resultpanels.msaviewer(jobID)) }
   ),
-  Toolnames.HHPRED_MANUAL -> Map(
 
+  Toolnames.HHPRED_MANUAL -> Map(
     Resultviews.RESULTS -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful(views.html.jobs.resultpanels.hhpred.forward(s"$jobPath$jobID/results/tomodel.pir", jobID)) },
@@ -389,100 +397,106 @@ val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.Request
       implicit val r = requestHeader
     Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out")) }
   ),
-  Toolnames.HHPRED_AUTOMATIC -> Map(
 
+  Toolnames.HHPRED_AUTOMATIC -> Map(
     Resultviews.RESULTS ->  { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/out.hhr"))}
   ),
-  Toolnames.HHREPID -> Map(
 
+  Toolnames.HHREPID -> Map(
     Resultviews.RESULTS -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.modeller(s"/files/$jobID/query_A.png", s"$jobPath$jobID/results/query.hhrepid"))}
   ),
-  Toolnames.ALI2D -> Map(
 
+  Toolnames.ALI2D -> Map(
     Resultviews.DATA -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".aln",s"$jobPath$jobID/results/" + jobID + ".aln", jobID, "ali2d"))}
   ),
-  Toolnames.CLUSTALO -> Map(
 
+  Toolnames.CLUSTALO -> Map(
     Resultviews.ALIGNMENT -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
         case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.CLUSTALO))
+        case _ => views.html.empty()
       }},
     Resultviews.ALIGNMENTVIEWER -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.msaviewer(jobID))}
   ),
-  Toolnames.KALIGN -> Map(
 
+  Toolnames.KALIGN -> Map(
     Resultviews.ALIGNMENT -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
         case Some(jsvalue) =>  views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.KALIGN))
+        case _ => views.html.empty()
       }},
     Resultviews.ALIGNMENTVIEWER -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.msaviewer(jobID))}
   ),
-  Toolnames.MAFFT -> Map(
 
+  Toolnames.MAFFT -> Map(
     Resultviews.ALIGNMENT -> { (jobID,requestHeader) =>
       getResult(jobID).map {
         case Some(jsvalue) =>
           implicit val r = requestHeader
           views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.MAFFT))
+        case _ => views.html.empty()
       }},
     Resultviews.ALIGNMENTVIEWER ->  { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.msaviewer(jobID))}
   ),
-  Toolnames.MSAPROBS -> Map(
 
+  Toolnames.MSAPROBS -> Map(
     Resultviews.ALIGNMENT -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
         case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.MSAPROBS))
+        case _ => views.html.empty()
       }},
     Resultviews.ALIGNMENTVIEWER -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.msaviewer(jobID))}
   ),
-  Toolnames.MUSCLE -> Map(
 
+  Toolnames.MUSCLE -> Map(
     Resultviews.ALIGNMENT -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
         case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.MUSCLE))
+        case _ => views.html.empty()
       }},
     Resultviews.ALIGNMENTVIEWER -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.msaviewer(jobID))}
   ),
-  Toolnames.TCOFFEE -> Map(
 
+  Toolnames.TCOFFEE -> Map(
     Resultviews.ALIGNMENT -> { (jobID,requestHeader) =>
       getResult(jobID).map {
         case Some(jsvalue) =>
           implicit val r = requestHeader
           views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.TCOFFEE))
+        case _ => views.html.empty()
       }},
     Resultviews.ALIGNMENTVIEWER -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.msaviewer(jobID))}
   ),
-  Toolnames.ALN2PLOT -> Map(
 
+  Toolnames.ALN2PLOT -> Map(
     "Plots" -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.aln2plot(jobID))}
   ),
-  Toolnames.ANCESCON -> Map(
 
+  Toolnames.ANCESCON -> Map(
     Resultviews.TREE -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.tree(jobID + ".clu.tre",s"$jobPath$jobID/results/" + jobID + ".clu.tre", jobID, "ancescon_output_tree"))},
@@ -490,8 +504,8 @@ val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.Request
       implicit val r = requestHeader
       Future.successful(  views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".anc_out",s"$jobPath$jobID/results/" + jobID + ".anc_out", jobID, "ancescon_output_data"))}
   ),
-  Toolnames.PHYML -> Map(
 
+  Toolnames.PHYML -> Map(
     Resultviews.TREE -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful(  views.html.jobs.resultpanels.tree(jobID + ".phy_phyml_tree.txt",s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt", jobID, "phyml_tree"))},
@@ -499,8 +513,8 @@ val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.Request
       implicit val r = requestHeader
       Future.successful(  views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".stats",s"$jobPath$jobID/results/" + jobID + ".stats", jobID, "phyml_data"))}
   ),
-  Toolnames.MMSEQS2 -> Map(
 
+  Toolnames.MMSEQS2 -> Map(
     Resultviews.RESULTS -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".fas",s"$jobPath$jobID/results/" + jobID + ".fas", jobID, "mmseqs_reps"))},
@@ -508,8 +522,8 @@ val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.Request
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".clu",s"$jobPath$jobID/results/" + jobID + ".clu", jobID, "mmseqs_clusters"))}
   ),
-  Toolnames.RETSEQ -> Map(
 
+  Toolnames.RETSEQ -> Map(
     Resultviews.RESULTS -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/sequences.fa"))},
@@ -517,16 +531,17 @@ val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.Request
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/unretrievable"))}
   ),
-  Toolnames.SEQ2ID -> Map(
 
+  Toolnames.SEQ2ID -> Map(
     Resultviews.RESULTS -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
         case Some(jsvalue) => views.html.jobs.resultpanels.unchecked_list("Seq2ID",jobID, jsvalue)
+        case _ => views.html.empty()
       }}
   ),
-  Toolnames.SAMCC -> Map(
 
+  Toolnames.SAMCC -> Map(
     "3D-Structure-With-Axes" -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "samcc_PDB_AXES"))},
@@ -537,35 +552,37 @@ val resultMap : Map[String, Map[String, Function2[ String,  play.api.mvc.Request
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out",s"$jobPath$jobID/results/" + jobID + ".out", jobID, "samcc"))}
   ),
-  Toolnames.SIXFRAMETRANSLATION -> Map(
 
+  Toolnames.SIXFRAMETRANSLATION -> Map(
     Resultviews.RESULTS ->  { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out",s"$jobPath$jobID/results/" + jobID + ".out", jobID, "sixframetrans_out"))}
   ),
-  Toolnames.BACKTRANS -> Map(
 
+  Toolnames.BACKTRANS -> Map(
     Resultviews.RESULTS ->  { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful(views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out",s"$jobPath$jobID/results/" + jobID + ".out", jobID, "backtrans"))}
   ),
-  Toolnames.HHFILTER -> Map(
 
+  Toolnames.HHFILTER -> Map(
     Resultviews.ALIGNMENT -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       getResult(jobID).map {
         case Some(jsvalue) => views.html.jobs.resultpanels.alignment(jobID, aln.parseAlignment((jsvalue \ "alignment").as[JsArray]) , "alignment", this.values(Toolnames.HHFILTER))
+        case _ => views.html.empty()
       }},
     Resultviews.ALIGNMENTVIEWER -> { (jobID,requestHeader) =>
       implicit val r = requestHeader
       Future.successful( views.html.jobs.resultpanels.msaviewer(jobID))}
   ),
-  Toolnames.PATSEARCH -> Map (
 
+  Toolnames.PATSEARCH -> Map (
     "PatternSearch" -> { (jobID, requestHeader) =>
       implicit val  r = requestHeader
       getResult(jobID).map {
         case Some(jsvalue) => views.html.jobs.resultpanels.patternSearch("PatternSearch",jobID, "output", jsvalue, this.values(Toolnames.PATSEARCH))
+        case _ => views.html.empty()
       }}
   )
 )
