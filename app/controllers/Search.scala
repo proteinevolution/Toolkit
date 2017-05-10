@@ -20,19 +20,18 @@ import scala.concurrent.Future
 import scala.language.postfixOps
 
 @Singleton
-final class Search @Inject() (@NamedCache("userCache") implicit val userCache : CacheApi,
-                              implicit val locationProvider: LocationProvider,
-                              val reactiveMongoApi : ReactiveMongoApi,
-                              toolFactory: ToolFactory,
-                              val jobDao           : JobDAO)
-                              extends Controller with Constants
-                                                 with ReactiveMongoComponents
-                                                 with UserSessions
-                                                 with CommonModule {
+final class Search @Inject()(@NamedCache("userCache") implicit val userCache: CacheApi,
+                             implicit val locationProvider: LocationProvider,
+                             val reactiveMongoApi: ReactiveMongoApi,
+                             toolFactory: ToolFactory,
+                             val jobDao: JobDAO)
+    extends Controller
+    with Constants
+    with ReactiveMongoComponents
+    with UserSessions
+    with CommonModule {
 
-
-
-  def ac(queryString : String) : Action[AnyContent] = Action.async{ implicit request =>
+  def ac(queryString: String): Action[AnyContent] = Action.async { implicit request =>
     jobDao.jobIDcompletionSuggester(queryString).map { richSearchResponse =>
       val jobIDEntries = richSearchResponse.suggestion("jobID")
       if (jobIDEntries.size > 0) {
@@ -49,23 +48,24 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
     }
   }
 
-  def autoComplete(queryString : String) : Action[AnyContent] = Action.async{ implicit request =>
+  def autoComplete(queryString: String): Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
-      val toolOpt : Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
+      val toolOpt: Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
       Logger.info("user is looking for: " + queryString + " Found Tool: " + toolOpt)
       // Find out if the user looks for a certain tool or for a jobID
       toolOpt match {
         case Some(tool) => // Find the Jobs with the matching tool
-          val mainIDStrings : Future[List[String]] =
+          val mainIDStrings: Future[List[String]] =
             jobDao.jobsWithTool(tool.toolNameShort, user.userID).map(_.getHits.hits().toList.map(_.id()))
           // Convert to BSON mainIDs
           val futureMainIDs = mainIDStrings.map(_.map(mainIDString => BSONObjectID.parse(mainIDString).get))
           // Grab Job Objects from the Database
-          futureMainIDs.map(mainIDs => findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)))).flatMap{ jobs =>
-            //jobs.map(joblist => Logger.info("Final Result: " + joblist.toString()))
-            jobs.map(_.map(_.cleaned())).map(jobJs => Ok(Json.toJson(jobJs)))
+          futureMainIDs.map(mainIDs => findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)))).flatMap {
+            jobs =>
+              //jobs.map(joblist => Logger.info("Final Result: " + joblist.toString()))
+              jobs.map(_.map(_.cleaned())).map(jobJs => Ok(Json.toJson(jobJs)))
           }
-        case None =>       // Grab Job ID auto completions
+        case None => // Grab Job ID auto completions
 //            val jobIDSuggestions = jobDao.jobIDcompletionSuggester(queryString)
 //              .map(_.suggestion("jobIDfield").entries.flatMap(_.options.map(_.text)).toList)
 //            jobIDSuggestions.map(ids => Logger.info("Found Strings: " + ids.mkString(", ")))
@@ -76,7 +76,7 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
 //            // Grab main IDs from the hits
 //            searchHits.map(_.hits().toList.map(_.id()))
           //val jobIDP = s"($queryString.*)".r
-          findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).map{ jobs =>
+          findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).map { jobs =>
             val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID) && job.deletion.isEmpty)
             Ok(Json.toJson(jobsFiltered.map(_.cleaned())))
           }
@@ -84,58 +84,53 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
     }
   }
 
-
-  def existsTool(queryString : String) : Action[AnyContent] = Action.async { implicit request =>
-
-    getUser.flatMap{ user =>
-      val toolOpt : Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
+  def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      val toolOpt: Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
       toolOpt match {
         case Some(tool) => Future.successful(Ok(Json.toJson(true)))
-        case None => Future.successful(NotFound)
+        case None       => Future.successful(NotFound)
       }
     }
   }
 
-
-  def elasticSearch(userID : BSONObjectID, queryString : String) : Future[List[Job]] = {
+  def elasticSearch(userID: BSONObjectID, queryString: String): Future[List[Job]] = {
     jobDao.fuzzySearchJobID(queryString).flatMap { richSearchResponse =>
       if (richSearchResponse.totalHits > 0) {
         val jobIDEntries = richSearchResponse.getHits.getHits
         val mainIDs      = jobIDEntries.toList.map(hit => BSONObjectID.parse(hit.id).get)
 
         // Collect the list of jobs
-        findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in"-> mainIDs)))
+        findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)))
       } else {
         Future.successful(List.empty[Job])
       }
     }
   }
 
-
-  def getJob(queryString : String) : Action[AnyContent] = Action.async { implicit request =>
+  def getJob(queryString: String): Action[AnyContent] = Action.async { implicit request =>
     // Retrieve the user from the cache or the DB
     getUser.flatMap { user =>
-      elasticSearch(user.userID, queryString).map{ jobList =>
+      elasticSearch(user.userID, queryString).map { jobList =>
         Ok(Json.obj("jobs" -> jobList.map(_.cleaned())))
       }
     }
   }
 
-
-  def get : Action[AnyContent] = Action.async { implicit request =>
+  def get: Action[AnyContent] = Action.async { implicit request =>
     // Retrieve the jobs from the DB
     getUser.flatMap { user =>
-      findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map{ jobs =>
-        Ok(Json.toJson(jobs.map(_.jobManagerJob())))
+      findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
+        jobs =>
+          Ok(Json.toJson(jobs.map(_.jobManagerJob())))
       }
     }
   }
 
-
-  def getCleaned : Action[AnyContent] = Action.async { implicit request =>
+  def getCleaned: Action[AnyContent] = Action.async { implicit request =>
     // Retrieve the jobs from the DB
     getUser.flatMap { user =>
-      findJobs(BSONDocument(Job.OWNERID -> user.userID)).map{ jobs =>
+      findJobs(BSONDocument(Job.OWNERID -> user.userID)).map { jobs =>
         Ok(Json.toJson(jobs.map(_.cleaned())))
       }
     }
@@ -146,9 +141,9 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
     *
     * @return
     */
-  def getIndexPageInfo : Action[AnyContent] = Action.async { implicit request=>
+  def getIndexPageInfo: Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
-      findSortedJob(BSONDocument(Job.OWNERID -> user.userID), BSONDocument(Job.DATEUPDATED -> -1)).flatMap{ lastJob =>
+      findSortedJob(BSONDocument(Job.OWNERID -> user.userID), BSONDocument(Job.DATEUPDATED -> -1)).flatMap { lastJob =>
         countJobs(BSONDocument(Job.OWNERID -> user.userID)).map { count =>
           Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned()), "totalJobs" -> count))
         }
@@ -156,15 +151,15 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
     }
   }
 
-  def checkJobID(jobID : String, resubmit : Boolean = false) : Action[AnyContent] = Action.async{
+  def checkJobID(jobID: String, resubmit: Boolean = false): Action[AnyContent] = Action.async {
     val jobIDNoVersionPattern = "([0-9a-zA-Z_]+)".r
-    val jobVersionPattern = "(_([0-9]{1,3}))".r
-    val jobIDPattern = (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
-    val foundMainJobID : Option[String] =
+    val jobVersionPattern     = "(_([0-9]{1,3}))".r
+    val jobIDPattern          = (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
+    val foundMainJobID: Option[String] =
       jobID match {
         case jobIDPattern(mainJobID, _, _)    => Some(mainJobID)
         case jobIDNoVersionPattern(mainJobID) => Some(mainJobID)
-        case _ => None
+        case _                                => None
       }
 
     foundMainJobID match {
@@ -172,20 +167,20 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
       case Some(mainJobID) =>
         val jobIDSearch = mainJobID + "(_[0-9]{1,3})?"
         Logger.info("Old job ID: " + mainJobID + " Current job ID: " + jobID + " Searching for: " + jobIDSearch)
-        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map{ jobs =>
+        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map { jobs =>
           if (jobs.isEmpty) {
             Logger.info("Found no such jobs.")
             Ok(Json.obj("exists" -> false))
           } else {
             Logger.info("Found " + jobs.length + " Jobs: " + jobs.map(_.jobID).mkString(","))
-            val jobVersions = jobs.map{ job =>
+            val jobVersions = jobs.map { job =>
               Logger.info("jobID to match: " + job.jobID)
               job.jobID match {
-                case jobIDPattern(_, _,v)    => if(v.isEmpty){ -1 }else {Integer.parseInt(v)}
-                case _ =>0
+                case jobIDPattern(_, _, v) => if (v.isEmpty) { -1 } else { Integer.parseInt(v) }
+                case _                     => 0
               }
             }
-            val version : Int = jobVersions.max + 1
+            val version: Int = jobVersions.max + 1
             if (resubmit) {
               //Logger.info("Resubmitting job ID version: " + version + " for " + mainJobID)
               Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> (mainJobID + "_" + version)))
@@ -193,12 +188,12 @@ final class Search @Inject() (@NamedCache("userCache") implicit val userCache : 
               //Logger.info("Main Job ID:" + mainJobID)
               var boolExists = false
               jobVersions.foreach { version =>
-                if (mainJobID + "_" + version == jobID ) {
+                if (mainJobID + "_" + version == jobID) {
                   boolExists = true
                 }
               }
-              jobs.foreach{ x =>
-                if(x.jobID == jobID){
+              jobs.foreach { x =>
+                if (x.jobID == jobID) {
                   println(x.jobID)
                   boolExists = true
                 }

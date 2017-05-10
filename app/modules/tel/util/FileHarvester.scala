@@ -12,7 +12,6 @@ sealed abstract class FileHarvester(file: File) {
   def apply(): Iterator[String]
 }
 
-
 /**
   *
   *  Just returns the content of the file as line iterator
@@ -39,7 +38,7 @@ case class FileExecuterHarvester(file: File, maxApply: Int) extends FileHarveste
     val x = Process(file.pathAsString).!!.split('\n').toIterator
     this.n += 1
 
-    if(this.n == maxApply) {
+    if (this.n == maxApply) {
 
       file.delete(swallowIOExceptions = true)
     }

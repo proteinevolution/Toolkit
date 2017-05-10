@@ -8,40 +8,36 @@ import modules.tel.TEL
 /**
   * Created by astephens on 24.05.16.
   */
-
-
-
-
 /**
   * Template trait to the Mail object
   */
 sealed trait MailTemplate {
   // User to whom the eMail should be sent
-  val user : User
+  val user: User
   // Subject of the Email
   def subject = "Generic Information"
 
   // Text version of the Email
-  val bodyText : String
+  val bodyText: String
 
   // HTML version of the Email
-  val bodyHtml : String
+  val bodyHtml: String
 
   // Send the email
-  def send(implicit mailerClient : MailerClient) {
+  def send(implicit mailerClient: MailerClient) {
     val email = Email(
       subject,
       "Toolkit Team <toolkitmpg@gmail.com>",
       Seq(user.getUserData.nameLogin + " <" + user.getUserData.eMail + ">"),
       attachments = Seq(),
       bodyText = Some(this.bodyText), // Text version of the E-Mail in case the User has no HTML E-Mail client
-      bodyHtml = Some(this.bodyHtml)  // HTML formatted E-Mail content
+      bodyHtml = Some(this.bodyHtml) // HTML formatted E-Mail content
     )
     mailerClient.send(email)
   }
 
-  def bodyHtmlTemplate(subject : String, content : String) : String =
-      s"""
+  def bodyHtmlTemplate(subject: String, content: String): String =
+    s"""
          |<html>
          |  <body>
          |    <p>$subject</p>
@@ -50,23 +46,21 @@ sealed trait MailTemplate {
          |</html>
     """.stripMargin
 
-
-  val origin : String = TEL.hostname match {
+  val origin: String = TEL.hostname match {
 
     case "olt" => s"http://${TEL.hostname}:${TEL.port}"
-    case _ => s"https://rye.tuebingen.mpg.de" // TODO change it to toolkit.tuebingen.mpg.de later
+    case _     => s"https://rye.tuebingen.mpg.de" // TODO change it to toolkit.tuebingen.mpg.de later
 
   }
 
 }
 
-case class NewUserWelcomeMail (userParam : User, token : String) extends MailTemplate {
+case class NewUserWelcomeMail(userParam: User, token: String) extends MailTemplate {
   override def subject = "Account Verification - Bioinformatics Toolkit"
 
-  val user : User = userParam
+  val user: User = userParam
 
-
-  val bodyText : String = {
+  val bodyText: String = {
     s"""Welcome ${user.getUserData.nameLogin},
        |Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
        |To do this, visit
@@ -75,7 +69,7 @@ case class NewUserWelcomeMail (userParam : User, token : String) extends MailTem
      """.stripMargin
   }
 
-  val bodyHtml : String = {
+  val bodyHtml: String = {
     super.bodyHtmlTemplate(
       s"""Welcome ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.<br />
@@ -88,12 +82,12 @@ case class NewUserWelcomeMail (userParam : User, token : String) extends MailTem
   }
 }
 
-case class ChangePasswordMail (userParam : User, token : String) extends MailTemplate {
+case class ChangePasswordMail(userParam: User, token: String) extends MailTemplate {
   override def subject = "Password Verification - Bioinformatics Toolkit"
 
-  val user : User = userParam
+  val user: User = userParam
 
-  val bodyText : String = {
+  val bodyText: String = {
     s"""Hello ${user.getUserData.nameLogin},
         |You requested a password change.
         |To complete the process, visit
@@ -104,7 +98,7 @@ case class ChangePasswordMail (userParam : User, token : String) extends MailTem
      """.stripMargin
   }
 
-  val bodyHtml : String = {
+  val bodyHtml: String = {
     super.bodyHtmlTemplate(
       s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""You requested a password change.<br />
@@ -119,12 +113,12 @@ case class ChangePasswordMail (userParam : User, token : String) extends MailTem
   }
 }
 
-case class ResetPasswordMail (userParam : User, token : String) extends MailTemplate {
+case class ResetPasswordMail(userParam: User, token: String) extends MailTemplate {
   override def subject = "Password Verification - Bioinformatics Toolkit"
 
-  val user : User = userParam
+  val user: User = userParam
 
-  val bodyText : String = {
+  val bodyText: String = {
     s"""Hello ${user.getUserData.nameLogin},
         |You requested to reset your password and set a new one.
         |To complete the process, visit
@@ -134,7 +128,7 @@ case class ResetPasswordMail (userParam : User, token : String) extends MailTemp
      """.stripMargin
   }
 
-  val bodyHtml : String = {
+  val bodyHtml: String = {
     super.bodyHtmlTemplate(
       s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""You requested to reset your password and set a new one.<br />
@@ -149,12 +143,12 @@ case class ResetPasswordMail (userParam : User, token : String) extends MailTemp
   }
 }
 
-case class PasswordChangedMail (userParam : User) extends MailTemplate {
+case class PasswordChangedMail(userParam: User) extends MailTemplate {
   override def subject = "Password Changed - Bioinformatics Toolkit"
 
-  val user : User = userParam
+  val user: User = userParam
 
-  val bodyText : String = {
+  val bodyText: String = {
     s"""Hello ${user.getUserData.nameLogin},
         |As requested your password has been changed. You can do this at any time in your user profile.
         |If You did not request this, then someone else may have changed your password.
@@ -162,7 +156,7 @@ case class PasswordChangedMail (userParam : User) extends MailTemplate {
      """.stripMargin
   }
 
-  val bodyHtml : String = {
+  val bodyHtml: String = {
     super.bodyHtmlTemplate(
       s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""You requested to reset your password and set a new one.<br />
@@ -174,20 +168,20 @@ case class PasswordChangedMail (userParam : User) extends MailTemplate {
   }
 }
 
-case class JobFinishedMail (userParam : User, job : Job) extends MailTemplate {
-  override def subject : String = s"""Job ${job.jobID} finished running - Bioinformatics Toolkit""".stripMargin
+case class JobFinishedMail(userParam: User, job: Job) extends MailTemplate {
+  override def subject: String = s"""Job ${job.jobID} finished running - Bioinformatics Toolkit""".stripMargin
 
-  val user : User = userParam
+  val user: User = userParam
 
-  def statusMessage : String = {
+  def statusMessage: String = {
     job.status match {
-      case Done =>  "Your job has finished sucessfully. You can now look at the results."
+      case Done  => "Your job has finished sucessfully. You can now look at the results."
       case Error => "Your job has failed. Please check all parameters and see if you find any issues."
-      case _ =>     "Has changed state"
+      case _     => "Has changed state"
     }
   }
 
-  val bodyText : String = {
+  val bodyText: String = {
     s"""Hello ${user.getUserData.nameLogin},
         |$statusMessage
         |You can view it at any time at $origin/jobs/${job.jobID}
@@ -195,7 +189,7 @@ case class JobFinishedMail (userParam : User, job : Job) extends MailTemplate {
      """.stripMargin
   }
 
-  val bodyHtml : String = {
+  val bodyHtml: String = {
     super.bodyHtmlTemplate(
       s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""$statusMessage
