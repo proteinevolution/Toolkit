@@ -10,163 +10,168 @@ let samccIsValid : boolean = false;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
-    $(".submitJob").prop("disabled", true);
 
-    if(!isInit) {
-
-        let toolname : string;
-        try { toolname = $("#toolnameAccess").val(); }
-        catch(err) {
-            toolname = "unknown";
-            console.warn("toolname unspecified");
-        }
-
-        // Placeholder overrides
-
-        switch(toolname) {
-
-
-            case "hhblits":
-                $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
-                break;
-
-            case "hhpred":
-                $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
-                break;
-
-            case "hmmer":
-                $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
-                break;
-
-            case "psiblast":
-                $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
-                break;
-
-            case "patsearch":
-                $(elem).attr("placeholder", "Enter a PROSITE grammar or a regular expression");
-                break;
-
-            case "clustalo":
-                $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
-                break;
-
-            case "kalign":
-                $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
-                break;
-
-            case "mafft":
-                $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
-                break;
-
-            case "msaprobs":
-                $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
-                break;
-
-            case "muscle":
-                $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
-                break;
-
-            case "tcoffee":
-                $(elem).attr("placeholder", "Enter protein sequences (<500) in FASTA format");
-                break;
-
-            case "aln2plot":
-                $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
-                break;
-
-            case "frpred":
-                $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
-                break;
-
-            case "hhrepid":
-                $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
-                break;
-
-            case "marcoil":
-                $(elem).attr("placeholder", "Enter a protein sequence in FASTA format");
-                break;
-
-            case "pcoils":
-                $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
-                break;
-
-            case "repper":
-                $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
-                break;
-
-            case "tprpred":
-                $(elem).attr("placeholder", "Enter a protein sequence in FASTA format");
-                break;
-
-            case "ali2d":
-                $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
-                break;
-
-            case "quick2d":
-                $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
-                break;
-
-            case "modeller":
-                $(elem).attr("placeholder", "Enter a protein multiple sequence alignment [Target sequence + template(s)]. The first sequence must be the target; the other sequences serve as templates. The header of each template should start with a PDB or SCOP identifier (see example).");
-                break;
-
-            case "samcc":
-                $(elem).attr("placeholder", "Enter PDB coordinates of a four-helical bundle.\n\nNote: The definitions for helices below need to be entered according to their sequential position in the bundle (it is not relevant whether this done clockwise or counterclockwise, and whether one starts with the N-terminal helix or any other one), and not in their order from N- to C-terminus. For helices in anti-parallel orientation, the residue range should be given with the larger residue number before the smaller one.");
-                break;
-
-            case "ancescon":
-                $(elem).attr("placeholder", "Enter a protein multiple sequence alignment in FASTA or CLUSTAL format");
-                break;
-
-            case "clans":
-                $(elem).attr("placeholder", "Enter protein sequences (<10000) in FASTA format");
-                break;
-
-            case "mmseqs2":
-                $(elem).attr("placeholder", "Enter protein sequences (<20000) in FASTA format");
-                break;
-
-            case "phyml":
-                $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<100) in FASTA or CLUSTAL format");
-                break;
-
-            case "6frametranslation":
-                $(elem).attr("placeholder", "Enter a DNA sequence in FASTA format");
-                break;
-
-            case "backtrans":
-                $(elem).attr("placeholder", "Enter a protein sequence");
-                break;
-
-            case "hhfilter":
-                $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
-                break;
-
-            case "retseq":
-                $(elem).attr("placeholder", "Enter a newline separated list of identifiers and choose the corresponding database");
-                break;
-
-            case "seq2id":
-                $(elem).attr("placeholder", "Enter protein sequences (or their headers) in FASTA format");
-                break;
-
-            default:
-                break;
-
-        }
-
-
-
-
-        return $(elem).on("keyup mouseover", function (e) {
-
-            validationProcess(elem, toolname);
-        });
+    if($(".uploadFileName").is(":visible")){
+        $(".submitJob").prop("disabled", false);
     }
+    else {
+        $(".submitJob").prop("disabled", true);
+
+        if(!isInit) {
+
+            let toolname : string;
+            try { toolname = $("#toolnameAccess").val(); }
+            catch(err) {
+                toolname = "unknown";
+                console.warn("toolname unspecified");
+            }
+
+            // Placeholder overrides
+
+            switch(toolname) {
+
+
+                case "hhblits":
+                    $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
+                    break;
+
+                case "hhpred":
+                    $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
+                    break;
+
+                case "hmmer":
+                    $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
+                    break;
+
+                case "psiblast":
+                    $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
+                    break;
+
+                case "patsearch":
+                    $(elem).attr("placeholder", "Enter a PROSITE grammar or a regular expression");
+                    break;
+
+                case "clustalo":
+                    $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                    break;
+
+                case "kalign":
+                    $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                    break;
+
+                case "mafft":
+                    $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                    break;
+
+                case "msaprobs":
+                    $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                    break;
+
+                case "muscle":
+                    $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                    break;
+
+                case "tcoffee":
+                    $(elem).attr("placeholder", "Enter protein sequences (<500) in FASTA format");
+                    break;
+
+                case "aln2plot":
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    break;
+
+                case "frpred":
+                    $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    break;
+
+                case "hhrepid":
+                    $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    break;
+
+                case "marcoil":
+                    $(elem).attr("placeholder", "Enter a protein sequence in FASTA format");
+                    break;
+
+                case "pcoils":
+                    $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    break;
+
+                case "repper":
+                    $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    break;
+
+                case "tprpred":
+                    $(elem).attr("placeholder", "Enter a protein sequence in FASTA format");
+                    break;
+
+                case "ali2d":
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    break;
+
+                case "quick2d":
+                    $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    break;
+
+                case "modeller":
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment [Target sequence + template(s)]. The first sequence must be the target; the other sequences serve as templates. The header of each template should start with a PDB or SCOP identifier (see example).");
+                    break;
+
+                case "samcc":
+                    $(elem).attr("placeholder", "Enter PDB coordinates of a four-helical bundle.\n\nNote: The definitions for helices below need to be entered according to their sequential position in the bundle (it is not relevant whether this done clockwise or counterclockwise, and whether one starts with the N-terminal helix or any other one), and not in their order from N- to C-terminus. For helices in anti-parallel orientation, the residue range should be given with the larger residue number before the smaller one.");
+                    break;
+
+                case "ancescon":
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment in FASTA or CLUSTAL format");
+                    break;
+
+                case "clans":
+                    $(elem).attr("placeholder", "Enter protein sequences (<10000) in FASTA format");
+                    break;
+
+                case "mmseqs2":
+                    $(elem).attr("placeholder", "Enter protein sequences (<20000) in FASTA format");
+                    break;
+
+                case "phyml":
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<100) in FASTA or CLUSTAL format");
+                    break;
+
+                case "6frametranslation":
+                    $(elem).attr("placeholder", "Enter a DNA sequence in FASTA format");
+                    break;
+
+                case "backtrans":
+                    $(elem).attr("placeholder", "Enter a protein sequence");
+                    break;
+
+                case "hhfilter":
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    break;
+
+                case "retseq":
+                    $(elem).attr("placeholder", "Enter a newline separated list of identifiers and choose the corresponding database");
+                    break;
+
+                case "seq2id":
+                    $(elem).attr("placeholder", "Enter protein sequences (or their headers) in FASTA format");
+                    break;
+
+                default:
+                    break;
+
+            }
+
+
+
+
+            return $(elem).on("keyup mouseover", function (e) {
+
+                validationProcess(elem, toolname);
+            });
+        }}
 };
 
 
-let validationProcess = function(elem: any,toolname: string){
+let validationProcess = function(elem: any,toolname: string) {
 
 
 
@@ -183,7 +188,7 @@ let validationProcess = function(elem: any,toolname: string){
 
     //---------------------------------------------------------------------------------------------//
 
-    switch(toolname) {
+    switch (toolname) {
         case "tcoffee":
             /** validation model for tcoffee:
              * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
@@ -644,7 +649,7 @@ let validationProcess = function(elem: any,toolname: string){
             break;
     }
 
-    if($(elem).val().length === 0){
+    if ($(elem).val().length === 0) {
         valReset();
     }
 
@@ -706,14 +711,14 @@ let originIsFasta : boolean = true;
 
 /*function mustHave2(el : any) {
 
-    if(el.validate('fasta') && el.reformat('numbers') < 2)
-        feedback(false, "must have at least two sequences", "error");
-    else if(el.validate('fasta') && el.reformat('numbers') >= 2 && el.reformat('alignment') && originIsFasta && el.reformat('uniqueids')) {
-        feedback(true);
-        originIsFasta = true;
-    }
-}
-*/
+ if(el.validate('fasta') && el.reformat('numbers') < 2)
+ feedback(false, "must have at least two sequences", "error");
+ else if(el.validate('fasta') && el.reformat('numbers') >= 2 && el.reformat('alignment') && originIsFasta && el.reformat('uniqueids')) {
+ feedback(true);
+ originIsFasta = true;
+ }
+ }
+ */
 
 // TODO standard validator for the search section. If search tools differ much in their validations, this one should be kept simple and small
 
