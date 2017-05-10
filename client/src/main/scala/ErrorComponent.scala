@@ -70,6 +70,12 @@ private[this] class ErrorComponentCtrl(args : Any) {
                             |--------AAAAAAAAAA-----QQQQQQQQQ-------------AAAAAAAAAA""".stripMargin
 
 
-  val notFoundRandomized : String = notFound.map(c => if (c == 'G' || c == 'Q' || c == 'A') Stream.continually(Random.alphanumeric).take(100).head.take(100).filter(x => aminoAcids.contains(x)).head else c)
+  val notFoundRandomized : String = notFound
+                                      .map( c =>
+                                        if (c == 'G' || c == 'Q' || c == 'A')
+                                          Stream.continually(Random.alphanumeric)
+                                            .flatten.take(100)
+                                            .filter(x => aminoAcids.contains(x)).head
+                                        else c )
 
 }
