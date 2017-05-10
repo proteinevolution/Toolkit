@@ -169,7 +169,7 @@ button.loggedIn {
 
 }
 
-.submenu {
+.userMenu {
   min-width: 90px;
   width: 90px;
   font-size: 0.75em;
@@ -178,7 +178,7 @@ button.loggedIn {
 
 }
 
-.submenu:after {
+.userMenu:after {
   content: "";
   width: 0;
   height: 0;
@@ -186,15 +186,15 @@ button.loggedIn {
   border-bottom-color: white;
   border-top: none;
   position: absolute;
-  margin-left: 2.95em;
-  margin-top: -6.2em;
+  margin-left: 1.95em;
+  margin-top: -8.9em;
 }
 
-.submenu a {
+.userMenu a {
   padding: 0.75em 0.75em 0.75em 0.75em !important;
 }
 
-.submenu i {
+.userMenu i {
   margin-right: 0.7em !important;
   margin-bottom: 0.2em;
   color: #666;

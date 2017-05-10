@@ -833,7 +833,7 @@ class AuthDropdown {
                               'data-click-open':    true
                     }, m("li", [
                         m("button", { "class" : "loggedIn", id: "auth-link-text"}, Auth.user.nameLogin),
-                        m("ul", { "class" :"menu" }, [
+                        m("ul", { "class" :"menu userMenu" }, [
                             m("li", m("a", { onclick:function(e : Event) { return openNav("profile")} }, m("i", {"class": "icon-user"}),"Profile")),
                             Auth.user.institute === "MPG" ? m("li", m("a", { href:"/#/backend/index" }, m("i", {"class": "icon-display_graph"}), "Backend")) : null,
                             m("li", m("a", {
