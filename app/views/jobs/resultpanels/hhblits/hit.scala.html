@@ -20,7 +20,7 @@
 <tr class="header">
     <td class="indexCheckbox"><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
 <td class="hitInfo" colspan="4">
-    @BlastVisualization.getSingleLink(hit.template.accession)
+    @BlastVisualization.getSingleLinkHHBlits(hit.template.accession)
     @{"  "+ hit.description}
 </td>
 </tr>
