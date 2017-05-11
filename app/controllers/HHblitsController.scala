@@ -35,10 +35,6 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
   private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
 
-  templateAlignmentScript.setPermissions(filePermissions)
-  retrieveFullSeq.setPermissions(filePermissions)
-  generateAlignmentScript.setPermissions(filePermissions)
-
   def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
     Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
   }
