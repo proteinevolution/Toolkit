@@ -123,6 +123,8 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     case PushJob(job: Job) =>
       //Logger.info("WS Log: " + job.jobID + " is now " + job.status.toString)
       out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
+    case UpdateLog(jobID: String) =>
+      out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
 
     case UpdateLoad(load: Double) =>
       out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
