@@ -11,10 +11,6 @@ let samccIsValid : boolean = false;
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
 
-    if($(".uploadFileName").is(":visible")){
-        $(".submitJob").prop("disabled", false);
-    }
-    else {
         $(".submitJob").prop("disabled", true);
 
         if(!isInit) {
@@ -167,7 +163,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
                 validationProcess(elem, toolname);
             });
-        }}
+        }
 };
 
 
