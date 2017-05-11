@@ -90,6 +90,7 @@ onClose = function(event : CloseEvent) : any {
 
 onMessage = function(event : MessageEvent) : any {
     let message : any = JSON.parse(event.data);
+    console.log("WS received a message: ", message.type);
     switch (message.type) {
         case "ClearJob":
             m.startComputation();
@@ -112,6 +113,11 @@ onMessage = function(event : MessageEvent) : any {
             sendMessage({
                 "type": "Ping"
             });
+            break;
+        case "UpdateLog":
+            m.startComputation();
+            JobRunningComponent.updateLog();
+            m.endComputation();
             break;
         default:
             break;
