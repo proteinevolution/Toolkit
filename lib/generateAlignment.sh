@@ -6,7 +6,7 @@ if [ "$HOSTNAME" = "olt" ]
 
 elif [ "$HOSTNAME" = "rye" ]
   then
-    source /cluster/toolkit/production/bioprogs/env/environment_prod.sh
+    source /cluster/toolkit/production/bioprogs/env/environment_rye.sh
   fi
 
 hhmakemodel.pl  -i results/${jobID}.hhr -fas results/alignment.fas -m ${numList}
