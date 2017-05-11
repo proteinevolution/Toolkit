@@ -212,7 +212,6 @@ object BlastVisualization extends Constants {
     case ncbiReg(_)       => "ncbi"
     case uniprotReg(_)    => "uniprot"
     case e: String        => Logger.info("Struc: (" + e + ") could not be matched against any database!"); ""
-    case e: String        => Logger.info("Struc: (" + e + ") could not be matched against any database!"); ""
   }
 
   def percentage(str: String): String = {
