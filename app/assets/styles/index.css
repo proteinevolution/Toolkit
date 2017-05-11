@@ -100,14 +100,17 @@ FIELDSET {
 
 .search_Input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
     color:    darkgray;
+    font-size: 0.9em;
 }
 .search_Input::-moz-placeholder { /* Mozilla Firefox 4 to 18 */
     color:    darkgray;
     opacity:  1;
+    font-size: 0.9em;
 }
 .search_Input::-moz-placeholder { /* Mozilla Firefox 19+ */
     color:     darkgray;
     opacity:  1;
+    font-size: 0.9em;
 }
 
 
@@ -455,7 +458,6 @@ FIELDSET {
 .trafficbar {
     cursor: pointer;
     z-index: 99;
-    margin-bottom: 0.1em !important;
     height: 0.2em;
     width: 100%;
     -moz-border-radius: 4px;
@@ -466,19 +468,19 @@ FIELDSET {
 }
 
 .trafficbar.queue {
-    background: rgba(192, 181, 191, 0.5);
+    background: rgba(192, 181, 191, 0.9);
     box-shadow: 0 1px 6px #9192af;
 }
 .trafficbar.done {
-    background: rgba(0, 180, 40, 0.2);
+    background: rgba(0, 180, 40, 0.9);
     box-shadow: 0 1px 6px #C3FFC3;
 }
 .trafficbar.error {
-    background: rgba(180, 0, 40, 0.2);
+    background: rgba(180, 0, 40, 0.9);
     box-shadow: 0 1px 6px #FFC5C5;
 }
 .trafficbar.running {
-    background: rgba(255, 255, 0, 0.4);
+    background: rgba(255, 255, 0, 0.9);
     box-shadow: 0 1px 6px #FFF666;
 }
 
@@ -492,14 +494,6 @@ FIELDSET {
     padding-left: 0 !important;
 }
 
-#clusterLoad {
-    background: rgba(214, 214, 214, 0.9);
-    text-align: center;
-    padding-top: 0;
-    max-height: 89px;
-
-}
-
 .line {
     fill: none;
     stroke: #000;
@@ -509,12 +503,6 @@ FIELDSET {
 svg#loadGraph {
     width: 360px;
     height: 100px;
-}
-
-.clusterLoad {
-    min-height: 90px;
-    background-color: rgba(214, 214, 214, 0.9);
-    padding-right: 0;
 }
 
 tspan{
@@ -677,13 +665,20 @@ td#joblistIcon i {
 
 /*Load Bar styling*/
 
+
 #indexLoadBar {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     text-align: center;
     color: #727272;
     background: none;
     margin: 0;
-    padding: 0.9rem 0.625rem 0.4rem;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+#sidebar #indexLoadBar {
+    font-size: 0.7em;
+    margin-top: -1em;
+    padding-bottom: 2.25em;
 }
 
 #indexLoadBar .loadBarGraph {

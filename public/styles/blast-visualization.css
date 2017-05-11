@@ -343,10 +343,14 @@ table.dataTable.no-footer{
 
 
 #viewport{
-    width: 50em;
-    height: 35em;
+    width: 70em;
+    height: 40em;
+    border: 1px solid lightgray;
     margin: 0 auto;
+}
 
+#viewport canvas {
+    background-color: transparent !important;
 }
 
 

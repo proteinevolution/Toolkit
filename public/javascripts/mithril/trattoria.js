@@ -1,41 +1,5 @@
-var JobErrorComponent, jobNoteArea, JobValidationComponent, ParameterAlignmentComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterSelectComponent, ParameterTextComponent, ParameterSlideComponent, SearchformComponent, closeShortcut, formComponents, foundationConfig, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
+var JobErrorComponent, JobValidationComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent ;
 
-helpModalAccess = function(elem, isInit) {
-    if (!isInit) {
-        return elem.setAttribute("data-open", "help-" + (this.job().tool.toolname));
-    }
-};
-
-
-selectBoxAccess = function(elem, isInit) {
-    if (!isInit) {
-        return $(elem).niceSelect();
-    } else {
-        return $(elem).niceSelect('update');
-    }
-};
-
-hideSubmitButtons = function (elem, isInit) {
-    if (!isInit) {
-        return $(elem).on("click", function() {
-            if($(this).attr('href') == "#tabpanel-Input" || $(this).attr('href') == "#tabpanel-Parameters") {
-                $('.submitbuttons').show();
-            } else {
-                $('.submitbuttons').hide();
-            }
-        });
-
-    }
-};
-
-
-select2Config = function(elem, isInit) {
-
-    if(!isInit) {
-        return $(elem).select2();
-    }
-
-};
 
 
 window.JobViewComponent = {
@@ -74,44 +38,7 @@ JobLineComponent = {
     }
 };
 
-SearchformComponent = {
-    view: function() {
-        return m("div", { id: "jobsearchform" },
-            m("input", { type: "text", placeholder: "Search by JobID, e.g. 6881313", id: "jobsearch" })
-        );
-    }
-};
 
-
-jobNoteArea = function(elem, isInit) {
-    if (!isInit && $(elem).attr('id').substring(7) > -1) {
-        $.ajax({
-            url: '/api/jobs/getnotes/' + $(elem).attr('id').substring(7),
-            type: 'get',
-            success: function(data) {
-                if(data && data.length > 0){
-                    $("#notesTab").addClass("hasNotes");
-                } else {
-                    $("#notesTab").removeClass("hasNotes");
-                }
-                $(elem).html(data);
-            },
-            error: function(e){
-                console.warn(JSON.stringify(e));
-            }
-        });
-        return $(elem).keyup(function(e) {
-            var contentString;
-            $("#notesTab").addClass("hasNotes");
-            if($(elem).val().length === 0)
-                $("#notesTab").removeClass("hasNotes");
-            contentString = $(this).val();
-            $.post(jsRoutes.controllers.Jobs.annotation($(this).attr('id').substring(7), contentString), function(response) {
-                console.log('Response: ' + response);
-            });
-        });
-    }
-};
 
 
 JobErrorComponent = {
@@ -230,6 +157,7 @@ JobRunningComponent = {
 
 
 
+<<<<<<< HEAD
 
 renderParameter = function(content, moreClasses) {
     return m("div", { class: moreClasses ? "parameter " + moreClasses : "parameter" }, content);
@@ -242,6 +170,8 @@ mapParam = function(param, ctrl) {
         value: ctrl.getParamValue(param.name)
     });
 };
+=======
+>>>>>>> f33bf298bef190f8add243442f935895558529d9
 
 
 
@@ -316,6 +246,7 @@ JobTabsComponent = {
                     }
                     $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
                     followScroll(document);
+                    setViewport();
 
                 } else {
                     job_tab_component.addClass("fullscreen");
@@ -325,6 +256,7 @@ JobTabsComponent = {
                     }
                     $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
                     followScroll(job_tab_component);
+                    setViewport();
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
@@ -461,14 +393,6 @@ JobTabsComponent = {
     }
 };
 
-submitModal = function(elem, isInit) {
-    if (!isInit) {
-        $(elem).foundation();
-        return $(elem).bind('closed.zf.reveal', (function() {
-            return $(".submitJob").prop("disabled", false);
-        }));
-    }
-};
 
 
 JobValidationComponent = {
@@ -699,6 +623,9 @@ JobSubmissionComponent = {
     }
 };
 
+
+
+/*
 m.capture = function(eventName, handler) {
     var bindCapturingHandler;
     bindCapturingHandler = function(element) {
@@ -709,7 +636,7 @@ m.capture = function(eventName, handler) {
             bindCapturingHandler(element);
         }
     };
-};
+}; */ // TODO: most likely not in use anymore
 
 
 
@@ -922,211 +849,5 @@ window.ParameterAlignmentComponent = {
 
 
 
-var alignment_format = function(elem, isInit) {
-
-    if (!isInit) {
-        $(elem).niceSelect();
-    } else {
-        $(elem).niceSelect('update');
-    }
-    if(this.length == 0) {
-        $(".alignment_format").hide();
-    }
-};
 
 
-
-ParameterRadioComponent = {
-    view: function(ctrl, args) {
-        return renderParameter([
-            m("label", {
-                "for": args.param.name
-            }, args.param.label), args.param.paramType.options.map(function(entry) {
-                return m("span", [
-                    m("input", {
-                        type: "radio",
-                        name: args.param.name,
-                        value: entry[0]
-                    }), entry[1]
-                ]);
-            })
-        ]);
-    }
-};
-
-ParameterSelectComponent = {
-    //not needed so far but is working
-    controller: function(args) {
-        return {
-            preventMultiSelection: (function () {
-                var last_valid_selection = null;
-
-                $('.inputDBs').change(function (event) {
-
-                    if ($('#hhsuitedb').val().length > 3) {
-
-                        $('#hhsuitedb').val(last_valid_selection);
-                    } else {
-                        last_valid_selection = $('#hhsuitedb').val();
-                    }
-                });
-            }).bind(this.mo),
-
-            solveDBSelection: (function () {
-                if((($('#hhsuitedb').val() != "") || ($('#proteomes').val() != ""))) {
-                    $('.inputDBs').removeAttr("required");
-                }
-
-                if((($('#hhsuitedb').val() == "") && ($('#proteomes').val() == ""))) {
-                    $('.inputDBs').prop("required", true);
-                }
-            }).bind(this.mo)
-        }
-    },
-
-    view: function(ctrl, args) {
-        var paramAttrs = {
-            name: args.param.name,
-            "class": "wide",
-            id: args.param.name,
-            //if max count of chosen databases is needed
-            //onclick: ctrl.preventMultiSelection
-            onclick: ctrl.solveDBSelection,
-            config: select2Config,
-            required: true
-        };
-        if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
-            paramAttrs["multiple"] = "multiple";
-            paramAttrs["class"] = "inputDBs";
-        }else{
-            paramAttrs["config"] = selectBoxAccess;
-        }
-        return renderParameter([
-            m("label", {
-                "for": args.param.name
-            }, args.param.label),
-            m("select", paramAttrs,
-                args.param.paramType.options.map(function(entry) {
-                    return m("option", (args.value.indexOf(entry[0]) > -1 ? {
-                            value: entry[0],
-                            selected: "selected"
-                        } : {
-                            value: entry[0]
-                        }), entry[1])
-                }))
-        ]);
-    }
-};
-
-
-ParameterNumberComponent = {
-    view: function(ctrl, args) {
-        var paramAttrs = {
-            type: "number",
-            id: args.param.name,
-            name: args.param.name,
-            value: args.value
-        };
-        // Add minimum and maximum if present
-        if(args.param.paramType["min"] != null) {
-            paramAttrs["min"] = args.param.paramType["min"];
-        }
-        if(args.param.paramType["max"]) {
-            paramAttrs["max"] = args.param.paramType["max"];
-        }
-        if(args.param.paramType["step"]) {
-            paramAttrs["step"] = args.param.paramType["step"];
-        }
-        return renderParameter([
-            m("label", {
-                "for": args.param.name
-            }, args.param.label), m("input", paramAttrs)
-        ]);
-    }
-};
-
-
-ParameterTextComponent = {
-    view: function(ctrl, args) {
-        var paramAttrs = {
-            type: "text",
-            id: args.param.name,
-            name: args.param.name,
-            value: args.value,
-            config: paramValidation
-        };
-        return renderParameter([
-            m("label", {
-                "for": args.param.name
-            }, args.param.label), m("input", paramAttrs)
-        ]);
-    }
-};
-
-ParameterBoolComponent = {
-    view: function(ctrl, args) {
-        return renderParameter([
-            m("label", {
-                "for": args.param.name
-            }, args.label), m("input", {
-                type: "checkbox",
-                id: args.param.name,
-                name: args.param.name,
-                value: args.value
-            })
-        ]);
-    }
-};
-
-ParameterSlideComponent = {
-    model: function(args) {
-
-    },
-    controller: function(args){
-
-        this.value = args.value;
-        this.config = function (el, isInit, ctx) {
-            if (!isInit) {
-                $(el).ionRangeSlider({
-                    grid: true,
-                    values: [0.000000000000000000000000000000000000000000000000001,0.00000000000000000000000000000000000000001,0.000000000000000000000000000001,0.00000000000000000001,0.000000000000001,0.0000000001,0.00000001,0.000001, 0.0001, 0.001, 0.01, 0.02, 0.05, 0.1],
-                    grid_snap: true,
-                    keyboard: true
-                })
-            }
-        }.bind(this)
-
-    },
-    view: function (ctrl, args) {
-        var paramAttrs = {
-            type: "range",
-            id: args.param.name,
-            name: args.param.name,
-            value: ctrl.value,
-            config: ctrl.config
-        };
-        // Add minimum and maximum if present
-        if(args.param.paramType["max"]) {
-            paramAttrs["max"] = args.param.paramType["max"];
-        }
-        if(args.param.paramType["min"]) {
-            paramAttrs["min"] = args.param.paramType["min"];
-        }
-        return renderParameter([
-            m("label", args.value),
-            m("input", paramAttrs)
-        ])
-
-    }
-
-};
-
-formComponents = {
-    1: ParameterAlignmentComponent,
-    2: ParameterNumberComponent,
-    3: ParameterSelectComponent,
-    4: ParameterBoolComponent,
-    5: ParameterRadioComponent,
-    6: ParameterSlideComponent,
-    7: ParameterTextComponent
-};
