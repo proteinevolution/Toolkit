@@ -7,9 +7,6 @@ import reactivemongo.bson.{BSONInteger, BSONReader, BSONWriter}
   * Created by lukas on 1/20/16.
   * Object which describes the job's status
   */
-
-
-
 object JobDeletionFlag {
 
   sealed trait JobDeletionFlag
@@ -21,25 +18,26 @@ object JobDeletionFlag {
   case object Automated     extends JobDeletionFlag
 
   implicit object JobStateReads extends Reads[JobDeletionFlag] {
-    override def reads(json: JsValue) : JsResult[JobDeletionFlag] = json match {
-      case obj: JsObject => try {
-        JsSuccess((obj \ "status").as[Int] match {
-          case 0 => Error
-          case 1 => OwnerRequest
-          case 2 => PublicRequest
-          case 3 => Moderation
-          case 4 => Automated
-          case _ => Error
-        })
-      } catch {
-        case cause: Throwable => JsError(cause.getMessage)
-      }
+    override def reads(json: JsValue): JsResult[JobDeletionFlag] = json match {
+      case obj: JsObject =>
+        try {
+          JsSuccess((obj \ "status").as[Int] match {
+            case 0 => Error
+            case 1 => OwnerRequest
+            case 2 => PublicRequest
+            case 3 => Moderation
+            case 4 => Automated
+            case _ => Error
+          })
+        } catch {
+          case cause: Throwable => JsError(cause.getMessage)
+        }
       case _ => JsError("expected.jsobject")
     }
   }
 
   implicit object JobStateWrites extends Writes[JobDeletionFlag] {
-    def writes(jobState: JobDeletionFlag) : JsNumber = jobState match {
+    def writes(jobState: JobDeletionFlag): JsNumber = jobState match {
       case Error         => JsNumber(0)
       case OwnerRequest  => JsNumber(1)
       case PublicRequest => JsNumber(2)
@@ -68,7 +66,7 @@ object JobDeletionFlag {
     * Object containing the writer for the job state
     */
   implicit object JobStateWriter extends BSONWriter[JobDeletionFlag, BSONInteger] {
-    def write(state : JobDeletionFlag) : BSONInteger  = {
+    def write(state: JobDeletionFlag): BSONInteger = {
       state match {
         case Error         => BSONInteger(0)
         case OwnerRequest  => BSONInteger(1)
@@ -79,6 +77,3 @@ object JobDeletionFlag {
     }
   }
 }
-
-
-

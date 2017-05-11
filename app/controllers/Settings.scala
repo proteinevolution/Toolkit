@@ -1,6 +1,5 @@
 package controllers
 
-
 import java.util.Date
 import play.api.mvc.{Action, Controller}
 import play.api.i18n.MessagesApi
@@ -20,19 +19,16 @@ import scala.sys.process._
   * this controller is used to modify system parameters and store them in the database
   *
   */
-
-
 @Singleton
-final class Settings @Inject() (val messagesApi       : MessagesApi,
-                                val reactiveMongoApi  : ReactiveMongoApi)
-                                extends Controller with MongoController with ReactiveMongoComponents {
+final class Settings @Inject()(val messagesApi: MessagesApi, val reactiveMongoApi: ReactiveMongoApi)
+    extends Controller
+    with MongoController
+    with ReactiveMongoComponents {
 
-
-
-
-
-  val clusterSettings : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection("settings").as[BSONCollection](FailoverStrategy()))
-  val toolSettings : Future[BSONCollection] = reactiveMongoApi.database.map(_.collection("toolSettings").as[BSONCollection](FailoverStrategy()))
+  val clusterSettings: Future[BSONCollection] =
+    reactiveMongoApi.database.map(_.collection("settings").as[BSONCollection](FailoverStrategy()))
+  val toolSettings: Future[BSONCollection] =
+    reactiveMongoApi.database.map(_.collection("toolSettings").as[BSONCollection](FailoverStrategy()))
   private[this] var cm = ""
 
   /**
@@ -41,19 +37,14 @@ final class Settings @Inject() (val messagesApi       : MessagesApi,
     *
     * @param clusterMode
     */
+  def setClusterMode(clusterMode: String) = Action {
 
-  def setClusterMode(clusterMode : String) = Action {
-
-
-    val document = BSONDocument(
-      "clusterMode" -> clusterMode,
-      "created_on" -> new Date(),
-      "update_on" -> new Date())
+    val document = BSONDocument("clusterMode" -> clusterMode, "created_on" -> new Date(), "update_on" -> new Date())
 
     val future = clusterSettings.flatMap(_.insert(document))
 
     future.onComplete {
-      case Failure(e) => throw e
+      case Failure(e)         => throw e
       case Success(lastError) => println("successfully inserted document with lastError = " + lastError)
     }
 
@@ -61,40 +52,30 @@ final class Settings @Inject() (val messagesApi       : MessagesApi,
 
   }
 
-
-  def clusterMode : String = {
+  def clusterMode: String = {
 
     val hostname_cmd = "hostname"
-    val hostname = hostname_cmd.!!.dropRight(1)
+    val hostname     = hostname_cmd.!!.dropRight(1)
 
     if (hostname.equals("olt") || hostname.equals("rye"))
-
       cm = "sge"
-
     else
-
       cm = "LOCAL"
 
     cm
   }
-
 
   /**
     * sets h_vmem for a specific tool
     *
     * @param memory
     */
-  def setMemoryAllocation(memory : Int, toolName: String) = Action {
+  def setMemoryAllocation(memory: Int, toolName: String) = Action {
 
-
-    val document = BSONDocument(
-      "toolname" -> toolName,
-      "memory" -> memory,
-      "created_on" -> new Date(),
-      "update_on" -> new Date())
+    val document =
+      BSONDocument("toolname" -> toolName, "memory" -> memory, "created_on" -> new Date(), "update_on" -> new Date())
 
     val future = toolSettings.flatMap(_.insert(document))
-
 
     future.onComplete {
       case Failure(e) => throw e
@@ -107,5 +88,5 @@ final class Settings @Inject() (val messagesApi       : MessagesApi,
 
   }
 
-  def getMemoryAlloc(toolName : String) = "42" // IMPLEMENT ME
+  def getMemoryAlloc(toolName: String) = "42" // IMPLEMENT ME
 }

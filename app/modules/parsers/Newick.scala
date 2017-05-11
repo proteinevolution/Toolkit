@@ -3,15 +3,15 @@ import scala.util.parsing.combinator._
 
 sealed abstract class Tree
 case class Node(edges: List[Edge], name: Option[String]) extends Tree
-case class Leaf(name: Option[String]) extends Tree
-case class Edge(to: Tree, weight: Option[Double]) extends Tree
+case class Leaf(name: Option[String])                    extends Tree
+case class Edge(to: Tree, weight: Option[Double])        extends Tree
 
 sealed trait Newick {
-  val OPEN_PAREN = "("
+  val OPEN_PAREN  = "("
   val CLOSE_PAREN = ")"
-  val SEMICOLON = ";"
-  val COLON = ":"
-  val COMMA = ","
+  val SEMICOLON   = ";"
+  val COLON       = ":"
+  val COMMA       = ","
 }
 
 object newickParser extends RegexParsers with Newick {

@@ -17,7 +17,6 @@ import scala.io.Source
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 /*
 TODO
 We can introduce auto-coercion of the Job MainID to the BSONObject ID
@@ -29,42 +28,46 @@ We can introduce auto-coercion of the Job MainID to the BSONObject ID
   */
 @Singleton
 final class Jobs @Inject()(jobActorAccess: JobActorAccess,
-                           @NamedCache("userCache") implicit val userCache : CacheApi,
-                           implicit val locationProvider : LocationProvider,
-                           val reactiveMongoApi: ReactiveMongoApi) extends Controller with CommonModule with UserSessions with Constants{
+                           @NamedCache("userCache") implicit val userCache: CacheApi,
+                           implicit val locationProvider: LocationProvider,
+                           val reactiveMongoApi: ReactiveMongoApi)
+    extends Controller
+    with CommonModule
+    with UserSessions
+    with Constants {
 
   def jobStatusDone(jobID: String, key: String) = Action {
 
-    if(checkKey(jobID, key)) {
+    if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
       Ok
     } else BadRequest("Permission denied")
   }
 
   def jobStatusError(jobID: String, key: String) = Action {
-    if(checkKey(jobID, key)) {
+    if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Error))
       Ok
     } else BadRequest("Permission denied")
   }
 
   def jobStatusRunning(jobID: String, key: String) = Action {
-    if(checkKey(jobID, key)) {
+    if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Running))
       Ok
     } else BadRequest("Permission denied")
   }
 
   def jobStatusQueued(jobID: String, key: String) = Action {
-    if(checkKey(jobID, key)) {
+    if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Queued))
       Ok
     } else BadRequest("Permission denied")
   }
 
   def updateLog(jobID: String) = Action {
-      jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID))
-      Ok
+    jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID))
+    Ok
   }
 
   //TODO make secure
@@ -74,7 +77,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
       case Some(job) =>
         modifyJob(BSONDocument(Job.JOBID -> job.jobID),
-          BSONDocument("$set" -> BSONDocument("clusterData.sgeid" -> sgeID)))
+                  BSONDocument("$set"    -> BSONDocument("clusterData.sgeid" -> sgeID)))
         Logger.info(jobID + " gets job-ID " + sgeID + " on SGE")
       case None =>
         Logger.info("Unknown ID " + jobID.toString)
@@ -84,18 +87,17 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
   }
 
-  def pushMessage(jobID : String, message : String)  = Action {
+  def pushMessage(jobID: String, message: String) = Action {
     //userManager ! RunningJobMessage(reactivemongo.bson.BSONObjectID.parse(jobID).get, message)
     Ok
   }
 
-
   // TODO make secure
 
-  def updateDateViewed(jobID : String)  = Action {
+  def updateDateViewed(jobID: String) = Action {
 
     modifyJob(BSONDocument(Job.JOBID -> jobID),
-      BSONDocument("$set"   -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis))))
+              BSONDocument("$set"    -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis))))
     Ok
   }
 
@@ -103,34 +105,28 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     *
     * Creates new annotation document and modifies this if it already exists in one method
     *
- *
+    *
     * @param jobID
     * @param content
     * @return
     */
-
-  def annotation(jobID : String, content : String) : Action[AnyContent] = Action.async { implicit request =>
-
+  def annotation(jobID: String, content: String): Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
-
       findJob(BSONDocument(Job.JOBID -> jobID)).map {
 
         case x if x.get.ownerID.get == user.userID =>
-
-
           val entry = JobAnnotation(mainID = BSONObjectID.generate(),
-            jobID = jobID,
-            content = content,
-            dateCreated = Some(DateTime.now()))
+                                    jobID = jobID,
+                                    content = content,
+                                    dateCreated = Some(DateTime.now()))
 
           upsertAnnotation(entry)
 
           modifyAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID),
-            BSONDocument("$set" -> BSONDocument(JobAnnotation.CONTENT -> content)))
+                           BSONDocument("$set"              -> BSONDocument(JobAnnotation.CONTENT -> content)))
           Ok("annotation upserted")
 
         case _ =>
-
           Logger.info("Unknown ID " + jobID.toString)
           BadRequest("Permission denied")
 
@@ -139,17 +135,12 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
   }
 
-
   def getAnnotation(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-
     getUser.flatMap { user =>
-
       findJobAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID)).flatMap {
 
         case Some(x) =>
-
           findJob(BSONDocument(Job.JOBID -> jobID)).map { jobList =>
-
             if (jobList.get.ownerID.get == user.userID) {
 
               Ok(x.content)
@@ -159,9 +150,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
           }
 
         case None =>
-
           findJob(BSONDocument(Job.JOBID -> jobID)).map { jobList =>
-
             if (jobList.get.ownerID.get == user.userID) {
 
               Ok
@@ -183,7 +172,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     * @return
     */
   def checkKey(jobID: String, key: String): Boolean = {
-    val refKey = Source.fromFile(jobPath+"/"+jobID + "/key").mkString.replaceAll("\n", "")
+    val refKey = Source.fromFile(jobPath + "/" + jobID + "/key").mkString.replaceAll("\n", "")
     key == refKey
   }
 }

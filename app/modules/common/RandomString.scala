@@ -5,22 +5,20 @@ package modules.common
   * Created by astephens on 02.03.16.
   */
 object RandomString {
-  val numbers      = '0' to '9' // List of numbers
-  val lowerLetters = 'a' to 'z' // List of lower letters
-  val upperLetters = 'A' to 'Z' // List of upper letters
+  val numbers      = '0' to '9'                          // List of numbers
+  val lowerLetters = 'a' to 'z'                          // List of lower letters
+  val upperLetters = 'A' to 'Z'                          // List of upper letters
   val specialChar  = ('!', '§', '$', '_', '#', '~', '*') // Special characters which should be save to use
-  val umlLetters   = ('ä', 'ö', 'ü', 'ß') // German special vowels
+  val umlLetters   = ('ä', 'ö', 'ü', 'ß')                // German special vowels
 
-  val random       = scala.util.Random  // random seed class
-
-
+  val random = scala.util.Random // random seed class
 
   /**
     * Returns a String with random letters
     * @param length Length of the String
     * @return
     */
-  def randomAlphaString (length : Int) : String = {
+  def randomAlphaString(length: Int): String = {
     randomStringFromCharList(length, lowerLetters ++ upperLetters)
   }
 
@@ -29,7 +27,7 @@ object RandomString {
     * @param length Length of the String
     * @return
     */
-  def randomNumString (length : Int) : String = {
+  def randomNumString(length: Int): String = {
     randomStringFromCharList(length, numbers)
   }
 
@@ -38,7 +36,7 @@ object RandomString {
     * @param length Length of the String
     * @return
     */
-  def randomAlphaNumString (length : Int) : String = {
+  def randomAlphaNumString(length: Int): String = {
     randomStringFromCharList(length, numbers ++ lowerLetters ++ upperLetters)
   }
 
