@@ -6,7 +6,7 @@ import actors.JobActor.{CreateJob, Delete}
 import actors.JobIDActor
 import akka.actor.ActorRef
 import models.Constants
-import models.database.jobs.{Error, Job, JobDeletion, JobDeletionFlag}
+import models.database.jobs._
 import models.database.users.User
 import models.job.JobActorAccess
 import models.search.JobDAO
@@ -155,7 +155,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
                     val foundMainIDs   = jobList.map(_.mainID)
                     val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-                    val jobsPartition  = jobList.partition(_.status == Error)
+                    val jobsPartition  = jobList.partition(x => Set(Queued, Running, Error).exists(_ == x.status))
 
                     // Delete index-zombie jobs
                     unFoundMainIDs.foreach { mainID =>
@@ -217,6 +217,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   /**
     * Sends a deletion request to the job actor.
+ *
     * @return
     */
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
