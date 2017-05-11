@@ -46,6 +46,13 @@ declare class JobViewComponent {
 
 }
 
+declare class JobRunningComponent {
+
+    public static controller: any;
+    public static view: any;
+    public static updateLog: any;
+
+}
 declare class Backend{
     public static controller : any;
     public static view: any;

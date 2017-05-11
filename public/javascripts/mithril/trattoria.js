@@ -42,6 +42,9 @@ JobLineComponent = {
 
 
 JobErrorComponent = {
+    updateLog: function(){
+        m.redraw(true);
+    },
     log : "",
     controller: function (args) {
         m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
@@ -98,6 +101,9 @@ JobErrorComponent = {
 };
 
 JobQueuedComponent = {
+    updateLog: function(){
+        m.redraw(true);
+    },
     view: function(ctrl, args) {
         return m("div", { class: "queued-panel", config: foundationConfig }, [
             m('h6', "Your submission is queued!"),
@@ -109,6 +115,9 @@ JobQueuedComponent = {
 };
 
 JobRunningComponent = {
+    updateLog: function(){
+      m.redraw(true);
+    },
     log : "",
     controller: function (args) {
             m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
@@ -147,7 +156,17 @@ JobRunningComponent = {
 };
 
 
+renderParameter = function(content, moreClasses) {
+    return m("div", { class: moreClasses ? "parameter " + moreClasses : "parameter" }, content);
+};
 
+mapParam = function(param, ctrl) {
+    var comp = formComponents[param.paramType.type];
+    return m(comp, {
+        param: param,
+        value: ctrl.getParamValue(param.name)
+    });
+};
 
 
 

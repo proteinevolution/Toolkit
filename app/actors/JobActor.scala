@@ -516,9 +516,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     case UpdateLog(jobID: String) =>
       currentJobs.get(jobID) match {
         case Some(job) =>
-          val foundWatchers =
-            job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-          foundWatchers.flatten.foreach(_ ! PushJob(job))
+          val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify) : Option[List[ActorRef]])
+          foundWatchers.flatten.foreach(_ ! UpdateLog(jobID))
         case None =>
       }
   }
