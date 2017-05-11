@@ -30,7 +30,6 @@ class PSIBlastController @Inject()(psiblast: PSIBlast, general: General, aln: Al
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
 
-  retrieveFullSeq.setPermissions(filePermissions)
   def evalFull(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
