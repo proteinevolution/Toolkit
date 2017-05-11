@@ -82,13 +82,25 @@ class LiveTable {
     static view (ctrl : any, args : any) : any {
         let trafficBarStatus;
         // TODO: THIS PART CAUSES THAT LIVETABLE IS BROKEN ON RYE
-        /*switch(LiveTable.lastJob.state) {
-            case 2: trafficBarStatus = "queue"; break;
-            case 3: trafficBarStatus = "running"; break;
-            case 4: trafficBarStatus = "error"; break;
-            case 5: trafficBarStatus = "done"; break;
-            default: trafficBarStatus = ""; break;
-        }*/
+        if(LiveTable.lastJob != null) {
+            switch (LiveTable.lastJob.state) {
+                case 2:
+                    trafficBarStatus = "queue";
+                    break;
+                case 3:
+                    trafficBarStatus = "running";
+                    break;
+                case 4:
+                    trafficBarStatus = "error";
+                    break;
+                case 5:
+                    trafficBarStatus = "done";
+                    break;
+                default:
+                    trafficBarStatus = "";
+                    break;
+            }
+        } else trafficBarStatus = "";
         return m('div', [
             //m('div', {"class" : "clusterLoad column large-4"}, ""),
             m('table', {"class" : "liveTable"}, [
@@ -96,7 +108,7 @@ class LiveTable {
                     [m('tr', [
                         m('td', m.component(LoadBar, {})),
                         m('td', {id: "joblistIcon"},
-                            m('a', {href: "/#/jobmanager", id: "jobmanagerIcon", title: "Go to job manager" , style: "font-weight: bold;" },'Jobmanager', [
+                            m('a', {href: "/#/jobmanager", id: "jobmanagerIcon", title: "Go to job manager" , style: "font-weight: bold;" },'Job Manager', [
                                 m("i", {"class": "icon-list"})
                             ])
                         )

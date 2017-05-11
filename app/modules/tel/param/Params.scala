@@ -5,5 +5,5 @@ package modules.tel.param
   */
 trait Params {
 
-  def generateValues(name : String) : Map[String, String]
+  def generateValues(name: String): Map[String, String]
 }

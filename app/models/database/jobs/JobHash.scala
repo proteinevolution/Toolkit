@@ -4,38 +4,34 @@ import org.joda.time.DateTime
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
 
 /**
- *
- * Created by snam on 23.08.16.
- *
- * the JobHash also contains non-hashed information to avoid collision as much as possible. Only the input file and the parameters will be hashed
- * due performance reasons. Note that not every tool/job uses a database.
- *
- */
-
-
-case class JobHash(mainID : BSONObjectID,
-                   inputHash : String,
+  *
+  * Created by snam on 23.08.16.
+  *
+  * the JobHash also contains non-hashed information to avoid collision as much as possible. Only the input file and the parameters will be hashed
+  * due performance reasons. Note that not every tool/job uses a database.
+  *
+  */
+case class JobHash(mainID: BSONObjectID,
+                   inputHash: String,
                    runscriptHash: String,
-                   dbName : Option[String],
-                   dbMtime : Option[String],
+                   dbName: Option[String],
+                   dbMtime: Option[String],
                    toolname: String,
                    toolHash: String,
-                   dateCreated : Option[DateTime],
+                   dateCreated: Option[DateTime],
                    jobID: String)
-
 
 object JobHash {
 
-  val ID = "_id"
-  val INPUTHASH = "hash"
+  val ID            = "_id"
+  val INPUTHASH     = "hash"
   val RUNSCRIPTHASH = "rshash"
-  val DBNAME = "dbname"
-  val DBMTIME = "dbmtime"
-  val TOOLNAME = "toolname"
-  val TOOLHASH = "toolhash"
-  val DATECREATED = "dateCreated"
-  val JOBID = "jobID"
-
+  val DBNAME        = "dbname"
+  val DBMTIME       = "dbmtime"
+  val TOOLNAME      = "toolname"
+  val TOOLHASH      = "toolhash"
+  val DATECREATED   = "dateCreated"
+  val JOBID         = "jobID"
 
   implicit object Reader extends BSONDocumentReader[JobHash] {
     override def read(bson: BSONDocument): JobHash = JobHash(
@@ -53,15 +49,15 @@ object JobHash {
 
   implicit object Writer extends BSONDocumentWriter[JobHash] {
     override def write(jobHash: JobHash): BSONDocument = BSONDocument(
-      ID  ->  jobHash.mainID,
-      INPUTHASH -> jobHash.inputHash,
+      ID            -> jobHash.mainID,
+      INPUTHASH     -> jobHash.inputHash,
       RUNSCRIPTHASH -> jobHash.runscriptHash,
-      DBNAME -> jobHash.dbName,
-      DBMTIME -> jobHash.dbMtime,
-      TOOLNAME -> jobHash.toolname,
-      TOOLHASH -> jobHash.toolHash,
-      DATECREATED -> BSONDateTime(jobHash.dateCreated.fold(-1L)(_.getMillis)),
-      JOBID -> jobHash.jobID
+      DBNAME        -> jobHash.dbName,
+      DBMTIME       -> jobHash.dbMtime,
+      TOOLNAME      -> jobHash.toolname,
+      TOOLHASH      -> jobHash.toolHash,
+      DATECREATED   -> BSONDateTime(jobHash.dateCreated.fold(-1L)(_.getMillis)),
+      JOBID         -> jobHash.jobID
     )
   }
 }

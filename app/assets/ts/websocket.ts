@@ -29,9 +29,9 @@ connect = function() : any {
         let wsRoute = jsRoutes.controllers.Application.ws;
         let isSecure : boolean = location.protocol === "https:";
         ws = new WebSocket(wsRoute().webSocketURL(isSecure));   // create the new websocket
-        console.log(ws);
-        console.log(isSecure);
-        console.log(location.protocol);
+        //console.log(ws);
+        //console.log(isSecure);
+        //console.log(location.protocol);
         ws.onopen    = function(evt : Event)        : any { return onOpen(evt); };
         ws.onclose   = function(evt : CloseEvent)   : any { return onClose(evt); };
         ws.onmessage = function(evt : MessageEvent) : any { return onMessage(evt); };

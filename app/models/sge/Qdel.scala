@@ -8,7 +8,7 @@ import scala.language.postfixOps
   */
 final class Qdel {
 
-  def delete(jobID : String) : Int = {
+  def delete(jobID: String): Int = {
 
     s"qdel $jobID" !
 
