@@ -155,7 +155,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
                     val foundMainIDs   = jobList.map(_.mainID)
                     val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-                    val jobsPartition  = jobList.partition(x => Set(Queued, Running, Error).exists(_ == x.status))
+                    val jobsPartition  = jobList.partition(_.status != Done)
 
                     // Delete index-zombie jobs
                     unFoundMainIDs.foreach { mainID =>
@@ -217,7 +217,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   /**
     * Sends a deletion request to the job actor.
- *
     * @return
     */
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
