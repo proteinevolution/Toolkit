@@ -156,9 +156,6 @@ JobRunningComponent = {
 };
 
 
-
-<<<<<<< HEAD
-
 renderParameter = function(content, moreClasses) {
     return m("div", { class: moreClasses ? "parameter " + moreClasses : "parameter" }, content);
 };
@@ -170,8 +167,6 @@ mapParam = function(param, ctrl) {
         value: ctrl.getParamValue(param.name)
     });
 };
-=======
->>>>>>> f33bf298bef190f8add243442f935895558529d9
 
 
 
