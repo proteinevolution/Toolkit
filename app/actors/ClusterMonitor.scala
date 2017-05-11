@@ -64,9 +64,10 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
         */
       load match {
 
-        case x if x > 1.2            => TEL.memFactor = 0.5; TEL.threadsFactor = 0.5
-        case x if x < 0.5 && x > 0.1 => TEL.memFactor = 2; TEL.threadsFactor = 2
-        case x if x < 0.1            => TEL.memFactor = 4; TEL.threadsFactor = 4
+        //reducing the number of cores and memory is not a good idea! Some jobs need a minimum of these to run
+        case x if x > 1.2            => TEL.memFactor = 1; TEL.threadsFactor = 1
+        case x if x < 0.5 && x > 0.1 => TEL.memFactor = 1; TEL.threadsFactor = 1
+        case x if x < 0.1            => TEL.memFactor = 1; TEL.threadsFactor = 1
         case _                       => TEL.memFactor = 1; TEL.threadsFactor = 1
 
       }
