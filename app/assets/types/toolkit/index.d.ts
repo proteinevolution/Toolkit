@@ -30,6 +30,16 @@ declare class JobListComponent {
 
 }
 
+declare class JobLineComponent{
+    public static controller: any;
+    public static view: any;
+}
+
+declare class JobTabsComponent{
+    public static controller: any;
+    public static view: any;
+}
+
 declare class FrontendAlnvizComponent {
 
     public static controller : any;
