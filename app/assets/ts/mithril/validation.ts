@@ -941,11 +941,6 @@ class alignmentVal implements ToolkitValidator {
             valReset();
         }
 
-        else if ($( "#regkey" ).css("background-color") == "rgb(219, 255, 219)"){
-            feedback(true, "Valid input", "success");
-            modellerIsValid = true;
-        }
-
         else {
             feedback(false, "Valid input", "success");
             modellerIsValid = true;
