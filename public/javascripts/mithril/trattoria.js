@@ -1,4 +1,4 @@
-var JobErrorComponent, jobNoteArea, JobValidationComponent, ParameterAlignmentComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterSelectComponent, ParameterTextComponent, ParameterSlideComponent, SearchformComponent, closeShortcut, formComponents, foundationConfig, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
+var JobErrorComponent, JobPendingComponent, jobNoteArea, JobValidationComponent, ParameterAlignmentComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent, ParameterBoolComponent, ParameterNumberComponent, ParameterRadioComponent, ParameterSelectComponent, ParameterTextComponent, ParameterSlideComponent, SearchformComponent, closeShortcut, formComponents, foundationConfig, helpModalAccess, mapParam, renderParameter, selectBoxAccess, submitModal, tabulated ;
 
 helpModalAccess = function(elem, isInit) {
     if (!isInit) {
@@ -223,7 +223,17 @@ JobPendingComponent = {
     view: function(ctrl, args) {
         return m("div", { class: "pending-panel", config: foundationConfig }, [
             m('h6', "Your submission is pending, as there is a different job with similar parameters!"),
-            m('div', {"class":"openSimilarJob"}, m("button",{}, "Start Job anyways")),
+            m('div', {"class": "openSimilarJob"},
+                m("button",{ class   : "button small",
+                             onclick : function(e){
+                                 console.log("clicked.", e);
+                                 e.preventDefault();
+                                 console.log("clicked.", e);
+                                 m.request({url:"/api/job/start/"+args.job().jobID}).then(function(data){
+                                     console.log("requested:",data);
+                                 });
+                             }
+                           }, "Start Job anyways")),
             m("div", {"class": "processJobIdContainer"},
                 m('b', "Job ID:"),
                 m('p', ' ' + args.job().jobID))
@@ -280,6 +290,10 @@ JobTabsComponent = {
                     break;
                 case 5:
                     active = listitems.length;
+                    break;
+                case 7:
+                    active = listitems.length;
+                    listitems = listitems.concat("Pending");
                     break;
                 default:
                     break;
@@ -347,7 +361,7 @@ JobTabsComponent = {
         return m("div", { class: "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl) }, [
             m("ul", [ // Tab List
                 ctrl.listitems.map(function(item) {
-                    if(item == "Input" || item == "Parameters" || item == "Running" || item == "Queued" || item == "Error"){
+                    if(item == "Input" || item == "Parameters" || item == "Running" || item == "Queued" || item == "Error" || item == "Pending"){
                         return m("li", { id: "tab-" + item},
                             m("a", { href: "#tabpanel-" + item, config: hideSubmitButtons }, item)
                         );
@@ -452,6 +466,8 @@ JobTabsComponent = {
                     m(JobRunningComponent, { job: ctrl.job })) : void 0,
                 ctrl.isJob && ctrl.state === 4 ? m("div", { class: "tabs-panel", id: "tabpanel-Error"   },
                     m(JobErrorComponent, {job: ctrl.job})) : void 0,
+                ctrl.isJob && ctrl.state === 7 ? m("div", { class: "tabs-panel", id: "tabpanel-Pending" },
+                    m(JobPendingComponent, {job: ctrl.job})) : void 0,
                 m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob })
             ),
             ctrl.views ? ctrl.views.map(function(view) {
@@ -725,7 +741,7 @@ JobSubmissionComponent = {
                     // hide submitbuttons
                     if (args.job().jobstate > -1)
                         $(elem).hide();
-                }// };D
+                }
             }
         };
         return m("div", { "class":  "submitbuttons", config: hide.oninit }, [
