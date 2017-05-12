@@ -82,8 +82,8 @@ $(document).ready( function(){
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
         getHits(0, shownHits);
-        getCheckedCheckboxes()
-    }
+        setTimeout(function(){getCheckedCheckboxes()}, 1000);    
+}
 });
 
 
