@@ -287,7 +287,7 @@ function selectFromArray(checkboxes){
 }
 
 function getCheckedCheckboxes(){
-    $('.checkbox:input:checkbox').attr("checked").map(checkboxes.push($(this).val()));
+    $('input:checkbox:checked').each(function(){checkboxes.push($(this).val());});
 }
 
 
@@ -304,7 +304,7 @@ function hitlistBaseFunctions(){
             // in order to make it work with pagination/lazyload
             selectFromArray(checkboxes);
 
-            $('input:checkbox').click(function (e) {
+            $('input:checkbox').on('change',function (e) {
                 var currentVal = $(this).val();
                 var currentState = $(this).prop('checked');
 
