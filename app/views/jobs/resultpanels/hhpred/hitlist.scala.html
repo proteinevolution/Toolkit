@@ -301,7 +301,7 @@
         function hhpred_forwardQueryMSA(selectedTool) {
             $.ajax({
                 type: 'GET',
-                url: "files/" + jobID + "/" + jobID + ".reduced.msa"
+                url: "files/" + jobID + "/alignment.fas"
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });
