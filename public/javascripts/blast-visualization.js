@@ -131,7 +131,7 @@ function resubmitSection(sequence, name) {
     var resubmitSeqs = [];
 
     resubmitSeqs.push(name + '\n');
-    resubmitSeqs.push(sequence.substr(sliderRange[0] - 1, sliderRange[1]) + '\n');
+    resubmitSeqs.push(sequence.substr(sliderRange[0], sliderRange[1]) + '\n');
 
     $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
     $('#alignment').val(resubmitSeqs.join(''));
