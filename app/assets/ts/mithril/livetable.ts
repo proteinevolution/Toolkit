@@ -52,9 +52,10 @@ class LiveTable {
     static updateJobInfo () : void {
         m.request({method: "GET", url: "indexPageInfo"})
             .then(function(pageInfo) {
+                //console.log(JSON.stringify(pageInfo));
                 LiveTable.lastJob   = pageInfo.lastJob;
                 LiveTable.totalJobs = pageInfo.totalJobs;
-            }).catch(function(error){console.log(error);});
+            }).catch(function(error){console.warn(error);});
     }
     static pushJob (job : Job) : void {
         LiveTable.lastJob = job;
