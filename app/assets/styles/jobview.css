@@ -631,6 +631,10 @@ hr {
     width: 80em;
 }
 
+.helpModal .greenlink a {
+    color : #2aa198;
+}
+
 map[name="blastmap"] area { cursor: pointer; }
 
 @media only screen and (max-width: 1100px) {
