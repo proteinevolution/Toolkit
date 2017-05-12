@@ -625,6 +625,12 @@ let validationProcess = function(elem: any,toolname: string) {
 
             break;
 
+        case "retseq":
+            let retseqTarget = new alignmentVal($(elem));
+            retseqTarget.retSeqValidation();
+
+            break;
+
         case "seq2id":
             /** validation model for hhfilter:
              * Input has to be aligned FASTA.
@@ -961,6 +967,18 @@ class alignmentVal implements ToolkitValidator {
         else {
             $("#validOrNot").css("display", "block").html("Valid input").removeClass("alert").addClass("success");
             samccIsValid = true;
+        }
+    }
+
+    //retseq validation is only a stub
+
+    retSeqValidation(): any {
+        if(this.elem.val() != "")
+            feedback(true, "Valid input", "success");
+
+        else if (this.elem.val() == "") {
+            feedback(false);
+            valReset();
         }
     }
 }
