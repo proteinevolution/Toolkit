@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobActor.{CreateJob, PrepareJob, Delete}
+import actors.JobActor.{CreateJob, Delete, PrepareJob, StartJob}
 import actors.JobIDActor
 import akka.actor.ActorRef
 import models.Constants
@@ -62,6 +62,13 @@ final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
         findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
           Ok(Json.toJson( jobs.map(_.cleaned())))
         }
+    }
+  }
+
+  def startJob(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
+    getUser.map{ user =>
+      jobActorAccess.sendToJobActor(jobID, StartJob(jobID))
+      Ok(Json.toJson(Json.obj("message"->"Starting Job...")))
     }
   }
 
