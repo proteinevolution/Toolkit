@@ -2,22 +2,6 @@ var JobErrorComponent, JobValidationComponent, JobRunningComponent, JobLineCompo
 
 
 
-window.JobViewComponent = {
-
-    view: function(ctrl, args) {
-        if (!args.job()) {
-            return m("div", "Waiting for Job"); // TODO Styling, UPDATE: if-case probably not needed anymore...
-        } else {
-                return m("div", {
-                    id: "jobview"
-                }, [
-                    m(JobLineComponent, { job: args.job }),
-                    m(JobTabsComponent, { job: args.job, owner: args.owner })
-                ]);
-            }
-        }
-};
-
 JobLineComponent = {
     view: function(ctrl, args) {
         var isJob;
