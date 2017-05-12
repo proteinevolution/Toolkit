@@ -81,7 +81,8 @@ $(document).ready( function(){
         var firstQueryEnd = @result.HSPS.head.query_end;
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
-	getHits(0, shownHits);
+        getHits(0, shownHits);
+        getCheckedCheckboxes()
     }
 });
 

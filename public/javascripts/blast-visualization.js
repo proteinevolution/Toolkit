@@ -286,6 +286,10 @@ function selectFromArray(checkboxes){
     })
 }
 
+function getCheckedCheckboxes(){
+    $('.checkbox:input:checkbox').attr("checked").map(checkboxes.push($(this).val()));
+}
+
 
 function hitlistBaseFunctions(){
     $(document).ready(function() {
