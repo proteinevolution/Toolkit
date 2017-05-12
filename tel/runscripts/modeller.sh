@@ -61,7 +61,7 @@ mv modeller.py modeller_script.py
 chmod 0777 modeller_script.py
 chmod 0777 alignment.pir
 # run modeller
-modeller modeller_script.py >> modeller.log
+mod9.18 modeller_script.py >> modeller.log
 mv modeller.log ../logs/
 mv $FILENAME* ../results/
 
