@@ -76,7 +76,7 @@ JobErrorComponent = {
                             m("div", {class: "logElemText"}, logElem[0])),
                             m("div", {class: "logElem"},
                             m("i", {class: "icon-cancel_circle logElemError"}),
-                            m("div", {class: "logElemText"}, "error in runscript"))
+                            m("div", {class: "logElemText"}, "Error."))
                             ]
                     }
                     else if(logElem[1] == "done"){
