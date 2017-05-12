@@ -590,25 +590,26 @@ JobSubmissionComponent = {
                     method: "POST",
                     url: "/api/job/create/" + toolName,
                     data: formData,
-                    extract: extractStatus,
                     serialize: function(submissionReturnData) {
-                        console.log("unsetting job submission Blocking.");
-                        console.log("Data(serial):", submissionReturnData);
                         return submissionReturnData;
                     }
                 }).then(function(submissionReturnData){
                     console.log("Data(then):", submissionReturnData);
                     if (submissionReturnData.successful === true) {
                         console.log("Job Submission was successful.");
-                        m.route("/jobs/" + submissionReturnData.jobID);
+                        jobID = submissionReturnData.jobID;
+                        var jobListComp = JobListComponent.Job(
+                            { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolName }
+                        );
+                        JobListComponent.pushJob(jobListComp, true);
                     } else {
                         console.log("Error while submitting:", submissionReturnData.message)
                     }
-                    submitButton.prop("disabled", false);
+                    $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
                 }).catch(function(error){
                     console.log("Error while submitting:", error);
-                    submitButton.prop("disabled", false);
+                    $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
                 });
                 return;
