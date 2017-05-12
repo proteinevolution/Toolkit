@@ -50,39 +50,24 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
 
   def autoComplete(queryString: String): Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
-      val toolOpt: Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
-      Logger.info("user is looking for: " + queryString + " Found Tool: " + toolOpt)
+      val tools: List[models.tools.Tool] = toolFactory.values.values.filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined).toList
+      Logger.info("user is looking for: " + queryString + " Found Tool: " + tools.map(_.toolNameShort).mkString(", "))
       // Find out if the user looks for a certain tool or for a jobID
-      toolOpt match {
-        case Some(tool) => // Find the Jobs with the matching tool
-          val mainIDStrings: Future[List[String]] =
-            jobDao.jobsWithTool(tool.toolNameShort, user.userID).map(_.getHits.hits().toList.map(_.id()))
-          // Convert to BSON mainIDs
-          val futureMainIDs = mainIDStrings.map(_.map(mainIDString => BSONObjectID.parse(mainIDString).get))
-          // Grab Job Objects from the Database
-          futureMainIDs.map(mainIDs => findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)))).flatMap {
-            jobs =>
-              //jobs.map(joblist => Logger.info("Final Result: " + joblist.toString()))
-              jobs.map(_.map(_.cleaned())).map(jobJs => Ok(Json.toJson(jobJs)))
-          }
-        case None => // Grab Job ID auto completions
-//            val jobIDSuggestions = jobDao.jobIDcompletionSuggester(queryString)
-//              .map(_.suggestion("jobIDfield").entries.flatMap(_.options.map(_.text)).toList)
-//            jobIDSuggestions.map(ids => Logger.info("Found Strings: " + ids.mkString(", ")))
-//
-//            // Search for jobIDs in ES
-//            val searchHits = jobIDSuggestions.flatMap(jobIDSuggestions => jobDao.getJobIDs(jobIDSuggestions)).map(_.getHits)
-//            //searchHits.map(ids => Logger.info("Found Hits: " + ids.totalHits()))
-//            // Grab main IDs from the hits
-//            searchHits.map(_.hits().toList.map(_.id()))
-          //val jobIDP = s"($queryString.*)".r
-          findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).map { jobs =>
-            val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID) && job.deletion.isEmpty)
-            Ok(Json.toJson(jobsFiltered.map(_.cleaned())))
-          }
+      if (tools.isEmpty) {
+        // Grab Job ID auto completions
+        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).map { jobs =>
+          val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID) && job.deletion.isEmpty)
+          Ok(Json.toJson(jobsFiltered.map(_.cleaned())))
+        }
+      } else {
+          // Find the Jobs with the matching tool
+          findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))).map { jobs =>
+            jobs.map(_.cleaned())
+          }.map(jobJs => Ok(Json.toJson(jobJs)))
+        }
       }
     }
-  }
+
 
   def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
