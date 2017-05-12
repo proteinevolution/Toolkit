@@ -132,9 +132,12 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     */
   def getIndexPageInfo: Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
-      findSortedJob(BSONDocument(Job.OWNERID -> user.userID), BSONDocument(Job.DATEUPDATED -> -1)).flatMap { lastJob =>
+      findSortedJob(BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),BSONDocument(Job.OWNERID -> user.userID)), BSONDocument(Job.DATEUPDATED -> -1)).flatMap { lastJob =>
         countJobs(BSONDocument(Job.OWNERID -> user.userID)).map { count =>
-          Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned()), "totalJobs" -> count))
+          if(count > 0)
+            Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned()), "totalJobs" -> count))
+          else
+            NotFound("None")
         }
       }
     }
