@@ -114,6 +114,23 @@ FIELDSET {
 }
 
 
+
+.search-results{
+    color:  #262626;;
+    font-size: 0.8em;
+    margin: 0 20px 5px 20px;
+}
+
+.search-result-tool{
+
+}
+
+.header-name {
+    margin: 0 20px 5px 20px;
+    padding: 3px 0;
+    border-bottom: 1px solid #ccc;
+}
+
 .search_container input:focus {
 
     border: 1px solid #f1e6f9;;
