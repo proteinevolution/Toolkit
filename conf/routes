@@ -112,6 +112,7 @@ GET           /search/checkJobID/:jobID               @controllers.Search.checkJ
 GET           /search/checkJobID/resubmit/:jobID      @controllers.Search.checkJobID(jobID : String, resubmit : Boolean = true)
 
 #GET           /suggest/:jobID                         @controllers.Search.ac(jobID: String)
+GET           /getToolList                            @controllers.Search.getToolList()
 GET           /suggest/:jobID                         @controllers.Search.autoComplete(jobID: String)
 GET           /checktool/:tool                        @controllers.Search.existsTool(tool: String)
 

@@ -48,6 +48,10 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     }
   }
 
+  def getToolList() : Action[AnyContent] = Action {
+    Ok(Json.toJson(toolFactory.values.values.map(a => Json.obj("long" ->  a.toolNameLong, "short" -> a.toolNameShort))))
+  }
+
   def autoComplete(queryString: String): Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
       val tools: List[models.tools.Tool] = toolFactory.values.values.filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined).toList
