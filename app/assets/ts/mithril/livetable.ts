@@ -40,11 +40,6 @@ class LoadBar {
                                     (60 <= loadval && loadval < 80 ? " pulsating" : "")}),
                     m("th", {"class": (loadval < 80 ? "loadBar gray" : colorClass) +
                                     (80 <= loadval && loadval < 100 ? " pulsating" : "")})
-                    /*m("th", {"class": (loadval < 1.0 ? "loadBar gray" : colorClass) +
-                                    (1.0 <= loadval && loadval < 2.5 ? " pulsating" : "")}),
-                    m("th", {"class": (loadval < 2.5 ? "loadBar gray" : colorClass) +
-                                    (2.5 <= loadval && loadval < 5.0 ? " pulsating" : "")}),
-                    m("th", {"class": (loadval < 5.0 ? "loadBar gray" : colorClass + " pulsating")})*/
                 ])
             )))
         ])
@@ -100,7 +95,7 @@ class LiveTable {
                     trafficBarStatus = "";
                     break;
             }
-        } else trafficBarStatus = "";
+        } else trafficBarStatus = "not_init";
         return m('div', [
             //m('div', {"class" : "clusterLoad column large-4"}, ""),
             m('table', {"class" : "liveTable"}, [

@@ -485,7 +485,8 @@ FIELDSET {
 }
 
 .trafficbar.queue {
-    background: rgba(192, 181, 191, 0.9);
+    background: rgba(192, 181, 191, 1);
+    height: 0.3em;
     box-shadow: 0 1px 6px #9192af;
 }
 .trafficbar.done {
@@ -499,6 +500,9 @@ FIELDSET {
 .trafficbar.running {
     background: rgba(255, 255, 0, 0.9);
     box-shadow: 0 1px 6px #FFF666;
+}
+.trafficbar.not_init {
+    display: none;
 }
 
 #mainface {
@@ -532,6 +536,7 @@ tspan{
     text-align: center;
     padding: 0px 7px 0px 7px;
     margin-bottom: 0;
+    height: 70px;
 
 }
 
