@@ -782,4 +782,10 @@ td#joblistIcon i {
     }
 }
 
-
+noscript {
+    letter-spacing:0.2em;
+    font-family: Vollkorn, Georgia, Times, 'Times New Roman', serif;
+    padding-top: 200px;
+    display: block;
+    margin: auto;
+}
