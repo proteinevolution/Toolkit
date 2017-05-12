@@ -19,7 +19,7 @@ let paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
         }
 
 
-        return $(elem).on("keyup mouseover", function (e) {
+        return $(elem).on("input", function (e) {
             setTimeout(function () {
                 e.preventDefault();
                 switch (toolname) {
@@ -31,7 +31,7 @@ let paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
                                 url: "/validate/modeller/" + $(elem).val(),
                                 background: true
                             }).then(function (result) {
-                                console.log($(elem).val());
+                                //console.log($(elem).val());
                                 if (JSON.stringify(result) == "\"valid\"") {
                                     $( "#regkey" ).css("background-color", "rgb(219, 255, 219)");
                                     if(modellerIsValid) {
