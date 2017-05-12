@@ -1,6 +1,15 @@
 JOBID=%jobid.content
 SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
 
+if [ $SEQ_COUNT -gt "500" ] ; then
+
+      echo "#Input contains more than 500 sequences." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      echo "error" >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      $?=1
+fi
+
 echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
