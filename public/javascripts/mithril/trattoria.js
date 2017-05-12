@@ -264,6 +264,7 @@ JobTabsComponent = {
                 jobID = this.job().jobID;
                 if (confirm("Do you really want to delete this Job (ID: " + jobID + ")")) {
                     console.log("Delete for job " + jobID + " clicked");
+                    LiveTable.updateJobInfo();
                     return JobListComponent.removeJob(jobID, true, true);
                 }
             }
