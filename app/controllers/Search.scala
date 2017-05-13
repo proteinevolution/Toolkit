@@ -144,7 +144,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
   }
 
   def checkJobID(jobID: String, resubmit: Boolean = false): Action[AnyContent] = Action.async {
-    val jobIDNoVersionPattern = "([0-9a-zA-Z_]+)".r
+    val jobIDNoVersionPattern = "([0-9a-zA-Z_]{3,96})".r
     val jobVersionPattern     = "(_([0-9]{1,3}))".r
     val jobIDPattern          = (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
     val foundMainJobID: Option[String] =
@@ -164,33 +164,20 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
             Logger.info("Found no such jobs.")
             Ok(Json.obj("exists" -> false))
           } else {
-            Logger.info("Found " + jobs.length + " Jobs: " + jobs.map(_.jobID).mkString(","))
-            val jobVersions = jobs.map { job =>
-              Logger.info("jobID to match: " + job.jobID)
-              job.jobID match {
-                case jobIDPattern(_, _, v) => if (v.isEmpty) { -1 } else { Integer.parseInt(v) }
-                case _                     => 0
-              }
-            }
-            val version: Int = jobVersions.max + 1
             if (resubmit) {
+              Logger.info("Found " + jobs.length + " Jobs: " + jobs.map(_.jobID).mkString(","))
+              val jobVersions = jobs.map { job =>
+                Logger.info("jobID to match: " + job.jobID)
+                job.jobID match {
+                  case jobIDPattern(_, _, v) => if (v.isEmpty) { -1 } else { Integer.parseInt(v) }
+                  case _                     => 0
+                }
+              }
+              val version: Int = jobVersions.max + 1
               //Logger.info("Resubmitting job ID version: " + version + " for " + mainJobID)
               Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> (mainJobID + "_" + version)))
             } else {
-              //Logger.info("Main Job ID:" + mainJobID)
-              var boolExists = false
-              jobVersions.foreach { version =>
-                if (mainJobID + "_" + version == jobID) {
-                  boolExists = true
-                }
-              }
-              jobs.foreach { x =>
-                if (x.jobID == jobID) {
-                  println(x.jobID)
-                  boolExists = true
-                }
-              }
-              Ok(Json.obj("exists" -> boolExists))
+              Ok(Json.obj("exists" -> jobs.map(_.jobID).contains(jobID)))
             }
           }
         }
