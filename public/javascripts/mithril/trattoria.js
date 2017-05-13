@@ -394,7 +394,7 @@ JobSubmissionComponent = {
     currentJobID    : null,     // Currently entered jobID
     jobIDValid      : false,    // Is the current jobID valid?
     jobIDValidationTimeout : null,     // timer ID for the timeout
-    jobIDRegExp     : new RegExp(/^[a-zA-Z0-9\_]{6,96}(\_\d{1,3})?$/),
+    jobIDRegExp     : new RegExp(/^([0-9a-zA-Z_]+){6,96}(_[0-9]{1,3})?$/),
     jobResubmit     : false,
     checkJobID : function (jobID, addResubmitVersion) {
         clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);    // clear all previous timeouts
@@ -443,7 +443,6 @@ JobSubmissionComponent = {
                 newJobID = args.job().jobID;
                 JobSubmissionComponent.checkJobID(newJobID, true); // ask server for new jobID
             } else {
-                newJobID = "";
                 JobSubmissionComponent.jobIDValid = true;
             }
         }
