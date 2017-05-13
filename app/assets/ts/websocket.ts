@@ -125,8 +125,9 @@ onMessage = function(event : MessageEvent) : any {
 };
 
 
-let sendMessage = function(object : any) : any {
-    return ws.send(JSON.stringify(object));
+let sendMessage = function(object : any) : void {
+    console.log("Sending message:", object);
+    ws.send(JSON.stringify(object));
 };
 addJob = function(jobID : string) : any { sendMessage({ "type": "AddJob", "jobID": jobID }); };
 

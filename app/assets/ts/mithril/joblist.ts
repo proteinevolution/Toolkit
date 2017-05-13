@@ -52,7 +52,8 @@ window.JobListComponent = {
     numVisibleItems : 12,   // Number of shown jobs
     selectedJobID   : null, // JobID of the selected job
     lastUpdatedJob  : null, // Job which has been updated last
-    sort            : { mode : "createdOn", asc : true },
+    sort            : { mode : "createdOn", asc : false },
+    jobIDRegExp     : new RegExp(/^[a-zA-Z0-9\_]{6,96}(\_\d{1,3})?$/),
     getJob          : function (jobID : string) : any {    // Returns a job with the given jobID
         let foundJob = null;
         JobListComponent.list.map(function (job : any){ if(job.jobID === jobID) foundJob = job });
@@ -63,36 +64,41 @@ window.JobListComponent = {
         JobListComponent.list.map(function (job : any, index : number){ if (job.jobID === jobID) foundIndex = index });
         return foundIndex
     },
-    contains        : function (jobID : string) {    // Checks if the job with the given jobID is in the list
+    contains        : function (jobID : string) : boolean {    // Checks if the job with the given jobID is in the list
         return JobListComponent.getJob(jobID) != null
     },
-    jobIDs          : function () {         // Returns all the jobIDs from the list
+    jobIDs          : function () : Array<string> {         // Returns all the jobIDs from the list
         return JobListComponent.list.map(function(job : any){ return job.jobID })
     },
-    jobIDsFiltered  : function () {         // Returns all the jobIDs from the list which can still be updated
+    jobIDsFiltered  : function () : Array<string> {         // Returns all the jobIDs from the list which can still be updated
         return JobListComponent.list.filter(function(job : any){
             return job.state != 4 && job.state != 5
         }).map(function(job : any){ return job.jobID })
     },
-    register        : function (jobIDs : string) {   // Notices the server to send update messages about the jobs
-        if (jobIDs) {
+    register        : function (jobIDs? : Array<string>) : void {   // Notices the server to send update messages about the jobs
+        if (jobIDs != null) {
             sendMessage({ type: "RegisterJobs", "jobIDs": jobIDs });
         } else {
             sendMessage({ type: "RegisterJobs", "jobIDs": JobListComponent.jobIDsFiltered() });
         }
-
     },
     emptyList       : function () { JobListComponent.list = [] },   // empties the job list
     reloadList      : function () {         // reloads the job list from the server
+        //console.log("Reload Job List called.");
         let request = m.request({
             url: "/api/jobs",
             method: "GET",
             type: JobListComponent.Job
         });
         request.then(function(data : any) {
+            //console.log("Received list.", data, "Saving it.");
             JobListComponent.list = data;   // put the jobs in the list
-            JobListComponent.register();    // send the server a message that these items are being watched
+            //console.log("Sorting List.");
             JobListComponent.sortList();    // sort the list with the current sorting mode
+            //console.log("Registering Jobs.");
+            JobListComponent.register();    // send the server a message that these items are being watched
+            // TODO Something will hinder the execution of any code after JobListComponent.register()
+            //console.log("Done with Reloading Job List.");
         });
         return JobListComponent.list
     },
@@ -117,14 +123,15 @@ window.JobListComponent = {
             }
         });
     },
-    sortList        : function(sort : any, reverse : any) {      // Sorting the list elements
-        let oldSort, sameMode, inv : any, selectedJobID : string, selectedInView = false;
+    sortList        : function(sortMode? : string, reverse? : boolean) : boolean {      // Sorting the list elements
+        let oldSort, sameMode : boolean, inv : number, selectedJobID : string, selectedInView : boolean = false;
         oldSort = JobListComponent.sort;    // grab the old sort
-        if (sort != null && reverse != null) {
-            sameMode = (oldSort.mode === sort); // see if the mode has changed
+        if (sortMode != null && reverse != null) {
+            sameMode = (oldSort.mode === sortMode); // see if the mode has changed
             // If the mode has changed adjust the order (ascending - true / descending - false)
-            JobListComponent.sort = { mode : sort, asc : ((sameMode && reverse) ? !oldSort.asc : true) }
+            JobListComponent.sort = { mode : sortMode, asc : ((sameMode && reverse) ? !oldSort.asc : true) }
         }
+        //console.log("Sorting: ", sortMode, reverse, oldSort, JobListComponent.sort);
         // inv gets multiplied to invert the sorting order
         inv = JobListComponent.sort.asc ? 1 : -1;
         // Check if the selected jobID is in the view to get the new index to scroll to
@@ -135,16 +142,17 @@ window.JobListComponent = {
             switch (JobListComponent.sort.mode) {
                 case "toolName"  : return inv * job2.toolname.localeCompare(job1.toolname);
                 case "jobID"     : return inv * job2.jobID.localeCompare(job1.jobID);
-                case "createdOn" :
-                default          : return inv * (job2.createdOn - job1.createdOn);
+                case "createdOn" : return inv * (job1.createdOn - job2.createdOn);
+                default          : return inv * (job1.createdOn - job2.createdOn);
             }
         });
         // Scroll to the selected item if it was in the view before
         if (selectedJobID != null && selectedInView) {
             JobListComponent.scrollToJobListItem(JobListComponent.getJobIndex(selectedJobID));
         }
+        return true;
     },
-    pushJob         : function(newJob : any, setActive : boolean) {
+    pushJob         : function(newJob : any, setActive? : boolean) {
         if (newJob == null || newJob.jobID == null) { console.log(newJob); return }  // ensure that there are no empty jobs pushed
         JobListComponent.lastUpdatedJob = newJob;                        // change the "last updated" job to this one
         if (setActive) { JobListComponent.selectedJobID = newJob.jobID } // change the selectedJobID to this job when setActive is on
@@ -211,8 +219,9 @@ window.JobListComponent = {
         return m("div", { "class": "job-list" }, [
             m("div", { "class": "job-button" }, [
                 m("div", { "class": "idsort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
+                m("div", { "class": "datesort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "createdOn", true) }, "Date"),
                 m("div", { "class": "toolsort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "toolName", true) }, "Tool"),
-                m("div", { "class": "openJobManager"}, m('a', { href : "/#/jobmanager"}, m("i", {"class": "icon-list"})))
+                m("div", { "class": "openmanager textcenter"}, m('a', { href : "/#/jobmanager"}, m("i", {"class": "icon-list"})))
             ]),
             m("div", { "class": "elements noselect" }, [
                 listTooLong ?
