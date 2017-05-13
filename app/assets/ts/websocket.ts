@@ -105,9 +105,9 @@ onMessage = function(event : MessageEvent) : any {
             break;
         case "UpdateLoad":
             // Tried to limit this by saving the "currentRoute", but we might need something proper in the future.
-            if (currentRoute === "index" && !noRedraw) {
-                LoadBar.updateLoad(message.load);
-            }
+            // if (currentRoute === "index" && !noRedraw) {
+            LoadBar.updateLoad(message.load);
+            // }
             break;
         case "Ping":
             sendMessage({
