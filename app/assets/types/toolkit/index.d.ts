@@ -6,8 +6,7 @@ declare class JobListComponent {
     public static reloadList() : any;
     public static lastUpdatedJob : any;
     public static removeJob(param : any) : any;
-    public static pushJob(param : any) : any;
-    public static pushJob(param: any, bool : boolean) : any;
+    public static pushJob(param : any, bool? : boolean) : any;
     public static Job(param : any) : any;
     public static selectedJobID : string;
     public static getJobIndex(jobID : string) : number;
@@ -18,9 +17,8 @@ declare class JobListComponent {
     public static controller : any;
     public static view : any;
     public static jobIDsFiltered() : any;
-    public static register() : any;
-    public static register(item : any): any;
-    public static sortList(): any;
+    public static register(joblist? : Array<string>): void;
+    public static sortList(): boolean;
     public static sort : any;
     public static visibleJobs() : any;
     public static scrollToJobListItem(item : any) : any;
