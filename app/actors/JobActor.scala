@@ -148,9 +148,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         BSONDocument(
           "$set" ->
             BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
-          BSONDocument(
-            "$unset" ->
-              BSONDocument(Job.WATCHLIST -> ""))
+          "$unset" ->
+            BSONDocument(Job.WATCHLIST -> "")
         )
       ).foreach {
         case Some(deletedJob) =>
