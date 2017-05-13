@@ -97,15 +97,6 @@ window.JobManager = {
     view: function (ctrl : any) {
         return [
             m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
-                m("div", { id : "job-search-div" }, [
-                    m("input", {
-                        type:        "text",
-                        placeholder: "Search by JobID",
-                        id:          "job-search",
-                        name:        "job-search"
-                    }),
-                    m("span", { "class": "bar" })
-                ]),
                 m(JobListComponent, { activejobID : m.route.param("jobID") })
             ]),
             m("div", {"class": "jobManagerContainer large-10"},
