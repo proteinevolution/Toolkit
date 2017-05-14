@@ -1,6 +1,6 @@
 package actors
 
-import java.io.{FileOutputStream, ObjectOutputStream}
+import java.io.{FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream}
 import javax.inject.{Inject, Named}
 
 import actors.JobActor._
@@ -20,6 +20,7 @@ import controllers.UserSessions
 import models.sge.Qdel
 import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
+import modules.tel.execution.ExecutionContext.FileAlreadyExists
 import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
@@ -38,8 +39,15 @@ object JobActor {
 
   case class CreateJob(jobID: String, user: User, toolname: String, params: Map[String, String])
 
+  case class PrepareJob(job: Job,
+                        params: Map[String, String],
+                        startJob: Boolean = false,
+                        isInternalJob: Boolean = false)
+
+  case class CheckJobHashes(jobID: String)
+
   // Messages the Job Actor to start a job
-  case class StartJob(jobID: String, userID: BSONObjectID)
+  case class StartJob(jobID: String)
 
   trait Factory {
 
@@ -61,7 +69,7 @@ object JobActor {
   // JobActor is requested to Delete the job
   case class Delete(jobID: String, userID: BSONObjectID)
 
-  // Job Controller receives a job state change from the SGE
+  // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)
 
   // Job Controller receives push message to update the log
@@ -92,6 +100,74 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   // Running executions
   private var runningExecutions: Map[String, RunningExecution] = Map.empty
 
+  /**
+    * Get the job from the current jobs. If it is not there, get it from the DB.
+    * @param jobID
+    * @return
+    */
+  private def getCurrentJob(jobID: String): Future[Option[Job]] = {
+    // Check if the job is still in the current jobs.
+    this.currentJobs.get(jobID) match {
+      case Some(job) => // Everything is fine. Return the job.
+        Future.successful(Some(job))
+      case None => // Job is not in the current jobs.. try to get it back.
+        findJob(BSONDocument(Job.JOBID -> jobID)).map {
+          case Some(job) =>
+            // Get the job back into the current jobs
+            this.currentJobs = this.currentJobs.updated(job.jobID, job)
+            // TODO Check if the job is a running job and also if the cluster has done any changes with on the job.
+            // Return the job
+            Some(job)
+          case None =>
+            // Something must have went wrong, the job is not in the DB.
+            None
+        }
+    }
+  }
+
+  /**
+    * Gets the execution context for a given jobID, even if it has been removed.
+    * @param jobID
+    * @return
+    */
+  private def getCurrentExecutionContext(jobID: String): Option[ExecutionContext] = {
+    this.currentExecutionContexts.get(jobID) match {
+      case Some(executionContext) => Some(executionContext)
+      case None =>
+        if ((jobPath / jobID).exists) {
+          val executionContext = ExecutionContext(jobPath / jobID, reOpen = true)
+          this.currentExecutionContexts = this.currentExecutionContexts.updated(jobID, executionContext)
+          Some(executionContext)
+        } else {
+          None
+        }
+    }
+  }
+
+  /**
+    * Return the validated parameters
+    * @param job
+    * @param runscript
+    * @param params
+    * @return
+    */
+  private def validatedParameters(job: Job,
+                                  runscript: Runscript,
+                                  params: Map[String, String]): Seq[(String, (Evaluation, Option[Argument]))] = {
+    // Representation of the current State of the job submission
+
+    // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
+    // TODO Check parameters for validity here!!!             TODO
+    // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
+
+    var validParameters: Seq[(String, (Evaluation, Option[Argument]))] =
+      runscript.parameters.map(t => t._1 -> (t._2 -> Some(ValidArgument(new LiteralRepresentation(RString("false"))))))
+    params.foreach { pv =>
+      validParameters = supply(job.jobID, pv._1, pv._2, validParameters)
+    }
+    validParameters
+  }
+
   /** Supplies a value for a particular Parameter. Returns params again if the parameter
     * is not present
     *
@@ -112,7 +188,10 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     }
   }
 
-  // JobActor removes the Job from its maps
+  /**
+    * JobActor removes the Job from its maps
+    * @param jobID
+    */
   private def removeJob(jobID: String) = {
     val job = this.currentJobs(jobID)
 
@@ -133,6 +212,11 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     this.currentExecutionContexts = this.currentExecutionContexts.filter(_._1 == jobID)
   }
 
+  /**
+    * Trys to delete a job and inform all watching users about it
+    * @param job
+    * @param userID
+    */
   private def delete(job: Job, userID: BSONObjectID): Unit = {
     if (job.ownerID.contains(userID)) {
       Logger.info("Owner Requested job Deletion")
@@ -153,7 +237,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         )
       ).foreach {
         case Some(deletedJob) =>
-          Logger.info(s"Job Deletion from DB was sucessful:\n${deletedJob.toString()}")
+          Logger.info(s"Job Deletion from DB was successful:\n${deletedJob.toString()}")
         case None =>
           Logger.info("Job Deletion from DB failed.")
       }
@@ -174,14 +258,13 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     this.currentJobs = this.currentJobs.updated(job.jobID, job)
 
     // Update job in the database and notify watcher upon completion
-    modifyJob(BSONDocument(Job.JOBID -> job.jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
+    modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
       .map { modifiedJob =>
         val jobLog = this.currentJobLogs.get(job.jobID) match {
           case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
           case None =>
             JobEventLog(mainID = job.mainID,
                         toolName = job.tool,
-                        internalJob = false,
                         events = List(JobEvent(job.status, Some(DateTime.now))))
         }
         this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
@@ -202,6 +285,11 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     params.forall(item => item._2._2.isDefined)
   }
 
+  /**
+    * Sends an eMail to the owner of the job
+    * @param job
+    * @return
+    */
   private def sendJobUpdateMail(job: Job): Boolean = {
     if (job.emailUpdate && job.ownerID.isDefined) {
       findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach {
@@ -218,6 +306,123 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   }
 
   override def receive = LoggingReceive {
+
+    case PrepareJob(job, params, startJob, isInternalJob) =>
+      // jobid will also be available as parameter
+      val extendedParams = params + ("jobid" -> job.jobID)
+
+      // Add job to the current jobs
+      this.currentJobs = this.currentJobs.updated(job.jobID, job)
+
+      try {
+        // Establish execution context for the new Job
+        val executionContext = ExecutionContext(jobPath / job.jobID)
+        this.currentExecutionContexts = this.currentExecutionContexts.updated(job.jobID, executionContext)
+
+        // Create a log for this job
+        this.currentJobLogs =
+          this.currentJobLogs.updated(job.jobID,
+                                      JobEventLog(mainID = job.mainID,
+                                                  toolName = job.tool,
+                                                  internalJob = isInternalJob,
+                                                  events = List(JobEvent(job.status, Some(DateTime.now)))))
+
+        // Update the statistics
+        increaseJobCount(job.tool) // TODO switch to better statistic handling
+
+        // Get new runscript instance from the runscript manager
+        val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
+
+        // Validate the Parameters right away
+        var validParameters = this.validatedParameters(job, runscript, extendedParams)
+
+        // adds the params of the disabled controls from formData, sets value of those to "false"
+        validParameters.filterNot(pv => extendedParams.contains(pv._1)).foreach { pv =>
+          extendedParams.+(pv._1 -> "false")
+        }
+
+        // Serialize the JobParameters to the JobDirectory
+        // Store the extended Parameters in the working directory for faster reloading
+        executionContext.writeParams(extendedParams)
+
+        if (isComplete(validParameters)) {
+          // When the user wants to force the job to start without job hash check, then this will jump right to prepared
+          if (startJob) {
+            val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
+            hashCollection.flatMap(_.insert(jobHash))
+            self ! StartJob(job.jobID)
+          } else {
+            Logger.info("JobID " + job.jobID + " will now be hashed.")
+            self ! CheckJobHashes(job.jobID)
+          }
+        } else {
+          // TODO Implement Me. This specifies what the JobActor should do
+          // TODO when not all parameters have been specified or when they are invalid
+          Logger.error("[JobActor.PrepareJob] The job " + job.jobID + " has invalid or missing parameters.")
+          self ! JobStateChanged(job.jobID, Error)
+        }
+      } catch {
+        case FileAlreadyExists(msg) =>
+          Logger.error(
+            "[JobActor.PrepareJob] The directory for job " + job.jobID + " already exists\n" +
+              "[JobActor.PrepareJob] Stopping job since it can not be retrieved by user.")
+          self ! JobStateChanged(job.jobID, Error)
+      }
+
+    /**
+      * Checks the jobHashDB for matches and generates one for the job if there are none.
+      */
+    case CheckJobHashes(jobID) =>
+      Logger.info("JobID " + jobID + " will now be hashed.")
+      this.getCurrentJob(jobID).foreach {
+        case Some(job) =>
+          this.getCurrentExecutionContext(jobID) match {
+            case Some(executionContext) =>
+              // Ensure that the jobID is not being hashed
+              val params  = executionContext.reloadParams - "jobid" - "jobID" - "mainID"
+              val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
+
+              // Match the hash
+              jobDao.matchHash(jobHash).map { richSearchResponse =>
+                Logger.info("Retrieved richSearchResponse")
+                Logger.info("success: " + richSearchResponse.getHits.getHits.map(_.getId).mkString(", "))
+                Logger.info("hits: " + richSearchResponse.totalHits)
+
+                // Generate a list of hits and convert them into a list of future option jobs
+                val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
+                  BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate())
+                }
+
+                // Find the Jobs in the Database
+                findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
+                  val foundMainIDs   = jobList.map(_.mainID)
+                  val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
+                  val jobsPartition  = jobList.partition(_.status == Error)
+
+                  // Delete index-zombie jobs
+                  unFoundMainIDs.foreach { mainID =>
+                    Logger.info("[WARNING]: job in index but not in database: " + mainID.stringify)
+                    jobDao.deleteJob(mainID.stringify)
+                  }
+
+                  jobsPartition._2.lastOption match {
+                    case Some(_) =>
+                      Logger.info("JobID " + jobID + " is a duplicate.")
+                      self ! JobStateChanged(job.jobID, Pending)
+                    case None =>
+                      Logger.info("JobID " + jobID + " will now be started.")
+                      hashCollection.flatMap(_.insert(jobHash))
+                      self ! StartJob(job.jobID)
+                  }
+                }
+              }
+            case None =>
+              Logger.error("[JobActor.CheckJobHashes] Could not recreate execution context for jobID " + jobID)
+          }
+        case None =>
+          Logger.error("[JobActor.CheckJobHashes] Could not find the jobID " + jobID + " in the Cache or DB.")
+      }
+
     case CreateJob(jobID, user, toolname, params) =>
       // TODO Add param validation here
       // set memory allocation on the cluster and let the clusterMonitor define the multiplier
@@ -290,7 +495,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               jobDao.generateRSHash(toolname),
               dbName = Some(DBNAME),
               dbMtime = Some(STANDARDDB.lastModifiedTime.toString),
-              toolname = toolname,
+              toolName = toolname,
               jobDao.generateToolHash(toolname),
               dateCreated = Some(jobCreationTime),
               jobID = jobID
@@ -302,7 +507,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               jobDao.generateRSHash(toolname),
               dbName = Some(DBNAME),
               dbMtime = Some(HHSUITEDBMTIME),
-              toolname = toolname,
+              toolName = toolname,
               jobDao.generateToolHash(toolname),
               dateCreated = Some(jobCreationTime),
               jobID = jobID
@@ -314,7 +519,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               jobDao.generateRSHash(toolname),
               dbName = Some(DBNAME),
               dbMtime = Some(HHBLITSDBMTIME),
-              toolname = toolname,
+              toolName = toolname,
               jobDao.generateToolHash(toolname),
               dateCreated = Some(jobCreationTime),
               jobID = jobID
@@ -326,7 +531,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               jobDao.generateRSHash(toolname),
               dbName = Some("none"), // field must exist so that elasticsearch can do a bool query on multiple fields
               dbMtime = Some("1970-01-01T00:00:00Z"), // use unix epoch time
-              toolname = toolname,
+              toolName = toolname,
               jobDao.generateToolHash(toolname),
               dateCreated = Some(jobCreationTime),
               jobID = jobID
@@ -393,9 +598,15 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         Logger.info("STAY")
       }
 
+    /**
+      * Checks everything and deletes the Job.
+      * Includes: Removing the job from the cluster if the job is still in the current jobs
+      *           Creating the job deleted object and inserting it to the database
+      *           Removing the job from ES
+      */
     case Delete(jobID, userID) =>
       Logger.info(s"Received Delete for $jobID")
-      this.currentJobs.get(jobID) match {
+      this.getCurrentJob(jobID).foreach {
         case Some(job) =>
           Logger.info("Removing Job from Elastic Search.")
           jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
@@ -414,22 +625,74 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               Logger.info("Removing Job from DB")
               this.delete(job, userID)
             case None =>
-              Logger.info("No such jobID found in Database. Ignoring.")
+              Logger.error("[JobActor.Delete] No such jobID found in Database. Ignoring.")
           }
       }
 
-    case StartJob(jobID, userID) =>
-      this.currentJobs.get(jobID) match {
+    /**
+      * Starts the job
+      */
+    case StartJob(jobID) =>
+      this.getCurrentJob(jobID).foreach {
         case Some(job) =>
-          self ! JobStateChanged(jobID, Prepared)
-        case None =>
-          findJob(BSONDocument(Job.JOBID -> jobID)).map {
-            case Some(job) =>
-              this.currentJobs = this.currentJobs.updated(job.jobID, job)
-              self ! JobStateChanged(jobID, Prepared)
+          this.getCurrentExecutionContext(jobID) match {
+            case Some(executionContext) =>
+              Logger.info("[JobActor.StartJob] reached. starting job " + jobID)
+              // set memory allocation on the cluster and let the clusterMonitor define the multiplier
+
+              val h_vmem = (ConfigFactory
+                .load()
+                .getString(s"Tools.${job.tool}.memory")
+                .dropRight(1)
+                .toInt * TEL.memFactor).toString + "G"
+              val threads =
+                math.ceil(ConfigFactory.load().getInt(s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
+              env.configure(s"MEMORY", h_vmem)
+              env.configure(s"THREADS", threads.toString)
+              Logger.info(s"$jobID is running with $h_vmem h_vmem")
+              Logger.info(s"$jobID is running with $threads threads")
+
+              val clusterData = JobClusterData("", Some(h_vmem), Some(threads))
+
+              modifyJob(BSONDocument(Job.IDDB -> job.mainID),
+                        BSONDocument("$set" ->
+                          BSONDocument(Job.CLUSTERDATA -> clusterData))).foreach {
+                case Some(updatedJob) =>
+                  // Get new runscript instance from the runscript manager
+                  val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
+                  // Load the parameters from the serialized parameters file
+                  val params = executionContext.reloadParams
+                  // Validate the Parameters (again) to ensure that everything works
+                  var validParameters = this.validatedParameters(job, runscript, params)
+
+                  // adds the params of the disabled controls from formData, sets value of those to "false"
+                  validParameters.filterNot(pv => params.contains(pv._1)).foreach { pv =>
+                    params.+(pv._1 -> "false")
+                  }
+
+                  if (isComplete(validParameters)) {
+                    val pendingExecution = wrapperExecutionFactory.getInstance(
+                      runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
+                    executionContext.accept(pendingExecution)
+                    Logger.info("[JobActor.StartJob] Running job now.")
+
+                    this.runningExecutions =
+                      this.runningExecutions.updated(job.jobID, executionContext.executeNext.run())
+                  } else {
+                    // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
+                    Logger.info("STAY")
+                  }
+
+                  self ! JobStateChanged(job.jobID, Prepared)
+                case None =>
+                  Logger.error("[JobActor.StartJob] Job could not be written to DB: " + jobID)
+              }
+            //env.remove(s"MEMORY")
+            //env.remove(s"THREADS")
             case None =>
-              Logger.info("No such jobID found in Database. Ignoring.")
           }
+        case None =>
+          Logger.error("[JobActor.StartJob] Job not found in DB: " + jobID)
       }
 
     // User does no longer watch this Job
@@ -459,12 +722,12 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
     // Message from outside that the jobState has changed
     case JobStateChanged(jobID: String, jobState: JobState) =>
-      currentJobs.get(jobID) match {
+      this.getCurrentJob(jobID).foreach {
         case Some(oldJob) =>
           // Update the job object
           val job = oldJob.copy(status = jobState)
           // Give a update message to all
-          Logger.info("Jobstate has changed to " + job.status.toString + " of Job with ID " + job.jobID)
+          Logger.info("Job State has changed to " + job.status.toString + " for the Job with the JobID " + job.jobID)
 
           // Dependent on the state, we have to do different things
           job.status match {
@@ -510,13 +773,14 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           }
         case None =>
           Logger.info("Job not found: " + jobID)
-
       }
+
     case UpdateLog(jobID: String) =>
       currentJobs.get(jobID) match {
         case Some(job) =>
-          val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify) : Option[List[ActorRef]])
-          foundWatchers.flatten.foreach(_ ! UpdateLog(jobID))
+          val foundWatchers =
+            job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
+          foundWatchers.flatten.foreach(_ ! PushJob(job))
         case None =>
       }
   }

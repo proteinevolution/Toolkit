@@ -5,7 +5,7 @@ let FrontendTools : any = {
     "reformat": FrontendReformatComponent
 };
 
-let a = ['0', 'p', 'q', 'r', 'e', 'd', 'i'];
+let a = ['0', 'p', 'q', 'r', 'e', 'd', 'i', 'w']; // TODO rename this to something like "JobStateMap"
 
 let jobs = {};
 

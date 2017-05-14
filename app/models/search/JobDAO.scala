@@ -7,6 +7,7 @@ import com.evojam.play.elastic4s.configuration.ClusterSetup
 import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
 import com.sksamuel.elastic4s.analyzers.{StandardAnalyzer, WhitespaceAnalyzer}
 import com.typesafe.config.ConfigFactory
+import models.database.jobs.JobHash
 import models.tools.ToolFactory
 import modules.tel.TELConstants
 import modules.tools.FNV
@@ -96,6 +97,24 @@ final class JobDAO @Inject()(cs: ClusterSetup,
             matchQuery("toolname", toolname).analyzer(StandardAnalyzer),
             matchQuery("rshash", rsHash).analyzer(StandardAnalyzer),
             matchQuery("toolhash", toolHash).analyzer(StandardAnalyzer)
+          )
+        )
+      }
+    )
+  }
+
+  // Searches for a matching hash in the Hash DB
+  def matchHash(jobHash: JobHash): Future[RichSearchResponse] = {
+    client.execute(
+      search in jobHashIndex query {
+        bool(
+          must(
+            matchQuery("hash", jobHash.inputHash).analyzer(StandardAnalyzer),
+            matchQuery("dbname", jobHash.dbName.getOrElse("none")).analyzer(StandardAnalyzer),
+            termQuery("dbmtime", jobHash.dbMtime.getOrElse("1970-01-01T00:00:00Z")),
+            matchQuery("toolname", jobHash.toolName).analyzer(StandardAnalyzer),
+            matchQuery("rshash", jobHash.runscriptHash).analyzer(StandardAnalyzer),
+            matchQuery("toolhash", jobHash.toolHash).analyzer(StandardAnalyzer)
           )
         )
       }

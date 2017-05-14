@@ -248,6 +248,22 @@
     margin-bottom: 1px;
 }
 
+.job-list .w {
+    background-color: #dbdbff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.job-list .w:hover {
+    background-color: #bcbcdf;
+}
+.job-list .w.selected {
+    background-color: #bcbcdf;
+    box-shadow: 2px 0px 4px 0px #777;
+    margin-left: -2px;
+    margin-bottom: 1px;
+}
+
+
 .job-list .i {
     background-color: #f2f2f2;
 }
