@@ -93,6 +93,11 @@ declare class JobManager{
     public static model : any;
     public static controller : any;
     public static view: any;
+    public static reload : Function;
+    public static data : any;
+    public static dataTableLoader: Function;
+    public static toColumnItems: Function;
+    public static toColumnNames: Function;
 
 }
 
