@@ -140,10 +140,24 @@ window.JobListComponent = {
         // Sort the list
         JobListComponent.list.sort(function(job1 : any, job2 : any) {
             switch (JobListComponent.sort.mode) {
-                case "toolName"  : return inv * job2.toolname.localeCompare(job1.toolname);
-                case "jobID"     : return inv * job2.jobID.localeCompare(job1.jobID);
-                case "createdOn" : return inv * (job1.createdOn - job2.createdOn);
-                default          : return inv * (job1.createdOn - job2.createdOn);
+                case "toolName"  :
+                    $('.toolsort').css('color', '#2E8C81');
+                    $('.idsort').css('color', '#707070');
+                    $('.datesort').css('color', '#707070');
+                    return inv * job2.toolname.localeCompare(job1.toolname);
+                case "jobID"     :
+                    $('.idsort').css('color', '#2E8C81');
+                    $('.toolsort').css('color', '#707070');
+                    $('.datesort').css('color', '#707070');
+                    return inv * job2.jobID.localeCompare(job1.jobID);
+                case "createdOn" :
+                    $('.datesort').css('color', '#2E8C81');
+                    $('.idsort').css('color', '#707070');
+                    $('.toolsort').css('color', '#707070');
+                    return inv * (job1.createdOn - job2.createdOn);
+                default          :
+                    $('.datesort').css('color', '#707070');
+                    return inv * (job1.createdOn - job2.createdOn);
             }
         });
         // Scroll to the selected item if it was in the view before

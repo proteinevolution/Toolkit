@@ -346,7 +346,10 @@ final class ToolFactory @Inject()(
     // PhyML
     ("phyml", Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYML, paramAccess.NO_REPLICATES), Seq.empty, Seq.empty),
     // MMseqs2
-    ("mmseqs2", Seq(paramAccess.ALIGNMENT, paramAccess.MIN_SEQID, paramAccess.MIN_ALN_COV), Seq.empty, Seq.empty),
+    ("mmseqs2",
+     Seq(paramAccess.ALIGNMENT, paramAccess.MIN_SEQID, paramAccess.MIN_ALN_COV),
+     Seq("clans", "mmseqs2"),
+     Seq.empty),
     // Backtranslator
     ("backtrans",
      Seq(paramAccess.SINGLESEQ, paramAccess.INC_AMINO, paramAccess.GENETIC_CODE, paramAccess.CODON_TABLE_ORGANISM),
@@ -719,7 +722,7 @@ final class ToolFactory @Inject()(
         implicit val r = requestHeader
         Future.successful(
           views.html.jobs.resultpanels
-            .fileviewWithDownload(jobID + ".fas", s"$jobPath$jobID/results/" + jobID + ".fas", jobID, "mmseqs_reps"))
+            .fileviewWithDownloadForward(jobID + ".fas", s"$jobPath$jobID/results/" + jobID + ".fas", jobID, "mmseqs_reps", this.values(Toolnames.MMSEQS2)))
       },
       Resultviews.SUMMARY -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
