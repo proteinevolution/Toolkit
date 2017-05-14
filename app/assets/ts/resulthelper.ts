@@ -8,12 +8,32 @@ declare var getHits: any;
 
 // add scrollcontainer highlighting
 let followScroll = function(element : any) {
+
+    let expandButton = $('#collapseMe').clone(true);
+    expandButton.css('display', 'none');
+    $('.scrollContainer').append(expandButton);
+
+    expandButton.on('click',function () {
+
+
+    });
+
+
+
     $(element).on('scroll', function () {
 
         let top = $(this).scrollTop();
         if (typeof top !== 'undefined' && top >= $('#visualization').position().top + 75) {
             $('.scrollContainer').addClass('fixed');
-        } else if ($('#flat-slider').visible()) {
+            expandButton.addClass('expandButtonOnScroll');
+        }
+        else {
+            $('.scrollContainer').removeClass('fixed');
+            expandButton.removeClass('expandButtonOnScroll');
+
+        }
+
+        if ($('#flat-slider').visible()) {
             $("#visualizationScroll").addClass("colorToggle");
             $("#hitlistScroll").removeClass("colorToggle");
             $("#alignmentsScroll").removeClass("colorToggle");
@@ -25,8 +45,6 @@ let followScroll = function(element : any) {
             $("#hitlistScroll").addClass("colorToggle");
             $("#alignmentsScroll").removeClass("colorToggle");
             $("#visualizationScroll").removeClass("colorToggle");
-        } if (typeof top !== 'undefined' && top < $('#visualization').position().top + 75) {
-            $('.scrollContainer').removeClass('fixed');
         }
         // trigger lazyload for loading alignment
         if ($(this).scrollTop() == $(this).height() - $(window).height()) {

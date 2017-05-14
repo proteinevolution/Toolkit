@@ -524,6 +524,12 @@ table.dataTable.no-footer{
     padding-bottom: 2em !important;
 }
 
-.indexCheckbox{
+.indexCheckbox {
     margin-right: 0.3em !important;
+}
+.expandButtonOnScroll {
+    position: absolute;
+    display: inline-block !important;
+    bottom: 13px;
+    right: 15px;
 }
