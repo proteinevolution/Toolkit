@@ -54,6 +54,20 @@ declare class JobViewComponent {
 
 }
 
+declare class JobSubmissionComponent {
+    public static submitting      : boolean;
+    public static currentJobID    : string;
+    public static jobIDValid      : boolean;
+    public static jobIDValidationTimeout : number;
+    public static jobIDRegExp     : RegExp;
+    public static jobResubmit     : boolean;
+    public static checkJobID(jobID : string, addResubmitVersion? : boolean) : any;
+    public static jobIDComponent(ctrl : any) : any;
+    public static hide(ctrl : any, args : any) : any;
+    public static controller(args : any) : any;
+    public static view (ctrl : any, args : any): any;
+}
+
 declare class JobRunningComponent {
 
     public static controller: any;
@@ -65,7 +79,6 @@ declare class Backend{
     public static controller : any;
     public static view: any;
 }
-
 
 declare class Toolkit{
     public static currentJobID : string;
@@ -113,14 +126,4 @@ declare class Job {
     jobID : string;
     toolnameLong : string;
     state : Number
-}
-
-
-declare class JobSubmissionComponent {
-
-    public static controller : any;
-    public static view: any;
-    public static currentJobID: any;
-
-
 }
