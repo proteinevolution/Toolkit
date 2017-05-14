@@ -53,6 +53,7 @@ window.Toolkit = {
             }
         } else {
             JobListComponent.selectedJobID = null;
+            JobSubmissionComponent.currentJobID = null;
         }
         toolname = m.route.param("toolname");
 
