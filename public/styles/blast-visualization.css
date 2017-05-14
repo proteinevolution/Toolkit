@@ -523,3 +523,7 @@ table.dataTable.no-footer{
     padding-left: 23em !important;
     padding-bottom: 2em !important;
 }
+
+.indexCheckbox{
+    margin-right: 0.3em !important;
+}
