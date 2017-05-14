@@ -118,16 +118,6 @@ class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends
       .toFile
       .list
       .foreach { file =>
-        file.setPermissions(
-          Set(
-            PosixFilePermission.OWNER_EXECUTE,
-            PosixFilePermission.OWNER_READ,
-            PosixFilePermission.OWNER_WRITE,
-            PosixFilePermission.GROUP_EXECUTE,
-            PosixFilePermission.GROUP_READ,
-            PosixFilePermission.GROUP_WRITE
-          ))
-
         file.extension match {
 
           case Some(".prop") => new PropFile(file.pathAsString).addObserver(tv)
