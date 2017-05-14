@@ -73,6 +73,8 @@ window.JobManager = {
                                 return x.status = "error";
                             case 5:
                                 return x.status = "done";
+                            case 7:
+                                return x.status = "pending";
                             default:
                                 return x.status = "undefined";
                         }

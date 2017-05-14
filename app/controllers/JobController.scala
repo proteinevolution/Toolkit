@@ -1,8 +1,9 @@
 package controllers
 
+import java.io.{FileInputStream, ObjectInputStream}
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobActor.{CreateJob, Delete}
+import actors.JobActor.{CreateJob, Delete, PrepareJob, StartJob}
 import actors.JobIDActor
 import akka.actor.ActorRef
 import models.Constants
@@ -12,9 +13,8 @@ import models.job.JobActorAccess
 import models.search.JobDAO
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.DateTime
-import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
@@ -24,6 +24,7 @@ import scala.concurrent.Future
 import better.files._
 import models.tools.ToolFactory
 import modules.tel.env.Env
+import play.Logger
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -64,6 +65,91 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     getUser.flatMap { user =>
       findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
         Ok(Json.toJson(jobs.map(_.cleaned())))
+      }
+    }
+  }
+
+  def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    getUser.map { user =>
+      jobActorAccess.sendToJobActor(jobID, StartJob(jobID))
+      Ok(Json.toJson(Json.obj("message" -> "Starting Job...")))
+    }
+  }
+
+  def submitJob(toolName: String): Action[AnyContent] = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      // Grab the formData from the request data
+      request.body.asMultipartFormData match {
+        case Some(mpfd) =>
+          val formData = mpfd.dataParts.mapValues(_.mkString(formMultiValueSeparator))
+          // Determine the jobID
+          (formData.get("jobID") match {
+            case Some(jobID) =>
+              // Bad Request if the jobID can be matched to one from the database
+              selectJob(jobID).map { job =>
+                if (job.isDefined) None else Some(jobID)
+              }
+            case None =>
+              // Use jobID Actor to get a new random jobID
+              Future.successful(Some(JobIDActor.provide))
+          }).flatMap {
+            case Some(jobID) =>
+              // Load the parameters for the tool
+              val toolParams = toolFactory.values(toolName).params
+
+              // Filter invalid parameters
+              val params =
+                formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
+                  paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
+                }
+
+              // Set job as either private or public
+              val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
+
+              // Get the current date to set it for all three dates
+              val jobCreationTime = DateTime.now()
+
+              // Create a new Job object for the job and set the initial values
+              val job = Job(
+                mainID = BSONObjectID.generate(),
+                jobID = jobID,
+                ownerID = ownerOption,
+                status = Submitted,
+                emailUpdate = params.get(Job.EMAILUPDATE).isDefined,
+                tool = toolName,
+                label = params.get("label").flatten,
+                watchList = List(user.userID),
+                dateCreated = Some(jobCreationTime),
+                dateUpdated = Some(jobCreationTime),
+                dateViewed = Some(jobCreationTime)
+              )
+
+              // TODO may want to use a different way to identify our users - use the account type in the user perhaps?
+              val isFromInstitute = user.getUserData.eMail.matches(".+@tuebingen.mpg.de")
+
+              // Add Job to user in database
+              modifyUserWithCache(BSONDocument(User.IDDB   -> user.userID),
+                                  BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID)))
+
+              // Add job to database
+              insertJob(job).map {
+                case Some(_) =>
+                  // Send the job to the jobActor for preparation
+                  jobActorAccess.sendToJobActor(jobID, PrepareJob(job, formData, startJob = false, isFromInstitute))
+                  // Notify user that the job has been submitted
+                  Ok(Json.obj("successful" -> true, "jobID" -> jobID))
+                    .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+                case None =>
+                  // Something went wrong when pushing to the DB
+                  Ok(Json.obj("successful" -> false, "message" -> "Could not write to DB."))
+              }
+            case None =>
+              // TODO Should not be a Bad Request but a message stating that the job ID is already taken.
+              Future.successful(Ok(Json.obj("successful" -> false, "message" -> "Job ID is already taken.")))
+          }
+        case None =>
+          // No form data - something went wrong.
+          Future.successful(Ok(Json.obj("successful" -> false, "message" -> "The form was invalid.")))
       }
     }
   }
@@ -224,6 +310,54 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     getUser.map { user =>
       jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID))
       Ok
+    }
+  }
+
+
+  /**
+    * TODO implement me
+    * @param jobID
+    * @return
+    */
+  def checkHash(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
+        case Some(job) =>
+          val params: Map[String, String] = {
+            val ois = new ObjectInputStream(new FileInputStream((jobPath/jobID/serializedParam).pathAsString))
+            val x   = ois.readObject().asInstanceOf[Map[String, String]]
+            ois.close()
+            x
+          }
+          val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
+          Logger.info(jobHash.inputHash)
+
+          // Match the hash
+          jobDao.matchHash(jobHash).flatMap { richSearchResponse =>
+            Logger.info("Retrieved richSearchResponse")
+            Logger.info("success: " + richSearchResponse.getHits.getHits.map(_.getId).mkString(", "))
+            Logger.info("hits: " + richSearchResponse.totalHits)
+
+            // Generate a list of hits and convert them into a list of future option jobs
+            val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
+              BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate())
+            }
+
+            // Find the Jobs in the Database
+            findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
+              val foundMainIDs = jobList.map(_.mainID)
+              val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
+              val jobsPartition = jobList.filter(_.status == Done)
+
+              // Delete index-zombie jobs
+              unFoundMainIDs.foreach { mainID =>
+                Logger.info("[WARNING]: job in index but not in database: " + mainID.stringify)
+                jobDao.deleteJob(mainID.stringify)
+              }
+              Ok(Json.toJson(Json.obj("jobID" -> jobsPartition.lastOption.map(_.jobID))))
+            }
+          }
+      }
     }
   }
 }
