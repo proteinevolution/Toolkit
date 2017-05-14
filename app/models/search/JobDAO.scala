@@ -104,7 +104,7 @@ final class JobDAO @Inject()(cs: ClusterSetup,
   }
 
   // Searches for a matching hash in the Hash DB
-  def matchHash(jobHash : JobHash): Future[RichSearchResponse] = {
+  def matchHash(jobHash: JobHash): Future[RichSearchResponse] = {
     client.execute(
       search in jobHashIndex query {
         bool(
