@@ -56,7 +56,7 @@
             }
         }
         return {
-            submit2: function(startJob : boolean) {
+            submit: function(startJob : boolean) {
                 if (JobSubmissionComponent.submitting || !JobSubmissionComponent.jobIDValid) {
                     console.log("Job Submission is blocked: Already submitting: ", JobSubmissionComponent.submitting,
                                 "jobID valid: ",                                   JobSubmissionComponent.jobIDValid);
@@ -94,11 +94,10 @@
                 if(parentid) {
                     formData.append('parentid', parentid);
                 }
-
-                //submitRoute = jsRoutes.controllers.JobController.submitJob(toolname);
+                submitRoute = jsRoutes.controllers.JobController.submitJob(toolName);
                 m.request({
-                    method: "POST",
-                    url: "/api/job/create/" + toolName,
+                    method: submitRoute.method,
+                    url: submitRoute.url,
                     data: formData,
                     serialize: function(submissionReturnData) {
                         return submissionReturnData;
@@ -108,7 +107,7 @@
                     if (submissionReturnData.successful === true) {
                         console.log("Job Submission was successful.");
                         jobID = submissionReturnData.jobID;
-                        var jobListComp = JobListComponent.Job(
+                        let jobListComp = JobListComponent.Job(
                             { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolName }
                         );
                         JobListComponent.pushJob(jobListComp, true);
@@ -168,7 +167,7 @@
                 "class": "success button small submitJob",
                 value: (args.isJob ? "Res" : "S") + "ubmit Job",
                 style: "float: right;",
-                onclick: ctrl.submit2.bind(ctrl, true)
+                onclick: ctrl.submit.bind(ctrl, true)
             }),
             //!args.isJob ? m("label", m("input", { type: "checkbox", name: "private", value: "true", checked: "checked" }), "Private" ) : null, // TODO reimplement private checkbox
             //args.isJob && args.job().jobstate === 1 ?

@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.{FileInputStream, ObjectInputStream}
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor.{CreateJob, Delete, PrepareJob, StartJob}
@@ -12,9 +13,8 @@ import models.job.JobActorAccess
 import models.search.JobDAO
 import modules.{CommonModule, LocationProvider}
 import org.joda.time.DateTime
-import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
@@ -24,6 +24,7 @@ import scala.concurrent.Future
 import better.files._
 import models.tools.ToolFactory
 import modules.tel.env.Env
+import play.Logger
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -309,6 +310,54 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     getUser.map { user =>
       jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID))
       Ok
+    }
+  }
+
+
+  /**
+    * TODO implement me
+    * @param jobID
+    * @return
+    */
+  def checkHash(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
+        case Some(job) =>
+          val params: Map[String, String] = {
+            val ois = new ObjectInputStream(new FileInputStream((jobPath/jobID/serializedParam).pathAsString))
+            val x   = ois.readObject().asInstanceOf[Map[String, String]]
+            ois.close()
+            x
+          }
+          val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
+          Logger.info(jobHash.inputHash)
+
+          // Match the hash
+          jobDao.matchHash(jobHash).flatMap { richSearchResponse =>
+            Logger.info("Retrieved richSearchResponse")
+            Logger.info("success: " + richSearchResponse.getHits.getHits.map(_.getId).mkString(", "))
+            Logger.info("hits: " + richSearchResponse.totalHits)
+
+            // Generate a list of hits and convert them into a list of future option jobs
+            val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
+              BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate())
+            }
+
+            // Find the Jobs in the Database
+            findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
+              val foundMainIDs = jobList.map(_.mainID)
+              val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
+              val jobsPartition = jobList.filter(_.status == Done)
+
+              // Delete index-zombie jobs
+              unFoundMainIDs.foreach { mainID =>
+                Logger.info("[WARNING]: job in index but not in database: " + mainID.stringify)
+                jobDao.deleteJob(mainID.stringify)
+              }
+              Ok(Json.toJson(Json.obj("jobID" -> jobsPartition.lastOption.map(_.jobID))))
+            }
+          }
+      }
     }
   }
 }

@@ -130,10 +130,11 @@ GET           /api/tools/:toolname                    @controllers.Service.getTo
 # Get list of userjobs
 GET           /api/jobs                               @controllers.JobController.listJobs
 # Submit a job directly
-POST          /api/job/create/:toolName               @controllers.JobController.submitJob(toolName: String)
-GET           /api/job/start/:jobID                   @controllers.JobController.startJob(jobID: String)
+POST          /api/job                                @controllers.JobController.submitJob(toolName: String)
+GET           /api/job/:jobID/start                   @controllers.JobController.startJob(jobID: String)
+GET           /api/job/:jobID/checkHash               @controllers.JobController.checkHash(jobID: String)
 # TODO Remove this route in favor of submitJob
-POST          /api/job                                @controllers.JobController.create(toolname: String, jobID: String)
+POST          /api/job/create                         @controllers.JobController.create(toolname: String, jobID: String)
 # TODO Remove this route in favor of submitJob
 POST          /api/job/check                          @controllers.JobController.check(toolname: String, jobID: Option[String], hash: Boolean)
 GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
