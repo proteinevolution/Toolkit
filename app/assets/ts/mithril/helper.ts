@@ -1,3 +1,5 @@
+/// <reference path="validation.ts"/>
+
 let closeShortcut = function() {
     return $(document).keydown(function(e) {
         if (e.keyCode === 27 && $("#tool-tabs").hasClass("fullscreen")) {
@@ -56,6 +58,9 @@ let hideSubmitButtons = function (elem : any, isInit : boolean) : any {
         return $(elem).on("click", function() {
             if($(this).attr('href') == "#tabpanel-Input" || $(this).attr('href') == "#tabpanel-Parameters") {
                 $('.submitbuttons').show();
+                setTimeout(function(){
+                    validationProcess($('#alignment'),$("#toolnameAccess").val());
+                }, 100);
             } else {
                 $('.submitbuttons').hide();
             }
