@@ -28,7 +28,6 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
 
-
   def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
     Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
   }

@@ -144,10 +144,7 @@ final class ToolFactory @Inject()(
     // HHpred - Manual Template Selection
     ("hhpred_manual", Seq.empty, Seq.empty, Seq.empty),
     // HHpred - Manual Template Selection
-    ("hhpred_automatic",
-     Seq.empty,
-     Seq.empty,
-     Seq.empty),
+    ("hhpred_automatic", Seq.empty, Seq.empty, Seq.empty),
     // PSI-BLAST
     ("psiblast",
      Seq(paramAccess.SEQORALI,
@@ -318,16 +315,13 @@ final class ToolFactory @Inject()(
     //("repper", "Repper", "rep", "seqanal", "", Seq(paramAccess.ALIGNMENT), Seq.empty,Seq.empty),
 
     // TPRpred
-    ("tprpred",
-     Seq(paramAccess.SINGLESEQ, paramAccess.EVAL_TPR),
-     Seq.empty,
-     Seq.empty),
+    ("tprpred", Seq(paramAccess.SINGLESEQ, paramAccess.EVAL_TPR), Seq.empty, Seq.empty),
     // Quick 2D
-    ("quick2d",  Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
+    ("quick2d", Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
     // Ali2D
-    ("ali2d",  Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
+    ("ali2d", Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
     // Modeller
-    ("modeller",  Seq(paramAccess.ALIGNMENT, paramAccess.REGKEY), Seq.empty, Seq.empty),
+    ("modeller", Seq(paramAccess.ALIGNMENT, paramAccess.REGKEY), Seq.empty, Seq.empty),
     // SamCC
     ("samcc",
      Seq(
@@ -342,29 +336,17 @@ final class ToolFactory @Inject()(
      Seq.empty,
      Seq.empty),
     // RetrieveSeq
-    ("retseq",
-     Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE),
-     Seq.empty,
-     Seq.empty),
+    ("retseq", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE), Seq.empty, Seq.empty),
     // Seq2ID
-    ("seq2id",  Seq(paramAccess.FASTAHEADERS), Seq("retseq"), Seq.empty),
+    ("seq2id", Seq(paramAccess.FASTAHEADERS), Seq("retseq"), Seq.empty),
     // ANCESCON
     ("ancescon", Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
     // CLANS
-    ("clans",
-     Seq(paramAccess.MULTISEQ, paramAccess.MATRIX),
-     Seq.empty,
-     Seq.empty),
+    ("clans", Seq(paramAccess.MULTISEQ, paramAccess.MATRIX), Seq.empty, Seq.empty),
     // PhyML
-    ("phyml",
-     Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYML, paramAccess.NO_REPLICATES),
-     Seq.empty,
-     Seq.empty),
+    ("phyml", Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYML, paramAccess.NO_REPLICATES), Seq.empty, Seq.empty),
     // MMseqs2
-    ("mmseqs2",
-     Seq(paramAccess.ALIGNMENT, paramAccess.MIN_SEQID, paramAccess.MIN_ALN_COV),
-     Seq.empty,
-     Seq.empty),
+    ("mmseqs2", Seq(paramAccess.ALIGNMENT, paramAccess.MIN_SEQID, paramAccess.MIN_ALN_COV), Seq.empty, Seq.empty),
     // Backtranslator
     ("backtrans",
      Seq(paramAccess.SINGLESEQ, paramAccess.INC_AMINO, paramAccess.GENETIC_CODE, paramAccess.CODON_TABLE_ORGANISM),
@@ -403,11 +385,20 @@ final class ToolFactory @Inject()(
          "hhfilter"),
      Seq.empty)
   ).map { t =>
-    t._1 -> tool(t._1, ConfigFactory.load().getString(s"Tools.${t._1}.longname"), ConfigFactory.load().getString(s"Tools.${t._1}.code"), ConfigFactory.load().getString(s"Tools.${t._1}.section").toLowerCase, "TODO", t._2, t._3, t._4)
+    t._1 -> tool(
+      t._1,
+      ConfigFactory.load().getString(s"Tools.${t._1}.longname"),
+      ConfigFactory.load().getString(s"Tools.${t._1}.code"),
+      ConfigFactory.load().getString(s"Tools.${t._1}.section").toLowerCase,
+      "TODO",
+      t._2,
+      t._3,
+      t._4
+    )
   }.toMap
 
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
-  val resultMap: Map[String, Map[String, (String,  play.api.mvc.RequestHeader) => Future[HtmlFormat.Appendable]]] = Map(
+  val resultMap: Map[String, Map[String, (String, play.api.mvc.RequestHeader) => Future[HtmlFormat.Appendable]]] = Map(
     Toolnames.PSIBLAST -> Map(
       Resultviews.HITLIST -> { (jobID, requestHeader) =>
         getResult(jobID).map {
