@@ -1,0 +1,48 @@
+@import play.api.mvc.RequestHeader
+@import models.results.FileLoader
+
+@(filename: String, filePath: String, jobID: String, resultname: String, tool: models.tools.Tool)(implicit request: RequestHeader)
+    @import java.lang.String;
+
+    <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+    @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
+
+    <div class="colorOptsAlignment">
+    <a type="button" onclick="@{resultname}_download()"> <span id="downloadAlignment">Download</span></a>
+    <a data-open="forwardModal_@{tool.toolNameShort}" type="buttom"><span id="downloadAlignment">Forward All</span></a>
+    <hr id="line-element" colspan="4" class="horizontal-line">
+    </div>
+
+    <pre class="fileview" >@FileLoader.loadFile(filePath)</pre>
+
+    <script>
+        var downloadFilename = "@{resultname}_@{jobID}";
+        window["@{resultname}_download"] = function(){
+            var downloadFilename = "@{resultname}_@{jobID}";
+            var fileURL="/files/@{jobID}/@{filename}";
+            $.ajax({
+                method: "GET",
+                url: fileURL
+            }).done(function(data){
+                download(downloadFilename, data);
+            })
+        };
+
+        function mmseqs2_forward(selectedTool) {
+            var forwardData = [];
+            //fill array with headers and sequences
+            data.hits.forEach(function(currentValue) {
+                forwardData.push(currentValue.name);
+                forwardData.push(currentValue.seq);
+            });
+            forward(selectedTool, forwardData.join("\n"));
+        }
+
+        function onExpand() {
+            $(".fileview").css("overflow-y", "visible");
+            $(".fileview").css("height", "100%");
+        }
+        function onCollapse() {
+            $(".fileview").css("height", "30pc");
+        }
+</script>
