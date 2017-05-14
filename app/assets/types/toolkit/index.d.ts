@@ -5,7 +5,7 @@ declare class JobListComponent {
 
     public static reloadList() : any;
     public static lastUpdatedJob : any;
-    public static removeJob(param : any) : any;
+    public static removeJob(param : any, messageServer?: boolean, deleteJob?: boolean) : any;
     public static pushJob(param : any, bool? : boolean) : any;
     public static Job(param : any) : any;
     public static selectedJobID : string;
