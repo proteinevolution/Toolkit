@@ -343,10 +343,14 @@ table.dataTable.no-footer{
 
 
 #viewport{
-    width: 50em;
-    height: 35em;
+    width: 70em;
+    height: 40em;
+    border: 1px solid lightgray;
     margin: 0 auto;
+}
 
+#viewport canvas {
+    background-color: transparent !important;
 }
 
 
@@ -458,7 +462,7 @@ table.dataTable.no-footer{
     padding-bottom: 1em;
 }
 #visualizationTitle{
-    padding-top: 0.5em;
+    padding-top: 2em;
 }
 #informationTitle{
     padding-top: 2em;
@@ -513,3 +517,13 @@ table.dataTable.no-footer{
     color: white;
 }
 
+#loadingHits{
+    display: none;
+    font-size: 1.4em;
+    padding-left: 23em !important;
+    padding-bottom: 2em !important;
+}
+
+.indexCheckbox{
+    margin-right: 0.3em !important;
+}

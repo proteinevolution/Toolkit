@@ -32,22 +32,22 @@ import scala.concurrent.duration._
   * Created by lukas on 2/27/16.
   */
 @Singleton
-final class Service @Inject() (webJarAssets                                     : WebJarAssets,
-                               val messagesApi                                  : MessagesApi,
-                               @NamedCache("userCache") implicit val userCache  : CacheApi,
-                               implicit val locationProvider                    : LocationProvider,
-                               toolFactory                                      : ToolFactory,
-                               val reactiveMongoApi                             : ReactiveMongoApi)
-                               extends Controller with I18nSupport
-                                                  with Constants
-                                                  with ReactiveMongoComponents
-                                                  with UserSessions
-                                                  with CommonModule {
+final class Service @Inject()(webJarAssets: WebJarAssets,
+                              val messagesApi: MessagesApi,
+                              @NamedCache("userCache") implicit val userCache: CacheApi,
+                              implicit val locationProvider: LocationProvider,
+                              toolFactory: ToolFactory,
+                              val reactiveMongoApi: ReactiveMongoApi)
+    extends Controller
+    with I18nSupport
+    with Constants
+    with ReactiveMongoComponents
+    with UserSessions
+    with CommonModule {
 
   implicit val timeout = Timeout(1.seconds)
 
-  def static(static: String) : Action[AnyContent] = Action { implicit request =>
-
+  def static(static: String): Action[AnyContent] = Action { implicit request =>
     static match {
 
       case "sitemap" =>
@@ -58,17 +58,17 @@ final class Service @Inject() (webJarAssets                                     
         Ok(views.html.tools.forms.reformat(webJarAssets, "Utils"))
 
       case _ =>
-
         Ok(views.html.errors.pagenotfound()) //Bug: Mithril only accepts 200 to re-route
 
     }
   }
   // Allows serialization of tuples
   implicit def tuple2Reads[A, B](implicit aReads: Reads[A], bReads: Reads[B]): Reads[(A, B)] = Reads[(A, B)] {
-    case JsArray(arr) if arr.size == 2 => for {
-      a <- aReads.reads(arr.head)
-      b <- bReads.reads(arr(1))
-    } yield (a, b)
+    case JsArray(arr) if arr.size == 2 =>
+      for {
+        a <- aReads.reads(arr.head)
+        b <- bReads.reads(arr(1))
+      } yield (a, b)
     case _ => JsError(Seq(JsPath() -> Seq(ValidationError("Expected array of three elements"))))
   }
 
@@ -76,7 +76,7 @@ final class Service @Inject() (webJarAssets                                     
     def writes(tuple: (A, B)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2)))
   }
 
-  implicit def htmlWrites : Writes[Html] = new Writes[Html] {
+  implicit def htmlWrites: Writes[Html] = new Writes[Html] {
 
     def writes(html: Html) = JsString(html.body)
   }
@@ -88,10 +88,10 @@ final class Service @Inject() (webJarAssets                                     
       (JsPath \ "category").write[String] and
       (JsPath \ "optional").write[String] and
       (JsPath \ "params").write[Seq[(String, Seq[Param])]]
-    ) (unlift(Toolitem.unapply))
+  )(unlift(Toolitem.unapply))
 
   implicit val jobitemWrites: Writes[Jobitem] = (
-      (JsPath \ "mainID").write[String] and
+    (JsPath \ "mainID").write[String] and
       (JsPath \ "newMainID").write[String] and
       (JsPath \ "jobID").write[String] and
       (JsPath \ "project").write[String] and
@@ -101,28 +101,24 @@ final class Service @Inject() (webJarAssets                                     
       (JsPath \ "toolitem").write[Toolitem] and
       (JsPath \ "views").write[Seq[String]] and
       (JsPath \ "paramValues").write[Map[String, String]](play.api.libs.json.Writes.mapWrites[String])
-    ) (unlift(Jobitem.unapply))
-
+  )(unlift(Jobitem.unapply))
 
   def getTool(toolname: String) = Action {
     toolFactory.values.get(toolname) match {
       case Some(tool) => Ok(Json.toJson(tool.toolitem))
-      case None => NotFound
+      case None       => NotFound
     }
   }
 
-
-
-
   // Fetches the result of a job for a particular result panel
-  def getResult(jobID : String, tool: String, resultpanel : String) : Action[AnyContent] = Action.async { implicit request =>
-    var resultPanel = toolFactory.resultMap(tool)(resultpanel)(jobID, request)
-    resultPanel.map(Ok(_))
+  def getResult(jobID: String, tool: String, resultpanel: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      var resultPanel = toolFactory.resultMap(tool)(resultpanel)(jobID, request)
+      resultPanel.map(Ok(_))
   }
 
-
   // TODO Change that not all jobViews but only the resultpanel titles are returned
-  def getJob(jobID: String) : Action[AnyContent] = Action.async { implicit request =>
+  def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     selectJob(jobID).flatMap {
       case Some(job) =>
         job.deletion match {
@@ -131,7 +127,7 @@ final class Service @Inject() (webJarAssets                                     
             val toolitem = toolFactory.values(job.tool).toolitem
             val ownerName =
               if (job.isPrivate) {
-                findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map{
+                findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map {
                   case Some(owner) =>
                     owner.userData match {
                       case Some(ownerData) => // Owner is registered
@@ -156,9 +152,9 @@ final class Service @Inject() (webJarAssets                                     
             }
             // Read parameters from serialized file
             val paramValues: Map[String, String] = {
-              if((jobPath/jobID/"sparam").exists) {
-                val ois = new ObjectInputStream(new FileInputStream((jobPath/jobID/"sparam").pathAsString))
-                val x = ois.readObject().asInstanceOf[Map[String, String]]
+              if ((jobPath / jobID / "sparam").exists) {
+                val ois = new ObjectInputStream(new FileInputStream((jobPath / jobID / "sparam").pathAsString))
+                val x   = ois.readObject().asInstanceOf[Map[String, String]]
                 ois.close()
                 x
               } else {
@@ -167,8 +163,9 @@ final class Service @Inject() (webJarAssets                                     
             }
             ownerName.flatMap { ownerN =>
               jobViews.map { jobViewsN =>
-                Ok(Json.toJson(
-                  Jobitem(job.mainID.stringify,
+                Ok(
+                  Json.toJson(Jobitem(
+                    job.mainID.stringify,
                     BSONObjectID.generate().stringify, // Used for resubmitting
                     job.jobID,
                     BSONObjectID.generate().stringify,
@@ -177,7 +174,8 @@ final class Service @Inject() (webJarAssets                                     
                     DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get),
                     toolitem,
                     jobViewsN,
-                    paramValues)))
+                    paramValues
+                  )))
               }
             }
 
@@ -186,9 +184,9 @@ final class Service @Inject() (webJarAssets                                     
             Logger.info("Job was found but deleted.")
             Future.successful(NotFound)
         }
-    case _ =>
-      Logger.info("Job could not be found")
-      Future.successful(NotFound)
+      case _ =>
+        Logger.info("Job could not be found")
+        Future.successful(NotFound)
     }
   }
 }

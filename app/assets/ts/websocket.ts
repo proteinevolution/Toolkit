@@ -26,7 +26,12 @@ connect = function() : any {
         reconnecting = false;   // we are not reconnecting
         connecting   = true;    // we are connecting
         clearInterval(retryCountdownInterval);  // Remove the timer
-        ws = new WebSocket($("body").data("ws-url"));   // create the new websocket
+        let wsRoute = jsRoutes.controllers.Application.ws;
+        let isSecure : boolean = location.protocol === "https:";
+        ws = new WebSocket(wsRoute().webSocketURL(isSecure));   // create the new websocket
+        //console.log(ws);
+        //console.log(isSecure);
+        //console.log(location.protocol);
         ws.onopen    = function(evt : Event)        : any { return onOpen(evt); };
         ws.onclose   = function(evt : CloseEvent)   : any { return onClose(evt); };
         ws.onmessage = function(evt : MessageEvent) : any { return onMessage(evt); };
@@ -85,6 +90,7 @@ onClose = function(event : CloseEvent) : any {
 
 onMessage = function(event : MessageEvent) : any {
     let message : any = JSON.parse(event.data);
+    console.log("WS received a message: ", message.type);
     switch (message.type) {
         case "ClearJob":
             m.startComputation();
@@ -99,14 +105,19 @@ onMessage = function(event : MessageEvent) : any {
             break;
         case "UpdateLoad":
             // Tried to limit this by saving the "currentRoute", but we might need something proper in the future.
-            if (currentRoute === "index" && !noRedraw) {
+             if (currentRoute === "index" && !noRedraw) {
                 LoadBar.updateLoad(message.load);
-            }
+             }
             break;
         case "Ping":
             sendMessage({
                 "type": "Ping"
             });
+            break;
+        case "UpdateLog":
+            m.startComputation();
+            JobRunningComponent.updateLog();
+            m.endComputation();
             break;
         default:
             break;
@@ -114,8 +125,9 @@ onMessage = function(event : MessageEvent) : any {
 };
 
 
-let sendMessage = function(object : any) : any {
-    return ws.send(JSON.stringify(object));
+let sendMessage = function(object : any) : void {
+    console.log("Sending message:", object);
+    ws.send(JSON.stringify(object));
 };
 addJob = function(jobID : string) : any { sendMessage({ "type": "AddJob", "jobID": jobID }); };
 

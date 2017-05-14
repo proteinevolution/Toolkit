@@ -100,16 +100,36 @@ FIELDSET {
 
 .search_Input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
     color:    darkgray;
+    font-size: 0.9em;
 }
 .search_Input::-moz-placeholder { /* Mozilla Firefox 4 to 18 */
     color:    darkgray;
     opacity:  1;
+    font-size: 0.9em;
 }
 .search_Input::-moz-placeholder { /* Mozilla Firefox 19+ */
     color:     darkgray;
     opacity:  1;
+    font-size: 0.9em;
 }
 
+
+
+.search-results{
+    color:  #262626;;
+    font-size: 0.8em;
+    margin: 0 20px 5px 20px;
+}
+
+.search-result-tool{
+
+}
+
+.header-name {
+    margin: 0 20px 5px 20px;
+    padding: 3px 0;
+    border-bottom: 1px solid #ccc;
+}
 
 .search_container input:focus {
 
@@ -455,7 +475,6 @@ FIELDSET {
 .trafficbar {
     cursor: pointer;
     z-index: 99;
-    margin-bottom: 0.1em !important;
     height: 0.2em;
     width: 100%;
     -moz-border-radius: 4px;
@@ -466,20 +485,24 @@ FIELDSET {
 }
 
 .trafficbar.queue {
-    background: rgba(192, 181, 191, 0.5);
+    background: rgba(192, 181, 191, 1);
+    height: 0.3em;
     box-shadow: 0 1px 6px #9192af;
 }
 .trafficbar.done {
-    background: rgba(0, 180, 40, 0.2);
+    background: rgba(0, 180, 40, 0.9);
     box-shadow: 0 1px 6px #C3FFC3;
 }
 .trafficbar.error {
-    background: rgba(180, 0, 40, 0.2);
+    background: rgba(180, 0, 40, 0.9);
     box-shadow: 0 1px 6px #FFC5C5;
 }
 .trafficbar.running {
-    background: rgba(255, 255, 0, 0.4);
+    background: rgba(255, 255, 0, 0.9);
     box-shadow: 0 1px 6px #FFF666;
+}
+.trafficbar.not_init {
+    display: none;
 }
 
 #mainface {
@@ -490,14 +513,6 @@ FIELDSET {
     letter-spacing: 0.05em;
     font-size: 0.85em;
     padding-left: 0 !important;
-}
-
-#clusterLoad {
-    background: rgba(214, 214, 214, 0.9);
-    text-align: center;
-    padding-top: 0;
-    max-height: 89px;
-
 }
 
 .line {
@@ -511,12 +526,6 @@ svg#loadGraph {
     height: 100px;
 }
 
-.clusterLoad {
-    min-height: 90px;
-    background-color: rgba(214, 214, 214, 0.9);
-    padding-right: 0;
-}
-
 tspan{
 
     color: black !important;
@@ -527,6 +536,7 @@ tspan{
     text-align: center;
     padding: 0px 7px 0px 7px;
     margin-bottom: 0;
+    height: 70px;
 
 }
 
@@ -577,10 +587,13 @@ td#joblistIcon {
     width: 50%;
 }
 
+#jobmanagerIcon{
+    font-size: 1.2em;
+}
 td#joblistIcon i {
-    margin-left: 0;
     opacity: 0.9;
     line-height: 1em;
+    font-size: 1.3em;;
 }
 
 .liveTable .icon-list {
@@ -674,13 +687,20 @@ td#joblistIcon i {
 
 /*Load Bar styling*/
 
+
 #indexLoadBar {
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     text-align: center;
     color: #727272;
     background: none;
     margin: 0;
-    padding: 0.9rem 0.625rem 0.4rem;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+#sidebar #indexLoadBar {
+    font-size: 0.7em;
+    margin-top: -1em;
+    padding-bottom: 2.25em;
 }
 
 #indexLoadBar .loadBarGraph {
@@ -762,4 +782,10 @@ td#joblistIcon i {
     }
 }
 
-
+noscript {
+    letter-spacing:0.2em;
+    font-family: Vollkorn, Georgia, Times, 'Times New Roman', serif;
+    padding-top: 200px;
+    display: block;
+    margin: auto;
+}

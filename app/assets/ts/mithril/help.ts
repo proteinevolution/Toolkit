@@ -303,6 +303,7 @@ accordionContent = function(elem : Element, isInit : boolean) {
 };
 
 (<any>window).HelpModalComponent = {
+
     controller: function(){},
     view: function(ctrl : any, args : any) {
         let overview : any, params : any, results : any, references : any;
@@ -334,7 +335,8 @@ accordionContent = function(elem : Element, isInit : boolean) {
                     "class": "not-active"
                 }, args.toolnameLong))
             ]), m("div", {
-                id: "help-tabs1"
+                id: "help-tabs1",
+                "class": "greenlink"
             }, m("div", m.trust(overview))), m("div", {
                 id: "help-tabs2"
             }, m("ul", {
@@ -361,7 +363,8 @@ accordionContent = function(elem : Element, isInit : boolean) {
                     marginTop: '2em'
                 }
             })), m("div", {
-                id: "help-tabs4"
+                id: "help-tabs4",
+                "class": "greenlink"
             }, m("div", m.trust(references)))
         ]));
     }

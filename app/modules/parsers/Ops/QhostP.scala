@@ -1,72 +1,60 @@
 package modules.parsers.Ops
 
-
 import scala.util.parsing.combinator.RegexParsers
 
 /**
   * Created by snam on 23.03.17.
   */
-
 object QhostP {
 
   // Ignored: ARCH, SWAPTO, SWAPUS
 
-case class Node(hostname : String, ncpu: Int, load: Double, memtot: Double, memuse: Double)
+  case class Node(hostname: String, ncpu: Int, load: Double, memtot: Double, memuse: Double)
 
-
-  def fromString( input: String ) : List[QhostP.Node] = {
+  def fromString(input: String): List[QhostP.Node] = {
 
     Parser.parse(input.split('\n').drop(3).mkString("\n")) // ignores first three lines
 
   }
 
-
   private object Parser extends RegexParsers {
 
-    val hostname : QhostP.Parser.Parser[String] = """(?m)^[\S]+""".r
-    val arch : QhostP.Parser.Parser[String] = """\S*""".r
-    val ncpu : QhostP.Parser.Parser[Int] = """\d*""".r ^^ { _.toInt }
-    val load : QhostP.Parser.Parser[Double] = """([+-]?([0-9]*[.])?[0-9]+)(.|K)?|-""".r ^^ {
-      case x if x == "-" => 0
+    val hostname: QhostP.Parser.Parser[String] = """(?m)^[\S]+""".r
+    val arch: QhostP.Parser.Parser[String]     = """\S*""".r
+    val ncpu: QhostP.Parser.Parser[Int]        = """\d*""".r ^^ { _.toInt }
+    val load: QhostP.Parser.Parser[Double] = """([+-]?([0-9]*[.])?[0-9]+)(.|K)?|-""".r ^^ {
+      case x if x == "-"        => 0
       case x if x.endsWith("K") => "0.000".concat(x.dropRight(1).filterNot(_ == '.')).toDouble
-      case x => x.toDouble
+      case x                    => x.toDouble
     }
-    val memtot : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M|K)""".r ^^ {
+    val memtot: QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M|K)""".r ^^ {
       case x if x.endsWith("M") => "0.".concat(x.dropRight(1).filterNot(_ == '.')).toDouble
       case x if x.endsWith("G") => x.dropRight(1).toDouble
       case x if x.endsWith("K") => "0.000".concat(x.dropRight(1).filterNot(_ == '.')).toDouble
     }
-    val memuse : QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M|K)|-""".r ^^ {
-      case x if x == "-" => 0
+    val memuse: QhostP.Parser.Parser[Double] = """[+-]?([0-9]*[.])?[0-9]+(G|M|K)|-""".r ^^ {
+      case x if x == "-"        => 0
       case x if x.endsWith("M") => "0.".concat(x.dropRight(1).filterNot(_ == '.')).toDouble
       case x if x.endsWith("G") => x.dropRight(1).toDouble
       case x if x.endsWith("K") => "0.000".concat(x.dropRight(1).filterNot(_ == '.')).toDouble
     }
-    val rest : QhostP.Parser.Parser[String] = """.*""".r
+    val rest: QhostP.Parser.Parser[String] = """.*""".r
 
-
-    val entry : QhostP.Parser.Parser[QhostP.Node] = hostname ~ arch ~ ncpu ~ load ~ memtot ~ memuse ~ rest ^^ {
-      case h ~ a ~ n ~ l ~ mt ~ mu ~ r => Node(h,n,l,mt,mu)
+    val entry: QhostP.Parser.Parser[QhostP.Node] = hostname ~ arch ~ ncpu ~ load ~ memtot ~ memuse ~ rest ^^ {
+      case h ~ a ~ n ~ l ~ mt ~ mu ~ r => Node(h, n, l, mt, mu)
     }
 
-    val entries : QhostP.Parser.Parser[scala.List[QhostP.Node]] = rep1( entry )
+    val entries: QhostP.Parser.Parser[scala.List[QhostP.Node]] = rep1(entry)
 
-
-
-
-    private[QhostP] def parse( input: String ): List[Node]  = {
-      parseAll( entries, input ) match {
-        case Success( es , _ ) => es
-        case x: NoSuccess =>  throw new Exception(x.toString)
+    private[QhostP] def parse(input: String): List[Node] = {
+      parseAll(entries, input) match {
+        case Success(es, _) => es
+        case x: NoSuccess   => throw new Exception(x.toString)
       }
     }
   }
 
-
 }
-
-
-
 /*
 HOSTNAME                ARCH         NCPU  LOAD  MEMTOT  MEMUSE  SWAPTO  SWAPUS
 -------------------------------------------------------------------------------
