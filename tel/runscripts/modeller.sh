@@ -8,7 +8,6 @@ if [ "%regkey.content" = "MODELIRANJE" ] ; then
       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 else
       echo "#Incorrect registration key. Please register here: https://salilab.org/modeller/registration.html." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
       echo "error" >> ../results/process.log
       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
       $?=1
