@@ -363,7 +363,7 @@ final class ToolFactory @Inject()(
     // MMseqs2
     ("mmseqs2",
      Seq(paramAccess.ALIGNMENT, paramAccess.MIN_SEQID, paramAccess.MIN_ALN_COV),
-     Seq.empty,
+     Seq("clans", "mmseqs2"),
      Seq.empty),
     // Backtranslator
     ("backtrans",
@@ -728,7 +728,7 @@ final class ToolFactory @Inject()(
         implicit val r = requestHeader
         Future.successful(
           views.html.jobs.resultpanels
-            .fileviewWithDownload(jobID + ".fas", s"$jobPath$jobID/results/" + jobID + ".fas", jobID, "mmseqs_reps"))
+            .fileviewWithDownloadForward(jobID + ".fas", s"$jobPath$jobID/results/" + jobID + ".fas", jobID, "mmseqs_reps", this.values(Toolnames.MMSEQS2)))
       },
       Resultviews.SUMMARY -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
