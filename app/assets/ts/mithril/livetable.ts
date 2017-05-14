@@ -93,7 +93,7 @@ class LiveTable {
                     trafficBarStatus = "done";
                     break;
                 default:
-                    trafficBarStatus = "";
+                    trafficBarStatus = "not_init";
                     break;
             }
         } else trafficBarStatus = "not_init";
