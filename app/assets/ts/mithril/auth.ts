@@ -1,7 +1,4 @@
-/// <reference path="../common.ts"/>
-declare const jsRoutes: any;
-
-let noRedraw     : boolean = false;
+let noRedraw : boolean = false;
 let focusInNoRedraw = function(event : Event) : void { noRedraw = true;  console.log('focus in - no redraw');  },
     focusOutRedraw  = function(event : Event) : void { noRedraw = false; console.log('focus out - redrawing'); };
 

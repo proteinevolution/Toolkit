@@ -31,7 +31,6 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
 
-
   def evalFull(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
