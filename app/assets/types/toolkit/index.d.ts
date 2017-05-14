@@ -109,3 +109,13 @@ declare class Job {
     toolnameLong : string;
     state : Number
 }
+
+
+declare class JobSubmissionComponent {
+
+    public static controller : any;
+    public static view: any;
+    public static currentJobID: any;
+
+
+}
