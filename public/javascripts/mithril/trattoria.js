@@ -1,4 +1,4 @@
-var JobErrorComponent, JobValidationComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobSubmissionComponent, JobTabsComponent;
+var JobErrorComponent, JobValidationComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobTabsComponent;
 
 JobLineComponent = {
     view: function(ctrl, args) {
@@ -425,9 +425,6 @@ var extractStatus = function(xhr, xhrOptions) {
 };
 
 
-
-
-
 /*
 m.capture = function(eventName, handler) {
     var bindCapturingHandler;
@@ -616,11 +613,12 @@ window.ParameterAlignmentComponent = {
                 "class": "show-for-sr",
                 onchange: function() {
                     if (this.value) {
-                        $(".submitJob").prop("disabled", false);
+
                         $(".uploadFileName").show();
                         $("#uploadBoxClose").show();
                         $("#" + ctrl.id).prop("disabled", true);
                         $("#" + ctrl.id + "_two").prop("disabled", true);
+                        $(".submitJob").prop("disabled", false);
                         }
                     }
                 }), m("div",
@@ -632,6 +630,7 @@ window.ParameterAlignmentComponent = {
                         onclick: function(){
                             $(".uploadFileName").hide();
                             $("input[type=file]").val(null);
+                            $(".submitJob").prop("disabled", true);
                             return $("#" + ctrl.id).prop("disabled", false);
                             }
                     }, m("i", {"class": "fa fa-times"})))),
