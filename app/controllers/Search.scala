@@ -1,10 +1,10 @@
 package controllers
 
-import models.database.jobs.Job
+import models.database.jobs.{Job, JobHash}
 import play.Logger
 import models.Constants
 import play.api.cache._
-import play.api.libs.json.{JsNull, Json}
+import play.api.libs.json.Json
 import javax.inject.{Inject, Singleton}
 
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}

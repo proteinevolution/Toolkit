@@ -1,5 +1,8 @@
 import ControllerFunction = Mithril.ControllerFunction;
 
+declare class jsRoutes {
+    public static controllers : any;
+}
 
 declare class JobListComponent {
 

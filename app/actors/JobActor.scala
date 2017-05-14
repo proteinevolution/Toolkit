@@ -232,9 +232,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         BSONDocument(
           "$set" ->
             BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
-          BSONDocument(
-            "$unset" ->
-              BSONDocument(Job.WATCHLIST -> ""))
+          "$unset" ->
+            BSONDocument(Job.WATCHLIST -> "")
         )
       ).foreach {
         case Some(deletedJob) =>
@@ -306,47 +305,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     }
   }
 
-  /**
-    * Generates a JobHash for the job from the supplied parameters
-    * @param job
-    * @param params
-    * @return
-    */
-  private def generateJobHash(job: Job, params: Map[String, String]): JobHash = {
-    // filter unique parameters
-    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public"
-
-    // Create the job Hash depending on what db is used
-
-    val dbParam = params match {
-      case x if x isDefinedAt "standarddb" =>
-        val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile
-        (Some("standarddb"), Some(STANDARDDB.lastModifiedTime.toString))
-
-      case x if x isDefinedAt "hhsuitedb" =>
-        val HHSUITEDB = env.get("HHSUITE").toFile
-        (Some("hhsuitedb"), Some(HHSUITEDB.lastModifiedTime.toString))
-
-      case x if x isDefinedAt "hhblitsdb" =>
-        val HHBLITSDB = env.get("HHBLITS").toFile
-        (Some("hhblitsdb"), Some(HHBLITSDB.lastModifiedTime.toString))
-
-      case _ => (Some("none"), Some("1970-01-01T00:00:00Z"))
-    }
-
-    JobHash(
-      mainID = job.mainID,
-      inputHash = jobDao.generateHash(paramsWithoutMainID).toString(),
-      runscriptHash = jobDao.generateRSHash(job.tool),
-      dbName = dbParam._1, // field must exist so that elasticsearch can do a bool query on multiple fields
-      dbMtime = dbParam._2, // use unix epoch time
-      toolName = job.tool,
-      toolHash = jobDao.generateToolHash(job.tool),
-      dateCreated = job.dateCreated,
-      jobID = job.jobID
-    )
-  }
-
   override def receive = LoggingReceive {
 
     case PrepareJob(job, params, startJob, isInternalJob) =>
@@ -390,7 +348,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         if (isComplete(validParameters)) {
           // When the user wants to force the job to start without job hash check, then this will jump right to prepared
           if (startJob) {
-            val jobHash = this.generateJobHash(job, params)
+            val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
             hashCollection.flatMap(_.insert(jobHash))
             self ! StartJob(job.jobID)
           } else {
@@ -422,7 +380,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
             case Some(executionContext) =>
               // Ensure that the jobID is not being hashed
               val params  = executionContext.reloadParams - "jobid" - "jobID" - "mainID"
-              val jobHash = this.generateJobHash(job, params)
+              val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
 
               // Match the hash
               jobDao.matchHash(jobHash).map { richSearchResponse =>
@@ -449,7 +407,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
                   jobsPartition._2.lastOption match {
                     case Some(_) =>
-                      // TODO generate Mithril view for Pending jobs
                       Logger.info("JobID " + jobID + " is a duplicate.")
                       self ! JobStateChanged(job.jobID, Pending)
                     case None =>

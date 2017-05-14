@@ -138,20 +138,33 @@ JobPendingComponent = {
     view: function(ctrl, args) {
         return m("div", { class: "pending-panel", config: foundationConfig }, [
             m('h6', "Your submission is pending, as there is a different job with similar parameters!"),
-            m('div', {"class": "openSimilarJob"},
+            m('div', {"class": "openSimilarJob"}, [
                 m("button",{ class   : "button small",
-                             onclick : function(e){
-                                 console.log("clicked.", e);
-                                 e.preventDefault();
-                                 console.log("clicked.", e);
-                                 m.request({url:"/api/job/start/"+args.job().jobID}).then(function(data){
-                                     console.log("requested:",data);
-                                 });
-                             }
-                           }, "Start Job anyways")),
+                    onclick : function(e){
+                        e.preventDefault();
+                        var route = jsRoutes.controllers.JobController.startJob(args.job().jobID);
+                        m.request({method:route.method, url:route.url}).then(function(data){
+                            console.log("requested:",data);
+                        });
+                    }
+                }, "Start Job anyways"),
+                m("button",{ class   : "button small",
+                    onclick : function(e){
+                        e.preventDefault();
+                        var route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
+                        m.request({method:route.method, url:route.url}).then(function(data){
+                            if (data != null && data.jobID != null) {
+                               m.route(data.jobID);
+                            }
+                            console.log("requested:",data);
+                        });
+                    }
+                }, "Start the found job")
+            ]),
             m("div", {"class": "processJobIdContainer"},
                 m('b', "Job ID:"),
-                m('p', ' ' + args.job().jobID))
+                m('p', ' ' + args.job().jobID)
+            )
         ]);
     }
 };
