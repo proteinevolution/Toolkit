@@ -48,13 +48,15 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     }
   }
 
-  def getToolList() : Action[AnyContent] = Action {
-    Ok(Json.toJson(toolFactory.values.values.map(a => Json.obj("long" ->  a.toolNameLong, "short" -> a.toolNameShort))))
+  def getToolList(): Action[AnyContent] = Action {
+    Ok(Json.toJson(toolFactory.values.values.map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
   }
 
   def autoComplete(queryString: String): Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
-      val tools: List[models.tools.Tool] = toolFactory.values.values.filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined).toList
+      val tools: List[models.tools.Tool] = toolFactory.values.values
+        .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
+        .toList
       Logger.info("user is looking for: " + queryString + " Found Tool: " + tools.map(_.toolNameShort).mkString(", "))
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {
@@ -64,14 +66,16 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
           Ok(Json.toJson(jobsFiltered.map(_.cleaned())))
         }
       } else {
-          // Find the Jobs with the matching tool
-          findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))).map { jobs =>
+        // Find the Jobs with the matching tool
+        findJobs(
+          BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort))))
+          .map { jobs =>
             jobs.map(_.cleaned())
-          }.map(jobJs => Ok(Json.toJson(jobJs)))
-        }
+          }
+          .map(jobJs => Ok(Json.toJson(jobJs)))
       }
     }
-
+  }
 
   def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
@@ -132,9 +136,11 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     */
   def getIndexPageInfo: Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
-      findSortedJob(BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),BSONDocument(Job.OWNERID -> user.userID)), BSONDocument(Job.DATEUPDATED -> -1)).flatMap { lastJob =>
+      findSortedJob(BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
+                                 BSONDocument(Job.OWNERID  -> user.userID)),
+                    BSONDocument(Job.DATEUPDATED -> -1)).flatMap { lastJob =>
         countJobs(BSONDocument(Job.OWNERID -> user.userID)).map { count =>
-          if(count > 0)
+          if (count > 0)
             Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned()), "totalJobs" -> count))
           else
             NotFound("None")

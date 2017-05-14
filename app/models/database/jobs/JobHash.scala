@@ -4,24 +4,22 @@ import org.joda.time.DateTime
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
 
 /**
- *
- * Created by snam on 23.08.16.
- *
- * the JobHash also contains non-hashed information to avoid collision as much as possible. Only the input file and the parameters will be hashed
- * due performance reasons. Note that not every tool/job uses a database.
- *
- */
-
-
-case class JobHash(mainID        : BSONObjectID,
-                   inputHash     : String,
-                   runscriptHash : String,
-                   dbName        : Option[String],
-                   dbMtime       : Option[String],
-                   toolName      : String,
-                   toolHash      : String,
-                   dateCreated   : Option[DateTime],
-                   jobID         : String)
+  *
+  * Created by snam on 23.08.16.
+  *
+  * the JobHash also contains non-hashed information to avoid collision as much as possible. Only the input file and the parameters will be hashed
+  * due performance reasons. Note that not every tool/job uses a database.
+  *
+  */
+case class JobHash(mainID: BSONObjectID,
+                   inputHash: String,
+                   runscriptHash: String,
+                   dbName: Option[String],
+                   dbMtime: Option[String],
+                   toolName: String,
+                   toolHash: String,
+                   dateCreated: Option[DateTime],
+                   jobID: String)
 
 object JobHash {
   val ID            = "_id"
@@ -33,7 +31,6 @@ object JobHash {
   val TOOLHASH      = "toolhash"
   val DATECREATED   = "dateCreated"
   val JOBID         = "jobID"
-
 
   implicit object Reader extends BSONDocumentReader[JobHash] {
     override def read(bson: BSONDocument): JobHash = JobHash(
