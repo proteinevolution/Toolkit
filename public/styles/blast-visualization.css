@@ -517,3 +517,9 @@ table.dataTable.no-footer{
     color: white;
 }
 
+#loadingHits{
+    display: none;
+    font-size: 1.4em;
+    padding-left: 23em !important;
+    padding-bottom: 2em !important;
+}
