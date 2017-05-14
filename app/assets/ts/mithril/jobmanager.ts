@@ -15,16 +15,14 @@ let fadesIn = function(element : any, isInitialized : boolean, context : any) {
 
 interface Window { JobManager: any; }
 window.JobManager = {
-    model: function (ctrl : any) {
-        return {data: m.request({"url": "jobs", "method": "GET", background: true})};
-    },
+
     tableObjects: {
         names: [
             {id: "jobID", label: "Job ID"},
             {id: "tool", label: "Tool"},
             {id: "status", label: "Job State"},
             {id: "dateCreated", label: "Created On", source: {_: "dateCreated.string", sort: "dateCreated.timestamp"}},
-            {id: "removeJob", label: "Remove Job"}
+            {id: "removeJob", label: "Delete Job"}
         ],
         toColumnItems: function () {
             let tableHeaderItems = this.names.map(function (item : any) {
@@ -59,14 +57,13 @@ window.JobManager = {
         }
     },
 
-    dataTableLoader: function (ctrl : any) {
+    dataTableLoader: function () {
         return function (elem : any, isInit : boolean) {
             if (!isInit) {
-                ctrl.data.then(function (jobData : any) {
 
                     //console.log(JSON.stringify(jobData));
 
-                    jobData.map(function(x : any) : any {
+                JobManager.data.map(function(x : any) : any {
                         switch(x.status) {
                             case 2:
                                 return x.status = "queued";
@@ -84,7 +81,7 @@ window.JobManager = {
                     });
                     let $table = $("#" + elem.id);
                     let table = $table.DataTable({
-                        data: jobData,
+                        data: JobManager.data,
                         columns: JobManager.tableObjects.toColumnNames(),
                         order: [[4, 'desc']]
                     });
@@ -95,21 +92,34 @@ window.JobManager = {
                         m.route("/jobs/" + rowData.jobID);
                     });
                     $table.on('click', 'td.deleteJob', function () {
+                        console.log(JSON.stringify(JobManager.data));
                         let tr = $(this).closest('tr');
                         let row = table.row(tr);
                         let rowData : JobManagerObject = <JobManagerObject>row.data();
                         JobListComponent.removeJob(rowData.jobID, true, true);
-                        m.redraw(true);
+                        JobManager.reload();
                     })
-                })
             }
         }
     },
 
+    data : null,
+
+    reload : function() {
+        console.log("TEST1");
+        m.redraw();
+            m.request({"url": "jobs", "method": "GET", background: true})
+                .then(function(response){
+                    JobManager.data = response;
+                    m.redraw(true);
+                })
+                .catch(function(e){console.warn(e);})
+
+    },
+
     controller: function () {
-        currentRoute = "jobmanager";
-        let model = new JobManager.model();
-        return {data: model.data}
+        JobManager.reload();
+        return {}
     },
 
     view: function (ctrl : any) {
@@ -125,7 +135,7 @@ window.JobManager = {
                     ])
                 ]),
                 m("div", {id: "content", "class": "row columns padded-column", config: fadesIn},
-                    m("table", {id: "jobManagerTable", "class": "dataTable hover row-border compact", config: this.dataTableLoader(ctrl)}, [
+                    m("table", {id: "jobManagerTable", "class": "dataTable hover row-border compact", config: this.dataTableLoader()}, [
                             m("thead", m("tr", JobManager.tableObjects.toColumnItems())),
                             m("tbody", [])
                         ]
