@@ -11,7 +11,9 @@ let followScroll = function(element : any) {
     $(element).on('scroll', function () {
 
         let top = $(this).scrollTop();
-        if ($('#flat-slider').visible()) {
+        if (typeof top !== 'undefined' && top >= $('#visualization').position().top + 75) {
+            $('.scrollContainer').addClass('fixed');
+        } else if ($('#flat-slider').visible()) {
             $("#visualizationScroll").addClass("colorToggle");
             $("#hitlistScroll").removeClass("colorToggle");
             $("#alignmentsScroll").removeClass("colorToggle");
@@ -23,9 +25,7 @@ let followScroll = function(element : any) {
             $("#hitlistScroll").addClass("colorToggle");
             $("#alignmentsScroll").removeClass("colorToggle");
             $("#visualizationScroll").removeClass("colorToggle");
-        } else if (typeof top !== 'undefined' && top >= $('#visualization').position().top + 75) {
-            $('.scrollContainer').addClass('fixed');
-        } else {
+        } if (typeof top !== 'undefined' && top < $('#visualization').position().top + 75) {
             $('.scrollContainer').removeClass('fixed');
         }
         // trigger lazyload for loading alignment
