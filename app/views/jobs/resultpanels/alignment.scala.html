@@ -28,6 +28,9 @@
     <table class="unstriped">
         <tbody class="alignmentTBody">
         </tbody>
+        <tr>
+            <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
+        </tr>
     </table>
 
 </form>
@@ -129,6 +132,7 @@
         function getHits(start, end){
             if(start <= numHits && end <= numHits && !loading){
                 loading = true;
+                $('#loadingHits').show();
                 var route = jsRoutes.controllers.AlignmentController.loadHits(jobID,start,end, resultName);
                 return $.ajax({
                     method: route.method,
@@ -136,6 +140,7 @@
                 }).done(function (data_) {
                     $(".alignmentTBody").append(data_);
                     loading = false;
+                    $('#loadingHits').hide();
                 });
             }
         }
