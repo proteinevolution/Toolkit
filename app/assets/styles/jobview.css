@@ -981,14 +981,14 @@ textarea:focus{
     display: none;
     margin-left: auto;
     margin-right: auto;
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid rgba(40,120,111,0.636); /* Green */
+    border: 5px solid #f3f3f3; /* Light grey */
+    border-top: 5px solid rgba(40,120,111,0.636); /* Green */
     border-radius: 50%;
     width: 120px;
     height: 120px;
-    animation: spin 2s linear infinite;
-    -webkit-animation-delay: 2s; /* Safari 4.0 - 8.0 */
-    animation-delay: 2s;
+    animation: spin 1s linear infinite;
+    -webkit-animation-delay: 1s; /* Safari 4.0 - 8.0 */
+    animation-delay: 1s;
 }
 
 @-webkit-keyframes spin {
