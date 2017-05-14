@@ -23,7 +23,7 @@ $( "#kal" ).prop('title', 'Multiple sequence alignment tool');
 
 $( "#mft" ).prop('title', 'Multiple sequence alignment tool');
 
-$( "#msap" ).prop('title', 'Multiple sequence alignment tool');
+$( "#msa" ).prop('title', 'Multiple sequence alignment tool');
 
 $( "#musc" ).prop('title', 'Multiple sequence alignment tool');
 
@@ -33,7 +33,7 @@ $( "#a2pl" ).prop('title', 'Shows a graphical overview of hydrophobicity and sid
 
 $( "#frp" ).prop('title', 'Prediction of functional residues in multiple sequence alignments');
 
-$( "#hhr" ).prop('title', 'de novo identification of repeats');
+$( "#hhr" ).prop('title', 'De novo identification of repeats');
 
 $( "#mar" ).prop('title', 'Prediction of coiled coils based on HMMs');
 
@@ -57,7 +57,7 @@ $( "#clan" ).prop('title', 'Clustering based on all-against-all BLAST+ similarit
 
 $( "#mseq" ).prop('title', 'Ultra fast and sensitive protein sequence clustering');
 
-$( "#phyn" ).prop('title', 'Infer phylogenies');
+$( "#phym" ).prop('title', 'Infer phylogenies');
 
 $( "#6frt" ).prop('title', 'Six-frame translation of nucleotide sequences');
 
