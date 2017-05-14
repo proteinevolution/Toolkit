@@ -115,7 +115,7 @@ JobRunningComponent = {
             m("div", {"class": "processJobIdContainer"},
                 m('b', "Job ID:"),
                 m('p',  {style: "margin-left: 5px"}, ' ' + args.job().jobID)),
-            JobRunningComponent.log.map(function(logElem){
+            (JobRunningComponent.log.length > -1) ? JobRunningComponent.log.map(function(logElem){
                 if(logElem == "")
                     return;
                 logElem = logElem.split("\n");
@@ -134,7 +134,7 @@ JobRunningComponent = {
                     return m("div", {class: "logElem"},
                         m("div", {class: "logElemRunning"}),
                         m("div", {class: "logElemText"}, logElem[0]))
-            })
+            }) : []
         ]);
     }
 };
