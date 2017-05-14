@@ -20,10 +20,6 @@ GET           /javascriptRoutes                       controllers.Application.ja
 POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)
 POST          /settings/memset                        @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
 
-GET           /@/backend/settings                     @controllers.Backend.settings
-GET           /@/backend/edit                         @controllers.Backend.edit
-GET           /@/backend/access                       @controllers.Backend.access
-GET           /@/backend/logout                       @controllers.Backend.logOut
 
 # integrated mithril route backend routes
 GET           /backend/index                          @controllers.Backend.index
@@ -86,10 +82,10 @@ GET           /jobs/find/:queryString                 @controllers.Search.getJob
 GET           /jobs                                   @controllers.Search.get
 GET           /indexPageInfo                          @controllers.Search.getIndexPageInfo
 # Update Job status
-POST          /jobs/done/:jobID                       @controllers.Jobs.jobStatusDone(jobID : String)
-POST          /jobs/error/:jobID                      @controllers.Jobs.jobStatusError(jobID : String)
-POST          /jobs/running/:jobID                    @controllers.Jobs.jobStatusRunning(jobID : String)
-POST          /jobs/queued/:jobID                     @controllers.Jobs.jobStatusQueued(jobID : String)
+POST          /jobs/done/:jobID/:key                  @controllers.Jobs.jobStatusDone(jobID : String, key: String)
+POST          /jobs/error/:jobID/:key                 @controllers.Jobs.jobStatusError(jobID : String, key: String)
+POST          /jobs/running/:jobID/:key               @controllers.Jobs.jobStatusRunning(jobID : String, key: String)
+POST          /jobs/queued/:jobID/:key                @controllers.Jobs.jobStatusQueued(jobID : String, key: String)
 POST          /jobs/sge/:jobID/:sgeID                 @controllers.Jobs.SGEID(jobID: String, sgeID: String)
 POST          /jobs/message/:mainID                   @controllers.Jobs.pushMessage(mainID, message: String)
 POST          /jobs/dateviewed/:mainID                @controllers.Jobs.updateDateViewed(mainID)
@@ -99,7 +95,7 @@ POST          /jobs/updateLog/:jobID                  @controllers.Jobs.updateLo
 
 # Validation Controller
 
-GET           /validate/modeller/:input             @controllers.Validation.validateModellerKey(input: String)
+GET           /validate/modeller/:input               @controllers.Validation.validateModellerKey(input: String)
 
 # Cluster
 
@@ -116,6 +112,7 @@ GET           /search/checkJobID/:jobID               @controllers.Search.checkJ
 GET           /search/checkJobID/resubmit/:jobID      @controllers.Search.checkJobID(jobID : String, resubmit : Boolean = true)
 
 #GET           /suggest/:jobID                         @controllers.Search.ac(jobID: String)
+GET           /getToolList                            @controllers.Search.getToolList()
 GET           /suggest/:jobID                         @controllers.Search.autoComplete(jobID: String)
 GET           /checktool/:tool                        @controllers.Search.existsTool(tool: String)
 
@@ -140,7 +137,7 @@ POST          /api/job                                @controllers.JobController
 # TODO Remove this route in favor of submitJob
 POST          /api/job/check                          @controllers.JobController.check(toolname: String, jobID: Option[String], hash: Boolean)
 GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
-GET           /api/job/result/:jobID/:tool/:panel            @controllers.Service.getResult(jobID : String, tool: String, panel: String)
+GET           /api/job/result/:jobID/:tool/:panel     @controllers.Service.getResult(jobID : String, tool: String, panel: String)
 DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
 GET           /api/job/load/:jobID                    @controllers.JobController.loadJob(jobID: String)
 
@@ -157,67 +154,49 @@ GET           /api/jobs/getnotes/:jobID               @controllers.Jobs.getAnnot
 GET           /api/job/results/:jobID                 @controllers.DataController.get(jobID: String)
 
 # DataTables
-GET          /api/job/results/dataTableHmmer/:jobID      @controllers.HmmerController.dataTable(jobID: String)
-GET          /api/job/results/dataTablePSIBlast/:jobID   @controllers.PSIBlastController.dataTable(jobID: String)
-GET          /api/job/results/dataTableHHpred/:jobID              @controllers.HHpredController.dataTable(jobID: String)
-GET          /api/job/results/dataTableHHblits/:jobID              @controllers.HHblitsController.dataTable(jobID: String)
+GET  /api/job/results/dataTableHmmer/:jobID           @controllers.HmmerController.dataTable(jobID: String)
+GET  /api/job/results/dataTablePSIBlast/:jobID        @controllers.PSIBlastController.dataTable(jobID: String)
+GET  /api/job/results/dataTableHHpred/:jobID          @controllers.HHpredController.dataTable(jobID: String)
+GET  /api/job/results/dataTableHHblits/:jobID         @controllers.HHblitsController.dataTable(jobID: String)
+
 # Article
-GET           /api/getRecentArticles/:numArticles     @controllers.DataController.getRecentArticles(numArticles: Integer)
-POST          /api/writeArticle                       @controllers.DataController.writeArticle(title: String, text: String, link: String, imagePath: String)
+GET  /api/getRecentArticles/:numArticles              @controllers.DataController.getRecentArticles(numArticles: Integer)
+POST /api/writeArticle                                @controllers.DataController.writeArticle(title: String, text: String, textlong: String, link: String, imagePath: String)
 
 # 3D structure
-GET          /structure3D/:accession                  @controllers.HHpredController.show3DStructure(accession : String)
-# get pdb structure
-GET          /getStructure/:filename                  @controllers.Application.getStructureFile(filename : String)
-# HHPRED
-#template alignment
-GET         /templateAlignment/:jobID/:accession        @controllers.HHpredController.runScript(jobID : String, accession : String)
-#HHBlits
+GET         /structure3D/:accession                   @controllers.HHpredController.show3DStructure(accession : String)
+GET         /getStructure/:filename                   @controllers.Application.getStructureFile(filename : String)
 # template alignment
-GET         /templateAlignmentHHblits/:jobID/:accession @controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession : String)
+GET  /templateAlignment/:jobID/:accession             @controllers.HHpredController.runScript(jobID : String, accession : String)
+GET  /templateAlignmentHHblits/:jobID/:accession      @controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession : String)
 
 
-# PSIBlast load hits on request
-POST        /HmmerLoadHits                              @controllers.HmmerController.loadHits(jobID: String, start: Int, end: Int)
-# Hmmer retrieve seqs with evale < threshold
-POST         /alnEvalHmmer                              @controllers.HmmerController.alnEval(jobID: String, eval:String)
-# Hmmer retrieve selected seqs
-POST         /alnHmmer                                  @controllers.HmmerController.aln(jobID: String, listNum: Seq[Int])
-# Hmmer retrieve seqs with evale < threshold
-POST         /evalHmmerFull                              @controllers.HmmerController.evalFull(jobID: String, eval:String)
-# Hmmer retrieve selected seqs
-POST         /HmmerFull                                 @controllers.HmmerController.full(jobID: String, listNum: Seq[Int])
+# Hmmer
+POST        /HmmerLoadHits                            @controllers.HmmerController.loadHits(jobID: String, start: Int, end: Int)
+POST        /alnEvalHmmer                             @controllers.HmmerController.alnEval(jobID: String, eval:String)
+POST        /alnHmmer                                 @controllers.HmmerController.aln(jobID: String, listNum: Seq[Int])
+POST        /evalHmmerFull                            @controllers.HmmerController.evalFull(jobID: String, eval:String)
+POST        /HmmerFull                                @controllers.HmmerController.full(jobID: String, listNum: Seq[Int])
 
-# PSIblast retrieve seqs with evalue < threshold
-POST         /evalPSIBlast                               @controllers.PSIBlastController.alnEval(jobID: String, eval:String)
-# PSIblast retrieve selected seqs
-POST         /alnPSIBlast                                @controllers.PSIBlastController.aln(jobID:String, listNum: Seq[Int])
-# PSIblast retrieve full seqs with evalue < threshold
-POST        /evalPSIBlastFull                            @controllers.PSIBlastController.evalFull(jobID : String, eval: String)
-# PSIblast retrieve selected full seqs
-POST        /PSIBlastFull                              @controllers.PSIBlastController.full(jobID : String, listNum: Seq[Int])
-# PSIBlast load hits on request
-POST        /PSIBlastLoadHits                              @controllers.PSIBlastController.loadHits(jobID: String, start: Int, end: Int)
+# PSIblast
+POST        /evalPSIBlast                             @controllers.PSIBlastController.alnEval(jobID: String, eval:String)
+POST        /alnPSIBlast                              @controllers.PSIBlastController.aln(jobID:String, listNum: Seq[Int])
+POST        /evalPSIBlastFull                         @controllers.PSIBlastController.evalFull(jobID : String, eval: String)
+POST        /PSIBlastFull                             @controllers.PSIBlastController.full(jobID : String, listNum: Seq[Int])
+POST        /PSIBlastLoadHits                         @controllers.PSIBlastController.loadHits(jobID: String, start: Int, end: Int)
 
-# HHblits retrieve seqs with evalue < threshold
-POST         /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String, eval:String)
-#  HHblits retrieve selected seqs
-POST         /alnHHBlits                           @controllers.HHblitsController.aln(jobID:String, listNum: Seq[Int])
-# HHblits retrieve full seqs with evalue < threshold
-POST        /evalHHBlitsFull                            @controllers.HHblitsController.evalFull(jobID : String, eval: String)
-# HHblits retrieve selected full seqs
+# HHblits
+POST        /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String, eval:String)
+POST        /alnHHBlits                               @controllers.HHblitsController.aln(jobID:String, listNum: Seq[Int])
+POST        /evalHHBlitsFull                          @controllers.HHblitsController.evalFull(jobID : String, eval: String)
 POST        /HHBlitsFull                              @controllers.HHblitsController.full(jobID : String, listNum: Seq[Int])
-# PSIBlast load hits on request
-POST        /HHblitsLoadHits                              @controllers.HHblitsController.loadHits(jobID: String, start: Int, end: Int)
+POST        /HHblitsLoadHits                          @controllers.HHblitsController.loadHits(jobID: String, start: Int, end: Int)
 
-# HHPred retrieve seqs with evalue < threshold
-POST         /evalHHpred                           @controllers.HHpredController.alnEval(jobID: String, eval:String)
-# HHpred retrieve selected seqs
-POST         /alnHHpred                         @controllers.HHpredController.aln(jobID:String, listNum: Seq[Int])
-# PSIBlast load hits on request
-POST        /HHpredLoadHits                              @controllers.HHpredController.loadHits(jobID: String, start: Int, end: Int)
+# HHPred
+POST        /evalHHpred                               @controllers.HHpredController.alnEval(jobID: String, eval:String)
+POST        /alnHHpred                                @controllers.HHpredController.aln(jobID:String, listNum: Seq[Int])
+POST        /HHpredLoadHits                           @controllers.HHpredController.loadHits(jobID: String, start: Int, end: Int)
 
-# ALignment load hits on request
-POST        /AlignmentLoadHits                              @controllers.AlignmentController.loadHits(jobID: String, start: Int, end: Int, resultName: String)
-# fetch alignment
-POST        /AlignmentGetAln                              @controllers.AlignmentController.getAln(jobID: String, listNum: Seq[Int], resultName: String)
+# Alignment
+POST        /AlignmentLoadHits                        @controllers.AlignmentController.loadHits(jobID: String, start: Int, end: Int, resultName: String)
+POST        /AlignmentGetAln                          @controllers.AlignmentController.getAln(jobID: String, listNum: Seq[Int], resultName: String)

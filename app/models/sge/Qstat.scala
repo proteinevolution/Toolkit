@@ -11,10 +11,6 @@ final class Qstat {
 
   //private[this] val cmd = "qstat -u \"*\"" !!
 
-  def get() : Unit = {
-
-
-
-  }
+  def get(): Unit = {}
 
 }

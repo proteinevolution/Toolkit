@@ -36,7 +36,7 @@
         <script src="@routes.Assets.versioned("javascripts/vendor/newick.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/vendor/jquery.nice-select.js")" type="text/javascript"></script>
 
-        <!-- Mithril -->
+
         <link href="@routes.Assets.versioned("styles/index.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/alnviz.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
@@ -44,6 +44,9 @@
         <link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/jobview.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/joblist.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/news.css")" rel="stylesheet">
+
+        <!-- Mithril -->
 
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("mithril.min.js"))" type="text/javascript" ></script>
 
@@ -115,9 +118,7 @@
         <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Vollkorn:400,700' rel='stylesheet' type='text/css'>
     </head>
-
-    <body data-ws-url="@routes.Application.ws().webSocketURL()">
-
+    <body>
         <input type="hidden" id="authView" value="@view">
 
         <div id="message-float" style="position: fixed; top: 0px; left: 0px; width: 100%; text-align: center; z-index: 1000;">
@@ -159,8 +160,8 @@
              <div class="row" id="metanav">
                  <div id="metauser"></div> <!-- TODO: ugly construction -->
                  <div id="social">
-                     <a href="https://www.facebook.com/mpitoolkit"><i class="icon-facebook"></i></a>
-                     <a href="https://twitter.com/mpitoolkit"><i class="icon-twitter"></i></a>
+                     <a href="https://www.facebook.com/mpitoolkit" target="_blank"><i class="icon-facebook"></i></a>
+                     <a href="https://twitter.com/mpitoolkit" target="_blank"><i class="icon-twitter"></i></a>
                  </div>
              </div>
 
@@ -215,7 +216,7 @@
 
                       <!--- Mount point for Mithril Application -->
                       <div class="row" id="main-content">
-
+                          <noscript><div class="noscript">It's okay to hate JavaScript... <br/> ...but you won't be able to use this website properly! <!-- or another slogan --></div></noscript>
                       </div>
                 </div>
             </div>

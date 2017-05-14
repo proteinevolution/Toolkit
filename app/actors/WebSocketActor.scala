@@ -20,13 +20,12 @@ import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 /**
   * Actor that listens to the WebSocket and accepts messages from and passes messages to it.
   *
   */
 object WebSocketActor {
-  case class ChangeSessionID(sessionID : BSONObjectID)
+  case class ChangeSessionID(sessionID: BSONObjectID)
   case object LogOut
 
   trait Factory {
@@ -34,15 +33,18 @@ object WebSocketActor {
   }
 }
 
-class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
-                            implicit val locationProvider: LocationProvider,
-                                         jobActorAccess  : JobActorAccess,
-   @Named("clusterMonitor")              clusterMonitor  : ActorRef,
-   @NamedCache("userCache") implicit val userCache       : CacheApi,
-@NamedCache("wsActorCache") implicit val wsActorCache    : CacheApi,
-     @Assisted("sessionID") private  var sessionID       : BSONObjectID,
-           @Assisted("out")              out             : ActorRef)
-                                 extends Actor with ActorLogging with CommonModule with UserSessions {
+class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
+                               implicit val locationProvider: LocationProvider,
+                               jobActorAccess: JobActorAccess,
+                               @Named("clusterMonitor") clusterMonitor: ActorRef,
+                               @NamedCache("userCache") implicit val userCache: CacheApi,
+                               @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi,
+                               @Assisted("sessionID") private var sessionID: BSONObjectID,
+                               @Assisted("out") out: ActorRef)
+    extends Actor
+    with ActorLogging
+    with CommonModule
+    with UserSessions {
 
   override def preStart(): Unit = {
     // Grab the user from cache to ensure a working job
@@ -51,7 +53,7 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
       case Some(user) =>
         wsActorCache.get(user.userID.stringify) match {
           case Some(wsActors) =>
-            val actorSet = (wsActors : List[ActorRef]).::(self)
+            val actorSet = (wsActors: List[ActorRef]).::(self)
             wsActorCache.set(user.userID.stringify, actorSet)
           case None =>
             wsActorCache.set(user.userID.stringify, List(self))
@@ -67,8 +69,8 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
       case Some(user) =>
         wsActorCache.get(user.userID.stringify) match {
           case Some(wsActors) =>
-            val actorSet : List[ActorRef] = wsActors : List[ActorRef]
-            val newActorSet = actorSet.filter(_ == self)
+            val actorSet: List[ActorRef] = wsActors: List[ActorRef]
+            val newActorSet              = actorSet.filter(_ == self)
             wsActorCache.set(user.userID.stringify, newActorSet)
           case None =>
         }
@@ -82,55 +84,56 @@ class WebSocketActor @Inject() (     val reactiveMongoApi: ReactiveMongoApi,
     case js: JsValue =>
       getUser(sessionID).foreach {
         case Some(user) =>
-        (js \ "type").validate[String].foreach {
+          (js \ "type").validate[String].foreach {
 
-          // Message containing a List of Jobs the WebSocket wants to register to
-          case "RegisterJobs" =>
+            // Message containing a List of Jobs the WebSocket wants to register to
+            case "RegisterJobs" =>
+              (js \ "jobIDs").validate[Seq[String]].asOpt match {
 
-            (js \ "jobIDs").validate[Seq[String]].asOpt match {
-
-              case Some(jobIDs) => jobIDs.foreach { jobID =>
-                jobActorAccess.sendToJobActor(jobID, StartWatch(jobID, user.userID))
+                case Some(jobIDs) =>
+                  jobIDs.foreach { jobID =>
+                    jobActorAccess.sendToJobActor(jobID, StartWatch(jobID, user.userID))
+                  }
+                case None => // Client has send strange message over the Websocket
               }
-              case None => // Client has send strange message over the Websocket
-            }
 
-          // Request to remove a Job from the user's view but it will remain stored
-          case "ClearJob" =>
+            // Request to remove a Job from the user's view but it will remain stored
+            case "ClearJob" =>
+              (js \ "jobID").validate[String].asOpt match {
+                case Some(jobID) =>
+                  Logger.info("Recieved StopWatch for job " + jobID)
+                  jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, user.userID))
+                case None => //
+              }
 
-            (js \ "jobID").validate[String].asOpt match {
-              case Some(jobID) =>
-                Logger.info("Recieved StopWatch for job " + jobID)
-                jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, user.userID))
-              case None => //
-            }
+            // Request to receive load messages
+            case "RegisterLoad" =>
+              Logger.info("Received RegisterLoad message.")
+              clusterMonitor ! Connect(self)
 
-          // Request to receive load messages
-          case "RegisterLoad" =>
-            Logger.info("Received RegisterLoad message.")
-            clusterMonitor ! Connect(self)
+            // Request to no longer receive load messages
+            case "UnregisterLoad" =>
+              clusterMonitor ! Disconnect(self)
 
-          // Request to no longer receive load messages
-          case "UnregisterLoad" =>
-            clusterMonitor ! Disconnect(self)
-
-        }
+          }
         case None =>
           self ! PoisonPill
       }
 
-    case PushJob(job : Job) =>
+    case PushJob(job: Job) =>
       //Logger.info("WS Log: " + job.jobID + " is now " + job.status.toString)
       out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
+    case UpdateLog(jobID: String) =>
+      out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
 
     case UpdateLoad(load: Double) =>
       out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
 
-    case ClearJob(jobID : String) =>
+    case ClearJob(jobID: String) =>
       //Logger.info("WS Log: " + jobID + " clear message sent")
       out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID)
 
-    case ChangeSessionID(sessionID : BSONObjectID) =>
+    case ChangeSessionID(sessionID: BSONObjectID) =>
       this.sessionID = sessionID
 
     case LogOut =>

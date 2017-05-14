@@ -131,7 +131,7 @@ function resubmitSection(sequence, name) {
     var resubmitSeqs = [];
 
     resubmitSeqs.push(name + '\n');
-    resubmitSeqs.push(sequence.substr(sliderRange[0] - 1, sliderRange[1]) + '\n');
+    resubmitSeqs.push(sequence.substr(sliderRange[0], sliderRange[1]) + '\n');
 
     $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
     $('#alignment').val(resubmitSeqs.join(''));
@@ -286,6 +286,10 @@ function selectFromArray(checkboxes){
     })
 }
 
+function getCheckedCheckboxes(){
+    $('input:checkbox:checked').each(function(){checkboxes.push($(this).val());});
+}
+
 
 function hitlistBaseFunctions(){
     $(document).ready(function() {
@@ -300,7 +304,7 @@ function hitlistBaseFunctions(){
             // in order to make it work with pagination/lazyload
             selectFromArray(checkboxes);
 
-            $('input:checkbox').click(function (e) {
+            $('input:checkbox').on('change',function (e) {
                 var currentVal = $(this).val();
                 var currentState = $(this).prop('checked');
 

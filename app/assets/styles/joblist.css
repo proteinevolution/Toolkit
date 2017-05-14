@@ -35,11 +35,23 @@
 }
 
 .job-list .idsort {
-    width: 48%;
+    width: 25%;
 }
 
 .job-list .toolsort {
-    width: 48%;
+    width: 25%;
+}
+
+.job-list .datesort {
+    width: 25%;
+}
+
+.job-list .openmanager {
+    width: 25%;
+}
+
+.job-list .openmanager .icon-list {
+    margin:unset;
 }
 
 .job-list .boxclose {

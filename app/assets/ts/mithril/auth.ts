@@ -386,7 +386,7 @@ class SignUp {
                     m("input", { id:         'nameLogin',
                                  name:       'nameLogin',
                                  pattern:    '[a-zA-Z0-9]{6,40}',
-                                 placeholder:'Name',
+                                 placeholder:'Username',
                                  required:   'required',
                                  type:       'text',
                                  onkeyup:     m.withAttr("value", SignUp.nameLoginSetter),
@@ -395,7 +395,7 @@ class SignUp {
                                  onblur:      focusOutRedraw,
                                  value:       SignUp.nameLogin
                     }),
-                    m("span", {"class":"form-error"}, "Name must be at least 1 character long!")
+                    m("span", {"class":"form-error"}, "Name must be at least 6 characters long!")
                 ])),
                 m("div", m("label", [
                     m("input", { id:          'eMail',
@@ -492,9 +492,10 @@ class ForgotPassword {
                 m("div", m("label",
                     m("input", { id:          'eMail',
                                  name:        'eMail',
-                                 pattern:     'email',
                                  placeholder: 'email or username',
+                                 pattern:    '[a-zA-Z0-9_]{6,40}',
                                  type:        'text',
+                                 required:     'required',
                                  onkeyup:      m.withAttr("value", ForgotPassword.eMailSetter),
                                  onchange:     m.withAttr("value", ForgotPassword.eMailSetter),
                                  onfocus:      focusInNoRedraw,
@@ -610,48 +611,6 @@ class Profile {
                         }),
                         m("span", { "class":"form-error"}, "Please enter a valid e-Mail address!")
                     ])),
-                    m("div", m("label", [
-                        m("input", { id:          'institute',
-                                     name:        'institute',
-                                     pattern:     '[a-zA-Z0-9_]{0,100}',
-                                     placeholder: 'Institute',
-                                     type:        'text',
-                                     onkeyup:     m.withAttr("value", Profile.userSetter("institute")),
-                                     onchange:    m.withAttr("value", Profile.userSetter("institute")),
-                                     onfocus:     focusInNoRedraw,
-                                     onblur:      focusOutRedraw,
-                                     value:       Profile.user.institute
-                        }),
-                        m("span", { "class":"form-error"}, "The name of the institute can be no longer then 100 characters!")
-                    ])),
-                    m("div", m("label", [
-                        m("input", { id:          'street',
-                                     name:        'street',
-                                     pattern:     '[a-zA-Z0-9_]{0,100}',
-                                     placeholder: 'Street',
-                                     type:        'text',
-                                     onkeyup:     m.withAttr("value", Profile.userSetter("street")),
-                                     onchange:    m.withAttr("value", Profile.userSetter("street")),
-                                     onfocus:     focusInNoRedraw,
-                                     onblur:      focusOutRedraw,
-                                     value:       Profile.user.street
-                        }),
-                        m("span", { "class":"form-error"}, "Please ensure that the name of the street is not longer then 100 characters!")
-                    ])),
-                    m("div", m("label", [
-                        m("input", { id:          'city',
-                                     name:        'city',
-                                     pattern:     '[a-zA-Z0-9_]{0,100}',
-                                     placeholder: 'City',
-                                     type:        'text',
-                                     onkeyup:     m.withAttr("value", Profile.userSetter("city")),
-                                     onchange:    m.withAttr("value", Profile.userSetter("city")),
-                                     onfocus:     focusInNoRedraw,
-                                     onblur:      focusOutRedraw,
-                                     value:       Profile.user.city
-                        }),
-                        m("span", { "class":"form-error"}, "Please use less then 100 characters for the name of the City!")
-                    ])),
                     m("div", { "class": "country_drop" },
                         m("select", { name:"country", onchange: m.withAttr("value", Profile.userSetter("country")) },
                             regions.map(function(country){
@@ -662,34 +621,7 @@ class Profile {
                             })
                         )
                     ),
-                    m("div", m("label", [
-                        m("input", { id:          'groups',
-                                     name:        'groups',
-                                     pattern:     '[a-zA-Z0-9_]{0,100}',
-                                     placeholder: 'Groups',
-                                     type:        'text',
-                                     onkeyup:     m.withAttr("value", Profile.userSetter("groups")),
-                                     onchange:    m.withAttr("value", Profile.userSetter("groups")),
-                                     onfocus:     focusInNoRedraw,
-                                     onblur:      focusOutRedraw,
-                                     value:       Profile.user.groups
-                        }),
-                        m("span", { "class":"form-error"}, "Please describe your group in less then 100 characters!")
-                    ])),
-                    m("div", m("label", [
-                        m("input", { id:          'roles',
-                                     name:        'roles',
-                                     pattern:     '[a-zA-Z0-9_]{0,100}',
-                                     placeholder: 'Roles',
-                                     type:        'text',
-                                     onkeyup:     m.withAttr("value", Profile.userSetter("roles")),
-                                     onchange:    m.withAttr("value", Profile.userSetter("roles")),
-                                     onfocus:     focusInNoRedraw,
-                                     onblur:      focusOutRedraw,
-                                     value:       Profile.user.roles
-                        }),
-                        m("span", { "class":"form-error"}, "Please describe your role in less then 100 characters!")
-                    ])),
+                    m("label", "Please re-enter your password to confirm the changes."),
                     m("div", m("label", [
                         m("input", { id:         'password',
                                      pattern:    '.{8,128}',
@@ -901,7 +833,7 @@ class AuthDropdown {
                               'data-click-open':    true
                     }, m("li", [
                         m("button", { "class" : "loggedIn", id: "auth-link-text"}, Auth.user.nameLogin),
-                        m("ul", { "class" :"menu" }, [
+                        m("ul", { "class" :"menu userMenu" }, [
                             m("li", m("a", { onclick:function(e : Event) { return openNav("profile")} }, m("i", {"class": "icon-user"}),"Profile")),
                             Auth.user.institute === "MPG" ? m("li", m("a", { href:"/#/backend/index" }, m("i", {"class": "icon-display_graph"}), "Backend")) : null,
                             m("li", m("a", {

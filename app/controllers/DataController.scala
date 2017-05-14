@@ -20,57 +20,64 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by lzimmermann on 26.01.17.
   */
-class DataController  @Inject() (val reactiveMongoApi: ReactiveMongoApi, psiblastController: PSIBlastController, hmmerController: HmmerController, hmmer: Hmmer, psi: PSIBlast)
-  extends Controller with CommonModule {
+class DataController @Inject()(val reactiveMongoApi: ReactiveMongoApi,
+                               psiblastController: PSIBlastController,
+                               hmmerController: HmmerController,
+                               hmmer: Hmmer,
+                               psi: PSIBlast)
+    extends Controller
+    with CommonModule {
 
   /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with
     * stored given a particular key
-   */
-  def get(jobID: String) : Action[AnyContent] = Action.async {
+    */
+  def get(jobID: String): Action[AnyContent] = Action.async {
     getResult(jobID).map {
       case Some(jsValue) => Ok(jsValue)
-      case None => NotFound
+      case None          => NotFound
     }
   }
 
   /**
     * Action to fetch article with articleID from database
     */
-
-  def fetchArticle(articleID: String) : Action[AnyContent] = Action.async{
+  def fetchArticle(articleID: String): Action[AnyContent] = Action.async {
     getArticle(articleID).map {
-        case Some(realArticle) => Ok
-        case None => NotFound
-      }
+      case Some(realArticle) => Ok
+      case None              => NotFound
     }
+  }
+
   /**
     * Action to fetch the last N recent articles database
     */
-  def getRecentArticles(numArticles: Int) : Action[AnyContent] = Action.async{
+  def getRecentArticles(numArticles: Int): Action[AnyContent] = Action.async {
     getArticles(numArticles).map { seq =>
-      val  x = Json.toJson(seq)
+      val x = Json.toJson(seq)
       Ok(x)
     }
   }
+
   /**
     * Action to write an article into the database
     */
-  def writeArticle(title: String, text: String, link: String, imagePath: String) : Action[AnyContent] = Action.async{
+  def writeArticle(title: String,
+                   text: String,
+                   textlong: String,
+                   link: String,
+                   imagePath: String): Action[AnyContent] = Action.async {
     // TODO ensure that only authorized people can write a front page article
-    val article = FeaturedArticle(BSONObjectID.generate(),title, text, link,imagePath,Some(DateTime.now()),None)
+    val article =
+      FeaturedArticle(BSONObjectID.generate(), title, text, textlong, link, imagePath, Some(DateTime.now()), None)
     writeArticleDatabase(article).map { wr =>
-      if(wr.ok){
+      if (wr.ok) {
         Ok
-      } else{
+      } else {
         BadRequest
       }
     }
   }
 
-
 }
 
 case class DTParam(sSearch: String, iDisplayStart: Int, iDisplayLength: Int, iSortCol: Int, sSortDir: String)
-
-
-

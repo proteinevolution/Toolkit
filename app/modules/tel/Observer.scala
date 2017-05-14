@@ -6,13 +6,11 @@ package modules.tel
   */
 trait Observer[S] {
   def receiveUpdate(subject: S)
-  def receiveInitial(subject : S)
+  def receiveInitial(subject: S)
 }
 
-
 // TODO Add support for deleting Observers
-trait Subject[S] {
-  this: S =>
+trait Subject[S] { this: S =>
   private var observers: List[Observer[S]] = Nil
 
   def addObserver(observer: Observer[S]) = {
