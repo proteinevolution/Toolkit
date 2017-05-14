@@ -589,6 +589,7 @@ JobSubmissionComponent = {
                 "class": "success button small submitJob",
                 value: (args.isJob ? "Res" : "S") + "ubmit Job",
                 style: "float: right;",
+                "disabled": true,
                 onclick: ctrl.submit.bind(ctrl, true)
             }),
             //!args.isJob ? m("label", m("input", { type: "checkbox", name: "private", value: "true", checked: "checked" }), "Private" ) : null, // TODO reimplement private checkbox
@@ -792,11 +793,12 @@ window.ParameterAlignmentComponent = {
                 "class": "show-for-sr",
                 onchange: function() {
                     if (this.value) {
-                        $(".submitJob").prop("disabled", false);
+
                         $(".uploadFileName").show();
                         $("#uploadBoxClose").show();
                         $("#" + ctrl.id).prop("disabled", true);
                         $("#" + ctrl.id + "_two").prop("disabled", true);
+                        $(".submitJob").prop("disabled", false);
                         }
                     }
                 }), m("div",
@@ -808,6 +810,7 @@ window.ParameterAlignmentComponent = {
                         onclick: function(){
                             $(".uploadFileName").hide();
                             $("input[type=file]").val(null);
+                            $(".submitJob").prop("disabled", true);
                             return $("#" + ctrl.id).prop("disabled", false);
                             }
                     }, m("i", {"class": "fa fa-times"})))),
