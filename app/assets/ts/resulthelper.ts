@@ -11,7 +11,11 @@ let followScroll = function(element : any) {
     $(element).on('scroll', function () {
 
         let top = $(this).scrollTop();
-        if ($('#alignments').visible(true)) {
+        if ($('#flat-slider').visible()) {
+            $("#visualizationScroll").addClass("colorToggle");
+            $("#hitlistScroll").removeClass("colorToggle");
+            $("#alignmentsScroll").removeClass("colorToggle");
+        } else if ($('#alignments').visible(true)) {
             $("#alignmentsScroll").addClass("colorToggle");
             $("#hitlistScroll").removeClass("colorToggle");
             $("#visualizationScroll").removeClass("colorToggle");
@@ -21,10 +25,6 @@ let followScroll = function(element : any) {
             $("#visualizationScroll").removeClass("colorToggle");
         } else if (typeof top !== 'undefined' && top >= $('#visualization').position().top + 75) {
             $('.scrollContainer').addClass('fixed');
-        } else if ($('#visualization').visible()) {
-            $("#visualizationScroll").addClass("colorToggle");
-            $("#hitlistScroll").removeClass("colorToggle");
-            $("#alignmentsScroll").removeClass("colorToggle");
         } else {
             $('.scrollContainer').removeClass('fixed');
         }

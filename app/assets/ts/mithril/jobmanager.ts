@@ -18,12 +18,13 @@ window.JobManager = {
     model: function (ctrl : any) {
         return {data: m.request({"url": "jobs", "method": "GET", background: true})};
     },
-
     tableObjects: {
-        names: [{id: "jobID", label: "Job ID"},
+        names: [
+            {id: "jobID", label: "Job ID"},
             {id: "tool", label: "Tool"},
             {id: "status", label: "Job State"},
             {id: "dateCreated", label: "Created On", source: {_: "dateCreated.string", sort: "dateCreated.timestamp"}},
+            {id: "removeJob", label: "Remove Job"}
         ],
         toColumnItems: function () {
             let tableHeaderItems = this.names.map(function (item : any) {
@@ -45,6 +46,14 @@ window.JobManager = {
                 "orderable": false,
                 "data": null,
                 "defaultContent": "<i class='icon-reply'></i>"
+            });
+
+            tableRowDataSelection.splice(5, 5, {
+                "className": "deleteJob",
+                "orderable": false,
+                "data": null,
+                "defaultContent": "<i class='delete fa fa-trash-o' type='button'></i>"
+
             });
             return tableRowDataSelection;
         }
@@ -77,13 +86,20 @@ window.JobManager = {
                     let table = $table.DataTable({
                         data: jobData,
                         columns: JobManager.tableObjects.toColumnNames(),
-                        order: [[1, 'asc']]
+                        order: [[4, 'desc']]
                     });
                     $table.on('click', 'td.addButton', function () {
                         let tr = $(this).closest('tr');
                         let row = table.row(tr);
                         let rowData : JobManagerObject = <JobManagerObject>row.data();
                         m.route("/jobs/" + rowData.jobID);
+                    });
+                    $table.on('click', 'td.deleteJob', function () {
+                        let tr = $(this).closest('tr');
+                        let row = table.row(tr);
+                        let rowData : JobManagerObject = <JobManagerObject>row.data();
+                        JobListComponent.removeJob(rowData.jobID, true, true);
+                        m.redraw(true);
                     })
                 })
             }
@@ -99,15 +115,6 @@ window.JobManager = {
     view: function (ctrl : any) {
         return [
             m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
-                m("div", { id : "job-search-div" }, [
-                    m("input", {
-                        type:        "text",
-                        placeholder: "Search by JobID",
-                        id:          "job-search",
-                        name:        "job-search"
-                    }),
-                    m("span", { "class": "bar" })
-                ]),
                 m(JobListComponent, { activejobID : m.route.param("jobID") })
             ]),
             m("div", {"class": "jobManagerContainer large-10"},

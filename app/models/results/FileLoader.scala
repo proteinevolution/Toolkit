@@ -20,7 +20,6 @@ object FileLoader {
     filepath.toFile.contentAsString
   }
 
-
   def loadHTML(filepath: String): Html = {
     Html(s"$jobPath/$filepath".toFile.contentAsString.filter(_ >= ' '))
   }

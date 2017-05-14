@@ -6,7 +6,7 @@ import actors.JobActor.{CreateJob, Delete, PrepareJob, StartJob}
 import actors.JobIDActor
 import akka.actor.ActorRef
 import models.Constants
-import models.database.jobs.{Error, Job, JobDeletion, JobDeletionFlag, Submitted}
+import models.database.jobs._
 import models.database.users.User
 import models.job.JobActorAccess
 import models.search.JobDAO
@@ -235,7 +235,7 @@ final class JobController @Inject() ( jobActorAccess   : JobActorAccess,
 
                 val foundMainIDs = jobList.map(_.mainID)
                 val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-                val jobsPartition = jobList.partition(_.status == Error)
+                val jobsPartition = jobList.partition(_.status != Done)
 
                 // Delete index-zombie jobs
                 unFoundMainIDs.foreach { mainID =>

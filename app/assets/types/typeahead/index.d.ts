@@ -1028,6 +1028,8 @@ declare namespace Bloodhound {
          * @returns Transform response.
          */
         transform?: (response: T) => T;
+
+        filter?: any;
     }
 
     /**

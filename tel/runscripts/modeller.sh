@@ -8,7 +8,6 @@ if [ "%regkey.content" = "MODELIRANJE" ] ; then
       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 else
       echo "#Incorrect registration key. Please register here: https://salilab.org/modeller/registration.html." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
       echo "error" >> ../results/process.log
       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
       $?=1
@@ -61,7 +60,7 @@ mv modeller.py modeller_script.py
 chmod 0777 modeller_script.py
 chmod 0777 alignment.pir
 # run modeller
-modeller modeller_script.py >> modeller.log
+mod9.18 modeller_script.py >> modeller.log
 mv modeller.log ../logs/
 mv $FILENAME* ../results/
 

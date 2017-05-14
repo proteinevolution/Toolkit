@@ -37,25 +37,20 @@ let slickSlider = function (elem : any, isInit : boolean) {
 
 let typeAhead = function (elem : any, isInit : boolean) : any {
     let engine;
+    let tools;
     if (!isInit) {
         $('#searchInput').on('keyup', function(e : any) : any {
             let selectables = $('#searchInput').siblings(".tt-menu").find(".tt-selectable").find('.search-results');
-            if(e.which == 13) {
+            if (e.which == 13) {
                 e.preventDefault();
                 //find the selectable item under the input, if any:
-                if (selectables.length > 0){
+                if (selectables.length > 0) {
                     selectables[0].click();
                     return false;
                 }
             }
-
         });
-        // $('#searchInput').on('typeahead:asyncreceive', function(){
-        //     var selectables = $('#searchInput').siblings(".tt-menu").find(".tt-selectable").find('.search-results');
-        //     if(selectables.length > 0) {
-        //         $('#searchInput').val(selectables[0].name)
-        //     }
-        // });
+
         engine = new Bloodhound({
             remote: {
                 url: '/suggest/%QUERY%',
@@ -64,11 +59,33 @@ let typeAhead = function (elem : any, isInit : boolean) : any {
             datumTokenizer: Bloodhound.tokenizers.whitespace('q'),
             queryTokenizer: Bloodhound.tokenizers.whitespace
         });
+        tools = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('long'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: {
+                url: '/getToolList'
+            }
+        });
+        tools.initialize();
         return $('.search_Input').typeahead({
             highlight: true,
             minLength: 1,
-            hint: true
-        }, {
+            autoselect: 'first'
+
+        },[
+
+            {
+                displayKey: 'long',
+                source: tools.ttAdapter(),
+                templates: {
+                    suggestion: function (data: any) {
+                            return '<div class="list-group-item"><a class="search-results" href="#/tools/' + data.short + '" name="'+data.long+'">' + data.long + '</a></div>';
+                    },
+                    header: '<h6 class="header-name">Tools</h6>',
+                }
+            }
+            ,
+            {
             source: engine.ttAdapter(),
             name: 'jobList',
             limit: 30,
@@ -78,9 +95,10 @@ let typeAhead = function (elem : any, isInit : boolean) : any {
                 suggestion: function (data : any) {
                     return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="'+data.jobID+' - ' + data.toolnameLong+ '">'
                         + data.jobID + '<span class="search-result-tool"> - ' + data.toolnameLong + '</span></a></div>' ;
-                }
+                },
+                header: '<h6 class="header-name">Jobs</h6>',
             }
-        })
+        }]);
     }
 };
 
@@ -166,7 +184,7 @@ let trafficBarComponent = {
                         type: "text",
                         id: "searchInput",
                         name: "q",
-                        placeholder: "Search Keywords",
+                        placeholder: "enter a job ID or a tool name",
                         config: typeAhead
                     }))
                 )

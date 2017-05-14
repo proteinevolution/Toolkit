@@ -27,9 +27,7 @@
         </div>
     </div>
     <br>
-    Number of sequences: @{
-        result.num_hits
-    }
+    Number of sequences: <b>@{result.num_hits}</b>
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div>
@@ -65,6 +63,9 @@
                 <table class="unstriped">
                     <tbody id="alignmentTable">
                     </tbody>
+                    <tr>
+                        <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
+                    </tr>
                 </table>
             </form>
         </div>
@@ -164,8 +165,9 @@
 
 
         function getHits(start, end) {
-            if (start <= numHits && end <= numHits) {
+            if (start <= numHits && end <= numHits && !loading) {
                 loading = true;
+                $('#loadingHits').show();
                 var route = jsRoutes.controllers.HmmerController.loadHits(jobID, start, end);
                 return $.ajax({
                     method: route.method,
@@ -173,6 +175,7 @@
                 }).done(function (data_) {
                     $("#alignmentTable").append(data_);
                     loading = false;
+                    $('#loadingHits').hide();
                 });
             }
         }
