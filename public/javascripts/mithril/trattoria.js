@@ -35,7 +35,7 @@ JobErrorComponent = {
         return m("div", { class: "running-panel", config: foundationConfig }, [
             m('h6', "Your Job has reached error state!"),
             m("div", {"class": "processJobIdContainer"},
-                m('b', "Job ID:"),
+                m('p', "Job ID:"),
                 m('p', '' + args.job().jobID)),
             //m("h6", "Job has reached Error state"),
             //m("br"),
@@ -87,7 +87,7 @@ JobQueuedComponent = {
         return m("div", { class: "queued-panel", config: foundationConfig }, [
             m('h6', "Your submission is queued!"),
             m("div", {"class": "processJobIdContainer"},
-                m('b', "Job ID:"),
+                m('p', "Job ID:"),
                 m('p', ' ' + args.job().jobID)),
         ]);
     }
@@ -108,7 +108,7 @@ JobRunningComponent = {
         return m("div", { class: "running-panel" , config: foundationConfig}, [
             m('h6', "Your submission is processing!"),
             m("div", {"class": "processJobIdContainer"},
-                m('b', "Job ID:"),
+                m('p', "Job ID:"),
                 m('p',  {style: "margin-left: 5px"}, ' ' + args.job().jobID)),
             (JobRunningComponent.log.length > -1) ? JobRunningComponent.log.map(function(logElem){
                 if(logElem == "")
@@ -159,7 +159,7 @@ JobPendingComponent = {
                             console.log("requested:",data);
                         });
                     }
-                }, "Start the found job")
+                }, "Load the found job")
             ]),
             m("div", {"class": "processJobIdContainer"},
                 m('b', "Job ID:"),
