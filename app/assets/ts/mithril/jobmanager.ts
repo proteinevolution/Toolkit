@@ -1,5 +1,6 @@
 // Velocity animation config
 
+
 let fadesIn = function(element : any, isInitialized : boolean, context : any) {
 
     let url = window.location.href;
@@ -50,15 +51,10 @@ window.JobManager = {
     },
     removeFromList: function(jobID: string): any{
         sendMessage({ "type" : "ClearJob",  "jobID" : jobID });
-        JobManager.reload()
     },
 
     addToList: function(jobID: string): any{
-        let job = JobListComponent.Job(JobManager.getJob(jobID)[0]);
-        if(job) {
-           JobListComponent.pushJob(job);
-            JobManager.reload();
-        }
+        sendMessage({ "type" : "PushJob",  "jobID" : jobID});
     },
 
     getJob: function(jobID:string): any{
@@ -75,7 +71,7 @@ window.JobManager = {
                 {"mDataProp": "jobID"},
                 {"mDataProp": "jobID"},
                 {"mDataProp": "tool"},
-                {"mDataProp": "dateCreated.string"},
+                {"mDataProp": "jobID"},
                 {"mDataProp": "jobID"}
             ],
             'columnDefs': [
@@ -84,19 +80,23 @@ window.JobManager = {
                     'searchable': false,
                     'orderable': false,
                     'render': function (jobID: any) {
-                        return '<i class="delete fa fa-trash-o" type="button" onclick="JobManager.deleteJob(\'' + jobID + '\')"></i>';
+                        return '<i class="delete fa fa-trash-o" onclick="JobManager.deleteJob(\'' + jobID + '\')"></i>';
                     }
                 },
                 {
                     'targets': 1,
                     'render': function(jobID: any){
-                        return '<a href="/jobs/'+jobID+'" type="button">'+jobID+'</a>';
+                        return '<a href="/jobs/'+jobID+'">'+jobID+'</a>';
                     },
                     "createdCell": function (td: any, cellData: any, rowData: any, row: any, col: any) {
-                            let status = a[JobManager.getJob(cellData)[0].status];
-                            if(status) {
-                                $(td).addClass(status);
-                            }
+                        let job = JobManager.getJob(cellData);
+                        if(job.length < 1){
+                            return;
+                        }
+                        let status = a[job[0].status];
+                        $(td).addClass(status);
+
+
                     },
                 },
                 {
@@ -105,11 +105,32 @@ window.JobManager = {
                     'orderable': false,
                     'render': function (jobID: any) {
                         if(JobListComponent.contains(jobID)){
-                            return '<i class="icon-minus remove" type="button" onclick="JobManager.removeFromList(\''+jobID+'\')"></i>';
+                            return '<i class="icon-minus remove" onclick="JobManager.removeFromList(\''+jobID+'\')"></i>';
                         }else{
-                            return '<i class="icon-plus add" type="button" onclick="JobManager.addToList(\''+jobID+'\')"></i>';
+                            return '<i class="icon-plus add" onclick="JobManager.addToList(\''+jobID+'\')"></i>';
                         }
                     }
+                },
+                {
+                    'targets': 3,
+                    data: "jobID",
+                    render: function ( data: any, type: any) {
+                        let job = JobManager.getJob(data);
+                        if(job.length < 1){
+                            return;
+                        }
+                        let timestamp = job[0].dateCreated.timestamp;
+                        // If display or filter data is requested, format the date
+                        if ( type === 'display') {
+                           return moment(timestamp).fromNow();
+                        }
+
+                        // Otherwise the data type requested (`type`) is type detection or
+                        // sorting data, for which we want to use the integer, so just return
+                        // that, unaltered
+                        return timestamp;
+                    }
+
                 }],
         });
     },

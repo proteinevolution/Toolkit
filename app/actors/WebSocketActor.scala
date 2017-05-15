@@ -4,7 +4,7 @@ import javax.inject.{Inject, Named}
 
 import actors.ClusterMonitor._
 import actors.JobActor._
-import actors.WebSocketActor.{LogOut, ChangeSessionID}
+import actors.WebSocketActor.{ChangeSessionID, LogOut}
 import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
@@ -16,7 +16,7 @@ import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{JsValue, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.BSONObjectID
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -105,7 +105,16 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
                   jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, user.userID))
                 case None => //
               }
+            case "PushJob" =>
+              (js \ "jobID").validate[String].asOpt match {
+                case Some(jobID) => Logger.info("Recieved PushJob for job " + jobID)
+                 findJob(BSONDocument(Job.JOBID -> jobID)).map {
+                   case Some(job) => println(job) ; jobActorAccess.sendToJobActor(jobID, PushJobManager(job, user.userID))
+                   case None => Logger.info("Job not found!")
+                 }
 
+                case None => //
+              }
             // Request to receive load messages
             case "RegisterLoad" =>
               Logger.info("Received RegisterLoad message.")
