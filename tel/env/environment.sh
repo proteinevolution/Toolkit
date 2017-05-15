@@ -26,6 +26,15 @@ export HHLIB=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/hh-suite-buil
 export HHPRED_CONFIG=/ebio/abt1_share/toolkit_support1/code/bioprogs/env/hhpred.config
 
 
+# COILS/PCOILS
+export COILSDIR=/ebio/abt1_share/toolkit_support1/code/bioprogs/pcoils
+
+#BACKTRANSLATOR
+export BACKTRANSLATORPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/backtranslate
+
+#SamCC
+export SAMCCPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/samcc
+
 
 # PATH variable 
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" # Python binary

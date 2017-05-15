@@ -1,3 +1,3 @@
 interface JQuery {
-    niceSelect(modifier ?: String) : any;
+    niceSelect(modifier ?: string) : any;
 }
