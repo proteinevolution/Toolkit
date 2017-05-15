@@ -15,10 +15,10 @@ window.JobListComponent = {
 
     Job : function (data : any) { // Generates a job Object
         return {
-            jobID     : data ? data.jobID : null,
-            status     : data ? data.status : null,
-            createdOn : data ? data.createdOn : null,
-            tool  : data ? data.tool  : null,
+            jobID       : data ? data.jobID : null,
+            status      : data ? data.status : null,
+            dateCreated : data ? data.dateCreated : null,
+            tool        : data ? data.tool  : null,
             // Functions
             select    : function(job : any) {     // marks a job as selected and changes the route
                 return function(e : any) {        // ensure that the event bubble is not triggering when the clear button is hit
@@ -52,7 +52,7 @@ window.JobListComponent = {
     numVisibleItems : 12,   // Number of shown jobs
     selectedJobID   : null, // JobID of the selected job
     lastUpdatedJob  : null, // Job which has been updated last
-    sort            : { mode : "createdOn", asc : false },
+    sort            : { mode : "dateCreated", asc : false },
     jobIDRegExp     : new RegExp(/^[a-zA-Z0-9\_]{6,96}(\_\d{1,3})?$/),
     getJob          : function (jobID : string) : any {    // Returns a job with the given jobID
         let foundJob = null;
@@ -93,7 +93,7 @@ window.JobListComponent = {
         request.then(function(data : any) {
             //console.log("Received list.", data, "Saving it.");
             JobListComponent.list = data;   // put the jobs in the list
-            //console.log("Sorting List.");
+            console.log("Sorting List.");
             JobListComponent.sortList();    // sort the list with the current sorting mode
             //console.log("Registering Jobs.");
             JobListComponent.register();    // send the server a message that these items are being watched
@@ -117,7 +117,6 @@ window.JobListComponent = {
 
                     if (deleteJob) {
                         //sendMessage({ "type" : "DeleteJob", "jobID" : job.jobID }) TODO reimplement the deletion over WS
-                        console.log("delete")
                         m.request({ url: "/api/job/" + job.jobID, method: "DELETE" }).then(function(){
                         });
                     }
@@ -134,7 +133,7 @@ window.JobListComponent = {
             // If the mode has changed adjust the order (ascending - true / descending - false)
             JobListComponent.sort = { mode : sortMode, asc : ((sameMode && reverse) ? !oldSort.asc : true) }
         }
-        //console.log("Sorting: ", sortMode, reverse, oldSort, JobListComponent.sort);
+        console.log("Sorting: ", sortMode, reverse, oldSort, JobListComponent.sort);
         // inv gets multiplied to invert the sorting order
         inv = JobListComponent.sort.asc ? 1 : -1;
         // Check if the selected jobID is in the view to get the new index to scroll to
@@ -143,24 +142,15 @@ window.JobListComponent = {
         // Sort the list
         JobListComponent.list.sort(function(job1 : any, job2 : any) {
             switch (JobListComponent.sort.mode) {
-                case "toolName"  :
-                    $('.toolsort').css('color', '#2E8C81');
-                    $('.idsort').css('color', '#707070');
-                    $('.datesort').css('color', '#707070');
-                    return inv * job2.tool.localeCompare(job1.tool);
+                case "tool"  :
+                    return inv * job1.tool.localeCompare(job2.tool);
                 case "jobID"     :
-                    $('.idsort').css('color', '#2E8C81');
-                    $('.toolsort').css('color', '#707070');
-                    $('.datesort').css('color', '#707070');
-                    return inv * job2.jobID.localeCompare(job1.jobID);
-                case "createdOn" :
-                    $('.datesort').css('color', '#2E8C81');
-                    $('.idsort').css('color', '#707070');
-                    $('.toolsort').css('color', '#707070');
-                    return inv * (job1.createdOn - job2.createdOn);
+                    return inv * job1.jobID.localeCompare(job2.jobID);
+                case "dateCreated":
+                    console.log("job:", job1.dateCreated, job2.dateCreated);
+                    return inv * (job1.dateCreated - job2.dateCreated);
                 default          :
-                    $('.datesort').css('color', '#707070');
-                    return inv * (job1.createdOn - job2.createdOn);
+                    return inv * (job1.dateCreated - job2.dateCreated);
             }
         });
         // Scroll to the selected item if it was in the view before
@@ -178,8 +168,8 @@ window.JobListComponent = {
             JobListComponent.list[index] = newJob;              // Job is not new, update it
         } else {
             JobListComponent.list.push(newJob);                 // Job is new, push it to the list
-            JobListComponent.register([newJob.jobID]);
             JobListComponent.sortList();                        // Sort the list with the current sorting mode
+            JobListComponent.register([newJob.jobID]);
         }
         if (newJob.jobID === JobListComponent.selectedJobID) {  // Since the job is selected
             index = this.getJobIndex(newJob.jobID);             // find the new index of the job,
@@ -235,9 +225,12 @@ window.JobListComponent = {
         numScrollItems = JobListComponent.numVisibleItems; // How many items to scroll per click
         return m("div", { "class": "job-list" }, [
             m("div", { "class": "job-button" }, [
-                m("div", { "class": "idsort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
-                m("div", { "class": "datesort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "createdOn", true) }, "Date"),
-                m("div", { "class": "toolsort textcenter", onclick: JobListComponent.sortList.bind(ctrl, "toolName", true) }, "Tool"),
+                m("div", { "class": "sort id textcenter" + (JobListComponent.sort.mode == "jobID" ? " selected" : ""),
+                           onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
+                m("div", { "class": "sort date textcenter"  + (JobListComponent.sort.mode == "dateCreated" ? " selected" : ""),
+                           onclick: JobListComponent.sortList.bind(ctrl, "dateCreated", true) }, "Date"),
+                m("div", { "class": "sort tool textcenter"  + (JobListComponent.sort.mode == "tool" ? " selected" : ""),
+                           onclick: JobListComponent.sortList.bind(ctrl, "tool", true) }, "Tool"),
                 m("div", { "class": "openmanager textcenter"}, m('a', { href : "/#/jobmanager"}, m("i", {"class": "icon-list"})))
             ]),
             m("div", { "class": "elements noselect" }, [

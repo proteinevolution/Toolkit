@@ -35,15 +35,18 @@
     box-shadow: 2px 2px 15px -5px rgba(153,153,153,1);
 }
 
-.job-list .idsort {
+.job-list .sort {
+    color: #707070;
+}
+.job-list .sort.id {
     width: 25%;
 }
 
-.job-list .toolsort {
+.job-list .sort.tool {
     width: 25%;
 }
 
-.job-list .datesort {
+.job-list .sort.date {
     width: 25%;
 }
 
@@ -58,6 +61,10 @@
 .job-list .boxclose {
     width: 20%;
     opacity: 0.8;
+}
+
+.job-list .sort.selected {
+    color: #2E8C81;
 }
 
 .icon-list {
