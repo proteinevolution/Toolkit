@@ -77,11 +77,7 @@ POST          /profile/submit/password/               @controllers.Auth.password
 GET           /verification/:userName/:token          @controllers.Auth.verification(userName : String, token : String)
 GET           /getCurrentUser                         @controllers.Auth.profile2json()
 
-# Find a Job
-GET           /jobs/find/:queryString                 @controllers.Search.getJob(queryString : String)
-GET           /jobs                                   @controllers.Search.get
-GET           /indexPageInfo                          @controllers.Search.getIndexPageInfo
-# Update Job status
+# Update Job status (should be server internal access only)
 POST          /jobs/done/:jobID/:key                  @controllers.Jobs.jobStatusDone(jobID : String, key: String)
 POST          /jobs/error/:jobID/:key                 @controllers.Jobs.jobStatusError(jobID : String, key: String)
 POST          /jobs/running/:jobID/:key               @controllers.Jobs.jobStatusRunning(jobID : String, key: String)
@@ -104,15 +100,12 @@ GET           /load                                   @controllers.ClusterContro
 # Static route
 GET           /static/get/:static                     @controllers.Service.static(static : String)
 
-# ElasticSearch
-
-#GET     /search/jobs/:id                                   @controllers.Search.getJob(id: String)
-#GET     /search:q                                          @controllers.Search.searchJob(q: String)
+# Search controller access
+GET           /jobs                                   @controllers.Search.get
+GET           /indexPageInfo                          @controllers.Search.getIndexPageInfo
 GET           /search/checkJobID/:jobID               @controllers.Search.checkJobID(jobID : String, resubmit : Boolean = false)
-GET           /search/checkJobID/resubmit/:jobID      @controllers.Search.checkJobID(jobID : String, resubmit : Boolean = true)
-
-#GET           /suggest/:jobID                         @controllers.Search.ac(jobID: String)
-GET           /getToolList                            @controllers.Search.getToolList()
+GET           /search/checkJobID/:jobID/resubmit      @controllers.Search.checkJobID(jobID : String, resubmit : Boolean = true)
+GET           /getToolList                            @controllers.Search.getToolList
 GET           /suggest/:jobID                         @controllers.Search.autoComplete(jobID: String)
 GET           /checktool/:tool                        @controllers.Search.existsTool(tool: String)
 

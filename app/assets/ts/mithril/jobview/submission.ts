@@ -12,7 +12,8 @@
         if (jobID !== "") { // ignore checking if the field is empty as the server will generate a jobID in that case.
             if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
                 JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
-                    m.request({ method: "GET", url: "/search/checkJobID/"+(addResubmitVersion?"resubmit/"+jobID:jobID)}).then(
+                    let route = jsRoutes.controllers.Search.checkJobID(jobID, addResubmitVersion);
+                    m.request({ method: route.method, url: route.url}).then(
                         function (data) {
                             console.log(data);
                             JobSubmissionComponent.jobIDValid = !data.exists;
@@ -64,7 +65,7 @@
                 }
                 JobSubmissionComponent.submitting = true; // ensure that the submission is not reinitiated while a submission is ongoing
 
-                let submitRoute : any, formData : FormData, jobID : string, toolName : string, submitButton : JQuery, form : any;
+                let submitRoute : any, formData : FormData, jobID : string, tool : string, submitButton : JQuery, form : any;
                 form = document.getElementById("jobform");
                 if(!form.checkValidity()) {
                     JobSubmissionComponent.submitting = false;
@@ -75,13 +76,13 @@
                 // disable submit button
                 submitButton = $(".submitJob");
                 submitButton.prop("disabled", true);
-                toolName = args.job().tool.toolname;
+                tool = args.job().tool.toolname;
                 jobID = JobSubmissionComponent.currentJobID;
                 console.log("Current JobID is: ", jobID, JobSubmissionComponent.currentJobID, "valid:", JobSubmissionComponent.jobIDValid);
 
                 // collect form data
                 formData = new FormData(form);
-                formData.append("toolName", toolName);
+                formData.append("tool", tool);
 
                 if ((jobID != null) && (jobID !== "")) { formData.append("jobID", jobID); }
 
@@ -94,7 +95,7 @@
                 if(parentid) {
                     formData.append('parentid', parentid);
                 }
-                submitRoute = jsRoutes.controllers.JobController.submitJob(toolName);
+                submitRoute = jsRoutes.controllers.JobController.submitJob(tool);
                 m.request({
                     method: submitRoute.method,
                     url: submitRoute.url,
@@ -108,7 +109,7 @@
                         console.log("Job Submission was successful.");
                         jobID = submissionReturnData.jobID;
                         let jobListComp = JobListComponent.Job(
-                            { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), toolname: toolName }
+                            { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), tool: tool }
                         );
                         JobListComponent.pushJob(jobListComp, true);
                     } else {
@@ -169,12 +170,6 @@
                 style: "float: right;",
                 onclick: ctrl.submit.bind(ctrl, true)
             }),
-            //!args.isJob ? m("label", m("input", { type: "checkbox", name: "private", value: "true", checked: "checked" }), "Private" ) : null, // TODO reimplement private checkbox
-            //args.isJob && args.job().jobstate === 1 ?
-            //    m("input", { type: "button", class: "button small addJob", value: "Start Job", onclick: ctrl.startJob })
-            //    : null,
-            //args.isJob ? m("input", { type: "button", class: "button small addJob", value: "Add Job", onclick: ctrl.addJob })
-            //    : null,
             JobSubmissionComponent.jobIDComponent(ctrl), m(ProjectComponent, {})
         ])
     }

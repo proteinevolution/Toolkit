@@ -108,10 +108,6 @@ trait CommonModule extends ReactiveMongoComponents {
 
   }
 
-  protected def countJobs(selector: BSONDocument): Future[Int] = {
-    jobCollection.flatMap(_.count(Some(selector)))
-  }
-
   /**
     * Finds the first / last job with the matching sort
     */
