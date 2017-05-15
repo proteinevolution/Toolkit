@@ -111,9 +111,12 @@ declare class JobManager{
     public static view: any;
     public static reload : Function;
     public static data : any;
-    public static dataTableLoader: Function;
-    public static toColumnItems: Function;
-    public static toColumnNames: Function;
+    public static removeFromList: Function;
+    public static addToList: Function;
+    public static mapStatus: Function;
+    public static deleteJob: Function;
+    public static dataTables: Function;
+    public static getJob: Function;
 
 }
 

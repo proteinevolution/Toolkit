@@ -50,11 +50,10 @@ class LiveTable {
     static lastJob     : Job = null;
     static totalJobs   : number = 0;
     static updateJobInfo () : void {
-        m.request({method: "GET", url: "indexPageInfo"})
+        let route = jsRoutes.controllers.Search.getIndexPageInfo();
+        m.request({method: route.method, url: route.url })
             .then(function(pageInfo) {
-                //console.log(JSON.stringify(pageInfo));
                 LiveTable.lastJob   = pageInfo.lastJob;
-                LiveTable.totalJobs = pageInfo.totalJobs;
             }).catch(function(error){console.warn(error);});
     }
     static pushJob (job : Job) : void {
