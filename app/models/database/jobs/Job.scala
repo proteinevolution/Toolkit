@@ -88,7 +88,7 @@ case class Jobitem(mainID: String,
                    project: String,
                    state: JobState,
                    ownerName: String,
-                   createdOn: String,
+                   dateCreated: String,
                    toolitem: Toolitem,
                    views: Seq[String],
                    paramValues: Map[String, String])

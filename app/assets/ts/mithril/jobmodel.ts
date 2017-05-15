@@ -75,7 +75,7 @@ window.JobModel = {
                     isJob: true,
                     jobID: data.jobID,
                     ownerName: data.ownerName,
-                    createdOn: data.createdOn,
+                    dateCreated: data.dateCreated,
                     jobstate: data.state,
                     views: data.views,
                     successful : true
