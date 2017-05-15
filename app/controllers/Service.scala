@@ -97,7 +97,7 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
       (JsPath \ "project").write[String] and
       (JsPath \ "state").write[JobState] and
       (JsPath \ "ownerName").write[String] and
-      (JsPath \ "createdOn").write[String] and
+      (JsPath \ "dateCreated").write[String] and
       (JsPath \ "toolitem").write[Toolitem] and
       (JsPath \ "views").write[Seq[String]] and
       (JsPath \ "paramValues").write[Map[String, String]](play.api.libs.json.Writes.mapWrites[String])

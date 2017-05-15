@@ -15,7 +15,7 @@ JobLineComponent = {
                     m("i", { class: "icon-information_white helpicon" })
                 )
             ]),
-            m("span", { class: "jobdate" }, isJob ? "Created: " + (args.job().createdOn) : "")
+            m("span", { class: "jobdate" }, isJob ? "Created: " + (args.job().dateCreated) : "")
         ]);
     }
 };
