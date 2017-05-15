@@ -91,7 +91,13 @@ window.JobManager = {
                     'targets': 1,
                     'render': function(jobID: any){
                         return '<a href="/jobs/'+jobID+'" type="button">'+jobID+'</a>';
-                    }
+                    },
+                    "createdCell": function (td: any, cellData: any, rowData: any, row: any, col: any) {
+                            let status = a[JobManager.getJob(cellData)[0].status];
+                            if(status) {
+                                $(td).addClass(status);
+                            }
+                    },
                 },
                 {
                     'targets': 0,
