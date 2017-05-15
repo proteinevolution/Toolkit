@@ -41,12 +41,12 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
   def cleaned(): JsObject = {
 
     Json.obj(
-      Job.JOBID        -> jobID,
-      "project"      -> project,
-      Job.STATUS       -> status,
-      Job.DATECREATED    -> dateCreated.get,
-      Job.TOOL     -> tool,
-      "toolnameLong" -> ConfigFactory.load().getString(s"Tools.$tool.longname")
+      Job.JOBID       -> jobID,
+      "project"       -> project,
+      Job.STATUS      -> status,
+      Job.DATECREATED -> dateCreated.get,
+      Job.TOOL        -> tool,
+      "toolnameLong"  -> ConfigFactory.load().getString(s"Tools.$tool.longname")
     )
   }
 
@@ -135,7 +135,7 @@ object Job {
           val dateViewed  = (obj \ DATEVIEWED).asOpt[String]
           JsSuccess(
             Job(
-              mainID = BSONObjectID.generate(), // TODO need to find out how to get the main id as it is needed for the job
+              mainID = BSONObjectID.generate(),
               parentID = None,
               jobID = "",
               ownerID = Some(BSONObjectID.generate()),
