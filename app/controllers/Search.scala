@@ -31,24 +31,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     with UserSessions
     with CommonModule {
 
-  def ac(queryString: String): Action[AnyContent] = Action.async { implicit request =>
-    jobDao.jobIDcompletionSuggester(queryString).map { richSearchResponse =>
-      val jobIDEntries = richSearchResponse.suggestion("jobID")
-      if (jobIDEntries.size > 0) {
-
-        val resp = jobIDEntries.entry(queryString).optionsText.toList
-
-        Ok(Json.toJson(resp))
-
-      } else {
-
-        NotFound
-
-      }
-    }
-  }
-
-  def getToolList(): Action[AnyContent] = Action {
+  def getToolList: Action[AnyContent] = Action {
     Ok(Json.toJson(toolFactory.values.values.map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
   }
 
@@ -81,31 +64,8 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     getUser.flatMap { user =>
       val toolOpt: Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
       toolOpt match {
-        case Some(tool) => Future.successful(Ok(Json.toJson(true)))
-        case None       => Future.successful(NotFound)
-      }
-    }
-  }
-
-  def elasticSearch(userID: BSONObjectID, queryString: String): Future[List[Job]] = {
-    jobDao.fuzzySearchJobID(queryString).flatMap { richSearchResponse =>
-      if (richSearchResponse.totalHits > 0) {
-        val jobIDEntries = richSearchResponse.getHits.getHits
-        val mainIDs      = jobIDEntries.toList.map(hit => BSONObjectID.parse(hit.id).get)
-
-        // Collect the list of jobs
-        findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)))
-      } else {
-        Future.successful(List.empty[Job])
-      }
-    }
-  }
-
-  def getJob(queryString: String): Action[AnyContent] = Action.async { implicit request =>
-    // Retrieve the user from the cache or the DB
-    getUser.flatMap { user =>
-      elasticSearch(user.userID, queryString).map { jobList =>
-        Ok(Json.obj("jobs" -> jobList.map(_.cleaned())))
+        case Some(_) => Future.successful(Ok(Json.toJson(true)))
+        case None    => Future.successful(NotFound)
       }
     }
   }
@@ -120,15 +80,6 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     }
   }
 
-  def getCleaned: Action[AnyContent] = Action.async { implicit request =>
-    // Retrieve the jobs from the DB
-    getUser.flatMap { user =>
-      findJobs(BSONDocument(Job.OWNERID -> user.userID)).map { jobs =>
-        Ok(Json.toJson(jobs.map(_.cleaned())))
-      }
-    }
-  }
-
   /**
     * Returns a json object containing both the last updated job and the most recent total number of jobs.
     *
@@ -136,19 +87,23 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     */
   def getIndexPageInfo: Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
-      findSortedJob(BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
-                                 BSONDocument(Job.OWNERID  -> user.userID)),
-                    BSONDocument(Job.DATEUPDATED -> -1)).flatMap { lastJob =>
-        countJobs(BSONDocument(Job.OWNERID -> user.userID)).map { count =>
-          if (count > 0)
-            Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned()), "totalJobs" -> count))
-          else
-            NotFound("None")
-        }
+      findSortedJob(
+        BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
+                     BSONDocument(Job.OWNERID  -> user.userID)),
+        BSONDocument(Job.DATEUPDATED -> -1)
+      ).map { lastJob =>
+        Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned())))
       }
     }
   }
 
+  /**
+    * Looks for a jobID in the DB and checks if it is in use
+    * if resubmit is true, the return object will also include the highest version jobID
+    * @param jobID
+    * @param resubmit
+    * @return
+    */
   def checkJobID(jobID: String, resubmit: Boolean = false): Action[AnyContent] = Action.async {
     val jobIDNoVersionPattern = "([0-9a-zA-Z_]{3,96})".r
     val jobVersionPattern     = "(_([0-9]{1,3}))".r

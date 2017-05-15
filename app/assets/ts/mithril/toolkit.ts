@@ -44,7 +44,8 @@ window.Toolkit = {
                 // ensure addition to the job list
                 //sendMessage({ type: "RegisterJobs", "jobIDs": [jobID] });
                 // request job
-                m.request({url: "/api/job/load/" + jobID, method: "GET"}).catch(function (e) {
+                let route = jsRoutes.controllers.JobController.loadJob(jobID);
+                m.request({method: route.method, url: route.url}).catch(function (e) {
                     m.route("/404");
                     console.log("Job Not found", e);
                 }).then(function (data) {
@@ -65,7 +66,8 @@ window.Toolkit = {
 
             // checks whether toolname is valid
             if (!args.isJob) {
-                m.request({url: "/checktool/" + toolname, method: "GET"}).catch(function (e) {
+                let route = jsRoutes.controllers.Search.existsTool(toolname);
+                m.request({method: route.method, url: route.url}).catch(function (e) {
                     m.route("/404");
                     console.log("Tool not found", e);
                 }).then(function(data) {
