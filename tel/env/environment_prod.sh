@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 BIOPROGS="/cluster/toolkit/production/bioprogs/"
 DATABASES="/cluster/toolkit/production/databases/"
 
@@ -13,7 +12,6 @@ export TAXONOMY="${DATABASES}/standard/taxonomy"
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
 export JRE_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre
 
-
 # PERL
 ##########################################################
 export PERL5LIB=/cluster/toolkit/production/bioprogs/lib
@@ -21,10 +19,17 @@ export PERL5LIB=/cluster/toolkit/production/bioprogs/lib
 # HHLIB
 export HHLIB=/cluster/toolkit/production/bioprogs/tools/hh-suite-build
 
-
 # HHpred
 export HHPRED_CONFIG=/cluster/toolkit/production/bioprogs/env/hhpred.config
 
+# COILS/PCOILS
+export COILSDIR=/cluster/toolkit/production/bioprogs/pcoils
+
+#BACKTRANSLATOR
+export BACKTRANSLATORPATH=/cluster/toolkit/production/bioprogs/tools/backtranslate
+
+#SamCC
+export SAMCCPATH=/cluster/toolkit/production/bioprogs/tools/samcc
 
 # PATH variable
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" # Python binary
