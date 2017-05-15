@@ -41,11 +41,11 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
   def cleaned(): JsObject = {
 
     Json.obj(
-      "jobID"        -> jobID,
+      Job.JOBID        -> jobID,
       "project"      -> project,
-      "state"        -> status,
-      "createdOn"    -> dateCreated.get,
-      "toolname"     -> tool,
+      Job.STATUS       -> status,
+      Job.DATECREATED    -> dateCreated.get,
+      Job.TOOL     -> tool,
       "toolnameLong" -> ConfigFactory.load().getString(s"Tools.$tool.longname")
     )
   }
