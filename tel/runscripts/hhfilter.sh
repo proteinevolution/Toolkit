@@ -1,4 +1,43 @@
 JOBID=%jobid.content
+
+SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
+CHAR_COUNT=$(wc -m < ../params/alignment)
+FORMAT=$(head -1 ../params/alignment | egrep ^CLUSTAL | wc -l)
+
+if [ $CHAR_COUNT -gt "10000000" ] ; then
+      echo "#Input may no contain more than 10000000 characters." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
+
+if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
+      echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
+
+if [ $FORMAT = "1" ] ; then
+
+      OUTFORMAT=$(reformatValidator.pl clu fas \
+	        $(readlink -f ../params/alignment) \
+            $(readlink -f ../params/alignment) \
+            -d 160 -uc -l 32000)
+else
+      OUTFORMAT=$(reformatValidator.pl fas fas \
+	        $(readlink -f ../params/alignment) \
+            $(readlink -f ../params/alignment) \
+            -d 160 -uc -l 32000)
+fi
+
+if [ "$OUTFORMAT" = "fas" ] ; then
+    echo "#Starting HHfilter." >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+else
+    echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    false
+fi
+
 hhfilter        -i %alignment.path \
                 -o ../results/alignment.a3m \
                 -id %max_seqid.content \
@@ -6,6 +45,9 @@ hhfilter        -i %alignment.path \
                 -cov %min_query_cov.content \
                 -diff %num_seqs_extract \
                 -M 30
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 reformat_hhsuite.pl a3m fas ../results/alignment.a3m ../results/alignment.fas
 
