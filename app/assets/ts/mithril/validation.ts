@@ -113,7 +113,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "ancescon":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
                     break;
 
                 case "clans":
@@ -526,7 +526,7 @@ let validationProcess = function(elem: any,toolname: string) {
                     ancesconTarget.mustHave2();
             }
 
-            seqLimit = 20000;
+            seqLimit = 2000;
 
             break;
 
