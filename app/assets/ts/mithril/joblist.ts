@@ -93,7 +93,7 @@ window.JobListComponent = {
         request.then(function(data : any) {
             //console.log("Received list.", data, "Saving it.");
             JobListComponent.list = data;   // put the jobs in the list
-            console.log("Sorting List.");
+            //console.log("Sorting List.");
             JobListComponent.sortList();    // sort the list with the current sorting mode
             //console.log("Registering Jobs.");
             JobListComponent.register();    // send the server a message that these items are being watched
@@ -133,7 +133,7 @@ window.JobListComponent = {
             // If the mode has changed adjust the order (ascending - true / descending - false)
             JobListComponent.sort = { mode : sortMode, asc : ((sameMode && reverse) ? !oldSort.asc : true) }
         }
-        console.log("Sorting: ", sortMode, reverse, oldSort, JobListComponent.sort);
+        //console.log("Sorting: ", sortMode, reverse, oldSort, JobListComponent.sort);
         // inv gets multiplied to invert the sorting order
         inv = JobListComponent.sort.asc ? 1 : -1;
         // Check if the selected jobID is in the view to get the new index to scroll to
@@ -147,7 +147,6 @@ window.JobListComponent = {
                 case "jobID"     :
                     return inv * job1.jobID.localeCompare(job2.jobID);
                 case "dateCreated":
-                    console.log("job:", job1.dateCreated, job2.dateCreated);
                     return inv * (job1.dateCreated - job2.dateCreated);
                 default          :
                     return inv * (job1.dateCreated - job2.dateCreated);
