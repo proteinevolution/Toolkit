@@ -30,13 +30,27 @@ else
 fi
 
 if [ "$OUTFORMAT" = "fas" ] ; then
-    echo "#Starting HHfilter." >> ../results/process.log
+
+    SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
+    echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
     curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
 else
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
     curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
     false
 fi
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+if [ $SEQ_COUNT -gt "2000" ] ; then
+      echo "#Input contains more than 2000 sequences." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
+
+echo "#Starting HHfilter." >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 hhfilter        -i %alignment.path \
                 -o ../results/alignment.a3m \
