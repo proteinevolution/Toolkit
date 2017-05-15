@@ -16,9 +16,9 @@ window.JobListComponent = {
     Job : function (data : any) { // Generates a job Object
         return {
             jobID     : data ? data.jobID : null,
-            state     : data ? data.state : null,
+            status     : data ? data.status : null,
             createdOn : data ? data.createdOn : null,
-            toolname  : data ? data.toolname  : null,
+            tool  : data ? data.tool  : null,
             // Functions
             select    : function(job : any) {     // marks a job as selected and changes the route
                 return function(e : any) {        // ensure that the event bubble is not triggering when the clear button is hit
@@ -32,12 +32,12 @@ window.JobListComponent = {
             controller : function (args : any) {},
             view : function (ctrl : any) {
                 return m("div", {
-                    "class"   : ("job " + a[this.state]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
+                    "class"   : ("job " + a[this.status]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
                     id      : this.jobID,
                     onclick : this.select(this)
                 }, [
                     m("div", { "class": "jobid"    }, this.jobID),
-                    m("div", { "class": "toolname" }, this.toolname.substr(0, 4).toUpperCase()),
+                    m("div", { "class": "toolname" }, this.tool.substr(0, 4).toUpperCase()),
                     m("div", {
                         id      : "boxclose",
                         "class"   : "boxclose",
@@ -72,7 +72,7 @@ window.JobListComponent = {
     },
     jobIDsFiltered  : function () : Array<string> {         // Returns all the jobIDs from the list which can still be updated
         return JobListComponent.list.filter(function(job : any){
-            return job.state != 4 && job.state != 5
+            return job.status != 4 && job.status != 5
         }).map(function(job : any){ return job.jobID })
     },
     register        : function (jobIDs? : Array<string>) : void {   // Notices the server to send update messages about the jobs
@@ -109,14 +109,17 @@ window.JobListComponent = {
             if (job.jobID === jobID) {
                 if (jobID === JobListComponent.selectedJobID) {
                     JobListComponent.selectedJobID = null;
-                    m.route("/tools/" + job.toolname);
+                    m.route("/jobmanager");
                 }
                 JobListComponent.list[idx] = null;
                 JobListComponent.list.splice(idx, 1);
                 if (messageServer) {
+
                     if (deleteJob) {
                         //sendMessage({ "type" : "DeleteJob", "jobID" : job.jobID }) TODO reimplement the deletion over WS
-                        m.request({ url: "/api/job/" + job.jobID, method: "DELETE" });
+                        console.log("delete")
+                        m.request({ url: "/api/job/" + job.jobID, method: "DELETE" }).then(function(){
+                        });
                     }
                     else           { sendMessage({ "type" : "ClearJob",  "jobID" : job.jobID }) }
                 }
@@ -144,7 +147,7 @@ window.JobListComponent = {
                     $('.toolsort').css('color', '#2E8C81');
                     $('.idsort').css('color', '#707070');
                     $('.datesort').css('color', '#707070');
-                    return inv * job2.toolname.localeCompare(job1.toolname);
+                    return inv * job2.tool.localeCompare(job1.tool);
                 case "jobID"     :
                     $('.idsort').css('color', '#2E8C81');
                     $('.toolsort').css('color', '#707070');
