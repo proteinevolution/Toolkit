@@ -12,8 +12,8 @@
         if (jobID !== "") { // ignore checking if the field is empty as the server will generate a jobID in that case.
             if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
                 JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
-                    let route = jsRoutes.controllers.Search.checkJobID(jobID, addResubmitVersion);
-                    m.request({ method: route.method, url: route.url}).then(
+                    let checkJobIDroute = jsRoutes.controllers.Search.checkJobID(jobID, addResubmitVersion);
+                    m.request({ method: checkJobIDroute.method, url: checkJobIDroute.url}).then(
                         function (data) {
                             console.log(data);
                             JobSubmissionComponent.jobIDValid = !data.exists;
@@ -109,7 +109,7 @@
                         console.log("Job Submission was successful.");
                         jobID = submissionReturnData.jobID;
                         let jobListComp = JobListComponent.Job(
-                            { jobID: jobID, state: 0, createdOn: Date.now().valueOf(), tool: tool }
+                            { jobID: jobID, state: 0, dateCreated: Date.now().valueOf(), tool: tool }
                         );
                         JobListComponent.pushJob(jobListComp, true);
                     } else {
