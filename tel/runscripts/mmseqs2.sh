@@ -2,6 +2,29 @@ JOBID=%jobid.content
 
 SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
 
+FORMAT=$(reformatValidator.pl fas ufas \
+	$(readlink -f ../params/alignment) \
+    $(readlink -f ../params/alignment) \
+    -d 160 -uc -l 32000)
+
+if [ $FORMAT != "ufas" ] ; then
+
+      echo "#Input is not in FASTA format." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      echo "error" >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      $?=1
+fi
+
+if [ $SEQ_COUNT -lt "2" ] ; then
+
+      echo "#Input contains less than 2 sequences." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      echo "error" >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      $?=1
+fi
+
 if [ $SEQ_COUNT -gt "20000" ] ; then
 
       echo "#Input contains more than 20000 sequences." >> ../results/process.log
