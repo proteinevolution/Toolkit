@@ -333,19 +333,14 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             x
           }
           val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
-          Logger.info(jobHash.inputHash)
-
           // Match the hash
           jobDao.matchHash(jobHash).flatMap { richSearchResponse =>
-            Logger.info("Retrieved richSearchResponse")
-            Logger.info("success: " + richSearchResponse.getHits.getHits.map(_.getId).mkString(", "))
-            Logger.info("hits: " + richSearchResponse.totalHits)
-
             // Generate a list of hits and convert them into a list of future option jobs
             val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
               BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate())
             }
 
+            Logger.info(mainIDs.map(_.stringify).mkString(", "))
             // Find the Jobs in the Database
             findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
               val foundMainIDs = jobList.map(_.mainID)

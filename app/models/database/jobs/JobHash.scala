@@ -22,7 +22,14 @@ case class JobHash(mainID: BSONObjectID,
                    toolName: String,
                    toolHash: String,
                    dateCreated: Option[DateTime],
-                   jobID: String)
+                   jobID: String) {
+
+  override def toString : String = {
+    "\nmainID: " + mainID.stringify + "\nJobHash: " + inputHash + "\nrsHash: "+ runscriptHash +
+    "\ndbName: " + dbName + "\ndbMtime "+dbMtime+"\nTool"+ toolName+"\ntoolHash"+ toolHash+
+    "\ndateCreated: "+dateCreated+"\njobID: "+jobID
+  }
+}
 
 object JobHash {
   val ID            = "_id"
@@ -71,7 +78,7 @@ object JobHash {
     */
   def generateJobHash(job: Job, params: Map[String, String], env : Env, jobDAO: JobDAO): JobHash = {
     // filter unique parameters
-    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public"
+    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid"
 
     // Create the job Hash depending on what db is used
 
