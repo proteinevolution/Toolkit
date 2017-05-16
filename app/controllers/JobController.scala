@@ -324,6 +324,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     */
   def checkHash(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
+      Logger.info("Looking for jobID checkHash "+jobID)
       findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
         case Some(job) =>
           val params: Map[String, String] = {
@@ -333,7 +334,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             x
           }
           val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
-          Logger.info(jobHash.inputHash)
+          Logger.info("job Hash: "+jobHash.toString)
 
           // Match the hash
           jobDao.matchHash(jobHash).flatMap { richSearchResponse =>
@@ -346,6 +347,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate())
             }
 
+            Logger.info(mainIDs.map(_.stringify).mkString(", "))
             // Find the Jobs in the Database
             findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
               val foundMainIDs = jobList.map(_.mainID)
