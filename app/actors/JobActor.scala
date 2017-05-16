@@ -743,18 +743,15 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               Logger.info("DONE Removing execution context")
               // Tell the user that their job finished via eMail
               sendJobUpdateMail(job)
-
-              // Put the result files into the database, JobActor has to wait until this process has finished
-              Future
-                .sequence(
-                  (jobPath / job.jobID / "results").list
+                 val result =  (jobPath / job.jobID / "results").list
                     .withFilter(_.hasExtension)
                     .withFilter(_.extension.get == ".json")
                     .map { file =>
-
-                      Future { Await.result(result2Job(job.jobID, file.nameWithoutExtension, Json.parse(file.contentAsString)), Duration.Inf) }
-
-                    })
+                      (file.nameWithoutExtension, reactivemongo.play.json.BSONFormats.toBSON(Json.parse(file.contentAsString)).get)
+                    }.toTraversable
+                  // Put the result files into the database, JobActor has to wait until this process has finished
+                val bsonResult = BSONDocument(result)
+                result2Job(job.jobID, bsonResult)
                 .map { _ =>
                   // Now we can update the JobState and remove it, once the update has completed
                   this.updateJobState(job).map { job =>
@@ -793,8 +790,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     case PushJobManager(job: Job, userID) =>
       val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
       wsActors.foreach(_.foreach(_ ! PushJob(job)))
-
-      modifyUserWithCache(BSONDocument(User.IDDB -> userID), BSONDocument("$pull" -> BSONDocument(User.JOBS -> job.jobID)))
+      modifyUserWithCache(BSONDocument(User.IDDB -> userID), BSONDocument("$set" -> BSONDocument(User.JOBS -> job.jobID)))
 
   }
 }
