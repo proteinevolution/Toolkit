@@ -41,17 +41,19 @@
                             placeholder: "Custom JobID",
                             onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobID),
                             onchange:    m.withAttr("value", JobSubmissionComponent.checkJobID),
-                            value:       JobSubmissionComponent.currentJobID
+                            //value:       JobSubmissionComponent.currentJobID
         });
     },
     controller: function(args : any) {
         if (JobSubmissionComponent.currentJobID == null) {
             let newJobID;
             if (args.isJob) {
-                JobSubmissionComponent.jobResubmit = true;
-                JobSubmissionComponent.jobIDValid  = false;
-                newJobID = args.job().jobID;
-                JobSubmissionComponent.checkJobID(newJobID, true); // ask server for new jobID
+                //JobSubmissionComponent.jobResubmit = true;
+                //JobSubmissionComponent.jobIDValid  = false;
+                //newJobID = args.job().jobID;
+                //JobSubmissionComponent.checkJobID(newJobID, true); // ask server for new jobID
+                JobSubmissionComponent.jobIDValid  = true; // Disable versioning for now, can easily re-enabled later
+
             } else {
                 JobSubmissionComponent.jobIDValid  = true;
             }
