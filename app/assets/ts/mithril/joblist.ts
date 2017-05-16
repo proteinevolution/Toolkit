@@ -12,13 +12,13 @@ let tooltipSearch = function(elem : any, isInit : boolean) {
 interface Window { JobListComponent: any; }
 
 window.JobListComponent = {
-
-    Job : function (data : any) { // Generates a job Object
+    // Generates a job Object
+    Job : function (data : any) {
         return {
-            jobID       : data ? data.jobID : null,
-            status      : data ? data.status : null,
-            dateCreated : data ? data.dateCreated : null,
-            tool        : data ? data.tool  : null,
+            jobID       : ((data && data.jobID       != null) ? data.jobID       : null),
+            status      : ((data && data.status      != null) ? data.status      : null),
+            dateCreated : ((data && data.dateCreated != null) ? data.dateCreated : null),
+            tool        : ((data && data.tool        != null) ? data.tool        : null),
             // Functions
             select    : function(job : any) {     // marks a job as selected and changes the route
                 return function(e : any) {        // ensure that the event bubble is not triggering when the clear button is hit
@@ -29,7 +29,7 @@ window.JobListComponent = {
                 }
             },
             // View component
-            controller : function (args : any) {},
+            controller : function (args : any) { return {} },
             view : function (ctrl : any) {
                 return m("div", {
                     "class"   : ("job " + a[this.status]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
@@ -39,7 +39,7 @@ window.JobListComponent = {
                     m("div", { "class": "jobid"    }, this.jobID),
                     m("div", { "class": "toolname" }, this.tool.substr(0, 4).toUpperCase()),
                     m("div", {
-                        id      : "boxclose",
+                        id        : "boxclose",
                         "class"   : "boxclose",
                         onclick : JobListComponent.removeJob.bind(ctrl, this.jobID)
                     })
@@ -52,30 +52,38 @@ window.JobListComponent = {
     numVisibleItems : 12,   // Number of shown jobs
     selectedJobID   : null, // JobID of the selected job
     lastUpdatedJob  : null, // Job which has been updated last
+    // object holding the current sorting mode
     sort            : { mode : "dateCreated", asc : false },
+    // Regex for jobIDs
     jobIDRegExp     : new RegExp(/^[a-zA-Z0-9\_]{6,96}(\_\d{1,3})?$/),
-    getJob          : function (jobID : string) : any {    // Returns a job with the given jobID
+    // Returns a job with the given jobID
+    getJob          : function (jobID : string) : any {
         let foundJob = null;
         JobListComponent.list.map(function (job : any){ if(job.jobID === jobID) foundJob = job });
         return foundJob
     },
-    getJobIndex     : function (jobID : string) : any {    // Returns the index of a job with the given jobID
+    // Returns the index of a job with the given jobID
+    getJobIndex     : function (jobID : string) : any {
         let foundIndex = null;
         JobListComponent.list.map(function (job : any, index : number){ if (job.jobID === jobID) foundIndex = index });
         return foundIndex
     },
-    contains        : function (jobID : string) : boolean {    // Checks if the job with the given jobID is in the list
+    // Checks if the job with the given jobID is in the list
+    contains        : function (jobID : string) : boolean {
         return JobListComponent.getJob(jobID) != null
     },
-    jobIDs          : function () : Array<string> {         // Returns all the jobIDs from the list
+    // Returns all the jobIDs from the list
+    jobIDs          : function () : Array<string> {
         return JobListComponent.list.map(function(job : any){ return job.jobID })
     },
-    jobIDsFiltered  : function () : Array<string> {         // Returns all the jobIDs from the list which can still be updated
+    // Returns all the jobIDs from the list which can still be updated
+    jobIDsFiltered  : function () : Array<string> {
         return JobListComponent.list.filter(function(job : any){
             return job.status != 4 && job.status != 5
         }).map(function(job : any){ return job.jobID })
     },
-    register        : function (jobIDs? : Array<string>) : void {   // Notices the server to send update messages about the jobs
+    // Notices the server to send update messages about the jobs
+    register        : function (jobIDs? : Array<string>) : void {
         if (jobIDs != null) {
             sendMessage({ type: "RegisterJobs", "jobIDs": jobIDs });
         } else {
@@ -127,7 +135,7 @@ window.JobListComponent = {
     },
     sortList        : function(sortMode? : string, reverse? : boolean) : boolean {      // Sorting the list elements
         let oldSort, sameMode : boolean, inv : number, selectedJobID : string, selectedInView : boolean = false;
-        oldSort = JobListComponent.sort;    // grab the old sort
+        oldSort = JobListComponent.sort;    // grab the old sorting method
         if (sortMode != null && reverse != null) {
             sameMode = (oldSort.mode === sortMode); // see if the mode has changed
             // If the mode has changed adjust the order (ascending - true / descending - false)
@@ -142,13 +150,16 @@ window.JobListComponent = {
         // Sort the list
         JobListComponent.list.sort(function(job1 : any, job2 : any) {
             switch (JobListComponent.sort.mode) {
-                case "tool"  :
+                case "tool":
                     return inv * job1.tool.localeCompare(job2.tool);
-                case "jobID"     :
+                case "jobID":
                     return inv * job1.jobID.localeCompare(job2.jobID);
                 case "dateCreated":
+                    if(isNaN(parseInt(job1.dateCreated)) || isNaN(parseInt(job2.dateCreated))) {
+                        console.log("Illegal object with dateCreated NaN:", job1, job2);
+                    }
                     return inv * (job1.dateCreated - job2.dateCreated);
-                default          :
+                default:
                     return inv * (job1.dateCreated - job2.dateCreated);
             }
         });
