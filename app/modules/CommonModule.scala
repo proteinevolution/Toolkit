@@ -73,9 +73,8 @@ trait CommonModule extends ReactiveMongoComponents {
   protected def addFrontendJob(frontendJob: FrontendJob): Future[WriteResult] =
     frontendJobCollection.flatMap(_.insert(frontendJob))
 
-  protected def result2Job(jobID: String, key: String, result: JsValue): Future[Option[BSONDocument]] = {
-    val bson = reactivemongo.play.json.BSONFormats.toBSON(result).get
-    modifyResult(BSONDocument("jobID" -> jobID), BSONDocument("$set" -> BSONDocument(key -> bson)))
+  protected def result2Job(jobID: String, x: BSONDocument): Future[Option[BSONDocument]] = {
+    modifyResult(BSONDocument("jobID" -> jobID), BSONDocument("$set" -> x))
   }
 
   // Able to fetch one field for the respective result

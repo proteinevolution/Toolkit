@@ -15,7 +15,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="selectAll()" class="selectAllSeq"><span>Select all</span></a>
+    <a onclick="selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
     <a type="button" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download File</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
@@ -150,7 +150,7 @@
             selectAllBool = !selectAllBool;
             if(selectAllBool) {
                 selectAllHelper(checkbox);
-                $(".selectAllSeq").addClass("colorToggle");
+                $(".selectAllSeqSpan").addClass("colorToggle");
                 // first empty array
                 checkboxes = [];
                 // push all checkboxes (1 to num_hits) into array
@@ -158,7 +158,7 @@
             }
             else {
                 deselectAll(checkbox);
-                $(".selectAllSeq").removeClass("colorToggle");
+                $(".selectAllSeqSpan").removeClass("colorToggle");
                 // delete all checkboxes from array
                 checkboxes = [];
             }
