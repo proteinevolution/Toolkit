@@ -14,6 +14,28 @@
     }
 };
 
+
+let JobLineComponent = {
+    controller : function() {},
+    view: function(ctrl : any, args : any) {
+        let isJob;
+        isJob = args.job().isJob;
+        return m("div", {
+            "class": "jobline"
+        }, [
+            m((<any>window).HelpModalComponent, { toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong }),
+            m("span", { "class": "toolname" }, [
+                m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
+                m("a", { href: "/#/tools/" + args.job().tool.toolname }, args.job().tool.toolnameLong),
+                m("a", { config: helpModalAccess.bind(args) },
+                    m("i", { "class": "icon-information_white helpicon" })
+                )
+            ]),
+            m("span", { "class": "jobdate" }, isJob ? "Created: " + (args.job().dateCreated) : "")
+        ]);
+    }
+};
+
 let initLoader = function(elem: any, isInit: boolean) : any {
     if(!isInit) {
         return setTimeout(function(){ $(elem).show(); }, 200); // css loading animation to be shown only when the transition to job state tabs takes too long

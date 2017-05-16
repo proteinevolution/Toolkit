@@ -384,9 +384,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           this.getCurrentExecutionContext(jobID) match {
             case Some(executionContext) =>
               // Ensure that the jobID is not being hashed
-              val params  = executionContext.reloadParams - "jobid" - "jobID" - "mainID"
+              val params  = executionContext.reloadParams
               val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
-
+              Logger.info("JobHash: " + jobHash.toString)
               // Match the hash
               jobDao.matchHash(jobHash).map { richSearchResponse =>
                 Logger.info("Retrieved richSearchResponse")
