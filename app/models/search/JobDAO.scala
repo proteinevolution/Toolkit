@@ -91,12 +91,12 @@ final class JobDAO @Inject()(cs: ClusterSetup,
       search in jobHashIndex query {
         bool(
           must(
-            matchQuery("hash", hash).analyzer(StandardAnalyzer),
-            matchQuery("dbname", dbName.getOrElse("none")).analyzer(StandardAnalyzer),
-            termQuery("dbmtime", dbMtime.getOrElse("1970-01-01T00:00:00Z")),
-            matchQuery("toolname", toolname).analyzer(StandardAnalyzer),
-            matchQuery("rshash", rsHash).analyzer(StandardAnalyzer),
-            matchQuery("toolhash", toolHash).analyzer(StandardAnalyzer)
+            matchQuery(JobHash.INPUTHASH, hash).analyzer(StandardAnalyzer),
+            matchQuery(JobHash.DBNAME, dbName.getOrElse("none")).analyzer(StandardAnalyzer),
+            termQuery(JobHash.DBMTIME, dbMtime.getOrElse("1970-01-01T00:00:00Z")),
+            matchQuery(JobHash.TOOLNAME, toolname).analyzer(StandardAnalyzer),
+            matchQuery(JobHash.RUNSCRIPTHASH, rsHash).analyzer(StandardAnalyzer),
+            matchQuery(JobHash.TOOLHASH, toolHash).analyzer(StandardAnalyzer)
           )
         )
       }
@@ -109,12 +109,12 @@ final class JobDAO @Inject()(cs: ClusterSetup,
       search in jobHashIndex query {
         bool(
           must(
-            matchQuery("hash", jobHash.inputHash).analyzer(StandardAnalyzer),
-            matchQuery("dbname", jobHash.dbName.getOrElse("none")).analyzer(StandardAnalyzer),
-            termQuery("dbmtime", jobHash.dbMtime.getOrElse("1970-01-01T00:00:00Z")),
-            matchQuery("toolname", jobHash.toolName).analyzer(StandardAnalyzer),
-            matchQuery("rshash", jobHash.runscriptHash).analyzer(StandardAnalyzer),
-            matchQuery("toolhash", jobHash.toolHash).analyzer(StandardAnalyzer)
+            matchQuery(JobHash.INPUTHASH, jobHash.inputHash).analyzer(StandardAnalyzer),
+            matchQuery(JobHash.DBNAME, jobHash.dbName.getOrElse("none")).analyzer(StandardAnalyzer),
+            termQuery(JobHash.DBMTIME, jobHash.dbMtime.getOrElse("1970-01-01T00:00:00Z")),
+            matchQuery(JobHash.TOOLNAME, jobHash.toolName).analyzer(StandardAnalyzer),
+            matchQuery(JobHash.RUNSCRIPTHASH, jobHash.runscriptHash).analyzer(StandardAnalyzer),
+            matchQuery(JobHash.TOOLHASH, jobHash.toolHash).analyzer(StandardAnalyzer)
           )
         )
       }
