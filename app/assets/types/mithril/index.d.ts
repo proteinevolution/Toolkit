@@ -791,6 +791,14 @@ declare namespace Mithril {
          * The URL to send the request to.
          */
         url: string;
+
+        /**
+         * customized
+         */
+
+         contentType ?: string;
+
+
     }
 
     /**
