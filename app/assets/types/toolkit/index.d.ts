@@ -16,7 +16,7 @@ declare class JobListComponent {
     public static contains(jobID : string) : any;
     public static list: any;
     public static getJob : any;
-
+    public static reloadJob : any;
     public static controller : any;
     public static view : any;
     public static jobIDsFiltered() : any;
