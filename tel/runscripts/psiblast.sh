@@ -27,7 +27,7 @@ fi
 
 psiblast -db %STANDARD/%standarddb.content \
          -matrix %matrix.content \
-         -num_iterations %num_iter.content \
+         -num_iterations %maxrounds.content \
          -evalue %evalue.content \
          -inclusion_ethresh %hhpred_incl_eval.content \
          -gapopen $GAPOPEN \
