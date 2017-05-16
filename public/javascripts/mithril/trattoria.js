@@ -174,6 +174,7 @@ renderParameter = function(content, moreClasses) {
 };
 
 mapParam = function(param, ctrl) {
+
     var comp = formComponents[param.paramType.type];
     return m(comp, {
         param: param,
@@ -258,7 +259,9 @@ JobTabsComponent = {
                     }
                     $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
                     followScroll(document);
-                    setViewport();
+                    if (typeof setViewport === "function") {
+                        setViewport();
+                    }
 
                 } else {
                     job_tab_component.addClass("fullscreen");
@@ -268,7 +271,10 @@ JobTabsComponent = {
                     }
                     $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
                     followScroll(job_tab_component);
-                    setViewport();
+                    if (typeof setViewport === "function") {
+                        setViewport();
+                    }
+
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
