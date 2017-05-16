@@ -157,12 +157,12 @@
             ]),
             Auth.user == null ? null :
                 m("label", {style: "width: 16em; float:left;"}, [
-                    m("input", { type: "checkbox", id:"emailUpdate", name: "emailUpdate", value:true}),
+                    m("input", { type: "checkbox", "class": "checkbox", id:"emailUpdate", name: "emailUpdate", value:true}),
                     "E-Mail notification"
                 ]),
             Auth.user == null ? null :
                 m("label", {style: "width: 16em; float:left;"}, [
-                    m("input", { type: "checkbox", id:"public", name: "public", value:true}),
+                    m("input", { type: "checkbox", "class": "checkbox", id:"public", name: "public", value:true}),
                     "Public Job"
                 ]),
             m("input", {
