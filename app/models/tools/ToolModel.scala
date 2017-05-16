@@ -150,7 +150,7 @@ final class ToolFactory @Inject()(
      Seq(paramAccess.SEQORALI,
          paramAccess.STANDARD_DB,
          paramAccess.MATRIX,
-         paramAccess.NUM_ITER,
+         paramAccess.MAXROUNDS,
          paramAccess.EVALUE,
          paramAccess.HHPRED_INCL_EVAL,
          paramAccess.DESC),

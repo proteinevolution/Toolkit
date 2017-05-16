@@ -3,7 +3,6 @@ interface Window { JobModel: any; }
 window.JobModel = {
     paramValues: {},
     defaultValues: {
-        "num_iter": 1,
         "evalue": "1",
         "inclusion_ethresh": "0.001",
         "min_cov": "20",
@@ -11,7 +10,7 @@ window.JobModel = {
         "gap_open": 11,
         "desc": "250",
         "alignmode": "local",
-        "maxrounds": "2",
+        "maxrounds": "1",
         "matrix": "BLOSUM62",
         "use_nr70": "1",
         "max_lines": 100,
