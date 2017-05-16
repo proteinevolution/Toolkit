@@ -14,7 +14,7 @@
                 JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
                     let checkJobIDroute = jsRoutes.controllers.Search.checkJobID(jobID, addResubmitVersion);
                     m.request({ method: checkJobIDroute.method, url: checkJobIDroute.url}).then(
-                        function (data) {
+                        function (data : any) {
                             console.log(data);
                             JobSubmissionComponent.jobIDValid = !data.exists;
                             if (data.exists && data.suggested != null) {
@@ -37,21 +37,23 @@
             (JobSubmissionComponent.jobIDValid          ? " green" : " red");
         return m("input", { type:        "text",
                             id:          "jobID",
-                            class:       style,
+                            "class":       style,
                             placeholder: "Custom JobID",
                             onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobID),
                             onchange:    m.withAttr("value", JobSubmissionComponent.checkJobID),
-                            value:       JobSubmissionComponent.currentJobID
+                            //value:       JobSubmissionComponent.currentJobID
         });
     },
     controller: function(args : any) {
         if (JobSubmissionComponent.currentJobID == null) {
             let newJobID;
             if (args.isJob) {
-                JobSubmissionComponent.jobResubmit = true;
-                JobSubmissionComponent.jobIDValid  = false;
-                newJobID = args.job().jobID;
-                JobSubmissionComponent.checkJobID(newJobID, true); // ask server for new jobID
+                //JobSubmissionComponent.jobResubmit = true;
+                //JobSubmissionComponent.jobIDValid  = false;
+                //newJobID = args.job().jobID;
+                //JobSubmissionComponent.checkJobID(newJobID, true); // ask server for new jobID
+                JobSubmissionComponent.jobIDValid  = true; // Disable versioning for now, can easily re-enabled later
+
             } else {
                 JobSubmissionComponent.jobIDValid  = true;
             }
@@ -117,7 +119,7 @@
                     }
                     $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
-                }).catch(function(error){
+                }).catch(function(error : any){
                     console.log("Error while submitting:", error);
                     $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
