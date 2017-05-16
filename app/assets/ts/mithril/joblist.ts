@@ -198,6 +198,9 @@ window.JobListComponent = {
             }
         }
     },
+    reloadJob : function (jobID : string) : any {
+        JobListComponent.scrollToJobListItem(JobListComponent.getJobIndex(jobID));
+    },
     scrollToJobListItem : function (index: number) {    // function scrolls the job list to the index while scrolling exact numVisibleItems
         let scrollIndex = Math.floor(index / JobListComponent.numVisibleItems);
         scrollIndex *= JobListComponent.numVisibleItems;

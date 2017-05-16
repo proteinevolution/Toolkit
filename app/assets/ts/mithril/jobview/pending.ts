@@ -19,6 +19,7 @@ let JobPendingComponent = {
                         m.request({method:route.method, url:route.url}).then(function(data : any){
                             if (data != null && data.jobID != null) {
                                 m.route("/jobs/"+data.jobID);
+                                JobListComponent.reloadJob(data.jobID);
                             }
                             console.log("requested:",data);
                         });
