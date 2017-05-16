@@ -1,4 +1,4 @@
-let ErrorLog : any = [];
+let ErrorLog : Array<string> = [];
 
 let JobErrorComponent = {
     updateLog: function(){
