@@ -1,22 +1,4 @@
-var JobValidationComponent, JobTabsComponent;
-
-
-renderParameter = function(content, moreClasses) {
-    return m("div", { class: moreClasses ? "parameter " + moreClasses : "parameter" }, content);
-};
-
-mapParam = function(param, ctrl) {
-
-    var comp = formComponents[param.paramType.type];
-    return m(comp, {
-        param: param,
-        value: ctrl.getParamValue(param.name)
-    });
-};
-
-
-
-JobTabsComponent = {
+var JobTabsComponent = {
     model: function() {
         return {
             isFullscreen: false,
@@ -247,12 +229,6 @@ JobTabsComponent = {
 };
 
 
-
-JobValidationComponent = {
-    view: function(){
-        return m("div#validOrNot", {class: "callout", style: "display: none"}, "")
-    }
-};
 
 //return status code if error
 var extractStatus = function(xhr, xhrOptions) {
