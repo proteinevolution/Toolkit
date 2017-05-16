@@ -67,13 +67,7 @@ declare class JobSubmissionComponent {
     public static view (ctrl : any, args : any): any;
 }
 
-declare class JobRunningComponent {
 
-    public static controller: any;
-    public static view: any;
-    public static updateLog: any;
-
-}
 declare class Backend{
     public static controller : any;
     public static view: any;
