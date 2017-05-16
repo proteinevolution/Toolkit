@@ -1,17 +1,16 @@
+let ErrorLog : Array<string> = [];
 
-
-class JobErrorComponent {
-    static updateLog(){
+let JobErrorComponent = {
+    updateLog: function(){
         m.redraw(true);
-    }
-    static log: any;
-    static controller(args: any) {
+    },
+    controller: function (args: any) {
         m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
-            deserialize: function (data) {RunningLog = data.split('#')}});
+            deserialize: function (data) {ErrorLog = data.split('#')}});
 
         return {}
-    }
-    static view(ctrl : any, args : any) : any {
+    },
+    view: function(ctrl : any, args : any) {
         return m("div", { "class": "running-panel", config: foundationConfig }, [
             m('h6', "Your Job has reached error state!"),
             m("div", {"class": "processJobIdContainer"},
@@ -20,7 +19,7 @@ class JobErrorComponent {
             //m("h6", "Job has reached Error state"),
             //m("br"),
             //m("br"),
-            RunningLog.map(function(logElem : any) : any{
+            ErrorLog.map(function(logElem : any) : any{
                 if(logElem == "")
                     return;
                 logElem = logElem.split("\n");
