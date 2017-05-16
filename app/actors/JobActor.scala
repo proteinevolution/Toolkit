@@ -33,7 +33,8 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
 
 object JobActor {
 
@@ -750,7 +751,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     .withFilter(_.hasExtension)
                     .withFilter(_.extension.get == ".json")
                     .map { file =>
-                      result2Job(job.jobID, file.nameWithoutExtension, Json.parse(file.contentAsString))
+
+                      Future { Await.result(result2Job(job.jobID, file.nameWithoutExtension, Json.parse(file.contentAsString)), Duration.Inf) }
+
                     })
                 .map { _ =>
                   // Now we can update the JobState and remove it, once the update has completed
