@@ -750,15 +750,15 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                       (file.nameWithoutExtension, reactivemongo.play.json.BSONFormats.toBSON(Json.parse(file.contentAsString)).get)
                     }.toTraversable
                   // Put the result files into the database, JobActor has to wait until this process has finished
-                val bsonResult = BSONDocument(result)
-                result2Job(job.jobID, bsonResult)
-                .map { _ =>
+                  
+                  result2Job(job.jobID, BSONDocument(result))
+                  
                   // Now we can update the JobState and remove it, once the update has completed
                   this.updateJobState(job).map { job =>
                     this.removeJob(job.jobID)
                     Logger.info("Job has been removed from JobActor")
                   }
-                }
+               
 
             // Currently no further error handling
             case Error =>
