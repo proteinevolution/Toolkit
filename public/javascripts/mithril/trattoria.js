@@ -136,7 +136,7 @@ JobPendingComponent = {
                         var route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
                         m.request({method:route.method, url:route.url}).then(function(data){
                             if (data != null && data.jobID != null) {
-                               m.route(data.jobID);
+                               m.route("/jobs/"+data.jobID);
                             }
                             console.log("requested:",data);
                         });
