@@ -1,23 +1,51 @@
 JOBID=%jobid.content
 
-SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
+SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
+CHAR_COUNT=$(wc -m < ../params/alignment)
+FORMAT=$(head -1 ../params/alignment | egrep ^CLUSTAL | wc -l)
 
-
-reformat_hhsuite.pl fas fas \
-	$(readlink -f %alignment.path) \
-    $(readlink -f ../results/${JOBID}.in.fas) \
-    -d 160 -uc -l 32000
-
-if [ $SEQ_COUNT -gt "1" ] ; then
-       echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-else
-       echo "#Query is a single protein sequence." >> ../results/process.log
-       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+if [ $CHAR_COUNT -gt "10000000" ] ; then
+      echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
 fi
 
+if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
+      echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
+
+if [ $FORMAT = "1" ] ; then
+
+      OUTFORMAT=$(reformatValidator.pl clu fas \
+	        $(readlink -f ../params/alignment) \
+            $(readlink -f ../results/${JOBID}.in.fas) \
+            -d 160 -uc -l 32000)
+else
+      OUTFORMAT=$(reformatValidator.pl fas fas \
+	        $(readlink -f ../params/alignment) \
+            $(readlink -f ../results/${JOBID}.in.fas) \
+            -d 160 -uc -l 32000)
+fi
+
+if [ "$OUTFORMAT" = "fas" ] ; then
+    SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.in.fas | wc -l)
+    echo "#Read ${SEQ_COUNT} sequence(s)." >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+else
+    echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    false
+fi
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+if [ $SEQ_COUNT -gt "2000" ] ; then
+      echo "#Input contains more than 2000 sequences." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
 
 echo "#Searching %hhblitsdb.content." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
