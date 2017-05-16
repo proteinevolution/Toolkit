@@ -1,24 +1,6 @@
-var JobErrorComponent, JobValidationComponent, JobRunningComponent, JobLineComponent, JobQueuedComponent, JobTabsComponent;
+var JobErrorComponent, JobValidationComponent, JobRunningComponent, JobQueuedComponent, JobTabsComponent;
 
-JobLineComponent = {
-    view: function(ctrl, args) {
-        var isJob;
-        isJob = args.job().isJob;
-        return m("div", {
-            "class": "jobline"
-        }, [
-            m(HelpModalComponent, { toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong }),
-            m("span", { class: "toolname" }, [
-                m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
-                m("a", { href: "/#/tools/" + args.job().tool.toolname }, args.job().tool.toolnameLong),
-                m("a", { config: helpModalAccess.bind(args) },
-                    m("i", { class: "icon-information_white helpicon" })
-                )
-            ]),
-            m("span", { class: "jobdate" }, isJob ? "Created: " + (args.job().dateCreated) : "")
-        ]);
-    }
-};
+
 
 JobErrorComponent = {
     updateLog: function(){
