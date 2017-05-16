@@ -976,6 +976,10 @@ textarea:focus{
     font-size: 12px;
 }
 
+.select2-results ul {
+    overflow-x: hidden;
+}
+
 .still_waiting {
     margin-top: 200px;
     display: none;
