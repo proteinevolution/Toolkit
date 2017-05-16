@@ -1,3 +1,5 @@
+/// <reference path="helper.ts"/>
+
 let foundationConfig = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         return $(elem).foundation();
