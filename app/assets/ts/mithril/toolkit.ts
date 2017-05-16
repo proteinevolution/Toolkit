@@ -1,5 +1,5 @@
 /// <reference path="frontend.ts"/>
-
+/// <reference path="helper.ts"/>
 let FrontendTools : any = {
     "alnviz": FrontendAlnvizComponent,
     "reformat": FrontendReformatComponent
