@@ -492,8 +492,8 @@ table.dataTable.no-footer{
 }
 
 #templateAlignmentModal, #structureModal {
-    width: 80em;
-    max-width: 80em;
+    width: 50%;
+    max-width: 60em;
     background-color: #eee;
 }
 
@@ -509,6 +509,10 @@ table.dataTable.no-footer{
     color: #000;
     text-shadow: 0 0 0 #000;
     width: 12em;
+}
+
+#templateAlignmentModal h4 {
+    margin-bottom: 0;
 }
 
 #structureModal .button {
