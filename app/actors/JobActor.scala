@@ -57,6 +57,10 @@ object JobActor {
   // Messages the jobActor accepts from outside
   case class PushJob(job: Job)
 
+  // Messages the jobActor accepts from outside
+  case class PushJobManager(job: Job, userID: BSONObjectID)
+
+
   // Message for the Websocket Actor to send a ClearJob Message
   case class ClearJob(jobID: String)
 
@@ -783,5 +787,11 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           foundWatchers.flatten.foreach(_ ! PushJob(job))
         case None =>
       }
+    case PushJobManager(job: Job, userID) =>
+      val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
+      wsActors.foreach(_.foreach(_ ! PushJob(job)))
+
+      modifyUserWithCache(BSONDocument(User.IDDB -> userID), BSONDocument("$pull" -> BSONDocument(User.JOBS -> job.jobID)))
+
   }
 }
