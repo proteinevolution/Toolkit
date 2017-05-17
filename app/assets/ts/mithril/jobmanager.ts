@@ -5,16 +5,15 @@ declare var moment : any;
 
 (<any>window).JobManager = {
     data: [],
+    table: null,
     dataTableLoader: function () {
         return function (elem: any, isInit: boolean) {
             if (!isInit) {
-
                 m.request({"url": "jobs", "method": "GET", background: true})
                     .then(function(response){
                         JobManager.data = response;
-                        JobManager.dataTables();
+                        JobManager.table = JobManager.dataTables();
                     });
-
             }
         }
     },
@@ -28,15 +27,18 @@ declare var moment : any;
         JobManager.reload();
     },
     removeFromTable : function(jobID: String) {
-        JobManager.data = JobManager.data.filter(function(job: Job){return job.jobID != jobID});
+        JobManager.data = JobManager.data.filter(function (job: Job) {
+            return job.jobID != jobID
+        });
         JobManager.reload();
     },
 
     reload : function() {
-        let table = $('#jobManagerTable');
-        table.DataTable()
-            .clear().rows.add(JobManager.data).draw(false);
-        m.redraw(true);
+        if(JobManager.data != null) {
+            console.log("reload",JobManager.data)
+            JobManager.table.DataTable()
+                .clear().rows.add(JobManager.data).draw(false);
+        }
     },
 
     /** called by clicking on delete Job*/
@@ -64,11 +66,11 @@ declare var moment : any;
       return JobManager.data.filter(function(job: any){return job.jobID == jobID});
     },
     dataTables: function() : any {
-        $('#jobManagerTable').dataTable({
+        return  $('#jobManagerTable').dataTable({
             "bInfo": false,
             "bFilter": true,
             "data": JobManager.data,
-            "order": [[ 3, "desc" ]],
+            "order": [[3, "desc"]],
             "columns": [
                 {"mDataProp": "jobID"},
                 {"mDataProp": "jobID"},
@@ -78,7 +80,12 @@ declare var moment : any;
             ],
             'columnDefs': [
                 {
+                    "defaultContent": "-",
+                    "targets": "_all"
+                },
+                {
                     'targets': 4,
+                    "defaultContent": "-",
                     'searchable': false,
                     'orderable': false,
                     'render': function (jobID: any) {
@@ -87,12 +94,13 @@ declare var moment : any;
                 },
                 {
                     'targets': 1,
-                    'render': function(jobID: any){
-                        return '<a href="#/jobs/'+jobID+'">'+jobID+'</a>';
+                    "defaultContent": "-",
+                    'render': function (jobID: any) {
+                        return '<a href="#/jobs/' + jobID + '">' + jobID + '</a>';
                     },
                     "createdCell": function (td: any, cellData: any, rowData: any, row: any, col: any) {
                         let job = JobManager.getJob(cellData);
-                        if(job.length < 1){
+                        if (job.length < 1) {
                             return;
                         }
                         let status = a[job[0].status];
@@ -103,27 +111,25 @@ declare var moment : any;
                 },
                 {
                     'targets': 0,
+                    "defaultContent": "-",
                     'searchable': false,
                     'orderable': false,
                     'render': function (jobID: any) {
-                        if(JobListComponent.contains(jobID)){
-                            return '<i class="fa fa-minus-circle remove" aria-hidden="true" onclick="JobManager.removeFromList(\''+jobID+'\')"></i>';
-                        }else{
-                            return '<i class="fa fa-plus-circle add" aria-hidden="true" onclick="JobManager.addToList(\''+jobID+'\')"></i>';
+                        if (JobListComponent.contains(jobID)) {
+                            return '<i class="fa fa-minus-circle remove" aria-hidden="true" onclick="JobManager.removeFromList(\'' + jobID + '\')"></i>';
+                        } else {
+                            return '<i class="fa fa-plus-circle add" aria-hidden="true" onclick="JobManager.addToList(\'' + jobID + '\')"></i>';
                         }
                     }
                 },
                 {
                     'targets': 3,
-                    render: function ( timestamp: any, type: any) {
+                    "defaultContent": "-",
+                    render: function (timestamp: any, type: any) {
                         // If display or filter data is requested, format the date
-                        if ( type === 'display') {
+                        if (type === 'display') {
                             return moment(timestamp).fromNow();
                         }
-
-                        // Otherwise the data type requested (`type`) is type detection or
-                        // sorting data, for which we want to use the integer, so just return
-                        // that, unaltered
                         return timestamp;
                     }
 
@@ -132,7 +138,9 @@ declare var moment : any;
     },
 
     controller: function () {
-        return {}
+        return {
+
+        }
     },
 
     view: function (ctrl : any) {

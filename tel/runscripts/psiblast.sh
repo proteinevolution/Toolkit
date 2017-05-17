@@ -4,9 +4,59 @@ GAPOPEN=11
 GAPEXT=1
 INPUT="query"
 
-reformat_hhsuite.pl fas fas $(readlink -f %alignment.path) $(readlink -f %alignment.path) -uc -r -M first -l 32000
+SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
+CHAR_COUNT=$(wc -m < ../params/alignment)
+FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
-SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
+if [ $CHAR_COUNT -gt "10000000" ] ; then
+      echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
+
+if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
+      echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
+
+if [ $FORMAT = "1" ] ; then
+      reformatValidator.pl clu fas \
+            $(readlink -f %alignment.path) \
+            $(readlink -f ../results/${JOBID}.fas) \
+            -d 160 -uc -l 32000
+else
+      reformatValidator.pl fas fas \
+            $(readlink -f %alignment.path) \
+            $(readlink -f ../results/${JOBID}.fas) \
+            -d 160 -uc -l 32000
+fi
+
+if [ ! -f ../results/${JOBID}.fas ]; then
+    echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    false
+fi
+
+SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
+
+if [ $SEQ_COUNT -gt "2000" ] ; then
+      echo "#Input contains more than 2000 sequences." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
+
+if [ $SEQ_COUNT -gt "1" ] ; then
+       echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
+       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+else
+       echo "#Query is a single protein sequence." >> ../results/process.log
+       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+fi
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+
 
 if [ $SEQ_COUNT -gt 1 ] ; then
     INPUT="in_msa"
@@ -34,7 +84,7 @@ psiblast -db %STANDARD/%standarddb.content \
          -gapextend $GAPEXT \
          -num_threads %THREADS \
          -max_target_seqs %desc.content \
-         -${INPUT} %alignment.path \
+         -${INPUT} ../results/${JOBID}.fas \
          -out ../results/output_psiblastp.asn \
          -outfmt 11 \
          -max_hsps 1
@@ -57,7 +107,7 @@ shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_ps
 
 #extract MSA
 alignhits_html.pl   ../results/output_psiblastp.html ../results/output_psiblastp.aln \
-                    -Q %alignment.path \
+                    -Q ../results/${JOBID}.fas \
                     -e %evalue.content \
                     -fas \
                     -no_link \
@@ -68,7 +118,7 @@ blastJson2tab.py ../results/output_psiblastp.json ../results/output_psiblastp.ta
 blastviz_json.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
 
 # Generate Query in JSON
-fasta2json.py %alignment.path ../results/query.json
+fasta2json.py ../results/${JOBID}.fas ../results/query.json
 
 
 # Generate Query in JSON
