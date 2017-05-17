@@ -1,24 +1,73 @@
 JOBID=%jobid.content
 
-SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
+SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
+CHAR_COUNT=$(wc -m < ../params/alignment)
+FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
+
+if [ $CHAR_COUNT -gt "10000000" ] ; then
+      echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
+
+if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
+      echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
+
+if [ $FORMAT = "1" ] ; then
+      reformatValidator.pl clu fas \
+            $(readlink -f %alignment.path) \
+            $(readlink -f ../results/${JOBID}.fas) \
+            -d 160 -uc -l 32000
+else
+      reformatValidator.pl fas fas \
+            $(readlink -f %alignment.path) \
+            $(readlink -f ../results/${JOBID}.fas) \
+            -d 160 -uc -l 32000
+fi
+
+if [ ! -f ../results/${JOBID}.fas ]; then
+    echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    false
+fi
+
+SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
+
+if [ $SEQ_COUNT -gt "2000" ] ; then
+      echo "#Input contains more than 2000 sequences." >> ../results/process.log
+      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      false
+fi
+
+if [ $SEQ_COUNT -gt "1" ] ; then
+       echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
+       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+else
+       echo "#Query is a single protein sequence." >> ../results/process.log
+       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+fi
+
+echo "done" >> ../results/process.log
+curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
 
 if [ "%hhpred_align.content" = "true" ] ; then
         echo "#Pairwise comparison mode." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
-        SEQ_COUNT2=$(egrep '^>' ../params/alignment_two  -c)
+        SEQ_COUNT2=$(egrep '^>' ../params/alignment_two | wc -l)
 
         echo "done" >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 fi
 
 
-reformat_hhsuite.pl fas fas %alignment.path ${JOBID}.fas -l 32000 -uc
-mv ${JOBID}.fas ../results
-
 #CHECK IF MSA generation is required or not
 if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
-        echo "#Query is an MSA with ${SEQ_COUNT} sequences. No MSA generation required for building A3M." >> ../results/process.log
+        echo "#No MSA generation required for building A3M." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
         reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
         mv ${JOBID}.a3m ../results/${JOBID}.a3m
@@ -34,10 +83,10 @@ else
     #Check what method to use (PSI-BLAST? HHblits?)
 
     if [ ${SEQ_COUNT} -gt "1" ] ; then
-        echo "#Query is an MSA with ${SEQ_COUNT} sequences. MSA generation required." >> ../results/process.log
+        echo "#MSA generation required." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
     else
-        echo "#Query is a single protein sequence. MSA generation required." >> ../results/process.log
+        echo "#MSA generation required." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
     fi
     echo "done" >> ../results/process.log
