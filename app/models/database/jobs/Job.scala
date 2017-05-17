@@ -39,12 +39,12 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
     * @return
     */
   def cleaned(): JsObject = {
-
+    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     Json.obj(
       Job.JOBID       -> jobID,
       "project"       -> project,
       Job.STATUS      -> status,
-      Job.DATECREATED -> dateCreated.get,
+      Job.DATECREATED -> dateCreated.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis)),
       Job.TOOL        -> tool,
       "toolnameLong"  -> ConfigFactory.load().getString(s"Tools.$tool.longname")
     )

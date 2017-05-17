@@ -98,12 +98,17 @@ onMessage = function(event : MessageEvent) : any {
             JobManager.reload();
             m.endComputation();
             break;
+        case "DeleteJob":
+            m.startComputation();
+            JobListComponent.removeJob(message.jobID);
+            JobManager.removeFromTable(message.jobID);
+            m.endComputation();
+            break;
         case "PushJob":
             m.startComputation();
-            console.log("called")
             JobListComponent.pushJob(JobListComponent.Job(message.job));
             LiveTable.pushJob(message.job);
-            JobManager.reload();
+            JobManager.pushToTable(message.job);
             m.endComputation();
             break;
         case "UpdateLoad":

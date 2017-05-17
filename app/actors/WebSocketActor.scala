@@ -97,8 +97,16 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
                 case None => // Client has send strange message over the Websocket
               }
 
-            // Request to remove a Job from the user's view but it will remain stored
+            // Request to remove a Job from the user's view ( remains in JobManager)but it will remain stored
             case "ClearJob" =>
+              (js \ "jobID").validate[String].asOpt match {
+                case Some(jobID) =>
+                  Logger.info("Recieved StopWatch for job " + jobID)
+                  jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, user.userID))
+                case None => //
+              }
+            // Request to remove a Job from the user's view but it will remain stored
+            case "DeleteJob" =>
               (js \ "jobID").validate[String].asOpt match {
                 case Some(jobID) =>
                   Logger.info("Recieved StopWatch for job " + jobID)
@@ -109,7 +117,7 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
               (js \ "jobID").validate[String].asOpt match {
                 case Some(jobID) => Logger.info("Recieved PushJob for job " + jobID)
                  findJob(BSONDocument(Job.JOBID -> jobID)).map {
-                   case Some(job) => println(job) ; jobActorAccess.sendToJobActor(jobID, PushJobManager(job, user.userID))
+                   case Some(job) => jobActorAccess.sendToJobActor(jobID, PushJobManager(job, user.userID))
                    case None => Logger.info("Job not found!")
                  }
 
