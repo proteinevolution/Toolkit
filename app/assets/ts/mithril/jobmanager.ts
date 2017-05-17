@@ -4,7 +4,7 @@
 declare var moment : any;
 
 (<any>window).JobManager = {
-    data: null,
+    data: [],
     dataTableLoader: function () {
         return function (elem: any, isInit: boolean) {
             if (!isInit) {
@@ -68,12 +68,12 @@ declare var moment : any;
             "bInfo": false,
             "bFilter": true,
             "data": JobManager.data,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 3, "desc" ]],
             "columns": [
                 {"mDataProp": "jobID"},
                 {"mDataProp": "jobID"},
                 {"mDataProp": "tool"},
-                {"mDataProp": "jobID"},
+                {"mDataProp": "dateCreated.timestamp"},
                 {"mDataProp": "jobID"}
             ],
             'columnDefs': [
@@ -115,9 +115,16 @@ declare var moment : any;
                 },
                 {
                     'targets': 3,
-                    data: "jobID",
-                    render: function ( data: any, type: any) {
-                        return "asdf";
+                    render: function ( timestamp: any, type: any) {
+                        // If display or filter data is requested, format the date
+                        if ( type === 'display') {
+                            return moment(timestamp).fromNow();
+                        }
+
+                        // Otherwise the data type requested (`type`) is type detection or
+                        // sorting data, for which we want to use the integer, so just return
+                        // that, unaltered
+                        return timestamp;
                     }
 
                 }],
