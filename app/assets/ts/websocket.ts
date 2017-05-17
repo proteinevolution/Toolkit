@@ -96,7 +96,7 @@ onMessage = function(event : MessageEvent) : any {
             m.startComputation();
             JobListComponent.removeJob(message.jobID);
             if (message.delete) {JobManager.removeFromTable(message.jobID);}
-            else {JobManager.reload();}
+            else {if(JobManager.table){JobManager.reload();}}
             m.endComputation();
             break;
         case "PushJob":
