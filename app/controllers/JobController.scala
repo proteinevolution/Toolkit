@@ -48,17 +48,22 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     *
     */
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    // Find the Job in the database
-    selectJob(jobID).map {
-      case Some(job) =>
-        // Check if the Job was deleted or not
-        job.deletion match {
-          case Some(deletionReason) =>
-            NotFound
-          case None =>
-            Ok(job.cleaned())
-        }
-      case None => NotFound
+    getUser.flatMap { user =>
+      // Find the Job in the database
+      selectJob(jobID).map {
+        case Some(job) =>
+          // Check if the Job was deleted or not
+          job.deletion match {
+            case Some(_) =>
+              NotFound
+            case None =>
+              // Check if the user is the Owner or if the job is public
+              if (job.ownerID.contains(user.userID) || job.ownerID.isEmpty)
+                Ok(job.cleaned())
+              else NotFound
+          }
+        case None => NotFound
+      }
     }
   }
   def listJobs: Action[AnyContent] = Action.async { implicit request =>
