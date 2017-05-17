@@ -6,6 +6,31 @@
 
 // final input sequences, not reassignable to variables
 
+/*
+function readTextFile(file: any)
+{
+    let rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                let allText = rawFile.responseText;
+                alert(allText);
+            }
+        }
+    };
+    rawFile.send(null);
+}
+
+let fileString = "";
+let splitFile = readTextFile("~/Toolkit/public/images/Examples/samcc.txt").split("\n");
+for (let i =0; i<splitFile.length; i++){
+    fileString += splitFile[i] + "\n";
+}
+*/
 /**
  * short description of the sample sequence and why it was used for which tool
  * @type {string}
@@ -152,6 +177,10 @@ let sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
 
                 case "samcc":
                     $a.val(samccSeq);
+                    $("#samcc_helixone").val("a;A;2;30");
+                    $("#samcc_helixtwo").val("a;B;2;30");
+                    $("#samcc_helixthree").val("a;C;2;30");
+                    $("#samcc_helixfour").val("a;D;2;30");
                     break;
 
                 case "mmseqs2":
