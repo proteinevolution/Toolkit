@@ -81,9 +81,13 @@ let typeAhead = function (elem : any, isInit : boolean) : any {
                 source: tools.ttAdapter(),
                 templates: {
                     suggestion: function (data: any) {
-                            return '<div class="list-group-item"><a class="search-results" href="#/tools/' + data.short + '" name="'+data.long+'">' + data.long + '</a></div>';
-                    },
+                        if(data !=null) {
+                            return '<div class="list-group-item"><a class="search-results" href="#/tools/' + data.short + '" name="' + data.long + '">' + data.long + '</a></div>';
+                        }
+                        return ''
+                        },
                     header: '<h6 class="header-name">Tools</h6>',
+                    empty: ['']
                 }
             }
             ,
@@ -95,8 +99,11 @@ let typeAhead = function (elem : any, isInit : boolean) : any {
             templates: {
                 empty: ['<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>'],
                 suggestion: function (data : any) {
-                    return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="'+data.jobID+' - ' + data.toolnameLong+ '">'
-                        + data.jobID + '<span class="search-result-tool"> - ' + data.toolnameLong + '</span></a></div>' ;
+                        if(data != null) {
+                            return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="' + data.jobID + ' - ' + data.toolnameLong + '">'
+                                + data.jobID + '<span class="search-result-tool"> - ' + data.toolnameLong + '</span></a></div>';
+                        }
+                        return ''
                 },
                 header: '<h6 class="header-name">Jobs</h6>',
             }
