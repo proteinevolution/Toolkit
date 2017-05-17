@@ -4,9 +4,7 @@ import com.typesafe.config.ConfigFactory
 import models.Constants
 import models.tools.Toolitem
 import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
 import play.api.libs.json._
-import play.twirl.api.Html
 import reactivemongo.bson._
 import reactivemongo.play.json._
 
@@ -14,6 +12,7 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
                parentID: Option[BSONObjectID] = None, // ID of the Parent Job
                jobID: String, // User visible ID of the Job
                ownerID: Option[BSONObjectID] = None, // User to whom the Job belongs
+               isPublic : Boolean = false,
                project: Option[BSONObjectID] = None,
                status: JobState, // Status of the Job
                emailUpdate: Boolean = false, // Owner wants to be notified when the job is ready
@@ -39,12 +38,11 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
     * @return
     */
   def cleaned(): JsObject = {
-    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     Json.obj(
       Job.JOBID       -> jobID,
       "project"       -> project,
       Job.STATUS      -> status,
-      Job.DATECREATED -> dateCreated.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis)),
+      Job.DATECREATED -> dateCreated.map(_.getMillis),
       Job.TOOL        -> tool,
       "toolnameLong"  -> ConfigFactory.load().getString(s"Tools.$tool.longname")
     )
@@ -56,16 +54,15 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
     * @return
     */
   def jobManagerJob(): JsObject = {
-    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     Json.obj(
       Job.JOBID       -> jobID,
       Job.PROJECT     -> project,
       Job.STATUS      -> status,
       Job.TOOL        -> tool,
       Job.COMMENTLIST -> commentList.length,
-      Job.DATECREATED -> dateCreated.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis)),
-      Job.DATEUPDATED -> dateUpdated.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis)),
-      Job.DATEVIEWED  -> dateViewed.map(dt => Json.obj("string" -> dtf.print(dt), "timestamp" -> dt.getMillis))
+      Job.DATECREATED -> dateCreated.map(_.getMillis),
+      Job.DATEUPDATED -> dateUpdated.map(_.getMillis),
+      Job.DATEVIEWED  -> dateViewed.map(_.getMillis)
     )
   }
   override def toString: String = {
