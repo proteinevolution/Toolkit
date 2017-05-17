@@ -88,7 +88,7 @@ declare var moment : any;
                 {
                     'targets': 1,
                     'render': function(jobID: any){
-                        return '<a href="/jobs/'+jobID+'">'+jobID+'</a>';
+                        return '<a href="#/jobs/'+jobID+'">'+jobID+'</a>';
                     },
                     "createdCell": function (td: any, cellData: any, rowData: any, row: any, col: any) {
                         let job = JobManager.getJob(cellData);
