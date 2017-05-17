@@ -6,31 +6,6 @@
 
 // final input sequences, not reassignable to variables
 
-/*
-function readTextFile(file: any)
-{
-    let rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, false);
-    rawFile.onreadystatechange = function ()
-    {
-        if(rawFile.readyState === 4)
-        {
-            if(rawFile.status === 200 || rawFile.status == 0)
-            {
-                let allText = rawFile.responseText;
-                alert(allText);
-            }
-        }
-    };
-    rawFile.send(null);
-}
-
-let fileString = "";
-let splitFile = readTextFile("~/Toolkit/public/images/Examples/samcc.txt").split("\n");
-for (let i =0; i<splitFile.length; i++){
-    fileString += splitFile[i] + "\n";
-}
-*/
 /**
  * short description of the sample sequence and why it was used for which tool
  * @type {string}
@@ -61,8 +36,6 @@ const tprSeq : string = ">sp|Q8N0Z6|TTC5_HUMAN Tetratricopeptide repeat protein 
 const protHeaders : string = "AAN59974.1\nNP_009552.1\nXP_641587.1\nNP_001005967.1\nNP_001027366.1\nNP_175517.1\nNP_001263788.1\n";
 
 const modellerPIR : string = ">P1;UKNP\nsequence:UKNP:1    :A:132  :A::::\nMSGRGKQGG-KARAKAKTRSSRAGLQFPVGRVHRLLRKGNY-AERVGAGAPVYLAAVLEYLTAEILELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLGKVTIAQGGVLPNIQAVLLPKKTESHHKAKGK*\n>P1;4WNN\nstructure:4WNN:18  :C:100 :C::Saccharomyces cerevisiae:1.8:\n-----------------SRSAKAGLTFPVGRVHRLLRRGNY-AQRIGSGAPVYLTAVLEYLAAEILELAGNAARDNKKTRIIPRHLQLAIRNDDELNKLLG-------------------------------*\n>P1;4CAY\nstructure:4CAY:2   :A:91  :A::HOMO SAPIENS:1.48:\n-----------------SRSQRAGLQFPVGRIHRHLKSR----GRVGATAAVYSAAILEYLTAEVLELAGNASKDLKVKRITPRHLQLAIRGDEELDSLIK-ATIAGG------------------------*\n>P1;5B0Z\nstructure:5B0Z:15  :C:122 :C::Homo sapiens:1.987:\n------------RAKAKTRSSRAGLQFPVGRVHRLLRKGNY-SERVGAGAPVYLAAVLEYLTAEILELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLGRVTIAQGGVLPNIQAVLLPK-----------*";
-
-const samccSeq : string = "To be completed";//readSingleFile("~/Toolkit/public/images/Examples/samcc.txt");
 
 let sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
 
@@ -176,7 +149,19 @@ let sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
                     break;
 
                 case "samcc":
-                    $a.val(samccSeq);
+                    $(document).ready(function() {
+                        //fetch text file
+                        $.get("assets/images/Examples/samcc.txt", function(data) {
+                            let samccText = "";
+                            //split on new lines
+                            let lines = data.split('\n');
+
+                            for(let i=0;i<lines.length;i++) {
+                                samccText+=lines[i] + "\n";
+                            }
+                            $("#alignment").val(samccText);
+                        });
+                    });
                     $("#samcc_helixone").val("a;A;2;30");
                     $("#samcc_helixtwo").val("a;B;2;30");
                     $("#samcc_helixthree").val("a;C;2;30");
