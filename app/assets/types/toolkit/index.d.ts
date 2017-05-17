@@ -99,6 +99,7 @@ declare class JobManager{
     public static controller : any;
     public static view: any;
     public static data : any;
+    public static table : any;
     public static removeFromList: Function;
     public static addToList: Function;
     public static deleteJob: Function;

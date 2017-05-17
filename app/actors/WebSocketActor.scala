@@ -130,8 +130,7 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
 
     case ClearJob(jobID: String,  deleted : Boolean) =>
-      if (deleted) out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> true)
-      else         out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID)
+       out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> deleted)
 
     case ChangeSessionID(sessionID: BSONObjectID) =>
       this.sessionID = sessionID
