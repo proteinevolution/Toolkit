@@ -236,7 +236,7 @@ class ParamAccess @Inject()(tel: TEL) {
   final val GRAMMAR                 = select("grammar", "Select grammar")
   final val SEQCOUNT                = select("seqcount", "Maximum number of sequences to display")
   final val INC_NUCL                = select("inc_nucl", "Include nucleic acid sequence")
-  final val AMINO_NUCL_REL          = select("amino_nucl_rel", "Amino acids in relation to nucleotide sequence")
+  final val AMINO_NUCL_REL          = select("amino_nucl_rel", "Amino acids in relation to nucleotides")
   final val CODON_TABLE             = select("codon_table", "Select codon usage table")
   final val MAX_HHBLITS_ITER        = select("max_hhblits_iter", "MSA enrichment iterations using HHblits")
   final val PROTEOMES               = select("proteomes", "Proteomes")
