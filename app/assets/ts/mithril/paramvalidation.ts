@@ -6,7 +6,7 @@
 let paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
 
     function helixValid(helix:string) : boolean{
-        return (/[a-g];[a-zA-Z0-9];\d+;\d+/g.test(helix))
+        return (/^[a-g];[a-zA-Z0-9];\d+;\d+$/g.test(helix))
     }
 
     if(!isInit) {
@@ -19,7 +19,7 @@ let paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
         }
 
 
-        return $(elem).on("input", function (e) {
+        return $(elem).on("input click", function (e) {
             setTimeout(function () {
                 e.preventDefault();
                 switch (toolname) {
