@@ -48,11 +48,11 @@ declare var moment : any;
 
     /** send message to websocket */
     removeFromList: function(jobID: string): any{
-        sendMessage({ "type" : "ClearJob",  "jobID" : jobID });
+        sendMessage({ "type" : "ClearJob",  "jobIDs" : [jobID] });
     },
 
     addToList: function(jobID: string): any{
-        sendMessage({ "type" : "PushJob",  "jobID" : jobID});
+        sendMessage({ "type" : "RegisterJobs",  "jobIDs" : [jobID]});
     },
 
     /**
