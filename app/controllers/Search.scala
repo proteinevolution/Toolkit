@@ -35,8 +35,9 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     Ok(Json.toJson(toolFactory.values.values.map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
   }
 
-  def autoComplete(queryString: String): Action[AnyContent] = Action.async { implicit request =>
+  def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
+      val queryString = queryString_.replaceAll("""(?m)\s+$""", "")
       val tools: List[models.tools.Tool] = toolFactory.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
         .toList
@@ -44,9 +45,13 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {
         // Grab Job ID auto completions
-        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).map { jobs =>
+        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
           val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID) && job.deletion.isEmpty)
-          Ok(Json.toJson(jobsFiltered.map(_.cleaned())))
+          if(jobsFiltered.isEmpty) {
+            findJob(BSONDocument(Job.JOBID -> queryString)).map(x=> Ok(Json.toJson(List(x.map(_.cleaned())))))
+          }else{
+            Future.successful(Ok(Json.toJson(jobsFiltered.map(_.cleaned()))))
+          }
         }
       } else {
         // Find the Jobs with the matching tool
