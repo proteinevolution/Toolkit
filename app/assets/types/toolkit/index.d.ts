@@ -109,6 +109,7 @@ declare class JobManager{
     public static removeFromTable: Function;
     public static reload: Function;
     public static dataTableLoader: Function;
+    public static dataLoader: Function;
 
 
 }
