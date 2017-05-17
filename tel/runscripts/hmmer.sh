@@ -64,6 +64,8 @@ if [ "%max_hhblits_iter.content" = "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
 else
     echo "#MSA generation required." >> ../results/process.log
     curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    echo "done" >> ../results/process.log
+    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
     echo "#Running HHblits for query MSA." >> ../results/process.log
     curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
     #MSA generation required; generation by HHblits
@@ -93,7 +95,7 @@ echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 
-echo "Running hmmsearch against the %hmmerdb.content DB." >> ../results/process.log
+echo "#Running hmmsearch against the %hmmerdb.content DB." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
     $HMMERPATH/hmmsearch --cpu %THREADS \
