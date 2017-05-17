@@ -73,7 +73,7 @@ declare var moment : any;
                 {"mDataProp": "jobID"},
                 {"mDataProp": "jobID"},
                 {"mDataProp": "tool"},
-                {"mDataProp": "dateCreated.timestamp"},
+                {"mDataProp": "dateCreated"},
                 {"mDataProp": "jobID"}
             ],
             'columnDefs': [
