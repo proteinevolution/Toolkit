@@ -37,7 +37,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
 
   def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
-      val queryString = queryString_.replaceAll("""(?m)\s+$""", "")
+      val queryString = queryString_.trim()
       val tools: List[models.tools.Tool] = toolFactory.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
         .toList
