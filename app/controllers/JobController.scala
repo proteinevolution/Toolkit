@@ -58,9 +58,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               NotFound
             case None =>
               // Check if the user is the Owner or if the job is public
-              if (job.ownerID.contains(user.userID) || job.ownerID.isEmpty)
+              //if (job.ownerID.contains(user.userID) || job.ownerID.isEmpty)
                 Ok(job.cleaned())
-              else NotFound
+              //else NotFound
           }
         case None => NotFound
       }
