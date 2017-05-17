@@ -95,18 +95,18 @@ declare class News{
 
 declare class JobManager{
 
-    public static tableObjects : any;
     public static model : any;
     public static controller : any;
     public static view: any;
-    public static reload : Function;
     public static data : any;
     public static removeFromList: Function;
     public static addToList: Function;
-    public static mapStatus: Function;
     public static deleteJob: Function;
     public static dataTables: Function;
     public static getJob: Function;
+    public static pushToTable: Function;
+    public static removeFromTable: Function;
+    public static reload: Function;
 
 }
 
