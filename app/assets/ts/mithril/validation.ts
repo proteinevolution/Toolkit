@@ -25,59 +25,59 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
 
                 case "hhblits":
-                    $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
                     break;
 
                 case "hhpred":
-                    $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
                     break;
 
                 case "hmmer":
-                    $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
                     break;
 
                 case "psiblast":
-                    $(elem).attr("placeholder", "Enter a protein sequence or a protein multiple sequence alignment in FASTA or CLUSTAL format.");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
                     break;
 
                 case "patsearch":
-                    $(elem).attr("placeholder", "Enter a PROSITE grammar or a regular expression");
+                    $(elem).attr("placeholder", "Enter a PROSITE grammar/regular expression");
                     break;
 
                 case "clustalo":
-                    $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 2000 protein sequences in FASTA format");
                     break;
 
                 case "kalign":
-                    $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 2000 protein sequences in FASTA format");
                     break;
 
                 case "mafft":
-                    $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 2000 protein sequences in FASTA format");
                     break;
 
                 case "msaprobs":
-                    $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 2000 protein sequences in FASTA format");
                     break;
 
                 case "muscle":
-                    $(elem).attr("placeholder", "Enter protein sequences (<2000) in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 2000 protein sequences in FASTA format");
                     break;
 
                 case "tcoffee":
-                    $(elem).attr("placeholder", "Enter protein sequences (<500) in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 500 protein sequences in FASTA format");
                     break;
 
                 case "aln2plot":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "frpred":
-                    $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "hhrepid":
-                    $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "marcoil":
@@ -85,11 +85,11 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "pcoils":
-                    $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "repper":
-                    $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "tprpred":
@@ -97,11 +97,11 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "ali2d":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "quick2d":
-                    $(elem).attr("placeholder", "Enter a protein sequence or multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "modeller":
@@ -113,19 +113,19 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "ancescon":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "clans":
-                    $(elem).attr("placeholder", "Enter protein sequences (<10000) in FASTA format");
+                    $(elem).attr("placeholder", "Enter protein sequences with up to 10000 sequences in FASTA format");
                     break;
 
                 case "mmseqs2":
-                    $(elem).attr("placeholder", "Enter protein sequences (<20000) in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 20000 protein sequences in FASTA format");
                     break;
 
                 case "phyml":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<100) in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 100 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "6frametranslation":
@@ -137,7 +137,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "hhfilter":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment (<2000) in FASTA or CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "retseq":
@@ -785,7 +785,7 @@ class alignmentVal implements ToolkitValidator {
         }
 
         else if (!this.elem.reformat('maxlength', 2000000)) {
-            feedback(false, "Input contains over ten million characters!", "error");
+            feedback(false, "Input contains over twenty million characters!", "error");
             return false;
         }
 
