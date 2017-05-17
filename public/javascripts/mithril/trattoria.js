@@ -409,6 +409,7 @@ window.ParameterAlignmentComponent = {
                     config: sampleSeqConfig,
                     onclick: function() {
                         //$('.submitJob').prop('disabled', false);
+                        paramValidation($('#pasteButton'));
                         setTimeout(function(){
                             validationProcess($('#alignment'),$("#toolnameAccess").val());
                         }, 100);
