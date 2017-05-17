@@ -156,7 +156,7 @@ declare var moment : any;
                     ])
                 ]),
                 m("div", {id: "content", "class": "row columns padded-column", config: fadesIn},
-                    m("table", {id: "jobManagerTable", "class": "dataTable hover row-border compact job-manager", config: this.dataTableLoader()}, [
+                    m("table", {id: "jobManagerTable", "class": "dataTable hover row-border compact job-manager", config: JobManager.dataTableLoader()}, [
                             m("thead", m("tr", [
                                 m("th", "Job List"),
                                 m("th", "Job ID"),
