@@ -61,14 +61,19 @@ object JobActor {
   // Messages the jobActor accepts from outside
   case class PushJobManager(job: Job, userID: BSONObjectID)
 
+  // UserActor Stops Watching this Job (remove from Jobmanager)
+  case class DeleteFromManager(jobID: String)
 
   // Message for the Websocket Actor to send a ClearJob Message
   case class ClearJob(jobID: String)
 
+  // Message for the Websocket Actor to send a ClearJob Message
+  case class DeleteJob(jobID: String, userID: BSONObjectID)
+
   // User Actor starts watching
   case class StartWatch(jobID: String, userID: BSONObjectID)
 
-  // UserActor Stops Watching this Job
+  // UserActor Stops Watching this Job (stays in JObmanager)
   case class StopWatch(jobID: String, userID: BSONObjectID)
 
   // JobActor is requested to Delete the job
@@ -700,7 +705,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           Logger.error("[JobActor.StartJob] Job not found in DB: " + jobID)
       }
 
-    // User does no longer watch this Job
+    // User does no longer watch this Job (stays in JobManager)
     case StopWatch(jobID, userID) =>
       modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
         .foreach {
@@ -710,6 +715,19 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         }
       val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
       wsActors.foreach(_.foreach(_ ! ClearJob(jobID)))
+
+      modifyUserWithCache(BSONDocument(User.IDDB -> userID), BSONDocument("$pull" -> BSONDocument(User.JOBS -> jobID)))
+
+    // User does no longer watch this Job (delete also from JobManager)
+    case DeleteJob(jobID, userID) =>
+      modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
+        .foreach {
+          case Some(updatedJob) =>
+            this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
+          case None =>
+        }
+      val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
+      wsActors.foreach(_.foreach(_ ! DeleteFromManager(jobID)))
 
       modifyUserWithCache(BSONDocument(User.IDDB -> userID), BSONDocument("$pull" -> BSONDocument(User.JOBS -> jobID)))
 
