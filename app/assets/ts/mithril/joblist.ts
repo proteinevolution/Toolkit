@@ -155,12 +155,12 @@ window.JobListComponent = {
                 case "jobID":
                     return inv * job1.jobID.localeCompare(job2.jobID);
                 case "dateCreated":
-                    if(isNaN(parseInt(job1.dateCreated.timestamp)) || isNaN(parseInt(job2.dateCreated.timestamp))) {
+                    if(isNaN(parseInt(job1.dateCreated)) || isNaN(parseInt(job2.dateCreated))) {
                         console.log("Illegal object with dateCreated NaN:", job1, job2);
                     }
-                    return inv * (job1.dateCreated.timestamp - job2.dateCreated.timestamp);
+                    return inv * (job1.dateCreated - job2.dateCreated);
                 default:
-                    return inv * (job1.dateCreated.timestamp - job2.dateCreated.timestamp);
+                    return inv * (job1.dateCreated - job2.dateCreated);
             }
         });
         // Scroll to the selected item if it was in the view before
