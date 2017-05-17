@@ -88,7 +88,7 @@ declare var moment : any;
                 {
                     'targets': 1,
                     'render': function(jobID: any){
-                        return '<a href="/jobs/'+jobID+'">'+jobID+'</a>';
+                        return '<a href="#/jobs/'+jobID+'">'+jobID+'</a>';
                     },
                     "createdCell": function (td: any, cellData: any, rowData: any, row: any, col: any) {
                         let job = JobManager.getJob(cellData);
@@ -107,9 +107,9 @@ declare var moment : any;
                     'orderable': false,
                     'render': function (jobID: any) {
                         if(JobListComponent.contains(jobID)){
-                            return '<i class="icon-minus remove" onclick="JobManager.removeFromList(\''+jobID+'\')"></i>';
+                            return '<i class="fa fa-minus-circle remove" aria-hidden="true" onclick="JobManager.removeFromList(\''+jobID+'\')"></i>';
                         }else{
-                            return '<i class="icon-plus add" onclick="JobManager.addToList(\''+jobID+'\')"></i>';
+                            return '<i class="fa fa-plus-circle add" aria-hidden="true" onclick="JobManager.addToList(\''+jobID+'\')"></i>';
                         }
                     }
                 },
