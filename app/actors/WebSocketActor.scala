@@ -86,43 +86,27 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
         case Some(user) =>
           (js \ "type").validate[String].foreach {
 
-            // Message containing a List of Jobs the WebSocket wants to register to
+            // Message containing a List of Jobs the user wants to register for the job list
             case "RegisterJobs" =>
               (js \ "jobIDs").validate[Seq[String]].asOpt match {
 
                 case Some(jobIDs) =>
                   jobIDs.foreach { jobID =>
-                    jobActorAccess.sendToJobActor(jobID, StartWatch(jobID, user.userID))
+                    jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
                   }
                 case None => // Client has send strange message over the Websocket
               }
 
-            // Request to remove a Job from the user's view ( remains in JobManager)but it will remain stored
+            // Request to remove a Job from the user's Joblist
             case "ClearJob" =>
-              (js \ "jobID").validate[String].asOpt match {
-                case Some(jobID) =>
-                  Logger.info("Recieved StopWatch for job " + jobID)
-                  jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, user.userID))
+              (js \ "jobIDs").validate[Seq[String]].asOpt match {
+                case Some(jobIDs) =>
+                  jobIDs.foreach { jobID =>
+                    jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
+                  }
                 case None => //
               }
-            // Request to remove a Job from the user's view but it will remain stored
-            case "DeleteJob" =>
-              (js \ "jobID").validate[String].asOpt match {
-                case Some(jobID) =>
-                  Logger.info("Recieved StopWatch for job " + jobID)
-                  jobActorAccess.sendToJobActor(jobID, StopWatch(jobID, user.userID))
-                case None => //
-              }
-            case "PushJob" =>
-              (js \ "jobID").validate[String].asOpt match {
-                case Some(jobID) => Logger.info("Recieved PushJob for job " + jobID)
-                 findJob(BSONDocument(Job.JOBID -> jobID)).map {
-                   case Some(job) => jobActorAccess.sendToJobActor(jobID, PushJobManager(job, user.userID))
-                   case None => Logger.info("Job not found!")
-                 }
 
-                case None => //
-              }
             // Request to receive load messages
             case "RegisterLoad" =>
               Logger.info("Received RegisterLoad message.")
@@ -131,24 +115,23 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
             // Request to no longer receive load messages
             case "UnregisterLoad" =>
               clusterMonitor ! Disconnect(self)
-
           }
         case None =>
           self ! PoisonPill
       }
 
     case PushJob(job: Job) =>
-      //Logger.info("WS Log: " + job.jobID + " is now " + job.status.toString)
       out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
+
     case UpdateLog(jobID: String) =>
       out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
 
     case UpdateLoad(load: Double) =>
       out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
 
-    case ClearJob(jobID: String) =>
-      //Logger.info("WS Log: " + jobID + " clear message sent")
-      out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID)
+    case ClearJob(jobID: String,  deleted : Boolean) =>
+      if (deleted) out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> true)
+      else         out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID)
 
     case ChangeSessionID(sessionID: BSONObjectID) =>
       this.sessionID = sessionID
