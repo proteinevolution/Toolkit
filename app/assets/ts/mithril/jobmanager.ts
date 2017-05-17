@@ -3,9 +3,8 @@
 
 declare var moment : any;
 
-
-
 (<any>window).JobManager = {
+    data: [],
     dataTableLoader: function () {
         return function (elem: any, isInit: boolean) {
             if (!isInit) {
@@ -20,25 +19,34 @@ declare var moment : any;
         }
     },
 
-    reload : function() {
-        $('#jobManagerTable').DataTable().clear();
-            m.request({"url": "jobs", "method": "GET", background: true})
-                .then(function(response) {
-                    if (response) {
-                        JobManager.data = response;
-                        $('#jobManagerTable').DataTable().rows.add(JobManager.data);
-                        $('#jobManagerTable').DataTable().draw();
-                        m.redraw(true);
-                    }
-                })
-                .catch(function(e){console.warn(e);})
 
+    /** When receiving a message from the websocket*/
+    pushToTable : function(job_: Job) {
+        let job = JobListComponent.Job(job_);
+        JobManager.data =  JobManager.data.filter(function(jobData: Job){return jobData.jobID != job.jobID});
+        JobManager.data.push(job);
+        JobManager.reload();
     },
+    removeFromTable : function(jobID: String) {
+        JobManager.data = JobManager.data.filter(function(job: Job){return job.jobID != jobID});
+        JobManager.reload();
+    },
+
+    reload : function() {
+        let table = $('#jobManagerTable');
+        table.DataTable()
+            .clear().rows.add(JobManager.data).draw(false);
+        m.redraw(true);
+    },
+
+    /** called by clicking on delete Job*/
     deleteJob: function(jobID : string): any{
         m.request({ url: "/api/job/" + jobID, method: "DELETE" }).then(function(){
-            JobManager.reload();
+            JobManager.removeFromTable(jobID);
         });
     },
+
+    /** send message to websocket */
     removeFromList: function(jobID: string): any{
         sendMessage({ "type" : "ClearJob",  "jobID" : jobID });
     },
@@ -47,10 +55,14 @@ declare var moment : any;
         sendMessage({ "type" : "PushJob",  "jobID" : jobID});
     },
 
+    /**
+     * to get a job that is stored
+     * inside JobManager.list by jobID
+     * @param jobID
+     */
     getJob: function(jobID:string): any{
       return JobManager.data.filter(function(job: any){return job.jobID == jobID});
     },
-
     dataTables: function() : any {
         $('#jobManagerTable').dataTable({
             "bInfo": false,
@@ -61,7 +73,7 @@ declare var moment : any;
                 {"mDataProp": "jobID"},
                 {"mDataProp": "jobID"},
                 {"mDataProp": "tool"},
-                {"mDataProp": "jobID"},
+                {"mDataProp": "dateCreated.timestamp"},
                 {"mDataProp": "jobID"}
             ],
             'columnDefs': [
@@ -103,16 +115,10 @@ declare var moment : any;
                 },
                 {
                     'targets': 3,
-                    data: "jobID",
-                    render: function ( data: any, type: any) {
-                        let job = JobManager.getJob(data);
-                        if(job.length < 1){
-                            return;
-                        }
-                        let timestamp = job[0].dateCreated.timestamp;
+                    render: function ( timestamp: any, type: any) {
                         // If display or filter data is requested, format the date
                         if ( type === 'display') {
-                           return moment(timestamp).fromNow();
+                            return moment(timestamp).fromNow();
                         }
 
                         // Otherwise the data type requested (`type`) is type detection or
