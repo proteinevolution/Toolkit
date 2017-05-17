@@ -48,11 +48,11 @@ declare var moment : any;
 
     /** send message to websocket */
     removeFromList: function(jobID: string): any{
-        sendMessage({ "type" : "ClearJob",  "jobID" : jobID });
+        sendMessage({ "type" : "ClearJob",  "jobIDs" : [jobID] });
     },
 
     addToList: function(jobID: string): any{
-        sendMessage({ "type" : "PushJob",  "jobID" : jobID});
+        sendMessage({ "type" : "RegisterJobs",  "jobIDs" : [jobID]});
     },
 
     /**
@@ -88,7 +88,7 @@ declare var moment : any;
                 {
                     'targets': 1,
                     'render': function(jobID: any){
-                        return '<a href="/jobs/'+jobID+'">'+jobID+'</a>';
+                        return '<a href="#/jobs/'+jobID+'">'+jobID+'</a>';
                     },
                     "createdCell": function (td: any, cellData: any, rowData: any, row: any, col: any) {
                         let job = JobManager.getJob(cellData);
