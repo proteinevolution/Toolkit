@@ -125,10 +125,9 @@ window.JobListComponent = {
 
                     if (deleteJob) {
                         //sendMessage({ "type" : "DeleteJob", "jobID" : job.jobID }) TODO reimplement the deletion over WS
-                        m.request({ url: "/api/job/" + job.jobID, method: "DELETE" }).then(function(){
-                        });
+                        m.request({ url: "/api/job/" + job.jobID, method: "DELETE" })
                     }
-                    else           { sendMessage({ "type" : "ClearJob",  "jobID" : job.jobID }) }
+                    else           { sendMessage({ "type" : "ClearJob",  "jobIDs" : [job.jobID] }) }
                 }
             }
         });
