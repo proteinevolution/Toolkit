@@ -447,7 +447,7 @@ hr {
     background-color: #eee;
 }
 
-.result-panel pre {
+.fileview {
     width: 100%;
     font-size: 12px;
     height: 30pc;
@@ -462,7 +462,6 @@ hr {
 
 /* Jobline */
 .jobline {
-
     height: 50px;
 }
 
