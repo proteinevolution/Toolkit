@@ -287,7 +287,7 @@ function selectFromArray(checkboxes){
 }
 
 function getCheckedCheckboxes(){
-    $('input:checkbox:checked').each(function(){checkboxes.push($(this).val());});
+    $('input:checkbox:checked').each(function(){checkboxes.push(parseInt($(this).val()));});
 }
 
 
@@ -345,4 +345,31 @@ function hitlistBaseFunctions(){
             });
         });
     });
+}
+
+
+Array.prototype.removeDuplicates = function () {
+    return this.filter(function (item, index, self) {
+        return self.indexOf(item) == index;
+    });
+};
+
+
+
+function selectAll(){
+    selectAllBool = !selectAllBool;
+    if(selectAllBool) {
+        selectAllHelper(checkbox);
+        $(".selectAllSeq").addClass("colorToggle");
+        // first empty array
+        checkboxes = [];
+        // push all checkboxes (1 to num_hits) into array
+        _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
+    }
+    else {
+        deselectAll(checkbox);
+        $(".selectAllSeq").removeClass("colorToggle");
+        // delete all checkboxes from array
+        checkboxes = [];
+    }
 }
