@@ -1058,3 +1058,12 @@ textarea:focus{
 }
 
 
+.pending-panel {
+    text-align: center;
+    display: block;
+    margin-left: auto;
+}
+
+.copySpacer {
+    padding-bottom: 25px;
+}
