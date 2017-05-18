@@ -306,6 +306,11 @@ textarea { resize:both; }
     color: red;
     display: none;
     text-align: center;
+    cursor: pointer;
+}
+
+#rcnbtn {
+    font-size: 1.2em !important;
 }
 
 .slick-prev:before {
