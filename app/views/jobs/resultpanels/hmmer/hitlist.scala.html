@@ -110,15 +110,19 @@
         }
 
         function hmmer_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
+            var data = {"checkboxes": checkboxes.removeDuplicates()};
+            var route = null;
             if (boolFullLength) {
                 if (boolEvalue) {
-                    var route = jsRoutes.controllers.HmmerController.evalFull(jobID, evalue);
+                    route = jsRoutes.controllers.HmmerController.evalFull(jobID, evalue);
                 } else {
-                    var route = jsRoutes.controllers.HmmerController.full(jobID, checkboxes);
+                    route = jsRoutes.controllers.HmmerController.full(jobID);
                 }
                 $.ajax({
                     url: route.url,
-                    method: route.method
+                    method: route.method,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
                 }).done(function () {
                     $.ajax({
                         type: 'GET',
@@ -131,35 +135,16 @@
                 if (boolEvalue) {
                     route = jsRoutes.controllers.HmmerController.alnEval(jobID, evalue);
                 } else {
-                    route = jsRoutes.controllers.HmmerController.aln(jobID, checkboxes);
+                    route = jsRoutes.controllers.HmmerController.aln(jobID);
                 }
                 $.ajax({
                     url: route.url,
-                    method: route.method
+                    method: route.method,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
                 }).done(function (data_) {
                     forward(selectedTool, data_);
                 });
-            }
-        }
-
-
-        function selectAll() {
-            selectAllBool = !selectAllBool;
-            if (selectAllBool) {
-                selectAllHelper(checkbox);
-                $(".selectAllSeq").addClass("colorToggle");
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits + 1).forEach(function (x) {
-                    checkboxes.push(x)
-                });
-            }
-            else {
-                deselectAll(checkbox);
-                $(".selectAllSeq").removeClass("colorToggle");
-                // delete all checkboxes from array
-                checkboxes = [];
             }
         }
 
