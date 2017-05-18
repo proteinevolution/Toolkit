@@ -24,11 +24,14 @@ let JobPendingComponent = {
                             console.log("requested:",data);
                         });
                     }
-                }, "Load the found job")
+                }, "Reload existing job")
             ]),
             m("div", {"class": "processJobIdContainer"},
-                m('b', "Job ID:"),
-                m('p', ' ' + args.job().jobID)
+                m('table',
+                    m('tr',
+                        m('td',
+                            m('b', "Job ID:"),
+                            m('p', ' ' + args.job().jobID))))
             )
         ]);
     }
