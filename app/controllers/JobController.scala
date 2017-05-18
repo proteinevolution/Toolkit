@@ -22,6 +22,7 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
+import com.typesafe.config.ConfigFactory
 import models.tools.ToolFactory
 import modules.tel.env.Env
 import play.Logger
@@ -125,6 +126,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 status = Submitted,
                 emailUpdate = params.get(Job.EMAILUPDATE).isDefined,
                 tool = toolName,
+                toolnameLong = None,
                 label = params.get("label").flatten,
                 watchList = List(user.userID),
                 dateCreated = Some(jobCreationTime),
