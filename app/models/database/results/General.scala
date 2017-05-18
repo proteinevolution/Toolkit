@@ -18,7 +18,7 @@ class Alignment @Inject()() {
         var alignment = obj.as[List[JsArray]]
         val list = alignment.zipWithIndex.map {
           case (data, index) =>
-            parseAlignmentItem(data, (index.toInt + 1))
+            parseAlignmentItem(data, index.toInt + 1)
         }
         AlignmentResult(list)
       }

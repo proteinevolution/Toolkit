@@ -55,7 +55,9 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
     }
   }
 
-  def full(jobID: String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json = request.body.asJson.get
+    val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -97,7 +99,9 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
     }
   }
 
-  def aln(jobID: String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json = request.body.asJson.get
+    val numList = (json \ "checkboxes").as[List[Int]]
     getResult(jobID).map {
       case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
       case _             => NotFound
@@ -112,7 +116,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
   }
 
   def getAln(alignment: AlignmentResult, list: Seq[Int]): String = {
-    val fas = list.map { num =>
+    val fas = list.map { num => println(num-1) ; println(alignment.alignment(num - 1).accession)
       ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num - 1).seq + "\n"
     }
     fas.mkString
