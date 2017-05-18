@@ -219,7 +219,7 @@ window.JobListComponent = {
         return {}
     },
     view: function(ctrl : any, args : any) {
-        let shownList, listLength, listTooLong, onTopOfList, onBottomOfList, numScrollItems, page, pagesTotal;
+        let shownList:any, listLength:any, listTooLong:any, onTopOfList:any, onBottomOfList:any, numScrollItems:any, page:any, pagesTotal:any;
         shownList  = JobListComponent.visibleJobs();
         listLength = JobListComponent.list.length;                   // lenght of the original list
         page       = Math.floor(JobListComponent.index / JobListComponent.numVisibleItems) + 1;  // Calculate the current page
@@ -239,12 +239,12 @@ window.JobListComponent = {
         return m("div", { "class": "job-list" }, [
             m("div", { "class": "job-button" }, [
                 m("div", { "class": "sort id textcenter" + (JobListComponent.sort.mode == "jobID" ? " selected" : ""),
-                           onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
-                m("div", { "class": "sort date textcenter"  + (JobListComponent.sort.mode == "dateCreated" ? " selected" : ""),
-                           onclick: JobListComponent.sortList.bind(ctrl, "dateCreated", true) }, "Date"),
-                m("div", { "class": "sort tool textcenter"  + (JobListComponent.sort.mode == "tool" ? " selected" : ""),
-                           onclick: JobListComponent.sortList.bind(ctrl, "tool", true) }, "Tool"),
-                m("div", { "class": "openmanager textcenter"}, m('a', { href : "/#/jobmanager"}, m("i", {"class": "icon-list"})))
+                           title: "Sort by job ID", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
+                m("div", { "class": "sort date textcenter" + (JobListComponent.sort.mode == "dateCreated" ? " selected" : ""),
+                           title: "Sort by date created", onclick: JobListComponent.sortList.bind(ctrl, "dateCreated", true) }, "Date"),
+                m("div", { "class": "sort tool textcenter" + (JobListComponent.sort.mode == "tool" ? " selected" : ""),
+                           title: "Sort by tool name", onclick: JobListComponent.sortList.bind(ctrl, "tool", true) }, "Tool"),
+                m("div", { "class": "openmanager textcenter"}, m('a', { href : "/#/jobmanager", title: "Open job manager"}, m("i", {"class": "icon-list"})))
             ]),
             m("div", { "class": "elements noselect" }, [
                 listTooLong ?
