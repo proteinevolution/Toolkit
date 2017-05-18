@@ -10,7 +10,7 @@
                     let route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
                     m.request({method:route.method, url:route.url}).then(function(data : any){
                         if (data != null && data.jobID != null) {
-                            console.log(JSON.stringify(data));
+                            //console.log(JSON.stringify(data));
                             $("#copyID").val(data.jobID.toString());
                             $("#copyDate").val(data.dateCreated);
                         }
@@ -36,7 +36,7 @@
                             console.log("requested:",data);
                         });
                     }
-                }, "Start Job anyways"),
+                }, "Start job anyway"),
                 m("button",{ "class" : "hashPrompt button submitJob",
                     onclick : function(e : any){
                         e.preventDefault();
@@ -49,7 +49,7 @@
                             console.log("requested:",data);
                         });
                     }
-                }, "Reload existing job")
+                }, "Load existing job")
             ]),
             m("div", {"class": "processJobIdContainer"},
             )
