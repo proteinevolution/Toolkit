@@ -263,7 +263,7 @@ class SignIn {
         event.preventDefault();
         let dataS = {nameLogin:SignIn.email, password:SignIn.password};
         let route = jsRoutes.controllers.Auth.signInSubmit();
-        m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
+        m.request({method: route.method, user: SignIn.email, password: SignIn.password, url: route.url, data: dataS }).then(function(authMessage) {
             dataS = null;
             if (authMessage.successful) {
                 SignIn.password = null;
