@@ -214,9 +214,10 @@
 }
 .job-list .d.selected {
     background-color: #C3FFC3;
-    box-shadow: 2px 0px 4px 0px #777;
-    margin-left: -2px;
-    margin-bottom: 1px;
+    box-shadow: 1px 0 6px darkgreen;
+    margin-right: 2px;
+    margin-top: 1px;
+    margin-bottom: 2px;
 }
 
 .job-list .e {
