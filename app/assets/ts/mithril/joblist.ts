@@ -216,10 +216,12 @@ window.JobListComponent = {
         JobListComponent.reloadList();
         // TODO this is a hack to make the controller use the reload list command only once
         JobListComponent.controller = function(){return {}};
+
+
         return {}
     },
     view: function(ctrl : any, args : any) {
-        let shownList, listLength, listTooLong, onTopOfList, onBottomOfList, numScrollItems, page, pagesTotal;
+        let shownList:any, listLength:any, listTooLong:any, onTopOfList:any, onBottomOfList:any, numScrollItems:any, page:any, pagesTotal:any;
         shownList  = JobListComponent.visibleJobs();
         listLength = JobListComponent.list.length;                   // lenght of the original list
         page       = Math.floor(JobListComponent.index / JobListComponent.numVisibleItems) + 1;  // Calculate the current page
@@ -236,15 +238,15 @@ window.JobListComponent = {
         //             "on Top"                  : onTopOfList,
         //             "on Bottom"               : onBottomOfList});
         numScrollItems = JobListComponent.numVisibleItems; // How many items to scroll per click
-        return m("div", { "class": "job-list" }, [
+        return m("div", { "class": "job-list", config: tooltipsterConf }, [
             m("div", { "class": "job-button" }, [
                 m("div", { "class": "sort id textcenter" + (JobListComponent.sort.mode == "jobID" ? " selected" : ""),
-                           onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
-                m("div", { "class": "sort date textcenter"  + (JobListComponent.sort.mode == "dateCreated" ? " selected" : ""),
-                           onclick: JobListComponent.sortList.bind(ctrl, "dateCreated", true) }, "Date"),
-                m("div", { "class": "sort tool textcenter"  + (JobListComponent.sort.mode == "tool" ? " selected" : ""),
-                           onclick: JobListComponent.sortList.bind(ctrl, "tool", true) }, "Tool"),
-                m("div", { "class": "openmanager textcenter"}, m('a', { href : "/#/jobmanager"}, m("i", {"class": "icon-list"})))
+                           title: "Sort by job ID", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
+                m("div", { "class": "sort date textcenter" + (JobListComponent.sort.mode == "dateCreated" ? " selected" : ""),
+                           title: "Sort by date created", onclick: JobListComponent.sortList.bind(ctrl, "dateCreated", true) }, "Date"),
+                m("div", { "class": "sort tool textcenter" + (JobListComponent.sort.mode == "tool" ? " selected" : ""),
+                           title: "Sort by tool name", onclick: JobListComponent.sortList.bind(ctrl, "tool", true) }, "Tool"),
+                m("div", { "class": "openmanager textcenter", title: "Open job manager"}, m('a', { href : "/#/jobmanager"}, m("i", {"class": "icon-list"})))
             ]),
             m("div", { "class": "elements noselect" }, [
                 listTooLong ?

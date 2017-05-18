@@ -1,14 +1,16 @@
 @import play.api.libs.json.JsValue
 
-@(toolName: String, jobID: String, jsValue: JsValue)(implicit request: RequestHeader)
-
-<a type="button" class="button success tiny hhpred_extra_button" data-open="forwardModal">Forward selected</a>
-<a type="button" class="button success tiny hhpred_extra_button" id="downloadAlignment"  onclick="download_()">Download File</a>
-
+@(toolName: String, jobID: String, jsValue: JsValue, tool : models.tools.Tool)(implicit request: RequestHeader)
+<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+<div class="colorOptsAlignment">
+    <a type="button" data-open="forwardModal_@toolName""><span>Forward selected</span></a>
+    <a type="button" id="downloadAlignment"  onclick="download_()"><span>Download File</span></a>
+    <hr id="line-element" colspan="4" class="horizontal-line">
+</div>
 <br/><br/>
 <div class="h1">Retrieved @{{jsValue \ "ids" \ "ACC_IDS"}.as[List[JsValue]].size} IDs<br/><br/></div>
 
-
+    @views.html.forwardmodals.simpler(tool, toolName)
 
  <div class="uncheckedListWrap">
     @for((id) <- (jsValue \ "ids" \ "ACC_IDS").as[List[JsValue]]){
@@ -26,11 +28,11 @@
     data = data_;
     });
 
-    function forward_(tool) {
+    window["@{toolName}_forward"] = function(tool) {
         forwardData = data.ACC_IDS;
         console.log(JSON.stringify(data));
         forward(tool, forwardData.join("\n"));
-    }
+    };
 
     function download_(){
         var fileString = "";
