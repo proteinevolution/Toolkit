@@ -81,10 +81,12 @@ let typeAhead = function (elem : any, isInit : boolean) : any {
                 source: tools.ttAdapter(),
                 templates: {
                     suggestion: function (data: any) {
-                        if(data !=null) {
+                        if(data !=null && data.short != "hhpred_automatic" && data.short != "hhpred_manual") {
+                            console.log(data.long)
                             return '<div class="list-group-item"><a class="search-results" href="#/tools/' + data.short + '" name="' + data.long + '">' + data.long + '</a></div>';
+                        }else {
+                            return '<div style="display: none"></div>';
                         }
-                        return ''
                         },
                     header: '<h6 class="header-name">Tools</h6>',
                     empty: ['']

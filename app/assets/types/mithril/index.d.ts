@@ -798,6 +798,10 @@ declare namespace Mithril {
 
          contentType ?: string;
 
+         user ?: string;
+
+         password ?: string;
+
 
     }
 
