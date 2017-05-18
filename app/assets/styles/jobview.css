@@ -41,6 +41,7 @@ body.is-reveal-open {
 #alignmentViewerPanel textarea {
     font-size: 0.7em;
     font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin-bottom: 0.5em;
 }
 
 #bioJSContainer, #rootDiv {
@@ -277,7 +278,7 @@ hr {
     color: rgba(0, 110, 98, 166) !important;
     border-bottom: solid 1px rgba(0, 110, 98, 166);
     line-height: 20px;
-    margin: unset !important;
+    margin-top: 0.25em;
     padding: unset !important;
     height: 1.88em;
 }
@@ -335,6 +336,12 @@ hr {
     background-color: transparent;
 }
 
+#alignmentViewerPanel .alignmentExample {
+    padding-left: 0;
+    padding-right: 0;
+    width: 7em;
+    text-align: left;
+}
 
 
 .alignmentParameter input {
@@ -342,6 +349,7 @@ hr {
     color: black;
     float: left;
     padding-left: 0;
+    padding-right: 0;
     margin-left: 0 !important;
 }
 
@@ -364,13 +372,14 @@ hr {
     /*margin-bottom: 1.3em;*/
 /*}*/
 
-.parameters input {
+.parameters input, #alignmentViewerPanel .alignmentExample {
     text-shadow: 0 0 0 #878787;
     /*width: 15em;*/
-    height: 2.7em;
+    height: 3em;
     border-width: 0 0 1px 0;
     box-shadow: none;
     background-color: transparent;
+    padding-bottom: 0;
 }
 
 .parameters input:focus {
@@ -391,7 +400,7 @@ hr {
 .submitJob {
     background-color: rgba(0, 110, 98, 166) !important;
     border-radius: 3px !important;
-    margin-right: 1em !important;
+    margin-right: 2em !important;
     color: white !important;
     margin-left: 2em;
 }
@@ -968,7 +977,8 @@ textarea:focus{
 }
 
 #viewAlignment {
-    margin-left: -30px;
+    float: right;
+    margin-right: 0 !important;
 }
 
 .select2-results__option {
