@@ -17,9 +17,9 @@
 
     <script>
         var downloadFilename = "@{resultname}_@{jobID}";
+        var fileURL="/files/@{jobID}/@{filename}";
         window["@{resultname}_download"] = function(){
             var downloadFilename = "@{resultname}_@{jobID}";
-            var fileURL="/files/@{jobID}/@{filename}";
             $.ajax({
                 method: "GET",
                 url: fileURL
@@ -28,16 +28,16 @@
             })
         };
 
-        function mmseqs2_forward(selectedTool) {
+        window["@{tool.toolNameShort}_forward"] = function(selectedTool){
             var forwardData = [];
             //fill array with headers and sequences
-            data.hits.forEach(function(currentValue) {
-                forwardData.push(currentValue.name);
-                forwardData.push(currentValue.seq);
+            $.ajax({
+                method: "GET",
+                url: fileURL
+            }).done(function(data) {
+                forward(selectedTool, data);
             });
-            forward(selectedTool, forwardData.join("\n"));
-        }
-
+        };
         function onExpand() {
             $(".fileview").css("overflow-y", "visible");
             $(".fileview").css("height", "100%");
