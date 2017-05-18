@@ -37,17 +37,17 @@ let followScroll = function(element : any) {
             }
 
             if ($('#flat-slider').visible()) {
-                $("#visualizationScroll").addClass("colorToggle");
-                $("#hitlistScroll").removeClass("colorToggle");
-                $("#alignmentsScroll").removeClass("colorToggle");
+                $("#visualizationScroll").addClass("colorToggleBar");
+                $("#hitlistScroll").removeClass("colorToggleBar");
+                $("#alignmentsScroll").removeClass("colorToggleBar");
             } else if ($('#alignments').visible(true)) {
-                $("#alignmentsScroll").addClass("colorToggle");
-                $("#hitlistScroll").removeClass("colorToggle");
-                $("#visualizationScroll").removeClass("colorToggle");
+                $("#alignmentsScroll").addClass("colorToggleBar");
+                $("#hitlistScroll").removeClass("colorToggleBar");
+                $("#visualizationScroll").removeClass("colorToggleBar");
             } else if ($('#hitlist').visible(true)) {
-                $("#hitlistScroll").addClass("colorToggle");
-                $("#alignmentsScroll").removeClass("colorToggle");
-                $("#visualizationScroll").removeClass("colorToggle");
+                $("#hitlistScroll").addClass("colorToggleBar");
+                $("#alignmentsScroll").removeClass("colorToggleBar");
+                $("#visualizationScroll").removeClass("colorToggleBar");
             }
             // trigger lazyload for loading alignment
             if ($(this).scrollTop() == $(this).height() - $(window).height()) {
