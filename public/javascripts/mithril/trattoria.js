@@ -217,7 +217,7 @@ var JobTabsComponent = {
                 ctrl.isJob && ctrl.state === 4 ? m("div", { class: "tabs-panel", id: "tabpanel-Error"   },
                     m(JobErrorComponent, {job: ctrl.job})) : void 0,
                 ctrl.isJob && ctrl.state === 7 ? m("div", { class: "tabs-panel", id: "tabpanel-Pending" },
-                    m(JobPendingComponent, {job: ctrl.job})) : void 0,
+                    m(window.JobPendingComponent, {job: ctrl.job})) : void 0,
                 m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob })
             ),
             ctrl.views ? ctrl.views.map(function(view) {
