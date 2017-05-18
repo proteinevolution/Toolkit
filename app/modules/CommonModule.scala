@@ -3,7 +3,7 @@ package modules
 import models.database.CMS.FeaturedArticle
 import models.database.jobs.{FrontendJob, Job, JobAnnotation}
 import models.database.statistics.{ClusterLoadEvent, JobEventLog, ToolStatistic}
-import models.database.users.User
+import models.database.users.{User, UserData}
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
@@ -233,6 +233,11 @@ true).map{x=>println(x);x.result})
 
   protected def findUser(selector: BSONDocument): Future[Option[User]] =
     userCollection.flatMap(_.find(selector).one[User])
+
+
+  protected def getUserData(selector: BSONDocument) : Future[Option[UserData]] =
+    userCollection.flatMap(_.find(selector).one[UserData])
+
 
   protected def findUsers(selector: BSONDocument): Future[scala.List[User]] = {
     userCollection.map(_.find(selector).cursor[User]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))
