@@ -178,18 +178,6 @@ button.loggedIn {
 
 }
 
-.userMenu:after {
-  content: "";
-  width: 0;
-  height: 0;
-  border: 10px solid transparent;
-  border-bottom-color: white;
-  border-top: none;
-  position: absolute;
-  margin-left: 1.95em;
-  margin-top: -8.9em;
-}
-
 .userMenu a {
   padding: 0.75em 0.75em 0.75em 0.75em !important;
 }
