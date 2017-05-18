@@ -15,10 +15,11 @@ window.JobListComponent = {
     // Generates a job Object
     Job : function (data : any) {
         return {
-            jobID       : ((data && data.jobID       != null) ? data.jobID       : null),
-            status      : ((data && data.status      != null) ? data.status      : null),
-            dateCreated : ((data && data.dateCreated != null) ? data.dateCreated : null),
-            tool        : ((data && data.tool        != null) ? data.tool        : null),
+            jobID       : ((data && data.jobID        != null) ? data.jobID       : null),
+            status      : ((data && data.status       != null) ? data.status      : null),
+            dateCreated : ((data && data.dateCreated  != null) ? data.dateCreated : null),
+            tool        : ((data && data.tool         != null) ? data.tool        : null),
+            toolnameLong: ((data && data.toolnameLong != null) ? data.toolnameLong        : null),
             // Functions
             select    : function(job : any) {     // marks a job as selected and changes the route
                 return function(e : any) {        // ensure that the event bubble is not triggering when the clear button is hit

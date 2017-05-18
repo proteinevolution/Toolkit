@@ -18,6 +18,7 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
                emailUpdate: Boolean = false, // Owner wants to be notified when the job is ready
                deletion: Option[JobDeletion] = None, // Deletion Flag showing the reason for the deletion
                tool: String, // Tool used for this Job
+               toolnameLong: Option[String],
                label: Option[String],
                watchList: List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
                commentList: List[BSONObjectID] = List.empty, // List of comment IDs for the Job
@@ -44,7 +45,7 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
       Job.STATUS      -> status,
       Job.DATECREATED -> dateCreated.map(_.getMillis),
       Job.TOOL        -> tool,
-      "toolnameLong"  -> ConfigFactory.load().getString(s"Tools.$tool.longname")
+      Job.TOOLNAMELONG -> ConfigFactory.load().getString(s"Tools.$tool.longname")
     )
   }
 
@@ -62,7 +63,8 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
       Job.COMMENTLIST -> commentList.length,
       Job.DATECREATED -> dateCreated.map(_.getMillis),
       Job.DATEUPDATED -> dateUpdated.map(_.getMillis),
-      Job.DATEVIEWED  -> dateViewed.map(_.getMillis)
+      Job.DATEVIEWED  -> dateViewed.map(_.getMillis),
+      Job.TOOLNAMELONG  -> ConfigFactory.load().getString(s"Tools.$tool.longname")
     )
   }
   override def toString: String = {
@@ -110,6 +112,7 @@ object Job {
   val DATECREATED = "dateCreated" //              created on field
   val DATEUPDATED = "dateUpdated" //              changed on field
   val DATEVIEWED  = "dateViewed" //              last view on field
+  val TOOLNAMELONG= "toolnameLong" //           long tool name
 
   implicit object JsonReader extends Reads[Job] {
     // TODO this is unused at the moment, as there is no convertion of JSON -> Job needed.
@@ -130,6 +133,7 @@ object Job {
           val dateCreated = (obj \ DATECREATED).asOpt[String]
           val dateUpdated = (obj \ DATEUPDATED).asOpt[String]
           val dateViewed  = (obj \ DATEVIEWED).asOpt[String]
+          val toolnameLong = (obj \ TOOLNAMELONG).asOpt[String]
           JsSuccess(
             Job(
               mainID = BSONObjectID.generate(),
@@ -140,6 +144,7 @@ object Job {
               status = status.get,
               deletion = deletion,
               tool = "",
+              toolnameLong = None,
               label = Some(""),
               dateCreated = Some(new DateTime()),
               dateUpdated = Some(new DateTime()),
@@ -163,6 +168,7 @@ object Job {
       EMAILUPDATE -> job.emailUpdate,
       DELETION    -> job.deletion,
       TOOL        -> job.tool,
+      TOOLNAMELONG-> job.toolnameLong,
       WATCHLIST   -> job.watchList,
       COMMENTLIST -> job.commentList,
       CLUSTERDATA -> job.clusterData,
@@ -187,6 +193,7 @@ object Job {
         emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         deletion = bson.getAs[JobDeletion](DELETION),
         tool = bson.getAs[String](TOOL).getOrElse(""),
+        toolnameLong = bson.getAs[String](TOOLNAMELONG),
         label = bson.getAs[String](LABEL),
         watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
@@ -214,6 +221,7 @@ object Job {
         EMAILUPDATE -> emailUpdate,
         DELETION    -> job.deletion,
         TOOL        -> job.tool,
+        TOOLNAMELONG-> job.toolnameLong,
         LABEL       -> job.label,
         WATCHLIST   -> job.watchList,
         COMMENTLIST -> job.commentList,

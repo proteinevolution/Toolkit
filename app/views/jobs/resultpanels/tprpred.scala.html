@@ -10,7 +10,7 @@
                 <h6>No hits found!</h6>
         </div>
 } else {
-
+        <br/><hr><br/><br/>
         <div class="tprResults">
                 <br>
 
@@ -20,11 +20,6 @@
                 }
                 <br>
                 <br>
-                <div class="colorOptsAlignment">
-                        <a onclick='toggleAliColor_("letters")' type="button"><span id="letterColor">Color letters</span></a>
-                        <a onclick='toggleAliColor_("background")' type="button"><span id="backgroundColor">Color background</span></a>
-                        <hr id="line-element" colspan="4" class="horizontal-line">
-                </div>
         <table class="unstriped">
                 <tbody class="alignmentTBody">
                         <tr class="header">
@@ -54,7 +49,7 @@
 
 
         </div>
-
+        <br/><br/><hr><br/>
 }
 
 <script>
@@ -64,29 +59,6 @@
         $.getJSON(fileUrl, function (data_) {
             data = data_;
         });
-
-        var aas = $('span[class^="aa_"]');
-        var colorLettersBool = false;
-        var colorBackgroundBool = false;
-
-
-        function toggleAliColor_(str){
-                if(str == "letters" ){
-                        if(colorLettersBool)
-                                toggleAliColor("");
-                        else
-                                toggleAliColor("letters");
-                        this.colorLettersBool = !this.colorLettersBool;
-                }
-                if(str == "background"){
-                        if(colorBackgroundBool)
-                                toggleAliColor("");
-                        else
-                                toggleAliColor("background");
-                        this.colorBackgroundBool = !this.colorBackgroundBool;
-                }
-        }
-
 
 
 </script>
