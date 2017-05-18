@@ -40,8 +40,8 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
       val queryString = queryString_.trim()
       val tools: List[models.tools.Tool] = toolFactory.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
+        .filter( tool=>  tool.toolNameShort != "hhpred_manual" && tool.toolNameShort != "hhpred_automatic")
         .toList
-      Logger.info("user is looking for: " + queryString + " Found Tool: " + tools.map(_.toolNameShort).mkString(", "))
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {
         // Grab Job ID auto completions

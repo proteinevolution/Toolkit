@@ -9,7 +9,7 @@ import models.database.users.{User, UserToken}
 import models.job.JobActorAccess
 import models.mailing.{ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail}
 import models.tools.ToolFactory
-import modules.LocationProvider
+import modules.{CommonModule, LocationProvider}
 import modules.tel.TEL
 import org.joda.time.DateTime
 import play.Logger
@@ -22,7 +22,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 
 /**
   * Controller for Authentication interactions
@@ -42,7 +42,8 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     with I18nSupport
     with JSONTemplate
     with UserSessions
-    with Common {
+    with Common
+    with CommonModule {
 
   /**
     * Returns the sign in form
@@ -135,92 +136,123 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
+
+
+  def matchUserToPW(username : String, password : String) : Future[Boolean]  = {
+
+      findUser(BSONDocument("userData.nameLogin" -> username)).map {
+
+        case Some(user) if user.checkPassword(password) => true
+        case None => false
+
+    }
+
+  }
+
+  // add header authentication layer so that this cannot be curled easily by checking db if user matches with pw
+
+  def BasicSecured[A]()(action: Action[A]): Action[A] = Action.async(action.parser) { request =>
+    request.headers.get("Authorization").flatMap { authorization =>
+      authorization.split(" ").drop(1).headOption.filter { encoded =>
+        new String(org.apache.commons.codec.binary.Base64.decodeBase64(encoded.getBytes)).split(":").toList match {
+          case u :: p :: Nil if Await.result(matchUserToPW(u,p), scala.concurrent.duration.Duration.Inf) => true
+          case _ => false
+        }
+      }
+    }.map(_ => action(request)).getOrElse {
+      //Future.successful(Unauthorized.withHeaders("WWW-Authenticate" -> """Basic realm="Secured Area""""))
+      Future.successful(Ok(LoginIncorrect()))
+    }
+  }
+
+
   /**
     * Submission of the sign in form
     * Checks the Database for the user and logs him in if password matches
     *
     * @return
     */
-  def signInSubmit(): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { unregisteredUser =>
-      if (unregisteredUser.accountType < 0) {
-        // Evaluate the Form
-        FormDefinitions.SignIn.bindFromRequest.fold(
-          errors =>
-            Future.successful {
-              Logger.info(" but there was an error in the submit form: " + errors.toString)
-              Ok(LoginError())
-          },
-          // if no error, then insert the user to the collection
-          signInFormUser => {
-            val futureUser = findUser(
-              BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> signInFormUser.nameLogin),
-                                         BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))))
-            futureUser.flatMap {
-              case Some(databaseUser) =>
-                // Check the password
-                if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
-                  // create a modifier document to change the last login date in the Database
-                  val selector = BSONDocument(User.IDDB -> databaseUser.userID)
-                  // Change the login time and give the new Session ID to the user.
-                  // Additionally add the watched jobs to the users watchlist.
-                  val modifier = BSONDocument(
-                    "$set" ->
-                      BSONDocument(User.SESSIONID     -> databaseUser.sessionID.getOrElse(BSONObjectID.generate()),
-                                   User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
-                  // TODO this adds the non logged in user's jobs to the now logged in user's job list
-                  //                            "$addToSet"        ->
-                  //               BSONDocument(User.JOBS          ->
-                  //               BSONDocument("$each"            -> unregisteredUser.jobs)))
-                  // Finally add the edits to the collection
-                  modifyUserWithCache(selector, modifier).map {
-                    case Some(loggedInUser) =>
-                      Logger.info(
-                        "\n-[old user]-\n"
-                          + unregisteredUser.toString
-                          + "\n-[new user]-\n"
-                          + loggedInUser.toString)
-                      // Remove the old, not logged in user
-                      //removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
-                      removeUserFromCache(unregisteredUser)
+  def signInSubmit() : Action[AnyContent] = BasicSecured() {
+    Action.async { implicit request =>
+      getUser.flatMap { unregisteredUser =>
+        if (unregisteredUser.accountType < 0) {
+          // Evaluate the Form
+          FormDefinitions.SignIn.bindFromRequest.fold(
+            errors =>
+              Future.successful {
+                Logger.info(" but there was an error in the submit form: " + errors.toString)
+                Ok(LoginError())
+              },
+            // if no error, then insert the user to the collection
+            signInFormUser => {
+              val futureUser = findUser(
+                BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> signInFormUser.nameLogin),
+                  BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))))
+              futureUser.flatMap {
+                case Some(databaseUser) =>
+                  // Check the password
+                  if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
+                    // create a modifier document to change the last login date in the Database
+                    val selector = BSONDocument(User.IDDB -> databaseUser.userID)
+                    // Change the login time and give the new Session ID to the user.
+                    // Additionally add the watched jobs to the users watchlist.
+                    val modifier = BSONDocument(
+                      "$set" ->
+                        BSONDocument(User.SESSIONID -> databaseUser.sessionID.getOrElse(BSONObjectID.generate()),
+                          User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
+                    // TODO this adds the non logged in user's jobs to the now logged in user's job list
+                    //                            "$addToSet"        ->
+                    //               BSONDocument(User.JOBS          ->
+                    //               BSONDocument("$each"            -> unregisteredUser.jobs)))
+                    // Finally add the edits to the collection
+                    modifyUserWithCache(selector, modifier).map {
+                      case Some(loggedInUser) =>
+                        Logger.info(
+                          "\n-[old user]-\n"
+                            + unregisteredUser.toString
+                            + "\n-[new user]-\n"
+                            + loggedInUser.toString)
+                        // Remove the old, not logged in user
+                        //removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
+                        removeUserFromCache(unregisteredUser)
 
-                      // Tell the job actors to copy all jobs connected to the old user to the new user
-                      wsActorCache.get(unregisteredUser.userID.stringify) match {
-                        case Some(wsActors) =>
-                          val actorList: List[ActorRef] = wsActors: List[ActorRef]
-                          wsActorCache.set(loggedInUser.userID.stringify, actorList)
-                          actorList.foreach(_ ! ChangeSessionID(loggedInUser.sessionID.get))
-                          wsActorCache.remove(unregisteredUser.userID.stringify)
-                        case None =>
-                      }
+                        // Tell the job actors to copy all jobs connected to the old user to the new user
+                        wsActorCache.get(unregisteredUser.userID.stringify) match {
+                          case Some(wsActors) =>
+                            val actorList: List[ActorRef] = wsActors: List[ActorRef]
+                            wsActorCache.set(loggedInUser.userID.stringify, actorList)
+                            actorList.foreach(_ ! ChangeSessionID(loggedInUser.sessionID.get))
+                            wsActorCache.remove(unregisteredUser.userID.stringify)
+                          case None =>
+                        }
 
-                      // Everything is ok, let the user know that they are logged in now
-                      Ok(LoggedIn(loggedInUser))
-                        .withSession(
-                          sessionCookie(request, loggedInUser.sessionID.get, Some(loggedInUser.getUserData.nameLogin)))
-                    case None =>
-                      Ok(LoginIncorrect())
+                        // Everything is ok, let the user know that they are logged in now
+                        Ok(LoggedIn(loggedInUser))
+                          .withSession(
+                            sessionCookie(request, loggedInUser.sessionID.get, Some(loggedInUser.getUserData.nameLogin)))
+                      case None =>
+                        Ok(LoginIncorrect())
+                    }
+                  } else if (databaseUser.accountType < 1) {
+                    // User needs to Verify first
+                    Future.successful(Ok(MustVerify()))
+                  } else {
+                    // Wrong Password, show the error message
+                    Future.successful(Ok(LoginIncorrect()))
                   }
-                } else if (databaseUser.accountType < 1) {
-                  // User needs to Verify first
-                  Future.successful(Ok(MustVerify()))
-                } else {
-                  // Wrong Password, show the error message
-                  Future.successful(Ok(LoginIncorrect()))
-                }
-              case None =>
-                Future.successful {
-                  Ok(LoginIncorrect())
-                }
+                case None =>
+                  Future.successful {
+                    Ok(LoginIncorrect())
+                  }
+              }
             }
-          }
-        )
-      } else {
-        Future.successful(Ok(AlreadyLoggedIn()))
+          )
+        } else {
+          Future.successful(Ok(AlreadyLoggedIn()))
+        }
       }
     }
   }
-
   /**
     * Submission of the sign up form
     * Checks Database if there is a preexisting user and adds him if there is none
