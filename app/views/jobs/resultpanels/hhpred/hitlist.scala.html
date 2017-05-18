@@ -197,6 +197,7 @@
 
 
         function templateAlignment(accession) {
+            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
             $('textarea#alignmentTemplate').val(" ");
             // replace '#' for url
             accession = accession.replace("#", "%23");
@@ -210,12 +211,13 @@
                     url: 'files/' + jobID + '/' + accession + '.fas'
                 }).done(function (data) {
                     $("#alignmentTemplate").val(data.toString());
-                });
+                }).always($.LoadingOverlay("hide"));
             }).fail(function () {
                 $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
+                $.LoadingOverlay("hide")
             });
-        }
 
+        }
 
         function showStructure(accession) {
             currentStructureAccession = accession;
@@ -248,6 +250,7 @@
 
         function hhpred_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
+            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
             var route = null;
             if (boolEvalue) {
                 route = jsRoutes.controllers.HHpredController.alnEval(jobID, evalue);
@@ -265,8 +268,8 @@
                     url: 'files/' + jobID + '/alignment.fas'
                 }).done(function (data_) {
                     forward(selectedTool, data_.toString());
-                });
-            });
+                }).always($.LoadingOverlay("hide"));
+            }).fail($.LoadingOverlay("hide"));
 
         }
 
