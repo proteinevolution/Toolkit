@@ -336,7 +336,7 @@ final class ToolFactory @Inject()(
      Seq.empty,
      Seq.empty),
     // RetrieveSeq
-    ("retseq", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE), Seq.empty, Seq.empty),
+    ("retseq", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE), Seq("clans"),Seq.empty),
     // Seq2ID
     ("seq2id", Seq(paramAccess.FASTAHEADERS), Seq("retseq"), Seq.empty),
     // ANCESCON
@@ -731,13 +731,13 @@ final class ToolFactory @Inject()(
       }
     ),
     Toolnames.RETSEQ -> Map(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/sequences.fa"))
-      },
       Resultviews.SUMMARY -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/unretrievable"))
+      },
+      Resultviews.RESULTS -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        Future.successful(views.html.jobs.resultpanels.fileviewWithDownloadForward("sequences.fa", s"$jobPath$jobID/results/sequences.fa", jobID, "retseq",  this.values(Toolnames.RETSEQ)))
       }
     ),
     Toolnames.SEQ2ID -> Map(
