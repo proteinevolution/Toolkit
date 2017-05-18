@@ -317,7 +317,7 @@ final class ToolFactory @Inject()(
     // TPRpred
     ("tprpred", Seq(paramAccess.SINGLESEQ, paramAccess.EVAL_TPR), Seq.empty, Seq.empty),
     // Quick 2D
-    ("quick2d", Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
+    //("quick2d", Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
     // Ali2D
     ("ali2d", Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
     // Modeller
