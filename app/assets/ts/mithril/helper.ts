@@ -103,3 +103,16 @@ let fadesIn = function(element : any, isInitialized : boolean, context : any) {
         $(element).velocity({opacity: 1, top: "50%"}, 750);
     }
 };
+
+let tooltipsterConf = function(elem: any, isInit: boolean) {
+
+    if(!isInit){
+        $('.job-list div').tooltipster({
+            theme: 'tooltipster-borderless',
+            position: 'bottom',
+            animation: 'fade'
+        });
+
+    }
+
+};
