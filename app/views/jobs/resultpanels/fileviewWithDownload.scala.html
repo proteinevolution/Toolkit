@@ -7,7 +7,7 @@
     <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 
-    <pre class="fileview" id="fileviewer" >@FileLoader.loadFile(filePath)</pre>
+    <pre class="fileview" id="fileviewer" >@Html(FileLoader.loadFile(filePath))</pre>
 
     <script>
         var downloadFilename = "@{resultname}_@{jobID}";
