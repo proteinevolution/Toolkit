@@ -114,6 +114,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
         case Some(jsValue) =>
           val result     = hhblits.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
+          println(numListStr)
           Process(generateAlignmentScript.pathAsString,
                   (jobPath + jobID).toFile.toJava,
                   "jobID"   -> jobID,
