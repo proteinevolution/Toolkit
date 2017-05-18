@@ -167,29 +167,29 @@ GET  /templateAlignmentHHblits/:jobID/:accession      @controllers.HHblitsContro
 # Hmmer
 POST        /HmmerLoadHits                            @controllers.HmmerController.loadHits(jobID: String, start: Int, end: Int)
 POST        /alnEvalHmmer                             @controllers.HmmerController.alnEval(jobID: String, eval:String)
-POST        /alnHmmer                                 @controllers.HmmerController.aln(jobID: String, listNum: Seq[Int])
+POST        /alnHmmer                                 @controllers.HmmerController.aln(jobID: String)
 POST        /evalHmmerFull                            @controllers.HmmerController.evalFull(jobID: String, eval:String)
-POST        /HmmerFull                                @controllers.HmmerController.full(jobID: String, listNum: Seq[Int])
+POST        /HmmerFull                                @controllers.HmmerController.full(jobID: String)
 
 # PSIblast
 POST        /evalPSIBlast                             @controllers.PSIBlastController.alnEval(jobID: String, eval:String)
-POST        /alnPSIBlast                              @controllers.PSIBlastController.aln(jobID:String, listNum: Seq[Int])
+POST        /alnPSIBlast                              @controllers.PSIBlastController.aln(jobID:String)
 POST        /evalPSIBlastFull                         @controllers.PSIBlastController.evalFull(jobID : String, eval: String)
-POST        /PSIBlastFull                             @controllers.PSIBlastController.full(jobID : String, listNum: Seq[Int])
+POST        /PSIBlastFull                             @controllers.PSIBlastController.full(jobID : String)
 POST        /PSIBlastLoadHits                         @controllers.PSIBlastController.loadHits(jobID: String, start: Int, end: Int)
 
 # HHblits
 POST        /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String, eval:String)
-POST        /alnHHBlits                               @controllers.HHblitsController.aln(jobID:String, listNum: Seq[Int])
+POST        /alnHHBlits                               @controllers.HHblitsController.aln(jobID:String)
 POST        /evalHHBlitsFull                          @controllers.HHblitsController.evalFull(jobID : String, eval: String)
-POST        /HHBlitsFull                              @controllers.HHblitsController.full(jobID : String, listNum: Seq[Int])
+POST        /HHBlitsFull                              @controllers.HHblitsController.full(jobID : String)
 POST        /HHblitsLoadHits                          @controllers.HHblitsController.loadHits(jobID: String, start: Int, end: Int)
 
 # HHPred
 POST        /evalHHpred                               @controllers.HHpredController.alnEval(jobID: String, eval:String)
-POST        /alnHHpred                                @controllers.HHpredController.aln(jobID:String, listNum: Seq[Int])
+POST        /alnHHpred                                @controllers.HHpredController.aln(jobID:String)
 POST        /HHpredLoadHits                           @controllers.HHpredController.loadHits(jobID: String, start: Int, end: Int)
 
 # Alignment
 POST        /AlignmentLoadHits                        @controllers.AlignmentController.loadHits(jobID: String, start: Int, end: Int, resultName: String)
-POST        /AlignmentGetAln                          @controllers.AlignmentController.getAln(jobID: String, listNum: Seq[Int], resultName: String)
+POST        /AlignmentGetAln                          @controllers.AlignmentController.getAln(jobID: String, resultName: String)
