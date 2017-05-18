@@ -176,7 +176,7 @@ let sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
                     $a.val(msaProtSeq);
                     break;
 
-                case "6frametranslation":
+                case "sixframe":
                     $a.val(singleDNASeq);
                     break;
 
