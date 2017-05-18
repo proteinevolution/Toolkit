@@ -266,7 +266,17 @@ let tabsContents : any = {
                 rows: 25,
                 value: GeneralTabComponent.controller().forwardString(),
                 spellcheck: false
-            }), m("div", {
+            }),
+            m("input", {
+                id: "pasteButton",
+                "class": "button small alignmentExample",
+                value: "Paste Example",
+                config: sampleSeqConfig,
+                onclick: function() {
+                    $('#alignment').val(exampleSequence);
+                }
+            }),
+            m("div", {
                 "class": "submitbuttons",
                 onclick: ctrl.frontendSubmit
             }, m("input", {

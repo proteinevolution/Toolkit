@@ -50,6 +50,7 @@ let sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
         catch (err) {
             toolname = "unknown";
             console.warn("toolname unspecified");
+
         }
 
         return $(elem).on("click", function (e) {
