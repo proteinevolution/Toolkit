@@ -462,6 +462,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         status = Submitted,
         emailUpdate = params.get(Job.EMAILUPDATE).isDefined,
         tool = toolname,
+        toolnameLong = None,
         clusterData = Some(clusterData),
         label = params.get("label"),
         watchList = List(user.userID),
