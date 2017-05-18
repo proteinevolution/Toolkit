@@ -80,7 +80,7 @@ onOpen = function(event : Event) : any {
 };
 
 onError = function(event : ErrorEvent) : any {
-    setTimeout(reconnect(true), 3000);
+    setTimeout(reconnect(true), 500);
 };
 
 onClose = function(event : CloseEvent) : any {
