@@ -359,7 +359,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 Logger.info("[WARNING]: job in index but not in database: " + mainID.stringify)
                 jobDao.deleteJob(mainID.stringify)
               }
-              Ok(Json.toJson(Json.obj("jobID" -> jobsPartition.lastOption.map(_.jobID))))
+              Ok(Json.toJson(Json.obj("jobID" -> jobsPartition.lastOption.map(_.jobID), "dateCreated" -> jobsPartition.lastOption.map(_.dateCreated))))
             }
           }
       }
