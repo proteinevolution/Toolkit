@@ -581,23 +581,18 @@ final class ToolFactory @Inject()(
         implicit val r = requestHeader
         Future.successful(
           views.html.jobs.resultpanels
-            .fileviewWithDownload(jobID + ".aln", s"$jobPath$jobID/results/" + jobID + ".results", jobID, "ali2d"))
+            .fileview(s"$jobPath$jobID/results/" + jobID + ".results"))
       }
     ,
     "ColoredResults" -> { (jobID, requestHeader) =>
       implicit val r = requestHeader
-      Future.successful(views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".aln", s"$jobPath$jobID/results/" + jobID + ".results_color", jobID, "ali2d"))
+      Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_color"))
     }
     ,
-    "ColoredResultsConfidence" -> { (jobID, requestHeader) =>
+    "ColoredResultsWithConfidence" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".aln", s"$jobPath$jobID/results/" + jobID + ".results_colorC", jobID, "ali2d"))
+        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_colorC"))
     }
-    ,
-    "BWResults" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".aln", s"$jobPath$jobID/results/" + jobID + ".results_bw", jobID, "ali2d"))
-      }
   ),
     Toolnames.CLUSTALO -> Map(
       Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
@@ -759,7 +754,7 @@ final class ToolFactory @Inject()(
       Resultviews.RESULTS -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
-          case Some(jsvalue) => views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue)
+          case Some(jsvalue) => views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue, this.values(Toolnames.SEQ2ID))
         }
       }
     ),
