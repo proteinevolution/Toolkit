@@ -1069,6 +1069,6 @@ textarea:focus{
 }
 
 h6 {
-    letter-spacing:0.05em;
+    font-size: 0.85em;
     font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }

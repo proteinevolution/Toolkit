@@ -76,7 +76,7 @@ class LiveTable {
     }
     static view (ctrl : any, args : any) : any {
         let trafficBarStatus: any;
-        // TODO: THIS PART CAUSES THAT LIVETABLE IS BROKEN ON RYE
+        // TODO: TRAFFICBAR IS BROKEN AGAIN!!!
         if(LiveTable.lastJob != null) {
             switch (LiveTable.lastJob.state) {
                 case 2:
