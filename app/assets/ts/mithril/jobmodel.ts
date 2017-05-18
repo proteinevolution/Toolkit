@@ -54,7 +54,8 @@ window.JobModel = {
         "matrix_phyml":"LG",
         "eff_crick_angle":"1",
         "samcc_periodicity":"7",
-        "seqcount":"500"
+        "seqcount":"500",
+        "invoke_psipred":"30"
 },
 
     /* Seems not to be used
