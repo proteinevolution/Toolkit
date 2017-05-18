@@ -97,7 +97,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "ali2d":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 200 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "quick2d":
@@ -128,7 +128,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 100 sequences in FASTA/CLUSTAL format");
                     break;
 
-                case "6frametranslation":
+                case "sixframe":
                     $(elem).attr("placeholder", "Enter a DNA sequence in FASTA format");
                     break;
 
@@ -484,7 +484,7 @@ let validationProcess = function(elem: any,toolname: string) {
                     ali2dTarget.mustHave2();
             }
 
-            seqLimit = 2000;
+            seqLimit = 200;
 
             break;
 
@@ -585,7 +585,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             break;
 
-        case "6frametranslation":
+        case "sixframe":
 
             let sixframetranslationTarget = new alignmentVal($(elem));
             sixframetranslationTarget.DNAvalidation();
