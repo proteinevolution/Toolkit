@@ -59,7 +59,7 @@ object JobActor {
   case class PushJob(job: Job)
 
   // Message for the Websocket Actor to send a ClearJob Message
-  case class ClearJob(jobID: String,  deleted : Boolean = false)
+  case class ClearJob(jobID: String, deleted: Boolean = false)
 
   // Message for the Websocket Actor to send a ClearJob Message
   case class DeleteJob(jobID: String, userID: BSONObjectID)
@@ -700,7 +700,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           Logger.error("[JobActor.StartJob] Job not found in DB: " + jobID)
       }
 
-
     // User does no longer watch this Job (delete also from JobManager)
     case DeleteJob(jobID, userID) =>
       modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
@@ -760,22 +759,23 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               Logger.info("DONE Removing execution context")
               // Tell the user that their job finished via eMail
               sendJobUpdateMail(job)
-                 val result =  (jobPath / job.jobID / "results").list
-                    .withFilter(_.hasExtension)
-                    .withFilter(_.extension.get == ".json")
-                    .map { file =>
-                      (file.nameWithoutExtension, reactivemongo.play.json.BSONFormats.toBSON(Json.parse(file.contentAsString)).get)
-                    }.toTraversable
-                  // Put the result files into the database, JobActor has to wait until this process has finished
-                  
-                  result2Job(job.jobID, BSONDocument(result))
-                  
-                  // Now we can update the JobState and remove it, once the update has completed
-                  this.updateJobState(job).map { job =>
-                    this.removeJob(job.jobID)
-                    Logger.info("Job has been removed from JobActor")
-                  }
-               
+              val result = (jobPath / job.jobID / "results").list
+                .withFilter(_.hasExtension)
+                .withFilter(_.extension.get == ".json")
+                .map { file =>
+                  (file.nameWithoutExtension,
+                   reactivemongo.play.json.BSONFormats.toBSON(Json.parse(file.contentAsString)).get)
+                }
+                .toTraversable
+              // Put the result files into the database, JobActor has to wait until this process has finished
+
+              result2Job(job.jobID, BSONDocument(result))
+
+              // Now we can update the JobState and remove it, once the update has completed
+              this.updateJobState(job).map { job =>
+                this.removeJob(job.jobID)
+                Logger.info("Job has been removed from JobActor")
+              }
 
             // Currently no further error handling
             case Error =>

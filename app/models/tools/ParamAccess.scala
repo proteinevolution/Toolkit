@@ -226,7 +226,8 @@ class ParamAccess @Inject()(tel: TEL) {
   final val MATRIX_MARCOIL         = select("matrix_marcoil", "Matrix")
   final val TRANSITION_PROBABILITY = select("transition_probability", "Transition Probability")
   final val MIN_SEQID_QUERY        = Param("min_seqid_query", ParamType.Percentage, 1, "Minimum sequence ID with Query (%)")
-  final val NUM_SEQS_EXTRACT       = Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
+  final val NUM_SEQS_EXTRACT =
+    Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
   final val SCORE_SS                = select("score_ss", "Score secondary structure")
   final val SS_SCORING              = select("ss_scoring", "SS Scoring")
   final val UNIQUE_SEQUENCE         = select("unique_sequence", "Retrieve only unique sequences")
@@ -261,5 +262,6 @@ class ParamAccess @Inject()(tel: TEL) {
   final val SAMCC_HELIXTWO          = Param("samcc_helixtwo", Text, 1, "Definition for helix 2")
   final val SAMCC_HELIXTHREE        = Param("samcc_helixthree", Text, 1, "Definition for helix 3")
   final val SAMCC_HELIXFOUR         = Param("samcc_helixfour", Text, 1, "Definition for helix 4")
-  final val INVOKE_PSIPRED          = Param("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
+  final val INVOKE_PSIPRED =
+    Param("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
 }
