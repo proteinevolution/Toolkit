@@ -924,7 +924,7 @@ class Auth {
     }
     static loadUser () : any {
         let route = jsRoutes.controllers.Auth.getUserData();
-        return m.request({method: route.method, user: "TEST", password: SignIn.password, url: route.url, type : User }).then(function(user) {
+        return m.request({method: route.method, url: route.url, type : User }).then(function(user) {
             if (user) {
                 SignIn.password = null;
                 Auth.user       = user.nameLogin != null ? user : null;
