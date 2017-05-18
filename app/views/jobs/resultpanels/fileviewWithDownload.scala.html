@@ -7,7 +7,7 @@
     <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 
-    <pre class="fileview" >@FileLoader.loadFile(filePath)</pre>
+    <pre class="fileview" id="fileviewer" >@FileLoader.loadFile(filePath)</pre>
 
     <script>
         var downloadFilename = "@{resultname}_@{jobID}";
@@ -21,9 +21,20 @@
                 download(downloadFilename, data);
             })
         };
+
+        //using both functions is not pretty and somewhat redundant but gets the job done
+        $( "#fileviewer" ).ready(function() {
+            if ($('#tool-tabs').hasClass('fullscreen')) {
+                $(".fileview").css("overflow-y", "visible");
+                $(".fileview").css("height", "100pc");
+            } else {
+                $(".fileview").css("height", "30pc");
+            }
+        });
+
         function onExpand() {
             $(".fileview").css("overflow-y", "visible");
-            $(".fileview").css("height", "100%");
+            $(".fileview").css("height", "100pc");
         }
         function onCollapse() {
             $(".fileview").css("height", "30pc");

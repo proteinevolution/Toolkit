@@ -4,15 +4,3 @@
 @(filepath : String)(implicit request: RequestHeader)
 
 <pre class="fileview" >@FileLoader.loadFile(filepath)</pre>
-
-
-
-<script>
-function onExpand() {
-    $(".fileview").css("overflow-y", "visible");
-}
-function onCollapse() {
-
-    $(".fileview").css("overflow-y", "scroll");
-}
-</script>
