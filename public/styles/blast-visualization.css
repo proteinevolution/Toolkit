@@ -433,6 +433,17 @@ table.dataTable.no-footer{
     margin-bottom: 1em;
 }
 
+
+#htb_wrapper .sorting_1 {
+    width: 5em;
+}
+
+
+#htb_wrapper .sorting_1 input {
+    margin-right: 0.25em;
+} 
+
+
 #treeSvgContainer {
     text-align: center;
 }
