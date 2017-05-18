@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import java.nio.file.attribute.PosixFilePermission
 
 import com.typesafe.config.ConfigFactory
 import play.api.Logger
@@ -12,7 +11,6 @@ import scala.sys.process._
 import better.files._
 import models.Constants
 import models.database.results.{General, HHBlits, HHBlitsHSP, HHBlitsResult}
-import models.database.results.Alignment
 import modules.CommonModule
 import play.api.libs.json.{JsArray, JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -81,7 +79,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       }
     }
   }
-  def full(jobID: String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json = request.body.asJson.get
+    val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -127,7 +127,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
-  def aln(jobID: String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json = request.body.asJson.get
+    val numList = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")

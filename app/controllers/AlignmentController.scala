@@ -20,12 +20,13 @@ class AlignmentController @Inject()(aln: Alignment, val reactiveMongoApi: Reacti
     with CommonModule
     with Common {
 
-  def getAln(jobID: String, listNum: Seq[Int], resultName: String): Action[AnyContent] = Action.async {
-    implicit request =>
+  def getAln(jobID: String, resultName: String): Action[AnyContent] = Action.async { implicit  request =>
+    val json = request.body.asJson.get
+    val numList = (json \ "checkboxes").as[List[Int]]
       getResult(jobID).map {
         case Some(jsValue) =>
           val result = aln.parseAlignment((jsValue \ resultName).as[JsArray]).alignment
-          val fas = listNum.map { num =>
+          val fas = numList.map { num =>
             ">" + result { num - 1 }.accession + "\n" + result { num - 1 }.seq + "\n"
           }
           Ok(fas.mkString)
