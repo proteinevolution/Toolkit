@@ -85,28 +85,10 @@ $(document).ready( function(){
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
         getHits(0, shownHits);
-        setTimeout(function(){getCheckedCheckboxes()}, 1000);    
+        setTimeout(function(){getCheckedCheckboxes()}, 500);
 }
 });
 
-
-function selectAll(){
-    selectAllBool = !selectAllBool;
-    if(selectAllBool) {
-        selectAllHelper(checkbox);
-        $(".selectAllSeq").addClass("colorToggle");
-        // first empty array
-        checkboxes = [];
-        // push all checkboxes (1 to num_hits) into array
-        _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-    }
-    else {
-        deselectAll(checkbox);
-        $(".selectAllSeq").removeClass("colorToggle");
-        // delete all checkboxes from array
-        checkboxes = [];
-    }
-}
 
 function drawDataTable(){
     hitlist = $('#htb').dataTable({
@@ -122,14 +104,18 @@ function drawDataTable(){
 
 function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
     // full seq is retrieved
+    var data = {"checkboxes": checkboxes.removeDuplicates()};
+    var route = null;
     if(boolFullLength) {
         if(boolEvalue) {
-            var route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue);
+            route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue);
         }else{
-            var route = jsRoutes.controllers.PSIBlastController.full(jobID, checkboxes);
+            route = jsRoutes.controllers.PSIBlastController.full(jobID);
         }
         $.ajax({
             url: route.url,
+            contentType: "application/json",
+            data: JSON.stringify(data),
             method: route.method
         }).done(function (data_) {
             $.ajax({
@@ -143,10 +129,12 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
         if(boolEvalue) {
             route = jsRoutes.controllers.PSIBlastController.alnEval(jobID, evalue);
         }else{
-            route = jsRoutes.controllers.PSIBlastController.aln(jobID, checkboxes);
+            route = jsRoutes.controllers.PSIBlastController.aln(jobID);
         }
         $.ajax({
             url: route.url,
+            contentType: "application/json",
+            data: JSON.stringify(data),
             method: route.method
         }).done(function (data_) {
             forward(selectedTool, data_);

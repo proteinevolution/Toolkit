@@ -11,12 +11,16 @@ import models.Constants
 import models.database.results._
 import play.api.mvc.{Action, AnyContent, Controller}
 import javax.inject.Inject
+import play.api.data._
+import play.api.data.Forms._
 
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.Future
 import modules.CommonModule
+import play.api.data.Form
 import play.api.libs.json.{JsArray, JsObject, Json}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class PSIBlastController @Inject()(psiblast: PSIBlast, general: General, aln: Alignment)(
@@ -54,7 +58,11 @@ class PSIBlastController @Inject()(psiblast: PSIBlast, general: General, aln: Al
     }
   }
 
-  def full(jobID: String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+
+
+  def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json = request.body.asJson.get
+    val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -85,23 +93,28 @@ class PSIBlastController @Inject()(psiblast: PSIBlast, general: General, aln: Al
     }
   }
 
-  def aln(jobID: String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
-      case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
-      case _             => NotFound
-    }
+  def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json = request.body.asJson.get
+    val numList = (json \ "checkboxes").as[List[Int]]
+        getResult(jobID).map {
+          case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
+          case _             => NotFound
+        }
+
   }
 
   def getAlnEval(result: PSIBlastResult, eval: Double): String = {
     val fas = result.HSPS.filter(_.evalue < eval).map { hit =>
-      ">" + result.alignment(hit.num - 1).accession + "\n" + result.alignment(hit.num - 1).seq + "\n"
+      // not hit-num -1 because alginments adds query (+1) to beginning of retrieved file
+      ">" + result.alignment(hit.num).accession + "\n" + result.alignment(hit.num).seq + "\n"
     }
     fas.mkString
   }
 
   def getAln(alignment: AlignmentResult, numList: Seq[Int]): String = {
     val fas = numList.map { num =>
-      ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num - 1).seq + "\n"
+      // not hit-num -1 because alginments adds query (+1) to beginning of retrieved file
+      ">" + alignment.alignment(num).accession + "\n" + alignment.alignment(num).seq + "\n"
     }
     fas.mkString
   }

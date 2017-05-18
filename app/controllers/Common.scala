@@ -1,7 +1,8 @@
 package controllers
 
 import java.nio.file.attribute.PosixFilePermission
-
+import play.api.data._
+import play.api.data.Forms._
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoComponents
 import play.api.mvc.Controller
@@ -32,6 +33,14 @@ private[controllers] trait Common extends Controller with ContentTypes with Reac
     PosixFilePermission.GROUP_READ,
     PosixFilePermission.GROUP_WRITE
   )
+  val forwardForm = Form(
+    mapping(
+      "checkboxes" -> seq(number)
+    )(ForwardForm.apply)(ForwardForm.unapply)
+  )
 }
 // Exceptions
 case class FileException(message: String) extends Exception(message)
+
+
+case class ForwardForm(checkboxes: Seq[Int])
