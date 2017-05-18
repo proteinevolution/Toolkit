@@ -24,10 +24,10 @@ case class JobHash(mainID: BSONObjectID,
                    dateCreated: Option[DateTime],
                    jobID: String) {
 
-  override def toString : String = {
-    "\nmainID: " + mainID.stringify + "\nJobHash: " + inputHash + "\nrsHash: "+ runscriptHash +
-    "\ndbName: " + dbName + "\ndbMtime "+dbMtime+"\nTool"+ toolName+"\ntoolHash"+ toolHash+
-    "\ndateCreated: "+dateCreated+"\njobID: "+jobID
+  override def toString: String = {
+    "\nmainID: " + mainID.stringify + "\nJobHash: " + inputHash + "\nrsHash: " + runscriptHash +
+      "\ndbName: " + dbName + "\ndbMtime " + dbMtime + "\nTool" + toolName + "\ntoolHash" + toolHash +
+      "\ndateCreated: " + dateCreated + "\njobID: " + jobID
   }
 }
 
@@ -76,7 +76,7 @@ object JobHash {
     * @param params
     * @return
     */
-  def generateJobHash(job: Job, params: Map[String, String], env : Env, jobDAO: JobDAO): JobHash = {
+  def generateJobHash(job: Job, params: Map[String, String], env: Env, jobDAO: JobDAO): JobHash = {
     // filter unique parameters
     val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid"
 
