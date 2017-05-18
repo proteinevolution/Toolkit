@@ -478,3 +478,7 @@ textarea { resize:both; }
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
     font-size: 1.1em;
 }
+
+.pagination .current {
+    background: #ccc;
+}
