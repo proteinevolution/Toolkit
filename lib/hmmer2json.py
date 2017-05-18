@@ -33,6 +33,12 @@ def parse_user_arguments(argv):
                         required=False,
                         default=0.005)
 
+    parser.add_argument('-m',
+                        '--max-number',
+                        help='Maximal number of hits to save',
+                        type=int,
+                        required=False,
+                        default=5000)
     arguments = parser.parse_args(argv)
 
     return arguments
@@ -99,12 +105,13 @@ def hsp2dict(hsp, num):
     return hsp_json
 
 
-def hmmer2json(in_file, max_num):
+def hmmer2json(in_file, evalue, max_num):
     """
     Reads hmmer results with biopython and turns
     it into data that can be serialized with json.
 
     :param in_file: Input file with hmmer results
+    :param evalue: E-value below which hits will be saved
     :param max_num: max number of hits in output file
     :return: json dict
     """
@@ -133,9 +140,8 @@ def hmmer2json(in_file, max_num):
             i = 1
             # Read hits table and add to results dict
             for hit in qres.hits:
-                if hit.num <= max_num:
-                    results['hits'].append(hit2dict(hit=hit,
-                                                                       num=i))
+                if hit.num <= max_num and hit.evalue <= evalue:
+                    results['hits'].append(hit2dict(hit=hit, num=i))
                     i += 1
 
             # Read HSPs to a temporary dict and filter to
@@ -152,8 +158,7 @@ def hmmer2json(in_file, max_num):
     # Add unique domains in the same order as hits
     for hit in results['hits']:
         curr_hsp = hsps[hit['id']]
-        results['hsps'].append(hsp2dict(hsp=curr_hsp,
-                                                           num=hit['num']))
+        results['hsps'].append(hsp2dict(hsp=curr_hsp, num=hit['num']))
 
     return results
 
