@@ -38,6 +38,6 @@ let JobLineComponent = {
 
 let initLoader = function(elem: any, isInit: boolean) : any {
     if(!isInit) {
-        return setTimeout(function(){ $(elem).show(); }, 200); // css loading animation to be shown only when the transition to job state tabs takes too long
+        return setTimeout(function(){ $(elem).show(); }, 1000); // css loading animation to be shown only when the transition to job state tabs takes too long
     }
 };

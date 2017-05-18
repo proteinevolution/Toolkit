@@ -109,3 +109,7 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
     aa_color_background.set("aa_C", "#ffff00;");
     aa_color_background.set("aa_P", "#a0a0a0");
     aa_color_background.set("aa_G", "#404040");
+
+    // custom css for cluo
+
+    $("#cluo").html("Clustal<span style='letter-spacing: 2px; padding-left: 2px;'>\u03A9</span>");
