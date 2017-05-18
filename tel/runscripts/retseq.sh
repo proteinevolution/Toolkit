@@ -21,5 +21,10 @@ seq_retrieve.pl -i %alignment.path \
                 -d %STANDARD/%standarddb.content \
                 -unique %unique_sequence.content > ../results/unretrievable
 
+reformat_hhsuite.pl fas ufas \
+            $(readlink -f ../results/sequences.fa) \
+            $(readlink -f ../results/sequences.fa) \
+            -d 100 -uc -l 50000
+
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
