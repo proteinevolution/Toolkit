@@ -3,7 +3,7 @@
 
 @(filepath : String)(implicit request: RequestHeader)
 
-<pre class="fileview" >@FileLoader.loadFile(filepath)</pre>
+<pre class="fileview" >@Html(FileLoader.loadFile(filepath))</pre>
 
 <script>
 
