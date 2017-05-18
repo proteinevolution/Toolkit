@@ -204,6 +204,10 @@
     background-color: #DBFFDB;
     text-overflow: ellipsis;
     overflow: hidden;
+    -webkit-user-select: text;  /* Chrome all / Safari all */
+    -moz-user-select: text;     /* Firefox all */
+    -ms-user-select: text;      /* IE 10+ */
+    user-select: text;
 }
 .job-list .d:hover {
     background-color: #C3FFC3;
@@ -217,6 +221,10 @@
 
 .job-list .e {
     background-color: #FFDDDD;
+    -webkit-user-select: text;  /* Chrome all / Safari all */
+    -moz-user-select: text;     /* Firefox all */
+    -ms-user-select: text;      /* IE 10+ */
+    user-select: text;
 }
 .job-list .e:hover {
     background-color: #FFC5C5;
@@ -231,6 +239,10 @@
 
 .job-list .r{
     background-color: #FFFF94;
+    -webkit-user-select: text;  /* Chrome all / Safari all */
+    -moz-user-select: text;     /* Firefox all */
+    -ms-user-select: text;      /* IE 10+ */
+    user-select: text;
 }
 .job-list .r:hover {
     background-color: #FFF666;
@@ -244,6 +256,10 @@
 
 .job-list .q {
     background-color: #c0b5bf;
+    -webkit-user-select: text;  /* Chrome all / Safari all */
+    -moz-user-select: text;     /* Firefox all */
+    -ms-user-select: text;      /* IE 10+ */
+    user-select: text;
 }
 .job-list .q:hover {
     background-color: #c0b5bf;
@@ -256,6 +272,10 @@
 }
 
 .job-list .w {
+    -webkit-user-select: text;  /* Chrome all / Safari all */
+    -moz-user-select: text;     /* Firefox all */
+    -ms-user-select: text;      /* IE 10+ */
+    user-select: text;
     background-color: #dbdbff;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -272,6 +292,10 @@
 
 
 .job-list .i {
+    -webkit-user-select: text;  /* Chrome all / Safari all */
+    -moz-user-select: text;     /* Firefox all */
+    -ms-user-select: text;      /* IE 10+ */
+    user-select: text;
     background-color: #f2f2f2;
 }
 .job-list .i:hover {
@@ -282,6 +306,10 @@
 }
 
 .job-list .p {
+    -webkit-user-select: text;  /* Chrome all / Safari all */
+    -moz-user-select: text;     /* Firefox all */
+    -ms-user-select: text;      /* IE 10+ */
+    user-select: text;
     background-color: #f2f2f2;
 }
 .job-list .p:hover {
