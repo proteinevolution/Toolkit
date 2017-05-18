@@ -5,25 +5,25 @@
     <form id="signup-form" data-abide="ajax" novalidate>
             <div>
                 <label>
-                    <input type="text" id="nameLogin" name="nameLogin" placeholder="Username" required pattern="[a-zA-Z0-9_]{6,40}">
+                    <input type="text" id="nameLogin" name="nameLogin" placeholder="Username" required pattern="[a-zA-Z0-9_]{6,40}" autocomplete="off">
                     <span class="form-error">Username must be at least 6 characters long!</span>
                 </label>
             </div>
             <div>
                 <label>
-                    <input type="password" id="passwordCheck" placeholder="Password" required pattern=".{8,128}">
+                    <input type="password" id="passwordCheck" placeholder="Password" required pattern=".{8,128}" autocomplete="off">
                     <span class="form-error">Passwords must be at least 8 characters long!</span>
                 </label>
             </div>
             <div>
                 <label>
-                    <input type="password" id="password" name="password" placeholder="Confirm password" data-equalTo="passwordCheck" required pattern=".{8,128}">
+                    <input type="password" id="password" name="password" placeholder="Confirm password" data-equalTo="passwordCheck" required pattern=".{8,128}" autocomplete="off">
                     <span class="form-error">Passwords must match!</span>
                 </label>
             </div>
             <div>
                 <label>
-                    <input type="text" id="eMail" name="eMail" placeholder="E-Mail" pattern="email">
+                    <input type="text" id="eMail" name="eMail" placeholder="E-Mail" pattern="email" autocomplete="off">
                     <span class="form-error">Please enter a valid e-Mail address!</span>
                 </label>
             </div>
