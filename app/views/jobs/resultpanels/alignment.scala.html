@@ -107,11 +107,14 @@
         });
 
         window["@{resultName}_forward"] = function(selectedTool){
-            var route = jsRoutes.controllers.AlignmentController.getAln(jobID, checkboxes, resultName);
+            var data = {"checkboxes": checkboxes.removeDuplicates()};
+            var route = jsRoutes.controllers.AlignmentController.getAln(jobID, resultName);
             // get result json
             $.ajax({
                 type: route.method,
-                url: route.url
+                url: route.url,
+                contentType: "application/json",
+                data: JSON.stringify(data)
             }).done(function (data) {
                     forward(selectedTool, data);
             });
