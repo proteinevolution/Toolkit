@@ -338,7 +338,8 @@ hr {
 
 #alignmentViewerPanel .alignmentExample {
     padding-left: 0;
-    width: 8em;
+    padding-right: 0;
+    width: 7em;
     text-align: left;
 }
 
