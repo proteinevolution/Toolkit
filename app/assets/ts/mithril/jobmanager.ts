@@ -18,7 +18,7 @@ window.JobManager = {
                             "columns": [
                                 {"mDataProp": "jobID"},
                                 {"mDataProp": "jobID"},
-                                {"mDataProp": "tool"},
+                                {"mDataProp": "toolnameLong"},
                                 {"mDataProp": "dateCreated"},
                                 {"mDataProp": "jobID"}
                             ],
