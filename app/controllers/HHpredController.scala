@@ -71,7 +71,9 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
     }
   }
 
-  def aln(jobID: String, numList: Seq[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json = request.body.asJson.get
+    val numList = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")

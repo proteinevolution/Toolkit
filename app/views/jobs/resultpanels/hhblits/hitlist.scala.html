@@ -139,35 +139,21 @@
         }
 
 
-        function selectAll(){
-            selectAllBool = !selectAllBool;
-            if(selectAllBool) {
-                selectAllHelper(checkbox);
-                $(".selectAllSeq").addClass("colorToggle");
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-            }
-            else {
-                deselectAll(checkbox);
-                $(".selectAllSeq").removeClass("colorToggle");
-                // delete all checkboxes from array
-                checkboxes = [];
-            }
-        }
-
 
        function hhblits_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
+           var data = {"checkboxes": checkboxes.removeDuplicates()};
+           var route = null;
             if(boolFullLength) {
                 if(boolEvalue) {
-                    var route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
+                    route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
                 }else{
-                    var route = jsRoutes.controllers.HHblitsController.full('@jobID', checkboxes);
+                    route = jsRoutes.controllers.HHblitsController.full('@jobID');
                 }
                 $.ajax({
                     url: route.url,
-                    method: route.method
+                    method: route.method,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
                 }).done(function (data_) {
                     $.ajax({
                         type: 'GET',
@@ -181,11 +167,13 @@
                 if(boolEvalue) {
                     route = jsRoutes.controllers.HHblitsController.alnEval('@jobID', evalue);
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.aln('@jobID', checkboxes);
+                    route = jsRoutes.controllers.HHblitsController.aln('@jobID');
                 }
                 $.ajax({
                     url: route.url,
-                    method: route.method
+                    method: route.method,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
                 }).done(function (data_) {
                     $.ajax({
                         type: 'GET',
