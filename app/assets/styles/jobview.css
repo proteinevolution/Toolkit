@@ -1067,3 +1067,8 @@ textarea:focus{
 .copySpacer {
     padding-bottom: 25px;
 }
+
+h6 {
+    letter-spacing:0.05em;
+    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
