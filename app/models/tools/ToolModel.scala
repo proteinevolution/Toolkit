@@ -754,7 +754,7 @@ final class ToolFactory @Inject()(
       Resultviews.RESULTS -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
-          case Some(jsvalue) => views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue)
+          case Some(jsvalue) => views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue, this.values(Toolnames.SEQ2ID))
         }
       }
     ),
