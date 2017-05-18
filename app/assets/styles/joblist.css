@@ -232,9 +232,10 @@
 }
 .job-list .e.selected {
     background-color: #FFC5C5;
-    box-shadow: 2px 0px 4px 0px #d2071d;
-    margin-left: -2px;
-    margin-bottom: 1px;
+    box-shadow: 1px 0 6px #d2071d;
+    margin-right: 2px;
+    margin-top: 1px;
+    margin-bottom: 2px;
 }
 
 
@@ -250,9 +251,10 @@
 }
 .job-list .r.selected {
     background-color: #FFF666;
-    box-shadow: 2px 0px 4px 0px #dcb21f;
-    margin-left: -2px;
-    margin-bottom: 1px;
+    box-shadow: 1px 0 6px #dcb21f;
+    margin-right: 2px;
+    margin-top: 1px;
+    margin-bottom: 2px;
 }
 
 .job-list .q {
@@ -267,9 +269,10 @@
 }
 .job-list .q.selected {
     background-color: #c0b5bf;
-    box-shadow: 2px 0px 4px 0px #9192af;
-    margin-left: -2px;
-    margin-bottom: 1px;
+    box-shadow: 1px 0 6px #9192af;
+    margin-right: 2px;
+    margin-top: 1px;
+    margin-bottom: 2px;
 }
 
 .job-list .w {
@@ -287,8 +290,9 @@
 .job-list .w.selected {
     background-color: #bcbcdf;
     box-shadow: 2px 0px 4px 0px #777;
-    margin-left: -2px;
-    margin-bottom: 1px;
+    margin-right: 2px;
+    margin-top: 1px;
+    margin-bottom: 2px;
 }
 
 
@@ -304,6 +308,9 @@
 }
 .job-list .i.selected {
     background-color: #DADADA;
+    margin-right: 2px;
+    margin-top: 1px;
+    margin-bottom: 2px;
 }
 
 .job-list .p {
@@ -318,4 +325,7 @@
 }
 .job-list .p.selected {
     background-color: #DADADA;
+    margin-right: 2px;
+    margin-top: 1px;
+    margin-bottom: 2px;
 }
