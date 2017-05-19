@@ -95,7 +95,7 @@ object FeaturedArticle {
       IDDB        -> featuredArticle.articleID,
       TITLE       -> featuredArticle.title,
       TEXT        -> featuredArticle.text,
-      TEXTLONG    -> featuredArticle.text,
+      TEXTLONG    -> featuredArticle.textlong,
       LINK        -> featuredArticle.link,
       IMAGEPATH   -> featuredArticle.imagePath,
       DATECREATED -> BSONDateTime(featuredArticle.dateCreated.fold(-1L)(_.getMillis)),
