@@ -39,7 +39,7 @@ case class PSIBlastHSP(evalue: Double,
         "0" -> Json.toJson(BlastVisualization.getCheckboxPre(num, checked)),
         "1" -> Json.toJson(BlastVisualization.getSingleLinkDB(db, accession).toString),
         "2" -> Json.toJson(description),
-        "3" -> Json.toJson(evalue),
+        "3" -> Json.toJson("%.2e".format(evalue)),
         "4" -> Json.toJson(bitscore),
         "5" -> Json.toJson(hit_len)
       ))
