@@ -136,14 +136,12 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
+  def matchUserToPW(username: String, password: String): Future[Boolean] = {
 
+    findUser(BSONDocument("userData.nameLogin" -> username)).map {
 
-  def matchUserToPW(username : String, password : String) : Future[Boolean]  = {
-
-      findUser(BSONDocument("userData.nameLogin" -> username)).map {
-
-        case Some(user) if user.checkPassword(password) => true
-        case None => false
+      case Some(user) if user.checkPassword(password) => true
+      case None                                       => false
 
     }
 
@@ -152,19 +150,22 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
   // add header authentication layer so that this cannot be curled easily by checking db if user matches with pw
 
   def BasicSecured[A]()(action: Action[A]): Action[A] = Action.async(action.parser) { request =>
-    request.headers.get("Authorization").flatMap { authorization =>
-      authorization.split(" ").drop(1).headOption.filter { encoded =>
-        new String(org.apache.commons.codec.binary.Base64.decodeBase64(encoded.getBytes)).split(":").toList match {
-          case u :: p :: Nil if Await.result(matchUserToPW(u,p), scala.concurrent.duration.Duration.Inf) => true
-          case _ => false
+    request.headers
+      .get("Authorization")
+      .flatMap { authorization =>
+        authorization.split(" ").drop(1).headOption.filter { encoded =>
+          new String(org.apache.commons.codec.binary.Base64.decodeBase64(encoded.getBytes)).split(":").toList match {
+            case u :: p :: Nil if Await.result(matchUserToPW(u, p), scala.concurrent.duration.Duration.Inf) => true
+            case _                                                                                          => false
+          }
         }
       }
-    }.map(_ => action(request)).getOrElse {
-      //Future.successful(Unauthorized.withHeaders("WWW-Authenticate" -> """Basic realm="Secured Area""""))
-      Future.successful(Ok(LoginIncorrect()))
-    }
+      .map(_ => action(request))
+      .getOrElse {
+        //Future.successful(Unauthorized.withHeaders("WWW-Authenticate" -> """Basic realm="Secured Area""""))
+        Future.successful(Ok(LoginIncorrect()))
+      }
   }
-
 
   /**
     * Submission of the sign in form
@@ -172,7 +173,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     *
     * @return
     */
-  def signInSubmit() : Action[AnyContent] = BasicSecured() {
+  def signInSubmit(): Action[AnyContent] = BasicSecured() {
     Action.async { implicit request =>
       getUser.flatMap { unregisteredUser =>
         if (unregisteredUser.accountType < 0) {
@@ -182,12 +183,12 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
               Future.successful {
                 Logger.info(" but there was an error in the submit form: " + errors.toString)
                 Ok(LoginError())
-              },
+            },
             // if no error, then insert the user to the collection
             signInFormUser => {
               val futureUser = findUser(
                 BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> signInFormUser.nameLogin),
-                  BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))))
+                                           BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))))
               futureUser.flatMap {
                 case Some(databaseUser) =>
                   // Check the password
@@ -198,8 +199,8 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                     // Additionally add the watched jobs to the users watchlist.
                     val modifier = BSONDocument(
                       "$set" ->
-                        BSONDocument(User.SESSIONID -> databaseUser.sessionID.getOrElse(BSONObjectID.generate()),
-                          User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
+                        BSONDocument(User.SESSIONID     -> databaseUser.sessionID.getOrElse(BSONObjectID.generate()),
+                                     User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
                     // TODO this adds the non logged in user's jobs to the now logged in user's job list
                     //                            "$addToSet"        ->
                     //               BSONDocument(User.JOBS          ->
@@ -229,7 +230,9 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                         // Everything is ok, let the user know that they are logged in now
                         Ok(LoggedIn(loggedInUser))
                           .withSession(
-                            sessionCookie(request, loggedInUser.sessionID.get, Some(loggedInUser.getUserData.nameLogin)))
+                            sessionCookie(request,
+                                          loggedInUser.sessionID.get,
+                                          Some(loggedInUser.getUserData.nameLogin)))
                       case None =>
                         Ok(LoginIncorrect())
                     }
@@ -253,6 +256,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
       }
     }
   }
+
   /**
     * Submission of the sign up form
     * Checks Database if there is a preexisting user and adds him if there is none

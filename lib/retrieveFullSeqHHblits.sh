@@ -11,7 +11,7 @@ elif [ "$HOSTNAME" = "rye" ]
 
 
     HHBLITS=${DATABASES}/hhblits/
-    DB=${STANDARDNEW}/uniprot
+    DB=${STANDARD}/uniprot_trembl
 
     #separate accessions in string by whitespace
     ACCESSIONS=$(echo $accessionsStr | tr " " "\n")
