@@ -415,11 +415,11 @@ final class ToolFactory @Inject()(
             implicit val r = requestHeader
             views.html.jobs.resultpanels.psiblast.hitlist(jobID, psi.parseResult(jsvalue), this.values("psiblast"))
         }
-      },
-      "E-values" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.evalues(jobID))
-      }
+      }//,
+      //"E-values" -> { (jobID, requestHeader) =>
+        //implicit val r = requestHeader
+        //Future.successful(views.html.jobs.resultpanels.evalues(jobID))
+      //}
     ),
     Toolnames.CLANS -> Map(
       Resultviews.RESULTS -> { (jobID, requestHeader) =>
