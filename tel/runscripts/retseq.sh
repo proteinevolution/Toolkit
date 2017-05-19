@@ -24,7 +24,7 @@ seq_retrieve.pl -i %alignment.path \
 reformat_hhsuite.pl fas ufas \
             $(readlink -f ../results/sequences.fa) \
             $(readlink -f ../results/sequences.fa) \
-            -d 100 -uc -l 50000
+            -d 100 -uc -l 32000
 
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
