@@ -231,7 +231,7 @@ let tilescomponent = {
                             m("div", {"class": "rightContainer"},
                                 m("a", {href: article.link},article.title),
                                 m("hr"),
-                                m("p", article.text),
+                                m("p", m.trust(article.text)),
                                 m("a", {href: article.link}, m("i", {"class": "fa  fa-angle-right fa-2x"}))
                             )
                         )
