@@ -161,7 +161,7 @@
                     "E-Mail notification"
                 ]),
             Auth.user == null ? null :
-                m("label", {style: "width: 16em; float:left;"}, [
+                m("label", {style: "width: 16em; float:left; display: none;"}, [
                     m("input", { type: "checkbox", "class": "checkbox", id:"public", name: "public"}),
                     "Public Job"
                 ]),
