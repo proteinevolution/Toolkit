@@ -609,7 +609,7 @@ td#joblistIcon i {
     }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1300px) {
     .slide-caption {
         display: none;
     }
