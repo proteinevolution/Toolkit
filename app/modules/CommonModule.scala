@@ -150,8 +150,9 @@ trait CommonModule extends ReactiveMongoComponents {
 
   // Modifies result in database
   protected def modifyResult(selector: BSONDocument, modifier: BSONDocument): Future[Option[BSONDocument]] = {
-    resultCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true, upsert =
-true).map{x=>println(x);x.result})
+    resultCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true, upsert = true).map { x =>
+      println(x); x.result
+    })
   }
 
   // Modifies a single Job in the database and returns it
@@ -234,10 +235,8 @@ true).map{x=>println(x);x.result})
   protected def findUser(selector: BSONDocument): Future[Option[User]] =
     userCollection.flatMap(_.find(selector).one[User])
 
-
-  protected def getUserData(selector: BSONDocument) : Future[Option[UserData]] =
+  protected def getUserData(selector: BSONDocument): Future[Option[UserData]] =
     userCollection.flatMap(_.find(selector).one[UserData])
-
 
   protected def findUsers(selector: BSONDocument): Future[scala.List[User]] = {
     userCollection.map(_.find(selector).cursor[User]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))

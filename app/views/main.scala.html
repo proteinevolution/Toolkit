@@ -83,6 +83,9 @@
         <!-- VISIBLE -->
         <script src="@routes.Assets.versioned("javascripts/vendor/jquery.visible.min.js")"></script>
 
+            <!-- Loadingoverlay -->
+        <script src="@routes.Assets.versioned("javascripts/vendor/loadingoverlay.js")"></script>
+
         <!-- Slick Slider -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("slick.min.js"))"></script>
 
@@ -291,7 +294,25 @@
 
         @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
         <script>Router().main();</script>
-
+        <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+        <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+        <script>
+                window.addEventListener("load", function(){
+                    window.cookieconsent.initialise({
+                        "palette": {
+                            "popup": {
+                                "background": "#28786f"
+                            },
+                            "button": {
+                                "background": "#e2e2e2"
+                            }
+                        },
+                        "content": {
+                            "link": '<a data-open="privacyPolicyModal" style="color:#15423b" text-decoration="underline";>Learn More</a>',
+                            "message": "This website uses cookies to ensure you get the best experience on our website. By using our services you agree to our privacy policies.",
+                        },
+                    })});
+        </script>
     </body>
 </html>
 

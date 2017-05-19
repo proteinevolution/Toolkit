@@ -147,13 +147,15 @@ final class ToolFactory @Inject()(
     ("hhpred_automatic", Seq.empty, Seq.empty, Seq.empty),
     // PSI-BLAST
     ("psiblast",
-     Seq(paramAccess.SEQORALI,
-         paramAccess.STANDARD_DB,
-         paramAccess.MATRIX,
-         paramAccess.MAXROUNDS,
-         paramAccess.EVALUE,
-         paramAccess.HHPRED_INCL_EVAL,
-         paramAccess.DESC),
+     Seq(
+       paramAccess.SEQORALI,
+       paramAccess.STANDARD_DB,
+       paramAccess.MATRIX,
+       paramAccess.MAXROUNDS,
+       paramAccess.EVALUE,
+       paramAccess.HHPRED_INCL_EVAL,
+       paramAccess.DESC
+     ),
      Seq(
        "psiblast",
        "hhpred",
@@ -336,7 +338,10 @@ final class ToolFactory @Inject()(
      Seq.empty,
      Seq.empty),
     // RetrieveSeq
-    ("retseq", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE), Seq("clans"),Seq.empty),
+    ("retseq",
+     Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE),
+     Seq("clans"),
+     Seq.empty),
     // Seq2ID
     ("seq2id", Seq(paramAccess.FASTAHEADERS), Seq("retseq"), Seq.empty),
     // ANCESCON
@@ -582,18 +587,17 @@ final class ToolFactory @Inject()(
         Future.successful(
           views.html.jobs.resultpanels
             .fileview(s"$jobPath$jobID/results/" + jobID + ".results"))
-      }
-    ,
-    "ColoredResults" -> { (jobID, requestHeader) =>
-      implicit val r = requestHeader
-      Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_color"))
-    }
-    ,
-    "ColoredResultsWithConfidence" -> { (jobID, requestHeader) =>
+      },
+      "ColoredResults" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_colorC"))
-    }
-  ),
+        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_color"))
+      },
+      "ColoredResultsWithConfidence" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        Future.successful(
+          views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_colorC"))
+      }
+    ),
     Toolnames.CLUSTALO -> Map(
       Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
@@ -732,7 +736,11 @@ final class ToolFactory @Inject()(
         implicit val r = requestHeader
         Future.successful(
           views.html.jobs.resultpanels
-            .fileviewWithDownloadForward(jobID + ".fas", s"$jobPath$jobID/results/" + jobID + ".fas", jobID, "mmseqs_reps", this.values(Toolnames.MMSEQS2)))
+            .fileviewWithDownloadForward(jobID + ".fas",
+                                         s"$jobPath$jobID/results/" + jobID + ".fas",
+                                         jobID,
+                                         "mmseqs_reps",
+                                         this.values(Toolnames.MMSEQS2)))
       },
       Resultviews.SUMMARY -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
@@ -747,14 +755,20 @@ final class ToolFactory @Inject()(
       },
       Resultviews.RESULTS -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileviewWithDownloadForward("sequences.fa", s"$jobPath$jobID/results/sequences.fa", jobID, "retseq",  this.values(Toolnames.RETSEQ)))
+        Future.successful(
+          views.html.jobs.resultpanels.fileviewWithDownloadForward("sequences.fa",
+                                                                   s"$jobPath$jobID/results/sequences.fa",
+                                                                   jobID,
+                                                                   "retseq",
+                                                                   this.values(Toolnames.RETSEQ)))
       }
     ),
     Toolnames.SEQ2ID -> Map(
       Resultviews.RESULTS -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
-          case Some(jsvalue) => views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue, this.values(Toolnames.SEQ2ID))
+          case Some(jsvalue) =>
+            views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue, this.values(Toolnames.SEQ2ID))
         }
       }
     ),

@@ -269,7 +269,7 @@
 }
 .job-list .q.selected {
     background-color: #c0b5bf;
-    box-shadow: 1px 0 6px #9192af;
+    box-shadow: 1px 0 6px #5867af;
     margin-right: 2px;
     margin-top: 2px;
     margin-bottom: 3px;
@@ -289,7 +289,7 @@
 }
 .job-list .w.selected {
     background-color: #bcbcdf;
-    box-shadow: 2px 0px 4px 0px #777;
+    box-shadow: 1px 0 6px #4e54af;
     margin-right: 2px;
     margin-top: 2px;
     margin-bottom: 3px;
@@ -325,6 +325,7 @@
 }
 .job-list .p.selected {
     background-color: #DADADA;
+    box-shadow: 1px 0 6px #7c92af;
     margin-right: 2px;
     margin-top: 2px;
     margin-bottom: 3px;

@@ -72,7 +72,7 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
   }
 
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json = request.body.asJson.get
+    val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)

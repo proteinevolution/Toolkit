@@ -80,7 +80,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     }
   }
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json = request.body.asJson.get
+    val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
@@ -114,6 +114,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
         case Some(jsValue) =>
           val result     = hhblits.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
+          println(numListStr)
           Process(generateAlignmentScript.pathAsString,
                   (jobPath + jobID).toFile.toJava,
                   "jobID"   -> jobID,
@@ -128,7 +129,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
   }
 
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json = request.body.asJson.get
+    val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)

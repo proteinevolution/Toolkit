@@ -42,5 +42,4 @@ private[controllers] trait Common extends Controller with ContentTypes with Reac
 // Exceptions
 case class FileException(message: String) extends Exception(message)
 
-
 case class ForwardForm(checkboxes: Seq[Int])
