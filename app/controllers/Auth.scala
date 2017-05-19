@@ -173,7 +173,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     *
     * @return
     */
-  def signInSubmit(): Action[AnyContent] = BasicSecured() {
+  def signInSubmit(): Action[AnyContent] =
     Action.async { implicit request =>
       getUser.flatMap { unregisteredUser =>
         if (unregisteredUser.accountType < 0) {
@@ -255,7 +255,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
         }
       }
     }
-  }
+
 
   /**
     * Submission of the sign up form
