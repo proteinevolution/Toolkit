@@ -255,7 +255,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
         }
       }
     }
-  
+
 
   /**
     * Submission of the sign up form
