@@ -28,7 +28,7 @@
                                         m("a", article.title),
                                         m("hr")),
                                     m("div", {"class": "news-text"},
-                                        m("p", article.textlong),
+                                        m("p", m.trust(article.textlong)),
                                     ),
                                     m("div", {class: "news-image", 'style': {'background-image': 'url(' + article.imagePath + ')'}})
                                 )
