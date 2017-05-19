@@ -44,7 +44,7 @@ let followScroll = function(element : any) {
                 $("#alignmentsScroll").addClass("colorToggleBar");
                 $("#hitlistScroll").removeClass("colorToggleBar");
                 $("#visualizationScroll").removeClass("colorToggleBar");
-            } else if ($('#hitlist').visible(true)) {
+            } else if ($('#htb').visible(true)) {
                 $("#hitlistScroll").addClass("colorToggleBar");
                 $("#alignmentsScroll").removeClass("colorToggleBar");
                 $("#visualizationScroll").removeClass("colorToggleBar");
