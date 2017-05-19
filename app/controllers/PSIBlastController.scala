@@ -58,10 +58,8 @@ class PSIBlastController @Inject()(psiblast: PSIBlast, general: General, aln: Al
     }
   }
 
-
-
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json = request.body.asJson.get
+    val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
@@ -94,12 +92,12 @@ class PSIBlastController @Inject()(psiblast: PSIBlast, general: General, aln: Al
   }
 
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json = request.body.asJson.get
+    val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
-        getResult(jobID).map {
-          case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
-          case _             => NotFound
-        }
+    getResult(jobID).map {
+      case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
+      case _             => NotFound
+    }
 
   }
 

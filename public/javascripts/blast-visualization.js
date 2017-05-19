@@ -293,12 +293,7 @@ function getCheckedCheckboxes(){
 
 function hitlistBaseFunctions(){
     $(document).ready(function() {
-        // adding loading overlay
-        $(document).ajaxStart(function () {
-            //$.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
-        });
-        $(document).ajaxComplete(function () {
-            //$.LoadingOverlay("hide");
+            $.LoadingOverlay("hide");
 
             // check checkboxes that are stored in array
             // in order to make it work with pagination/lazyload
@@ -325,7 +320,6 @@ function hitlistBaseFunctions(){
                     checkboxes = checkboxes.filter(function(x){return x != currentVal});
                 }
             });
-        });
 
         followScroll(document);
 
@@ -360,7 +354,7 @@ function selectAll(){
     selectAllBool = !selectAllBool;
     if(selectAllBool) {
         selectAllHelper(checkbox);
-        $(".selectAllSeq").addClass("colorToggle");
+        $(".selectAllSeqBar").addClass("colorToggleBar");
         // first empty array
         checkboxes = [];
         // push all checkboxes (1 to num_hits) into array
@@ -368,7 +362,7 @@ function selectAll(){
     }
     else {
         deselectAll(checkbox);
-        $(".selectAllSeq").removeClass("colorToggle");
+        $(".selectAllSeqBar").removeClass("colorToggleBar");
         // delete all checkboxes from array
         checkboxes = [];
     }

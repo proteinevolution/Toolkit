@@ -19,7 +19,7 @@
         </div>
         <span class="headerDivider"></span>
         <div id="controlls">
-            <a onclick="selectAll()" class="selectAllSeq">Select all</a>
+            <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
             <a type="button" data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
         </div>
     </div>
@@ -106,6 +106,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
     // full seq is retrieved
     var data = {"checkboxes": checkboxes.removeDuplicates()};
     var route = null;
+    $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
     if(boolFullLength) {
         if(boolEvalue) {
             route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue);
@@ -123,8 +124,8 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
                 url: 'files/'+jobID+'/sequences.fa'
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
-            });
-        });
+            }).always($.LoadingOverlay("hide"));
+        }).fail($.LoadingOverlay("hide"));
     }else{
         if(boolEvalue) {
             route = jsRoutes.controllers.PSIBlastController.alnEval(jobID, evalue);
@@ -138,7 +139,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
             method: route.method
         }).done(function (data_) {
             forward(selectedTool, data_);
-        });
+        }).always($.LoadingOverlay("hide"))
     }
 }
 

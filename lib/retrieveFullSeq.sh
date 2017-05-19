@@ -24,5 +24,5 @@ elif [ "$HOSTNAME" = "rye" ]
     #retrieve full length sequences
     seq_retrieve.pl -i results/accessionsToRetrieve \
                     -o results/sequences.fa \
-                    -d ${STANDARDNEW}/${db} \
+                    -d ${STANDARD}/${db} \
                     -unique 1 > results/unretrievable

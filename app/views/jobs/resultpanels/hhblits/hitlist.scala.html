@@ -25,7 +25,7 @@
         </div>
         <span class="headerDivider"></span>
         <div id="controlls">
-            <a onclick="selectAll()" class="selectAllSeq">Select all</a>
+            <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
             <a data-open="forwardModal_@{tool.toolNameShort}">Forward</a>
             <a data-open="forwardModal_@{tool.toolNameShort}_hhsuite">Forward Query MSA</a>
         </div>
@@ -143,6 +143,7 @@
        function hhblits_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
            var route = null;
+           $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
             if(boolFullLength) {
                 if(boolEvalue) {
                     route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
@@ -160,8 +161,8 @@
                         url: 'files/@jobID/sequences.fa'
                     }).done(function (data_) {
                         forward(selectedTool, data_.toString());
-                    });
-                });
+                    }).always($.LoadingOverlay("hide"));
+                }).fail($.LoadingOverlay("hide"));
             } else{
 
                 if(boolEvalue) {
@@ -180,8 +181,8 @@
                         url: 'files/@jobID/alignment.fas'
                     }).done(function (data_) {
                         forward(selectedTool, data_.toString());
-                    });
-                });
+                    }).always($.LoadingOverlay("hide"));;
+                }).fail($.LoadingOverlay("hide"));
 
             }
         }
@@ -202,7 +203,7 @@
             $('textarea#alignmentTemplate').val(" ");
             // replace '#' for url
             accession = accession.replace("#", "%23");
-
+            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
             $.ajax({
                 type: 'GET',
                 url: '/templateAlignmentHHblits/@jobID/' + accession
@@ -212,10 +213,10 @@
                     url: 'files/@jobID/' + accession + '.fas'
                 }).done(function (data) {
                     $("#alignmentTemplate").val(data.toString());
-                });
+                }).always($.LoadingOverlay("hide"));;
             }).fail(function () {
                 $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
-            });
+            })
         }
 
 
