@@ -17,7 +17,7 @@ lazy val commonDeps = Seq(
   "com.github.pathikrit" %% "better-files"            % "2.17.1",
   "org.mindrot"          % "jbcrypt"                  % "0.3m",
   "com.evojam"           %% "play-elastic4s"          % "0.3.1",
-  "org.reactivemongo"    %% "play2-reactivemongo"     % "0.12.2",
+  "org.reactivemongo"    %% "play2-reactivemongo"     % "0.12.3",
   "org.reactivemongo"    %% "reactivemongo-play-json" % "0.12.3",
   "co.fs2"               %% "fs2-core"                % "0.9.2",
   "org.scalaz"           %% "scalaz-core"             % "7.2.10",

@@ -111,6 +111,7 @@
 
         function hmmer_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
+            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
             var route = null;
             if (boolFullLength) {
                 if (boolEvalue) {
@@ -129,8 +130,8 @@
                         url: 'files/' + jobID + '/sequences.fa'
                     }).done(function (data_) {
                         forward(selectedTool, data_.toString());
-                    });
-                });
+                    }).always($.LoadingOverlay("hide"));
+                }).fail($.LoadingOverlay("hide"));
             } else {
                 if (boolEvalue) {
                     route = jsRoutes.controllers.HmmerController.alnEval(jobID, evalue);
@@ -144,7 +145,7 @@
                     data: JSON.stringify(data)
                 }).done(function (data_) {
                     forward(selectedTool, data_);
-                });
+                }).always($.LoadingOverlay("hide"));
             }
         }
 

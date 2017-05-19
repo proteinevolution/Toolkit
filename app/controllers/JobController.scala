@@ -60,8 +60,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             case None =>
               // Check if the user is the Owner or if the job is public
               //if (job.ownerID.contains(user.userID) || job.ownerID.isEmpty)
-                Ok(job.cleaned())
-              //else NotFound
+              Ok(job.cleaned())
+            //else NotFound
           }
         case None => NotFound
       }
@@ -323,18 +323,17 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     }
   }
 
-
   /**
     * TODO implement me
     * @param jobID
     * @return
     */
-  def checkHash(jobID : String) : Action[AnyContent] = Action.async { implicit request =>
+  def checkHash(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     getUser.flatMap { user =>
       findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
         case Some(job) =>
           val params: Map[String, String] = {
-            val ois = new ObjectInputStream(new FileInputStream((jobPath/jobID/serializedParam).pathAsString))
+            val ois = new ObjectInputStream(new FileInputStream((jobPath / jobID / serializedParam).pathAsString))
             val x   = ois.readObject().asInstanceOf[Map[String, String]]
             ois.close()
             x
@@ -350,16 +349,17 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             Logger.info(mainIDs.map(_.stringify).mkString(", "))
             // Find the Jobs in the Database
             findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
-              val foundMainIDs = jobList.map(_.mainID)
+              val foundMainIDs   = jobList.map(_.mainID)
               val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-              val jobsPartition = jobList.filter(_.status == Done)
+              val jobsPartition  = jobList.filter(_.status == Done)
 
               // Delete index-zombie jobs
               unFoundMainIDs.foreach { mainID =>
                 Logger.info("[WARNING]: job in index but not in database: " + mainID.stringify)
                 jobDao.deleteJob(mainID.stringify)
               }
-              Ok(Json.toJson(Json.obj("jobID" -> jobsPartition.lastOption.map(_.jobID))))
+              Ok(Json.toJson(Json.obj("jobID"       -> jobsPartition.lastOption.map(_.jobID),
+                                      "dateCreated" -> jobsPartition.lastOption.map(_.dateCreated))))
             }
           }
       }

@@ -40,16 +40,16 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
       val queryString = queryString_.trim()
       val tools: List[models.tools.Tool] = toolFactory.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
-        .filter( tool=>  tool.toolNameShort != "hhpred_manual" && tool.toolNameShort != "hhpred_automatic")
+        .filter(tool => tool.toolNameShort != "hhpred_manual" && tool.toolNameShort != "hhpred_automatic")
         .toList
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {
         // Grab Job ID auto completions
         findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
           val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID) && job.deletion.isEmpty)
-          if(jobsFiltered.isEmpty) {
-            findJob(BSONDocument(Job.JOBID -> queryString)).map(x=> Ok(Json.toJson(List(x.map(_.cleaned())))))
-          }else{
+          if (jobsFiltered.isEmpty) {
+            findJob(BSONDocument(Job.JOBID -> queryString)).map(x => Ok(Json.toJson(List(x.map(_.cleaned())))))
+          } else {
             Future.successful(Ok(Json.toJson(jobsFiltered.map(_.cleaned()))))
           }
         }

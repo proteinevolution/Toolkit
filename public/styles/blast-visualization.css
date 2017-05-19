@@ -441,7 +441,8 @@ table.dataTable.no-footer{
 
 #htb_wrapper .sorting_1 input {
     margin-right: 0.25em;
-} 
+    top: 0;
+}
 
 
 #treeSvgContainer {
@@ -551,6 +552,11 @@ table.dataTable.no-footer{
 .indexCheckbox {
     margin-right: 0.3em !important;
 }
+
+.indexCheckbox input {
+    top: 0;
+}
+
 .expandButtonOnScroll {
     position: absolute;
     display: inline-block !important;

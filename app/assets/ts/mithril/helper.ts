@@ -105,14 +105,11 @@ let fadesIn = function(element : any, isInitialized : boolean, context : any) {
 };
 
 let tooltipsterConf = function(elem: any, isInit: boolean) {
-
     if(!isInit){
-        $('.job-list div').tooltipster({
+        $('.job-button div').tooltipster({
             theme: 'tooltipster-borderless',
             position: 'bottom',
             animation: 'fade'
         });
-
     }
-
 };
