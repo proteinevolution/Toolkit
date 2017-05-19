@@ -1058,3 +1058,17 @@ textarea:focus{
 }
 
 
+.pending-panel {
+    text-align: center;
+    display: block;
+    margin-left: auto;
+}
+
+.copySpacer {
+    padding-bottom: 25px;
+}
+
+h6 {
+    font-size: 0.85em;
+    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
