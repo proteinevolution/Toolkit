@@ -354,7 +354,7 @@ function selectAll(){
     selectAllBool = !selectAllBool;
     if(selectAllBool) {
         selectAllHelper(checkbox);
-        $(".selectAllSeq").addClass("colorToggle");
+        $(".selectAllSeqBar").addClass("colorToggleBar");
         // first empty array
         checkboxes = [];
         // push all checkboxes (1 to num_hits) into array
@@ -362,7 +362,7 @@ function selectAll(){
     }
     else {
         deselectAll(checkbox);
-        $(".selectAllSeq").removeClass("colorToggle");
+        $(".selectAllSeqBar").removeClass("colorToggleBar");
         // delete all checkboxes from array
         checkboxes = [];
     }

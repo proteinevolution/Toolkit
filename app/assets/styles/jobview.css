@@ -1072,3 +1072,7 @@ h6 {
     font-size: 0.85em;
     font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
+
+.openSimilarJob button{
+    font-size: 0.725em !important;
+}

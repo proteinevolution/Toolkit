@@ -13,7 +13,7 @@ let JobRunningComponent = {
     },
     view: function(ctrl : any, args : any) : any {
         return m("div", { "class": "running-panel" , config: foundationConfig}, [
-            m('h6', "Your submission is processing!"),
+            m('h5', "Your submission is processing!"),
             m("div", {"class": "processJobIdContainer"},
                 m('p', "Job ID:"),
                 m('p',  {style: "margin-left: 5px"}, ' ' + args.job().jobID)),
