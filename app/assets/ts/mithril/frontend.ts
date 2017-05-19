@@ -189,23 +189,23 @@ let GeneralTabComponent = {
                 if (this.isFullscreen) {
                     job_tab_component.removeClass("fullscreen");
                     this.isFullscreen = false;
-                    this.label = "Expand";
                     if (typeof onCollapse === "function") {
                         onCollapse();
                     }
                     $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
-                    $('#bioJSContainer').css({'overflow-x': 'scroll'});
+                    followScroll(document);
+
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
-                    this.label = "Collapse";
                     if (typeof onExpand === "function") {
                         onExpand();
                     }
                     $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
-                    $('#bioJSContainer').css({'overflow-x': 'auto'});
+                    followScroll(job_tab_component);
+
                 }
-                if (typeof onFullscreenToggle === "function") {
+                if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
                 }
             }).bind(mo),
