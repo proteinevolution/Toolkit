@@ -41,6 +41,11 @@
                     onclick : function(e : any){
                         e.preventDefault();
                         let route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
+                        console.log("DELETE",args.job().jobID)
+                        m.request({ url: "/api/job/" + args.job().jobID, method: "DELETE" }).then(function(){
+                            JobManager.removeFromTable(args.job().jobID);
+
+                        });
                         m.request({method:route.method, url:route.url}).then(function(data : any){
                             if (data != null && data.jobID != null) {
                                 m.route("/jobs/"+data.jobID);
