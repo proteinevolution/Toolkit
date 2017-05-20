@@ -210,7 +210,6 @@ object Job {
     */
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job): BSONDocument = {
-      val emailUpdate = if (job.emailUpdate) Some(true) else None
       BSONDocument(
         IDDB         -> job.mainID,
         PARENTID     -> job.parentID,
@@ -218,7 +217,7 @@ object Job {
         OWNERID      -> job.ownerID,
         PROJECT      -> job.project,
         STATUS       -> job.status,
-        EMAILUPDATE  -> emailUpdate,
+        EMAILUPDATE  -> job.emailUpdate,
         DELETION     -> job.deletion,
         TOOL         -> job.tool,
         TOOLNAMELONG -> job.toolnameLong,
