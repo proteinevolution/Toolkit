@@ -41,18 +41,32 @@
 </tr>
 @* color only 150 first hits, to avoid bloating of the generated html*@
     @* Query *@
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq)+ "   " + hit.query_end.toString))
-    }
-    @* Midline *@
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline)))
-    }
-    @* Hit *@
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + "   " + hit.hit_end.toString))
-    }
+    @if(hit.num > 50) {
+        @{
+            BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, hit.query_seq+ "   " + hit.query_end.toString))
+        }
+        @* Midline *@
+        @{
+            BlastVisualization.makeRow("sequence", Array("", "", hit.midline))
+        }
+        @* Hit *@
+        @{
+            BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, hit.hit_seq + "   " + hit.hit_end.toString))
+        }
+    }else{
 
+        @{
+            BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq)+ "   " + hit.query_end.toString))
+        }
+        @* Midline *@
+        @{
+            BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline)))
+        }
+        @* Hit *@
+        @{
+            BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + "   " + hit.hit_end.toString))
+        }
+    }
 <tr>
     <td colspan="5"><hr id="line-element" class="horizontal-line"></td>
 </tr>
