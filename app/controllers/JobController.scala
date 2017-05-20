@@ -111,20 +111,23 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
                   paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
                 }
-
+              // get checkbox value
+              // TODO: mailUpdate some how gets lost in the filter function above
+              val emailUpdate = formData.get("emailUpdate") match {
+                case Some(x) => true
+                case _ => false
+              }
               // Set job as either private or public
               val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
-
               // Get the current date to set it for all three dates
               val jobCreationTime = DateTime.now()
-
               // Create a new Job object for the job and set the initial values
               val job = Job(
                 mainID = BSONObjectID.generate(),
                 jobID = jobID,
                 ownerID = ownerOption,
                 status = Submitted,
-                emailUpdate = params.get(Job.EMAILUPDATE).isDefined,
+                emailUpdate =  emailUpdate,
                 tool = toolName,
                 toolnameLong = None,
                 label = params.get("label").flatten,
