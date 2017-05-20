@@ -255,6 +255,12 @@ fasta2json.py ../results/alignment.fas ../results/reduced.json
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
+#Generate query template alignment
+hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/querytemplateMSA.fas -p %pmin.content
+# Generate Query in JSON
+fasta2json.py ../results/querytemplateMSA.fas ../results/querytemplate.json
+
+
 # Generate Hitlist in JSON for hhrfile
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
 

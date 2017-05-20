@@ -448,6 +448,16 @@ final class ToolFactory @Inject()(
                                                          this.values(Toolnames.HHBLITS))
         }
       },
+
+      "HHR" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        Future.successful(
+          views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".hhr",
+            s"$jobPath$jobID/results/" + jobID + ".hhr",
+            jobID,
+            "hhblits_hhr"))
+      },
+
       "Representative_Alignment" -> { (jobID, requestHeader) =>
         getResult(jobID).map {
           case Some(jsvalue) =>
@@ -456,6 +466,17 @@ final class ToolFactory @Inject()(
                                                    aln.parseAlignment((jsvalue \ "rep100").as[JsArray]),
                                                    "rep100",
                                                    this.values(Toolnames.HHBLITS))
+        }
+      },
+
+      "QueryTemplateMSA" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        getResult(jobID).map {
+          case Some(jsvalue) =>
+            views.html.jobs.resultpanels.alignment(jobID,
+              aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
+              "querytemplate",
+              this.values(Toolnames.HHBLITS))
         }
       }
     ),
@@ -523,7 +544,7 @@ final class ToolFactory @Inject()(
       }
     ),
     Toolnames.HHPRED -> Map(
-      Resultviews.HITLIST -> { (jobID, requestHeader) =>
+      Resultviews.RESULTS -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
           case Some(jsvalue) =>
@@ -532,14 +553,36 @@ final class ToolFactory @Inject()(
                                                         this.values(Toolnames.HHPRED))
         }
       },
-      "Representative_Alignment" -> { (jobID, requestHeader) =>
+
+      "HHR" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        Future.successful(
+          views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".hhr",
+            s"$jobPath$jobID/results/" + jobID + ".hhr",
+            jobID,
+            "hhpred_hhr"))
+      },
+
+      "QueryTemplateMSA" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
           case Some(jsvalue) =>
             views.html.jobs.resultpanels.alignment(jobID,
-                                                   aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
-                                                   "reduced",
-                                                   this.values(Toolnames.HHPRED))
+              aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
+              "querytemplate",
+              this.values(Toolnames.HHPRED))
+        }
+      },
+
+      "RepresentativeQueryMSA" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        getResult(jobID).map {
+          case Some(jsvalue) =>
+            views.html.jobs.resultpanels.alignment(jobID,
+              aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
+              "reduced",
+              this.values(Toolnames.HHPRED))
+
         }
       }
     ),

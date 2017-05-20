@@ -130,6 +130,7 @@ object ParamType {
 
   final val UnconstrainedNumber = Number(None, None)
   final val Percentage          = Number(Some(0), Some(100))
+  final val Percentage_10_100          = Number(Some(10), Some(100))
   final val ConstrainedNumber   = Number(Some(1), Some(10000))
 
   // JSON conversion
@@ -217,7 +218,7 @@ class ParamAccess @Inject()(tel: TEL) {
   final val MACMODE                = select("macmode", "Realign with MAC")
   final val MACTHRESHOLD           = select("macthreshold", "MAC realignment threshold")
   final val MIN_COV                = Param("min_cov", ParamType.Percentage, 1, "Min. coverage of hits (%)")
-  final val PMIN                   = Param("pmin", ParamType.Percentage, 1, "Min. probability in hitlist (%)")
+  final val PMIN                   = Param("pmin", ParamType.Percentage_10_100, 1, "Min. probability in hitlist (> 10%)")
   final val MAX_SEQID              = Param("max_seqid", ParamType.UnconstrainedNumber, 1, "Maximal Sequence Identity (%)")
   final val MIN_QUERY_COV          = Param("min_query_cov", ParamType.Percentage, 1, "Minimal coverage with query (%)")
   final val MATRIX_PHYML           = select("matrix_phyml", "Model of AminoAcid replacement")
@@ -226,8 +227,7 @@ class ParamAccess @Inject()(tel: TEL) {
   final val MATRIX_MARCOIL         = select("matrix_marcoil", "Matrix")
   final val TRANSITION_PROBABILITY = select("transition_probability", "Transition Probability")
   final val MIN_SEQID_QUERY        = Param("min_seqid_query", ParamType.Percentage, 1, "Minimum sequence ID with Query (%)")
-  final val NUM_SEQS_EXTRACT =
-    Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
+  final val NUM_SEQS_EXTRACT       =  Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
   final val SCORE_SS                = select("score_ss", "Score secondary structure")
   final val SS_SCORING              = select("ss_scoring", "SS Scoring")
   final val UNIQUE_SEQUENCE         = select("unique_sequence", "Retrieve only unique sequences")

@@ -76,6 +76,11 @@ curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>
 echo "#Generating output" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
+#Generate query template alignment
+hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/querytemplateMSA.fas -p %pmin.content
+# Generate Query in JSON
+fasta2json.py ../results/querytemplateMSA.fas ../results/querytemplate.json
+
 
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > $(readlink -f ../results/${JOBID}.json)
 json2fasta.py ../results/${JOBID}.json ../results/${JOBID}.fasta
