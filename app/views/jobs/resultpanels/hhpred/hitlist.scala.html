@@ -197,7 +197,7 @@
 
 
         function templateAlignment(accession) {
-            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+            $.LoadingOverlay("show");
             $('textarea#alignmentTemplate').val(" ");
             // replace '#' for url
             accession = accession.replace("#", "%23");
@@ -250,7 +250,7 @@
 
         function hhpred_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
-            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+            $.LoadingOverlay("show");
             var route = null;
             if (boolEvalue) {
                 route = jsRoutes.controllers.HHpredController.alnEval(jobID, evalue);
