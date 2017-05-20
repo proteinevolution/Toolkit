@@ -143,7 +143,7 @@
        function hhblits_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
            var route = null;
-           $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+           $.LoadingOverlay("show");
             if(boolFullLength) {
                 if(boolEvalue) {
                     route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
@@ -203,7 +203,7 @@
             $('textarea#alignmentTemplate').val(" ");
             // replace '#' for url
             accession = accession.replace("#", "%23");
-            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+            $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
                 url: '/templateAlignmentHHblits/@jobID/' + accession
