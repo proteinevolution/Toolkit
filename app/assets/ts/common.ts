@@ -115,7 +115,7 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
     $("#cluo").html("Clustal<span style='letter-spacing: 2px; padding-left: 2px;'>\u03A9</span>");
 
            window.addEventListener("load", function(){
-                    window.cookieconsent.initialise({
+               (<any>window).cookieconsent.initialise({
                         "palette": {
                             "popup": {
                                 "background": "#28786f"

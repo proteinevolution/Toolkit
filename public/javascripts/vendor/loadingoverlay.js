@@ -8,7 +8,7 @@
 (function($, undefined){
     // Default Settings
     var _defaults = {
-        color           : "rgba(255, 255, 255, 0.8)",
+        color           : "rgba(255, 255, 255, 0.0)",
         custom          : "",
         fade            : true,
         fontawesome     : "",
@@ -83,10 +83,8 @@
             if (wholePage) {
                 overlay.css({
                     "position"  : "fixed",
-                    "top"       : 0,
-                    "left"      : 0,
-                    "margin-left" : "56em",
-                    "margin-top": "24em"
+                    "top": "19%",
+                    "left": "50%"
                 });
             } else {
                 overlay.css("position", (container.css("position") == "fixed") ? "fixed" : "absolute");
