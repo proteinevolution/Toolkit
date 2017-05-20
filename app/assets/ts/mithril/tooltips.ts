@@ -76,3 +76,10 @@ $('.toolsec a').tooltipster({
     position: 'bottom',
     animation: 'fade'
 });
+
+$('#navbar-tabs a').tooltipster({
+    theme: 'tooltipster-borderless',
+    position: 'bottom',
+    animation: 'fade',
+    contentAsHTML: true
+});
