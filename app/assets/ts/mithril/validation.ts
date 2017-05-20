@@ -774,6 +774,11 @@ class alignmentVal implements ToolkitValidator {
             return false;
         }
 
+        else if ((/^\n$/m.test(this.elem.reformat('extractheaders')))) {
+            feedback(false, "Empty header!", "error");
+            return false;
+        }
+
         else if (this.elem.reformat('maxseqnumber', seqLimit)) {
             feedback(false, "Input contains more than " + seqLimit + " sequences!", "error");
             return false;
@@ -852,6 +857,9 @@ class alignmentVal implements ToolkitValidator {
 
         else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
             feedback(false, "Must have single sequence!", "error");
+
+        else if ((/^\n$/m.test(this.elem.reformat('extractheaders'))))
+            feedback(false, "Empty header!", "error");
 
         else if (!this.elem.reformat('maxlength', 10000))
             feedback(false, "Input contains over 10,000 characters!", "error");
