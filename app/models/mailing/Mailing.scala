@@ -27,7 +27,7 @@ sealed trait MailTemplate {
   def send(implicit mailerClient: MailerClient) {
     val email = Email(
       subject,
-      "Toolkit Team <toolkitmpg@gmail.com>",
+      "Toolkit Team <mpi-toolkit@tuebingen.mpg.de>",
       Seq(user.getUserData.nameLogin + " <" + user.getUserData.eMail + ">"),
       attachments = Seq(),
       bodyText = Some(this.bodyText), // Text version of the E-Mail in case the User has no HTML E-Mail client
@@ -49,7 +49,7 @@ sealed trait MailTemplate {
   val origin: String = TEL.hostname match {
 
     case "olt" => s"http://${TEL.hostname}:${TEL.port}"
-    case _     => s"https://rye.tuebingen.mpg.de" // TODO change it to toolkit.tuebingen.mpg.de later
+    case _     => s"https://toolkit.tuebingen.mpg.de"
 
   }
 
