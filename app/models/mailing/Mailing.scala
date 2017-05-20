@@ -62,7 +62,7 @@ case class NewUserWelcomeMail(userParam: User, token: String) extends MailTempla
 
   val bodyText: String = {
     s"""Welcome ${user.getUserData.nameLogin},
-       |Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
+       |your registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
        |To do this, visit
        |$origin/verification/${user.getUserData.nameLogin}/$token
        |Your Toolkit Team
@@ -72,10 +72,10 @@ case class NewUserWelcomeMail(userParam: User, token: String) extends MailTempla
   val bodyHtml: String = {
     super.bodyHtmlTemplate(
       s"""Welcome ${user.getUserData.nameLogin},<br />""".stripMargin,
-      s"""Your Registration was successful. Please take a moment and verify that this is indeed your E-Mail account.<br />
+      s"""your registration was successful. Please take a moment and verify that this is indeed your E-Mail account.<br />
        |To do this, click <a href=\"$origin/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
        |or copy this URL and visit this page in your browser:<br />
-       |$origin/verification/${user.getUserData.nameLogin}/$token<br />
+       |$origin/verification/${user.getUserData.nameLogin}/$token<br /><br />
        |Your Toolkit Team
      """.stripMargin
     )
@@ -88,25 +88,25 @@ case class ChangePasswordMail(userParam: User, token: String) extends MailTempla
   val user: User = userParam
 
   val bodyText: String = {
-    s"""Hello ${user.getUserData.nameLogin},
-        |You requested a password change.
+    s"""Dear ${user.getUserData.nameLogin},
+        |you requested a password change.
         |To complete the process, visit
         |$origin/verification/${user.getUserData.nameLogin}/$token
-        |If You did not request this, then your account has been used by someone else.
-        |Log in and change the password yourself to ensure that this other Person can no longer access your account.
+        |If you did not request this, then your account has been used by someone else.
+        |Log in and change the password yourself to ensure that this other person can no longer access your account.
         |Your Toolkit Team
      """.stripMargin
   }
 
   val bodyHtml: String = {
     super.bodyHtmlTemplate(
-      s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
-      s"""You requested a password change.<br />
+      s"""Dear ${user.getUserData.nameLogin},<br />""".stripMargin,
+      s"""you requested a password change.<br />
           |To complete the process, click <a href=\"$origin/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
           |or copy this URL and visit this page in your browser:<br />
           |$origin/verification/${user.getUserData.nameLogin}/$token<br />
-          |If You did not request this, then your account has been used by someone else.<br />
-          |Log in and change the password yourself to ensure that this other Person can no longer access your account.<br />
+          |If you did not request this, then your account has been used by someone else.<br />
+          |Log in and change the password yourself to ensure that this other person can no longer access your account.<br /><br />
           |Your Toolkit Team<br />
      """.stripMargin
     )
@@ -119,24 +119,24 @@ case class ResetPasswordMail(userParam: User, token: String) extends MailTemplat
   val user: User = userParam
 
   val bodyText: String = {
-    s"""Hello ${user.getUserData.nameLogin},
-        |You requested to reset your password and set a new one.
+    s"""Dear ${user.getUserData.nameLogin},
+        |you requested to reset your password and set a new one.
         |To complete the process, visit
         |$origin/verification/${user.getUserData.nameLogin}/$token
-        |If You did not request this, then someone may have tried to log into your account.
+        |If you did not request this, then someone may have tried to log into your account.
         |Your Toolkit Team
      """.stripMargin
   }
 
   val bodyHtml: String = {
     super.bodyHtmlTemplate(
-      s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
-      s"""You requested to reset your password and set a new one.<br />
+      s"""Dear ${user.getUserData.nameLogin},<br />""".stripMargin,
+      s"""you requested to reset your password and set a new one.<br />
           |To complete the process, visit <a href=\"$origin/verification/${user.getUserData.nameLogin}/$token\">here</a><br />
           |or copy this URL and visit this page in your browser:<br />
           |$origin/verification/${user.getUserData.nameLogin}/$token<br />
-          |If You did not request this, then your account has been used by someone else.<br />
-          |Log in and change the password yourself to ensure that this other Person can no longer access your account.<br />
+          |If you did not request this, then your account has been used by someone else.<br />
+          |Log in and change the password yourself to ensure that this other person can no longer access your account.<br /><br />
           |Your Toolkit Team
      """.stripMargin
     )
@@ -149,8 +149,8 @@ case class PasswordChangedMail(userParam: User) extends MailTemplate {
   val user: User = userParam
 
   val bodyText: String = {
-    s"""Hello ${user.getUserData.nameLogin},
-        |As requested your password has been changed. You can do this at any time in your user profile.
+    s"""Dear ${user.getUserData.nameLogin},
+        |as requested your password has been changed. You can do this at any time in your user profile.
         |If You did not request this, then someone else may have changed your password.
         |Your Toolkit Team
      """.stripMargin
@@ -158,10 +158,10 @@ case class PasswordChangedMail(userParam: User) extends MailTemplate {
 
   val bodyHtml: String = {
     super.bodyHtmlTemplate(
-      s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
-      s"""You requested to reset your password and set a new one.<br />
+      s"""Dear ${user.getUserData.nameLogin},<br />""".stripMargin,
+      s"""you requested to reset your password and set a new one.<br />
           |As requested your password has been changed. You can do this at any time in your user profile.<br />
-          |If You did not request this, then someone else may have changed your password.<br />
+          |If you did not request this, then someone else may have changed your password.<br /><br />
           |Your Toolkit Team
      """.stripMargin
     )
@@ -175,26 +175,26 @@ case class JobFinishedMail(userParam: User, job: Job) extends MailTemplate {
 
   def statusMessage: String = {
     job.status match {
-      case Done  => "Your job has finished sucessfully. You can now look at the results."
-      case Error => "Your job has failed. Please check all parameters and see if you find any issues."
-      case _     => "Has changed state"
+      case Done  => "your job has finished successfully. You can now look at the results."
+      case Error => "your job has failed. Please check all parameters and see if you find any issues."
+      case _     => "your job has changed state."
     }
   }
 
   val bodyText: String = {
-    s"""Hello ${user.getUserData.nameLogin},
+    s"""Dear ${user.getUserData.nameLogin},
         |$statusMessage
-        |You can view it at any time at $origin/jobs/${job.jobID}
+        |you can view it at any time at $origin/jobs/${job.jobID}
         |Your Toolkit Team
      """.stripMargin
   }
 
   val bodyHtml: String = {
     super.bodyHtmlTemplate(
-      s"""Hello ${user.getUserData.nameLogin},<br />""".stripMargin,
+      s"""Dear ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""$statusMessage
           |You can view it at any time <a href=\"$origin/jobs/${job.jobID}>here</a>
-          |or go to $origin/jobs/${job.jobID} in your browser<br />
+          |or go to $origin/jobs/${job.jobID} in your browser<br /><br />
           |Your Toolkit Team
      """.stripMargin
     )
