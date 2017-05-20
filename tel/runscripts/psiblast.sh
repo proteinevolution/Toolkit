@@ -15,10 +15,19 @@ if [ $CHAR_COUNT -gt "10000000" ] ; then
 fi
 
 if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
-      echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-      false
+      sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
+      CHAR_COUNT=$(wc -m < ../params/alignment1)
+
+      if [ $CHAR_COUNT -gt "10000" ] ; then
+            echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
+            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            false
+      else
+            sed -i "1 i\>${JOBID}" ../params/alignment1
+            mv ../params/alignment1 ../params/alignment
+      fi
 fi
+
 
 if [ $FORMAT = "1" ] ; then
       reformatValidator.pl clu fas \

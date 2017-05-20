@@ -10,9 +10,17 @@ if [ $CHAR_COUNT -gt "10000000" ] ; then
 fi
 
 if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
-      echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-      false
+      sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
+      CHAR_COUNT=$(wc -m < ../params/alignment1)
+
+      if [ $CHAR_COUNT -gt "10000" ] ; then
+            echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
+            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            false
+      else
+            sed -i "1 i\>${JOBID}" ../params/alignment1
+            mv ../params/alignment1 ../params/alignment
+      fi
 fi
 
 if [ $FORMAT = "1" ] ; then
@@ -51,7 +59,7 @@ fi
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
-
+fasta2json.py ../results/${JOBID}.fas ../results/query.json
 
 if [ "%max_hhblits_iter.content" = "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
     #Use user MSA to build HMM
@@ -66,8 +74,11 @@ else
     curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
     echo "done" >> ../results/process.log
     curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-    echo "#Running HHblits for query MSA." >> ../results/process.log
+    echo "#Running HHblits for query MSA generation." >> ../results/process.log
     curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
+    # Generate Query in JSON
+
     #MSA generation required; generation by HHblits
     hhblits -cpu %THREADS \
             -v 2 \
@@ -122,11 +133,10 @@ curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>
 
     hmmer2json.py -i ../results/${JOBID}.outfilefl \
                   -o ../results/${JOBID}.json \
-                  -m %desc.content
-                  # add DB to json
+                  -m %desc.content \
+                  -e %evalue.content
 
-# Generate Query in JSON
-fasta2json.py ../results/${JOBID}.fas ../results/query.json
+
 manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
 #create tab separated file to feed into blastviz
 hmmerJson2tab.py ../results/${JOBID}.json ../results/query.json ../results/${JOBID}.tab
