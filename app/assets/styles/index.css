@@ -170,7 +170,7 @@ FIELDSET {
 .slide-caption{
     min-height: 80px;
     position: absolute;
-    background: black;
+    background: rgba(4, 4, 4, 0.9);
     color:white;
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
     letter-spacing:1px;
