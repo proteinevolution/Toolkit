@@ -288,30 +288,15 @@
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-io-newick.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-vis-tree.min.js")'></script>
         <script src='@routes.Assets.versioned("javascripts/vendor/snap.svg-min.js")'></script>
-        <script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
+        <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+        <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+	<script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
 
             <!-- ScalaJS assets -->
 
         @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
         <script>Router().main();</script>
-        <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
-        <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
-        <script>
-                window.addEventListener("load", function(){
-                    window.cookieconsent.initialise({
-                        "palette": {
-                            "popup": {
-                                "background": "#28786f"
-                            },
-                            "button": {
-                                "background": "#e2e2e2"
-                            }
-                        },
-                        "content": {
-                            "link": '<a data-open="privacyPolicyModal" style="color:#15423b" text-decoration="underline";>Learn More</a>',
-                            "message": "We use cookies to ensure you get the best experience on our website. By using our services you agree to our privacy policies.",
-                        },
-                    })});
+        
         </script>
     </body>
 </html>
