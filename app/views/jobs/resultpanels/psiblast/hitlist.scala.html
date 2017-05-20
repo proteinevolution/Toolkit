@@ -106,7 +106,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
     // full seq is retrieved
     var data = {"checkboxes": checkboxes.removeDuplicates()};
     var route = null;
-    $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+    $.LoadingOverlay("show");
     if(boolFullLength) {
         if(boolEvalue) {
             route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue);
