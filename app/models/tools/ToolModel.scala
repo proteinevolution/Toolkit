@@ -485,17 +485,18 @@ final class ToolFactory @Inject()(
         implicit val r = requestHeader
         Future.successful(views.html.jobs.resultpanels.image(s"/files/$jobID/alignment_ncoils.png"))
       },
+      "ProbList" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbList"))
+      }
+      ,
       "ProbState" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbPerState"))
       },
-      "Domains" -> { (jobID, requestHeader) =>
+      "PredictedDomains" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.Domains"))
-      },
-      "ProbList/PSSM" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/alignment.ProbList"))
       }
     ),
     Toolnames.PCOILS -> Map(
