@@ -4,7 +4,7 @@ BIOPROGS="/cluster/toolkit/production/bioprogs/"
 DATABASES="/cluster/toolkit/production/databases/"
 
 # Databases
-export STANDARDNEW="${DATABASES}/standard"
+export STANDARD="${DATABASES}/standard"
 export TAXONOMY="${DATABASES}/standard/taxonomy"
 
 # JAVA
