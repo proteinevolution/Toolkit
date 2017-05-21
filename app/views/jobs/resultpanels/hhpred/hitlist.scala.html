@@ -86,8 +86,10 @@
         <h4>Template Alignment</h4>
         <div>
             <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
-                <option value="" selected>Forward To</option>
-                <option value="modeller" >Modeller</option>
+                <option value="" selected>Forward to</option>
+                <option value="hhpred" >HHpred</option>
+                <option value="hhblits" >HHblits</option>
+                <option value="hhrepid" >HHrepID</option>
             </select>
         </div>
         <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
