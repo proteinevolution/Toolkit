@@ -130,7 +130,7 @@ else
             INPUT="in_msa"
         fi
 
-        psiblast -db ${STANDARDNEW}/nre70 \
+        psiblast -db ${STANDARD}/nre70 \
                  -num_iterations %msa_gen_max_iter.content \
                  -evalue %hhpred_incl_eval.content \
                  -inclusion_ethresh 0.001 \
