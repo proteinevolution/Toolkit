@@ -117,15 +117,21 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
             url: route.url,
             contentType: "application/json",
             data: JSON.stringify(data),
-            method: route.method
+            method: route.method,
+            error: function(){
+                $.LoadingOverlay("hide")
+            }
         }).done(function (data_) {
             $.ajax({
                 type: 'GET',
-                url: 'files/'+jobID+'/sequences.fa'
+                url: 'files/'+jobID+'/sequences.fa',
+                error: function(){
+                    $.LoadingOverlay("hide")
+                }
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
-            }).always($.LoadingOverlay("hide"));
-        }).fail($.LoadingOverlay("hide"));
+            })
+        })
     }else{
         if(boolEvalue) {
             route = jsRoutes.controllers.PSIBlastController.alnEval(jobID, evalue);
@@ -139,7 +145,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
             method: route.method
         }).done(function (data_) {
             forward(selectedTool, data_);
-        }).always($.LoadingOverlay("hide"))
+        })
     }
 }
 
