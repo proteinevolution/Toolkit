@@ -145,6 +145,11 @@ function resubmitSection(sequence, name) {
 // parameter: tool (String)
 // forwards all checked identifier and sequences to tool
 function forward(tool, forwardData){
+    if(forwardData == ""){
+        alert("No hits selected!");
+        $.LoadingOverlay("hide");
+        return;
+    }
     localStorage.setItem("resultcookie", forwardData);
     window.location.href = "/#/tools/" + tool;
 }
@@ -154,6 +159,7 @@ $(document).ready(function() {
     var resultcookie = localStorage.getItem("resultcookie");
     $('#alignment').val(resultcookie);
     localStorage.removeItem("resultcookie");
+    $.LoadingOverlay("hide")
 });
 
 

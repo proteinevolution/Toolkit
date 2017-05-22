@@ -207,14 +207,20 @@
 
             $.ajax({
                 type: 'GET',
-                url: '/templateAlignment/' + jobID + '/' + accession
+                url: '/templateAlignment/' + jobID + '/' + accession,
+                error: function(){
+                    $.LoadingOverlay("hide")
+                }
             }).done(function () {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/' + jobID + '/' + accession + '.fas'
+                    url: 'files/' + jobID + '/' + accession + '.fas',
+                    error: function(){
+                        $.LoadingOverlay("hide")
+                    }
                 }).done(function (data) {
                     $("#alignmentTemplate").val(data.toString());
-                }).always($.LoadingOverlay("hide"));
+                });
             }).fail(function () {
                 $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
                 $.LoadingOverlay("hide")
@@ -241,11 +247,12 @@
                     $(document).ready(function () {
                         $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
                         stage = new NGL.Stage("viewport");
-                        stage.loadFile(url, {defaultRepresentation: true, sele: ":A or :B or DPPC",});
+                        stage.loadFile(url, {defaultRepresentation: true, sele: ":A or :B or DPPC"});
                         stage.set
                     });
                 }).fail(function () {
                     $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
+                    $.LoadingOverlay("hide")
                 });
             });
 
@@ -264,16 +271,21 @@
                 url: route.url,
                 method: route.method,
                 contentType: "application/json",
-                data: JSON.stringify(data)
+                data: JSON.stringify(data),
+                error: function(){
+                    $.LoadingOverlay("hide")
+                }
             }).done(function (data_) {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/' + jobID + '/alignment.fas'
+                    url: 'files/' + jobID + '/alignment.fas',
+                    error: function(){
+                        $.LoadingOverlay("hide")
+                    }
                 }).done(function (data_) {
                     forward(selectedTool, data_.toString());
-                }).always($.LoadingOverlay("hide"));
-            }).fail($.LoadingOverlay("hide"));
-
+                });
+            });
         }
 
 
