@@ -258,7 +258,7 @@ final class ToolFactory @Inject()(
      Seq.empty),
     // MUSCLE
     ("muscle",
-     Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.MAXROUNDS),
+     Seq(paramAccess.MULTISEQ, paramAccess.MAXROUNDS),
      Seq("psiblast",
          "clustalo",
          "kalign",
