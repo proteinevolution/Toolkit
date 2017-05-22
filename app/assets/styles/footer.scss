@@ -87,10 +87,10 @@
 
 }
 
-#imprintModal, #subnavHelpModal, #privacyPolicyModal {
+#imprintModal, #subnavHelpModal, #subnavFAQModal, #privacyPolicyModal {
   font-size: 0.75em;
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-  width: 45%;
+  width: 50%;
 
   a {
     font-size: large;
@@ -102,7 +102,7 @@
 
 }
 
-#imprintContent, #helpModalContent, #privacyPolicyContent, #contactModelContent {
+#imprintContent, #helpModalContent, #FAQModalContent, #privacyPolicyContent, #contactModelContent {
   padding: 1em;
 }
 
