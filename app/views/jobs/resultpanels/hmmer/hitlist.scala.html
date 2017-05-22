@@ -123,15 +123,21 @@
                     url: route.url,
                     method: route.method,
                     contentType: "application/json",
-                    data: JSON.stringify(data)
+                    data: JSON.stringify(data),
+                    error: function(){
+                        $.LoadingOverlay("hide")
+                    }
                 }).done(function () {
                     $.ajax({
                         type: 'GET',
-                        url: 'files/' + jobID + '/sequences.fa'
+                        url: 'files/' + jobID + '/sequences.fa',
+                        error: function(){
+                            $.LoadingOverlay("hide")
+                        }
                     }).done(function (data_) {
                         forward(selectedTool, data_.toString());
-                    }).always($.LoadingOverlay("hide"));
-                }).fail($.LoadingOverlay("hide"));
+                    })
+                });
             } else {
                 if (boolEvalue) {
                     route = jsRoutes.controllers.HmmerController.alnEval(jobID, evalue);
@@ -142,10 +148,13 @@
                     url: route.url,
                     method: route.method,
                     contentType: "application/json",
-                    data: JSON.stringify(data)
+                    data: JSON.stringify(data),
+                    error: function(){
+                        $.LoadingOverlay("hide")
+                    }
                 }).done(function (data_) {
                     forward(selectedTool, data_);
-                }).always($.LoadingOverlay("hide"));
+                });
             }
         }
 
