@@ -417,8 +417,9 @@ hr {
     width: 8em;
     float: right;
     border-radius: 3px;
-    font-size: 0.88em;
-    padding: 0.25em;
+    font-size: 0.725em;
+    padding-top: 1.25em;
+    padding-bottom: 1.25em;
 }
 
 .submitbuttons .jobid.white {
