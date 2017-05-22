@@ -87,10 +87,10 @@
 
 }
 
-#imprintModal, #subnavHelpModal, #privacyPolicyModal {
+#imprintModal, #subnavHelpModal, #subnavFAQModal, #privacyPolicyModal {
   font-size: 0.75em;
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-  width: 45%;
+  width: 50%;
 
   a {
     font-size: large;
@@ -102,7 +102,7 @@
 
 }
 
-#imprintContent, #helpModalContent, #privacyPolicyContent, #contactModelContent {
+#imprintContent, #helpModalContent, #FAQModalContent, #privacyPolicyContent, #contactModelContent {
   padding: 1em;
 }
 
@@ -123,7 +123,7 @@
     font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
     box-shadow: 0 1px 1px rgba(black, 0.1);
     resize: none;
-    font-size: 0.8em;
+    font-size: 0.7em;
 
     &:focus {
       border: 1px solid #2E8C81;
