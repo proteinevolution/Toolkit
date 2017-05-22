@@ -45,6 +45,8 @@ window.JobModel = {
         "eval_tpr":"1e-6",
         "msa_gen_method":"hhblits",
         "hhsuitedb": "mmcif70/pdb70",
+        "hmmerdb": "nr70",
+        "standarddb": "nr50",
         "hhpred_incl_eval": "1e-3",
         "hhblits_incl_eval": "1e-3",
         "pcoils_matrix": "2",
