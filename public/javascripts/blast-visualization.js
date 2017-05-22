@@ -26,6 +26,8 @@ function download(filename, text){
     pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     pom.setAttribute('download', filename);
 
+    $.LoadingOverlay("hide");
+
     if (document.createEvent) {
         var event = document.createEvent('MouseEvents');
         event.initEvent('click', true, true);
