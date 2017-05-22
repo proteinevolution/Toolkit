@@ -236,12 +236,13 @@
                     <div class="columns large-12">
                         <div id="sub-nav">
                             <a data-open="subnavHelpModal">Help</a>
+                            <a data-open="subnavFAQModal">FAQ</a>
                             <a data-open="privacyPolicyModal">Privacy Policy</a>
                             <a data-open="imprintModal">Imprint</a>
                             <a data-open="contactModal">Contact</a>
                             <a href="/#/news">News</a>
                         </div>
-                        <div id="socket"> © 2008-@(new Date().format("yyyy")) , Dept. of Protein Evolution at the Max Planck Institute for Developmental Biology, Tübingen </div>
+                        <div id="socket"> © 2008-@(new Date().format("yyyy")), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen</div>
                     </div>
                 </footer>
         </div>
@@ -257,6 +258,10 @@
 
         <div class="small reveal" id="subnavHelpModal" data-reveal>
             @helpmodals.helpmodal()
+        </div>
+
+        <div class="small reveal" id="subnavFAQModal" data-reveal>
+            @helpmodals.faqmodal()
         </div>
 
         <div class="small reveal" id="privacyPolicyModal" data-reveal>
@@ -296,8 +301,8 @@
 
         @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
         <script>Router().main();</script>
-        
-        </script>
+
+        </script>        </script>
     </body>
 </html>
 
