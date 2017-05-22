@@ -383,7 +383,7 @@ class SignUp {
                     m("input", { id:         'nameLogin',
                                  name:       'nameLogin',
                                  pattern:    '[a-zA-Z0-9]{6,40}',
-                                 placeholder:'Username',
+                                 placeholder:'Username (min. 6 characters)',
                                  required:   'required',
                                  type:       'text',
                                  onkeyup:     m.withAttr("value", SignUp.nameLoginSetter),
@@ -412,7 +412,7 @@ class SignUp {
                 m("div", m("label", [
                     m("input", { id:         'passwordCheck',
                                  pattern:    '.{8,128}',
-                                 placeholder:'Password',
+                                 placeholder:'Password (min. 8 characters)',
                                  required:   'required',
                                  type:       'password',
                                  onkeyup:     m.withAttr("value", SignUp.passwordSetter),
