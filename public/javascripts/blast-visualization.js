@@ -375,3 +375,16 @@ function selectAll(){
         checkboxes = [];
     }
 }
+
+
+function getsHitsManually(){
+    if (!loading) {
+        var end = shownHits + showMore;
+        end = end < numHits ? end : numHits;
+        if (shownHits != end) {
+            getHits(shownHits, end);
+        }
+        shownHits = end;
+    }
+}
+
