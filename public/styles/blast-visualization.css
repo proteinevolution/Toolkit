@@ -549,6 +549,14 @@ table.dataTable.no-footer{
     padding-bottom: 2em !important;
 }
 
+#loadHits{
+    font-size: 1.4em;
+    margin-left: 23em !important;
+    margin-bottom: 2em !important;
+    margin-top: 2em !important;
+}
+
+
 .indexCheckbox {
     margin-right: 0.3em !important;
 }

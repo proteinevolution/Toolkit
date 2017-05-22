@@ -29,10 +29,12 @@
         <tbody class="alignmentTBody">
         </tbody>
         <tr>
+            <td colspan="4" ><a onclick="getsHitsManually()" id="loadHits">Load Hits</a></td>
+        </tr>
+        <tr>
             <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
         </tr>
     </table>
-
 </form>
 </div>
 
@@ -89,15 +91,20 @@
         function getHits(start, end){
             if(start <= numHits && end <= numHits && !loading){
                 loading = true;
+                $('#loadHits').hide();
                 $('#loadingHits').show();
                 var route = jsRoutes.controllers.AlignmentController.loadHits(jobID,start,end, resultName);
                 return $.ajax({
                     method: route.method,
-                    url: route.url
+                    url: route.url,
+                    error: function(){
+                        $(".alignmentTBody").append("Error loading Data.");
+                    }
                 }).done(function (data_) {
                     $(".alignmentTBody").append(data_);
                     loading = false;
                     $('#loadingHits').hide();
+                        $('#loadHits').show();
                 });
             }
         }
@@ -122,7 +129,6 @@
         }
 
 
-
         $(document).ready(function () {
 
             // trigger lazyload for loading alignment
@@ -138,8 +144,12 @@
                             end = end < numHits ? end : numHits;
                             if (shownHits != end) {
                                 getHits(shownHits, end);
+                            }else{
+                                $('#loadHits').hide();
                             }
                             shownHits = end;
+
+
                         }
                     }
                     $("#alignmentResult").floatingScroll('init');
