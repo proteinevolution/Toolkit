@@ -75,6 +75,9 @@
                     <tbody id="alignmentTable">
                     </tbody>
                     <tr>
+                        <td colspan="4" ><a onclick="getsHitsManually()" id="loadHits">Load Hits</a></td>
+                    </tr>
+                    <tr>
                         <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
                     </tr>
                 </table>
@@ -316,6 +319,7 @@
             if (start <= numHits && end <= numHits && !loading) {
                 loading = true;
                 $('#loadingHits').show();
+                $('#loadHits').hide();
                 var route = jsRoutes.controllers.HHpredController.loadHits(jobID, start, end);
                 return $.ajax({
                     method: route.method,
@@ -324,6 +328,7 @@
                     $("#alignmentTable").append(data_);
                     loading = false;
                     $('#loadingHits').hide();
+                    $('#loadHits').show();
                 });
             }
         }
