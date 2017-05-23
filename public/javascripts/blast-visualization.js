@@ -253,11 +253,10 @@ function calcColor(prob) {
 
 
 function scrollToElem(num){
-    var numAdd = num+3;
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     if (num > shownHits) {
         $.LoadingOverlay("show");
-        getHits(shownHits, numAdd).done(function(data){
+        getHits(shownHits, num, colorAAs).done(function(data){
             var pos = $('input[name=templates][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
