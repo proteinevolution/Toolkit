@@ -5,20 +5,35 @@ declare var showMore : number;
 declare var numHits : number;
 declare var getHits: any;
 
+let count = 0;
+
 // add scrollcontainer highlighting
 let followScroll = function(element : any) {
     
     $(element).on('scroll', function () {
-
+    let detached;
 
         try {
 
             let top = $(this).scrollTop();
             if (typeof top !== 'undefined' && top >= $('#visualization').position().top + 75) {
-                $('.scrollContainer').addClass('fixed');
-            }
-            else {
+                    // detached = $('#collapseMe').detach();
+                    // $('.scrollContainer').append(detached);
+
+
+                    $('.scrollContainer').addClass('fixed');
+                    $('.scrollContainer').removeClass('scrollContainerWhite');
+                    $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
+
+            } else {
+                // detached = $('#collapseMe').detach();
+                // $('.ui-widget-header').append(detached);
+
+
                 $('.scrollContainer').removeClass('fixed');
+                $('.scrollContainer').addClass('scrollContainerWhite');
+                $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
+
             }
 
             if ($('#flat-slider').visible()) {
