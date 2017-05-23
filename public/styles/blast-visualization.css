@@ -440,7 +440,7 @@ table.dataTable.no-footer{
 
 
 #htb_wrapper .sorting_1 input {
-    margin-right: 0.25em;
+    margin-right: 1.25em;
     top: 0;
 }
 
@@ -478,6 +478,12 @@ table.dataTable.no-footer{
 .scrollContainer span{
     margin-right: 2em;
 }
+
+.scrollContainerDiv {
+    display: flex;
+    margin: 0 auto;
+}
+
 #hitlistTitle{
     padding-top: 2em;
     padding-bottom: 1em;
