@@ -277,7 +277,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         routes.javascript.AlignmentController.getAln,
         routes.javascript.Application.ws
       )
-    ).as("text/javascript")
+    ).as("text/javascript").withHeaders(CACHE_CONTROL -> "max-age=31536000")
   }
 
 }
