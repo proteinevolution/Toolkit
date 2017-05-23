@@ -58,7 +58,7 @@ class LiveTable {
     }
     static pushJob (job : Job) : void {
         LiveTable.lastJob = job;
-        console.log("Last job:", job);
+        //console.log("Last job:", job);
         m.redraw.strategy("diff");
         m.redraw();
     }
@@ -78,7 +78,7 @@ class LiveTable {
         let trafficBarStatus: any;
         // TODO: TRAFFICBAR IS BROKEN AGAIN!!!
         if(LiveTable.lastJob != null) {
-            switch (LiveTable.lastJob.state) {
+            switch (LiveTable.lastJob.status) {
                 case 2:
                     trafficBarStatus = "queue";
                     break;
