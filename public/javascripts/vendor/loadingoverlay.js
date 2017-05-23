@@ -8,7 +8,7 @@
 (function($, undefined){
     // Default Settings
     var _defaults = {
-        color           : "rgba(255, 255, 255, 0.0)",
+        color           : "rgba(0, 0, 0, 0.0)",
         custom          : "",
         fade            : true,
         fontawesome     : "",

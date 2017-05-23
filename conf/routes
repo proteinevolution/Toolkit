@@ -185,7 +185,7 @@ POST        /HHblitsLoadHits                          @controllers.HHblitsContro
 # HHPred
 POST        /evalHHpred                               @controllers.HHpredController.alnEval(jobID: String, eval:String)
 POST        /alnHHpred                                @controllers.HHpredController.aln(jobID:String)
-POST        /HHpredLoadHits                           @controllers.HHpredController.loadHits(jobID: String, start: Int, end: Int)
+POST        /HHpredLoadHits                           @controllers.HHpredController.loadHits(jobID: String, start: Int, end: Int, isColor: Boolean)
 
 # Alignment
 POST        /AlignmentLoadHits                        @controllers.AlignmentController.loadHits(jobID: String, start: Int, end: Int, resultName: String)
