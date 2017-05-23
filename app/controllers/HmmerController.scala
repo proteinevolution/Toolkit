@@ -117,7 +117,6 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
 
   def getAln(alignment: AlignmentResult, list: Seq[Int]): String = {
     val fas = list.map { num =>
-      println(num - 1); println(alignment.alignment(num - 1).accession)
       ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num - 1).seq + "\n"
     }
     fas.mkString

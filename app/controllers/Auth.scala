@@ -181,7 +181,6 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
           FormDefinitions.SignIn.bindFromRequest.fold(
             errors =>
               Future.successful {
-                Logger.info(" but there was an error in the submit form: " + errors.toString)
                 Ok(LoginError())
             },
             // if no error, then insert the user to the collection
@@ -255,7 +254,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
         }
       }
     }
-  
+
 
   /**
     * Submission of the sign up form

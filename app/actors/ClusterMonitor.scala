@@ -3,7 +3,7 @@ package actors
 import javax.inject.{Inject, Singleton}
 
 import actors.ClusterMonitor._
-import akka.actor._
+import akka.actor.{ActorLogging, _}
 import akka.event.LoggingReceive
 import controllers.Settings
 import models.database.statistics.ClusterLoadEvent

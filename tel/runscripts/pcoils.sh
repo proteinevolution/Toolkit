@@ -34,7 +34,7 @@ if [ "%pcoils_input_mode.content" = "2" ]; then
             INPUT="in_msa"
         fi
 
-        psiblast -db ${STANDARDNEW}/nr70 \
+        psiblast -db ${STANDARD}/nr70 \
                  -num_iterations 1 \
                  -evalue 0.0001 \
                  -inclusion_ethresh 0.0001 \

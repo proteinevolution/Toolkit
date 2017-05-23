@@ -754,6 +754,11 @@ interface JQueryEasingFunctions {
  */
 interface JQueryStatic {
 
+
+    // custom stuff
+
+    LoadingOverlay(modifier: string) : JQueryStatic;
+
     /**
      * Perform an asynchronous HTTP (Ajax) request.
      *
@@ -3774,6 +3779,7 @@ interface JQuery {
      * @see {@link https://api.jquery.com/queue/#queue-queueName-callback}
      */
     queue(queueName: string, callback: Function): JQuery;
+
 }
 declare module "jquery" {
     export = $;
