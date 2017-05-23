@@ -130,7 +130,6 @@ object ParamType {
 
   final val UnconstrainedNumber = Number(None, None)
   final val Percentage          = Number(Some(0), Some(100))
-  final val Percentage_10_100          = Number(Some(10), Some(100))
   final val ConstrainedNumber   = Number(Some(1), Some(10000))
 
   // JSON conversion
@@ -218,7 +217,7 @@ class ParamAccess @Inject()(tel: TEL) {
   final val MACMODE                = select("macmode", "Realign with MAC")
   final val MACTHRESHOLD           = select("macthreshold", "MAC realignment threshold")
   final val MIN_COV                = Param("min_cov", ParamType.Percentage, 1, "Min. coverage of hits (%)")
-  final val PMIN                   = Param("pmin", ParamType.Percentage_10_100, 1, "Min. probability in hitlist (> 10%)")
+  final val PMIN                   = Param("pmin", ParamType.Percentage, 1, "Min. probability in hitlist (> 10%)")
   final val MAX_SEQID              = Param("max_seqid", ParamType.UnconstrainedNumber, 1, "Maximal Sequence Identity (%)")
   final val MIN_QUERY_COV          = Param("min_query_cov", ParamType.Percentage, 1, "Minimal coverage with query (%)")
   final val MATRIX_PHYML           = select("matrix_phyml", "Model of AminoAcid replacement")

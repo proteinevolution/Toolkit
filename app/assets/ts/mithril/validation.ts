@@ -29,7 +29,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "hhpred":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format. \n\nTo create a structural model of your query protein, run a HHpred search with it, select the top-scoring templates and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER.");
                     break;
 
                 case "hmmer":
@@ -105,7 +105,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "modeller":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment [Target sequence + template(s)]. The first sequence must be the target; the other sequences serve as templates. The header of each template should start with a PDB or SCOP identifier (see example).");
+                    $(elem).attr("placeholder", "Please note: MODELLER is configured to work with PIR alignments forwarded by HHpred. \n\nRun a HHpred search with your query, select the top-scoring templates and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER. \n\nTO obtain a key for MODELLER go to: http://salilab.org/modeller/registration.shtml.");
                     break;
 
                 case "samcc":
