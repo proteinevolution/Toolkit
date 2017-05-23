@@ -537,6 +537,7 @@ table.dataTable.no-footer{
     width: 50%;
     max-width: 60em;
     background-color: #eee;
+    overflow-y: initial;
 }
 
 #templateAlignmentModal select {
@@ -555,6 +556,11 @@ table.dataTable.no-footer{
 
 #templateAlignmentModal h4 {
     margin-bottom: 0;
+}
+
+#accessionStructure {
+    height: 2em;
+    margin-bottom: 1em;
 }
 
 #structureModal .button {
