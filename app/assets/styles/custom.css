@@ -486,17 +486,17 @@ textarea { resize:both; }
 
 /* Color for placeholder text; override default colors */
 *::-webkit-input-placeholder {
-    color: #ababab !important;
+    color: #767676 !important;
 }
 *:-moz-placeholder {
     /* FF 4-18 */
-    color: #ababab !important;
+    color: #767676 !important;
 }
 *::-moz-placeholder {
     /* FF 19+ */
-    color: #ababab !important;
+    color: #767676 !important;
 }
 *:-ms-input-placeholder {
     /* IE 10+ */
-    color: #ababab !important;
+    color: #767676 !important;
 }
