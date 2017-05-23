@@ -157,7 +157,7 @@ window.JobManager = {
                                 m("th", "Job List"),
                                 m("th", "Job ID"),
                                 m("th", "Tool"),
-                                m("th", "Created On"),
+                                m("th", "Created"),
                                 m("th", "Delete Job")
                                 ])),
                             m("tbody", [])
