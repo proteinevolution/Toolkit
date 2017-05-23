@@ -537,6 +537,7 @@ table.dataTable.no-footer{
     width: 50%;
     max-width: 60em;
     background-color: #eee;
+    overflow-y: initial;
 }
 
 #templateAlignmentModal select {
@@ -555,6 +556,19 @@ table.dataTable.no-footer{
 
 #templateAlignmentModal h4 {
     margin-bottom: 0;
+}
+
+#accessionStructure {
+    height: 2em;
+    margin-bottom: 1em;
+}
+
+#accessionStructure a {
+    -webkit-appearance: none;
+}
+
+#accessionStructure a:hover {
+    background-color: #777777;
 }
 
 #structureModal .button {
@@ -594,5 +608,13 @@ table.dataTable.no-footer{
 }
 
 .colorAA{
-    margin-left: 2em;
+    color: #006F62 !important;
+    margin-left: 3em;
+    vertical-align: 0.3em;
+}
+
+.colorToggleHHpred{
+    color: #006F62 !important;
+    border-bottom: solid 1px rgba(0, 110, 98, 0.3) !important;
+    padding-bottom: 2px;
 }
