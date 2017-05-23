@@ -145,10 +145,10 @@
             $("#alignmentTable").empty();
             if(colorAAs){
                 getHits(0, shownHits, colorAAs);
-                $(".colorAA").removeClass("colorToggle");
+                $(".colorAA").addClass("colorToggle");
             }else {
                 getHits(0, shownHits, colorAAs);
-                $(".colorAA").addClass("colorToggle");
+                $(".colorAA").removeClass("colorToggle");
             }
         }
 
@@ -161,9 +161,10 @@
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits);
+                getHits(0, shownHits, colorAAs);
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
+                $(".colorAA").addClass("colorToggle");
             }
 
         });
