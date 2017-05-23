@@ -142,14 +142,16 @@
 
         function colorAA(){
             colorAAs = !colorAAs;
+            $.LoadingOverlay("show");
             $("#alignmentTable").empty();
             if(colorAAs){
-                getHits(0, shownHits, colorAAs);
                 $(".colorAA").addClass("colorToggleHHpred");
             }else {
-                getHits(0, shownHits, colorAAs);
                 $(".colorAA").removeClass("colorToggleHHpred");
             }
+            getHits(0, shownHits, colorAAs).then(function(){
+                $.LoadingOverlay("hide");
+            });
         }
 
         $(document).ready(function () {
