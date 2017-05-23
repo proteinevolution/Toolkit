@@ -52,7 +52,7 @@ window.FrontendAlnvizComponent = {
                         conserv: false,
                         overviewbox: false,
                         seqlogo: false,
-                        labels: false,
+                        labels: true,
                         labelName: true,
                         labelId: false,
                         labelPartition: false,
