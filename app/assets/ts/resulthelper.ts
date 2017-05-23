@@ -1,9 +1,10 @@
 
 declare var loading : boolean;
-declare var shownHits : number;
-declare var showMore : number;
-declare var numHits : number;
+declare var shownHits : any;
+declare var showMore : any;
+declare var numHits : any;
 declare var getHits: any;
+declare var colorAAs: boolean;
 
 let count = 0;
 
@@ -52,14 +53,15 @@ let followScroll = function(element : any) {
             // trigger lazyload for loading alignment
             if ($(this).scrollTop() == $(this).height() - $(window).height()) {
                 if (!loading) {
-                    let end = shownHits + showMore;
+                    let end = parseInt(shownHits) + parseInt(showMore);
                     end = end < numHits ? end : numHits;
                     if (shownHits != end) {
-                        getHits(shownHits, end).then(function(){
-                            // hide loadHits
-                            if(shownHits == numHits){
-                                $('#loadHits').hide();
-                            }});
+                            getHits(shownHits, end, colorAAs).then(function () {
+                                // hide loadHits
+                                if (shownHits == numHits) {
+                                    $('#loadHits').hide();
+                                }
+                            });
                     }else{
                         $('#loadHits').hide();
                     }
