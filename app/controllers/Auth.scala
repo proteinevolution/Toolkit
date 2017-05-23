@@ -46,41 +46,6 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     with CommonModule {
 
   /**
-    * Returns the sign in form
-    *
-    * @param userName usually the eMail address
-    * @return
-    */
-  def signIn(userName: String): Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.auth.signin(userName))
-  }
-
-  /**
-    * Returns the sign up form
-    *
-    * @return
-    */
-  def signUp(): Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.auth.signup())
-  }
-
-  /**
-    * Shows a small profile in the login panel when the User is signed in.
-    *
-    * @return
-    */
-  def miniProfile(): Action[AnyContent] = Action.async { implicit request =>
-    getUser.map { user =>
-      user.userData match {
-        case Some(userData) =>
-          Ok(views.html.auth.miniprofile(user))
-        case None =>
-          BadRequest
-      }
-    }
-  }
-
-  /**
     * User wants to sign out
     * -> remove the sessionID from the database, Overwrite their cookie and give them a new Session ID
     *
@@ -93,24 +58,6 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
       Redirect(routes.Application.index()).withNewSession.flashing(
         "success" -> "You've been logged out"
       )
-    }
-  }
-
-  /**
-    * A logged in User would like to edit their personal data
-    *
-    * @return
-    */
-  def profile(): Action[AnyContent] = Action.async { implicit request =>
-    getUser.map { user =>
-      user.userData match {
-        case Some(userData) =>
-          Ok(views.html.auth.profile(user))
-            .withSession(sessionCookie(request, user.sessionID.get, Some(userData.nameLogin)))
-        case None =>
-          // User was not logged in
-          Redirect(routes.Application.index())
-      }
     }
   }
 
@@ -338,7 +285,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
             .ProfileEdit(user)
             .bindFromRequest
             .fold(
-              errors =>
+              formWithErrors =>
                 Future.successful {
                   Ok(FormError())
               },
@@ -350,13 +297,13 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                   val selector        = BSONDocument(User.IDDB -> user.userID)
                   val modifier = BSONDocument(
                     "$set" ->
-                      BSONDocument(User.USERDATA      -> editedProfileUserData,
+                      BSONDocument(User.USERDATA      -> editedProfileUserData.copy(nameLogin = userData.nameLogin),
                                    User.DATELASTLOGIN -> bsonCurrentTime,
                                    User.DATEUPDATED   -> bsonCurrentTime))
 
                   val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
                   findUser(selectorMail).flatMap {
-                    case Some(x) =>
+                    case Some(_) =>
                       Future.successful(Ok(AccountEmailUsed()))
                     case None =>
                       modifyUserWithCache(selector, modifier).map {
@@ -367,10 +314,10 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                           // User has been found in the DB at first but now it cant be retrieved
                           Ok(LoginError())
                       }
-                    case None =>
-                      // Password was incorrect
-                      Future.successful(Ok(PasswordWrong()))
                   }
+                case None =>
+                  // Password was incorrect
+                  Future.successful(Ok(PasswordWrong()))
               }
             )
         case None =>
