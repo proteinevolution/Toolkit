@@ -229,7 +229,6 @@ var JobTabsComponent = {
 };
 
 
-
 //return status code if error
 var extractStatus = function(xhr, xhrOptions) {
     if(xhr.status == 413){
@@ -237,21 +236,6 @@ var extractStatus = function(xhr, xhrOptions) {
         return false;
     }
 };
-
-
-/*
-m.capture = function(eventName, handler) {
-    var bindCapturingHandler;
-    bindCapturingHandler = function(element) {
-        element.addEventListener(eventName, handler, true);
-    };
-    return function(element, init) {
-        if (!init) {
-            bindCapturingHandler(element);
-        }
-    };
-}; */ // TODO: most likely not in use anymore
-
 
 
 window.ParameterAlignmentComponent = {
