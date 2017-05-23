@@ -35,7 +35,9 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                             m.redraw(true);
                         }
                     });
-                    $('#pasteButton').on('click', function() {$(elem).css('color','#0a0a0a'); m.redraw(true); validationProcess($(elem), toolname)});
+                    $('#pasteButton').on('click', function() {$(elem).css('color','#0a0a0a'); m.redraw(true);
+                        setTimeout(function(){validationProcess($(elem), toolname)},100)
+                        });
                     $(elem).blur(function(){
                         if($(elem).val() ===''){
                             $(elem).attr('value', placeholder).css('color','#C7C7CD');
