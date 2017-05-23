@@ -72,7 +72,7 @@
     <div id="alignmentResult">
         <div id="alignments">
             <h5 id="alignmentsTitleHHpred">Alignments</h5>
-            <a onclick="colorAA()" class="colorAA">Color amino acids</a>
+            <a onclick="colorAA()" class="colorAA">Color alignment</a>
             <form id="hhpred_templates">
                 <table class="unstriped">
                     <tbody id="alignmentTable">
@@ -145,10 +145,10 @@
             $("#alignmentTable").empty();
             if(colorAAs){
                 getHits(0, shownHits, colorAAs);
-                $(".colorAA").addClass("colorToggle");
+                $(".colorAA").addClass("colorToggleHHpred");
             }else {
                 getHits(0, shownHits, colorAAs);
-                $(".colorAA").removeClass("colorToggle");
+                $(".colorAA").removeClass("colorToggleHHpred");
             }
         }
 
@@ -164,7 +164,7 @@
                 getHits(0, shownHits, colorAAs);
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
-                $(".colorAA").addClass("colorToggle");
+                $(".colorAA").addClass("colorToggleHHpred");
             }
 
         });
