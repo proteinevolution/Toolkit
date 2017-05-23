@@ -58,16 +58,11 @@ POST          /upload                                 @controllers.Application.u
 
 # Routes for Auth Service
 GET           /userData                               @controllers.Auth.getUserData
-GET           /signin                                 @controllers.Auth.signIn(userName : String = "")
-GET           /signin/:userName                       @controllers.Auth.signIn(userName : String)
 POST          /signin                                 @controllers.Auth.signInSubmit()
-GET           /signup                                 @controllers.Auth.signUp()
 POST          /signup                                 @controllers.Auth.signUpSubmit()
 GET           /signout                                @controllers.Auth.signOut()
 POST          /resetPassword                          @controllers.Auth.resetPassword
 POST          /resetPasswordChange                    @controllers.Auth.resetPasswordChange
-GET           /miniprofile                            @controllers.Auth.miniProfile()
-GET           /profile                                @controllers.Auth.profile()
 POST          /profile                                @controllers.Auth.profileSubmit()
 POST          /password                               @controllers.Auth.passwordChangeSubmit()
 POST          /profile/submit/userData/               @controllers.Auth.profileSubmit()

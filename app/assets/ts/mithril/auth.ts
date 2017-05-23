@@ -279,7 +279,7 @@ class SignIn {
     }
     static view (ctrl : any, args : any) : any {
         return m("div", { "class" : "auth-form" },
-            m("form", { 'data-abide': 'ajax', id: 'signin-form', novalidate:'novalidate', onsubmit: SignIn.submit }, [
+            m("form", { 'data-abide': 'ajax', id: 'signin-form', novalidate:'novalidate', onsubmit: SignIn.submit , config: foundationInit }, [
                 m("div", m("label",
                     m("input", { id:         'emailLogin',
                                  name:       'emailLogin',
@@ -292,7 +292,8 @@ class SignIn {
                                  onfocus:     focusInNoRedraw,
                                  onblur:      focusOutRedraw,
                                  value:      SignIn.email
-                    })
+                    }),
+                    m("span", {"class":"form-error"}, "Must be at least 6 characters long!")
                 )),
                 m("div", m("label",
                     m("input", { id:         'password',
@@ -306,7 +307,8 @@ class SignIn {
                                  onfocus:     focusInNoRedraw,
                                  onblur:      focusOutRedraw,
                                  value:      SignIn.password
-                    })
+                    }),
+                    m("span", {"class":"form-error"}, "Password must be at least 8 characters long!")
                 )),
                 m("input", { "class": "input small expanded secondary button",
                              id:    'signin-submit',
@@ -375,6 +377,7 @@ class SignUp {
             m("form", {'data-abide': 'ajax',
                         "class":       'auth-form',
                         id:          'signup-form',
+                        config: foundationInit,
                         onsubmit:    SignUp.submit,
                         onchange:    SignUp.validate,
                         novalidate:  'novalidate'
@@ -482,8 +485,9 @@ class ForgotPassword {
                         id:           'forgot-form',
                         "class":        "auth-form",
                         novalidate:   'novalidate',
-                        onsubmit:     ForgotPassword.submit
-            }, [
+                        onsubmit:     ForgotPassword.submit,
+                config: foundationInit
+    }, [
                 m("label","Provide your account email address or username to receive an email to reset your password."),
                 m("br"),
                 m("div", m("label",
@@ -532,7 +536,7 @@ class Profile {
     }
 
     static controller (args : any) : any {
-        Profile.user = Profile.user ? Profile.user : jQuery.extend({},Auth.user); // Needed to make a proper copy
+        Profile.user = Profile.user ? Profile.user : new User(); // Needed to make a proper copy
         if (args) {
             SignUp.eMail     = args.eMail     ? args.eMail     : SignUp.eMail;
         }
@@ -548,24 +552,9 @@ class Profile {
                             id:           'profile-edit-form',
                             "class":        'auth-form',
                             novalidate:   'novalidate',
-                            onsubmit:     Profile.submit
-                }, [
-                    // TODO might implement this to change the user Name in a easy and fast way
-                    //m("div", {class: "small-6 small-offset-3 columns" }, m("label", [
-                    //    m("input", { id:          'nameLogin',
-                    //                 name:        'nameLogin',
-                    //                 pattern:     '[a-zA-Z0-9_]{6,40}',
-                    //                 placeholder: 'Username',
-                    //                 required:    'required',
-                    //                 type:        'text',
-                    //                 onkeyup:     m.withAttr("value", Profile.userSetter("nameLogin")),
-                    //                 onchange:    m.withAttr("value", Profile.userSetter("nameLogin")),
-                    //                 onfocus:     focusInNoRedraw,
-                    //                 onblur:      focusOutRedraw,
-                    //                 value:       Profile.user.nameLogin
-                    //    }),
-                    //    m("span", {class:"form-error"}, "Username must be at least 6 characters long!")
-                    //])),
+                            onsubmit:     Profile.submit,
+                            config: foundationInit
+        }, [
                     m("div", m("label", [
                         m("input", { id:          'nameFirst',
                                      name:        'nameFirst',
@@ -598,7 +587,7 @@ class Profile {
                         m("input", { id:          'eMail',
                                      name:        'eMail',
                                      pattern:     'email',
-                                     placeholder: 'E-Mail',
+                                     placeholder:  Auth.user.eMail,
                                      type:        'text',
                                      onkeyup:     m.withAttr("value", Profile.userSetter("eMail")),
                                      onchange:    m.withAttr("value", Profile.userSetter("eMail")),
@@ -618,7 +607,7 @@ class Profile {
                             })
                         )
                     ),
-                    m("label", "Please re-enter your password to confirm the changes."),
+                    m("label", "Please re-enter your password."),
                     m("div", m("label", [
                         m("input", { id:         'password',
                                      pattern:    '.{8,128}',
@@ -677,8 +666,9 @@ class PasswordChange {
             return m("div", { "class": "auth-form"},
                 m("form", { 'data-abide': 'ajax',
                             id:           'password-edit-form',
-                            "class":        'password-edit-form',
-                            onsubmit:     PasswordChange.submit
+                            "class":      'password-edit-form',
+                            onsubmit:     PasswordChange.submit,
+                            config: foundationInit
                 }, [
                     m("div", m("label", [
                         m("input", { id:         'passwordOld',
@@ -765,7 +755,8 @@ class PasswordReset {
             m("form", { 'data-abide': 'ajax',
                         id:           'password-edit-form',
                         "class":        'password-edit-form',
-                        onsubmit:     PasswordReset.submit
+                        onsubmit:     PasswordReset.submit,
+                        config: foundationInit,
             }, [
                 Auth.message == null ? null :
                     !Auth.message.successful ?
@@ -832,7 +823,7 @@ class AuthDropdown {
                         m("button", { "class" : "loggedIn", id: "auth-link-text"}, Auth.user.nameLogin),
                         m("ul", { "class" :"menu userMenu" }, [
                             m("li", m("a", { onclick:function(e : Event) { return openNav("profile")} }, m("i", {"class": "icon-user"}),"Profile")),
-                            Auth.user.institute === "MPG" ? m("li", m("a", { href:"/#/backend/index" }, m("i", {"class": "icon-display_graph"}), "Backend")) : null,
+                           // Auth.user.institute === "MPG" ? m("li", m("a", { href:"/#/backend/index" }, m("i", {"class": "icon-display_graph"}), "Backend")) : null,
                             m("li", m("a", {
                                 onclick: function(e : Event) { window.location.replace("/signout") }
                             },  m("i", {"class": "icon-signout"}), "Sign Out"))
@@ -966,47 +957,29 @@ class User {
     private _nameLogin  : string = null;
     private _nameFirst  : string = null;
     private _nameLast   : string = null;
-    private _eMail      : Array<string> = null;
-    private _institute  : string = null;
-    private _street     : string = null;
-    private _city       : string = null;
+    private _eMail      : string = null;
     private _country    : string = null;
-    private _groups     : string = null;
-    private _roles      : string = null;
     constructor(object? : any){
         if (object) {
             this._nameLogin = object.nameLogin;
             this._nameFirst = object.nameFirst;
             this._nameLast  = object.nameLast;
             this._eMail     = object.eMail;
-            this._institute = object.institute;
-            this._street    = object.street;
-            this._city      = object.city;
             this._country   = object.country;
-            this._groups    = object.groups;
-            this._roles     = object.roles;
+
         }
     }
     set nameLogin (nameLogin  : string) { this._nameLogin  = nameLogin; console.log("String is now " + this._nameLogin); }
     set nameFirst (nameFirst  : string) { this._nameFirst  = nameFirst; }
     set nameLast  (nameLast   : string) { this._nameLast   = nameLast;  }
-    set eMail     (eMail      : Array<string>) { this._eMail = eMail;   }
-    set institute (institute  : string) { this._institute  = institute; }
-    set street    (street     : string) { this._street     = street;    }
-    set city      (city       : string) { this._city       = city;      }
+    set eMail     (eMail      : string) { this._eMail = eMail;   }
     set country   (country    : string) { this._country    = country;   }
-    set groups    (groups     : string) { this._groups     = groups;    }
-    set roles     (roles      : string) { this._roles      = roles;     }
     get nameLogin() : string { return this._nameLogin }
     get nameFirst() : string { return this._nameFirst }
     get nameLast () : string { return this._nameLast  }
-    get eMail    () : Array<string> { return this._eMail }
-    get institute() : string { return this._institute }
-    get street   () : string { return this._street    }
-    get city     () : string { return this._city      }
+    get eMail    () : string { return this._eMail }
     get country  () : string { return this._country   }
-    get groups   () : string { return this._groups    }
-    get roles    () : string { return this._roles     }
+
 }
 
 
