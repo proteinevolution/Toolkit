@@ -484,6 +484,15 @@ table.dataTable.no-footer{
     margin: 0 auto;
 }
 
+.scrollContainerWhite {
+    background-color: white;
+    box-shadow: none;
+}
+
+.scrollContainerDivWhite {
+    margin: unset;
+}
+
 #hitlistTitle{
     padding-top: 2em;
     padding-bottom: 1em;
