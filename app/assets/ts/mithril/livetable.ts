@@ -11,7 +11,7 @@ let trafficBarConfig = function(lastJob : any) {
 };
 
 class LoadBar {
-    static load : number = 0.5;
+    static load : number = 0;
     static updateLoad(load : number) : any {
         LoadBar.load = load;
         m.redraw.strategy("diff");
@@ -58,7 +58,7 @@ class LiveTable {
     }
     static pushJob (job : Job) : void {
         LiveTable.lastJob = job;
-        console.log("Last job:", job);
+        //console.log("Last job:", job);
         m.redraw.strategy("diff");
         m.redraw();
     }
@@ -76,9 +76,8 @@ class LiveTable {
     }
     static view (ctrl : any, args : any) : any {
         let trafficBarStatus: any;
-        // TODO: TRAFFICBAR IS BROKEN AGAIN!!!
         if(LiveTable.lastJob != null) {
-            switch (LiveTable.lastJob.state) {
+            switch (LiveTable.lastJob.status) {
                 case 2:
                     trafficBarStatus = "queue";
                     break;
