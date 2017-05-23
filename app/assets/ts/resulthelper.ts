@@ -40,7 +40,11 @@ let followScroll = function(element : any) {
                     let end = shownHits + showMore;
                     end = end < numHits ? end : numHits;
                     if (shownHits != end) {
-                        getHits(shownHits, end);
+                        getHits(shownHits, end).then(function(){
+                            // hide loadHits
+                            if(shownHits == numHits){
+                                $('#loadHits').hide();
+                            }});
                     }else{
                         $('#loadHits').hide();
                     }
