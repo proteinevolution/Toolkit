@@ -11,7 +11,7 @@ let trafficBarConfig = function(lastJob : any) {
 };
 
 class LoadBar {
-    static load : number = 0.5;
+    static load : number = 0;
     static updateLoad(load : number) : any {
         LoadBar.load = load;
         m.redraw.strategy("diff");
