@@ -156,12 +156,20 @@
                 m("input", { "class": 'button', id: 'submit_again', type: 'button', value: 'New Submission' })
             ]),
             Auth.user == null ? null :
-                m("label", {style: "width: 16em; float:left;"}, [
-                    m("input", { type: "checkbox", "class": "checkbox", id:"emailUpdate", name: "emailUpdate"}),
-                    "E-Mail notification"
-                ]),
+           m("div", {"class": "switchContainer"},
+                m("label", {"class": "switch tiny"},
+                    m("input", {
+                        id: "emailUpdate",
+                        type: "checkbox",
+                        class: "checkbox",
+                        name: "emailUpdate",
+                        value: true}),
+                    m("div", {"class": "sliderSwitch round"})
+                ),
+                m("label",{"class": "firstLabel"},"E-Mail notification")
+            ),
             Auth.user == null ? null :
-                m("label", {style: "width: 16em; float:left;"}, [
+                m("label", {style: "width: 16em; float:left; display: none;"}, [
                     m("input", { type: "checkbox", "class": "checkbox", id:"public", name: "public"}),
                     "Public Job"
                 ]),

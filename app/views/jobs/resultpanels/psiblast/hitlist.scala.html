@@ -56,6 +56,9 @@
                     <tbody id="alignmentTable">
                     </tbody>
                       <tr>
+                          <td colspan="4" ><a onclick="getsHitsManually()" id="loadHits">Load Hits</a></td>
+                      </tr>
+                      <tr>
                           <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
                       </tr>
                   </table>
@@ -84,8 +87,9 @@ $(document).ready( function(){
         var firstQueryEnd = @result.HSPS.head.query_end;
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
-        getHits(0, shownHits);
-        setTimeout(function(){getCheckedCheckboxes()}, 500);
+        getHits(0, shownHits).then(function(){
+            getCheckedCheckboxes()
+        });
 }
 });
 
@@ -106,7 +110,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
     // full seq is retrieved
     var data = {"checkboxes": checkboxes.removeDuplicates()};
     var route = null;
-    $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+    $.LoadingOverlay("show");
     if(boolFullLength) {
         if(boolEvalue) {
             route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue);
@@ -117,15 +121,21 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
             url: route.url,
             contentType: "application/json",
             data: JSON.stringify(data),
-            method: route.method
+            method: route.method,
+            error: function(){
+                $.LoadingOverlay("hide")
+            }
         }).done(function (data_) {
             $.ajax({
                 type: 'GET',
-                url: 'files/'+jobID+'/sequences.fa'
+                url: 'files/'+jobID+'/sequences.fa',
+                error: function(){
+                    $.LoadingOverlay("hide")
+                }
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
-            }).always($.LoadingOverlay("hide"));
-        }).fail($.LoadingOverlay("hide"));
+            })
+        })
     }else{
         if(boolEvalue) {
             route = jsRoutes.controllers.PSIBlastController.alnEval(jobID, evalue);
@@ -139,7 +149,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
             method: route.method
         }).done(function (data_) {
             forward(selectedTool, data_);
-        }).always($.LoadingOverlay("hide"))
+        })
     }
 }
 
@@ -147,6 +157,7 @@ function getHits(start, end){
     if(start <= numHits && end <= numHits && !loading){
 	    loading = true;
         $('#loadingHits').show();
+        $('#loadHits').hide();
         var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID,start, end);
         return $.ajax({
             method: route.method,
@@ -155,6 +166,7 @@ function getHits(start, end){
             $("#alignmentTable").append(data_);
 	    loading = false;
             $('#loadingHits').hide();
+            $('#loadHits').show();
         });
     }
 }

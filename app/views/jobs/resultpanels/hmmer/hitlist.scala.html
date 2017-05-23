@@ -64,6 +64,9 @@
                     <tbody id="alignmentTable">
                     </tbody>
                     <tr>
+                        <td colspan="4" ><a onclick="getsHitsManually()" id="loadHits">Load Hits</a></td>
+                    </tr>
+                    <tr>
                         <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
                     </tr>
                 </table>
@@ -111,7 +114,7 @@
 
         function hmmer_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
-            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+            $.LoadingOverlay("show");
             var route = null;
             if (boolFullLength) {
                 if (boolEvalue) {
@@ -123,15 +126,21 @@
                     url: route.url,
                     method: route.method,
                     contentType: "application/json",
-                    data: JSON.stringify(data)
+                    data: JSON.stringify(data),
+                    error: function(){
+                        $.LoadingOverlay("hide")
+                    }
                 }).done(function () {
                     $.ajax({
                         type: 'GET',
-                        url: 'files/' + jobID + '/sequences.fa'
+                        url: 'files/' + jobID + '/sequences.fa',
+                        error: function(){
+                            $.LoadingOverlay("hide")
+                        }
                     }).done(function (data_) {
                         forward(selectedTool, data_.toString());
-                    }).always($.LoadingOverlay("hide"));
-                }).fail($.LoadingOverlay("hide"));
+                    })
+                });
             } else {
                 if (boolEvalue) {
                     route = jsRoutes.controllers.HmmerController.alnEval(jobID, evalue);
@@ -142,10 +151,13 @@
                     url: route.url,
                     method: route.method,
                     contentType: "application/json",
-                    data: JSON.stringify(data)
+                    data: JSON.stringify(data),
+                    error: function(){
+                        $.LoadingOverlay("hide")
+                    }
                 }).done(function (data_) {
                     forward(selectedTool, data_);
-                }).always($.LoadingOverlay("hide"));
+                });
             }
         }
 
@@ -154,6 +166,7 @@
             if (start <= numHits && end <= numHits && !loading) {
                 loading = true;
                 $('#loadingHits').show();
+                $('#loadHits').hide();
                 var route = jsRoutes.controllers.HmmerController.loadHits(jobID, start, end);
                 return $.ajax({
                     method: route.method,
@@ -162,6 +175,7 @@
                     $("#alignmentTable").append(data_);
                     loading = false;
                     $('#loadingHits').hide();
+                    $('#loadHits').show();
                 });
             }
         }
