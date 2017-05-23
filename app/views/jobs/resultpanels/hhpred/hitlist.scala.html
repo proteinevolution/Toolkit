@@ -72,7 +72,7 @@
     <div id="alignmentResult">
         <div id="alignments">
             <h5 id="alignmentsTitleHHpred">Alignments</h5>
-            <a onclick="colorAA()" class="colorAA">Color amino acids</a>
+            <a onclick="colorAA()" class="colorAA">Color alignment</a>
             <form id="hhpred_templates">
                 <table class="unstriped">
                     <tbody id="alignmentTable">
@@ -106,9 +106,9 @@
 
     <div class="reveal" id="structureModal" data-reveal>
         <p>Template 3D structure</p>
-        <div id="accessionStructure"></div>
-        <a type="button" class="button success tiny data-close" onclick="detachStructure()">
-            Open in new window</a>
+        <div id="accessionStructure">  <a type="button" class="button success tiny data-close" onclick="detachStructure()">
+            Open in new window</a></div>
+
         <div id="viewport"></div>
         <button class="close-button" data-close aria-label="Close modal" type="button">
             <span aria-hidden="true">&times;</span>
@@ -145,10 +145,10 @@
             $("#alignmentTable").empty();
             if(colorAAs){
                 getHits(0, shownHits, colorAAs);
-                $(".colorAA").addClass("colorToggle");
+                $(".colorAA").addClass("colorToggleHHpred");
             }else {
                 getHits(0, shownHits, colorAAs);
-                $(".colorAA").removeClass("colorToggle");
+                $(".colorAA").removeClass("colorToggleHHpred");
             }
         }
 
@@ -164,7 +164,7 @@
                 getHits(0, shownHits, colorAAs);
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
-                $(".colorAA").addClass("colorToggle");
+                $(".colorAA").addClass("colorToggleHHpred");
             }
 
         });
@@ -265,9 +265,9 @@
                 $.get(url).done(function () {
                     $(document).ready(function () {
                         $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
+                        $('#viewport').width(800).height(700);
                         stage = new NGL.Stage("viewport");
                         stage.loadFile(url, {defaultRepresentation: true, sele: ":A or :B or DPPC"});
-                        stage.set
                     });
                 }).fail(function () {
                     $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
