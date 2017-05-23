@@ -77,6 +77,7 @@ onMessage = function(event : MessageEvent) : any {
             break;
         case "PushJob":
             m.startComputation();
+            //console.log("WSS " + JSON.stringify(message.job));
             JobListComponent.pushJob(JobListComponent.Job(message.job));
             LiveTable.pushJob(message.job);
             JobManager.pushToTable(message.job);
