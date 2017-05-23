@@ -19,6 +19,24 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                 console.warn("toolname unspecified");
             }
 
+
+            let linebreak = function(elem : any, placeholder : string) {
+                $(elem).val(placeholder).css('color','#C7C7CD');
+                $(elem).focus(function(){
+                    if($(elem).val() === placeholder){
+                        $(elem).attr('value', '').css('color','#0a0a0a');
+                        m.redraw(true);
+                    }
+                });
+                $('#pasteButton').on('click', function() {$(elem).css('color','#0a0a0a'); m.redraw(true);});
+                $(elem).blur(function(){
+                    if($(elem).val() ===''){
+                        $(elem).attr('value', placeholder).css('color','#C7C7CD');
+                        m.redraw(true);
+                    }
+                });
+            };
+
             // Placeholder overrides
 
             switch(toolname) {
@@ -109,7 +127,8 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "samcc":
-                    $(elem).attr("placeholder", "Enter PDB coordinates of a four-helical bundle.\n\nNote: The definitions for helices below need to be entered according to their sequential position in the bundle (it is not relevant whether this done clockwise or counterclockwise, and whether one starts with the N-terminal helix or any other one), and not in their order from N- to C-terminus. For helices in anti-parallel orientation, the residue range should be given with the larger residue number before the smaller one.");
+                    const placeholder : string = "Enter PDB coordinates of a four-helical bundle.\n\nNote: The definitions for helices below need to be entered according to their sequential position in the bundle (it is not relevant whether this done clockwise or counterclockwise, and whether one starts with the N-terminal helix or any other one), and not in their order from N- to C-terminus. For helices in anti-parallel orientation, the residue range should be given with the larger residue number before the smaller one.";
+                    linebreak($(elem), placeholder);
                     break;
 
                 case "ancescon":
