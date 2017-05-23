@@ -163,6 +163,7 @@ var JobTabsComponent = {
                     id:    "tabpanel-notes"
                 }, [
                     m("textarea", {
+                        "class" : "noteArea",
                         placeholder: "Type private notes here",
                         rows: 18,
                         cols: 70,
