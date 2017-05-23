@@ -1075,3 +1075,7 @@ h6 {
 .openSimilarJob button{
     font-size: 0.725em !important;
 }
+
+.noteArea {
+    font-size: 0.75em;
+}
