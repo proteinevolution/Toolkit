@@ -113,7 +113,9 @@
                         let jobListComp = JobListComponent.Job(
                             { jobID: jobID, state: 0, dateCreated: Date.now().valueOf(), tool: tool }
                         );
-                        JobListComponent.pushJob(jobListComp, true);
+                        if (!JobListComponent.contains(jobID)) {
+                            JobListComponent.pushJob(jobListComp, true);
+                        }
                     } else {
                         console.log("Error while submitting:", submissionReturnData.message)
                     }
