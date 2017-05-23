@@ -69,7 +69,8 @@
     </div>
     <div id="alignmentResult">
         <div id="alignments">
-            <h5 id="alignmentsTitle">Alignments</h5>
+            <h5 id="alignmentsTitleHHpred">Alignments</h5>
+            <a onclick="colorAA()" class="colorAA">Color amino acids</a>
             <form id="hhpred_templates">
                 <table class="unstriped">
                     <tbody id="alignmentTable">
@@ -125,6 +126,7 @@
         var checkbox = "checkbox";
         var currentStructureAccession = "";
         var selectAllBool = false;
+        var colorAAs = true;
         var shownHits = 50;
         var showMore = 100;
         var numHits = @{result.num_hits};
@@ -136,6 +138,17 @@
         // due to pagination/lazyload
         var checkboxes = [];
 
+        function colorAA(){
+            colorAAs = !colorAAs;
+            $("#alignmentTable").empty();
+            if(colorAAs){
+                getHits(0, shownHits, colorAAs);
+                $(".colorAA").removeClass("colorToggle");
+            }else {
+                getHits(0, shownHits, colorAAs);
+                $(".colorAA").addClass("colorToggle");
+            }
+        }
 
         $(document).ready(function () {
             hitlistBaseFunctions();
@@ -315,12 +328,12 @@
             });
         }
 
-        function getHits(start, end) {
+        function getHits(start, end, isColor) {
             if (start <= numHits && end <= numHits && !loading) {
                 loading = true;
                 $('#loadingHits').show();
                 $('#loadHits').hide();
-                var route = jsRoutes.controllers.HHpredController.loadHits(jobID, start, end);
+                var route = jsRoutes.controllers.HHpredController.loadHits(jobID, start, end, isColor);
                 return $.ajax({
                     method: route.method,
                     url: route.url

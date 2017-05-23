@@ -108,14 +108,14 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
 
-  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+  def loadHits(jobID: String, start: Int, end: Int, isColor: Boolean): Action[AnyContent] = Action.async { implicit request =>
     getResult(jobID).map {
       case Some(jsValue) =>
         val result = hhpred.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
           BadRequest
         } else {
-          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _))
+          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor))
           Ok(hits.mkString)
         }
     }
