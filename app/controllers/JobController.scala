@@ -354,15 +354,17 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
               val foundMainIDs   = jobList.map(_.mainID)
               val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-              val jobsPartition  = jobList.filter(_.status == Done)
+              val jobsFiltered  = jobList.filter(_.status == Done)
 
               // Delete index-zombie jobs
               unFoundMainIDs.foreach { mainID =>
                 Logger.info("[WARNING]: job in index but not in database: " + mainID.stringify)
                 jobDao.deleteJob(mainID.stringify)
               }
-              Ok(Json.toJson(Json.obj("jobID"       -> jobsPartition.lastOption.map(_.jobID),
-                                      "dateCreated" -> jobsPartition.lastOption.map(_.dateCreated))))
+              jobsFiltered.lastOption match {
+                case Some(oldJob) => Ok (Json.toJson(Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated) ) )
+                case None => NotFound
+              }
             }
           }
       }

@@ -400,23 +400,14 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 // Find the Jobs in the Database
                 findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
                   val foundMainIDs   = jobList.map(_.mainID)
-                  val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-                  val jobsPartition  = jobList.partition(_.status == Error)
 
-                  // Delete index-zombie jobs
-                  unFoundMainIDs.foreach { mainID =>
-                    Logger.info("[WARNING]: job in index but not in database: " + mainID.stringify)
-                    jobDao.deleteJob(mainID.stringify)
-                  }
-
-                  jobsPartition._2.lastOption match {
-                    case Some(_) =>
-                      Logger.info("JobID " + jobID + " is a duplicate.")
-                      self ! JobStateChanged(job.jobID, Pending)
-                    case None =>
-                      Logger.info("JobID " + jobID + " will now be started.")
-                      hashCollection.flatMap(_.insert(jobHash))
-                      self ! StartJob(job.jobID)
+                  if(jobList.exists(_.status == Done)) {
+                    Logger.info("JobID " + jobID + " is a duplicate.")
+                    self ! JobStateChanged(job.jobID, Pending)
+                  } else {
+                    Logger.info("JobID " + jobID + " will now be started.")
+                    hashCollection.flatMap(_.insert(jobHash))
+                    self ! StartJob(job.jobID)
                   }
                 }
               }
