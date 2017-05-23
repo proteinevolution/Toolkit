@@ -563,6 +563,14 @@ table.dataTable.no-footer{
     margin-bottom: 1em;
 }
 
+#accessionStructure a {
+    -webkit-appearance: none;
+}
+
+#accessionStructure a:hover {
+    background-color: #777777;
+}
+
 #structureModal .button {
     float: right;
     background-color: rgba(0, 110, 98, 166);
