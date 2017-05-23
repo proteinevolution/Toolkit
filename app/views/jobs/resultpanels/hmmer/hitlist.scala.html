@@ -13,17 +13,19 @@
     @* Loads ForwardModal *@
     @views.html.forwardmodals.normal(tool, tool.toolNameShort)
     <div class="scrollContainer">
-        <div id="scrollLinks">
-            <a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a>
-            <a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hitlist</a>
-            <a id="alignmentsScroll" onclick="scrollToSection('alignments')">Alignments</a>
-        </div>
-        <span class="headerDivider"></span>
-        <div id="controlls">
-            <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
-            <a type="button" data-open="forwardModal_@{
-                tool.toolNameShort
-            }">Forward</a>
+        <div class="scrollContainerDiv">
+            <div id="scrollLinks">
+                <a id="visualizationScroll" onclick="scrollToSection('visualization')">Visualization</a>
+                <a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hitlist</a>
+                <a id="alignmentsScroll" onclick="scrollToSection('alignments')">Alignments</a>
+            </div>
+            <span class="headerDivider"></span>
+            <div id="controlls">
+                <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
+                <a type="button" data-open="forwardModal_@{
+                    tool.toolNameShort
+                }">Forward</a>
+            </div>
         </div>
     </div>
     <br>
