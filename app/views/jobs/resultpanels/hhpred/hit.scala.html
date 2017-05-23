@@ -48,7 +48,9 @@
             BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")"))
         }
     }else{
+        @{
         BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, hit.query.seq + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")"))
+        }
     }
 }
 @*Consensus of query, if present*@
@@ -74,7 +76,9 @@
         BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) + "    "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
     }
     }else{
+        @{
         BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, hit.template.seq + "    "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
+        }
     }
 }
 @* Handle secondary structure annotation for template, if present *@
