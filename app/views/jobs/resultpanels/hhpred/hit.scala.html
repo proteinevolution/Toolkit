@@ -1,6 +1,6 @@
 @import models.results.BlastVisualization
 @import models.database.results.HHPredHSP
-@(jobID: String, hit: HHPredHSP)(implicit request: RequestHeader)
+@(jobID: String, hit: HHPredHSP, isColor: Boolean)(implicit request: RequestHeader)
 @* hit number, links *@
 <tr>
     <td></td>
@@ -36,14 +36,19 @@
         BlastVisualization.makeRow("sequence", Array("", "Q  ss_pred", "", BlastVisualization.SSColorReplace(hit.query.ss_dssp)))
     }
 }
+
 @if(!hit.query.ss_pred.isEmpty) {
     @{
         BlastVisualization.makeRow("sequence", Array("", "Q  ss_dssp", "", BlastVisualization.SSColorReplace(hit.query.ss_pred)))
     }
 }
 @if(!hit.query.seq.isEmpty) {
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) +"    "+hit.query.end.toString + " " +"("+hit.query.ref+")"))
+    @if(isColor) {
+        @{
+            BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")"))
+        }
+    }else{
+        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, hit.query.seq + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")"))
     }
 }
 @*Consensus of query, if present*@
@@ -64,8 +69,12 @@
 }
 @*  seq template, if present *@
 @if(!hit.template.seq.isEmpty) {
+    @if(isColor){
     @{
         BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) + "    "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
+    }
+    }else{
+        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, hit.template.seq + "    "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
     }
 }
 @* Handle secondary structure annotation for template, if present *@

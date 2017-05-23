@@ -494,6 +494,12 @@ table.dataTable.no-footer{
     padding-bottom: 1em;
 }
 
+#alignmentsTitleHHpred{
+    padding-top: 2em;
+    padding-bottom: 1em;
+    display: inline-flex;
+}
+
 .fixed{
     position: fixed !important;
 }
@@ -570,4 +576,8 @@ table.dataTable.no-footer{
     display: inline-block !important;
     bottom: 13px;
     right: 15px;
+}
+
+.colorAA{
+    margin-left: 2em;
 }
