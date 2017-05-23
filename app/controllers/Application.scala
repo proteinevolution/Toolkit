@@ -134,6 +134,9 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
     //generateStatisticsDB
 
+    // show whether nginx can pass the authorization header
+    println("Show headers: " + request.headers)
+
     ConfigFactory.load().getString(s"toolkit_mode") match {
 
       case "prod" =>
