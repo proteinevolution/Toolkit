@@ -19,6 +19,24 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                 console.warn("toolname unspecified");
             }
 
+
+            let linebreak = function(elem : any, placeholder : string) {
+                $(elem).val(placeholder).css('color','#C7C7CD');
+                $(elem).focus(function(){
+                    if($(elem).val() === placeholder){
+                        $(elem).attr('value', '').css('color','#0a0a0a');
+                        m.redraw(true);
+                    }
+                });
+                $('#pasteButton').on('click', function() {$(elem).css('color','#0a0a0a'); m.redraw(true);});
+                $(elem).blur(function(){
+                    if($(elem).val() ===''){
+                        $(elem).attr('value', placeholder).css('color','#C7C7CD');
+                        m.redraw(true);
+                    }
+                });
+            };
+
             // Placeholder overrides
 
             switch(toolname) {
@@ -29,7 +47,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "hhpred":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
+                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format. \n\nTo create a structural model of your query protein, run a HHpred search with it, select the top-scoring templates and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER.");
                     break;
 
                 case "hmmer":
@@ -105,11 +123,12 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "modeller":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment [Target sequence + template(s)]. The first sequence must be the target; the other sequences serve as templates. The header of each template should start with a PDB or SCOP identifier (see example).");
+                    $(elem).attr("placeholder", "Please note: MODELLER is configured to work with PIR alignments forwarded by HHpred. \n\nRun a HHpred search with your query, select the top-scoring templates and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER. \n\nTO obtain a key for MODELLER go to: http://salilab.org/modeller/registration.shtml.");
                     break;
 
                 case "samcc":
-                    $(elem).attr("placeholder", "Enter PDB coordinates of a four-helical bundle.\n\nNote: The definitions for helices below need to be entered according to their sequential position in the bundle (it is not relevant whether this done clockwise or counterclockwise, and whether one starts with the N-terminal helix or any other one), and not in their order from N- to C-terminus. For helices in anti-parallel orientation, the residue range should be given with the larger residue number before the smaller one.");
+                    const placeholder : string = "Enter PDB coordinates of a four-helical bundle.\n\nNote: The definitions for helices below need to be entered according to their sequential position in the bundle (it is not relevant whether this done clockwise or counterclockwise, and whether one starts with the N-terminal helix or any other one), and not in their order from N- to C-terminus. For helices in anti-parallel orientation, the residue range should be given with the larger residue number before the smaller one.";
+                    linebreak($(elem), placeholder);
                     break;
 
                 case "ancescon":
@@ -774,6 +793,11 @@ class alignmentVal implements ToolkitValidator {
             return false;
         }
 
+        else if ((/^\n$/m.test(this.elem.reformat('extractheaders')))) {
+            feedback(false, "Empty header!", "error");
+            return false;
+        }
+
         else if (this.elem.reformat('maxseqnumber', seqLimit)) {
             feedback(false, "Input contains more than " + seqLimit + " sequences!", "error");
             return false;
@@ -852,6 +876,9 @@ class alignmentVal implements ToolkitValidator {
 
         else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
             feedback(false, "Must have single sequence!", "error");
+
+        else if ((/^\n$/m.test(this.elem.reformat('extractheaders'))))
+            feedback(false, "Empty header!", "error");
 
         else if (!this.elem.reformat('maxlength', 10000))
             feedback(false, "Input contains over 10,000 characters!", "error");

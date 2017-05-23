@@ -26,6 +26,8 @@ function download(filename, text){
     pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     pom.setAttribute('download', filename);
 
+    $.LoadingOverlay("hide");
+
     if (document.createEvent) {
         var event = document.createEvent('MouseEvents');
         event.initEvent('click', true, true);
@@ -145,6 +147,11 @@ function resubmitSection(sequence, name) {
 // parameter: tool (String)
 // forwards all checked identifier and sequences to tool
 function forward(tool, forwardData){
+    if(forwardData == ""){
+        alert("No hits selected!");
+        $.LoadingOverlay("hide");
+        return;
+    }
     localStorage.setItem("resultcookie", forwardData);
     window.location.href = "/#/tools/" + tool;
 }
@@ -154,6 +161,7 @@ $(document).ready(function() {
     var resultcookie = localStorage.getItem("resultcookie");
     $('#alignment').val(resultcookie);
     localStorage.removeItem("resultcookie");
+    $.LoadingOverlay("hide")
 });
 
 
@@ -367,3 +375,16 @@ function selectAll(){
         checkboxes = [];
     }
 }
+
+
+function getsHitsManually(){
+    if (!loading) {
+        var end = shownHits + showMore;
+        end = end < numHits ? end : numHits;
+        if (shownHits != end) {
+            getHits(shownHits, end);
+        }
+        shownHits = end;
+    }
+}
+

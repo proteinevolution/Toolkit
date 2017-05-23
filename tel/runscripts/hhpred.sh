@@ -11,9 +11,17 @@ if [ $CHAR_COUNT -gt "10000000" ] ; then
 fi
 
 if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
-      echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-      false
+      sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
+      CHAR_COUNT=$(wc -m < ../params/alignment1)
+
+      if [ $CHAR_COUNT -gt "10000" ] ; then
+            echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
+            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            false
+      else
+            sed -i "1 i\>Q_${JOBID}" ../params/alignment1
+            mv ../params/alignment1 ../params/alignment
+      fi
 fi
 
 if [ $FORMAT = "1" ] ; then
@@ -58,7 +66,68 @@ if [ "%hhpred_align.content" = "true" ] ; then
         echo "#Pairwise comparison mode." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
+        echo "done" >> ../results/process.log
+        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+
         SEQ_COUNT2=$(egrep '^>' ../params/alignment_two | wc -l)
+        CHAR_COUNT2=$(wc -m < ../params/alignment_two)
+        FORMAT2=$(head -1 ../params/alignment_two | egrep "^CLUSTAL" | wc -l)
+
+        if [ ${CHAR_COUNT2} -gt "10000000" ] ; then
+            echo "#Template sequence/MSA may not contain more than 10000000 characters." >> ../results/process.log
+            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            false
+        fi
+
+        if [ ${SEQ_COUNT2} = "0" ] && [ ${FORMAT2} = "0" ] ; then
+            sed 's/[^a-z^A-Z]//g' ../params/alignment_two > ../params/alignment2
+            CHAR_COUNT2=$(wc -m < ../params/alignment2)
+
+            if [ ${CHAR_COUNT2} -gt "10000" ] ; then
+                echo "#Template protein sequence contains more than 10000 characters." >> ../results/process.log
+                curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+                false
+            else
+                sed -i "1 i\>T_${JOBID}" ../params/alignment2
+                mv ../params/alignment2 ../params/alignment_two
+            fi
+        fi
+
+        if [ ${FORMAT2} = "1" ] ; then
+            reformatValidator.pl clu fas \
+            $(readlink -f %alignment_two.path) \
+            $(readlink -f ../results/${JOBID}.2.fas) \
+            -d 160 -uc -l 32000
+        else
+            reformatValidator.pl fas fas \
+            $(readlink -f %alignment_two.path) \
+            $(readlink -f ../results/${JOBID}.2.fas) \
+            -d 160 -uc -l 32000
+        fi
+
+        if [ ! -f ../results/${JOBID}.2.fas ]; then
+            echo "#Template MSA is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
+            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            false
+        fi
+
+        SEQ_COUNT2=$(egrep '^>' ../results/${JOBID}.2.fas | wc -l)
+
+        if [ ${SEQ_COUNT2} -gt "2000" ] ; then
+            echo "#Template MSA contains more than 2000 sequences." >> ../results/process.log
+            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            false
+        fi
+
+        if [ ${SEQ_COUNT2} -gt "1" ] ; then
+            echo "#Template is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
+            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        else
+            echo "#Template is a single protein sequence." >> ../results/process.log
+            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+         fi
+
+        mv ../results/${JOBID}.2.fas ../params/alignment_two
 
         echo "done" >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
@@ -82,15 +151,10 @@ else
     #MSA generation required
     #Check what method to use (PSI-BLAST? HHblits?)
 
-    if [ ${SEQ_COUNT} -gt "1" ] ; then
-        echo "#MSA generation required." >> ../results/process.log
+        echo "#Query MSA generation required." >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-    else
-        echo "#MSA generation required." >> ../results/process.log
+        echo "done" >> ../results/process.log
         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-    fi
-    echo "done" >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
     #MSA generation by HHblits
     if [ "%msa_gen_method.content" = "hhblits" ] ; then
@@ -122,7 +186,7 @@ else
             INPUT="in_msa"
         fi
 
-        psiblast -db ${STANDARDNEW}/nre70 \
+        psiblast -db ${STANDARD}/nre70 \
                  -num_iterations %msa_gen_max_iter.content \
                  -evalue %hhpred_incl_eval.content \
                  -inclusion_ethresh 0.001 \
@@ -254,6 +318,12 @@ curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>
 fasta2json.py ../results/alignment.fas ../results/reduced.json
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
+
+#Generate query template alignment
+hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/querytemplateMSA.fas -p %pmin.content
+# Generate Query in JSON
+fasta2json.py ../results/querytemplateMSA.fas ../results/querytemplate.json
+
 
 # Generate Hitlist in JSON for hhrfile
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json

@@ -152,7 +152,6 @@ GET  /api/job/results/dataTableHHblits/:jobID         @controllers.HHblitsContro
 
 # Article
 GET  /api/getRecentArticles/:numArticles              @controllers.DataController.getRecentArticles(numArticles: Integer)
-POST /api/writeArticle                                @controllers.DataController.writeArticle(title: String, text: String, textlong: String, link: String, imagePath: String)
 
 # 3D structure
 GET         /structure3D/:accession                   @controllers.HHpredController.show3DStructure(accession : String)

@@ -113,3 +113,19 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
     // custom css for cluo
 
     $("#cluo").html("Clustal<span style='letter-spacing: 2px; padding-left: 2px;'>\u03A9</span>");
+
+           window.addEventListener("load", function(){
+               (<any>window).cookieconsent.initialise({
+                        "palette": {
+                            "popup": {
+                                "background": "#28786f"
+                            },
+                            "button": {
+                                "background": "#e2e2e2"
+                            }
+                        },
+                        "content": {
+                            "link": '<a data-open="privacyPolicyModal" style="color:#15423b" text-decoration="underline";>Learn More</a>',
+                            "message": "We use cookies to ensure you get the best experience on our website. By using our services you agree to our privacy policies.",
+                        },
+                    })});

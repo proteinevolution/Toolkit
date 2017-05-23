@@ -60,8 +60,9 @@
                     <th>Name</th>
                     <th>Probability</th>
                     <th>E-value</th>
+                    <th>SS</th>
                     <th>Cols</th>
-                    <th>Length of Target</th>
+                    <th>Target Length</th>
                 </tr>
             </thead>
         </table>
@@ -74,6 +75,9 @@
                     <tbody id="alignmentTable">
                     </tbody>
                     <tr>
+                        <td colspan="4" ><a onclick="getsHitsManually()" id="loadHits">Load Hits</a></td>
+                    </tr>
+                    <tr>
                         <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
                     </tr>
                 </table>
@@ -85,8 +89,10 @@
         <h4>Template Alignment</h4>
         <div>
             <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
-                <option value="" selected>Forward To</option>
-                <option value="modeller" >Modeller</option>
+                <option value="" selected>Forward to</option>
+                <option value="hhpred" >HHpred</option>
+                <option value="hhblits" >HHblits</option>
+                <option value="hhrepid" >HHrepID</option>
             </select>
         </div>
         <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
@@ -197,21 +203,27 @@
 
 
         function templateAlignment(accession) {
-            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+            $.LoadingOverlay("show");
             $('textarea#alignmentTemplate').val(" ");
             // replace '#' for url
             accession = accession.replace("#", "%23");
 
             $.ajax({
                 type: 'GET',
-                url: '/templateAlignment/' + jobID + '/' + accession
+                url: '/templateAlignment/' + jobID + '/' + accession,
+                error: function(){
+                    $.LoadingOverlay("hide")
+                }
             }).done(function () {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/' + jobID + '/' + accession + '.fas'
+                    url: 'files/' + jobID + '/' + accession + '.fas',
+                    error: function(){
+                        $.LoadingOverlay("hide")
+                    }
                 }).done(function (data) {
                     $("#alignmentTemplate").val(data.toString());
-                }).always($.LoadingOverlay("hide"));
+                });
             }).fail(function () {
                 $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
                 $.LoadingOverlay("hide")
@@ -238,11 +250,12 @@
                     $(document).ready(function () {
                         $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
                         stage = new NGL.Stage("viewport");
-                        stage.loadFile(url, {defaultRepresentation: true, sele: ":A or :B or DPPC",});
+                        stage.loadFile(url, {defaultRepresentation: true, sele: ":A or :B or DPPC"});
                         stage.set
                     });
                 }).fail(function () {
                     $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
+                    $.LoadingOverlay("hide")
                 });
             });
 
@@ -250,7 +263,7 @@
 
         function hhpred_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
-            $.LoadingOverlay("show", {color: "rgba(0,0,0,0.0)"});
+            $.LoadingOverlay("show");
             var route = null;
             if (boolEvalue) {
                 route = jsRoutes.controllers.HHpredController.alnEval(jobID, evalue);
@@ -261,16 +274,21 @@
                 url: route.url,
                 method: route.method,
                 contentType: "application/json",
-                data: JSON.stringify(data)
+                data: JSON.stringify(data),
+                error: function(){
+                    $.LoadingOverlay("hide")
+                }
             }).done(function (data_) {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/' + jobID + '/alignment.fas'
+                    url: 'files/' + jobID + '/alignment.fas',
+                    error: function(){
+                        $.LoadingOverlay("hide")
+                    }
                 }).done(function (data_) {
                     forward(selectedTool, data_.toString());
-                }).always($.LoadingOverlay("hide"));
-            }).fail($.LoadingOverlay("hide"));
-
+                });
+            });
         }
 
 
@@ -301,6 +319,7 @@
             if (start <= numHits && end <= numHits && !loading) {
                 loading = true;
                 $('#loadingHits').show();
+                $('#loadHits').hide();
                 var route = jsRoutes.controllers.HHpredController.loadHits(jobID, start, end);
                 return $.ajax({
                     method: route.method,
@@ -309,6 +328,7 @@
                     $("#alignmentTable").append(data_);
                     loading = false;
                     $('#loadingHits').hide();
+                    $('#loadHits').show();
                 });
             }
         }

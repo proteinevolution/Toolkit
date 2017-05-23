@@ -151,7 +151,7 @@ trait CommonModule extends ReactiveMongoComponents {
   // Modifies result in database
   protected def modifyResult(selector: BSONDocument, modifier: BSONDocument): Future[Option[BSONDocument]] = {
     resultCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true, upsert = true).map { x =>
-      println(x); x.result
+      x.result
     })
   }
 

@@ -213,6 +213,7 @@ let GeneralTabComponent = {
                 if (localStorage.getItem("resultcookie")) {
                     let cookieString = String(localStorage.getItem("resultcookie"));
                     localStorage.removeItem("resultcookie");
+                    $.LoadingOverlay("hide")
                     return cookieString;
                 } else {
                     return "";

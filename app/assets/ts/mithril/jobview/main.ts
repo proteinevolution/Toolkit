@@ -28,7 +28,7 @@ let JobLineComponent = {
                 m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
                 m("a", { href: "/#/tools/" + args.job().tool.toolname }, args.job().tool.toolnameLong),
                 m("a", { config: helpModalAccess.bind(args) },
-                    m("i", { "class": "icon-information_white helpicon" })
+                        m("i", { "class": "icon-white_question helpicon" })
                 )
             ]),
             m("span", { "class": "jobdate" }, isJob ? "Created: " + (args.job().dateCreated) : "")

@@ -18,7 +18,9 @@ case class HHPredHSP(query: HHPredQuery,
                      info: HHPredInfo,
                      agree: String,
                      description: String,
-                     num: Int) {
+                     num: Int,
+                     ss_score: Double,
+                     confidence: String) {
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
@@ -27,8 +29,9 @@ case class HHPredHSP(query: HHPredQuery,
         "2" -> Json.toJson(description),
         "3" -> Json.toJson(info.probab),
         "4" -> Json.toJson(info.evalue),
-        "5" -> Json.toJson(info.aligned_cols),
-        "6" -> Json.toJson(template.ref)
+        "5" -> Json.toJson(ss_score),
+        "6" -> Json.toJson(info.aligned_cols),
+        "7" -> Json.toJson(template.ref)
       ))
 }
 
@@ -77,7 +80,9 @@ class HHPred @Inject()(general: General, aln: Alignment) {
           val agree          = (x._1 \ "agree").as[String]
           val description    = (x._1 \ "header").as[String]
           val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
-          HHPredHSP(queryResult, templateResult, infoResult, agree, description, num)
+          val ss_score            = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
+          val confidence     = (x._1 \ "confidence").getOrElse(Json.toJson("")).as[String]
+          HHPredHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, confidence)
         }
         val db        = (obj \ jobID \ "db").as[String]
         val proteomes = (obj \ jobID \ "proteomes").as[String]
@@ -86,6 +91,9 @@ class HHPred @Inject()(general: General, aln: Alignment) {
         val num_hits  = hsplist.length
 
         HHPredResult(hsplist, alignment, num_hits, query, db, proteomes)
+      } catch {
+
+        case e: Exception  => e.printStackTrace(); null
       }
   }
 
@@ -109,6 +117,7 @@ class HHPred @Inject()(general: General, aln: Alignment) {
     val score        = (obj \ "score").getOrElse(Json.toJson(-1)).as[Double]
     val similarity   = (obj \ "similarity").getOrElse(Json.toJson(-1)).as[Double]
     HHPredInfo(aligned_cols, eval, identities, probab, score, similarity)
+
   }
 
   def parseTemplate(obj: JsObject, hits: JsObject): HHPredTemplate = {
@@ -133,10 +142,12 @@ class HHPred @Inject()(general: General, aln: Alignment) {
       case (3, "desc") => hits.sortWith(_.info.probab > _.info.probab)
       case (4, "asc")  => hits.sortBy(_.info.evalue)
       case (4, "desc") => hits.sortWith(_.info.evalue > _.info.evalue)
-      case (5, "asc")  => hits.sortBy(_.info.aligned_cols)
-      case (5, "desc") => hits.sortWith(_.info.aligned_cols > _.info.aligned_cols)
-      case (6, "asc")  => hits.sortBy(_.template.ref)
-      case (6, "desc") => hits.sortWith(_.template.ref > _.template.ref)
+      case (5, "asc")  => hits.sortBy(_.ss_score)
+      case (5, "desc") => hits.sortWith(_.ss_score > _.ss_score)
+      case (6, "asc")  => hits.sortBy(_.info.aligned_cols)
+      case (6, "desc") => hits.sortWith(_.info.aligned_cols > _.info.aligned_cols)
+      case (7, "asc")  => hits.sortBy(_.template.ref)
+      case (7, "desc") => hits.sortWith(_.template.ref > _.template.ref)
       case (_, "asc")  => hits.sortBy(_.num)
       case (_, "desc") => hits.sortWith(_.num > _.num)
       case (_, _)      => hits.sortBy(_.num)
