@@ -74,24 +74,15 @@ object FormDefinitions {
         UserData.EMAIL     -> email,
         UserData.NAMEFIRST -> optional(text(1, 100) verifying pattern(textRegex, error = "error.NameFirst")),
         UserData.NAMELAST  -> optional(text(1, 100) verifying pattern(textRegex, error = "error.NameLast")),
-        UserData.INSTITUTE -> optional(text(1, 100) verifying pattern(textRegex, error = "error.Institute")),
-        UserData.STREET    -> optional(text(1, 100) verifying pattern(textRegex, error = "error.Street")),
-        UserData.CITY      -> optional(text(1, 100) verifying pattern(textRegex, error = "error.City")),
         UserData.COUNTRY   -> optional(text(3, 3) verifying pattern(textRegex, error = "error.Country")),
-        UserData.GROUPS    -> optional(text(1, 100) verifying pattern(textRegex, error = "error.Groups")),
-        UserData.ROLES     -> optional(text(1, 100) verifying pattern(textRegex, error = "error.Roles")),
         UserData.PASSWORD  -> (text(8, 128) verifying pattern(textRegex, error = "error.Password"))
-      ) { (eMail, nameFirst, nameLast, institute, street, city, country, groups, roles, password) =>
+      ) { (eMail, nameFirst, nameLast, country, password) =>
         if (user.checkPassword(password)) {
           Some(
-            user.getUserData.copy(nameFirst = nameFirst,
+            user.getUserData.copy(eMail = eMail,
+                                  nameFirst = nameFirst,
                                   nameLast = nameLast,
-                                  institute = institute,
-                                  street = street,
-                                  city = city,
-                                  country = country,
-                                  groups = groups,
-                                  roles = roles))
+                                  country = country))
         } else {
           None
         }
