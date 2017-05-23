@@ -8,12 +8,7 @@ case class UserData(nameLogin: String, // User Login Name
                     eMail: String, // User eMail Address
                     nameFirst: Option[String] = None, // User First Name
                     nameLast: Option[String] = None, // User Last Name
-                    institute: Option[String] = None, // User Workplace
-                    street: Option[String] = None, // User Location
-                    city: Option[String] = None, // User / Institute city
-                    country: Option[String] = None, // 3 Char long Optional String, Country code
-                    groups: Option[String] = None, // Group the User is in
-                    roles: Option[String] = None) // Position the User is in
+                    country: Option[String] = None) // 3 Char long Optional String, Country code
 
 object UserData {
   // Constants for the BSON object identifiers
@@ -24,12 +19,7 @@ object UserData {
   final val PASSWORDNEW = "passwordNew"
   final val NAMEFIRST   = "nameFirst"
   final val NAMELAST    = "nameLast"
-  final val INSTITUTE   = "institute"
-  final val STREET      = "street"
-  final val CITY        = "city"
   final val COUNTRY     = "country"
-  final val GROUPS      = "groups"
-  final val ROLES       = "roles"
 
   implicit object JobWrites extends Writes[UserData] {
     def writes(userData: UserData): JsObject = Json.obj(
@@ -37,12 +27,8 @@ object UserData {
       EMAIL     -> userData.eMail,
       NAMEFIRST -> userData.nameFirst,
       NAMELAST  -> userData.nameLast,
-      INSTITUTE -> userData.institute,
-      STREET    -> userData.street,
-      CITY      -> userData.city,
-      COUNTRY   -> userData.country,
-      GROUPS    -> userData.groups,
-      ROLES     -> userData.roles
+      COUNTRY   -> userData.country
+
     )
   }
 
@@ -56,12 +42,8 @@ object UserData {
       eMail = bson.getAs[String](EMAIL).getOrElse(""),
       nameFirst = bson.getAs[String](NAMEFIRST),
       nameLast = bson.getAs[String](NAMELAST),
-      institute = bson.getAs[String](INSTITUTE),
-      street = bson.getAs[String](STREET),
-      city = bson.getAs[String](CITY),
-      country = bson.getAs[String](COUNTRY),
-      groups = bson.getAs[String](GROUPS),
-      roles = bson.getAs[String](ROLES)
+      country = bson.getAs[String](COUNTRY)
+
     )
   }
 
@@ -75,12 +57,7 @@ object UserData {
       EMAIL     -> userData.eMail,
       NAMEFIRST -> userData.nameFirst,
       NAMELAST  -> userData.nameLast,
-      INSTITUTE -> userData.institute,
-      STREET    -> userData.street,
-      CITY      -> userData.city,
-      COUNTRY   -> userData.country,
-      GROUPS    -> userData.groups,
-      ROLES     -> userData.roles
+      COUNTRY   -> userData.country
     )
   }
 }
