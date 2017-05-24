@@ -57,8 +57,8 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
       watchers = watchers - actorRef
 
     case FetchLatest =>
-      val load = cluster.getLoad.loadEst
-
+      //val load = cluster.getLoad.loadEst
+      val load = 0.5
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load
         */
