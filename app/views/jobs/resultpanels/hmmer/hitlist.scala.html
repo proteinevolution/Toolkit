@@ -178,7 +178,9 @@
                     $("#alignmentTable").append(data_);
                     loading = false;
                     $('#loadingHits').hide();
-                    $('#loadHits').show();
+                    if (shownHits != numHits) {
+                        $('#loadHits').show();
+                    }
                 });
             }
         }

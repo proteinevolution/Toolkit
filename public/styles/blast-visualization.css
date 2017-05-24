@@ -534,7 +534,7 @@ table.dataTable.no-footer{
 }
 
 #templateAlignmentModal, #structureModal {
-    width: 50%;
+    width:  60em;
     max-width: 60em;
     background-color: #eee;
     overflow-y: initial;
