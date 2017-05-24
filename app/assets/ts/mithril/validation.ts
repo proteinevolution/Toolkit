@@ -126,7 +126,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "ali2d":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 200 sequences in FASTA/CLUSTAL format.\n\n\nPlease note: Runtime of ~30 mins for N=100 sequences of length L=200. Scales as N*L.");
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 100 sequences in FASTA/CLUSTAL format.\n\n\nPlease note: Runtime of ~30 mins for N=100 sequences of length L=200. Scales as N*L.");
                     break;
 
                 case "quick2d":
@@ -514,7 +514,7 @@ let validationProcess = function(elem: any,toolname: string) {
                     ali2dTarget.mustHave2();
             }
 
-            seqLimit = 200;
+            seqLimit = 100;
 
             break;
 
