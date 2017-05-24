@@ -6,7 +6,7 @@ let JobQueuedComponent = {
         return m("div", { "class": "queued-panel", config: foundationConfig }, [
             m('h5', "Your submission is queued!"),
             m("div", {"class": "processJobIdContainer"},
-                m('p', "Job ID:"),
+                m('p', "Job ID: "),
                 m('p', ' ' + args.job().jobID)),
         ]);
     }
