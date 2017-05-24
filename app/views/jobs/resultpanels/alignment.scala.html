@@ -105,7 +105,10 @@
                     $(".alignmentTBody").append(data_);
                     loading = false;
                     $('#loadingHits').hide();
+                    // hide loadHits
+                    if (shownHits != numHits) {
                         $('#loadHits').show();
+                    }
                 });
             }
         }

@@ -241,6 +241,7 @@
                     }
                 }).done(function (data) {
                     $("#alignmentTemplate").val(data.toString());
+                    $.LoadingOverlay("hide")
                 });
             }).fail(function () {
                 $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
@@ -346,8 +347,12 @@
                     $("#alignmentTable").append(data_);
                     loading = false;
                     $('#loadingHits').hide();
-                    $('#loadHits').show();
+                    if (shownHits != numHits) {
+                        $('#loadHits').show();
+                    }
                 });
             }
+            // hide loadHits
+
         }
 </script>
