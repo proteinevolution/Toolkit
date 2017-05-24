@@ -10,6 +10,7 @@ import reactivemongo.bson._
 case class JobClusterData(sgeID: String, // sun grid engine job id
                           memory: Option[String],
                           threads: Option[Int],
+                          queue: Option[String],
                           dateStarted: Option[DateTime] = Some(DateTime.now),
                           dateFinished: Option[DateTime] = None) {
   def runtime: Long = {
@@ -22,6 +23,7 @@ object JobClusterData {
   val SGEID        = "sgeid"
   val MEMORY       = "memory"
   val THREADS      = "threads"
+  val QUEUE        = "queue"
   val DATESTARTED  = "started"
   val DATEFINISHED = "finished"
 
@@ -32,6 +34,7 @@ object JobClusterData {
         try {
           val sgeID        = (obj \ SGEID).asOpt[String]
           val memory       = (obj \ MEMORY).asOpt[Int]
+          val queue        = (obj \ QUEUE).asOpt[String]
           val threads      = (obj \ THREADS).asOpt[Int]
           val dateStarted  = (obj \ DATESTARTED).asOpt[String]
           val dateFinished = (obj \ DATEFINISHED).asOpt[String]
@@ -39,6 +42,7 @@ object JobClusterData {
             JobClusterData(sgeID = "",
                            memory = Some(""),
                            threads = Some(0),
+                           queue = Some("short"),
                            dateStarted = Some(new DateTime()),
                            dateFinished = Some(new DateTime())))
         } catch {
@@ -53,6 +57,7 @@ object JobClusterData {
       SGEID        -> job.sgeID,
       MEMORY       -> job.memory,
       THREADS      -> job.threads,
+      QUEUE        -> job.queue,
       DATESTARTED  -> job.dateStarted,
       DATEFINISHED -> job.dateFinished
     )
@@ -67,6 +72,7 @@ object JobClusterData {
         sgeID = bson.getAs[String](SGEID).getOrElse(""),
         memory = bson.getAs[String](MEMORY),
         threads = bson.getAs[Int](THREADS),
+        queue = bson.getAs[String](QUEUE),
         dateStarted = bson.getAs[BSONDateTime](DATESTARTED).map(dt => new DateTime(dt.value)),
         dateFinished = bson.getAs[BSONDateTime](DATESTARTED).map(dt => new DateTime(dt.value))
       )
@@ -81,6 +87,7 @@ object JobClusterData {
       SGEID        -> clusterData.sgeID,
       MEMORY       -> clusterData.memory,
       THREADS      -> clusterData.threads,
+      QUEUE        -> clusterData.queue,
       DATESTARTED  -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.getMillis)),
       DATEFINISHED -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.getMillis))
     )
