@@ -20,7 +20,7 @@ if [ ${SEQ_COUNT} = "0" ] ; then
       perl -pe 's/\s+//g' ../params/alignment1 > ../params/alignment
       CHAR_COUNT=$(wc -m < ../params/alignment)
 
-      if [ $CHAR_COUNT -gt "10000" ] ; then
+      if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Input may not contain more than 10000 characters." >> ../results/process.log
             curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
             false
