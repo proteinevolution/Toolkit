@@ -421,7 +421,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     case CreateJob(jobID, user, toolname, params) =>
       // TODO Add param validation here
       // set memory allocation on the cluster and let the clusterMonitor define the multiplier
-
+      val queue = ConfigFactory.load().getString(s"Tools.$toolname.queue")
       val h_vmem = (ConfigFactory
         .load()
         .getString(s"Tools.$toolname.memory")
@@ -430,8 +430,10 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       val threads = math.ceil(ConfigFactory.load().getInt(s"Tools.$toolname.threads") * TEL.threadsFactor).toInt
       env.configure(s"MEMORY", h_vmem)
       env.configure("THREADS", threads.toString)
+      env.configure("QUEUE", queue.toString)
       Logger.info(s"$jobID is running with $h_vmem h_vmem")
       Logger.info(s"$jobID is running with $threads threads")
+      Logger.info(s"$jobID is queued on: $queue")
 
       // Get the current date to set it for all three dates
       val jobCreationTime = DateTime.now()
@@ -439,7 +441,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       // jobid will also be available as parameter
       var extendedParams = params + ("jobid" -> jobID)
 
-      val clusterData = JobClusterData("", Some(h_vmem), Some(threads))
+      val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(queue))
 
       // Set private or public
       val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
@@ -588,6 +590,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         this.runningExecutions = this.runningExecutions.updated(jobID, executionContext.executeNext.run())
         env.remove(s"MEMORY")
         env.remove(s"THREADS")
+        env.remove(s"QUEUE")
 
       } else {
         // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
@@ -635,7 +638,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
             case Some(executionContext) =>
               Logger.info("[JobActor.StartJob] reached. starting job " + jobID)
               // set memory allocation on the cluster and let the clusterMonitor define the multiplier
-
+              val queue = ConfigFactory.load().getString(s"Tools.${job.tool}.queue")
               val h_vmem = (ConfigFactory
                 .load()
                 .getString(s"Tools.${job.tool}.memory")
@@ -645,10 +648,12 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 math.ceil(ConfigFactory.load().getInt(s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
               env.configure(s"MEMORY", h_vmem)
               env.configure(s"THREADS", threads.toString)
+              env.configure(s"QUEUE", queue.toString)
               Logger.info(s"$jobID is running with $h_vmem h_vmem")
               Logger.info(s"$jobID is running with $threads threads")
+              Logger.info(s"$jobID is queued: $queue")
 
-              val clusterData = JobClusterData("", Some(h_vmem), Some(threads))
+              val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(queue))
 
               modifyJob(BSONDocument(Job.IDDB -> job.mainID),
                         BSONDocument("$set" ->
