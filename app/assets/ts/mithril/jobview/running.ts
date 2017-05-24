@@ -15,7 +15,7 @@ let JobRunningComponent = {
         return m("div", { "class": "running-panel" , config: foundationConfig}, [
             m('h5', "Your submission is processing!"),
             m("div", {"class": "processJobIdContainer"},
-                m('p', "Job ID: "),
+                m('p', "Job ID:"),
                 m('p',  {style: "margin-left: 5px"}, ' ' + args.job().jobID)),
            RunningLog.map(function(logElem : any) : any{
                 if(logElem == "")
