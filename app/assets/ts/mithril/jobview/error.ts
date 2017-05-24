@@ -14,7 +14,7 @@ let JobErrorComponent = {
         return m("div", { "class": "running-panel", config: foundationConfig }, [
             m('h5', "Your Job has reached error state!"),
             m("div", {"class": "processJobIdContainer"},
-                m('p', "Job ID:"),
+                m('p', "Job ID: "),
                 m('p', '' + args.job().jobID)),
             //m("h6", "Job has reached Error state"),
             //m("br"),
