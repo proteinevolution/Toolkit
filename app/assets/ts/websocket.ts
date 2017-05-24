@@ -10,8 +10,9 @@ let ws : WebSocket = null,
     onMessage : Function,
     onOpen    : Function,
     addJob : Function;
-
+let notifications = 0;
 let attempts = 1;
+declare var titlenotifier: any;
 
 connect = function() : any {
         let wsRoute = jsRoutes.controllers.Application.ws;
@@ -81,6 +82,10 @@ onMessage = function(event : MessageEvent) : any {
             JobListComponent.pushJob(JobListComponent.Job(message.job));
             LiveTable.pushJob(message.job);
             JobManager.pushToTable(message.job);
+            if(message.job.status== 4 || message.job.status == 5) {
+                notifications += 1;
+                titlenotifier.set(notifications);
+            }
             m.endComputation();
             break;
         case "UpdateLoad":
