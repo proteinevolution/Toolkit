@@ -134,7 +134,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "modeller":
-                    $(elem).attr("placeholder", "Please note: MODELLER is configured to work with PIR alignments forwarded by HHpred. \n\nRun a HHpred search with your query, select the top-scoring templates and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER. \n\nTO obtain a key for MODELLER go to: http://salilab.org/modeller/registration.shtml.");
+                    $(elem).attr("placeholder", "Please note: MODELLER is configured to work with PIR alignments forwarded by HHpred. \n\nRun a HHpred search with your query, select the top-scoring templates and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER. \n\nTo obtain a key for MODELLER go to: http://salilab.org/modeller/registration.shtml.");
                     break;
 
                 case "samcc":
