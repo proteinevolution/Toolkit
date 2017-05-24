@@ -238,6 +238,7 @@
                     }
                 }).done(function (data) {
                     $("#alignmentTemplate").val(data.toString());
+                    $.LoadingOverlay("hide")
                 })
             }).fail(function () {
                 $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
