@@ -304,6 +304,14 @@ function getCheckedCheckboxes(){
 
 function hitlistBaseFunctions(){
     $(document).ready(function() {
+        // add tooltipser to visualization
+        $('#blastviz area').tooltipster({
+            theme: 'tooltipster-borderless',
+            position: 'bottom',
+            animation: 'fade',
+            contentAsHTML: true,
+            debug: false
+        });
             $.LoadingOverlay("hide");
 
             // check checkboxes that are stored in array
@@ -330,6 +338,7 @@ function hitlistBaseFunctions(){
                     // delete num of unchecked checkbox from array
                     checkboxes = checkboxes.filter(function(x){return x != currentVal});
                 }
+
             });
 
         followScroll(document);
