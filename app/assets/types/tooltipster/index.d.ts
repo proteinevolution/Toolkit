@@ -124,6 +124,8 @@ interface JQueryTooltipsterOptions {
      * If a tooltip is open while its content is updated, play a subtle animation when the content changes. Default: true
      */
     updateAnimation?: boolean;
+
+    debug?: boolean;
 }
 
 interface JQuery {
