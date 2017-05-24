@@ -74,12 +74,14 @@ $( "#reformat" ).prop('title', 'Sequence reformatting utility');
 $('.toolsec a').tooltipster({
     theme: 'tooltipster-borderless',
     position: 'bottom',
-    animation: 'fade'
+    animation: 'fade',
+    debug: false
 });
 
 $('#navbar-tabs a').tooltipster({
     theme: 'tooltipster-borderless',
     position: 'bottom',
     animation: 'fade',
-    contentAsHTML: true
+    contentAsHTML: true,
+    debug: false
 });
