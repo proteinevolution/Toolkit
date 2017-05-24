@@ -5,12 +5,13 @@ let trafficBarConfig = function(lastJob : any) {
         if (lastJob != null && !isInit) {
             elem.setAttribute("data-disable-hover", "false");
             //elem.setAttribute("data-tooltip", "data-tooltip");
-            elem.setAttribute("title", "Click to view last job: " + lastJob.jobID);
+            elem.setAttribute("title", "View last job: " + lastJob.jobID);
             $(elem).tooltipster({
                 theme: 'tooltipster-borderless',
                 position: 'bottom',
                 animation: 'fade',
-                contentAsHTML: true
+                contentAsHTML: true,
+                debug: false
             });
         }
     };

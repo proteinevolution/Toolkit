@@ -109,7 +109,8 @@ let tooltipsterConf = function(elem: any, isInit: boolean) {
         $('.job-button div').tooltipster({
             theme: 'tooltipster-borderless',
             position: 'bottom',
-            animation: 'fade'
+            animation: 'fade',
+            debug: false
         });
     }
 };

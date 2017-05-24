@@ -16,25 +16,27 @@ let followScroll = function(element : any) {
 
         try {
 
-            let top = $(this).scrollTop();
-            if (typeof top !== 'undefined' && top >= $('#visualization').position().top + 75) {
+            let top = $(element).scrollTop();
+            if(typeof top !== 'undefined'){
+                if (top >= $('#visualization').position().top + 75) {
+                        // detached = $('#collapseMe').detach();
+                        // $('.scrollContainer').append(detached);
+
+
+                        $('.scrollContainer').addClass('fixed');
+                        $('.scrollContainer').removeClass('scrollContainerWhite');
+                        $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
+
+                } else {
                     // detached = $('#collapseMe').detach();
-                    // $('.scrollContainer').append(detached);
+                    // $('.ui-widget-header').append(detached);
 
 
-                    $('.scrollContainer').addClass('fixed');
-                    $('.scrollContainer').removeClass('scrollContainerWhite');
-                    $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
+                    $('.scrollContainer').removeClass('fixed');
+                    $('.scrollContainer').addClass('scrollContainerWhite');
+                    $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
 
-            } else {
-                // detached = $('#collapseMe').detach();
-                // $('.ui-widget-header').append(detached);
-
-
-                $('.scrollContainer').removeClass('fixed');
-                $('.scrollContainer').addClass('scrollContainerWhite');
-                $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
-
+                }
             }
 
             if ($('#flat-slider').visible()) {
