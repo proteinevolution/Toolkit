@@ -1,4 +1,4 @@
-
+/// <reference path="websocket.ts"/>
 let jqueryUITabsInit = function(elem : Element, isInit : boolean) : void {
     if (!isInit) {
         $("#" + elem.id).tabs().addClass( "ui-tabs-vertical");
@@ -60,6 +60,8 @@ $(window).scroll(function() {
         $('#scrollTop').hide();
     }
 });
+window.onfocus = function(){notifications = 0; titlenotifier.reset()};
+window.onclick = function(){notifications = 0; titlenotifier.reset()};
 
 $('#scrollTop').click(function() {
     $("html, body").animate({ scrollTop: 0 }, 200);
