@@ -42,7 +42,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     extends Controller
     with UserSessions
     with CommonModule
-    with Constants {
+    with Constants
+    with Common {
 
   /**
     *  Loads one minified version of a job to the view, given the jobID
@@ -266,23 +267,23 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                       case Some(job) =>
                         Logger.info("Returning response")
 
-                        Ok(
+                        NoCache(Ok(
                           Json.obj("jobSubmitted" -> true,
                                    "jobStarted"   -> false,
                                    "existingJobs" -> true,
                                    "existingJob"  -> job.cleaned(),
                                    "jobID"        -> jobIDnew))
-                          .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+                          .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin))))
 
                       case None =>
                         Logger.info("Returning response")
 
-                        Ok(
+                        NoCache(Ok(
                           Json.obj("jobSubmitted"  -> true,
                                    "identicalJobs" -> false,
                                    "existingJobs"  -> false,
                                    "jobID"         -> jobIDnew))
-                          .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+                          .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin))))
                     }
                   }
               }
