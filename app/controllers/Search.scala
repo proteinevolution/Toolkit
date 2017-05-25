@@ -29,7 +29,8 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     with Constants
     with ReactiveMongoComponents
     with UserSessions
-    with CommonModule {
+    with CommonModule
+    with Common {
 
   def getToolList: Action[AnyContent] = Action {
     Ok(Json.toJson(toolFactory.values.values.map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
@@ -80,7 +81,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     getUser.flatMap { user =>
       findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
         jobs =>
-          Ok(Json.toJson(jobs.map(_.jobManagerJob())))
+          NoCache(Ok(Json.toJson(jobs.map(_.jobManagerJob()))))
       }
     }
   }
