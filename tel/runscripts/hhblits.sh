@@ -4,17 +4,17 @@ SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
-if [ $CHAR_COUNT -gt "10000000" ] ; then
+if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
       false
 fi
 
-if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
+if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
       CHAR_COUNT=$(wc -m < ../params/alignment1)
 
-      if [ $CHAR_COUNT -gt "10000" ] ; then
+      if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
             curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
             false
@@ -24,7 +24,7 @@ if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
       fi
 fi
 
-if [ $FORMAT = "1" ] ; then
+if [ ${FORMAT} = "1" ] ; then
       reformatValidator.pl clu fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.in.fas) \
@@ -44,13 +44,13 @@ fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.in.fas | wc -l)
 
-if [ $SEQ_COUNT -gt "2000" ] ; then
+if [ ${SEQ_COUNT} -gt "2000" ] ; then
       echo "#Input contains more than 2000 sequences." >> ../results/process.log
       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
       false
 fi
 
-if [ $SEQ_COUNT -gt "1" ] ; then
+if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 else

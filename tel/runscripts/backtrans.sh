@@ -53,7 +53,7 @@ else
         else
             makeCUT.pl -i ../results/${JOBID}.org \
                      -o ../results/${JOBID}.cut \
-                     -d $BACKTRANSLATORPATH/CUT_database
+                     -d ${BACKTRANSLATORPATH}/CUT_database
 
             backtranslate.pl  -o=../results/${JOBID}.out \
                           -i=%alignment.path \
