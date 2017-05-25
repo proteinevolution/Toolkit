@@ -216,14 +216,14 @@ object BlastVisualization extends Constants {
 
   def percentage(str: String): String = {
     val num     = str.toDouble
-    val percent = (num * 100).toInt.toString + " %"
+    val percent = (num * 100).toInt.toString + "%"
     percent
   }
 
   def calculatePercentage(num1_ : Int, num2_ : Int): String = {
     val num1    = num1_.toDouble
     val num2    = num2_.toDouble
-    val percent = ((num1 / num2) * 100).toInt.toString + " %"
+    val percent = ((num1 / num2) * 100).toInt.toString + "%"
     percent
   }
 
