@@ -24,8 +24,8 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   private val execNumbers    = Iterator.from(0, 1)
 
   /**
-   Registers a new file in this ExecutionContext with a certain name and content.
-   A preexisting file with the same name will be overridden
+    * Registers a new file in this ExecutionContext with a certain name and content.
+    * A preexisting file with the same name will be overridden
     */
   def getFile(name: String, content: String): File = {
     val x = repFileBase./(name)
@@ -36,6 +36,7 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
 
   /**
     * Writes the parameters to the ExecutionContext folder
+    *
     * @param params
     */
   def writeParams(params: Map[String, String]): Unit = {
@@ -46,6 +47,7 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
 
   /**
     * Reload the parameters for a job when the EC is gone
+    *
     * @return
     */
   def reloadParams: Map[String, String] = {
@@ -58,10 +60,15 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   /** Accepts an execution which is subsequently registered in this Execution Context
     * The working directory is created within the executionContext. Currently, the names
     * of the working directories of subsequent executions are just incremented.
+    *
     * @param execution
     */
   def accept(execution: PendingExecution): Unit = {
-    executionQueue.enqueue(execution.register(root./(execNumbers.next().toString).createDirectories()))
+
+    // TODO Onlu allow one execution
+    if (executionQueue.isEmpty) {
+      executionQueue.enqueue(execution.register(root./(execNumbers.next().toString).createDirectories()))
+    }
   }
 
   def executeNext: RegisteredExecution = {
