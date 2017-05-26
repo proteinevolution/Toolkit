@@ -30,6 +30,7 @@ window.JobModel = {
         "macthreshold":"0.3",
         "max_hhblits_iter":"0",
         "score_ss":"1",
+        "ss_scoring":"2",
         "rep_pval_threshold":"1e-2",
         "self_aln_pval_threshold":"1e-1",
         "merge_iters":"3",
