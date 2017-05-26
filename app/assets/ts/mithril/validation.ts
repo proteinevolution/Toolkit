@@ -396,6 +396,10 @@ let validationProcess = function(elem: any,toolname: string) {
             let psiblastTarget = new alignmentVal($(elem));
             psiblastTarget.basicValidation();
 
+            if (psiblastTarget.basicValidation()) {
+                    psiblastTarget.sameLengthValidation();
+            }
+
             break;
 
         case "patsearch":
