@@ -53,6 +53,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     with Constants
     with UserSessions {
 
+  private val toolkitMode = ConfigFactory.load().getString(s"toolkit_mode")
+
   implicit val implicitMaterializer: Materializer = mat
   implicit val implicitActorSystem: ActorSystem   = system
   // Use a direct reference to SLF4J
@@ -134,7 +136,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
     //generateStatisticsDB
 
-    ConfigFactory.load().getString(s"toolkit_mode") match {
+    toolkitMode match {
 
       case "prod" =>
         val port     = "9000"
