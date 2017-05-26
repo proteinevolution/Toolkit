@@ -106,6 +106,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
   /**
     * Get the job from the current jobs. If it is not there, get it from the DB.
+    *
     * @param jobID
     * @return
     */
@@ -131,6 +132,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
   /**
     * Gets the execution context for a given jobID, even if it has been removed.
+    *
     * @param jobID
     * @return
     */
@@ -150,6 +152,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
   /**
     * Return the validated parameters
+    *
     * @param job
     * @param runscript
     * @param params
@@ -194,6 +197,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
   /**
     * JobActor removes the Job from its maps
+    *
     * @param jobID
     */
   private def removeJob(jobID: String) = {
@@ -218,6 +222,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
   /**
     * Trys to delete a job and inform all watching users about it
+    *
     * @param job
     * @param userID
     */
@@ -291,6 +296,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
   /**
     * Sends an eMail to the owner of the job
+    *
     * @param job
     * @return
     */
@@ -585,9 +591,13 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       if (isComplete(parameters)) {
         val pendingExecution = wrapperExecutionFactory.getInstance(
           runscript(parameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
-        executionContext.accept(pendingExecution)
 
-        this.runningExecutions = this.runningExecutions.updated(jobID, executionContext.executeNext.run())
+        if ( ! executionContext.blocked) {
+
+          executionContext.accept(pendingExecution)
+          this.runningExecutions = this.runningExecutions.updated(jobID, executionContext.executeNext.run())
+        }
+
         env.remove(s"MEMORY")
         env.remove(s"THREADS")
         env.remove(s"QUEUE")
@@ -674,11 +684,13 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   if (isComplete(validParameters)) {
                     val pendingExecution = wrapperExecutionFactory.getInstance(
                       runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
-                    executionContext.accept(pendingExecution)
-                    Logger.info("[JobActor.StartJob] Running job now.")
 
-                    this.runningExecutions =
-                      this.runningExecutions.updated(job.jobID, executionContext.executeNext.run())
+                    if ( ! executionContext.blocked) {
+
+                      executionContext.accept(pendingExecution)
+                      Logger.info("[JobActor.StartJob] Running job now.")
+                      this.runningExecutions = this.runningExecutions.updated(job.jobID, executionContext.executeNext.run())
+                    }
                   } else {
                     // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
                     Logger.info("STAY")
