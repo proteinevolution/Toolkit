@@ -12,19 +12,21 @@
 
         <link rel="shortcut icon" href="@routes.Assets.versioned("images/favicons/favicon-32x32.png")">
 
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.min.css">
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
 
 
         <link href="@routes.Assets.versioned("styles/hamburgers.min.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/global.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/nice-select.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/blast-visualization.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/mfglabs_iconset.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/nice-select.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/mfglabs_iconset.css")" rel="stylesheet">
         <link href="@routes.WebJarAssets.at(webJarAssets.locate("font-awesome.min.css"))" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/sequence_coloring.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/hhpred_slider.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/sequence_coloring.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
-        <link href="@routes.Assets.versioned("styles/motion-ui.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/motion-ui.css")" rel="stylesheet">
 
         <link href="@routes.WebJarAssets.at(webJarAssets.locate("slick.css"))" rel="stylesheet">
         <link href="@routes.WebJarAssets.at(webJarAssets.locate("slick-theme.css"))" rel="stylesheet">
@@ -38,14 +40,14 @@
         <script src="@routes.Assets.versioned("javascripts/vendor/jquery.nice-select.js")" type="text/javascript"></script>
 
 
-        <link href="@routes.Assets.versioned("styles/index.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/alnviz.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/reformat.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/reformat-common.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/reformat-jobview.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/jobview.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/joblist.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/news.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/index.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/alnviz.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/reformat-common.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/jobview.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/joblist.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/news.css")" rel="stylesheet">
 
         <!-- Mithril -->
 
@@ -100,7 +102,7 @@
 
             <!-- FloatingScroll -->
         <script src="@routes.Assets.versioned("javascripts/vendor/floatingscroll.min.js")" type="text/javascript"></script>
-        <link href="@routes.Assets.versioned("styles/floatingscroll.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/floatingscroll.css")" rel="stylesheet">
 
         <!-- Codemirror -->
 
@@ -108,8 +110,7 @@
         <link rel="stylesheet" href="@routes.WebJarAssets.at(webJarAssets.locate("codemirror.css"))">
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("javascript.js"))"></script>
 
-
-        <link href="@routes.Assets.versioned("styles/custom.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/custom.css")" rel="stylesheet">
 
 
         <!-- Datatables -->
@@ -295,11 +296,11 @@
         <script src='@routes.Assets.versioned("javascripts/vendor/snap.svg-min.js")'></script>
         <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
         <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
-	    <script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
+	<script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
 
             <!-- ScalaJS assets -->
 
-        <script src="@routes.Assets.versioned("main.min.js")"></script>
+        @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
         <script>Router().main();</script>
 
         </script>        </script>
