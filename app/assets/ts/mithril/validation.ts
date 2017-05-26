@@ -396,10 +396,6 @@ let validationProcess = function(elem: any,toolname: string) {
             let psiblastTarget = new alignmentVal($(elem));
             psiblastTarget.basicValidation();
 
-            if (psiblastTarget.basicValidation()) {
-                psiblastTarget.sameLengthValidation();
-            }
-
             break;
 
         case "patsearch":
@@ -819,7 +815,7 @@ class alignmentVal implements ToolkitValidator {
             return false;
         }
 
-        else if (!this.elem.reformat('maxlength', 2000000)) {
+        else if (!this.elem.reformat('maxlength', 20000000)) {
             feedback(false, "Input contains over twenty million characters!", "error");
             return false;
         }
