@@ -48,7 +48,7 @@ echo "#Running SamCC." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 
-/usr/bin/python $SAMCCPATH/samcc.py ../results/${JOBID}.params ../results/${JOBID}.out
+/usr/bin/python ${SAMCCPATH}/samcc.py ../results/${JOBID}.params ../results/${JOBID}.out
 
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
