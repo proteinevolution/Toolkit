@@ -19,6 +19,8 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   // Parameter directory of the Execution Context
   private val serializedParameters = root./("sparam")
 
+  var blocked = false
+
   // a Queue of executable files for this execution Context
   private val executionQueue = mutable.Queue[RegisteredExecution]()
   private val execNumbers    = Iterator.from(0, 1)
@@ -66,8 +68,9 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   def accept(execution: PendingExecution): Unit = {
 
     // TODO Onlu allow one execution
-    if (executionQueue.isEmpty) {
+    if ( ! this.blocked) {
       executionQueue.enqueue(execution.register(root./(execNumbers.next().toString).createDirectories()))
+      this.blocked = true
     }
   }
 
