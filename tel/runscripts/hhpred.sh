@@ -222,15 +222,16 @@ reformat_hhsuite.pl a3m fas \
          $(readlink -f ../results/alignment.fas) \
          -d 160
 
-addss.pl ../results/${JOBID}.a3m
 
 # Here assume that the query alignment exists
-
 # prepare histograms
 # Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
 hhfilter -i ../results/${JOBID}.a3m \
          -o ../results/${JOBID}.reduced.a3m \
          -diff 100
+
+addss.pl ../results/${JOBID}.reduced.a3m
+
 
 DBJOINED=""
 #create file in which selected dbs are written
