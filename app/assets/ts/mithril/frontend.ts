@@ -261,7 +261,7 @@ let tabsContents : any = {
         }, [
             m("textarea", {
                 name: "alignment",
-                placeholder: "multiple sequence alignment",
+                placeholder: "Enter sequences in FASTA or CLUSTAL format",
                 options: [["fas", "FASTA"]],
                 id: "alignment",
                 rows: 25,
