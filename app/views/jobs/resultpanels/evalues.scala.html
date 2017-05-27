@@ -9,10 +9,8 @@
         var bins = new Array();
 
         @for(lines <- PsiBlast.evalues(jobID)){
-            bins.push(@lines);
+            bins.push(Array(@lines, bins.length));
         }
-
-        console.log(bins);
 
         $(function() {
             var width= $("#tool-tabs").width() - 30;
@@ -26,8 +24,8 @@
                         text: '-log(E-Value)'
                     }
                 },
-                yAxis: {
 
+                yAxis: {
                     title: {
                         text: 'No. of HSPs below E-Value'
                     },
