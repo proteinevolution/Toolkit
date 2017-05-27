@@ -37,7 +37,7 @@
                                 <li><a id="dropzonetoggle">Upload</a></li>
                                 <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
                                 <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
-                                <li style="padding-top: 15px; padding-left: 10px;">
+                                <li>
                                     <select id="forwardTool" style="font-size: 12px;" onchange="forwardChanged()">
                                         <option selected>Forward To</option>
                                         <option  id="clans" value="clans">Clans</option>
@@ -638,5 +638,9 @@
                 $expand.click();
              }
        });
+    
+       $(document).ready(function() {
+          $('select').niceSelect();
+        });
 
     </script>
