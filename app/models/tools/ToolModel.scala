@@ -189,7 +189,8 @@ final class ToolFactory @Inject()(
          "hhblits",
          "hmmer",
          "hhfilter",
-         "alnviz"),
+         "alnviz",
+         "reformat"),
      Seq.empty),
     // Kalign
     ("kalign",
