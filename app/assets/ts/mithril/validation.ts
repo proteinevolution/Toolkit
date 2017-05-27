@@ -28,7 +28,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                 let url = path.split("/");
 
                 if(url[url.length-2] != 'jobs'){
-                    $(elem).val(placeholder).css('color','#C7C7CD');
+                    $(elem).val(placeholder).css('color','grey');
                     $(elem).focus(function(){
                         if($(elem).val() === placeholder){
                             $(elem).attr('value', '').css('color','#0a0a0a');
@@ -40,7 +40,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                         });
                     $(elem).blur(function(){
                         if($(elem).val() ===''){
-                            $(elem).attr('value', placeholder).css('color','#C7C7CD');
+                            $(elem).attr('value', placeholder).css('color','grey');
                             m.redraw(true);
                         }
                     });
