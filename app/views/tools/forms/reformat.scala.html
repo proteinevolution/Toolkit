@@ -6,6 +6,7 @@
 
 <div class="jobline">
     <span class="toolname">Reformat</span>
+    <i class="icon-white_question helpicon"></i>
 </div>
 <div style="display: block; margin: auto;">
 
@@ -71,7 +72,6 @@
 
 
                 <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
-                    <div id="progress_bar"><div class="percent">0%</div></div>
                     <input type="file" id="files" name="file" />
                         <!--<div id="drop_zone" type="file" class="dropzone" name="file" style="margin-top: 10px; text-align: center; line-height: 150px; vertical-align: middle;">Drop files here</div>-->
                     <output id="list"></output>
@@ -583,7 +583,6 @@
         /* Forwarding */
 
         function forwardTo(tool) {
-            console.log('drin');
             if(myCodeMirror2.lineCount()>1) {
                var seqs = myCodeMirror2.getValue ( ) ;
                localStorage.setItem ( "resultcookie", seqs ) ;
