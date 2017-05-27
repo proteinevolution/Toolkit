@@ -31,22 +31,22 @@
 
                 <div id="reformatcontainer" style="min-height: 800px; margin: 0 auto">
 
-                            <ul class="menu horizontal nested" style="font-size: 12px;">
+                            <ul class="show-for-medium menu horizontal nested" style="font-size: 12px;">
                                 <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
                                 <li><a id="dropzonetoggle">Upload</a></li>
                                 <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
                                 <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
                                 <li style="padding-top: 15px; padding-left: 10px;">
-                                    <select id="forwardTool" style="font-size: 12px;">
+                                    <select id="forwardTool" style="font-size: 12px;" onchange="forwardChanged()">
                                         <option selected>Forward To</option>
-                                        <option  id="clans" onclick="forwardTo('clans')" value="psi">Clans</option>
-                                        <option  id="csblast" onclick="forwardTo('csblast')" value="psi">CS-BLAST</option>
-                                        <option  id="hhblits" onclick="forwardTo('hhblits')" value="psi">HHblits</option>
-                                        <option  id="hhpred" onclick="forwardTo('hhpred')" value="psi">HHpred</option>
-                                        <option  id="hmmer3" onclick="forwardTo('hmmer3')" value="psi">Hmmer3</option>
-                                        <option  id="mafft" onclick="forwardTo('mafft')" value="psi">Mafft</option>
-                                        <option  id="psiblast" onclick="forwardTo('psiblast')" value="psi">PSI-BLAST</option>
-                                        <option  id="tcoffee" onclick="forwardTo('tcoffee')" value="psi">T-Coffee</option>
+                                        <option  id="clans" value="clans">Clans</option>
+                                        <option  id="hhblits" value="hhblits">HHblits</option>
+                                        <option  id="hhpred" value="hhpred">HHpred</option>
+                                        <option  id="hmmer" value="hmmer">Hmmer</option>
+                                        <option  id="mafft" value="mafft">Mafft</option>
+                                        <option  id="psiblast" value="psiblast">PSI-BLAST</option>
+                                        <option  id="tcoffee" value="tcoffee">T-Coffee</option>
+                                        <option  id="retseq" value="retseq">RetrieveSeq</option>
                                     </select>
                                 </li>
                             </ul>
@@ -58,14 +58,13 @@
                         <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
                         <select id="forwardTool">
                             <option selected>Forward To</option>
-                            <option  id="clans" onclick="forwardTo('clans')" value="psi">Clans</option>
-                            <option  id="csblast" onclick="forwardTo('csblast')" value="psi">CS-BLAST</option>
-                            <option  id="hhblits" onclick="forwardTo('hhblits')" value="psi">HHblits</option>
-                            <option  id="hhpred" onclick="forwardTo('hhpred')" value="psi">HHpred</option>
-                            <option  id="hmmer3" onclick="forwardTo('hmmer3')" value="psi">Hmmer3</option>
-                            <option  id="mafft" onclick="forwardTo('mafft')" value="psi">Mafft</option>
-                            <option  id="psiblast" onclick="forwardTo('psiblast')" value="psi">PSI-BLAST</option>
-                            <option  id="tcoffee" onclick="forwardTo('tcoffee')" value="psi">T-Coffee</option>
+                            <option  id="clans" value="clans">Clans</option>
+                            <option  id="hhblits" value="hhblits">HHblits</option>
+                            <option  id="hhpred" value="hhpred">HHpred</option>
+                            <option  id="hmmer" value="hmmer">Hmmer</option>
+                            <option  id="mafft" value="mafft">Mafft</option>
+                            <option  id="psiblast" value="psiblast">PSI-BLAST</option>
+                            <option  id="tcoffee" value="tcoffee">T-Coffee</option>
                         </select>
                     </ul>
 
@@ -122,9 +121,8 @@
                                 <option id="Stockholm" value="Stockholm">STOCKHOLM</option>
                                 <option id="PIR" value="PIR">PIR</option>
                                 <option id="EMBL" value="EMBL">EMBL</option>
-                                <option id="NEXUS" value="NEXUS">Nexus</option>
+                                <option id="NEXUS" value="NEXUS">NEXUS</option>
                                 <option id="Genbank" value="Genbank">Genbank</option>
-                                <option id="GetGIs" value="GetGIs">Extract GIs</option>
                                 <option id="GetAccessions" value="GetAccessions">Extract Accessions</option>
                                 <option id="Consensus" value="Consensus">Consensus</option>
                                 <option id="Alphabet" value="Alphabet">Alphabet</option>
@@ -165,9 +163,14 @@
 
 <script>
 
+        function forwardChanged() {
+            var selectBox = document.getElementById("forwardTool");
+            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+            forwardTo(selectedValue);
+        }
+
         $("#tool-tabs").tabs();
 
-           hideTools("");
         var inputFasta = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR\n";
         // document.getElementById("alignment").value = inputFasta;
         var inputClustal = "CLUSTAL multiple sequence alignment\n\ngi|33300828\tPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\ngi|11479639\tPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\ngi|11479645\tPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\ngi|29366706\tPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\ngi|68299729\tPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\ngi|77118174\tPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\ngi|17570796\tPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\ngi|11963775\tPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\n\ngi|33300828\tD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\ngi|11479639\tA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\ngi|11479645\tEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\ngi|29366706\t-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\ngi|68299729\tD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\ngi|77118174\t------DYYKGWACQITYMEETPDGSLRHPSFDQWR\ngi|17570796\tD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\ngi|11963775\tD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
@@ -488,81 +491,41 @@
 
         // hides tools for forwarding that are not able to process the current format
         function hideTools(currentVal) {
-                console.log(currentVal);
                 var ddl = $('#forwardTool');
                 for (var m = 0; m < ddl.length; m++) {
                     for (var i = 0; i < ddl[m].length; i++) {
                          ddl[m].options[i].disabled = false;
                     }
                 }
-            if (currentVal == 'Genbank') {
-                $('#clans').prop('disabled', true);
-                $('#csblast').prop('disabled', true);
-                $('#hhblits').prop('disabled', true);
-                $('#hhpred').prop('disabled', true);
-                $('#hmmer3').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#psiblast').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
+                console.log(currentVal);
+            if (currentVal === 'Fasta' || currentVal === 'Clustal') {
+                $('#forwardTool').prop('disabled', false);
+                $('#clans').show();
+                $('#hhblits').show();
+                $('#hhpred').show();
+                $('#hmmer').show();
+                $('#mafft').show();
+                $('#psiblast').show();
+                $('#tcoffee').show();
+                $('#retseq').hide();
 
-            }
-            else if (currentVal == 'NEXUS') {
-                $('#clans').prop('disabled', true);
-                $('#csblast').prop('disabled', true);
-                $('#hhblits').prop('disabled', true);
-                $('#hhpred').prop('disabled', true);
-                $('#hmmer3').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#psiblast').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'EMBL') {
-                $('#clans').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'Phylip') {
-                $('#clans').prop('disabled', true);
-                $('#csblast').prop('disabled', true);
-                $('#hhblits').prop('disabled', true);
-                $('#hhpred').prop('disabled', true);
-                $('#hmmer3').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#psiblast').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'A3M') {
-                $('#clans').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'Clustal') {
-                $('#clans').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'Fasta') {
+            } else if (currentVal === 'GetAccessions') {
+                $('#forwardTool').prop('disabled', false);
+                $('#clans').hide();
+                $('#hhblits').hide();
+                $('#hhpred').hide();
+                $('#hmmer').hide();
+                $('#mafft').hide();
+                $('#psiblast').hide();
+                $('#tcoffee').hide();
+                $('#retseq').show();
 
+            } else {
+                $('#forwardTool').prop('disabled', true);
             }
-            else if (currentVal == 'Stockholm') {
-                $('#clans').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'PIR') {
-                $('#clans').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }else{
-                $('#clans').prop('disabled', true);
-                $('#csblast').prop('disabled', true);
-                $('#hhblits').prop('disabled', true);
-                $('#hhpred').prop('disabled', true);
-                $('#hmmer3').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#psiblast').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
+
+
+
         }
 
         function hideFormats(currentVal) {
@@ -620,6 +583,7 @@
         /* Forwarding */
 
         function forwardTo(tool) {
+            console.log('drin');
             if(myCodeMirror2.lineCount()>1) {
                var seqs = myCodeMirror2.getValue ( ) ;
                localStorage.setItem ( "resultcookie", seqs ) ;
