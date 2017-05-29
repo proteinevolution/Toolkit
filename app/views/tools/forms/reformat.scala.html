@@ -40,11 +40,23 @@
                                 <li style="padding-top: 15px; padding-left: 10px;">
                                     <select id="forwardTool" style="font-size: 12px;" onchange="forwardChanged()">
                                         <option selected>Forward To</option>
-                                        <option  id="clans" value="clans">Clans</option>
+                                        <option  id="alnviz" value="alnviz">AlignmentViewer</option>
+                                        <option  id="aln2plot" value="aln2plot">Aln2Plot</option>
+                                        <option  id="ancescon" value="ancescon">ANCESCON</option>
+                                        <option  id="clans" value="clans">CLANS</option>
+                                        <option  id="clustalo" value="clustalo">ClustalO</option>
                                         <option  id="hhblits" value="hhblits">HHblits</option>
+                                        <option  id="hhfilter" value="hhfilter">HHfilter</option>
                                         <option  id="hhpred" value="hhpred">HHpred</option>
+                                        <option  id="hhrepid" value="hhrepid">HHrepID</option>
                                         <option  id="hmmer" value="hmmer">Hmmer</option>
+                                        <option  id="kalign" value="kalign">Kalign</option>
                                         <option  id="mafft" value="mafft">Mafft</option>
+                                        <option  id="mmseqs2" value="mmseqs2">MMseqs2</option>
+                                        <option  id="msaprobs" value="msaprobs">MSAProbs</option>
+                                        <option  id="muscle" value="muscle">MUSCLE</option>
+                                        <option  id="pcoils" value="pcoils">PCOILS</option>
+                                        <option  id="phyml" value="phyml">PhyML</option>
                                         <option  id="psiblast" value="psiblast">PSI-BLAST</option>
                                         <option  id="tcoffee" value="tcoffee">T-Coffee</option>
                                         <option  id="retseq" value="retseq">RetrieveSeq</option>
@@ -59,13 +71,26 @@
                         <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
                         <select id="forwardTool">
                             <option selected>Forward To</option>
-                            <option  id="clans" value="clans">Clans</option>
+                            <option  id="alnviz" value="alnviz">AlignmentViewer</option>
+                            <option  id="aln2plot" value="aln2plot">Aln2Plot</option>
+                            <option  id="ancescon" value="ancescon">ANCESCON</option>
+                            <option  id="clans" value="clans">CLANS</option>
+                            <option  id="clustalo" value="clustalo">ClustalO</option>
                             <option  id="hhblits" value="hhblits">HHblits</option>
+                            <option  id="hhfilter" value="hhfilter">HHfilter</option>
                             <option  id="hhpred" value="hhpred">HHpred</option>
+                            <option  id="hhrepid" value="hhrepid">HHrepID</option>
                             <option  id="hmmer" value="hmmer">Hmmer</option>
+                            <option  id="kalign" value="kalign">Kalign</option>
                             <option  id="mafft" value="mafft">Mafft</option>
+                            <option  id="mmseqs2" value="mmseqs2">MMseqs2</option>
+                            <option  id="msaprobs" value="msaprobs">MSAProbs</option>
+                            <option  id="muscle" value="muscle">MUSCLE</option>
+                            <option  id="pcoils" value="pcoils">PCOILS</option>
+                            <option  id="phyml" value="phyml">PhyML</option>
                             <option  id="psiblast" value="psiblast">PSI-BLAST</option>
                             <option  id="tcoffee" value="tcoffee">T-Coffee</option>
+                            <option  id="retseq" value="retseq">RetrieveSeq</option>
                         </select>
                     </ul>
 
@@ -501,22 +526,46 @@
                 console.log(currentVal);
             if (currentVal === 'Fasta' || currentVal === 'Clustal') {
                 $('#forwardTool').prop('disabled', false);
+                $('#alnviz').show();
+                $('#aln2plot').show();
+                $('#ancescon').show();
                 $('#clans').show();
+                $('#clustalo').show();
                 $('#hhblits').show();
+                $('#hhfilter').show();
                 $('#hhpred').show();
+                $('#hhrepid').show();
                 $('#hmmer').show();
+                $('#kalign').show();
                 $('#mafft').show();
+                $('#mmseqs2').show();
+                $('#msaprobs').show();
+                $('#muscle').show();
+                $('#pcoils').show();
+                $('#phyml').show();
                 $('#psiblast').show();
                 $('#tcoffee').show();
                 $('#retseq').hide();
 
             } else if (currentVal === 'GetAccessions') {
                 $('#forwardTool').prop('disabled', false);
+                $('#alnviz').hide();
+                $('#aln2plot').hide();
+                $('#ancescon').hide();
                 $('#clans').hide();
+                $('#clustalo').hide();
                 $('#hhblits').hide();
+                $('#hhfilter').hide();
                 $('#hhpred').hide();
+                $('#hhrepid').hide();
                 $('#hmmer').hide();
+                $('#kalign').hide();
                 $('#mafft').hide();
+                $('#mmseqs2').hide();
+                $('#msaprobs').hide();
+                $('#muscle').hide();
+                $('#pcoils').hide();
+                $('#phyml').hide();
                 $('#psiblast').hide();
                 $('#tcoffee').hide();
                 $('#retseq').show();
