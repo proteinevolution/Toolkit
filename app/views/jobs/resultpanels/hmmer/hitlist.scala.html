@@ -99,7 +99,14 @@
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits);
+                getHits(0, shownHits).then(function(){
+                    // check checkboxes that are stored in array
+                    // in order to make it work with pagination/lazyload
+                    selectFromArray(checkboxes);
+                    // link checkboxes from hitlist and alignment, push
+                    // val of each checkbox in checkboxes array
+                    linkCheckboxes();
+                });
             }
         });
 
