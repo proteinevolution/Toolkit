@@ -273,14 +273,14 @@ function scrollToElem(num){
     }
 }
 
-function scrollToSection(name){
+function scrollToSection(name) {
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
-    var pos = $('#tool-tabs').hasClass("fullscreen") ? $('#'+name).offset().top + $(elem).scrollTop(): $('#'+name).offset().top;
+    var pos = $('#tool-tabs').hasClass("fullscreen") ? $('#' + name).offset().top + $(elem).scrollTop() : $('#' + name).offset().top;
     $(elem).animate({
-        scrollTop: pos-30}, 'fast');
+        scrollTop: pos
+    }, 'fast');
+
 }
-
-
 // select all checkboxes
 function selectAllHelper(name) {
     $('input:checkbox.'+name+'').each(function () {
