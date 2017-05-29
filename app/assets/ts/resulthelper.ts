@@ -5,21 +5,15 @@ declare var showMore : any;
 declare var numHits : any;
 declare var getHits: any;
 declare var colorAAs: boolean;
-
 let count = 0;
 
 // add scrollcontainer highlighting
 let followScroll = function(element : any) {
 
-
-
-    $(document).ready(function () {
+    $(element).ready(function () {
         $("#alignments").floatingScroll('init');
         //smoothscroll
         $('#scrollLinks a').on('click', function (e) {
-            e.preventDefault();
-            $(element).off("scroll");
-
             $('a').each(function () {
                 $(this).removeClass('colorToggleBar');
             });
@@ -28,22 +22,15 @@ let followScroll = function(element : any) {
     });
 
     $(element).on("scroll", function(){
-    try {
-        let top = $(element).scrollTop();
-        if (typeof top !== 'undefined') {
-            if (top >= $('#visualization').position().top + 75) {
-                // detached = $('#collapseMe').detach();
-                // $('.scrollContainer').append(detached);
-                $('.scrollContainer').addClass('fixed');
-                $('.scrollContainer').removeClass('scrollContainerWhite');
-                $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
-            } else {
-                // detached = $('#collapseMe').detach();
-                // $('.ui-widget-header').append(detached);
-                $('.scrollContainer').removeClass('fixed');
-                $('.scrollContainer').addClass('scrollContainerWhite');
-                $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
-            }
+        let top = $(document).scrollTop();
+        if (top >= $('#visualization').position().top + 75) {
+            $('.scrollContainer').addClass('fixed');
+            $('.scrollContainer').removeClass('scrollContainerWhite');
+            $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
+        } else {
+            $('.scrollContainer').removeClass('fixed');
+            $('.scrollContainer').addClass('scrollContainerWhite');
+            $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
         }
         // trigger lazyload for loading alignment
         if (top == $(this).height() - $(window).height()) {
@@ -57,7 +44,6 @@ let followScroll = function(element : any) {
                 shownHits = end;
             }
         }
-
         $('#scrollLinks a').each(function () {
             let currLink = $(this);
             let  refElement = $(currLink.attr("name"));
@@ -70,9 +56,6 @@ let followScroll = function(element : any) {
             }
         });
 
-    } catch (e) {
-        console.warn(e);
-    }
 
     });
 
