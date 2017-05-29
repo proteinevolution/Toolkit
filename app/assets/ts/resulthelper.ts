@@ -9,7 +9,7 @@ let count = 0;
 
 // add scrollcontainer highlighting
 let followScroll = function(element : any) {
-
+    try {
     $(element).ready(function () {
         $("#alignments").floatingScroll('init');
         //smoothscroll
@@ -47,17 +47,19 @@ let followScroll = function(element : any) {
         $('#scrollLinks a').each(function () {
             let currLink = $(this);
             let  refElement = $(currLink.attr("name"));
-            if (refElement.position().top <= top && refElement.position().top + refElement.height() > top) {
-                $('#scrollLinks a').removeClass("colorToggleBar");
-                currLink.addClass("colorToggleBar");
-            }
-            else {
-                currLink.removeClass("colorToggleBar");
+            if(typeof refElement.position() != "undefined") {
+                if (refElement.position().top <= top && refElement.position().top + refElement.height() > top) {
+                    $('#scrollLinks a').removeClass("colorToggleBar");
+                    currLink.addClass("colorToggleBar");
+                }
+                else {
+                    currLink.removeClass("colorToggleBar");
+                }
             }
         });
 
 
     });
-
+    } catch(e) { console.warn(e); }
 };
 
