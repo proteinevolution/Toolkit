@@ -18,9 +18,9 @@
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
-                <a id="visualizationScroll" name="#visualization" onclick="scrollToSection('visualization')">Vis</a>
-                <a id="hitlistScroll" name="#hitlist" onclick="scrollToSection('hitlist')">Hits</a>
-                <a id="alignmentsScroll" name="#alignments" onclick="scrollToSection('alignments')">Aln</a>
+                <a id="visualizationScroll" onclick="scrollToSection('visualization')">Vis</a>
+                <a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hits</a>
+                <a id="alignmentsScroll" onclick="scrollToSection('alignments')">Aln</a>
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
@@ -151,6 +151,7 @@
             }
             getHits(0, shownHits, colorAAs).then(function(){
                 $.LoadingOverlay("hide");
+                linkCheckboxes();
             });
         }
 
@@ -164,11 +165,6 @@
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits, colorAAs).then(function(){
-                    // check checkboxes that are stored in array
-                    // in order to make it work with pagination/lazyload
-                    selectFromArray(checkboxes);
-                    // link checkboxes from hitlist and alignment, push
-                    // val of each checkbox in checkboxes array
                     linkCheckboxes();
                 });
                 $('#templateAlignmentModal').foundation();
@@ -195,34 +191,41 @@
         function hhpred_manual() {
             // Get selected templates and append parentID
             var formData = new FormData(document.getElementById("hhpred_templates"));
-            if (!formData.has("templates")) {
-                $("input:checkbox.checkbox_@{tool.toolNameShort}[value=1]").prop("checked", true)
+            if ($('input:checkbox:checked').length == 0) {
+                $("input:checkbox.checkbox_@{tool.toolNameShort}[value=1]").prop("checked", true);
                 alert("No templates selected. Using first template for modelling.");
             }
-            formData = new FormData(document.getElementById("hhpred_templates"));
             formData.append("parentid", jobID);
 
-            var checkRoute = jsRoutes.controllers.JobController.check("hhpred_manual", null, false);
-            m.request({
-                method: checkRoute.method,
-                url: checkRoute.url,
-                data: formData,
-                serialize: function (data) {
-                    return data;
-                }
-            }).then(function (data) {
-                var submitRoute = jsRoutes.controllers.JobController.create("hhpred_manual", data.jobID);
-                m.request({
-                    method: submitRoute.method,
-                    url: submitRoute.url,
-                    data: formData,
-                    serialize: function (data) {
-                        return data;
-                    }
-                }).then(setTimeout(function () {
-                    window.location.href = "/#/jobs/" + data.jobID
-                }, 1000));
 
+            var submitRoute = jsRoutes.controllers.JobController.submitJob("hhpred_manual");
+            m.request({
+                method: submitRoute.method,
+                url: submitRoute.url,
+                data: formData,
+                serialize: function(submissionReturnData) {
+                    return submissionReturnData;
+                }
+            }).then(function(submissionReturnData){
+                console.log("Data(then):", submissionReturnData);
+                if (submissionReturnData.successful) {
+                    console.log("Job Submission was successful.");
+                    jobID = submissionReturnData.jobID;
+                    var jobListComp = JobListComponent.Job(
+                            { jobID: jobID, state: 0, dateCreated: Date.now().valueOf(), tool: "hhpred_manual" }
+                    );
+                    if (!JobListComponent.contains(jobID)) {
+                        JobListComponent.pushJob(jobListComp, true);
+                    }
+                } else {
+                    console.log("Error while submitting:", submissionReturnData.message)
+                }
+                $(".submitJob").prop("disabled", false);
+                JobSubmissionComponent.submitting = false;
+            }).catch(function(error){
+                console.log("Error while submitting:", error);
+                $(".submitJob").prop("disabled", false);
+                JobSubmissionComponent.submitting = false;
             });
         }
 
