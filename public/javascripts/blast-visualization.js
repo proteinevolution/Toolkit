@@ -312,35 +312,7 @@ function hitlistBaseFunctions(){
             contentAsHTML: true,
             debug: false
         });
-            $.LoadingOverlay("hide");
-
-            // check checkboxes that are stored in array
-            // in order to make it work with pagination/lazyload
-            selectFromArray(checkboxes);
-
-            $('input:checkbox').on('change',function (e) {
-                var currentVal = $(this).val();
-                var currentState = $(this).prop('checked');
-
-                // link checkboxes with same value
-                $('input:checkbox[value=' + currentVal + ']').each(function () {
-                    $(this).prop('checked', currentState);
-                });
-
-                if (currentState) {
-                    // push num of checked checkbox into array
-                    checkboxes.push(currentVal);
-                    // make sure array contains no duplicates
-                    checkboxes = checkboxes.filter(function (value, index, array) {
-                        return array.indexOf(value) == index;
-                    });
-                } else {
-                    // delete num of unchecked checkbox from array
-                    checkboxes = checkboxes.filter(function(x){return x != currentVal});
-                }
-
-            });
-
+        $.LoadingOverlay("hide");
         followScroll(document);
 
         // add slider val
@@ -400,3 +372,27 @@ function getsHitsManually(){
     }
 }
 
+function linkCheckboxes(){
+    $('input:checkbox').on('change',function (e) {
+        var currentVal = $(this).val();
+        var currentState = $(this).prop('checked');
+
+        // link checkboxes with same value
+        $('input:checkbox[value=' + currentVal + ']').each(function () {
+            $(this).prop('checked', currentState);
+        });
+
+        if (currentState) {
+            // push num of checked checkbox into array
+            checkboxes.push(currentVal);
+            // make sure array contains no duplicates
+            checkboxes = checkboxes.filter(function (value, index, array) {
+                return array.indexOf(value) == index;
+            });
+        } else {
+            // delete num of unchecked checkbox from array
+            checkboxes = checkboxes.filter(function(x){return x != currentVal});
+        }
+
+    });
+}
