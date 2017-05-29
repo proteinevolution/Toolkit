@@ -8,6 +8,8 @@ import models.Implicits._
 import modules.tel.env.Env
 import play.api.Logger
 
+import scala.collection.immutable.ListMap
+
 /**
   Provides methods to read Generative Params from a file
   */
@@ -60,10 +62,10 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
 
   // Remembers parameter values that are allowed to be used
   private var allowed: Set[String]                = _
-  private var clearTextNames: Map[String, String] = _
+  private var clearTextNames: ListMap[String, String] = _
 
   def load(): Unit = {
-    clearTextNames = Map.empty
+    clearTextNames = ListMap.empty
     val lines = this.env match {
       case Some(e) =>
         val tempFile = File.newTemporaryFile()
@@ -89,7 +91,7 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
       spt(0)
     }.toSet
   }
-  def generate: Map[String, String] = this.clearTextNames
+  def generate: ListMap[String, String] = this.clearTextNames
 }
 
 class ListGenParamFile(name: String, path: String) extends GenerativeParamFile(name, path) {
@@ -103,10 +105,10 @@ class ListGenParamFile(name: String, path: String) extends GenerativeParamFile(n
 
   // Remembers parameter values that are allowed to be used
   private var allowed: Set[String]                = _
-  private var clearTextNames: Map[String, String] = _
+  private var clearTextNames: ListMap[String, String] = _
 
   def load(): Unit = {
-    clearTextNames = Map.empty
+    clearTextNames = ListMap.empty
 
     this.allowed = f.lineIterator.map { line =>
       Logger.info("Reading line " + line)
@@ -116,5 +118,5 @@ class ListGenParamFile(name: String, path: String) extends GenerativeParamFile(n
     }.toSet
   }
 
-  def generate: Map[String, String] = this.clearTextNames
+  def generate: ListMap[String, String] = this.clearTextNames
 }
