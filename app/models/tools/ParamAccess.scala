@@ -168,8 +168,8 @@ object Param {
 @Singleton
 class ParamAccess @Inject()(tel: TEL) {
 
-  def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq.sortBy(_._2)), 1, label)
-
+  def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq),1, label)
+  println(tel.generateValues("evalue"))
   final val alignmentFormats = Seq(
     "fas" -> "fas",
     "a2m" -> "a2m",
@@ -178,7 +178,6 @@ class ParamAccess @Inject()(tel: TEL) {
     "psi" -> "psi",
     "clu" -> "clu"
   )
-
   final val ALIGNMENT = Param("alignment", Sequence(Seq.empty, false), 1, "")
   final val TWOTEXTALIGNMENT =
     Param("alignment", Sequence(Seq(SingleSequence, Alignment(alignmentFormats)), true), 1, "")
