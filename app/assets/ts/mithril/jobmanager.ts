@@ -72,7 +72,7 @@ window.JobManager = {
                                     render: function (timestamp: any, type: any) {
                                         // If display or filter data is requested, format the date
                                         if (type === 'display') {
-                                            return moment(timestamp).fromNow();
+                                            return moment(timestamp).local().fromNow();
                                         }
                                         return timestamp;
                                     }
