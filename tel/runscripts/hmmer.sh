@@ -142,9 +142,6 @@ manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
 hmmerJson2tab.py ../results/${JOBID}.json ../results/query.json ../results/${JOBID}.tab
 blastviz_json.pl ../results/${JOBID}.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
 
-
-awk {'print -(log($(NF-6))/log(10))'} ../results/${JOBID}.tab >> ../results/evalues
-
 # Generate MSA in JSON
 fasta2json.py ../results/${JOBID}.msa_fas ../results/alignment.json
 
