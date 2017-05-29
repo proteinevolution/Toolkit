@@ -522,8 +522,11 @@ final class ToolFactory @Inject()(
         }
       },
       "E-values" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.evalues(jobID))
+        getResult(jobID).map {
+          case Some(jsvalue) =>
+            implicit val r = requestHeader
+            views.html.jobs.resultpanels.evalues(psi.parseResult(jsvalue).HSPS.map(_.evalue))
+        }
       }
     ),
     Toolnames.CLANS -> Map(
@@ -652,8 +655,11 @@ final class ToolFactory @Inject()(
         }
       },
       "E-values" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.evalues(jobID))
+        getResult(jobID).map {
+          case Some(jsvalue) =>
+            implicit val r = requestHeader
+            views.html.jobs.resultpanels.evalues(hmmer.parseResult(jsvalue).HSPS.map(_.evalue))
+        }
       }
     ),
     Toolnames.HHPRED -> Map(
