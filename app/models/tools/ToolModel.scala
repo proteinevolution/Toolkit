@@ -650,6 +650,10 @@ final class ToolFactory @Inject()(
             implicit val r = requestHeader
             views.html.jobs.resultpanels.hmmer.hitlist(jobID, hmmer.parseResult(jsvalue), this.values(Toolnames.HMMER))
         }
+      },
+      "E-values" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        Future.successful(views.html.jobs.resultpanels.evalues(jobID))
       }
     ),
     Toolnames.HHPRED -> Map(
