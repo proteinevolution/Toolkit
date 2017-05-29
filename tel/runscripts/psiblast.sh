@@ -133,10 +133,6 @@ fasta2json.py ../results/${JOBID}.fas ../results/query.json
 # Generate Query in JSON
 fasta2json.py ../results/output_psiblastp.aln ../results/alignment.json
 
-# Produce Evalues list
-awk {'print -(log($(NF-6))/log(10))'} ../results/output_psiblastp.tab >> ../results/evalues
-
-
 
 # add DB to json
 manipulate_json.py -k 'db' -v '%standarddb.content' ../results/output_psiblastp.json
