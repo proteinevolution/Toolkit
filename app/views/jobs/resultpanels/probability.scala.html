@@ -1,24 +1,24 @@
-@(evalues: List[Double])(implicit request: RequestHeader)
+@(probs: List[Double])(implicit request: RequestHeader)
 
 
 <div id="hcontainer" style="min-width: 610px; height: 400px; margin: 0 auto"></div>
 
 <script>
         var bins = new Array();
-        @for(evalue <- evalues){
-                bins.push(Array(@(-Math.log(evalue)/Math.log(10)), bins.length));
+        @for(prob <- probs){
+                bins.push(Array(@(prob), bins.length));
         }
 
         $(function() {
             var width= $("#tool-tabs").width() - 30;
             var chart = new Highcharts.Chart({
                 title: {
-                    text: 'E-Value Distribution',
+                    text: 'Probability Distribution',
                     x: -20 //center
                 },
                 xAxis: {
                     title: {
-                        text: '-log10(E-Value)'
+                        text: 'Probability'
                     }
                 },
 
