@@ -8,7 +8,6 @@
 <script>
         var bins = new Array();
         @for(evalue <- evalues){
-        console.log(@evalue.toString)
                 bins.push(Array(@(-Math.log(evalue)/Math.log(10)), bins.length));
         }
 
