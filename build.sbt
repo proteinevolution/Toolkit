@@ -46,7 +46,6 @@ lazy val commonSettings = Seq(
   version := "0.0.0",
   scalaVersion := "2.11.8",
   scalaJSProjects := Seq(client),
-  pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
   dependencyOverrides ++= Set("org.webjars" % "jquery" % "3.1.1", "com.typesafe.akka" %% "akka-actor" % akkaVersion)
 )
@@ -97,7 +96,10 @@ lazy val root = (project in file("."))
       "org.webjars"       % "tooltipster"         % "4.1.4-1",
       "org.webjars"       % "momentjs"            % "2.18.1"
     )),
-    pipelineStages := Seq(digest, gzip),
+    pipelineStages in Assets := Seq(scalaJSPipeline, uglify, cssCompress, digest, gzip),
+    UglifyKeys.uglifyOps := { js =>
+      Seq((js.sortBy(_._2), "main.min.js"))
+    },
     compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
