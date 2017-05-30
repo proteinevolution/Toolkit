@@ -118,7 +118,7 @@ let JobTabsComponent = {
                             m("a", { href: "#tabpanel-" + item, config: hideSubmitButtons }, item)
                         );
                     }else{
-                        return m("li", { id: "tab-" + item},
+                        return m("li", { id: "tab-" + item },
                             m("a", { href: "/api/job/result/"+args.job().jobID+"/"+args.job().tool.toolname+"/"+item, config: hideSubmitButtons }, item)
                         );
                     }
