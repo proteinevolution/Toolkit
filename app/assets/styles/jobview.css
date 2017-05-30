@@ -40,7 +40,7 @@ body.is-reveal-open {
 
 #alignmentViewerPanel textarea {
     font-size: 0.7em;
-    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
     margin-bottom: 0.5em;
 }
 
