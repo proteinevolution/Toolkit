@@ -169,7 +169,6 @@ object Param {
 class ParamAccess @Inject()(tel: TEL) {
 
   def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq),1, label)
-  println(tel.generateValues("evalue"))
   final val alignmentFormats = Seq(
     "fas" -> "fas",
     "a2m" -> "a2m",
