@@ -1,6 +1,6 @@
 package actors
 
-import java.io.{FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream}
+import java.io.{FileOutputStream, ObjectOutputStream}
 import javax.inject.{Inject, Named}
 
 import actors.JobActor._
@@ -13,7 +13,7 @@ import models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
 import modules.tel.TEL
-import modules.tel.runscripts.{LiteralRepresentation, Representation, _}
+import modules.tel.runscripts._
 import better.files._
 import com.typesafe.config.ConfigFactory
 import controllers.UserSessions
@@ -33,8 +33,8 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 object JobActor {
 
@@ -777,12 +777,14 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 .toTraversable
               // Put the result files into the database, JobActor has to wait until this process has finished
 
-              result2Job(job.jobID, BSONDocument(result))
-
-              // Now we can update the JobState and remove it, once the update has completed
-              this.updateJobState(job).map { job =>
-                this.removeJob(job.jobID)
-                Logger.info("Job has been removed from JobActor")
+              val x = result2Job(job.jobID, BSONDocument(result)) onComplete {
+                case Success(doc) =>
+                  // Now we can update the JobState and remove it, once the update has completed
+                  this.updateJobState(job).map { job =>
+                    this.removeJob(job.jobID)
+                    Logger.info("Job has been removed from JobActor")
+                  }
+                case Failure(t) => println("An error has occured: " + t.getMessage)
               }
 
             // Currently no further error handling
