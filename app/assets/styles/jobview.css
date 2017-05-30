@@ -40,7 +40,7 @@ body.is-reveal-open {
 
 #alignmentViewerPanel textarea {
     font-size: 0.7em;
-    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
     margin-bottom: 0.5em;
 }
 
@@ -909,7 +909,7 @@ textarea:focus{
     bottom: 20px;
     right: 20px;
     display: none;
-    background: url('../images/arrow-top.svg') no-repeat;
+    background: url('/assets/images/arrow-top.svg') no-repeat;
     background-size: 40px 40px;
     outline: 0;
 }
@@ -926,7 +926,7 @@ textarea:focus{
 }
 
 .logElemRunning{
-    background:url('../images/ellipsis.gif') no-repeat center center;
+    background:url('/assets/images/ellipsis.gif') no-repeat center center;
     width: 32px;
     height: 15px;
     margin-top: 0.6em;

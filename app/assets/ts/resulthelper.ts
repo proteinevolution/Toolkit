@@ -22,7 +22,7 @@ let followScroll = function(element : any) {
     });
 
     $(element).on("scroll", function(){
-        let top = $(document).scrollTop();
+        let top = Number($(document).scrollTop());
         if (top >= $('#visualization').position().top + 75) {
             $('.scrollContainer').addClass('fixed');
             $('.scrollContainer').removeClass('scrollContainerWhite');
