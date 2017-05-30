@@ -1,0 +1,6 @@
+@import models.results.HHrepID
+@(jobID: String)(implicit request: RequestHeader)
+
+<div class="hhrepidResult">
+    @HHrepID.getResult(jobID)
+</div>
