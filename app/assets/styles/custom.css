@@ -500,3 +500,17 @@ textarea { resize:both; }
     /* IE 10+ */
     color: #767676 !important;
 }
+
+.maintenance_alert {
+    background: linear-gradient(to bottom,rgba(245,245,245,1) 0%,rgba(240,240,240,1) 100%);
+    text-shadow: 0 1px 0 #FFF;
+    color: #848484;
+    font-size: 0.65em;
+    border: 1px solid #c0c0c0;
+    padding: 6px 8px 7px 8px;
+    margin-bottom: 8px;
+    border-radius: 2px;
+    box-shadow: 0 0 3px 0 #d85000;
+    transition: box-shadow 1.5s;
+    display: none;
+}
