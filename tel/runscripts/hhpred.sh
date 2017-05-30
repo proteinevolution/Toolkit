@@ -303,7 +303,6 @@ fi
 hhsearch -cpu %THREADS \
          -i ../results/${JOBID}.a3m \
          ${DBJOINED} \
-         -diff 100 \
          -o ../results/${JOBID}.hhr \
          -oa3m ../results/${JOBID}.a3m \
          -p %pmin.content \
@@ -317,8 +316,7 @@ hhsearch -cpu %THREADS \
          -seq 1 \
          -dbstrlen 10000 \
          -cs ${HHLIB}/data/context_data.lib \
-         -atab $(readlink -f ../results/hhsearch.start.tab) \
-         ${MACT}
+         -atab $(readlink -f ../results/hhsearch.start.tab)
 
 
 echo "done" >> ../results/process.log
