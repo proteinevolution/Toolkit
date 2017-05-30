@@ -47,7 +47,7 @@ class HHBlits @Inject()(general: General, aln: Alignment) {
 
   def parseResult(jsValue: JsValue): HHBlitsResult = jsValue match {
     case obj: JsObject =>
-      try {
+
         val jobID      = (obj \ "jobID").as[String]
         val alignments = (obj \ jobID \ "alignments").as[List[JsObject]]
         val hits       = (obj \ jobID \ "hits").as[List[JsObject]]
@@ -67,7 +67,7 @@ class HHBlits @Inject()(general: General, aln: Alignment) {
         val num_hits  = hsplist.length
 
         HHBlitsResult(hsplist, alignment, num_hits, query, db)
-      }
+
   }
 
   def parseQuery(obj: JsObject): HHBlitsQuery = {
