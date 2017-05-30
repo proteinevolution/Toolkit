@@ -70,6 +70,7 @@ let hideSubmitButtons = function (elem : any, isInit : boolean) : any {
 };
 
 
+
 let submitModal = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         $(elem).foundation();

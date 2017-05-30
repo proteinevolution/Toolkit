@@ -61,10 +61,6 @@ window.JobModel = {
         "invoke_psipred":"30"
 },
 
-    /* Seems not to be used
-    pushMessage: function(msg : string) {
-        return messages().push(msg);
-    }, */
 
     update: function(args : any, value : string) : any {
         if (args.isJob) {

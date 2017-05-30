@@ -14,7 +14,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
         if(!isInit) {
 
-            let toolname : string;
+            let toolname : string, placeholder :  string;
             try { toolname = $("#toolnameAccess").val(); }
             catch(err) {
                 toolname = "unknown";
@@ -23,6 +23,9 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
 
             let linebreak = function(elem : any, placeholder : string) {
+
+                if (toolname == 'hhpred')
+                    elem = $("[name='alignment']");
 
                 let path = window.location.href;
                 let url = path.split("/");
@@ -36,8 +39,9 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                         }
                     });
                     $('#pasteButton').on('click', function() {$(elem).css('color','#0a0a0a'); m.redraw(true);
-                        setTimeout(function(){validationProcess($(elem), toolname)},100)
-                        });
+                        setTimeout(function(){validationProcess($(elem), toolname)},200);
+                        $(elem).focus();
+                    });
                     $(elem).blur(function(){
                         if($(elem).val() ===''){
                             $(elem).attr('value', placeholder).css('color','grey');
@@ -52,13 +56,13 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
             switch(toolname) {
 
-
                 case "hhblits":
                     $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
                     break;
 
                 case "hhpred":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format. \n\nTo create a structural model of your query protein, run a HHpred search with it against the PDB_mmCIF70 database, select the top-scoring template(s) and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER.");
+                    placeholder = "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format. \n\nTo create a structural model of your query protein, run a HHpred search with it against the PDB_mmCIF70 database, select the top-scoring template(s) and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER.";
+                    linebreak($(elem), placeholder);
                     break;
 
                 case "hmmer":
@@ -126,7 +130,8 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "ali2d":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 100 sequences in FASTA/CLUSTAL format.\n\n\nPlease note: Runtime of ~30 mins for N=100 sequences of length L=200. Scales as N*L.");
+                    placeholder = "Enter a protein multiple sequence alignment with up to 100 sequences in FASTA/CLUSTAL format.\n\n\nPlease note: Runtime of ~30 mins for N=100 sequences of length L=200. Scales as N*L.";
+                    linebreak($(elem), placeholder);
                     break;
 
                 case "quick2d":
@@ -134,11 +139,12 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "modeller":
-                    $(elem).attr("placeholder", "Please note: MODELLER is configured to work with PIR alignments forwarded by HHpred. \n\nRun a HHpred search with your query, select the top-scoring templates and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER. \n\nTo obtain a key for MODELLER go to: http://salilab.org/modeller/registration.shtml.");
+                    placeholder = "Please note: MODELLER is configured to work with PIR alignments forwarded by HHpred. \n\nRun a HHpred search with your query, select the top-scoring templates and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER. \n\nTo obtain a key for MODELLER go to: http://salilab.org/modeller/registration.shtml.";
+                    linebreak($(elem), placeholder);
                     break;
 
                 case "samcc":
-                    const placeholder : string = "Enter PDB coordinates of a four-helical bundle.\n\nNote: The definitions for helices below need to be entered according to their sequential position in the bundle (it is not relevant whether this done clockwise or counterclockwise, and whether one starts with the N-terminal helix or any other one), and not in their order from N- to C-terminus. For helices in anti-parallel orientation, the residue range should be given with the larger residue number before the smaller one.";
+                    placeholder = "Enter PDB coordinates of a four-helical bundle.\n\nNote: The definitions for helices below need to be entered according to their sequential position in the bundle (it is not relevant whether this done clockwise or counterclockwise, and whether one starts with the N-terminal helix or any other one), and not in their order from N- to C-terminus. For helices in anti-parallel orientation, the residue range should be given with the larger residue number before the smaller one.";
                     linebreak($(elem), placeholder);
                     break;
 
@@ -374,6 +380,8 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
+            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
+
             let hhpredTarget = new alignmentVal($(elem));
             hhpredTarget.basicValidation();
 
@@ -381,7 +389,6 @@ let validationProcess = function(elem: any,toolname: string) {
                 hhpredTarget.sameLengthValidation();
             }
 
-            charLimitPerSeq = 3000;
 
             break;
 
@@ -738,32 +745,6 @@ function valReset(){
 let originIsFasta : boolean = true;
 
 
-/*function mustHave2(el : any) {
-
- if(el.validate('fasta') && el.reformat('numbers') < 2)
- feedback(false, "must have at least two sequences", "error");
- else if(el.validate('fasta') && el.reformat('numbers') >= 2 && el.reformat('alignment') && originIsFasta && el.reformat('uniqueids')) {
- feedback(true);
- originIsFasta = true;
- }
- }
- */
-
-// TODO standard validator for the search section. If search tools differ much in their validations, this one should be kept simple and small
-
-
-//var searchVal = function(el) { /*...*/ };
-
-
-// TODO other validators, similar story
-
-
-//var classVal = function(el) { /*...*/ };
-//var utilsVal = function(el) { /*...*/ };
-//var secondaryVal = function(el) { /*...*/ };
-//var ternaryVal = function(el) { /*...*/ };
-//var seqAnalVal = function(el) { /*...*/ };
-
 
 // this is the standard validator for the alignment section
 
@@ -799,7 +780,7 @@ class alignmentVal implements ToolkitValidator {
 
     basicValidation(): boolean {
 
-        if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') === '') {
+        if (this.elem.val() !== "" && !this.elem.validate('fasta')) {
             feedback(false, "This is no Fasta!", "error");
             return false;
         }
