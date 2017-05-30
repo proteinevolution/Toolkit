@@ -1,15 +1,18 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 
+import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
-import akka.actor.{ActorSystem, Props}
+import actors.WebSocketActor.MaintenanceAlert
+import akka.actor.{ActorRef, ActorSystem, Props}
 import models.sge.Cluster
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import models.database.statistics.ToolStatistic
 import models.search.JobDAO
 import models.Constants
+import models.database.users.User
 import models.results.BlastVisualization
 import models.tools.ToolFactory
 import modules.tel.TEL
@@ -32,6 +35,7 @@ import scala.concurrent.Future
 @Singleton
 final class Application @Inject()(webJarAssets: WebJarAssets,
                                   val messagesApi: MessagesApi,
+                                  @Named("clusterMonitor") clusterMonitor: ActorRef,
                                   webSocketActorFactory: WebSocketActor.Factory,
                                   @NamedCache("userCache") implicit val userCache: CacheApi,
                                   implicit val locationProvider: LocationProvider,
@@ -51,7 +55,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     with I18nSupport
     with CommonModule
     with Constants
-    with UserSessions {
+    with UserSessions
+    with Common {
 
   private val toolkitMode = ConfigFactory.load().getString(s"toolkit_mode")
 
@@ -278,6 +283,18 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         routes.javascript.Application.ws
       )
     ).as("text/javascript").withHeaders(CACHE_CONTROL -> "max-age=31536000")
+  }
+
+  def maintenance : Action[AnyContent] = MaintenanceSecured() {
+
+    Action { implicit ctx =>
+
+      clusterMonitor ! Multicast
+
+      Ok("Maintenance screen active...")
+
+    }
+
   }
 
 }
