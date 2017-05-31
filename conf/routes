@@ -33,6 +33,8 @@ POST          /backend/users                          @controllers.Backend.users
 # Websocket
 GET           /ws                                     @controllers.Application.ws
 
+# Maintenance
+POST          /maintenance                            controllers.Application.maintenance
 
 # Serve files
 GET           /files/:mainID/:filename                @controllers.Application.file(filename: String, mainID: String)

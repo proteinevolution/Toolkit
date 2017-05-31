@@ -226,12 +226,12 @@ reformat_hhsuite.pl a3m fas \
 # Here assume that the query alignment exists
 # prepare histograms
 # Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
+
+addss.pl ../results/${JOBID}.a3m
+
 hhfilter -i ../results/${JOBID}.a3m \
          -o ../results/${JOBID}.reduced.a3m \
          -diff 100
-
-addss.pl ../results/${JOBID}.reduced.a3m
-
 
 DBJOINED=""
 #create file in which selected dbs are written
@@ -287,26 +287,36 @@ else
       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 fi
 
+if [ "%alignmode.content" = "global" ] ; then
+    MACT_SCORE=0.0
+else
+    MACT_SCORE=%macthreshold.content
+fi
+
+if [ "%macmode.content" = "-realign" ] ; then
+    MACT="-realign -mact ${MACT_SCORE}"
+else
+    MACT="-norealign"
+fi
+
 # Perform HHsearch #
 hhsearch -cpu %THREADS \
-         -i ../results/${JOBID}.reduced.a3m \
+         -i ../results/${JOBID}.a3m \
          ${DBJOINED} \
          -o ../results/${JOBID}.hhr \
          -oa3m ../results/${JOBID}.a3m \
          -p %pmin.content \
-         -P %pmin.content \
          -Z %desc.content \
          -%alignmode.content \
          -z 1 \
          -b 1 \
          -B %desc.content \
          -ssm %ss_scoring.content \
+         -sc 1 \
          -seq 1 \
          -dbstrlen 10000 \
          -cs ${HHLIB}/data/context_data.lib \
-         -atab $(readlink -f ../results/hhsearch.start.tab) \
-         %macmode.content \
-         -mact %macthreshold.content
+         -atab $(readlink -f ../results/hhsearch.start.tab)
 
 
 echo "done" >> ../results/process.log

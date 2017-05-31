@@ -4,7 +4,10 @@ import models.Constants
 import play.twirl.api.Html
 
 import scala.io.Source
+<<<<<<< HEAD
 import java.nio.file.{Paths, Files}
+=======
+>>>>>>> c98e6956df3054e03f4b8fa9fd81f15a3e834dc5
 
 /**
   * Created by drau on 30.05.17.
@@ -31,6 +34,5 @@ object HHrepID extends Constants{
     val filePath = s"$jobPath$jobID/results/query.hhrepid"
     Files.exists(Paths.get(filePath))
   }
-
 
 }
