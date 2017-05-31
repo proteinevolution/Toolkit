@@ -49,6 +49,7 @@ let ParameterAlignmentComponent = {
                 this.twoTextAreas = !this.twoTextAreas;
                 if (this.twoTextAreas) {
                     $(".inputDBs").prop('disabled', true);
+                    $(".inputDBs").val(null).trigger("change");
                     $(".inputDBs option:selected").prop("selected", false);
                     $("#alignment").attr("rows", "8");
                     $('#alignment_two').show();
@@ -77,6 +78,7 @@ let ParameterAlignmentComponent = {
             oninit: function (elem : any, isInit : boolean) {
                 if (!isInit) {
                     if (ctrl.getTwoTextAreas()) {
+                        $(".inputDBs").val(null).trigger("change");
                         $(".inputDBs").prop('disabled', true);
                         $(".inputDBs option:selected").prop("selected", false);
                         $("#hhpred_align").prop('checked', true);
