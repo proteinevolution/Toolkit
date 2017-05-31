@@ -427,6 +427,16 @@ table.dataTable.no-footer{
 .noHits{
     width: 5em;
     margin-top: 3em;
+    margin: 0 auto;
+    margin-bottom: 1em;
+}
+
+.noHitsWide{
+    width: 15em;
+    margin-top: 3em !important;
+    margin: 0 auto;
+    margin-bottom: 1em;
+    font-size: 1.2em;
 }
 
 #htb_length {

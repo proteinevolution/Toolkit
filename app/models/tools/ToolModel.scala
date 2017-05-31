@@ -751,7 +751,7 @@ final class ToolFactory @Inject()(
       Resultviews.RESULTS -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(
-          views.html.jobs.resultpanels.hhrepid(jobID))
+          views.html.jobs.resultpanels.hhrepid(jobID, "querymsa", this.values(Toolnames.HHBLITS)))
       }
     ),
     Toolnames.ALI2D -> ListMap(
