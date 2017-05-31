@@ -3,6 +3,7 @@ package actors
 import javax.inject.{Inject, Singleton}
 
 import actors.ClusterMonitor._
+import actors.WebSocketActor.MaintenanceAlert
 import akka.actor.{ActorLogging, _}
 import akka.event.LoggingReceive
 import controllers.Settings
@@ -56,6 +57,9 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
     case Disconnect(actorRef) =>
       watchers = watchers - actorRef
 
+    case Multicast =>
+      watchers.foreach {_ ! MaintenanceAlert }
+
     case FetchLatest =>
       val load = cluster.getLoad.loadEst
 
@@ -100,6 +104,8 @@ object ClusterMonitor {
   case object FetchLatest
 
   case object Recording
+
+  case object Multicast
 
   case class UpdateLoad(load: Double)
 
