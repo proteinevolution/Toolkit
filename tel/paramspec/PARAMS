@@ -1,5 +1,5 @@
 hmmerdb GEN hmmerdb.py
-standarddb GEN standarddb.sh
+standarddb GEN standarddb.py
 hhblitsdb  GEN hhblitsdb.py
 hhsuitedb  GEN hhsuitedb.py
 msa_gen_max_iter GEN msa_gen_max_iter.prop
