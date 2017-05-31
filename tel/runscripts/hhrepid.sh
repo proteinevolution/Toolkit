@@ -95,9 +95,11 @@ hhfilter -i ../results/query.a3m \
 
 #max. 160 characters in description
 reformat_hhsuite.pl a3m fas \
-         ../results/query.reduced.a3m \
-         ../results/query.fas \
+         $(readlink -f ../results/query.reduced.a3m) \
+         $(readlink -f ../results/query.msa) \
          -d 160
+
+cp ../results/query.reduced.a3m ../results/query.a3m
 
 echo "#Running HHblits." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
@@ -120,9 +122,3 @@ hhrepid -qsc 0.$i \
 
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-
-
-#ruby $HHREPIDPATH/script/graphrepeats -i ../results/query.hhrepid \
-#                                -q ../results/query.fas \
-#                                -o ../results/query.png \
-#                                -m ../results/query.map
