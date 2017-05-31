@@ -10,12 +10,12 @@ import play.api.libs.json._
 abstract class SequenceMode(val label: String)
 case class Alignment(formats: Seq[(String, String)])
     extends SequenceMode("Multiple protein sequence alignment in FASTA/CLUSTAL format")
-case object SingleSequence    extends SequenceMode("Single protein sequence in FASTA format")
-case object SingleSequenceDNA extends SequenceMode("Single DNA sequence in FASTA format")
-case object MultiSequence     extends SequenceMode("Muliple protein sequences in FASTA/CLUSTAL format")
-case object BLASTHTML         extends SequenceMode("BLAST HTML page") // BLAMMER
-case object PIR               extends SequenceMode("PIR Format")
-case object FASTAHeaders      extends SequenceMode("Sequences/headers in FASTA format") // BLAMMER
+case object SingleSequence    extends SequenceMode("")
+case object SingleSequenceDNA extends SequenceMode("")
+case object MultiSequence     extends SequenceMode("")
+case object BLASTHTML         extends SequenceMode("") // BLAMMER
+case object PIR               extends SequenceMode("")
+case object FASTAHeaders      extends SequenceMode("") // BLAMMER
 
 object SequenceMode {
 
