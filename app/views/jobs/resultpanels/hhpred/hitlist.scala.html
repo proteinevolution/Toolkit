@@ -179,7 +179,10 @@
                 "autoWidth": false,
                 "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
                 "searching": false,
-                "iDisplayLength": 10
+                "iDisplayLength": 10,
+                "drawCallback": function() {
+                    selectFromArray(checkboxes);
+                }
             });
         }
 
@@ -362,6 +365,7 @@
                     if (shownHits != numHits) {
                         $('#loadHits').show();
                     }
+                    selectFromArray(checkboxes);
                 });
             }
             // hide loadHits
