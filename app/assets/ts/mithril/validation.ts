@@ -380,7 +380,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 30000; // TODO: why was the charLimit defined after it's usage?
 
             let hhpredTarget = new alignmentVal($(elem));
             hhpredTarget.basicValidation();
