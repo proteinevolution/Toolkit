@@ -301,7 +301,7 @@ fi
 
 # Perform HHsearch #
 hhsearch -cpu %THREADS \
-         -i ../results/${JOBID}.a3m \
+         -i ../results/${JOBID}.reduced.a3m \
          ${DBJOINED} \
          -o ../results/${JOBID}.hhr \
          -oa3m ../results/${JOBID}.a3m \
