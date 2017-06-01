@@ -703,15 +703,14 @@ final class ToolFactory @Inject()(
               this.values(Toolnames.HHPRED))
         }
       },
-      "RepresentativeQueryMSA" -> { (jobID, requestHeader) =>
+      "QueryMSA" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
           case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignment(jobID,
+            views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
               aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
               "reduced",
               this.values(Toolnames.HHPRED))
-
         }
       }
     ),
