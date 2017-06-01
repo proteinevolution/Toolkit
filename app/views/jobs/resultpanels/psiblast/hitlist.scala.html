@@ -121,6 +121,11 @@ function drawDataTable(){
 function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
     // full seq is retrieved
     var data = {"checkboxes": checkboxes.removeDuplicates()};
+    if(data.checkboxes.length == 0){
+        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+        alert("No sequences selected!");
+        return false;
+    }
     var route = null;
     $.LoadingOverlay("show");
     if(boolFullLength) {
