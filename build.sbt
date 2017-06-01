@@ -96,10 +96,7 @@ lazy val root = (project in file("."))
       "org.webjars"       % "tooltipster"         % "4.1.4-1",
       "org.webjars"       % "momentjs"            % "2.18.1"
     )),
-    pipelineStages in Assets := Seq(scalaJSPipeline, concat, uglify, cssCompress, digest, gzip),
-    Concat.groups := Seq(
-      "assets.css" -> group((sourceDirectory in Assets).value  ** "*.css")
-    ),
+    pipelineStages in Assets := Seq(scalaJSPipeline, uglify, cssCompress, digest, gzip),
     UglifyKeys.uglifyOps := { js =>
       Seq((js.sortBy(_._2), "main.min.js"))
     },
