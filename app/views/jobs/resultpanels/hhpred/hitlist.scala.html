@@ -286,6 +286,11 @@
 
         function hhpred_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
+            if(data.checkboxes.length == 0){
+                $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                alert("No sequences selected!");
+                return false;
+            }
             $.LoadingOverlay("show");
             var route = null;
             if (boolEvalue) {
@@ -310,6 +315,7 @@
                     }
                 }).done(function (data_) {
                     forward(selectedTool, data_.toString());
+
                 });
             });
         }
