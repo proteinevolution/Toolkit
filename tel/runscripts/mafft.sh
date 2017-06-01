@@ -46,7 +46,7 @@ fi
 echo "#Aligning sequences with MAFFT."  >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
-if [ %output_order.content == "input"] ; then
+if [ %output_order.content = "input" ] ; then
 
     mafft --op %gap_open.content \
           --ep %offset.content \
