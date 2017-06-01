@@ -72,13 +72,18 @@ if [ %msa_gen_max_iter.content == "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
 else
     #MSA generation required
     #MSA generation by HHblits
-    echo "#MSA generation required. Running %msa_gen_max_iter.content iteration(s) of HHblits." >> ../results/process.log
+    if [ %msa_gen_max_iter.content -lt "2" ] ; then
+        echo "#MSA generation required. Running 1 iteration of HHblits." >> ../results/process.log
+    else
+        echo "#MSA generation required. Running %msa_gen_max_iter.content iterations of HHblits." >> ../results/process.log
+    fi
+
     curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
     hhblits -cpu 8 \
             -v 2 \
             -i %alignment.path \
             -d %UNIPROT  \
-            -o ../results/msagen.hhblits \
+            -o /dev/null \
             -oa3m ../results/query.a3m \
             -n %msa_gen_max_iter.content \
             -mact 0.35
@@ -88,6 +93,8 @@ fi
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
+addss.pl ../results/query.a3m
+
 #100 maximally diverse sequences
 hhfilter -i ../results/query.a3m \
          -o ../results/query.reduced.a3m \
@@ -95,9 +102,11 @@ hhfilter -i ../results/query.a3m \
 
 #max. 160 characters in description
 reformat_hhsuite.pl a3m fas \
-         ../results/query.reduced.a3m \
-         ../results/query.fas \
-         -d 160
+         $(readlink -f ../results/query.reduced.a3m) \
+         $(readlink -f ../results/query.msa) \
+         -d 160 -noss
+
+cp ../results/query.reduced.a3m ../results/query.a3m
 
 echo "#Running HHblits." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
@@ -120,9 +129,3 @@ hhrepid -qsc 0.$i \
 
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-
-
-#ruby $HHREPIDPATH/script/graphrepeats -i ../results/query.hhrepid \
-#                                -q ../results/query.fas \
-#                                -o ../results/query.png \
-#                                -m ../results/query.map

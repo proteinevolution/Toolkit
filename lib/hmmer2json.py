@@ -5,6 +5,7 @@ Script for parsing HMMER3 output text format into JSON format.
 
 import json
 import argparse
+from collections import namedtuple
 from os import sys
 from Bio import SearchIO
 
@@ -44,31 +45,7 @@ def parse_user_arguments(argv):
     return arguments
 
 
-def hit2dict(hit, num):
-    """
-    Turns Biopython Hit object into dictionary
-    that can be easily serialized by json.
-
-    :param hit: Bio.SearchIO._model.Hit object
-    :param num: number in the ordered list of hits
-    :return: dictionary representation of an object
-    """
-
-    hit_json = {
-        'num': num,
-        'description': hit.description,
-        'id': hit.id,
-        'bias': hit.bias,
-        'bitscore': hit.bitscore,
-        'evalue': hit.evalue,
-        'dom_exp_num': hit.domain_exp_num,
-        'domain_obs_num': hit.domain_obs_num
-    }
-
-    return hit_json
-
-
-def hsp2dict(hsp, num):
+def hsp2dict(hsp, num, hit_eval, domains_nr):
     """
     Turns Biopython HSP object into dictionary
     that can be easily serialized by json.
@@ -77,6 +54,8 @@ def hsp2dict(hsp, num):
     :param num: number in the ordered list of HSPs, same
                 as for the hit representing given HSP in
                 the hit list.
+    :param hit_eval: General evalue for full length sequence
+    :param domains_nr: Number of domains from hitlist
     :return:
     """
 
@@ -85,6 +64,8 @@ def hsp2dict(hsp, num):
         'bias': hsp.bias,
         'bitscore': hsp.bitscore,
         'evalue': hsp.evalue,
+        'full_evalue': hit_eval,
+        'domain_obs_num': domains_nr,
         'acc_avg': hsp.acc_avg,
         'env_start': hsp.env_start,
         'env_end': hsp.env_end,
@@ -119,7 +100,6 @@ def hmmer2json(in_file, evalue, max_num):
     # This is how json output will be structured
     results = {'id': '',
                'description': '',
-               'hits': [],
                'hsps': [],
                }
 
@@ -127,6 +107,7 @@ def hmmer2json(in_file, evalue, max_num):
     # Maybe we can improve Biopython parser so it's easier
     # to extract best domain hit
     hsps = {}
+    hits_evals = {}
 
     with open(in_file, 'r') as handle:
         for qres in SearchIO.parse(handle=handle,
@@ -137,28 +118,35 @@ def hmmer2json(in_file, evalue, max_num):
             results['description'] = qres.description
             # print('Nr of hits: %d' % len(qres.hits))
 
-            i = 1
             # Read hits table and add to results dict
+            HitObj = namedtuple('HitObj', ['evalue', 'domains'])
+
             for hit in qres.hits:
-                if hit.num <= max_num and hit.evalue <= evalue:
-                    results['hits'].append(hit2dict(hit=hit, num=i))
-                    i += 1
+                hits_evals[hit.id] = HitObj(hit.evalue, hit.domain_obs_num)
 
             # Read HSPs to a temporary dict and filter to
             # add only best scoring domain
             # for multi domain hits
-            for hsp in qres.hsps:
-                if hsp.hit_id not in hsps:
-                    hsps[hsp.hit_id] = hsp
-                else:
-                    favorite = min(hsp, hsps[hsp.hit_id],
-                                   key=lambda x: x.evalue)
-                    hsps[favorite.hit_id] = favorite
 
-    # Add unique domains in the same order as hits
-    for hit in results['hits']:
-        curr_hsp = hsps[hit['id']]
-        results['hsps'].append(hsp2dict(hsp=curr_hsp, num=hit['num']))
+            for hsp in qres.hsps:
+                # If HSP has independent e-value of a threshold or less
+                if hsp.evalue <= evalue:
+                    if hsp.hit_id not in hsps:
+                        hsps[hsp.hit_id] = hsp
+                    else:
+                        if hsp.evalue < hsps[hsp.hit_id].evalue:
+                            hsps[hsp.hit_id] = hsp
+
+                if len(hsps) == max_num:
+                    break
+
+    hsps = sorted(list(hsps.values()), key=lambda x: x.evalue)
+
+    results['hsps'] = [hsp2dict(hsp=hsp,
+                                num=i+1,
+                                hit_eval=hits_evals[hsp.hit_id].evalue,
+                                domains_nr=hits_evals[hsp.hit_id].domains)
+                       for i, hsp in enumerate(hsps)]
 
     return results
 
@@ -172,7 +160,7 @@ def main(arg):
                            arg.input_file[:args.input_file.rfind('.')]
 
     # Read HMMER output into JSON serializable format
-    json_data = hmmer2json(arg.input_file, arg.e_value)
+    json_data = hmmer2json(arg.input_file, arg.e_value, arg.max_number)
 
     # Dump output in JSON format
     with open(arg.output_file, 'w') as handle:

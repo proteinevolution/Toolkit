@@ -113,7 +113,7 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
   // Fetches the result of a job for a particular result panel
   def getResult(jobID: String, tool: String, resultpanel: String): Action[AnyContent] = Action.async {
     implicit request =>
-      var resultPanel = toolFactory.resultMap(tool)(resultpanel)(jobID, request)
+      val resultPanel = toolFactory.resultMap(tool)(resultpanel)(jobID, request)
       resultPanel.map(Ok(_))
   }
 

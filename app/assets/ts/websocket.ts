@@ -82,7 +82,7 @@ onMessage = function(event : MessageEvent) : any {
             JobListComponent.pushJob(JobListComponent.Job(message.job));
             LiveTable.pushJob(message.job);
             JobManager.pushToTable(message.job);
-            if(message.job.status== 4 || message.job.status == 5) {
+            if(message.job.status == 4 || message.job.status == 5) {
                 notifications += 1;
                 titlenotifier.set(notifications);
             }
@@ -103,6 +103,11 @@ onMessage = function(event : MessageEvent) : any {
             m.startComputation();
             JobRunningComponent.updateLog();
             m.endComputation();
+            break;
+        case "MaintenanceAlert":
+            //m.startComputation();
+            $('.maintenance_alert').show();
+            //m.endComputation();
             break;
         default:
             break;

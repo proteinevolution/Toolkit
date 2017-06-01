@@ -1,3 +1,5 @@
+/// <reference path="jobview/input.ts"/>
+
 let renderParameter = function(content : any, moreClasses? : any) : any {
     return m("div", { "class": moreClasses ? "parameter " + moreClasses : "parameter" }, content);
 };
@@ -201,7 +203,7 @@ let ParameterBoolComponent = {
 
 
 let formComponents : any = {
-    1: (<any>window).ParameterAlignmentComponent,
+    1: ParameterAlignmentComponent,
     2: ParameterNumberComponent,
     3: ParameterSelectComponent,
     4: ParameterBoolComponent,
