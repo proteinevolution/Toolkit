@@ -84,7 +84,7 @@ def hsp2dict(hsp, num):
         'num': num,
         'bias': hsp.bias,
         'bitscore': hsp.bitscore,
-        'evalue': hsp.evalue,
+        'evalue': hsp.evalue_cond,
         'acc_avg': hsp.acc_avg,
         'env_start': hsp.env_start,
         'env_end': hsp.env_end,
@@ -115,7 +115,8 @@ def hmmer2json(in_file, evalue, max_num):
     :param max_num: max number of hits in output file
     :return: json dict
     """
-
+    #VIKRAM
+    print(evalue)
     # This is how json output will be structured
     results = {'id': '',
                'description': '',
@@ -140,7 +141,7 @@ def hmmer2json(in_file, evalue, max_num):
             i = 1
             # Read hits table and add to results dict
             for hit in qres.hits:
-                if hit.num <= max_num and hit.evalue <= evalue:
+                if i <= max_num and hit.evalue <= evalue:
                     results['hits'].append(hit2dict(hit=hit, num=i))
                     i += 1
 
@@ -152,7 +153,7 @@ def hmmer2json(in_file, evalue, max_num):
                     hsps[hsp.hit_id] = hsp
                 else:
                     favorite = min(hsp, hsps[hsp.hit_id],
-                                   key=lambda x: x.evalue)
+                                   key=lambda x: x.evalue_cond)
                     hsps[favorite.hit_id] = favorite
 
     # Add unique domains in the same order as hits
@@ -172,7 +173,7 @@ def main(arg):
                            arg.input_file[:args.input_file.rfind('.')]
 
     # Read HMMER output into JSON serializable format
-    json_data = hmmer2json(arg.input_file, arg.e_value)
+    json_data = hmmer2json(arg.input_file, arg.e_value, arg.max_number)
 
     # Dump output in JSON format
     with open(arg.output_file, 'w') as handle:
