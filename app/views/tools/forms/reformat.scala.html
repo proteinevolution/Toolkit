@@ -30,14 +30,14 @@
 
             <div class="tabs-panel ui-tabs-panel ui-widget-content ui-corner-bottom" id="tabpanel-Alignment" aria-labelledby="ui-id-4" role="tabpanel" aria-hidden="false">
 
-                <div id="reformatcontainer" style="min-height: 800px; margin: 0 auto">
+                <div id="reformatcontainer" style="min-height: 650px; margin: 0 auto">
 
-                            <ul class="show-for-medium menu horizontal nested" style="font-size: 12px;">
+                            <ul class="show-for-medium menu horizontal nested" style="font-size: 12px;" id="reformatTopbar">
                                 <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
                                 <li><a id="dropzonetoggle">Upload</a></li>
                                 <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
                                 <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
-                                <li style="padding-top: 15px; padding-left: 10px;">
+                                <li style="padding-left: 10px;">
                                     <select id="forwardTool" style="font-size: 12px;" onchange="forwardChanged()">
                                         <option selected>Forward To</option>
                                         <option  id="alnviz" value="alnviz">AlignmentViewer</option>
@@ -121,24 +121,10 @@
                         <input type="button" id="reformatExample" class="button small alignmentExample exampleReformat" value="Paste Example">
 
                     </div>
-                    <div class="large-12 columns" style="padding-top: 9px;">
-                        <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
-                    </div>
 
-
-                </div>
-                <p>&nbsp;</p>
-
-                <div class="show-for-medium large-12 columns" style="padding-top: 20px;">
-                    <div class="success callout" id="callout" data-closable="slide-out-right" style="width: 50%; display: block; margin: auto;">
-                        <p style="width: 80%;">Found <span id="nonalignedwarning" style="color: red; display: none;">non-aligned</span> <span id="format"></span> formatted input.</p>
-                        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-
-                        <label>Select Output Format
+                    <div id="selectContainer">
                             <select id="outformat">
-                                <option selected>Choose</option>
+                                <option selected>Select Output Format</option>
                                 <option id="Fasta" value="Fasta">Fasta</option>
                                 <option id="A3M" value="A3M">A3M</option>
                                 <option id="Clustal" value="Clustal" class="clustaloption">CLUSTAL</option>
@@ -152,10 +138,25 @@
                                 <option id="Consensus" value="Consensus">Consensus</option>
                                 <option id="Alphabet" value="Alphabet">Alphabet</option>
                             </select>
-                        </label>
+
+                        <div class="show-for-medium large-4 columns">
+                            <div class="success callout" id="callout" display: block; margin: auto;">
+                                <p>Found format: <span id="nonalignedwarning" style="color: red; display: none;">non-aligned</span> <b id="format"></b></p>
+                            </div>
+                        </div>
                     </div>
 
+
+
+                    <div class="large-12 columns" style="padding-top: 9px;">
+                        <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
+                    </div>
+
+
                 </div>
+                <p>&nbsp;</p>
+
+
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
 
@@ -195,6 +196,9 @@
         }
 
         $("#tool-tabs").tabs();
+        $("#outformat").niceSelect();
+        $("#forwardTool").niceSelect();
+
 
         var inputFasta = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR\n";
         // document.getElementById("alignment").value = inputFasta;

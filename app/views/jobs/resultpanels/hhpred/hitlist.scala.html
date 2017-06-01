@@ -160,6 +160,8 @@
                 shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits, colorAAs).then(function(){
                     linkCheckboxes();
+                    $("#alignments").floatingScroll('init');
+
                 });
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
