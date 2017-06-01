@@ -126,19 +126,13 @@
                     // link checkboxes from hitlist and alignment, push
                     // val of each checkbox in checkboxes array
                     linkCheckboxes();
+                    $("#alignments").floatingScroll('init');
                 });
                 $('#templateAlignmentModal').foundation()
             }
 
         });
 
-
-        $(document).ready(function () {
-            setTimeout(function () {
-                $("#alignments").floatingScroll('init');
-            }, 2000);
-
-        });
         function drawDataTable(){
             hitlist = $('#htb').dataTable({
                 "bProcessing" : true,
