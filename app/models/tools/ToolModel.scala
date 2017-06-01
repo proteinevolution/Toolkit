@@ -401,7 +401,6 @@ final class ToolFactory @Inject()(
        paramAccess.SELF_ALN_PVAL_THRESHOLD,
        paramAccess.MERGE_ITERS,
        paramAccess.MAC_CUTOFF,
-       paramAccess.ALN_STRINGENCY,
        paramAccess.DOMAIN_BOUND_DETECTION
      ),
      Seq.empty,
