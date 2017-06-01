@@ -1586,7 +1586,7 @@ interface JQuery {
      * @param attributeName An attribute to remove; as of version 1.7, it can be a space-separated list of attributes.
      * @see {@link https://api.jquery.com/removeAttr/}
      */
-    removeAttr(attributeName: string): JQuery;
+    removeAttr(attributeName: string, attributeMod?: any): JQuery;
 
     /**
      * Remove a single class, multiple classes, or all classes from each element in the set of matched elements.

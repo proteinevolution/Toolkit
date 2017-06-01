@@ -401,7 +401,6 @@ final class ToolFactory @Inject()(
        paramAccess.SELF_ALN_PVAL_THRESHOLD,
        paramAccess.MERGE_ITERS,
        paramAccess.MAC_CUTOFF,
-       paramAccess.ALN_STRINGENCY,
        paramAccess.DOMAIN_BOUND_DETECTION
      ),
      Seq.empty,
@@ -751,7 +750,7 @@ final class ToolFactory @Inject()(
       Resultviews.RESULTS -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(
-          views.html.jobs.resultpanels.modeller(s"/files/$jobID/query_A.png", s"$jobPath$jobID/results/query.hhrepid"))
+          views.html.jobs.resultpanels.hhrepid(jobID, "querymsa", this.values(Toolnames.HHBLITS)))
       }
     ),
     Toolnames.ALI2D -> ListMap(

@@ -10,12 +10,12 @@ import play.api.libs.json._
 abstract class SequenceMode(val label: String)
 case class Alignment(formats: Seq[(String, String)])
     extends SequenceMode("Multiple protein sequence alignment in FASTA/CLUSTAL format")
-case object SingleSequence    extends SequenceMode("Single protein sequence in FASTA format")
-case object SingleSequenceDNA extends SequenceMode("Single DNA sequence in FASTA format")
-case object MultiSequence     extends SequenceMode("Muliple protein sequences in FASTA/CLUSTAL format")
-case object BLASTHTML         extends SequenceMode("BLAST HTML page") // BLAMMER
-case object PIR               extends SequenceMode("PIR Format")
-case object FASTAHeaders      extends SequenceMode("Sequences/headers in FASTA format") // BLAMMER
+case object SingleSequence    extends SequenceMode("")
+case object SingleSequenceDNA extends SequenceMode("")
+case object MultiSequence     extends SequenceMode("")
+case object BLASTHTML         extends SequenceMode("") // BLAMMER
+case object PIR               extends SequenceMode("")
+case object FASTAHeaders      extends SequenceMode("") // BLAMMER
 
 object SequenceMode {
 
@@ -169,7 +169,6 @@ object Param {
 class ParamAccess @Inject()(tel: TEL) {
 
   def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq),1, label)
-  println(tel.generateValues("evalue"))
   final val alignmentFormats = Seq(
     "fas" -> "fas",
     "a2m" -> "a2m",
@@ -187,10 +186,10 @@ class ParamAccess @Inject()(tel: TEL) {
   final val SINGLESEQDNA = Param("alignment", Sequence(Seq(SingleSequenceDNA), false), 1, "")
   final val FASTAHEADERS = Param("alignment", Sequence(Seq(FASTAHeaders), false), 1, "")
 
-  final val HMMER_DB     = select("hmmerdb", "Select Database")
-  final val STANDARD_DB  = select("standarddb", "Select Standard Database")
-  final val HHSUITEDB    = select("hhsuitedb", "Select HH-Suite Database")
-  final val MATRIX       = select("matrix", "Scoring Matrix")
+  final val HMMER_DB     = select("hmmerdb", "Select database")
+  final val STANDARD_DB  = select("standarddb", "Select database")
+  final val HHSUITEDB    = select("hhsuitedb", "Select database")
+  final val MATRIX       = select("matrix", "Scoring matrix")
   final val NUM_ITER     = Param("num_iter", ParamType.UnconstrainedNumber, 1, "No. of iterations")
   final val EVALUE       = select("evalue", "E-value")
   final val GAP_OPEN     = Param("gap_open", ParamType.UnconstrainedNumber, 1, "Gap open penalty")
@@ -198,15 +197,14 @@ class ParamAccess @Inject()(tel: TEL) {
   final val GAP_EXT_KALN = Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
   final val BONUSSCORE   = Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
   final val DESC         = Param("desc", ParamType.ConstrainedNumber, 1, "No. of target sequences (up to 10000)")
-  final val CONSISTENCY =
-    Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
+  final val CONSISTENCY = Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
   final val ITREFINE               = Param("itrefine", ParamType.UnconstrainedNumber, 1, "Passes of iterative refinements")
   final val PRETRAIN               = Param("pretrain", ParamType.UnconstrainedNumber, 1, "Rounds of pretraining")
   final val MAXROUNDS              = select("maxrounds", "Max. number of iterations")
   final val OFFSET                 = Param("offset", Decimal("0.01", Some(0), Some(10)), 1, "Offset")
   final val OUTORDER               = Param("outorder", ParamType.UnconstrainedNumber, 1, "Outorder")
   final val ETRESH                 = Param("inclusion_ethresh", ParamType.UnconstrainedNumber, 1, "E-value inclusion threshold")
-  final val HHBLITSDB              = Param("hhblitsdb", Select(tel.generateValues("hhblitsdb").toSeq), 1, "Select HHblits database")
+  final val HHBLITSDB              = Param("hhblitsdb", Select(tel.generateValues("hhblitsdb").toSeq), 1, "Select database")
   final val ALIGNMODE              = select("alignmode", "Alignment Mode")
   final val MSA_GEN_MAX_ITER       = select("msa_gen_max_iter", "Maximal no. of MSA generation steps")
   final val MSA_GEN_METHOD         = select("msa_gen_method", "MSA generation method")
@@ -221,7 +219,7 @@ class ParamAccess @Inject()(tel: TEL) {
   final val MIN_QUERY_COV          = Param("min_query_cov", ParamType.Percentage, 1, "Minimal coverage with query (%)")
   final val MATRIX_PHYML           = select("matrix_phyml", "Model of AminoAcid replacement")
   final val PROTBLASTPROGRAM       = select("protblastprogram", "Program for Protein BLAST")
-  final val FILTER_LOW_COMPLEXITY  = Param("filter_low_complexity", Bool, 1, "Filter for low oltcomplexity regions")
+  final val FILTER_LOW_COMPLEXITY  = Param("filter_low_complexity", Bool, 1, "Filter for low complexity regions")
   final val MATRIX_MARCOIL         = select("matrix_marcoil", "Matrix")
   final val TRANSITION_PROBABILITY = select("transition_probability", "Transition Probability")
   final val MIN_SEQID_QUERY        = Param("min_seqid_query", ParamType.Percentage, 1, "Minimum sequence ID with Query (%)")
@@ -243,7 +241,6 @@ class ParamAccess @Inject()(tel: TEL) {
   final val MERGE_ITERS             = select("merge_iters", "Merge rounds")
   final val MAC_CUTOFF              = select("mac_cutoff", "MAC threshold")
   final val DOMAIN_BOUND_DETECTION  = select("domain_bound_detection", "Domain boundary detection")
-  final val ALN_STRINGENCY          = select("aln_stringency", "Alignment stringency")
   final val OUTPUT_ORDER            = select("output_order", "Output the alignment in:")
   final val EVAL_TPR                = select("eval_tpr", "E-value inclusion TPR & SEL")
   final val CODON_TABLE_ORGANISM    = Param("codon_table_organism", Text, 1, "Use codon usage table of")

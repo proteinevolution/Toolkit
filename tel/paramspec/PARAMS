@@ -1,5 +1,5 @@
 hmmerdb GEN hmmerdb.py
-standarddb GEN standarddb.sh
+standarddb GEN standarddb.py
 hhblitsdb  GEN hhblitsdb.py
 hhsuitedb  GEN hhsuitedb.py
 msa_gen_max_iter GEN msa_gen_max_iter.prop
@@ -33,7 +33,6 @@ self_aln_pval_threshold GEN self_aln_pval_threshold.prop
 merge_iters GEN merge_iters.prop
 mac_cutoff GEN mac_cutoff.prop
 domain_bound_detection GEN domain_bound_detection.prop
-aln_stringency GEN aln_stringency.prop
 proteomes GEN proteomes.py
 output_order GEN output_order.prop
 eval_tpr GEN eval_tpr.prop

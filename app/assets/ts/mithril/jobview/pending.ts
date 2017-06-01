@@ -1,4 +1,4 @@
-(<any>window).JobPendingComponent = {
+let JobPendingComponent = {
 
     controller : function(args : any){
 
@@ -41,7 +41,7 @@
                     onclick : function(e : any){
                         e.preventDefault();
                         let route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
-                        console.log("DELETE",args.job().jobID)
+                        console.log("DELETE",args.job().jobID);
                         m.request({ url: "/api/job/" + args.job().jobID, method: "DELETE" }).then(function(){
                             JobManager.removeFromTable(args.job().jobID);
 

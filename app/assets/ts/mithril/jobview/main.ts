@@ -1,5 +1,8 @@
 (<any>window).JobViewComponent = {
 
+    controller: function(args : any) {
+
+    },
     view: function(ctrl : any, args : any) {
         if (!args.job()) {
             return m("div", {"class" : "still_waiting", config: initLoader}, "");

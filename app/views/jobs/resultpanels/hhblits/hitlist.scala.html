@@ -1,11 +1,4 @@
-@import play.api.libs.json.JsObject
-@import play.api.libs.json.JsValue
-@import play.api.Logger
-@import models.results.FileLoader
-@import play.api.libs.json.JsUndefined
-@import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
-@import modules.tel.TEL
 @import models.database.results.HHBlitsResult
 @(jobID: String, result: HHBlitsResult, tool: models.tools.Tool)(implicit request: RequestHeader)
 @if(result.num_hits < 1) {
@@ -111,7 +104,7 @@
         var shownHits = 50;
         var colorAAs = true;
         var showMore = 100;
-	var loading = false;
+	    var loading = false;
         // use this array to store
         // checked checkboxes
         // due to pagination/lazyload
@@ -125,7 +118,7 @@
                 var firstQueryEnd = @result.HSPS.head.query.end;
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
-		shownHits = shownHits > numHits ? numHits : shownHits;
+		        shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits).then(function(){
                     // check checkboxes that are stored in array
                     // in order to make it work with pagination/lazyload
@@ -136,6 +129,7 @@
                 });
                 $('#templateAlignmentModal').foundation()
             }
+
         });
 
 
@@ -143,6 +137,7 @@
             setTimeout(function () {
                 $("#alignments").floatingScroll('init');
             }, 2000);
+
         });
         function drawDataTable(){
             hitlist = $('#htb').dataTable({
@@ -159,6 +154,11 @@
 
        function hhblits_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
+           if(data.checkboxes.length == 0){
+               $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+               alert("No sequences selected!");
+               return false;
+           }
            var route = null;
            $.LoadingOverlay("show");
             if(boolFullLength) {
@@ -283,6 +283,7 @@
                 });
             }
         }
+
 
 
 </script>
