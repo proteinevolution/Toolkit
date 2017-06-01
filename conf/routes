@@ -86,7 +86,7 @@ POST          /jobs/updateLog/:jobID                  @controllers.Jobs.updateLo
 
 # Validation Controller
 
-GET           /validate/modeller/:input               @controllers.Validation.validateModellerKey(input: String)
+POST          /validate/modeller                      @controllers.Auth.validateModellerKey(input: String)
 
 # Cluster
 

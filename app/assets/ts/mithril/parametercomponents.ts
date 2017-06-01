@@ -200,7 +200,44 @@ let ParameterBoolComponent = {
 };
 
 
+let ParameterModellerKeyComponent = {
+    keyStored: false,
+    value: "",
+    validate: function(val: string, checkLen?: boolean){
+        ParameterModellerKeyComponent.value = val;
+        if(checkLen || val.length >= 11) {
+            let route = jsRoutes.controllers.Auth.validateModellerKey(val);
+            m.request({method: route.method, url: route.url}).then(function (response) {
+                ParameterModellerKeyComponent.keyStored = response.isValid;
+                if(ParameterModellerKeyComponent.keyStored){
+                    $(".submitJob").attr("disabled", false);
+                }
+            });
+        }
+    },
+    controller: function(){
+        ParameterModellerKeyComponent.validate("", true);
+        return {}
+    },
+    view: function(ctrl : any, args : any) {
+        let paramAttrs = {
+            type: "text",
+            id: args.param.name,
+            value: ParameterModellerKeyComponent.value,
+            onkeyup: m.withAttr("value", ParameterModellerKeyComponent.validate),
+            config: paramValidation,
+            class: "modellerKey invalid"
 
+        };
+
+        return renderParameter([
+            ParameterModellerKeyComponent.keyStored ?  m("text",{class: "modellerKey valid"},"MODELLER-key is stored in your profile.") : [
+            m("label", {
+                "for": args.param.name,
+            }, args.param.label), m("input", paramAttrs)]
+        ]);
+    }
+};
 
 let formComponents : any = {
     1: ParameterAlignmentComponent,
@@ -209,5 +246,6 @@ let formComponents : any = {
     4: ParameterBoolComponent,
     5: ParameterRadioComponent,
     6: ParameterSlideComponent,
-    7: ParameterTextComponent
+    7: ParameterTextComponent,
+    8: ParameterModellerKeyComponent
 };
