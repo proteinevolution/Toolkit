@@ -103,7 +103,7 @@ window.JobModel = {
             }, 100);
             window.JobModel.paramValues["alignment"] = resultcookie;
             localStorage.removeItem("resultcookie");
-            $.LoadingOverlay("hide")
+            $.LoadingOverlay("hide");
         }
         let val = window.JobModel.paramValues[param];
         let defVal = window.JobModel.defaultValues[param];
