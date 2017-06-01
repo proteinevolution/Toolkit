@@ -154,6 +154,11 @@
 
        function hhblits_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
+           if(data.checkboxes.length == 0){
+               $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+               alert("No sequences selected!");
+               return false;
+           }
            var route = null;
            $.LoadingOverlay("show");
             if(boolFullLength) {
