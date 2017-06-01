@@ -12,10 +12,9 @@ import java.nio.file.{Paths, Files}
 object HHrepID extends Constants{
   def getResult(jobID: String) : Html = {
     val headerLine = """(Results for repeats type )([A-Z])(:)""".r
-    val seqLine = """([A-Z][0-9]\s+[A-Za-z0-9\|]+\s+[0-9\-]+\s+[0-9+]+\s)([A-Za-z\-\.]+)""".r
+    val seqLine = """([\S]+\s+[\S]+\s+[\S]+\s+[\S]+\s)([\S]+)""".r
 
     val filePath = s"$jobPath$jobID/results/query.hhrepid"
-
 
       val imagePath = s"/files/$jobID/query_"
       val data = Source.fromFile(filePath).getLines().toList.map {
