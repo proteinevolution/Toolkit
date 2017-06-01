@@ -213,15 +213,15 @@ else
 fi
 
 #Generate representative MSA for forwarding
+
 hhfilter -i ../results/${JOBID}.a3m \
-         -o ../results/alignment.fas \
+         -o ../results/reduced.fas \
          -diff 100
 
 reformat_hhsuite.pl a3m fas \
-         $(readlink -f ../results/alignment.fas) \
-         $(readlink -f ../results/alignment.fas) \
+         $(readlink -f ../results/reduced.fas) \
+         $(readlink -f ../results/reduced.fas) \
          -d 160
-
 
 # Here assume that the query alignment exists
 # prepare histograms
@@ -232,6 +232,11 @@ addss.pl ../results/${JOBID}.a3m
 hhfilter -i ../results/${JOBID}.a3m \
          -o ../results/${JOBID}.reduced.a3m \
          -diff 100
+
+reformat_hhsuite.pl a3m fas \
+         $(readlink -f ../results/${JOBID}.a3m) \
+         $(readlink -f ../results/full.fas) \
+         -d 160
 
 DBJOINED=""
 #create file in which selected dbs are written
@@ -315,9 +320,7 @@ hhsearch -cpu %THREADS \
          -sc 1 \
          -seq 1 \
          -dbstrlen 10000 \
-         -cs ${HHLIB}/data/context_data.lib \
-         -atab $(readlink -f ../results/hhsearch.start.tab)
-
+         -cs ${HHLIB}/data/context_data.lib
 
 echo "done" >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
@@ -326,14 +329,14 @@ echo "#Preparing output." >> ../results/process.log
 curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
 
 #create full alignment json; use for forwarding
-fasta2json.py ../results/alignment.fas ../results/reduced.json
+fasta2json.py ../results/reduced.fas ../results/reduced.json
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 #Generate query template alignment
-hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/querytemplateMSA.fas -p %pmin.content
+hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/alignment.fas -p %pmin.content
 # Generate Query in JSON
-fasta2json.py ../results/querytemplateMSA.fas ../results/querytemplate.json
+fasta2json.py ../results/alignment.fas ../results/querytemplate.json
 
 
 # Generate Hitlist in JSON for hhrfile
