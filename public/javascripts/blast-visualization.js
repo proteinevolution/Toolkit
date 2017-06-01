@@ -140,8 +140,6 @@ function resubmitSection(sequence, name) {
 }
 
 
-
-
 /* FORWARDING */
 
 // parameter: tool (String)
@@ -161,7 +159,7 @@ $(document).ready(function() {
     var resultcookie = localStorage.getItem("resultcookie");
     $('#alignment').val(resultcookie);
     localStorage.removeItem("resultcookie");
-    $.LoadingOverlay("hide")
+    $.LoadingOverlay("hide");
 });
 
 
