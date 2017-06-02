@@ -40,28 +40,28 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
-      Ok
+      Ok("done")
     } else BadRequest("Permission denied")
   }
 
   def jobStatusError(jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Error))
-      Ok
+      Ok("error")
     } else BadRequest("Permission denied")
   }
 
   def jobStatusRunning(jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Running))
-      Ok
+      Ok("running")
     } else BadRequest("Permission denied")
   }
 
   def jobStatusQueued(jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Queued))
-      Ok
+      Ok("queued")
     } else BadRequest("Permission denied")
   }
 
@@ -71,19 +71,20 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   }
 
   //TODO make <strike>america</strike> Jobs <strike>great</strike> secure again!
-  def SGEID(jobID: String, sgeID: String) = Action {
+  def SGEID(jobID: String, sgeID: String) = Action.async {
 
-    findJob(BSONDocument(Job.JOBID -> jobID)).foreach {
+    findJob(BSONDocument(Job.JOBID -> jobID)).map {
 
       case Some(job) =>
         modifyJob(BSONDocument(Job.JOBID -> job.jobID),
                   BSONDocument("$set"    -> BSONDocument("clusterData.sgeid" -> sgeID)))
         Logger.info(jobID + " gets job-ID " + sgeID + " on SGE")
+        Ok
       case None =>
         Logger.info("Unknown ID " + jobID.toString)
+        BadRequest
     }
 
-    Ok
 
   }
 

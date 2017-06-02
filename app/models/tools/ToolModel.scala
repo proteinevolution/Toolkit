@@ -401,7 +401,6 @@ final class ToolFactory @Inject()(
        paramAccess.SELF_ALN_PVAL_THRESHOLD,
        paramAccess.MERGE_ITERS,
        paramAccess.MAC_CUTOFF,
-       paramAccess.ALN_STRINGENCY,
        paramAccess.DOMAIN_BOUND_DETECTION
      ),
      Seq.empty,
@@ -704,15 +703,14 @@ final class ToolFactory @Inject()(
               this.values(Toolnames.HHPRED))
         }
       },
-      "RepresentativeQueryMSA" -> { (jobID, requestHeader) =>
+      "QueryMSA" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
           case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignment(jobID,
+            views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
               aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
               "reduced",
               this.values(Toolnames.HHPRED))
-
         }
       }
     ),

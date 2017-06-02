@@ -241,7 +241,6 @@ class ParamAccess @Inject()(tel: TEL) {
   final val MERGE_ITERS             = select("merge_iters", "Merge rounds")
   final val MAC_CUTOFF              = select("mac_cutoff", "MAC threshold")
   final val DOMAIN_BOUND_DETECTION  = select("domain_bound_detection", "Domain boundary detection")
-  final val ALN_STRINGENCY          = select("aln_stringency", "Alignment stringency")
   final val OUTPUT_ORDER            = select("output_order", "Output the alignment in:")
   final val EVAL_TPR                = select("eval_tpr", "E-value inclusion TPR & SEL")
   final val CODON_TABLE_ORGANISM    = Param("codon_table_organism", Text, 1, "Use codon usage table of")

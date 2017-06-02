@@ -51,6 +51,7 @@
                     <th>Id</th>
                     <th>Title</th>
                     <th>E-value</th>
+                    <th>Ind. E-value</th>
                     <th>Bitscore</th>
                     <th>Aligned positions</th>
                 </tr>
@@ -100,11 +101,6 @@
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits).then(function(){
-                    // check checkboxes that are stored in array
-                    // in order to make it work with pagination/lazyload
-                    selectFromArray(checkboxes);
-                    // link checkboxes from hitlist and alignment, push
-                    // val of each checkbox in checkboxes array
                     linkCheckboxes();
                 });
             }
@@ -118,7 +114,10 @@
                 "autoWidth": false,
                 "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
                 "searching": false,
-                "iDisplayLength": 10
+                "iDisplayLength": 10,
+                "drawCallback": function() {
+                    selectFromArray(checkboxes);
+                }
             });
         }
 
@@ -131,6 +130,12 @@
                     route = jsRoutes.controllers.HmmerController.evalFull(jobID, evalue);
                 } else {
                     route = jsRoutes.controllers.HmmerController.full(jobID);
+                    if(data.checkboxes.length == 0){
+                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                        $.LoadingOverlay("hide")
+                        alert("No sequences selected!");
+                        return false;
+                    }
                 }
                 $.ajax({
                     url: route.url,
@@ -188,6 +193,8 @@
                     if (shownHits != numHits) {
                         $('#loadHits').show();
                     }
+                    selectFromArray(checkboxes);
+                    $("#alignments").floatingScroll('init');
                 });
             }
         }
