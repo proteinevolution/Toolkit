@@ -121,7 +121,6 @@
 		        shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits).then(function(){
                     linkCheckboxes();
-                    $("#alignments").floatingScroll('init');
                 });
                 $('#templateAlignmentModal').foundation()
             }
@@ -274,6 +273,7 @@
                         $('#loadHits').show();
                     }
                     selectFromArray(checkboxes);
+                    $("#alignments").floatingScroll('init');
                 });
             }
         }

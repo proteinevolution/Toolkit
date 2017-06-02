@@ -94,7 +94,6 @@ $(document).ready( function(){
         shownHits = shownHits > numHits ? numHits : shownHits;
         getHits(0, shownHits).then(function(){
             linkCheckboxes();
-            $("#alignments").floatingScroll('init');
         });
 }
 });
@@ -186,6 +185,7 @@ function getHits(start, end){
             }
             selectFromArray(checkboxes);
             getCheckedCheckboxes();
+            $("#alignments").floatingScroll('init');
         });
     }
 }
