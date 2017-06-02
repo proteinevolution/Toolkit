@@ -29,14 +29,13 @@ window.JobModel = {
         "macmode": "off",
         "macthreshold":"0.3",
         "max_hhblits_iter":"0",
-        "score_ss":"1",
+        "score_ss":"2",
         "ss_scoring":"2",
         "rep_pval_threshold":"1e-2",
         "self_aln_pval_threshold":"1e-1",
         "merge_iters":"3",
         "mac_cutoff":"0.3",
-        "domain_bound_detection":"0",
-        "aln_stringency":"0.3",
+        "domain_bound_detection":"1",
         "gap_ext_kaln":"0.85",
         "gap_term":"0.45",
         "bonusscore":"0",
@@ -103,7 +102,7 @@ window.JobModel = {
             }, 100);
             window.JobModel.paramValues["alignment"] = resultcookie;
             localStorage.removeItem("resultcookie");
-            $.LoadingOverlay("hide")
+            $.LoadingOverlay("hide");
         }
         let val = window.JobModel.paramValues[param];
         let defVal = window.JobModel.defaultValues[param];
