@@ -132,6 +132,7 @@
                     route = jsRoutes.controllers.HmmerController.full(jobID);
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                        $.LoadingOverlay("hide")
                         alert("No sequences selected!");
                         return false;
                     }
