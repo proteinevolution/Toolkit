@@ -11,7 +11,10 @@ if [ "$HOSTNAME" = "olt" ] || [ "$HOSTNAME" = "rye" ]; then
 QUEUE=%QUEUE
 JOBID=$(basename $(dirname $(pwd)))
 
-curl -X POST http://%HOSTNAME:%PORT/jobs/queued/$JOBID/$key
+until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/queued/$JOBID/$key); do
+    printf 'host unreachable\n...waiting to set job status to queued\n'
+    sleep 5
+done
 
 if [ "$HOSTNAME" = "olt" ]
   then
