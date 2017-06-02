@@ -27,5 +27,3 @@ addSbtPlugin("net.ground5hark.sbt" % "sbt-concat" % "0.1.9")
 addSbtPlugin("com.typesafe.sbt" % "sbt-aspectj" % "0.10.6")
 
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.6.8")
-
-addSbtPlugin("net.ground5hark.sbt" % "sbt-css-compress" % "0.1.4")
