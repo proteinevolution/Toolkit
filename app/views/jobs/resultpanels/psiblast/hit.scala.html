@@ -41,7 +41,7 @@
 </tr>
 @* color only 150 first hits, to avoid bloating of the generated html*@
     @* Query *@
-    @if(hit.num > 100) {
+    @if(hit.num > 0) {
         @{
             BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, hit.query_seq+ "   " + hit.query_end.toString))
         }
