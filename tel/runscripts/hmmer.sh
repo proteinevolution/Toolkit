@@ -111,6 +111,7 @@ updateProcessLog
 
     ${HMMERPATH}/hmmsearch --cpu %THREADS \
           -E %evalue.content \
+          --incE %evalue.content \
           -o ../results/${JOBID}.outfile \
           -A ../results/${JOBID}.msa_sto \
           ../results/${JOBID}.hmm  %STANDARD/%hmmerdb.content
