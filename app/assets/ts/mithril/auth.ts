@@ -553,13 +553,13 @@ class Profile {
                             "class":        'auth-form',
                             novalidate:   'novalidate',
                             onsubmit:     Profile.submit,
-                            config: foundationInit
+                            config: foundationInit,
         }, [
                     m("div", m("label", [
                         m("input", { id:          'nameFirst',
                                      name:        'nameFirst',
-                                     pattern:     '[a-zA-Z0-9_]{0,100}',
-                                     placeholder: 'First Name',
+                                     pattern:     '[a-zA-Z0-9_]{0,25}',
+                                     placeholder:  Auth.user.nameFirst != null ? Auth.user.nameFirst : 'First Name',
                                      type:        'text',
                                      onkeyup:     m.withAttr("value", Profile.userSetter("nameFirst")),
                                      onchange:    m.withAttr("value", Profile.userSetter("nameFirst")),
@@ -567,13 +567,13 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.nameFirst
                         }),
-                        m("span", { "class" : "form-error"}, "First name can be only 100 characters long!")
+                        m("span", { "class" : "form-error"}, "First name can be only 25 characters long!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:          'nameLast',
                                      name:        'nameLast',
-                                     pattern:     '[a-zA-Z0-9_]{0,100}',
-                                     placeholder: 'Last Name',
+                                     pattern:     '[a-zA-Z0-9_]{0,25}',
+                                     placeholder: Auth.user.nameLast != null ? Auth.user.nameLast : 'Last Name',
                                      type:        'text',
                                      onkeyup:     m.withAttr("value", Profile.userSetter("nameLast")),
                                      onchange:    m.withAttr("value", Profile.userSetter("nameLast")),
@@ -581,7 +581,7 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.nameLast
                         }),
-                        m("span", { "class":"form-error"}, "Last name can be only 100 characters long!")
+                        m("span", { "class":"form-error"}, "Last name can be only 25 characters long!")
                     ])),
                     m("div", m("label", [
                         m("input", { id:          'eMail',
@@ -595,7 +595,7 @@ class Profile {
                                      onblur:      focusOutRedraw,
                                      value:       Profile.user.eMail
                         }),
-                        m("span", { "class":"form-error"}, "Please enter a valid e-Mail address!")
+                        m("span", { "class":"form-error"}, "Please enter a valid e-mail!")
                     ])),
                     m("div", { "class": "country_drop" },
                         m("select", { name:"country", onchange: m.withAttr("value", Profile.userSetter("country")) },
@@ -619,7 +619,8 @@ class Profile {
                                      onfocus:     focusInNoRedraw,
                                      onblur:      focusOutRedraw,
                                      value:       Profile.password
-                        })
+                        }),
+                        m("span", { "class":"form-error"}, "Please enter your password!")
                     ])),
                     m("input", { "class": "input small expanded secondary button",
                                  id:    'edit-form-submit',
