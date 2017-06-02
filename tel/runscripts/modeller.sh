@@ -5,16 +5,16 @@
 
 if [ "%regkey.content" = "MODELIRANJE" ] ; then
       echo "#Starting MODELLER." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
 else
       echo "#Incorrect registration key. Please register here: https://salilab.org/modeller/registration.html." >> ../results/process.log
       echo "error" >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 #convert alignment file to PIR, if it is not already PIR
 
@@ -65,17 +65,17 @@ mv modeller.log ../logs/
 mv ${FILENAME}* ../results/
 
 echo "#Running quality checks on the model." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 #quality check
 cd ../results
 mv `echo *[0-9].pdb` ${FILENAME}.pdb
 
 echo "#Running VERIFY3D." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 #VERIFY3D
 mkdir verify3d
@@ -100,10 +100,10 @@ mv ${FILENAME}.verify3d.png ../
 cd ../
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "#Running ANOLEA." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 #ANOLEA
 mkdir anolea
@@ -117,10 +117,10 @@ mv anolea/${FILENAME}.anolea.png .
 
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "#Running Solvx." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 #Solvx
 mkdir solvx
@@ -133,4 +133,4 @@ perl ${BIOPROGS}/helpers/Solvx/solvx_graphics.pl "${FILENAME}" . > ${FILENAME}.l
 mv ${FILENAME}.solvx.png ../
 cd ../
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog

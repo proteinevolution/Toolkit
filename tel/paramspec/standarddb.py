@@ -6,7 +6,7 @@ def print_args(args):
     print(args[-1] + ' '+  '_'.join(args[:-1]))
 
 def main(argv):
-    path = "%STANDARD/STANDARDDB"
+    path = "%STANDARD/DB"
     # If directory does not exist, print random stuff
     if not os.path.exists(path):
         print("foo bar")

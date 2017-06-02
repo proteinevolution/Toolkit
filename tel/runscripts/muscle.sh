@@ -4,19 +4,19 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} = "0" ] ; then
       echo "#Invalid input format. Input should be in FASTA format." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -lt "2" ] ; then
       echo "#Input should contain at least 2 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
@@ -28,23 +28,23 @@ OUTFORMAT=$(reformatValidator.pl fas ufas \
 if [ "${OUTFORMAT}" = "ufas" ] ; then
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
     echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
 else
     echo "#Input is not in FASTA format." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     false
 fi
 echo "done"  >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 if [ ${SEQ_COUNT} -gt "2000" ] ; then
       echo "#Input contains more than 2000 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
 echo "#Aligning sequences with MUSCLE."  >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 
 muscle -in %alignment.path \
@@ -53,13 +53,13 @@ muscle -in %alignment.path \
        -quiet
 
 echo "done"  >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "#Preparing output." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "done"  >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 reformat_hhsuite.pl fas clu ../results/alignment.fas  ../results/alignment.clustalw_aln
 

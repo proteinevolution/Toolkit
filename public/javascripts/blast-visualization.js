@@ -135,11 +135,9 @@ function resubmitSection(sequence, name) {
     resubmitSeqs.push(name + '\n');
     resubmitSeqs.push(sequence.substr(sliderRange[0], sliderRange[1]) + '\n');
 
-    $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
+    $('a[href="#tabpanel-Input"]').click();
     $('#alignment').val(resubmitSeqs.join(''));
 }
-
-
 
 
 /* FORWARDING */
@@ -161,7 +159,7 @@ $(document).ready(function() {
     var resultcookie = localStorage.getItem("resultcookie");
     $('#alignment').val(resultcookie);
     localStorage.removeItem("resultcookie");
-    $.LoadingOverlay("hide")
+    $.LoadingOverlay("hide");
 });
 
 
@@ -341,7 +339,6 @@ Array.prototype.removeDuplicates = function () {
 };
 
 
-
 function selectAll(){
     selectAllBool = !selectAllBool;
     if(selectAllBool) {
@@ -384,7 +381,7 @@ function linkCheckboxes(){
 
         if (currentState) {
             // push num of checked checkbox into array
-            checkboxes.push(currentVal);
+            checkboxes.push(parseInt(currentVal));
             // make sure array contains no duplicates
             checkboxes = checkboxes.filter(function (value, index, array) {
                 return array.indexOf(value) == index;
