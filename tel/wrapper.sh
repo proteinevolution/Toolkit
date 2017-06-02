@@ -8,6 +8,15 @@ key=`date | md5sum | awk '{print $1}'`
 echo $key > ../key
 if [ "$HOSTNAME" = "olt" ] || [ "$HOSTNAME" = "rye" ]; then
 
+
+# update process log
+updateProcessLog () {
+    until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content); do
+        printf 'host unreachable\n...waiting to update process log\n'
+        sleep 5
+    done
+}
+
 QUEUE=%QUEUE
 JOBID=$(basename $(dirname $(pwd)))
 

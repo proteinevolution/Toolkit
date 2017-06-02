@@ -5,7 +5,7 @@ FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
@@ -15,7 +15,7 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
 
       if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            updateProcessLog
             false
       else
             sed -i "1 i\>${JOBID}" ../params/alignment1
@@ -37,7 +37,7 @@ fi
 
 if [ ! -f ../results/${JOBID}.fas ]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     false
 fi
 
@@ -45,26 +45,26 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
 if [ ${SEQ_COUNT} -gt "2000" ] ; then
       echo "#Input contains more than 2000 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+       updateProcessLog
 fi
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 mv ../results/${JOBID}.fas ../params/alignment
 
 #CHECK IF MSA generation is required or not
 if [ %msa_gen_max_iter.content == "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         echo "#No MSA generation required." >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 
         reformat_hhsuite.pl fas a3m %alignment.path query.a3m -M first
         mv query.a3m ../results/query.a3m
@@ -78,7 +78,7 @@ else
         echo "#MSA generation required. Running %msa_gen_max_iter.content iterations of HHblits." >> ../results/process.log
     fi
 
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     hhblits -cpu 8 \
             -v 2 \
             -i %alignment.path \
@@ -91,7 +91,7 @@ else
 fi
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 addss.pl ../results/query.a3m
 
@@ -109,7 +109,7 @@ reformat_hhsuite.pl a3m fas \
 cp ../results/query.reduced.a3m ../results/query.a3m
 
 echo "#Running HHblits." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 hhrepid -qsc 0.$i \
         -i ../results/query.a3m \
@@ -128,4 +128,4 @@ hhrepid -qsc 0.$i \
         -domm %domain_bound_detection.content
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
