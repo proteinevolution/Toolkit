@@ -155,6 +155,7 @@
                     route = jsRoutes.controllers.HHblitsController.full('@jobID');
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                        $.LoadingOverlay("hide")
                         alert("No sequences selected!");
                         return false;
                     }
