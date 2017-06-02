@@ -339,7 +339,6 @@ Array.prototype.removeDuplicates = function () {
 };
 
 
-
 function selectAll(){
     selectAllBool = !selectAllBool;
     if(selectAllBool) {
@@ -382,7 +381,7 @@ function linkCheckboxes(){
 
         if (currentState) {
             // push num of checked checkbox into array
-            checkboxes.push(currentVal);
+            checkboxes.push(parseInt(currentVal));
             // make sure array contains no duplicates
             checkboxes = checkboxes.filter(function (value, index, array) {
                 return array.indexOf(value) == index;
