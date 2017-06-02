@@ -51,6 +51,7 @@
                     <th>Id</th>
                     <th>Title</th>
                     <th>E-value</th>
+                    <th>Ind. E-value</th>
                     <th>Bitscore</th>
                     <th>Aligned positions</th>
                 </tr>
@@ -101,7 +102,6 @@
                 shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits).then(function(){
                     linkCheckboxes();
-                    $("#alignments").floatingScroll('init');
                 });
             }
         });
@@ -194,6 +194,7 @@
                         $('#loadHits').show();
                     }
                     selectFromArray(checkboxes);
+                    $("#alignments").floatingScroll('init');
                 });
             }
         }
