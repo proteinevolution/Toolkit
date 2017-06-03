@@ -38,6 +38,8 @@ import scala.util.{Failure, Success}
 
 object JobActor {
 
+  case class CreateJob(jobID: String, user: User, toolname: String, params: Map[String, String])
+
   case class PrepareJob(job: Job,
                         params: Map[String, String],
                         startJob: Boolean = false,
