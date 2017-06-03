@@ -1088,10 +1088,3 @@ h6 {
     margin: 1em;
 }
 
-.modellerKey .valid{
-    color: rgb(219, 255, 219);
-}
-
-.modellerKey .invalid{
-    background-color: rgb(255, 221, 221);
-}
