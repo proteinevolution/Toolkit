@@ -73,7 +73,7 @@ fi
 
 if [ "%pcoils_input_mode.content" = "2" ]; then
 
-        echo "#MSA generation required. Running 1 iterations of PSI-BLAST against nr70." >> ../results/process.log
+        echo "#MSA generation required. Running 1 iteration of PSI-BLAST against nr70." >> ../results/process.log
         updateProcessLog
 
         INPUT="query"
