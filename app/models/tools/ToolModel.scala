@@ -77,7 +77,6 @@ final class ToolFactory @Inject()(
     final val HHPRED              = "hhpred"
     final val HHPRED_ALIGN        = "hhpred_align"
     final val HHPRED_MANUAL       = "hhpred_manual"
-    final val HHPRED_AUTOMATIC    = "hhpred_automatic"
     final val HHREPID             = "hhrepid"
     final val ALI2D               = "ali2d"
     final val CLUSTALO            = "clustalo"
@@ -145,8 +144,6 @@ final class ToolFactory @Inject()(
      Seq.empty),
     // HHpred - Manual Template Selection
     ("hhpred_manual", Seq.empty, Seq.empty, Seq.empty),
-    // HHpred - Manual Template Selection
-    ("hhpred_automatic", Seq.empty, Seq.empty, Seq.empty),
     // PSI-BLAST
     ("psiblast",
      Seq(
@@ -737,12 +734,6 @@ final class ToolFactory @Inject()(
       Resultviews.SUMMARY -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out"))
-      }
-    ),
-    Toolnames.HHPRED_AUTOMATIC -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/out.hhr"))
       }
     ),
     Toolnames.HHREPID -> ListMap(
