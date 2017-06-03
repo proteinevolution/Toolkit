@@ -4,14 +4,16 @@ import javax.inject.{Inject, Singleton}
 
 import actors.WebSocketActor.{ChangeSessionID, LogOut}
 import akka.actor.ActorRef
+import models.Constants
 import models.auth._
-import models.database.users.{User, UserToken}
+import models.database.users.{User, UserConfig, UserToken}
 import models.job.JobActorAccess
 import models.mailing.{ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail}
 import models.tools.ToolFactory
 import modules.{CommonModule, LocationProvider}
 import modules.tel.TEL
 import org.joda.time.DateTime
+import org.mindrot.jbcrypt.BCrypt
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -43,6 +45,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     with JSONTemplate
     with UserSessions
     with Common
+    with Constants
     with CommonModule {
 
   /**
@@ -638,6 +641,29 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
               views.html.main(webJarAssets,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                               "There was an error finding your account.")))
+      }
+    }
+  }
+
+  def validateModellerKey(input: String): Action[AnyContent] = Action.async { implicit request =>
+    getUser.flatMap { user =>
+      if (user.userConfig.hasMODELLERKey) {
+        Future.successful(Ok(Json.obj("isValid" -> true)))
+      } else if (input == modellerKey) {
+        modifyUserWithCache(BSONDocument(User.IDDB -> user.userID),
+          BSONDocument("$set" ->
+            BSONDocument(
+              s"${User.USERCONFIG}.${UserConfig.HASMODELLERKEY}" ->
+                true)
+          )).map {
+          case Some(_) =>
+            Ok(Json.obj("isValid" -> true))
+          case None =>
+            BadRequest
+        }
+      }
+      else {
+        Future.successful(Ok(Json.obj("isValid" -> false)))
       }
     }
   }
