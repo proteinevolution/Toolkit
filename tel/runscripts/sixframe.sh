@@ -38,7 +38,7 @@ updateProcessLog
 echo "#Running 6FrameTranslation on the input DNA sequence." >> ../results/process.log
 updateProcessLog
 
-java -Xmx4G -cp ${BIOPROGS}/tools/sixframe translate \
+java -Xmx256m -cp ${BIOPROGS}/tools/sixframe translate \
                       -i %alignment.path \
                       -o ../results/${JOBID}.out \
                       -seq %inc_nucl.content \
