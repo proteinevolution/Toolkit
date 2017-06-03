@@ -5,18 +5,16 @@ import reactivemongo.bson._
 /**
   * Created by astephens on 20.08.16.
   */
-case class UserConfig(defaultPublic: Boolean = false, defaultComments: Boolean = false, hasMODELLERKey : Boolean = false)
+case class UserConfig(defaultPublic: Boolean = false, defaultComments: Boolean = false)
 
 object UserConfig {
   final val DEFAULTPUBLIC   = "defaultPublic"
   final val DEFAULTCOMMENTS = "defaultComments"
-  final val HASMODELLERKEY  = "modellerKey"
 
   implicit object Reader extends BSONDocumentReader[UserConfig] {
     override def read(bson: BSONDocument): UserConfig = UserConfig(
       defaultPublic = bson.getAs[Boolean](DEFAULTPUBLIC).getOrElse(false),
-      defaultComments = bson.getAs[Boolean](DEFAULTCOMMENTS).getOrElse(false),
-      hasMODELLERKey = bson.getAs[Boolean](HASMODELLERKEY).getOrElse(false)
+      defaultComments = bson.getAs[Boolean](DEFAULTCOMMENTS).getOrElse(false)
     )
   }
 
@@ -27,8 +25,7 @@ object UserConfig {
       else
         BSONDocument(
           DEFAULTPUBLIC   -> BSONBoolean(userConfig.defaultPublic),
-          DEFAULTCOMMENTS -> BSONBoolean(userConfig.defaultPublic),
-          HASMODELLERKEY  -> BSONBoolean(userConfig.hasMODELLERKey)
+          DEFAULTCOMMENTS -> BSONBoolean(userConfig.defaultPublic)
         )
   }
 }
