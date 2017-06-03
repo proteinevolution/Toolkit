@@ -301,20 +301,22 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                                    User.DATELASTLOGIN -> bsonCurrentTime,
                                    User.DATEUPDATED   -> bsonCurrentTime))
 
-                  val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
-                  findUser(selectorMail).flatMap {
-                    case Some(_) =>
-                      Future.successful(Ok(AccountEmailUsed()))
-                    case None =>
-                      modifyUserWithCache(selector, modifier).map {
-                        case Some(updatedUser) =>
-                          // Everything is ok, let the user know that they are logged in now
-                          Ok(EditSuccessful(updatedUser))
-                        case None =>
-                          // User has been found in the DB at first but now it cant be retrieved
-                          Ok(LoginError())
-                      }
+                  if(editedProfileUserData.eMail != user.getUserData.eMail) {
+                    val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
+                    findUser(selectorMail).flatMap {
+                      case Some(_) =>
+                        Future.successful(Ok(AccountEmailUsed()))
+                    }
                   }
+                  modifyUserWithCache(selector, modifier).map {
+                    case Some(updatedUser) =>
+                      // Everything is ok, let the user know that they are logged in now
+                      Ok(EditSuccessful(updatedUser))
+                    case None =>
+                      // User has been found in the DB at first but now it cant be retrieved
+                      Ok(LoginError())
+                  }
+
                 case None =>
                   // Password was incorrect
                   Future.successful(Ok(PasswordWrong()))
