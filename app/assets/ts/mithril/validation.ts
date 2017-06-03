@@ -1,7 +1,7 @@
 /**
  * Created by snam on 03.03.17.
  */
-/// <reference path="parametercomponents.ts"/>
+
 
 let seqLimit : any;
 let charLimitPerSeq : any;
@@ -557,6 +557,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let modellerTarget = new alignmentVal($(elem));
             modellerTarget.modellerValidation();
+
             break;
 
         case "samcc":
@@ -973,9 +974,6 @@ class alignmentVal implements ToolkitValidator {
 
         else {
             feedback(false, "Valid input", "success");
-            if(ParameterModellerKeyComponent.keyStored){
-                $(".submitJob").attr("disabled", false);
-            }
             modellerIsValid = true;
         }
     }
