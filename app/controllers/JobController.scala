@@ -3,7 +3,7 @@ package controllers
 import java.io.{FileInputStream, ObjectInputStream}
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobActor.{CreateJob, Delete, PrepareJob, StartJob}
+import actors.JobActor.{Delete, PrepareJob, StartJob}
 import actors.JobIDActor
 import akka.actor.ActorRef
 import models.Constants
@@ -108,16 +108,18 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               val toolParams = toolFactory.values(toolName).params
 
               // Filter invalid parameters
-              val params =
+              var params : Map[String, String] = formData
                 formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
                   paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
                 }
+              params = params.updated("regkey", modellerKey)
               // get checkbox value
               // TODO: mailUpdate some how gets lost in the filter function above
               val emailUpdate = formData.get("emailUpdate") match {
                 case Some(x) => true
                 case _ => false
               }
+              println(params.mkString(","))
               // Set job as either private or public
               val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
               // Get the current date to set it for all three dates
@@ -131,7 +133,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 emailUpdate =  emailUpdate,
                 tool = toolName,
                 toolnameLong = None,
-                label = params.get("label").flatten,
+                label = params.get("label"),
                 watchList = List(user.userID),
                 dateCreated = Some(jobCreationTime),
                 dateUpdated = Some(jobCreationTime),
@@ -149,7 +151,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               insertJob(job).map {
                 case Some(_) =>
                   // Send the job to the jobActor for preparation
-                  jobActorAccess.sendToJobActor(jobID, PrepareJob(job, formData, startJob = false, isFromInstitute))
+                  jobActorAccess.sendToJobActor(jobID, PrepareJob(job, params, startJob = false, isFromInstitute))
                   // Notify user that the job has been submitted
                   Ok(Json.obj("successful" -> true, "jobID" -> jobID))
                     .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
