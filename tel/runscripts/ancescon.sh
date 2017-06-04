@@ -73,3 +73,9 @@ updateProcessLog
 
 cp ../results/${JOBID}.clu.tre  ../results/${JOBID}.clu.orig.tre
 ancescontreemerger.pl -n ../results/${JOBID}.names -t ../results/${JOBID}.clu.tre
+
+rm ../results/${JOBID}.clu.dis
+rm ../results/${JOBID}.names
+rm ../results/${JOBID}.clu
+rm ../results/${JOBID}.clu.orig.tre
+rm ../results/${JOBID}.in

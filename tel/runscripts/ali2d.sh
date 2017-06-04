@@ -71,7 +71,6 @@ updateProcessLog
 echo "#Generating output pages." >> ../results/process.log
 updateProcessLog
 
-
 java -Xmx8000m -jar ${ALI2DPATH}/buildParams.jar ../results/${JOBID}.aln ../results/${JOBID}.mainlog > ../results/${JOBID}.results
 
 /usr/bin/python ${ALI2DPATH}/viewer.py ../results/${JOBID}.results ../results/${JOBID}.results_colorC color true
@@ -79,3 +78,7 @@ java -Xmx8000m -jar ${ALI2DPATH}/buildParams.jar ../results/${JOBID}.aln ../resu
 
 echo "done" >> ../results/process.log
 updateProcessLog
+
+cd ../results/
+rm *.memsat2* *.fas* *.mainlog *.ss *.ss2 *.horiz *.aln
+rm *.*.log

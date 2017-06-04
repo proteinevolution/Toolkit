@@ -129,3 +129,5 @@ hhrepid -qsc 0.$i \
 
 echo "done" >> ../results/process.log
 updateProcessLog
+
+rm ../results/query.reduced.a3m ../results/query.a3m

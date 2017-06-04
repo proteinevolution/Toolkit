@@ -88,11 +88,6 @@ else
             -n %max_hhblits_iter.content \
             -mact 0.35
 
-    #Filter down to a maximum 90% pairwise sequence identity
-    hhfilter -i ../results/${JOBID}.a3m \
-             -o ../results/${JOBID}.reduced.a3m \
-             -id 90
-
     #Convert to fasta format
     reformat_hhsuite.pl a3m fas ../results/${JOBID}.a3m $(readlink -f ../results/${JOBID}.fas)
 
@@ -100,6 +95,10 @@ else
              -n "${JOBID}" \
              ../results/${JOBID}.hmm \
              ../results/${JOBID}.fas
+
+    rm ../results/*.hhr
+    rm ../results/*.a3m
+
 fi
 
 echo "done" >> ../results/process.log
@@ -145,6 +144,9 @@ blastviz_json.pl ../results/${JOBID}.tab %jobid.content ../results/ ../results/ 
 
 # Generate MSA in JSON
 fasta2json.py ../results/${JOBID}.msa_fas ../results/alignment.json
+
+cd ../results
+rm *.hmm *.outfile
 
 echo "done" >> ../results/process.log
 updateProcessLog
