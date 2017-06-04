@@ -69,3 +69,5 @@ reformat_hhsuite.pl fas clu ../results/alignment.fas ../results/alignment.clusta
 
 # Convert fasta to JSON
 fasta2json.py ../results/alignment.fas ../results/alignment.json
+
+rm ../results/alignment.a3m
