@@ -657,7 +657,7 @@ final class ToolFactory @Inject()(
       }
     ),
     Toolnames.HMMER -> ListMap(
-      Resultviews.HITLIST -> { (jobID, requestHeader) =>
+      Resultviews.RESULTS -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
           case Some(jsvalue) =>
@@ -665,7 +665,15 @@ final class ToolFactory @Inject()(
             views.html.jobs.resultpanels.hmmer.hitlist(jobID, hmmer.parseResult(jsvalue), this.values(Toolnames.HMMER))
         }
       },
-      "E-Value-Plot" -> { (jobID, requestHeader) =>
+      "Unformatted Output" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        Future.successful(
+          views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".outfilefl",
+            s"$jobPath$jobID/results/" + jobID + ".outfilefl",
+            jobID,
+            "HMMER_OUTPUT"))
+      },
+      "E-Value Plot" -> { (jobID, requestHeader) =>
         getResult(jobID).map {
           case Some(jsvalue) =>
             implicit val r = requestHeader
