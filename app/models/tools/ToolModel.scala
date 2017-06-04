@@ -511,7 +511,7 @@ final class ToolFactory @Inject()(
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
   val resultMap: Map[String, ListMap[String, (String, play.api.mvc.RequestHeader) => Future[HtmlFormat.Appendable]]] = Map(
     Toolnames.PSIBLAST -> ListMap(
-      Resultviews.HITLIST -> { (jobID, requestHeader) =>
+      Resultviews.RESULTS -> { (jobID, requestHeader) =>
         getResult(jobID).map {
 
           case Some(jsvalue) =>
@@ -519,7 +519,15 @@ final class ToolFactory @Inject()(
             views.html.jobs.resultpanels.psiblast.hitlist(jobID, psi.parseResult(jsvalue), this.values("psiblast"))
         }
       },
-      "E-Value-Plot" -> { (jobID, requestHeader) =>
+      "Unformatted Output" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        Future.successful(
+          views.html.jobs.resultpanels.fileviewWithDownload("output_psiblastp.html",
+            s"$jobPath$jobID/results/" + "output_psiblastp.html",
+            jobID,
+            "PSI-BLAST_OUTPUT"))
+      },
+      "E-Value Plot" -> { (jobID, requestHeader) =>
         getResult(jobID).map {
           case Some(jsvalue) =>
             implicit val r = requestHeader
