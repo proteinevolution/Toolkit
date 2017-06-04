@@ -139,3 +139,7 @@ manipulate_json.py -k 'db' -v '%standarddb.content' ../results/output_psiblastp.
 
 # add evalue to json
 manipulate_json.py -k 'evalue' -v '%hhpred_incl_eval.content' ../results/output_psiblastp.json
+
+cd ../results
+
+rm output_psiblastp.asn output_psiblastp.tab
