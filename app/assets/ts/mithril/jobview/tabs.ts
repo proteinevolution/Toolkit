@@ -157,7 +157,7 @@ let JobTabsComponent = {
                 }, [
                     m("textarea", {
                         "class" : "noteArea",
-                        placeholder: "Type private notes here",
+                        placeholder: "Type notes here",
                         rows: 18,
                         cols: 70,
                         id: "notepad" + ctrl.job().jobID,
