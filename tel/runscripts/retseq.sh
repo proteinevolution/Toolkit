@@ -19,7 +19,7 @@ updateProcessLog
 seq_retrieve.pl -i %alignment.path \
                 -o ../results/sequences.fa \
                 -d %STANDARD/%standarddb.content \
-                -unique %unique_sequence.content > ../results/unretrievable
+                -unique T > ../results/unretrievable
 
 reformat_hhsuite.pl fas ufas \
             $(readlink -f ../results/sequences.fa) \
