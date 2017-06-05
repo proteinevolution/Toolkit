@@ -920,7 +920,7 @@ final class ToolFactory @Inject()(
                                          "mmseqs_reps",
                                          this.values(Toolnames.MMSEQS2)))
       },
-      Resultviews.SUMMARY -> { (jobID, requestHeader) =>
+      "Clusters" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(views.html.jobs.resultpanels
           .fileviewWithDownload(jobID + ".clu", s"$jobPath$jobID/results/" + jobID + ".clu", jobID, "mmseqs_clusters"))
