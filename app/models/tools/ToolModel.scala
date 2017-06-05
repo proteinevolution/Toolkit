@@ -433,7 +433,7 @@ final class ToolFactory @Inject()(
      Seq.empty),
     // RetrieveSeq
     ("retseq",
-     Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE),
+     Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB),
      Seq("clans",
          "mmseqs2"),
      Seq.empty),

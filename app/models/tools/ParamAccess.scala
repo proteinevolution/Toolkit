@@ -226,7 +226,6 @@ class ParamAccess @Inject()(tel: TEL) {
   final val NUM_SEQS_EXTRACT       =  Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
   final val SCORE_SS                = select("score_ss", "Score secondary structure")
   final val SS_SCORING              = select("ss_scoring", "SS Scoring")
-  final val UNIQUE_SEQUENCE         = select("unique_sequence", "Retrieve only unique sequences")
   final val MIN_SEQID               = select("min_seqid", "Minimum sequence identity")
   final val MIN_ALN_COV             = select("min_aln_cov", "Minimum alignment coverage")
   final val GRAMMAR                 = select("grammar", "Select grammar")
