@@ -100,9 +100,7 @@
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits).then(function(){
-                    linkCheckboxes();
-                });
+                getHits(0, shownHits);
             }
         });
 
@@ -116,6 +114,7 @@
                 "searching": false,
                 "iDisplayLength": 10,
                 "drawCallback": function() {
+                    linkCheckboxes();
                     selectFromArray(checkboxes);
                 }
             });
@@ -193,6 +192,7 @@
                     if (shownHits != numHits) {
                         $('#loadHits').show();
                     }
+                    linkCheckboxes();
                     selectFromArray(checkboxes);
                     $("#alignments").floatingScroll('init');
                 });

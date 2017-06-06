@@ -13,9 +13,9 @@
 @* checkboxes, accession, name of hit*@
 <tr class="header">
     @if(hit.checked){
-        <td class="indexCheckbox"><input type="checkbox" checked="true" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
+        <td class="indexCheckbox"><input type="checkbox" checked="true" name="alignment_elem" class="checkbox aln" value='@{hit.num}'> @{hit.num}.</td>
     }else{
-        <td class="indexCheckbox"><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
+        <td class="indexCheckbox"><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}'> @{hit.num}.</td>
     }
 <td class="hitInfo" colspan="4">
     @{BlastVisualization.getSingleLinkDB(db , hit.accession)}
