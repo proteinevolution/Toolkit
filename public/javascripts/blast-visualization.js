@@ -255,7 +255,7 @@ function scrollToElem(num){
     if (num > shownHits) {
         $.LoadingOverlay("show");
         getHits(shownHits, num, colorAAs).done(function(data){
-            var pos = $('input[name=templates][value=' + num + ']').offset().top;
+            var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
             }, 'fast')
@@ -264,7 +264,7 @@ function scrollToElem(num){
         });
         shownHits = num;
     }else{
-        var pos = $('input[name=templates][value=' + num + ']').offset().top;
+        var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
         $(elem).animate({
             scrollTop: pos - 100
         }, 'fast')
@@ -281,22 +281,23 @@ function scrollToSection(name) {
 }
 // select all checkboxes
 function selectAllHelper(name) {
-    $('input:checkbox.'+name+'').each(function () {
+    $('input:checkbox.'+name+'[name="alignment_elem"]').each(function () {
         $(this).prop('checked', true);
     });
 
 }
 function deselectAll(name){
     $('input:checkbox.'+name+'').prop('checked', false);
+    checkboxes = [];
 }
 function selectFromArray(checkboxes){
-    checkboxes.forEach(function (currentVal) {
-        $('input:checkbox[value='+currentVal+']').prop('checked', true);
+    _.range(1, numHits).forEach(function (currentVal) {
+        $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) != -1 ? true : false);
     })
 }
 
 function getCheckedCheckboxes(){
-    $('input:checkbox:checked').each(function(){checkboxes.push(parseInt($(this).val()));});
+    $('input:checkbox:checked[name="alignment_elem"]').each(function(){checkboxes.push(parseInt($(this).val()));});
 }
 
 
@@ -375,7 +376,7 @@ function linkCheckboxes(){
         var currentState = $(this).prop('checked');
 
         // link checkboxes with same value
-        $('input:checkbox[value=' + currentVal + ']').each(function () {
+        $('input:checkbox[value=' + currentVal + '][name=alignment_elem]').each(function () {
             $(this).prop('checked', currentState);
         });
 
