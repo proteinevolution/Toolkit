@@ -206,8 +206,7 @@ let ParameterModellerKeyComponent = {
     validate: function(val: string, checkLen?: boolean){
         ParameterModellerKeyComponent.value = val;
         if(checkLen || val.length >= 11) {
-            let route = jsRoutes.controllers.Auth.validateModellerKey(val);
-            m.request({method: route.method, url: route.url}).then(function (response) {
+            m.request({method: "POST", url: "/validate/modeller?input=" + val}).then(function (response) {
                 ParameterModellerKeyComponent.keyStored = response.isValid;
                 if(ParameterModellerKeyComponent.keyStored){
                     $(".submitJob").attr("disabled", false);
