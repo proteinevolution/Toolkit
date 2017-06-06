@@ -55,7 +55,8 @@ window.JobModel = {
         "eff_crick_angle":"1",
         "samcc_periodicity":"7",
         "seqcount":"500",
-        "invoke_psipred":"30"
+        "invoke_psipred":"30",
+        "clans_eval":"1e-4"
 },
 
 
