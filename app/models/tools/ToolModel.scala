@@ -442,7 +442,7 @@ final class ToolFactory @Inject()(
     // ANCESCON
     ("ancescon", Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
     // CLANS
-    ("clans", Seq(paramAccess.MULTISEQ, paramAccess.MATRIX), Seq.empty, Seq.empty),
+    ("clans", Seq(paramAccess.MULTISEQ, paramAccess.MATRIX, paramAccess.CLANS_EVAL), Seq.empty, Seq.empty),
     // PhyML
     ("phyml", Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYML, paramAccess.NO_REPLICATES), Seq.empty, Seq.empty),
     // MMseqs2
@@ -525,7 +525,7 @@ final class ToolFactory @Inject()(
           views.html.jobs.resultpanels.fileviewWithDownload("output_psiblastp.html",
             s"$jobPath$jobID/results/" + "output_psiblastp.html",
             jobID,
-            "PSI-BLAST_OUTPUT"))
+            "PSIBLAST_OUTPUT"))
       },
       "E-Value Plot" -> { (jobID, requestHeader) =>
         getResult(jobID).map {
