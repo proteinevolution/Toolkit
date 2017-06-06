@@ -157,7 +157,7 @@ let JobTabsComponent = {
                 }, [
                     m("textarea", {
                         "class" : "noteArea",
-                        placeholder: "Type private notes here",
+                        placeholder: "Type notes here",
                         rows: 18,
                         cols: 70,
                         id: "notepad" + ctrl.job().jobID,
@@ -186,7 +186,7 @@ let JobTabsComponent = {
                                         elements.length > 1 ? m("div", { "class": "row", style: "margin-top: 35px;" },
                                             elements.slice(1).map(function(param : any) {
                                                 //console.log(JSON.stringify(mapParam(param,ctrl)));
-                                                return m("div", {"class" : "large-6 medium-3 small-1 columns", style: "padding-right: 20px"},
+                                                return m("div", {"class" : "large-6 medium-12 small-12 columns", style: "padding-right: 20px"},
                                                     mapParam(param, ctrl));
                                             })
                                         ) : void 0

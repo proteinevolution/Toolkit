@@ -199,7 +199,6 @@ let ParameterBoolComponent = {
     }
 };
 
-
 let ParameterModellerKeyComponent = {
     keyStored: false,
     value: "",
@@ -227,16 +226,6 @@ let ParameterModellerKeyComponent = {
             config: paramValidation,
             class: "modellerKey invalid"
 
-        };
-
-        return renderParameter([
-            ParameterModellerKeyComponent.keyStored ?  m("text",{class: "modellerKey valid"},"MODELLER-key is stored in your profile.") : [
-            m("label", {
-                "for": args.param.name,
-            }, args.param.label), m("input", paramAttrs)]
-        ]);
-    }
-};
 
 let formComponents : any = {
     1: ParameterAlignmentComponent,
@@ -245,6 +234,5 @@ let formComponents : any = {
     4: ParameterBoolComponent,
     5: ParameterRadioComponent,
     6: ParameterSlideComponent,
-    7: ParameterTextComponent,
-    8: ParameterModellerKeyComponent
+    7: ParameterTextComponent
 };

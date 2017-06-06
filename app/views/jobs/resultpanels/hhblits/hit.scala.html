@@ -18,7 +18,7 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td class="indexCheckbox"><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
+    <td class="indexCheckbox"><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}'> @{hit.num}.</td>
 <td class="hitInfo" colspan="4">
     @BlastVisualization.getSingleLinkHHBlits(hit.template.accession)
     @{"  "+ hit.description}
@@ -39,7 +39,8 @@
 
 @if(!hit.query.seq.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) +"    "+hit.query.end.toString + " "+"("+hit.query.ref+")"))
+
+        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, hit.query.seq +"    "+hit.query.end.toString + " "+"("+hit.query.ref+")"))
     }
 }
 @*Consensus of query, if present*@
@@ -61,7 +62,7 @@
 @*  seq template, if present *@
 @if(!hit.template.seq.isEmpty) {
     @{
-        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) +"    "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
+        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, hit.template.seq +"    "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
     }
 }
 <tr>

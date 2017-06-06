@@ -119,26 +119,12 @@
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
 		        shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits).then(function(){
-                    // check checkboxes that are stored in array
-                    // in order to make it work with pagination/lazyload
-                    selectFromArray(checkboxes);
-                    // link checkboxes from hitlist and alignment, push
-                    // val of each checkbox in checkboxes array
-                    linkCheckboxes();
-                });
+                getHits(0, shownHits);
                 $('#templateAlignmentModal').foundation()
             }
 
         });
 
-
-        $(document).ready(function () {
-            setTimeout(function () {
-                $("#alignments").floatingScroll('init');
-            }, 2000);
-
-        });
         function drawDataTable(){
             hitlist = $('#htb').dataTable({
                 "bProcessing" : true,
@@ -146,7 +132,11 @@
                 "sAjaxSource" : "/api/job/results/dataTableHHblits/@jobID",
                 "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
                 "searching": false,
-                "iDisplayLength": 10
+                "iDisplayLength": 10,
+                "drawCallback": function() {
+                    linkCheckboxes();
+                    selectFromArray(checkboxes);
+                }
             });
         }
 
@@ -154,11 +144,6 @@
 
        function hhblits_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
-           if(data.checkboxes.length == 0){
-               $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-               alert("No sequences selected!");
-               return false;
-           }
            var route = null;
            $.LoadingOverlay("show");
             if(boolFullLength) {
@@ -166,6 +151,12 @@
                     route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
                 }else{
                     route = jsRoutes.controllers.HHblitsController.full('@jobID');
+                    if(data.checkboxes.length == 0){
+                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                        $.LoadingOverlay("hide")
+                        alert("No sequences selected!");
+                        return false;
+                    }
                 }
                 $.ajax({
                     url: route.url,
@@ -280,6 +271,9 @@
                     if (shownHits != numHits) {
                         $('#loadHits').show();
                     }
+                    linkCheckboxes();
+                    selectFromArray(checkboxes);
+                    $("#alignments").floatingScroll('init');
                 });
             }
         }

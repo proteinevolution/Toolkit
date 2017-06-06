@@ -44,9 +44,7 @@ window.JobModel = {
         "clustering_pval_threshold":"1",
         "eval_tpr":"1e-6",
         "msa_gen_method":"hhblits",
-        "standarddb":"nr70",
         "hhsuitedb":"mmcif70/pdb70",
-        "hmmerdb":"nr70",
         "hhpred_incl_eval":"1e-3",
         "hhblits_incl_eval":"1e-3",
         "pcoils_matrix": "2",
@@ -103,7 +101,7 @@ window.JobModel = {
             }, 100);
             window.JobModel.paramValues["alignment"] = resultcookie;
             localStorage.removeItem("resultcookie");
-            $.LoadingOverlay("hide")
+            $.LoadingOverlay("hide");
         }
         let val = window.JobModel.paramValues[param];
         let defVal = window.JobModel.defaultValues[param];

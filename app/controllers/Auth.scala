@@ -4,16 +4,14 @@ import javax.inject.{Inject, Singleton}
 
 import actors.WebSocketActor.{ChangeSessionID, LogOut}
 import akka.actor.ActorRef
-import models.Constants
 import models.auth._
-import models.database.users.{User, UserConfig, UserToken}
+import models.database.users.{User, UserToken}
 import models.job.JobActorAccess
 import models.mailing.{ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail}
 import models.tools.ToolFactory
 import modules.{CommonModule, LocationProvider}
 import modules.tel.TEL
 import org.joda.time.DateTime
-import org.mindrot.jbcrypt.BCrypt
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -45,7 +43,6 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     with JSONTemplate
     with UserSessions
     with Common
-    with Constants
     with CommonModule {
 
   /**
@@ -304,20 +301,22 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                                    User.DATELASTLOGIN -> bsonCurrentTime,
                                    User.DATEUPDATED   -> bsonCurrentTime))
 
-                  val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
-                  findUser(selectorMail).flatMap {
-                    case Some(_) =>
-                      Future.successful(Ok(AccountEmailUsed()))
-                    case None =>
-                      modifyUserWithCache(selector, modifier).map {
-                        case Some(updatedUser) =>
-                          // Everything is ok, let the user know that they are logged in now
-                          Ok(EditSuccessful(updatedUser))
-                        case None =>
-                          // User has been found in the DB at first but now it cant be retrieved
-                          Ok(LoginError())
-                      }
+                  if(editedProfileUserData.eMail != user.getUserData.eMail) {
+                    val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
+                    findUser(selectorMail).flatMap {
+                      case Some(_) =>
+                        Future.successful(Ok(AccountEmailUsed()))
+                    }
                   }
+                  modifyUserWithCache(selector, modifier).map {
+                    case Some(updatedUser) =>
+                      // Everything is ok, let the user know that they are logged in now
+                      Ok(EditSuccessful(updatedUser))
+                    case None =>
+                      // User has been found in the DB at first but now it cant be retrieved
+                      Ok(LoginError())
+                  }
+
                 case None =>
                   // Password was incorrect
                   Future.successful(Ok(PasswordWrong()))
@@ -639,29 +638,6 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
               views.html.main(webJarAssets,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                               "There was an error finding your account.")))
-      }
-    }
-  }
-
-  def validateModellerKey(input: String): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
-      if (user.userConfig.hasMODELLERKey) {
-        Future.successful(Ok(Json.obj("isValid" -> true)))
-      } else if (input == modellerKey) {
-        modifyUserWithCache(BSONDocument(User.IDDB -> user.userID),
-          BSONDocument("$set" ->
-            BSONDocument(
-              s"${User.USERCONFIG}.${UserConfig.HASMODELLERKEY}" ->
-                true)
-          )).map {
-          case Some(_) =>
-            Ok(Json.obj("isValid" -> true))
-          case None =>
-            BadRequest
-        }
-      }
-      else {
-        Future.successful(Ok(Json.obj("isValid" -> false)))
       }
     }
   }

@@ -122,12 +122,6 @@ case object Text extends ParamType {
   def validate(value: String): Option[String] = Some(value)
 }
 
-case object ModellerKey extends ParamType {
-
-  def validate(value: String): Option[String] = Some(value)
-}
-
-
 object ParamType {
 
   implicit def tuple2Writes[A, B](implicit a: Writes[A], b: Writes[B]): Writes[(A, B)] = new Writes[(A, B)] {
@@ -152,7 +146,6 @@ object ParamType {
       case Radio                         => Json.obj(FIELD_TYPE -> 5)
       case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step, "min" -> minVal, "max" -> maxVal)
       case Text                          => Json.obj(FIELD_TYPE -> 7)
-      case ModellerKey                   => Json.obj(FIELD_TYPE -> 8)
     }
   }
 }
@@ -233,7 +226,6 @@ class ParamAccess @Inject()(tel: TEL) {
   final val NUM_SEQS_EXTRACT       =  Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
   final val SCORE_SS                = select("score_ss", "Score secondary structure")
   final val SS_SCORING              = select("ss_scoring", "SS Scoring")
-  final val UNIQUE_SEQUENCE         = select("unique_sequence", "Retrieve only unique sequences")
   final val MIN_SEQID               = select("min_seqid", "Minimum sequence identity")
   final val MIN_ALN_COV             = select("min_aln_cov", "Minimum alignment coverage")
   final val GRAMMAR                 = select("grammar", "Select grammar")
@@ -259,7 +251,7 @@ class ParamAccess @Inject()(tel: TEL) {
   final val NO_REPLICATES           = select("no_replicates", "Number of replicates")
   final val SAMCC_PERIODICITY       = select("samcc_periodicity", "Periodicity")
   final val EFF_CRICK_ANGLE         = select("eff_crick_angle", "Effective Crick angle")
-  final val REGKEY                  = Param("regkey", ModellerKey, 1, "Enter MODELLER-key (see help pages for details)")
+  final val REGKEY                  = Param("regkey", Text, 1, "Enter MODELLER-key (see help pages for details)")
   final val SAMCC_HELIXONE          = Param("samcc_helixone", Text, 1, "Definition for helix 1")
   final val SAMCC_HELIXTWO          = Param("samcc_helixtwo", Text, 1, "Definition for helix 2")
   final val SAMCC_HELIXTHREE        = Param("samcc_helixthree", Text, 1, "Definition for helix 3")

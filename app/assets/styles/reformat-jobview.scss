@@ -31,3 +31,37 @@
 
 }
 
+#reformatTopbar .nice-select {
+  font-size: 1em;
+  width: 12em;
+}
+
+#reformatTopbar ul {
+  width: 12em;
+  border-radius: 0;
+}
+
+#selectContainer .nice-select {
+  margin-left: 35%;
+  font-size: 0.7em;
+  margin-bottom: 2em;
+  width: 15em;
+}
+
+#selectContainer ul {
+  width: 15em;
+  border-radius: 0;
+}
+
+#selectContainer p {
+  margin-bottom: 0;
+  font-size: 0.7em;
+  width: 100%;
+
+}
+
+#selectContainer .callout {
+  width: 10em;
+  float: right;
+  margin-right: 0.5em;
+}
