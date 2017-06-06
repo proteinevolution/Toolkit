@@ -256,6 +256,7 @@ class ParamAccess @Inject()(tel: TEL) {
   final val SAMCC_HELIXTWO          = Param("samcc_helixtwo", Text, 1, "Definition for helix 2")
   final val SAMCC_HELIXTHREE        = Param("samcc_helixthree", Text, 1, "Definition for helix 3")
   final val SAMCC_HELIXFOUR         = Param("samcc_helixfour", Text, 1, "Definition for helix 4")
-  final val INVOKE_PSIPRED =
-    Param("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
+  final val INVOKE_PSIPRED          = Param("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
+  final val CLANS_EVAL              =  select("clans_eval", "Extract BLAST HSP's up to E-values of")
+
 }

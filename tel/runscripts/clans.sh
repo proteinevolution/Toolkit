@@ -74,7 +74,7 @@ blastp -query ../results/${JOBID}.1.fas \
        -db ../results/${JOBID}.1.fas \
        -outfmt "6 qacc sacc evalue" \
        -matrix %matrix.content \
-       -evalue 1  \
+       -evalue %clans_eval.content  \
        -gapopen ${GAPOPEN} \
        -gapextend ${GAPEXT} \
        -max_target_seqs ${SEQ_COUNT} \
@@ -91,8 +91,8 @@ updateProcessLog
 
 blast2clans.pl ../results/${JOBID} ../results/${JOBID}.0.fas ${SEQ_COUNT}
 
-rm ../results/${JOBID}.nxnblast
-rm ../results/${JOBID}*fas*
+#rm ../results/${JOBID}.nxnblast
+#rm ../results/${JOBID}*fas*
 
 echo "done" >> ../results/process.log
 updateProcessLog
