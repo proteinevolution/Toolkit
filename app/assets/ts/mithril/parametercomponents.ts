@@ -199,32 +199,7 @@ let ParameterBoolComponent = {
     }
 };
 
-let ParameterModellerKeyComponent = {
-    keyStored: false,
-    value: "",
-    validate: function(val: string, checkLen?: boolean){
-        ParameterModellerKeyComponent.value = val;
-        if(checkLen || val.length >= 11) {
-            m.request({method: "POST", url: "/validate/modeller?input=" + val}).then(function (response) {
-                ParameterModellerKeyComponent.keyStored = response.isValid;
-                if(ParameterModellerKeyComponent.keyStored){
-                    $(".submitJob").attr("disabled", false);
-                }
-            });
-        }
-    },
-    controller: function(){
-        ParameterModellerKeyComponent.validate("", true);
-        return {}
-    },
-    view: function(ctrl : any, args : any) {
-        let paramAttrs = {
-            type: "text",
-            id: args.param.name,
-            value: ParameterModellerKeyComponent.value,
-            onkeyup: m.withAttr("value", ParameterModellerKeyComponent.validate),
-            config: paramValidation,
-            class: "modellerKey invalid"
+
 
 
 let formComponents : any = {
