@@ -601,8 +601,8 @@ class Profile {
                         m("select", { name:"country", onchange: m.withAttr("value", Profile.userSetter("country")) },
                             regions.map(function(country){
                                 return m("option", {
-                                    value:    country[0],
-                                    selected:(country[0] === Profile.user.country ? "selected" : null)
+                                    "selected": country[0] == Auth.user.country ? "selected" : "",
+                                    value:    country[0]
                                 }, country[1])
                             })
                         )
