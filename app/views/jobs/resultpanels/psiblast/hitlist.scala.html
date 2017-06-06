@@ -92,9 +92,7 @@ $(document).ready( function(){
         var firstQueryEnd = @result.HSPS.head.query_end;
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
-        getHits(0, shownHits).then(function(){
-            linkCheckboxes();
-        });
+        getHits(0, shownHits);
 }
 });
 
@@ -108,6 +106,7 @@ function drawDataTable(){
         "searching": false,
         "iDisplayLength": 10,
         "drawCallback": function() {
+            linkCheckboxes();
             selectFromArray(checkboxes);
         }
     });
@@ -183,8 +182,9 @@ function getHits(start, end){
             if (shownHits != numHits) {
                 $('#loadHits').show();
             }
-            selectFromArray(checkboxes);
             getCheckedCheckboxes();
+            selectFromArray(checkboxes);
+            linkCheckboxes();
             $("#alignments").floatingScroll('init');
         });
     }
