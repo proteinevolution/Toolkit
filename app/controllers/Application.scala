@@ -129,6 +129,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     * Returns true if the value of the Origin header contains an acceptable value.
     */
   def originMatches(origin: String): Boolean = {
+    println(origin)
     origin.contains(TEL.hostname + ":" + TEL.port) || origin.contains("tuebingen.mpg.de") || origin.contains(
       "tue.mpg.de")
   }
