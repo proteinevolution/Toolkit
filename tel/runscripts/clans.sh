@@ -91,8 +91,12 @@ updateProcessLog
 
 blast2clans.pl ../results/${JOBID} ../results/${JOBID}.0.fas ${SEQ_COUNT}
 
-rm ../results/${JOBID}.nxnblast
-rm ../results/${JOBID}*fas*
+cd ../results/
+zip -q ${JOBID}.clans.zip ${JOBID}.clans
+
+rm ${JOBID}.clans
+rm ${JOBID}.nxnblast
+rm ${JOBID}*fas*
 
 echo "done" >> ../results/process.log
 updateProcessLog
