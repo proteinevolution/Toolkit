@@ -320,6 +320,7 @@ hhsearch -cpu %THREADS \
          -sc 1 \
          -seq 1 \
          -dbstrlen 10000 \
+         ${MACT} \
          -cs ${HHLIB}/data/context_data.lib
 
 echo "done" >> ../results/process.log
