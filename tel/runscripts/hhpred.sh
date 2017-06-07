@@ -6,7 +6,7 @@ FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
@@ -16,7 +16,7 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
 
       if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            updateProcessLog
             false
       else
             sed -i "1 i\>Q_${JOBID}" ../params/alignment1
@@ -38,7 +38,7 @@ fi
 
 if [ ! -f ../results/${JOBID}.fas ]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     false
 fi
 
@@ -46,28 +46,28 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
 if [ ${SEQ_COUNT} -gt "2000" ] ; then
       echo "#Input contains more than 2000 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+       updateProcessLog
 fi
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 
 if [ "%hhpred_align.content" = "true" ] ; then
         echo "#Pairwise comparison mode." >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 
         echo "done" >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 
         SEQ_COUNT2=$(egrep '^>' ../params/alignment_two | wc -l)
         CHAR_COUNT2=$(wc -m < ../params/alignment_two)
@@ -75,7 +75,7 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
         if [ ${CHAR_COUNT2} -gt "10000000" ] ; then
             echo "#Template sequence/MSA may not contain more than 10000000 characters." >> ../results/process.log
-            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            updateProcessLog
             false
         fi
 
@@ -85,7 +85,7 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
             if [ ${CHAR_COUNT2} -gt "10000" ] ; then
                 echo "#Template protein sequence contains more than 10000 characters." >> ../results/process.log
-                curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+                updateProcessLog
                 false
             else
                 sed -i "1 i\>T_${JOBID}" ../params/alignment2
@@ -107,7 +107,7 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
         if [ ! -f ../results/${JOBID}.2.fas ]; then
             echo "#Template MSA is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            updateProcessLog
             false
         fi
 
@@ -115,29 +115,29 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
         if [ ${SEQ_COUNT2} -gt "2000" ] ; then
             echo "#Template MSA contains more than 2000 sequences." >> ../results/process.log
-            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            updateProcessLog
             false
         fi
 
         if [ ${SEQ_COUNT2} -gt "1" ] ; then
             echo "#Template is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            updateProcessLog
         else
             echo "#Template is a single protein sequence." >> ../results/process.log
-            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            updateProcessLog
          fi
 
         mv ../results/${JOBID}.2.fas ../params/alignment_two
 
         echo "done" >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 fi
 
 
 #CHECK IF MSA generation is required or not
 if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         echo "#No MSA generation required for building A3M." >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
         reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
         mv ${JOBID}.a3m ../results/${JOBID}.a3m
         hhfilter -i ../results/${JOBID}.a3m \
@@ -146,20 +146,20 @@ if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
                  -qid %min_seqid_query.content
 
         echo "done" >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 else
     #MSA generation required
     #Check what method to use (PSI-BLAST? HHblits?)
 
         echo "#Query MSA generation required." >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
         echo "done" >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 
     #MSA generation by HHblits
     if [ "%msa_gen_method.content" = "hhblits" ] ; then
         echo "#Running HHblits for query MSA and A3M generation." >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
         hhblits -cpu %THREADS \
                 -v 2 \
                 -e %hhpred_incl_eval.content \
@@ -172,14 +172,14 @@ else
                 -mact 0.35
 
         echo "done" >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 
     fi
     #MSA generation by PSI-BLAST
     if [ "%msa_gen_method.content" = "psiblast" ] ; then
 
         echo "#Running PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
         #Check if input is a single sequence or an MSA
         INPUT="query"
         if [ ${SEQ_COUNT} -gt 1 ] ; then
@@ -208,20 +208,20 @@ else
                     -no_link \
                     -blastplus
         echo "done" >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
     fi
 fi
 
 #Generate representative MSA for forwarding
+
 hhfilter -i ../results/${JOBID}.a3m \
-         -o ../results/alignment.fas \
+         -o ../results/reduced.fas \
          -diff 100
 
 reformat_hhsuite.pl a3m fas \
-         $(readlink -f ../results/alignment.fas) \
-         $(readlink -f ../results/alignment.fas) \
+         $(readlink -f ../results/reduced.fas) \
+         $(readlink -f ../results/reduced.fas) \
          -d 160
-
 
 # Here assume that the query alignment exists
 # prepare histograms
@@ -233,6 +233,11 @@ hhfilter -i ../results/${JOBID}.a3m \
          -o ../results/${JOBID}.reduced.a3m \
          -diff 100
 
+reformat_hhsuite.pl a3m fas \
+         $(readlink -f ../results/${JOBID}.a3m) \
+         $(readlink -f ../results/full.fas) \
+         -d 160
+
 DBJOINED=""
 #create file in which selected dbs are written
 touch ../params/dbs
@@ -240,7 +245,7 @@ touch ../params/dbs
 if [  "%hhpred_align.content" = "true" ]
 then
     echo "#Running HHblits for template MSA and A3M generation." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
 
     cd ../results
 
@@ -258,7 +263,7 @@ then
     DBJOINED+="-d ../results/db"
     cd ../0
     echo "done" >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
 else
     #splitting input databases into array and completing with -d
     if [ "%hhsuitedb.content" != "false" ]
@@ -281,10 +286,10 @@ fi
 
 if [  "%hhpred_align.content" = "true" ] ; then
       echo "#Comparing query profile HMM with template profile HMM." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
 else
       echo "#Searching profile HMM database(s)." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
 fi
 
 if [ "%alignmode.content" = "global" ] ; then
@@ -315,25 +320,24 @@ hhsearch -cpu %THREADS \
          -sc 1 \
          -seq 1 \
          -dbstrlen 10000 \
-         -cs ${HHLIB}/data/context_data.lib \
-         -atab $(readlink -f ../results/hhsearch.start.tab)
-
+         ${MACT} \
+         -cs ${HHLIB}/data/context_data.lib
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "#Preparing output." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 #create full alignment json; use for forwarding
-fasta2json.py ../results/alignment.fas ../results/reduced.json
+fasta2json.py ../results/reduced.fas ../results/reduced.json
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 #Generate query template alignment
-hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/querytemplateMSA.fas -p %pmin.content
+hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/alignment.fas -p %pmin.content
 # Generate Query in JSON
-fasta2json.py ../results/querytemplateMSA.fas ../results/querytemplate.json
+fasta2json.py ../results/alignment.fas ../results/querytemplate.json
 
 
 # Generate Hitlist in JSON for hhrfile
@@ -352,4 +356,4 @@ manipulate_json.py -k 'db' -v '%hhsuitedb.content' ../results/${JOBID}.json
 manipulate_json.py -k 'proteomes' -v '%proteomes.content' ../results/${JOBID}.json
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog

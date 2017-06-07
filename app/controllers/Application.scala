@@ -129,7 +129,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     * Returns true if the value of the Origin header contains an acceptable value.
     */
   def originMatches(origin: String): Boolean = {
-    origin.contains(TEL.hostname + ":" + TEL.port) || origin.contains("tuebingen.mpg.de") || origin.contains(
+      origin.contains(TEL.hostname + ":" + TEL.port) || origin.contains("tuebingen.mpg.de") || origin.contains(
       "tue.mpg.de")
   }
 
@@ -224,7 +224,6 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         import java.io.File
         val filename    = file.filename
         val contentType = file.contentType
-        println(file)
         file.ref.moveTo(new File(s"/tmp/$filename"))
         Ok("File uploaded")
       }

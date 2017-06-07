@@ -71,15 +71,15 @@ object FormDefinitions {
   def ProfileEdit(user: User) =
     Form(
       mapping(
-        UserData.EMAIL     -> email,
-        UserData.NAMEFIRST -> optional(text(1, 100) verifying pattern(textRegex, error = "error.NameFirst")),
-        UserData.NAMELAST  -> optional(text(1, 100) verifying pattern(textRegex, error = "error.NameLast")),
+        UserData.EMAIL     -> optional(email),
+        UserData.NAMEFIRST -> optional(text(1, 25) verifying pattern(textRegex, error = "error.NameFirst")),
+        UserData.NAMELAST  -> optional(text(1, 25) verifying pattern(textRegex, error = "error.NameLast")),
         UserData.COUNTRY   -> optional(text(3, 3) verifying pattern(textRegex, error = "error.Country")),
         UserData.PASSWORD  -> (text(8, 128) verifying pattern(textRegex, error = "error.Password"))
       ) { (eMail, nameFirst, nameLast, country, password) =>
         if (user.checkPassword(password)) {
           Some(
-            user.getUserData.copy(eMail = eMail,
+            user.getUserData.copy(eMail = eMail.getOrElse(user.getUserData.eMail),
                                   nameFirst = nameFirst,
                                   nameLast = nameLast,
                                   country = country))

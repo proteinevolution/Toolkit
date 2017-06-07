@@ -24,7 +24,7 @@ window.JobModel = {
         "seq_count": 1000,
         "codon_table": "1",
         "genetic_code": "1",
-        "msa_gen_max_iter": "2",
+        "msa_gen_max_iter": "4",
         "grammar": "Prosite_grammar",
         "macmode": "off",
         "macthreshold":"0.3",
@@ -44,9 +44,7 @@ window.JobModel = {
         "clustering_pval_threshold":"1",
         "eval_tpr":"1e-6",
         "msa_gen_method":"hhblits",
-        "standarddb":"nr70",
         "hhsuitedb":"mmcif70/pdb70",
-        "hmmerdb":"nr70",
         "hhpred_incl_eval":"1e-3",
         "hhblits_incl_eval":"1e-3",
         "pcoils_matrix": "2",
@@ -57,7 +55,8 @@ window.JobModel = {
         "eff_crick_angle":"1",
         "samcc_periodicity":"7",
         "seqcount":"500",
-        "invoke_psipred":"30"
+        "invoke_psipred":"30",
+        "clans_eval":"1e-4"
 },
 
 
@@ -103,7 +102,7 @@ window.JobModel = {
             }, 100);
             window.JobModel.paramValues["alignment"] = resultcookie;
             localStorage.removeItem("resultcookie");
-            $.LoadingOverlay("hide")
+            $.LoadingOverlay("hide");
         }
         let val = window.JobModel.paramValues[param];
         let defVal = window.JobModel.defaultValues[param];
