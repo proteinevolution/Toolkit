@@ -187,10 +187,11 @@
         function hhpred_manual() {
             // Get selected templates and append parentID
             var formData = new FormData(document.getElementById("hhpred_templates"));
-            if ($('input:checkbox:checked').length == 0) {
-                $("input:checkbox.checkbox_@{tool.toolNameShort}[value=1]").prop("checked", true);
+            if ($('input:checkbox[name=alignment_elem]:checked').length == 0) {
+                $("input:checkbox[name=alignment_elem][value=1]").prop("checked", true);
                 alert("No templates selected. Using first template for modelling.");
             }
+
             formData.append("parentid", jobID);
 
 
