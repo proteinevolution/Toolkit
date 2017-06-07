@@ -191,7 +191,7 @@
                 $("input:checkbox[name=alignment_elem][value=1]").prop("checked", true);
                 alert("No templates selected. Using first template for modelling.");
             }
-
+            formData.append("templates", checkboxes.join(" "));
             formData.append("parentid", jobID);
 
 
