@@ -79,7 +79,6 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
       val numListStr = numList.mkString(" ")
-      println(numListStr)
       Process(generateAlignmentScript.pathAsString,
               (jobPath + jobID).toFile.toJava,
               "jobID"   -> jobID,
