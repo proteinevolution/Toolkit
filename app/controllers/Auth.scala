@@ -234,7 +234,6 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
               } else {
                 // Check database for existing users with the same email
                 val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> signUpFormUser.getUserData.eMail))
-                println(signUpFormUser.getUserData.eMail)
                 val selectorName = BSONDocument(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
                 findUser(selectorName).flatMap {
                   case Some(x) =>
