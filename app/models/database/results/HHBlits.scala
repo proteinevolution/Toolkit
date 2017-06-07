@@ -24,7 +24,7 @@ case class HHBlitsHSP(query: HHBlitsQuery,
       Map(
         "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
         "1" -> Json.toJson(BlastVisualization.getSingleLinkHHBlits(template.accession).toString),
-        "2" -> Json.toJson(description),
+        "2" -> Json.toJson(BlastVisualization.addBreak(description)),
         "3" -> Json.toJson(info.probab),
         "4" -> Json.toJson(info.evalue),
         "5" -> Json.toJson(info.aligned_cols),

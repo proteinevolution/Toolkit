@@ -250,6 +250,10 @@ object BlastVisualization extends Constants {
     }
   }
 
+  def addBreak(description: String): String = {
+    description.replaceAll("(\\S{40})", "$1</br>");
+  }
+
   def insertMatch(seq: String, length: Int, hitArr: List[Int]): String = {
     var newSeq = ""
     for (starPos <- hitArr) {
