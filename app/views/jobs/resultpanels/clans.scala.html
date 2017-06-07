@@ -1,13 +1,12 @@
 @(toolName: String, jobID: String)(implicit request: RequestHeader)
-
+@import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".clans.zip";
 
 <div class="clansResults">
-
 	<br/><hr><br/><br/><br/><br/>
-	Download the CLANS file generated for your sequences: <a onclick="clans_download()">@{jobID}.clans</a>
+	Download the zipped CLANS file (<a href="@fileURL" download>@{jobID}.clans.zip</a>) generated for your sequences and unzip it.
     <br/><br/>
 	Download the CLANS application here: <a href="ftp://ftp.tuebingen.mpg.de/pub/protevo/CLANS/clans.jar">clans.jar</a>
-	and visualize your CLANS file using the 'Load Run' option in the 'File' menu.
+	and visualize your unzipped CLANS file (<b>@{jobID}.clans</b>) using the 'Load Run' option in the 'File' menu.
 	<br/><br/>Please make sure you have Java Runtime Environment (JRE) installed. <br/><br/>
 	If your input contains large number of sequences, please consider running CLANS on the command line:<br/>
 	<em>java -Xmx4G -jar clans.jar -load @{jobID}.clans</em><br/><br/>
@@ -16,17 +15,3 @@
 
 	<br/><br/><br/><br/><hr><br/>
 </div>
-
-<script>
-        var fileURL="/files/" + "@jobID" + "/" + "@jobID" + ".clans";
-        var fileName= "@jobID" + ".clans";
-        function clans_download(){
-            $.LoadingOverlay("show");
-            $.ajax({
-                method: "GET",
-                url: fileURL
-            }).done(function(data){
-                download(fileName, data);
-            })
-        }
-</script>
