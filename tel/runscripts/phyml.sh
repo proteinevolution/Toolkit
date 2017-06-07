@@ -6,13 +6,13 @@ FORMAT=$(head -1 ../params/alignment | egrep ^CLUSTAL | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may no contain more than 10000000 characters." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
@@ -33,19 +33,19 @@ if [ "${OUTFORMAT}" = "fas" ] ; then
 
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
     echo "#Read MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
 
 else
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     false
 fi
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 if [ ${SEQ_COUNT} -gt "100" ] ; then
       echo "#Input contains more than 100 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
@@ -55,13 +55,13 @@ reformat_phylip.pl -i=fas \
                    -a=$(readlink -f ../results/${JOBID}.phy)
 
 echo "#Running PhyML." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 if [ "%no_replicates.content" -gt 0 ] ; then
     echo "done" >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     echo "#Performing %no_replicates.content bootstrap iterations." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
 fi
 
 PhyML-3.1_linux64 -i ../results/${JOBID}.phy \
@@ -81,4 +81,4 @@ else
 fi
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog

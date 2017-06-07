@@ -77,7 +77,6 @@ final class ToolFactory @Inject()(
     final val HHPRED              = "hhpred"
     final val HHPRED_ALIGN        = "hhpred_align"
     final val HHPRED_MANUAL       = "hhpred_manual"
-    final val HHPRED_AUTOMATIC    = "hhpred_automatic"
     final val HHREPID             = "hhrepid"
     final val ALI2D               = "ali2d"
     final val CLUSTALO            = "clustalo"
@@ -145,8 +144,6 @@ final class ToolFactory @Inject()(
      Seq.empty),
     // HHpred - Manual Template Selection
     ("hhpred_manual", Seq.empty, Seq.empty, Seq.empty),
-    // HHpred - Manual Template Selection
-    ("hhpred_automatic", Seq.empty, Seq.empty, Seq.empty),
     // PSI-BLAST
     ("psiblast",
      Seq(
@@ -436,7 +433,7 @@ final class ToolFactory @Inject()(
      Seq.empty),
     // RetrieveSeq
     ("retseq",
-     Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB, paramAccess.UNIQUE_SEQUENCE),
+     Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB),
      Seq("clans",
          "mmseqs2"),
      Seq.empty),
@@ -445,7 +442,7 @@ final class ToolFactory @Inject()(
     // ANCESCON
     ("ancescon", Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
     // CLANS
-    ("clans", Seq(paramAccess.MULTISEQ, paramAccess.MATRIX), Seq.empty, Seq.empty),
+    ("clans", Seq(paramAccess.MULTISEQ, paramAccess.MATRIX, paramAccess.CLANS_EVAL), Seq.empty, Seq.empty),
     // PhyML
     ("phyml", Seq(paramAccess.ALIGNMENT, paramAccess.MATRIX_PHYML, paramAccess.NO_REPLICATES), Seq.empty, Seq.empty),
     // MMseqs2
@@ -514,7 +511,7 @@ final class ToolFactory @Inject()(
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
   val resultMap: Map[String, ListMap[String, (String, play.api.mvc.RequestHeader) => Future[HtmlFormat.Appendable]]] = Map(
     Toolnames.PSIBLAST -> ListMap(
-      Resultviews.HITLIST -> { (jobID, requestHeader) =>
+      Resultviews.RESULTS -> { (jobID, requestHeader) =>
         getResult(jobID).map {
 
           case Some(jsvalue) =>
@@ -522,7 +519,15 @@ final class ToolFactory @Inject()(
             views.html.jobs.resultpanels.psiblast.hitlist(jobID, psi.parseResult(jsvalue), this.values("psiblast"))
         }
       },
-      "E-Value-Plot" -> { (jobID, requestHeader) =>
+      "Unformatted Output" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        Future.successful(
+          views.html.jobs.resultpanels.fileviewWithDownload("output_psiblastp.html",
+            s"$jobPath$jobID/results/" + "output_psiblastp.html",
+            jobID,
+            "PSIBLAST_OUTPUT"))
+      },
+      "E-Value Plot" -> { (jobID, requestHeader) =>
         getResult(jobID).map {
           case Some(jsvalue) =>
             implicit val r = requestHeader
@@ -565,14 +570,14 @@ final class ToolFactory @Inject()(
             jobID,
             "hhblits_hhr"))
       },
-      "E-Value-Plot" -> { (jobID, requestHeader) =>
+      "E-Value Plot" -> { (jobID, requestHeader) =>
         getResult(jobID).map {
           case Some(jsvalue) =>
             implicit val r = requestHeader
             views.html.jobs.resultpanels.evalues(hhblits.parseResult(jsvalue).HSPS.map(_.info.evalue))
         }
       },
-      "Representative_Alignment" -> { (jobID, requestHeader) =>
+      "Representative Alignment" -> { (jobID, requestHeader) =>
         getResult(jobID).map {
           case Some(jsvalue) =>
             implicit val r = requestHeader
@@ -583,7 +588,7 @@ final class ToolFactory @Inject()(
         }
       },
 
-      "QueryTemplateMSA" -> { (jobID, requestHeader) =>
+      "Query Template MSA" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
           case Some(jsvalue) =>
@@ -610,7 +615,7 @@ final class ToolFactory @Inject()(
         Future.successful(views.html.jobs.resultpanels.fileviewWithDownload("alignment.ProbPerState",
           s"$jobPath$jobID/results/alignment.ProbPerState" ,jobID, "marcoil_probperstate"))
       },
-      "PredictedDomains" -> { (jobID, requestHeader) =>
+      "Predicted Domains" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(views.html.jobs.resultpanels.fileviewWithDownload("alignment.Domains",
           s"$jobPath$jobID/results/alignment.Domains" ,jobID, "marcoil_domains"))
@@ -652,7 +657,7 @@ final class ToolFactory @Inject()(
       }
     ),
     Toolnames.HMMER -> ListMap(
-      Resultviews.HITLIST -> { (jobID, requestHeader) =>
+      Resultviews.RESULTS -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
           case Some(jsvalue) =>
@@ -660,7 +665,15 @@ final class ToolFactory @Inject()(
             views.html.jobs.resultpanels.hmmer.hitlist(jobID, hmmer.parseResult(jsvalue), this.values(Toolnames.HMMER))
         }
       },
-      "E-Value-Plot" -> { (jobID, requestHeader) =>
+      "Unformatted Output" -> { (jobID, requestHeader) =>
+        implicit val r = requestHeader
+        Future.successful(
+          views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".outfilefl",
+            s"$jobPath$jobID/results/" + jobID + ".outfilefl",
+            jobID,
+            "HMMER_OUTPUT"))
+      },
+      "E-Value Plot" -> { (jobID, requestHeader) =>
         getResult(jobID).map {
           case Some(jsvalue) =>
             implicit val r = requestHeader
@@ -686,14 +699,14 @@ final class ToolFactory @Inject()(
             jobID,
             "hhpred_hhr"))
       },
-      "ProbabilityPlot" -> { (jobID, requestHeader) =>
+      "Probability  Plot" -> { (jobID, requestHeader) =>
         getResult(jobID).map {
           case Some(jsvalue) =>
             implicit val r = requestHeader
             views.html.jobs.resultpanels.probability(hhpred.parseResult(jsvalue).HSPS.map(_.info.probab))
         }
       },
-      "QueryTemplateMSA" -> { (jobID, requestHeader) =>
+      "Query Template MSA" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
           case Some(jsvalue) =>
@@ -703,15 +716,14 @@ final class ToolFactory @Inject()(
               this.values(Toolnames.HHPRED))
         }
       },
-      "RepresentativeQueryMSA" -> { (jobID, requestHeader) =>
+      "Query MSA" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         getResult(jobID).map {
           case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignment(jobID,
+            views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
               aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
               "reduced",
               this.values(Toolnames.HHPRED))
-
         }
       }
     ),
@@ -740,12 +752,6 @@ final class ToolFactory @Inject()(
         Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out"))
       }
     ),
-    Toolnames.HHPRED_AUTOMATIC -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/out.hhr"))
-      }
-    ),
     Toolnames.HHREPID -> ListMap(
       Resultviews.RESULTS -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
@@ -760,11 +766,11 @@ final class ToolFactory @Inject()(
           views.html.jobs.resultpanels
             .fileview(s"$jobPath$jobID/results/" + jobID + ".results"))
       },
-      "ColoredResults" -> { (jobID, requestHeader) =>
+      "Colored Results" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_color"))
       },
-      "ColoredResultsWithConfidence" -> { (jobID, requestHeader) =>
+      "Colored Results With Confidence" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(
           views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_colorC"))
@@ -914,7 +920,7 @@ final class ToolFactory @Inject()(
                                          "mmseqs_reps",
                                          this.values(Toolnames.MMSEQS2)))
       },
-      Resultviews.SUMMARY -> { (jobID, requestHeader) =>
+      "Clusters" -> { (jobID, requestHeader) =>
         implicit val r = requestHeader
         Future.successful(views.html.jobs.resultpanels
           .fileviewWithDownload(jobID + ".clu", s"$jobPath$jobID/results/" + jobID + ".clu", jobID, "mmseqs_clusters"))

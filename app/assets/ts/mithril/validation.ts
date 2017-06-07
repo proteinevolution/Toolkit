@@ -1,7 +1,7 @@
 /**
  * Created by snam on 03.03.17.
  */
-
+/// <reference path="parametercomponents.ts"/>
 
 let seqLimit : any;
 let charLimitPerSeq : any;
@@ -24,30 +24,45 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
             let linebreak = function(elem : any, placeholder : string) {
 
-                if (toolname == 'hhpred')
-                    elem = $("[name='alignment']");
+                let pastedContent = $(elem).val();
+                if (pastedContent == '') {
+                    if (toolname == 'hhpred')
+                        elem = $("[name='alignment']");
 
-                let path = window.location.href;
-                let url = path.split("/");
+                    let path = window.location.href;
+                    let url = path.split("/");
 
-                if(url[url.length-2] != 'jobs'){
-                    $(elem).val(placeholder).css('color','grey');
-                    $(elem).focus(function(){
-                        if($(elem).val() === placeholder){
-                            $(elem).attr('value', '').css('color','#0a0a0a');
+                    if (url[url.length - 2] != 'jobs') {
+                        $(elem).val(placeholder).css('color', 'grey');
+                        $(elem).focus(function () {
+                            if ($(elem).val() === placeholder) {
+                                $(elem).attr('value', '').css('color', '#0a0a0a');
+                                m.redraw(true);
+                            }
+                        });
+                        $('#pasteButton').on('click', function () {
+                            $(elem).css('color', '#0a0a0a');
                             m.redraw(true);
-                        }
-                    });
-                    $('#pasteButton').on('click', function() {$(elem).css('color','#0a0a0a'); m.redraw(true);
-                        setTimeout(function(){validationProcess($(elem), toolname)},200);
-                        $(elem).focus();
-                    });
-                    $(elem).blur(function(){
-                        if($(elem).val() ===''){
-                            $(elem).attr('value', placeholder).css('color','grey');
-                            m.redraw(true);
-                        }
-                    });
+                            setTimeout(function () {
+                                validationProcess($(elem), toolname)
+                            }, 200);
+                            $(elem).focus();
+                        });
+                        $(elem).blur(function () {
+                            if ($(elem).val() === '') {
+                                $(elem).attr('value', placeholder).css('color', 'grey');
+                                m.redraw(true);
+                            }
+                        });
+                    }
+                } else {
+                    m.redraw(true);
+                    setTimeout(function () {
+                        $(elem).css('color', '#0a0a0a');
+                        $(elem).val(pastedContent);
+                        validationProcess($(elem), toolname)
+                    }, 200);
+                    $(elem).focus();
                 }
             };
 
@@ -380,7 +395,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 30000; // TODO: why was the charLimit defined after it's usage?
 
             let hhpredTarget = new alignmentVal($(elem));
             hhpredTarget.basicValidation();
@@ -542,7 +557,9 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let modellerTarget = new alignmentVal($(elem));
             modellerTarget.modellerValidation();
-
+            if(ParameterModellerKeyComponent.keyStored){
+                $(".submitJob").attr("disabled", false);
+            }
             break;
 
         case "samcc":

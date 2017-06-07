@@ -17,7 +17,8 @@
 <div class="colorOptsAlignment">
     <a onclick="selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
     <a type="button" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
-    <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download File</span></a>
+    <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced MSA</span></a>
+    <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full MSA</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -40,8 +41,12 @@
 
 <script>
 
-        var fileUrl = "/files/@jobID/alignment.fas";
+        var fileUrl = "/files/@jobID/reduced.fas";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.fasta";
+
+        var fileUrlFull = "/files/@jobID/full.fas";
+        var downloadFilenameFull = "@{tool.toolNameShort}_full_jobID_@{jobID}.fasta";
+
         var selectAllBool = false;
         var shownHits = 20;
         var showMore = 100;
@@ -87,6 +92,18 @@
             });
         };
 
+        window["@{resultName}_downloadFull"] = function(){
+            // get result json
+
+            $.LoadingOverlay("show");
+
+            $.ajax({
+                type: 'GET',
+                url: fileUrlFull
+            }).done(function (data) {
+                download(downloadFilenameFull, data.toString());
+            });
+        };
 
         function getHits(start, end){
             if(start <= numHits && end <= numHits && !loading){
