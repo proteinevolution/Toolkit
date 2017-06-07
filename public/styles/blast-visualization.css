@@ -439,6 +439,10 @@ table.dataTable.no-footer{
     font-size: 1.2em;
 }
 
+#htb_wrapper {
+    overflow-x: scroll;
+}
+
 #htb_length {
     margin-bottom: 1em;
 }
