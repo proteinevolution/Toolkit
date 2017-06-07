@@ -58,8 +58,8 @@ window.FrontendAlnvizComponent = {
                         labelPartition: false,
                         labelCheckbox: false
                     },
-                    seqs: msa.io.fasta.parse(seqs),
                     menu: 'small',
+                    seqs : fasta2json(seqs),
                     zoomer : {
                         alignmentHeight: height,
                         alignmentWidth: width,
@@ -75,7 +75,6 @@ window.FrontendAlnvizComponent = {
                         autoResize: true
                     }
                 };
-                console.log(JSON.stringify(fasta2json(seqs)));
 
                 alignment = new msa.msa(opts);
                 menuOpts = {
