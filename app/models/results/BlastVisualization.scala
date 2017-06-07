@@ -239,14 +239,14 @@ object BlastVisualization extends Constants {
   }
 
   def getCheckbox(num: Int): String = {
-    "<input type=\"checkbox\" value=\"" + num + "\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
+    "<input type=\"checkbox\" value=\"" + num + "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
   }
 
   def getCheckboxPre(num: Int, checked: Boolean): String = {
     if (checked) {
-      "<input type=\"checkbox\" checked=\"true\" value=\"" + num + "\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
+      "<input type=\"checkbox\" checked=\"true\" name=\"alignment_elem\" value=\"" + num + "\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
     } else {
-      "<input type=\"checkbox\" value=\"" + num + "\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
+      "<input type=\"checkbox\" name=\"alignment_elem\" value=\"" + num + "\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
     }
   }
 

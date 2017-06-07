@@ -158,11 +158,7 @@
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits, colorAAs).then(function(){
-                    linkCheckboxes();
-                    $("#alignments").floatingScroll('init');
-
-                });
+                getHits(0, shownHits, colorAAs);
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
                 $(".colorAA").addClass("colorToggleHHpred");
@@ -179,7 +175,11 @@
                 "autoWidth": false,
                 "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
                 "searching": false,
-                "iDisplayLength": 10
+                "iDisplayLength": 10,
+                "drawCallback": function() {
+                    linkCheckboxes();
+                    selectFromArray(checkboxes);
+                }
             });
         }
 
@@ -187,10 +187,11 @@
         function hhpred_manual() {
             // Get selected templates and append parentID
             var formData = new FormData(document.getElementById("hhpred_templates"));
-            if ($('input:checkbox:checked').length == 0) {
-                $("input:checkbox.checkbox_@{tool.toolNameShort}[value=1]").prop("checked", true);
+            if ($('input:checkbox[name=alignment_elem]:checked').length == 0) {
+                $("input:checkbox[name=alignment_elem][value=1]").prop("checked", true);
                 alert("No templates selected. Using first template for modelling.");
             }
+
             formData.append("parentid", jobID);
 
 
@@ -288,16 +289,17 @@
 
         function hhpred_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
-            if(data.checkboxes.length == 0){
-                $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                alert("No sequences selected!");
-                return false;
-            }
             $.LoadingOverlay("show");
             var route = null;
             if (boolEvalue) {
                 route = jsRoutes.controllers.HHpredController.alnEval(jobID, evalue);
             } else {
+                if(data.checkboxes.length == 0){
+                    $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                    $.LoadingOverlay("hide");
+                    alert("No sequences selected!");
+                    return false;
+                }
                 route = jsRoutes.controllers.HHpredController.aln(jobID);
             }
             $.ajax({
@@ -340,7 +342,7 @@
         function hhpred_forwardQueryMSA(selectedTool) {
             $.ajax({
                 type: 'GET',
-                url: "files/" + jobID + "/alignment.fas"
+                url: "files/" + jobID + "/reduced.fas"
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });
@@ -362,6 +364,9 @@
                     if (shownHits != numHits) {
                         $('#loadHits').show();
                     }
+                    linkCheckboxes();
+                    selectFromArray(checkboxes);
+                    $("#alignments").floatingScroll('init');
                 });
             }
             // hide loadHits

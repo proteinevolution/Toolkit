@@ -3,21 +3,44 @@
 #unset proxy variable
 export http_proxy=
 key=$(<../key)
+SGE_ID=""
 
+# update process log
+updateProcessLog () {
+    until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content); do
+        printf 'host unreachable\n...waiting to update process log\n'
+        sleep 5
+    done
+}
 
+if [ -e jobIDCluster ]
+then
+    SGE_ID=$(<jobIDCluster)
+fi
 # Make Request to Toolkit to indicate current state of execution
 trap catch_errors ERR;
 function catch_errors() {
     echo "error" >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/error/%jobid.content/$key
+    until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/error/%jobid.content/$key); do
+        printf 'host unreachable\n...waiting to set job status to error\n'
+        sleep 5
+    done
     echo "script aborted, because of errors"
     exit 0
 }
-curl -X POST http://%HOSTNAME:%PORT/jobs/running/%jobid.content/$key > /dev/null 2>&1
+
+until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/running/%jobid.content/$key); do
+    printf 'host unreachable\n...waiting to set job status to running\n'
+    sleep 5
+done
 
 # retrieve sge id
 
-curl -X POST http://%HOSTNAME:%PORT/jobs/sge/%jobid.content/${JOB_ID} > /dev/null 2>&1
+until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/sge/%jobid.content/${SGE_ID}); do
+    printf 'host unreachable\n...waiting to retrieve sge id\n'
+    sleep 5
+done
+
 
 # Recreate results and log directories
 rm -rf ../results

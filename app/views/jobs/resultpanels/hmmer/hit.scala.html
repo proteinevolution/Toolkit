@@ -14,7 +14,7 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td class="indexCheckbox" ><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}</td>
+    <td class="indexCheckbox" ><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}'> @{hit.num}</td>
     <td  class="hitInfo"  colspan="4">
         @BlastVisualization.getSingleLinkDB(db,hit.accession)
         @{"  "+hit.description}
@@ -23,7 +23,7 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td class="hitInfo" colspan="4">E-value: @{hit.evalue}&emsp;&emsp;
+    <td class="hitInfo" colspan="4">E-value: @{hit.full_evalue}&emsp;&emsp; Ind. E-value: @{hit.evalue}&emsp;&emsp;
         Score: @{hit.bitscore}&emsp;&emsp;Aligned positions: @{hit.hit_len}&emsp;&emsp;
         Observed domains: @{hit.domain_obs_num}
     </td>
@@ -34,7 +34,7 @@
 
 @* color only 100 first hits, to avoid bloating of the generated html*@
 
-    @if(hit.num > 100) {
+    @if(hit.num > 0) {
 
         @* seq of query, if present *@
         @{
