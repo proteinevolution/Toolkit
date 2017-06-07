@@ -224,7 +224,6 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         import java.io.File
         val filename    = file.filename
         val contentType = file.contentType
-        println(file)
         file.ref.moveTo(new File(s"/tmp/$filename"))
         Ok("File uploaded")
       }

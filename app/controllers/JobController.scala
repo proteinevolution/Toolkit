@@ -118,7 +118,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 case Some(x) => true
                 case _ => false
               }
-              println(params.mkString(","))
               // Set job as either private or public
               val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
               // Get the current date to set it for all three dates
