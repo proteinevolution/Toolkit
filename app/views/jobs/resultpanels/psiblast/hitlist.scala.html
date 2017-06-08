@@ -5,7 +5,7 @@
 
 @if(result.num_hits < 1) {
     <div class="callout alert noHits" id="noHits">
-        <text>No hits found!</text>
+        <h6>No hits found!</h6>
     </div>
 
 }else{
@@ -85,11 +85,11 @@ var jobID = '@{jobID}';
 var loading = false;
 
 $(document).ready( function(){
+    hitlistBaseFunctions();
     if(numHits > 0 ){
         drawDataTable();
-        hitlistBaseFunctions();
-        var firstQueryStart = @if(result.num_hits > 1){ result.HSPS.head.query_start};
-        var firstQueryEnd = @if(result.num_hits > 1){ result.HSPS.head.query_end};
+        var firstQueryStart = @result.HSPS.head.query_start;
+        var firstQueryEnd = @result.HSPS.head.query_end;
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
         getHits(0, shownHits);
