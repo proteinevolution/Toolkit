@@ -131,3 +131,17 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
                             "message": "We use cookies to ensure you get the best experience on our website. By using our services you agree to our privacy policies.",
                         },
                     })});
+
+    // Limit HHpred DB
+    function maxDB() {
+        $('.inputDBs').change(function () {
+        if ($("#hhsuitedb").val().length + $("#proteomes").val().length > 6) {
+            feedback(false, "Only 6 databases may be selected at a time!", "error");
+            return false
+        }
+        else {
+            feedback(true, "Valid input", "success");
+            return true
+            }
+        });
+    }
