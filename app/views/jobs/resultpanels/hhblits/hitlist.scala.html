@@ -3,7 +3,7 @@
 @(jobID: String, result: HHBlitsResult, tool: models.tools.Tool)(implicit request: RequestHeader)
 @if(result.num_hits < 1) {
     <div class="callout alert noHits" id="noHits">
-        <h6>No hits found!</h6>
+        <text>No hits found!</text>
     </div>
 }else{
     @* Loads ForwardModal *@
@@ -114,8 +114,8 @@
             hitlistBaseFunctions();
             if(numHits > 0 ){
                 drawDataTable();
-                var firstQueryStart = @result.HSPS.head.query.start;
-                var firstQueryEnd = @result.HSPS.head.query.end;
+                var firstQueryStart = @if(result.num_hits > 1){ result.HSPS.head.query_start};
+                var firstQueryEnd = @if(result.num_hits > 1){ result.HSPS.head.query_end};
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
 		        shownHits = shownHits > numHits ? numHits : shownHits;
