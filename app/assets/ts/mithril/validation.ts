@@ -797,7 +797,15 @@ class alignmentVal implements ToolkitValidator {
 
     basicValidation(): boolean {
 
-        if (this.elem.val() !== "" && !this.elem.validate('fasta')) {
+        if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
+            originIsFasta = false;
+            let t = this.elem.reformat('detect');
+            feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
+            $("#alignment").val(this.elem.reformat('fasta'));
+            return true;
+        }
+
+        else if (this.elem.val() !== "" && !this.elem.validate('fasta')) {
             feedback(false, "This is no Fasta!", "error");
             return false;
         }
@@ -829,14 +837,6 @@ class alignmentVal implements ToolkitValidator {
 
         else if (!this.elem.reformat('uniqueids')) {
             feedback(true, "Fasta but identifiers are not unique!", "warning");
-            return true;
-        }
-
-        else if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
-            originIsFasta = false;
-            let t = this.elem.reformat('detect');
-            feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
-            $("#alignment").val(this.elem.reformat('fasta'));
             return true;
         }
 
