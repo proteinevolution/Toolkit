@@ -77,7 +77,6 @@ let ParameterAlignmentComponent = {
         let params = {
             oninit: function (elem : any, isInit : boolean) {
                 if (!isInit) {
-                    maxDB();
                     if (ctrl.getTwoTextAreas()) {
                         $(".inputDBs").val(null).trigger("change");
                         $(".inputDBs").prop('disabled', true);

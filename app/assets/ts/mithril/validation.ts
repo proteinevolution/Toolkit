@@ -48,6 +48,11 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                             }, 200);
                             $(elem).focus();
                         });
+                        $('.inputDBs').on('change', function () {
+                            setTimeout(function () {
+                                validationProcess($(elem), toolname)
+                            }, 200);
+                        });
                         $(elem).blur(function () {
                             if ($(elem).val() === '') {
                                 $(elem).attr('value', placeholder).css('color', 'grey');
@@ -402,8 +407,9 @@ let validationProcess = function(elem: any,toolname: string) {
 
             if (hhpredTarget.basicValidation()) {
                 hhpredTarget.sameLengthValidation();
+                hhpredTarget.hhMaxDB();
+
             }
-            hhpredTarget.hhMaxDB();
 
             break;
 
@@ -796,14 +802,11 @@ class alignmentVal implements ToolkitValidator {
 
     // Limit HHpred DB
     hhMaxDB(): boolean{
-
         if ($("#hhsuitedb").val().length + $("#proteomes").val().length > 6) {
             feedback(false, "Only 6 databases may be selected at a time!", "error");
-            return false
-        }
-        else{
-            feedback(true, "Valid input", "success");
-            return true
+            return false;
+        }else{
+            return true;
         }
     }
 
@@ -870,6 +873,7 @@ class alignmentVal implements ToolkitValidator {
             return false;
         }
         return true;
+
     }
 
     mustHave2() : boolean {
