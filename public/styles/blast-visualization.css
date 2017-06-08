@@ -425,11 +425,10 @@ table.dataTable.no-footer{
 }
 
 .noHits{
-    width: 15em;
-    margin-top: 3em !important;
+    width: 5em;
+    margin-top: 3em;
     margin: 0 auto;
     margin-bottom: 1em;
-    font-size: 1.2em;
 }
 
 .noHitsWide{
