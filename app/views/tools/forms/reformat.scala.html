@@ -5,7 +5,7 @@
 <link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
 
 <div class="jobline">
-    <span class="toolname">Reformat</span>
+    <span class="toolname"><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Reformat</a></span>
     <i class="icon-white_question helpicon"></i>
 </div>
 <div style="display: block; margin: auto;">
@@ -18,9 +18,10 @@
                 <li id="tab-Alignment" class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="tabpanel-Alignment" aria-labelledby="ui-id-4" aria-selected="true" aria-expanded="true">
                     <a href="#tabpanel-Alignment" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-4">Reformat View</a>
                 </li>
+                    <!--
                 <li id="tab-Freqs" class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tabpanel-Freqs" aria-labelledby="ui-id-5" aria-selected="false" aria-expanded="false">
                     <a href="#tabpanel-Freqs" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-5">Relative Frequencies</a>
-                </li>
+                </li> -->
                 <li style="float: right;">
                     <i type="button" id="expandTabReformat" class="button_fullscreen fa fa-expand" onclick="javascript:fullscreenReformat();"></i>
                 </li>
@@ -33,10 +34,9 @@
                 <div id="reformatcontainer" style="min-height: 650px; margin: 0 auto">
 
                             <ul class="show-for-medium menu horizontal nested" style="font-size: 12px;" id="reformatTopbar">
-                                <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
-                                <li><a id="dropzonetoggle">Upload</a></li>
+                                <li><a download="reformat_download.txt" class="download" onclick="downloadResult()">Download</a></li>
+                                <!--<li><a id="dropzonetoggle">Upload</a></li> -->
                                 <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
-                                <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
                                 <li style="padding-left: 10px;">
                                     <select id="forwardTool" style="font-size: 12px;" onchange="forwardChanged()">
                                         <option selected>Forward To</option>
@@ -63,36 +63,6 @@
                                     </select>
                                 </li>
                             </ul>
-
-                    <ul class="reformat-small menu show-for-small-only">
-                        <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
-                        <li><a id="dropzonetoggle">Upload</a></li>
-                        <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
-                        <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
-                        <select id="forwardTool">
-                            <option selected>Forward To</option>
-                            <option  id="alnviz" value="alnviz">AlignmentViewer</option>
-                            <option  id="aln2plot" value="aln2plot">Aln2Plot</option>
-                            <option  id="ancescon" value="ancescon">ANCESCON</option>
-                            <option  id="clans" value="clans">CLANS</option>
-                            <option  id="clustalo" value="clustalo">ClustalO</option>
-                            <option  id="hhblits" value="hhblits">HHblits</option>
-                            <option  id="hhfilter" value="hhfilter">HHfilter</option>
-                            <option  id="hhpred" value="hhpred">HHpred</option>
-                            <option  id="hhrepid" value="hhrepid">HHrepID</option>
-                            <option  id="hmmer" value="hmmer">Hmmer</option>
-                            <option  id="kalign" value="kalign">Kalign</option>
-                            <option  id="mafft" value="mafft">Mafft</option>
-                            <option  id="mmseqs2" value="mmseqs2">MMseqs2</option>
-                            <option  id="msaprobs" value="msaprobs">MSAProbs</option>
-                            <option  id="muscle" value="muscle">MUSCLE</option>
-                            <option  id="pcoils" value="pcoils">PCOILS</option>
-                            <option  id="phyml" value="phyml">PhyML</option>
-                            <option  id="psiblast" value="psiblast">PSI-BLAST</option>
-                            <option  id="tcoffee" value="tcoffee">T-Coffee</option>
-                            <option  id="retseq" value="retseq">RetrieveSeq</option>
-                        </select>
-                    </ul>
 
 
 
@@ -122,7 +92,7 @@
 
                     </div>
 
-                    <div id="selectContainer">
+                    <div class="show-for-medium" id="selectContainer">
                             <select id="outformat">
                                 <option selected>Select Output Format</option>
                                 <option id="Fasta" value="Fasta">Fasta</option>
@@ -145,7 +115,6 @@
                             </div>
                         </div>
                     </div>
-
 
 
                     <div class="large-12 columns" style="padding-top: 9px;">
@@ -198,7 +167,7 @@
         $("#tool-tabs").tabs();
         $("#outformat").niceSelect();
         $("#forwardTool").niceSelect();
-
+        $("#callout").hide();
 
         var inputFasta = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR\n";
         // document.getElementById("alignment").value = inputFasta;
@@ -206,7 +175,7 @@
 
 
         var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
-            value: inputClustal,
+            //value: inputClustal,
             lineNumbers: false,
             mode:  "none",
             theme: "reformat"
@@ -464,9 +433,9 @@
             // Basic jQuery plugin pattern
             return function (options) {
                 options = $.extend({}, defaultOptions, (options || {}));
-                return this.each(function () {
-                    animate($(this), options);
-                });
+                //return this.each(function () {
+                   // animate($(this), options);
+                //});
             };
         }(jQuery));
 
@@ -641,7 +610,7 @@
                var seqs = myCodeMirror2.getValue ( ) ;
                localStorage.setItem ( "resultcookie", seqs ) ;
                window.location.href = "/#/tools/" + tool ;
-               } else alert("No output to forwardTo.");
+               } else alert("No output to forward to.");
             }
 
 
