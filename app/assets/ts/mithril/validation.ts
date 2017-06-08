@@ -403,7 +403,7 @@ let validationProcess = function(elem: any,toolname: string) {
             if (hhpredTarget.basicValidation()) {
                 hhpredTarget.sameLengthValidation();
             }
-
+            hhpredTarget.hhMaxDB();
 
             break;
 
@@ -794,6 +794,18 @@ class alignmentVal implements ToolkitValidator {
         visitor.visit(this);
     }
 
+    // Limit HHpred DB
+    hhMaxDB(): boolean{
+
+        if ($("#hhsuitedb").val().length + $("#proteomes").val().length > 6) {
+            feedback(false, "Only 6 databases may be selected at a time!", "error");
+            return false
+        }
+        else{
+            feedback(true, "Valid input", "success");
+            return true
+        }
+    }
 
     basicValidation(): boolean {
 
