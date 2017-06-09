@@ -95,8 +95,8 @@
             hitlistBaseFunctions();
             if (numHits > 0) {
                 drawDataTable();
-                var firstQueryStart = @result.HSPS.head.query_start;
-                var firstQueryEnd = @result.HSPS.head.query_end;
+                var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query_start}};
+                var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query_end}};
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
