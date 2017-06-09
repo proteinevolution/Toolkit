@@ -164,6 +164,9 @@ trait CommonModule extends ReactiveMongoComponents {
         fetchNewObject = true
       ).map(_.result[Job]))
   }
+
+
+
   // Updates multiple Jobs in the database but does not return them
   protected def updateJobs(selector: BSONDocument, modifier: BSONDocument): Future[UpdateWriteResult] = {
     jobCollection.flatMap(_.update(selector, modifier, multi = true))
@@ -255,4 +258,6 @@ trait CommonModule extends ReactiveMongoComponents {
   }
 
   //protected def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))
+  protected def removeJob(selector : BSONDocument) : Future[WriteResult] = jobCollection.flatMap(_.remove(selector))
+
 }
