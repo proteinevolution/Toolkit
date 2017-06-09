@@ -15,6 +15,7 @@ import models.Constants
 import models.database.users.User
 import models.results.BlastVisualization
 import models.tools.ToolFactory
+import modules.common.HTTPRequest
 import modules.tel.TEL
 import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
@@ -81,7 +82,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     */
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
-    case rh if sameOriginCheck(rh) =>
+    case rh if sameOriginCheck(rh) && HTTPRequest(rh).isHuman(rh) =>
       getUser(rh)
         .map { user =>
           Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
