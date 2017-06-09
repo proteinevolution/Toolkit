@@ -14,7 +14,8 @@ object Tcoffee extends Constants {
 
     val outfile = s"$jobPath$mainID/results/alignment.score_html"
 
-    val text = Source.fromFile(outfile).getLines().mkString
+    val source = Source.fromFile(outfile)
+    val text = try{source.getLines().mkString} finally {source.close()}
 
     val regex = """(?s)<body>(.*?)</body>""".r
 
