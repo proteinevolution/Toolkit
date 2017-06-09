@@ -173,7 +173,8 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     * @return
     */
   def checkKey(jobID: String, key: String): Boolean = {
-    val refKey = Source.fromFile(jobPath + "/" + jobID + "/key").mkString.replaceAll("\n", "")
+    val source  = Source.fromFile(jobPath + "/" + jobID + "/key")
+    val refKey =  try{ source.mkString.replaceAll("\n", "")} finally {source.close()}
     key == refKey
   }
 }

@@ -17,12 +17,15 @@ object HHrepID extends Constants{
     val filePath = s"$jobPath$jobID/results/query.hhrepid"
 
       val imagePath = s"/files/$jobID/query_"
-      val data = Source.fromFile(filePath).getLines().toList.map {
-        case wholeMatch@headerLine(m1, m2, m3) => "<h5>" + wholeMatch + "</h5>" + "<div class='hhrepImage'>" + views.html.jobs.resultpanels.image(s"$imagePath$m2.png") + "</div>"
-        case wholeMatch@seqLine(m1, m2) => "<pre class='sequence'>" + wholeMatch.replace(m2, BlastVisualization.colorRegexReplacer(m2)) + "</pre>"
-        case "" => "<br />"
-        case m => "<pre class='sequence'>" + m + "</pre>"
-      }
+      val source  = Source.fromFile(filePath)
+      val data = try {
+        source.getLines().toList.map {
+          case wholeMatch@headerLine(m1, m2, m3) => "<h5>" + wholeMatch + "</h5>" + "<div class='hhrepImage'>" + views.html.jobs.resultpanels.image(s"$imagePath$m2.png") + "</div>"
+          case wholeMatch@seqLine(m1, m2) => "<pre class='sequence'>" + wholeMatch.replace(m2, BlastVisualization.colorRegexReplacer(m2)) + "</pre>"
+          case "" => "<br />"
+          case m => "<pre class='sequence'>" + m + "</pre>"
+        }
+      } finally{source.close()}
       Html(data.mkString(""))
   }
 

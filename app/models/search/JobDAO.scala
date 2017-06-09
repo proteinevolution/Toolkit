@@ -58,7 +58,8 @@ final class JobDAO @Inject()(cs: ClusterSetup,
   def generateRSHash(toolname: String): String = {
 
     val runscript = s"$runscriptPath$toolname.sh"
-    val content   = scala.io.Source.fromFile(runscript).getLines().mkString
+    val source = scala.io.Source.fromFile(runscript)
+    val content   = try{source.getLines().mkString}finally{source.close()}
 
     MurmurHash3.stringHash(content, 0).toString
 
