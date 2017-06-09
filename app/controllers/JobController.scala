@@ -3,8 +3,8 @@ package controllers
 import java.io.{FileInputStream, ObjectInputStream}
 import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobActor.{Delete, PrepareJob, StartJob}
-import actors.JobIDActor
+import actors.JobActor._
+import actors.{JobActor, JobIDActor}
 import akka.actor.ActorRef
 import models.Constants
 import models.database.jobs._
@@ -17,15 +17,14 @@ import play.api.cache._
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
-import com.typesafe.config.ConfigFactory
 import models.tools.ToolFactory
 import modules.tel.env.Env
-import play.Logger
+import play.api.Logger
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -181,6 +180,25 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID))
       Ok
     }
+  }
+
+
+  /**
+    * deletes all jobs that are marked for deletion permanently
+    * @return
+    */
+  def deleteJobsPermanently() : Action[AnyContent] = Action.async { implicit request =>
+    Logger.info("delete jobs that are marked for deletion Action in JobController reached")
+    jobActorAccess.sendToJobActor("", MarkForDeletion(132))
+    //findJobs(BSONDocument(Job.DELETION -> BSONDocument("$or" -> List(BSONDocument("flag" -> 1), BSONDocument("flag" -> 4)))).map { jobList =>
+    findJobs(BSONDocument("deletion" -> BSONDocument("flag" -> 4))).map { jobList =>
+      println(jobList.mkString)
+      jobList.foreach{ job =>
+        println(job.jobID, "is killed")
+        jobActorAccess.sendToJobActor(job.jobID, DeleteFromDisk(job))
+      }
+    }
+    Future.successful(Ok)
   }
 
   /**
