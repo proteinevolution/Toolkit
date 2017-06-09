@@ -62,7 +62,9 @@ case class HHPredResult(HSPS: List[HHPredHSP],
                         num_hits: Int,
                         query: Query,
                         db: String,
-                        proteomes: String)
+                        proteomes: String,
+                        TMPRED: String,
+                        COILPRED: String)
 
 @Singleton
 class HHPred @Inject()(general: General, aln: Alignment) {
@@ -86,11 +88,24 @@ class HHPred @Inject()(general: General, aln: Alignment) {
         }
         val db        = (obj \ jobID \ "db").as[String]
         val proteomes = (obj \ jobID \ "proteomes").as[String]
+        val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
+          case Some(data) => data
+          case None => "0"
+        }
+        val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
+          case Some(data) => data
+          case None => "1"
+        }
+
+
+
+
+
         val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
         val query     = general.parseQuery((obj \ "query").as[JsArray])
         val num_hits  = hsplist.length
 
-        HHPredResult(hsplist, alignment, num_hits, query, db, proteomes)
+        HHPredResult(hsplist, alignment, num_hits, query, db, proteomes, TMPRED, COILPRED)
       } catch {
 
         case e: Exception  => e.printStackTrace(); null
