@@ -69,7 +69,6 @@ window.FrontendAlnvizComponent = {
                         labelIdLength: 75,
                         menuFontsize: "12px",
                         menuMarginLeft: "2px",
-                        menuPadding: "0px 10px 0px 0px",
                         menuItemFontsize: "14px",
                         menuItemLineHeight: "14px",
                         autoResize: true
@@ -87,8 +86,9 @@ window.FrontendAlnvizComponent = {
                 alignment.render();
 
                 //hide unsused options
-                $('div#menuDiv div:eq(5)').hide();
-                $('div#menuDiv div:eq(6)').hide();
+                $('#menuDiv').children().eq(5).hide();
+                $('#menuDiv').children().eq(6).hide();
+
 
                 setTimeout(function(){
                     $('#tab-Visualization').removeAttr('style');
