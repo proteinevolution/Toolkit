@@ -26,7 +26,6 @@
 }
 
 #outformat {
-
   font-size: smaller;
 
 }
@@ -41,27 +40,38 @@
   border-radius: 0;
 }
 
-#selectContainer .nice-select {
-  margin-left: 35%;
-  font-size: 0.7em;
-  margin-bottom: 2em;
-  width: 15em;
+.selectContainer {
+  width: 100%;
+  height: 4em;
+  display: flex;
 }
 
-#selectContainer ul {
+.selectContainer select {
+  font-size: 0.68em !important;
+  -moz-appearance: none !important;
+  -webkit-appearance: none !important;
+  border-radius: 4px;
+  margin-top: 0.5em;
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+  height: 2.75em;
+  color: #000;
+  text-shadow: 0 0 0 #000;
   width: 15em;
-  border-radius: 0;
+  margin-left: 10em;
 }
 
-#selectContainer p {
+
+.selectContainer p {
   margin-bottom: 0;
   font-size: 0.7em;
   width: 100%;
 
 }
 
-#selectContainer .callout {
+.selectContainer .callout {
   width: 10em;
   float: right;
   margin-right: 0.5em;
 }
+
