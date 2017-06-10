@@ -53,7 +53,9 @@ case class PSIBlastResult(HSPS: List[PSIBlastHSP],
                           db: String,
                           evalue: Double,
                           alignment: List[AlignmentItem],
-                          query: Query)
+                          query: Query,
+                          TMPRED: String,
+                          COILPRED: String)
 
 @Singleton
 class PSIBlast @Inject()(general: General, aln: Alignment) {
@@ -79,7 +81,16 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
         val hsplist = hits.map { x =>
           parseHSP(x, db, evalue)
         }
-        PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query)
+
+        val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
+          case Some(data) => data
+          case None => "0"
+        }
+        val COILPRED = (obj \ "output_psiblastp" \ "COILPRED").asOpt[String] match {
+          case Some(data) => data
+          case None => "1"
+        }
+        PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query, TMPRED, COILPRED)
       }
   }
 

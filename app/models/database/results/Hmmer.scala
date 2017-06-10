@@ -45,7 +45,8 @@ case class HmmerHSP(evalue: Double,
 
 case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 
-case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int, alignment: List[AlignmentItem], query: Query, db: String)
+case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int, alignment: List[AlignmentItem], query: Query, db: String,
+                       TMPRED: String, COILPRED: String)
 
 @Singleton
 class Hmmer @Inject()(general: General, aln: Alignment) {
@@ -65,7 +66,16 @@ class Hmmer @Inject()(general: General, aln: Alignment) {
 
         val hsplist = hsps.map (parseHSP(_))
 
-        HmmerResult(hsplist, num_hits, alignment, query, db)
+        val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
+          case Some(data) => data
+          case None => "0"
+        }
+        val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
+          case Some(data) => data
+          case None => "1"
+        }
+
+        HmmerResult(hsplist, num_hits, alignment, query, db, TMPRED, COILPRED)
       }
   }
 
