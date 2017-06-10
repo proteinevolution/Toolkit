@@ -82,6 +82,17 @@ if [ "%matrix.content" = "BLOSUM45" ] ; then
     GAPEXT=2
 fi
 
+
+head -n 2 ../results/${JOBID}.fas > ../results/firstSeq0.fas
+sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
+
+TMPRED=`tmhmm ../results/firstSeq.fas -short`
+
+run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
+COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
+
+rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
+
 #%inclusion_ethresh.content (switch to this after the slider is fixed)
 
 psiblast -db %STANDARD/%standarddb.content \
@@ -139,6 +150,13 @@ manipulate_json.py -k 'db' -v '%standarddb.content' ../results/output_psiblastp.
 
 # add evalue to json
 manipulate_json.py -k 'evalue' -v '%hhpred_incl_eval.content' ../results/output_psiblastp.json
+
+# add transmembrane prediction info to json
+manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/output_psiblastp.json
+
+# add coiled coil prediction info to json
+manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/output_psiblastp.json
+
 
 cd ../results
 

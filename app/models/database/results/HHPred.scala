@@ -98,9 +98,6 @@ class HHPred @Inject()(general: General, aln: Alignment) {
         }
 
 
-
-
-
         val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
         val query     = general.parseQuery((obj \ "query").as[JsArray])
         val num_hits  = hsplist.length

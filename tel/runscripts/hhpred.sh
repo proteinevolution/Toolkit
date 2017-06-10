@@ -369,7 +369,7 @@ manipulate_json.py -k 'proteomes' -v '%proteomes.content' ../results/${JOBID}.js
 # add transmembrane prediction info to json
 manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
 
-# add transmembrane prediction info to json
+# add coiled coil prediction info to json
 manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
 
 

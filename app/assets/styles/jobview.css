@@ -1070,8 +1070,13 @@ h6 {
     font-size: 0.85em;
     font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
+.notePlain {
+    font-size: 1.2em;
+}
+
 .note {
     font-size: 1.1em;
+    font-weight: 600;
 }
 
 .openSimilarJob button{

@@ -59,6 +59,18 @@ fi
 echo "done" >> ../results/process.log
 updateProcessLog
 
+
+head -n 2 ../results/${JOBID}.fas > ../results/firstSeq0.fas
+sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
+
+TMPRED=`tmhmm ../results/firstSeq.fas -short`
+
+run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
+COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
+
+rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
+
+
 fasta2json.py ../results/${JOBID}.fas ../results/query.json
 
 if [ "%max_hhblits_iter.content" = "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
@@ -141,6 +153,14 @@ manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
 #create tab separated file to feed into blastviz
 hmmerJson2tab.py ../results/${JOBID}.json ../results/query.json ../results/${JOBID}.tab
 blastviz_json.pl ../results/${JOBID}.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
+
+# add transmembrane prediction info to json
+manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
+
+# add coiled coil prediction info to json
+manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
+
+
 
 # Generate MSA in JSON
 fasta2json.py ../results/${JOBID}.msa_fas ../results/alignment.json

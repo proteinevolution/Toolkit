@@ -29,7 +29,36 @@
         </div>
     </div>
     <br>
-    Number of sequences: <b>@{result.num_hits}</b>
+    <text class="notePlain">Number of hits: <b>@result.num_hits</b></text>
+    <br>
+
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+        <br>
+        <text class="note"> We have detected</i></text>
+
+    }
+    @if(result.TMPRED == "1"){
+
+        <text class="note"> @result.TMPRED transmembrane helix</text>
+    }
+    @if(result.TMPRED.toInt > 1){
+
+        <text class="note"> @result.TMPRED transmembrane helices</text>
+    }
+    @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
+        <text class="note"> and </text>
+
+    }
+    @if(result.COILPRED == "0"){
+        <text class="note">coiled-coil segments </text>
+    }
+
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+        <text class="note"> in your query protein!</text>
+
+    }
+
+
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div>
