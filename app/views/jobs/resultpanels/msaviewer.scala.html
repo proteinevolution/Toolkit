@@ -67,8 +67,8 @@
 
         alignment.render();
         //hide unsused options
-        document.getElementById('menuDiv').childNodes[5].style.display = 'none';
-        document.getElementById('menuDiv').childNodes[6].style.display = 'none';
+        $('#menuDiv').children().eq(5).hide();
+        $('#menuDiv').children().eq(6).hide();
 
         //fixes option positions
 
