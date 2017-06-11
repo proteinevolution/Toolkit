@@ -101,7 +101,7 @@
 
 var checkbox = "checkbox";
 var selectAllBool = false;
-var shownHits = 50;
+var shownHits = 100;
 var showMore = 100;
 var colorAAs = true;
 // use this array to store
@@ -130,9 +130,9 @@ function drawDataTable(){
         "bProcessing" : true,
         "bServerSide" : true,
         "sAjaxSource" : "/api/job/results/dataTablePSIBlast/"+jobID,
-        "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+        "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
         "searching": false,
-        "iDisplayLength": 10,
+        "iDisplayLength": 25,
         "drawCallback": function() {
             linkCheckboxes();
             selectFromArray(checkboxes);
