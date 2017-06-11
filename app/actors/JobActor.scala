@@ -463,7 +463,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
             case Some(executionContext) =>
               Logger.info("[JobActor.StartJob] reached. starting job " + jobID)
               // set memory allocation on the cluster and let the clusterMonitor define the multiplier
-              val queue = ConfigFactory.load().getString(s"Tools.${job.tool}.queue")
+              val h_rt = ConfigFactory.load().getString(s"Tools.${job.tool}.hardruntime")
               val h_vmem = (ConfigFactory
                 .load()
                 .getString(s"Tools.${job.tool}.memory")
@@ -473,12 +473,12 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 math.ceil(ConfigFactory.load().getInt(s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
               env.configure(s"MEMORY", h_vmem)
               env.configure(s"THREADS", threads.toString)
-              env.configure(s"QUEUE", queue.toString)
+              env.configure(s"HARDRUNTIME", h_rt.toString)
               Logger.info(s"$jobID is running with $h_vmem h_vmem")
               Logger.info(s"$jobID is running with $threads threads")
-              Logger.info(s"$jobID is queued: $queue")
+              Logger.info(s"$jobID is running with $h_rt h_rt")
 
-              val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(queue))
+              val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(h_rt))
 
               modifyJob(BSONDocument(Job.IDDB -> job.mainID),
                         BSONDocument("$set" ->
