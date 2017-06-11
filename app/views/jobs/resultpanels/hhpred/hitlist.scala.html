@@ -151,7 +151,7 @@
         var currentStructureAccession = "";
         var selectAllBool = false;
         var colorAAs = true;
-        var shownHits = 50;
+        var shownHits = 100;
         var showMore = 100;
         var numHits = @{result.num_hits};
         var jobID = '@{jobID}';
@@ -201,9 +201,9 @@
                 "bServerSide": true,
                 "sAjaxSource": "/api/job/results/dataTableHHpred/" + jobID,
                 "autoWidth": false,
-                "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+                "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
                 "searching": false,
-                "iDisplayLength": 10,
+                "iDisplayLength": 25,
                 "drawCallback": function() {
                     linkCheckboxes();
                     selectFromArray(checkboxes);
