@@ -109,7 +109,7 @@
 <script>
         var checkbox = "checkbox";
         var selectAllBool = false;
-        var shownHits = 50;
+        var shownHits = 100;
         var showMore = 100;
         var colorAAs = true;
         var numHits = @{result.num_hits};
@@ -139,9 +139,9 @@
                 "bServerSide": true,
                 "sAjaxSource": "/api/job/results/dataTableHmmer/" + jobID,
                 "autoWidth": false,
-                "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+                "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
                 "searching": false,
-                "iDisplayLength": 10,
+                "iDisplayLength": 25,
                 "drawCallback": function() {
                     linkCheckboxes();
                     selectFromArray(checkboxes);

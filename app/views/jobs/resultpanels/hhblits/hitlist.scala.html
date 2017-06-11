@@ -128,7 +128,7 @@
         var checkbox = "checkbox";
         var selectAllBool = false;
         var numHits = @{result.num_hits};
-        var shownHits = 50;
+        var shownHits = 100;
         var colorAAs = true;
         var showMore = 100;
 	    var loading = false;
@@ -157,9 +157,9 @@
                 "bProcessing" : true,
                 "bServerSide" : true,
                 "sAjaxSource" : "/api/job/results/dataTableHHblits/@jobID",
-                "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+                "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
                 "searching": false,
-                "iDisplayLength": 10,
+                "iDisplayLength": 25,
                 "drawCallback": function() {
                     linkCheckboxes();
                     selectFromArray(checkboxes);
