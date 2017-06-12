@@ -594,18 +594,31 @@ table.dataTable.no-footer{
 
 #loadingHits{
     display: none;
-    font-size: 1.4em;
+    font-size: 1.3em;
     padding-left: 23em !important;
     padding-bottom: 2em !important;
 }
 
 #loadHits{
-    font-size: 1.4em;
-    margin-left: 23em !important;
+    font-size: 1.3em;
+    margin-left: 24em !important;
     margin-bottom: 2em !important;
     margin-top: 2em !important;
 }
 
+#loadHitsAln{
+    font-size: 1.3em;
+    margin-left: 24em !important;
+    margin-bottom: 2em !important;
+    margin-top: 2em !important;
+}
+
+#loadHitsQaln{
+    font-size: 1.3em;
+    margin-left: 24em !important;
+    margin-bottom: 2em !important;
+    margin-top: 2em !important;
+}
 
 .indexCheckbox {
     margin-right: 0.3em !important;
