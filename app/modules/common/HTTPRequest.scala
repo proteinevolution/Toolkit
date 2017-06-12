@@ -23,6 +23,8 @@ final case class HTTPRequest(req: RequestHeader) {
   }
   //val isHuman   = !isBot
 
+  implicit val requestHeader : RequestHeader = req
+
   def isXhr: Boolean =
     (req.headers get "X-Requested-With") contains "XMLHttpRequest"
 
@@ -56,7 +58,7 @@ final case class HTTPRequest(req: RequestHeader) {
   def sid: Option[String] =
     req.session get "sid"
 
-  private def UaMatcher(regex: scala.util.matching.Regex): RequestHeader => Boolean = { req =>
+  private def UaMatcher(regex: scala.util.matching.Regex): RequestHeader => Boolean = { implicit req =>
     {
       userAgent match {
         case `regex` => true
