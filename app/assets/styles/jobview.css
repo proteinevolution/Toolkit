@@ -247,10 +247,6 @@ hr {
     margin: 0 0 0;
 }
 
-.alignment_textarea textarea {
-    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-}
-
 
 .alignment_buttons {
     flex-direction: row;
