@@ -1,6 +1,5 @@
 package actors
 
-import java.io.{ FileOutputStream, ObjectOutputStream }
 import javax.inject.{ Inject, Named }
 
 import actors.JobActor._
