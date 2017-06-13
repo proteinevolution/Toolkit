@@ -67,6 +67,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   private val logger = org.slf4j.LoggerFactory.getLogger("controllers.Application")
   val SID            = "sid"
 
+  private[this] val blacklist = ConfigFactory.load().getStringList("banned.ip")
+
   // Run this once to generate database objects for the statistics
   def generateStatisticsDB(): Unit = {
     for (toolName: String <- toolFactory.values.keys) {
@@ -111,7 +113,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     */
   def sameOriginCheck(rh: RequestHeader): Boolean = {
     rh.headers.get("Origin") match {
-      case Some(originValue) if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) =>
+      case Some(originValue) if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) && !blacklist.contains(rh.remoteAddress) =>
         logger.debug(s"originCheck: originValue = $originValue")
         true
 
