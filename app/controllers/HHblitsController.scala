@@ -1,18 +1,18 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.ConfigFactory
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 
 import scala.concurrent.Future
 import scala.sys.process._
 import better.files._
 import models.Constants
-import models.database.results.{General, HHBlits, HHBlitsHSP, HHBlitsResult}
+import models.database.results.{ General, HHBlits, HHBlitsHSP, HHBlitsResult }
 import modules.CommonModule
-import play.api.libs.json.{JsArray, JsObject, Json}
+import play.api.libs.json.{ JsArray, JsObject, Json }
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -211,7 +211,8 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
           Json
             .toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
+            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db))))
+        )
       }
     }
   }

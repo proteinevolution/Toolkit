@@ -6,7 +6,7 @@ import models.sge.Cluster
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 
 /**
   * This controller will be used later for user interaction with the ClusterMonitor

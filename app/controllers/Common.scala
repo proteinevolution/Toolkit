@@ -11,7 +11,7 @@ import play.api.mvc.Controller
 import play.api.http.ContentTypes
 import reactivemongo.bson.BSONDocument
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 /**
   *
@@ -61,8 +61,9 @@ private[controllers] trait Common extends Controller with ContentTypes with Reac
       .flatMap { authorization =>
         authorization.split(" ").drop(1).headOption.filter { encoded =>
           new String(org.apache.commons.codec.binary.Base64.decodeBase64(encoded.getBytes)).split(":").toList match {
-            case u :: p :: Nil if Await.result(matchSuperUserToPW(u, p), scala.concurrent.duration.Duration.Inf) => true
-            case _                                                                                               => false
+            case u :: p :: Nil if Await.result(matchSuperUserToPW(u, p), scala.concurrent.duration.Duration.Inf) =>
+              true
+            case _ => false
           }
         }
       }

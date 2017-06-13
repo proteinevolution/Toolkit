@@ -1,6 +1,6 @@
 package modules.tel.execution
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import better.files.File
 import better.files._
@@ -45,7 +45,9 @@ class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath: Strin
         wrapper.write(
           envString.replaceAllIn(
             runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString, runscript.pathAsString),
-            m => env.get(m.group("constant"))))
+            m => env.get(m.group("constant"))
+          )
+        )
         wrapper.setPermissions(filePermissions)
         val proc = Process(wrapper.pathAsString, file.toJava).run()
 

@@ -1,6 +1,6 @@
 package actors
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import actors.JobIDActor._
 import akka.actor._
@@ -10,7 +10,7 @@ import modules.CommonModule
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 import scala.util.Random
 import scala.concurrent.duration._
 

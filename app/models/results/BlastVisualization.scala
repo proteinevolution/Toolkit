@@ -163,7 +163,8 @@ object BlastVisualization extends Constants {
   }
   def getLinksHHBlits(id: String): Html = {
     Html(
-      "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>")
+      "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
+    )
   }
 
   def getLinksHHpred(id: String): Html = {

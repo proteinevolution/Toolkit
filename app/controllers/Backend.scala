@@ -1,20 +1,20 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import models.database.jobs.Job
-import models.database.statistics.{JobEvent, JobEventLog, ToolStatistic}
+import models.database.statistics.{ JobEvent, JobEventLog, ToolStatistic }
 import models.database.users.User
 import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.json
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -52,14 +52,20 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
         findJobEventLogs(
           BSONDocument(
             JobEventLog.EVENTS ->
+            BSONDocument(
+              "$elemMatch" ->
               BSONDocument(
-                "$elemMatch" ->
-                  BSONDocument(JobEvent.TIMESTAMP ->
-                    BSONDocument("$gte" -> BSONDateTime(dateTimeFirstOfMonth.minusMonths(1).getMillis),
-                                 "$lt"  -> BSONDateTime(dateTimeFirstOfMonth.getMillis)))))).foreach { jobEventList =>
+                JobEvent.TIMESTAMP ->
+                BSONDocument("$gte" -> BSONDateTime(dateTimeFirstOfMonth.minusMonths(1).getMillis),
+                             "$lt"  -> BSONDateTime(dateTimeFirstOfMonth.getMillis))
+              )
+            )
+          )
+        ).foreach { jobEventList =>
           Logger.info(
             "Found " + jobEventList.length + " Jobs for the last Month (From " + dateTimeFirstOfMonth
-              .minusMonths(1) + " to " + dateTimeFirstOfMonth + ")")
+              .minusMonths(1) + " to " + dateTimeFirstOfMonth + ")"
+          )
         }
 
         getStatistics.map { toolStatisticList: List[ToolStatistic] =>

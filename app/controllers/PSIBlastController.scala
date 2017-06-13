@@ -9,7 +9,7 @@ import scala.sys.process._
 import better.files._
 import models.Constants
 import models.database.results._
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 import javax.inject.Inject
 import play.api.data._
 import play.api.data.Forms._
@@ -19,13 +19,13 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.Future
 import modules.CommonModule
 import play.api.data.Form
-import play.api.libs.json.{JsArray, JsObject, Json}
+import play.api.libs.json.{ JsArray, JsObject, Json }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class PSIBlastController @Inject()(psiblast: PSIBlast, general: General, aln: Alignment)(
-    webJarAssets: WebJarAssets,
-    val reactiveMongoApi: ReactiveMongoApi)
+class PSIBlastController @Inject()(psiblast: PSIBlast,
+                                   general: General,
+                                   aln: Alignment)(webJarAssets: WebJarAssets, val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
     with Constants
     with CommonModule
@@ -181,7 +181,8 @@ class PSIBlastController @Inject()(psiblast: PSIBlast, general: General, aln: Al
           Json
             .toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
+            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db))))
+        )
       }
     }
   }

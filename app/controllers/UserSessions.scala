@@ -1,13 +1,13 @@
 package controllers
 
-import models.database.users.{SessionData, User}
-import modules.{CommonModule, LocationProvider}
+import models.database.users.{ SessionData, User }
+import modules.{ CommonModule, LocationProvider }
 import modules.common.HTTPRequest
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.{Logger, mvc}
+import play.api.{ mvc, Logger }
 import play.api.mvc.RequestHeader
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -39,9 +39,9 @@ trait UserSessions extends CommonModule {
         Logger.info("User found by SessionID")
         val selector = BSONDocument(User.IDDB -> user.userID)
         val modifier = BSONDocument("$set" ->
-                                      BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
+                                    BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
                                     "$addToSet" ->
-                                      BSONDocument(User.SESSIONDATA -> newSessionData))
+                                    BSONDocument(User.SESSIONDATA -> newSessionData))
         modifyUserWithCache(selector, modifier).map {
           case Some(updatedUser) =>
             updatedUser
@@ -106,7 +106,8 @@ trait UserSessions extends CommonModule {
             val selector = BSONDocument(User.IDDB -> user.userID)
             val modifier = BSONDocument(
               "$set" ->
-                BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
+              BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis))
+            )
             modifyUserWithCache(selector, modifier).map {
               case Some(updatedUser) =>
                 Some(updatedUser)
@@ -156,7 +157,8 @@ trait UserSessions extends CommonModule {
     if (withDB) {
       userCollection.flatMap(
         _.update(BSONDocument(User.IDDB -> user.userID),
-                 BSONDocument("$unset"  -> BSONDocument(User.SESSIONID -> "", User.CONNECTED -> ""))))
+                 BSONDocument("$unset"  -> BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "")))
+      )
     }
   }
 

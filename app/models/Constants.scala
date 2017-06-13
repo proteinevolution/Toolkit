@@ -16,7 +16,7 @@ trait Constants {
   val serializedParam                 = "sparam"
   val nJobActors                      = 100
   val formMultiValueSeparator: String = " "
-  val modellerKey            : String = "MODELIRANJE"
+  val modellerKey: String             = "MODELIRANJE"
 }
 
 trait ExitCodes {

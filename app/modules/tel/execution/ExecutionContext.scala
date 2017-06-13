@@ -1,6 +1,6 @@
 package modules.tel.execution
 
-import java.io.{FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream}
+import java.io.{ FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream }
 
 import better.files.File
 
@@ -68,7 +68,7 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   def accept(execution: PendingExecution): Unit = {
 
     // TODO Onlu allow one execution
-    if ( ! this.blocked) {
+    if (!this.blocked) {
       executionQueue.enqueue(execution.register(root./(execNumbers.next().toString).createDirectories()))
       this.blocked = true
     }
