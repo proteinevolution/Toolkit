@@ -15,6 +15,7 @@ import models.Constants
 import models.database.users.User
 import models.results.BlastVisualization
 import models.tools.ToolFactory
+import modules.common.HTTPRequest
 import modules.tel.TEL
 import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
@@ -110,7 +111,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     */
   def sameOriginCheck(rh: RequestHeader): Boolean = {
     rh.headers.get("Origin") match {
-      case Some(originValue) if originMatches(originValue) =>
+      case Some(originValue) if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) =>
         logger.debug(s"originCheck: originValue = $originValue")
         true
 
