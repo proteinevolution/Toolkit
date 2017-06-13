@@ -26,7 +26,7 @@ case class JobHash(mainID: BSONObjectID,
 
   override def toString: String = {
     "\nmainID: " + mainID.stringify + "\nJobHash: " + inputHash + "\nrsHash: " + runscriptHash +
-      "\ndbName: " + dbName + "\ndbMtime " + dbMtime + "\nTool" + toolName + "\ntoolHash" + toolHash +
+      "\ndbName: " + dbName + "\ndbMtime: " + dbMtime + "\nTool: " + toolName + "\ntoolHash: " + toolHash +
       "\ndateCreated: " + dateCreated + "\njobID: " + jobID
   }
 }
