@@ -23,7 +23,7 @@ object JobClusterData {
   val SGEID        = "sgeid"
   val MEMORY       = "memory"
   val THREADS      = "threads"
-  val HARDRUNTIME        = "hardruntime"
+  val HARDRUNTIME  = "hardruntime"
   val DATESTARTED  = "started"
   val DATEFINISHED = "finished"
 
@@ -34,7 +34,7 @@ object JobClusterData {
         try {
           val sgeID        = (obj \ SGEID).asOpt[String]
           val memory       = (obj \ MEMORY).asOpt[Int]
-          val hardruntime        = (obj \ HARDRUNTIME).asOpt[String]
+          val hardruntime  = (obj \ HARDRUNTIME).asOpt[String]
           val threads      = (obj \ THREADS).asOpt[Int]
           val dateStarted  = (obj \ DATESTARTED).asOpt[String]
           val dateFinished = (obj \ DATEFINISHED).asOpt[String]
@@ -44,7 +44,8 @@ object JobClusterData {
                            threads = Some(0),
                            hardruntime = Some(""),
                            dateStarted = Some(new DateTime()),
-                           dateFinished = Some(new DateTime())))
+                           dateFinished = Some(new DateTime()))
+          )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
         }
@@ -57,7 +58,7 @@ object JobClusterData {
       SGEID        -> job.sgeID,
       MEMORY       -> job.memory,
       THREADS      -> job.threads,
-      HARDRUNTIME        -> job.hardruntime,
+      HARDRUNTIME  -> job.hardruntime,
       DATESTARTED  -> job.dateStarted,
       DATEFINISHED -> job.dateFinished
     )
@@ -87,7 +88,7 @@ object JobClusterData {
       SGEID        -> clusterData.sgeID,
       MEMORY       -> clusterData.memory,
       THREADS      -> clusterData.threads,
-      HARDRUNTIME        -> clusterData.hardruntime,
+      HARDRUNTIME  -> clusterData.hardruntime,
       DATESTARTED  -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.getMillis)),
       DATEFINISHED -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.getMillis))
     )

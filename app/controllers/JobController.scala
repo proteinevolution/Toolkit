@@ -1,9 +1,9 @@
 package controllers
 
-import java.io.{FileInputStream, ObjectInputStream}
-import javax.inject.{Inject, Named, Singleton}
+import java.io.{ FileInputStream, ObjectInputStream }
+import javax.inject.{ Inject, Named, Singleton }
 
-import actors.JobActor.{Delete, PrepareJob, StartJob}
+import actors.JobActor.{ Delete, PrepareJob, StartJob }
 import actors.JobIDActor
 import akka.actor.ActorRef
 import models.Constants
@@ -11,13 +11,13 @@ import models.database.jobs._
 import models.database.users.User
 import models.job.JobActorAccess
 import models.search.JobDAO
-import modules.{CommonModule, LocationProvider}
+import modules.{ CommonModule, LocationProvider }
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.libs.json.{JsNull, Json}
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.libs.json.{ JsNull, Json }
+import play.api.mvc.{ Action, AnyContent, Controller }
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -91,7 +91,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
           var formData = mpfd.dataParts.mapValues(_.mkString(formMultiValueSeparator))
           mpfd.file("file").foreach { file =>
             var source = scala.io.Source.fromFile(file.ref.file)
-            formData = try{formData.updated("alignment", source.getLines().mkString("\n"))} finally {source.close()}
+            formData = try { formData.updated("alignment", source.getLines().mkString("\n")) } finally {
+              source.close()
+            }
           }
           // Determine the jobID
           (formData.get("jobID") match {
@@ -108,7 +110,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               // Load the parameters for the tool
               val toolParams = toolFactory.values(toolName).params
               // Filter invalid parameters
-              var params : Map[String, String] = formData
+              var params: Map[String, String] = formData
               formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
                 paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
               }
@@ -117,7 +119,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               // TODO: mailUpdate some how gets lost in the filter function above
               val emailUpdate = formData.get("emailUpdate") match {
                 case Some(x) => true
-                case _ => false
+                case _       => false
               }
               // Set job as either private or public
               val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
@@ -129,7 +131,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 jobID = jobID,
                 ownerID = ownerOption,
                 status = Submitted,
-                emailUpdate =  emailUpdate,
+                emailUpdate = emailUpdate,
                 tool = toolName,
                 toolnameLong = None,
                 label = params.get("label"),
@@ -144,7 +146,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
               // Add Job to user in database
               modifyUserWithCache(BSONDocument(User.IDDB   -> user.userID),
-                BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID)))
+                                  BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID)))
 
               // Add job to database
               insertJob(job).map {
@@ -168,8 +170,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       }
     }
   }
-
-
 
   /**
     * Sends a deletion request to the job actor.
@@ -211,7 +211,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
               val foundMainIDs   = jobList.map(_.mainID)
               val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-              val jobsFiltered  = jobList.filter(_.status == Done)
+              val jobsFiltered   = jobList.filter(_.status == Done)
 
               // Delete index-zombie jobs
               unFoundMainIDs.foreach { mainID =>
@@ -219,7 +219,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 jobDao.deleteJob(mainID.stringify)
               }
               jobsFiltered.lastOption match {
-                case Some(oldJob) => Ok (Json.toJson(Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated) ) )
+                case Some(oldJob) =>
+                  Ok(Json.toJson(Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated)))
                 case None => NotFound
               }
             }

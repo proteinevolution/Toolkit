@@ -1,11 +1,11 @@
 package controllers
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
 import actors.WebSocketActor.MaintenanceAlert
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import models.sge.Cluster
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
@@ -17,13 +17,13 @@ import models.results.BlastVisualization
 import models.tools.ToolFactory
 import modules.common.HTTPRequest
 import modules.tel.TEL
-import modules.{CommonModule, LocationProvider}
+import modules.{ CommonModule, LocationProvider }
 import modules.tel.env.Env
-import play.api.{Configuration, Logger}
+import play.api.{ Configuration, Logger }
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.Files
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
@@ -117,7 +117,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
 
       case Some(badOrigin) =>
         logger.error(
-          s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin")
+          s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin"
+        )
         false
 
       case None =>
@@ -130,8 +131,9 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     * Returns true if the value of the Origin header contains an acceptable value.
     */
   def originMatches(origin: String): Boolean = {
-      origin.contains(TEL.hostname + ":" + TEL.port) || origin.contains("tuebingen.mpg.de") || origin.contains(
-      "tue.mpg.de")
+    origin.contains(TEL.hostname + ":" + TEL.port) || origin.contains("tuebingen.mpg.de") || origin.contains(
+      "tue.mpg.de"
+    )
   }
 
   /**
@@ -285,10 +287,9 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     ).as("text/javascript").withHeaders(CACHE_CONTROL -> "max-age=31536000")
   }
 
-  def maintenance : Action[AnyContent] = MaintenanceSecured() {
+  def maintenance: Action[AnyContent] = MaintenanceSecured() {
 
     Action { implicit ctx =>
-
       clusterMonitor ! Multicast
 
       Ok("Maintenance screen active...")

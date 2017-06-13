@@ -1,6 +1,6 @@
 package modules
 
-import actors.{JobIDActor, ClusterMonitor, JobActor, WebSocketActor}
+import actors.{ ClusterMonitor, JobActor, JobIDActor, WebSocketActor }
 import com.google.inject.AbstractModule
 import play.api.libs.concurrent.AkkaGuiceSupport
 

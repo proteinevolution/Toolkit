@@ -1,7 +1,7 @@
 package models.database.statistics
 
 import org.joda.time.DateTime
-import play.api.libs.json.{JsObject, Json, Writes}
+import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 
 /**

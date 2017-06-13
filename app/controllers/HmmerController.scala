@@ -12,8 +12,8 @@ import models.Constants
 import scala.concurrent.ExecutionContext.Implicits.global
 import modules.CommonModule
 import models.database.results._
-import play.api.libs.json.{JsArray, JsObject, Json}
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.libs.json.{ JsArray, JsObject, Json }
+import play.api.mvc.{ Action, AnyContent, Controller }
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.Future
@@ -176,7 +176,8 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
           Json
             .toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
+            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db))))
+        )
       }
     }
   }

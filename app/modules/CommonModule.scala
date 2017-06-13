@@ -1,22 +1,22 @@
 package modules
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.{FrontendJob, Job, JobAnnotation}
-import models.database.statistics.{ClusterLoadEvent, JobEventLog, ToolStatistic}
-import models.database.users.{User, UserData}
+import models.database.jobs.{ FrontendJob, Job, JobAnnotation }
+import models.database.statistics.{ ClusterLoadEvent, JobEventLog, ToolStatistic }
+import models.database.users.{ User, UserData }
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
+import reactivemongo.api.indexes.{ Index, IndexType }
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import org.joda.time.DateTime
 import play.api.Logger
 
 import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 /**
   * Created by zin on 03.08.16.
@@ -40,8 +40,8 @@ trait CommonModule extends ReactiveMongoComponents {
   // articleCollection is now a value with the Index structure ensured
   protected lazy val articleCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("articles")).map { collection =>
-      collection.indexesManager.ensure(
-        Index(Seq("dateCreated" -> IndexType.Descending), background = true, unique = true))
+      collection.indexesManager
+        .ensure(Index(Seq("dateCreated" -> IndexType.Descending), background = true, unique = true))
       collection
     }
   }
@@ -129,7 +129,8 @@ trait CommonModule extends ReactiveMongoComponents {
     */
   protected def upsertJob(job: Job): Future[Option[Job]] = {
     jobCollection.flatMap(
-      _.findAndUpdate(selectjobID(job.jobID), update = job, upsert = true, fetchNewObject = true).map(_.result[Job]))
+      _.findAndUpdate(selectjobID(job.jobID), update = job, upsert = true, fetchNewObject = true).map(_.result[Job])
+    )
   }
 
   protected def insertJob(job: Job): Future[Option[Job]] = {
@@ -141,7 +142,8 @@ trait CommonModule extends ReactiveMongoComponents {
   protected def upsertAnnotation(notes: JobAnnotation): Future[Option[JobAnnotation]] = {
 
     jobAnnotationCollection.flatMap(
-      _.findAndUpdate(selectjobID(notes.jobID), update = notes, upsert = true).map(_.result[JobAnnotation]))
+      _.findAndUpdate(selectjobID(notes.jobID), update = notes, upsert = true).map(_.result[JobAnnotation])
+    )
   }
 
   protected def modifyAnnotation(selector: BSONDocument, modifier: BSONDocument): Future[Option[Job]] = {
@@ -162,7 +164,8 @@ trait CommonModule extends ReactiveMongoComponents {
         selector,
         modifier.merge(BSONDocument("$set" -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis)))),
         fetchNewObject = true
-      ).map(_.result[Job]))
+      ).map(_.result[Job])
+    )
   }
   // Updates multiple Jobs in the database but does not return them
   protected def updateJobs(selector: BSONDocument, modifier: BSONDocument): Future[UpdateWriteResult] = {
@@ -203,17 +206,21 @@ trait CommonModule extends ReactiveMongoComponents {
     statisticsCollection.flatMap(
       _.findAndUpdate(selector = BSONDocument(ToolStatistic.IDDB -> toolStatistic.toolID),
                       update = toolStatistic,
-                      upsert = true).map(_.result[ToolStatistic]))
+                      upsert = true).map(_.result[ToolStatistic])
+    )
   }
 
   protected def increaseJobCount(toolName: String, failed: Boolean = false): Future[WriteResult] = {
     statisticsCollection.flatMap(
       _.update(
         BSONDocument(ToolStatistic.TOOLNAME -> toolName),
-        BSONDocument("$inc" ->
+        BSONDocument(
+          "$inc" ->
           BSONDocument({ if (failed) { ToolStatistic.CURRENTFAILED } else { ToolStatistic.CURRENT } }
-            -> 1))
-      ))
+          -> 1)
+        )
+      )
+    )
   }
 
   protected def loadStatisticsCollection: Future[BSONCollection] =
@@ -224,7 +231,8 @@ trait CommonModule extends ReactiveMongoComponents {
       _.findAndUpdate(selector = BSONDocument(ClusterLoadEvent.IDDB -> clusterLoadEvent.id),
                       update = clusterLoadEvent,
                       upsert = true,
-                      fetchNewObject = true).map(_.result[ClusterLoadEvent]))
+                      fetchNewObject = true).map(_.result[ClusterLoadEvent])
+    )
 
   // User DB access
   protected def userCollection: Future[BSONCollection] =
@@ -251,7 +259,8 @@ trait CommonModule extends ReactiveMongoComponents {
       _.findAndUpdate(selector = BSONDocument(User.IDDB -> user.userID),
                       update = user,
                       upsert = true,
-                      fetchNewObject = true).map(_.result[User]))
+                      fetchNewObject = true).map(_.result[User])
+    )
   }
 
   //protected def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))

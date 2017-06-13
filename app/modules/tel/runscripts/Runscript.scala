@@ -2,7 +2,7 @@ package modules.tel.runscripts
 
 import better.files._
 import modules.tel.TELRegex
-import modules.tel.env.{Env, EnvAware}
+import modules.tel.env.{ Env, EnvAware }
 import modules.tel.execution.ExecutionContext
 import modules.tel.runscripts.Runscript.Evaluation
 

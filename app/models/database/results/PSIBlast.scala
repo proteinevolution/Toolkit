@@ -42,7 +42,8 @@ case class PSIBlastHSP(evalue: Double,
         "3" -> Json.toJson("%.2e".format(evalue)),
         "4" -> Json.toJson(bitscore),
         "5" -> Json.toJson(hit_len)
-      ))
+      )
+    )
 }
 
 case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
@@ -84,11 +85,11 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
 
         val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
           case Some(data) => data
-          case None => "0"
+          case None       => "0"
         }
         val COILPRED = (obj \ "output_psiblastp" \ "COILPRED").asOpt[String] match {
           case Some(data) => data
-          case None => "1"
+          case None       => "1"
         }
         PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query, TMPRED, COILPRED)
       }

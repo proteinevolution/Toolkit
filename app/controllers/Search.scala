@@ -1,20 +1,20 @@
 package controllers
 
-import models.database.jobs.{Job, JobHash}
+import models.database.jobs.{ Job, JobHash }
 import play.Logger
 import models.Constants
 import play.api.cache._
 import play.api.libs.json.Json
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.search.JobDAO
 import models.tools.ToolFactory
-import modules.{CommonModule, LocationProvider}
-import play.api.mvc.{Action, AnyContent, Controller}
+import modules.{ CommonModule, LocationProvider }
+import play.api.mvc.{ Action, AnyContent, Controller }
 
 import scala.concurrent.Future
 import scala.language.postfixOps
@@ -57,8 +57,8 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
       } else {
         // Find the Jobs with the matching tool
         findJobs(
-          BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort))))
-          .map { jobs =>
+          BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))
+        ).map { jobs =>
             jobs.map(_.cleaned())
           }
           .map(jobJs => Ok(Json.toJson(jobJs)))

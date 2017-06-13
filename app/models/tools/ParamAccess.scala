@@ -1,7 +1,7 @@
 package models.tools
 
 import modules.tel.TEL
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -123,8 +123,8 @@ case object Text extends ParamType {
 }
 
 case object ModellerKey extends ParamType {
-    def validate(value: String): Option[String] = Some(value)
-  }
+  def validate(value: String): Option[String] = Some(value)
+}
 
 object ParamType {
 
@@ -161,9 +161,9 @@ case class Param(name: String, paramType: ParamType, internalOrdering: Int, labe
 object Param {
   implicit val paramWrites: Writes[Param] = (
     (JsPath \ "name").write[String] and
-      (JsPath \ "paramType").write[ParamType] and
-      (JsPath \ "internalOrdering").write[Int] and
-      (JsPath \ "label").write[String]
+    (JsPath \ "paramType").write[ParamType] and
+    (JsPath \ "internalOrdering").write[Int] and
+    (JsPath \ "label").write[String]
   )(unlift(Param.unapply))
 }
 
@@ -173,7 +173,7 @@ object Param {
 @Singleton
 class ParamAccess @Inject()(tel: TEL) {
 
-  def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq),1, label)
+  def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq), 1, label)
   final val alignmentFormats = Seq(
     "fas" -> "fas",
     "a2m" -> "a2m",
@@ -202,7 +202,8 @@ class ParamAccess @Inject()(tel: TEL) {
   final val GAP_EXT_KALN = Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
   final val BONUSSCORE   = Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
   final val DESC         = Param("desc", ParamType.ConstrainedNumber, 1, "No. of target sequences (up to 10000)")
-  final val CONSISTENCY = Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
+  final val CONSISTENCY =
+    Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
   final val ITREFINE               = Param("itrefine", ParamType.UnconstrainedNumber, 1, "Passes of iterative refinements")
   final val PRETRAIN               = Param("pretrain", ParamType.UnconstrainedNumber, 1, "Rounds of pretraining")
   final val MAXROUNDS              = select("maxrounds", "Max. number of iterations")
@@ -228,7 +229,8 @@ class ParamAccess @Inject()(tel: TEL) {
   final val MATRIX_MARCOIL         = select("matrix_marcoil", "Matrix")
   final val TRANSITION_PROBABILITY = select("transition_probability", "Transition Probability")
   final val MIN_SEQID_QUERY        = Param("min_seqid_query", ParamType.Percentage, 1, "Minimum sequence ID with Query (%)")
-  final val NUM_SEQS_EXTRACT       =  Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
+  final val NUM_SEQS_EXTRACT =
+    Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
   final val SCORE_SS                = select("score_ss", "Score secondary structure")
   final val SS_SCORING              = select("ss_scoring", "SS Scoring")
   final val MIN_SEQID               = select("min_seqid", "Minimum sequence identity")
@@ -261,7 +263,8 @@ class ParamAccess @Inject()(tel: TEL) {
   final val SAMCC_HELIXTWO          = Param("samcc_helixtwo", Text, 1, "Definition for helix 2")
   final val SAMCC_HELIXTHREE        = Param("samcc_helixthree", Text, 1, "Definition for helix 3")
   final val SAMCC_HELIXFOUR         = Param("samcc_helixfour", Text, 1, "Definition for helix 4")
-  final val INVOKE_PSIPRED          = Param("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
-  final val CLANS_EVAL              =  select("clans_eval", "Extract BLAST HSP's up to E-values of")
+  final val INVOKE_PSIPRED =
+    Param("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
+  final val CLANS_EVAL = select("clans_eval", "Extract BLAST HSP's up to E-values of")
 
 }

@@ -8,12 +8,12 @@ import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 import org.joda.time.DateTime
-import play.api.libs.json.{JsArray, JsObject, Json}
+import play.api.libs.json.{ JsArray, JsObject, Json }
 
 import scala.concurrent.Future
 import controllers.PSIBlastController
 import controllers.HmmerController
-import models.database.results.{Hmmer, PSIBlast}
+import models.database.results.{ Hmmer, PSIBlast }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

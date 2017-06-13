@@ -1,16 +1,16 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import akka.stream.Materializer
 import akka.util.Timeout
 import models.database.jobs.FrontendJob
 import models.search.JobDAO
-import modules.{CommonModule, LocationProvider}
+import modules.{ CommonModule, LocationProvider }
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, Controller }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 
@@ -40,7 +40,8 @@ final class Tool @Inject()(val messagesApi: MessagesApi,
       FrontendJob(mainID = BSONObjectID.generate(),
                   parentID = None,
                   tool = toolname,
-                  dateCreated = Some(DateTime.now())))
+                  dateCreated = Some(DateTime.now()))
+    )
 
     Future.successful(Ok)
   }

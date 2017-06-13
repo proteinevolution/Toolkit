@@ -1,5 +1,5 @@
 package models.database.results
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import play.api.libs.json._
 

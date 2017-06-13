@@ -1,9 +1,9 @@
 package models.database.statistics
 
-import models.database.jobs.{JobState, Error}
+import models.database.jobs.{ Error, JobState }
 import org.joda.time.DateTime
 import play.api.libs.json._
-import reactivemongo.bson.{BSONDateTime, BSONDocumentWriter, BSONDocument, BSONDocumentReader}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
 /**
   * Created by astephens on 19.02.17.

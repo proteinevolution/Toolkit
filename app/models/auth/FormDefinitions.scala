@@ -1,6 +1,6 @@
 package models.auth
 
-import models.database.users.{UserToken, UserData, User}
+import models.database.users.{ User, UserData, UserToken }
 import org.joda.time.DateTime
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
@@ -40,7 +40,8 @@ object FormDefinitions {
         userData = Some(
           UserData(nameLogin = nameLogin,
                    password = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
-                   eMail = eMail)),
+                   eMail = eMail)
+        ),
         jobs = user.jobs,
         dateLastLogin = Some(new DateTime()),
         dateCreated = Some(new DateTime()),
@@ -82,14 +83,16 @@ object FormDefinitions {
             user.getUserData.copy(eMail = eMail.getOrElse(user.getUserData.eMail),
                                   nameFirst = nameFirst,
                                   nameLast = nameLast,
-                                  country = country))
+                                  country = country)
+          )
         } else {
           None
         }
       } {
         case _ =>
           None
-      })
+      }
+    )
 
   /**
     * Edit form for the password change in the Profile
