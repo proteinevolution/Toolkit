@@ -149,6 +149,27 @@
             });
         }
 
+        function selectAll(){
+            selectAllBool = !selectAllBool;
+            if(selectAllBool) {
+                selectAllHelper(checkbox);
+                $(".selectAllSeqBar").text("Deselect all");
+                $(".selectAllSeqBar").addClass("colorToggleBar");
+
+                // first empty array
+                checkboxes = [];
+                // push all checkboxes (1 to num_hits) into array
+                _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
+            }
+            else {
+                deselectAll(checkbox);
+                $(".selectAllSeqBar").text("Select all");
+                $(".selectAllSeqBar").removeClass("colorToggleBar");
+                // delete all checkboxes from array
+                checkboxes = [];
+            }
+        }
+
         function hmmer_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
             $.LoadingOverlay("show");

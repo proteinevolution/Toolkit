@@ -145,7 +145,7 @@ function resubmitSection(sequence, name) {
 // forwards all checked identifier and sequences to tool
 function forward(tool, forwardData){
     if(forwardData == ""){
-        alert("No hits selected!");
+        alert("No sequences selected!");
         $.LoadingOverlay("hide");
         return;
     }
@@ -343,7 +343,9 @@ function selectAll(){
     selectAllBool = !selectAllBool;
     if(selectAllBool) {
         selectAllHelper(checkbox);
+        $(".selectAllSeqBar").text("Deselect all");
         $(".selectAllSeqBar").addClass("colorToggleBar");
+
         // first empty array
         checkboxes = [];
         // push all checkboxes (1 to num_hits) into array
@@ -351,6 +353,7 @@ function selectAll(){
     }
     else {
         deselectAll(checkbox);
+        $(".selectAllSeqBar").text("Select all");
         $(".selectAllSeqBar").removeClass("colorToggleBar");
         // delete all checkboxes from array
         checkboxes = [];
