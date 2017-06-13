@@ -1,6 +1,6 @@
 package models.database.users
 
-import play.api.libs.json.{Json, JsObject, Writes}
+import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 
 /**

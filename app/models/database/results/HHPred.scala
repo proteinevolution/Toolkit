@@ -32,7 +32,8 @@ case class HHPredHSP(query: HHPredQuery,
         "5" -> Json.toJson(ss_score),
         "6" -> Json.toJson(info.aligned_cols),
         "7" -> Json.toJson(template.ref)
-      ))
+      )
+    )
 }
 
 case class HHPredInfo(aligned_cols: Int,
@@ -82,7 +83,7 @@ class HHPred @Inject()(general: General, aln: Alignment) {
           val agree          = (x._1 \ "agree").as[String]
           val description    = (x._1 \ "header").as[String]
           val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
-          val ss_score            = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
+          val ss_score       = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
           val confidence     = (x._1 \ "confidence").getOrElse(Json.toJson("")).as[String]
           HHPredHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, confidence)
         }
@@ -90,13 +91,12 @@ class HHPred @Inject()(general: General, aln: Alignment) {
         val proteomes = (obj \ jobID \ "proteomes").as[String]
         val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
           case Some(data) => data
-          case None => "0"
+          case None       => "0"
         }
         val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
           case Some(data) => data
-          case None => "1"
+          case None       => "1"
         }
-
 
         val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
         val query     = general.parseQuery((obj \ "query").as[JsArray])
@@ -105,7 +105,7 @@ class HHPred @Inject()(general: General, aln: Alignment) {
         HHPredResult(hsplist, alignment, num_hits, query, db, proteomes, TMPRED, COILPRED)
       } catch {
 
-        case e: Exception  => e.printStackTrace(); null
+        case e: Exception => e.printStackTrace(); null
       }
   }
 

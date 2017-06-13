@@ -1,14 +1,14 @@
 package actors
 
-import java.io.{FileOutputStream, ObjectOutputStream}
-import javax.inject.{Inject, Named}
+import java.io.{ FileOutputStream, ObjectOutputStream }
+import javax.inject.{ Inject, Named }
 
 import actors.JobActor._
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{ Actor, ActorRef }
 import akka.event.LoggingReceive
 import models.Constants
 import models.database.jobs._
-import models.database.statistics.{JobEvent, JobEventLog}
+import models.database.statistics.{ JobEvent, JobEventLog }
 import models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
@@ -18,23 +18,23 @@ import better.files._
 import com.typesafe.config.ConfigFactory
 import controllers.UserSessions
 import models.sge.Qdel
-import modules.{CommonModule, LocationProvider}
+import modules.{ CommonModule, LocationProvider }
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
+import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
+import play.api.cache.{ CacheApi, NamedCache }
 import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 object JobActor {
 
@@ -180,11 +180,12 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     * @param value
     * @param params
     */
-  private def supply(jobID: String,
-                     name: String,
-                     value: String,
-                     params: Seq[(String, (Runscript.Evaluation, Option[Argument]))])
-    : Seq[(String, (Runscript.Evaluation, Option[Argument]))] = {
+  private def supply(
+      jobID: String,
+      name: String,
+      value: String,
+      params: Seq[(String, (Runscript.Evaluation, Option[Argument]))]
+  ): Seq[(String, (Runscript.Evaluation, Option[Argument]))] = {
     params.map {
       case (paramName, (evaluation, _)) if paramName == name =>
         val x = Some(evaluation(RString(value), this.currentExecutionContexts(jobID)))
@@ -238,9 +239,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         BSONDocument(Job.IDDB -> job.mainID),
         BSONDocument(
           "$set" ->
-            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
+          BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
           "$unset" ->
-            BSONDocument(Job.WATCHLIST -> "")
+          BSONDocument(Job.WATCHLIST -> "")
         )
       ).foreach {
         case Some(deletedJob) =>
@@ -373,7 +374,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         case FileAlreadyExists(msg) =>
           Logger.error(
             "[JobActor.PrepareJob] The directory for job " + job.jobID + " already exists\n" +
-              "[JobActor.PrepareJob] Stopping job since it can not be retrieved by user.")
+            "[JobActor.PrepareJob] Stopping job since it can not be retrieved by user."
+          )
           self ! JobStateChanged(job.jobID, Error)
       }
 
@@ -403,9 +405,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
                 // Find the Jobs in the Database
                 findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
-                  val foundMainIDs   = jobList.map(_.mainID)
+                  val foundMainIDs = jobList.map(_.mainID)
 
-                  if(jobList.exists(_.status == Done)) {
+                  if (jobList.exists(_.status == Done)) {
                     Logger.info("JobID " + jobID + " is a duplicate.")
                     self ! JobStateChanged(job.jobID, Pending)
                   } else {
@@ -481,8 +483,10 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(h_rt))
 
               modifyJob(BSONDocument(Job.IDDB -> job.mainID),
-                        BSONDocument("$set" ->
-                          BSONDocument(Job.CLUSTERDATA -> clusterData))).foreach {
+                        BSONDocument(
+                          "$set" ->
+                          BSONDocument(Job.CLUSTERDATA -> clusterData)
+                        )).foreach {
                 case Some(updatedJob) =>
                   // Get new runscript instance from the runscript manager
                   val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
@@ -498,13 +502,15 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
                   if (isComplete(validParameters)) {
                     val pendingExecution = wrapperExecutionFactory.getInstance(
-                      runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
+                      runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument])))
+                    )
 
-                    if ( ! executionContext.blocked) {
+                    if (!executionContext.blocked) {
 
                       executionContext.accept(pendingExecution)
                       Logger.info("[JobActor.StartJob] Running job now.")
-                      this.runningExecutions = this.runningExecutions.updated(job.jobID, executionContext.executeNext.run())
+                      this.runningExecutions =
+                        this.runningExecutions.updated(job.jobID, executionContext.executeNext.run())
                     }
                   } else {
                     // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
@@ -590,7 +596,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                    reactivemongo.play.json.BSONFormats.toBSON(Json.parse(file.contentAsString)).get)
                 }
                 .toTraversable
-              if(result.nonEmpty){
+              if (result.nonEmpty) {
                 // Put the result files into the database, JobActor has to wait until this process has finished
                 val x = result2Job(job.jobID, BSONDocument(result)) onComplete {
                   case Success(doc) =>
@@ -601,7 +607,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     }
                   case Failure(t) => println("An error has occured: " + t.getMessage)
                 }
-              }else {
+              } else {
                 // Now we can update the JobState and remove it, once the update has completed
                 this.updateJobState(job).map { job =>
                   this.removeJob(job.jobID)

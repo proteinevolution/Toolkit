@@ -4,7 +4,7 @@ import models.search.JobDAO
 import modules.tel.env.Env
 import better.files._
 import org.joda.time.DateTime
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
 
 /**
   *
@@ -26,8 +26,8 @@ case class JobHash(mainID: BSONObjectID,
 
   override def toString: String = {
     "\nmainID: " + mainID.stringify + "\nJobHash: " + inputHash + "\nrsHash: " + runscriptHash +
-      "\ndbName: " + dbName + "\ndbMtime: " + dbMtime + "\nTool: " + toolName + "\ntoolHash: " + toolHash +
-      "\ndateCreated: " + dateCreated + "\njobID: " + jobID
+    "\ndbName: " + dbName + "\ndbMtime: " + dbMtime + "\nTool: " + toolName + "\ntoolHash: " + toolHash +
+    "\ndateCreated: " + dateCreated + "\njobID: " + jobID
   }
 }
 

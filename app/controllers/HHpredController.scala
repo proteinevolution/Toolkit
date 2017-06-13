@@ -1,20 +1,20 @@
 package controllers
 
-import javax.inject.{Inject}
+import javax.inject.{ Inject }
 import java.nio.file.attribute.PosixFilePermission
 
 import com.typesafe.config.ConfigFactory
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 import scala.sys.process._
 import better.files._
 import models.Constants
-import models.database.results.{HHPred, HHPredHSP, HHPredResult}
+import models.database.results.{ HHPred, HHPredHSP, HHPredResult }
 import play.modules.reactivemongo.ReactiveMongoApi
 import modules.CommonModule
-import play.api.libs.json.{JsArray, JsObject, Json}
+import play.api.libs.json.{ JsArray, JsObject, Json }
 
 /**
   * Created by drau on 01.03.17.
@@ -108,17 +108,18 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
 
-  def loadHits(jobID: String, start: Int, end: Int, isColor: Boolean): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
-      case Some(jsValue) =>
-        val result = hhpred.parseResult(jsValue)
-        if (end > result.num_hits || start > result.num_hits) {
-          BadRequest
-        } else {
-          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor))
-          Ok(hits.mkString)
-        }
-    }
+  def loadHits(jobID: String, start: Int, end: Int, isColor: Boolean): Action[AnyContent] = Action.async {
+    implicit request =>
+      getResult(jobID).map {
+        case Some(jsValue) =>
+          val result = hhpred.parseResult(jsValue)
+          if (end > result.num_hits || start > result.num_hits) {
+            BadRequest
+          } else {
+            val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor))
+            Ok(hits.mkString)
+          }
+      }
   }
 
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
@@ -146,7 +147,8 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
           Json
             .toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db)))))
+            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db))))
+        )
       }
     }
   }

@@ -1,8 +1,8 @@
 package models.job
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import actors.JobActor
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import models.Constants
 
 /**
