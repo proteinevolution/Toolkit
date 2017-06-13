@@ -38,3 +38,4 @@ public/javascripts/typescriptc.js.map
 /development
 *.sbt.swp
 native
+*.swp
