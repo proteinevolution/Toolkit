@@ -66,7 +66,7 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
   override def postStop(): Unit = {
     clusterMonitor ! Disconnect(self)
-    getUser(sessionID).foreach {
+    /*getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get(user.userID.stringify) match {
           case Some(wsActors) =>
@@ -76,8 +76,21 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
           case None =>
         }
       case None =>
-        self ! PoisonPill
-    }
+        self ! PoisonPill // PoisonPill here is pretty useless since postStop means that the actor is shutting down
+    } */
+
+    /**
+      *
+      *  do we need to have persistent actors? if so,
+      *  let's use akka-persistence instead of the cache (which would not work).
+      *  actors must be removed from
+      *  the cache at some point anyway.
+      */
+
+    getUser(sessionID).foreach {
+      case Some(user) =>
+            wsActorCache.remove(user.userID.stringify)
+        }
   }
 
   def receive = LoggingReceive {
