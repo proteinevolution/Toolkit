@@ -100,7 +100,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     case rejected =>
       logger.error(s"Request $rejected failed same origin check")
       Future.successful {
-        Left(Forbidden("forbidden"))
+        Left(Ok("forbidden"))
       }
   }
 
