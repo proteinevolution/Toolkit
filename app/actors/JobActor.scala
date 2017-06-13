@@ -1,13 +1,14 @@
 package actors
 
-import javax.inject.{ Inject, Named }
+import javax.inject.{Inject, Named}
 
+import actors.FileWatcher.{StartProcessReport, StopProcessReport}
 import actors.JobActor._
-import akka.actor.{ Actor, ActorRef }
+import akka.actor.{Actor, ActorRef}
 import akka.event.LoggingReceive
 import models.Constants
 import models.database.jobs._
-import models.database.statistics.{ JobEvent, JobEventLog }
+import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
@@ -17,23 +18,23 @@ import better.files._
 import com.typesafe.config.ConfigFactory
 import controllers.UserSessions
 import models.sge.Qdel
-import modules.{ CommonModule, LocationProvider }
+import modules.{CommonModule, LocationProvider}
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
+import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.{ CacheApi, NamedCache }
+import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
 
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 
 object JobActor {
 
@@ -86,6 +87,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          wrapperExecutionFactory: WrapperExecutionFactory,
                          implicit val locationProvider: LocationProvider,
                          @Named("jobIDActor") jobIDActor: ActorRef,
+                         @Named("fileWatcher") fileWatcher: ActorRef,
                          @NamedCache("userCache") implicit val userCache: CacheApi,
                          @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi)
     extends Actor
@@ -571,6 +573,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
     // Message from outside that the jobState has changed
     case JobStateChanged(jobID: String, jobState: JobState) =>
+
+
       this.getCurrentJob(jobID).foreach {
         case Some(oldJob) =>
           // Update the job object
@@ -580,8 +584,12 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
           // Dependent on the state, we have to do different things
           job.status match {
+            case Running =>
+              println("Job is running. Start process logging...")
+              fileWatcher ! StartProcessReport(jobID)
             case Done =>
               // Job is no longer running
+              fileWatcher ! StopProcessReport(jobID)
               Logger.info("Removing execution context")
               this.runningExecutions = this.runningExecutions.-(job.jobID)
               Logger.info("DONE Removing execution context")
