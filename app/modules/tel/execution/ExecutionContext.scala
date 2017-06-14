@@ -1,10 +1,7 @@
 package modules.tel.execution
 
 import java.io.{FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream}
-
 import better.files.File
-import shapeless.ops.coproduct.ExtendLeftBy
-
 import scala.collection.mutable
 
 /**
