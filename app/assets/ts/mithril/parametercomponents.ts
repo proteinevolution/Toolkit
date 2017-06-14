@@ -109,10 +109,16 @@ let ParameterSelectComponent = {
             id: args.param.name,
             config: select2Config
         };
-        if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
+
+        let multiselect : boolean = args.param.name === "hhsuitedb" || args.param.name === "proteomes";
+
+        if (multiselect) {
+
             paramAttrs["multiple"] = "multiple";
             paramAttrs["class"] = "inputDBs";
-        }else{
+            args.value = args.value.split(/\s+/);
+
+        } else {
             paramAttrs["config"] = selectBoxAccess;
         }
 
@@ -123,7 +129,7 @@ let ParameterSelectComponent = {
             m("select", paramAttrs,
                 args.param.paramType.options.map(function(entry : any) {
 
-                    return m("option", (args.value === entry[0] ? {
+                    return m("option", ( (multiselect ? args.value.indexOf(entry[0]) > -1  : args.value === entry[0]) ? {
                         value: entry[0],
                         selected: "selected"
                     } : {
