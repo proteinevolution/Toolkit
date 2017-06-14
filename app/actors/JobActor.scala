@@ -494,7 +494,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   // Load the parameters from the serialized parameters file
                   val params = executionContext.reloadParams
                   // Validate the Parameters (again) to ensure that everything works
-                  var validParameters = this.validatedParameters(job, runscript, params)
+                  val validParameters = this.validatedParameters(job, runscript, params)
 
                   // adds the params of the disabled controls from formData, sets value of those to "false"
                   validParameters.filterNot(pv => params.contains(pv._1)).foreach { pv =>
