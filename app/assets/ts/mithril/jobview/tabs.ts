@@ -185,7 +185,6 @@ let JobTabsComponent = {
                                         ),
                                         elements.length > 1 ? m("div", { "class": "row", style: "margin-top: 35px;" },
                                             elements.slice(1).map(function(param : any) {
-                                                //console.log(JSON.stringify(mapParam(param,ctrl)));
                                                 return m("div", {"class" : "large-6 medium-12 small-12 columns", style: "padding-right: 20px"},
                                                     mapParam(param, ctrl));
                                             })
