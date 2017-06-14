@@ -106,7 +106,8 @@ window.JobModel = {
         }
         let val = window.JobModel.paramValues[param];
         let defVal = window.JobModel.defaultValues[param];
-        if (val) {
+
+        if (val || val === "") {
             return val;
         } else if (defVal) {
             return defVal;
