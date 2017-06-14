@@ -44,7 +44,7 @@
         window["@{viewName}_forward_"] = function(){
             var selectedTool = $('#forwardSelect_@viewName').val();
             if(selectedTool == ""){
-                alert("no sequences selected!")
+                alert("Please select a tool!")
                 $('#forwardModal_@{viewName}').foundation('close');
                 return;
             }
