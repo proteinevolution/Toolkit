@@ -1001,7 +1001,7 @@ class alignmentVal implements ToolkitValidator {
         samccIsValid = false;
 
         if(!this.elem.reformat('atoms'))
-            feedback(false, "Must have at least 25 sequences starting with \"ATOM\"", "error");
+            feedback(false, "Must contain at least 28 ATOM records", "error");
 
         else if (this.elem.val() == "") {
             feedback(false);
