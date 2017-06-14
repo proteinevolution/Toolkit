@@ -70,7 +70,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     Ok
   }
 
-  //TODO make <strike>america</strike> Jobs <strike>great</strike> secure again!
+  
   def SGEID(jobID: String, sgeID: String) = Action.async {
 
     findJob(BSONDocument(Job.JOBID -> jobID)).map {
