@@ -12,8 +12,6 @@ import models.sge.Cluster
 import modules.db.MongoStore
 import modules.tel.TEL
 import org.joda.time.DateTime
-import play.api.Logger
-import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 
 import sys.process._
