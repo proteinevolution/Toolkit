@@ -3,16 +3,13 @@ package actors
 import javax.inject.{Inject, Singleton}
 
 import actors.ClusterMonitor.FetchLatest
-import actors.FileWatcher.{StartProcessReport, StopProcessReport}
+import actors.FileWatcher.{StartFileWatching, StopFileWatching}
 import akka.actor.{ActorLogging, _}
 import akka.event.LoggingReceive
-import models.database.jobs.Job
-import models.database.users.User
+import models.Constants
 import modules.CommonModule
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.BSONDocument
 
-import scala.collection.immutable.HashSet
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
@@ -25,13 +22,13 @@ import scala.concurrent.duration._
 final class FileWatcher @Inject()(val reactiveMongoApi: ReactiveMongoApi)
   extends Actor
     with ActorLogging
-    with CommonModule {
+    with Constants {
 
 
-  private val fetchLatestInterval = 75.millis
+  private[this] val fetchLatestInterval = 75.millis
 
-  protected[this] var jobs : HashSet[String] = HashSet.empty[String]
-  protected[this] var users : HashSet[String] = HashSet.empty[String]
+  protected[this] var jobLogs : scala.collection.immutable.Map[String, ActorRef] = Map.empty[String, ActorRef]
+
 
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
@@ -47,23 +44,28 @@ final class FileWatcher @Inject()(val reactiveMongoApi: ReactiveMongoApi)
 
   override def receive = LoggingReceive {
 
-    case StartProcessReport(jobID: String) =>
+    case StartFileWatching(jobID: String, wsActor : ActorRef) =>
+
+      jobLogs = jobLogs + (jobID -> wsActor)
 
 
-      jobs = jobs + jobID
+    case StopFileWatching(jobID: String) =>
+
+      jobLogs -= jobID
 
 
-    case StopProcessReport(jobID: String) =>
+    case FetchLatest =>
 
-      jobs = jobs - jobID
-
+      jobLogs.foreach {
+        println
+      }
 
   }
 }
 
 object FileWatcher {
 
-  case class StartProcessReport(jobID : String)
-  case class StopProcessReport(jobID: String)
+  case class StartFileWatching(jobID : String, wsActor : ActorRef)
+  case class StopFileWatching(jobID: String)
 
 }

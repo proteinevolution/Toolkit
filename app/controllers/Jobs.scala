@@ -70,7 +70,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     Ok
   }
 
-  
+
   def SGEID(jobID: String, sgeID: String) = Action.async {
 
     findJob(BSONDocument(Job.JOBID -> jobID)).map {
