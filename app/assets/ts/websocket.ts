@@ -13,8 +13,11 @@ let ws : WebSocket = null,
 let notifications = 0;
 let attempts = 1;
 declare var titlenotifier: any;
+let connectCount = 0;
 
 connect = function() : any {
+        connectCount++;
+        console.log(connectCount);
         let wsRoute = jsRoutes.controllers.Application.ws;
         let isSecure : boolean = location.protocol === "https:";
         ws = new WebSocket(wsRoute().webSocketURL(isSecure));   // create the new websocket

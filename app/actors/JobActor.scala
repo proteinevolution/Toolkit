@@ -2,8 +2,9 @@ package actors
 
 import javax.inject.{Inject, Named}
 
-import actors.FileWatcher.{StartProcessReport, StopProcessReport}
+import actors.FileWatcher.{StartFileWatching, StopFileWatching}
 import actors.JobActor._
+import actors.WebSocketActor.StartLog
 import akka.actor.{Actor, ActorRef}
 import akka.event.LoggingReceive
 import models.Constants
@@ -585,11 +586,22 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           // Dependent on the state, we have to do different things
           job.status match {
             case Running =>
+
               println("Job is running. Start process logging...")
-              fileWatcher ! StartProcessReport(jobID)
+
+              currentJobs.get(jobID) match {
+                case Some(runningJob) =>
+                  val foundWatchers =
+                    runningJob.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
+                  foundWatchers.flatten.foreach(_ ! StartLog(job))
+                case _ =>
+              }
+
+
+
             case Done =>
               // Job is no longer running
-              fileWatcher ! StopProcessReport(jobID)
+              fileWatcher ! StopFileWatching(jobID)
               Logger.info("Removing execution context")
               this.runningExecutions = this.runningExecutions.-(job.jobID)
               Logger.info("DONE Removing execution context")
