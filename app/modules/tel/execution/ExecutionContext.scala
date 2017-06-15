@@ -64,7 +64,14 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   // TODO Why is this a member of Execution context?
   def reloadParams: Map[String, String] = {
     val ois = new ObjectInputStream(new FileInputStream(serializedParameters.pathAsString))
-    val x   = ois.readObject().asInstanceOf[Map[String, String]]
+    var x   = ois.readObject().asInstanceOf[Map[String, String]]
+
+    x  = x.filterNot { x =>
+      x._1 == "hhsuitedb" && x._2 == ""
+    }.filterNot {x =>
+      x._1 == "proteomes" && x._2 == ""
+    }
+
     ois.close()
     x
   }
