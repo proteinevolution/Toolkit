@@ -62,8 +62,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
 
     case FetchLatest =>
       //val load = cluster.getLoad.loadEst
-      val load = "qstat -f | grep -v -e -- -e queuename | tr '/' '\\t' | awk '{NUM+=$4;DENOM+=$5}END{print NUM/DENOM}'".!!.toDouble
-
+      val load = ("qstat" #| "wc -l") .!!.toDouble / 64
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load
         */
