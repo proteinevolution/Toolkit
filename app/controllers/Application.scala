@@ -85,6 +85,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
+      Logger.info("TEST")
+
       getUser(rh)
         .map { user =>
           Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
@@ -98,6 +100,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         }
 
     case rejected =>
+      Logger.info("TEST")
       logger.error(s"Request $rejected failed same origin check")
       Future.successful {
         Left(Ok("forbidden"))
