@@ -12,7 +12,6 @@ import controllers.UserSessions
 import models.database.jobs.Job
 import models.job.JobActorAccess
 import modules.LocationProvider
-import modules.db.MongoStore
 import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{ JsValue, Json }
