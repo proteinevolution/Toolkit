@@ -18,7 +18,8 @@ import better.files._
 import com.typesafe.config.ConfigFactory
 import controllers.UserSessions
 import models.sge.Qdel
-import modules.{CommonModule, LocationProvider}
+import modules.LocationProvider
+import modules.db.MongoStore
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
 import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
@@ -93,7 +94,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     extends Actor
     with Constants
     with UserSessions
-    with CommonModule {
+    with MongoStore {
 
   // Attributes asssocidated with a Job
   private var currentJobs: Map[String, Job]                           = Map.empty

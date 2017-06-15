@@ -2,13 +2,13 @@ package controllers
 
 import javax.inject.Inject
 
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc.{Action, AnyContent, Controller}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.Constants
-import models.database.results.{ Alignment, AlignmentResult, General }
+import models.database.results.{Alignment, AlignmentResult, General}
+import modules.db.MongoStore
 import play.modules.reactivemongo.ReactiveMongoApi
-import modules.CommonModule
 import play.api.libs.json.JsArray
 
 /**
@@ -17,7 +17,7 @@ import play.api.libs.json.JsArray
 class AlignmentController @Inject()(aln: Alignment, val reactiveMongoApi: ReactiveMongoApi, general: General)
     extends Controller
     with Constants
-    with CommonModule
+    with MongoStore
     with Common {
 
   def getAln(jobID: String, resultName: String): Action[AnyContent] = Action.async { implicit request =>

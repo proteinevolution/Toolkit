@@ -2,7 +2,7 @@ package controllers
 
 import java.nio.file.attribute.PosixFilePermission
 
-import modules.CommonModule
+import modules.db.MongoStore
 import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc._
@@ -10,14 +10,15 @@ import play.modules.reactivemongo.ReactiveMongoComponents
 import play.api.mvc.Controller
 import play.api.http.ContentTypes
 import reactivemongo.bson.BSONDocument
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{Await, Future}
 
 /**
   *
   * Created by snam on 12.11.16.
   */
-private[controllers] trait Common extends Controller with ContentTypes with ReactiveMongoComponents with CommonModule {
+private[controllers] trait Common extends Controller with ContentTypes with ReactiveMongoComponents with MongoStore {
 
   var loggedOut = true
 

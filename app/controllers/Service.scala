@@ -1,26 +1,27 @@
 package controllers
 
-import java.io.{ FileInputStream, ObjectInputStream }
-import javax.inject.{ Inject, Singleton }
+import java.io.{FileInputStream, ObjectInputStream}
+import javax.inject.{Inject, Singleton}
 
 import akka.util.Timeout
 import models.Constants
-import models.database.jobs.{ Done, JobState, Jobitem }
+import models.database.jobs.{Done, JobState, Jobitem}
 import models.database.users.User
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
-import play.api.mvc.{ Action, AnyContent, Controller, Request }
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Controller, Request}
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import better.files._
-import models.tools.{ Param, ToolFactory, Toolitem }
-import modules.{ CommonModule, LocationProvider }
+import models.tools.{Param, ToolFactory, Toolitem}
+import modules.LocationProvider
+import modules.db.MongoStore
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -43,7 +44,7 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
     with Constants
     with ReactiveMongoComponents
     with UserSessions
-    with CommonModule {
+    with MongoStore {
 
   implicit val timeout = Timeout(1.seconds)
 

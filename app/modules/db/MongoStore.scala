@@ -1,27 +1,27 @@
-package modules
+package modules.db
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.{ FrontendJob, Job, JobAnnotation }
-import models.database.statistics.{ ClusterLoadEvent, JobEventLog, ToolStatistic }
-import models.database.users.{ User, UserData }
+import models.database.jobs.{FrontendJob, Job, JobAnnotation}
+import models.database.statistics.{ClusterLoadEvent, JobEventLog, ToolStatistic}
+import models.database.users.{User, UserData}
+import org.joda.time.DateTime
+import play.api.Logger
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
-import reactivemongo.api.indexes.{ Index, IndexType }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument }
-import org.joda.time.DateTime
-import play.api.Logger
+import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
+import reactivemongo.api.indexes.{Index, IndexType}
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
-import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.Future
+import scala.language.postfixOps
 
 /**
   * Created by zin on 03.08.16.
   */
-trait CommonModule extends ReactiveMongoComponents {
+trait MongoStore extends ReactiveMongoComponents {
 
   private final def selectjobID(jobID: String) = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
 

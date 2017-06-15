@@ -4,7 +4,7 @@ import javax.inject.Inject
 import models.Constants
 import better.files._
 import models.results.Tcoffee.jobPath
-import modules.CommonModule
+import modules.db.MongoStore
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.twirl.api.Html

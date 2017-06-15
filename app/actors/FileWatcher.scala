@@ -8,7 +8,7 @@ import akka.actor.{ActorLogging, _}
 import akka.event.LoggingReceive
 import models.database.jobs.Job
 import models.database.users.User
-import modules.CommonModule
+import modules.db.MongoStore
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 
@@ -25,7 +25,7 @@ import scala.concurrent.duration._
 final class FileWatcher @Inject()(val reactiveMongoApi: ReactiveMongoApi)
   extends Actor
     with ActorLogging
-    with CommonModule {
+    with MongoStore {
 
 
   private val fetchLatestInterval = 75.millis

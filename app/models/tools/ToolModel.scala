@@ -1,19 +1,19 @@
 package models.tools
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 import com.typesafe.config.ConfigFactory
 import models.Constants
-import models.database.results.{ HHBlits, HHPred, Hmmer, PSIBlast }
+import models.database.results.{HHBlits, HHPred, Hmmer, PSIBlast}
+import modules.db.MongoStore
 
 import scala.collection.immutable.ListMap
 import scala.collection.mutable
 import scala.concurrent._
 import ExecutionContext.Implicits.global
-import modules.CommonModule
 import play.api.libs.json.JsArray
 import play.modules.reactivemongo.ReactiveMongoApi
-import play.twirl.api.{ Html, HtmlFormat }
+import play.twirl.api.{Html, HtmlFormat}
 
 import scala.concurrent.Future
 
@@ -59,7 +59,7 @@ final class ToolFactory @Inject()(
     hhblits: HHBlits,
     aln: models.database.results.Alignment
 )(paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi)
-    extends CommonModule
+    extends MongoStore
     with Constants {
 
   // Encompasses all the toolnames
