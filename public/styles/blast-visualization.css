@@ -486,12 +486,13 @@ table.dataTable.no-footer{
     height: auto;
 }
 
-.scrollContainer a{
+#scrollLinks a{
     margin-right: 2em;
     margin-bottom: 1.5em;
 }
-.scrollContainer span{
+#controlls a{
     margin-right: 2em;
+    display: block;
 }
 
 .scrollContainerDiv {
@@ -506,6 +507,17 @@ table.dataTable.no-footer{
 
 .scrollContainerDivWhite {
     margin: unset;
+}
+
+#controlls {
+    display: flex;
+}
+
+#extraWide {
+    width: 5.5em;
+    margin-right: 0.9em !important;
+    margin-left: 1em;
+    height: 1.7em;
 }
 
 #hitlistTitle{
