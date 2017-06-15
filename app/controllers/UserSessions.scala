@@ -1,13 +1,14 @@
 package controllers
 
-import models.database.users.{ SessionData, User }
-import modules.{ CommonModule, LocationProvider }
+import models.database.users.{SessionData, User}
+import modules.LocationProvider
 import modules.common.HTTPRequest
+import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.{ mvc, Logger }
+import play.api.{Logger, mvc}
 import play.api.mvc.RequestHeader
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -16,7 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by astephens on 24.08.16.
   */
-trait UserSessions extends CommonModule {
+trait UserSessions extends MongoStore {
   private val SID      = "sid"
   private val USERNAME = "username"
 

@@ -1,18 +1,18 @@
 package controllers
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 import com.typesafe.config.ConfigFactory
 import play.api.Logger
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc.{Action, AnyContent, Controller}
 
 import scala.concurrent.Future
 import scala.sys.process._
 import better.files._
 import models.Constants
-import models.database.results.{ General, HHBlits, HHBlitsHSP, HHBlitsResult }
-import modules.CommonModule
-import play.api.libs.json.{ JsArray, JsObject, Json }
+import models.database.results.{General, HHBlits, HHBlitsHSP, HHBlitsResult}
+import modules.db.MongoStore
+import play.api.libs.json.{JsArray, JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,7 +26,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
                                   general: General)
     extends Controller
     with Constants
-    with CommonModule
+    with MongoStore
     with Common {
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile

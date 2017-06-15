@@ -1,16 +1,17 @@
 package controllers
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 import akka.stream.Materializer
 import akka.util.Timeout
 import models.database.jobs.FrontendJob
 import models.search.JobDAO
-import modules.{ CommonModule, LocationProvider }
+import modules.LocationProvider
+import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
 
@@ -27,7 +28,7 @@ final class Tool @Inject()(val messagesApi: MessagesApi,
     extends Controller
     with I18nSupport
     with UserSessions
-    with CommonModule {
+    with MongoStore {
 
   implicit val timeout = Timeout(5.seconds)
 

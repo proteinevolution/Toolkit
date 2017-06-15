@@ -1,9 +1,9 @@
 package controllers
 
-import java.io.{ FileInputStream, ObjectInputStream }
-import javax.inject.{ Inject, Named, Singleton }
+import java.io.{FileInputStream, ObjectInputStream}
+import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobActor.{ Delete, PrepareJob, StartJob }
+import actors.JobActor.{Delete, PrepareJob, StartJob}
 import actors.JobIDActor
 import akka.actor.ActorRef
 import models.Constants
@@ -11,19 +11,20 @@ import models.database.jobs._
 import models.database.users.User
 import models.job.JobActorAccess
 import models.search.JobDAO
-import modules.{ CommonModule, LocationProvider }
+import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.libs.json.{ JsNull, Json }
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.libs.json.{JsNull, Json}
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
 import com.typesafe.config.ConfigFactory
 import models.tools.ToolFactory
+import modules.db.MongoStore
 import modules.tel.env.Env
 import play.Logger
 
@@ -41,7 +42,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
     with UserSessions
-    with CommonModule
+    with MongoStore
     with Constants
     with Common {
 

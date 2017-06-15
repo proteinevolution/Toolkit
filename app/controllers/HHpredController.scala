@@ -1,20 +1,20 @@
 package controllers
 
-import javax.inject.{ Inject }
+import javax.inject.Inject
 import java.nio.file.attribute.PosixFilePermission
 
 import com.typesafe.config.ConfigFactory
-import play.api.mvc.{ Action, AnyContent, Controller }
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.mvc.{Action, AnyContent, Controller}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.sys.process._
 import better.files._
 import models.Constants
-import models.database.results.{ HHPred, HHPredHSP, HHPredResult }
+import models.database.results.{HHPred, HHPredHSP, HHPredResult}
+import modules.db.MongoStore
 import play.modules.reactivemongo.ReactiveMongoApi
-import modules.CommonModule
-import play.api.libs.json.{ JsArray, JsObject, Json }
+import play.api.libs.json.{JsArray, JsObject, Json}
 
 /**
   * Created by drau on 01.03.17.
@@ -22,7 +22,7 @@ import play.api.libs.json.{ JsArray, JsObject, Json }
 class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveMongoApi)(webJarAssets: WebJarAssets)
     extends Controller
     with Constants
-    with CommonModule
+    with MongoStore
     with Common {
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile

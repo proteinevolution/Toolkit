@@ -1,29 +1,30 @@
 package controllers
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
-import actors.WebSocketActor.{ ChangeSessionID, LogOut }
+import actors.WebSocketActor.{ChangeSessionID, LogOut}
 import akka.actor.ActorRef
 import models.Constants
 import models.auth._
-import models.database.users.{ User, UserConfig, UserToken }
+import models.database.users.{User, UserConfig, UserToken}
 import models.job.JobActorAccess
-import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
+import models.mailing.{ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail}
 import models.tools.ToolFactory
-import modules.{ CommonModule, LocationProvider }
+import modules.LocationProvider
+import modules.db.MongoStore
 import modules.tel.TEL
 import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.libs.mailer._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{Await, Future}
 
 /**
   * Controller for Authentication interactions
@@ -45,7 +46,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     with JSONTemplate
     with UserSessions
     with Common
-    with CommonModule {
+    with MongoStore {
 
   /**
     * User wants to sign out

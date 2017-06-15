@@ -1,22 +1,23 @@
 package actors
 
-import javax.inject.{ Inject, Named }
+import javax.inject.{Inject, Named}
 
 import actors.ClusterMonitor._
 import actors.JobActor._
-import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
-import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
+import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert}
+import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import controllers.UserSessions
 import models.database.jobs.Job
 import models.job.JobActorAccess
-import modules.{ CommonModule, LocationProvider }
+import modules.LocationProvider
+import modules.db.MongoStore
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{ JsValue, Json }
+import play.api.libs.json.{JsValue, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -44,7 +45,7 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
                                @Assisted("out") out: ActorRef)
     extends Actor
     with ActorLogging
-    with CommonModule
+    with MongoStore
     with UserSessions {
 
   override def preStart(): Unit = {
