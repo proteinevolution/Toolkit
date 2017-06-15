@@ -86,6 +86,7 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
     userSessions.getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.remove(user.userID.stringify)
+      case None => 
     }
   }
 
