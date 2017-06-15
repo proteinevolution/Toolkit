@@ -1,11 +1,11 @@
 package actors
 
-import javax.inject.{Inject, Named}
+import javax.inject.{ Inject, Named }
 
 import actors.ClusterMonitor._
 import actors.JobActor._
-import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert}
-import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
+import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
+import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import controllers.UserSessions
@@ -15,7 +15,7 @@ import modules.LocationProvider
 import modules.db.MongoStore
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,16 +35,15 @@ object WebSocketActor {
 }
 
 final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
-                               @Named("clusterMonitor") clusterMonitor: ActorRef,
-                               @Assisted("out") out: ActorRef,
-                               jobActorAccess: JobActorAccess,
-                               userSessions : UserSessions,
-                               @NamedCache("userCache") val userCache: CacheApi,
-                               @NamedCache("wsActorCache") val wsActorCache: CacheApi,
-                               @Assisted("sessionID") private var sessionID: BSONObjectID)
+                                     @Named("clusterMonitor") clusterMonitor: ActorRef,
+                                     @Assisted("out") out: ActorRef,
+                                     jobActorAccess: JobActorAccess,
+                                     userSessions: UserSessions,
+                                     @NamedCache("userCache") val userCache: CacheApi,
+                                     @NamedCache("wsActorCache") val wsActorCache: CacheApi,
+                                     @Assisted("sessionID") private var sessionID: BSONObjectID)
     extends Actor
     with ActorLogging {
-
 
   override def preStart(): Unit = {
     // Grab the user from cache to ensure a working job
@@ -133,24 +132,24 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
       }
 
     case PushJob(job: Job) =>
-    out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
+      out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
 
     case UpdateLog(jobID: String) =>
-     out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
+      out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
 
     case UpdateLoad(load: Double) =>
-          out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
+      out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
 
     case ClearJob(jobID: String, deleted: Boolean) =>
-     out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> deleted)
+      out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> deleted)
 
     case ChangeSessionID(sessionID: BSONObjectID) =>
       this.sessionID = sessionID
 
     case LogOut =>
-       out ! Json.obj("type" -> "LogOut")
+      out ! Json.obj("type" -> "LogOut")
 
     case MaintenanceAlert =>
-        out ! Json.obj("type" -> "MaintenanceAlert")
+      out ! Json.obj("type" -> "MaintenanceAlert")
   }
 }

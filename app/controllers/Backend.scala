@@ -1,21 +1,21 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import models.database.jobs.Job
-import models.database.statistics.{JobEvent, JobEventLog, ToolStatistic}
+import models.database.statistics.{ JobEvent, JobEventLog, ToolStatistic }
 import models.database.users.User
 import modules.LocationProvider
 import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.json
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -26,8 +26,8 @@ import scala.concurrent.Future
 @Singleton
 final class Backend @Inject()(webJarAssets: WebJarAssets,
                               settingsController: Settings,
-                              userSessions : UserSessions,
-                              mongoStore : MongoStore,
+                              userSessions: UserSessions,
+                              mongoStore: MongoStore,
                               @NamedCache("userCache") implicit val userCache: CacheApi,
                               implicit val locationProvider: LocationProvider,
                               val reactiveMongoApi: ReactiveMongoApi,
@@ -51,24 +51,26 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
     userSessions.getUser.flatMap { user =>
       if (user.isSuperuser) {
         val dateTimeFirstOfMonth: DateTime = DateTime.now().dayOfMonth().withMinimumValue().withTimeAtStartOfDay()
-        mongoStore.findJobEventLogs(
-          BSONDocument(
-            JobEventLog.EVENTS ->
+        mongoStore
+          .findJobEventLogs(
             BSONDocument(
-              "$elemMatch" ->
+              JobEventLog.EVENTS ->
               BSONDocument(
-                JobEvent.TIMESTAMP ->
-                BSONDocument("$gte" -> BSONDateTime(dateTimeFirstOfMonth.minusMonths(1).getMillis),
-                             "$lt"  -> BSONDateTime(dateTimeFirstOfMonth.getMillis))
+                "$elemMatch" ->
+                BSONDocument(
+                  JobEvent.TIMESTAMP ->
+                  BSONDocument("$gte" -> BSONDateTime(dateTimeFirstOfMonth.minusMonths(1).getMillis),
+                               "$lt"  -> BSONDateTime(dateTimeFirstOfMonth.getMillis))
+                )
               )
             )
           )
-        ).foreach { jobEventList =>
-          Logger.info(
-            "Found " + jobEventList.length + " Jobs for the last Month (From " + dateTimeFirstOfMonth
-              .minusMonths(1) + " to " + dateTimeFirstOfMonth + ")"
-          )
-        }
+          .foreach { jobEventList =>
+            Logger.info(
+              "Found " + jobEventList.length + " Jobs for the last Month (From " + dateTimeFirstOfMonth
+                .minusMonths(1) + " to " + dateTimeFirstOfMonth + ")"
+            )
+          }
 
         mongoStore.getStatistics.map { toolStatisticList: List[ToolStatistic] =>
           NoCache(Ok(Json.toJson(toolStatisticList)))

@@ -1,10 +1,10 @@
 package models.tools
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.ConfigFactory
 import models.Constants
-import models.database.results.{HHBlits, HHPred, Hmmer, PSIBlast}
+import models.database.results.{ HHBlits, HHPred, Hmmer, PSIBlast }
 import modules.db.MongoStore
 
 import scala.collection.immutable.ListMap
@@ -13,7 +13,7 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 import play.api.libs.json.JsArray
 import play.modules.reactivemongo.ReactiveMongoApi
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.{ Html, HtmlFormat }
 
 import scala.concurrent.Future
 
@@ -58,7 +58,7 @@ final class ToolFactory @Inject()(
     hhpred: HHPred,
     hhblits: HHBlits,
     aln: models.database.results.Alignment
-)(paramAccess: ParamAccess, mongoStore : MongoStore)
+)(paramAccess: ParamAccess, mongoStore: MongoStore)
     extends Constants {
 
   // Encompasses all the toolnames
@@ -567,9 +567,8 @@ final class ToolFactory @Inject()(
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
-              views.html.jobs.resultpanels.hhblits.hitlist(jobID,
-                                                           hhblits.parseResult(jsvalue),
-                                                           this.values(Toolnames.HHBLITS))
+              views.html.jobs.resultpanels.hhblits
+                .hitlist(jobID, hhblits.parseResult(jsvalue), this.values(Toolnames.HHBLITS))
           }
         },
         "HHR" -> { (jobID, requestHeader) =>
@@ -685,9 +684,8 @@ final class ToolFactory @Inject()(
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
-              views.html.jobs.resultpanels.hmmer.hitlist(jobID,
-                                                         hmmer.parseResult(jsvalue),
-                                                         this.values(Toolnames.HMMER))
+              views.html.jobs.resultpanels.hmmer
+                .hitlist(jobID, hmmer.parseResult(jsvalue), this.values(Toolnames.HMMER))
           }
         },
         "Unformatted Output" -> { (jobID, requestHeader) =>
@@ -712,9 +710,8 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
-              views.html.jobs.resultpanels.hhpred.hitlist(jobID,
-                                                          hhpred.parseResult(jsvalue),
-                                                          this.values(Toolnames.HHPRED))
+              views.html.jobs.resultpanels.hhpred
+                .hitlist(jobID, hhpred.parseResult(jsvalue), this.values(Toolnames.HHPRED))
           }
         },
         "HHR" -> { (jobID, requestHeader) =>
@@ -757,9 +754,8 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
-              views.html.jobs.resultpanels.hhpred.hitlist(jobID,
-                                                          hhpred.parseResult(jsvalue),
-                                                          this.values(Toolnames.HHPRED_ALIGN))
+              views.html.jobs.resultpanels.hhpred
+                .hitlist(jobID, hhpred.parseResult(jsvalue), this.values(Toolnames.HHPRED_ALIGN))
           }
         },
         "FullAlignment" -> { (jobID, requestHeader) =>
@@ -1059,11 +1055,8 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
-              views.html.jobs.resultpanels.patternSearch("PatternSearch",
-                                                         jobID,
-                                                         "output",
-                                                         jsvalue,
-                                                         this.values(Toolnames.PATSEARCH))
+              views.html.jobs.resultpanels
+                .patternSearch("PatternSearch", jobID, "output", jsvalue, this.values(Toolnames.PATSEARCH))
           }
         }
       )

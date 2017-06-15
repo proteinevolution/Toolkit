@@ -1,9 +1,9 @@
 package controllers
 
-import java.io.{FileInputStream, ObjectInputStream}
-import javax.inject.{Inject, Named, Singleton}
+import java.io.{ FileInputStream, ObjectInputStream }
+import javax.inject.{ Inject, Named, Singleton }
 
-import actors.JobActor.{Delete, PrepareJob, StartJob}
+import actors.JobActor.{ Delete, PrepareJob, StartJob }
 import actors.JobIDActor
 import akka.actor.ActorRef
 import models.Constants
@@ -14,9 +14,9 @@ import models.search.JobDAO
 import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.libs.json.{JsNull, Json}
-import play.api.mvc.{Action, AnyContent, Controller}
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import play.api.libs.json.{ JsNull, Json }
+import play.api.mvc.{ Action, AnyContent, Controller }
+import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,8 +34,8 @@ import play.modules.reactivemongo.ReactiveMongoApi
 final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     val reactiveMongoApi: ReactiveMongoApi,
                                     @Named("jobIDActor") jobIDActor: ActorRef,
-                                    userSessions : UserSessions,
-                                    mongoStore : MongoStore,
+                                    userSessions: UserSessions,
+                                    mongoStore: MongoStore,
                                     env: Env,
                                     @NamedCache("userCache") implicit val userCache: CacheApi,
                                     implicit val locationProvider: LocationProvider,
@@ -146,7 +146,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
               // Add Job to user in database
               userSessions.modifyUserWithCache(BSONDocument(User.IDDB   -> user.userID),
-                                  BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID)))
+                                               BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID)))
 
               // Add job to database
               mongoStore.insertJob(job).map {
@@ -155,7 +155,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   jobActorAccess.sendToJobActor(jobID, PrepareJob(job, params, startJob = false, isFromInstitute))
                   // Notify user that the job has been submitted
                   Ok(Json.obj("successful" -> true, "jobID" -> jobID))
-                    .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+                    .withSession(
+                      userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin))
+                    )
                 case None =>
                   // Something went wrong when pushing to the DB
                   Ok(Json.obj("successful" -> false, "message" -> "Could not write to DB."))

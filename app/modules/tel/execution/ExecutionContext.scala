@@ -1,6 +1,6 @@
 package modules.tel.execution
 
-import java.io.{FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream}
+import java.io.{ FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream }
 import better.files.File
 import scala.collection.mutable
 
@@ -44,10 +44,10 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
 
     var extendedParams = params
     // Add keys for multiselect if not yet preset
-    if ( ! params.contains("hhsuitedb")) {
+    if (!params.contains("hhsuitedb")) {
       extendedParams = params.updated("hhsuitedb", "")
     }
-    if ( ! params.contains("proteomes")) {
+    if (!params.contains("proteomes")) {
       extendedParams = params.updated("proteomes", "")
     }
 
@@ -66,11 +66,13 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
     val ois = new ObjectInputStream(new FileInputStream(serializedParameters.pathAsString))
     var x   = ois.readObject().asInstanceOf[Map[String, String]]
 
-    x  = x.filterNot { x =>
-      x._1 == "hhsuitedb" && x._2 == ""
-    }.filterNot {x =>
-      x._1 == "proteomes" && x._2 == ""
-    }
+    x = x
+      .filterNot { x =>
+        x._1 == "hhsuitedb" && x._2 == ""
+      }
+      .filterNot { x =>
+        x._1 == "proteomes" && x._2 == ""
+      }
 
     ois.close()
     x

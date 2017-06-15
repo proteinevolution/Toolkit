@@ -5,9 +5,9 @@ import play.Logger
 import models.Constants
 import play.api.cache._
 import play.api.libs.json.Json
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,7 +15,7 @@ import models.search.JobDAO
 import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.db.MongoStore
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 
 import scala.concurrent.Future
 import scala.language.postfixOps
@@ -23,9 +23,9 @@ import scala.language.postfixOps
 @Singleton
 final class Search @Inject()(@NamedCache("userCache") implicit val userCache: CacheApi,
                              implicit val locationProvider: LocationProvider,
-                             userSessions : UserSessions,
-                             val reactiveMongoApi : ReactiveMongoApi,
-                             mongoStore : MongoStore,
+                             userSessions: UserSessions,
+                             val reactiveMongoApi: ReactiveMongoApi,
+                             mongoStore: MongoStore,
                              toolFactory: ToolFactory,
                              val jobDao: JobDAO)
     extends Controller
@@ -50,16 +50,20 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
         mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
           val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID) && job.deletion.isEmpty)
           if (jobsFiltered.isEmpty) {
-            mongoStore.findJob(BSONDocument(Job.JOBID -> queryString)).map(x => Ok(Json.toJson(List(x.map(_.cleaned())))))
+            mongoStore
+              .findJob(BSONDocument(Job.JOBID -> queryString))
+              .map(x => Ok(Json.toJson(List(x.map(_.cleaned())))))
           } else {
             Future.successful(Ok(Json.toJson(jobsFiltered.map(_.cleaned()))))
           }
         }
       } else {
         // Find the Jobs with the matching tool
-        mongoStore.findJobs(
-          BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))
-        ).map { jobs =>
+        mongoStore
+          .findJobs(
+            BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))
+          )
+          .map { jobs =>
             jobs.map(_.cleaned())
           }
           .map(jobJs => Ok(Json.toJson(jobJs)))
@@ -80,10 +84,11 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
   def get: Action[AnyContent] = Action.async { implicit request =>
     // Retrieve the jobs from the DB
     userSessions.getUser.flatMap { user =>
-      mongoStore.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
-        jobs =>
+      mongoStore
+        .findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false)))
+        .map { jobs =>
           NoCache(Ok(Json.toJson(jobs.map(_.jobManagerJob()))))
-      }
+        }
     }
   }
 
@@ -94,13 +99,15 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     */
   def getIndexPageInfo: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
-      mongoStore.findSortedJob(
-        BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
-                     BSONDocument(Job.OWNERID  -> user.userID)),
-        BSONDocument(Job.DATEUPDATED -> -1)
-      ).map { lastJob =>
-        Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned())))
-      }
+      mongoStore
+        .findSortedJob(
+          BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
+                       BSONDocument(Job.OWNERID  -> user.userID)),
+          BSONDocument(Job.DATEUPDATED -> -1)
+        )
+        .map { lastJob =>
+          Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned())))
+        }
     }
   }
 

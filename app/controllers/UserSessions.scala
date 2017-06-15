@@ -2,15 +2,15 @@ package controllers
 
 import javax.inject.Inject
 import javax.inject.Singleton
-import models.database.users.{SessionData, User}
+import models.database.users.{ SessionData, User }
 import modules.LocationProvider
 import modules.common.HTTPRequest
 import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.{Logger, mvc}
+import play.api.{ mvc, Logger }
 import play.api.mvc.RequestHeader
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -19,9 +19,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by astephens on 24.08.16.
   */
-
 @Singleton
-class UserSessions @Inject()(mongoStore: MongoStore, @NamedCache("userCache")  val userCache: CacheApi, locationProvider: LocationProvider) {
+class UserSessions @Inject()(mongoStore: MongoStore,
+                             @NamedCache("userCache") val userCache: CacheApi,
+                             locationProvider: LocationProvider) {
   private val SID      = "sid"
   private val USERNAME = "username"
 
@@ -142,10 +143,12 @@ class UserSessions @Inject()(mongoStore: MongoStore, @NamedCache("userCache")  v
     * @return
     */
   def modifyUserWithCache(selector: BSONDocument, modifier: BSONDocument): Future[Option[User]] = {
-    mongoStore.modifyUser(selector, modifier).map(_.map { user =>
-      updateUserCache(user)
-      user
-    })
+    mongoStore
+      .modifyUser(selector, modifier)
+      .map(_.map { user =>
+        updateUserCache(user)
+        user
+      })
   }
 
   /**

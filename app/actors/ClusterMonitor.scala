@@ -1,10 +1,10 @@
 package actors
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import actors.ClusterMonitor._
 import actors.WebSocketActor.MaintenanceAlert
-import akka.actor.{ActorLogging, _}
+import akka.actor.{ ActorLogging, _ }
 import akka.event.LoggingReceive
 import controllers.Settings
 import models.database.statistics.ClusterLoadEvent
@@ -25,7 +25,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by snam on 24.03.17.
   */
 @Singleton
-final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore : MongoStore, val settings: Settings)
+final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, val settings: Settings)
     extends Actor
     with ActorLogging {
 
@@ -61,7 +61,8 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore : MongoStore, 
 
     case FetchLatest =>
       //val load = cluster.getLoad.loadEst
-      val load = ("qstat" #| "wc -l") .!!.toDouble / 64
+      val load = ("qstat" #| "wc -l").!!.toDouble / 64
+
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load
         */
@@ -86,11 +87,12 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore : MongoStore, 
     case Recording =>
       val loadAverage      = record.sum[Double] / record.length
       val currentTimestamp = DateTime.now()
-      mongoStore.upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp))).map {
-        clusterLoadEvent =>
+      mongoStore
+        .upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp)))
+        .map { clusterLoadEvent =>
           //Logger.info("Average: " + loadAverage + " - " + record.mkString(", "))
           record = List.empty[Double]
-      }
+        }
   }
 }
 
