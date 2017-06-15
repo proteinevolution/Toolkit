@@ -1,9 +1,7 @@
 package modules.tel.execution
 
 import java.io.{ FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream }
-
 import better.files.File
-
 import scala.collection.mutable
 
 /**
@@ -41,9 +39,20 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
     *
     * @param params
     */
+  // TODO Why is this a member of Execution Context?
   def writeParams(params: Map[String, String]): Unit = {
+
+    var extendedParams = params
+    // Add keys for multiselect if not yet preset
+    if (!params.contains("hhsuitedb")) {
+      extendedParams = params.updated("hhsuitedb", "")
+    }
+    if (!params.contains("proteomes")) {
+      extendedParams = params.updated("proteomes", "")
+    }
+
     val oos = new ObjectOutputStream(new FileOutputStream(serializedParameters.pathAsString))
-    oos.writeObject(params)
+    oos.writeObject(extendedParams)
     oos.close()
   }
 
@@ -52,9 +61,19 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
     *
     * @return
     */
+  // TODO Why is this a member of Execution context?
   def reloadParams: Map[String, String] = {
     val ois = new ObjectInputStream(new FileInputStream(serializedParameters.pathAsString))
-    val x   = ois.readObject().asInstanceOf[Map[String, String]]
+    var x   = ois.readObject().asInstanceOf[Map[String, String]]
+
+    x = x
+      .filterNot { x =>
+        x._1 == "hhsuitedb" && x._2 == ""
+      }
+      .filterNot { x =>
+        x._1 == "proteomes" && x._2 == ""
+      }
+
     ois.close()
     x
   }
@@ -67,7 +86,6 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
     */
   def accept(execution: PendingExecution): Unit = {
 
-    // TODO Onlu allow one execution
     if (!this.blocked) {
       executionQueue.enqueue(execution.register(root./(execNumbers.next().toString).createDirectories()))
       this.blocked = true
