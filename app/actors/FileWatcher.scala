@@ -24,8 +24,7 @@ import scala.concurrent.duration._
 @Singleton
 final class FileWatcher @Inject()(val reactiveMongoApi: ReactiveMongoApi)
   extends Actor
-    with ActorLogging
-    with MongoStore {
+    with ActorLogging {
 
 
   private val fetchLatestInterval = 75.millis

@@ -25,10 +25,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by snam on 24.03.17.
   */
 @Singleton
-final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: ReactiveMongoApi, val settings: Settings)
+final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore : MongoStore, val settings: Settings)
     extends Actor
-    with ActorLogging
-    with MongoStore {
+    with ActorLogging {
 
   case class RecordedTick(load: Double, timestamp: DateTime)
   private val fetchLatestInterval                 = 3.seconds
@@ -87,7 +86,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
     case Recording =>
       val loadAverage      = record.sum[Double] / record.length
       val currentTimestamp = DateTime.now()
-      upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp))).map {
+      mongoStore.upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp))).map {
         clusterLoadEvent =>
           //Logger.info("Average: " + loadAverage + " - " + record.mkString(", "))
           record = List.empty[Double]

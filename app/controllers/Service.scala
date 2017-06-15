@@ -35,16 +35,16 @@ import scala.concurrent.duration._
 @Singleton
 final class Service @Inject()(webJarAssets: WebJarAssets,
                               val messagesApi: MessagesApi,
+                              val reactiveMongoApi: ReactiveMongoApi,
+                              mongoStore : MongoStore,
+                              userSessions : UserSessions,
                               @NamedCache("userCache") implicit val userCache: CacheApi,
                               implicit val locationProvider: LocationProvider,
-                              toolFactory: ToolFactory,
-                              val reactiveMongoApi: ReactiveMongoApi)
+                              toolFactory: ToolFactory)
     extends Controller
     with I18nSupport
     with Constants
-    with ReactiveMongoComponents
-    with UserSessions
-    with MongoStore {
+    with ReactiveMongoComponents {
 
   implicit val timeout = Timeout(1.seconds)
 
@@ -120,7 +120,7 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
 
   // TODO Change that not all jobViews but only the resultpanel titles are returned
   def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    selectJob(jobID).flatMap {
+    mongoStore.selectJob(jobID).flatMap {
       case Some(job) =>
         job.deletion match {
           case None =>
@@ -128,7 +128,7 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
             val toolitem = toolFactory.values(job.tool).toolitem
             val ownerName =
               if (job.isPrivate) {
-                findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map {
+                mongoStore.findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map {
                   case Some(owner) =>
                     owner.userData match {
                       case Some(ownerData) => // Owner is registered

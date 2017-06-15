@@ -1,6 +1,6 @@
 package controllers
 
-import models.database.jobs.{Job, JobHash}
+import models.database.jobs.Job
 import play.Logger
 import models.Constants
 import play.api.cache._
@@ -8,7 +8,7 @@ import play.api.libs.json.Json
 import javax.inject.{Inject, Singleton}
 
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.search.JobDAO
@@ -23,14 +23,14 @@ import scala.language.postfixOps
 @Singleton
 final class Search @Inject()(@NamedCache("userCache") implicit val userCache: CacheApi,
                              implicit val locationProvider: LocationProvider,
-                             val reactiveMongoApi: ReactiveMongoApi,
+                             userSessions : UserSessions,
+                             val reactiveMongoApi : ReactiveMongoApi,
+                             mongoStore : MongoStore,
                              toolFactory: ToolFactory,
                              val jobDao: JobDAO)
     extends Controller
     with Constants
     with ReactiveMongoComponents
-    with UserSessions
-    with MongoStore
     with Common {
 
   def getToolList: Action[AnyContent] = Action {
@@ -38,7 +38,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
   }
 
   def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
+    userSessions.getUser.flatMap { user =>
       val queryString = queryString_.trim()
       val tools: List[models.tools.Tool] = toolFactory.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
@@ -47,17 +47,17 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {
         // Grab Job ID auto completions
-        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
+        mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
           val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID) && job.deletion.isEmpty)
           if (jobsFiltered.isEmpty) {
-            findJob(BSONDocument(Job.JOBID -> queryString)).map(x => Ok(Json.toJson(List(x.map(_.cleaned())))))
+            mongoStore.findJob(BSONDocument(Job.JOBID -> queryString)).map(x => Ok(Json.toJson(List(x.map(_.cleaned())))))
           } else {
             Future.successful(Ok(Json.toJson(jobsFiltered.map(_.cleaned()))))
           }
         }
       } else {
         // Find the Jobs with the matching tool
-        findJobs(
+        mongoStore.findJobs(
           BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))
         ).map { jobs =>
             jobs.map(_.cleaned())
@@ -68,7 +68,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
   }
 
   def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
+    userSessions.getUser.flatMap { user =>
       val toolOpt: Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
       toolOpt match {
         case Some(_) => Future.successful(Ok(Json.toJson(true)))
@@ -79,8 +79,8 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
 
   def get: Action[AnyContent] = Action.async { implicit request =>
     // Retrieve the jobs from the DB
-    getUser.flatMap { user =>
-      findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
+    userSessions.getUser.flatMap { user =>
+      mongoStore.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
         jobs =>
           NoCache(Ok(Json.toJson(jobs.map(_.jobManagerJob()))))
       }
@@ -93,8 +93,8 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     * @return
     */
   def getIndexPageInfo: Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
-      findSortedJob(
+    userSessions.getUser.flatMap { user =>
+      mongoStore.findSortedJob(
         BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
                      BSONDocument(Job.OWNERID  -> user.userID)),
         BSONDocument(Job.DATEUPDATED -> -1)
@@ -127,7 +127,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
       case Some(mainJobID) =>
         val jobIDSearch = mainJobID + "(_[0-9]{1,3})?"
         Logger.info("Old job ID: " + mainJobID + " Current job ID: " + jobID + " Searching for: " + jobIDSearch)
-        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map { jobs =>
+        mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map { jobs =>
           if (jobs.isEmpty) {
             Logger.info("Found no such jobs.")
             Ok(Json.obj("exists" -> false))
