@@ -1,8 +1,8 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import actors.JobActor.{JobStateChanged, UpdateLog}
+import actors.JobActor.{ JobStateChanged, UpdateLog }
 import models.Constants
 import models.database.jobs._
 import models.job.JobActorAccess
@@ -10,13 +10,12 @@ import modules.LocationProvider
 import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
+import play.api.cache.{ CacheApi, NamedCache }
 import play.api.mvc._
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global
-
 
 /**
   * This controller is supposed to handle request coming from the Backend, such as compute
@@ -25,7 +24,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 @Singleton
 final class Jobs @Inject()(jobActorAccess: JobActorAccess,
-                           userSessions : UserSessions,
+                           userSessions: UserSessions,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
                            implicit val locationProvider: LocationProvider,
                            mongoStore: MongoStore)
@@ -73,7 +72,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
       case Some(job) =>
         mongoStore.modifyJob(BSONDocument(Job.JOBID -> job.jobID),
-                  BSONDocument("$set"    -> BSONDocument("clusterData.sgeid" -> sgeID)))
+                             BSONDocument("$set"    -> BSONDocument("clusterData.sgeid" -> sgeID)))
         Logger.info(jobID + " gets job-ID " + sgeID + " on SGE")
         Ok
       case None =>
@@ -92,8 +91,10 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
   def updateDateViewed(jobID: String) = Action {
 
-    mongoStore.modifyJob(BSONDocument(Job.JOBID -> jobID),
-              BSONDocument("$set"    -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis))))
+    mongoStore.modifyJob(
+      BSONDocument(Job.JOBID -> jobID),
+      BSONDocument("$set"    -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis)))
+    )
     Ok
   }
 
@@ -119,7 +120,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
           mongoStore.upsertAnnotation(entry)
 
           mongoStore.modifyAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID),
-                           BSONDocument("$set"              -> BSONDocument(JobAnnotation.CONTENT -> content)))
+                                      BSONDocument("$set"              -> BSONDocument(JobAnnotation.CONTENT -> content)))
           Ok("annotation upserted")
 
         case _ =>

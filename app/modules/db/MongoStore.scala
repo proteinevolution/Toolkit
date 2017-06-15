@@ -4,18 +4,18 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.{FrontendJob, Job, JobAnnotation}
-import models.database.statistics.{ClusterLoadEvent, JobEventLog, ToolStatistic}
-import models.database.users.{User, UserData}
+import models.database.jobs.{ FrontendJob, Job, JobAnnotation }
+import models.database.statistics.{ ClusterLoadEvent, JobEventLog, ToolStatistic }
+import models.database.users.{ User, UserData }
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.JsValue
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
+import reactivemongo.api.indexes.{ Index, IndexType }
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -269,4 +269,3 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
 
   //def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))
 }
-

@@ -6,9 +6,9 @@ import models.database.CMS.FeaturedArticle
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
 import org.joda.time.DateTime
-import play.api.libs.json.{JsArray, JsObject, Json}
+import play.api.libs.json.{ JsArray, JsObject, Json }
 
-import models.database.results.{Hmmer, PSIBlast}
+import models.database.results.{ Hmmer, PSIBlast }
 import modules.db.MongoStore
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by lzimmermann on 26.01.17.
   */
-class DataController @Inject()(mongoStore : MongoStore,
+class DataController @Inject()(mongoStore: MongoStore,
                                psiblastController: PSIBlastController,
                                hmmerController: HmmerController,
                                hmmer: Hmmer,

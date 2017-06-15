@@ -2,19 +2,22 @@ package controllers
 
 import javax.inject.Inject
 
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.Constants
-import models.database.results.{Alignment, AlignmentResult, General}
+import models.database.results.{ Alignment, AlignmentResult, General }
 import modules.db.MongoStore
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import play.api.libs.json.JsArray
 
 /**
   * Created by drau on 28.04.17.
   */
-class AlignmentController @Inject()(aln: Alignment, general: General, mongoStore : MongoStore, val reactiveMongoApi : ReactiveMongoApi)
+class AlignmentController @Inject()(aln: Alignment,
+                                    general: General,
+                                    mongoStore: MongoStore,
+                                    val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
     with Constants
     with Common

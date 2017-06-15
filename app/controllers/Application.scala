@@ -1,10 +1,10 @@
 package controllers
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import models.sge.Cluster
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
@@ -18,19 +18,19 @@ import modules.tel.TEL
 import modules.LocationProvider
 import modules.db.MongoStore
 import modules.tel.env.Env
-import play.api.{Configuration, Logger}
+import play.api.{ Configuration, Logger }
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.Files
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 @Singleton
 final class Application @Inject()(webJarAssets: WebJarAssets,
@@ -39,13 +39,13 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
                                   webSocketActorFactory: WebSocketActor.Factory,
                                   @NamedCache("userCache") implicit val userCache: CacheApi,
                                   implicit val locationProvider: LocationProvider,
-                                  val reactiveMongoApi : ReactiveMongoApi,
+                                  val reactiveMongoApi: ReactiveMongoApi,
                                   @NamedCache("viewCache") val viewCache: CacheApi,
                                   toolFactory: ToolFactory,
                                   val jobDao: JobDAO,
-                                  mongoStore : MongoStore,
+                                  mongoStore: MongoStore,
                                   system: ActorSystem,
-                                  userSessions : UserSessions,
+                                  userSessions: UserSessions,
                                   mat: Materializer,
                                   val tel: TEL,
                                   val env: Env,
@@ -71,7 +71,9 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   // Run this once to generate database objects for the statistics
   def generateStatisticsDB(): Unit = {
     for (toolName: String <- toolFactory.values.keys) {
-      mongoStore.addStatistic(ToolStatistic(BSONObjectID.generate(), toolName, 0, 0, List.empty, List.empty, List.empty))
+      mongoStore.addStatistic(
+        ToolStatistic(BSONObjectID.generate(), toolName, 0, 0, List.empty, List.empty, List.empty)
+      )
     }
   }
 
@@ -84,7 +86,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
-      userSessions.getUser(rh)
+      userSessions
+        .getUser(rh)
         .map { user =>
           Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
         }
@@ -112,7 +115,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     */
   def sameOriginCheck(rh: RequestHeader): Boolean = {
     rh.headers.get("Origin") match {
-      case Some(originValue) if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) && !blacklist.contains(rh.remoteAddress) =>
+      case Some(originValue)
+          if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) && !blacklist.contains(rh.remoteAddress) =>
         logger.debug(s"originCheck: originValue = $originValue")
         true
 

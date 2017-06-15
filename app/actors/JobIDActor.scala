@@ -1,9 +1,9 @@
 package actors
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import actors.JobIDActor._
-import akka.actor.{ActorLogging, _}
+import akka.actor.{ ActorLogging, _ }
 import akka.event.LoggingReceive
 import models.search.JobDAO
 import modules.db.MongoStore
@@ -11,7 +11,7 @@ import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 import scala.util.Random
 import scala.concurrent.duration._
 
@@ -19,9 +19,7 @@ import scala.concurrent.duration._
   * Created by zin on 04.04.17.
   */
 @Singleton
-class JobIDActor @Inject()(val jobDao: JobDAO)
-    extends Actor
-    with ActorLogging {
+class JobIDActor @Inject()(val jobDao: JobDAO) extends Actor with ActorLogging {
 
   private val fetchLatestInterval = 5.seconds
   private val iter = Iterator

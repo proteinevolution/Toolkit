@@ -9,8 +9,8 @@ import models.Constants
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.database.results._
 import modules.db.MongoStore
-import play.api.libs.json.{JsArray, JsObject, Json}
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.libs.json.{ JsArray, JsObject, Json }
+import play.api.mvc.{ Action, AnyContent, Controller }
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.Future
@@ -19,7 +19,8 @@ import scala.sys.process.Process
 /**
   * Created by drau on 18.04.17.
   */
-class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(mongoStore : MongoStore, val reactiveMongoApi : ReactiveMongoApi)
+class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(mongoStore: MongoStore,
+                                                                                val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
     with Common
     with Constants {
