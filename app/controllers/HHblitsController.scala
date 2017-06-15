@@ -1,18 +1,18 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.ConfigFactory
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 
 import scala.concurrent.Future
 import scala.sys.process._
 import better.files._
 import models.Constants
-import models.database.results.{General, HHBlits, HHBlitsHSP, HHBlitsResult}
+import models.database.results.{ General, HHBlits, HHBlitsHSP, HHBlitsResult }
 import modules.db.MongoStore
-import play.api.libs.json.{JsArray, JsObject, Json}
+import play.api.libs.json.{ JsArray, JsObject, Json }
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,7 +21,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by drau on 01.03.17.
   */
 class HHblitsController @Inject()(webJarAssets: WebJarAssets,
-                                  mongoStore : MongoStore,
+                                  mongoStore: MongoStore,
                                   val reactiveMongoApi: ReactiveMongoApi,
                                   hhblits: HHBlits,
                                   general: General)

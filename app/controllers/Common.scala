@@ -10,12 +10,10 @@ import play.api.mvc.Controller
 import play.api.http.ContentTypes
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 /**
   *
   * Created by snam on 12.11.16.
   */
-
 private[controllers] trait Common extends Controller with ContentTypes with ReactiveMongoComponents {
 
   var loggedOut = true
@@ -48,5 +46,3 @@ private[controllers] trait Common extends Controller with ContentTypes with Reac
 case class FileException(message: String) extends Exception(message)
 
 case class ForwardForm(checkboxes: Seq[Int])
-
-

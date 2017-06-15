@@ -3,7 +3,6 @@ import better.files._
 import models.results.Tcoffee.jobPath
 import play.twirl.api.Html
 
-
 /**
   * Created by lzimmermann on 21.01.17.
   */

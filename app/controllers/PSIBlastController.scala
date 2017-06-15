@@ -9,20 +9,22 @@ import scala.sys.process._
 import better.files._
 import models.Constants
 import models.database.results._
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 import javax.inject.Inject
 
 import modules.db.MongoStore
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.Future
-import play.api.libs.json.{JsArray, JsObject, Json}
+import play.api.libs.json.{ JsArray, JsObject, Json }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class PSIBlastController @Inject()(psiblast: PSIBlast,
-                                   general: General,
-                                   aln: Alignment)(webJarAssets: WebJarAssets, mongoStore : MongoStore, val reactiveMongoApi: ReactiveMongoApi)
+class PSIBlastController @Inject()(
+    psiblast: PSIBlast,
+    general: General,
+    aln: Alignment
+)(webJarAssets: WebJarAssets, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
     with Constants
     with Common {
