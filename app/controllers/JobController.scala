@@ -16,33 +16,32 @@ import org.joda.time.DateTime
 import play.api.cache._
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
-import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
-import com.typesafe.config.ConfigFactory
 import models.tools.ToolFactory
 import modules.db.MongoStore
 import modules.tel.env.Env
 import play.Logger
+import play.modules.reactivemongo.ReactiveMongoApi
 
 /**
   * Created by lzimmermann on 02.12.16.
   */
 @Singleton
 final class JobController @Inject()(jobActorAccess: JobActorAccess,
+                                    val reactiveMongoApi: ReactiveMongoApi,
                                     @Named("jobIDActor") jobIDActor: ActorRef,
+                                    userSessions : UserSessions,
+                                    mongoStore : MongoStore,
                                     env: Env,
                                     @NamedCache("userCache") implicit val userCache: CacheApi,
                                     implicit val locationProvider: LocationProvider,
                                     val jobDao: JobDAO,
-                                    val toolFactory: ToolFactory,
-                                    val reactiveMongoApi: ReactiveMongoApi)
+                                    val toolFactory: ToolFactory)
     extends Controller
-    with UserSessions
-    with MongoStore
     with Constants
     with Common {
 
@@ -51,9 +50,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     *
     */
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
+    userSessions.getUser.flatMap { user =>
       // Find the Job in the database
-      selectJob(jobID).map {
+      mongoStore.selectJob(jobID).map {
         case Some(job) =>
           // Check if the Job was deleted or not
           job.deletion match {
@@ -70,22 +69,22 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     }
   }
   def listJobs: Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
-      findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
+    userSessions.getUser.flatMap { user =>
+      mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
         Ok(Json.toJson(jobs.map(_.cleaned())))
       }
     }
   }
 
   def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    getUser.map { user =>
+    userSessions.getUser.map { user =>
       jobActorAccess.sendToJobActor(jobID, StartJob(jobID))
       Ok(Json.toJson(Json.obj("message" -> "Starting Job...")))
     }
   }
 
   def submitJob(toolName: String): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
+    userSessions.getUser.flatMap { user =>
       // Grab the formData from the request data
       request.body.asMultipartFormData match {
         case Some(mpfd) =>
@@ -100,7 +99,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
           (formData.get("jobID") match {
             case Some(jobID) =>
               // Bad Request if the jobID can be matched to one from the database
-              selectJob(jobID).map { job =>
+              mongoStore.selectJob(jobID).map { job =>
                 if (job.isDefined) None else Some(jobID)
               }
             case None =>
@@ -146,17 +145,17 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               val isFromInstitute = user.getUserData.eMail.matches(".+@tuebingen.mpg.de")
 
               // Add Job to user in database
-              modifyUserWithCache(BSONDocument(User.IDDB   -> user.userID),
+              userSessions.modifyUserWithCache(BSONDocument(User.IDDB   -> user.userID),
                                   BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID)))
 
               // Add job to database
-              insertJob(job).map {
+              mongoStore.insertJob(job).map {
                 case Some(_) =>
                   // Send the job to the jobActor for preparation
                   jobActorAccess.sendToJobActor(jobID, PrepareJob(job, params, startJob = false, isFromInstitute))
                   // Notify user that the job has been submitted
                   Ok(Json.obj("successful" -> true, "jobID" -> jobID))
-                    .withSession(sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+                    .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
                 case None =>
                   // Something went wrong when pushing to the DB
                   Ok(Json.obj("successful" -> false, "message" -> "Could not write to DB."))
@@ -178,7 +177,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     */
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     Logger.info("Delete Action in JobController reached")
-    getUser.map { user =>
+    userSessions.getUser.map { user =>
       jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID))
       Ok
     }
@@ -190,8 +189,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     * @return
     */
   def checkHash(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
-      findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
+    userSessions.getUser.flatMap { user =>
+      mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
         case Some(job) =>
           val params: Map[String, String] = {
             val ois = new ObjectInputStream(new FileInputStream((jobPath / jobID / serializedParam).pathAsString))
@@ -209,7 +208,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
             Logger.info(mainIDs.map(_.stringify).mkString(", "))
             // Find the Jobs in the Database
-            findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
+            mongoStore.findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
               val foundMainIDs   = jobList.map(_.mainID)
               val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
               val jobsFiltered   = jobList.filter(_.status == Done)

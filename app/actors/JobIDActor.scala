@@ -19,10 +19,9 @@ import scala.concurrent.duration._
   * Created by zin on 04.04.17.
   */
 @Singleton
-class JobIDActor @Inject()(val reactiveMongoApi: ReactiveMongoApi, val jobDao: JobDAO)
+class JobIDActor @Inject()(val jobDao: JobDAO)
     extends Actor
-    with ActorLogging
-    with MongoStore {
+    with ActorLogging {
 
   private val fetchLatestInterval = 5.seconds
   private val iter = Iterator

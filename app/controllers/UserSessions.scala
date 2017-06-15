@@ -1,5 +1,7 @@
 package controllers
 
+import javax.inject.Inject
+import javax.inject.Singleton
 import models.database.users.{SessionData, User}
 import modules.LocationProvider
 import modules.common.HTTPRequest
@@ -17,12 +19,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by astephens on 24.08.16.
   */
-trait UserSessions extends MongoStore {
+
+@Singleton
+class UserSessions @Inject()(mongoStore: MongoStore, @NamedCache("userCache")  val userCache: CacheApi, locationProvider: LocationProvider) {
   private val SID      = "sid"
   private val USERNAME = "username"
-
-  implicit val userCache: CacheApi
-  implicit val locationProvider: LocationProvider
 
   /**
     *
@@ -35,7 +36,7 @@ trait UserSessions extends MongoStore {
                                      userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
                                      location = locationProvider.getLocation(request))
 
-    findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
+    mongoStore.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user) =>
         Logger.info("User found by SessionID")
         val selector = BSONDocument(User.IDDB -> user.userID)
@@ -60,7 +61,7 @@ trait UserSessions extends MongoStore {
           dateLastLogin = Some(new DateTime()),
           dateUpdated = Some(new DateTime())
         )
-        addUser(user).map { _ =>
+        mongoStore.addUser(user).map { _ =>
           user
         }
     }
@@ -99,7 +100,7 @@ trait UserSessions extends MongoStore {
         Future.successful(Some(user))
       case None =>
         // Pull it from the DB, as it is not in the cache
-        findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
+        mongoStore.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
           case Some(user) =>
             // There is a user in the DB
             //Logger.info("User found in collection by sessionID")
@@ -141,7 +142,7 @@ trait UserSessions extends MongoStore {
     * @return
     */
   def modifyUserWithCache(selector: BSONDocument, modifier: BSONDocument): Future[Option[User]] = {
-    modifyUser(selector, modifier).map(_.map { user =>
+    mongoStore.modifyUser(selector, modifier).map(_.map { user =>
       updateUserCache(user)
       user
     })
@@ -156,7 +157,7 @@ trait UserSessions extends MongoStore {
     user.sessionID.foreach(sessionID => userCache.remove(sessionID.stringify))
 
     if (withDB) {
-      userCollection.flatMap(
+      mongoStore.userCollection.flatMap(
         _.update(BSONDocument(User.IDDB -> user.userID),
                  BSONDocument("$unset"  -> BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "")))
       )

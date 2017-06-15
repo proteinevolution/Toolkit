@@ -21,12 +21,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by drau on 01.03.17.
   */
 class HHblitsController @Inject()(webJarAssets: WebJarAssets,
+                                  mongoStore : MongoStore,
                                   val reactiveMongoApi: ReactiveMongoApi,
                                   hhblits: HHBlits,
                                   general: General)
     extends Controller
     with Constants
-    with MongoStore
     with Common {
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
@@ -61,7 +61,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result        = hhblits.parseResult(jsValue)
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
@@ -86,7 +86,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result        = hhblits.parseResult(jsValue)
           val accessionsStr = getAccessions(result, numList)
@@ -110,7 +110,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result     = hhblits.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
@@ -163,7 +163,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
 
   def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HHBlitsHSP]] = {
     if (params.sSearch.isEmpty) {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(result) =>
           hhblits
             .hitsOrderBy(params, hhblits.parseResult(result).HSPS)
@@ -175,7 +175,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
   def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
+    mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hhblits.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -197,7 +197,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     )
 
     var db = ""
-    val total = getResult(jobID).map {
+    val total = mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hhblits.parseResult(jsValue)
         db = result.db
