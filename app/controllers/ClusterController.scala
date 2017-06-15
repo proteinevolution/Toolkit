@@ -19,7 +19,7 @@ final class ClusterController @Inject()(ws: WSClient, configuration: Configurati
     extends Controller {
 
   def getLoad: Action[AnyContent] = Action { implicit request =>
-
-    Ok(Json.toJson("qstat -f | grep -v -e -- -e queuename | tr '/' '\\t' | awk '{NUM+=$4;DENOM+=$5}END{print NUM/DENOM}'".!!))
+    Ok(Json.toJson(("qstat" #| "wc -l") .!!.toDouble / 64))
   }
 }
+
