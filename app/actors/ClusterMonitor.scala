@@ -15,6 +15,7 @@ import org.joda.time.DateTime
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
+import sys.process._
 
 import scala.collection.immutable.HashSet
 import scala.concurrent.duration._
@@ -44,7 +45,6 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
 
     if (settings.clusterMode == "LOCAL")
       context.stop(self)
-
   }
 
   override def postStop(): Unit = Tick.cancel()
@@ -61,8 +61,8 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
       watchers.foreach { _ ! MaintenanceAlert }
 
     case FetchLatest =>
-      val load = cluster.getLoad.loadEst
-
+      //val load = cluster.getLoad.loadEst
+      val load = ("qstat" #| "wc -l") .!!.toDouble / 64
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load
         */
