@@ -173,14 +173,14 @@ hr {
 .sequence{
     font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
     letter-spacing: 0.05em;
-    font-size: 0.725rem;
+    font-size: 0.75rem;
     white-space: pre;
 }
 
 .sequenceAlignment{
     font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
     letter-spacing: 0.05em;
-    font-size: 0.725rem;
+    font-size: 0.75rem;
     /*background-color: rgba(241, 241, 241, 0.75) !important;*/
 }
 
