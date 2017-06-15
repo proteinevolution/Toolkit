@@ -1,22 +1,22 @@
 package actors
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 import actors.ClusterMonitor._
 import actors.WebSocketActor.MaintenanceAlert
-import akka.actor.{ ActorLogging, _ }
+import akka.actor.{ActorLogging, _}
 import akka.event.LoggingReceive
 import controllers.Settings
 import models.database.statistics.ClusterLoadEvent
 import models.sge.Cluster
-import modules.CommonModule
+import modules.db.MongoStore
 import modules.tel.TEL
 import org.joda.time.DateTime
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
-import sys.process._
 
+import sys.process._
 import scala.collection.immutable.HashSet
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: ReactiveMongoApi, val settings: Settings)
     extends Actor
     with ActorLogging
-    with CommonModule {
+    with MongoStore {
 
   case class RecordedTick(load: Double, timestamp: DateTime)
   private val fetchLatestInterval                 = 3.seconds
