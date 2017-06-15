@@ -28,7 +28,6 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       fi
 fi
 
-
 if [ ${FORMAT} = "1" ] ; then
       reformatValidator.pl clu fas \
             $(readlink -f %alignment.path) \
@@ -93,7 +92,9 @@ COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
 rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
 
-#%inclusion_ethresh.content (switch to this after the slider is fixed)
+echo "#Running PSI-BLAST against the %standarddb.content DB." >> ../results/process.log
+updateProcessLog
+
 
 psiblast -db %STANDARD/%standarddb.content \
          -matrix %matrix.content \
@@ -108,6 +109,13 @@ psiblast -db %STANDARD/%standarddb.content \
          -out ../results/output_psiblastp.asn \
          -outfmt 11 \
          -max_hsps 1
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
+
+echo "#Preparing output." >> ../results/process.log
+updateProcessLog
 
 #converst ASN.1 output to JSON
 blast_formatter -archive ../results/output_psiblastp.asn \
@@ -161,3 +169,7 @@ manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/output_psiblastp.js
 cd ../results
 
 rm output_psiblastp.asn output_psiblastp.tab
+
+
+echo "done" >> ../results/process.log
+updateProcessLog

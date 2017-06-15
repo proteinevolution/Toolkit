@@ -3,15 +3,12 @@ package controllers
 import javax.inject.Inject
 
 import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigFactory
-
-import scala.sys.process._
 import better.files._
 import models.Constants
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import modules.CommonModule
 import models.database.results._
+import modules.db.MongoStore
 import play.api.libs.json.{ JsArray, JsObject, Json }
 import play.api.mvc.{ Action, AnyContent, Controller }
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -22,9 +19,9 @@ import scala.sys.process.Process
 /**
   * Created by drau on 18.04.17.
   */
-class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(val reactiveMongoApi: ReactiveMongoApi)
+class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(mongoStore: MongoStore,
+                                                                                val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
-    with CommonModule
     with Common
     with Constants {
 
@@ -36,7 +33,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result        = hmmer.parseResult(jsValue)
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
@@ -62,7 +59,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result        = hmmer.parseResult(jsValue)
           val accessionsStr = getAccessions(result, numList)
@@ -93,7 +90,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
   }
 
   def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
+    mongoStore.getResult(jobID).map {
       case Some(jsValue) => Ok(getAlnEval(hmmer.parseResult(jsValue), eval.toDouble))
       case _             => NotFound
     }
@@ -102,7 +99,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
-    getResult(jobID).map {
+    mongoStore.getResult(jobID).map {
       case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
       case _             => NotFound
     }
@@ -124,7 +121,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
 
   def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HmmerHSP]] = {
     if (params.sSearch.isEmpty) {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(result) =>
           hmmer
             .hitsOrderBy(params, hmmer.parseResult(result).HSPS)
@@ -136,7 +133,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
   }
 
   def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
+    mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hmmer.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -163,7 +160,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
 
     val hits = getHitsByKeyWord(jobID, params)
     var db   = ""
-    val total = getResult(jobID).map {
+    val total = mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hmmer.parseResult(jsValue)
         db = result.db
