@@ -19,10 +19,9 @@ import play.api.libs.json.{JsArray, JsObject, Json}
 /**
   * Created by drau on 01.03.17.
   */
-class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveMongoApi)(webJarAssets: WebJarAssets)
+class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val reactiveMongoApi : ReactiveMongoApi)(webJarAssets: WebJarAssets)
     extends Controller
     with Constants
-    with MongoStore
     with Common {
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
@@ -54,7 +53,7 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result     = hhpred.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
@@ -96,7 +95,7 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
 
   def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HHPredHSP]] = {
     if (params.sSearch.isEmpty) {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(result) =>
           hhpred
             .hitsOrderBy(params, hhpred.parseResult(result).HSPS)
@@ -110,7 +109,7 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
 
   def loadHits(jobID: String, start: Int, end: Int, isColor: Boolean): Action[AnyContent] = Action.async {
     implicit request =>
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result = hhpred.parseResult(jsValue)
           if (end > result.num_hits || start > result.num_hits) {
@@ -124,7 +123,7 @@ class HHpredController @Inject()(hhpred: HHPred, val reactiveMongoApi: ReactiveM
 
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     var db = ""
-    val total = getResult(jobID).map {
+    val total = mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hhpred.parseResult(jsValue)
         db = result.db

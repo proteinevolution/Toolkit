@@ -16,8 +16,7 @@ import modules.db.MongoStore
 import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{JsValue, Json}
-import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -35,23 +34,22 @@ object WebSocketActor {
   }
 }
 
-class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
-                               implicit val locationProvider: LocationProvider,
-                               jobActorAccess: JobActorAccess,
+final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
                                @Named("clusterMonitor") clusterMonitor: ActorRef,
-                               @NamedCache("userCache") implicit val userCache: CacheApi,
-                               @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi,
-                               @Assisted("sessionID") private var sessionID: BSONObjectID,
-                               @Assisted("out") out: ActorRef)
+                               @Assisted("out") out: ActorRef,
+                               jobActorAccess: JobActorAccess,
+                               userSessions : UserSessions,
+                               @NamedCache("userCache") val userCache: CacheApi,
+                               @NamedCache("wsActorCache") val wsActorCache: CacheApi,
+                               @Assisted("sessionID") private var sessionID: BSONObjectID)
     extends Actor
-    with ActorLogging
-    with MongoStore
-    with UserSessions {
+    with ActorLogging {
+
 
   override def preStart(): Unit = {
     // Grab the user from cache to ensure a working job
     clusterMonitor ! Connect(self)
-    getUser(sessionID).foreach {
+    userSessions.getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get(user.userID.stringify) match {
           case Some(wsActors) =>
@@ -87,7 +85,7 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       *  actors must be removed from
       *  the cache at some point anyway.
       */
-    getUser(sessionID).foreach {
+    userSessions.getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.remove(user.userID.stringify)
     }
@@ -96,7 +94,7 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   def receive = LoggingReceive {
 
     case js: JsValue =>
-      getUser(sessionID).foreach {
+      userSessions.getUser(sessionID).foreach {
         case Some(user) =>
           (js \ "type").validate[String].foreach {
 
@@ -126,7 +124,7 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
               Logger.info("Received RegisterLoad message.")
               clusterMonitor ! Connect(self)
 
-            // Request to no longer receive load messages
+            //// Request to no longer receive load messages
             case "UnregisterLoad" =>
               clusterMonitor ! Disconnect(self)
           }
@@ -135,24 +133,24 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       }
 
     case PushJob(job: Job) =>
-      out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
+    out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
 
     case UpdateLog(jobID: String) =>
-      out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
+     out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
 
     case UpdateLoad(load: Double) =>
-      out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
+          out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
 
     case ClearJob(jobID: String, deleted: Boolean) =>
-      out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> deleted)
+     out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> deleted)
 
     case ChangeSessionID(sessionID: BSONObjectID) =>
       this.sessionID = sessionID
 
     case LogOut =>
-      out ! Json.obj("type" -> "LogOut")
+       out ! Json.obj("type" -> "LogOut")
 
     case MaintenanceAlert =>
-      out ! Json.obj("type" -> "MaintenanceAlert")
+        out ! Json.obj("type" -> "MaintenanceAlert")
   }
 }
