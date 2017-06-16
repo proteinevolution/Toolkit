@@ -20,10 +20,10 @@
             <span class="headerDivider"></span>
             <div id="controlls">
                 <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
-                <a data-open="forwardModal_@{
+                <a id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
-                <a data-open="forwardModal_@{
+                <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
                 }_hhsuite">Forward Query MSA</a>
             </div>
@@ -189,22 +189,23 @@
         }
 
 
-       function hhblits_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
+       function hhblits_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
            var route = null;
            $.LoadingOverlay("show");
             if(boolFullLength) {
                 if(boolEvalue) {
-                    route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
+                    route = jsRoutes.controllers.HHblitsController.evalFull(jobID, evalue);
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.full('@jobID');
+                    route = jsRoutes.controllers.HHblitsController.full(jobID);
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                        $.LoadingOverlay("hide")
+                        $.LoadingOverlay("hide");
                         alert("No sequences selected!");
                         return false;
                     }
                 }
+
                 $.ajax({
                     url: route.url,
                     method: route.method,
@@ -227,9 +228,15 @@
             } else{
 
                 if(boolEvalue) {
-                    route = jsRoutes.controllers.HHblitsController.alnEval('@jobID', evalue);
+                    route = jsRoutes.controllers.HHblitsController.alnEval(jobID, evalue);
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.aln('@jobID');
+                    if(data.checkboxes.length == 0){
+                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                        $.LoadingOverlay("hide");
+                        alert("No sequences selected!");
+                        return false;
+                    }
+                    route = jsRoutes.controllers.HHblitsController.aln(jobID);
                 }
                 $.ajax({
                     url: route.url,
