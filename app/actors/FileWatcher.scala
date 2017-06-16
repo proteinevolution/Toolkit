@@ -12,6 +12,9 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
+import akka.actor.{ActorRef, ActorSystem}
+import better.files._, FileWatcher._
+
 /**
   * Created by snam on 13.06.17.
   * Reports process log updates to the frontend
@@ -22,6 +25,8 @@ final class FileWatcher @Inject()(val reactiveMongoApi: ReactiveMongoApi)
     with ActorLogging
     with Constants {
 
+
+  implicit val system = ActorSystem("processLogging")
 
 
   private[this] val fetchLatestInterval = 75.millis
@@ -62,9 +67,7 @@ final class FileWatcher @Inject()(val reactiveMongoApi: ReactiveMongoApi)
 
 object FileWatcher {
 
-
   case class StartFileWatching(jobID : String, wsActor : ActorRef)
   case class StopFileWatching(jobID: String)
-
 
 }
