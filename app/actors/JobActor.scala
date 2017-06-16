@@ -597,23 +597,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
           // Dependent on the state, we have to do different things
           job.status match {
-            case Running =>
-
-              println("Job is running. Start process logging...")
-
-              currentJobs.get(jobID) match {
-                case Some(runningJob) =>
-                  val foundWatchers =
-                    runningJob.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-                  foundWatchers.flatten.foreach(_ ! StartLog(job))
-                case _ =>
-              }
-
-
-
             case Done =>
               // Job is no longer running
-              fileWatcher ! StopFileWatching(jobID)
               Logger.info("Removing execution context")
               this.runningExecutions = this.runningExecutions.-(job.jobID)
               Logger.info("DONE Removing execution context")
