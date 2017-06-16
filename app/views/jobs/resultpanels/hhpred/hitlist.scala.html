@@ -19,10 +19,10 @@
             <span class="headerDivider"></span>
             <div id="controlls">
                 <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
-                <a data-open="forwardModal_@{
+                <a id="forwardButtonSimple" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
-                <a data-open="forwardModal_@{
+                <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
                 }_hhsuite">Forward Query MSA</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
@@ -346,7 +346,7 @@
                 if(data.checkboxes.length == 0){
                     $('#forwardModal_@{tool.toolNameShort}').foundation('close');
                     $.LoadingOverlay("hide");
-                    alert("No sequences selected!");
+                    alert("No sequence(s) selected!");
                     return false;
                 }
                 route = jsRoutes.controllers.HHpredController.aln(jobID);

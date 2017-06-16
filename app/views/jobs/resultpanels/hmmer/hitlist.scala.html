@@ -22,7 +22,7 @@
             <span class="headerDivider"></span>
             <div id="controlls">
                 <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
-                <a type="button" data-open="forwardModal_@{
+                <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
             </div>
@@ -181,8 +181,8 @@
                     route = jsRoutes.controllers.HmmerController.full(jobID);
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                        $.LoadingOverlay("hide")
-                        alert("No sequences selected!");
+                        $.LoadingOverlay("hide");
+                        alert("No sequence(s) selected!");
                         return false;
                     }
                 }
