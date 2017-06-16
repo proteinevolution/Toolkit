@@ -597,12 +597,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
           // Dependent on the state, we have to do different things
           job.status match {
-            case Running =>
-              println("Job is running. Start process logging...")
-              fileWatcher ! StartProcessReport(jobID)
             case Done =>
               // Job is no longer running
-              fileWatcher ! StopProcessReport(jobID)
               Logger.info("Removing execution context")
               this.runningExecutions = this.runningExecutions.-(job.jobID)
               Logger.info("DONE Removing execution context")
