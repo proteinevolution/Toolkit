@@ -121,7 +121,7 @@
             </select>
         </div>
         <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
-        <button class="close-button" data-close aria-label="Close modal" type="button">
+        <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -421,4 +421,14 @@
             // hide loadHits
 
         }
+
+        $('#templateAlignmentModal').on("click", function() {
+            $('#alignmentTemplate_tool').val('');
+        });
+
+        $('#alignmentTemplateClose').on("click", function() {
+            $('#alignmentTemplate_tool').val('');
+            $.LoadingOverlay("hide");
+        });
+
 </script>
