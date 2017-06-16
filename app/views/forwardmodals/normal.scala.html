@@ -7,26 +7,25 @@
 
     <div class="forward_form">
         <div class="forwardFormDiv">
-            <label style="font-weight: bold">Select hits to forward</label>
-            <label class="forwardLabel"> <input type="radio" class="selectedHits" id="selectedHits_@viewName" name="radio1">Selected Hits</label>
+            <label style="font-weight: bold">Forward hits</label>
+            <label class="forwardLabel"> <input type="radio" class="selectedHits" id="selectedHits_@viewName" name="radio1">Selected</label>
             <div class="two_input">
-                <label class="forwardLabel"><input type="radio" class="selectedHits" id="accordingEvalue_@viewName" name="radio1">
-                    E-Value better than</label>
+                <label class="forwardLabel"><input type="radio" class="selectedHits" id="accordingEvalue_@viewName" name="radio1">E-value better than</label>
                 <input class="result_inputs" type="text" class="selectedHits" id="forwardEvalue_@viewName" value="0.001" >
             </div>
         </div>
         <div class="forwardFormDiv">
             <label style="font-weight: bold">Select sequence length</label>
-            <label class="forwardLabel"><input type="radio" id="sliderRegion_@viewName" name="radio2">Forward aligned region</label>
+            <label class="forwardLabel"><input type="radio" id="sliderRegion_@viewName" name="radio2">Aligned region</label>
             <label class="forwardLabel"><input type="radio" id="fullLength_@viewName" name="radio2">
-                Forward full length sequence</label>
+                Full length sequences</label>
         </div>
     </div>
 
     <div class="row">
         <div class="select_forward large-4 columns">
             <select class="selectedHits_@viewName" id="forwardSelect_@viewName">
-                <option value="">Select Tool</option>
+                <option value="">Select a tool</option>
                 <div>
                     @for(forwardTool <- {tool.forwardAlignment}) {
                         <option class="alignmentOptions_@viewName"value="@forwardTool">@forwardTool</option>
@@ -39,7 +38,7 @@
         </div>
         <div class="large-5 columns">
             <div class="callout alert" id="forwardWarning" style="display: none;" >
-                <span>Some tools take alignments as input</span>
+                <span>Only some tools accept full-length sequences as input!</span>
             </div>
         </div>
 
@@ -81,8 +80,8 @@
         $('.multiSeqOptions_@viewName').hide();
 
         //default check radio buttons
-        $("#selectedHits_@viewName").prop("checked", true);
-        $("#sliderRegion_@viewName").prop("checked", true);
+        $('#selectedHits_@viewName').prop("checked", true);
+        $('#sliderRegion_@viewName').prop("checked", true);
 
         $("input[name='radio2']").change(function (e) {
             if ($(this).attr('id') == 'fullLength_@viewName') {
@@ -93,14 +92,17 @@
                 $('#forwardWarning').css({display: 'none'});
                 $('.alignmentOptions_@viewName').show();
                 $('.multiSeqOptions_@viewName').hide();
-
             }
-
         });
 
-    $('#forwardSelect_@viewName').val('');
-
+    $('#forwardButtonNormal').on("click", function() {
+        $('#forwardSelect_@viewName').val('');
+        $('#forwardWarning').css({display: 'none'});
+        $('#forwardEvalue_@viewName').val('0.001');
+        $('#selectedHits_@viewName').prop("checked", true);
+        $('#sliderRegion_@viewName').prop("checked", true);
+        $('.alignmentOptions_@viewName').show();
+        $('.multiSeqOptions_@viewName').hide();
+    })
 
 </script>
-
-

@@ -145,7 +145,7 @@ function resubmitSection(sequence, name) {
 // forwards all checked identifier and sequences to tool
 function forward(tool, forwardData){
     if(forwardData == ""){
-        alert("No sequences selected!");
+        alert("No sequence(s) selected!");
         $.LoadingOverlay("hide");
         return;
     }
