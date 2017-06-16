@@ -28,7 +28,7 @@ object WebSocketActor {
   case class ChangeSessionID(sessionID: BSONObjectID)
   case object LogOut
   case object MaintenanceAlert
-  case class StartLog(job: Job)
+  case class StartLog(jobID: String)
 
   trait Factory {
     def apply(@Assisted("sessionID") sessionID: BSONObjectID, @Assisted("out") out: ActorRef): Actor
@@ -139,7 +139,7 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
     case MaintenanceAlert =>
       out ! Json.obj("type" -> "MaintenanceAlert")
 
-    case StartLog(job: Job) =>
-      fileWatcher ! StartFileWatching(job.jobID, self)
+    case StartLog(jobID: String) =>
+      fileWatcher ! StartFileWatching(jobID, self)
   }
 }

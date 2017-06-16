@@ -77,6 +77,9 @@ object JobActor {
 
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID: String)
+
+  case class NotifyFileWatcher(jobID: String, state: JobState)
+
 }
 
 class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscripts to be executed
@@ -588,6 +591,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
     // Message from outside that the jobState has changed
     case JobStateChanged(jobID: String, jobState: JobState) =>
+
       this.getCurrentJob(jobID).foreach {
         case Some(oldJob) =>
           // Update the job object
@@ -657,6 +661,25 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
             job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
           foundWatchers.flatten.foreach(_ ! PushJob(job))
         case None =>
+      }
+
+    case NotifyFileWatcher(jobID: String, state: JobState) =>
+      state match {
+
+        case Running =>
+
+          currentJobs.get(jobID) match {
+            case Some(runningJob) =>
+              val foundWatchers =
+                runningJob.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
+              foundWatchers.flatten.foreach(_ ! StartLog(jobID))
+            case _ =>
+          }
+
+        case _ =>
+
+          fileWatcher ! StopFileWatching(jobID)
+
       }
   }
 }
