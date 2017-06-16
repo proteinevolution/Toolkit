@@ -223,7 +223,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               jobsFiltered.lastOption match {
                 case Some(oldJob) =>
                   Ok(Json.toJson(Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated)))
-                case None => NotFound
+                case None => NotFound("job is new.")
               }
             }
           }
