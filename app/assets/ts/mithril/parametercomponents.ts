@@ -227,12 +227,12 @@ let ParameterModellerKeyComponent = {
             value: ParameterModellerKeyComponent.value,
             onkeyup: m.withAttr("value", ParameterModellerKeyComponent.validate),
             config: paramValidation,
-            class: "modellerKey invalid"
+            "class": "modellerKey invalid"
 
         };
 
         return renderParameter([
-            ParameterModellerKeyComponent.keyStored ?  m("text",{class: "modellerKey valid"},"MODELLER-key is stored in your profile.") : [
+            ParameterModellerKeyComponent.keyStored ?  m("text",{"class": "modellerKey valid"},"MODELLER-key is stored in your profile.") : [
                     m("label", {
                         "for": args.param.name,
                     }, args.param.label), m("input", paramAttrs)]
