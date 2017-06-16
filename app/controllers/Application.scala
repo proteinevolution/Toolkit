@@ -87,8 +87,6 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
 
     case rh if sameOriginCheck(rh) =>
 
-      Logger.info("TEST")
-
       userSessions
         .getUser(rh)
 
@@ -104,7 +102,6 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         }
 
     case rejected =>
-      Logger.info("TEST")
       logger.error(s"Request $rejected failed same origin check")
       Future.successful {
         Left(Ok("forbidden"))
