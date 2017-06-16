@@ -1,4 +1,4 @@
-lazy val akkaVersion  = "2.4.18"
+lazy val akkaVersion  = "2.4.19"
 lazy val kamonVersion = "0.6.6"
 
 lazy val commonDeps = Seq(
