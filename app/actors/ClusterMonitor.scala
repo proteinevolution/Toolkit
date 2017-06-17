@@ -9,14 +9,12 @@ import akka.event.LoggingReceive
 import controllers.Settings
 import models.database.statistics.ClusterLoadEvent
 import models.sge.Cluster
-import modules.CommonModule
+import modules.db.MongoStore
 import modules.tel.TEL
 import org.joda.time.DateTime
-import play.api.Logger
-import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONObjectID
-import sys.process._
 
+import sys.process._
 import scala.collection.immutable.HashSet
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -25,10 +23,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by snam on 24.03.17.
   */
 @Singleton
-final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: ReactiveMongoApi, val settings: Settings)
+final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, val settings: Settings)
     extends Actor
-    with ActorLogging
-    with CommonModule {
+    with ActorLogging {
 
   case class RecordedTick(load: Double, timestamp: DateTime)
   private val fetchLatestInterval                 = 3.seconds
@@ -36,7 +33,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
   private var record: List[Double]                = List.empty[Double]
   protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
   // Fetch the latest qhost status every 375ms
-  val Tick: Cancellable = {
+  private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, FetchLatest)(context.system.dispatcher)
   }
@@ -62,7 +59,8 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
 
     case FetchLatest =>
       //val load = cluster.getLoad.loadEst
-      val load = ("qstat" #| "wc -l") .!!.toDouble / 64
+      val load = ("qstat" #| "wc -l").!!.toDouble / 64
+
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load
         */
@@ -87,11 +85,12 @@ final class ClusterMonitor @Inject()(cluster: Cluster, val reactiveMongoApi: Rea
     case Recording =>
       val loadAverage      = record.sum[Double] / record.length
       val currentTimestamp = DateTime.now()
-      upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp))).map {
-        clusterLoadEvent =>
+      mongoStore
+        .upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp)))
+        .map { clusterLoadEvent =>
           //Logger.info("Average: " + loadAverage + " - " + record.mkString(", "))
           record = List.empty[Double]
-      }
+        }
   }
 }
 
