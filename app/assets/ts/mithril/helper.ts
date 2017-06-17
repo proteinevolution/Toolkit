@@ -8,6 +8,9 @@ let closeShortcut = function() {
     });
 };
 
+let nonJsonErrors = function(xhr : XMLHttpRequest) {
+    return xhr.status > 200 ? JSON.stringify(xhr.responseText) : xhr.responseText
+};
 
 let tabulated = function(element : any, isInit : boolean) : any {
     if (!isInit) { return $(element).tabs({ active: this.active, beforeLoad: function(event, ui){ ui.panel.addClass("result-panel")}});}

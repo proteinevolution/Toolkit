@@ -3,12 +3,13 @@ package actors
 import javax.inject.{ Inject, Singleton }
 
 import actors.JobIDActor._
-import akka.actor._
+import akka.actor.{ ActorLogging, _ }
 import akka.event.LoggingReceive
 import models.search.JobDAO
-import modules.CommonModule
+import modules.db.MongoStore
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
 import scala.util.Random
@@ -18,16 +19,14 @@ import scala.concurrent.duration._
   * Created by zin on 04.04.17.
   */
 @Singleton
-class JobIDActor @Inject()(val reactiveMongoApi: ReactiveMongoApi, val jobDao: JobDAO)
-    extends Actor
-    with CommonModule {
+class JobIDActor @Inject()(val jobDao: JobDAO) extends Actor with ActorLogging {
 
   private val fetchLatestInterval = 5.seconds
   private val iter = Iterator
     .continually[String](Random.nextInt(9999999).toString.padTo(7, '0'))
     .filter(x => Await.result(isValid(x), scala.concurrent.duration.Duration.Inf))
 
-  val Tick: Cancellable = {
+  private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, Refill)(context.system.dispatcher)
   }

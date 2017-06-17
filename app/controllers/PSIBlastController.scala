@@ -11,24 +11,22 @@ import models.Constants
 import models.database.results._
 import play.api.mvc.{ Action, AnyContent, Controller }
 import javax.inject.Inject
-import play.api.data._
-import play.api.data.Forms._
 
+import modules.db.MongoStore
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.Future
-import modules.CommonModule
-import play.api.data.Form
 import play.api.libs.json.{ JsArray, JsObject, Json }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class PSIBlastController @Inject()(psiblast: PSIBlast,
-                                   general: General,
-                                   aln: Alignment)(webJarAssets: WebJarAssets, val reactiveMongoApi: ReactiveMongoApi)
+class PSIBlastController @Inject()(
+    psiblast: PSIBlast,
+    general: General,
+    aln: Alignment
+)(webJarAssets: WebJarAssets, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
     with Constants
-    with CommonModule
     with Common {
 
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
@@ -39,7 +37,7 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result        = psiblast.parseResult(jsValue)
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
@@ -65,7 +63,7 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result        = psiblast.parseResult(jsValue)
           val accessionsStr = getAccessions(result, numList)
@@ -85,7 +83,7 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
   }
 
   def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
+    mongoStore.getResult(jobID).map {
       case Some(jsValue) => Ok(getAlnEval(psiblast.parseResult(jsValue), eval.toDouble))
       case _             => NotFound
     }
@@ -94,7 +92,7 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
-    getResult(jobID).map {
+    mongoStore.getResult(jobID).map {
       case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
       case _             => NotFound
     }
@@ -130,7 +128,7 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
 
   def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[PSIBlastHSP]] = {
     if (params.sSearch.isEmpty) {
-      getResult(jobID).map {
+      mongoStore.getResult(jobID).map {
         case Some(result) =>
           psiblast
             .hitsOrderBy(params, psiblast.parseResult(result).HSPS)
@@ -143,7 +141,7 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
   }
 
   def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
-    getResult(jobID).map {
+    mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -166,7 +164,7 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
     )
 
     var db = ""
-    val total = getResult(jobID).map {
+    val total = mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
         db = result.db
