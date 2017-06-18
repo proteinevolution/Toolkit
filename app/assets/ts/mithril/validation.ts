@@ -193,7 +193,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "hhfilter":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 10000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "retseq":
@@ -373,7 +373,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            seqLimit = 999999;
+            seqLimit = 10000;
 
             let hmmerTarget = new alignmentVal($(elem));
             hmmerTarget.basicValidation();
@@ -392,7 +392,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            seqLimit = 999999;
+            seqLimit = 10000;
 
             let hhblitsTarget = new alignmentVal($(elem));
             hhblitsTarget.basicValidation();
@@ -412,7 +412,7 @@ let validationProcess = function(elem: any,toolname: string) {
              */
 
             charLimitPerSeq = 30000; // TODO: why was the charLimit defined after it's usage?
-            seqLimit = 999999;
+            seqLimit = 10000;
 
             let hhpredTarget = new alignmentVal($(elem));
             hhpredTarget.basicValidation();
@@ -433,7 +433,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            seqLimit = 999999;
+            seqLimit = 5000;
 
             let psiblastTarget = new alignmentVal($(elem));
             psiblastTarget.basicValidation();
@@ -485,7 +485,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "hhrepid":
 
-            seqLimit = 2000;
+            seqLimit = 10000;
 
             let hhrepidTarget = new alignmentVal($(elem));
             hhrepidTarget.basicValidation();
