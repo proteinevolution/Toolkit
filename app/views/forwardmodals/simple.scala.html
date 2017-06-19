@@ -74,12 +74,11 @@
         //default check radio buttons
         $('#selectedHits_@viewName').prop("checked", true);
 
-        $('#forwardButtonSimple').on("click", function() {
+        $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
             $('#forwardSelect_@viewName').val('');
             $('#forwardEvalue_@viewName').val('0.001');
             $('#selectedHits_@viewName').prop("checked", true);
-        })
-
+        }));
 </script>
 
 
