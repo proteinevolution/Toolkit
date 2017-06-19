@@ -82,8 +82,8 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
         val num_hits = hits.length
         val hsplist = hits.map { hit =>
           // get num of last checkboxes that is checked by default
-          if (belowEvalThreshold == -1 && ( hit \ "hsps" \ 0 \ "evalue").as[Double] > evalue){
-            belowEvalThreshold = (hit \ "num").as[Int]-1
+          if (belowEvalThreshold == -1 && ( hit \ "hsps" \ 0 \ "evalue").as[Double] >= evalue){
+            belowEvalThreshold = (hit \ "num").as[Int]
           }
           parseHSP(hit, db, evalue)
         }
