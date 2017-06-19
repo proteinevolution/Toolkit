@@ -31,12 +31,11 @@ case class PSIBlastHSP(evalue: Double,
                        ref_len: Int,
                        accession: String,
                        midline: String,
-                       description: String,
-                       checked: Boolean) {
+                       description: String) {
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(BlastVisualization.getCheckboxPre(num, checked)),
+        "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
         "1" -> Json.toJson(BlastVisualization.getSingleLinkDB(db, accession).toString),
         "2" -> Json.toJson(BlastVisualization.addBreak(description)),
         "3" -> Json.toJson("%.2e".format(evalue)),
@@ -55,6 +54,7 @@ case class PSIBlastResult(HSPS: List[PSIBlastHSP],
                           evalue: Double,
                           alignment: List[AlignmentItem],
                           query: Query,
+                          belowEvalThreshold: Int,
                           TMPRED: String,
                           COILPRED: String)
 
@@ -64,6 +64,7 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
   def parseResult(json: JsValue): PSIBlastResult = json match {
     case obj: JsObject =>
       try {
+        var belowEvalThreshold = -1;
         val jobID = (obj \ "jobID").as[String]
         val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map {
           case (x, index) =>
@@ -79,10 +80,18 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
           (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ iter_num \ "search" \ "hits")
             .as[List[JsObject]]
         val num_hits = hits.length
-        val hsplist = hits.map { x =>
-          parseHSP(x, db, evalue)
+        val hsplist = hits.map { hit =>
+          // get num of last checkboxes that is checked by default
+          if (belowEvalThreshold == -1 && ( hit \ "hsps" \ 0 \ "evalue").as[Double] > evalue){
+            belowEvalThreshold = (hit \ "num").as[Int]-1
+          }
+          parseHSP(hit, db, evalue)
         }
-
+        // if all hits are below threshold
+        // set belowEvalThreshold to total number of found hits
+        if(belowEvalThreshold == -1){
+          belowEvalThreshold = hsplist.length +1
+        }
         val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
           case Some(data) => data
           case None       => "0"
@@ -91,7 +100,7 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
           case Some(data) => data
           case None       => "1"
         }
-        PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query, TMPRED, COILPRED)
+        PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query,belowEvalThreshold, TMPRED, COILPRED)
       }
   }
 
@@ -124,7 +133,6 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
     }
     val midline     = (hsps \ "midline").getOrElse(Json.toJson("")).as[String].toUpperCase
     val description = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
-    val checked     = evalue <= eval_threshold
 
     PSIBlastHSP(
       evalue,
@@ -145,8 +153,7 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
       ref_len,
       accession,
       midline,
-      description,
-      checked
+      description
     )
 
   }

@@ -290,13 +290,13 @@ function deselectAll(name){
     checkboxes = [];
 }
 function selectFromArray(checkboxes){
-    _.range(1, numHits).forEach(function (currentVal) {
+    _.range(1, numHits+1).forEach(function (currentVal) {
         $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) != -1 ? true : false);
     })
 }
 
 function getCheckedCheckboxes(){
-    $('input:checkbox:checked[name="alignment_elem"]').each(function(){checkboxes.push(parseInt($(this).val()));});
+    $('input:checkbox:checked[name="alignment_elem"]').each(function(){var num = parseInt($(this).val()); if(checkboxes.indexOf(num) == -1){checkboxes.push(num)}});
 }
 
 
@@ -397,10 +397,7 @@ function linkCheckboxes(){
     });
 }
 
-/**
- * generates random number of length 6
- * @returns {number}
- */
+
 function generateFilename(){
     return Math.floor(100000 + Math.random() * 900000);
 }
