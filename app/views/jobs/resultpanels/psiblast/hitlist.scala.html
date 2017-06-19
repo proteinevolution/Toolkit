@@ -166,10 +166,11 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
     // full seq is retrieved
     var data = {"checkboxes": checkboxes.removeDuplicates()};
     var route = null;
+    var filename = generateFilename();
     $.LoadingOverlay("show");
     if(boolFullLength) {
         if(boolEvalue) {
-            route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue);
+            route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue, filename);
         }else{
             if(data.checkboxes.length == 0){
                 $('#forwardModal_@{tool.toolNameShort}').foundation('close');
@@ -177,7 +178,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
                 alert("No sequence(s) selected!");
                 return false;
             }
-            route = jsRoutes.controllers.PSIBlastController.full(jobID);
+            route = jsRoutes.controllers.PSIBlastController.full(jobID, filename);
         }
         $.ajax({
             url: route.url,
@@ -190,7 +191,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
         }).done(function (data_) {
             $.ajax({
                 type: 'GET',
-                url: 'files/'+jobID+'/sequences.fa',
+                url: 'files/'+jobID+'/'+filename+'.fa',
                 error: function(){
                     $.LoadingOverlay("hide")
                 }

@@ -3,7 +3,7 @@ interface Window { JobModel: any; }
 window.JobModel = {
     paramValues: {},
     defaultValues: {
-        "evalue": "1e-3",
+        "evalue": "1",
         "inclusion_ethresh": "0.001",
         "min_cov": "20",
         "min_seqid_query": "0",

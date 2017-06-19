@@ -195,7 +195,7 @@ let ParameterAlignmentComponent = {
                                     $(".submitJob").prop("disabled", true);
                                     return $("#" + ctrl.id).prop("disabled", false);
                                 }
-                            }, m("i", {"class": "fa fa-times"})))),
+                            }, m("i", {"class": "fa fa-trash-o"})))),
                     m(JobValidationComponent, {})
                     , m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format : any){
                             return m("option", {value: format[0]}, format[1])}
@@ -208,4 +208,3 @@ let ParameterAlignmentComponent = {
         ], "alignmentParameter");
     }
 };
-
