@@ -248,7 +248,7 @@ hr {
 .parameter span {
     float: left;
 }
-.parameter #alignment {
+.parameter #alignment, #alignment_two {
 
     font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
     margin: 0 0 0;
@@ -257,7 +257,7 @@ hr {
 
 .alignment_buttons {
     flex-direction: row;
-    margin-top: 10px;
+    margin-top: 4px;
 }
 
 .leftAlignmentButtons {
@@ -265,9 +265,8 @@ hr {
 }
 
 .alignmentExample {
-    margin-top: -10px;
+    margin-top: -0.71em;
     color: rgba(0, 110, 98, 166) !important;
-    border: solid 1px rgba(0, 110, 98, 166);
     margin-right: 1em;
     line-height: 20px;
 }
@@ -279,7 +278,6 @@ hr {
 .fileUpload{
     background-color: unset !important;
     color: rgba(0, 110, 98, 166) !important;
-    border-bottom: solid 1px rgba(0, 110, 98, 166);
     line-height: 20px;
     margin-top: 0.25em;
     padding: 0 0 0.05em 0;
@@ -315,6 +313,7 @@ hr {
 
 .switchDiv {
     width: 15em;
+    padding-top: 0.5em;
 }
 
 .parameter .nice-select {
@@ -559,7 +558,8 @@ hr {
 
 .uploadFileName {
     display: flex;
-    padding-left: 0.5em;
+    padding-left: 1.5em;
+    padding-top: 0.3em
 }
 
 .uploadFileName p {
@@ -737,7 +737,7 @@ i.button_fullscreen:focus {
 }
 
 .nice-select:active, .nice-select.open, .nice-select:focus {
-    border-color: #88bfff;
+    border-color: darkgray;
 }
 
 .result-panel .nice-select, .result-panel .nice-select ul {
@@ -840,7 +840,7 @@ a.hasNotes:active {
     margin-left: auto;
     float: right;
     margin-bottom: 0;
-    margin-top: -1.75em;
+    margin-top: -2.55em;
 }
 
 div#calloutSpacer {
@@ -855,6 +855,9 @@ div#calloutSpacer {
 textarea:focus{
 
 }
+.callout{
+    border:unset !important;
+}
 
 .callout.alert{
     opacity: 0.9;
@@ -862,7 +865,6 @@ textarea:focus{
     min-width: 12em;
     padding: 0.6em 0.7em 0.6em 0.7em;
     color:red;
-    border: 1px solid #ff00001a;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     border-radius: 2px;
@@ -1105,4 +1107,13 @@ h6 {
 
 .modellerKey .invalid{
     background-color: rgb(255, 221, 221);
+}
+.select2-container--default .select2-selection--multiple {
+
+    border: 1px solid lightgrey !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #f4f4f4 !important;
+    color: black !important;
 }
