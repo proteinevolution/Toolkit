@@ -28,7 +28,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
 
-  def evalFull(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def evalFull(jobID: String, eval: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -42,6 +42,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
                   (jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
                   "db"            -> db).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -52,7 +53,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
     }
   }
 
-  def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+  def full(jobID: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
@@ -68,6 +69,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
                   (jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
                   "db"            -> db).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest

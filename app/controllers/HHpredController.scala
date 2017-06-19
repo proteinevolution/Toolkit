@@ -49,7 +49,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
       }
     }
   }
-  def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEval(jobID: String, eval: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
@@ -61,6 +61,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
           Process(generateAlignmentScript.pathAsString,
                   (jobPath + jobID).toFile.toJava,
                   "jobID"   -> jobID,
+                  "filename" -> filename,
                   "numList" -> numListStr).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -71,7 +72,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     }
   }
 
-  def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+  def aln(jobID: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
@@ -82,6 +83,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
       Process(generateAlignmentScript.pathAsString,
               (jobPath + jobID).toFile.toJava,
               "jobID"   -> jobID,
+              "filename"-> filename,
               "numList" -> numListStr).run().exitValue() match {
         case 0 => Future.successful(Ok)
         case _ => Future.successful(BadRequest)
