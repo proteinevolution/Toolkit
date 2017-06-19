@@ -52,9 +52,9 @@
         $('.alignmentOptions_@viewName').show();
         $('.multiSeqOptions_@viewName').hide();
 
-        $('#forwardButtonHHsuite').on("click", function() {
+        $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
             $('#forwardSelect_@viewName').val('');
-        })
+        }));
 
 </script>
 

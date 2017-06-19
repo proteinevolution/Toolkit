@@ -123,6 +123,10 @@
 </div>
 
 <script>
+        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
+            $('#alignmentTemplate_tool').val('');
+            $.LoadingOverlay("hide");
+        }));
         var jobID = '@{jobID}';
         var fileUrlQueryMSAFas = "/files/"+jobID+"/alignment.fas";
         var checkbox = "checkbox";
@@ -332,15 +336,6 @@
                 });
             }
         }
-
-        $('#templateAlignmentModal').on("click", function() {
-            $('#alignmentTemplate_tool').val('');
-        });
-
-        $('#alignmentTemplateClose').on("click", function() {
-            $('#alignmentTemplate_tool').val('');
-            $.LoadingOverlay("hide");
-        });
 
 </script>
 

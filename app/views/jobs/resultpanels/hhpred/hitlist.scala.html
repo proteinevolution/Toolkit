@@ -144,8 +144,14 @@
             //clear 3D structure modal
             $('#accessionStructure').html("");
             $('#viewport canvas').remove();
+            $.LoadingOverlay("hide");
         }));
 
+
+        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
+            $('#alignmentTemplate_tool').val('');
+            $.LoadingOverlay("hide");
+        }));
 
         var checkbox = "checkbox";
         var currentStructureAccession = "";
@@ -423,13 +429,5 @@
 
         }
 
-        $('#templateAlignmentModal').on("click", function() {
-            $('#alignmentTemplate_tool').val('');
-        });
-
-        $('#alignmentTemplateClose').on("click", function() {
-            $('#alignmentTemplate_tool').val('');
-            $.LoadingOverlay("hide");
-        });
 
 </script>
