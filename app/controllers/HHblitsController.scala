@@ -56,7 +56,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       }
     }
   }
-  def evalFull(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def evalFull(jobID: String, eval: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -70,6 +70,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
                   (jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
                   "db"            -> db).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -79,7 +80,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       }
     }
   }
-  def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+  def full(jobID: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
@@ -95,6 +96,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
                   (jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
                   "db"            -> db).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -105,7 +107,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
-  def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEval(jobID: String, eval: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
@@ -117,6 +119,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
           Process(generateAlignmentScript.pathAsString,
                   (jobPath + jobID).toFile.toJava,
                   "jobID"   -> jobID,
+                  "filename"-> filename,
                   "numList" -> numListStr).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -127,7 +130,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
-  def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+  def aln(jobID: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
@@ -138,6 +141,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       Process(generateAlignmentScript.pathAsString,
               (jobPath + jobID).toFile.toJava,
               "jobID"   -> jobID,
+              "filename"-> filename,
               "numList" -> numListStr).run().exitValue() match {
         case 0 => Future.successful(Ok)
         case _ => Future.successful(BadRequest)

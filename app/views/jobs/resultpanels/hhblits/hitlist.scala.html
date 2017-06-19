@@ -192,12 +192,13 @@
        function hhblits_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
            var route = null;
+           var filename = generateFilename();
            $.LoadingOverlay("show");
             if(boolFullLength) {
                 if(boolEvalue) {
-                    route = jsRoutes.controllers.HHblitsController.evalFull(jobID, evalue);
+                    route = jsRoutes.controllers.HHblitsController.evalFull(jobID, evalue, filename);
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.full(jobID);
+                    route = jsRoutes.controllers.HHblitsController.full(jobID, filename);
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
                         $.LoadingOverlay("hide");
@@ -217,7 +218,7 @@
                 }).done(function (data_) {
                     $.ajax({
                         type: 'GET',
-                        url: 'files/@jobID/sequences.fa',
+                        url: 'files/@jobID/'+filename+'.fa',
                         error: function(){
                             $.LoadingOverlay("hide")
                         }
@@ -228,7 +229,7 @@
             } else{
 
                 if(boolEvalue) {
-                    route = jsRoutes.controllers.HHblitsController.alnEval(jobID, evalue);
+                    route = jsRoutes.controllers.HHblitsController.alnEval(jobID, evalue, filename);
                 }else{
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
@@ -236,7 +237,7 @@
                         alert("No sequences selected!");
                         return false;
                     }
-                    route = jsRoutes.controllers.HHblitsController.aln(jobID);
+                    route = jsRoutes.controllers.HHblitsController.aln(jobID, filename);
                 }
                 $.ajax({
                     url: route.url,
@@ -249,7 +250,7 @@
                 }).done(function (data_) {
                     $.ajax({
                         type: 'GET',
-                        url: 'files/@jobID/alignment.fas',
+                        url: 'files/@jobID/'+filename+'.fas',
                         error: function(){
                             $.LoadingOverlay("hide")
                         }

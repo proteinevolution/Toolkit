@@ -340,8 +340,9 @@
             var data = {"checkboxes": checkboxes.removeDuplicates()};
             $.LoadingOverlay("show");
             var route = null;
+            var filename = generateFilename();
             if (boolEvalue) {
-                route = jsRoutes.controllers.HHpredController.alnEval(jobID, evalue);
+                route = jsRoutes.controllers.HHpredController.alnEval(jobID, evalue, filename);
             } else {
                 if(data.checkboxes.length == 0){
                     $('#forwardModal_@{tool.toolNameShort}').foundation('close');
@@ -349,7 +350,7 @@
                     alert("No sequence(s) selected!");
                     return false;
                 }
-                route = jsRoutes.controllers.HHpredController.aln(jobID);
+                route = jsRoutes.controllers.HHpredController.aln(jobID, filename);
             }
             $.ajax({
                 url: route.url,
@@ -362,7 +363,7 @@
             }).done(function (data_) {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/' + jobID + '/alignment.fas',
+                    url: 'files/' + jobID + '/'+filename+'.fas',
                     error: function(){
                         $.LoadingOverlay("hide")
                     }
