@@ -189,10 +189,10 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     */
   def deleteJobsPermanently() : Action[AnyContent] = Action.async { implicit request =>
     Logger.info("delete jobs that are marked for deletion Action in JobController reached")
-    jobActorAccess.sendToJobActor("", MarkForDeletion(132))
+    //jobActorAccess.sendToJobActor("", MarkForDeletion())
     //findJobs(BSONDocument(Job.DELETION -> BSONDocument("$or" -> List(BSONDocument("flag" -> 1), BSONDocument("flag" -> 4)))).map { jobList =>
-    findJobs(BSONDocument("deletion" -> BSONDocument("flag" -> 4))).map { jobList =>
-      println(jobList.mkString)
+    findJobs(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 4))).map { jobList =>
+      println(jobList)
       jobList.foreach{ job =>
         println(job.jobID, "is killed")
         jobActorAccess.sendToJobActor(job.jobID, DeleteFromDisk(job))

@@ -34,6 +34,9 @@ import scala.concurrent.Future
 import scala.sys.process.Process
 import scala.util.{Failure, Success}
 
+import better.files._
+
+
 object JobActor {
 
   case class PrepareJob(job: Job,
@@ -74,7 +77,7 @@ object JobActor {
 
   // JobActor is requested to mark all jobs that are older than
   // a given number of days
-  case class MarkForDeletion(daysAgo: Int)
+  case class MarkForDeletion()
 
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)
@@ -469,56 +472,48 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       Logger.info(s"Received Delete from disk for ${job.jobID}")
       Logger.info("Removing Job from Elastic Search.")
       jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
-      Logger.info("Removing Job from current Jobs.")
-      this.removeJob(job.jobID)
       Logger.info("Removing Job from mongo DB")
-      removeJob(BSONDocument(Job.ID -> job.jobID))
+      removeJob(BSONDocument(Job.JOBID -> job.jobID))
       Logger.info("Deletion Complete.")
-      val deletetionFile = s"$jobPath${job.jobID}/0/delete.sh".toFile
-      if(!deletetionFile.exists) {
-        throw FileException(s"File ${deletetionFile.name} does not exist.")
+      s"$jobPath${job.jobID}".toFile.delete(true)
+
+
+    /**
+      * marks jobs in mongodb for deletion that are older than a given number of days
+      * ('daysAgo') and informs all watching users
+      * about it in behalf of the job maintenance routine
+      *
+      */
+    case MarkForDeletion() =>
+      Logger.info("Removing Job from DB")
+      updateAndFetchJobs(
+        BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(jobDeletionThreshold).getMillis))),
+        BSONDocument(
+          "$set" ->
+            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
+          "$unset" ->
+            BSONDocument(Job.WATCHLIST -> "")
+        )
+      ).map { jobList =>
+        jobList.map(_.map { _ match {
+            case Some(deletedJob) =>
+              Logger.info(s"Job mark for Deletion in DB was successful:\n${deletedJob.toString()}")
+              Logger.info("Job maintenance routine Requested job Deletion")
+
+              // Message user clients to remove the job from their watchlist
+              Logger.info("Informing Users of deletion.")
+              DeleteJob(deletedJob.jobID, deletedJob.ownerID.get)
+              Logger.info("Removing Job from Elastic Search.")
+              jobDao.deleteJob(deletedJob.mainID.stringify) // Remove job from elastic search
+
+
+            case None =>
+              Logger.info("Job deletion mark in DB failed.")
+          }
+        })
       }
-      else if (!deletetionFile.isExecutable) {
-        throw FileException(s"File ${deletetionFile.name} is not executable.")
-      } else {
-        Process(deletetionFile.pathAsString).run().exitValue() match {
-          case 0 => Logger.info("Executing deletion.sh successful.")
-          case _ => Logger.info("Executing deletion.sh failed.")
-        }
-      }
 
 
-      /**
-        * marks jobs in mongodb for deletion that are older than a given number of days
-        * ('daysAgo') and informs all watching users
-        * about it in behalf of the job maintenance routine
-        *
-        */
-     case MarkForDeletion (daysAgo: Int) =>
-       Logger.info("Removing Job from DB")
-        modifyJob(
-          BSONDocument(Job.DATECREATED -> BSONDocument( "$lt" -> BSONDateTime(new DateTime().minusDays(daysAgo).getMillis))),
-          BSONDocument(
-            "$set" ->
-              BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
-            "$unset" ->
-              BSONDocument(Job.WATCHLIST -> "")
-          )
-        ).foreach {
-          case Some(deletedJob) =>
-            Logger.info(s"Job mark for Deletion in DB was successful:\n${deletedJob.toString()}")
-            Logger.info("Job maintenance routine Requested job Deletion")
-
-            // Message user clients to remove the job from their watchlist
-            Logger.info("Informing Users of deletion.")
-            DeleteJob(deletedJob.jobID, deletedJob.ownerID.get)
-            Logger.info("Removing Job from Elastic Search.")
-            jobDao.deleteJob(deletedJob.mainID.stringify) // Remove job from elastic search
-
-
-          case None =>
-            Logger.info("Job mark Deletion in DB failed.")
-        }
 
     /**
       * Starts the job

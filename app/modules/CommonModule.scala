@@ -166,6 +166,15 @@ trait CommonModule extends ReactiveMongoComponents {
   }
 
 
+  // Updates multiple Jobs in the database but does not return them
+  protected def updateAndFetchJobs(selector: BSONDocument, modifier: BSONDocument): Future[List[Future[Option[Job]]]] = {
+    findJobs(selector).map{ jobList =>
+      jobList.map{ job =>
+        modifyJob(BSONDocument(Job.JOBID -> job.jobID), modifier)
+        }
+      }
+    }
+
 
   // Updates multiple Jobs in the database but does not return them
   protected def updateJobs(selector: BSONDocument, modifier: BSONDocument): Future[UpdateWriteResult] = {
