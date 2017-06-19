@@ -71,9 +71,8 @@
 
         });
 
-        $('#forwardButtonSimpler').on("click", function() {
+        $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
             $('#forwardSelect_@viewName').val('');
-        })
-
+        }));
 </script>
 

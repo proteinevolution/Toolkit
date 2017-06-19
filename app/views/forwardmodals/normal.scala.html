@@ -95,7 +95,7 @@
             }
         });
 
-    $('#forwardButtonNormal').on("click", function() {
+    $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
         $('#forwardSelect_@viewName').val('');
         $('#forwardWarning').css({display: 'none'});
         $('#forwardEvalue_@viewName').val('0.001');
@@ -103,6 +103,5 @@
         $('#sliderRegion_@viewName').prop("checked", true);
         $('.alignmentOptions_@viewName').show();
         $('.multiSeqOptions_@viewName').hide();
-    })
-
+    }));
 </script>
