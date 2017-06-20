@@ -2,7 +2,7 @@ package models.mailing
 
 import models.database.jobs._
 import models.database.users.User
-import play.api.libs.mailer.{MailerClient, Email}
+import play.api.libs.mailer.{ Email, MailerClient }
 import modules.tel.TEL
 
 /**

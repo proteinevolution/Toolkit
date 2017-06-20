@@ -1,7 +1,7 @@
-import co.technius.scalajs.mithril.{Component, MithrilComponent, MithrilProp, m}
+import co.technius.scalajs.mithril.{ m, Component, MithrilComponent, MithrilProp }
 
 import scala.scalajs.js
-import js.Dynamic.{global => g}
+import js.Dynamic.{ global => g }
 import scala.util.Random
 
 /**

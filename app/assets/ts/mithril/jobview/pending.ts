@@ -1,3 +1,4 @@
+/// <reference path="helper.ts"/>
 let JobPendingComponent = {
 
     controller : function(args : any){
@@ -8,13 +9,13 @@ let JobPendingComponent = {
             copyConfig : function(elem: any, isInit : boolean) {
                 if (!isInit) {
                     let route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
-                    m.request({method:route.method, url:route.url}).then(function(data : any){
+                    m.request({method:route.method, url:route.url, extract: nonJsonErrors}).then(function(data : any){
                         if (data != null && data.jobID != null) {
                             //console.log(JSON.stringify(data));
                             $("#copyID").val(data.jobID.toString());
                             $("#copyDate").val(data.dateCreated);
                         }
-                    });
+                    }, function(error) {console.log(error)}).catch(function(e) {});
                 }
             },
 
@@ -46,13 +47,13 @@ let JobPendingComponent = {
                             JobManager.removeFromTable(args.job().jobID);
 
                         });
-                        m.request({method:route.method, url:route.url}).then(function(data : any){
+                        m.request({method:route.method, url:route.url, extract: nonJsonErrors}).then(function(data : any){
                             if (data != null && data.jobID != null) {
                                 m.route("/jobs/"+data.jobID);
                                 JobListComponent.reloadJob(data.jobID);
                             }
                             console.log("requested:",data);
-                        });
+                        }, function(error) {console.log(error)}).catch(function(e) {});
                     }
                 }, "Load existing job")
             ]),

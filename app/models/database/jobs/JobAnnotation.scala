@@ -2,7 +2,7 @@ package models.database.jobs
 
 import org.joda.time.DateTime
 import play.api.libs.json._
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
 import reactivemongo.play.json._
 
 /**
@@ -36,7 +36,8 @@ object JobAnnotation {
             JobAnnotation(mainID = BSONObjectID.generate(),
                           jobID = "",
                           content = "",
-                          dateCreated = Some(new DateTime())))
+                          dateCreated = Some(new DateTime()))
+          )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
         }

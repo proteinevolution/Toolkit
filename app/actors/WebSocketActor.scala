@@ -1,22 +1,21 @@
 package actors
 
-import javax.inject.{Inject, Named}
+import javax.inject.{ Inject, Named }
 
 import actors.ClusterMonitor._
 import actors.JobActor._
-import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert}
-import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
+import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
+import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import controllers.UserSessions
 import models.database.jobs.Job
 import models.job.JobActorAccess
-import modules.{CommonModule, LocationProvider}
+import modules.LocationProvider
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{JsValue, Json}
-import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import play.api.libs.json.{ JsValue, Json }
+import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -34,23 +33,21 @@ object WebSocketActor {
   }
 }
 
-class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
-                               implicit val locationProvider: LocationProvider,
-                               jobActorAccess: JobActorAccess,
-                               @Named("clusterMonitor") clusterMonitor: ActorRef,
-                               @NamedCache("userCache") implicit val userCache: CacheApi,
-                               @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi,
-                               @Assisted("sessionID") private var sessionID: BSONObjectID,
-                               @Assisted("out") out: ActorRef)
+final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
+                                     @Named("clusterMonitor") clusterMonitor: ActorRef,
+                                     @Assisted("out") out: ActorRef,
+                                     jobActorAccess: JobActorAccess,
+                                     userSessions: UserSessions,
+                                     @NamedCache("userCache") val userCache: CacheApi,
+                                     @NamedCache("wsActorCache") val wsActorCache: CacheApi,
+                                     @Assisted("sessionID") private var sessionID: BSONObjectID)
     extends Actor
-    with ActorLogging
-    with CommonModule
-    with UserSessions {
+    with ActorLogging {
 
   override def preStart(): Unit = {
     // Grab the user from cache to ensure a working job
     clusterMonitor ! Connect(self)
-    getUser(sessionID).foreach {
+    userSessions.getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get(user.userID.stringify) match {
           case Some(wsActors) =>
@@ -66,7 +63,7 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
   override def postStop(): Unit = {
     clusterMonitor ! Disconnect(self)
-    getUser(sessionID).foreach {
+    /*getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get(user.userID.stringify) match {
           case Some(wsActors) =>
@@ -76,14 +73,27 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
           case None =>
         }
       case None =>
-        self ! PoisonPill
+        self ! PoisonPill // PoisonPill here is pretty useless since postStop means that the actor is shutting down
+    } */
+
+    /**
+      *
+      *  do we need to have persistent actors? if so,
+      *  let's use akka-persistence instead of the cache (which would not work).
+      *  actors must be removed from
+      *  the cache at some point anyway.
+      */
+    userSessions.getUser(sessionID).foreach {
+      case Some(user) =>
+        wsActorCache.remove(user.userID.stringify)
+      case None => 
     }
   }
 
   def receive = LoggingReceive {
 
     case js: JsValue =>
-      getUser(sessionID).foreach {
+      userSessions.getUser(sessionID).foreach {
         case Some(user) =>
           (js \ "type").validate[String].foreach {
 
@@ -113,7 +123,7 @@ class WebSocketActor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
               Logger.info("Received RegisterLoad message.")
               clusterMonitor ! Connect(self)
 
-            // Request to no longer receive load messages
+            //// Request to no longer receive load messages
             case "UnregisterLoad" =>
               clusterMonitor ! Disconnect(self)
           }

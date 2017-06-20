@@ -1,6 +1,8 @@
 package actors
+
 import javax.inject.{Inject, Named}
-import play.api.Logger
+
+import actors.FileWatcher.{StartProcessReport, StopProcessReport}
 import actors.JobActor._
 import akka.actor.{Actor, ActorRef}
 import akka.event.LoggingReceive
@@ -12,16 +14,17 @@ import models.mailing.JobFinishedMail
 import models.search.JobDAO
 import modules.tel.TEL
 import modules.tel.runscripts._
-import better.files._
 import com.typesafe.config.ConfigFactory
 import controllers.{FileException, UserSessions}
 import models.sge.Qdel
-import modules.{CommonModule, LocationProvider}
+import modules.LocationProvider
+import modules.db.MongoStore
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
 import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
+import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -31,9 +34,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
 
 import scala.concurrent.Future
-import scala.sys.process.Process
 import scala.util.{Failure, Success}
-
 import better.files._
 
 
@@ -88,19 +89,19 @@ object JobActor {
 
 class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscripts to be executed
                          env: Env, // To supply the runscripts with an environment
-                         val reactiveMongoApi: ReactiveMongoApi,
                          implicit val mailerClient: MailerClient,
                          val jobDao: JobDAO,
                          qdel: Qdel,
+                         mongoStore: MongoStore,
+                         userSessions: UserSessions,
                          wrapperExecutionFactory: WrapperExecutionFactory,
                          implicit val locationProvider: LocationProvider,
                          @Named("jobIDActor") jobIDActor: ActorRef,
+                         @Named("fileWatcher") fileWatcher: ActorRef,
                          @NamedCache("userCache") implicit val userCache: CacheApi,
                          @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi)
     extends Actor
-    with Constants
-    with UserSessions
-    with CommonModule {
+    with Constants {
 
   // Attributes asssocidated with a Job
   private var currentJobs: Map[String, Job]                           = Map.empty
@@ -122,7 +123,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       case Some(job) => // Everything is fine. Return the job.
         Future.successful(Some(job))
       case None => // Job is not in the current jobs.. try to get it back.
-        findJob(BSONDocument(Job.JOBID -> jobID)).map {
+        mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map {
           case Some(job) =>
             // Get the job back into the current jobs
             this.currentJobs = this.currentJobs.updated(job.jobID, job)
@@ -188,11 +189,12 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     * @param value
     * @param params
     */
-  private def supply(jobID: String,
-                     name: String,
-                     value: String,
-                     params: Seq[(String, (Runscript.Evaluation, Option[Argument]))])
-    : Seq[(String, (Runscript.Evaluation, Option[Argument]))] = {
+  private def supply(
+      jobID: String,
+      name: String,
+      value: String,
+      params: Seq[(String, (Runscript.Evaluation, Option[Argument]))]
+  ): Seq[(String, (Runscript.Evaluation, Option[Argument]))] = {
     params.map {
       case (paramName, (evaluation, _)) if paramName == name =>
         val x = Some(evaluation(RString(value), this.currentExecutionContexts(jobID)))
@@ -214,7 +216,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
     // Save Job Event Log to the collection and remove it from the map afterwards
     if (this.currentJobLogs.contains(jobID)) {
-      addJobLog(this.currentJobLogs(jobID))
+      mongoStore.addJobLog(this.currentJobLogs(jobID))
       this.currentJobLogs = this.currentJobLogs.filter(_._1 == jobID)
     }
 
@@ -242,27 +244,30 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       foundWatchers.flatten.foreach(_ ! ClearJob(job.jobID))
 
       // Mark the job in mongoDB
-      modifyJob(
-        BSONDocument(Job.IDDB -> job.mainID),
-        BSONDocument(
-          "$set" ->
+      mongoStore
+        .modifyJob(
+          BSONDocument(Job.IDDB -> job.mainID),
+          BSONDocument(
+            "$set" ->
             BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
-          "$unset" ->
+            "$unset" ->
             BSONDocument(Job.WATCHLIST -> "")
+          )
         )
-      ).foreach {
-        case Some(deletedJob) =>
-          Logger.info(s"Job Deletion from DB was successful:\n${deletedJob.toString()}")
-        case None =>
-          Logger.info("Job Deletion from DB failed.")
-      }
+        .foreach {
+          case Some(deletedJob) =>
+            Logger.info(s"Job Deletion from DB was successful:\n${deletedJob.toString()}")
+          case None =>
+            Logger.info("Job Deletion from DB failed.")
+        }
     } else {
       // Just clear a job which is not owned by the user
-      modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
+      mongoStore.modifyJob(BSONDocument(Job.IDDB -> job.mainID),
+                           BSONDocument("$pull"  -> BSONDocument(Job.WATCHLIST -> userID)))
     }
     // clear job from the user's watchlist
-    modifyUserWithCache(BSONDocument(User.IDDB -> userID),
-                        BSONDocument("$pull"   -> BSONDocument(User.JOBS -> job.jobID)))
+    userSessions.modifyUserWithCache(BSONDocument(User.IDDB -> userID),
+                                     BSONDocument("$pull"   -> BSONDocument(User.JOBS -> job.jobID)))
   }
 
   /**
@@ -273,7 +278,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     this.currentJobs = this.currentJobs.updated(job.jobID, job)
 
     // Update job in the database and notify watcher upon completion
-    modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
+    mongoStore
+      .modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
       .map { modifiedJob =>
         val jobLog = this.currentJobLogs.get(job.jobID) match {
           case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
@@ -308,7 +314,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     */
   private def sendJobUpdateMail(job: Job): Boolean = {
     if (job.emailUpdate && job.ownerID.isDefined) {
-      findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach {
+      mongoStore.findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach {
         case Some(user) =>
           Logger.info("Sending EMail to owner: " + user.getUserData.eMail)
           val eMail = JobFinishedMail(user, job)
@@ -344,7 +350,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               events = List(JobEvent(job.status, Some(DateTime.now)))))
 
         // Update the statistics
-        increaseJobCount(job.tool) // TODO switch to better statistic handling
+        mongoStore.increaseJobCount(job.tool) // TODO switch to better statistic handling
 
         // Get new runscript instance from the runscript manager
         val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
@@ -365,7 +371,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           // When the user wants to force the job to start without job hash check, then this will jump right to prepared
           if (startJob) {
             val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
-            hashCollection.flatMap(_.insert(jobHash))
+            mongoStore.hashCollection.flatMap(_.insert(jobHash))
             self ! StartJob(job.jobID)
           } else {
             Logger.info("JobID " + job.jobID + " will now be hashed.")
@@ -381,7 +387,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         case FileAlreadyExists(msg) =>
           Logger.error(
             "[JobActor.PrepareJob] The directory for job " + job.jobID + " already exists\n" +
-              "[JobActor.PrepareJob] Stopping job since it can not be retrieved by user.")
+            "[JobActor.PrepareJob] Stopping job since it can not be retrieved by user."
+          )
           self ! JobStateChanged(job.jobID, Error)
       }
 
@@ -410,7 +417,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 }
 
                 // Find the Jobs in the Database
-                findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
+                mongoStore.findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
                   val foundMainIDs = jobList.map(_.mainID)
 
                   if (jobList.exists(_.status == Done)) {
@@ -418,7 +425,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     self ! JobStateChanged(job.jobID, Pending)
                   } else {
                     Logger.info("JobID " + jobID + " will now be started.")
-                    hashCollection.flatMap(_.insert(jobHash))
+                    mongoStore.hashCollection.flatMap(_.insert(jobHash))
                     self ! StartJob(job.jobID)
                   }
                 }
@@ -449,7 +456,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           Logger.info("Deletion Complete.")
         case None =>
           Logger.info("No such jobID found in current jobs. Loading job from DB.")
-          findJob(BSONDocument(Job.JOBID -> jobID)).map {
+          mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map {
             case Some(job) =>
               Logger.info("Found Job in DB. Deleting.")
               Logger.info("Removing Job from Elastic Search.")
@@ -473,7 +480,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       Logger.info("Removing Job from Elastic Search.")
       jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
       Logger.info("Removing Job from mongo DB")
-      removeJob(BSONDocument(Job.JOBID -> job.jobID))
+      mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
       Logger.info("Deletion Complete.")
       s"$jobPath${job.jobID}".toFile.delete(true)
 
@@ -486,7 +493,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       */
     case MarkForDeletion() =>
       Logger.info("Removing Job from DB")
-      updateAndFetchJobs(
+      mongoStore.updateAndFetchJobs(
         BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(jobDeletionThreshold).getMillis))),
         BSONDocument(
           "$set" ->
@@ -525,7 +532,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
             case Some(executionContext) =>
               Logger.info("[JobActor.StartJob] reached. starting job " + jobID)
               // set memory allocation on the cluster and let the clusterMonitor define the multiplier
-              val queue = ConfigFactory.load().getString(s"Tools.${job.tool}.queue")
+              val h_rt = ConfigFactory.load().getString(s"Tools.${job.tool}.hardruntime")
               val h_vmem = (ConfigFactory
                 .load()
                 .getString(s"Tools.${job.tool}.memory")
@@ -535,48 +542,54 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 math.ceil(ConfigFactory.load().getInt(s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
               env.configure(s"MEMORY", h_vmem)
               env.configure(s"THREADS", threads.toString)
-              env.configure(s"QUEUE", queue.toString)
+              env.configure(s"HARDRUNTIME", h_rt.toString)
               Logger.info(s"$jobID is running with $h_vmem h_vmem")
               Logger.info(s"$jobID is running with $threads threads")
-              Logger.info(s"$jobID is queued: $queue")
+              Logger.info(s"$jobID is running with $h_rt h_rt")
 
-              val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(queue))
+              val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(h_rt))
 
-              modifyJob(BSONDocument(Job.IDDB -> job.mainID),
-                        BSONDocument("$set" ->
-                          BSONDocument(Job.CLUSTERDATA -> clusterData))).foreach {
-                case Some(updatedJob) =>
-                  // Get new runscript instance from the runscript manager
-                  val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
-                  // Load the parameters from the serialized parameters file
-                  val params = executionContext.reloadParams
-                  // Validate the Parameters (again) to ensure that everything works
-                  var validParameters = this.validatedParameters(job, runscript, params)
+              mongoStore
+                .modifyJob(BSONDocument(Job.IDDB -> job.mainID),
+                           BSONDocument(
+                             "$set" ->
+                             BSONDocument(Job.CLUSTERDATA -> clusterData)
+                           ))
+                .foreach {
+                  case Some(updatedJob) =>
+                    // Get new runscript instance from the runscript manager
+                    val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
+                    // Load the parameters from the serialized parameters file
+                    val params = executionContext.reloadParams
+                    // Validate the Parameters (again) to ensure that everything works
+                    var validParameters = this.validatedParameters(job, runscript, params)
 
-                  // adds the params of the disabled controls from formData, sets value of those to "false"
-                  validParameters.filterNot(pv => params.contains(pv._1)).foreach { pv =>
-                    params.+(pv._1 -> "false")
-                  }
-
-                  if (isComplete(validParameters)) {
-                    val pendingExecution = wrapperExecutionFactory.getInstance(
-                      runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))))
-
-                    if ( ! executionContext.blocked) {
-
-                      executionContext.accept(pendingExecution)
-                      Logger.info("[JobActor.StartJob] Running job now.")
-                      this.runningExecutions = this.runningExecutions.updated(job.jobID, executionContext.executeNext.run())
+                    // adds the params of the disabled controls from formData, sets value of those to "false"
+                    validParameters.filterNot(pv => params.contains(pv._1)).foreach { pv =>
+                      params.+(pv._1 -> "false")
                     }
-                  } else {
-                    // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
-                    Logger.info("STAY")
-                  }
 
-                  self ! JobStateChanged(job.jobID, Prepared)
-                case None =>
-                  Logger.error("[JobActor.StartJob] Job could not be written to DB: " + jobID)
-              }
+                    if (isComplete(validParameters)) {
+                      val pendingExecution = wrapperExecutionFactory.getInstance(
+                        runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument])))
+                      )
+
+                      if (!executionContext.blocked) {
+
+                        executionContext.accept(pendingExecution)
+                        Logger.info("[JobActor.StartJob] Running job now.")
+                        this.runningExecutions =
+                          this.runningExecutions.updated(job.jobID, executionContext.executeNext.run())
+                      }
+                    } else {
+                      // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
+                      Logger.info("STAY")
+                    }
+
+                    self ! JobStateChanged(job.jobID, Prepared)
+                  case None =>
+                    Logger.error("[JobActor.StartJob] Job could not be written to DB: " + jobID)
+                }
             //env.remove(s"MEMORY")
             //env.remove(s"THREADS")
             case None =>
@@ -587,9 +600,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
     // User does no longer watch this Job (delete also from JobManager)
     case DeleteJob(jobID, userID) =>
-      Logger.info("Removing Job from current Jobs.")
-      this.removeJob(jobID)
-      modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
+      mongoStore
+        .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
         .foreach {
           case Some(updatedJob) =>
             this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
@@ -598,33 +610,41 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
       wsActors.foreach(_.foreach(_ ! ClearJob(jobID, deleted = true)))
 
-      modifyUserWithCache(BSONDocument(User.IDDB -> userID), BSONDocument("$pull" -> BSONDocument(User.JOBS -> jobID)))
+      userSessions.modifyUserWithCache(BSONDocument(User.IDDB -> userID),
+                                       BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
 
     // User Starts watching job
     case AddToWatchlist(jobID, userID) =>
-      modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
+      mongoStore
+        .modifyJob(BSONDocument(Job.JOBID   -> jobID),
+                   BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
         .map {
           case Some(updatedJob) =>
-            modifyUserWithCache(BSONDocument(User.IDDB   -> userID),
-                                BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID))).foreach { _ =>
-              this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
-              val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
-              wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
-            }
+            userSessions
+              .modifyUserWithCache(BSONDocument(User.IDDB   -> userID),
+                                   BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
+              .foreach { _ =>
+                this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
+                val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
+                wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
+              }
           case None =>
         }
 
     // User does no longer watch this Job (stays in JobManager)
     case RemoveFromWatchlist(jobID, userID) =>
-      modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
+      mongoStore
+        .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
         .foreach {
           case Some(updatedJob) =>
-            modifyUserWithCache(BSONDocument(User.IDDB -> userID),
-                                BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID))).foreach { _ =>
-              this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
-              val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
-              wsActors.foreach(_.foreach(_ ! ClearJob(jobID)))
-            }
+            userSessions
+              .modifyUserWithCache(BSONDocument(User.IDDB -> userID),
+                                   BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
+              .foreach { _ =>
+                this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
+                val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
+                wsActors.foreach(_.foreach(_ ! ClearJob(jobID)))
+              }
           case None =>
         }
 
@@ -654,9 +674,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                    reactivemongo.play.json.BSONFormats.toBSON(Json.parse(file.contentAsString)).get)
                 }
                 .toTraversable
-              if(result.nonEmpty){
+              if (result.nonEmpty) {
                 // Put the result files into the database, JobActor has to wait until this process has finished
-                val x = result2Job(job.jobID, BSONDocument(result)) onComplete {
+                val x = mongoStore.result2Job(job.jobID, BSONDocument(result)) onComplete {
                   case Success(doc) =>
                     // Now we can update the JobState and remove it, once the update has completed
                     this.updateJobState(job).map { job =>
@@ -665,7 +685,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     }
                   case Failure(t) => println("An error has occured: " + t.getMessage)
                 }
-              }else {
+              } else {
                 // Now we can update the JobState and remove it, once the update has completed
                 this.updateJobState(job).map { job =>
                   this.removeJob(job.jobID)
@@ -682,7 +702,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 sendJobUpdateMail(job)
 
                 // Update the statistics for the failed job TODO - swap to better statistic handling
-                increaseJobCount(job.tool, failed = true)
+                mongoStore.increaseJobCount(job.tool, failed = true)
               }
 
             case _ =>

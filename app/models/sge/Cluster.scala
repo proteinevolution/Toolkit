@@ -1,6 +1,6 @@
 package models.sge
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 /**
   * Created by snam on 19.03.17.

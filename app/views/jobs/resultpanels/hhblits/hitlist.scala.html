@@ -19,19 +19,46 @@
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
-                <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
-                <a data-open="forwardModal_@{
+                <a onclick="selectAll()" class="selectAllSeqBar" id="extraWide">Select all</a>
+                <a id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
-                <a data-open="forwardModal_@{
+                <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
                 }_hhsuite">Forward Query MSA</a>
             </div>
         </div>
     </div>
     <br>
+    <text class="notePlain">Number of hits: <b>@result.num_hits</b></text>
     <br>
-    Number of matched sequences: <b>@result.num_hits</b>
+
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+        <br>
+        <text class="note"><b> We have detected</b></text>
+
+    }
+    @if(result.TMPRED == "1"){
+
+        <text class="note"><b> @result.TMPRED transmembrane helix</b></text>
+    }
+    @if(result.TMPRED.toInt > 1){
+
+        <text class="note"><b> @result.TMPRED transmembrane helices</b></text>
+    }
+    @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
+        <text class="note"><b> and </b></text>
+
+    }
+    @if(result.COILPRED == "0"){
+        <text class="note"><b>coiled-coil segments </b></text>
+    }
+
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+        <text class="note"><b> in your query protein!</b></text>
+
+    }
+
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div><a class="success button tiny resubmitSection" onclick="resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}')" type="button" id="resubmitSection">Resubmit section</a></div>
@@ -90,18 +117,22 @@
         </select>
     </div>
     <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
-    <button class="close-button" data-close aria-label="Close modal" type="button">
+    <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
 <script>
+        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
+            $('#alignmentTemplate_tool').val('');
+            $.LoadingOverlay("hide");
+        }));
         var jobID = '@{jobID}';
         var fileUrlQueryMSAFas = "/files/"+jobID+"/alignment.fas";
         var checkbox = "checkbox";
         var selectAllBool = false;
         var numHits = @{result.num_hits};
-        var shownHits = 50;
+        var shownHits = 100;
         var colorAAs = true;
         var showMore = 100;
 	    var loading = false;
@@ -130,9 +161,9 @@
                 "bProcessing" : true,
                 "bServerSide" : true,
                 "sAjaxSource" : "/api/job/results/dataTableHHblits/@jobID",
-                "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+                "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
                 "searching": false,
-                "iDisplayLength": 10,
+                "iDisplayLength": 25,
                 "drawCallback": function() {
                     linkCheckboxes();
                     selectFromArray(checkboxes);
@@ -140,24 +171,46 @@
             });
         }
 
+        function selectAll(){
+            selectAllBool = !selectAllBool;
+            if(selectAllBool) {
+                selectAllHelper(checkbox);
+                $(".selectAllSeqBar").text("Deselect all");
+                $(".selectAllSeqBar").addClass("colorToggleBar");
+
+                // first empty array
+                checkboxes = [];
+                // push all checkboxes (1 to num_hits) into array
+                _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
+            }
+            else {
+                deselectAll(checkbox);
+                $(".selectAllSeqBar").text("Select all");
+                $(".selectAllSeqBar").removeClass("colorToggleBar");
+                // delete all checkboxes from array
+                checkboxes = [];
+            }
+        }
 
 
-       function hhblits_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
+       function hhblits_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
            var route = null;
+           var filename = generateFilename();
            $.LoadingOverlay("show");
             if(boolFullLength) {
                 if(boolEvalue) {
-                    route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
+                    route = jsRoutes.controllers.HHblitsController.evalFull(jobID, evalue, filename);
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.full('@jobID');
+                    route = jsRoutes.controllers.HHblitsController.full(jobID, filename);
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                        $.LoadingOverlay("hide")
+                        $.LoadingOverlay("hide");
                         alert("No sequences selected!");
                         return false;
                     }
                 }
+
                 $.ajax({
                     url: route.url,
                     method: route.method,
@@ -169,7 +222,7 @@
                 }).done(function (data_) {
                     $.ajax({
                         type: 'GET',
-                        url: 'files/@jobID/sequences.fa',
+                        url: 'files/@jobID/'+filename+'.fa',
                         error: function(){
                             $.LoadingOverlay("hide")
                         }
@@ -180,9 +233,15 @@
             } else{
 
                 if(boolEvalue) {
-                    route = jsRoutes.controllers.HHblitsController.alnEval('@jobID', evalue);
+                    route = jsRoutes.controllers.HHblitsController.alnEval(jobID, evalue, filename);
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.aln('@jobID');
+                    if(data.checkboxes.length == 0){
+                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                        $.LoadingOverlay("hide");
+                        alert("No sequences selected!");
+                        return false;
+                    }
+                    route = jsRoutes.controllers.HHblitsController.aln(jobID, filename);
                 }
                 $.ajax({
                     url: route.url,
@@ -195,7 +254,7 @@
                 }).done(function (data_) {
                     $.ajax({
                         type: 'GET',
-                        url: 'files/@jobID/alignment.fas',
+                        url: 'files/@jobID/'+filename+'.fas',
                         error: function(){
                             $.LoadingOverlay("hide")
                         }
@@ -278,6 +337,5 @@
             }
         }
 
-
-
 </script>
+

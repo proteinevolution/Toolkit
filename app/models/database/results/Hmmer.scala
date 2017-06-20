@@ -40,12 +40,19 @@ case class HmmerHSP(evalue: Double,
         "4" -> Json.toJson(evalue),
         "5" -> Json.toJson(bitscore),
         "6" -> Json.toJson(hit_len)
-      ))
+      )
+    )
 }
 
 case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 
-case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int, alignment: List[AlignmentItem], query: Query, db: String)
+case class HmmerResult(HSPS: List[HmmerHSP],
+                       num_hits: Int,
+                       alignment: List[AlignmentItem],
+                       query: Query,
+                       db: String,
+                       TMPRED: String,
+                       COILPRED: String)
 
 @Singleton
 class Hmmer @Inject()(general: General, aln: Alignment) {
@@ -63,15 +70,24 @@ class Hmmer @Inject()(general: General, aln: Alignment) {
         val hsps     = (obj \ jobID \ "hsps").as[List[JsObject]]
         val num_hits = hsps.length
 
-        val hsplist = hsps.map (parseHSP(_))
+        val hsplist = hsps.map(parseHSP(_))
 
-        HmmerResult(hsplist, num_hits, alignment, query, db)
+        val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
+          case Some(data) => data
+          case None       => "0"
+        }
+        val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
+          case Some(data) => data
+          case None       => "1"
+        }
+
+        HmmerResult(hsplist, num_hits, alignment, query, db, TMPRED, COILPRED)
       }
   }
 
   def parseHSP(hsp: JsObject): HmmerHSP = {
     val evalue         = (hsp \ "evalue").getOrElse(Json.toJson(-1)).as[Double]
-    val full_evalue         = (hsp \ "full_evalue").getOrElse(Json.toJson(-1)).as[Double]
+    val full_evalue    = (hsp \ "full_evalue").getOrElse(Json.toJson(-1)).as[Double]
     val num            = (hsp \ "num").getOrElse(Json.toJson(-1)).as[Int]
     val bitscore       = (hsp \ "bitscore").getOrElse(Json.toJson(-1)).as[Double]
     val hit_start      = (hsp \ "hit_start").getOrElse(Json.toJson(-1)).as[Int]

@@ -1,7 +1,7 @@
 package models.auth
 
 import models.database.users.User
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{ JsObject, JsValue, Json }
 
 /**
   * Created by astephens on 26.05.16.

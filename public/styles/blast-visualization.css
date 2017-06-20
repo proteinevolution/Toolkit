@@ -116,15 +116,6 @@
     float: right;
 }
 
-.forwardModal .nice-select {
-    width: 12em;
-    margin-top: 1.75em;
-    margin-left: 0.25em;
-}
-.forwardModal .nice-select ul {
-    width: 12em;
-}
-
 .forward {
     float: right;
     background-color: rgba(0, 110, 98, 166);
@@ -136,14 +127,24 @@
 }
 #forward {
     float: right;
-    background-color: rgba(0, 110, 98, 166);
-    color: white;
-    margin-bottom: 0;
-    margin-top: 2em;
-    font-size: 0.70em;
+    margin-top: 0.5em;
     -webkit-appearance: none;
-
+    background-color: rgba(0, 110, 98, 166) !important;
+    border-radius: 3px !important;
+    color: white !important;
+    margin-left: 2em;
 }
+
+.forwardFormLast #forward {
+    margin-top: 2em;
+}
+
+
+#forward:hover {
+    background-color: gray !important;
+}
+
+
 
 .forward_panel {
     margin-bottom: 1em;
@@ -477,7 +478,7 @@ table.dataTable.no-footer{
     top: 0;
     box-shadow: 2px 4px 6px -2px #302e2e4d;
     font-size: 1.2em;
-    padding: 1em;
+    padding: 1em 1em 1em 0;
     opacity: 0.96;
     background: #f5f5f5;
     z-index: 99;
@@ -485,12 +486,13 @@ table.dataTable.no-footer{
     height: auto;
 }
 
-.scrollContainer a{
+#scrollLinks a{
     margin-right: 2em;
     margin-bottom: 1.5em;
 }
-.scrollContainer span{
+#controlls a{
     margin-right: 2em;
+    display: block;
 }
 
 .scrollContainerDiv {
@@ -499,12 +501,23 @@ table.dataTable.no-footer{
 }
 
 .scrollContainerWhite {
-    background-color: white;
+    background-color: #FEFEFE;
     box-shadow: none;
 }
 
 .scrollContainerDivWhite {
     margin: unset;
+}
+
+#controlls {
+    display: flex;
+}
+
+#extraWide {
+    width: 5.7em;
+    margin-right: 0.9em !important;
+    margin-left: 1em;
+    height: 1.7em;
 }
 
 #hitlistTitle{
@@ -593,18 +606,31 @@ table.dataTable.no-footer{
 
 #loadingHits{
     display: none;
-    font-size: 1.4em;
+    font-size: 1.3em;
     padding-left: 23em !important;
     padding-bottom: 2em !important;
 }
 
 #loadHits{
-    font-size: 1.4em;
-    margin-left: 23em !important;
+    font-size: 1.3em;
+    margin-left: 24em !important;
     margin-bottom: 2em !important;
     margin-top: 2em !important;
 }
 
+#loadHitsAln{
+    font-size: 1.3em;
+    margin-left: 24em !important;
+    margin-bottom: 2em !important;
+    margin-top: 2em !important;
+}
+
+#loadHitsQaln{
+    font-size: 1.3em;
+    margin-left: 24em !important;
+    margin-bottom: 2em !important;
+    margin-top: 2em !important;
+}
 
 .indexCheckbox {
     margin-right: 0.3em !important;

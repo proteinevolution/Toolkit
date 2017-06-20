@@ -1,19 +1,19 @@
 package models.tools
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.ConfigFactory
 import models.Constants
-import models.database.results.{HHBlits, HHPred, Hmmer, PSIBlast}
+import models.database.results.{ HHBlits, HHPred, Hmmer, PSIBlast }
+import modules.db.MongoStore
 
 import scala.collection.immutable.ListMap
 import scala.collection.mutable
 import scala.concurrent._
 import ExecutionContext.Implicits.global
-import modules.CommonModule
 import play.api.libs.json.JsArray
 import play.modules.reactivemongo.ReactiveMongoApi
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.{ Html, HtmlFormat }
 
 import scala.concurrent.Future
 
@@ -57,9 +57,9 @@ final class ToolFactory @Inject()(
     hmmer: Hmmer,
     hhpred: HHPred,
     hhblits: HHBlits,
-    aln: models.database.results.Alignment)(paramAccess: ParamAccess, val reactiveMongoApi: ReactiveMongoApi)
-    extends CommonModule
-    with Constants {
+    aln: models.database.results.Alignment
+)(paramAccess: ParamAccess, mongoStore: MongoStore)
+    extends Constants {
 
   // Encompasses all the toolnames
   object Toolnames {
@@ -177,34 +177,36 @@ final class ToolFactory @Inject()(
        "psiblast",
        "reformat",
        "seq2id",
-       "tcoffee"),
+       "tcoffee"
+     ),
      Seq("clans", "mmseqs2", "seq2id")),
     // CLustalOmega
     ("clustalo",
      Seq(paramAccess.ALIGNMENT, paramAccess.OUTPUT_ORDER),
      Seq(
-         "ali2d",
-         "aln2plot",
-         "alnviz",
-         "ancescon",
-         "clans",
-          "clustalo",
-          "kalign",
-          "hhblits",
-          "hhfilter",
-          "hhpred",
-          "hhrepid",
-          "hmmer",
-          "mafft",
-          "mmseqs2",
-          "msaprobs",
-          "muscle",
-          "pcoils",
-          "phyml",
-          "psiblast",
-          "reformat",
-          "seq2id",
-          "tcoffee"),
+       "ali2d",
+       "aln2plot",
+       "alnviz",
+       "ancescon",
+       "clans",
+       "clustalo",
+       "kalign",
+       "hhblits",
+       "hhfilter",
+       "hhpred",
+       "hhrepid",
+       "hmmer",
+       "mafft",
+       "mmseqs2",
+       "msaprobs",
+       "muscle",
+       "pcoils",
+       "phyml",
+       "psiblast",
+       "reformat",
+       "seq2id",
+       "tcoffee"
+     ),
      Seq.empty),
     // Kalign
     ("kalign",
@@ -215,134 +217,141 @@ final class ToolFactory @Inject()(
          paramAccess.GAP_TERM,
          paramAccess.BONUSSCORE),
      Seq(
-         "ali2d",
-         "aln2plot",
-         "alnviz",
-         "ancescon",
-         "clans",
-         "clustalo",
-         "kalign",
-         "hhblits",
-         "hhfilter",
-         "hhpred",
-         "hhrepid",
-         "hmmer",
-         "mafft",
-         "mmseqs2",
-         "msaprobs",
-         "muscle",
-         "pcoils",
-         "phyml",
-         "psiblast",
-         "reformat",
-         "seq2id",
-         "tcoffee"),
+       "ali2d",
+       "aln2plot",
+       "alnviz",
+       "ancescon",
+       "clans",
+       "clustalo",
+       "kalign",
+       "hhblits",
+       "hhfilter",
+       "hhpred",
+       "hhrepid",
+       "hmmer",
+       "mafft",
+       "mmseqs2",
+       "msaprobs",
+       "muscle",
+       "pcoils",
+       "phyml",
+       "psiblast",
+       "reformat",
+       "seq2id",
+       "tcoffee"
+     ),
      Seq.empty),
     // T-Coffee
     ("tcoffee",
      Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER),
      Seq(
-         "ali2d",
-         "aln2plot",
-         "alnviz",
-         "ancescon",
-         "clans",
-         "clustalo",
-         "kalign",
-         "hhblits",
-         "hhfilter",
-         "hhpred",
-         "hhrepid",
-         "hmmer",
-         "mafft",
-         "mmseqs2",
-         "msaprobs",
-         "muscle",
-         "pcoils",
-         "phyml",
-         "psiblast",
-         "reformat",
-         "seq2id",
-         "tcoffee"),
+       "ali2d",
+       "aln2plot",
+       "alnviz",
+       "ancescon",
+       "clans",
+       "clustalo",
+       "kalign",
+       "hhblits",
+       "hhfilter",
+       "hhpred",
+       "hhrepid",
+       "hmmer",
+       "mafft",
+       "mmseqs2",
+       "msaprobs",
+       "muscle",
+       "pcoils",
+       "phyml",
+       "psiblast",
+       "reformat",
+       "seq2id",
+       "tcoffee"
+     ),
      Seq.empty),
     // MAFFT
     ("mafft",
      Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.GAP_OPEN, paramAccess.OFFSET),
      Seq(
-         "ali2d",
-         "aln2plot",
-         "alnviz",
-         "ancescon",
-         "clans",
-         "clustalo",
-         "kalign",
-         "hhblits",
-         "hhfilter",
-         "hhpred",
-         "hhrepid",
-         "hmmer",
-         "mafft",
-         "mmseqs2",
-         "msaprobs",
-         "muscle",
-         "pcoils",
-         "phyml",
-         "psiblast",
-         "reformat",
-         "seq2id",
-         "tcoffee"),
+       "ali2d",
+       "aln2plot",
+       "alnviz",
+       "ancescon",
+       "clans",
+       "clustalo",
+       "kalign",
+       "hhblits",
+       "hhfilter",
+       "hhpred",
+       "hhrepid",
+       "hmmer",
+       "mafft",
+       "mmseqs2",
+       "msaprobs",
+       "muscle",
+       "pcoils",
+       "phyml",
+       "psiblast",
+       "reformat",
+       "seq2id",
+       "tcoffee"
+     ),
      Seq.empty),
     // MSA Probs
     ("msaprobs",
      Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER),
-     Seq("ali2d",
-         "aln2plot",
-         "alnviz",
-         "ancescon",
-         "clans",
-         "clustalo",
-         "kalign",
-         "hhblits",
-         "hhfilter",
-         "hhpred",
-         "hhrepid",
-         "hmmer",
-         "mafft",
-         "mmseqs2",
-         "msaprobs",
-         "muscle",
-         "pcoils",
-         "phyml",
-         "psiblast",
-         "reformat",
-         "seq2id",
-         "tcoffee"),
+     Seq(
+       "ali2d",
+       "aln2plot",
+       "alnviz",
+       "ancescon",
+       "clans",
+       "clustalo",
+       "kalign",
+       "hhblits",
+       "hhfilter",
+       "hhpred",
+       "hhrepid",
+       "hmmer",
+       "mafft",
+       "mmseqs2",
+       "msaprobs",
+       "muscle",
+       "pcoils",
+       "phyml",
+       "psiblast",
+       "reformat",
+       "seq2id",
+       "tcoffee"
+     ),
      Seq.empty),
     // MUSCLE
     ("muscle",
      Seq(paramAccess.MULTISEQ, paramAccess.MAXROUNDS),
-     Seq("ali2d",
-         "aln2plot",
-         "alnviz",
-         "ancescon",
-         "clans",
-         "clustalo",
-         "kalign",
-         "hhblits",
-         "hhfilter",
-         "hhpred",
-         "hhrepid",
-         "hmmer",
-         "mafft",
-         "mmseqs2",
-         "msaprobs",
-         "muscle",
-         "pcoils",
-         "phyml",
-         "psiblast",
-         "reformat",
-         "seq2id",
-         "tcoffee"),
+     Seq(
+       "ali2d",
+       "aln2plot",
+       "alnviz",
+       "ancescon",
+       "clans",
+       "clustalo",
+       "kalign",
+       "hhblits",
+       "hhfilter",
+       "hhpred",
+       "hhrepid",
+       "hmmer",
+       "mafft",
+       "mmseqs2",
+       "msaprobs",
+       "muscle",
+       "pcoils",
+       "phyml",
+       "psiblast",
+       "reformat",
+       "seq2id",
+       "tcoffee"
+     ),
      Seq.empty),
     // Hmmer
     ("hmmer",
@@ -351,30 +360,31 @@ final class ToolFactory @Inject()(
          paramAccess.MAX_HHBLITS_ITER,
          paramAccess.EVALUE,
          paramAccess.DESC),
-     Seq("ali2d",
-         "aln2plot",
-         "alnviz",
-         "ancescon",
-         "clans",
-         "clustalo",
-         "kalign",
-         "hhblits",
-         "hhfilter",
-         "hhpred",
-         "hhrepid",
-         "hmmer",
-         "mafft",
-         "mmseqs2",
-         "msaprobs",
-         "muscle",
-         "pcoils",
-         "phyml",
-         "psiblast",
-         "reformat",
-         "seq2id",
-         "tcoffee"),
-     Seq("clans",
-         "mmseqs2")),
+     Seq(
+       "ali2d",
+       "aln2plot",
+       "alnviz",
+       "ancescon",
+       "clans",
+       "clustalo",
+       "kalign",
+       "hhblits",
+       "hhfilter",
+       "hhpred",
+       "hhrepid",
+       "hmmer",
+       "mafft",
+       "mmseqs2",
+       "msaprobs",
+       "muscle",
+       "pcoils",
+       "phyml",
+       "psiblast",
+       "reformat",
+       "seq2id",
+       "tcoffee"
+     ),
+     Seq("clans", "mmseqs2")),
     // Aln2Plot
     ("aln2plot", Seq(paramAccess.ALIGNMENT), Seq.empty, Seq.empty),
     // PCOILS
@@ -432,11 +442,7 @@ final class ToolFactory @Inject()(
      Seq.empty,
      Seq.empty),
     // RetrieveSeq
-    ("retseq",
-     Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB),
-     Seq("clans",
-         "mmseqs2"),
-     Seq.empty),
+    ("retseq", Seq(paramAccess.ALIGNMENT, paramAccess.STANDARD_DB), Seq("clans", "mmseqs2"), Seq.empty),
     // Seq2ID
     ("seq2id", Seq(paramAccess.FASTAHEADERS), Seq("retseq"), Seq.empty),
     // ANCESCON
@@ -472,28 +478,30 @@ final class ToolFactory @Inject()(
          paramAccess.MIN_SEQID_QUERY,
          paramAccess.MIN_QUERY_COV,
          paramAccess.NUM_SEQS_EXTRACT),
-     Seq("ali2d",
-         "aln2plot",
-         "alnviz",
-         "ancescon",
-         "clans",
-         "clustalo",
-         "kalign",
-         "hhblits",
-         "hhfilter",
-         "hhpred",
-         "hhrepid",
-         "hmmer",
-         "mafft",
-         "mmseqs2",
-         "msaprobs",
-         "muscle",
-         "pcoils",
-         "phyml",
-         "psiblast",
-         "reformat",
-         "seq2id",
-         "tcoffee"),
+     Seq(
+       "ali2d",
+       "aln2plot",
+       "alnviz",
+       "ancescon",
+       "clans",
+       "clustalo",
+       "kalign",
+       "hhblits",
+       "hhfilter",
+       "hhpred",
+       "hhrepid",
+       "hmmer",
+       "mafft",
+       "mmseqs2",
+       "msaprobs",
+       "muscle",
+       "pcoils",
+       "phyml",
+       "psiblast",
+       "reformat",
+       "seq2id",
+       "tcoffee"
+     ),
      Seq.empty)
   ).map { t =>
     t._1 -> tool(
@@ -509,517 +517,550 @@ final class ToolFactory @Inject()(
   }.toMap
 
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
-  val resultMap: Map[String, ListMap[String, (String, play.api.mvc.RequestHeader) => Future[HtmlFormat.Appendable]]] = Map(
-    Toolnames.PSIBLAST -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        getResult(jobID).map {
+  val resultMap: Map[String, ListMap[String, (String, play.api.mvc.RequestHeader) => Future[HtmlFormat.Appendable]]] =
+    Map(
+      Toolnames.PSIBLAST -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          mongoStore.getResult(jobID).map {
 
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.psiblast.hitlist(jobID, psi.parseResult(jsvalue), this.values("psiblast"))
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.psiblast.hitlist(jobID, psi.parseResult(jsvalue), this.values("psiblast"))
+          }
+        },
+        "Unformatted Output" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileviewWithDownload("output_psiblastp.html",
+                                                              s"$jobPath$jobID/results/" + "output_psiblastp.html",
+                                                              jobID,
+                                                              "PSIBLAST_OUTPUT")
+          )
+        },
+        "E-Value Plot" -> { (jobID, requestHeader) =>
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.evalues(psi.parseResult(jsvalue).HSPS.map(_.evalue))
+          }
         }
-      },
-      "Unformatted Output" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.fileviewWithDownload("output_psiblastp.html",
-            s"$jobPath$jobID/results/" + "output_psiblastp.html",
-            jobID,
-            "PSIBLAST_OUTPUT"))
-      },
-      "E-Value Plot" -> { (jobID, requestHeader) =>
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.evalues(psi.parseResult(jsvalue).HSPS.map(_.evalue))
+      ),
+      Toolnames.CLANS -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.clans("CLANS", jobID))
         }
-      }
-    ),
-    Toolnames.CLANS -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.clans("CLANS", jobID))
-      }
-    ),
-    Toolnames.TPRPRED -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.tprpred("TPRpred", jobID, jsvalue)
+      ),
+      Toolnames.TPRPRED -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.tprpred("TPRpred", jobID, jsvalue)
+          }
         }
-      }
-    ),
-    Toolnames.HHBLITS -> ListMap(
-      Resultviews.HITLIST -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.hhblits.hitlist(jobID,
-                                                         hhblits.parseResult(jsvalue),
-                                                         this.values(Toolnames.HHBLITS))
+      ),
+      Toolnames.HHBLITS -> ListMap(
+        Resultviews.HITLIST -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.hhblits
+                .hitlist(jobID, hhblits.parseResult(jsvalue), this.values(Toolnames.HHBLITS))
+          }
+        },
+        "HHR" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .fileviewWithDownload(jobID + ".hhr", s"$jobPath$jobID/results/" + jobID + ".hhr", jobID, "hhblits_hhr")
+          )
+        },
+        "E-Value Plot" -> { (jobID, requestHeader) =>
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.evalues(hhblits.parseResult(jsvalue).HSPS.map(_.info.evalue))
+          }
+        },
+        "Representative Alignment" -> { (jobID, requestHeader) =>
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "rep100").as[JsArray]),
+                                                     "rep100",
+                                                     this.values(Toolnames.HHBLITS))
+          }
+        },
+        "Query Template MSA" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
+                                                     "querytemplate",
+                                                     this.values(Toolnames.HHBLITS))
+          }
         }
-      },
-      "HHR" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".hhr",
-            s"$jobPath$jobID/results/" + jobID + ".hhr",
-            jobID,
-            "hhblits_hhr"))
-      },
-      "E-Value Plot" -> { (jobID, requestHeader) =>
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.evalues(hhblits.parseResult(jsvalue).HSPS.map(_.info.evalue))
+      ),
+      Toolnames.MARCOIL -> ListMap(
+        "CC-Prob" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.image(s"/files/$jobID/alignment_ncoils.png"))
+        },
+        "ProbList" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileviewWithDownload("alignment.ProbList",
+                                                              s"$jobPath$jobID/results/alignment.ProbList",
+                                                              jobID,
+                                                              "marcoil_problist")
+          )
+        },
+        "ProbState" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileviewWithDownload("alignment.ProbPerState",
+                                                              s"$jobPath$jobID/results/alignment.ProbPerState",
+                                                              jobID,
+                                                              "marcoil_probperstate")
+          )
+        },
+        "Predicted Domains" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileviewWithDownload("alignment.Domains",
+                                                              s"$jobPath$jobID/results/alignment.Domains",
+                                                              jobID,
+                                                              "marcoil_domains")
+          )
         }
-      },
-      "Representative Alignment" -> { (jobID, requestHeader) =>
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.alignment(jobID,
-                                                   aln.parseAlignment((jsvalue \ "rep100").as[JsArray]),
-                                                   "rep100",
-                                                   this.values(Toolnames.HHBLITS))
+      ),
+      Toolnames.PCOILS -> ListMap(
+        "CC-Prob" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.image(s"/files/$jobID/" + jobID + "_ncoils.png"))
+        },
+        "ProbList" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".numerical"))
         }
-      },
-
-      "Query Template MSA" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignment(jobID,
-              aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
-              "querytemplate",
-              this.values(Toolnames.HHBLITS))
+      ),
+      Toolnames.MODELLER -> ListMap(
+        "3D-Structure" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "Modeller")
+          )
+        },
+        "VERIFY3D" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.verify3d.png",
+                                                  s"$jobPath$jobID/results/verify3d/$jobID.plotdat")
+          )
+        },
+        "SOLVX" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png",
+                                                  s"$jobPath$jobID/results/solvx/$jobID.solvx")
+          )
+        },
+        "ANOLEA" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png",
+                                                  s"$jobPath$jobID/results/$jobID.pdb.profile")
+          )
         }
-      }
-    ),
-    Toolnames.MARCOIL -> ListMap(
-      "CC-Prob" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.image(s"/files/$jobID/alignment_ncoils.png"))
-      },
-      "ProbList" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileviewWithDownload("alignment.ProbList",
-          s"$jobPath$jobID/results/alignment.ProbList" ,jobID, "marcoil_problist"))
-      }
-      ,
-      "ProbState" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileviewWithDownload("alignment.ProbPerState",
-          s"$jobPath$jobID/results/alignment.ProbPerState" ,jobID, "marcoil_probperstate"))
-      },
-      "Predicted Domains" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileviewWithDownload("alignment.Domains",
-          s"$jobPath$jobID/results/alignment.Domains" ,jobID, "marcoil_domains"))
-      }
-    ),
-    Toolnames.PCOILS -> ListMap(
-      "CC-Prob" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.image(s"/files/$jobID/" + jobID + "_ncoils.png"))
-      },
-      "ProbList" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".numerical"))
-      }
-    ),
-    Toolnames.MODELLER -> ListMap(
-      "3D-Structure" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "Modeller"))
-      },
-      "VERIFY3D" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.verify3d.png",
-                                                s"$jobPath$jobID/results/verify3d/$jobID.plotdat"))
-      },
-      "SOLVX" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png",
-                                                s"$jobPath$jobID/results/solvx/$jobID.solvx"))
-      },
-      "ANOLEA" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png",
-                                                s"$jobPath$jobID/results/$jobID.pdb.profile"))
-      }
-    ),
-    Toolnames.HMMER -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.hmmer.hitlist(jobID, hmmer.parseResult(jsvalue), this.values(Toolnames.HMMER))
+      ),
+      Toolnames.HMMER -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.hmmer
+                .hitlist(jobID, hmmer.parseResult(jsvalue), this.values(Toolnames.HMMER))
+          }
+        },
+        "Unformatted Output" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".outfilefl",
+                                                              s"$jobPath$jobID/results/" + jobID + ".outfilefl",
+                                                              jobID,
+                                                              "HMMER_OUTPUT")
+          )
+        },
+        "E-Value Plot" -> { (jobID, requestHeader) =>
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.evalues(hmmer.parseResult(jsvalue).HSPS.map(_.evalue))
+          }
         }
-      },
-      "Unformatted Output" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".outfilefl",
-            s"$jobPath$jobID/results/" + jobID + ".outfilefl",
-            jobID,
-            "HMMER_OUTPUT"))
-      },
-      "E-Value Plot" -> { (jobID, requestHeader) =>
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.evalues(hmmer.parseResult(jsvalue).HSPS.map(_.evalue))
+      ),
+      Toolnames.HHPRED -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.hhpred
+                .hitlist(jobID, hhpred.parseResult(jsvalue), this.values(Toolnames.HHPRED))
+          }
+        },
+        "HHR" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .fileviewWithDownload(jobID + ".hhr", s"$jobPath$jobID/results/" + jobID + ".hhr", jobID, "hhpred_hhr")
+          )
+        },
+        "Probability  Plot" -> { (jobID, requestHeader) =>
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.probability(hhpred.parseResult(jsvalue).HSPS.map(_.info.probab))
+          }
+        },
+        "Query Template MSA" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
+                                                     "querytemplate",
+                                                     this.values(Toolnames.HHPRED))
+          }
+        },
+        "Query MSA" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
+                                                             aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
+                                                             "reduced",
+                                                             this.values(Toolnames.HHPRED))
+          }
         }
-      }
-    ),
-    Toolnames.HHPRED -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.hhpred.hitlist(jobID,
-                                                        hhpred.parseResult(jsvalue),
-                                                        this.values(Toolnames.HHPRED))
+      ),
+      Toolnames.HHPRED_ALIGN -> ListMap(
+        Resultviews.HITLIST -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.hhpred
+                .hitlist(jobID, hhpred.parseResult(jsvalue), this.values(Toolnames.HHPRED_ALIGN))
+          }
+        },
+        "FullAlignment" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
         }
-      },
-      "HHR" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".hhr",
-            s"$jobPath$jobID/results/" + jobID + ".hhr",
-            jobID,
-            "hhpred_hhr"))
-      },
-      "Probability  Plot" -> { (jobID, requestHeader) =>
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.probability(hhpred.parseResult(jsvalue).HSPS.map(_.info.probab))
+      ),
+      Toolnames.HHPRED_MANUAL -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.hhpred.forward(s"$jobPath$jobID/results/tomodel.pir", jobID))
+        },
+        Resultviews.SUMMARY -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out"))
         }
-      },
-      "Query Template MSA" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignment(jobID,
-              aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
-              "querytemplate",
-              this.values(Toolnames.HHPRED))
+      ),
+      Toolnames.HHREPID -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.hhrepid(jobID, "querymsa", this.values(Toolnames.HHBLITS)))
         }
-      },
-      "Query MSA" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
-              aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
-              "reduced",
-              this.values(Toolnames.HHPRED))
+      ),
+      Toolnames.ALI2D -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .fileview(s"$jobPath$jobID/results/" + jobID + ".results")
+          )
+        },
+        "Colored Results" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_color")
+          )
+        },
+        "Colored Results With Confidence" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_colorC")
+          )
         }
-      }
-    ),
-    Toolnames.HHPRED_ALIGN -> ListMap(
-      Resultviews.HITLIST -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.hhpred.hitlist(jobID,
-                                                        hhpred.parseResult(jsvalue),
-                                                        this.values(Toolnames.HHPRED_ALIGN))
+      ),
+      Toolnames.CLUSTALO -> ListMap(
+        Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     this.values(Toolnames.CLUSTALO))
+          }
+        },
+        Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
         }
-      },
-      "FullAlignment" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
-      }
-    ),
-    Toolnames.HHPRED_MANUAL -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.hhpred.forward(s"$jobPath$jobID/results/tomodel.pir", jobID))
-      },
-      Resultviews.SUMMARY -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/results.out"))
-      }
-    ),
-    Toolnames.HHREPID -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.hhrepid(jobID, "querymsa", this.values(Toolnames.HHBLITS)))
-      }
-    ),
-    Toolnames.ALI2D -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels
-            .fileview(s"$jobPath$jobID/results/" + jobID + ".results"))
-      },
-      "Colored Results" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_color"))
-      },
-      "Colored Results With Confidence" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/" + jobID + ".results_colorC"))
-      }
-    ),
-    Toolnames.CLUSTALO -> ListMap(
-      Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignment(jobID,
-                                                   aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
-                                                   "alignment",
-                                                   this.values(Toolnames.CLUSTALO))
+      ),
+      Toolnames.KALIGN -> ListMap(
+        Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     this.values(Toolnames.KALIGN))
+          }
+        },
+        Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
         }
-      },
-      Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
-      }
-    ),
-    Toolnames.KALIGN -> ListMap(
-      Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignment(jobID,
-                                                   aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
-                                                   "alignment",
-                                                   this.values(Toolnames.KALIGN))
+      ),
+      Toolnames.MAFFT -> ListMap(
+        Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     this.values(Toolnames.MAFFT))
+          }
+        },
+        Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
         }
-      },
-      Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
-      }
-    ),
-    Toolnames.MAFFT -> ListMap(
-      Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.alignment(jobID,
-                                                   aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
-                                                   "alignment",
-                                                   this.values(Toolnames.MAFFT))
+      ),
+      Toolnames.MSAPROBS -> ListMap(
+        Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     this.values(Toolnames.MSAPROBS))
+          }
+        },
+        Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
         }
-      },
-      Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
-      }
-    ),
-    Toolnames.MSAPROBS -> ListMap(
-      Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignment(jobID,
-                                                   aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
-                                                   "alignment",
-                                                   this.values(Toolnames.MSAPROBS))
+      ),
+      Toolnames.MUSCLE -> ListMap(
+        Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     this.values(Toolnames.MUSCLE))
+          }
+        },
+        Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
         }
-      },
-      Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
-      }
-    ),
-    Toolnames.MUSCLE -> ListMap(
-      Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignment(jobID,
-                                                   aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
-                                                   "alignment",
-                                                   this.values(Toolnames.MUSCLE))
+      ),
+      Toolnames.TCOFFEE -> ListMap(
+        Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              implicit val r = requestHeader
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     this.values(Toolnames.TCOFFEE))
+          }
+        },
+        Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
         }
-      },
-      Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
-      }
-    ),
-    Toolnames.TCOFFEE -> ListMap(
-      Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            implicit val r = requestHeader
-            views.html.jobs.resultpanels.alignment(jobID,
-                                                   aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
-                                                   "alignment",
-                                                   this.values(Toolnames.TCOFFEE))
+      ),
+      Toolnames.ALN2PLOT -> ListMap(
+        "Plots" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.aln2plot(jobID))
         }
-      },
-      Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
-      }
-    ),
-    Toolnames.ALN2PLOT -> ListMap(
-      "Plots" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.aln2plot(jobID))
-      }
-    ),
-    Toolnames.ANCESCON -> ListMap(
-      Resultviews.TREE -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels
-            .tree(jobID + ".clu.tre", s"$jobPath$jobID/results/" + jobID + ".clu.tre", jobID, "ancescon_output_tree"))
-      },
-      Resultviews.DATA -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".anc_out",
-                                                            s"$jobPath$jobID/results/" + jobID + ".anc_out",
-                                                            jobID,
-                                                            "ancescon_output_data"))
-      }
-    ),
-    Toolnames.PHYML -> ListMap(
-      Resultviews.TREE -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.tree(jobID + ".phy_phyml_tree.txt",
-                                            s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt",
-                                            jobID,
-                                            "phyml_tree"))
-      },
-      Resultviews.DATA -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels
-          .fileviewWithDownload(jobID + ".stats", s"$jobPath$jobID/results/" + jobID + ".stats", jobID, "phyml_data"))
-      }
-    ),
-    Toolnames.MMSEQS2 -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels
-            .fileviewWithDownloadForward(jobID + ".fas",
-                                         s"$jobPath$jobID/results/" + jobID + ".fas",
-                                         jobID,
-                                         "mmseqs_reps",
-                                         this.values(Toolnames.MMSEQS2)))
-      },
-      "Clusters" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels
-          .fileviewWithDownload(jobID + ".clu", s"$jobPath$jobID/results/" + jobID + ".clu", jobID, "mmseqs_clusters"))
-      }
-    ),
-    Toolnames.RETSEQ -> ListMap(
-      Resultviews.SUMMARY -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/unretrievable"))
-      },
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.fileviewWithDownloadForward("sequences.fa",
-                                                                   s"$jobPath$jobID/results/sequences.fa",
-                                                                   jobID,
-                                                                   "retseq",
-                                                                   this.values(Toolnames.RETSEQ)))
-      }
-    ),
-    Toolnames.SEQ2ID -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue, this.values(Toolnames.SEQ2ID))
+      ),
+      Toolnames.ANCESCON -> ListMap(
+        Resultviews.TREE -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .tree(jobID + ".clu.tre", s"$jobPath$jobID/results/" + jobID + ".clu.tre", jobID, "ancescon_output_tree")
+          )
+        },
+        Resultviews.DATA -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".anc_out",
+                                                              s"$jobPath$jobID/results/" + jobID + ".anc_out",
+                                                              jobID,
+                                                              "ancescon_output_data")
+          )
         }
-      }
-    ),
-    Toolnames.SAMCC -> ListMap(
-      "3D-Structure-With-Axes" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels
-            .NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "samcc_PDB_AXES"))
-      },
-      "Plots" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.samcc(s"/files/$jobID/out0.png",
-                                             s"/files/$jobID/out1.png",
-                                             s"/files/$jobID/out2.png",
-                                             s"/files/$jobID/out3.png"))
-      },
-      "NumericalData" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels
-            .fileviewWithDownload(jobID + ".out", s"$jobPath$jobID/results/" + jobID + ".out", jobID, "samcc"))
-      }
-    ),
-    Toolnames.SIXFRAMETRANSLATION -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out",
-                                                            s"$jobPath$jobID/results/" + jobID + ".out",
-                                                            jobID,
-                                                            "sixframetrans_out"))
-      }
-    ),
-    Toolnames.BACKTRANS -> ListMap(
-      Resultviews.RESULTS -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(
-          views.html.jobs.resultpanels
-            .fileviewWithDownload(jobID + ".out", s"$jobPath$jobID/results/" + jobID + ".out", jobID, "backtrans"))
-      }
-    ),
-    Toolnames.HHFILTER -> ListMap(
-      Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.alignment(jobID,
-                                                   aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
-                                                   "alignment",
-                                                   this.values(Toolnames.HHFILTER))
+      ),
+      Toolnames.PHYML -> ListMap(
+        Resultviews.TREE -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.tree(jobID + ".phy_phyml_tree.txt",
+                                              s"$jobPath$jobID/results/" + jobID + ".phy_phyml_tree.txt",
+                                              jobID,
+                                              "phyml_tree")
+          )
+        },
+        Resultviews.DATA -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .fileviewWithDownload(jobID + ".stats",
+                                    s"$jobPath$jobID/results/" + jobID + ".stats",
+                                    jobID,
+                                    "phyml_data")
+          )
         }
-      },
-      Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
-      }
-    ),
-    Toolnames.PATSEARCH -> ListMap(
-      "PatternSearch" -> { (jobID, requestHeader) =>
-        implicit val r = requestHeader
-        getResult(jobID).map {
-          case Some(jsvalue) =>
-            views.html.jobs.resultpanels.patternSearch("PatternSearch",
-                                                       jobID,
-                                                       "output",
-                                                       jsvalue,
-                                                       this.values(Toolnames.PATSEARCH))
+      ),
+      Toolnames.MMSEQS2 -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .fileviewWithDownloadForward(jobID + ".fas",
+                                           s"$jobPath$jobID/results/" + jobID + ".fas",
+                                           jobID,
+                                           "mmseqs_reps",
+                                           this.values(Toolnames.MMSEQS2))
+          )
+        },
+        "Clusters" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .fileviewWithDownload(jobID + ".clu",
+                                    s"$jobPath$jobID/results/" + jobID + ".clu",
+                                    jobID,
+                                    "mmseqs_clusters")
+          )
         }
-      }
+      ),
+      Toolnames.RETSEQ -> ListMap(
+        Resultviews.SUMMARY -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.fileview(s"$jobPath$jobID/results/unretrievable"))
+        },
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileviewWithDownloadForward("sequences.fa",
+                                                                     s"$jobPath$jobID/results/sequences.fa",
+                                                                     jobID,
+                                                                     "retseq",
+                                                                     this.values(Toolnames.RETSEQ))
+          )
+        }
+      ),
+      Toolnames.SEQ2ID -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue, this.values(Toolnames.SEQ2ID))
+          }
+        }
+      ),
+      Toolnames.SAMCC -> ListMap(
+        "3D-Structure-With-Axes" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "samcc_PDB_AXES")
+          )
+        },
+        "Plots" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.samcc(s"/files/$jobID/out0.png",
+                                               s"/files/$jobID/out1.png",
+                                               s"/files/$jobID/out2.png",
+                                               s"/files/$jobID/out3.png")
+          )
+        },
+        "NumericalData" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .fileviewWithDownload(jobID + ".out", s"$jobPath$jobID/results/" + jobID + ".out", jobID, "samcc")
+          )
+        }
+      ),
+      Toolnames.SIXFRAMETRANSLATION -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out",
+                                                              s"$jobPath$jobID/results/" + jobID + ".out",
+                                                              jobID,
+                                                              "sixframetrans_out")
+          )
+        }
+      ),
+      Toolnames.BACKTRANS -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .fileviewWithDownload(jobID + ".out", s"$jobPath$jobID/results/" + jobID + ".out", jobID, "backtrans")
+          )
+        }
+      ),
+      Toolnames.HHFILTER -> ListMap(
+        Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     this.values(Toolnames.HHFILTER))
+          }
+        },
+        Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
+        }
+      ),
+      Toolnames.PATSEARCH -> ListMap(
+        "PatternSearch" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels
+                .patternSearch("PatternSearch", jobID, "output", jsvalue, this.values(Toolnames.PATSEARCH))
+          }
+        }
+      )
     )
-  )
 
   // Encompasses the names of the resultviews for each tool
   val resultPanels: Map[String, Seq[String]] = this.resultMap.map { trp =>
@@ -1068,7 +1109,7 @@ final class ToolFactory @Inject()(
       paramGroups.keysIterator.map { group =>
         group -> paramGroups(group).filter(params.map(_.name).contains(_)).map(paramMap(_))
       }.toSeq :+
-        remainParamName -> remainParams.map(paramMap(_))
+      remainParamName -> remainParams.map(paramMap(_))
     )
     Tool(toolNameShort,
          toolNameLong,

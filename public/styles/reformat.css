@@ -32,19 +32,3 @@
 */
 
 .cm-s-reformat span.cm-string { font-weight: bold; color: red; }
-
-
-#forwardTool{
-    font-size: 0.80em !important;
-    -moz-appearance: none !important;
-    -webkit-appearance: none !important;
-    border-radius: 4px;
-    margin-left: 0.25em;
-    padding-bottom: 0.5em;
-    padding-top: 0.5em;
-    height: 2.75em;
-    color: #000;
-    text-shadow: 0 0 0 #000;
-    width: 9em !important;
-    margin-bottom: 1em;
-}

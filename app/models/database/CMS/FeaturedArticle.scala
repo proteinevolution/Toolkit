@@ -18,7 +18,8 @@ case class FeaturedArticle(
     link: String,
     imagePath: String, // path of the image
     dateCreated: Option[DateTime], // Creation time of the Article
-    dateUpdated: Option[DateTime]) // Last changed on (set this when replaced by a newer version)
+    dateUpdated: Option[DateTime]
+) // Last changed on (set this when replaced by a newer version)
 
 object FeaturedArticle {
   // Constants for the JSON object identifiers
@@ -47,7 +48,8 @@ object FeaturedArticle {
                             link = "",
                             imagePath = "",
                             dateCreated = Some(new DateTime()),
-                            dateUpdated = Some(new DateTime())))
+                            dateUpdated = Some(new DateTime()))
+          )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
         }

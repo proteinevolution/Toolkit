@@ -193,7 +193,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "hhfilter":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
+                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 10000 sequences in FASTA/CLUSTAL format");
                     break;
 
                 case "retseq":
@@ -248,13 +248,14 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 500.
              **/
 
+            seqLimit = 500;
+
             let tcoffeeTarget = new alignmentVal($(elem));
             tcoffeeTarget.basicValidation();
 
             if (tcoffeeTarget.basicValidation()) {
                 tcoffeeTarget.mustHave2();
             }
-            seqLimit = 500;
 
             break;
 
@@ -268,13 +269,15 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 2000.
              **/
 
+
+            seqLimit = 2000;
+
             let mafftTarget = new alignmentVal($(elem));
             mafftTarget.basicValidation();
 
             if (mafftTarget.basicValidation()) {
                 mafftTarget.mustHave2();
             }
-            seqLimit = 2000;
 
             break;
 
@@ -288,13 +291,14 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 2000.
              **/
 
+            seqLimit = 2000;
+
             let muscleTarget = new alignmentVal($(elem));
             muscleTarget.basicValidation();
 
             if (muscleTarget.basicValidation()) {
                 muscleTarget.mustHave2();
             }
-            seqLimit = 2000;
 
             break;
 
@@ -308,13 +312,14 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 2000.
              **/
 
+            seqLimit = 2000;
+
             let clustaloTarget = new alignmentVal($(elem));
             clustaloTarget.basicValidation();
 
             if (clustaloTarget.basicValidation()) {
                 clustaloTarget.mustHave2();
             }
-            seqLimit = 2000;
 
             break;
 
@@ -328,13 +333,14 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 2000.
              **/
 
+            seqLimit = 2000;
+
             let kalignTarget = new alignmentVal($(elem));
             kalignTarget.basicValidation();
 
             if (kalignTarget.basicValidation()) {
                 kalignTarget.mustHave2();
             }
-            seqLimit = 2000;
 
             break;
 
@@ -348,13 +354,14 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 2000.
              **/
 
+            seqLimit = 2000;
+
             let msaprobsTarget = new alignmentVal($(elem));
             msaprobsTarget.basicValidation();
 
             if (msaprobsTarget.basicValidation()) {
                 msaprobsTarget.mustHave2();
             }
-            seqLimit = 2000;
 
             break;
 
@@ -365,6 +372,8 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
+
+            seqLimit = 10000;
 
             let hmmerTarget = new alignmentVal($(elem));
             hmmerTarget.basicValidation();
@@ -382,6 +391,8 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
+
+            seqLimit = 10000;
 
             let hhblitsTarget = new alignmentVal($(elem));
             hhblitsTarget.basicValidation();
@@ -401,6 +412,7 @@ let validationProcess = function(elem: any,toolname: string) {
              */
 
             charLimitPerSeq = 30000; // TODO: why was the charLimit defined after it's usage?
+            seqLimit = 10000;
 
             let hhpredTarget = new alignmentVal($(elem));
             hhpredTarget.basicValidation();
@@ -420,6 +432,8 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
+
+            seqLimit = 5000;
 
             let psiblastTarget = new alignmentVal($(elem));
             psiblastTarget.basicValidation();
@@ -442,6 +456,8 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "aln2plot":
 
+            seqLimit = 2000;
+
             let aln2plotTarget = new alignmentVal($(elem));
             aln2plotTarget.basicValidation();
 
@@ -451,11 +467,12 @@ let validationProcess = function(elem: any,toolname: string) {
                     aln2plotTarget.mustHave2();
             }
 
-            seqLimit = 2000;
 
             break;
 
         case "frpred":
+
+            seqLimit = 2000;
 
             let frpredTarget = new alignmentVal($(elem));
             frpredTarget.basicValidation();
@@ -464,11 +481,11 @@ let validationProcess = function(elem: any,toolname: string) {
                 frpredTarget.sameLengthValidation();
             }
 
-            seqLimit = 2000;
-
             break;
 
         case "hhrepid":
+
+            seqLimit = 10000;
 
             let hhrepidTarget = new alignmentVal($(elem));
             hhrepidTarget.basicValidation();
@@ -477,11 +494,11 @@ let validationProcess = function(elem: any,toolname: string) {
                 hhrepidTarget.sameLengthValidation();
             }
 
-            seqLimit = 2000;
-
             break;
 
         case "pcoils":
+
+            seqLimit = 2000;
 
             let pcoilsTarget = new alignmentVal($(elem));
             pcoilsTarget.basicValidation();
@@ -490,11 +507,11 @@ let validationProcess = function(elem: any,toolname: string) {
                 pcoilsTarget.sameLengthValidation();
             }
 
-            seqLimit = 2000;
-
             break;
 
         case "repper":
+
+            seqLimit = 2000;
 
             let repperTarget = new alignmentVal($(elem));
             repperTarget.basicValidation();
@@ -503,11 +520,11 @@ let validationProcess = function(elem: any,toolname: string) {
                 repperTarget.sameLengthValidation();
             }
 
-            seqLimit = 2000;
-
             break;
 
         case "marcoil":
+
+            seqLimit = 2000;
 
             let marcoilTarget = new alignmentVal($(elem));
             marcoilTarget.basicValidation();
@@ -515,8 +532,6 @@ let validationProcess = function(elem: any,toolname: string) {
             if (marcoilTarget.basicValidation()) {
                 marcoilTarget.mustHave1();
             }
-
-            seqLimit = 2000;
 
             break;
 
@@ -533,6 +548,8 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "ali2d":
 
+            seqLimit = 100;
+
             let ali2dTarget = new alignmentVal($(elem));
             ali2dTarget.basicValidation();
 
@@ -542,11 +559,11 @@ let validationProcess = function(elem: any,toolname: string) {
                     ali2dTarget.mustHave2();
             }
 
-            seqLimit = 100;
-
             break;
 
         case "quick2d":
+
+            seqLimit = 2000;
 
             let quick2dTarget = new alignmentVal($(elem));
             quick2dTarget.basicValidation();
@@ -554,8 +571,6 @@ let validationProcess = function(elem: any,toolname: string) {
             if (quick2dTarget.basicValidation()) {
                 quick2dTarget.sameLengthValidation();
             }
-
-            seqLimit = 2000;
 
             break;
 
@@ -577,6 +592,8 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "ancescon":
 
+            seqLimit = 2000;
+
             let ancesconTarget = new alignmentVal($(elem));
             ancesconTarget.basicValidation();
 
@@ -585,8 +602,6 @@ let validationProcess = function(elem: any,toolname: string) {
                 if (ancesconTarget.sameLengthValidation())
                     ancesconTarget.mustHave2();
             }
-
-            seqLimit = 2000;
 
             break;
 
@@ -600,17 +615,20 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 20000.
              */
 
+            seqLimit = 20000;
+
             let mmseqs2Target = new alignmentVal($(elem));
             mmseqs2Target.basicValidation();
 
             if (mmseqs2Target.basicValidation()) {
                 mmseqs2Target.mustHave2();
             }
-            seqLimit = 20000;
 
             break;
 
         case "phyml":
+
+            seqLimit = 100;
 
             let phymlTarget = new alignmentVal($(elem));
             phymlTarget.basicValidation();
@@ -621,7 +639,6 @@ let validationProcess = function(elem: any,toolname: string) {
                     phymlTarget.mustHave2();
             }
 
-            seqLimit = 100;
 
             break;
 
@@ -635,13 +652,14 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 10000.
              **/
 
+            seqLimit = 10000;
+
             let clansTarget = new alignmentVal($(elem));
             clansTarget.basicValidation();
 
             if (clansTarget.basicValidation()) {
                 clansTarget.mustHave2();
             }
-            seqLimit = 10000;
 
             break;
 
@@ -672,13 +690,14 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 10000.
              */
 
+            seqLimit = 10000;
+
             let hhfilterTarget = new alignmentVal($(elem));
             hhfilterTarget.basicValidation();
 
             if (hhfilterTarget.basicValidation()) {
                 hhfilterTarget.mustHave2();
             }
-            seqLimit = 10000;
 
             break;
 
@@ -1001,7 +1020,7 @@ class alignmentVal implements ToolkitValidator {
         samccIsValid = false;
 
         if(!this.elem.reformat('atoms'))
-            feedback(false, "Must have at least 25 sequences starting with \"ATOM\"", "error");
+            feedback(false, "Must contain at least 28 ATOM records", "error");
 
         else if (this.elem.val() == "") {
             feedback(false);
