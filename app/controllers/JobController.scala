@@ -187,7 +187,10 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   }
 
 
-
+  /**
+    * markes jobs as deleted and subsequently deletes them from dbs and harddisk
+    * @return
+    */
   def deleteJobsPermanently() : Action[AnyContent] = Action.async { implicit request =>
 
     Logger.info("delete jobs that are marked for deletion Action in JobController reached")
@@ -225,10 +228,10 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 Logger.info("Informing Users of deletion.")
                 jobActorAccess.sendToJobActor(deletedJob.jobID, Delete(deletedJob.jobID, deletedJob.ownerID.get))
               case None =>
-                Logger.info("Job deletion mark in DB failed.")
+                Logger.info("Job could not be found in DB.")
             }
           case None =>
-            Logger.info("User not found: " + id.stringify)
+            Logger.info("User not found: " + id.stringify + s". Job ${job.jobID} is marked for deletion.")
             mongoStore.modifyJob( BSONDocument(Job.JOBID -> job.jobID),BSONDocument(
             "$set" ->
               BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
@@ -238,8 +241,13 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID, job.ownerID.get))
         }
         case None =>
-          Logger.info("Job "+job.jobID+" has no owner ID. Marking for deletion failed")
-         //jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID, job.ownerID.get))
+          Logger.info("Job "+job.jobID+" has no owner ID. It is marked for deletion.")
+          mongoStore.modifyJob( BSONDocument(Job.JOBID -> job.jobID),BSONDocument(
+            "$set" ->
+              BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
+            "$unset" ->
+              BSONDocument(Job.WATCHLIST -> "")
+          ))
       }
 
     })
@@ -252,7 +260,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     mongoStore.findJobs(BSONDocument("$or"-> List(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 4)),
       BSONDocument("$and" -> List(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 1)),
         BSONDocument("deletion.delDate" -> BSONDocument("$lt" -> BSONDateTime(new DateTime().getMillis)))))))).map { jobList =>
-      println(jobList)
+      println(jobList.mkString(", "))
       jobList.foreach{ job =>
         /*
           * deletes the Job from disk.
