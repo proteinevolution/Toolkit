@@ -20,15 +20,43 @@
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
-                <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
-                <a type="button" data-open="forwardModal_@{
+                <a onclick="selectAll()" class="selectAllSeqBar" id="extraWide">Select all</a>
+                <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
             </div>
         </div>
     </div>
     <br>
-    Number of sequences: <b>@{result.num_hits}</b>
+    <text class="notePlain">Number of hits: <b>@result.num_hits</b></text>
+    <br>
+
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+        <br>
+        <text class="note"> We have detected</i></text>
+
+    }
+    @if(result.TMPRED == "1"){
+
+        <text class="note"> @result.TMPRED transmembrane helix</text>
+    }
+    @if(result.TMPRED.toInt > 1){
+
+        <text class="note"> @result.TMPRED transmembrane helices</text>
+    }
+    @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
+        <text class="note"> and </text>
+
+    }
+    @if(result.COILPRED == "0"){
+        <text class="note">coiled-coil segments </text>
+    }
+
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+        <text class="note"> in your query protein!</text>
+
+    }
+
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div><a class="success button tiny resubmitSection" onclick="resubmitSection('@{result.query.seq}', '>' + '@{result.query.accession}')" type="button" id="resubmitSection">Resubmit section</a></div>
@@ -73,7 +101,7 @@
 
 var checkbox = "checkbox";
 var selectAllBool = false;
-var shownHits = 50;
+var shownHits = 100;
 var showMore = 100;
 var colorAAs = true;
 // use this array to store
@@ -87,24 +115,45 @@ var loading = false;
 $(document).ready( function(){
     hitlistBaseFunctions();
     if(numHits > 0 ){
+        initiallyCheckCheckboxes();
         drawDataTable();
-        var firstQueryStart = @if(result.num_hits > 0){ result.HSPS.head.query_start};
-        var firstQueryEnd = @if(result.num_hits > 0){ result.HSPS.head.query_end};
+        var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query_start}};
+        var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query_end}};
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
         getHits(0, shownHits);
 }
 });
 
+function selectAll(){
+    selectAllBool = !selectAllBool;
+    if(selectAllBool) {
+        selectAllHelper(checkbox);
+        $(".selectAllSeqBar").text("Deselect all");
+        $(".selectAllSeqBar").addClass("colorToggleBar");
+
+        // first empty array
+        checkboxes = [];
+        // push all checkboxes (1 to num_hits) into array
+        _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
+    }
+    else {
+        deselectAll(checkbox);
+        $(".selectAllSeqBar").text("Select all");
+        $(".selectAllSeqBar").removeClass("colorToggleBar");
+        // delete all checkboxes from array
+        checkboxes = [];
+    }
+}
 
 function drawDataTable(){
     hitlist = $('#htb').dataTable({
         "bProcessing" : true,
         "bServerSide" : true,
         "sAjaxSource" : "/api/job/results/dataTablePSIBlast/"+jobID,
-        "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+        "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
         "searching": false,
-        "iDisplayLength": 10,
+        "iDisplayLength": 25,
         "drawCallback": function() {
             linkCheckboxes();
             selectFromArray(checkboxes);
@@ -117,18 +166,19 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
     // full seq is retrieved
     var data = {"checkboxes": checkboxes.removeDuplicates()};
     var route = null;
+    var filename = generateFilename();
     $.LoadingOverlay("show");
     if(boolFullLength) {
         if(boolEvalue) {
-            route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue);
+            route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue, filename);
         }else{
-            route = jsRoutes.controllers.PSIBlastController.full(jobID);
             if(data.checkboxes.length == 0){
                 $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                $.LoadingOverlay("hide")
-                alert("No sequences selected!");
+                $.LoadingOverlay("hide");
+                alert("No sequence(s) selected!");
                 return false;
             }
+            route = jsRoutes.controllers.PSIBlastController.full(jobID, filename);
         }
         $.ajax({
             url: route.url,
@@ -141,7 +191,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
         }).done(function (data_) {
             $.ajax({
                 type: 'GET',
-                url: 'files/'+jobID+'/sequences.fa',
+                url: 'files/'+jobID+'/'+filename+'.fa',
                 error: function(){
                     $.LoadingOverlay("hide")
                 }
@@ -188,6 +238,12 @@ function getHits(start, end){
             $("#alignments").floatingScroll('init');
         });
     }
+}
+
+function initiallyCheckCheckboxes(){
+    _.range(1, @result.belowEvalThreshold).forEach(function (currentVal) {
+        checkboxes.push(currentVal);
+    })
 }
 
 </script>

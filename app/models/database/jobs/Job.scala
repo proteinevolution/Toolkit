@@ -149,7 +149,8 @@ object Job {
               dateCreated = Some(new DateTime()),
               dateUpdated = Some(new DateTime()),
               dateViewed = Some(new DateTime())
-            ))
+            )
+          )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
         }

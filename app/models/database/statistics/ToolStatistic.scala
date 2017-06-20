@@ -67,8 +67,9 @@ object ToolStatistic {
       CURRENTFAILED -> toolStatistic.currentFailed,
       MONTHLY       -> toolStatistic.monthly,
       MONTHLYFAILED -> toolStatistic.monthlyFailed,
-      DATEPUSHED -> toolStatistic.datePushed.map(dt =>
-        Json.obj("string" -> dtf.print(dt), "month" -> dt.monthOfYear().getAsShortText, "year" -> dt.year().get))
+      DATEPUSHED -> toolStatistic.datePushed.map(
+        dt => Json.obj("string" -> dtf.print(dt), "month" -> dt.monthOfYear().getAsShortText, "year" -> dt.year().get)
+      )
     )
   }
 

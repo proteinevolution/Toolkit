@@ -13,7 +13,8 @@ case class Comment(
     deleted: Option[Boolean] = None, // Unset: Not hidden, False: Hidden by Owner, True: Deleted by Moderators
     oldVersion: Option[BSONObjectID] = None, // Older version of the comment (set this to link to the original comment after a edit)
     dateCreated: Option[DateTime], // Creation time of the Comment
-    dateUpdated: Option[DateTime]) // Last changed on (set this when replaced by a newer version)
+    dateUpdated: Option[DateTime]
+) // Last changed on (set this when replaced by a newer version)
 
 object Comment {
   // Constants for the JSON object identifiers
@@ -40,7 +41,8 @@ object Comment {
             Comment(commentID = BSONObjectID.generate(),
                     text = "",
                     dateCreated = Some(new DateTime()),
-                    dateUpdated = Some(new DateTime())))
+                    dateUpdated = Some(new DateTime()))
+          )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
         }

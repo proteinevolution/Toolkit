@@ -1,7 +1,7 @@
 package models.database.jobs
 
 import play.api.libs.json._
-import reactivemongo.bson.{BSONInteger, BSONReader, BSONWriter}
+import reactivemongo.bson.{ BSONInteger, BSONReader, BSONWriter }
 
 /**
   * Created by lukas on 1/20/16.

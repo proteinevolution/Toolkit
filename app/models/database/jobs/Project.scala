@@ -6,7 +6,7 @@ package models.database.jobs
   */
 import org.joda.time.DateTime
 import play.api.libs.json._
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
 import reactivemongo.play.json._
 
 case class Project(mainID: BSONObjectID, // Unique Project ID
@@ -50,7 +50,8 @@ object Project {
               content = "",
               dateModified = Some(new DateTime()),
               dateCreated = Some(new DateTime())
-            ))
+            )
+          )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
         }

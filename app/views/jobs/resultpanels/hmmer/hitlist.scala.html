@@ -21,15 +21,45 @@
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
-                <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
-                <a type="button" data-open="forwardModal_@{
+
+                <a onclick="selectAll()" class="selectAllSeqBar" id="extraWide">Select all</a>
+                <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
             </div>
         </div>
     </div>
     <br>
-    Number of sequences: <b>@{result.num_hits}</b>
+    <text class="notePlain">Number of hits: <b>@result.num_hits</b></text>
+    <br>
+
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+        <br>
+        <text class="note"> We have detected</i></text>
+
+    }
+    @if(result.TMPRED == "1"){
+
+        <text class="note"> @result.TMPRED transmembrane helix</text>
+    }
+    @if(result.TMPRED.toInt > 1){
+
+        <text class="note"> @result.TMPRED transmembrane helices</text>
+    }
+    @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
+        <text class="note"> and </text>
+
+    }
+    @if(result.COILPRED == "0"){
+        <text class="note">coiled-coil segments </text>
+    }
+
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+        <text class="note"> in your query protein!</text>
+
+    }
+
+
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div>
@@ -80,7 +110,7 @@
 <script>
         var checkbox = "checkbox";
         var selectAllBool = false;
-        var shownHits = 50;
+        var shownHits = 100;
         var showMore = 100;
         var colorAAs = true;
         var numHits = @{result.num_hits};
@@ -110,9 +140,9 @@
                 "bServerSide": true,
                 "sAjaxSource": "/api/job/results/dataTableHmmer/" + jobID,
                 "autoWidth": false,
-                "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+                "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
                 "searching": false,
-                "iDisplayLength": 10,
+                "iDisplayLength": 25,
                 "drawCallback": function() {
                     linkCheckboxes();
                     selectFromArray(checkboxes);
@@ -120,19 +150,41 @@
             });
         }
 
+        function selectAll(){
+            selectAllBool = !selectAllBool;
+            if(selectAllBool) {
+                selectAllHelper(checkbox);
+                $(".selectAllSeqBar").text("Deselect all");
+                $(".selectAllSeqBar").addClass("colorToggleBar");
+
+                // first empty array
+                checkboxes = [];
+                // push all checkboxes (1 to num_hits) into array
+                _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
+            }
+            else {
+                deselectAll(checkbox);
+                $(".selectAllSeqBar").text("Select all");
+                $(".selectAllSeqBar").removeClass("colorToggleBar");
+                // delete all checkboxes from array
+                checkboxes = [];
+            }
+        }
+
         function hmmer_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
             $.LoadingOverlay("show");
             var route = null;
+            var filename = generateFilename();
             if (boolFullLength) {
                 if (boolEvalue) {
-                    route = jsRoutes.controllers.HmmerController.evalFull(jobID, evalue);
+                    route = jsRoutes.controllers.HmmerController.evalFull(jobID, evalue, filename);
                 } else {
-                    route = jsRoutes.controllers.HmmerController.full(jobID);
+                    route = jsRoutes.controllers.HmmerController.full(jobID, filename);
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                        $.LoadingOverlay("hide")
-                        alert("No sequences selected!");
+                        $.LoadingOverlay("hide");
+                        alert("No sequence(s) selected!");
                         return false;
                     }
                 }
@@ -147,7 +199,7 @@
                 }).done(function () {
                     $.ajax({
                         type: 'GET',
-                        url: 'files/' + jobID + '/sequences.fa',
+                        url: 'files/' + jobID + '/'+filename+'.fa',
                         error: function(){
                             $.LoadingOverlay("hide")
                         }

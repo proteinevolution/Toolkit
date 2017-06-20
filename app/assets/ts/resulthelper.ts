@@ -23,14 +23,16 @@ let followScroll = function(element : any) {
 
     $(element).on("scroll", function(){
         let top = Number($(document).scrollTop());
-        if (top >= $('#visualization').position().top + 75) {
-            $('.scrollContainer').addClass('fixed');
-            $('.scrollContainer').removeClass('scrollContainerWhite');
-            $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
-        } else {
-            $('.scrollContainer').removeClass('fixed');
-            $('.scrollContainer').addClass('scrollContainerWhite');
-            $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
+        if($('#visualization').position() != undefined) {
+            if (top >= $('#visualization').position().top + 75) {
+                $('.scrollContainer').addClass('fixed');
+                $('.scrollContainer').removeClass('scrollContainerWhite');
+                $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
+            } else {
+                $('.scrollContainer').removeClass('fixed');
+                $('.scrollContainer').addClass('scrollContainerWhite');
+                $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
+            }
         }
         // trigger lazyload for loading alignment
         if (top == $(this).height() - $(window).height()) {

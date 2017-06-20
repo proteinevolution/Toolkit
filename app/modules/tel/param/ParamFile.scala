@@ -1,7 +1,7 @@
 package modules.tel.param
 
 import java.nio.file.attribute.PosixFilePermission
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import better.files._
 import models.Implicits._
@@ -61,7 +61,7 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
   }
 
   // Remembers parameter values that are allowed to be used
-  private var allowed: Set[String]                = _
+  private var allowed: Set[String]                    = _
   private var clearTextNames: ListMap[String, String] = _
 
   def load(): Unit = {
@@ -77,7 +77,8 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
             PosixFilePermission.GROUP_EXECUTE,
             PosixFilePermission.GROUP_READ,
             PosixFilePermission.GROUP_WRITE
-          ))
+          )
+        )
         tempFile.write(envString.replaceAllIn(path.toFile.contentAsString, m => e.get(m.group("constant"))))
         val x = Process(tempFile.pathAsString).!!.split('\n')
         tempFile.delete(swallowIOExceptions = true)
@@ -104,7 +105,7 @@ class ListGenParamFile(name: String, path: String) extends GenerativeParamFile(n
   this.load()
 
   // Remembers parameter values that are allowed to be used
-  private var allowed: Set[String]                = _
+  private var allowed: Set[String]                    = _
   private var clearTextNames: ListMap[String, String] = _
 
   def load(): Unit = {
