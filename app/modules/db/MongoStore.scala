@@ -282,6 +282,7 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
 
   //def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))
   def removeJob(selector : BSONDocument) : Future[WriteResult] = {
+    jobAnnotationCollection.flatMap(_.remove(selector))
     jobCollection.flatMap(_.remove(selector))
     resultCollection.flatMap(_.remove(selector))
   }

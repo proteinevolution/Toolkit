@@ -254,13 +254,12 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
     /*
       * deletes all jobs that are marked for deletion with
-      * (deletion.flag == 4 )|| (deletion.flag == 1 && deletion.delDate < now)
+      * (deletion.flag == 1)
       * the duration of keeping the job is dependent on whether the user is a registered user
       */
     mongoStore.findJobs(BSONDocument("$or"-> List(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 4)),
-      BSONDocument("$and" -> List(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 1)),
-        BSONDocument("deletion.delDate" -> BSONDocument("$lt" -> BSONDateTime(new DateTime().getMillis)))))))).map { jobList =>
-      println(jobList.mkString(", "))
+      BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 1))))).map { jobList =>
+      println(jobList)
       jobList.foreach{ job =>
         /*
           * deletes the Job from disk.
