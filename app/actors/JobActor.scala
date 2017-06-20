@@ -246,9 +246,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         )
         .foreach {
           case Some(deletedJob) =>
-            Logger.info(s"Job Deletion from DB was successful:\n${deletedJob.toString()}")
+            Logger.info(s"Marking job as deleted in DB was successful:\n${deletedJob.toString()}")
           case None =>
-            Logger.info("Job Deletion from DB failed.")
+            Logger.info("Marking job as deleted in DB failed.")
         }
     } else {
       // Just clear a job which is not owned by the user
