@@ -528,7 +528,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.psiblast.hitlist(jobID, psi.parseResult(jsvalue), this.values("psiblast"))
           }
         },
-        "Unformatted Output" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels.fileviewWithDownload("output_psiblastp.html",
@@ -562,7 +562,7 @@ final class ToolFactory @Inject()(
         }
       ),
       Toolnames.HHBLITS -> ListMap(
-        Resultviews.HITLIST -> { (jobID, requestHeader) =>
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
@@ -571,7 +571,7 @@ final class ToolFactory @Inject()(
                 .hitlist(jobID, hhblits.parseResult(jsvalue), this.values(Toolnames.HHBLITS))
           }
         },
-        "HHR" -> { (jobID, requestHeader) =>
+        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
@@ -688,7 +688,7 @@ final class ToolFactory @Inject()(
                 .hitlist(jobID, hmmer.parseResult(jsvalue), this.values(Toolnames.HMMER))
           }
         },
-        "Unformatted Output" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".outfilefl",
@@ -714,7 +714,7 @@ final class ToolFactory @Inject()(
                 .hitlist(jobID, hhpred.parseResult(jsvalue), this.values(Toolnames.HHPRED))
           }
         },
-        "HHR" -> { (jobID, requestHeader) =>
+        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
