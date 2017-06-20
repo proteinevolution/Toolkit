@@ -90,6 +90,8 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     }
   }
 
+  def removeResult(selector : BSONDocument) : Future[WriteResult] = resultCollection.flatMap(_.remove(selector))
+
   def findJob(selector: BSONDocument): Future[Option[Job]] = jobCollection.flatMap(_.find(selector).one[Job])
 
   def findJobAnnotation(selector: BSONDocument): Future[Option[JobAnnotation]] =

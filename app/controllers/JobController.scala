@@ -190,6 +190,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   /**
     * deletes all jobs that are marked for deletion with
     * (deletion.flag == 4 )|| (deletion.flag == 1 && deletion.delDate < now)
+    * the length of keeping the job is dependent if user is a logged in user or not
     * permanently
     * @return
     */
