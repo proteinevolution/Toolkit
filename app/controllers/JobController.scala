@@ -1,10 +1,10 @@
 package controllers
 
-import java.io.{ FileInputStream, ObjectInputStream }
-import javax.inject.{ Inject, Named, Singleton }
+import java.io.{FileInputStream, ObjectInputStream}
+import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobActor.{ Delete, PrepareJob, StartJob }
-import actors.JobIDActor
+import actors.JobActor._
+import actors.{JobActor, JobIDActor}
 import akka.actor.ActorRef
 import models.Constants
 import models.database.jobs._
@@ -14,9 +14,9 @@ import models.search.JobDAO
 import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.libs.json.{ JsNull, Json }
-import play.api.mvc.{ Action, AnyContent, Controller }
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
+import play.api.libs.json.{JsNull, Json}
+import play.api.mvc.{Action, AnyContent, Controller}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -26,6 +26,7 @@ import modules.db.MongoStore
 import modules.tel.env.Env
 import play.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
+
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -183,6 +184,29 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID))
       Ok
     }
+  }
+
+
+  /**
+    * deletes all jobs that are marked for deletion with
+    * (deletion.flag == 4 )|| (deletion.flag == 1 && deletion.delDate < now)
+    * the length of keeping the job is dependent if user is a logged in user or not
+    * permanently
+    * @return
+    */
+  def deleteJobsPermanently() : Action[AnyContent] = Action.async { implicit request =>
+    Logger.info("delete jobs that are marked for deletion Action in JobController reached")
+    jobActorAccess.sendToJobActor("", MarkForDeletion())
+    mongoStore.findJobs(BSONDocument("$or"-> List(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 4)),
+      BSONDocument("$and" -> List(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 1)),
+        BSONDocument("deletion.delDate" -> BSONDocument("$lt" -> BSONDateTime(new DateTime().getMillis)))))))).map { jobList =>
+      println(jobList)
+      jobList.foreach{ job =>
+        println(job.jobID, "is killed")
+        jobActorAccess.sendToJobActor(job.jobID, DeleteFromDisk(job))
+      }
+    }
+    Future.successful(Ok)
   }
 
   /**
