@@ -7,7 +7,7 @@ import scala.scalajs.js
 import scala.scalajs.js.Dictionary
 
 object Router extends js.JSApp {
-  import js.Dynamic.{global => g}
+  import js.Dynamic.{ global => g }
 
   def main(): Unit = {
     m.route.mode = "hash"

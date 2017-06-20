@@ -54,30 +54,6 @@ div#content {
     background-color: transparent;
 }
 
-select#forwardTool {
-
-    height: 3em;
-    width: 12em;
-    font-size: 0.85em !important;
-    border: 1px solid black;
-    box-shadow: 0 2px 1px 0 rgba(255,255,255,1);
-    color:#333;
-    padding-top: 0;
-    padding-left: 5px;
-    padding-bottom: 0;
-    background-image: none;
-}
-
-select#outformat{
-    background-image: none;
-}
-
-option#forwardTool {
-    background:#fff;
-    border-top:1px solid #444;
-    padding:.3em 1em .3em 1em;
-}
-
 [data-accordion-menu] ul {
     display: none;
 }

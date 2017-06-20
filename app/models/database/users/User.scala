@@ -3,7 +3,7 @@ package models.database.users
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.mindrot.jbcrypt.BCrypt
-import play.api.libs.json.{Json, JsObject, Writes}
+import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 
 case class User(userID: BSONObjectID, // ID of the User

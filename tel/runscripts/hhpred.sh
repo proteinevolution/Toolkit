@@ -44,8 +44,8 @@ fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
-if [ ${SEQ_COUNT} -gt "2000" ] ; then
-      echo "#Input contains more than 2000 sequences." >> ../results/process.log
+if [ ${SEQ_COUNT} -gt "10000" ] ; then
+      echo "#Input contains more than 10000 sequences." >> ../results/process.log
       updateProcessLog
       false
 fi
@@ -113,8 +113,8 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
         SEQ_COUNT2=$(egrep '^>' ../results/${JOBID}.2.fas | wc -l)
 
-        if [ ${SEQ_COUNT2} -gt "2000" ] ; then
-            echo "#Template MSA contains more than 2000 sequences." >> ../results/process.log
+        if [ ${SEQ_COUNT2} -gt "10000" ] ; then
+            echo "#Template MSA contains more than 10000 sequences." >> ../results/process.log
             updateProcessLog
             false
         fi
@@ -132,6 +132,16 @@ if [ "%hhpred_align.content" = "true" ] ; then
         echo "done" >> ../results/process.log
         updateProcessLog
 fi
+
+head -n 2 ../results/${JOBID}.fas > ../results/firstSeq0.fas
+sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
+
+TMPRED=`tmhmm ../results/firstSeq.fas -short`
+
+run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
+COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
+
+rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
 
 
 #CHECK IF MSA generation is required or not
@@ -354,6 +364,16 @@ manipulate_json.py -k 'db' -v '%hhsuitedb.content' ../results/${JOBID}.json
 
 # add Proteomes to json
 manipulate_json.py -k 'proteomes' -v '%proteomes.content' ../results/${JOBID}.json
+
+
+# add transmembrane prediction info to json
+manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
+
+# add coiled coil prediction info to json
+manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
+
+
+
 
 echo "done" >> ../results/process.log
 updateProcessLog

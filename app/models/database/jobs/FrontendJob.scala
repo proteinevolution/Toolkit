@@ -42,7 +42,8 @@ object FrontendJob {
               ownerID = Some(BSONObjectID.generate()),
               tool = "",
               dateCreated = Some(new DateTime())
-            ))
+            )
+          )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
         }

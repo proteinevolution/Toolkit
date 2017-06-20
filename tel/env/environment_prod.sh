@@ -69,6 +69,7 @@ export PATH="${BIOPROGS}/tools/mmseqs2-build/bin:${PATH}" # MMseqs2
 export PATH="${BIOPROGS}/tools/patternsearch:${PATH}" # PatternSearch
 export PATH="${BIOPROGS}/tools/sixframe:${PATH}" # 6FrameTranslation
 export PATH="${BIOPROGS}/tools/hhrepid/bin:${PATH}" # HHrepid
+export PATH="${BIOPROGS}/tools/tmhmm/bin:${PATH}" # TMHMM
 
 #Setup Ali2D
 export ALI2DPATH="${BIOPROGS}/tools/ali2d"

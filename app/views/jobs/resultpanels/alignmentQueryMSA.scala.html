@@ -16,7 +16,7 @@
 
 <div class="colorOptsAlignment">
     <a onclick="selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
-    <a type="button" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
+    <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced MSA</span></a>
     <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full MSA</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
@@ -30,7 +30,7 @@
         <tbody class="alignmentTBody">
         </tbody>
         <tr>
-            <td colspan="4" ><a onclick="getsHitsManually()" id="loadHits">Load Hits</a></td>
+            <td colspan="4" ><a onclick="getsHitsManually()" id="loadHitsQaln">Load Hits</a></td>
         </tr>
         <tr>
             <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
@@ -108,7 +108,7 @@
         function getHits(start, end){
             if(start <= numHits && end <= numHits && !loading){
                 loading = true;
-                $('#loadHits').hide();
+                $('#loadHitsQaln').hide();
                 $('#loadingHits').show();
                 var route = jsRoutes.controllers.AlignmentController.loadHits(jobID,start,end, resultName);
                 return $.ajax({
@@ -121,9 +121,9 @@
                     $(".alignmentTBody").append(data_);
                     loading = false;
                     $('#loadingHits').hide();
-                    // hide loadHits
+                    // hide loadHitsQaln
                     if (shownHits != numHits) {
-                        $('#loadHits').show();
+                        $('#loadHitsQaln').show();
                     }
                 });
             }
@@ -134,7 +134,9 @@
             selectAllBool = !selectAllBool;
             if(selectAllBool) {
                 selectAllHelper(checkbox);
+                $(".selectAllSeqSpan").text("Deselect all");
                 $(".selectAllSeqSpan").addClass("colorToggle");
+
                 // first empty array
                 checkboxes = [];
                 // push all checkboxes (1 to num_hits) into array
@@ -142,7 +144,9 @@
             }
             else {
                 deselectAll(checkbox);
+                $(".selectAllSeqSpan").text("Select all");
                 $(".selectAllSeqSpan").removeClass("colorToggle");
+
                 // delete all checkboxes from array
                 checkboxes = [];
             }
@@ -165,7 +169,7 @@
                             if (shownHits != end) {
                                 getHits(shownHits, end);
                             }else{
-                                $('#loadHits').hide();
+                                $('#loadHitsQaln').hide();
                             }
                             shownHits = end;
 
@@ -191,9 +195,9 @@
                         });
                     }
                 });
-                // hide loadHits
+                // hide loadHitsQaln
                 if(shownHits == numHits){
-                    $('#loadHits').hide();
+                    $('#loadHitsQaln').hide();
                 }
             });
         });

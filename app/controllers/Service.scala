@@ -1,26 +1,27 @@
 package controllers
 
-import java.io.{FileInputStream, ObjectInputStream}
-import javax.inject.{Inject, Singleton}
+import java.io.{ FileInputStream, ObjectInputStream }
+import javax.inject.{ Inject, Singleton }
 
 import akka.util.Timeout
 import models.Constants
-import models.database.jobs.{Done, JobState, Jobitem}
+import models.database.jobs.{ Done, JobState, Jobitem }
 import models.database.users.User
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Controller, Request}
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, Controller, Request }
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import better.files._
-import models.tools.{Param, ToolFactory, Toolitem}
-import modules.{CommonModule, LocationProvider}
+import models.tools.{ Param, ToolFactory, Toolitem }
+import modules.LocationProvider
+import modules.db.MongoStore
 import org.joda.time.format.DateTimeFormat
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,16 +35,16 @@ import scala.concurrent.duration._
 @Singleton
 final class Service @Inject()(webJarAssets: WebJarAssets,
                               val messagesApi: MessagesApi,
+                              val reactiveMongoApi: ReactiveMongoApi,
+                              mongoStore: MongoStore,
+                              userSessions: UserSessions,
                               @NamedCache("userCache") implicit val userCache: CacheApi,
                               implicit val locationProvider: LocationProvider,
-                              toolFactory: ToolFactory,
-                              val reactiveMongoApi: ReactiveMongoApi)
+                              toolFactory: ToolFactory)
     extends Controller
     with I18nSupport
     with Constants
-    with ReactiveMongoComponents
-    with UserSessions
-    with CommonModule {
+    with ReactiveMongoComponents {
 
   implicit val timeout = Timeout(1.seconds)
 
@@ -83,24 +84,24 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
 
   implicit val toolitemWrites: Writes[Toolitem] = (
     (JsPath \ "toolname").write[String] and
-      (JsPath \ "toolnameLong").write[String] and
-      (JsPath \ "toolnameAbbrev").write[String] and
-      (JsPath \ "category").write[String] and
-      (JsPath \ "optional").write[String] and
-      (JsPath \ "params").write[Seq[(String, Seq[Param])]]
+    (JsPath \ "toolnameLong").write[String] and
+    (JsPath \ "toolnameAbbrev").write[String] and
+    (JsPath \ "category").write[String] and
+    (JsPath \ "optional").write[String] and
+    (JsPath \ "params").write[Seq[(String, Seq[Param])]]
   )(unlift(Toolitem.unapply))
 
   implicit val jobitemWrites: Writes[Jobitem] = (
     (JsPath \ "mainID").write[String] and
-      (JsPath \ "newMainID").write[String] and
-      (JsPath \ "jobID").write[String] and
-      (JsPath \ "project").write[String] and
-      (JsPath \ "state").write[JobState] and
-      (JsPath \ "ownerName").write[String] and
-      (JsPath \ "dateCreated").write[String] and
-      (JsPath \ "toolitem").write[Toolitem] and
-      (JsPath \ "views").write[Seq[String]] and
-      (JsPath \ "paramValues").write[Map[String, String]](play.api.libs.json.Writes.mapWrites[String])
+    (JsPath \ "newMainID").write[String] and
+    (JsPath \ "jobID").write[String] and
+    (JsPath \ "project").write[String] and
+    (JsPath \ "state").write[JobState] and
+    (JsPath \ "ownerName").write[String] and
+    (JsPath \ "dateCreated").write[String] and
+    (JsPath \ "toolitem").write[Toolitem] and
+    (JsPath \ "views").write[Seq[String]] and
+    (JsPath \ "paramValues").write[Map[String, String]](play.api.libs.json.Writes.mapWrites[String])
   )(unlift(Jobitem.unapply))
 
   def getTool(toolname: String) = Action {
@@ -119,7 +120,7 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
 
   // TODO Change that not all jobViews but only the resultpanel titles are returned
   def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    selectJob(jobID).flatMap {
+    mongoStore.selectJob(jobID).flatMap {
       case Some(job) =>
         job.deletion match {
           case None =>
@@ -127,7 +128,7 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
             val toolitem = toolFactory.values(job.tool).toolitem
             val ownerName =
               if (job.isPrivate) {
-                findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map {
+                mongoStore.findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map {
                   case Some(owner) =>
                     owner.userData match {
                       case Some(ownerData) => // Owner is registered
@@ -164,18 +165,21 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
             ownerName.flatMap { ownerN =>
               jobViews.map { jobViewsN =>
                 Ok(
-                  Json.toJson(Jobitem(
-                    job.mainID.stringify,
-                    BSONObjectID.generate().stringify, // Used for resubmitting
-                    job.jobID,
-                    BSONObjectID.generate().stringify,
-                    job.status,
-                    ownerN,
-                    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get),
-                    toolitem,
-                    jobViewsN,
-                    paramValues
-                  )))
+                  Json.toJson(
+                    Jobitem(
+                      job.mainID.stringify,
+                      BSONObjectID.generate().stringify, // Used for resubmitting
+                      job.jobID,
+                      BSONObjectID.generate().stringify,
+                      job.status,
+                      ownerN,
+                      DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get),
+                      toolitem,
+                      jobViewsN,
+                      paramValues
+                    )
+                  )
+                )
               }
             }
 

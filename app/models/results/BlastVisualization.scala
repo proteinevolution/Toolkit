@@ -163,7 +163,8 @@ object BlastVisualization extends Constants {
   }
   def getLinksHHBlits(id: String): Html = {
     Html(
-      "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>")
+      "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
+    )
   }
 
   def getLinksHHpred(id: String): Html = {
@@ -240,14 +241,6 @@ object BlastVisualization extends Constants {
 
   def getCheckbox(num: Int): String = {
     "<input type=\"checkbox\" value=\"" + num + "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
-  }
-
-  def getCheckboxPre(num: Int, checked: Boolean): String = {
-    if (checked) {
-      "<input type=\"checkbox\" checked=\"true\" name=\"alignment_elem\" value=\"" + num + "\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
-    } else {
-      "<input type=\"checkbox\" name=\"alignment_elem\" value=\"" + num + "\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
-    }
   }
 
   def addBreak(description: String): String = {

@@ -43,8 +43,8 @@ fi
 echo "done" >> ../results/process.log
 updateProcessLog
 
-if [ ${SEQ_COUNT} -gt "2000" ] ; then
-      echo "#Input contains more than 2000 sequences." >> ../results/process.log
+if [ ${SEQ_COUNT} -gt "10000" ] ; then
+      echo "#Input contains more than 10000 sequences." >> ../results/process.log
       updateProcessLog
       false
 fi
