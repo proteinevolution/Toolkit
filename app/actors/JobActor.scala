@@ -470,56 +470,65 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
 
     /**
-      * Checks everything and deletes the Job from disk.
-      * Includes: Removing the job from the cluster if the job is still in the current jobs
-      * Creating the job deleted object and inserting it to the database
-      * Removing the job from ES
+      * deletes the Job from disk.
+      * Includes: remove job and result from mongoDB,
+      * delete job folder
       */
     case DeleteFromDisk(job) =>
       Logger.info(s"Received Delete from disk for ${job.jobID}")
-      Logger.info("Removing Job from Elastic Search.")
-      jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
       Logger.info("Removing Job from mongo DB")
       mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
+      Logger.info("Removing Result from mongo DB")
+      mongoStore.removeResult(BSONDocument(Job.JOBID -> job.jobID))
       Logger.info("Deletion Complete.")
       s"$jobPath${job.jobID}".toFile.delete(true)
 
 
     /**
       * marks jobs in mongodb for deletion that are older than a given number of days
-      * ('daysAgo') and informs all watching users
-      * about it in behalf of the job maintenance routine
+      * ('deletionThresholdLoggedIn' for registered users and  'deletionThreshold' for others)
+      * and informs all watching users about it in behalf of the job maintenance routine
       *
       */
     case MarkForDeletion() =>
-      Logger.info("Removing Job from DB")
-      mongoStore.updateAndFetchJobs(
-        BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(jobDeletionThreshold).getMillis))),
-        BSONDocument(
-          "$set" ->
-            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
-          "$unset" ->
-            BSONDocument(Job.WATCHLIST -> "")
-        )
-      ).map { jobList =>
-        jobList.map(_.map { _ match {
-            case Some(deletedJob) =>
-              Logger.info(s"Job mark for Deletion in DB was successful:\n${deletedJob.toString()}")
-              Logger.info("Job maintenance routine Requested job Deletion")
-
-              // Message user clients to remove the job from their watchlist
-              Logger.info("Informing Users of deletion.")
-              DeleteJob(deletedJob.jobID, deletedJob.ownerID.get)
-              Logger.info("Removing Job from Elastic Search.")
-              jobDao.deleteJob(deletedJob.mainID.stringify) // Remove job from elastic search
-
-
-            case None =>
-              Logger.info("Job deletion mark in DB failed.")
+      Logger.info("setting deletion flag in DB")
+      mongoStore.findJobs(BSONDocument(Job.DATECREATED ->
+        BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThreshold).getMillis)))).map(_.map{ job =>
+        job.ownerID match {
+          case Some(id) => mongoStore.findUser(BSONDocument(User.IDDB -> id)).map{
+            case Some(user) => val storageTime = user.accountType match {
+              case -1 => deletionThreshold
+              case _  => deletionThresholdRegistered
+            }
+              mongoStore.modifyJob(BSONDocument(
+                "$and" -> List(
+                  BSONDocument(Job.JOBID -> job.jobID),
+                  BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(storageTime).getMillis)))
+                )
+              ), BSONDocument(
+                "$set" ->
+                  BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
+                "$unset" ->
+                  BSONDocument(Job.WATCHLIST -> "")
+              )
+              ).map{
+                case Some(deletedJob) =>
+                  Logger.info(s"${deletedJob.jobID} marking for Deletion in DB was successful:\n${deletedJob.toString()}")
+                  Logger.info("Job maintenance routine Requested job Deletion")
+                  // Message user clients to remove the job from their watchlist
+                  Logger.info("Informing Users of deletion.")
+                  DeleteJob(deletedJob.jobID, deletedJob.ownerID.get)
+                  Logger.info("Removing Job from Elastic Search.")
+                  jobDao.deleteJob(deletedJob.mainID.stringify) // Remove job from elastic search
+                case None =>
+                  Logger.info("Job deletion mark in DB failed.")
+              }
+            case None => Logger.info("User "+id.stringify+" could not be found.")
           }
-        })
-      }
+          case None => Logger.info("Job "+job.jobID+" has no owner ID. Marking for deletion failed")
+        }
 
+      })
 
 
     /**
