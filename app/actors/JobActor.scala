@@ -61,9 +61,6 @@ object JobActor {
   // Message for the Websocket Actor to send a ClearJob Message
   case class ClearJob(jobID: String, deleted: Boolean = false)
 
-  // Message for the Websocket Actor to send a ClearJob Message
-  case class DeleteJob(jobID: String, userID: BSONObjectID)
-
   // User Actor starts watching
   case class AddToWatchlist(jobID: String, userID: BSONObjectID)
 
@@ -72,13 +69,6 @@ object JobActor {
 
   // JobActor is requested to Delete the job
   case class Delete(jobID: String, userID: BSONObjectID)
-
-  // JobActor is requested to Delete the job
-  case class DeleteFromDisk(job: Job)
-
-  // JobActor is requested to mark all jobs that are older than
-  // a given number of days
-  case class MarkForDeletion()
 
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)
@@ -468,69 +458,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           }
       }
 
-
-    /**
-      * deletes the Job from disk.
-      * Includes: remove job and result from mongoDB,
-      * delete job folder
-      */
-    case DeleteFromDisk(job) =>
-      Logger.info(s"Received Delete from disk for ${job.jobID}")
-      Logger.info("Removing Job from mongo DB")
-      mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
-      Logger.info("Removing Result from mongo DB")
-      mongoStore.removeResult(BSONDocument(Job.JOBID -> job.jobID))
-      Logger.info("Deletion Complete.")
-      s"$jobPath${job.jobID}".toFile.delete(true)
-
-
-    /**
-      * marks jobs in mongodb for deletion that are older than a given number of days
-      * ('deletionThresholdLoggedIn' for registered users and  'deletionThreshold' for others)
-      * and informs all watching users about it in behalf of the job maintenance routine
-      *
-      */
-    case MarkForDeletion() =>
-      Logger.info("setting deletion flag in DB")
-      mongoStore.findJobs(BSONDocument(Job.DATECREATED ->
-        BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThreshold).getMillis)))).map(_.map{ job =>
-        job.ownerID match {
-          case Some(id) => mongoStore.findUser(BSONDocument(User.IDDB -> id)).map{
-            case Some(user) => val storageTime = user.accountType match {
-              case -1 => deletionThreshold
-              case _  => deletionThresholdRegistered
-            }
-              mongoStore.modifyJob(BSONDocument(
-                "$and" -> List(
-                  BSONDocument(Job.JOBID -> job.jobID),
-                  BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(storageTime).getMillis)))
-                )
-              ), BSONDocument(
-                "$set" ->
-                  BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
-                "$unset" ->
-                  BSONDocument(Job.WATCHLIST -> "")
-              )
-              ).map{
-                case Some(deletedJob) =>
-                  Logger.info(s"${deletedJob.jobID} marking for Deletion in DB was successful:\n${deletedJob.toString()}")
-                  Logger.info("Job maintenance routine Requested job Deletion")
-                  // Message user clients to remove the job from their watchlist
-                  Logger.info("Informing Users of deletion.")
-                  DeleteJob(deletedJob.jobID, deletedJob.ownerID.get)
-                  Logger.info("Removing Job from Elastic Search.")
-                  jobDao.deleteJob(deletedJob.mainID.stringify) // Remove job from elastic search
-                case None =>
-                  Logger.info("Job deletion mark in DB failed.")
-              }
-            case None => Logger.info("User "+id.stringify+" could not be found.")
-          }
-          case None => Logger.info("Job "+job.jobID+" has no owner ID. Marking for deletion failed")
-        }
-
-      })
-
-
     /**
       * Starts the job
       */
@@ -607,20 +534,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           Logger.error("[JobActor.StartJob] Job not found in DB: " + jobID)
       }
 
-    // User does no longer watch this Job (delete also from JobManager)
-    case DeleteJob(jobID, userID) =>
-      mongoStore
-        .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
-        .foreach {
-          case Some(updatedJob) =>
-            this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
-          case None =>
-        }
-      val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
-      wsActors.foreach(_.foreach(_ ! ClearJob(jobID, deleted = true)))
-
-      userSessions.modifyUserWithCache(BSONDocument(User.IDDB -> userID),
-                                       BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
 
     // User Starts watching job
     case AddToWatchlist(jobID, userID) =>
