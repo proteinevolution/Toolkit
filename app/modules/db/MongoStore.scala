@@ -90,7 +90,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     }
   }
 
-  def removeResult(selector : BSONDocument) : Future[WriteResult] = resultCollection.flatMap(_.remove(selector))
 
   def findJob(selector: BSONDocument): Future[Option[Job]] = jobCollection.flatMap(_.find(selector).one[Job])
 
@@ -282,6 +281,10 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
   }
 
   //def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))
-  def removeJob(selector : BSONDocument) : Future[WriteResult] = jobCollection.flatMap(_.remove(selector))
+  def removeJob(selector : BSONDocument) : Future[WriteResult] = {
+    jobCollection.flatMap(_.remove(selector))
+    resultCollection.flatMap(_.remove(selector))
+  }
+
 
 }
