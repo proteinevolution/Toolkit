@@ -224,7 +224,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 let validationProcess = function(elem: any,toolname: string) {
 
 
-
+    nucleotideSeqFound = "Nucleotide sequence found; Protein sequence expected!";
     //---------------------------------Validation Visitors------------------------------------------//
 
     // in order to modularize validation we use the visitor pattern
@@ -250,7 +250,7 @@ let validationProcess = function(elem: any,toolname: string) {
              **/
 
             seqLimit = 500;
-            nucleotideSeqFound = "Nucleotide sequence found; Protein sequence expected!";
+
 
             let tcoffeeTarget = new alignmentVal($(elem));
 
@@ -376,7 +376,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let hmmerTarget = new alignmentVal($(elem));
 
             if (hmmerTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
+                feedback(false, nucleotideSeqFound , "error");
                 break;
             }
 
