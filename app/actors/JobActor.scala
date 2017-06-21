@@ -68,7 +68,7 @@ object JobActor {
   case class RemoveFromWatchlist(jobID: String, userID: BSONObjectID)
 
   // JobActor is requested to Delete the job
-  case class Delete(jobID: String, userID: BSONObjectID)
+  case class Delete(jobID: String, userID: BSONObjectID, ownerRequest: Boolean)
 
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)
@@ -219,15 +219,14 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   }
 
   /**
-    * Trys to delete a job and inform all watching users about it
+    * Marks a job as deleted and informs all watching users about it
+    * also deleted job from
     *
     * @param job
     * @param userID
     */
-  private def delete(job: Job, userID: BSONObjectID): Unit = {
+  private def delete(job: Job, userID: BSONObjectID, ownerRequest: Boolean): Unit = {
     if (job.ownerID.contains(userID)) {
-      Logger.info("Owner Requested job Deletion")
-
       // Message user clients to remove the job from their watchlist
       Logger.info("Informing Users of deletion.")
       val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
@@ -239,7 +238,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           BSONDocument(Job.IDDB -> job.mainID),
           BSONDocument(
             "$set" ->
-            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
+            BSONDocument(Job.DELETION -> JobDeletion( if(ownerRequest) JobDeletionFlag.OwnerRequest else JobDeletionFlag.Automated, Some(DateTime.now()))),
             "$unset" ->
             BSONDocument(Job.WATCHLIST -> "")
           )
@@ -433,7 +432,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       * Creating the job deleted object and inserting it to the database
       * Removing the job from ES
       */
-    case Delete(jobID, userID) =>
+    case Delete(jobID, userID, ownerRequest) =>
       Logger.info(s"Received Delete for $jobID")
       this.getCurrentJob(jobID).foreach {
         case Some(job) =>
@@ -441,8 +440,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
           Logger.info("Removing Job from current Jobs.")
           this.removeJob(jobID)
-          Logger.info("Removing Job from DB")
-          this.delete(job, userID)
+          Logger.info("Marking job as deleted in DB")
+          this.delete(job, userID, ownerRequest)
           Logger.info("Deletion Complete.")
         case None =>
           Logger.info("No such jobID found in current jobs. Loading job from DB.")
@@ -452,7 +451,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               Logger.info("Removing Job from Elastic Search.")
               jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
               Logger.info("Removing Job from DB")
-              this.delete(job, userID)
+              this.delete(job, userID, ownerRequest)
             case None =>
               Logger.error("[JobActor.Delete] No such jobID found in Database. Ignoring.")
           }
