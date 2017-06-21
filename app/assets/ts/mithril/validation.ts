@@ -251,7 +251,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 500;
 
             let tcoffeeTarget = new alignmentVal($(elem));
-            tcoffeeTarget.basicValidation();
+
+            if (tcoffeeTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (tcoffeeTarget.basicValidation()) {
                 tcoffeeTarget.mustHave2();
@@ -273,7 +277,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let mafftTarget = new alignmentVal($(elem));
-            mafftTarget.basicValidation();
+
+            if (mafftTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (mafftTarget.basicValidation()) {
                 mafftTarget.mustHave2();
@@ -294,7 +302,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let muscleTarget = new alignmentVal($(elem));
-            muscleTarget.basicValidation();
+
+            if (muscleTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (muscleTarget.basicValidation()) {
                 muscleTarget.mustHave2();
@@ -315,7 +327,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let clustaloTarget = new alignmentVal($(elem));
-            clustaloTarget.basicValidation();
+
+            if (clustaloTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (clustaloTarget.basicValidation()) {
                 clustaloTarget.mustHave2();
@@ -336,7 +352,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let kalignTarget = new alignmentVal($(elem));
-            kalignTarget.basicValidation();
+
+            if (kalignTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (kalignTarget.basicValidation()) {
                 kalignTarget.mustHave2();
@@ -357,7 +377,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let msaprobsTarget = new alignmentVal($(elem));
-            msaprobsTarget.basicValidation();
+
+            if (msaprobsTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (msaprobsTarget.basicValidation()) {
                 msaprobsTarget.mustHave2();
@@ -376,7 +400,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 10000;
 
             let hmmerTarget = new alignmentVal($(elem));
-            hmmerTarget.basicValidation();
+
+            if (hmmerTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (hmmerTarget.basicValidation()) {
                 hmmerTarget.sameLengthValidation();
@@ -395,7 +423,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 10000;
 
             let hhblitsTarget = new alignmentVal($(elem));
-            hhblitsTarget.basicValidation();
+
+            if (hhblitsTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (hhblitsTarget.basicValidation()) {
                 hhblitsTarget.sameLengthValidation();
@@ -415,12 +447,15 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 10000;
 
             let hhpredTarget = new alignmentVal($(elem));
-            hhpredTarget.basicValidation();
+
+            if (hhpredTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (hhpredTarget.basicValidation()) {
                 hhpredTarget.sameLengthValidation();
                 hhpredTarget.hhMaxDB();
-
             }
 
             break;
@@ -436,10 +471,14 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 5000;
 
             let psiblastTarget = new alignmentVal($(elem));
-            psiblastTarget.basicValidation();
+
+            if (psiblastTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (psiblastTarget.basicValidation()) {
-                    psiblastTarget.sameLengthValidation();
+                psiblastTarget.sameLengthValidation();
             }
 
             break;
@@ -459,10 +498,13 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let aln2plotTarget = new alignmentVal($(elem));
-            aln2plotTarget.basicValidation();
+
+            if (aln2plotTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (aln2plotTarget.basicValidation()) {
-                aln2plotTarget.sameLengthValidation();
                 if (aln2plotTarget.sameLengthValidation())
                     aln2plotTarget.mustHave2();
             }
@@ -475,7 +517,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let frpredTarget = new alignmentVal($(elem));
-            frpredTarget.basicValidation();
+
+            if (frpredTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (frpredTarget.basicValidation()) {
                 frpredTarget.sameLengthValidation();
@@ -488,7 +534,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 10000;
 
             let hhrepidTarget = new alignmentVal($(elem));
-            hhrepidTarget.basicValidation();
+
+            if (hhrepidTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (hhrepidTarget.basicValidation()) {
                 hhrepidTarget.sameLengthValidation();
@@ -501,7 +551,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let pcoilsTarget = new alignmentVal($(elem));
-            pcoilsTarget.basicValidation();
+
+            if (pcoilsTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (pcoilsTarget.basicValidation()) {
                 pcoilsTarget.sameLengthValidation();
@@ -514,7 +568,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let repperTarget = new alignmentVal($(elem));
-            repperTarget.basicValidation();
+
+            if (repperTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (repperTarget.basicValidation()) {
                 repperTarget.sameLengthValidation();
@@ -527,7 +585,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let marcoilTarget = new alignmentVal($(elem));
-            marcoilTarget.basicValidation();
+
+            if (marcoilTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (marcoilTarget.basicValidation()) {
                 marcoilTarget.mustHave1();
@@ -538,7 +600,11 @@ let validationProcess = function(elem: any,toolname: string) {
         case "tprpred":
 
             let tprpredTarget = new alignmentVal($(elem));
-            tprpredTarget.basicValidation();
+
+            if (tprpredTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (tprpredTarget.basicValidation()) {
                 tprpredTarget.mustHave1();
@@ -551,10 +617,13 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 100;
 
             let ali2dTarget = new alignmentVal($(elem));
-            ali2dTarget.basicValidation();
+
+            if (ali2dTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (ali2dTarget.basicValidation()) {
-                ali2dTarget.sameLengthValidation();
                 if (ali2dTarget.sameLengthValidation())
                     ali2dTarget.mustHave2();
             }
@@ -566,7 +635,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let quick2dTarget = new alignmentVal($(elem));
-            quick2dTarget.basicValidation();
+
+            if (quick2dTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (quick2dTarget.basicValidation()) {
                 quick2dTarget.sameLengthValidation();
@@ -595,10 +668,13 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let ancesconTarget = new alignmentVal($(elem));
-            ancesconTarget.basicValidation();
+
+            if (ancesconTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (ancesconTarget.basicValidation()) {
-                ancesconTarget.sameLengthValidation();
                 if (ancesconTarget.sameLengthValidation())
                     ancesconTarget.mustHave2();
             }
@@ -618,7 +694,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 20000;
 
             let mmseqs2Target = new alignmentVal($(elem));
-            mmseqs2Target.basicValidation();
+
+            if (mmseqs2Target.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (mmseqs2Target.basicValidation()) {
                 mmseqs2Target.mustHave2();
@@ -631,10 +711,13 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 100;
 
             let phymlTarget = new alignmentVal($(elem));
-            phymlTarget.basicValidation();
+
+            if (phymlTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (phymlTarget.basicValidation()) {
-                phymlTarget.sameLengthValidation();
                 if (phymlTarget.sameLengthValidation())
                     phymlTarget.mustHave2();
             }
@@ -655,7 +738,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 10000;
 
             let clansTarget = new alignmentVal($(elem));
-            clansTarget.basicValidation();
+
+            if (clansTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (clansTarget.basicValidation()) {
                 clansTarget.mustHave2();
@@ -673,7 +760,6 @@ let validationProcess = function(elem: any,toolname: string) {
         case "backtrans":
 
             let backtransTarget = new alignmentVal($(elem));
-            backtransTarget.basicValidation();
 
             if (backtransTarget.basicValidation()) {
                 backtransTarget.mustHave1();
@@ -693,7 +779,11 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 10000;
 
             let hhfilterTarget = new alignmentVal($(elem));
-            hhfilterTarget.basicValidation();
+
+            if (hhfilterTarget.DNAvalidation()) {
+                feedback(false, "Protein sequence expected", "error");
+                break;
+            }
 
             if (hhfilterTarget.basicValidation()) {
                 hhfilterTarget.mustHave2();
@@ -708,7 +798,7 @@ let validationProcess = function(elem: any,toolname: string) {
             break;
 
         case "seq2id":
-            /** validation model for hhfilter:
+            /** validation model for seq2id: TODO is this model appropriate (copied from hhfilter)?
              * Input has to be aligned FASTA.
              * Input must consist of at least two Sequences.
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
@@ -717,10 +807,10 @@ let validationProcess = function(elem: any,toolname: string) {
              */
 
             let seq2idTarget = new alignmentVal($(elem));
+
             seq2idTarget.seq2IDvalidation();
 
             break;
-
 
         default:
             console.warn("No tool specified");
@@ -730,7 +820,6 @@ let validationProcess = function(elem: any,toolname: string) {
     if ($(elem).val().length === 0) {
         valReset();
     }
-
 
 };
 
@@ -915,20 +1004,30 @@ class alignmentVal implements ToolkitValidator {
 
     DNAvalidation(): any {
 
-        if (!this.elem.validate('fasta'))
+        if (!this.elem.validate('fasta')) {
             feedback(false, "This is no Fasta!", "error");
+            return false;
+        }
 
-        else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1)
+        else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
             feedback(false, "Must have single sequence!", "error");
+            return false;
+        }
 
-        else if ((/^\n$/m.test(this.elem.reformat('extractheaders'))))
+        else if ((/^\n$/m.test(this.elem.reformat('extractheaders')))){
             feedback(false, "Empty header!", "error");
+            return false;
+        }
 
-        else if (!this.elem.reformat('maxlength', 10000))
+        else if (!this.elem.reformat('maxlength', 10000)){
             feedback(false, "Input contains over 10,000 characters!", "error");
+            return false;
+        }
 
-        else if(!this.elem.reformat('DNA'))
+        else if(!this.elem.reformat('DNA')){
             feedback(false, "Illegal characters used!", "error");
+            return false;
+        }
 
         else if (this.elem.val() == "") {
             feedback(false);
@@ -936,6 +1035,7 @@ class alignmentVal implements ToolkitValidator {
         }
 
         else feedback(true, "Found format: <b>Fasta</b>", "success");
+        return true;
     }
 
     seq2IDvalidation(): any {
