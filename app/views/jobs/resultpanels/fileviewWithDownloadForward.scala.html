@@ -13,7 +13,7 @@
     <hr id="line-element" colspan="4" class="horizontal-line">
     </div>
 
-    <pre class="fileview" id="fileviewerDownloadForward">@FileLoader.loadFile(filePath)</pre>
+    <pre class="fileview" id="fileviewerDownloadForward_@{resultname}">@FileLoader.loadFile(filePath)</pre>
 
     <script>
         $(document).ready( function() {
@@ -26,7 +26,7 @@
                 }
             }).done(function (data_) {
                 $.LoadingOverlay("hide");
-                $('#fileviewerDownloadForward').append(data_)
+                $('#fileviewerDownloadForward_@{resultname}').append(data_)
             });
         });
 
@@ -55,7 +55,7 @@
 
 
         //using both functions is not pretty and somewhat redundant but gets the job done
-        $( "#fileviewerDownloadForward" ).ready(function() {
+        $( "#fileviewerDownloadForward_@{resultname}" ).ready(function() {
             if ($('#tool-tabs').hasClass('fullscreen')) {
                 $(".fileview").css("overflow-y", "visible");
                 $(".fileview").css("height", "100pc");

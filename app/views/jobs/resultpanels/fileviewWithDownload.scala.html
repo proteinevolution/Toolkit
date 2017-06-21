@@ -6,7 +6,7 @@
 
     <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
     <hr id="line-element" colspan="4" class="horizontal-line">
-    <pre class="fileview" id="fileviewerDownload" ></pre>
+    <pre class="fileview" id="fileviewerDownload_@{resultname}" ></pre>
 
     <script>
          $(document).ready( function() {
@@ -19,7 +19,7 @@
              }
          }).done(function (data_) {
              $.LoadingOverlay("hide");
-             $('#fileviewerDownload').append(data_)
+             $('#fileviewerDownload_@{resultname}').append(data_)
          });
          });
         var downloadFilename = "@{resultname}_@{jobID}";
@@ -35,7 +35,7 @@
         };
 
         //using both functions is not pretty and somewhat redundant but gets the job done
-        $( "#fileviewerDownload" ).ready(function() {
+        $( "#fileviewerDownload_@{resultname}" ).ready(function() {
             if ($('#tool-tabs').hasClass('fullscreen')) {
                 $(".fileview").css("overflow-y", "visible");
                 $(".fileview").css("height", "100pc");
