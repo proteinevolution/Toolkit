@@ -7,6 +7,7 @@ let seqLimit : any;
 let charLimitPerSeq : any;
 let modellerIsValid : boolean = false;
 let samccIsValid : boolean = false;
+let nucleotideSeqFound: string;
 
 
 
@@ -249,13 +250,9 @@ let validationProcess = function(elem: any,toolname: string) {
              **/
 
             seqLimit = 500;
+            nucleotideSeqFound = "Nucleotide sequence found; Protein sequence expected!";
 
             let tcoffeeTarget = new alignmentVal($(elem));
-
-            if (tcoffeeTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
-                break;
-            }
 
             if (tcoffeeTarget.basicValidation()) {
                 tcoffeeTarget.mustHave2();
@@ -278,11 +275,6 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let mafftTarget = new alignmentVal($(elem));
 
-            if (mafftTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
-                break;
-            }
-
             if (mafftTarget.basicValidation()) {
                 mafftTarget.mustHave2();
             }
@@ -302,11 +294,6 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 2000;
 
             let muscleTarget = new alignmentVal($(elem));
-
-            if (muscleTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
-                break;
-            }
 
             if (muscleTarget.basicValidation()) {
                 muscleTarget.mustHave2();
@@ -328,10 +315,6 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let clustaloTarget = new alignmentVal($(elem));
 
-            if (clustaloTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
-                break;
-            }
 
             if (clustaloTarget.basicValidation()) {
                 clustaloTarget.mustHave2();
@@ -353,10 +336,6 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let kalignTarget = new alignmentVal($(elem));
 
-            if (kalignTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
-                break;
-            }
 
             if (kalignTarget.basicValidation()) {
                 kalignTarget.mustHave2();
@@ -378,11 +357,6 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let msaprobsTarget = new alignmentVal($(elem));
 
-            if (msaprobsTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
-                break;
-            }
-
             if (msaprobsTarget.basicValidation()) {
                 msaprobsTarget.mustHave2();
             }
@@ -402,7 +376,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let hmmerTarget = new alignmentVal($(elem));
 
             if (hmmerTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -425,7 +399,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhblitsTarget = new alignmentVal($(elem));
 
             if (hhblitsTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -449,7 +423,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhpredTarget = new alignmentVal($(elem));
 
             if (hhpredTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -473,7 +447,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let psiblastTarget = new alignmentVal($(elem));
 
             if (psiblastTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -500,7 +474,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let aln2plotTarget = new alignmentVal($(elem));
 
             if (aln2plotTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -519,7 +493,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let frpredTarget = new alignmentVal($(elem));
 
             if (frpredTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -536,7 +510,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhrepidTarget = new alignmentVal($(elem));
 
             if (hhrepidTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -553,7 +527,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let pcoilsTarget = new alignmentVal($(elem));
 
             if (pcoilsTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -570,7 +544,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let repperTarget = new alignmentVal($(elem));
 
             if (repperTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -587,7 +561,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let marcoilTarget = new alignmentVal($(elem));
 
             if (marcoilTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -602,7 +576,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let tprpredTarget = new alignmentVal($(elem));
 
             if (tprpredTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -619,7 +593,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let ali2dTarget = new alignmentVal($(elem));
 
             if (ali2dTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -637,7 +611,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let quick2dTarget = new alignmentVal($(elem));
 
             if (quick2dTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -670,7 +644,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let ancesconTarget = new alignmentVal($(elem));
 
             if (ancesconTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -696,7 +670,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let mmseqs2Target = new alignmentVal($(elem));
 
             if (mmseqs2Target.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -713,7 +687,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let phymlTarget = new alignmentVal($(elem));
 
             if (phymlTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -740,7 +714,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let clansTarget = new alignmentVal($(elem));
 
             if (clansTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
@@ -760,6 +734,11 @@ let validationProcess = function(elem: any,toolname: string) {
         case "backtrans":
 
             let backtransTarget = new alignmentVal($(elem));
+
+            if (backtransTarget.DNAvalidation()) {
+                feedback(false, nucleotideSeqFound, "error");
+                break;
+            }
 
             if (backtransTarget.basicValidation()) {
                 backtransTarget.mustHave1();
@@ -781,7 +760,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhfilterTarget = new alignmentVal($(elem));
 
             if (hhfilterTarget.DNAvalidation()) {
-                feedback(false, "Protein sequence expected", "error");
+                feedback(false, nucleotideSeqFound, "error");
                 break;
             }
 
