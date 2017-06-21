@@ -27,6 +27,8 @@ import modules.tel.env.Env
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
 
+import scala.util.{Failure, Success}
+
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -181,7 +183,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     Logger.info("Delete Action in JobController reached")
     userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID))
+      jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID, true))
       Ok
     }
   }
@@ -194,83 +196,93 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   def deleteJobsPermanently() : Action[AnyContent] = Action.async { implicit request =>
 
     Logger.info("delete jobs that are marked for deletion Action in JobController reached")
-    /*
+    /**
       * marks jobs in mongodb for deletion that are older than a given number of days
       * ('deletionThresholdLoggedIn' for registered users and  'deletionThreshold' for others)
       * and informs all watching users about it in behalf of the job maintenance routine
       *
       */
-    mongoStore.findJobs(BSONDocument(Job.DATECREATED ->
-
-      BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThreshold).getMillis)))).map(_.map{ job =>
-      job.ownerID match {
-        case Some(id) => mongoStore.findUser(BSONDocument(User.IDDB -> id)).map{
-          case Some(user) =>
-
-            val storageTime = new DateTime().minusDays( if(user.accountType == -1) deletionThreshold else deletionThresholdRegistered)
-
-            mongoStore.modifyJob(BSONDocument(
-              "$and" -> List(
-                BSONDocument(Job.JOBID -> job.jobID),
-                BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(storageTime.getMillis)))
-              )
-            ), BSONDocument(
-              "$set" ->
-                BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
-              "$unset" ->
-                BSONDocument(Job.WATCHLIST -> "")
-            )
-            ).map{
-              case Some(deletedJob) =>
-                Logger.info(s"${deletedJob.jobID} marking for Deletion in DB was successful:\n${deletedJob.toString()}")
-                Logger.info("Job maintenance routine Requested job Deletion")
-                // Message user clients to remove the job from their watchlist
-                Logger.info("Informing Users of deletion.")
-                jobActorAccess.sendToJobActor(deletedJob.jobID, Delete(deletedJob.jobID, deletedJob.ownerID.get))
+      lazy val f1 = {
+        println("start")
+        mongoStore.findJobs(BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThreshold).getMillis)))).flatMap { jobList =>
+            Future.sequence(jobList.map { job =>
+            job.ownerID match {
+              case Some(id) =>
+                mongoStore.findUser(BSONDocument(User.IDDB -> id)).flatMap {
+                case Some(user) =>
+                  val storageTime = new DateTime().minusDays(if (user.accountType == -1) deletionThreshold else deletionThresholdRegistered)
+                  mongoStore.modifyJob(BSONDocument(
+                    "$and" -> List(
+                      BSONDocument(Job.JOBID -> job.jobID),
+                      BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(storageTime.getMillis)))
+                    )
+                  ), BSONDocument(
+                    "$set" ->
+                      BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
+                    "$unset" ->
+                      BSONDocument(Job.WATCHLIST -> "")
+                  )
+                  ).map {
+                    case Some(deletedJob) =>
+                      println(deletedJob.ownerID)
+                      Logger.info(s"${deletedJob.jobID} marking for Deletion in DB was successful:\n${deletedJob.toString()}")
+                      // Message user clients to remove the job from their watchlist
+                      jobActorAccess.sendToJobActor(deletedJob.jobID, Delete(deletedJob.jobID, deletedJob.ownerID.get, false))
+                      Some(deletedJob)
+                    case None => None
+                  }
+                case None =>
+                  Logger.info("User not found: " + id.stringify + s". Job ${job.jobID} is marked for deletion.")
+                  mongoStore.modifyJob(BSONDocument(Job.JOBID -> job.jobID), BSONDocument(
+                    "$set" ->
+                      BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
+                    "$unset" ->
+                      BSONDocument(Job.WATCHLIST -> "")
+                  ))
+                  jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID, job.ownerID.get, false))
+                  Future.successful(Some(job))
+              }
               case None =>
-                Logger.info("Job could not be found in DB.")
+                println("find user none++++++++++++++++++++++=");
+                Logger.info("Job " + job.jobID + " has no owner ID. It is marked for deletion.")
+                mongoStore.modifyJob(BSONDocument(Job.JOBID -> job.jobID), BSONDocument(
+                  "$set" ->
+                    BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
+                  "$unset" ->
+                    BSONDocument(Job.WATCHLIST -> ""))
+                )
             }
-          case None =>
-            Logger.info("User not found: " + id.stringify + s". Job ${job.jobID} is marked for deletion.")
-            mongoStore.modifyJob( BSONDocument(Job.JOBID -> job.jobID),BSONDocument(
-            "$set" ->
-              BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
-            "$unset" ->
-              BSONDocument(Job.WATCHLIST -> "")
-          ))
-            jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID, job.ownerID.get))
+          })
         }
-        case None =>
-          Logger.info("Job "+job.jobID+" has no owner ID. It is marked for deletion.")
-          mongoStore.modifyJob( BSONDocument(Job.JOBID -> job.jobID),BSONDocument(
-            "$set" ->
-              BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.Automated, Some(DateTime.now()))),
-            "$unset" ->
-              BSONDocument(Job.WATCHLIST -> "")
-          ))
       }
 
-    })
 
-    /*
-      * deletes all jobs that are marked for deletion with
-      * (deletion.flag == 1)
-      * the duration of keeping the job is dependent on whether the user is a registered user
-      */
-    mongoStore.findJobs(BSONDocument("$or"-> List(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 4)),
-      BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 1))))).map { jobList =>
-      println(jobList)
-      jobList.foreach{ job =>
-        /*
-          * deletes the Job from disk.
-          * Includes: remove job and result from mongoDB,
-          * delete job folder
-          */
-        Logger.info("Removing Job from mongo DB")
-        mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
-        s"$jobPath${job.jobID}".toFile.delete(true)
-        Logger.info("Deletion Complete.")
-      }
+    /**
+    * deletes all jobs that are marked for deletion with
+    * (deletion.flag == 1)
+    * the duration of keeping the job is dependent on whether the user is a registered user
+    */
+    f1.onComplete {
+
+      case Success(_) =>
+        println("----------------------------------------------------------------------")
+        println("Marking for deletion done. Deleting in progress...")
+        println("----------------------------------------------------------------------")
+//        mongoStore.findJobs(BSONDocument("$or" -> List(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 4)),
+//          BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 1))))).map { jobList =>
+//          jobList.foreach { job =>
+//            /*
+//                      * deletes the Job from disk.
+//                      * Includes: remove job and result from mongoDB,
+//                      * delete job folder
+//                      */
+//            Logger.info("Removing Job from mongo DB")
+//            mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
+//            s"$jobPath${job.jobID}".toFile.delete(true)
+//            Logger.info("Deletion Complete.")
+//          }
+//        }
+      case Failure(t) => println("An error has occured: " + t.getMessage)
     }
     Future.successful(Ok)
   }
