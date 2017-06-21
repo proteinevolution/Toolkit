@@ -1051,7 +1051,7 @@ final class ToolFactory @Inject()(
         }
       ),
       Toolnames.PATSEARCH -> ListMap(
-        "PatternSearch" -> { (jobID, requestHeader) =>
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
