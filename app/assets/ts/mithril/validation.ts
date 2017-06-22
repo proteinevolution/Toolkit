@@ -7,9 +7,6 @@ let seqLimit : any;
 let charLimitPerSeq : any;
 let modellerIsValid : boolean = false;
 let samccIsValid : boolean = false;
-let nucleotideSeqFound: string;
-
-
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
@@ -223,8 +220,6 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
 let validationProcess = function(elem: any,toolname: string) {
 
-
-    nucleotideSeqFound = "Nucleotide sequence found; Protein sequence expected!";
     //---------------------------------Validation Visitors------------------------------------------//
 
     // in order to modularize validation we use the visitor pattern
@@ -254,7 +249,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let tcoffeeTarget = new alignmentVal($(elem));
 
-            if (tcoffeeTarget.basicValidation()) {
+            if (tcoffeeTarget.basicValidation(false)) {
                 tcoffeeTarget.mustHave2();
             }
 
@@ -275,7 +270,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let mafftTarget = new alignmentVal($(elem));
 
-            if (mafftTarget.basicValidation()) {
+            if (mafftTarget.basicValidation(false)) {
                 mafftTarget.mustHave2();
             }
 
@@ -295,7 +290,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let muscleTarget = new alignmentVal($(elem));
 
-            if (muscleTarget.basicValidation()) {
+            if (muscleTarget.basicValidation(false)) {
                 muscleTarget.mustHave2();
             }
 
@@ -316,7 +311,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let clustaloTarget = new alignmentVal($(elem));
 
 
-            if (clustaloTarget.basicValidation()) {
+            if (clustaloTarget.basicValidation(false)) {
                 clustaloTarget.mustHave2();
             }
 
@@ -337,7 +332,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let kalignTarget = new alignmentVal($(elem));
 
 
-            if (kalignTarget.basicValidation()) {
+            if (kalignTarget.basicValidation(false)) {
                 kalignTarget.mustHave2();
             }
 
@@ -357,7 +352,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let msaprobsTarget = new alignmentVal($(elem));
 
-            if (msaprobsTarget.basicValidation()) {
+            if (msaprobsTarget.basicValidation(false)) {
                 msaprobsTarget.mustHave2();
             }
 
@@ -375,12 +370,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hmmerTarget = new alignmentVal($(elem));
 
-            if (hmmerTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound , "error");
-                break;
-            }
-
-            if (hmmerTarget.basicValidation()) {
+            if (hmmerTarget.basicValidation(true)) {
                 hmmerTarget.sameLengthValidation();
             }
 
@@ -398,12 +388,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hhblitsTarget = new alignmentVal($(elem));
 
-            if (hhblitsTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (hhblitsTarget.basicValidation()) {
+            if (hhblitsTarget.basicValidation(true)) {
                 hhblitsTarget.sameLengthValidation();
             }
 
@@ -422,12 +407,8 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hhpredTarget = new alignmentVal($(elem));
 
-            if (hhpredTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
 
-            if (hhpredTarget.basicValidation()) {
+            if (hhpredTarget.basicValidation(true)) {
                 hhpredTarget.sameLengthValidation();
                 hhpredTarget.hhMaxDB();
             }
@@ -446,12 +427,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let psiblastTarget = new alignmentVal($(elem));
 
-            if (psiblastTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (psiblastTarget.basicValidation()) {
+            if (psiblastTarget.basicValidation(true)) {
                 psiblastTarget.sameLengthValidation();
             }
 
@@ -473,12 +449,8 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let aln2plotTarget = new alignmentVal($(elem));
 
-            if (aln2plotTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
 
-            if (aln2plotTarget.basicValidation()) {
+            if (aln2plotTarget.basicValidation(true)) {
                 if (aln2plotTarget.sameLengthValidation())
                     aln2plotTarget.mustHave2();
             }
@@ -492,12 +464,8 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let frpredTarget = new alignmentVal($(elem));
 
-            if (frpredTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
 
-            if (frpredTarget.basicValidation()) {
+            if (frpredTarget.basicValidation(true)) {
                 frpredTarget.sameLengthValidation();
             }
 
@@ -509,12 +477,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hhrepidTarget = new alignmentVal($(elem));
 
-            if (hhrepidTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (hhrepidTarget.basicValidation()) {
+            if (hhrepidTarget.basicValidation(true)) {
                 hhrepidTarget.sameLengthValidation();
             }
 
@@ -526,12 +489,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let pcoilsTarget = new alignmentVal($(elem));
 
-            if (pcoilsTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (pcoilsTarget.basicValidation()) {
+            if (pcoilsTarget.basicValidation(true)) {
                 pcoilsTarget.sameLengthValidation();
             }
 
@@ -543,12 +501,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let repperTarget = new alignmentVal($(elem));
 
-            if (repperTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (repperTarget.basicValidation()) {
+            if (repperTarget.basicValidation(true)) {
                 repperTarget.sameLengthValidation();
             }
 
@@ -560,12 +513,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let marcoilTarget = new alignmentVal($(elem));
 
-            if (marcoilTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (marcoilTarget.basicValidation()) {
+            if (marcoilTarget.basicValidation(true)) {
                 marcoilTarget.mustHave1();
             }
 
@@ -575,12 +523,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let tprpredTarget = new alignmentVal($(elem));
 
-            if (tprpredTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (tprpredTarget.basicValidation()) {
+            if (tprpredTarget.basicValidation(true)) {
                 tprpredTarget.mustHave1();
             }
 
@@ -592,12 +535,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let ali2dTarget = new alignmentVal($(elem));
 
-            if (ali2dTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (ali2dTarget.basicValidation()) {
+            if (ali2dTarget.basicValidation(true)) {
                 if (ali2dTarget.sameLengthValidation())
                     ali2dTarget.mustHave2();
             }
@@ -610,12 +548,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let quick2dTarget = new alignmentVal($(elem));
 
-            if (quick2dTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (quick2dTarget.basicValidation()) {
+            if (quick2dTarget.basicValidation(true)) {
                 quick2dTarget.sameLengthValidation();
             }
 
@@ -643,12 +576,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let ancesconTarget = new alignmentVal($(elem));
 
-            if (ancesconTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (ancesconTarget.basicValidation()) {
+            if (ancesconTarget.basicValidation(true)) {
                 if (ancesconTarget.sameLengthValidation())
                     ancesconTarget.mustHave2();
             }
@@ -669,12 +597,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let mmseqs2Target = new alignmentVal($(elem));
 
-            if (mmseqs2Target.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (mmseqs2Target.basicValidation()) {
+            if (mmseqs2Target.basicValidation(true)) {
                 mmseqs2Target.mustHave2();
             }
 
@@ -686,12 +609,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let phymlTarget = new alignmentVal($(elem));
 
-            if (phymlTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (phymlTarget.basicValidation()) {
+            if (phymlTarget.basicValidation(true)) {
                 if (phymlTarget.sameLengthValidation())
                     phymlTarget.mustHave2();
             }
@@ -713,12 +631,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let clansTarget = new alignmentVal($(elem));
 
-            if (clansTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (clansTarget.basicValidation()) {
+            if (clansTarget.basicValidation(true)) {
                 clansTarget.mustHave2();
             }
 
@@ -735,12 +648,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let backtransTarget = new alignmentVal($(elem));
 
-            if (backtransTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (backtransTarget.basicValidation()) {
+            if (backtransTarget.basicValidation(true)) {
                 backtransTarget.mustHave1();
             }
 
@@ -759,13 +667,9 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hhfilterTarget = new alignmentVal($(elem));
 
-            if (hhfilterTarget.DNAvalidation()) {
-                feedback(false, nucleotideSeqFound, "error");
-                break;
-            }
-
-            if (hhfilterTarget.basicValidation()) {
-                hhfilterTarget.mustHave2();
+            if (hhfilterTarget.basicValidation(true)) {
+                if(hhfilterTarget.sameLengthValidation())
+                    hhfilterTarget.mustHave2();
             }
 
             break;
@@ -897,7 +801,7 @@ class alignmentVal implements ToolkitValidator {
         }
     }
 
-    basicValidation(): boolean {
+    basicValidation(checkDNA: boolean): boolean {
 
         if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
             originIsFasta = false;
@@ -908,10 +812,22 @@ class alignmentVal implements ToolkitValidator {
         }
 
         else if (this.elem.val() !== "" && !this.elem.validate('fasta')) {
-            feedback(false, "This is no Fasta!", "error");
+            feedback(false, "Invalid characters! Expecting protein sequence(s).", "error");
             return false;
         }
 
+        else if(!this.elem.reformat('PROTEINLETTERS')){
+            feedback(false, "Invalid characters!", "error");
+            return false;
+        }
+
+        else if(checkDNA && !this.elem.reformat('PROTEIN')){
+            feedback(false, "Nucleotide FASTA. Expecting protein sequence(s).", "error");
+            return false;
+        }
+        else if(!checkDNA && !this.elem.reformat('PROTEIN')){
+            feedback(true, "Nucleotide FASTA. Expecting protein sequence(s).", "warning");
+        }
         else if ((/^\n$/m.test(this.elem.reformat('extractheaders')))) {
             feedback(false, "Empty header!", "error");
             return false;
@@ -938,7 +854,7 @@ class alignmentVal implements ToolkitValidator {
         }
 
         else if (!this.elem.reformat('uniqueids')) {
-            feedback(true, "Fasta but identifiers are not unique!", "warning");
+            feedback(true, "FASTA but identifiers are not unique!", "warning");
             return true;
         }
 
@@ -947,7 +863,7 @@ class alignmentVal implements ToolkitValidator {
             valReset();
         }
 
-        else feedback(true, "Found format: <b>Fasta</b>", "success");
+        else feedback(true, "<b>Protein FASTA</b>", "success");
 
         return true;
 
@@ -956,7 +872,7 @@ class alignmentVal implements ToolkitValidator {
     sameLengthValidation(): boolean {
 
         if (!this.elem.reformat('samelength')) {
-            feedback(false, "Sequences should have the same length!", "error");
+            feedback(false, "Invalid MSA! Sequences should have the same length.", "error");
             return false;
         }
         return true;
@@ -975,7 +891,7 @@ class alignmentVal implements ToolkitValidator {
     mustHave1() : boolean {
 
         if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
-            feedback(false, "Must have single sequence!", "error");
+            feedback(false, "Input must be a single protein sequence!", "error");
             return false;
         }
         return true;
@@ -983,13 +899,15 @@ class alignmentVal implements ToolkitValidator {
 
     DNAvalidation(): any {
 
+        console.log(this.elem.reformat('DNA'));
+
         if (!this.elem.validate('fasta')) {
-            feedback(false, "This is no Fasta!", "error");
+            feedback(false, "This is no FASTA!", "error");
             return false;
         }
 
         else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
-            feedback(false, "Must have single sequence!", "error");
+            feedback(false, "Input must be a single DNA sequence!", "error");
             return false;
         }
 
@@ -1004,7 +922,7 @@ class alignmentVal implements ToolkitValidator {
         }
 
         else if(!this.elem.reformat('DNA')){
-            feedback(false, "Illegal characters used!", "error");
+            feedback(false, "Invalid characters! Expecting a DNA sequence.", "error");
             return false;
         }
 
@@ -1013,7 +931,7 @@ class alignmentVal implements ToolkitValidator {
             valReset();
         }
 
-        else feedback(true, "Found format: <b>Fasta</b>", "success");
+        else feedback(true, "<b>Nucleotide FASTA</b>", "success");
         return true;
     }
 
@@ -1050,7 +968,7 @@ class alignmentVal implements ToolkitValidator {
     patternSearchValidation(): any {
 
         if (!this.elem.reformat('line'))
-            feedback(false, "Input has to be one line!", "error");
+            feedback(false, "Please enter a valid regular expression/PROSITE grammar!", "error");
 
         else if (/\s/.test(this.elem.val()))
             feedback(false, "Input must not contain spaces!", "error");
@@ -1099,7 +1017,7 @@ class alignmentVal implements ToolkitValidator {
         samccIsValid = false;
 
         if(!this.elem.reformat('atoms'))
-            feedback(false, "Must contain at least 28 ATOM records", "error");
+            feedback(false, "Must contain at least 28 PDB ATOM records", "error");
 
         else if (this.elem.val() == "") {
             feedback(false);
@@ -1113,7 +1031,6 @@ class alignmentVal implements ToolkitValidator {
     }
 
     //retseq validation is only a stub
-
     retSeqValidation(): any {
         if(this.elem.val() != "")
             feedback(true, "Valid input", "success");
