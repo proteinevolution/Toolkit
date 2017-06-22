@@ -18,7 +18,7 @@ trait Constants {
   val formMultiValueSeparator     : String = " "
   val modellerKey                 : String = "MODELIRANJE"
   val deletionThresholdRegistered : Int    = 90 // all jobs of registered users that are older than the given number are permanently deleted everywhere
-  val deletionThreshold           : Int    = 10 // all jobs of non registered users that are older than the given number are permanently deleted everywhere
+  val deletionThreshold           : Int    = 30 // all jobs of non registered users that are older than the given number are permanently deleted everywhere
 }
 
 trait ExitCodes {
