@@ -86,6 +86,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
+      println("Creating new WebSocket. ip: "+rh.remoteAddress.toString() + ", with sessionId: " + rh.session)
       userSessions
         .getUser(rh)
         .map { user =>
