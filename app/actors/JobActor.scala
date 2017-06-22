@@ -453,7 +453,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               Logger.info("Removing Job from DB")
               this.delete(job, userID, ownerRequest)
             case None =>
-              Logger.error("[JobActor.Delete] No such jobID found in Database. Ignoring.")
+              Logger.error("[JobActor.Delete] No such jobID "+jobID+" found in Database. Ignoring.")
           }
       }
 
