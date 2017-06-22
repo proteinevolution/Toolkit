@@ -90,6 +90,7 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     }
   }
 
+
   def findJob(selector: BSONDocument): Future[Option[Job]] = jobCollection.flatMap(_.find(selector).one[Job])
 
   def findJobAnnotation(selector: BSONDocument): Future[Option[JobAnnotation]] =
@@ -171,6 +172,18 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
       ).map(_.result[Job])
     )
   }
+
+
+  // Updates multiple Jobs in the database but does not return them
+  def updateAndFetchJobs(selector: BSONDocument, modifier: BSONDocument): Future[List[Future[Option[Job]]]] = {
+    findJobs(selector).map{ jobList =>
+      jobList.map{ job =>
+        modifyJob(BSONDocument(Job.JOBID -> job.jobID), modifier)
+        }
+      }
+    }
+
+
   // Updates multiple Jobs in the database but does not return them
   def updateJobs(selector: BSONDocument, modifier: BSONDocument): Future[UpdateWriteResult] = {
     jobCollection.flatMap(_.update(selector, modifier, multi = true))
@@ -268,4 +281,11 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
   }
 
   //def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))
+  def removeJob(selector : BSONDocument) : Future[WriteResult] = {
+    jobAnnotationCollection.flatMap(_.remove(selector))
+    jobCollection.flatMap(_.remove(selector))
+    resultCollection.flatMap(_.remove(selector))
+  }
+
+
 }
