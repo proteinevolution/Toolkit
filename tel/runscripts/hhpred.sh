@@ -302,16 +302,18 @@ else
       updateProcessLog
 fi
 
-if [ "%alignmode.content" = "global" ] ; then
-    MACT_SCORE=0.0
-else
+if [ "%alignmode.content" = "loc" ] ; then
     MACT_SCORE=%macthreshold.content
+
+    if [ "%macmode.content" = "-realign" ] ; then
+        MACT="-realign -mact ${MACT_SCORE}"
+    else
+        MACT="-norealign"
+    fi
 fi
 
-if [ "%macmode.content" = "-realign" ] ; then
-    MACT="-realign -mact ${MACT_SCORE}"
-else
-    MACT="-norealign"
+if [ "%alignmode.content" = "glob" ] ; then
+    MACT="-realign -mact 0.0"
 fi
 
 # Perform HHsearch #
