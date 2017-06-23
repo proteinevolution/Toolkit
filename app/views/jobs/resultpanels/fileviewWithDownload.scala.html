@@ -10,15 +10,10 @@
 
     <script>
          $(document).ready( function() {
-             $.LoadingOverlay("show");
              $.ajax({
              type: 'GET',
              url: 'files/@jobID/@{filename}',
-             error: function(){
-                 $.LoadingOverlay("hide");
-             }
          }).done(function (data_) {
-             $.LoadingOverlay("hide");
              $('#fileviewerDownload_@{resultname}').append(data_)
          });
          });
