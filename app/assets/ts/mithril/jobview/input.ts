@@ -57,7 +57,7 @@ let ParameterAlignmentComponent = {
                     $("#hhpred_align").prop('checked', true);
                 } else {
                     $(".inputDBs").prop('disabled', false);
-                    $("#alignment").attr("rows", "18");
+                    $("#alignment").attr("rows", "14");
                     $("#alignment_two").hide();
                     $("#alignment_two").removeAttr("required", false);
                     $("#hhpred_align").prop('checked', false);
@@ -136,7 +136,7 @@ let ParameterAlignmentComponent = {
                 m("textarea", {
                     name: ctrl.name,
                     placeholder: ctrl.getLabel(),
-                    rows: 18,
+                    rows: 14,
                     cols: 70,
                     id: ctrl.id,
                     "class": "alignment",
