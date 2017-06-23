@@ -244,7 +244,8 @@
                             <a data-open="subnavFAQModal">FAQ</a>
                             <a data-open="privacyPolicyModal">Privacy Policy</a>
                             <a data-open="imprintModal">Imprint</a>
-                            <a data-open="contactModal">Contact</a>
+                            <a data-open="contactModal">Contact Us</a>
+                            <a data-open="citeModal">Cite Us</a>
                             <a href="/#/news">News</a>
                         </div>
                         <div id="socket"> © 2008-@(new Date().format("yyyy")), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen</div>
@@ -276,6 +277,11 @@
         <div class="small reveal" id="contactModal" data-reveal>
             @helpmodals.contactmodal()
         </div>
+
+        <div class="small reveal" id="citeModal" data-reveal>
+        @helpmodals.citemodal()
+        </div>
+
 
 
         <!-- Foundation 6 -->
