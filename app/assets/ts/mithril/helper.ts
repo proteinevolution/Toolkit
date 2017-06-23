@@ -21,8 +21,7 @@ let tabulated = function(element : any, isInit : boolean) : any {
                 ui.panel.addClass("result-panel");
                 let timerOverlay = setTimeout(function(){
                     $.LoadingOverlay("show")}, 300);
-                {}{{{}}}
-                ui.jqXHR.then(function () {
+                    ui.jqXHR.then(function () {
                     clearTimeout(timerOverlay);$.LoadingOverlay("hide");
                 });
             },
