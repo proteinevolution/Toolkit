@@ -446,6 +446,7 @@ hr {
 
 .result-panel{
     font-size: 0.65em;
+    min-height: 30em;
 }
 
 .result-panel a {
