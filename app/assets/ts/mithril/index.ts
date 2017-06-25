@@ -208,7 +208,7 @@ let trafficBarComponent = {
 let tilescomponent = {
 
     controller: function () {
-        let getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(2);
+        let getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(1);
         return {
             articles: m.request({
                 url: getRecentArticlesRoute.url,
@@ -224,18 +224,60 @@ let tilescomponent = {
                 return m("div", {
                         "class": "column column-block tile_main_container"
                     },
-                    m("div", {"class": "tile_container"},
-                        m("div", {"class": "tile_left", 'style': {'background-image': 'url(' + article.imagePath + ')'}}
-                        ),
-                        m("div", {"class": "tile_right"},
-                            m("div", {"class": "rightContainer"},
-                                m("a", {href: article.link},article.title),
-                                m("hr"),
-                                m("p", m.trust(article.text)),
-                                m("a", {href: article.link}, m("i", {"class": "fa  fa-angle-right fa-2x"}))
+                        m("div", {"class": "tile_container"},
+                            m("div", {"class": "tile_img", 'style': {'background-image': 'url(/assets/images/news.jpg)'}},
+                            ),
+                            m("div", {"class": "text_part"},
+                                m("h5", "Recent Updates"),
+                                m("a", {"data-open": "privacyPolicyModal", href: "#YourAnchor"},
+                                    m("h6", "20 June 2017"),
+                                    m("p", "Profile HMM database of",
+                                        m("em", " Arabidopsis thaliana"),
+                                        m("span", " is now available for HHpred")
+                                    )
+                                ),
+                                m("a", {"data-open": "privacyPolicyModal"},
+                                    m("h6", "10 June 2017"),
+                                    m("p", "Profile HMM databases of many bacterial proteomes are now available for HHpred")
+                                ),
+                                m("a", {"data-open": "subnavHelpModal"},
+                                    m("h6", "19 May 2017"),
+                                    m("p", "Welcome to the new version of the MPI Bioinformatics Toolkit",
+                                        m("span", {"class": "read_more"}, " (read more..)"),
+                                    )
+
+                                )
+                            ),
+                            m("div", {"class": "quick_links"},
+                                m("h5", "Quick Links"),
+                                m("a", {href: "/#/tools/hhpred"},
+                                    m("a", "HHpred"),
+                                    m("i", {"class": "fa fa-angle-right fa-2x"}),
+                                ),
+                                m("br"),
+                                m("a", {href: "/#/tools/hhblits"},
+                                    m("a", "HHblits"),
+                                    m("i", {"class": "fa fa-angle-right fa-2x"}),
+                                ),
+                                m("br"),
+                                m("a", {href: "/#/tools/hhrepid"},
+                                    m("a", "HHrepID"),
+                                    m("i", {"class": "fa fa-angle-right fa-2x"}),
+                                ),
+                                m("br"),
+                                m("a", {href: "/#/tools/pcoils"},
+                                    m("a", "PCOILS"),
+                                    m("i", {"class": "fa fa-angle-right fa-2x"}),
+                                ),
+                                m("br"),
+                                m("a", {href: "/#/tools/clans"},
+                                    m("a", "CLANS"),
+                                    m("i", {"class": "fa fa-angle-right fa-2x"}),
+                                ),
+                                m("br"),
                             )
                         )
-                    )
+
                 )
 
             })
