@@ -300,7 +300,7 @@ FIELDSET {
 
 .quick_links {
     width: 20%;
-    padding-top: 2em;
+    padding-top: 1.6em;
     border-left: 1px dashed lightgrey;
 }
 
@@ -317,6 +317,7 @@ FIELDSET {
 .quick_links a {
     color: #626262;
     font-size: 0.9em;
+    margin-left: -0.8em;
 }
 
 .quick_links i {
@@ -339,7 +340,7 @@ FIELDSET {
 
 .text_part {
     width: 65%;
-    padding: 2em 1em 1em 2em;
+    padding: 1.6em 1em 1em 2em;
     text-align: left;
 
 }
@@ -354,6 +355,7 @@ FIELDSET {
     color: rgba(0, 110, 98, 166);
     margin-bottom: 0.5em;
     font-weight: bold;
+    font-size: 13pt;
 }
 
 .text_part h6 {

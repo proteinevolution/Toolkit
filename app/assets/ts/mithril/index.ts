@@ -229,21 +229,28 @@ let tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
-                                m("a", {"data-open": "privacyPolicyModal", href: "#YourAnchor"},
-                                    m("h6", "20 June 2017"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "June 20, 2017"),
                                     m("p", "Profile HMM database of",
                                         m("em", " Arabidopsis thaliana"),
+                                        m("span", " is online")
+                                    )
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal"},
+                                    m("h6", "June 10, 2017"),
+                                    m("p", "Profile HMM databases of many bacterial proteomes are online")
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal"},
+                                    m("h6", "May 27, 2017"),
+                                    m("p", "Profile HMM databases of",
+                                        m("em", " Mycobacterium tuberculosis"),
                                         m("span", " is now available for HHpred")
                                     )
                                 ),
-                                m("a", {"data-open": "privacyPolicyModal"},
-                                    m("h6", "10 June 2017"),
-                                    m("p", "Profile HMM databases of many bacterial proteomes are now available for HHpred")
-                                ),
-                                m("a", {"data-open": "subnavHelpModal"},
-                                    m("h6", "19 May 2017"),
+                                m("a", {"data-open": "recentUpdatesModal"},
+                                    m("h6", "May 19, 2017"),
                                     m("p", "Welcome to the new version of the MPI Bioinformatics Toolkit",
-                                        m("span", {"class": "read_more"}, " (read more..)"),
+                                        m("span", {"class": "read_more"}, " (read more)"),
                                     )
 
                                 )
@@ -262,6 +269,11 @@ let tilescomponent = {
                                 m("br"),
                                 m("a", {href: "/#/tools/hhrepid"},
                                     m("a", "HHrepID"),
+                                    m("i", {"class": "fa fa-angle-right fa-2x"}),
+                                ),
+                                m("br"),
+                                m("a", {href: "/#/tools/psiblast"},
+                                    m("a", "BLAST"),
                                     m("i", {"class": "fa fa-angle-right fa-2x"}),
                                 ),
                                 m("br"),
