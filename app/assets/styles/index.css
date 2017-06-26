@@ -301,7 +301,7 @@ FIELDSET {
 .quick_links {
     width: 20%;
     padding-top: 1.6em;
-    border-left: 1px dashed lightgrey;
+    border-left: 2px dashed lightgrey;
 }
 
 .quick_links i {
