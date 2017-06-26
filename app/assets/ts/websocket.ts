@@ -17,6 +17,7 @@ let attempts = 1;
 declare var titlenotifier: any;
 
 connect = function() : boolean {
+    console.log("trying to connect websocket");
     if (!wsConnected && !wsConnecting) {
         wsConnecting = true;
         let wsRoute  = jsRoutes.controllers.Application.ws;
@@ -54,19 +55,22 @@ onOpen = function(event : Event) : any {
 };
 
 onError = function(event : ErrorEvent) : any {
-    wsConnected = false;
-    $("#offline-alert").fadeIn();   // show the "Reconnecting ..." message
-    let time = generateInterval(attempts);
-    console.log("trying to reconnect in ... " + time);
-    // We've tried to reconnect so increment the attempts by 1
-    attempts++;
-    setTimeout(connect(), time);
+    console.log("websocket got disconnected", event.message)
+    // wsConnected = false;
+    // $("#offline-alert").fadeIn();   // show the "Reconnecting ..." message
+    // let time = generateInterval(attempts);
+    // console.log("trying to reconnect in ... " + time);
+    // // We've tried to reconnect so increment the attempts by 1
+    // attempts++;
+    // setTimeout(connect(), time);
 };
 
 onClose = function(event : CloseEvent) : any {
     wsConnected = false;
+    wsConnecting = false;
     $("#offline-alert").fadeIn();   // show the "Reconnecting ..." message
     let time = generateInterval(attempts);
+    console.log("websocket was closed.");
     console.log("trying to reconnect in ... " + time);
     // We've tried to reconnect so increment the attempts by 1
     attempts++;
