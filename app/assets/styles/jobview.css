@@ -977,8 +977,14 @@ textarea:focus{
 }
 
 .processJobIdContainer {
+    margin-top:1em;
     display: flex;
 }
+
+.processCiteContainer a {
+    color: rgba(0, 110, 98, 166);
+}
+
 
 #viewAlignment {
     float: right;

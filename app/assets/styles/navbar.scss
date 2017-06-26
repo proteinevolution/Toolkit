@@ -272,9 +272,10 @@ i {
 .tabs-title > a {
 
   overflow: hidden;
-  color: #6e6e6e !important;
+  color: #888 !important;
   position:relative;
   text-shadow: 0 1px 1px white;
+  font-weight: bold;
 }
 
 .tabs-title > a:focus, .tabs-title > a[aria-selected='true']::after {
@@ -339,7 +340,7 @@ img#logomin {
 }
 
 .toolsec a {
-
+  font-weight: bold;
   border-right: none;
   color: grey;
   text-decoration: none;

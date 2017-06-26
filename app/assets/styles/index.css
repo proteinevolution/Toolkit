@@ -364,6 +364,7 @@ FIELDSET {
     color: #2E8C81;
     margin-bottom: 0;
     width: 10em;
+    opacity: 0.85;
 }
 
 .text_part hr {
