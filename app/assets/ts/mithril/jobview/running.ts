@@ -14,6 +14,12 @@ let JobRunningComponent = {
     view: function(ctrl : any, args : any) : any {
         return m("div", { "class": "running-panel" , config: foundationConfig}, [
             m('h5', "Your submission is being processed!"),
+            m("div", {"class": "processCiteContainer"},
+                m("span", "If you use our Toolkit for your research, please cite: "),
+                m("a", {href: "https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348", target: "_blank"},
+                m("a", "Alva et al. NAR (2016).")),
+                m("p"," ")
+            ),
             m("div", {"class": "processJobIdContainer"},
                 m('p', "Job ID:"),
                 m('p',  {style: "margin-left: 5px"}, ' ' + args.job().jobID)),
