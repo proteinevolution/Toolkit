@@ -302,12 +302,14 @@ FIELDSET {
     width: 20%;
     padding-top: 1.6em;
     border-left: 1px dashed lightgrey;
+    text-align: left;
+    padding-left: 1.5em;
 }
 
 .quick_links i {
-    position: absolute;
     font-size: 1.65em !important;
-    padding-left: 0.5em;
+    padding-right: 1.5em;
+
 }
 
 .quick_links br {
@@ -317,11 +319,11 @@ FIELDSET {
 .quick_links a {
     color: #626262;
     font-size: 0.9em;
-    margin-left: -0.8em;
+    float: left;
 }
 
 .quick_links i {
-    color: rgba(0, 110, 98, 166);
+    color: #2E8C81;
 }
 
 .tile_container {
@@ -352,14 +354,14 @@ FIELDSET {
 
 
 .text_part h5, .quick_links h5 {
-    color: rgba(0, 110, 98, 166);
+    color: #2E8C81;
     margin-bottom: 0.5em;
     font-weight: bold;
-    font-size: 13pt;
+    font-size: 12pt;
 }
 
 .text_part h6 {
-    color: rgba(0, 110, 98, 166);
+    color: #2E8C81;
     margin-bottom: 0;
     width: 10em;
 }
@@ -367,11 +369,11 @@ FIELDSET {
 .text_part hr {
     position: absolute;
     width: 8em;
-    background-color: rgba(0, 110, 98, 166);
+    color: #2E8C81;
 }
 
 .text_part .read_more {
-    color: rgba(0, 110, 98, 166);
+    color: #2E8C81;
 }
 
 
