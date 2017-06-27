@@ -1,3 +1,4 @@
+import com.typesafe.sbt.packager.MappingsHelper._
 lazy val akkaVersion  = "2.4.19"
 lazy val kamonVersion = "0.6.6"
 
@@ -144,3 +145,5 @@ scalacOptions ++= Seq(
 )
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
+
+mappings in Universal ++= directory(baseDirectory.value / "tel")
