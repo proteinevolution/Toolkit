@@ -378,19 +378,6 @@ FIELDSET {
 }
 
 
-.tile_container:after {
-    content: "";
-    width: 0;
-    height: 0;
-    border: 31px solid transparent;
-    border-right-color: white;
-    border-left: none;
-    position: absolute;
-    margin-left: 6.35em;
-    margin-top: 7em;
-
-}
-
 .rightContainer {
     height: 7em;
     overflow: hidden;
