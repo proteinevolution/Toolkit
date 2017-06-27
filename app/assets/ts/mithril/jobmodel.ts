@@ -8,6 +8,7 @@ window.JobModel = {
         "min_cov": "20",
         "min_seqid_query": "0",
         "gap_open": 11,
+        "mafft_gap_open": "1.53",
         "desc": "250",
         "alignmode": "local",
         "maxrounds": "1",

@@ -48,15 +48,19 @@ updateProcessLog
 
 if [ %output_order.content = "input" ] ; then
 
-    mafft --op %gap_open.content \
+    mafft --op %mafft_gap_open.content \
           --ep %offset.content \
           --quiet \
+          --auto \
+          --thread %THREADS \
           %alignment.path > ../results/alignment.fas
 else
-    mafft --op %gap_open.content \
+    mafft --op %mafft_gap_open.content \
           --ep %offset.content \
           --quiet \
           --reorder \
+          --auto \
+          --thread %THREADS \
           %alignment.path > ../results/alignment.fas
 fi
 
