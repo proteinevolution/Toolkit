@@ -1056,7 +1056,7 @@ final class ToolFactory @Inject()(
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels
-                .patternSearch("PatternSearch", jobID, "output", jsvalue, this.values(Toolnames.PATSEARCH))
+                .patternSearch("PatternSearch", jobID, jsvalue, this.values(Toolnames.PATSEARCH))
           }
         }
       )
