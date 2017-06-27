@@ -146,4 +146,3 @@ scalacOptions ++= Seq(
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
-mappings in Universal ++= directory(baseDirectory.value / "tel")
