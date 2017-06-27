@@ -177,7 +177,6 @@ window.Index = {
     }
 };
 
-
 let trafficBarComponent = {
     controller : function() : any {},
     view: function () {
@@ -225,7 +224,7 @@ let tilescomponent = {
                         "class": "column column-block tile_main_container"
                     },
                         m("div", {"class": "tile_container"},
-                            m("div", {"class": "tile_img", 'style': {'background-image': 'url(/assets/images/fold_galaxy.png)'}},
+                            m("div", {"class": "tile_img", 'style': {'background-image': 'url(/assets/images/fold_galaxy.png)'}}
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
@@ -250,9 +249,8 @@ let tilescomponent = {
                                 m("a", {"data-open": "recentUpdatesModal"},
                                     m("h6", "May 19, 2017"),
                                     m("p", "Welcome to the new version of the MPI Bioinformatics Toolkit",
-                                        m("span", {"class": "read_more"}, "  (read more)"),
+                                        m("span", {"class": "read_more"}, "  (read more)")
                                     )
-
                                 )
                             ),
                             m("div", {"class": "quick_links"},
@@ -261,79 +259,90 @@ let tilescomponent = {
                                     m("tr",
                                         m("td",
                                             m("a", {href: "/#/tools/hhpred"},
-                                                m("a", "HHpred"),
-                                            ),
+                                                m("a", "HHpred")
+                                            )
                                         ),
                                         m("td",
                                             m("a", {href: "/#/tools/hhpred"},
-                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"}),
-                                            ),
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
                                         )
                                     ),
                                     m("tr",
                                         m("td",
                                             m("a", {href: "/#/tools/hhblits"},
-                                                m("a", "HHblits"),
-                                            ),
+                                                m("a", "HHblits")
+                                            )
                                         ),
                                         m("td",
                                             m("a", {href: "/#/tools/hhblits"},
-                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"}),
-                                            ),
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
                                         )
                                     ),
                                     m("tr",
                                         m("td",
                                             m("a", {href: "/#/tools/hhrepid"},
-                                                m("a", "HHrepID"),
-                                            ),
+                                                m("a", "HHrepID")
+                                            )
                                         ),
                                         m("td",
                                             m("a", {href: "/#/tools/hhprepid"},
-                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"}),
-                                            ),
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
                                         )
                                     ),
                                     m("tr",
                                         m("td",
                                             m("a", {href: "/#/tools/psiblast"},
-                                                m("a", "BLAST"),
-                                            ),
+                                                m("a", "PSI-BLAST")
+                                            )
                                         ),
                                         m("td",
                                             m("a", {href: "/#/tools/psiblast"},
-                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"}),
-                                            ),
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
                                         )
                                     ),
                                     m("tr",
                                         m("td",
                                             m("a", {href: "/#/tools/pcoils"},
-                                                m("a", "PCOILS"),
-                                            ),
+                                                m("a", "PCOILS")
+                                            )
                                         ),
                                         m("td",
                                             m("a", {href: "/#/tools/pcoils"},
-                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"}),
-                                            ),
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
                                         )
                                     ),
                                     m("tr",
                                         m("td",
                                             m("a", {href: "/#/tools/clans"},
-                                                m("a", "CLANS"),
-                                            ),
+                                                m("a", "CLANS")
+                                            )
                                         ),
                                         m("td",
                                             m("a", {href: "/#/tools/clans"},
-                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"}),
-                                            ),
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
                                         )
                                     ),
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/mafft"},
+                                                m("a", "MAFFT")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/mafft"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    )
                                 )
                             )
                         )
-
                 )
 
             })
