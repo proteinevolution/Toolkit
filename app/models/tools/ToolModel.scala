@@ -271,7 +271,7 @@ final class ToolFactory @Inject()(
      Seq.empty),
     // MAFFT
     ("mafft",
-     Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.GAP_OPEN, paramAccess.OFFSET),
+     Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.MAFFT_GAP_OPEN, paramAccess.OFFSET),
      Seq(
        "ali2d",
        "aln2plot",
