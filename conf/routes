@@ -178,4 +178,5 @@ POST        /HHpredLoadHits                           @controllers.HHpredControl
 
 # Alignment
 POST        /AlignmentLoadHits                        @controllers.AlignmentController.loadHits(jobID: String, start: Int, end: Int, resultName: String)
+POST        /AlignmentLoadHitsClustal                 @controllers.AlignmentController.loadHitsClustal(jobID: String, resultName: String, color: Boolean)
 POST        /AlignmentGetAln                          @controllers.AlignmentController.getAln(jobID: String, resultName: String)

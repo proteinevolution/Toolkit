@@ -18,17 +18,22 @@
     <a onclick="selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Alignment</span></a>
+    <a type="button" onclick="colorAA()"><span id="colorAA">Color alignment</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
     Number of sequences: <b>@alignment.alignment.length</b>
         <br />
         <br />
+
+
 <form id="alignmentResult">
     <table class="unstriped">
-        <tbody class="alignmentTBody">
-            @Html(BlastVisualization.clustal(alignment, 0, 95))
+        <tbody id="alignmentTable">
         </tbody>
+        <tr>
+            <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
+        </tr>
     </table>
 </form>
 </div>
@@ -38,7 +43,7 @@
         var fileUrl = "/files/@jobID/alignment.clustalw_aln";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.clustal";
         var selectAllBool = false;
-        var colorAAs = true;
+        var colorAAsClustal = false;
         var numHits = @alignment.alignment.length;
         var resultName = '@resultName';
         var jobID = '@jobID';
@@ -103,6 +108,40 @@
         $(document).ready(function () {
 
             $("#alignmentResult").floatingScroll('init');
-            linkCheckboxes();
+            getHits(false).then(function(){
+                linkCheckboxes();
+            });
+
         });
+
+
+        function getHits(color){
+                $('#loadingHits').show();
+                var route = jsRoutes.controllers.AlignmentController.loadHitsClustal(jobID, resultName, color);
+                return $.ajax({
+                    method: route.method,
+                    url: route.url
+                }).done(function (data_) {
+                    $("#alignmentTable").append(data_);
+                    loading = false;
+                    $('#loadingHits').hide();
+                    linkCheckboxes();
+                    $("#alignments").floatingScroll('init');
+                });
+        }
+
+        function colorAA(){
+            colorAAsClustal = !colorAAsClustal;
+            $.LoadingOverlay("show");
+            $("#alignmentTable").empty();
+            if(colorAAsClustal ){
+                $("#colorAA").addClass("colorToggle");
+            }else {
+                $("#colorAA").removeClass("colorToggle");
+            }
+            getHits(colorAAsClustal ).then(function(){
+                $.LoadingOverlay("hide");
+                linkCheckboxes();
+            });
+        }
 </script>
