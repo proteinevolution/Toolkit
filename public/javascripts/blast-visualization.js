@@ -431,3 +431,23 @@ function linkCheckboxes(){
 function generateFilename(){
     return Math.floor(100000 + Math.random() * 900000);
 }
+
+/**
+ * wraps sequences for search tools
+ * for this it empties the table "#alignmentTable"
+ * and calls get Hits taking the boolean wrapped as a parameter
+ */
+function wrap(){
+    wrapped = !wrapped;
+    $.LoadingOverlay("show");
+    $("#alignmentTable").empty();
+    if(wrapped){
+        $("#wrap").addClass("colorToggleBar");
+    }else {
+        $("#wrap").removeClass("colorToggleBar");
+    }
+    getHits(0, shownHits, wrapped).then(function(){
+        $.LoadingOverlay("hide");
+        linkCheckboxes();
+    });
+}

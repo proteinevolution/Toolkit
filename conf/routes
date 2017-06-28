@@ -151,7 +151,7 @@ GET  /templateAlignmentHHblits/:jobID/:accession      @controllers.HHblitsContro
 
 
 # Hmmer
-POST        /HmmerLoadHits                            @controllers.HmmerController.loadHits(jobID: String, start: Int, end: Int)
+POST        /HmmerLoadHits                            @controllers.HmmerController.loadHits(jobID: String, start: Int, end: Int, wrapped: Boolean)
 POST        /alnEvalHmmer                             @controllers.HmmerController.alnEval(jobID: String, eval:String)
 POST        /alnHmmer                                 @controllers.HmmerController.aln(jobID: String)
 POST        /evalHmmerFull                            @controllers.HmmerController.evalFull(jobID: String, eval:String, filename: String)
@@ -162,7 +162,7 @@ POST        /evalPSIBlast                             @controllers.PSIBlastContr
 POST        /alnPSIBlast                              @controllers.PSIBlastController.aln(jobID:String)
 POST        /evalPSIBlastFull                         @controllers.PSIBlastController.evalFull(jobID : String, eval: String, filename: String)
 POST        /PSIBlastFull                             @controllers.PSIBlastController.full(jobID : String, filename: String)
-POST        /PSIBlastLoadHits                         @controllers.PSIBlastController.loadHits(jobID: String, start: Int, end: Int)
+POST        /PSIBlastLoadHits                         @controllers.PSIBlastController.loadHits(jobID: String, start: Int, end: Int, wrapped: Boolean)
 
 # HHblits
 POST        /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String, eval:String, filename: String)
