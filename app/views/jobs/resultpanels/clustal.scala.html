@@ -29,8 +29,8 @@
 
 <form id="alignmentResult">
     <table class="unstriped">
-        <tbody id="alignmentTable">
-        </tbody>
+        <table id="clustalTable">
+        </table>
         <tr>
             <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
         </tr>
@@ -50,6 +50,15 @@
         var checkboxes = [];
         var checkbox = "checkbox";
 
+
+        $(document).ready(function () {
+            getHits(false);
+
+
+            $(document).on('scroll', function () {
+                $("#alignmentResult").floatingScroll('init');
+            });
+        });
 
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates()};
@@ -105,14 +114,6 @@
         }
 
 
-        $(document).ready(function () {
-
-            $("#alignmentResult").floatingScroll('init');
-            getHits(false).then(function(){
-                linkCheckboxes();
-            });
-
-        });
 
 
         function getHits(color){
@@ -122,26 +123,25 @@
                     method: route.method,
                     url: route.url
                 }).done(function (data_) {
-                    $("#alignmentTable").append(data_);
+                    $("#clustalTable").append(data_);
                     loading = false;
-                    $('#loadingHits').hide();
                     linkCheckboxes();
-                    $("#alignments").floatingScroll('init');
+                    $('#loadingHits').hide();
+                    $.LoadingOverlay("hide");
                 });
         }
 
         function colorAA(){
             colorAAsClustal = !colorAAsClustal;
             $.LoadingOverlay("show");
-            $("#alignmentTable").empty();
+            $("#clustalTable").empty();
             if(colorAAsClustal ){
                 $("#colorAA").addClass("colorToggle");
             }else {
                 $("#colorAA").removeClass("colorToggle");
             }
-            getHits(colorAAsClustal ).then(function(){
-                $.LoadingOverlay("hide");
-                linkCheckboxes();
-            });
+            getHits(colorAAsClustal );
         }
+
+
 </script>

@@ -59,7 +59,7 @@ class AlignmentController @Inject()(aln: Alignment,
       mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
-            val hits = BlastVisualization.clustal(result, 0, 95, color)
+            val hits = BlastVisualization.clustal(result, 0, 60, color)
             Ok(hits.mkString)
           }
       }
