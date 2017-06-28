@@ -136,20 +136,53 @@ function resubmitSection(sequence, name) {
 }
 
 
-/* FORWARDING */
-
-// parameter: tool (String)
-// forwards all checked identifier and sequences to tool
+/**
+ * forward the given forwardData to the given tool
+ * @param tool
+ * @param forwardData
+ */
 function forward(tool, forwardData){
     if(forwardData == ""){
         alert("No sequence(s) selected!");
         $.LoadingOverlay("hide");
         return;
     }
-    localStorage.setItem("resultcookie", forwardData);
-    window.location.href = "/#/tools/" + tool;
+    try {
+        localStorage.setItem("resultcookie", forwardData);
+        window.location.href = "/#/tools/" + tool;
+    } catch(e) {
+        if (isQuotaExceeded(e)) {
+            // Storage full, maybe notify user or do some clean-up
+            $.LoadingOverlay("hide");
+            alert("File is too big to be forwarded. Please download the file and use the upload function of the selected tool." )
+        }
+
+    }
 }
 
+
+function isQuotaExceeded(e) {
+    var quotaExceeded = false;
+    if (e) {
+        if (e.code) {
+            switch (e.code) {
+                case 22:
+                    quotaExceeded = true;
+                    break;
+                case 1014:
+                    // Firefox
+                    if (e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                        quotaExceeded = true;
+                    }
+                    break;
+            }
+        } else if (e.number === -2147024882) {
+            // Internet Explorer 8
+            quotaExceeded = true;
+        }
+    }
+    return quotaExceeded;
+}
 // load forwarded data into alignment field
 $(document).ready(function() {
     var resultcookie = localStorage.getItem("resultcookie");
