@@ -96,15 +96,15 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "clustalo":
-                    $(elem).attr("placeholder", "Enter up to 2000 protein sequences in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 2000 protein/nucleotide sequences in FASTA format");
                     break;
 
                 case "kalign":
-                    $(elem).attr("placeholder", "Enter up to 2000 protein sequences in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 2000 protein/nucleotide sequences in FASTA format");
                     break;
 
                 case "mafft":
-                    $(elem).attr("placeholder", "Enter up to 2000 protein sequences in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 2000 protein/nucleotide sequences in FASTA format");
                     break;
 
                 case "msaprobs":
@@ -112,11 +112,11 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     break;
 
                 case "muscle":
-                    $(elem).attr("placeholder", "Enter up to 2000 protein sequences in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 2000 protein/nucleotide sequences in FASTA format");
                     break;
 
                 case "tcoffee":
-                    $(elem).attr("placeholder", "Enter up to 500 protein sequences in FASTA format");
+                    $(elem).attr("placeholder", "Enter up to 500 protein/nucleotide sequences in FASTA format");
                     break;
 
                 case "aln2plot":
@@ -270,7 +270,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let mafftTarget = new alignmentVal($(elem));
 
-            if (mafftTarget.basicValidation("")) {
+            if (mafftTarget.basicValidation("no")) {
                 mafftTarget.mustHave2();
             }
 
@@ -801,7 +801,7 @@ class alignmentVal implements ToolkitValidator {
         }
     }
 
-    basicValidation(checkDNA: string): boolean {
+    basicValidation(checkNucleotide: string): boolean {
 
         if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
             originIsFasta = false;
@@ -811,19 +811,24 @@ class alignmentVal implements ToolkitValidator {
             return true;
         }
         else if (this.elem.val() !== "" && !this.elem.validate('fasta')) {
-            feedback(false, "Invalid characters! Expecting protein sequence(s).", "error");
+            feedback(false, "Invalid characters!", "error");
             return false;
         }
         else if(!this.elem.reformat('PROTEINLETTERS')){
             feedback(false, "Invalid characters!", "error");
             return false;
         }
-        else if(checkDNA === "yes" && !this.elem.reformat('PROTEIN')){
+        else if( !this.elem.reformat('NUCLEOTIDE') && !this.elem.reformat('PROTEIN')){
+            feedback(false, "Found both protein and nucleotide sequences!", "error");
+            return false;
+        }
+
+        else if(checkNucleotide === "yes" && !this.elem.reformat('PROTEIN')){
             feedback(false, "Nucleotide FASTA. Expecting protein sequence(s).", "error");
             return false;
         }
-        else if(checkDNA === "no" && !this.elem.reformat('PROTEIN')){
-            feedback(true, "Nucleotide FASTA. Expecting protein sequence(s).", "warning");
+        else if(checkNucleotide === "no" && !this.elem.reformat('PROTEIN')){
+            feedback(true, "Nucleotide FASTA.", "success");
         }
         else if ((/^\n$/m.test(this.elem.reformat('extractheaders')))) {
             feedback(false, "Empty header!", "error");
