@@ -104,6 +104,7 @@ final class ToolFactory @Inject()(
     final val HITLIST         = "Hitlist"
     final val RESULTS         = "Results"
     final val ALIGNMENT       = "Alignment"
+    final val CLUSTAL         = "Clustal"
     final val ALIGNMENTVIEWER = "AlignmentViewer"
     final val TREE            = "Tree"
     final val SUMMARY         = "Summary"
@@ -809,6 +810,16 @@ final class ToolFactory @Inject()(
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                      "alignment",
                                                      this.values(Toolnames.CLUSTALO))
+          }
+        },
+        Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.clustal(jobID,
+                aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                "alignment",
+                this.values(Toolnames.CLUSTALO))
           }
         },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
