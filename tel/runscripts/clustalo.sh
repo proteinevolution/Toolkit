@@ -44,7 +44,7 @@ if [ ${SEQ_COUNT} -gt "2000" ] ; then
       false
 fi
 
-if [ %output_order.content == "input"] ; then
+if [ %output_order.content = "input" ] ; then
     OUTPUTORDER="--output-order=input-order"
 else
     OUTPUTORDER="--output-order=tree-order"
@@ -69,7 +69,6 @@ updateProcessLog
 
 echo "done"  >> ../results/process.log
 updateProcessLog
-
 
 reformat_hhsuite.pl clu fas ../results/alignment.clustalw_aln ../results/alignment.fas
 # Convert fasta to JSON
