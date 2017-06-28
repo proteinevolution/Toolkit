@@ -1,7 +1,7 @@
 
 @import models.results.BlastVisualization
 @import models.database.results.HmmerHSP
-@(jobID: String, hit: HmmerHSP, db: String)(implicit request: RequestHeader)
+@(jobID: String, hit: HmmerHSP, db: String, wrapped: Boolean)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@
 
 @* hit number, links *@
@@ -31,7 +31,22 @@
 <tr>
     <td><br /></td>
 </tr>
-@Html(BlastVisualization.hmmerHitWrapped(hit, 0, 80, hit.query_start, hit.hit_start))
+@if(wrapped) {
+    @Html(BlastVisualization.hmmerHitWrapped(hit, 0, 80, hit.query_start, hit.hit_start))
+}else{
+    @* seq of query, if present *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, hit.query_seq + "    " + hit.query_end.toString))
+    }
+    @* agree of query, if present *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "", hit.midline))
+    }
+    @* seq of hit, if present *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, hit.hit_seq + "    " + hit.hit_end.toString))
+    }
+}
 
 
 <tr>
