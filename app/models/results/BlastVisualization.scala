@@ -1,11 +1,12 @@
 package models.results
 
+
 import better.files._
 import models.Constants
 import models.database.results.AlignmentResult
 import play.twirl.api.Html
 import play.api.Logger
-
+import models.database.results._
 import scala.collection.mutable.ArrayBuffer
 import scala.util.matching.Regex
 
@@ -283,23 +284,77 @@ object BlastVisualization extends Constants {
   }
 
   def clustal(alignment: AlignmentResult, begin: Int, breakAfter: Int, color: Boolean): String = {
-        if (begin >alignment.alignment.head.seq.length) {
-          return ""
-        } else {
-          var string = alignment.alignment.map { elem =>
-            "<tr>" +
-              "<td>" +
-                "<input type=\"checkbox\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkbox\"><b>" +
-              "</b><td>" +
-              "<b>"+ elem.accession.take(15) + "</b><br />" +
-              "</td>" +
-              "</td>" +
-              "<td class=\"sequenceAlignment\">" +
-               {if (color) colorRegexReplacer(elem.seq.substring(begin, Math.min(begin+breakAfter, elem.seq.length))) else elem.seq.substring(begin, Math.min(begin+breakAfter, elem.seq.length))}+
-              "</td>" +
-            "</tr>"
-          }
-          return string.mkString +"<tr class=\"blank_row\"><td colspan=\"3\"></td></tr><tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + clustal(alignment, begin+breakAfter, breakAfter, color)
+    if (begin >= alignment.alignment.head.seq.length) {
+      return ""
+    } else {
+      var string = alignment.alignment.map { elem =>
+        "<tr>" +
+          "<td>" +
+          "<input type=\"checkbox\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkbox\"><b>" +
+          "</b><td>" +
+          "<b>" + elem.accession.take(15) + "</b><br />" +
+          "</td>" +
+          "</td>" +
+          "<td class=\"sequence\">" + {
+          if (color) colorRegexReplacer(elem.seq.substring(begin, Math.min(begin + breakAfter, elem.seq.length))) else elem.seq.substring(begin, Math.min(begin + breakAfter, elem.seq.length))
+        } +
+          "</td>" +
+          "</tr>"
+      }
+        return {
+          string.mkString + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr><tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + clustal(alignment, begin + breakAfter, breakAfter, color)
+        }
+    }
+  }
+
+  def hmmerHitWrapped(hit: HmmerHSP, charCount: Int, breakAfter: Int, beginQuery: Int, beginTemplate: Int): String ={
+    if (charCount >= hit.hit_len){
+      return ""
+    }
+    else {
+      val query = hit.query_seq.substring(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
+      val midline = hit.midline.substring(charCount, Math.min(charCount + breakAfter, hit.midline.length))
+      val template = hit.hit_seq.substring(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
+      val queryEnd = lengthWithoutDashDots(query)
+      val templateEnd = lengthWithoutDashDots(template)
+      if (beginQuery == beginQuery + queryEnd) {
+        return ""
+      } else {
+        return {
+          "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "    " + (beginQuery + queryEnd) + "</td></tr>" +
+            "<tr class='sequence'><td></td><td></td><td>" + midline + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "    " + (beginTemplate + templateEnd) + "</td></tr>" +
+            hmmerHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd + 1, beginTemplate + templateEnd + 1)
         }
       }
+    }
+  }
+
+  def psiblastHitWrapped(hit: PSIBlastHSP, charCount: Int, breakAfter: Int, beginQuery: Int, beginTemplate: Int): String ={
+    if (charCount >= hit.hit_len){
+      return ""
+    }
+    else {
+      val query = hit.query_seq.substring(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
+      val midline = hit.midline.substring(charCount, Math.min(charCount + breakAfter, hit.midline.length))
+      val template = hit.hit_seq.substring(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
+      val queryEnd = lengthWithoutDashDots(query)
+      val templateEnd = lengthWithoutDashDots(template)
+      if (beginQuery == beginQuery + queryEnd) {
+        return ""
+      } else {
+        return {
+          "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "    " + (beginQuery + queryEnd) + "</td></tr>" +
+            "<tr class='sequence'><td></td><td></td><td>" + midline + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "    " + (beginTemplate + templateEnd) + "</td></tr>" +
+            psiblastHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd + 1, beginTemplate + templateEnd + 1)
+        }
+      }
+    }
+  }
+
+
+  def lengthWithoutDashDots(str : String): Int ={
+    str.length-str.count(char =>  char == '-' ||  char == ".")
+  }
 }
