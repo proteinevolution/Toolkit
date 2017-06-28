@@ -282,7 +282,7 @@ object BlastVisualization extends Constants {
     newSeq
   }
 
-  def clustal(alignment: AlignmentResult, begin: Int, breakAfter: Int): String = {
+  def clustal(alignment: AlignmentResult, begin: Int, breakAfter: Int, color: Boolean): String = {
         if (begin >alignment.alignment.head.seq.length) {
           return ""
         } else {
@@ -295,11 +295,11 @@ object BlastVisualization extends Constants {
               "</td>" +
               "</td>" +
               "<td class=\"sequenceAlignment\">" +
-                elem.seq.substring(begin, Math.min(begin+breakAfter, elem.seq.length)) +
+               {if (color) colorRegexReplacer(elem.seq.substring(begin, Math.min(begin+breakAfter, elem.seq.length))) else elem.seq.substring(begin, Math.min(begin+breakAfter, elem.seq.length))}+
               "</td>" +
             "</tr>"
           }
-          return string.mkString +"<tr class=\"blank_row\"><td colspan=\"3\"></td></tr><tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + clustal(alignment, begin+breakAfter, breakAfter)
+          return string.mkString +"<tr class=\"blank_row\"><td colspan=\"3\"></td></tr><tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + clustal(alignment, begin+breakAfter, breakAfter, color)
         }
       }
 }
