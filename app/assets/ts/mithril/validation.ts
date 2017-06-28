@@ -249,7 +249,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let tcoffeeTarget = new alignmentVal($(elem));
 
-            if (tcoffeeTarget.basicValidation(false)) {
+            if (tcoffeeTarget.basicValidation("no")) {
                 tcoffeeTarget.mustHave2();
             }
 
@@ -270,7 +270,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let mafftTarget = new alignmentVal($(elem));
 
-            if (mafftTarget.basicValidation(false)) {
+            if (mafftTarget.basicValidation("")) {
                 mafftTarget.mustHave2();
             }
 
@@ -290,7 +290,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let muscleTarget = new alignmentVal($(elem));
 
-            if (muscleTarget.basicValidation(false)) {
+            if (muscleTarget.basicValidation("no")) {
                 muscleTarget.mustHave2();
             }
 
@@ -311,7 +311,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let clustaloTarget = new alignmentVal($(elem));
 
 
-            if (clustaloTarget.basicValidation(false)) {
+            if (clustaloTarget.basicValidation("no")) {
                 clustaloTarget.mustHave2();
             }
 
@@ -332,7 +332,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let kalignTarget = new alignmentVal($(elem));
 
 
-            if (kalignTarget.basicValidation(false)) {
+            if (kalignTarget.basicValidation("no")) {
                 kalignTarget.mustHave2();
             }
 
@@ -352,7 +352,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let msaprobsTarget = new alignmentVal($(elem));
 
-            if (msaprobsTarget.basicValidation(false)) {
+            if (msaprobsTarget.basicValidation("no")) {
                 msaprobsTarget.mustHave2();
             }
 
@@ -370,7 +370,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hmmerTarget = new alignmentVal($(elem));
 
-            if (hmmerTarget.basicValidation(true)) {
+            if (hmmerTarget.basicValidation("yes")) {
                 hmmerTarget.sameLengthValidation();
             }
 
@@ -388,7 +388,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hhblitsTarget = new alignmentVal($(elem));
 
-            if (hhblitsTarget.basicValidation(true)) {
+            if (hhblitsTarget.basicValidation("yes")) {
                 hhblitsTarget.sameLengthValidation();
             }
 
@@ -408,7 +408,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhpredTarget = new alignmentVal($(elem));
 
 
-            if (hhpredTarget.basicValidation(true)) {
+            if (hhpredTarget.basicValidation("yes")) {
                 hhpredTarget.sameLengthValidation();
                 hhpredTarget.hhMaxDB();
             }
@@ -427,7 +427,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let psiblastTarget = new alignmentVal($(elem));
 
-            if (psiblastTarget.basicValidation(true)) {
+            if (psiblastTarget.basicValidation("yes")) {
                 psiblastTarget.sameLengthValidation();
             }
 
@@ -450,7 +450,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let aln2plotTarget = new alignmentVal($(elem));
 
 
-            if (aln2plotTarget.basicValidation(true)) {
+            if (aln2plotTarget.basicValidation("yes")) {
                 if (aln2plotTarget.sameLengthValidation())
                     aln2plotTarget.mustHave2();
             }
@@ -465,7 +465,7 @@ let validationProcess = function(elem: any,toolname: string) {
             let frpredTarget = new alignmentVal($(elem));
 
 
-            if (frpredTarget.basicValidation(true)) {
+            if (frpredTarget.basicValidation("yes")) {
                 frpredTarget.sameLengthValidation();
             }
 
@@ -477,7 +477,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hhrepidTarget = new alignmentVal($(elem));
 
-            if (hhrepidTarget.basicValidation(true)) {
+            if (hhrepidTarget.basicValidation("yes")) {
                 hhrepidTarget.sameLengthValidation();
             }
 
@@ -489,7 +489,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let pcoilsTarget = new alignmentVal($(elem));
 
-            if (pcoilsTarget.basicValidation(true)) {
+            if (pcoilsTarget.basicValidation("yes")) {
                 pcoilsTarget.sameLengthValidation();
             }
 
@@ -501,7 +501,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let repperTarget = new alignmentVal($(elem));
 
-            if (repperTarget.basicValidation(true)) {
+            if (repperTarget.basicValidation("yes")) {
                 repperTarget.sameLengthValidation();
             }
 
@@ -513,7 +513,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let marcoilTarget = new alignmentVal($(elem));
 
-            if (marcoilTarget.basicValidation(true)) {
+            if (marcoilTarget.basicValidation("yes")) {
                 marcoilTarget.mustHave1();
             }
 
@@ -523,7 +523,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let tprpredTarget = new alignmentVal($(elem));
 
-            if (tprpredTarget.basicValidation(true)) {
+            if (tprpredTarget.basicValidation("yes")) {
                 tprpredTarget.mustHave1();
             }
 
@@ -535,7 +535,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let ali2dTarget = new alignmentVal($(elem));
 
-            if (ali2dTarget.basicValidation(true)) {
+            if (ali2dTarget.basicValidation("yes")) {
                 if (ali2dTarget.sameLengthValidation())
                     ali2dTarget.mustHave2();
             }
@@ -548,7 +548,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let quick2dTarget = new alignmentVal($(elem));
 
-            if (quick2dTarget.basicValidation(true)) {
+            if (quick2dTarget.basicValidation("yes")) {
                 quick2dTarget.sameLengthValidation();
             }
 
@@ -576,7 +576,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let ancesconTarget = new alignmentVal($(elem));
 
-            if (ancesconTarget.basicValidation(true)) {
+            if (ancesconTarget.basicValidation("yes")) {
                 if (ancesconTarget.sameLengthValidation())
                     ancesconTarget.mustHave2();
             }
@@ -597,7 +597,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let mmseqs2Target = new alignmentVal($(elem));
 
-            if (mmseqs2Target.basicValidation(true)) {
+            if (mmseqs2Target.basicValidation("yes")) {
                 mmseqs2Target.mustHave2();
             }
 
@@ -609,7 +609,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let phymlTarget = new alignmentVal($(elem));
 
-            if (phymlTarget.basicValidation(true)) {
+            if (phymlTarget.basicValidation("yes")) {
                 if (phymlTarget.sameLengthValidation())
                     phymlTarget.mustHave2();
             }
@@ -631,7 +631,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let clansTarget = new alignmentVal($(elem));
 
-            if (clansTarget.basicValidation(true)) {
+            if (clansTarget.basicValidation("yes")) {
                 clansTarget.mustHave2();
             }
 
@@ -648,7 +648,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let backtransTarget = new alignmentVal($(elem));
 
-            if (backtransTarget.basicValidation(true)) {
+            if (backtransTarget.basicValidation("yes")) {
                 backtransTarget.mustHave1();
             }
 
@@ -667,7 +667,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hhfilterTarget = new alignmentVal($(elem));
 
-            if (hhfilterTarget.basicValidation(true)) {
+            if (hhfilterTarget.basicValidation("yes")) {
                 if(hhfilterTarget.sameLengthValidation())
                     hhfilterTarget.mustHave2();
             }
@@ -801,7 +801,7 @@ class alignmentVal implements ToolkitValidator {
         }
     }
 
-    basicValidation(checkDNA: boolean): boolean {
+    basicValidation(checkDNA: string): boolean {
 
         if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
             originIsFasta = false;
@@ -810,22 +810,19 @@ class alignmentVal implements ToolkitValidator {
             $("#alignment").val(this.elem.reformat('fasta'));
             return true;
         }
-
         else if (this.elem.val() !== "" && !this.elem.validate('fasta')) {
             feedback(false, "Invalid characters! Expecting protein sequence(s).", "error");
             return false;
         }
-
         else if(!this.elem.reformat('PROTEINLETTERS')){
             feedback(false, "Invalid characters!", "error");
             return false;
         }
-
-        else if(checkDNA && !this.elem.reformat('PROTEIN')){
+        else if(checkDNA === "yes" && !this.elem.reformat('PROTEIN')){
             feedback(false, "Nucleotide FASTA. Expecting protein sequence(s).", "error");
             return false;
         }
-        else if(!checkDNA && !this.elem.reformat('PROTEIN')){
+        else if(checkDNA === "no" && !this.elem.reformat('PROTEIN')){
             feedback(true, "Nucleotide FASTA. Expecting protein sequence(s).", "warning");
         }
         else if ((/^\n$/m.test(this.elem.reformat('extractheaders')))) {
