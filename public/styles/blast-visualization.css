@@ -662,3 +662,7 @@ table.dataTable.no-footer{
 .blank_row {
     height: 1em;
 }
+
+#clustalTable td {
+    padding-right: 0.2em;
+}
