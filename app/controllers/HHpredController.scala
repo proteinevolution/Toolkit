@@ -32,7 +32,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
   }
 
-  def runScript(jobID: String, accession: String): Action[AnyContent] = Action.async {
+  def runScript(jobID: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
     if (!templateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${templateAlignmentScript.name} is not executable.")
@@ -49,7 +49,10 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
       }
     }
   }
-  def alnEval(jobID: String, eval: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val filename  = (json \ "fileName").as[String]
+    val eval      = (json \ "evalue").as[String]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
@@ -72,8 +75,9 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     }
   }
 
-  def aln(jobID: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
+  def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
+    val filename  = (json \ "fileName").as[String]
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
@@ -110,8 +114,11 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
 
-  def loadHits(jobID: String, start: Int, end: Int, isColor: Boolean): Action[AnyContent] = Action.async {
-    implicit request =>
+  def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json      = request.body.asJson.get
+    val start     = (json \ "start").as[Int]
+    val end       = (json \ "end").as[Int]
+    val isColor       = (json \ "isColor").as[Boolean]
       mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result = hhpred.parseResult(jsValue)
