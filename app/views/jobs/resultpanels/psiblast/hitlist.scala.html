@@ -167,13 +167,16 @@ function drawDataTable(){
 
 function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
     // full seq is retrieved
-    var data = {"checkboxes": checkboxes.removeDuplicates()};
+    var data = {};
+    data.checkboxes = checkboxes.removeDuplicates();
     var route = null;
     var filename = generateFilename();
     $.LoadingOverlay("show");
     if(boolFullLength) {
         if(boolEvalue) {
-            route = jsRoutes.controllers.PSIBlastController.evalFull(jobID, evalue, filename);
+            data.filename = filename;
+            data.evalue = evalue;
+            route = jsRoutes.controllers.PSIBlastController.evalFull(jobID);
         }else{
             if(data.checkboxes.length == 0){
                 $('#forwardModal_@{tool.toolNameShort}').foundation('close');
@@ -181,11 +184,12 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
                 alert("No sequence(s) selected!");
                 return false;
             }
-            route = jsRoutes.controllers.PSIBlastController.full(jobID, filename);
+            data.filename = filename;
+            route = jsRoutes.controllers.PSIBlastController.full(jobID);
         }
         $.ajax({
             url: route.url,
-            contentType: "application/json",
+            contentType: 'application/json',
             data: JSON.stringify(data),
             method: route.method,
             error: function(){
@@ -204,8 +208,9 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
         })
     }else{
         if(boolEvalue) {
-            route = jsRoutes.controllers.PSIBlastController.alnEval(jobID, evalue);
+            route = jsRoutes.controllers.PSIBlastController.alnEval(jobID);
         }else{
+            data.evalue = evalue;
             route = jsRoutes.controllers.PSIBlastController.aln(jobID);
         }
         $.ajax({
@@ -224,8 +229,14 @@ function getHits(start, end, isWrapped){
 	    loading = true;
         $('#loadingHits').show();
         $('#loadHits').hide();
-        var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID,start, end, isWrapped);
+        var data = {};
+        data.start = start;
+        data.end = end;
+        data.wrapped = wrapped;
+        var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID);
         return $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data),
             method: route.method,
             url: route.url
         }).done(function (data_) {
