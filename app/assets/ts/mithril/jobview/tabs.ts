@@ -39,6 +39,10 @@ let JobTabsComponent = {
                     active = listitems.length;
                     listitems = listitems.concat("Pending");
                     break;
+                case 8:
+                    active = listitems.length;
+                    listitems = listitems.concat("Warning");
+                    break;
                 default:
                     break;
             }
@@ -113,7 +117,7 @@ let JobTabsComponent = {
         return m("div", { "class": "tool-tabs", id: "tool-tabs", config: tabulated.bind(ctrl) }, [
             m("ul", [ // Tab List
                 ctrl.listitems.map(function(item : any) {
-                    if(item == "Input" || item == "Parameters" || item == "Running" || item == "Queued" || item == "Error" || item == "Pending"){
+                    if(item == "Input" || item == "Parameters" || item == "Running" || item == "Queued" || item == "Error" || item == "Pending" || item == "Warning"){
                         return m("li", { id: "tab-" + item},
                             m("a", { href: "#tabpanel-" + item, config: hideSubmitButtons }, item)
                         );
@@ -211,6 +215,8 @@ let JobTabsComponent = {
                     m(JobErrorComponent, {job: ctrl.job})) : void 0,
                 ctrl.isJob && ctrl.state === 7 ? m("div", { "class": "tabs-panel", id: "tabpanel-Pending" },
                     m(JobPendingComponent, {job: ctrl.job})) : void 0,
+                ctrl.isJob && ctrl.state === 8 ? m("div", { "class": "tabs-panel", id: "tabpanel-Warning" },
+                    m(JobLimitReachedComponent, {job: ctrl.job})) : void 0,
                 m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob })
             ),
             ctrl.views ? ctrl.views.map(function(view : any) {

@@ -1,14 +1,14 @@
 package actors
 
-import javax.inject.{ Inject, Named }
+import javax.inject.{Inject, Named}
 
-import actors.FileWatcher.{ StartProcessReport, StopProcessReport }
+import actors.FileWatcher.{StartProcessReport, StopProcessReport}
 import actors.JobActor._
-import akka.actor.{ Actor, ActorRef }
+import akka.actor.{Actor, ActorRef}
 import akka.event.LoggingReceive
 import models.Constants
 import models.database.jobs._
-import models.database.statistics.{ JobEvent, JobEventLog }
+import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
@@ -22,20 +22,20 @@ import modules.LocationProvider
 import modules.db.MongoStore
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
+import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.{ CacheApi, NamedCache }
+import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
 
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 
 object JobActor {
 
@@ -65,6 +65,10 @@ object JobActor {
 
   // User Actor starts watching
   case class AddToWatchlist(jobID: String, userID: BSONObjectID)
+
+  // checks if user has submitted max number of jobs
+  // of jobs within a given time
+  case class CheckIPHash(jobID:  String)
 
   // UserActor Stops Watching this Job
   case class RemoveFromWatchlist(jobID: String, userID: BSONObjectID)
@@ -364,7 +368,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           if (startJob) {
             val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
             mongoStore.hashCollection.flatMap(_.insert(jobHash))
-            self ! StartJob(job.jobID)
+            self ! CheckIPHash(job.jobID)
           } else {
             Logger.info("JobID " + job.jobID + " will now be hashed.")
             self ! CheckJobHashes(job.jobID)
@@ -418,7 +422,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   } else {
                     Logger.info("JobID " + jobID + " will now be started.")
                     mongoStore.hashCollection.flatMap(_.insert(jobHash))
-                    self ! StartJob(job.jobID)
+                    self ! CheckIPHash(job.jobID)
                   }
                 }
               }
@@ -459,6 +463,36 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               Logger.error("[JobActor.Delete] No such jobID found in Database. Ignoring.")
           }
       }
+
+
+    case CheckIPHash (jobID) =>
+      this.getCurrentJob(jobID).foreach {
+        case Some(job) =>
+          job.IPHash match {
+            case Some(hash) =>
+              val selector = BSONDocument("$and" ->
+                List(
+                  BSONDocument(Job.IPHASH -> hash),
+                  BSONDocument(Job.DATECREATED ->
+                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusHours(maxJobsWithin).getMillis)))
+                )
+              )
+              mongoStore.countJobs(selector).map{count =>
+                println(BSONDateTime(new DateTime().minusHours(maxJobsWithin).getMillis).toString)
+                Logger.info("IP " + job.IPHash + " has requested " + count +" jobs within the last " + maxJobsWithin + " hour.")
+                if(count < maxJobNum){
+                  self ! StartJob(job.jobID)
+                }else{
+                  self ! JobStateChanged(job.jobID, LimitReached)
+                }
+              }
+            case None =>
+              // TODO: remove this as soon as possible, because soon all jobs should hold the hashed IP
+              self ! StartJob(job.jobID)
+          }
+        case None =>
+      }
+
 
     /**
       * Starts the job

@@ -1,9 +1,10 @@
 package controllers
 
-import java.io.{ FileInputStream, ObjectInputStream }
-import javax.inject.{ Inject, Named, Singleton }
+import java.io.{FileInputStream, ObjectInputStream}
+import java.security.MessageDigest
+import javax.inject.{Inject, Named, Singleton}
 
-import actors.JobActor.{ Delete, PrepareJob, StartJob }
+import actors.JobActor.{CheckIPHash, Delete, PrepareJob, StartJob}
 import actors.JobIDActor
 import akka.actor.ActorRef
 import models.Constants
@@ -14,9 +15,9 @@ import models.search.JobDAO
 import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.libs.json.{ JsNull, Json }
-import play.api.mvc.{ Action, AnyContent, Controller }
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
+import play.api.libs.json.{JsNull, Json}
+import play.api.mvc.{Action, AnyContent, Controller}
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -24,6 +25,7 @@ import better.files._
 import models.tools.ToolFactory
 import modules.db.MongoStore
 import modules.tel.env.Env
+import org.mindrot.jbcrypt.BCrypt
 import play.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
 
@@ -78,7 +80,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, StartJob(jobID))
+      jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
       Ok(Json.toJson(Json.obj("message" -> "Starting Job...")))
     }
   }
@@ -138,7 +140,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 watchList = List(user.userID),
                 dateCreated = Some(jobCreationTime),
                 dateUpdated = Some(jobCreationTime),
-                dateViewed = Some(jobCreationTime)
+                dateViewed = Some(jobCreationTime),
+                IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
               )
 
               // TODO may want to use a different way to identify our users - use the account type in the user perhaps?
