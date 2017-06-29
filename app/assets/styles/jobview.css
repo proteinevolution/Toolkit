@@ -1032,6 +1032,10 @@ textarea:focus{
     cursor: pointer;
 }
 
+.checkboxClustal {
+    top: unset !important;
+}
+
 .checkbox:before {
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
