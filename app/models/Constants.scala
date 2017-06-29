@@ -17,6 +17,8 @@ trait Constants {
   val nJobActors                      = 100
   val formMultiValueSeparator: String = " "
   val modellerKey: String             = "MODELIRANJE"
+  val maxJobNum: Int                  = 100 // max number of jobs that can be submitted from one ip within maxJobsWithin
+  val maxJobsWithin: Int              = 1 // time within the max number of jobs is applied
 }
 
 trait ExitCodes {
