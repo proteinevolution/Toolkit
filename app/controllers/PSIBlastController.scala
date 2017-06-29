@@ -142,14 +142,14 @@ class PSIBlastController @Inject()(
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
 
-  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+  def loadHits(jobID: String, start: Int, end: Int, wrapped: Boolean): Action[AnyContent] = Action.async { implicit request =>
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
           BadRequest
         } else {
-          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _, result.db))
+          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _, result.db, wrapped))
           Ok(hits.mkString)
         }
 

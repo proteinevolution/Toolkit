@@ -1,3 +1,4 @@
+JOBID=%jobid.content
 SEQ_COUNT=$(wc -l < ../params/alignment)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
@@ -20,7 +21,7 @@ updateProcessLog
 
 patsearch.pl        -i  %alignment.path \
                     -d %STANDARD/%standarddb.content \
-                    -o ../results/output.json \
+                    -o ../results/${JOBID}.json \
                     -sc %seqcount.content \
                     -%grammar.content > report_patsearch
 echo "done" >> ../results/process.log

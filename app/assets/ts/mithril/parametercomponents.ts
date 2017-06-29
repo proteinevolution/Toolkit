@@ -11,17 +11,26 @@ let mapParam = function(param : any, ctrl : any) {
     });
 };
 
-
-
 let selectBoxAccess = function(elem : any, isInit : boolean) {
     if (!isInit) {
+
+        $("#alignmode").on('change', function(){
+
+            if ($("#alignmode").val() === 'glob'){
+                $("#macmode").prop("value", "-realign");
+                $('#macmode option[value="-norealign"]').attr("disabled", true);
+                $("#macmode").niceSelect('update');
+            }
+            else {
+                $('#macmode option[value="-norealign"]').attr("disabled", false);
+                $("#macmode").niceSelect('update');
+            }
+        });
         return $(elem).niceSelect();
     } else {
         return $(elem).niceSelect('update');
     }
 };
-
-
 
 let ParameterSlideComponent = {
     model: function(args : any) {
