@@ -464,7 +464,7 @@ final class ToolFactory @Inject()(
      Seq.empty),
     // PatternSearch
     ("patsearch",
-     Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.GRAMMAR, paramAccess.SEQCOUNT),
+     Seq(paramAccess.MULTISEQ, paramAccess.PATSEARCH_DB, paramAccess.GRAMMAR, paramAccess.SEQCOUNT),
      Seq("clans", "mmseqs2"),
      Seq.empty),
     // 6FrameTranslation
@@ -1097,6 +1097,7 @@ final class ToolFactory @Inject()(
         paramAccess.HHBLITSDB.name,
         paramAccess.PROTEOMES.name,
         paramAccess.HMMER_DB.name,
+        paramAccess.PATSEARCH_DB.name,
         paramAccess.REGKEY.name,
         paramAccess.GRAMMAR.name,
         paramAccess.SAMCC_HELIXONE.name,

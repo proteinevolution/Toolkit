@@ -20,7 +20,7 @@ echo "#Searching %standarddb.content DB for sequences '${PATTERN}' pattern." >> 
 updateProcessLog
 
 patsearch.pl        -i  %alignment.path \
-                    -d %STANDARD/%standarddb.content \
+                    -d %STANDARD/%patsearchdb.content \
                     -o ../results/${JOBID}.json \
                     -sc %seqcount.content \
                     -%grammar.content > report_patsearch
