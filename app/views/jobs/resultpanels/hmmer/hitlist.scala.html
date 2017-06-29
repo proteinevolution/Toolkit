@@ -181,9 +181,12 @@
             var filename = generateFilename();
             if (boolFullLength) {
                 if (boolEvalue) {
-                    route = jsRoutes.controllers.HmmerController.evalFull(jobID, evalue, filename);
+                    data.evalue = evalue;
+                    data.filename = filename;
+                    route = jsRoutes.controllers.HmmerController.evalFull(jobID);
                 } else {
-                    route = jsRoutes.controllers.HmmerController.full(jobID, filename);
+                    data.filename = filename;
+                    route = jsRoutes.controllers.HmmerController.full(jobID);
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
                         $.LoadingOverlay("hide");
@@ -212,7 +215,8 @@
                 });
             } else {
                 if (boolEvalue) {
-                    route = jsRoutes.controllers.HmmerController.alnEval(jobID, evalue);
+                    data.evalue = evalue;
+                    route = jsRoutes.controllers.HmmerController.alnEval(jobID);
                 } else {
                     route = jsRoutes.controllers.HmmerController.aln(jobID);
                 }
@@ -233,13 +237,16 @@
 
         function getHits(start, end, isWrapped) {
             if (start <= numHits && end <= numHits && !loading) {
+                var data = {"start": start, "end": end, "wrapped": wrapped};
                 loading = true;
                 $('#loadingHits').show();
                 $('#loadHits').hide();
-                var route = jsRoutes.controllers.HmmerController.loadHits(jobID, start, end, isWrapped);
+                var route = jsRoutes.controllers.HmmerController.loadHits(jobID);
                 return $.ajax({
                     method: route.method,
-                    url: route.url
+                    url: route.url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
                 }).done(function (data_) {
                     $("#alignmentTable").append(data_);
                     loading = false;

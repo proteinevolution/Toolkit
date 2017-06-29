@@ -146,16 +146,16 @@ GET  /api/getRecentArticles/:numArticles              @controllers.DataControlle
 GET         /structure3D/:accession                   @controllers.HHpredController.show3DStructure(accession : String)
 GET         /getStructure/:filename                   @controllers.Application.getStructureFile(filename : String)
 # template alignment
-GET  /templateAlignment/:jobID/:accession             @controllers.HHpredController.runScript(jobID : String, accession : String)
-GET  /templateAlignmentHHblits/:jobID/:accession      @controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession : String)
+GET  /templateAlignment                               @controllers.HHpredController.runScript(jobID : String, accession: String)
+GET  /templateAlignmentHHblits                        @controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession: String)
 
 
 # Hmmer
-POST        /HmmerLoadHits                            @controllers.HmmerController.loadHits(jobID: String, start: Int, end: Int, wrapped: Boolean)
-POST        /alnEvalHmmer                             @controllers.HmmerController.alnEval(jobID: String, eval:String)
+POST        /HmmerLoadHits                            @controllers.HmmerController.loadHits(jobID: String)
+POST        /alnEvalHmmer                             @controllers.HmmerController.alnEval(jobID: String)
 POST        /alnHmmer                                 @controllers.HmmerController.aln(jobID: String)
-POST        /evalHmmerFull                            @controllers.HmmerController.evalFull(jobID: String, eval:String, filename: String)
-POST        /HmmerFull                                @controllers.HmmerController.full(jobID: String, filename: String)
+POST        /evalHmmerFull                            @controllers.HmmerController.evalFull(jobID: String)
+POST        /HmmerFull                                @controllers.HmmerController.full(jobID: String)
 
 # PSIblast
 
@@ -167,18 +167,18 @@ POST        /PSIBlastLoadHits                         @controllers.PSIBlastContr
 
 
 # HHblits
-POST        /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String, eval:String, filename: String)
-POST        /alnHHBlits                               @controllers.HHblitsController.aln(jobID:String, filename: String)
-POST        /evalHHBlitsFull                          @controllers.HHblitsController.evalFull(jobID : String, eval: String, filename: String)
-POST        /HHBlitsFull                              @controllers.HHblitsController.full(jobID : String, filename: String)
-POST        /HHblitsLoadHits                          @controllers.HHblitsController.loadHits(jobID: String, start: Int, end: Int)
+POST        /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String)
+POST        /alnHHBlits                               @controllers.HHblitsController.aln(jobID:String)
+POST        /evalHHBlitsFull                          @controllers.HHblitsController.evalFull(jobID : String)
+POST        /HHBlitsFull                              @controllers.HHblitsController.full(jobID : String)
+POST        /HHblitsLoadHits                          @controllers.HHblitsController.loadHits(jobID: String)
 
 # HHPred
-POST        /evalHHpred                               @controllers.HHpredController.alnEval(jobID: String, eval:String, filename: String)
-POST        /alnHHpred                                @controllers.HHpredController.aln(jobID:String, filename: String)
-POST        /HHpredLoadHits                           @controllers.HHpredController.loadHits(jobID: String, start: Int, end: Int, isColor: Boolean)
+POST        /evalHHpred                               @controllers.HHpredController.alnEval(jobID: String)
+POST        /alnHHpred                                @controllers.HHpredController.aln(jobID:String)
+POST        /HHpredLoadHits                           @controllers.HHpredController.loadHits(jobID: String)
 
 # Alignment
-POST        /AlignmentLoadHits                        @controllers.AlignmentController.loadHits(jobID: String, start: Int, end: Int, resultName: String)
-POST        /AlignmentLoadHitsClustal                 @controllers.AlignmentController.loadHitsClustal(jobID: String, resultName: String, color: Boolean)
-POST        /AlignmentGetAln                          @controllers.AlignmentController.getAln(jobID: String, resultName: String)
+POST        /AlignmentLoadHits                        @controllers.AlignmentController.loadHits(jobID: String)
+POST        /AlignmentLoadHitsClustal                 @controllers.AlignmentController.loadHitsClustal(jobID: String)
+POST        /AlignmentGetAln                          @controllers.AlignmentController.getAln(jobID: String)

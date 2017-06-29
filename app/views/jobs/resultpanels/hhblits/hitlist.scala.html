@@ -200,9 +200,12 @@
            $.LoadingOverlay("show");
             if(boolFullLength) {
                 if(boolEvalue) {
-                    route = jsRoutes.controllers.HHblitsController.evalFull(jobID, evalue, filename);
+                    data.evalue = evalue;
+                    data.fileName = filename;
+                    route = jsRoutes.controllers.HHblitsController.evalFull(jobID);
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.full(jobID, filename);
+                    data.fileName = filename;
+                    route = jsRoutes.controllers.HHblitsController.full(jobID);
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
                         $.LoadingOverlay("hide");
@@ -233,7 +236,9 @@
             } else{
 
                 if(boolEvalue) {
-                    route = jsRoutes.controllers.HHblitsController.alnEval(jobID, evalue, filename);
+                    data.evalue = evalue;
+                    data.fileName = filename;
+                    route = jsRoutes.controllers.HHblitsController.alnEval(jobID);
                 }else{
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
@@ -241,7 +246,8 @@
                         alert("No sequences selected!");
                         return false;
                     }
-                    route = jsRoutes.controllers.HHblitsController.aln(jobID, filename);
+                    data.fileName = filename;
+                    route = jsRoutes.controllers.HHblitsController.aln(jobID);
                 }
                 $.ajax({
                     url: route.url,
@@ -316,13 +322,16 @@
 
         function getHits(start, end){
             if(start <= numHits && end <= numHits && !loading){
+                var data = {"start": start, "end": end};
                 loading = true;
                 $('#loadingHits').show();
                 $('#loadHits').hide();
-                var route = jsRoutes.controllers.HHblitsController.loadHits(jobID,start, end);
+                var route = jsRoutes.controllers.HHblitsController.loadHits(jobID);
                 return $.ajax({
                     method: route.method,
-                    url: route.url
+                    url: route.url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
                 }).done(function (data_) {
                     $("#alignmentTable").append(data_);
 		            loading = false;
