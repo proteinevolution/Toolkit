@@ -446,6 +446,7 @@ hr {
 
 .result-panel{
     font-size: 0.65em;
+    min-height: 30em;
 }
 
 .result-panel a {
@@ -976,8 +977,14 @@ textarea:focus{
 }
 
 .processJobIdContainer {
+    margin-top:1em;
     display: flex;
 }
+
+.processCiteContainer a {
+    color: rgba(0, 110, 98, 166);
+}
+
 
 #viewAlignment {
     float: right;

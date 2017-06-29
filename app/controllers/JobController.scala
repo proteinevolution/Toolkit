@@ -1,10 +1,12 @@
 package controllers
 
 import java.io.{FileInputStream, ObjectInputStream}
-import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor._
-import actors.{JobActor, JobIDActor}
+import java.security.MessageDigest
+import javax.inject.{Inject, Named, Singleton}
+import actors.JobIDActor
+
 import akka.actor.ActorRef
 import models.Constants
 import models.database.jobs._
@@ -18,13 +20,15 @@ import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import better.files._
 import models.tools.ToolFactory
 import modules.db.MongoStore
 import modules.tel.env.Env
-import play.api.Logger
+import org.mindrot.jbcrypt.BCrypt
+
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.commands.WriteResult
 
@@ -82,7 +86,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, StartJob(jobID))
+      jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
       Ok(Json.toJson(Json.obj("message" -> "Starting Job...")))
     }
   }
@@ -142,7 +146,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 watchList = List(user.userID),
                 dateCreated = Some(jobCreationTime),
                 dateUpdated = Some(jobCreationTime),
-                dateViewed = Some(jobCreationTime)
+                dateViewed = Some(jobCreationTime),
+                IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
               )
 
               // TODO may want to use a different way to identify our users - use the account type in the user perhaps?

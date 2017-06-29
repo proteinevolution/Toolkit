@@ -38,6 +38,7 @@ import scala.util.{Failure, Success}
 import better.files._
 
 
+
 object JobActor {
 
   case class PrepareJob(job: Job,
@@ -63,6 +64,10 @@ object JobActor {
 
   // User Actor starts watching
   case class AddToWatchlist(jobID: String, userID: BSONObjectID)
+
+  // checks if user has submitted max number of jobs
+  // of jobs within a given time
+  case class CheckIPHash(jobID:  String)
 
   // UserActor Stops Watching this Job
   case class RemoveFromWatchlist(jobID: String, userID: BSONObjectID)
@@ -361,7 +366,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           if (startJob) {
             val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
             mongoStore.hashCollection.flatMap(_.insert(jobHash))
-            self ! StartJob(job.jobID)
+            self ! CheckIPHash(job.jobID)
           } else {
             Logger.info("JobID " + job.jobID + " will now be hashed.")
             self ! CheckJobHashes(job.jobID)
@@ -415,7 +420,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   } else {
                     Logger.info("JobID " + jobID + " will now be started.")
                     mongoStore.hashCollection.flatMap(_.insert(jobHash))
-                    self ! StartJob(job.jobID)
+                    self ! CheckIPHash(job.jobID)
                   }
                 }
               }
@@ -456,6 +461,52 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               Logger.error("[JobActor.Delete] No such jobID "+jobID+" found in Database. Ignoring.")
           }
       }
+
+
+    case CheckIPHash (jobID) =>
+      this.getCurrentJob(jobID).foreach {
+        case Some(job) =>
+          job.IPHash match {
+            case Some(hash) =>
+              val selector = BSONDocument("$and" ->
+                List(
+                  BSONDocument(Job.IPHASH -> hash),
+                  BSONDocument(Job.DATECREATED ->
+                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusMinutes(maxJobsWithin).getMillis)))
+                )
+              )
+
+              val selectorDay = BSONDocument("$and" ->
+                List(
+                  BSONDocument(Job.IPHASH -> hash),
+                  BSONDocument(Job.DATECREATED ->
+                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusDays(maxJobsWithinDay).getMillis)))
+                )
+              )
+              mongoStore.countJobs(selector).map{count =>
+                mongoStore.countJobs(selectorDay).map{countDay =>
+                  println(BSONDateTime(new DateTime().minusMinutes(maxJobsWithin).getMillis).toString)
+                  Logger.info("IP " + job.IPHash + " has requested " + count +" jobs within the last " + maxJobsWithin + " minute and "+countDay+" within the last 24 hours.")
+
+                  if(count <= maxJobNum && countDay <= maxJobNumDay){
+                    self ! StartJob(job.jobID)
+                  }else{
+                    self ! JobStateChanged(job.jobID, LimitReached)
+                  }
+                }
+                if(count <= maxJobNum){
+                  self ! StartJob(job.jobID)
+                }else{
+                  self ! JobStateChanged(job.jobID, LimitReached)
+                }
+              }
+            case None =>
+              // TODO: remove this as soon as possible, because soon all jobs should hold the hashed IP
+              self ! StartJob(job.jobID)
+          }
+        case None =>
+      }
+
 
     /**
       * Starts the job

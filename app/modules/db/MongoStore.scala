@@ -23,6 +23,9 @@ import scala.language.postfixOps
 
 /**
   * Created by zin on 03.08.16.
+  *
+  * TODO may need to break this into multiple classes in the future  *
+  *
   */
 @Singleton
 final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends ReactiveMongoComponents {
@@ -98,6 +101,10 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
 
   def findJobs(selector: BSONDocument): Future[scala.List[Job]] = {
     jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
+  }
+
+  def countJobs(selector: BSONDocument): Future[Int] = {
+    jobCollection.flatMap(_.count(Some(selector)))
   }
 
   def findJobSGE(jobID: String): Future[Job] = {

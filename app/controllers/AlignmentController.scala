@@ -2,13 +2,14 @@ package controllers
 
 import javax.inject.Inject
 
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc.{Action, AnyContent, Controller}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.Constants
-import models.database.results.{ Alignment, AlignmentResult, General }
+import models.database.results.{Alignment, AlignmentResult, General}
+import models.results.BlastVisualization
 import modules.db.MongoStore
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import play.api.libs.json.JsArray
 
 /**
@@ -50,5 +51,17 @@ class AlignmentController @Inject()(aln: Alignment,
           }
       }
   }
+
+
+
+  def loadHitsClustal(jobID: String, resultName: String, color: Boolean): Action[AnyContent] = Action.async {
+    implicit request =>
+      mongoStore.getResult(jobID).map {
+        case Some(jsValue) =>
+          val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
+            val hits = BlastVisualization.clustal(result, 0, 60, color)
+            Ok(hits.mkString)
+          }
+      }
 
 }
