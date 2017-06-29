@@ -15,7 +15,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
+    <a onclick="@{tool.toolNameShort}_selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Alignment</span></a>
     <a type="button" onclick="colorAA()"><span id="colorAA">Color alignment</span></a>
@@ -25,7 +25,6 @@
     Number of sequences: <b>@alignment.alignment.length</b>
         <br />
         <br />
-
 
 <form id="alignmentResult">
     <table class="unstriped">
@@ -51,14 +50,6 @@
         var checkbox = "checkbox";
 
 
-        $(document).ready(function () {
-            getHits(false);
-
-
-            $(document).on('scroll', function () {
-                $("#alignmentResult").floatingScroll('init');
-            });
-        });
 
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates()};
@@ -91,8 +82,7 @@
             });
         };
 
-
-        function selectAll(){
+        window["@{tool.toolNameShort}_selectAll"] = function(){
             selectAllBool = !selectAllBool;
             if(selectAllBool) {
                 selectAllHelper(checkbox);
@@ -111,12 +101,10 @@
                 // delete all checkboxes from array
                 checkboxes = [];
             }
-        }
+        };
 
 
-
-
-        function getHits(color){
+        window["@{tool.toolNameShort}_getHits"] = function(color){
                 $('#loadingHits').show();
                 var route = jsRoutes.controllers.AlignmentController.loadHitsClustal(jobID, resultName, color);
                 return $.ajax({
@@ -126,10 +114,11 @@
                     $("#clustalTable").append(data_);
                     loading = false;
                     linkCheckboxes();
+                    selectFromArray(checkboxes);
                     $('#loadingHits').hide();
                     $.LoadingOverlay("hide");
                 });
-        }
+        };
 
         function colorAA(){
             colorAAsClustal = !colorAAsClustal;
@@ -140,8 +129,17 @@
             }else {
                 $("#colorAA").removeClass("colorToggle");
             }
-            getHits(colorAAsClustal );
+            @{tool.toolNameShort}_getHits(colorAAsClustal);
         }
 
+        (function($){
+
+            @{tool.toolNameShort}_getHits(false);
+
+            $(document).on('scroll', function () {
+                $("#alignmentResult").floatingScroll('init');
+            });
+
+        })(jQuery);
 
 </script>
