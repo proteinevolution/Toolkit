@@ -474,13 +474,29 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 List(
                   BSONDocument(Job.IPHASH -> hash),
                   BSONDocument(Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusHours(maxJobsWithin).getMillis)))
+                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusMinutes(maxJobsWithin).getMillis)))
+                )
+              )
+
+              val selectorDay = BSONDocument("$and" ->
+                List(
+                  BSONDocument(Job.IPHASH -> hash),
+                  BSONDocument(Job.DATECREATED ->
+                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusDays(maxJobsWithinDay).getMillis)))
                 )
               )
               mongoStore.countJobs(selector).map{count =>
-                println(BSONDateTime(new DateTime().minusHours(maxJobsWithin).getMillis).toString)
-                Logger.info("IP " + job.IPHash + " has requested " + count +" jobs within the last " + maxJobsWithin + " hour.")
-                if(count < maxJobNum){
+                mongoStore.countJobs(selectorDay).map{countDay =>
+                  println(BSONDateTime(new DateTime().minusMinutes(maxJobsWithin).getMillis).toString)
+                  Logger.info("IP " + job.IPHash + " has requested " + count +" jobs within the last " + maxJobsWithin + " minute and "+countDay+" within the last 24 hours.")
+
+                  if(count <= maxJobNum && countDay <= maxJobNumDay){
+                    self ! StartJob(job.jobID)
+                  }else{
+                    self ! JobStateChanged(job.jobID, LimitReached)
+                  }
+                }
+                if(count <= maxJobNum){
                   self ! StartJob(job.jobID)
                 }else{
                   self ! JobStateChanged(job.jobID, LimitReached)
