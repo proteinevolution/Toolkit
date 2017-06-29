@@ -630,32 +630,41 @@ td#joblistIcon i {
 }
 
 /*Hide slider on very small screen and adjust page elements */
-
-@media screen and (max-width: 640px) {
-    .tile_left {
+@media screen and (max-width: 1300px) {
+    .tile_img {
         display: none;
     }
 }
 
-@media screen and (max-width: 640px) {
-    .tile_right {
+@media screen and (max-width: 1300px) {
+    .tile_main_container {
+        width: 760px !important;
+    }
+}
+
+@media screen and (max-width: 1300px) {
+    .text_part {
+        width: 75%;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .quick_links {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .tile_container {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .text_part {
         width: 100%;
     }
 }
-
-@media screen and (max-width: 640px) {
-    .tile_main_container {
-        width: 300px !important;
-        height: 200px;
-    }
-}
-
-@media screen and (max-width: 550px) {
-    .tile_left img{
-        display: none;
-    }
-}
-
 
 
 
