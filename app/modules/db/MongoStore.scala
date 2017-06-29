@@ -102,6 +102,10 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
+  def countJobs(selector: BSONDocument): Future[Int] = {
+    jobCollection.flatMap(_.count(Some(selector)))
+  }
+
   def findJobSGE(jobID: String): Future[Job] = {
 
     val selector   = BSONDocument("jobID"       -> BSONDocument("$eq" -> jobID))
