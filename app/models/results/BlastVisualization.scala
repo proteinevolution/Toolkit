@@ -290,7 +290,7 @@ object BlastVisualization extends Constants {
       var string = alignment.alignment.map { elem =>
         "<tr>" +
           "<td>" +
-          "<input type=\"checkbox\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkbox\"><b>" +
+          "<input type=\"checkbox\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkboxClustal checkbox\"><b>" +
           "</b><td>" +
           "<b>" + elem.accession.take(15) + "</b><br />" +
           "</td>" +
@@ -324,7 +324,9 @@ object BlastVisualization extends Constants {
           "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "    " + (beginQuery + queryEnd) + "</td></tr>" +
             "<tr class='sequence'><td></td><td></td><td>" + midline + "</td></tr>" +
             "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "    " + (beginTemplate + templateEnd) + "</td></tr>" +
+            "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" +
             hmmerHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd + 1, beginTemplate + templateEnd + 1)
+
         }
       }
     }
@@ -347,6 +349,7 @@ object BlastVisualization extends Constants {
           "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "    " + (beginQuery + queryEnd) + "</td></tr>" +
             "<tr class='sequence'><td></td><td></td><td>" + midline + "</td></tr>" +
             "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "    " + (beginTemplate + templateEnd) + "</td></tr>" +
+            "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" +
             psiblastHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd + 1, beginTemplate + templateEnd + 1)
         }
       }
