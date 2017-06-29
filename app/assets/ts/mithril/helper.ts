@@ -60,6 +60,17 @@ let select2Config = function(elem : any, isInit : boolean) : any {
 
 };
 
+let select2Single = function(elem : any, isInit : boolean) : any {
+    if(!isInit) {
+        $(elem).select2({
+            dropdownAutoWidth : true,
+            width: 'auto'
+        });
+    }
+};
+
+
+
 
 let helpModalAccess = function(elem : any, isInit: boolean) {
     if (!isInit) {

@@ -193,6 +193,7 @@ class ParamAccess @Inject()(tel: TEL) {
 
   final val HMMER_DB     = select("hmmerdb", "Select database")
   final val STANDARD_DB  = select("standarddb", "Select database")
+  final val PATSEARCH_DB = select("patsearchdb", "Select database")
   final val HHSUITEDB    = select("hhsuitedb", "Select database")
   final val MATRIX       = select("matrix", "Scoring matrix")
   final val NUM_ITER     = Param("num_iter", ParamType.UnconstrainedNumber, 1, "No. of iterations")

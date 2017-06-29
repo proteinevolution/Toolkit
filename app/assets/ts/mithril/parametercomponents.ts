@@ -119,9 +119,14 @@ let ParameterSelectComponent = {
             config: select2Config
         };
 
+
         let multiselect : boolean = args.param.name === "hhsuitedb" || args.param.name === "proteomes";
 
-        if (multiselect) {
+        if(args.param.name === "patsearchdb"){
+            paramAttrs["config"] = select2Single;
+            paramAttrs["class"] = "wide inputDBs";
+        }
+        else if (multiselect) {
 
             paramAttrs["multiple"] = "multiple";
             paramAttrs["class"] = "inputDBs";
