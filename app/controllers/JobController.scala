@@ -15,6 +15,7 @@ import models.job.JobActorAccess
 import models.search.JobDAO
 import modules.LocationProvider
 import org.joda.time.DateTime
+import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
@@ -184,6 +185,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   /**
     * Sends a deletion request to the job actor.
+ *
     * @return
     */
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
@@ -197,6 +199,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   /**
     * markes jobs as deleted and subsequently deletes them from dbs and harddisk
+ *
     * @return
     */
   def deleteJobsPermanently() : Action[AnyContent] = Action.async { implicit request =>
@@ -208,13 +211,14 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       * and informs all watching users about it in behalf of the job maintenance routine
       *
       */
-    mongoStore.findJobs(BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThreshold).getMillis)))).map { jobList =>
+    mongoStore.findJobs(BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThresholdRegistered).getMillis)))).map { jobList =>
       jobList.map { job =>
         job.ownerID match {
           case Some(id) =>
             mongoStore.findUser(BSONDocument(User.IDDB -> id)).map {
               case Some(user) =>
-                val storageTime = new DateTime().minusDays(if (user.accountType == -1) deletionThreshold else deletionThresholdRegistered)
+                val storageTime = new DateTime().minusDays(if (user.accountType == -1) {deletionThreshold} else {deletionThresholdRegistered})
+                println("storage time: " + storageTime)
                 mongoStore.findJob(BSONDocument(
                   "$and" -> List(
                     BSONDocument(Job.JOBID -> job.jobID),
@@ -257,6 +261,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       * deletes the Job from disk.
       * Includes: remove job and result from mongoDB,
       * delete job folder
+ *
       * @param job
     */
   def deleteJobPermanently(job: Job): Unit ={
@@ -268,6 +273,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   /**
     * TODO implement me
+ *
     * @param jobID
     * @return
     */
