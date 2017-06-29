@@ -27,6 +27,8 @@ case object Done extends JobState
 case object Submitted extends JobState
 // Job State which is set when the job was validated by the hash search but a different job was found
 case object Pending extends JobState
+// Job State which is set when the maximal number of jobs is reached within a fixed time
+case object LimitReached extends  JobState
 
 object JobState {
   implicit object JobStateReads extends Reads[JobState] {
@@ -41,6 +43,7 @@ object JobState {
             case 5 => Done
             case 6 => Submitted
             case 7 => Pending
+            case 8 => LimitReached
             case _ => Error
           })
         } catch {
@@ -52,13 +55,14 @@ object JobState {
 
   implicit object JobStateWrites extends Writes[JobState] {
     def writes(jobState: JobState): JsNumber = jobState match {
-      case Prepared  => JsNumber(1)
-      case Queued    => JsNumber(2)
-      case Running   => JsNumber(3)
-      case Error     => JsNumber(4)
-      case Done      => JsNumber(5)
-      case Submitted => JsNumber(6)
-      case Pending   => JsNumber(7)
+      case Prepared     => JsNumber(1)
+      case Queued       => JsNumber(2)
+      case Running      => JsNumber(3)
+      case Error        => JsNumber(4)
+      case Done         => JsNumber(5)
+      case Submitted    => JsNumber(6)
+      case Pending      => JsNumber(7)
+      case LimitReached => JsNumber(8)
     }
   }
 
@@ -75,6 +79,7 @@ object JobState {
         case BSONInteger(5) => Done
         case BSONInteger(6) => Submitted
         case BSONInteger(7) => Pending
+        case BSONInteger(8) => LimitReached
         case _              => Error
       }
     }
@@ -93,6 +98,7 @@ object JobState {
         case Done      => BSONInteger(5)
         case Submitted => BSONInteger(6)
         case Pending   => BSONInteger(7)
+        case LimitReached   => BSONInteger(8)
       }
     }
   }
