@@ -64,7 +64,7 @@ let select2Single = function(elem : any, isInit : boolean) : any {
     if(!isInit) {
         $(elem).select2({
             dropdownAutoWidth : true,
-            width: 'auto'
+            width: '17.5em',
         });
     }
 };
