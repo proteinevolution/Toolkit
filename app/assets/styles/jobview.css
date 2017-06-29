@@ -414,13 +414,14 @@ hr {
 .submitbuttons .jobid {
     color: #000;
     text-shadow: 0 0 0 #878787;
-    height: 2.3em;
-    width: 8em;
+    height: 2.6em;
+    width: 9.5em;
     float: right;
     border-radius: 3px;
-    font-size: 0.88em;
+    font-size: 0.75em;
     padding: 0.25em;
 }
+
 
 .submitbuttons .jobid.white {
     border:1px solid #cacaca;
@@ -1127,4 +1128,14 @@ h6 {
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: #f4f4f4 !important;
     color: black !important;
+}
+
+#select2-patsearchdb-container {
+    width: 17.35em;
+    color: #000;
+}
+
+.select2-search__field {
+    margin-bottom: 0.5em;
+    font-size: 0.8em;
 }
