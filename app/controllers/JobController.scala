@@ -1,11 +1,12 @@
 package controllers
 
 import java.io.{FileInputStream, ObjectInputStream}
+
+import actors.JobActor._
 import java.security.MessageDigest
 import javax.inject.{Inject, Named, Singleton}
-
-import actors.JobActor.{CheckIPHash, Delete, PrepareJob, StartJob}
 import actors.JobIDActor
+
 import akka.actor.ActorRef
 import models.Constants
 import models.database.jobs._
@@ -17,7 +18,8 @@ import org.joda.time.DateTime
 import play.api.cache._
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -26,8 +28,12 @@ import models.tools.ToolFactory
 import modules.db.MongoStore
 import modules.tel.env.Env
 import org.mindrot.jbcrypt.BCrypt
-import play.Logger
+
 import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.api.commands.WriteResult
+
+import scala.util.{Failure, Success}
+
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -183,9 +189,81 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     Logger.info("Delete Action in JobController reached")
     userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID))
+      jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID, true))
       Ok
     }
+  }
+
+
+  /**
+    * markes jobs as deleted and subsequently deletes them from dbs and harddisk
+    * @return
+    */
+  def deleteJobsPermanently() : Action[AnyContent] = Action.async { implicit request =>
+
+    Logger.info("delete jobs that are marked for deletion Action in JobController reached")
+    /*
+      * deletes jobs are older than a given number of days
+      * ('deletionThresholdLoggedIn' for registered users and  'deletionThreshold' for others)
+      * and informs all watching users about it in behalf of the job maintenance routine
+      *
+      */
+    mongoStore.findJobs(BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThreshold).getMillis)))).map { jobList =>
+      jobList.map { job =>
+        job.ownerID match {
+          case Some(id) =>
+            mongoStore.findUser(BSONDocument(User.IDDB -> id)).map {
+              case Some(user) =>
+                val storageTime = new DateTime().minusDays(if (user.accountType == -1) deletionThreshold else deletionThresholdRegistered)
+                mongoStore.findJob(BSONDocument(
+                  "$and" -> List(
+                    BSONDocument(Job.JOBID -> job.jobID),
+                    BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(storageTime.getMillis)))
+                  )
+                )).map {
+                  case Some(deletedJob) =>
+                    println(deletedJob.jobID)
+                    // Message user clients to remove the job from their watchlist
+                    jobActorAccess.sendToJobActor(deletedJob.jobID, Delete(deletedJob.jobID, deletedJob.ownerID.get, false))
+                    this.deleteJobPermanently(job)
+                  case None =>
+                }
+              case None =>
+                Logger.info("User not found: " + id.stringify + s". Job ${job.jobID} is directely deleted.")
+                this.deleteJobPermanently(job)
+            }
+          case None =>
+            Logger.info("Job " + job.jobID + " has no owner ID. It is directely deleted")
+            this.deleteJobPermanently(job)
+
+        }
+      }
+    }
+
+    /*
+      * deletes all jobs that are marked for deletion with
+      * (deletion.flag == 1)
+      * the duration of keeping the job is dependent on whether the user is a registered user
+      */
+    println("Deleting jobs that user have requested for deletion in progress...")
+    mongoStore.findJobs(BSONDocument(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 1)))).map { jobList =>
+      jobList.foreach { job =>
+        this.deleteJobPermanently(job)
+      }
+    }
+    Future.successful(Ok)
+  }
+    /**
+      * deletes the Job from disk.
+      * Includes: remove job and result from mongoDB,
+      * delete job folder
+      * @param job
+    */
+  def deleteJobPermanently(job: Job): Unit ={
+    Logger.info("Deleting jobFolder" + jobPath/job.jobID)
+    s"$jobPath${job.jobID}".toFile.delete(true)
+    Logger.info("Removing Job "+job.jobID+" from mongo DB")
+    mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
   }
 
   /**

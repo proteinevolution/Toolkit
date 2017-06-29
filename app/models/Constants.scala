@@ -21,6 +21,7 @@ trait Constants {
   val maxJobsWithin: Int              = 1 // time in minutes within the max number of jobs is applied
   val maxJobNumDay: Int               = 500 // max number of jobs that can be submitted from one ip within maxJobsWithinDay
   val maxJobsWithinDay: Int           = 1 // time in day within the max number of jobs is applied for a day
+
 }
 
 trait ExitCodes {
