@@ -13,7 +13,20 @@ let nonJsonErrors = function(xhr : XMLHttpRequest) {
 };
 
 let tabulated = function(element : any, isInit : boolean) : any {
-    if (!isInit) { return $(element).tabs({ active: this.active, beforeLoad: function(event, ui){ ui.panel.addClass("result-panel")}});}
+    if (!isInit) {
+        return $(element).tabs({
+            active: this.active,
+            beforeLoad:
+            function(event, ui){
+                ui.panel.addClass("result-panel");
+                let timerOverlay = setTimeout(function(){
+                    $.LoadingOverlay("show")}, 300);
+                    ui.jqXHR.then(function () {
+                    clearTimeout(timerOverlay);$.LoadingOverlay("hide");
+                });
+            },
+        });
+    }
 };
 
 // clear input forms when clicking on a tool again
