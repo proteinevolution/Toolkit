@@ -107,7 +107,9 @@
         window["@{tool.toolNameShort}_getHits"] = function(color){
                 $('#loadingHits').show();
                 var data = {"color": color, "resultName" : resultName};
-                var route = jsRoutes.controllers.AlignmentController.loadHitsClustal(jobID);
+            var route = {};
+            route.url = "/AlignmentLoadHitsClustal/" + jobID;
+            route.method = "POST";
                 return $.ajax({
                     method: route.method,
                     url: route.url,
