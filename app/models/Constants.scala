@@ -23,7 +23,7 @@ trait Constants {
   val maxJobsWithinDay: Int           = 1 // time in day within the max number of jobs is applied for a day
   val deletionThresholdRegistered : Int    = 90 // all jobs of registered users that are older than the given number are permanently deleted everywhere
   val deletionThreshold           : Int    = 24 // all jobs of non registered users that are older than the given number are permanently deleted everywhere
-  val breakAfterClustal: Int           = 60 // clustal format breaks after n chars
+  val breakAfterClustal: Int           = 85 // clustal format breaks after n chars
 
 }
 
