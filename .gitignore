@@ -1,3 +1,5 @@
+tel/paramspec/hmmerdb.py
+tel/paramspec/patsearchdb.py
 conf/tel.conf
 project/project
 project/target
