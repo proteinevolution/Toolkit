@@ -103,8 +103,8 @@ final class ToolFactory @Inject()(
 
     final val HITLIST         = "Hitlist"
     final val RESULTS         = "Results"
-    final val ALIGNMENT       = "Alignment"
-    final val CLUSTAL         = "Clustal"
+    final val ALIGNMENT       = "FASTA Alignment"
+    final val CLUSTAL         = "CLUSTAL Alignment"
     final val ALIGNMENTVIEWER = "AlignmentViewer"
     final val TREE            = "Tree"
     final val SUMMARY         = "Summary"
@@ -802,16 +802,6 @@ final class ToolFactory @Inject()(
         }
       ),
       Toolnames.CLUSTALO -> ListMap(
-        Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
-          implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
-            case Some(jsvalue) =>
-              views.html.jobs.resultpanels.alignment(jobID,
-                                                     aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
-                                                     "alignment",
-                                                     this.values(Toolnames.CLUSTALO))
-          }
-        },
         Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
@@ -822,12 +812,32 @@ final class ToolFactory @Inject()(
                 this.values(Toolnames.CLUSTALO))
           }
         },
+        Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignment(jobID,
+                                                     aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     this.values(Toolnames.CLUSTALO))
+          }
+        },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
         }
       ),
       Toolnames.KALIGN -> ListMap(
+        Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.clustal(jobID,
+                aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                "alignment",
+                this.values(Toolnames.KALIGN))
+          }
+        },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
@@ -844,6 +854,16 @@ final class ToolFactory @Inject()(
         }
       ),
       Toolnames.MAFFT -> ListMap(
+        Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.clustal(jobID,
+                aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                "alignment",
+                this.values(Toolnames.MAFFT))
+          }
+        },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
@@ -854,6 +874,12 @@ final class ToolFactory @Inject()(
                                                      this.values(Toolnames.MAFFT))
           }
         },
+        Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
+        }
+      ),
+      Toolnames.MSAPROBS -> ListMap(
         Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
@@ -861,15 +887,9 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.clustal(jobID,
                 aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                 "alignment",
-                this.values(Toolnames.CLUSTALO))
+                this.values(Toolnames.MSAPROBS))
           }
         },
-        Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
-          implicit val r = requestHeader
-          Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
-        }
-      ),
-      Toolnames.MSAPROBS -> ListMap(
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
@@ -886,6 +906,16 @@ final class ToolFactory @Inject()(
         }
       ),
       Toolnames.MUSCLE -> ListMap(
+        Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.clustal(jobID,
+                aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                "alignment",
+                this.values(Toolnames.MUSCLE))
+          }
+        },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
@@ -902,6 +932,16 @@ final class ToolFactory @Inject()(
         }
       ),
       Toolnames.TCOFFEE -> ListMap(
+        Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.clustal(jobID,
+                aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                "alignment",
+                this.values(Toolnames.TCOFFEE))
+          }
+        },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
