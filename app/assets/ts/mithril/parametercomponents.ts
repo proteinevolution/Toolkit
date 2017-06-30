@@ -225,7 +225,7 @@ let ParameterModellerKeyComponent = {
             m.request({method: "POST", url: "/validate/modeller?input="+val}).then(function (response) {
                 ParameterModellerKeyComponent.keyStored = response.isValid;
                 if(ParameterModellerKeyComponent.keyStored){
-                    $(".submitJob").attr("disabled", false);
+                    validationProcess($('#alignment'),"modeller");
                 }
             });
         }
