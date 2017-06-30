@@ -190,13 +190,14 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     val json      = request.body.asJson.get
     val start     = (json \ "start").as[Int]
     val end       = (json \ "end").as[Int]
+    val wrapped = (json \ "wrapped").as[Boolean]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hhblits.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
           BadRequest
         } else {
-          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhblits.hit(jobID, _))
+          val hits = result.HSPS.slice(start, end).map {(views.html.jobs.resultpanels.hhblits.hit(jobID, _, wrapped))}
           Ok(hits.mkString)
         }
     }

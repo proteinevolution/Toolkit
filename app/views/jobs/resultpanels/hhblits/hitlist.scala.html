@@ -26,6 +26,7 @@
                 <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
                 }_hhsuite">Forward Query MSA</a>
+                <a onclick="wrap()" id="wrap">Wrap sequences</a>
             </div>
         </div>
     </div>
@@ -136,6 +137,7 @@
         var colorAAs = true;
         var showMore = 100;
 	    var loading = false;
+        var wrapped = true;
         // use this array to store
         // checked checkboxes
         // due to pagination/lazyload
@@ -144,13 +146,16 @@
         $(document).ready( function(){
             hitlistBaseFunctions();
             if(numHits > 0 ){
+                $("#wrap").text("Unwrap sequences");
+                $("#wrap").addClass("colorToggleBar");
+
                 drawDataTable();
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query.start}};
                 var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query.end}};
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
 		        shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits);
+                getHits(0, shownHits, wrapped);
                 $('#templateAlignmentModal').foundation()
             }
 
@@ -320,9 +325,9 @@
         }
 
 
-        function getHits(start, end){
+        function getHits(start, end, wrapped){
             if(start <= numHits && end <= numHits && !loading){
-                var data = {"start": start, "end": end};
+                var data = {"start": start, "end": end, "wrapped": wrapped};
                 loading = true;
                 $('#loadingHits').show();
                 $('#loadHits').hide();
