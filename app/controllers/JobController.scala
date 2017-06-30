@@ -1,10 +1,12 @@
 package controllers
 
 import java.io.{FileInputStream, ObjectInputStream}
-import javax.inject.{Inject, Named, Singleton}
 
 import actors.JobActor._
-import actors.{JobActor, JobIDActor}
+import java.security.MessageDigest
+import javax.inject.{Inject, Named, Singleton}
+import actors.JobIDActor
+
 import akka.actor.ActorRef
 import models.Constants
 import models.database.jobs._
@@ -13,10 +15,12 @@ import models.job.JobActorAccess
 import models.search.JobDAO
 import modules.LocationProvider
 import org.joda.time.DateTime
+import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -24,7 +28,8 @@ import better.files._
 import models.tools.ToolFactory
 import modules.db.MongoStore
 import modules.tel.env.Env
-import play.api.Logger
+import org.mindrot.jbcrypt.BCrypt
+
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.commands.WriteResult
 
@@ -82,7 +87,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, StartJob(jobID))
+      jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
       Ok(Json.toJson(Json.obj("message" -> "Starting Job...")))
     }
   }
@@ -142,7 +147,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 watchList = List(user.userID),
                 dateCreated = Some(jobCreationTime),
                 dateUpdated = Some(jobCreationTime),
-                dateViewed = Some(jobCreationTime)
+                dateViewed = Some(jobCreationTime),
+                IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
               )
 
               // TODO may want to use a different way to identify our users - use the account type in the user perhaps?
@@ -179,6 +185,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   /**
     * Sends a deletion request to the job actor.
+ *
     * @return
     */
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
@@ -192,6 +199,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   /**
     * markes jobs as deleted and subsequently deletes them from dbs and harddisk
+ *
     * @return
     */
   def deleteJobsPermanently() : Action[AnyContent] = Action.async { implicit request =>
@@ -253,6 +261,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       * deletes the Job from disk.
       * Includes: remove job and result from mongoDB,
       * delete job folder
+ *
       * @param job
     */
   def deleteJobPermanently(job: Job): Unit ={
@@ -264,6 +273,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   /**
     * TODO implement me
+ *
     * @param jobID
     * @return
     */

@@ -193,11 +193,13 @@ class ParamAccess @Inject()(tel: TEL) {
 
   final val HMMER_DB     = select("hmmerdb", "Select database")
   final val STANDARD_DB  = select("standarddb", "Select database")
+  final val PATSEARCH_DB = select("patsearchdb", "Select database")
   final val HHSUITEDB    = select("hhsuitedb", "Select database")
   final val MATRIX       = select("matrix", "Scoring matrix")
   final val NUM_ITER     = Param("num_iter", ParamType.UnconstrainedNumber, 1, "No. of iterations")
   final val EVALUE       = select("evalue", "E-value")
   final val GAP_OPEN     = Param("gap_open", ParamType.UnconstrainedNumber, 1, "Gap open penalty")
+  final val MAFFT_GAP_OPEN = Param("mafft_gap_open", Decimal("0.01", Some(0), Some(10)), 1, "Gap open penalty")
   final val GAP_TERM     = Param("gap_term", Decimal("0.01", Some(0), Some(10)), 1, "Terminal gap penalty")
   final val GAP_EXT_KALN = Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
   final val BONUSSCORE   = Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
