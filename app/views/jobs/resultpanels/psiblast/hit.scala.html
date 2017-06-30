@@ -1,6 +1,6 @@
 @import models.results.BlastVisualization
 @import models.database.results.PSIBlastHSP
-@(jobID: String, hit: PSIBlastHSP, db: String)(implicit request: RequestHeader)
+@(jobID: String, hit: PSIBlastHSP, db: String, wrapped: Boolean)(implicit request: RequestHeader)
 @* hit number, links *@
 <tr>
     <td></td>
@@ -35,34 +35,24 @@
 <tr>
     <td><br /></td>
 </tr>
-@* color only 150 first hits, to avoid bloating of the generated html*@
     @* Query *@
-    @if(hit.num > 0) {
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, hit.query_seq+ "   " + hit.query_end.toString))
-        }
-        @* Midline *@
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "", hit.midline))
-        }
-        @* Hit *@
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, hit.hit_seq + "   " + hit.hit_end.toString))
-        }
-    }else{
 
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq)+ "   " + hit.query_end.toString))
-        }
-        @* Midline *@
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline)))
-        }
-        @* Hit *@
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + "   " + hit.hit_end.toString))
-        }
+@if(wrapped) {
+
+    @Html(BlastVisualization.psiblastHitWrapped(hit, 0, 80, hit.query_start, hit.hit_start))
+} else {
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, hit.query_seq+ "   " + hit.query_end.toString))
     }
+    @* Midline *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "", hit.midline))
+    }
+    @* Hit *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, hit.hit_seq + "   " + hit.hit_end.toString))
+    }
+}
 <tr>
     <td colspan="5"><hr id="line-element" class="horizontal-line"></td>
 </tr>

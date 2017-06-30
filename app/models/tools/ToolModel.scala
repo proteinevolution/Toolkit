@@ -104,6 +104,7 @@ final class ToolFactory @Inject()(
     final val HITLIST         = "Hitlist"
     final val RESULTS         = "Results"
     final val ALIGNMENT       = "Alignment"
+    final val CLUSTAL         = "Clustal"
     final val ALIGNMENTVIEWER = "AlignmentViewer"
     final val TREE            = "Tree"
     final val SUMMARY         = "Summary"
@@ -271,7 +272,7 @@ final class ToolFactory @Inject()(
      Seq.empty),
     // MAFFT
     ("mafft",
-     Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.GAP_OPEN, paramAccess.OFFSET),
+     Seq(paramAccess.MULTISEQ, paramAccess.OUTPUT_ORDER, paramAccess.MAFFT_GAP_OPEN, paramAccess.OFFSET),
      Seq(
        "ali2d",
        "aln2plot",
@@ -463,7 +464,7 @@ final class ToolFactory @Inject()(
      Seq.empty),
     // PatternSearch
     ("patsearch",
-     Seq(paramAccess.MULTISEQ, paramAccess.STANDARD_DB, paramAccess.GRAMMAR, paramAccess.SEQCOUNT),
+     Seq(paramAccess.MULTISEQ, paramAccess.PATSEARCH_DB, paramAccess.GRAMMAR, paramAccess.SEQCOUNT),
      Seq("clans", "mmseqs2"),
      Seq.empty),
     // 6FrameTranslation
@@ -811,6 +812,16 @@ final class ToolFactory @Inject()(
                                                      this.values(Toolnames.CLUSTALO))
           }
         },
+        Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.clustal(jobID,
+                aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                "alignment",
+                this.values(Toolnames.CLUSTALO))
+          }
+        },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
@@ -1051,12 +1062,12 @@ final class ToolFactory @Inject()(
         }
       ),
       Toolnames.PATSEARCH -> ListMap(
-        "PatternSearch" -> { (jobID, requestHeader) =>
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels
-                .patternSearch("PatternSearch", jobID, "output", jsvalue, this.values(Toolnames.PATSEARCH))
+                .patternSearch("PatternSearch", jobID, jsvalue, this.values(Toolnames.PATSEARCH))
           }
         }
       )
@@ -1086,6 +1097,7 @@ final class ToolFactory @Inject()(
         paramAccess.HHBLITSDB.name,
         paramAccess.PROTEOMES.name,
         paramAccess.HMMER_DB.name,
+        paramAccess.PATSEARCH_DB.name,
         paramAccess.REGKEY.name,
         paramAccess.GRAMMAR.name,
         paramAccess.SAMCC_HELIXONE.name,
