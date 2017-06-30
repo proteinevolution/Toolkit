@@ -234,11 +234,13 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 }
               case None =>
                 Logger.info("User not found: " + id.stringify + s". Job ${job.jobID} is directely deleted.")
+                jobDao.deleteJob(mainID.stringify)
                 this.deleteJobPermanently(job)
             }
           case None =>
             Logger.info("Job " + job.jobID + " has no owner ID. It is directely deleted")
             this.deleteJobPermanently(job)
+            jobDao.deleteJob(mainID.stringify)
 
         }
       }
