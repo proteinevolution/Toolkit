@@ -158,11 +158,13 @@ POST        /evalHmmerFull                            @controllers.HmmerControll
 POST        /HmmerFull                                @controllers.HmmerController.full(jobID: String, filename: String)
 
 # PSIblast
-POST        /evalPSIBlast                             @controllers.PSIBlastController.alnEval(jobID: String, eval:String)
-POST        /alnPSIBlast                              @controllers.PSIBlastController.aln(jobID:String)
-POST        /evalPSIBlastFull                         @controllers.PSIBlastController.evalFull(jobID : String, eval: String, filename: String)
-POST        /PSIBlastFull                             @controllers.PSIBlastController.full(jobID : String, filename: String)
-POST        /PSIBlastLoadHits                         @controllers.PSIBlastController.loadHits(jobID: String, start: Int, end: Int, wrapped: Boolean)
+
+POST        /evalPSIBlast                             @controllers.PSIBlastController.alnEval(jobID: String)
+POST        /alnPSIBlast                              @controllers.PSIBlastController.aln(jobID: String)
+POST        /evalPSIBlastFull                         @controllers.PSIBlastController.evalFull(jobID: String)
+POST        /PSIBlastFull                             @controllers.PSIBlastController.full(jobID: String)
+POST        /PSIBlastLoadHits                         @controllers.PSIBlastController.loadHits(jobID: String)
+
 
 # HHblits
 POST        /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String, eval:String, filename: String)
