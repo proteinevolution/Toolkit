@@ -359,4 +359,32 @@ object BlastVisualization extends Constants {
   def lengthWithoutDashDots(str : String): Int ={
     str.length-str.count(char =>  char == '-' ||  char == ".")
   }
+
+  def hhblitsHitWrapped(hit: HHBlitsHSP, charCount: Int, breakAfter: Int, beginQuery: Int, beginTemplate: Int): String ={
+    if (charCount >= hit.length){
+      return ""
+    }
+    else {
+      val query = hit.query.seq.substring(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
+      val queryCons = hit.query.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
+      val midline = hit.agree.substring(charCount, Math.min(charCount + breakAfter, hit.agree.length))
+      val templateCons = hit.template.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
+      val template = hit.template.seq.substring(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+      val queryEnd = lengthWithoutDashDots(query)
+      val templateEnd = lengthWithoutDashDots(template)
+      if (beginQuery == beginQuery + queryEnd) {
+        return ""
+      } else {
+        return {
+          "<tr class='sequence'><td></td><td>Q " +  hit.query.accession + "</td><td>" + beginQuery + "</td><td>" + query + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>Q Consensus " + "</td><td>" + beginQuery + "</td><td>" + queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
+            "<tr class='sequence'><td></td><td></td><td></td><td>" + midline + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>T Consensus " + "</td><td>" + beginTemplate + "</td><td>" + templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>T " + hit.template.accession + "</td><td>" + beginTemplate + "</td><td>" + template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>" +
+            "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" +
+            hhblitsHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
+        }
+      }
+    }
+  }
 }
