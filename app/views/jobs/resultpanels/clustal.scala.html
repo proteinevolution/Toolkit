@@ -52,8 +52,8 @@
 
 
         window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": checkboxes.removeDuplicates()};
-            var route = jsRoutes.controllers.AlignmentController.getAln(jobID, resultName);
+            var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
+            var route = jsRoutes.controllers.AlignmentController.getAln(jobID);
 
             $.LoadingOverlay("show");
             // get result json
@@ -106,10 +106,13 @@
 
         window["@{tool.toolNameShort}_getHits"] = function(color){
                 $('#loadingHits').show();
-                var route = jsRoutes.controllers.AlignmentController.loadHitsClustal(jobID, resultName, color);
+                var data = {"color": color, "resultName" : resultName};
+                var route = jsRoutes.controllers.AlignmentController.loadHitsClustal(jobID);
                 return $.ajax({
                     method: route.method,
-                    url: route.url
+                    url: route.url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
                 }).done(function (data_) {
                     $("#clustalTable").append(data_);
                     loading = false;

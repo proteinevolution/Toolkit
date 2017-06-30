@@ -24,8 +24,9 @@ class AlignmentController @Inject()(aln: Alignment,
     with Common
     with ReactiveMongoComponents {
 
-  def getAln(jobID: String, resultName: String): Action[AnyContent] = Action.async { implicit request =>
+  def getAln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
+    val resultName  = (json \ "resultName").as[String]
     val numList = (json \ "checkboxes").as[List[Int]]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
@@ -38,8 +39,11 @@ class AlignmentController @Inject()(aln: Alignment,
     }
   }
 
-  def loadHits(jobID: String, start: Int, end: Int, resultName: String): Action[AnyContent] = Action.async {
-    implicit request =>
+  def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json             = request.body.asJson.get
+    val start            = (json \ "start").as[Int]
+    val end              = (json \ "end").as[Int]
+    val resultName       = (json \ "resultName").as[String]
       mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
@@ -54,12 +58,14 @@ class AlignmentController @Inject()(aln: Alignment,
 
 
 
-  def loadHitsClustal(jobID: String, resultName: String, color: Boolean): Action[AnyContent] = Action.async {
-    implicit request =>
+  def loadHitsClustal(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val resultName  = (json \ "resultName").as[String]
+    val color      = (json \ "color").as[Boolean]
       mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
-            val hits = BlastVisualization.clustal(result, 0, 60, color)
+            val hits = BlastVisualization.clustal(result, 0, breakAfterClustal, color)
             Ok(hits.mkString)
           }
       }
