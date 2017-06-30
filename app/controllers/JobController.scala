@@ -207,9 +207,10 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       jobList.map { job =>
         job.ownerID match {
           case Some(id) =>
-            mongoStore.findUser(BSONDocument(User.IDDB -> id)).map {
+            mongoStore.findUser(BSONDocument(User.IDDB -> BSONDocument("$eq" -> id))).map {
               case Some(user) =>
                 val storageTime = new DateTime().minusDays(if (user.accountType == -1) deletionThreshold else deletionThresholdRegistered)
+                println("storage time: " + storageTime)
                 mongoStore.findJob(BSONDocument(
                   "$and" -> List(
                     BSONDocument(Job.JOBID -> job.jobID),
