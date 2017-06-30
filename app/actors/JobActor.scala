@@ -494,11 +494,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     self ! JobStateChanged(job.jobID, LimitReached)
                   }
                 }
-                if(count <= maxJobNum){
-                  self ! StartJob(job.jobID)
-                }else{
-                  self ! JobStateChanged(job.jobID, LimitReached)
-                }
               }
             case None =>
               // TODO: remove this as soon as possible, because soon all jobs should hold the hashed IP
