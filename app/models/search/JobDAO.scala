@@ -122,6 +122,8 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     )
   }
 
+
+
   // Removes a Hash from ES
   def deleteJob(mainID: String): Future[BulkResult] = {
     client.execute {
