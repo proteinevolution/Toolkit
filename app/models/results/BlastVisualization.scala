@@ -321,12 +321,11 @@ object BlastVisualization extends Constants {
         return ""
       } else {
         return {
-          "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "    " + (beginQuery + queryEnd) + "</td></tr>" +
+          "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "    " + (beginQuery + queryEnd - 1) + "</td></tr>" +
             "<tr class='sequence'><td></td><td></td><td>" + midline + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "    " + (beginTemplate + templateEnd) + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "    " + (beginTemplate + templateEnd - 1) + "</td></tr>" +
             "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" +
-            hmmerHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd + 1, beginTemplate + templateEnd + 1)
-
+            hmmerHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
         }
       }
     }
@@ -346,11 +345,11 @@ object BlastVisualization extends Constants {
         return ""
       } else {
         return {
-          "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "    " + (beginQuery + queryEnd) + "</td></tr>" +
+          "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "    " + (beginQuery + queryEnd - 1) + "</td></tr>" +
             "<tr class='sequence'><td></td><td></td><td>" + midline + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "    " + (beginTemplate + templateEnd) + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "    " + (beginTemplate + templateEnd - 1) + "</td></tr>" +
             "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" +
-            psiblastHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd + 1, beginTemplate + templateEnd + 1)
+            psiblastHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
         }
       }
     }
