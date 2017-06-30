@@ -7,7 +7,7 @@
 @import models.results.BlastVisualization
 @import modules.tel.TEL
 @import models.database.results.HHBlitsHSP
-@(jobID: String, hit: HHBlitsHSP)(implicit request: RequestHeader)
+@(jobID: String, hit: HHBlitsHSP, wrapped: Boolean)(implicit request: RequestHeader)
 @* hit number, links *@
 <tr>
     <td></td>
@@ -37,34 +37,21 @@
     <td><br /></td>
 </tr>
 
-@if(!hit.query.seq.isEmpty) {
-    @{
-
-        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, hit.query.seq +"    "+hit.query.end.toString + " "+"("+hit.query.ref+")"))
-    }
+@if(wrapped){
+    @Html(BlastVisualization.hhblitsHitWrapped(hit, 0, 70, hit.query.start, hit.template.start))
+}else {
+    @BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, hit.query.seq + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")"))
+    @*Consensus of query, if present*@
+    @BlastVisualization.makeRow("sequence", Array("", "Q  Consensus", hit.query.start.toString, hit.query.consensus + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")"))
+    @* agree of query, if present *@
+    @BlastVisualization.makeRow("sequence", Array("", "", "", hit.agree))
+    @* consensus template, if present *@
+    @BlastVisualization.makeRow("sequence", Array("", "T  Consensus", hit.template.start.toString, hit.template.consensus + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")"))
+    @* seq template, if present *@
+    @BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, hit.template.seq + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")"))
 }
-@*Consensus of query, if present*@
-@if(!hit.query.consensus.isEmpty) {
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "Q  Consensus",hit.query.start.toString, hit.query.consensus +"    "+hit.query.end.toString +" "+"("+hit.query.ref+")"))
-    }
-}
-@* agree of query, if present *@
-
-@BlastVisualization.makeRow("sequence", Array("","","",hit.agree))
-
-@*  consensus template, if present *@
-@if(!hit.template.consensus.isEmpty) {
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "T  Consensus",hit.template.start.toString, hit.template.consensus + "    "+hit.template.end.toString +" "+"("+hit.template.ref+")"))
-    }
-}
-@*  seq template, if present *@
-@if(!hit.template.seq.isEmpty) {
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, hit.template.seq +"    "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
-    }
-}
+<tr class="blank_row"><td colspan="5"></td></tr>
 <tr>
+    <td></td>
     <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
 </tr>

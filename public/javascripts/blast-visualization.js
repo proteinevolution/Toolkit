@@ -442,8 +442,10 @@ function wrap(){
     $.LoadingOverlay("show");
     $("#alignmentTable").empty();
     if(wrapped){
+        $("#wrap").text("Unwrap sequences");
         $("#wrap").addClass("colorToggleBar");
     }else {
+        $("#wrap").text("Wrap sequences");
         $("#wrap").removeClass("colorToggleBar");
     }
     getHits(0, shownHits, wrapped).then(function(){
