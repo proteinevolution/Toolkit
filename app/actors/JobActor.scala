@@ -226,7 +226,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     * @param userID
     */
   private def delete(job: Job, userID: BSONObjectID, ownerRequest: Boolean): Unit = {
-    if (job.ownerID.contains(userID)) {
+    if (job.ownerID.contains(userID) && ownerRequest) {
       // Message user clients to remove the job from their watchlist
       Logger.info("Informing Users of deletion.")
       val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
@@ -238,7 +238,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           BSONDocument(Job.IDDB -> job.mainID),
           BSONDocument(
             "$set" ->
-            BSONDocument(Job.DELETION -> JobDeletion( if(ownerRequest) JobDeletionFlag.OwnerRequest else JobDeletionFlag.Automated, Some(DateTime.now()))),
+            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
             "$unset" ->
             BSONDocument(Job.WATCHLIST -> "")
           )
