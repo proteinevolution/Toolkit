@@ -557,10 +557,9 @@ let validationProcess = function(elem: any,toolname: string) {
         case "modeller":
 
             let modellerTarget = new alignmentVal($(elem));
+
             modellerTarget.modellerValidation();
-            if(ParameterModellerKeyComponent.keyStored){
-                $(".submitJob").attr("disabled", false);
-            }
+
             break;
 
         case "samcc":
@@ -992,7 +991,7 @@ class alignmentVal implements ToolkitValidator {
         modellerIsValid = false;
 
         if (!this.elem.validate('pir'))
-            feedback(false, "This is no pir!", "error");
+            feedback(false, "MODELLER only works with PIR alignments forwarded by HHpred.", "error");
 
         else if (!this.elem.reformat('star'))
             feedback(false, "Every sequence must end with a star!", "error");
@@ -1008,8 +1007,12 @@ class alignmentVal implements ToolkitValidator {
             valReset();
         }
 
+        else if(!ParameterModellerKeyComponent.keyStored){
+            feedback(false, "Please enter your MODELLER-key!", "error");
+        }
+
         else {
-            feedback(false, "Valid input", "success");
+            feedback(true, "Valid PIR alignment.", "success");
             modellerIsValid = true;
         }
     }
