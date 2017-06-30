@@ -292,7 +292,7 @@ object BlastVisualization extends Constants {
           "<td>" +
           "<input type=\"checkbox\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkboxClustal checkbox\"><b>" +
           "</b><td>" +
-          "<b>" + elem.accession.take(15) + "</b><br />" +
+          "<b>" + elem.accession.take(20) + "</b><br />" +
           "</td>" +
           "</td>" +
           "<td class=\"sequence\">" + {
