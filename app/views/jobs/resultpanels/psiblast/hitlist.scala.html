@@ -118,6 +118,7 @@ var wrapped = true;
 $(document).ready( function(){
     hitlistBaseFunctions();
     if(numHits > 0 ){
+        $("#wrap").text("Unwrap sequences");
         $("#wrap").addClass("colorToggleBar");
         initiallyCheckCheckboxes();
         drawDataTable();
