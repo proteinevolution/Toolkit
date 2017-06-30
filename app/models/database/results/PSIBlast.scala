@@ -13,7 +13,8 @@ import scala.concurrent.Future
 /**
   * Created by drau on 18.04.17.
   */
-case class PSIBlastHSP(evalue: Double,
+case class
+PSIBlastHSP(evalue: Double,
                        num: Int,
                        bitscore: Double,
                        score: Int,
@@ -40,7 +41,8 @@ case class PSIBlastHSP(evalue: Double,
         "2" -> Json.toJson(BlastVisualization.addBreak(description)),
         "3" -> Json.toJson("%.2e".format(evalue)),
         "4" -> Json.toJson(bitscore),
-        "5" -> Json.toJson(hit_len)
+        "5" -> Json.toJson(ref_len),
+        "6" -> Json.toJson(hit_len)
       )
     )
 }
@@ -121,7 +123,7 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
     val query_start     = (hsps \ "query_from").getOrElse(Json.toJson(-1)).as[Int]
     val query_end       = (hsps \ "query_to").getOrElse(Json.toJson(-1)).as[Int]
     val query_id        = (hsps \ "query_id").getOrElse(Json.toJson("")).as[String]
-    val ref_len         = (hit \ "ref_len").getOrElse(Json.toJson(-1)).as[Int]
+    val ref_len         = (hit \ "len").getOrElse(Json.toJson(-1)).as[Int]
     val hit_len         = (hsps \ "align_len").getOrElse(Json.toJson(-1)).as[Int]
     var accession       = ""
     // workaround: bug of psiblast output when searching pdb_nr
@@ -168,8 +170,10 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
       case (3, "desc") => hits.sortWith(_.evalue > _.evalue)
       case (4, "asc")  => hits.sortBy(_.bitscore)
       case (4, "desc") => hits.sortWith(_.bitscore > _.bitscore)
-      case (5, "asc")  => hits.sortBy(_.hit_len)
-      case (5, "desc") => hits.sortWith(_.hit_len > _.hit_len)
+      case (5, "asc")  => hits.sortBy(_.ref_len)
+      case (5, "desc") => hits.sortWith(_.ref_len > _.ref_len)
+      case (6, "asc")  => hits.sortBy(_.hit_len)
+      case (6, "desc") => hits.sortWith(_.hit_len > _.hit_len)
       case (_, "asc")  => hits.sortBy(_.num)
       case (_, "desc") => hits.sortWith(_.num > _.num)
       case (_, _)      => hits.sortBy(_.num)

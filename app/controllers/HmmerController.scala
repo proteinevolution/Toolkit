@@ -28,7 +28,10 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
 
-  def evalFull(jobID: String, eval: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
+  def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val filename  = (json \ "filename").as[String]
+    val eval      = (json \ "evalue").as[String]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -53,8 +56,9 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
     }
   }
 
-  def full(jobID: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
+  def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
+    val filename  = (json \ "filename").as[String]
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
@@ -91,7 +95,9 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
     fas.mkString
   }
 
-  def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val eval      = (json \ "evalue").as[String]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) => Ok(getAlnEval(hmmer.parseResult(jsValue), eval.toDouble))
       case _             => NotFound
@@ -134,7 +140,11 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
     }
   }
 
-  def loadHits(jobID: String, start: Int, end: Int, wrapped: Boolean): Action[AnyContent] = Action.async { implicit request =>
+  def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json      = request.body.asJson.get
+    val start     = (json \ "start").as[Int]
+    val end       = (json \ "end").as[Int]
+    val wrapped       = (json \ "wrapped").as[Boolean]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hmmer.parseResult(jsValue)
