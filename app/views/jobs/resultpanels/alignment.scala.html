@@ -92,7 +92,9 @@
                 loading = true;
                 $('#loadHitsAln').hide();
                 $('#loadingHits').show();
-                var route = jsRoutes.controllers.AlignmentController.loadHits(jobID);
+                var route = {};
+                route.url = "/AlignmentLoadHits/" + jobID;
+                route.method = "POST";
                 return $.ajax({
                     method: route.method,
                     url: route.url,
