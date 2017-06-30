@@ -56,7 +56,10 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       }
     }
   }
-  def evalFull(jobID: String, eval: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
+  def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val filename  = (json \ "fileName").as[String]
+    val eval      = (json \ "evalue").as[String]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -80,8 +83,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       }
     }
   }
-  def full(jobID: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
+  def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
+    val filename  = (json \ "fileName").as[String]
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
@@ -107,7 +111,10 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
-  def alnEval(jobID: String, eval: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val filename  = (json \ "fileName").as[String]
+    val eval      = (json \ "evalue").as[String]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
@@ -130,8 +137,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
-  def aln(jobID: String, filename: String): Action[AnyContent] = Action.async { implicit request =>
+  def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
+    val filename  = (json \ "fileName").as[String]
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
@@ -178,7 +186,10 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     }
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
-  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+  def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json      = request.body.asJson.get
+    val start     = (json \ "start").as[Int]
+    val end       = (json \ "end").as[Int]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hhblits.parseResult(jsValue)

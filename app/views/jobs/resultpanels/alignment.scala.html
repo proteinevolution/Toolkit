@@ -54,9 +54,8 @@
 
 
         window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": checkboxes.removeDuplicates()};
-            var route = jsRoutes.controllers.AlignmentController.getAln(jobID, resultName);
-
+            var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
+            var route = jsRoutes.controllers.AlignmentController.getAln(jobID);
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
@@ -89,13 +88,16 @@
 
         window["@{resultName}_getHits"] = function(start, end){
             if(start <= numHits && end <= numHits && !loading){
+                var data = { "start": start, "end": end, "resultName": resultName };
                 loading = true;
                 $('#loadHitsAln').hide();
                 $('#loadingHits').show();
-                var route = jsRoutes.controllers.AlignmentController.loadHits(jobID,start,end, resultName);
+                var route = jsRoutes.controllers.AlignmentController.loadHits(jobID);
                 return $.ajax({
                     method: route.method,
                     url: route.url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
                     error: function(){
                         $(".alignmentTBody").append("Error loading Data.");
                     }
