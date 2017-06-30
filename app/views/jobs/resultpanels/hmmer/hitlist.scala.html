@@ -126,6 +126,7 @@
         $(document).ready(function () {
             hitlistBaseFunctions();
             if (numHits > 0) {
+                $("#wrap").text("Unwrap sequences");
                 $("#wrap").addClass("colorToggleBar");
                 drawDataTable();
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query_start}};
