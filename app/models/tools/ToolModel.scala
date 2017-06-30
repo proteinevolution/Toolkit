@@ -854,6 +854,16 @@ final class ToolFactory @Inject()(
                                                      this.values(Toolnames.MAFFT))
           }
         },
+        Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.clustal(jobID,
+                aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
+                "alignment",
+                this.values(Toolnames.CLUSTALO))
+          }
+        },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(views.html.jobs.resultpanels.msaviewer(jobID))
