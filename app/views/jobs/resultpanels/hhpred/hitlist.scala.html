@@ -348,7 +348,9 @@
             var route = null;
             var filename = generateFilename();
             if (boolEvalue) {
-                route = jsRoutes.controllers.HHpredController.alnEval(jobID, evalue, filename);
+                data.evalue = evalue;
+                data.fileName = filename;
+                route = jsRoutes.controllers.HHpredController.alnEval(jobID);
             } else {
                 if(data.checkboxes.length == 0){
                     $('#forwardModal_@{tool.toolNameShort}').foundation('close');
@@ -356,7 +358,8 @@
                     alert("No sequence(s) selected!");
                     return false;
                 }
-                route = jsRoutes.controllers.HHpredController.aln(jobID, filename);
+                data.fileName = filename;
+                route = jsRoutes.controllers.HHpredController.aln(jobID);
             }
             $.ajax({
                 url: route.url,
@@ -406,13 +409,16 @@
 
         function getHits(start, end, isColor) {
             if (start <= numHits && end <= numHits && !loading) {
+                var data = { "start": start, "end": end, "isColor": isColor };
                 loading = true;
                 $('#loadingHits').show();
                 $('#loadHits').hide();
-                var route = jsRoutes.controllers.HHpredController.loadHits(jobID, start, end, isColor);
+                var route = jsRoutes.controllers.HHpredController.loadHits(jobID);
                 return $.ajax({
                     method: route.method,
-                    url: route.url
+                    url: route.url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
                 }).done(function (data_) {
                     $("#alignmentTable").append(data_);
                     loading = false;
