@@ -203,7 +203,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       * and informs all watching users about it in behalf of the job maintenance routine
       *
       */
-    mongoStore.findJobs(BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThreshold).getMillis)))).map { jobList =>
+    mongoStore.findJobs(BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThresholdRegistered).getMillis)))).map { jobList =>
       jobList.map { job =>
         job.ownerID match {
           case Some(id) =>
