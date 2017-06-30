@@ -21,10 +21,10 @@
             <span class="headerDivider"></span>
             <div id="controlls">
                 <a onclick="selectAll()" class="selectAllSeqBar" id="extraWide">Select all</a>
-                <a onclick="wrap()" id="wrap">Wrap sequences</a>
                 <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
+                <a onclick="wrap()" id="wrap">Wrap sequences</a>
             </div>
         </div>
     </div>
@@ -208,6 +208,8 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
         })
     }else{
         if(boolEvalue) {
+            data.filename = filename;
+            data.evalue = evalue;
             route = jsRoutes.controllers.PSIBlastController.alnEval(jobID);
         }else{
             data.evalue = evalue;
