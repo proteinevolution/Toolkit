@@ -21,6 +21,7 @@
             <span class="headerDivider"></span>
             <div id="controlls">
                 <a onclick="selectAll()" class="selectAllSeqBar" id="extraWide">Select all</a>
+                <a onclick="wrap()" id="wrap">Wrap sequences</a>
                 <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
@@ -111,17 +112,19 @@ var checkboxes = [];
 var numHits = @{result.num_hits};
 var jobID = '@{jobID}';
 var loading = false;
+var wrapped = true;
 
 $(document).ready( function(){
     hitlistBaseFunctions();
     if(numHits > 0 ){
+        $("#wrap").addClass("colorToggleBar");
         initiallyCheckCheckboxes();
         drawDataTable();
         var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query_start}};
         var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query_end}};
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
-        getHits(0, shownHits);
+        getHits(0, shownHits, wrapped);
 }
 });
 
@@ -216,12 +219,12 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
     }
 }
 
-function getHits(start, end){
+function getHits(start, end, isWrapped){
     if(start <= numHits && end <= numHits && !loading){
 	    loading = true;
         $('#loadingHits').show();
         $('#loadHits').hide();
-        var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID,start, end);
+        var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID,start, end, isWrapped);
         return $.ajax({
             method: route.method,
             url: route.url

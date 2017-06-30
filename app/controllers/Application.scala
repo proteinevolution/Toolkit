@@ -1,14 +1,15 @@
 package controllers
 
-import javax.inject.{ Inject, Named, Singleton }
+import javax.inject.{Inject, Named, Singleton}
 
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
-import akka.actor.{ ActorRef, ActorSystem, Props }
+import akka.actor.{ActorRef, ActorSystem, Props}
 import models.sge.Cluster
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import models.database.statistics.ToolStatistic
+import models.database.users.User
 import models.search.JobDAO
 import models.Constants
 import models.results.BlastVisualization
@@ -18,19 +19,19 @@ import modules.tel.TEL
 import modules.LocationProvider
 import modules.db.MongoStore
 import modules.tel.env.Env
-import play.api.{ Configuration, Logger }
+import play.api.{Configuration, Logger}
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.Files
-import play.api.libs.json.{ JsValue, Json }
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{Await, Future}
 
 @Singleton
 final class Application @Inject()(webJarAssets: WebJarAssets,
@@ -86,6 +87,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
+      println("Creating new WebSocket. ip: "+rh.remoteAddress.toString() + ", with sessionId: " + rh.session)
       userSessions
         .getUser(rh)
         .map { user =>
@@ -270,15 +272,15 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         routes.javascript.HHpredController.loadHits,
         routes.javascript.AlignmentController.loadHits,
         routes.javascript.AlignmentController.getAln,
+        routes.javascript.AlignmentController.loadHitsClustal,
         routes.javascript.Application.ws
       )
     ).as("text/javascript").withHeaders(CACHE_CONTROL -> "max-age=31536000")
   }
 
   def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
-
-    mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
-
+    // TODO smells like a hack
+    mongoStore.findUser(BSONDocument(User.NAMELOGIN -> username)).map {
       case Some(user) if user.checkPassword(password) && user.isSuperuser => true
       case None                                                           => false
 
