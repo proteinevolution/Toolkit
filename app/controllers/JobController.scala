@@ -211,13 +211,13 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       * and informs all watching users about it in behalf of the job maintenance routine
       *
       */
-    mongoStore.findJobs(BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThresholdRegistered).getMillis)))).map { jobList =>
+    mongoStore.findJobs(BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThreshold).getMillis)))).map { jobList =>
       jobList.map { job =>
         job.ownerID match {
           case Some(id) =>
             mongoStore.findUser(BSONDocument(User.IDDB -> BSONDocument("$eq" -> id))).map {
               case Some(user) =>
-                val storageTime = new DateTime().minusDays(if (user.accountType == -1) deletionThreshold else deletionThresholdRegistered)
+                val storageTime = new DateTime().minusDays(if (user.accountType == -1) {deletionThreshold} else deletionThresholdRegistered)
                 println("storage time: " + storageTime)
                 mongoStore.findJob(BSONDocument(
                   "$and" -> List(
@@ -234,11 +234,13 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 }
               case None =>
                 Logger.info("User not found: " + id.stringify + s". Job ${job.jobID} is directely deleted.")
+                jobDao.deleteJob(job.mainID.stringify)
                 this.deleteJobPermanently(job)
             }
           case None =>
             Logger.info("Job " + job.jobID + " has no owner ID. It is directely deleted")
             this.deleteJobPermanently(job)
+            jobDao.deleteJob(job.mainID.stringify)
 
         }
       }
