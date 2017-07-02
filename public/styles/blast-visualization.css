@@ -663,6 +663,14 @@ table.dataTable.no-footer{
     height: 1em;
 }
 
+#fastaTable {
+    width: auto;
+}
+
+#clustalTable {
+    width: auto;
+}
+
 #clustalTable td {
     padding-right: 0.2em;
 }
