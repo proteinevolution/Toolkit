@@ -656,7 +656,7 @@ td#joblistIcon i {
 
 @media screen and (max-width: 800px) {
     .tile_container {
-        width: 80%;
+        width: 93vw;
     }
 }
 
