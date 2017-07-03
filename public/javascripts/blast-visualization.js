@@ -410,7 +410,7 @@ function wrap(){
         }
     }
     $("#wrap").toggleClass("colorToggleBar");
-    $("#wrap").toggleText("Unwrap sequences", "Wrap sequences");
+    $("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs");
     $("#alignmentTable").empty();
     getHits(0, shownHits, wrapped, colorAAs).then(function(){
         linkCheckboxes();
