@@ -85,9 +85,9 @@
         window["@{tool.toolNameShort}_selectAll"] = function(){
             selectAllBool = !selectAllBool;
             $(".selectAllSeqSpan").toggleClass("colorToggle");
+            $(".selectAllSeqSpan").toggleText("Select all", "Deselect all");
             if(selectAllBool) {
                 selectAllHelper(checkbox);
-                $(".selectAllSeqSpan").text("Deselect all");
                 // first empty array
                 checkboxes = [];
                 // push all checkboxes (1 to num_hits) into array
@@ -95,7 +95,6 @@
             }
             else {
                 deselectAll(checkbox);
-                $(".selectAllSeqSpan").text("Select all");
                 // delete all checkboxes from array
                 checkboxes = [];
             }
