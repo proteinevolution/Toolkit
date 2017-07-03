@@ -30,7 +30,7 @@
                     <a onclick="hhpred_manual()">Create model using selection</a>
                 }
                 <a onclick="colorAA()" class="colorAA">Color Seqs</a>
-                <a onclick="wrapHHpred()" id="wrap">Wrap Seqs</a>
+                <a onclick="wrap()" id="wrap">Wrap Seqs</a>
                 </div>
         </div>
     </div>
@@ -175,9 +175,18 @@
             $.LoadingOverlay("show");
             $("#alignmentTable").empty();
             $(".colorAA").toggleClass("colorToggleBar");
-            getHits(0, shownHits, colorAAs, wrapped).then(function(){
+            var checkboxesWrap =  $("input:checkbox").toArray();
+            var num = 1;
+            for(var i =0 ; i < checkboxesWrap.length; i++){
+                if($(checkboxesWrap[i]).isOnScreen()){
+                    num  = $(checkboxesWrap[i]).val();
+                    break;
+                }
+            }
+            getHits(0, shownHits, wrapped, colorAAs).then(function(){
                 $.LoadingOverlay("hide");
                 linkCheckboxes();
+                scrollToElem(num);
             });
         }
 
@@ -192,7 +201,7 @@
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits, colorAAs, wrapped);
+                getHits(0, shownHits, wrapped, colorAAs);
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
                 $(".colorAA").addClass("colorToggleBar");
@@ -406,7 +415,7 @@
             });
         }
 
-        function getHits(start, end, isColor, isWrapped) {
+        function getHits(start, end, isWrapped, isColor) {
             if (start <= numHits && end <= numHits && !loading) {
                 var data = { "start": start, "end": end, "isColor": isColor, "wrapped": isWrapped };
                 loading = true;
@@ -434,27 +443,6 @@
 
         }
 
-        /**
-         * wraps sequences for search tools
-         * for this it empties the table "#alignmentTable"
-         * and calls get Hits taking the boolean wrapped as a parameter
-         */
-        function wrapHHpred(){
-            wrapped = !wrapped;
-            $.LoadingOverlay("show");
-            $("#alignmentTable").empty();
-            if(wrapped){
-                $("#wrap").text("Unwrap sequences");
-                $("#wrap").addClass("colorToggleBar");
-            }else {
-                $("#wrap").text("Wrap sequences");
-                $("#wrap").removeClass("colorToggleBar");
-            }
-            getHits(0, shownHits,colorAAs, wrapped).then(function(){
-                $.LoadingOverlay("hide");
-                linkCheckboxes();
-            });
-        }
 
 
 </script>

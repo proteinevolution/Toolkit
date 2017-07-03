@@ -245,7 +245,7 @@ function scrollToElem(num){
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     if (num > shownHits) {
         $.LoadingOverlay("show");
-        getHits(shownHits, num, colorAAs).done(function(data){
+        getHits(shownHits, num, wrapped,colorAAs).done(function(data){
             var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
@@ -358,7 +358,7 @@ function getsHitsManually(){
         var end = shownHits + showMore;
         end = end < numHits ? end : numHits;
         if (shownHits != end) {
-            getHits(shownHits, end);
+            getHits(shownHits, end, wrapped, colorAAs);
         }
         shownHits = end;
     }
@@ -400,20 +400,19 @@ function generateFilename(){
  * and calls get Hits taking the boolean wrapped as a parameter
  */
 function wrap(){
-    var scrollTop
     wrapped = !wrapped;
-    var checkboxes =  $("input:checkbox").toArray();
+    var checkboxesWrap =  $("input:checkbox").toArray();
     var num = 1;
-    for(var i =0 ; i < checkboxes.length; i++){
-        if($(checkboxes[i]).isOnScreen()){
-            num  = $(checkboxes[i]).val();
+    for(var i =0 ; i < checkboxesWrap.length; i++){
+        if($(checkboxesWrap[i]).isOnScreen()){
+            num  = $(checkboxesWrap[i]).val();
             break;
         }
     }
     $("#wrap").toggleClass("colorToggleBar");
     $("#wrap").toggleText("Unwrap sequences", "Wrap sequences");
     $("#alignmentTable").empty();
-    getHits(0, shownHits, wrapped).then(function(){
+    getHits(0, shownHits, wrapped, colorAAs).then(function(){
         linkCheckboxes();
         scrollToElem(num);
     });
