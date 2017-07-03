@@ -402,17 +402,19 @@ function generateFilename(){
 function wrap(){
     var scrollTop = $(document).scrollTop();
     wrapped = !wrapped;
+    $("#wrap").toggleClass("colorToggleBar");
+    $("#wrap").toggleText("Unwrap sequences", "Wrap sequences");
     $("#alignmentTable").empty();
-    if(wrapped){
-        $("#wrap").text("Unwrap sequences");
-        $("#wrap").addClass("colorToggleBar");
-    }else {
-        $("#wrap").text("Wrap sequences");
-        $("#wrap").removeClass("colorToggleBar");
-    }
     getHits(0, shownHits, wrapped).then(function(){
         linkCheckboxes();
         $(document).scrollTop(scrollTop);
     });
 
 }
+
+
+$.fn.extend({
+    toggleText: function(a, b){
+        return this.text(this.text() == b ? a : b);
+    }
+});

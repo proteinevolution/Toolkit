@@ -219,11 +219,10 @@
 
         function selectAll(){
             selectAllBool = !selectAllBool;
+            $(".selectAllSeqBar").toggleClass("colorToggleBar");
+            $(".selectAllSeqBar").toggleText("Select all","Deselect all");
             if(selectAllBool) {
                 selectAllHelper(checkbox);
-                $(".selectAllSeqBar").text("Deselect all");
-                $(".selectAllSeqBar").addClass("colorToggleBar");
-
                 // first empty array
                 checkboxes = [];
                 // push all checkboxes (1 to num_hits) into array
@@ -231,8 +230,6 @@
             }
             else {
                 deselectAll(checkbox);
-                $(".selectAllSeqBar").text("Select all");
-                $(".selectAllSeqBar").removeClass("colorToggleBar");
                 // delete all checkboxes from array
                 checkboxes = [];
             }
