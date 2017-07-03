@@ -278,6 +278,10 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     userCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[User]))
   }
 
+  def removeUsers(selector: BSONDocument): Future[WriteResult] = {
+    userCollection.flatMap(_.remove(selector))
+  }
+
   def upsertUser(user: User): Future[Option[User]] = {
     userCollection.flatMap(
       _.findAndUpdate(selector = BSONDocument(User.IDDB -> user.userID),
