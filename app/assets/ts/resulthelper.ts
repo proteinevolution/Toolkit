@@ -5,6 +5,7 @@ declare var showMore : any;
 declare var numHits : any;
 declare var getHits: any;
 declare var colorAAs: boolean;
+declare var wrapped: boolean;
 let count = 0;
 
 // add scrollcontainer highlighting
@@ -28,10 +29,15 @@ let followScroll = function(element : any) {
                 $('.scrollContainer').addClass('fixed');
                 $('.scrollContainer').removeClass('scrollContainerWhite');
                 $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
+                $('#wrap').show();
+                $(".colorAA").show();
             } else {
                 $('.scrollContainer').removeClass('fixed');
                 $('.scrollContainer').addClass('scrollContainerWhite');
                 $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
+                $('#wrap').hide();
+                $(".colorAA").hide();
+
             }
         }
         // trigger lazyload for loading alignment
@@ -40,7 +46,7 @@ let followScroll = function(element : any) {
                 let end = parseInt(shownHits) + parseInt(showMore);
                 end = end < numHits ? end : numHits;
                 if (shownHits != end) {
-                    getHits(shownHits, end, colorAAs).then(function () {
+                    getHits(shownHits, end,wrapped,colorAAs).then(function () {
                     });
                 }
                 shownHits = end;

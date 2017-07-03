@@ -118,6 +118,7 @@
         var jobID = '@{jobID}';
         var loading = false;
         var wrapped = true;
+        var colorAAs = false;
         // use this array to store
         // checked checkboxes
         // due to pagination/lazyload
@@ -135,6 +136,7 @@
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits, wrapped);
+                $("#wrap").hide();
             }
         });
 

@@ -20,7 +20,8 @@ case class HHPredHSP(query: HHPredQuery,
                      description: String,
                      num: Int,
                      ss_score: Double,
-                     confidence: String){
+                     confidence: String,
+                     length: Int) {
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
@@ -47,16 +48,16 @@ case class HHPredQuery(consensus: String,
                        accession: String,
                        ref: Int,
                        seq: String,
-                       ss_pred: String,
                        ss_dssp: String,
+                       ss_pred: String,
                        start: Int)
 case class HHPredTemplate(consensus: String,
                           end: Int,
                           accession: String,
                           ref: Int,
                           seq: String,
-                          ss_pred: String,
                           ss_dssp: String,
+                          ss_pred: String,
                           start: Int)
 case class HHPredResult(HSPS: List[HHPredHSP],
                         alignment: AlignmentResult,
@@ -85,7 +86,7 @@ class HHPred @Inject()(general: General, aln: Alignment) {
           val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
           val ss_score       = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
           val confidence     = (x._1 \ "confidence").getOrElse(Json.toJson("")).as[String]
-          HHPredHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, confidence)
+          HHPredHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, confidence, agree.length)
         }
         val db        = (obj \ jobID \ "db").as[String]
         val proteomes = (obj \ jobID \ "proteomes").as[String]
