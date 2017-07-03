@@ -34,44 +34,6 @@ function download(filename, text){
     $.LoadingOverlay("hide");
 }
 
-// Makes a table row with the specified content
-function makeRow(entries) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement("td");
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
-// Makes a table row with colspan=num
-function makeRowColspan(entries, num, HTMLElement) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement(HTMLElement);
-        entry.setAttribute("padding", "0");
-        entry.setAttribute("colspan",num);
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
-
-// Makes a table row with colspan=num
-function makeRowDiffColspan(entries, num, HTMLElement) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement(HTMLElement);
-        entry.setAttribute("padding", "0");
-        entry.setAttribute("colspan",num[i]);
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
 
 
 /* Slider */
@@ -287,7 +249,7 @@ function scrollToElem(num){
             var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
-            }, 'fast')
+            }, 1)
         }).then(function(){
             $.LoadingOverlay("hide");
         });
@@ -296,7 +258,7 @@ function scrollToElem(num){
         var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
         $(elem).animate({
             scrollTop: pos - 100
-        }, 'fast')
+        }, 1)
     }
 }
 
@@ -438,19 +400,39 @@ function generateFilename(){
  * and calls get Hits taking the boolean wrapped as a parameter
  */
 function wrap(){
+    var scrollTop
     wrapped = !wrapped;
-    $.LoadingOverlay("show");
-    $("#alignmentTable").empty();
-    if(wrapped){
-        $("#wrap").text("Unwrap sequences");
-        $("#wrap").addClass("colorToggleBar");
-    }else {
-        $("#wrap").text("Wrap sequences");
-        $("#wrap").removeClass("colorToggleBar");
+    var checkboxes =  $("input:checkbox").toArray();
+    var num = 1;
+    for(var i =0 ; i < checkboxes.length; i++){
+        if($(checkboxes[i]).isOnScreen()){
+            num  = $(checkboxes[i]).val();
+            break;
+        }
     }
+    $("#wrap").toggleClass("colorToggleBar");
+    $("#wrap").toggleText("Unwrap sequences", "Wrap sequences");
+    $("#alignmentTable").empty();
     getHits(0, shownHits, wrapped).then(function(){
-        $.LoadingOverlay("hide");
         linkCheckboxes();
+        scrollToElem(num);
     });
 
 }
+
+
+$.fn.extend({
+    toggleText: function(a, b){
+        return this.text(this.text() == b ? a : b);
+    }
+});
+
+$.fn.isOnScreen = function(){
+    var viewport = {};
+    viewport.top = $(window).scrollTop();
+    viewport.bottom = viewport.top + $(window).height();
+    var bounds = {};
+    bounds.top = this.offset().top;
+    bounds.bottom = bounds.top + this.outerHeight();
+    return ((bounds.top <= viewport.bottom) && (bounds.bottom >= viewport.top));
+};
