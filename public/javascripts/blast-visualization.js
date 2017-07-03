@@ -34,44 +34,6 @@ function download(filename, text){
     $.LoadingOverlay("hide");
 }
 
-// Makes a table row with the specified content
-function makeRow(entries) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement("td");
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
-// Makes a table row with colspan=num
-function makeRowColspan(entries, num, HTMLElement) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement(HTMLElement);
-        entry.setAttribute("padding", "0");
-        entry.setAttribute("colspan",num);
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
-
-// Makes a table row with colspan=num
-function makeRowDiffColspan(entries, num, HTMLElement) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement(HTMLElement);
-        entry.setAttribute("padding", "0");
-        entry.setAttribute("colspan",num[i]);
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
 
 
 /* Slider */
@@ -438,8 +400,8 @@ function generateFilename(){
  * and calls get Hits taking the boolean wrapped as a parameter
  */
 function wrap(){
+    var scrollTop = $(document).scrollTop();
     wrapped = !wrapped;
-    $.LoadingOverlay("show");
     $("#alignmentTable").empty();
     if(wrapped){
         $("#wrap").text("Unwrap sequences");
@@ -449,8 +411,8 @@ function wrap(){
         $("#wrap").removeClass("colorToggleBar");
     }
     getHits(0, shownHits, wrapped).then(function(){
-        $.LoadingOverlay("hide");
         linkCheckboxes();
+        $(document).scrollTop(scrollTop);
     });
 
 }
