@@ -15,9 +15,9 @@
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
-                <a id="visualizationScroll" name="#visualization" onclick="scrollToSection('visualization')">Visualization</a>
-                <a id="hitlistScroll" name="#hitlist" onclick="scrollToSection('hitlist')">Hitlist</a>
-                <a id="alignmentsScroll" name="#alignments" onclick="scrollToSection('alignments')">Alignments</a>
+                <a id="visualizationScroll" name="#visualization" onclick="scrollToSection('visualization')">Vis</a>
+                <a id="hitlistScroll" name="#hitlist" onclick="scrollToSection('hitlist')">Hits</a>
+                <a id="alignmentsScroll" name="#alignments" onclick="scrollToSection('alignments')">Aln</a>
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
@@ -26,7 +26,7 @@
                 <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
-                <a onclick="wrap()" id="wrap">Wrap sequences</a>
+                <a onclick="wrap()" id="wrap">Wrap Seqs</a>
             </div>
         </div>
     </div>
@@ -126,7 +126,7 @@
         $(document).ready(function () {
             hitlistBaseFunctions();
             if (numHits > 0) {
-                $("#wrap").text("Unwrap sequences");
+                $("#wrap").text("Unwrap Seqs");
                 $("#wrap").addClass("colorToggleBar");
                 drawDataTable();
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query_start}};
