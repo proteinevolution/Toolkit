@@ -290,9 +290,9 @@ object BlastVisualization extends Constants {
       var string = alignment.alignment.map { elem =>
         "<tr>" +
           "<td>" +
-          "<input type=\"checkbox\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkboxClustal checkbox\"><b>" +
+          "<input type=\"checkbox\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkbox\"><b>" +
           "</b><td>" +
-          "<b>" + elem.accession.take(20) + "</b><br />" +
+          "<b><span class='clustalAcc'>" + elem.accession.take(20) + "</span></b><br />" +
           "</td>" +
           "</td>" +
           "<td class=\"sequence\">" + {
