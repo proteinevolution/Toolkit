@@ -118,14 +118,15 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     val json      = request.body.asJson.get
     val start     = (json \ "start").as[Int]
     val end       = (json \ "end").as[Int]
-    val isColor       = (json \ "isColor").as[Boolean]
+    val isColor   = (json \ "isColor").as[Boolean]
+    val wrapped   = (json \ "wrapped").as[Boolean]
       mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result = hhpred.parseResult(jsValue)
           if (end > result.num_hits || start > result.num_hits) {
             BadRequest
           } else {
-            val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor))
+            val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor, wrapped))
             Ok(hits.mkString)
           }
       }
