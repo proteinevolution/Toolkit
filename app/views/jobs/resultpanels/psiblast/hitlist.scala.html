@@ -127,7 +127,8 @@ $(document).ready( function(){
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
         getHits(0, shownHits, wrapped);
-}
+        $("#wrap").hide();
+    }
 });
 
 function selectAll(){
