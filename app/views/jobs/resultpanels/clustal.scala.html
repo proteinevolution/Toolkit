@@ -84,10 +84,10 @@
 
         window["@{tool.toolNameShort}_selectAll"] = function(){
             selectAllBool = !selectAllBool;
+            $(".selectAllSeqSpan").toggleClass("colorToggle");
+            $(".selectAllSeqSpan").toggleText("Select all", "Deselect all");
             if(selectAllBool) {
                 selectAllHelper(checkbox);
-                $(".selectAllSeqSpan").text("Deselect all");
-                $(".selectAllSeqSpan").addClass("colorToggle");
                 // first empty array
                 checkboxes = [];
                 // push all checkboxes (1 to num_hits) into array
@@ -95,9 +95,6 @@
             }
             else {
                 deselectAll(checkbox);
-                $(".selectAllSeqSpan").text("Select all");
-                $(".selectAllSeqSpan").removeClass("colorToggle");
-
                 // delete all checkboxes from array
                 checkboxes = [];
             }
@@ -127,13 +124,8 @@
 
         function colorAA(){
             colorAAsClustal = !colorAAsClustal;
-            $.LoadingOverlay("show");
             $("#clustalTable").empty();
-            if(colorAAsClustal ){
-                $("#colorAA").addClass("colorToggle");
-            }else {
-                $("#colorAA").removeClass("colorToggle");
-            }
+            $("#colorAA").toggleClass("colorToggle");
             @{tool.toolNameShort}_getHits(colorAAsClustal);
         }
 

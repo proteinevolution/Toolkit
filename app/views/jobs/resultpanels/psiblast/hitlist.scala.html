@@ -105,7 +105,6 @@ var checkbox = "checkbox";
 var selectAllBool = false;
 var shownHits = 100;
 var showMore = 100;
-var colorAAs = true;
 // use this array to store
 // checked checkboxes
 // due to pagination/lazyload
@@ -133,11 +132,10 @@ $(document).ready( function(){
 
 function selectAll(){
     selectAllBool = !selectAllBool;
+    $(".selectAllSeqBar").toggleClass("colorToggleBar");
+    $(".selectAllSeqBar").toggleText("Select all","Deselect all");
     if(selectAllBool) {
         selectAllHelper(checkbox);
-        $(".selectAllSeqBar").text("Deselect all");
-        $(".selectAllSeqBar").addClass("colorToggleBar");
-
         // first empty array
         checkboxes = [];
         // push all checkboxes (1 to num_hits) into array
@@ -145,8 +143,6 @@ function selectAll(){
     }
     else {
         deselectAll(checkbox);
-        $(".selectAllSeqBar").text("Select all");
-        $(".selectAllSeqBar").removeClass("colorToggleBar");
         // delete all checkboxes from array
         checkboxes = [];
     }

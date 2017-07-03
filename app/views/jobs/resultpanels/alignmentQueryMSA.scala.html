@@ -50,7 +50,6 @@
         var selectAllBool = false;
         var shownHits = 20;
         var showMore = 100;
-        var colorAAs = true;
         var loading = false;
         var numHits = @alignment.alignment.length;
          var resultName = '@resultName';
@@ -131,29 +130,6 @@
                         $('#loadHitsQaln').show();
                     }
                 });
-            }
-        }
-
-
-        function selectAll(){
-            selectAllBool = !selectAllBool;
-            if(selectAllBool) {
-                selectAllHelper(checkbox);
-                $(".selectAllSeqSpan").text("Deselect all");
-                $(".selectAllSeqSpan").addClass("colorToggle");
-
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-            }
-            else {
-                deselectAll(checkbox);
-                $(".selectAllSeqSpan").text("Select all");
-                $(".selectAllSeqSpan").removeClass("colorToggle");
-
-                // delete all checkboxes from array
-                checkboxes = [];
             }
         }
 
