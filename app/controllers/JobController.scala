@@ -28,12 +28,9 @@ import better.files._
 import models.tools.ToolFactory
 import modules.db.MongoStore
 import modules.tel.env.Env
-import org.mindrot.jbcrypt.BCrypt
 
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.commands.WriteResult
 
-import scala.util.{Failure, Success}
 
 
 /**
@@ -49,9 +46,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     @NamedCache("userCache") implicit val userCache: CacheApi,
                                     implicit val locationProvider: LocationProvider,
                                     val jobDao: JobDAO,
-                                    val toolFactory: ToolFactory)
+                                    val toolFactory: ToolFactory,
+                                    constants: Constants)
     extends Controller
-    with Constants
     with Common {
 
   /**
@@ -97,7 +94,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       // Grab the formData from the request data
       request.body.asMultipartFormData match {
         case Some(mpfd) =>
-          var formData = mpfd.dataParts.mapValues(_.mkString(formMultiValueSeparator))
+          var formData = mpfd.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator))
           mpfd.file("file").foreach { file =>
             var source = scala.io.Source.fromFile(file.ref.file)
             formData = try { formData.updated("alignment", source.getLines().mkString("\n")) } finally {
@@ -123,7 +120,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
                 paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
               }
-              params = params.updated("regkey", modellerKey)
+              params = params.updated("regkey", constants.modellerKey)
               // get checkbox value
               // TODO: mailUpdate some how gets lost in the filter function above
               val emailUpdate = formData.get("emailUpdate") match {
@@ -197,81 +194,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   }
 
 
-  /**
-    * markes jobs as deleted and subsequently deletes them from dbs and harddisk
- *
-    * @return
-    */
-  def deleteJobsPermanently() : Action[AnyContent] = Action.async { implicit request =>
-
-    Logger.info("delete jobs that are marked for deletion Action in JobController reached")
-    /*
-      * deletes jobs are older than a given number of days
-      * ('deletionThresholdLoggedIn' for registered users and  'deletionThreshold' for others)
-      * and informs all watching users about it in behalf of the job maintenance routine
-      *
-      */
-    mongoStore.findJobs(BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(deletionThreshold).getMillis)))).map { jobList =>
-      jobList.map { job =>
-        job.ownerID match {
-          case Some(id) =>
-            mongoStore.findUser(BSONDocument(User.IDDB -> BSONDocument("$eq" -> id))).map {
-              case Some(user) =>
-                val storageTime = new DateTime().minusDays(if (user.accountType == -1) {deletionThreshold} else deletionThresholdRegistered)
-                println("storage time: " + storageTime)
-                mongoStore.findJob(BSONDocument(
-                  "$and" -> List(
-                    BSONDocument(Job.JOBID -> job.jobID),
-                    BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(storageTime.getMillis)))
-                  )
-                )).map {
-                  case Some(deletedJob) =>
-                    println(deletedJob.jobID)
-                    // Message user clients to remove the job from their watchlist
-                    jobActorAccess.sendToJobActor(deletedJob.jobID, Delete(deletedJob.jobID, deletedJob.ownerID.get, false))
-                    this.deleteJobPermanently(job)
-                  case None =>
-                }
-              case None =>
-                Logger.info("User not found: " + id.stringify + s". Job ${job.jobID} is directely deleted.")
-                jobDao.deleteJob(job.mainID.stringify)
-                this.deleteJobPermanently(job)
-            }
-          case None =>
-            Logger.info("Job " + job.jobID + " has no owner ID. It is directely deleted")
-            this.deleteJobPermanently(job)
-            jobDao.deleteJob(job.mainID.stringify)
-
-        }
-      }
-    }
-
-    /*
-      * deletes all jobs that are marked for deletion with
-      * (deletion.flag == 1)
-      * the duration of keeping the job is dependent on whether the user is a registered user
-      */
-    println("Deleting jobs that user have requested for deletion in progress...")
-    mongoStore.findJobs(BSONDocument(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 1)))).map { jobList =>
-      jobList.foreach { job =>
-        this.deleteJobPermanently(job)
-      }
-    }
-    Future.successful(Ok)
-  }
-    /**
-      * deletes the Job from disk.
-      * Includes: remove job and result from mongoDB,
-      * delete job folder
- *
-      * @param job
-    */
-  def deleteJobPermanently(job: Job): Unit ={
-    Logger.info("Deleting jobFolder" + jobPath/job.jobID)
-    s"$jobPath${job.jobID}".toFile.delete(true)
-    Logger.info("Removing Job "+job.jobID+" from mongo DB")
-    mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
-  }
 
   /**
     * TODO implement me
@@ -284,7 +206,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
         case Some(job) =>
           val params: Map[String, String] = {
-            val ois = new ObjectInputStream(new FileInputStream((jobPath / jobID / serializedParam).pathAsString))
+            val ois = new ObjectInputStream(new FileInputStream((constants.jobPath / jobID / constants.serializedParam).pathAsString))
             val x   = ois.readObject().asInstanceOf[Map[String, String]]
             ois.close()
             x
