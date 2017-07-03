@@ -30,7 +30,9 @@
                 @if(result.db.matches("mmcif70/pdb70")) {
                     <a onclick="hhpred_manual()">Create model using selection</a>
                 }
-            </div>
+                <a onclick="colorAA()" class="colorAA">Color Seqs</a>
+                <a onclick="wrap()" id="wrap">Wrap Seqs</a>
+                </div>
         </div>
     </div>
     <br>
@@ -95,7 +97,6 @@
     <div id="alignmentResult">
         <div id="alignments">
             <h5 id="alignmentsTitleHHpred">Alignments</h5>
-            <a onclick="colorAA()" class="colorAA">Color alignment</a>
             <form id="hhpred_templates">
                 <table class="unstriped">
                     <tbody id="alignmentTable">
@@ -163,6 +164,7 @@
         var numHits = @{result.num_hits};
         var jobID = '@{jobID}';
         var loading = false;
+        var wrapped = true;
 
         // use this array to store
         // checked checkboxes
@@ -173,30 +175,39 @@
             colorAAs = !colorAAs;
             $.LoadingOverlay("show");
             $("#alignmentTable").empty();
-            if(colorAAs){
-                $(".colorAA").addClass("colorToggleHHpred");
-            }else {
-                $(".colorAA").removeClass("colorToggleHHpred");
+            $(".colorAA").toggleClass("colorToggleBar");
+            var checkboxesWrap =  $("input:checkbox").toArray();
+            var num = 1;
+            for(var i =0 ; i < checkboxesWrap.length; i++){
+                if($(checkboxesWrap[i]).isOnScreen()){
+                    num  = $(checkboxesWrap[i]).val();
+                    break;
+                }
             }
-            getHits(0, shownHits, colorAAs).then(function(){
+            getHits(0, shownHits, wrapped, colorAAs).then(function(){
                 $.LoadingOverlay("hide");
                 linkCheckboxes();
+                scrollToElem(num);
             });
         }
 
         $(document).ready(function () {
             hitlistBaseFunctions();
             if (numHits > 0) {
+                $("#wrap").text("Unwrap Seqs");
+                $("#wrap").addClass("colorToggleBar");
                 drawDataTable();
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query.start}};
                 var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query.end}};
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits, colorAAs);
+                getHits(0, shownHits, wrapped, colorAAs);
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
-                $(".colorAA").addClass("colorToggleHHpred");
+                $(".colorAA").addClass("colorToggleBar");
+                $("#wrap").hide();
+                $(".colorAA").hide();
             }
 
         });
@@ -405,9 +416,9 @@
             });
         }
 
-        function getHits(start, end, isColor) {
+        function getHits(start, end, isWrapped, isColor) {
             if (start <= numHits && end <= numHits && !loading) {
-                var data = { "start": start, "end": end, "isColor": isColor };
+                var data = { "start": start, "end": end, "isColor": isColor, "wrapped": isWrapped };
                 loading = true;
                 $('#loadingHits').show();
                 $('#loadHits').hide();
@@ -432,6 +443,7 @@
             // hide loadHits
 
         }
+
 
 
 </script>
