@@ -7,6 +7,7 @@ import org.joda.time.DateTime
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
+import javax.inject.Inject
 
 case class Job(mainID: BSONObjectID, // ID of the Job in the System
                parentID: Option[BSONObjectID] = None, // ID of the Parent Job
@@ -27,7 +28,7 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
                dateUpdated: Option[DateTime], // Last Updated on
                dateViewed: Option[DateTime], // Last Viewed on
                IPHash: Option[String]) // hash of the ip
-    extends Constants {
+   {
 
   // Returns if the job is private or not
   def isPrivate: Boolean = {

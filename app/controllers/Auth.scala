@@ -40,10 +40,10 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                            implicit val mailerClient: MailerClient,
                            implicit val locationProvider: LocationProvider,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
-                           @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi) // Mailing Controller
+                           @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi, // Mailing Controller
+                           constants: Constants)
     extends Controller
     with I18nSupport
-    with Constants
     with JSONTemplate
     with Common
     with ReactiveMongoComponents {
@@ -682,7 +682,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     userSessions.getUser.flatMap { user =>
       if (user.userConfig.hasMODELLERKey) {
         Future.successful(Ok(Json.obj("isValid" -> true)))
-      } else if (input == modellerKey) {
+      } else if (input == constants.modellerKey) {
         userSessions
           .modifyUserWithCache(BSONDocument(User.IDDB -> user.userID),
                                BSONDocument(
