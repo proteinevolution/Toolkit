@@ -10,6 +10,7 @@ class ActorModule extends AbstractModule with AkkaGuiceSupport {
     bindActor[ClusterMonitor]("clusterMonitor")
     bindActor[FileWatcher]("fileWatcher")
     bindActor[JobIDActor]("jobIDActor")
+    bindActor[DatabaseMonitor]("DatabaseMonitor")
     bindActorFactory[JobActor, JobActor.Factory]
     bindActorFactory[WebSocketActor, WebSocketActor.Factory]
   }
