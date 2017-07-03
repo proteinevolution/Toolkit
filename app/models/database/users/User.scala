@@ -10,7 +10,7 @@ case class User(userID: BSONObjectID, // ID of the User
                 sessionID: Option[BSONObjectID] = None, // Session ID
                 sessionData: List[SessionData] = List.empty, // Session data separately from sid
                 connected: Boolean = true,
-                accountType: Int = -1, // User Access level
+                accountType: Int = User.NORMALUSER, // User Access level
                 userData: Option[UserData] = None, // Personal Data of the User //TODO possibly encrypt?
                 userConfig: UserConfig = UserConfig(), // Configurable parts for the user
                 userToken: Option[UserToken] = None,
@@ -23,7 +23,7 @@ case class User(userID: BSONObjectID, // ID of the User
     BCrypt.checkpw(plainPassword, getUserData.password)
   }
 
-  def getUserData = {
+  def getUserData: UserData = {
     // This should only return user data when the user is logged in.
     userData.getOrElse(UserData("invalid", "invalid", "invalid"))
   }
@@ -31,11 +31,14 @@ case class User(userID: BSONObjectID, // ID of the User
   // Mock up function to show how a possible function to check user levels could look like.
   def isSuperuser: Boolean = {
     accountType match {
-      case 10 => true
-      case 11 => true
+      case User.ADMINLEVEL     => true
+      case User.MODERATORLEVEL => true
       case _  => false
     }
   }
+
+  def hasNotLoggedIn : Boolean = accountType == 3
+
   override def toString: String = {
     s"""userID: ${userID.stringify}
        |sessionID: ${sessionID match {
@@ -70,6 +73,14 @@ object User {
   final val DATELASTLOGIN = "dateLastLogin" // name for the last login field
   final val DATECREATED   = "dateCreated" //              account created on field
   final val DATEUPDATED   = "dateUpdated" //              account data changed on field
+
+  final val ADMINLEVEL     = 11
+  final val MODERATORLEVEL = 10
+  final val BANNEDUSER     = 4
+  final val CLOSETODELETIONUSER = 3
+  final val REGISTEREDUSER = 1
+  final val NORMALUSERAWAITINGREGISTRATION = 0
+  final val NORMALUSER     = -1
 
   /**
     * Define how the User object is formatted when turned into a json object
