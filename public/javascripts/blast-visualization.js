@@ -249,7 +249,7 @@ function scrollToElem(num){
             var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
-            }, 'fast')
+            }, 1)
         }).then(function(){
             $.LoadingOverlay("hide");
         });
@@ -258,7 +258,7 @@ function scrollToElem(num){
         var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
         $(elem).animate({
             scrollTop: pos - 100
-        }, 'fast')
+        }, 1)
     }
 }
 
@@ -400,14 +400,22 @@ function generateFilename(){
  * and calls get Hits taking the boolean wrapped as a parameter
  */
 function wrap(){
-    var scrollTop = $(document).scrollTop();
+    var scrollTop
     wrapped = !wrapped;
+    var checkboxes =  $("input:checkbox").toArray();
+    var num = 1;
+    for(var i =0 ; i < checkboxes.length; i++){
+        if($(checkboxes[i]).isOnScreen()){
+            num  = $(checkboxes[i]).val();
+            break;
+        }
+    }
     $("#wrap").toggleClass("colorToggleBar");
     $("#wrap").toggleText("Unwrap sequences", "Wrap sequences");
     $("#alignmentTable").empty();
     getHits(0, shownHits, wrapped).then(function(){
         linkCheckboxes();
-        $(document).scrollTop(scrollTop);
+        scrollToElem(num);
     });
 
 }
@@ -418,3 +426,13 @@ $.fn.extend({
         return this.text(this.text() == b ? a : b);
     }
 });
+
+$.fn.isOnScreen = function(){
+    var viewport = {};
+    viewport.top = $(window).scrollTop();
+    viewport.bottom = viewport.top + $(window).height();
+    var bounds = {};
+    bounds.top = this.offset().top;
+    bounds.bottom = bounds.top + this.outerHeight();
+    return ((bounds.top <= viewport.bottom) && (bounds.bottom >= viewport.top));
+};
