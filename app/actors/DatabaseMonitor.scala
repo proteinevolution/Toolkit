@@ -74,7 +74,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
           Logger.info(s"Deleting user: ${user.userID}\nJobs: ${user.jobs.mkString(",")}")
           user.userID
         }
-        // TODO need to implement statistics before deleting the accounts?
+        // TODO need to implement statistics before deleting the accounts?  // Not deleting users just yet
 //        mongoStore.removeUsers(BSONDocument(User.IDDB -> userIDs)).foreach{ writeResult =>
 //          Logger.info(s"Deleting old jobs ${if (writeResult.ok) "successful" else "failed"}")
 //        }
@@ -90,10 +90,8 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       )).foreach{ users =>
         val userIDs = users.map { user =>
           Logger.info(s"User found: ${user.getUserData.nameLogin}")
-          if (user.userData.map(_.eMail).contains("andrew.stephens@tuebingen.mpg.de")) {
-            val mail = OldAccountEmail(user, userLoggedInDeletingAfterMonths)
-            mail.send
-          }
+          val mail = OldAccountEmail(user, userLoggedInDeletingAfterMonths)
+          mail.send
           user
         }
         mongoStore.modifyUser(BSONDocument(User.IDDB -> userIDs), BSONDocument(User.ACCOUNTTYPE -> User.CLOSETODELETIONUSER))
