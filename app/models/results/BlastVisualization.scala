@@ -387,4 +387,57 @@ object BlastVisualization extends Constants {
       }
     }
   }
+
+  def hhpredHitWrapped(hit: HHPredHSP, charCount: Int, breakAfter: Int, beginQuery: Int, beginTemplate: Int, color: Boolean): String ={
+    if (charCount >= hit.length){
+      return ""
+    }
+    else {
+      val querySSDSSP = hit.query.ss_dssp.drop(charCount).take(Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
+      val querySSPRED = hit.query.ss_pred.drop(charCount).take(Math.min(charCount + breakAfter, hit.query.ss_pred.length))
+      val query = hit.query.seq.substring(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
+      val queryCons = hit.query.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
+      val midline = hit.agree.substring(charCount, Math.min(charCount + breakAfter, hit.agree.length))
+      val templateCons = hit.template.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
+      val template = hit.template.seq.substring(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+      val templateSSDSSP = hit.template.ss_dssp.drop(charCount).take(Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
+      val templateSSPRED = hit.template.ss_pred.drop(charCount).take(Math.min(charCount + breakAfter, hit.template.ss_pred.length))
+      val confidence = hit.confidence.drop(charCount).take(Math.min(charCount + breakAfter, hit.confidence.length))
+      val queryEnd = lengthWithoutDashDots(query)
+      val templateEnd = lengthWithoutDashDots(template)
+
+      if (beginQuery == beginQuery + queryEnd) {
+        return ""
+      } else {
+
+          var html = ""
+          if(!querySSPRED.isEmpty) {
+          html +=" <tr class='sequence'><td></td><td>Q ss_pred" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(querySSPRED) + "</td></tr>"
+          }
+          if(!querySSDSSP.isEmpty) {
+            html += "<tr class='sequence'><td></td><td>Q ss_dssp" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(querySSDSSP) + "</td></tr>"
+          }
+        html +="<tr class='sequence'><td></td><td>Q " +  hit.query.accession + "</td><td>" + beginQuery + "</td><td>" + {if(color) colorRegexReplacer(query) else query} + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
+         "<tr class='sequence'><td></td><td>Q Consensus " + "</td><td>" + beginQuery + "</td><td>" + queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
+            "<tr class='sequence'><td></td><td></td><td></td><td>" + midline + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>T Consensus " + "</td><td>" + beginTemplate + "</td><td>" + templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>T " + hit.template.accession + "</td><td>" + beginTemplate + "</td><td>" + {if(color) colorRegexReplacer(template) else template} + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>"
+        if(!templateSSDSSP.isEmpty) {
+          html += "<tr class='sequence'><td></td><td>T ss_dssp" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(templateSSDSSP) + "</td></tr>"
+        }
+        if(!templateSSPRED.isEmpty) {
+          html +=" <tr class='sequence'><td></td><td>T ss_pred" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(templateSSPRED) + "</td></tr>"
+        }
+        if(!confidence.isEmpty) {
+          html +=" <tr class='sequence'><td></td><td>Confidence" + "</td><td>" + "</td><td>" + confidence + "</td></tr>"
+        }
+
+        html += "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
+
+            return html + hhpredHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd, color)
+      }
+    }
+  }
+
+
 }

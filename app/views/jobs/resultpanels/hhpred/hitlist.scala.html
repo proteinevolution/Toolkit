@@ -29,7 +29,9 @@
                 @if(result.db.matches("mmcif70/pdb70")) {
                     <a onclick="hhpred_manual()">Create model using selection</a>
                 }
-            </div>
+                <a onclick="colorAA()" class="colorAA">Color Seqs</a>
+                <a onclick="wrapHHpred()" id="wrap">Wrap Seqs</a>
+                </div>
         </div>
     </div>
     <br>
@@ -94,7 +96,6 @@
     <div id="alignmentResult">
         <div id="alignments">
             <h5 id="alignmentsTitleHHpred">Alignments</h5>
-            <a onclick="colorAA()" class="colorAA">Color alignment</a>
             <form id="hhpred_templates">
                 <table class="unstriped">
                     <tbody id="alignmentTable">
@@ -162,6 +163,7 @@
         var numHits = @{result.num_hits};
         var jobID = '@{jobID}';
         var loading = false;
+        var wrapped = true;
 
         // use this array to store
         // checked checkboxes
@@ -172,12 +174,8 @@
             colorAAs = !colorAAs;
             $.LoadingOverlay("show");
             $("#alignmentTable").empty();
-            if(colorAAs){
-                $(".colorAA").addClass("colorToggleHHpred");
-            }else {
-                $(".colorAA").removeClass("colorToggleHHpred");
-            }
-            getHits(0, shownHits, colorAAs).then(function(){
+            $(".colorAA").toggleClass("colorToggleBar");
+            getHits(0, shownHits, colorAAs, wrapped).then(function(){
                 $.LoadingOverlay("hide");
                 linkCheckboxes();
             });
@@ -186,16 +184,20 @@
         $(document).ready(function () {
             hitlistBaseFunctions();
             if (numHits > 0) {
+                $("#wrap").text("Unwrap Seqs");
+                $("#wrap").addClass("colorToggleBar");
                 drawDataTable();
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query.start}};
                 var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query.end}};
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits, colorAAs);
+                getHits(0, shownHits, colorAAs, wrapped);
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
-                $(".colorAA").addClass("colorToggleHHpred");
+                $(".colorAA").addClass("colorToggleBar");
+                $("#wrap").hide();
+                $(".colorAA").hide();
             }
 
         });
@@ -407,9 +409,9 @@
             });
         }
 
-        function getHits(start, end, isColor) {
+        function getHits(start, end, isColor, isWrapped) {
             if (start <= numHits && end <= numHits && !loading) {
-                var data = { "start": start, "end": end, "isColor": isColor };
+                var data = { "start": start, "end": end, "isColor": isColor, "wrapped": isWrapped };
                 loading = true;
                 $('#loadingHits').show();
                 $('#loadHits').hide();
@@ -433,6 +435,28 @@
             }
             // hide loadHits
 
+        }
+
+        /**
+         * wraps sequences for search tools
+         * for this it empties the table "#alignmentTable"
+         * and calls get Hits taking the boolean wrapped as a parameter
+         */
+        function wrapHHpred(){
+            wrapped = !wrapped;
+            $.LoadingOverlay("show");
+            $("#alignmentTable").empty();
+            if(wrapped){
+                $("#wrap").text("Unwrap sequences");
+                $("#wrap").addClass("colorToggleBar");
+            }else {
+                $("#wrap").text("Wrap sequences");
+                $("#wrap").removeClass("colorToggleBar");
+            }
+            getHits(0, shownHits,colorAAs, wrapped).then(function(){
+                $.LoadingOverlay("hide");
+                linkCheckboxes();
+            });
         }
 
 
