@@ -20,7 +20,7 @@ case class HHPredHSP(query: HHPredQuery,
                      description: String,
                      num: Int,
                      ss_score: Double,
-                     confidence: String) {
+                     confidence: String){
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(

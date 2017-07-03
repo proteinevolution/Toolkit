@@ -18,9 +18,9 @@ import play.api.libs.json.JsArray
 class AlignmentController @Inject()(aln: Alignment,
                                     general: General,
                                     mongoStore: MongoStore,
-                                    val reactiveMongoApi: ReactiveMongoApi)
+                                    val reactiveMongoApi: ReactiveMongoApi,
+                                    constants: Constants)
     extends Controller
-    with Constants
     with Common
     with ReactiveMongoComponents {
 
@@ -65,7 +65,7 @@ class AlignmentController @Inject()(aln: Alignment,
       mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
-            val hits = BlastVisualization.clustal(result, 0, breakAfterClustal, color)
+            val hits = BlastVisualization.clustal(result, 0, constants.breakAfterClustal, color)
             Ok(hits.mkString)
           }
       }
