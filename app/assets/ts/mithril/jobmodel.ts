@@ -68,6 +68,9 @@ window.JobModel = {
                 url: "/api/job/" + value
             }).then(function(data) {
                 window.JobModel.paramValues = data.paramValues;
+                if(JobModel.paramValues.proteomes && !JobModel.paramValues.hhsuitedb){
+                    JobModel.paramValues["hhsuitedb"]= "";
+                }
                 return {
                     tool: data.toolitem,
                     isJob: true,

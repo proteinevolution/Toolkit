@@ -130,7 +130,7 @@ let ParameterSelectComponent = {
 
             paramAttrs["multiple"] = "multiple";
             paramAttrs["class"] = "inputDBs";
-            args.value = args.value.split(/\s+/);
+
 
         } else {
             paramAttrs["config"] = selectBoxAccess;
