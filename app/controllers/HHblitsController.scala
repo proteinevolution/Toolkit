@@ -24,9 +24,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
                                   mongoStore: MongoStore,
                                   val reactiveMongoApi: ReactiveMongoApi,
                                   hhblits: HHBlits,
-                                  general: General)
+                                  general: General,
+                                  constants: Constants)
     extends Controller
-    with Constants
     with Common {
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
@@ -47,7 +47,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     } else {
       Future.successful {
         Process(templateAlignmentScript.pathAsString,
-                (jobPath + jobID).toFile.toJava,
+                (constants.jobPath + jobID).toFile.toJava,
                 "jobID"     -> jobID,
                 "accession" -> accession).run().exitValue() match {
           case 0 => Ok
@@ -70,7 +70,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
                   "filename"      -> filename,
@@ -97,7 +97,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
           val accessionsStr = getAccessions(result, numList)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
                   "filename"      -> filename,
@@ -124,7 +124,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
           val result     = hhblits.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
           Process(generateAlignmentScript.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"   -> jobID,
                   "filename"-> filename,
                   "numList" -> numListStr).run().exitValue() match {
@@ -147,7 +147,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     } else {
       val numListStr = numList.mkString(" ")
       Process(generateAlignmentScript.pathAsString,
-              (jobPath + jobID).toFile.toJava,
+              (constants.jobPath + jobID).toFile.toJava,
               "jobID"   -> jobID,
               "filename"-> filename,
               "numList" -> numListStr).run().exitValue() match {

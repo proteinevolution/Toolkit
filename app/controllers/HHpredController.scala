@@ -19,10 +19,9 @@ import play.api.libs.json.{ JsArray, JsObject, Json }
 /**
   * Created by drau on 01.03.17.
   */
-class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi)(
+class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi, constants: Constants)(
     webJarAssets: WebJarAssets
 ) extends Controller
-    with Constants
     with Common {
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
@@ -39,7 +38,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     } else {
       Future.successful {
         Process(templateAlignmentScript.pathAsString,
-                (jobPath + jobID).toFile.toJava,
+                (constants.jobPath + jobID).toFile.toJava,
                 "jobID"     -> jobID,
                 "accession" -> accession).run().exitValue() match {
 
@@ -62,7 +61,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
           val result     = hhpred.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
           Process(generateAlignmentScript.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"   -> jobID,
                   "filename" -> filename,
                   "numList" -> numListStr).run().exitValue() match {
@@ -85,7 +84,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     } else {
       val numListStr = numList.mkString(" ")
       Process(generateAlignmentScript.pathAsString,
-              (jobPath + jobID).toFile.toJava,
+              (constants.jobPath + jobID).toFile.toJava,
               "jobID"   -> jobID,
               "filename"-> filename,
               "numList" -> numListStr).run().exitValue() match {
