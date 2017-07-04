@@ -1,6 +1,6 @@
 package models.results
 
-
+import javax.inject.Inject
 import better.files._
 import models.Constants
 import models.database.results.AlignmentResult
@@ -10,7 +10,7 @@ import models.database.results._
 import scala.collection.mutable.ArrayBuffer
 import scala.util.matching.Regex
 
-object BlastVisualization extends Constants {
+object BlastVisualization  {
 
   private val color_regex = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
   private val helix_pattern = """([Hh]+)""".r
@@ -39,16 +39,6 @@ object BlastVisualization extends Constants {
   private val cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLik = "http://www.uniprot.org/uniprot/"
 
-  /**
-    * Renders file content as plain HTML. Can be used for scripts that produce HTML from the old Toolkit
-    *
-    * @param filepath
-    * @return
-    */
-  def html(filepath: String): Html = {
-    Logger.info("Getting file: " + s"$jobPath/$filepath")
-    Html(s"$jobPath/$filepath".toFile.contentAsString)
-  }
 
   def SSColorReplace(sequence: String): String =
     this.helix_sheets.replaceAllIn(

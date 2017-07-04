@@ -27,9 +27,9 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
                              val reactiveMongoApi: ReactiveMongoApi,
                              mongoStore: MongoStore,
                              toolFactory: ToolFactory,
-                             val jobDao: JobDAO)
+                             val jobDao: JobDAO,
+                             constants: Constants)
     extends Controller
-    with Constants
     with ReactiveMongoComponents
     with Common {
 

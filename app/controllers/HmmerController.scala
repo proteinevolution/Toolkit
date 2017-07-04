@@ -19,11 +19,13 @@ import scala.sys.process.Process
 /**
   * Created by drau on 18.04.17.
   */
-class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(mongoStore: MongoStore,
+class HmmerController @Inject()(hmmer: Hmmer,
+                                general: General,
+                                aln: Alignment,
+                                constants: Constants)(mongoStore: MongoStore,
                                                                                 val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
-    with Common
-    with Constants {
+    with Common {
 
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
@@ -42,7 +44,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
                   "filename"      -> filename,
@@ -70,7 +72,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
           val accessionsStr = getAccessions(result, numList)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
                   "filename"      -> filename,

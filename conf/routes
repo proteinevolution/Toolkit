@@ -122,8 +122,6 @@ DELETE        /api/job/:jobID                         @controllers.JobController
 GET           /api/job/load/:jobID                    @controllers.JobController.loadJob(jobID: String)
 
 
-# Job maintenance routine
-GET          /api/deleteJobsPermanently               @controllers.JobController.deleteJobsPermanently()
 
 # Frontend Stuff
 POST          /api/frontendSubmit/:toolname           @controllers.Tool.frontendCount(toolname: String)
