@@ -94,9 +94,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          @Named("jobIDActor") jobIDActor: ActorRef,
                          @Named("fileWatcher") fileWatcher: ActorRef,
                          @NamedCache("userCache") implicit val userCache: CacheApi,
-                         @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi)
-    extends Actor
-    with Constants {
+                         @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi,
+                         constants: Constants)
+    extends Actor {
 
   // Attributes asssocidated with a Job
   private var currentJobs: Map[String, Job]                           = Map.empty
@@ -142,8 +142,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     this.currentExecutionContexts.get(jobID) match {
       case Some(executionContext) => Some(executionContext)
       case None =>
-        if ((jobPath / jobID).exists) {
-          val executionContext = ExecutionContext(jobPath / jobID, reOpen = true)
+        if ((constants.jobPath / jobID).exists) {
+          val executionContext = ExecutionContext(constants.jobPath / jobID, reOpen = true)
           this.currentExecutionContexts = this.currentExecutionContexts.updated(jobID, executionContext)
           Some(executionContext)
         } else {
@@ -332,7 +332,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
       try {
         // Establish execution context for the new Job
-        val executionContext = ExecutionContext(jobPath / job.jobID)
+        val executionContext = ExecutionContext(constants.jobPath / job.jobID)
         this.currentExecutionContexts = this.currentExecutionContexts.updated(job.jobID, executionContext)
 
         // Create a log for this job
@@ -472,7 +472,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 List(
                   BSONDocument(Job.IPHASH -> hash),
                   BSONDocument(Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusMinutes(maxJobsWithin).getMillis)))
+                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusMinutes(constants.maxJobsWithin).getMillis)))
                 )
               )
 
@@ -480,15 +480,15 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 List(
                   BSONDocument(Job.IPHASH -> hash),
                   BSONDocument(Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusDays(maxJobsWithinDay).getMillis)))
+                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusDays(constants.maxJobsWithinDay).getMillis)))
                 )
               )
               mongoStore.countJobs(selector).map{count =>
                 mongoStore.countJobs(selectorDay).map{countDay =>
-                  println(BSONDateTime(new DateTime().minusMinutes(maxJobsWithin).getMillis).toString)
-                  Logger.info("IP " + job.IPHash + " has requested " + count +" jobs within the last " + maxJobsWithin + " minute and "+countDay+" within the last 24 hours.")
+                  println(BSONDateTime(new DateTime().minusMinutes(constants.maxJobsWithin).getMillis).toString)
+                  Logger.info("IP " + job.IPHash + " has requested " + count +" jobs within the last " + constants.maxJobsWithin + " minute and "+countDay+" within the last 24 hours.")
 
-                  if(count <= maxJobNum && countDay <= maxJobNumDay){
+                  if(count <= constants.maxJobNum && countDay <= constants.maxJobNumDay){
                     self ! StartJob(job.jobID)
                   }else{
                     self ! JobStateChanged(job.jobID, LimitReached)
@@ -633,7 +633,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               Logger.info("DONE Removing execution context")
               // Tell the user that their job finished via eMail
               sendJobUpdateMail(job)
-              val result = (jobPath / job.jobID / "results").list
+              val result = (constants.jobPath / job.jobID / "results").list
                 .withFilter(_.hasExtension)
                 .withFilter(_.extension.get == ".json")
                 .map { file =>

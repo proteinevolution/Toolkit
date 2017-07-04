@@ -23,10 +23,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class PSIBlastController @Inject()(
                                     psiblast: PSIBlast,
                                     general: General,
-                                    alignment: Alignment
+                                    alignment: Alignment,
+                                    constants: Constants
 )(webJarAssets: WebJarAssets, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
-    with Constants
     with Common {
 
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
@@ -46,7 +46,7 @@ class PSIBlastController @Inject()(
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
                   "filename"      -> filename,
@@ -75,7 +75,7 @@ class PSIBlastController @Inject()(
           val accessionsStr = getAccessions(result, numList)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
                   "filename"      -> filename,
