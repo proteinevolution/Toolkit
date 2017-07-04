@@ -84,7 +84,7 @@ object BlastVisualization extends Constants {
     val db = identifyDatabase(id)
     var link = ""
     val idTrimmed = if (id.length > 4) {
-      id.substring(1, 5)
+      id.slice(1, 5)
     } else {
       id
     }
@@ -112,7 +112,7 @@ object BlastVisualization extends Constants {
     var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
-      id.substring(1, 5)
+      id.slice(1, 5)
     } else {
       id
     }
@@ -135,7 +135,7 @@ object BlastVisualization extends Constants {
   def getSingleLinkDB(db: String, id: String): Html = {
     var link = ""
     val idTrimmed = if (id.length > 4) {
-      id.substring(1, 5)
+      id.slice(1, 5)
     } else {
       id
     }
@@ -156,7 +156,7 @@ object BlastVisualization extends Constants {
     var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
-      id.substring(1, 5)
+      id.slice(1, 5)
     } else {
       id
     }
@@ -193,7 +193,7 @@ object BlastVisualization extends Constants {
 
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
-      id.substring(1, 5)
+      id.slice(1, 5)
     } else {
       id
     }
@@ -255,7 +255,7 @@ object BlastVisualization extends Constants {
   def wrapSequence(seq: String, num: Int): String = {
     var seqWrapped = ""
     for {i <- 0 to seq.length if i % num == 0} if (i + num < seq.length) {
-      seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.substring(i, (i + num)) + "</td></tr>"
+      seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.slice(i, (i + num)) + "</td></tr>"
     } else {
       seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.substring(i) + "</td></tr>"
     }
@@ -275,7 +275,7 @@ object BlastVisualization extends Constants {
     var newSeq = ""
     for (starPos <- hitArr) {
       val endPos = starPos + length
-      newSeq += seq.substring(0, starPos) + "<span class=\"patternMatch\">" + seq.substring(starPos, endPos) + "</span>" + seq
+      newSeq += seq.slice(0, starPos) + "<span class=\"patternMatch\">" + seq.slice(starPos, endPos) + "</span>" + seq
         .substring(endPos)
 
     }
@@ -296,7 +296,7 @@ object BlastVisualization extends Constants {
           "</td>" +
           "</td>" +
           "<td class=\"sequence\">" + {
-          if (color) colorRegexReplacer(elem.seq.substring(begin, Math.min(begin + breakAfter, elem.seq.length))) else elem.seq.substring(begin, Math.min(begin + breakAfter, elem.seq.length))
+          if (color) colorRegexReplacer(elem.seq.slice(begin, Math.min(begin + breakAfter, elem.seq.length))) else elem.seq.slice(begin, Math.min(begin + breakAfter, elem.seq.length))
         } +
           "</td>" +
           "</tr>"
@@ -312,9 +312,9 @@ object BlastVisualization extends Constants {
       return ""
     }
     else {
-      val query = hit.query_seq.substring(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
-      val midline = hit.midline.substring(charCount, Math.min(charCount + breakAfter, hit.midline.length))
-      val template = hit.hit_seq.substring(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
+      val query = hit.query_seq.slice(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
+      val midline = hit.midline.slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
+      val template = hit.hit_seq.slice(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
       val queryEnd = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
@@ -336,9 +336,9 @@ object BlastVisualization extends Constants {
       return ""
     }
     else {
-      val query = hit.query_seq.substring(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
-      val midline = hit.midline.substring(charCount, Math.min(charCount + breakAfter, hit.midline.length))
-      val template = hit.hit_seq.substring(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
+      val query = hit.query_seq.slice(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
+      val midline = hit.midline.slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
+      val template = hit.hit_seq.slice(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
       val queryEnd = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
@@ -365,11 +365,11 @@ object BlastVisualization extends Constants {
       return ""
     }
     else {
-      val query = hit.query.seq.substring(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
-      val queryCons = hit.query.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
-      val midline = hit.agree.substring(charCount, Math.min(charCount + breakAfter, hit.agree.length))
-      val templateCons = hit.template.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
-      val template = hit.template.seq.substring(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+      val query = hit.query.seq.slice(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
+      val queryCons = hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
+      val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
+      val templateCons = hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
+      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
       val queryEnd = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
@@ -393,16 +393,16 @@ object BlastVisualization extends Constants {
       return ""
     }
     else {
-      val querySSDSSP = hit.query.ss_dssp.drop(charCount).take(Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
-      val querySSPRED = hit.query.ss_pred.drop(charCount).take(Math.min(charCount + breakAfter, hit.query.ss_pred.length))
-      val query = hit.query.seq.substring(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
-      val queryCons = hit.query.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
-      val midline = hit.agree.substring(charCount, Math.min(charCount + breakAfter, hit.agree.length))
-      val templateCons = hit.template.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
-      val template = hit.template.seq.substring(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
-      val templateSSDSSP = hit.template.ss_dssp.drop(charCount).take(Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
-      val templateSSPRED = hit.template.ss_pred.drop(charCount).take(Math.min(charCount + breakAfter, hit.template.ss_pred.length))
-      val confidence = hit.confidence.drop(charCount).take(Math.min(charCount + breakAfter, hit.confidence.length))
+      val querySSDSSP = hit.query.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
+      val querySSPRED = hit.query.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_pred.length))
+      val query = hit.query.seq.slice(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
+      val queryCons = hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
+      val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
+      val templateCons = hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
+      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+      val templateSSDSSP = hit.template.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
+      val templateSSPRED = hit.template.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_pred.length))
+      val confidence = hit.confidence.slice(charCount, Math.min(charCount + breakAfter, hit.confidence.length))
       val queryEnd = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
 
