@@ -4,18 +4,18 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.{ FrontendJob, Job, JobAnnotation }
-import models.database.statistics.{ ClusterLoadEvent, JobEventLog, ToolStatistic }
-import models.database.users.{ User, UserData }
+import models.database.jobs.{DeletedJob, FrontendJob, Job, JobAnnotation}
+import models.database.statistics.{ClusterLoadEvent, JobEventLog, ToolStatistic}
+import models.database.users.{User, UserData}
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.JsValue
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
-import reactivemongo.api.indexes.{ Index, IndexType }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument }
+import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
+import reactivemongo.api.indexes.{Index, IndexType}
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -217,6 +217,10 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
   def statisticsCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("statistics"))
 
+  // Statistics DB access
+  def deletedJobsCollection: Future[BSONCollection] =
+    reactiveMongoApi.database.map(_.collection[BSONCollection]("deleted"))
+
   def getStatistics: Future[scala.List[ToolStatistic]] = {
     statisticsCollection
       .map(_.find(BSONDocument.empty).cursor[ToolStatistic]())
@@ -225,6 +229,9 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
 
   def addStatistic(toolStatistic: ToolStatistic): Future[WriteResult] =
     statisticsCollection.flatMap(_.insert(toolStatistic))
+
+  def addDeletedJob(deletedJob: DeletedJob): Future[WriteResult] =
+    deletedJobsCollection.flatMap(_.insert(deletedJob))
 
   def upsertStatistics(toolStatistic: ToolStatistic): Future[Option[ToolStatistic]] = {
     statisticsCollection.flatMap(
