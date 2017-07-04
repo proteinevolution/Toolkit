@@ -64,31 +64,30 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
   override def postStop(): Unit = {
     println("Websocket closed!")
     clusterMonitor ! Disconnect(self)
-    /*getUser(sessionID).foreach {
+    userSessions.getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get(user.userID.stringify) match {
           case Some(wsActors) =>
             val actorSet: List[ActorRef] = wsActors: List[ActorRef]
-            val newActorSet              = actorSet.filter(_ == self)
+            val newActorSet              = actorSet.filterNot(_ == self)
             wsActorCache.set(user.userID.stringify, newActorSet)
           case None =>
         }
       case None =>
-        self ! PoisonPill // PoisonPill here is pretty useless since postStop means that the actor is shutting down
-    } */
-
+    }
     /**
       *
       *  do we need to have persistent actors? if so,
       *  let's use akka-persistence instead of the cache (which would not work).
-      *  actors must be removed from
-      *  the cache at some point anyway.
-      */
+      *  actors must be removed from the cache at some point anyway.
+      *
+      *  we need them as long as the user is on the page.
+      *//*
     userSessions.getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.remove(user.userID.stringify)
-      case None => 
-    }
+      case None =>
+    }*/
   }
 
   def receive = LoggingReceive {
