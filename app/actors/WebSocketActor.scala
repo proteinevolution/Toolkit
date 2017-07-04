@@ -67,13 +67,18 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
   } // TODO May not be able to send any messages at this point of init
 
   override def postStop(): Unit = {
+    println("Websocket closed!")
     clusterMonitor ! Disconnect(self)
-
     userSessions.getUser(sessionID).foreach {
-
       case Some(user) =>
-        wsActorCache.remove(user.userID.stringify)
-      case None => 
+        wsActorCache.get(user.userID.stringify) match {
+          case Some(wsActors) =>
+            val actorSet: List[ActorRef] = wsActors: List[ActorRef]
+            val newActorSet              = actorSet.filterNot(_ == self)
+            wsActorCache.set(user.userID.stringify, newActorSet)
+          case None =>
+        }
+      case None =>
     }
   }
 

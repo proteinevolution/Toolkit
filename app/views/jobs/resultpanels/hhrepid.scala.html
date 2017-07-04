@@ -1,15 +1,15 @@
 @import models.results.HHrepID
-@(jobID: String, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
+@(jobID: String, filePath: String, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
 @views.html.forwardmodals.simpler(tool, resultName)
 
-@if(HHrepID.existsResult(jobID)) {
+@if(HHrepID.existsResult(jobID, filePath)) {
     <div class="colorOptsAlignment">
         <a type="button" data-open="forwardModal_@resultName"><span>Forward Query MSA</span></a>
         <hr id="line-element" colspan="4" class="horizontal-line">
     </div>
 
     <div class="hhrepidResult">
-    @HHrepID.getResult(jobID)
+    @HHrepID.getResult(jobID, filePath)
     </div>
 }else{
     <div class="callout alert noHitsWide" id="noHitsWide">No repeats found!</div>

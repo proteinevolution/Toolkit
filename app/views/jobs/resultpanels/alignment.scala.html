@@ -2,7 +2,6 @@
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsArray
 @import play.api.Logger
-@import models.results.FileLoader
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
@@ -15,9 +14,9 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
-    <a type="button" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
-    <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download File</span></a>
+    <a onclick="@{resultName}_selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
+    <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
+    <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Alignment</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -45,19 +44,18 @@
         var selectAllBool = false;
         var shownHits = 20;
         var showMore = 100;
-        var colorAAs = true;
         var loading = false;
         var numHits = @alignment.alignment.length;
          var resultName = '@resultName';
         var jobID = '@jobID';
         var checkboxes = [];
         var checkbox = "checkbox";
+        var colorAAs = false;
 
 
         window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": checkboxes.removeDuplicates()};
-            var route = jsRoutes.controllers.AlignmentController.getAln(jobID, resultName);
-
+            var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
+            var route = jsRoutes.controllers.AlignmentController.getAln(jobID);
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
@@ -88,15 +86,20 @@
         };
 
 
-        function getHits(start, end){
+        window["@{resultName}_getHits"] = function(start, end){
             if(start <= numHits && end <= numHits && !loading){
+                var data = { "start": start, "end": end, "resultName": resultName };
                 loading = true;
                 $('#loadHitsAln').hide();
                 $('#loadingHits').show();
-                var route = jsRoutes.controllers.AlignmentController.loadHits(jobID,start,end, resultName);
+                var route = {};
+                route.url = "/AlignmentLoadHits/" + jobID;
+                route.method = "POST";
                 return $.ajax({
                     method: route.method,
                     url: route.url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
                     error: function(){
                         $(".alignmentTBody").append("Error loading Data.");
                     }
@@ -110,14 +113,14 @@
                     }
                 });
             }
-        }
+        };
 
-        function selectAll(){
+        window["@{resultName}_selectAll"] = function(){
             selectAllBool = !selectAllBool;
+            $(".selectAllSeqSpan").toggleText("Select all","Deselect all");
+            $(".selectAllSeqSpan").toggleClass("colorToggle");
             if(selectAllBool) {
                 selectAllHelper(checkbox);
-                $(".selectAllSeqSpan").text("Deselect all");
-                $(".selectAllSeqSpan").addClass("colorToggle");
                 // first empty array
                 checkboxes = [];
                 // push all checkboxes (1 to num_hits) into array
@@ -125,20 +128,17 @@
             }
             else {
                 deselectAll(checkbox);
-                $(".selectAllSeqSpan").text("Select all");
-                $(".selectAllSeqSpan").removeClass("colorToggle");
-
                 // delete all checkboxes from array
                 checkboxes = [];
             }
-        }
+        };
 
 
         $(document).ready(function () {
 
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
-            getHits(0, shownHits).then(function(){
+            @{resultName}_getHits(0, shownHits).then(function(){
                 // check checkboxes that are stored in array
                 // in order to make it work with pagination/lazyload
                 selectFromArray(checkboxes);
@@ -148,7 +148,7 @@
                             var end = shownHits + showMore;
                             end = end < numHits ? end : numHits;
                             if (shownHits != end) {
-                                getHits(shownHits, end);
+                                @{resultName}_getHits(shownHits, end);
                             }else{
                                 $('#loadHitsAln').hide();
                             }

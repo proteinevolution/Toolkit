@@ -22,59 +22,18 @@ var ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9])$";
 
 
 function download(filename, text){
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    pom.setAttribute('download', filename);
-
-    if (document.createEvent) {
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        pom.dispatchEvent(event);
-    }
-    else {
-        pom.click();
-    }
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    blob = new Blob([text], {type: "octet/stream"}),
+        url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
     $.LoadingOverlay("hide");
 }
 
-// Makes a table row with the specified content
-function makeRow(entries) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement("td");
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
-// Makes a table row with colspan=num
-function makeRowColspan(entries, num, HTMLElement) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement(HTMLElement);
-        entry.setAttribute("padding", "0");
-        entry.setAttribute("colspan",num);
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
-
-// Makes a table row with colspan=num
-function makeRowDiffColspan(entries, num, HTMLElement) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement(HTMLElement);
-        entry.setAttribute("padding", "0");
-        entry.setAttribute("colspan",num[i]);
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
 
 
 /* Slider */
@@ -139,20 +98,53 @@ function resubmitSection(sequence, name) {
 }
 
 
-/* FORWARDING */
-
-// parameter: tool (String)
-// forwards all checked identifier and sequences to tool
+/**
+ * forward the given forwardData to the given tool
+ * @param tool
+ * @param forwardData
+ */
 function forward(tool, forwardData){
     if(forwardData == ""){
-        alert("No sequences selected!");
+        alert("No sequence(s) selected!");
         $.LoadingOverlay("hide");
         return;
     }
-    localStorage.setItem("resultcookie", forwardData);
-    window.location.href = "/#/tools/" + tool;
+    try {
+        localStorage.setItem("resultcookie", forwardData);
+        window.location.href = "/#/tools/" + tool;
+    } catch(e) {
+        if (isQuotaExceeded(e)) {
+            // Storage full, maybe notify user or do some clean-up
+            $.LoadingOverlay("hide");
+            alert("File is too big to be forwarded. Please download the file and use the upload function of the selected tool." )
+        }
+
+    }
 }
 
+
+function isQuotaExceeded(e) {
+    var quotaExceeded = false;
+    if (e) {
+        if (e.code) {
+            switch (e.code) {
+                case 22:
+                    quotaExceeded = true;
+                    break;
+                case 1014:
+                    // Firefox
+                    if (e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                        quotaExceeded = true;
+                    }
+                    break;
+            }
+        } else if (e.number === -2147024882) {
+            // Internet Explorer 8
+            quotaExceeded = true;
+        }
+    }
+    return quotaExceeded;
+}
 // load forwarded data into alignment field
 $(document).ready(function() {
     var resultcookie = localStorage.getItem("resultcookie");
@@ -250,14 +242,15 @@ function calcColor(prob) {
 
 
 function scrollToElem(num){
+    num = parseInt(num);
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     if (num > shownHits) {
         $.LoadingOverlay("show");
-        getHits(shownHits, num, colorAAs).done(function(data){
+        getHits(shownHits, num, wrapped,colorAAs).done(function(data){
             var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
-            }, 'fast')
+            }, 1)
         }).then(function(){
             $.LoadingOverlay("hide");
         });
@@ -266,7 +259,7 @@ function scrollToElem(num){
         var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
         $(elem).animate({
             scrollTop: pos - 100
-        }, 'fast')
+        }, 1)
     }
 }
 
@@ -290,13 +283,13 @@ function deselectAll(name){
     checkboxes = [];
 }
 function selectFromArray(checkboxes){
-    _.range(1, numHits).forEach(function (currentVal) {
+    _.range(1, numHits+1).forEach(function (currentVal) {
         $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) != -1 ? true : false);
     })
 }
 
 function getCheckedCheckboxes(){
-    $('input:checkbox:checked[name="alignment_elem"]').each(function(){checkboxes.push(parseInt($(this).val()));});
+    $('input:checkbox:checked[name="alignment_elem"]').each(function(){var num = parseInt($(this).val()); if(checkboxes.indexOf(num) == -1){checkboxes.push(num)}});
 }
 
 
@@ -366,7 +359,7 @@ function getsHitsManually(){
         var end = shownHits + showMore;
         end = end < numHits ? end : numHits;
         if (shownHits != end) {
-            getHits(shownHits, end);
+            getHits(shownHits, end, wrapped, colorAAs);
         }
         shownHits = end;
     }
@@ -396,3 +389,50 @@ function linkCheckboxes(){
 
     });
 }
+
+
+function generateFilename(){
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+/**
+ * wraps sequences for search tools
+ * for this it empties the table "#alignmentTable"
+ * and calls get Hits taking the boolean wrapped as a parameter
+ */
+function wrap(){
+    wrapped = !wrapped;
+    var checkboxesWrap =  $("input:checkbox").toArray();
+    var num = 1;
+    for(var i =0 ; i < checkboxesWrap.length; i++){
+        if($(checkboxesWrap[i]).isOnScreen()){
+            num  = $(checkboxesWrap[i]).val();
+            break;
+        }
+    }
+    $("#wrap").toggleClass("colorToggleBar");
+    $("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs");
+    $("#alignmentTable").empty();
+    getHits(0, shownHits, wrapped, colorAAs).then(function(){
+        linkCheckboxes();
+        scrollToElem(num);
+    });
+
+}
+
+
+$.fn.extend({
+    toggleText: function(a, b){
+        return this.text(this.text() == b ? a : b);
+    }
+});
+
+$.fn.isOnScreen = function(){
+    var viewport = {};
+    viewport.top = $(window).scrollTop();
+    viewport.bottom = viewport.top + $(window).height();
+    var bounds = {};
+    bounds.top = this.offset().top;
+    bounds.bottom = bounds.top + this.outerHeight();
+    return ((bounds.top <= viewport.bottom) && (bounds.bottom >= viewport.top));
+};

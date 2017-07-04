@@ -1,3 +1,4 @@
+JOBID=%jobid.content
 SEQ_COUNT=$(wc -l < ../params/alignment)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
@@ -19,8 +20,8 @@ echo "#Searching %standarddb.content DB for sequences '${PATTERN}' pattern." >> 
 updateProcessLog
 
 patsearch.pl        -i  %alignment.path \
-                    -d %STANDARD/%standarddb.content \
-                    -o ../results/output.json \
+                    -d %STANDARD/%patsearchdb.content \
+                    -o ../results/${JOBID}.json \
                     -sc %seqcount.content \
                     -%grammar.content > report_patsearch
 echo "done" >> ../results/process.log

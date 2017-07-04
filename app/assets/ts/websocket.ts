@@ -4,28 +4,35 @@
  */
 
 let ws : WebSocket = null,
-    connect      : Function,
+    connect   : Function,
     onClose   : Function,
     onError   : Function,
     onMessage : Function,
     onOpen    : Function,
+    wsConnected  : boolean = false,
+    wsConnecting : boolean = false,
     addJob : Function;
 let notifications = 0;
 let attempts = 1;
 declare var titlenotifier: any;
 let connectCount = 0;
 
-connect = function() : any {
-        connectCount++;
-        console.log(connectCount);
-        let wsRoute = jsRoutes.controllers.Application.ws;
+
+connect = function() : boolean {
+    console.log("trying to connect websocket");
+    if (!wsConnected && !wsConnecting) {
+        wsConnecting = true;
+        let wsRoute  = jsRoutes.controllers.Application.ws;
         let isSecure : boolean = location.protocol === "https:";
-        ws = new WebSocket(wsRoute().webSocketURL(isSecure));   // create the new websocket
+        ws = new WebSocket(wsRoute().webSocketURL(isSecure));   // create the new web socket
         ws.onopen    = function(evt : Event)        : any { return onOpen(evt); };
         ws.onclose   = function(evt : CloseEvent)   : any { return onClose(evt); };
         ws.onmessage = function(evt : MessageEvent) : any { return onMessage(evt); };
         ws.onerror   = function(evt : ErrorEvent)   : any { return onError(evt); };
-        return
+        return true;
+    } else {
+        return false;
+    }
 };
 
 // use exponential backoff algorithm
@@ -42,23 +49,30 @@ let generateInterval = function(k : number) {
 };
 
 onOpen = function(event : Event) : any {
+    wsConnected  = true;
+    wsConnecting = false;
     attempts = 1;
     console.log("Websocket is Connected.");
     $("#offline-alert").fadeOut();  // Hide the Offline alert
 };
 
 onError = function(event : ErrorEvent) : any {
-    $("#offline-alert").fadeIn();   // show the "Reconnecting ..." message
-    let time = generateInterval(attempts);
-    console.log("trying to reconnect in ... " + time);
-    // We've tried to reconnect so increment the attempts by 1
-    attempts++;
-    setTimeout(connect(), time);
+    console.log("websocket got disconnected", event.message)
+    // wsConnected = false;
+    // $("#offline-alert").fadeIn();   // show the "Reconnecting ..." message
+    // let time = generateInterval(attempts);
+    // console.log("trying to reconnect in ... " + time);
+    // // We've tried to reconnect so increment the attempts by 1
+    // attempts++;
+    // setTimeout(connect(), time);
 };
 
 onClose = function(event : CloseEvent) : any {
+    wsConnected = false;
+    wsConnecting = false;
     $("#offline-alert").fadeIn();   // show the "Reconnecting ..." message
     let time = generateInterval(attempts);
+    console.log("websocket was closed.");
     console.log("trying to reconnect in ... " + time);
     // We've tried to reconnect so increment the attempts by 1
     attempts++;

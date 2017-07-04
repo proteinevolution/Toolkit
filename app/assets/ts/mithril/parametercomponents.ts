@@ -11,17 +11,26 @@ let mapParam = function(param : any, ctrl : any) {
     });
 };
 
-
-
 let selectBoxAccess = function(elem : any, isInit : boolean) {
     if (!isInit) {
+
+        $("#alignmode").on('change', function(){
+
+            if ($("#alignmode").val() === 'glob'){
+                $("#macmode").prop("value", "-realign");
+                $('#macmode option[value="-norealign"]').attr("disabled", true);
+                $("#macmode").niceSelect('update');
+            }
+            else {
+                $('#macmode option[value="-norealign"]').attr("disabled", false);
+                $("#macmode").niceSelect('update');
+            }
+        });
         return $(elem).niceSelect();
     } else {
         return $(elem).niceSelect('update');
     }
 };
-
-
 
 let ParameterSlideComponent = {
     model: function(args : any) {
@@ -110,13 +119,18 @@ let ParameterSelectComponent = {
             config: select2Config
         };
 
+
         let multiselect : boolean = args.param.name === "hhsuitedb" || args.param.name === "proteomes";
 
-        if (multiselect) {
+        if(args.param.name === "patsearchdb"){
+            paramAttrs["config"] = select2Single;
+            paramAttrs["class"] = "wide inputDBs";
+        }
+        else if (multiselect) {
 
             paramAttrs["multiple"] = "multiple";
             paramAttrs["class"] = "inputDBs";
-            args.value = args.value.split(/\s+/);
+
 
         } else {
             paramAttrs["config"] = selectBoxAccess;
@@ -211,7 +225,7 @@ let ParameterModellerKeyComponent = {
             m.request({method: "POST", url: "/validate/modeller?input="+val}).then(function (response) {
                 ParameterModellerKeyComponent.keyStored = response.isValid;
                 if(ParameterModellerKeyComponent.keyStored){
-                    $(".submitJob").attr("disabled", false);
+                    validationProcess($('#alignment'),"modeller");
                 }
             });
         }
