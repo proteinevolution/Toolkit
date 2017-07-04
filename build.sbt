@@ -1,5 +1,4 @@
-import com.typesafe.sbt.packager.MappingsHelper._
-lazy val akkaVersion  = "2.4.19"
+lazy val akkaVersion  = "2.5.3"
 lazy val kamonVersion = "0.6.6"
 
 lazy val commonDeps = Seq(
