@@ -242,6 +242,7 @@ function calcColor(prob) {
 
 
 function scrollToElem(num){
+    num = parseInt(num);
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     if (num > shownHits) {
         $.LoadingOverlay("show");
