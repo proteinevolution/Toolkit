@@ -19,16 +19,21 @@ import scala.sys.process.Process
 /**
   * Created by drau on 18.04.17.
   */
-class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(mongoStore: MongoStore,
+class HmmerController @Inject()(hmmer: Hmmer,
+                                general: General,
+                                aln: Alignment,
+                                constants: Constants)(mongoStore: MongoStore,
                                                                                 val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
-    with Common
-    with Constants {
+    with Common {
 
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
 
-  def evalFull(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val filename  = (json \ "filename").as[String]
+    val eval      = (json \ "evalue").as[String]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -39,9 +44,10 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
                   "db"            -> db).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -54,6 +60,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
 
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
+    val filename  = (json \ "filename").as[String]
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
@@ -65,9 +72,10 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
           val accessionsStr = getAccessions(result, numList)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
                   "db"            -> db).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -89,7 +97,9 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
     fas.mkString
   }
 
-  def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val eval      = (json \ "evalue").as[String]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) => Ok(getAlnEval(hmmer.parseResult(jsValue), eval.toDouble))
       case _             => NotFound
@@ -132,14 +142,18 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment)(
     }
   }
 
-  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+  def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json      = request.body.asJson.get
+    val start     = (json \ "start").as[Int]
+    val end       = (json \ "end").as[Int]
+    val wrapped       = (json \ "wrapped").as[Boolean]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hmmer.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
           BadRequest
         } else {
-          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(jobID, _, result.db))
+          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(jobID, _, result.db, wrapped))
           Ok(hits.mkString)
         }
 

@@ -42,17 +42,9 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   // TODO Why is this a member of Execution Context?
   def writeParams(params: Map[String, String]): Unit = {
 
-    var extendedParams = params
-    // Add keys for multiselect if not yet preset
-    if (!params.contains("hhsuitedb")) {
-      extendedParams = params.updated("hhsuitedb", "")
-    }
-    if (!params.contains("proteomes")) {
-      extendedParams = params.updated("proteomes", "")
-    }
 
     val oos = new ObjectOutputStream(new FileOutputStream(serializedParameters.pathAsString))
-    oos.writeObject(extendedParams)
+    oos.writeObject(params)
     oos.close()
   }
 
@@ -64,16 +56,7 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   // TODO Why is this a member of Execution context?
   def reloadParams: Map[String, String] = {
     val ois = new ObjectInputStream(new FileInputStream(serializedParameters.pathAsString))
-    var x   = ois.readObject().asInstanceOf[Map[String, String]]
-
-    x = x
-      .filterNot { x =>
-        x._1 == "hhsuitedb" && x._2 == ""
-      }
-      .filterNot { x =>
-        x._1 == "proteomes" && x._2 == ""
-      }
-
+    val x   = ois.readObject().asInstanceOf[Map[String, String]]
     ois.close()
     x
   }

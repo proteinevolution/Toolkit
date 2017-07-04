@@ -1,10 +1,12 @@
 package controllers
 
-import java.io.{ FileInputStream, ObjectInputStream }
-import javax.inject.{ Inject, Named, Singleton }
+import java.io.{FileInputStream, ObjectInputStream}
 
-import actors.JobActor.{ Delete, PrepareJob, StartJob }
+import actors.JobActor._
+import java.security.MessageDigest
+import javax.inject.{Inject, Named, Singleton}
 import actors.JobIDActor
+
 import akka.actor.ActorRef
 import models.Constants
 import models.database.jobs._
@@ -13,10 +15,12 @@ import models.job.JobActorAccess
 import models.search.JobDAO
 import modules.LocationProvider
 import org.joda.time.DateTime
+import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{ JsNull, Json }
-import play.api.mvc.{ Action, AnyContent, Controller }
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
+import play.api.libs.json.{JsNull, Json}
+import play.api.mvc.{Action, AnyContent, Controller}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -24,8 +28,10 @@ import better.files._
 import models.tools.ToolFactory
 import modules.db.MongoStore
 import modules.tel.env.Env
-import play.Logger
+
 import play.modules.reactivemongo.ReactiveMongoApi
+
+
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -40,9 +46,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     @NamedCache("userCache") implicit val userCache: CacheApi,
                                     implicit val locationProvider: LocationProvider,
                                     val jobDao: JobDAO,
-                                    val toolFactory: ToolFactory)
+                                    val toolFactory: ToolFactory,
+                                    constants: Constants)
     extends Controller
-    with Constants
     with Common {
 
   /**
@@ -78,7 +84,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, StartJob(jobID))
+      jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
       Ok(Json.toJson(Json.obj("message" -> "Starting Job...")))
     }
   }
@@ -88,7 +94,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       // Grab the formData from the request data
       request.body.asMultipartFormData match {
         case Some(mpfd) =>
-          var formData = mpfd.dataParts.mapValues(_.mkString(formMultiValueSeparator))
+          var formData = mpfd.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator))
           mpfd.file("file").foreach { file =>
             var source = scala.io.Source.fromFile(file.ref.file)
             formData = try { formData.updated("alignment", source.getLines().mkString("\n")) } finally {
@@ -114,7 +120,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
                 paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
               }
-              params = params.updated("regkey", modellerKey)
+              params = params.updated("regkey", constants.modellerKey)
               // get checkbox value
               // TODO: mailUpdate some how gets lost in the filter function above
               val emailUpdate = formData.get("emailUpdate") match {
@@ -138,7 +144,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 watchList = List(user.userID),
                 dateCreated = Some(jobCreationTime),
                 dateUpdated = Some(jobCreationTime),
-                dateViewed = Some(jobCreationTime)
+                dateViewed = Some(jobCreationTime),
+                IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
               )
 
               // TODO may want to use a different way to identify our users - use the account type in the user perhaps?
@@ -175,18 +182,22 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   /**
     * Sends a deletion request to the job actor.
+ *
     * @return
     */
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     Logger.info("Delete Action in JobController reached")
     userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID))
+      jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID, true))
       Ok
     }
   }
 
+
+
   /**
     * TODO implement me
+ *
     * @param jobID
     * @return
     */
@@ -195,7 +206,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
         case Some(job) =>
           val params: Map[String, String] = {
-            val ois = new ObjectInputStream(new FileInputStream((jobPath / jobID / serializedParam).pathAsString))
+            val ois = new ObjectInputStream(new FileInputStream((constants.jobPath / jobID / constants.serializedParam).pathAsString))
             val x   = ois.readObject().asInstanceOf[Map[String, String]]
             ois.close()
             x

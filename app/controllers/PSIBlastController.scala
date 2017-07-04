@@ -21,18 +21,21 @@ import play.api.libs.json.{ JsArray, JsObject, Json }
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class PSIBlastController @Inject()(
-    psiblast: PSIBlast,
-    general: General,
-    aln: Alignment
+                                    psiblast: PSIBlast,
+                                    general: General,
+                                    alignment: Alignment,
+                                    constants: Constants
 )(webJarAssets: WebJarAssets, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi)
     extends Controller
-    with Constants
     with Common {
 
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
 
-  def evalFull(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val filename  = (json \ "filename").as[String]
+    val eval      = (json \ "evalue").as[String]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -43,9 +46,10 @@ class PSIBlastController @Inject()(
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
                   "db"            -> db).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -57,8 +61,10 @@ class PSIBlastController @Inject()(
   }
 
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val numList = (json \ "checkboxes").as[List[Int]]
+    println("called")
+    val json       = request.body.asJson.get
+    val numList    = (json \ "checkboxes").as[List[Int]]
+    val filename   = (json \ "filename").as[String]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -69,9 +75,10 @@ class PSIBlastController @Inject()(
           val accessionsStr = getAccessions(result, numList)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
                   "db"            -> db).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -82,7 +89,9 @@ class PSIBlastController @Inject()(
     }
   }
 
-  def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json      = request.body.asJson.get
+    val eval      = (json \ "evalue").as[String]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) => Ok(getAlnEval(psiblast.parseResult(jsValue), eval.toDouble))
       case _             => NotFound
@@ -90,10 +99,10 @@ class PSIBlastController @Inject()(
   }
 
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val numList = (json \ "checkboxes").as[List[Int]]
+    val json      = request.body.asJson.get
+    val numList   = (json \ "checkboxes").as[List[Int]]
     mongoStore.getResult(jobID).map {
-      case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
+      case Some(jsValue) => Ok(getAln(alignment.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
       case _             => NotFound
     }
 
@@ -140,14 +149,18 @@ class PSIBlastController @Inject()(
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
 
-  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+  def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json      = request.body.asJson.get
+    val start     = (json \ "start").as[Int]
+    val end       = (json \ "end").as[Int]
+    val wrapped       = (json \ "wrapped").as[Boolean]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
           BadRequest
         } else {
-          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _, result.db))
+          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _, result.db, wrapped))
           Ok(hits.mkString)
         }
 

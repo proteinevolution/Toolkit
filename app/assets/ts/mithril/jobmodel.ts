@@ -3,11 +3,12 @@ interface Window { JobModel: any; }
 window.JobModel = {
     paramValues: {},
     defaultValues: {
-        "evalue": "1e-3",
+        "evalue": "1",
         "inclusion_ethresh": "0.001",
         "min_cov": "20",
         "min_seqid_query": "0",
         "gap_open": 11,
+        "mafft_gap_open": "1.53",
         "desc": "250",
         "alignmode": "local",
         "maxrounds": "1",
@@ -67,6 +68,9 @@ window.JobModel = {
                 url: "/api/job/" + value
             }).then(function(data) {
                 window.JobModel.paramValues = data.paramValues;
+                if(JobModel.paramValues.proteomes && !JobModel.paramValues.hhsuitedb){
+                    JobModel.paramValues["hhsuitedb"]= "";
+                }
                 return {
                     tool: data.toolitem,
                     isJob: true,

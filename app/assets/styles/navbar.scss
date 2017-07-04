@@ -275,6 +275,7 @@ i {
   color: #888 !important;
   position:relative;
   text-shadow: 0 1px 1px white;
+  font-weight: bold;
 }
 
 .tabs-title > a:focus, .tabs-title > a[aria-selected='true']::after {
@@ -339,7 +340,6 @@ img#logomin {
 }
 
 .toolsec a {
-
   border-right: none;
   color: grey;
   text-decoration: none;

@@ -36,8 +36,8 @@ fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.aln | wc -l)
 
-if [ ${SEQ_COUNT} -gt "2000" ] ; then
-      echo "#Input contains more than 2000 sequences." >> ../results/process.log
+if [ ${SEQ_COUNT} -gt "100" ] ; then
+      echo "#Input contains more than 100 sequences." >> ../results/process.log
       updateProcessLog
       false
 fi
