@@ -51,7 +51,7 @@ class SweepJobsImpl @Inject() (appLifecycle: ApplicationLifecycle,
                                 val jobDao: JobDAO,
                                 jobActorAccess: JobActorAccess, constants: Constants) extends SweepJobs {
 
-  override def sweep(): Unit = actorSystem.scheduler.schedule(0 seconds, constants.deletionCycle minutes) {
+  override def sweep(): Unit = actorSystem.scheduler.schedule(0 seconds, constants.deletionCycle hours) {
   deleteJobsPermanently()
   }
 
