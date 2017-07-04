@@ -22,12 +22,11 @@ class Constants {
   val maxJobNum: Int                        = 60 // max number of jobs that can be submitted from one ip within maxJobsWithin
   val maxJobsWithin: Int                    = 1 // time in minutes within the max number of jobs is applied
   val maxJobNumDay: Int                     = 500 // max number of jobs that can be submitted from one ip within maxJobsWithinDay
-  val maxJobsWithinDay: Int                 = 1 // time in day within the max number of jobs is applied for a day
+  val maxJobsWithinDay: Int                 = 1 // time in days within the max number of jobs is applied for a day
   val deletionThresholdRegistered : Int     = 90 // all jobs of registered users that are older than the given number are permanently deleted everywhere
   val deletionThreshold           : Int     = 24 // all jobs of non registered users that are older than the given number are permanently deleted everywhere
   val breakAfterClustal: Int                = 85 // clustal format breaks after n chars
-  val deletionCycle: Int                    = 30 // time in minutes in which the job sweeping routine is executed
-
+  val deletionCycle: Int                    = 1 // time in hours in which the job sweeping routine is executed
 }
 
 trait ExitCodes {
