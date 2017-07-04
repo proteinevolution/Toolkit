@@ -6,6 +6,7 @@ declare var numHits : any;
 declare var getHits: any;
 declare var colorAAs: boolean;
 declare var wrapped: boolean;
+declare var JobModel: any;
 let count = 0;
 
 // add scrollcontainer highlighting
@@ -70,4 +71,3 @@ let followScroll = function(element : any) {
     });
     } catch(e) { console.warn(e); }
 };
-
