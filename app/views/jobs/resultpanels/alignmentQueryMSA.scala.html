@@ -2,7 +2,6 @@
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsArray
 @import play.api.Logger
-@import models.results.FileLoader
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
@@ -16,7 +15,7 @@
 
 <div class="colorOptsAlignment">
     <a onclick="selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
-    <a type="button" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
+    <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced MSA</span></a>
     <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full MSA</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
@@ -50,18 +49,18 @@
         var selectAllBool = false;
         var shownHits = 20;
         var showMore = 100;
-        var colorAAs = true;
         var loading = false;
         var numHits = @alignment.alignment.length;
          var resultName = '@resultName';
         var jobID = '@jobID';
         var checkboxes = [];
         var checkbox = "checkbox";
+        var colorAAs = false;
 
 
         window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": checkboxes.removeDuplicates()};
-            var route = jsRoutes.controllers.AlignmentController.getAln(jobID, resultName);
+            var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
+            var route = jsRoutes.controllers.AlignmentController.getAln(jobID);
 
             $.LoadingOverlay("show");
             // get result json
@@ -107,13 +106,18 @@
 
         function getHits(start, end){
             if(start <= numHits && end <= numHits && !loading){
+                var data = {"start": start, "end": end, "resultName": resultName};
                 loading = true;
                 $('#loadHitsQaln').hide();
                 $('#loadingHits').show();
-                var route = jsRoutes.controllers.AlignmentController.loadHits(jobID,start,end, resultName);
+                var route = {};
+                route.url = "/AlignmentLoadHits/" + jobID;
+                route.method = "POST";
                 return $.ajax({
                     method: route.method,
                     url: route.url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
                     error: function(){
                         $(".alignmentTBody").append("Error loading Data.");
                     }
@@ -126,29 +130,6 @@
                         $('#loadHitsQaln').show();
                     }
                 });
-            }
-        }
-
-
-        function selectAll(){
-            selectAllBool = !selectAllBool;
-            if(selectAllBool) {
-                selectAllHelper(checkbox);
-                $(".selectAllSeqSpan").text("Deselect all");
-                $(".selectAllSeqSpan").addClass("colorToggle");
-
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-            }
-            else {
-                deselectAll(checkbox);
-                $(".selectAllSeqSpan").text("Select all");
-                $(".selectAllSeqSpan").removeClass("colorToggle");
-
-                // delete all checkboxes from array
-                checkboxes = [];
             }
         }
 

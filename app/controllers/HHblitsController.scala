@@ -24,9 +24,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
                                   mongoStore: MongoStore,
                                   val reactiveMongoApi: ReactiveMongoApi,
                                   hhblits: HHBlits,
-                                  general: General)
+                                  general: General,
+                                  constants: Constants)
     extends Controller
-    with Constants
     with Common {
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
@@ -47,7 +47,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     } else {
       Future.successful {
         Process(templateAlignmentScript.pathAsString,
-                (jobPath + jobID).toFile.toJava,
+                (constants.jobPath + jobID).toFile.toJava,
                 "jobID"     -> jobID,
                 "accession" -> accession).run().exitValue() match {
           case 0 => Ok
@@ -56,7 +56,10 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       }
     }
   }
-  def evalFull(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val filename  = (json \ "fileName").as[String]
+    val eval      = (json \ "evalue").as[String]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -67,9 +70,10 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
                   "db"            -> db).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -81,6 +85,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
   }
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
+    val filename  = (json \ "fileName").as[String]
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
@@ -92,9 +97,10 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
           val accessionsStr = getAccessions(result, numList)
           val db            = result.db
           Process(retrieveFullSeq.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"         -> jobID,
                   "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
                   "db"            -> db).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -105,7 +111,10 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
-  def alnEval(jobID: String, eval: String): Action[AnyContent] = Action.async { implicit request =>
+  def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json    = request.body.asJson.get
+    val filename  = (json \ "fileName").as[String]
+    val eval      = (json \ "evalue").as[String]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
@@ -115,8 +124,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
           val result     = hhblits.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
           Process(generateAlignmentScript.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"   -> jobID,
+                  "filename"-> filename,
                   "numList" -> numListStr).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
@@ -129,6 +139,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
 
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
+    val filename  = (json \ "fileName").as[String]
     val numList = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
@@ -136,8 +147,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     } else {
       val numListStr = numList.mkString(" ")
       Process(generateAlignmentScript.pathAsString,
-              (jobPath + jobID).toFile.toJava,
+              (constants.jobPath + jobID).toFile.toJava,
               "jobID"   -> jobID,
+              "filename"-> filename,
               "numList" -> numListStr).run().exitValue() match {
         case 0 => Future.successful(Ok)
         case _ => Future.successful(BadRequest)
@@ -174,14 +186,18 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     }
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
-  def loadHits(jobID: String, start: Int, end: Int): Action[AnyContent] = Action.async { implicit request =>
+  def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    val json      = request.body.asJson.get
+    val start     = (json \ "start").as[Int]
+    val end       = (json \ "end").as[Int]
+    val wrapped = (json \ "wrapped").as[Boolean]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hhblits.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
           BadRequest
         } else {
-          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhblits.hit(jobID, _))
+          val hits = result.HSPS.slice(start, end).map {(views.html.jobs.resultpanels.hhblits.hit(jobID, _, wrapped))}
           Ok(hits.mkString)
         }
     }

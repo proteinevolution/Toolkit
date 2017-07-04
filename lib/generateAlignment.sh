@@ -9,4 +9,4 @@ elif [ "$HOSTNAME" = "rye" ]
     source /cluster/toolkit/production/bioprogs/env/environment_rye.sh
   fi
 
-hhmakemodel.pl  -i results/${jobID}.hhr -fas results/alignment.fas -m ${numList}
+hhmakemodel.pl  -i results/${jobID}.hhr -fas results/${filename}.fas -m ${numList}

@@ -22,8 +22,7 @@ import better.files._, FileWatcher._
 @Singleton
 final class FileWatcher @Inject()(val reactiveMongoApi: ReactiveMongoApi)
   extends Actor
-    with ActorLogging
-    with Constants {
+    with ActorLogging {
 
 
   implicit val system = ActorSystem("processLogging")

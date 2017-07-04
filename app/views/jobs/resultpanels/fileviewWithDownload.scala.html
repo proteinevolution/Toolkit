@@ -1,15 +1,20 @@
 @import play.api.mvc.RequestHeader
-@import models.results.FileLoader
-
 @(filename: String, filePath: String, jobID: String, resultname: String)(implicit request: RequestHeader)
     @import java.lang.String;
 
     <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
     <hr id="line-element" colspan="4" class="horizontal-line">
-
-    <pre class="fileview" id="fileviewer" >@Html(FileLoader.loadFile(filePath))</pre>
+    <pre class="fileview" id="fileviewerDownload_@{resultname}" ></pre>
 
     <script>
+         $(document).ready( function() {
+             $.ajax({
+             type: 'GET',
+             url: 'files/@jobID/@{filename}',
+         }).done(function (data_) {
+             $('#fileviewerDownload_@{resultname}').append(data_)
+         });
+         });
         var downloadFilename = "@{resultname}_@{jobID}";
         window["@{resultname}_download"] = function(){
             var downloadFilename = "@{resultname}_@{jobID}";
@@ -23,7 +28,7 @@
         };
 
         //using both functions is not pretty and somewhat redundant but gets the job done
-        $( "#fileviewer" ).ready(function() {
+        $( "#fileviewerDownload_@{resultname}" ).ready(function() {
             if ($('#tool-tabs').hasClass('fullscreen')) {
                 $(".fileview").css("overflow-y", "visible");
                 $(".fileview").css("height", "100pc");

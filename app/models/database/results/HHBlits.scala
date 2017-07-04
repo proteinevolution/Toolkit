@@ -18,7 +18,8 @@ case class HHBlitsHSP(query: HHBlitsQuery,
                       info: HHBlitsInfo,
                       agree: String,
                       description: String,
-                      num: Int) {
+                      num: Int,
+                      length: Int) {
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
@@ -65,7 +66,7 @@ class HHBlits @Inject()(general: General, aln: Alignment) {
         val agree          = (x._1 \ "agree").as[String]
         val description    = (x._1 \ "header").as[String]
         val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
-        HHBlitsHSP(queryResult, templateResult, infoResult, agree, description, num)
+        HHBlitsHSP(queryResult, templateResult, infoResult, agree, description, num, agree.length)
       }
       val db        = (obj \ jobID \ "db").as[String]
       val alignment = aln.parseAlignment((obj \ "rep100").as[JsArray])

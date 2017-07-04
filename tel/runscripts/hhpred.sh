@@ -44,8 +44,8 @@ fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
-if [ ${SEQ_COUNT} -gt "2000" ] ; then
-      echo "#Input contains more than 2000 sequences." >> ../results/process.log
+if [ ${SEQ_COUNT} -gt "10000" ] ; then
+      echo "#Input contains more than 10000 sequences." >> ../results/process.log
       updateProcessLog
       false
 fi
@@ -113,8 +113,8 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
         SEQ_COUNT2=$(egrep '^>' ../results/${JOBID}.2.fas | wc -l)
 
-        if [ ${SEQ_COUNT2} -gt "2000" ] ; then
-            echo "#Template MSA contains more than 2000 sequences." >> ../results/process.log
+        if [ ${SEQ_COUNT2} -gt "10000" ] ; then
+            echo "#Template MSA contains more than 10000 sequences." >> ../results/process.log
             updateProcessLog
             false
         fi
@@ -302,16 +302,18 @@ else
       updateProcessLog
 fi
 
-if [ "%alignmode.content" = "global" ] ; then
-    MACT_SCORE=0.0
-else
+if [ "%alignmode.content" = "loc" ] ; then
     MACT_SCORE=%macthreshold.content
+
+    if [ "%macmode.content" = "-realign" ] ; then
+        MACT="-realign -mact ${MACT_SCORE}"
+    else
+        MACT="-norealign"
+    fi
 fi
 
-if [ "%macmode.content" = "-realign" ] ; then
-    MACT="-realign -mact ${MACT_SCORE}"
-else
-    MACT="-norealign"
+if [ "%alignmode.content" = "glob" ] ; then
+    MACT="-realign -mact 0.0"
 fi
 
 # Perform HHsearch #

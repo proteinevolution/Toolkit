@@ -1,14 +1,15 @@
 package controllers
 
-import javax.inject.{ Inject, Named, Singleton }
+import javax.inject.{Inject, Named, Singleton}
 
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
-import akka.actor.{ ActorRef, ActorSystem, Props }
+import akka.actor.{ActorRef, ActorSystem, Props}
 import models.sge.Cluster
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import models.database.statistics.ToolStatistic
+import models.database.users.User
 import models.search.JobDAO
 import models.Constants
 import models.results.BlastVisualization
@@ -18,19 +19,19 @@ import modules.tel.TEL
 import modules.LocationProvider
 import modules.db.MongoStore
 import modules.tel.env.Env
-import play.api.{ Configuration, Logger }
+import play.api.{Configuration, Logger}
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.Files
-import play.api.libs.json.{ JsValue, Json }
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{Await, Future}
 
 @Singleton
 final class Application @Inject()(webJarAssets: WebJarAssets,
@@ -52,10 +53,10 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
                                   val cluster: Cluster,
                                   val search: Search,
                                   val settings: Settings,
-                                  configuration: Configuration)
+                                  configuration: Configuration,
+                                  constants: Constants)
     extends Controller
     with I18nSupport
-    with Constants
     with Common {
 
   private val toolkitMode = ConfigFactory.load().getString(s"toolkit_mode")
@@ -86,6 +87,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
+
+      println("Creating new WebSocket. ip: "+rh.remoteAddress.toString() + ", with sessionId: " + rh.session)
 
       userSessions
         .getUser(rh)
@@ -201,8 +204,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       // mainID exists, allow send File
-      if (new java.io.File(s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename").exists)
-        Ok.sendFile(new java.io.File(s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename"))
+      if (new java.io.File(s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename").exists)
+        Ok.sendFile(new java.io.File(s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"))
           .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
           .as("text/plain") //TODO Only text/plain for files currently supported
       else
@@ -221,25 +224,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         case "mmcif" =>
           env.get("CIF")
       }
-      Future.successful(Ok.sendFile(new java.io.File(s"$filepath$SEPARATOR$filename")).as("text/plain"))
+      Future.successful(Ok.sendFile(new java.io.File(s"$filepath$constants.SEPARATOR$filename")).as("text/plain"))
     }
-  }
-
-  def upload: Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData) { request =>
-    request.body
-      .file("file")
-      .map { file =>
-        // TODO: Handle file storage, pass uploaded sequences to model, validate uploaded files
-        Logger.info("Uploading file.")
-        import java.io.File
-        val filename    = file.filename
-        val contentType = file.contentType
-        file.ref.moveTo(new File(s"/tmp/$filename"))
-        Ok("File uploaded")
-      }
-      .getOrElse {
-        Redirect(s"/upload").flashing("error" -> "Missing file")
-      }
   }
 
   def javascriptRoutes: Action[AnyContent] = Action { implicit request =>
@@ -289,15 +275,15 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         routes.javascript.HHpredController.loadHits,
         routes.javascript.AlignmentController.loadHits,
         routes.javascript.AlignmentController.getAln,
+        routes.javascript.AlignmentController.loadHitsClustal,
         routes.javascript.Application.ws
       )
     ).as("text/javascript").withHeaders(CACHE_CONTROL -> "max-age=31536000")
   }
 
   def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
-
-    mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
-
+    // TODO smells like a hack
+    mongoStore.findUser(BSONDocument(User.NAMELOGIN -> username)).map {
       case Some(user) if user.checkPassword(password) && user.isSuperuser => true
       case None                                                           => false
 

@@ -377,7 +377,7 @@ table.dataTable.no-footer{
 .colorToggle{
     color: #006F62 !important;
     border-bottom: solid 1px rgba(0, 110, 98, 0.3) !important;
-    padding-bottom: 7px;
+    padding-bottom: 6px;
 }
 
 .colorToggleBar{
@@ -456,7 +456,7 @@ table.dataTable.no-footer{
 
 #htb_wrapper .sorting_1 input {
     margin-right: 1.25em;
-    top: 0;
+    vertical-align: text-top;
 }
 
 
@@ -514,7 +514,7 @@ table.dataTable.no-footer{
 }
 
 #extraWide {
-    width: 5.5em;
+    width: 5.7em;
     margin-right: 0.9em !important;
     margin-left: 1em;
     height: 1.7em;
@@ -647,14 +647,22 @@ table.dataTable.no-footer{
     right: 15px;
 }
 
-.colorAA{
-    color: #006F62 !important;
-    margin-left: 3em;
-    vertical-align: 0.3em;
+.blank_row {
+    height: 1em;
 }
 
-.colorToggleHHpred{
-    color: #006F62 !important;
-    border-bottom: solid 1px rgba(0, 110, 98, 0.3) !important;
-    padding-bottom: 2px;
+#fastaTable {
+    width: auto;
+}
+
+#clustalTable {
+    width: auto;
+}
+
+#clustalTable td {
+    padding-right: 0.2em;
+}
+
+.clustalAcc {
+    margin-right:2em;
 }

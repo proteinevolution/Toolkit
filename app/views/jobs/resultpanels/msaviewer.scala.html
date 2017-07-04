@@ -1,7 +1,6 @@
-@import models.results.Tcoffee
 @import play.api.mvc.RequestHeader
-
-@(jobID : String)(implicit request: RequestHeader)
+@import scala.io.Source
+@(jobID : String, filePath: String)(implicit request: RequestHeader)
 
 <style>
 
@@ -19,13 +18,13 @@
 
 <script>
     var seqs = '';
-    @for(line <- Tcoffee.alnviz(jobID)) {
+    @for(line <-  Source.fromFile(filePath).getLines) {
         seqs += '@{line}\n';
     }
 
     var width, height, defMenu,  menuOpts;
 
-    var url ='files/' + jobID + '/alignment.json';
+    var url ='files/' + @jobID + '/alignment.json';
     $.getJSON(url, function (data) {
        width = data[0][1].length;
 

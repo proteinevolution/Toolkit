@@ -1,5 +1,4 @@
 @import play.api.mvc.RequestHeader
-@import models.results.FileLoader
 
 @(filename: String, filePath: String, jobID: String, resultname: String, tool: models.tools.Tool)(implicit request: RequestHeader)
     @import java.lang.String;
@@ -13,9 +12,18 @@
     <hr id="line-element" colspan="4" class="horizontal-line">
     </div>
 
-    <pre class="fileview" >@FileLoader.loadFile(filePath)</pre>
+    <pre class="fileview" id="fileviewerDownloadForward_@{resultname}"></pre>
 
     <script>
+        $(document).ready( function() {
+            $.ajax({
+                type: 'GET',
+                url: 'files/@jobID/@{filename}',
+            }).done(function (data_) {
+                $('#fileviewerDownloadForward_@{resultname}').append(data_)
+            });
+        });
+
         var downloadFilename = "@{resultname}_@{jobID}";
         var fileURL="/files/@{jobID}/@{filename}";
         window["@{resultname}_download"] = function(){
@@ -41,7 +49,7 @@
 
 
         //using both functions is not pretty and somewhat redundant but gets the job done
-        $( "#fileviewer" ).ready(function() {
+        $( "#fileviewerDownloadForward_@{resultname}" ).ready(function() {
             if ($('#tool-tabs').hasClass('fullscreen')) {
                 $(".fileview").css("overflow-y", "visible");
                 $(".fileview").css("height", "100pc");
