@@ -75,19 +75,6 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
         }
       case None =>
     }
-    /**
-      *
-      *  do we need to have persistent actors? if so,
-      *  let's use akka-persistence instead of the cache (which would not work).
-      *  actors must be removed from the cache at some point anyway.
-      *
-      *  we need them as long as the user is on the page.
-      *//*
-    userSessions.getUser(sessionID).foreach {
-      case Some(user) =>
-        wsActorCache.remove(user.userID.stringify)
-      case None =>
-    }*/
   }
 
   def receive = LoggingReceive {
