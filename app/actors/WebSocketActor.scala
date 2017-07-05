@@ -3,7 +3,6 @@ package actors
 import javax.inject.{Inject, Named}
 
 import actors.ClusterMonitor._
-import actors.FileWatcher.WatchProcessFile
 import actors.JobActor._
 import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert}
 import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
@@ -37,7 +36,6 @@ object WebSocketActor {
 
 final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
                                      @Named("clusterMonitor") clusterMonitor: ActorRef,
-                                     @Named("fileWatcher") fileWatcher: ActorRef,
                                      @Assisted("out") out: ActorRef,
                                      jobActorAccess: JobActorAccess,
                                      userSessions: UserSessions,
@@ -124,9 +122,7 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
 
     case PushJob(job: Job) =>
       out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
-
-      // something has changed, tell filewatcher
-      fileWatcher ! WatchProcessFile(job.jobID, self)
+      // TODO do filewatching here
 
     case UpdateLog(jobID: String) =>
       out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
