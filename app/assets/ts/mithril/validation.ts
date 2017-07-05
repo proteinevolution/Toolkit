@@ -364,6 +364,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
+            charLimitPerSeq = 3000;
             seqLimit = 10000;
 
             let hmmerTarget = new alignmentVal($(elem));
@@ -381,7 +382,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
-
+            charLimitPerSeq = 3000;
             seqLimit = 10000;
 
             let hhblitsTarget = new alignmentVal($(elem));
@@ -400,7 +401,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 30000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhpredTarget = new alignmentVal($(elem));
@@ -420,7 +421,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
-
+            charLimitPerSeq = 10000;
             seqLimit = 5000;
 
             let psiblastTarget = new alignmentVal($(elem));
@@ -471,6 +472,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "hhrepid":
 
+            charLimitPerSeq = 3000;
             seqLimit = 10000;
 
             let hhrepidTarget = new alignmentVal($(elem));
@@ -481,8 +483,10 @@ let validationProcess = function(elem: any,toolname: string) {
 
             break;
 
+
         case "pcoils":
 
+            charLimitPerSeq = 6000;
             seqLimit = 2000;
 
             let pcoilsTarget = new alignmentVal($(elem));
@@ -529,6 +533,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "ali2d":
 
+            charLimitPerSeq = 3000;
             seqLimit = 100;
 
             let ali2dTarget = new alignmentVal($(elem));
@@ -542,6 +547,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "quick2d":
 
+            charLimitPerSeq = 3000;
             seqLimit = 2000;
 
             let quick2dTarget = new alignmentVal($(elem));
@@ -838,7 +844,7 @@ class alignmentVal implements ToolkitValidator {
         }
 
         else if (!this.elem.reformat('maxseqlength', charLimitPerSeq)) {
-            feedback(false, "Input contains more than " + charLimitPerSeq + " chars in a sequence!", "error");
+            feedback(false, "Input exceeds maximum allowed sequence length of " + charLimitPerSeq + "!", "error");
             return false;
         }
 
