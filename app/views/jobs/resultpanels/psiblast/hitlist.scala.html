@@ -235,7 +235,7 @@ function getHits(start, end, isWrapped){
         var data = {};
         data.start = start;
         data.end = end;
-        data.wrapped = wrapped;
+        data.wrapped = isWrapped;
         var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID);
         return $.ajax({
             contentType: 'application/json; charset=utf-8',
