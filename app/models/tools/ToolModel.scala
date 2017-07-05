@@ -686,7 +686,7 @@ final class ToolFactory @Inject()(
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.hmmer
-                .hitlist(jobID, hmmer.parseResult(jsvalue), this.values(Toolnames.HMMER), s"${constants.jobPath}/$jobID/results/$jobID.html")
+                .hitlist(jobID, hmmer.parseResult(jsvalue), this.values(Toolnames.HMMER), s"${constants.jobPath}/$jobID/results/blastviz.html")
           }
         },
         "Raw Output" -> { (jobID, requestHeader) =>
