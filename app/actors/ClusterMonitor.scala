@@ -59,7 +59,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
 
     case FetchLatest =>
       //val load = cluster.getLoad.loadEst
-      val load = ("qstat" #| "wc -l").!!.toDouble / 64
+      val load = ("qstat" #| "wc -l").!!.toDouble / 32
 
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load
