@@ -151,7 +151,5 @@ class SweepJobsImpl @Inject() (appLifecycle: ApplicationLifecycle,
     constants.deletionLogPath.toFile.appendLine(jobID +"\t" + DateTime.now().toString())
     mongoStore.addDeletedJob(DeletedJob(jobID, DateTime.now))
   }
-  // Called when this singleton is constructed
-  sweep()
 
 }
