@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{ Inject, Singleton }
 
-import actors.JobActor.{ JobStateChanged, UpdateLog, NotifyFileWatcher }
+import actors.JobActor.{ JobStateChanged, UpdateLog }
 import models.Constants
 import models.database.jobs._
 import models.job.JobActorAccess
@@ -35,7 +35,6 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
-      jobActorAccess.sendToJobActor(jobID, NotifyFileWatcher(jobID, Done))
       Ok("done")
     } else BadRequest("Permission denied")
   }
@@ -43,7 +42,6 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   def jobStatusError(jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Error))
-      jobActorAccess.sendToJobActor(jobID, NotifyFileWatcher(jobID, Error))
       Ok("error")
     } else BadRequest("Permission denied")
   }
@@ -51,7 +49,6 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   def jobStatusRunning(jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Running))
-      jobActorAccess.sendToJobActor(jobID, NotifyFileWatcher(jobID, Running))
       Ok("running")
     } else BadRequest("Permission denied")
   }
