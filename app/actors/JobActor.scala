@@ -89,7 +89,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          wrapperExecutionFactory: WrapperExecutionFactory,
                          implicit val locationProvider: LocationProvider,
                          @Named("jobIDActor") jobIDActor: ActorRef,
-                         @Named("fileWatcher") fileWatcher: ActorRef,
                          @NamedCache("userCache") implicit val userCache: CacheApi,
                          @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi,
                          constants: Constants)
