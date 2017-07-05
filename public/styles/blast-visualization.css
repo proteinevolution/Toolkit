@@ -116,6 +116,10 @@
     float: right;
 }
 
+#forwardModal_alignment {
+    height: 10em;
+}
+
 .forward {
     float: right;
     background-color: rgba(0, 110, 98, 166);
