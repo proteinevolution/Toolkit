@@ -47,9 +47,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                             $(elem).focus();
                         });
                         $('.inputDBs').on('change', function () {
-                            setTimeout(function () {
                                 validationProcess($(elem), toolname)
-                            }, 200);
                         });
                         $(elem).blur(function () {
                             if ($(elem).val() === '') {
