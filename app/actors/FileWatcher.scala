@@ -3,7 +3,7 @@ package actors
 import javax.inject.{Inject, Singleton}
 
 import actors.ClusterMonitor.FetchLatest
-import actors.FileWatcher.{StartFileWatching, StopFileWatching}
+import actors.FileWatcher.WatchProcessFile
 import akka.actor.{ActorLogging, _}
 import akka.event.LoggingReceive
 import models.Constants
@@ -25,40 +25,19 @@ final class FileWatcher @Inject()(val reactiveMongoApi: ReactiveMongoApi)
     with ActorLogging {
 
 
-  implicit val system = ActorSystem("processLogging")
-
-
-  private[this] val fetchLatestInterval = 75.millis
 
   protected[this] var jobLogs : scala.collection.immutable.Map[String, ActorRef] = Map.empty[String, ActorRef]
 
 
-  private val Tick: Cancellable = {
-    // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, FetchLatest)(context.system.dispatcher)
-  }
-
   override def preStart(): Unit = {}
 
-  override def postStop(): Unit = Tick.cancel()
+  override def postStop(): Unit = {}
 
   override def receive = LoggingReceive {
 
-    case StartFileWatching(jobID: String, wsActor : ActorRef) =>
+    case WatchProcessFile(jobID: String, wsActor : ActorRef) =>
 
       jobLogs = jobLogs + (jobID -> wsActor)
-
-
-    case StopFileWatching(jobID: String) =>
-
-      jobLogs -= jobID
-
-
-    case FetchLatest =>
-
-      jobLogs.foreach {
-        println
-      }
 
 
   }
@@ -66,7 +45,6 @@ final class FileWatcher @Inject()(val reactiveMongoApi: ReactiveMongoApi)
 
 object FileWatcher {
 
-  case class StartFileWatching(jobID : String, wsActor : ActorRef)
-  case class StopFileWatching(jobID: String)
+  case class WatchProcessFile(jobID : String, wsActor : ActorRef)
 
 }

@@ -3,9 +3,9 @@ package actors
 import javax.inject.{Inject, Named}
 
 import actors.ClusterMonitor._
-import actors.FileWatcher.StartFileWatching
+import actors.FileWatcher.WatchProcessFile
 import actors.JobActor._
-import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert, StartLog}
+import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert}
 import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
@@ -28,7 +28,6 @@ object WebSocketActor {
   case class ChangeSessionID(sessionID: BSONObjectID)
   case object LogOut
   case object MaintenanceAlert
-  case class StartLog(jobID: String)
 
   trait Factory {
     def apply(@Assisted("sessionID") sessionID: BSONObjectID, @Assisted("out") out: ActorRef): Actor
@@ -126,6 +125,9 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
     case PushJob(job: Job) =>
       out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
 
+      // something has changed, tell filewatcher
+      fileWatcher ! WatchProcessFile(job.jobID, self)
+
     case UpdateLog(jobID: String) =>
       out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
 
@@ -144,7 +146,5 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
     case MaintenanceAlert =>
       out ! Json.obj("type" -> "MaintenanceAlert")
 
-    case StartLog(jobID: String) =>
-      fileWatcher ! StartFileWatching(jobID, self)
   }
 }

@@ -2,9 +2,7 @@ package actors
 
 import javax.inject.{Inject, Named}
 
-import actors.FileWatcher.{StartFileWatching, StopFileWatching}
 import actors.JobActor._
-import actors.WebSocketActor.StartLog
 import akka.actor._
 import akka.event.LoggingReceive
 import models.Constants
@@ -78,8 +76,6 @@ object JobActor {
 
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID: String)
-
-  case class NotifyFileWatcher(jobID: String, state: JobState)
 
 }
 
@@ -688,25 +684,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
             job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
           foundWatchers.flatten.foreach(_ ! PushJob(job))
         case None =>
-      }
-
-    case NotifyFileWatcher(jobID: String, state: JobState) =>
-      state match {
-
-        case Running =>
-
-          currentJobs.get(jobID) match {
-            case Some(runningJob) =>
-              val foundWatchers =
-                runningJob.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-              foundWatchers.flatten.foreach(_ ! StartLog(jobID))
-            case _ =>
-          }
-
-        case _ =>
-
-          fileWatcher ! StopFileWatching(jobID)
-
       }
   }
 }
