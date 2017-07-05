@@ -1,5 +1,4 @@
-import com.typesafe.sbt.packager.MappingsHelper._
-lazy val akkaVersion  = "2.4.19"
+lazy val akkaVersion  = "2.5.3"
 lazy val kamonVersion = "0.6.6"
 
 lazy val commonDeps = Seq(
@@ -30,7 +29,7 @@ lazy val commonDeps = Seq(
   "com.beachape"         %% "enumeratum-play-json"    % "1.4.13",
   "net.ruippeixotog"     %% "scala-scraper"           % "1.1.0",
   "com.lihaoyi"          %% "fastparse"               % "0.4.1",
-  "com.vmunier"          %% "scalajs-scripts"         % "1.0.0",
+  "com.vmunier"          %% "scalajs-scripts"         % "1.1.1",
   "org.typelevel"        %% "cats"                    % "0.9.0",
   "com.mohiva"           %% "play-html-compressor"    % "0.6.3"
   //"io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
