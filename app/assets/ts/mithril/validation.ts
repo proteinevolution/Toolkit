@@ -790,8 +790,8 @@ class alignmentVal implements ToolkitValidator {
 
     // Limit HHpred DB
     hhMaxDB(): boolean{
-        if ($("#hhsuitedb").val().length + $("#proteomes").val().length > 6) {
-            feedback(false, "Only 6 databases may be selected at a time!", "error");
+        if ($("#hhsuitedb").val().length + $("#proteomes").val().length > 4) {
+            feedback(false, "Only 4 databases may be selected at a time!", "error");
             return false;
         }else{
             return true;
