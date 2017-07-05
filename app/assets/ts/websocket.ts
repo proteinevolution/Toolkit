@@ -27,9 +27,9 @@ connect = function() : boolean {
         ws.onclose   = function(evt : CloseEvent)   : any { return onClose(evt); };
         ws.onmessage = function(evt : MessageEvent) : any { return onMessage(evt); };
         ws.onerror   = function(evt : ErrorEvent)   : any { return onError(evt); };
-        return true
+        return true;
     } else {
-        return false
+        return false;
     }
 };
 
