@@ -34,6 +34,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   private val userDeletionDelay    = 1 minutes            // Sweeps after this time
   private val userDeletionInterval = 3 hours              // Sweeps in this interval
   private val userDeletingAfterMonths = 1                 // Deletes regular accounts after this timeframe
+  private val userAwaitingRegistrationDeletingAfterDays = 3        // Deletes users awaiting registration after this timeframe (in days)
   private val userLoggedInDeletingAfterMonths = 3         // Deletes registered accounts after this timeframe
   private val userLoggedInWarningDaysBeforeDeletion = 14  // Sending an eMail to the user this many days prior to the deletion
 
@@ -61,7 +62,13 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
             User.DATELASTLOGIN ->
               BSONDocument("$lt" -> BSONDateTime(DateTime.now().minusMonths(userDeletingAfterMonths).getMillis)),
             User.ACCOUNTTYPE   ->
-              List(User.NORMALUSER, User.NORMALUSERAWAITINGREGISTRATION)
+              List(User.NORMALUSER)
+          ),
+          BSONDocument(// Removing regular users who await registration
+            User.DATELASTLOGIN ->
+              BSONDocument("$lt" -> BSONDateTime(DateTime.now().minusDays(userAwaitingRegistrationDeletingAfterDays).getMillis)),
+            User.ACCOUNTTYPE   ->
+              List(User.NORMALUSERAWAITINGREGISTRATION)
           ),
           BSONDocument(// Removing registered users with no privileges
             User.DATELASTLOGIN ->
@@ -75,9 +82,9 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
           user.userID
         }
         // TODO need to implement statistics before deleting the accounts?  // Not deleting users just yet
-//        mongoStore.removeUsers(BSONDocument(User.IDDB -> userIDs)).foreach{ writeResult =>
-//          Logger.info(s"Deleting old jobs ${if (writeResult.ok) "successful" else "failed"}")
-//        }
+        mongoStore.removeUsers(BSONDocument(User.IDDB -> userIDs)).foreach{ writeResult =>
+          Logger.info(s"Deleting old jobs ${if (writeResult.ok) "successful" else "failed"}")
+        }
       }
 
       Logger.info("Checking if there are any old accounts to send the owner an eMail")
