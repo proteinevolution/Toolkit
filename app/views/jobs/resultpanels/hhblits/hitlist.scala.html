@@ -217,26 +217,6 @@
                         return false;
                     }
                 }
-
-                $.ajax({
-                    url: route.url,
-                    method: route.method,
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    error: function(){
-                        $.LoadingOverlay("hide")
-                    }
-                }).done(function (data_) {
-                    $.ajax({
-                        type: 'GET',
-                        url: 'files/@jobID/'+filename+'.fa',
-                        error: function(){
-                            $.LoadingOverlay("hide")
-                        }
-                    }).done(function (data_) {
-                        forward(selectedTool, data_.toString());
-                    });
-                });
             } else{
 
                 if(boolEvalue) {
@@ -253,27 +233,27 @@
                     data.fileName = filename;
                     route = jsRoutes.controllers.HHblitsController.aln(jobID);
                 }
-                $.ajax({
-                    url: route.url,
-                    method: route.method,
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    error: function(){
-                        $.LoadingOverlay("hide")
-                    }
-                }).done(function (data_) {
-                    $.ajax({
-                        type: 'GET',
-                        url: 'files/@jobID/'+filename+'.fas',
-                        error: function(){
-                            $.LoadingOverlay("hide")
-                        }
-                    }).done(function (data_) {
-                        forward(selectedTool, data_.toString());
-                    });
-                });
-
             }
+
+           $.ajax({
+               url: route.url,
+               method: route.method,
+               contentType: "application/json",
+               data: JSON.stringify(data),
+               error: function(){
+                   $.LoadingOverlay("hide")
+               }
+           }).done(function (data_) {
+               $.ajax({
+                   type: 'GET',
+                   url: 'files/@jobID/'+filename+'.fa',
+                   error: function(){
+                       $.LoadingOverlay("hide")
+                   }
+               }).done(function (data_) {
+                   forward(selectedTool, data_.toString());
+               });
+           });
         }
 
 
