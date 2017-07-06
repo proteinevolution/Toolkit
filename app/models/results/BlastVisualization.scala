@@ -19,6 +19,7 @@ object BlastVisualization  {
 
   private val uniprotReg = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
   private val scopReg = """([defgh][0-9a-zA-Z\.\_]+)""".r
+  private val smartReg = """(^SM0[0-9]{4})""".r
   private val mmcifReg = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
   private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
@@ -38,6 +39,7 @@ object BlastVisualization  {
   private val pfamBaseLink = "http://pfam.xfam.org/family/"
   private val cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLik = "http://www.uniprot.org/uniprot/"
+  private val smartBaseLink = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
 
 
   def SSColorReplace(sequence: String): String =
@@ -90,9 +92,13 @@ object BlastVisualization  {
       link += generateLink(ncbiProteinBaseLink, id, id)
     } else if (db == "uniprot") {
       link += generateLink(uniprotBaseLik, id, id)
-    } else {
+    } else if (db == "smart") {
+      link += generateLink(smartBaseLink, id, id)
+    }
+    else {
       link = id
     }
+
     Html(link)
   }
 
@@ -203,6 +209,7 @@ object BlastVisualization  {
     } else if (db == "ncbi") {
       links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
     }
+
     Html(links.mkString(" | "))
   }
 
@@ -223,9 +230,11 @@ object BlastVisualization  {
     case scopReg(_) => "scop"
     case mmcifShortReg(_) => "mmcif"
     case mmcifReg(_) => "mmcif"
+    case smartReg(_) => "smart"
     case pfamReg(_, _) => "pfam"
-    case ncbiReg(_) => "ncbi"
     case uniprotReg(_) => "uniprot"
+    case ncbiReg(_) => "ncbi"
+
     case e: String => Logger.info("Struc: (" + e + ") could not be matched against any database!"); ""
   }
 
