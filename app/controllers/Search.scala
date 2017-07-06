@@ -37,6 +37,16 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     Ok(Json.toJson(toolFactory.values.values.map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
   }
 
+  /**
+    * fetches data for a given query
+    *
+    * if no tool is found for a given query,
+    * it looks for jobs which belong to the current user.
+    * only jobIDs that belong to the user are autocompleted
+    *
+    * @param queryString_
+    * @return
+    */
   def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       val queryString = queryString_.trim()
