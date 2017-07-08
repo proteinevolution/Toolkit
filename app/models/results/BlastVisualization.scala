@@ -20,6 +20,7 @@ object BlastVisualization  {
   private val uniprotReg = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
   private val scopReg = """([defgh][0-9a-zA-Z\.\_]+)""".r
   private val smartReg = """(^SM0[0-9]{4})""".r
+  private val ncbiCDReg   = """(^[cs]d[0-9]{5})""".r
   private val mmcifReg = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
   private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
@@ -40,7 +41,6 @@ object BlastVisualization  {
   private val cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLik = "http://www.uniprot.org/uniprot/"
   private val smartBaseLink = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
-
 
   def SSColorReplace(sequence: String): String =
     this.helix_sheets.replaceAllIn(
@@ -86,6 +86,8 @@ object BlastVisualization  {
       link += generateLink(scopBaseLink, id, id)
     } else if (db == "mmcif") {
       link += generateLink(pdbBaseLink, idPdb, id)
+    } else if (db == "ncbicd") {
+      link += generateLink(cddBaseLink, id, id)
     } else if (db == "pfam") {
       link += generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
     } else if (db == "ncbi") {
@@ -94,11 +96,9 @@ object BlastVisualization  {
       link += generateLink(uniprotBaseLik, id, id)
     } else if (db == "smart") {
       link += generateLink(smartBaseLink, id, id)
-    }
-    else {
+    } else {
       link = id
     }
-
     Html(link)
   }
 
@@ -230,6 +230,7 @@ object BlastVisualization  {
     case scopReg(_) => "scop"
     case mmcifShortReg(_) => "mmcif"
     case mmcifReg(_) => "mmcif"
+    case ncbiCDReg(_) => "ncbicd"
     case smartReg(_) => "smart"
     case pfamReg(_, _) => "pfam"
     case uniprotReg(_) => "uniprot"
