@@ -37,7 +37,7 @@
 </tr>
 
 @if(wrapped){
-    @Html(BlastVisualization.hhblitsHitWrapped(hit, 0, 70, hit.query.start, hit.template.start))
+    @Html(BlastVisualization.hhblitsHitWrapped(hit, 0, 65, hit.query.start, hit.template.start))
 }else {
     @BlastVisualization.makeRow("sequence", Array("", "Q " + hit.query.accession, hit.query.start.toString, hit.query.seq + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")"))
     @*Consensus of query, if present*@
@@ -51,6 +51,6 @@
     <tr class="blank_row"><td colspan="5"></td></tr>
 }
 <tr>
-    <td></td>
     <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
 </tr>
+
