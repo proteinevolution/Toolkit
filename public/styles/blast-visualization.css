@@ -670,3 +670,16 @@ table.dataTable.no-footer{
 .clustalAcc {
     margin-right:2em;
 }
+
+#toolReferences a {
+    color: rgba(0, 110, 98, 166);
+}
+
+#toolReferences {
+    font-size: 1.15em;
+}
+
+#toolReferences div {
+    margin-left: 1.5em;
+}
+
