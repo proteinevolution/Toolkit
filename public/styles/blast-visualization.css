@@ -675,11 +675,17 @@ table.dataTable.no-footer{
     color: rgba(0, 110, 98, 166);
 }
 
+.citation{
+    border-left: 3px solid rgba(0, 110, 98, 0.75);
+    margin: 0.5em !important;
+    margin-bottom: 1em !important;
+}
+
 #toolReferences {
     font-size: 1.15em;
 }
 
 #toolReferences div {
-    margin-left: 1.5em;
+    margin-left: 1em;
 }
 
