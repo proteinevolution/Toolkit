@@ -87,14 +87,10 @@
 
 }
 
-#imprintModal, #subnavHelpModal, #subnavFAQModal, #privacyPolicyModal {
-  font-size: 0.75em;
+#imprintModal, #subnavHelpModal, #subnavFAQModal, #privacyPolicyModal, #contactModal, #citeModal, #recentUpdatesModal {
+  font-size: 0.85em;
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-  width: 50%;
-
-  a {
-    font-size: large;
-  }
+  width: 55%;
 
   p {
     font-weight: bold;
@@ -102,62 +98,9 @@
 
 }
 
-#imprintContent, #helpModalContent, #FAQModalContent, #privacyPolicyContent, #contactModelContent {
+#imprintContent, #helpModalContent, #FAQModalContent, #privacyPolicyContent, #contactModelContent, #citeModalContent, #recentUpdatesContent {
   padding: 1em;
 }
-
-//contact form
-
-#contactModelContent form {
-  max-width: 600px;
-  text-align: center;
-  margin: 20px auto;
-
-  input, textarea {
-    border:0; outline:0;
-    padding: 0.5em;
-    border-radius: 5px;
-    display: block;
-    width: 100%;
-    margin-top: 1em;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-    box-shadow: 0 1px 1px rgba(black, 0.1);
-    resize: none;
-    font-size: 0.7em;
-
-    &:focus {
-      border: 1px solid #2E8C81;
-      box-shadow: 0 0 10px #2E8C81;
-    }
-  }
-
-  #input-submit {
-    color: white;
-    background: #006F62;
-    cursor: pointer;
-    width: 50%;
-    margin: auto;
-    height: 3em;
-
-    &:hover {
-      box-shadow: 0 1px 1px 1px rgba(#aaa, 0.6);
-    }
-  }
-
-  textarea {
-    height: 149px;
-  }
-}
-
-#contactModelContent h3, #contactModelContent h5 {
-  text-align: center;
-  color: #a8a8a8;
-  text-shadow: 1px 1px 0 rgba(white, 1);
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif;
-  margin-bottom: 0;
-
-}
-
 
 .half {
   float: left;
@@ -216,6 +159,12 @@
 }
 #sub-nav a {
   color: gray;
-  font-size: 0.575em;
+  font-size: 0.675em;
   padding: 0 1em 0 1em;
+}
+
+@media screen and (max-width: 730px) {
+  #sub-nav {
+    margin-bottom: 2em;
+  }
 }

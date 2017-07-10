@@ -2,15 +2,16 @@
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsArray
 @import play.api.Logger
-@import models.results.FileLoader
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
 @import modules.tel.TEL
-@(toolName: String, jobID: String, filename : String,jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
+@(toolName: String, jobID: String, jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
+@import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".fas";
+
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
-@if((jsValue \ filename \ "hits").as[List[JsObject]].size < 1) {
+@if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
     <div class="callout alert noHits" id="noHits">
         <h6>No hits found!</h6>
     </div>
@@ -18,19 +19,19 @@
 }else{
 <div class="colorOptsAlignment">
     <a onclick='wrapSequences()' type="button"><span id="wrapSequences">Wrap sequences</span></a>
-    <a onclick="download_()" type="buttom"><span id="downloadAlignment">Download File</span></a>
-    <a data-open="forwardModal_@{tool.toolNameShort}" type="buttom"><span id="downloadAlignment">Forward All</span></a>
+    <a onclick="download_()" type="button"><span id="downloadAlignment">Download Hits</span></a>
+    <a data-open="forwardModal_@{tool.toolNameShort}" type="button"><span id="downloadAlignment">Forward All</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
     <br/>
-    Number of sequences: <b>@{{jsValue \ filename \ "hits"}.as[List[JsObject]].size}</b>
+    Number of sequences: <b>@{{jsValue \ jobID \ "hits"}.as[List[JsObject]].size}</b>
     <br />
     <br />
     <form id="alignmentResult">
         <table class="unstriped">
             <tbody class="alignmentTBody">
-                @for((hit,index) <- {jsValue \ filename \ "hits" }.as[List[JsObject]].zipWithIndex) {
+                @for((hit,index) <- {jsValue \ jobID \ "hits" }.as[List[JsObject]].zipWithIndex) {
                     <tr class="header">
                         <td>
                             @{ hit \ "name" match {
@@ -42,7 +43,7 @@
                     <tr>
                         <td class="sequenceAlignment">
                         @{ hit \ "seq" match {
-                            case JsDefined(jsVal) => Html(BlastVisualization.insertMatch((hit \ "seq").get.as[String], (jsValue \ filename \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
+                            case JsDefined(jsVal) => Html(BlastVisualization.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
                         }
                         }
                         </td>
@@ -51,13 +52,22 @@
 
 
                 <tr><td><br/></td></tr>
-                <tr><td><br/></td></tr>
             </tbody>
         </table>
 
     </form>
     }
 </div>
+    <br>
+    <hr id="line-element" colspan="4" class="horizontal-line"><br>
+    <div id="toolReferences">
+        <h5 id="refTitle">References</h5>
+        If you use PatternSearch for your research, please cite:
+        <div><em>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.</em><a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank"> Alva et al. NAR (2016)</a>.</div>
+    </div><br>
+    <hr id="line-element" colspan="4" class="horizontal-line">
+
+
 
 <script>
         var data;
@@ -70,11 +80,10 @@
 
 
         // get result json
-        var fileUrl = "/files/@jobID/@{filename}.json";
+        var fileUrl = "/files/@jobID/@{jobID}.json";
         $.getJSON(fileUrl, function (data_) {
             data = data_;
         });
-
 
 
         function wrapSequences(){
@@ -89,25 +98,27 @@
             }
         }
 
-        function patsearch_forward(selectedTool) {
-            var forwardData = [];
-            //fill array with headers and sequences
-            data.hits.forEach(function(currentValue) {
-                forwardData.push(currentValue.name);
-                forwardData.push(currentValue.seq);
-            });
-            forward(selectedTool, forwardData.join("\n"));
-        }
+        window["@{tool.toolNameShort}_forward"] = function(selectedTool){
+            $.LoadingOverlay("show");
+            var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
+            $.ajax({
+                method: "GET",
+                url: fileURL
+            }).done(function(data){
+                forward(selectedTool, data);
+
+            })
+        };
 
         function download_(){
-            console.log(JSON.stringify(data))
-            var forwardData = [];
-            data.hits.forEach(function(currentValue) {
-                forwardData.push(currentValue.name);
-                forwardData.push(currentValue.seq);
-            });
-            var filename = "@{toolName}_jobID_@{jobID}.fasta";
-            download(filename, forwardData.join("\n"));
+            var downloadFilename = "@{jobID}_@{tool.toolNameShort}.fas";
+            var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
+            $.ajax({
+                method: "GET",
+                url: fileURL
+            }).done(function(data){
+                download(downloadFilename, data);
+            })
         }
 
 </script>

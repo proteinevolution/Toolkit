@@ -58,9 +58,9 @@ object newickPrinter extends Newick {
   private[this] def printTree(e: Tree): String = e match {
     case Node(edges, name) =>
       OPEN_PAREN +
-        edges.map(printTree).reduceLeft((acc, t) => acc + COMMA + t) +
-        CLOSE_PAREN +
-        printName(name)
+      edges.map(printTree).reduceLeft((acc, t) => acc + COMMA + t) +
+      CLOSE_PAREN +
+      printName(name)
     case Leaf(name) =>
       printName(name)
     case Edge(to, weight) =>

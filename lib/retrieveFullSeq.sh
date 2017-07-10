@@ -19,10 +19,10 @@ elif [ "$HOSTNAME" = "rye" ]
     ACCESSIONS=$(echo $accessionsStr | tr " " "\n")
 
     # write accessions to be retrieved in file
-    printf "${ACCESSIONS[@]}" > results/accessionsToRetrieve
+    printf "${ACCESSIONS[@]}" > results/${filename}_accessionsToRetrieve
 
     #retrieve full length sequences
-    seq_retrieve.pl -i results/accessionsToRetrieve \
-                    -o results/sequences.fa \
+    seq_retrieve.pl -i results/${filename}_accessionsToRetrieve \
+                    -o results/${filename}.fa \
                     -d ${STANDARD}/${db} \
-                    -unique 1 > results/unretrievable
+                    -unique 1 > results/${filename}_unretrievable

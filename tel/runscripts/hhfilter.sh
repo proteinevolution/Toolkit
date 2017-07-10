@@ -4,19 +4,19 @@ SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 FORMAT=$(head -1 ../params/alignment | egrep ^CLUSTAL | wc -l)
 
-if [ $CHAR_COUNT -gt "10000000" ] ; then
+if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
-if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
+if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
-if [ $FORMAT = "1" ] ; then
+if [ ${FORMAT} = "1" ] ; then
 
       OUTFORMAT=$(reformatValidator.pl clu fas \
 	        $(readlink -f ../params/alignment) \
@@ -29,28 +29,28 @@ else
             -d 160 -uc -l 32000)
 fi
 
-if [ "$OUTFORMAT" = "fas" ] ; then
+if [ "${OUTFORMAT}" = "fas" ] ; then
 
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
     echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
 
 else
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     false
 fi
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
-if [ $SEQ_COUNT -gt "2000" ] ; then
-      echo "#Input contains more than 2000 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+if [ ${SEQ_COUNT} -gt "10000" ] ; then
+      echo "#Input contains more than 10000 sequences." >> ../results/process.log
+      updateProcessLog
       false
 fi
 
 echo "#Starting HHfilter." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 hhfilter        -i %alignment.path \
                 -o ../results/alignment.a3m \
@@ -61,7 +61,7 @@ hhfilter        -i %alignment.path \
                 -M 30
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 reformat_hhsuite.pl a3m fas ../results/alignment.a3m ../results/alignment.fas
 
@@ -69,3 +69,5 @@ reformat_hhsuite.pl fas clu ../results/alignment.fas ../results/alignment.clusta
 
 # Convert fasta to JSON
 fasta2json.py ../results/alignment.fas ../results/alignment.json
+
+rm ../results/alignment.a3m

@@ -1,7 +1,7 @@
 
 @import models.results.BlastVisualization
 @import models.database.results.HmmerHSP
-@(jobID: String, hit: HmmerHSP, db: String)(implicit request: RequestHeader)
+@(jobID: String, hit: HmmerHSP, db: String, wrapped: Boolean)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@
 
 @* hit number, links *@
@@ -14,7 +14,7 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td class="indexCheckbox" ><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}</td>
+    <td class="indexCheckbox" ><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}'> @{hit.num}</td>
     <td  class="hitInfo"  colspan="4">
         @BlastVisualization.getSingleLinkDB(db,hit.accession)
         @{"  "+hit.description}
@@ -23,7 +23,7 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td class="hitInfo" colspan="4">E-value: @{hit.evalue}&emsp;&emsp;
+    <td class="hitInfo" colspan="4">E-value: @{hit.full_evalue}&emsp;&emsp; Ind. E-value: @{hit.evalue}&emsp;&emsp;
         Score: @{hit.bitscore}&emsp;&emsp;Aligned positions: @{hit.hit_len}&emsp;&emsp;
         Observed domains: @{hit.domain_obs_num}
     </td>
@@ -31,40 +31,23 @@
 <tr>
     <td><br /></td>
 </tr>
-
-@* color only 100 first hits, to avoid bloating of the generated html*@
-
-    @if(hit.num > 100) {
-
-        @* seq of query, if present *@
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, hit.query_seq + "    " + hit.query_end.toString))
-        }
-        @* agree of query, if present *@
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "", hit.midline))
-        }
-        @* seq of hit, if present *@
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, hit.hit_seq + "    " + hit.hit_end.toString))
-        }
-    }else {
-        @* seq of query, if present *@
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, BlastVisualization.colorRegexReplacer(hit.query_seq) + "    " + hit.query_end.toString))
-        }
-        @* agree of query, if present *@
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "", BlastVisualization.colorRegexReplacer(hit.midline)))
-        }
-        @* seq of hit, if present *@
-        @{
-            BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, BlastVisualization.colorRegexReplacer(hit.hit_seq) + "    " + hit.hit_end.toString))
-        }
+@if(wrapped) {
+    @Html(BlastVisualization.hmmerHitWrapped(hit, 0, 85, hit.query_start, hit.hit_start))
+}else{
+    @* seq of query, if present *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "Q " + (hit.query_start + 1).toString, hit.query_seq + "    " + hit.query_end.toString))
     }
-<tr>
-    <td><br /></td>
-</tr>
+    @* agree of query, if present *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "", hit.midline))
+    }
+    @* seq of hit, if present *@
+    @{
+        BlastVisualization.makeRow("sequence", Array("", "T " + (hit.hit_start + 1).toString, hit.hit_seq + "    " + hit.hit_end.toString))
+    }
+    <tr class="blank_row"><td colspan="5"></td></tr>
+}
 <tr>
     <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
 </tr>

@@ -8,31 +8,37 @@ key=`date | md5sum | awk '{print $1}'`
 echo $key > ../key
 if [ "$HOSTNAME" = "olt" ] || [ "$HOSTNAME" = "rye" ]; then
 
-QUEUE=%QUEUE
+
+# update process log
+updateProcessLog () {
+    until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content); do
+        printf 'host unreachable\n...waiting to update process log\n'
+        sleep 5
+    done
+}
+
 JOBID=$(basename $(dirname $(pwd)))
 
-curl -X POST http://%HOSTNAME:%PORT/jobs/queued/$JOBID/$key
+until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/queued/$JOBID/$key); do
+    printf 'host unreachable\n...waiting to set job status to queued\n'
+    sleep 5
+done
 
 if [ "$HOSTNAME" = "olt" ]
   then
-    if [ $QUEUE = "short" ]; then QUEUE="short.q"; fi
-    if [ $QUEUE = "normal" ]; then QUEUE="long.q"; fi
-
     qsub -sync n \
-         -q $QUEUE \
+         -l h_rt=%HARDRUNTIME \
          -l h_vmem=%MEMORY,h="node502|node503|node504|node505|node506|node507|node508|node509|node510|node511|node512|node513" \
          -cwd  \
          %r | grep -oE "[0-9]+" > jobIDCluster
 
 elif [ "$HOSTNAME" = "rye" ]
   then
-    if [ $QUEUE = "short" ]; then QUEUE="toolkit_immediate"; fi
-    if [ $QUEUE = "normal" ]; then QUEUE="toolkit_normal"; fi
-
       HOSTNAME="rye"
       qsub -sync n \
-               -q $QUEUE \
+               -l h_rt=%HARDRUNTIME \
                -l h_vmem=%MEMORY,h="node33|node34|node35|node36" \
+               -pe parallel %THREADS \
                -cwd  \
                %r | grep -oE "[0-9]+" > jobIDCluster
   fi

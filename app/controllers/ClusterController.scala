@@ -6,7 +6,8 @@ import models.sge.Cluster
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
+import sys.process._
 
 /**
   * This controller will be used later for user interaction with the ClusterMonitor
@@ -17,15 +18,7 @@ import play.api.mvc.{Action, AnyContent, Controller}
 final class ClusterController @Inject()(ws: WSClient, configuration: Configuration, cluster: Cluster)
     extends Controller {
 
-  private val logger = org.slf4j.LoggerFactory.getLogger(this.getClass)
-
-  // initialize liveTable with a real value
-
   def getLoad: Action[AnyContent] = Action { implicit request =>
-    val load = cluster.getLoad.loadEst
-
-    Ok(Json.toJson(load.toString))
-
+    Ok(Json.toJson(("qstat" #| "wc -l").!!.toDouble / 32))
   }
-
 }

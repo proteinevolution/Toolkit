@@ -69,7 +69,6 @@ window.FrontendAlnvizComponent = {
                         labelIdLength: 75,
                         menuFontsize: "12px",
                         menuMarginLeft: "2px",
-                        menuPadding: "0px 10px 0px 0px",
                         menuItemFontsize: "14px",
                         menuItemLineHeight: "14px",
                         autoResize: true
@@ -87,8 +86,9 @@ window.FrontendAlnvizComponent = {
                 alignment.render();
 
                 //hide unsused options
-                $('div#menuDiv div:eq(5)').hide();
-                $('div#menuDiv div:eq(6)').hide();
+                $('#menuDiv').children().eq(5).hide();
+                $('#menuDiv').children().eq(6).hide();
+
 
                 setTimeout(function(){
                     $('#tab-Visualization').removeAttr('style');
@@ -108,7 +108,7 @@ window.FrontendAlnvizComponent = {
                 "class": "jobline"
             }, m("span", {
                 "class": "toolname"
-            }, "Alignment Viewer")), m(GeneralTabComponent, {
+            }, "AlignmentViewer"), m("i", {"class": "icon-white_question helpicon"})), m(GeneralTabComponent, {
                 tabs: ["Alignment", "Visualization"],
                 ctrl: ctrl
             })
@@ -261,7 +261,7 @@ let tabsContents : any = {
         }, [
             m("textarea", {
                 name: "alignment",
-                placeholder: "multiple sequence alignment",
+                placeholder: "Enter sequences in FASTA or CLUSTAL format",
                 options: [["fas", "FASTA"]],
                 id: "alignment",
                 rows: 25,

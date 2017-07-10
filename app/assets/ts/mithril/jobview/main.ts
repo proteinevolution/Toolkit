@@ -1,5 +1,8 @@
 (<any>window).JobViewComponent = {
 
+    controller: function(args : any) {
+       return {}
+    },
     view: function(ctrl : any, args : any) {
         if (!args.job()) {
             return m("div", {"class" : "still_waiting", config: initLoader}, "");
@@ -26,12 +29,12 @@ let JobLineComponent = {
             m((<any>window).HelpModalComponent, { toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong }),
             m("span", { "class": "toolname" }, [
                 m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
-                m("a", { href: "/#/tools/" + args.job().tool.toolname }, args.job().tool.toolnameLong),
+                m("a", { onclick: function(){m.route("/tools/" + args.job().tool.toolname)}}, args.job().tool.toolnameLong),
                 m("a", { config: helpModalAccess.bind(args) },
                         m("i", { "class": "icon-white_question helpicon" })
                 )
             ]),
-            m("span", { "class": "jobdate" }, isJob ? "Created: " + (args.job().dateCreated) : "")
+            m("span", { "class": "jobdate" }, isJob ? "Created: " + (moment(args.job().dateCreated).local().format('lll')): "")
         ]);
     }
 };

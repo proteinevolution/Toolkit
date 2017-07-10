@@ -1,10 +1,8 @@
 @import play.api.mvc.RequestHeader
 @import models.results.FileLoader
-
 @(filepath : String)(implicit request: RequestHeader)
 
-<pre class="fileview" >@Html(FileLoader.loadFile(filepath))</pre>
-
+<pre class="fileview" id="fileviewer">@Html(FileLoader.loadFile(filepath))</pre>
 <script>
 
         //using both functions is not pretty and somewhat redundant but gets the job done

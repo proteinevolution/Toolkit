@@ -1,13 +1,13 @@
 package modules
 
 import java.nio.file.attribute.PosixFilePermission
-import javax.inject.{Inject, Provider}
+import javax.inject.{ Inject, Provider }
 
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
-import modules.tel.env.{Env, ExecFile, PropFile, TELEnv}
-import modules.tel.param.{GenerativeParamFileParser, ParamCollector, Params}
-import play.api.{Configuration, Logger}
+import modules.tel.env.{ Env, ExecFile, PropFile, TELEnv }
+import modules.tel.param.{ GenerativeParamFileParser, ParamCollector, Params }
+import play.api.{ Configuration, Logger }
 import com.google.inject.name.Names
 import grizzled.sys.OperatingSystem.Posix
 import modules.tel.execution.WrapperExecutionFactory

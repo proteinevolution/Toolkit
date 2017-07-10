@@ -1,20 +1,21 @@
 package controllers
 
-import models.database.jobs.{Job, JobHash}
+import models.database.jobs.Job
 import play.Logger
 import models.Constants
 import play.api.cache._
 import play.api.libs.json.Json
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.search.JobDAO
 import models.tools.ToolFactory
-import modules.{CommonModule, LocationProvider}
-import play.api.mvc.{Action, AnyContent, Controller}
+import modules.LocationProvider
+import modules.db.MongoStore
+import play.api.mvc.{ Action, AnyContent, Controller }
 
 import scala.concurrent.Future
 import scala.language.postfixOps
@@ -22,41 +23,57 @@ import scala.language.postfixOps
 @Singleton
 final class Search @Inject()(@NamedCache("userCache") implicit val userCache: CacheApi,
                              implicit val locationProvider: LocationProvider,
+                             userSessions: UserSessions,
                              val reactiveMongoApi: ReactiveMongoApi,
+                             mongoStore: MongoStore,
                              toolFactory: ToolFactory,
-                             val jobDao: JobDAO)
+                             val jobDao: JobDAO,
+                             constants: Constants)
     extends Controller
-    with Constants
     with ReactiveMongoComponents
-    with UserSessions
-    with CommonModule {
+    with Common {
 
   def getToolList: Action[AnyContent] = Action {
-    Ok(Json.toJson(toolFactory.values.values.map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
+    Ok(Json.toJson(toolFactory.values.values.filterNot(_.toolNameShort == "hhpred_manual").map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
   }
 
+  /**
+    * fetches data for a given query
+    *
+    * if no tool is found for a given query,
+    * it looks for jobs which belong to the current user.
+    * only jobIDs that belong to the user are autocompleted
+    *
+    * @param queryString_
+    * @return
+    */
   def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
+    userSessions.getUser.flatMap { user =>
       val queryString = queryString_.trim()
       val tools: List[models.tools.Tool] = toolFactory.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
-        .filter(tool => tool.toolNameShort != "hhpred_manual" && tool.toolNameShort != "hhpred_automatic")
+        .filter(tool => tool.toolNameShort != "hhpred_manual")
+
         .toList
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {
         // Grab Job ID auto completions
-        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
+        mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
           val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID) && job.deletion.isEmpty)
           if (jobsFiltered.isEmpty) {
-            findJob(BSONDocument(Job.JOBID -> queryString)).map(x => Ok(Json.toJson(List(x.map(_.cleaned())))))
+            mongoStore
+              .findJob(BSONDocument(Job.JOBID -> queryString))
+              .map(x => Ok(Json.toJson(List(x.map(_.cleaned())))))
           } else {
             Future.successful(Ok(Json.toJson(jobsFiltered.map(_.cleaned()))))
           }
         }
       } else {
         // Find the Jobs with the matching tool
-        findJobs(
-          BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort))))
+        mongoStore
+          .findJobs(
+            BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))
+          )
           .map { jobs =>
             jobs.map(_.cleaned())
           }
@@ -66,7 +83,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
   }
 
   def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
+    userSessions.getUser.flatMap { user =>
       val toolOpt: Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
       toolOpt match {
         case Some(_) => Future.successful(Ok(Json.toJson(true)))
@@ -77,11 +94,12 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
 
   def get: Action[AnyContent] = Action.async { implicit request =>
     // Retrieve the jobs from the DB
-    getUser.flatMap { user =>
-      findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
-        jobs =>
-          Ok(Json.toJson(jobs.map(_.jobManagerJob())))
-      }
+    userSessions.getUser.flatMap { user =>
+      mongoStore
+        .findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false)))
+        .map { jobs =>
+          NoCache(Ok(Json.toJson(jobs.map(_.jobManagerJob()))))
+        }
     }
   }
 
@@ -91,14 +109,16 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     * @return
     */
   def getIndexPageInfo: Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
-      findSortedJob(
-        BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
-                     BSONDocument(Job.OWNERID  -> user.userID)),
-        BSONDocument(Job.DATEUPDATED -> -1)
-      ).map { lastJob =>
-        Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned())))
-      }
+    userSessions.getUser.flatMap { user =>
+      mongoStore
+        .findSortedJob(
+          BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
+                       BSONDocument(Job.OWNERID  -> user.userID)),
+          BSONDocument(Job.DATEUPDATED -> -1)
+        )
+        .map { lastJob =>
+          Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned())))
+        }
     }
   }
 
@@ -125,7 +145,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
       case Some(mainJobID) =>
         val jobIDSearch = mainJobID + "(_[0-9]{1,3})?"
         Logger.info("Old job ID: " + mainJobID + " Current job ID: " + jobID + " Searching for: " + jobIDSearch)
-        findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map { jobs =>
+        mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map { jobs =>
           if (jobs.isEmpty) {
             Logger.info("Found no such jobs.")
             Ok(Json.obj("exists" -> false))

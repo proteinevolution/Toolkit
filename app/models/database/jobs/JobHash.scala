@@ -4,7 +4,7 @@ import models.search.JobDAO
 import modules.tel.env.Env
 import better.files._
 import org.joda.time.DateTime
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
 
 /**
   *
@@ -26,8 +26,8 @@ case class JobHash(mainID: BSONObjectID,
 
   override def toString: String = {
     "\nmainID: " + mainID.stringify + "\nJobHash: " + inputHash + "\nrsHash: " + runscriptHash +
-      "\ndbName: " + dbName + "\ndbMtime " + dbMtime + "\nTool" + toolName + "\ntoolHash" + toolHash +
-      "\ndateCreated: " + dateCreated + "\njobID: " + jobID
+    "\ndbName: " + dbName + "\ndbMtime: " + dbMtime + "\nTool: " + toolName + "\ntoolHash: " + toolHash +
+    "\ndateCreated: " + dateCreated + "\njobID: " + jobID
   }
 }
 
@@ -78,7 +78,7 @@ object JobHash {
     */
   def generateJobHash(job: Job, params: Map[String, String], env: Env, jobDAO: JobDAO): JobHash = {
     // filter unique parameters
-    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid"
+    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH
 
     // Create the job Hash depending on what db is used
 

@@ -1,6 +1,6 @@
 package modules.tel
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import modules.tel.env.Env
 import modules.tel.param.Params
 

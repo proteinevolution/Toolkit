@@ -1,0 +1,57 @@
+@(probs: List[Double])(implicit request: RequestHeader)
+
+
+<div id="hcontainer" style="min-width: 610px; height: 400px; margin: 0 auto"></div>
+
+<script>
+        var bins = new Array();
+        @for(prob <- probs){
+                bins.push(Array(@(prob), bins.length));
+        }
+
+        $(function() {
+            var width= $("#tool-tabs").width() - 30;
+            var chart = new Highcharts.Chart({
+                title: {
+                    text: 'Probability Distribution',
+                    x: -20 //center
+                },
+                xAxis: {
+                    title: {
+                        text: 'Probability'
+                    }
+                },
+
+                yAxis: {
+                    title: {
+                        text: 'No. of matches'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                              tooltip: {
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                chart: {
+                renderTo: 'hcontainer',
+                width: width
+                },
+                series: [{
+                    name: 'No. HSPs',
+                    data: bins
+                }],
+                credits: {
+                enabled: false
+                }
+            });
+        });
+</script>
+

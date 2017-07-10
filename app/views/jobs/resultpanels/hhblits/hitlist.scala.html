@@ -1,13 +1,7 @@
-@import play.api.libs.json.JsObject
-@import play.api.libs.json.JsValue
-@import play.api.Logger
-@import models.results.FileLoader
-@import play.api.libs.json.JsUndefined
-@import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
-@import modules.tel.TEL
 @import models.database.results.HHBlitsResult
-@(jobID: String, result: HHBlitsResult, tool: models.tools.Tool)(implicit request: RequestHeader)
+@import better.files._
+@(jobID: String, result: HHBlitsResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
 @if(result.num_hits < 1) {
     <div class="callout alert noHits" id="noHits">
         <h6>No hits found!</h6>
@@ -20,31 +14,59 @@
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
-                <a id="visualizationScroll" onclick="scrollToSection('visualization')">Vis</a>
-                <a id="hitlistScroll" onclick="scrollToSection('hitlist')">Hits</a>
-                <a id="alignmentsScroll" onclick="scrollToSection('alignments')">Aln</a>
+                <a id="visualizationScroll" name="#visualization" onclick="scrollToSection('visualization')">Vis</a>
+                <a id="hitlistScroll" name="#hitlist" onclick="scrollToSection('hitlist')">Hits</a>
+                <a id="alignmentsScroll" name="#alignments" onclick="scrollToSection('alignments')">Aln</a>
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
-                <a onclick="selectAll()" class="selectAllSeqBar">Select all</a>
-                <a data-open="forwardModal_@{
+                <a onclick="selectAll()" class="selectAllSeqBar" id="extraWide">Select all</a>
+                <a id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
-                <a data-open="forwardModal_@{
+                <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
                 }_hhsuite">Forward Query MSA</a>
+                <a onclick="wrap()" id="wrap">Wrap Seqs</a>
             </div>
         </div>
     </div>
     <br>
+    <text class="notePlain">Number of hits: <b>@result.num_hits</b></text>
     <br>
-    Number of matched sequences: <b>@result.num_hits</b>
+
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+        <br>
+        <text class="note"><b> We have detected</b></text>
+
+    }
+    @if(result.TMPRED == "1"){
+
+        <text class="note"><b> @result.TMPRED transmembrane helix</b></text>
+    }
+    @if(result.TMPRED.toInt > 1){
+
+        <text class="note"><b> @result.TMPRED transmembrane helices</b></text>
+    }
+    @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
+        <text class="note"><b> and </b></text>
+
+    }
+    @if(result.COILPRED == "0"){
+        <text class="note"><b>coiled-coil segments </b></text>
+    }
+
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+        <text class="note"><b> in your query protein!</b></text>
+
+    }
+
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div><a class="success button tiny resubmitSection" onclick="resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}')" type="button" id="resubmitSection">Resubmit section</a></div>
             <div id='blastviz'>
                 <div class='flat-slider' id='flat-slider'></div>
-                @BlastVisualization.html(s"$jobID/results/$jobID.html_NOIMG")
+                @Html(htmlPath.toFile.contentAsString)
                 <p><img src="files/@jobID/@{jobID}.png" border="0" alt="blasthits" usemap="#blastmap"></p>
             </div>
     </div>
@@ -81,6 +103,21 @@
                 </form>
         </div>
     </div>
+    <br>
+    <div id="toolReferences">
+        <h5 id="refTitle">References</h5>
+
+        If you use our HHblits server for your research, please cite:
+        <div class="citation">
+            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank"> Alva et al. NAR (2016)</a>.</div>
+        </div>
+        And the HHblits paper:
+        <div class="citation">
+            <div>HHblits: lightning-fast iterative protein sequence searching by HMM-HMM alignment.<a href="https://www.nature.com/nmeth/journal/v9/n2/full/nmeth.1818.html" target="_blank"> Remmert et al. Nat Methods (2011)</a>.</div>
+        </div>
+    </div>
+    <hr id="line-element" colspan="4" class="horizontal-line">
+
 }
 
 @*MODALS*@
@@ -97,21 +134,26 @@
         </select>
     </div>
     <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
-    <button class="close-button" data-close aria-label="Close modal" type="button">
+    <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
 <script>
+        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
+            $('#alignmentTemplate_tool').val('');
+            $.LoadingOverlay("hide");
+        }));
         var jobID = '@{jobID}';
         var fileUrlQueryMSAFas = "/files/"+jobID+"/alignment.fas";
         var checkbox = "checkbox";
         var selectAllBool = false;
         var numHits = @{result.num_hits};
-        var shownHits = 50;
-        var colorAAs = true;
+        var shownHits = 100;
         var showMore = 100;
-	var loading = false;
+	    var loading = false;
+        var wrapped = true;
+        var colorAAs = false;
         // use this array to store
         // checked checkboxes
         // due to pagination/lazyload
@@ -120,93 +162,113 @@
         $(document).ready( function(){
             hitlistBaseFunctions();
             if(numHits > 0 ){
+                $("#wrap").text("Unwrap Seqs");
+                $("#wrap").addClass("colorToggleBar");
+
                 drawDataTable();
-                var firstQueryStart = @result.HSPS.head.query.start;
-                var firstQueryEnd = @result.HSPS.head.query.end;
+                var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query.start}};
+                var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query.end}};
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
-		shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits);
+		        shownHits = shownHits > numHits ? numHits : shownHits;
+                getHits(0, shownHits, wrapped);
                 $('#templateAlignmentModal').foundation()
+                $("#wrap").hide();
             }
+
         });
 
-
-        $(document).ready(function () {
-            setTimeout(function () {
-                $("#alignments").floatingScroll('init');
-            }, 2000);
-        });
         function drawDataTable(){
             hitlist = $('#htb').dataTable({
                 "bProcessing" : true,
                 "bServerSide" : true,
                 "sAjaxSource" : "/api/job/results/dataTableHHblits/@jobID",
-                "lengthMenu": [[10, 25, 50, numHits], [10, 25, 50, "All"]],
+                "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
                 "searching": false,
-                "iDisplayLength": 10
+                "iDisplayLength": 25,
+                "drawCallback": function() {
+                    linkCheckboxes();
+                    selectFromArray(checkboxes);
+                }
             });
         }
 
+        function selectAll(){
+            selectAllBool = !selectAllBool;
+            $(".selectAllSeqBar").toggleClass("colorToggleBar");
+            $(".selectAllSeqBar").toggleText("Select all","Deselect all");
+            if(selectAllBool) {
+                selectAllHelper(checkbox);
+                // first empty array
+                checkboxes = [];
+                // push all checkboxes (1 to num_hits) into array
+                _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
+            }
+            else {
+                deselectAll(checkbox);
+                // delete all checkboxes from array
+                checkboxes = [];
+            }
+        }
 
 
-       function hhblits_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength){
+       function hhblits_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
            var route = null;
+           var filename = generateFilename();
            $.LoadingOverlay("show");
             if(boolFullLength) {
                 if(boolEvalue) {
-                    route = jsRoutes.controllers.HHblitsController.evalFull('@jobID', evalue);
+                    data.evalue = evalue;
+                    data.fileName = filename;
+                    route = jsRoutes.controllers.HHblitsController.evalFull(jobID);
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.full('@jobID');
-                }
-                $.ajax({
-                    url: route.url,
-                    method: route.method,
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    error: function(){
-                        $.LoadingOverlay("hide")
+                    data.fileName = filename;
+                    route = jsRoutes.controllers.HHblitsController.full(jobID);
+                    if(data.checkboxes.length == 0){
+                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                        $.LoadingOverlay("hide");
+                        alert("No sequences selected!");
+                        return false;
                     }
-                }).done(function (data_) {
-                    $.ajax({
-                        type: 'GET',
-                        url: 'files/@jobID/sequences.fa',
-                        error: function(){
-                            $.LoadingOverlay("hide")
-                        }
-                    }).done(function (data_) {
-                        forward(selectedTool, data_.toString());
-                    });
-                });
+                }
             } else{
 
                 if(boolEvalue) {
-                    route = jsRoutes.controllers.HHblitsController.alnEval('@jobID', evalue);
+                    data.evalue = evalue;
+                    data.fileName = filename;
+                    route = jsRoutes.controllers.HHblitsController.alnEval(jobID);
                 }else{
-                    route = jsRoutes.controllers.HHblitsController.aln('@jobID');
-                }
-                $.ajax({
-                    url: route.url,
-                    method: route.method,
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    error: function(){
-                        $.LoadingOverlay("hide")
+                    if(data.checkboxes.length == 0){
+                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                        $.LoadingOverlay("hide");
+                        alert("No sequences selected!");
+                        return false;
                     }
-                }).done(function (data_) {
-                    $.ajax({
-                        type: 'GET',
-                        url: 'files/@jobID/alignment.fas',
-                        error: function(){
-                            $.LoadingOverlay("hide")
-                        }
-                    }).done(function (data_) {
-                        forward(selectedTool, data_.toString());
-                    });
-                });
-
+                    data.fileName = filename;
+                    route = jsRoutes.controllers.HHblitsController.aln(jobID);
+                }
             }
+
+           $.ajax({
+               url: route.url,
+               method: route.method,
+               contentType: "application/json",
+               data: JSON.stringify(data),
+               error: function(){
+                   $.LoadingOverlay("hide")
+               }
+           }).done(function (data_) {
+               $.ajax({
+                   type: 'GET',
+                   url: 'files/@jobID/'+filename+'.fa',
+                   error: function(){
+                       $.LoadingOverlay("hide")
+                   }
+               }).done(function (data_) {
+                   forward(selectedTool, data_.toString());
+               });
+           });
         }
 
 
@@ -238,7 +300,7 @@
                     }
                 }).done(function (data) {
                     $("#alignmentTemplate").val(data.toString());
-                    $.LoadingOverlay("hide")
+                    $.LoadingOverlay("hide");
                 })
             }).fail(function () {
                 $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
@@ -257,23 +319,31 @@
         }
 
 
-        function getHits(start, end){
+        function getHits(start, end, wrapped){
             if(start <= numHits && end <= numHits && !loading){
+                var data = {"start": start, "end": end, "wrapped": wrapped};
                 loading = true;
                 $('#loadingHits').show();
                 $('#loadHits').hide();
-                var route = jsRoutes.controllers.HHblitsController.loadHits(jobID,start, end);
+                var route = jsRoutes.controllers.HHblitsController.loadHits(jobID);
                 return $.ajax({
                     method: route.method,
-                    url: route.url
+                    url: route.url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
                 }).done(function (data_) {
                     $("#alignmentTable").append(data_);
 		            loading = false;
                     $('#loadingHits').hide();
-                    $('#loadHits').show();
+                    if (shownHits != numHits) {
+                        $('#loadHits').show();
+                    }
+                    linkCheckboxes();
+                    selectFromArray(checkboxes);
+                    $("#alignments").floatingScroll('init');
                 });
             }
         }
 
-
 </script>
+

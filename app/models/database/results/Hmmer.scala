@@ -14,6 +14,7 @@ import scala.concurrent.Future
   * Created by drau on 18.04.17.
   */
 case class HmmerHSP(evalue: Double,
+                    full_evalue: Double,
                     num: Int,
                     bitscore: Double,
                     hit_start: Int,
@@ -27,7 +28,6 @@ case class HmmerHSP(evalue: Double,
                     accession: String,
                     midline: String,
                     description: String,
-                    dom_exp_num: Double,
                     domain_obs_num: Int) {
 
   def toDataTable(db: String): JsValue =
@@ -35,16 +35,24 @@ case class HmmerHSP(evalue: Double,
       Map(
         "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
         "1" -> Json.toJson(BlastVisualization.getSingleLinkDB(db, accession).toString),
-        "2" -> Json.toJson(description),
-        "3" -> Json.toJson(evalue),
-        "4" -> Json.toJson(bitscore),
-        "5" -> Json.toJson(hit_len)
-      ))
+        "2" -> Json.toJson(BlastVisualization.addBreak(description)),
+        "3" -> Json.toJson(full_evalue),
+        "4" -> Json.toJson(evalue),
+        "5" -> Json.toJson(bitscore),
+        "6" -> Json.toJson(hit_len)
+      )
+    )
 }
 
 case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 
-case class HmmerResult(HSPS: List[HmmerHSP], num_hits: Int, alignment: List[AlignmentItem], query: Query, db: String)
+case class HmmerResult(HSPS: List[HmmerHSP],
+                       num_hits: Int,
+                       alignment: List[AlignmentItem],
+                       query: Query,
+                       db: String,
+                       TMPRED: String,
+                       COILPRED: String)
 
 @Singleton
 class Hmmer @Inject()(general: General, aln: Alignment) {
@@ -60,18 +68,26 @@ class Hmmer @Inject()(general: General, aln: Alignment) {
         val db       = (obj \ jobID \ "db").as[String]
         val query    = general.parseQuery((obj \ "query").as[JsArray])
         val hsps     = (obj \ jobID \ "hsps").as[List[JsObject]]
-        val hits     = (obj \ jobID \ "hits").as[List[JsObject]]
-        val num_hits = hits.length
+        val num_hits = hsps.length
 
-        val hsplist = hsps.zip(hits).map { x =>
-          parseHSP(x._1, x._2)
+        val hsplist = hsps.map(parseHSP(_))
+
+        val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
+          case Some(data) => data
+          case None       => "0"
         }
-        HmmerResult(hsplist, num_hits, alignment, query, db)
+        val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
+          case Some(data) => data
+          case None       => "1"
+        }
+
+        HmmerResult(hsplist, num_hits, alignment, query, db, TMPRED, COILPRED)
       }
   }
 
-  def parseHSP(hsp: JsObject, hit: JsObject): HmmerHSP = {
+  def parseHSP(hsp: JsObject): HmmerHSP = {
     val evalue         = (hsp \ "evalue").getOrElse(Json.toJson(-1)).as[Double]
+    val full_evalue    = (hsp \ "full_evalue").getOrElse(Json.toJson(-1)).as[Double]
     val num            = (hsp \ "num").getOrElse(Json.toJson(-1)).as[Int]
     val bitscore       = (hsp \ "bitscore").getOrElse(Json.toJson(-1)).as[Double]
     val hit_start      = (hsp \ "hit_start").getOrElse(Json.toJson(-1)).as[Int]
@@ -85,10 +101,10 @@ class Hmmer @Inject()(general: General, aln: Alignment) {
     val accession      = general.refineAccession((hsp \ "hit_id").getOrElse(Json.toJson("")).as[String])
     val midline        = (hsp \ "aln_ann" \ "PP").getOrElse(Json.toJson("")).as[String].toUpperCase
     val description    = (hsp \ "hit_description").getOrElse(Json.toJson("")).as[String]
-    val dom_exp_num    = (hit \ "dom_exp_num").getOrElse(Json.toJson(-1)).as[Double]
-    val domain_obs_num = (hit \ "domain_obs_num").getOrElse(Json.toJson(-1)).as[Int]
+    val domain_obs_num = (hsp \ "domain_obs_num").getOrElse(Json.toJson(-1)).as[Int]
     HmmerHSP(
       evalue,
+      full_evalue,
       num,
       bitscore,
       hit_start,
@@ -102,27 +118,28 @@ class Hmmer @Inject()(general: General, aln: Alignment) {
       accession,
       midline,
       description,
-      dom_exp_num,
       domain_obs_num
     )
 
   }
 
-  def hitsOrderBy(params: DTParam, hits: List[HmmerHSP]): List[HmmerHSP] = {
+  def hitsOrderBy(params: DTParam, hsp: List[HmmerHSP]): List[HmmerHSP] = {
     (params.iSortCol, params.sSortDir) match {
-      case (1, "asc")  => hits.sortBy(_.accession)
-      case (1, "desc") => hits.sortWith(_.accession > _.accession)
-      case (2, "asc")  => hits.sortBy(_.description)
-      case (2, "desc") => hits.sortWith(_.description > _.description)
-      case (3, "asc")  => hits.sortBy(_.evalue)
-      case (3, "desc") => hits.sortWith(_.evalue > _.evalue)
-      case (4, "asc")  => hits.sortBy(_.bitscore)
-      case (4, "desc") => hits.sortWith(_.bitscore > _.bitscore)
-      case (5, "asc")  => hits.sortBy(_.hit_len)
-      case (5, "desc") => hits.sortWith(_.hit_len > _.hit_len)
-      case (_, "asc")  => hits.sortBy(_.num)
-      case (_, "desc") => hits.sortWith(_.num > _.num)
-      case (_, _)      => hits.sortBy(_.num)
+      case (1, "asc")  => hsp.sortBy(_.accession)
+      case (1, "desc") => hsp.sortWith(_.accession > _.accession)
+      case (2, "asc")  => hsp.sortBy(_.description)
+      case (2, "desc") => hsp.sortWith(_.description > _.description)
+      case (3, "asc")  => hsp.sortBy(_.full_evalue)
+      case (3, "desc") => hsp.sortWith(_.full_evalue > _.full_evalue)
+      case (4, "asc")  => hsp.sortBy(_.evalue)
+      case (4, "desc") => hsp.sortWith(_.evalue > _.evalue)
+      case (5, "asc")  => hsp.sortBy(_.bitscore)
+      case (5, "desc") => hsp.sortWith(_.bitscore > _.bitscore)
+      case (6, "asc")  => hsp.sortBy(_.hit_len)
+      case (6, "desc") => hsp.sortWith(_.hit_len > _.hit_len)
+      case (_, "asc")  => hsp.sortBy(_.num)
+      case (_, "desc") => hsp.sortWith(_.num > _.num)
+      case (_, _)      => hsp.sortBy(_.num)
     }
   }
 }
